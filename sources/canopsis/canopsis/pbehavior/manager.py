@@ -1079,7 +1079,7 @@ class PBehaviorManager(object):
             # we return now, which ensures this pbh isn't used in
             # ok ko timestamp computing
             if last_tstart is None:
-                return int(now.total_seconds())
+                return int((now - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
             last_tstop_dt = last_tstart + duration
             pbh_last_tstop = int((last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
         return pbh_last_tstop
