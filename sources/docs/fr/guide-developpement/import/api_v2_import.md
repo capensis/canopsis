@@ -37,9 +37,9 @@ Dans chaque entité présent dans la liste `cis` et dans chaque lien présent da
 }
 ```
 
-# Entités
+## Entités
 
-## Description des champs d'entités
+### Description des champs d'entités
 
 La liste `cis` est une liste d'entités représentée sous forme d'objet JSON. Chaque entité possède ces différents champs :
 * Le champ **`_id`** contient l'identifiant de l'entité, sous la forme d'une chaine de caractères, qui est concerné par l'action.
@@ -50,11 +50,11 @@ La liste `cis` est une liste d'entités représentée sous forme d'objet JSON. C
 * Le champ **`action`** contient le type de l'action à réaliser au moment de l'import.
 * Le champ **`action_properties`** vient en complément du champ action en spécifiant des informations complémentaires pour la bonne réalisation de l'action.
 
-## Description des actions sur les entités
+### Description des actions sur les entités
 
 Il existe 6 actions supportés sur les entités au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `update`, `disable` et `enable`.
 
-### Create
+#### Create
 `create` crée une nouvelle entité dans le contexte graphe. Si une entité existe déjà avec le même identifiant, une **mise à jour complète** de l'entité sera effectuée. Les nouvelles données vont écraser l'entité courante en base de données.
 
 Pour fonctionner correctement, les champs `_id`, `type` et `action` sont obligatoires.
@@ -65,40 +65,40 @@ Les champs dans la section [Description des champs d'entités](#Description-des-
 * `measurements` sera initialisé avec une liste vide
 * et le champ `infos` par un objet vide.
 
-### Set
+#### Set
 `set`, comme `create`, crée une nouvelle entité dans le contexte graphe. La différence est que l'action *Set* procède à une **mise à jour partielle** de l'entité. Seuls les champs fournis dans les données d'import impacteront l'entité.
 
 Par exemple, si une entité existante possède `info1` et `info2` dans ses `infos` et que l'import contient `info1` avec une valeur différente et `info3`, alors `info1` sera mis à jour avec sa nouvelle valeur, `info2` ne changera pas et `info3` sera créé.
 
 Un exemple pratique dans un paragraphe suivant permettra de mieux saisie la différente entre `set` et `create`.
 
-### Delete
+#### Delete
 `delete` supprime une entité désignée par son identifiant (champ `_id`). Si l'entité n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
 Pour fonctionner correctement, les champs `_id` et `action` sont obligatoires.
 
 Lors de la suppression de l'entité, les champs `impact` et `depends` des entités ayant une relation avec celle supprimée verront les références à l'entité détruite supprimées.
 
-### Update
+#### Update
 `update` met à jour l'entité désignée par son `_id`. Si l'entité désignée par `_id` n'existe pas initialement dans le contexte graphe, une erreur sera déclenchée, l'import s'arrêtera et les modifications ne seront pas répercutées dans le référentiel.
 
 Les champs `_id` et `action` sont obligatoires.
 
 Pour la mise à jour, tous les champs présents dans l'action hormis `action` et `action_properties` seront recopiés dans l'entité à mettre à jour.
 
-### Enable
+#### Enable
 L'action `enable` va activer une entité, c'est-à-dire que le champ `enabled` de l'entité sera mis à `True`. Si l'entité n'existe pas dans le contexte graphe, une erreur sera déclenchée, l'import s'arrêtera et les modifications ne seront pas répercutées dans le contexte graphe.
 
 Les champs `_id`, `action` et `action_properties` sont obligatoires. Le champ `action_properties` doit avoir un champ `enable` contenant soit un entier
 représentant un timestamp soit une liste d'horodatage correspondant à l'activation de l'entité.
 
-### Disable
+#### Disable
 `disable` réalise l'action contraire du `enable`, à savoir désactiver une entité.
 
 Les champs `_id`, `action` et `action_properties` sont obligatoires. Le champ `action_properties` doit avoir un champ `disable` correspondant à la désactivation de l'entité.
 
-# Liens
-## Description des champs des liens
+## Liens
+### Description des champs des liens
 La liste `links` représente toutes les relations entres les entités. Ces liens sont stockés sous forme d'objet JSON avec ces différents champs :
 * Le champ **`_id`** contient l'identifiant de l'action, il peut prendre n'importe quelle valeur.
 * Le champ **`from`** contient l'identifiant de l'entité de départ du lien
@@ -109,83 +109,157 @@ Pour tous les liens, les champs `from`, `to` et `action` sont obligatoires.
 
 Les liens décrits dans les actions sont des liens de type *impact-depends*, c'est-à-dire qu'ils représentent des liens dont l'entité de départ (champ `from` dans le lien) contient dans son champ `impact` une référence à l'entité d'arrivée du lien. Par conséquent, l'entité d'arrivée du lien (champ `to`) contiendra une référence à l'entité de départ dans son champ `depends`.
 
-## Description des actions sur les liens
+### Description des actions sur les liens
 
 Il y a deux actions supportées sur les liens : `create` et `delete`.
 
-### Create
+#### Create
 `create` crée un lien entre les deux entités définis à l'aide des champs `to` et `from` selon les modalités définies ci-dessus. Si au moins une des deux entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
-### Delete
+#### Delete
 `delete` supprime un lien entres les deux entités définis à l'aide des champs `to` et `from` selon les modalités définis ci-dessus. Si au moins une des deux
 entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
 # Fonctionnement de l'import
-Afin d'exécuter un nouvel import, il faut tout d'abord téléverser le fichier
-au format JSON sur la route *api/contextgraph/import* en utilisant le verbe
-HTTP PUT et en ajoutant l'import dans le corps de la requête. Le serveur
-retournera un objet JSON contenant l'identifiant de l'import.
+
+Pour importer un référentiel, il faut envoyer les données au format JSON sur la `PUT api/contextgraph/import`. Le serveur retournera un objet JSON contenant l'identifiant de l'import (`import_id`). Sur le serveur, l'import sera stocké sous la forme d'un fichier afin que la *task* responsable s'occupe de l'import.
+
+Lors du traitement de l'import par la tâche, si le fichier est mal formé ou qu'une anomalie est survenue lors du traitement d'une action, l'import est annulé et les modifications ne sont pas répercutées sur le contexte graphe. Si aucune erreur n'est rencontré, le contexte graphe sera mis à jour.
+
+Dans tous les cas, la progression et le résultat de l'import sont disponibles via la route `GET api/contextgraph/import/status/<import_id>` accessible en GET. La route retourne un objet JSON contenant au moins les champs `_id` (identifiant de l'import), `creation` (date à laquelle l'import a été envoyé à Canopsis) et `status`. Ce `status` est le statut de l'import et peut prendre quatre : `pending` (en attente), `ongoing` (en cours), `failed` (échec de l'import), `done` (succès de l'import).
+
+Dans le cas où l'import est `failed` ou `done`, la route `GET api/contextgraph/import/status/<import_id>` retourne des informations supplémentaires : temps d'exécution, nombre d'élémens impactés ou raison de l'échec.
+
+Différents exemples de retour des routes `PUT api/contextgraph/import` et `GET api/contextgraph/import/status/<import_id>` sont disponibles dans le paragraphe qui suit.
+
+# Utilisation de l'API d'import
+
+## Import d'un context graph
+
+**URL** : `/api/contextgraph/import`
+
+**Méthode** : `PUT`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de corps de requête** :
 
 ```json
 {
-  "total": 1,
-  "data": [
-    {
-      "import_id": "b95e227f-27a2-4636-9f9c-ad30109d075d"
+    "json":{
+        "cis":[
+            {
+                "name":"capitals",
+                "enabled":true,
+                "action":"create",
+                "infos":{
+                    "info1":{
+                        "name":"info1",
+                        "value":"Paris",
+                        "description":"Capitale de la France"
+                    },
+                    "info2":{
+                        "name":"info2",
+                        "value":"Londres",
+                        "description":"Capitale de la Grande-Bretagne"
+                    }
+                },
+                "_id":"capitals",
+                "type":"component"
+            }
+        ],
+        "links":[]
     }
-  ],
-  "success": true
 }
 ```
 
-Une fois l'import téléversé, l'import sera stocké sous la forme d'un fichier
-afin que la *task* responsable d'un import s'occupe de l'import.
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
-Lors du traitement de l'import par la tâche, si le fichier JSON est mal formé
-ou qu'une anomalie est survenue lors du traitement d'une action, l'import
-est annulé et les modifications ne sont pas répercutées sur le contexte graphe.
-Si aucune erreur n'est rencontré, le contexte graphe sera mise à jour.
+```sh
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+    "json":{
+        "cis":[
+            {
+                "name":"capitals",
+                "enabled":true,
+                "action":"create",
+                "infos":{
+                    "info1":{
+                        "name":"info1",
+                        "value":"Paris",
+                        "description":"Capitale de la France"
+                    },
+                    "info2":{
+                        "name":"info2",
+                        "value":"Londres",
+                        "description":"Capitale de la Grande-Bretagne"
+                    }
+                },
+                "_id":"capitals",
+                "type":"component"
+            }
+        ],
+        "links":[]
+    }
+}' 'http://<Canopsis_URL>/api/contextgraph/import'
+```
 
-Dans tous les cas, la progression et le résultat de l'import sont disponible
-via la route */api/contextgraph/import/status/<import_id>* accessible en GET.
-La route retourne un objet JSON contenant au moins les champs :
+### Réponse en cas de réussite
 
-  * **_id** de l'import.
-  * **status** qui contient le status de l'import. Il y en a actuellement
-  quatre : *"pending"*, *"ongoing"*, *"failed"*, *"done"*
-  * **creation** qui contient la date et l'heure du téléversement de l'import
-  sur le serveur.
+**Condition** : l'import a bien été téléversé dans Canopsis
 
-## Import en attente
-Lorsqu'un import est téléversé alors qu'un autre est en cours d'exécution,
-le nouvel import est mis en attente. L'interrogation de la route précédemment
-citée avec l'identifiant du nouvel import retournera un objet JSON
-dont le *status* sera à **pending**.
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
+
+```json
+{
+    "total":1,
+    "data":[
+        {
+            "import_id":"c3090ed6-5b17-4c75-ad23-82238cffa62f"
+        }
+    ],
+    "success":true
+}
+```
+
+## Statut d'un importé versé dans Canopsis
+
+**URL** : `/api/contextgraph/import/status/<import_id>`
+
+**Méthode** : `GET`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut connaître le statut de la task `c3090ed6-5b17-4c75-ad23-82238cffa62f` : `curl -u root:root http://<Canopsis_URL>/api/contextgraph/import/status/c3090ed6-5b17-4c75-ad23-82238cffa62f`
+
+### Import en attente
+Lorsqu'un import est téléversé alors qu'un autre est en cours d'exécution, le nouvel import est mis en attente. L'interrogation de la route précédemment citée avec l'identifiant du nouvel import retournera un objet JSON dont le `status` sera à **`pending`**.
 ```json
 {
   "status": "pending",
-  "_id": "6ac1deb9-1049-41f3-9e85-48d694deaab3",
+  "_id": "c3090ed6-5b17-4c75-ad23-82238cffa62f",
   "creation": "Mon Aug 28 17:41:27 2017"
 }
 ```
 
 ## Import en cours
-Lorsqu'un import est en cours de traitement, l'interrogation de la route
-précédemment citée avec l'identifiant du nouvel import retournera un objet JSON
-dont le *status* sera à **ongoing**.
+Lorsqu'un import est en cours de traitement, l'interrogation de la route précédemment citée avec l'identifiant du nouvel import retournera un objet JSON dont le `status` sera à **`ongoing`**.
 ```json
 {
   "status": "ongoing",
-  "_id": "6ac1deb9-1049-41f3-9e85-48d694deaab3",
+  "_id": "c3090ed6-5b17-4c75-ad23-82238cffa62f",
   "creation": "Mon Aug 28 17:41:27 2017"
 }
 ```
 
 ## Import terminé
-Lorsqu'un import est traité complétement sans erreur, la route précédemment
-citée retourne un objet JSON avec le *status* à **done**, le nombre
-d'entité supprimées dans *stats.deleted*, le nombres d'entité mises à jour ou créées
-*stats.updated* et le temps d'exécution de l'import dans le champ *exec_time*.
+Lorsqu'un import est traité complétement sans erreur, la route précédemment citée retourne un objet JSON avec le `status` à **`done`**, le nombre d'entités supprimées dans `stats.deleted`, le nombres d'entités mises à jour ou créées `stats.updated` et le temps d'exécution de l'import dans le champ `exec_time`.
 ```json
 {
   "status": "done",
@@ -200,9 +274,7 @@ d'entité supprimées dans *stats.deleted*, le nombres d'entité mises à jour o
 ```
 
 ## Échec de l'import
-En cas d'erreur, la route précédemment citée retourne un objet JSON contenant
-un status **failed**, une description de l'erreur dans le champ **infos** et le
-temps d'exécution total de l'import dans **exec_time**.
+En cas d'erreur, la route précédemment citée retourne un objet JSON contenantun status **`failed`**, une description de l'erreur dans le champ **`infos`** et le temps d'exécution total de l'import dans **`exec_time`**.
 ```json
 {
   "status": "failed",
@@ -224,88 +296,6 @@ Lorsqu'un job est bloqué en pending, il est possible de relancer manuellement l
 ```
 (remplacer par l'id de votre job ; voir par exemple dans `/opt/canopsis/tmp` le nom du fichier json en attente d'importation ou dans la collection `default_importctx`)
 
+## Exemples d'actions dans l'import
 
-# Exemple d'utilisation de l'import
-
- * Tout d'abord, il faut s'authentifier à auprès de l'API avec votre
-*authentication key*
-
-```
-GET http://192.168.0.93:8082/?authkey=6b6ce450-5fd2-11e7-b5dd-0800279471b5
-```
-
- * Ensuite, il faut téléverser l'import sur la route *api/contextgraph/import/*
-```JSON
-PUT http://127.0.0.1:8082/api/contextgraph/import/
-{
-    "cis": [
-        {
-            "type": "component",
-            "infos": {
-            },
-            "_id": "component_0",
-            "action": "create",
-            "measurements": [],
-            "action_properties": {
-            },
-            "name": "component_0",
-            "impact": [],
-            "depends": []
-        },
-        {
-            "type": "resource",
-            "infos": {
-            },
-            "_id": "resource_1",
-            "action": "create",
-            "measurements": [],
-            "action_properties": {
-                "disable": "494172"
-            },
-            "name": "resource_1",
-            "impact": [],
-            "depends": []
-        }
-    ],
-    "links": [
-        {
-            "to": "component_0",
-            "from": "resource_1",
-            "infos": {
-            },
-            "_id": "component_0-to-resource_1",
-            "action": "create",
-            "action_properties": {
-            }
-        }
-    ]
-}
-```
-```json
-{
-  "total": 1,
-  "data": [
-    {
-      "import_id": "01834fe6-181a-4312-8900-9ea24901bda0"
-    }
-  ],
-  "success": true
-}
-```
-
- * Pour obtenir l'état de l'import :
-```
-GET http://192.168.0.93:8082/api/contextgraph/import/status/01834fe6-181a-4312-8900-9ea24901bda0
-```
-```json
-{
-  "status": "done",
-  "exec_time": "00:00:01",
-  "_id": "01834fe6-181a-4312-8900-9ea24901bda0",
-  "creation": "Mon Aug 28 17:41:27 2017"
-  "stats": {
-    "deleted": 0,
-    "updated": 20000
-  }
-}
-```
+(Différence entre `set` et `create`)
