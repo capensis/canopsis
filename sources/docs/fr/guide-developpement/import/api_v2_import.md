@@ -1,20 +1,18 @@
-# Import d'un référentiel externe
+# API d'import de contexte graphe
 
-L'import d'un référentiel externe est une fonctionnalité de Canopsis qui permet
-d'importer un référentiel externe dans celui de Canopsis. Cette fonctionnalité
-est basée sur un format d'échange basé sur JSON et un ensemble de routes
-qui permet de téléverser l'import et de suivre l'évolution de l'import.
+Cette API permet d'importer un référentiel externe (autrement appelé *contexte graphe* ou *context graph*) au format JSON dans Canopsis.
 
-Dans la suite du document, le référentiel sera nommé contexte graphe.
+Un context graph est consitué d'un ensemble d'entités et des relations entre elles. Les entités vont enrichir les alarmes en leur rajoutant du contexte. Par exemple, si un équipement qui envoie une alarme dans Canopsis et qu'une entité représente cet équipement est présent, l'alarme sera entichie avec toutes les informations que contient l'entité. Ces informations peuvent être de toute sorte : adresse IP, OS installé, date de mise en service, criticité de l'équipement, responsable à contacter en cas de panne, etc.
 
-# Le format d'échange
-L'import d'un référentiel externe est constitué d'un ensemble d'actions
-sur des entités (Configuration Item ou CI) et sur les relations entre
-ces dernières (link). Par conséquent, ces actions sont réparties en deux
-listes :
+L'API propose différentes routes pour téléverser un import ou suivre son évolution.
 
-  * une pour les entités nommées **cis**
-  * une pour les liens nommés **links**
+# Format d'import du context graph
+
+Un référentiel externe est constitué de deux types de données : les entités et les liens entre ces entités.
+
+Au moment de l'import, on va donc séparer ces deux types d'éléments dans un objet JSON. On va retrouver les entités dans le champ `cis` (venant de *Configuration Items*) et les relations entre les entités dans `links`.
+
+Dans chaque entité présent dans la liste `cis` et dans chaque lien présent dans la liste `links`, le champ `action` va définir comment l'élément sera importé dans le contexte graphe.
 
 ```json
 {
@@ -39,141 +37,88 @@ listes :
 }
 ```
 
-# Présentation des actions sur les entités
+# Entités
 
-## Description des champs
-La liste *cis* contient une liste d'actions représentée sous forme d'objet.
+## Description des champs d'entités
 
-  * Le champ **_id** contient l'identifiant de l'entité, sous la forme d'une
-  chaine de caractères, qui est concerné par l'action
+La liste `cis` est une liste d'entités représentée sous forme d'objet JSON. Chaque entité possède ces différents champs :
+* Le champ **`_id`** contient l'identifiant de l'entité, sous la forme d'une chaine de caractères, qui est concerné par l'action.
+* Le champ **`type`** contient le type de l'entité sous forme d'une chaine de caractères. Ce champ ne peut prendre qu'une valeur parmi les 4 suivantes : `resource`, `component`, `connector`, `watcher`.
+* Le champ **`infos`** contient les informations complémentaires. Ce sont des données totalement personnalisables que l'utilisateur peut modifier.
+* Le champ **`measurements`** contient un ensemble de chaine de caractères correspondant aux métriques liées à l'entité.
+* Le champ **`name`** contient le nom de l'entité sous forme de chaine de caractères.
+* Le champ **`action`** contient le type de l'action à réaliser au moment de l'import.
+* Le champ **`action_properties`** vient en complément du champ action en spécifiant des informations complémentaires pour la bonne réalisation de l'action.
 
-  * Le champ **type** contient le type de l'entité sous forme d'une chaine de
-  caractères. Ce champ ne peut prendre qu'une valeur parmi les 4 suivantes :
-  "resource", "component", "connector", "watcher".
+## Description des actions sur les entités
 
-  * Le champ **infos** contient les informations complémentaires qui ne sont
-  pas utiles au contexte graphe.
-  * Le champ **measurements** contient un ensemble de chaine de caractères
-  correspondant aux métriques liées à l'entité.
-  * Le champ **name** contient le nom de l'entité sous forme de chaine de
-  caractères.
-  * Le champ **action** contient le type de l'action à réaliser sous forme d'une
-  chaine de caractères. Actuellement, il y a 6 actions supportées : "create",
-  "set", "delete", "update", "disable" et "enable".
-  * Le champ **action_properties** contient des informations complémentaires
-  pour la bonne réalisation de l'action définie dans le champ *action*.
+Il existe 6 actions supportés sur les entités au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `update`, `disable` et `enable`.
 
-Tous les champs précédemment cités correspondent avec les champs des documents
-représentant les entités dans le contexte graphe.
-
-
-## Description des actions
 ### Create
-*Create* crée une nouvelle entité dans le contexte graphe. Si une entité
-existe déjà avec le même identifiant, une **mise à jour complète** de l'entité sera effectuée. Les nouvelles données vont écraser l'entité courante en base de données.
+`create` crée une nouvelle entité dans le contexte graphe. Si une entité existe déjà avec le même identifiant, une **mise à jour complète** de l'entité sera effectuée. Les nouvelles données vont écraser l'entité courante en base de données.
 
-Pour fonctionner correctement, les champs *_id*, *type* et *action* sont
-obligatoires.
+Pour fonctionner correctement, les champs `_id`, `type` et `action` sont obligatoires.
 
-Tous les champs dans la section **Description des champs** vont être copiés
-tels quels dans la nouvelle entité. Si le champ n'existe pas, le champ
-dans la nouvelle entité sera initialisé avec une valeur par défaut.
-
-  * *name* sera initialisé avec la valeur du champ *_id*
-  * *depends*, *impact* seront initialisés avec une liste vide
-  * *measurement* sera initialisé avec une liste vide
-  * et le champ *infos* par un objet vide.
+Les champs dans la section [Description des champs d'entités](#Description-des-champs-d'entités) vont être copiés tels quels dans la nouvelle entité, à l'exception d'`action` et d'`action_properties`. Si le champ n'existe pas, le champ dans la nouvelle entité sera initialisé avec une valeur par défaut :
+* `name` sera initialisé avec la valeur du champ `_id`
+* `depends` et `impact` seront initialisés avec une liste vide
+* `measurements` sera initialisé avec une liste vide
+* et le champ `infos` par un objet vide.
 
 ### Set
-*Set*, comme *create*, crée une nouvelle entité dans le contexte graphe. La différence est que l'action *Set* procède à une **mise à jour partielle** de l'entité. Seuls les champs fournis dans les données d'import impacteront l'entité.
+`set`, comme `create`, crée une nouvelle entité dans le contexte graphe. La différence est que l'action *Set* procède à une **mise à jour partielle** de l'entité. Seuls les champs fournis dans les données d'import impacteront l'entité.
 
-Par exemple, si une entité existante possède `info1` et `info2` dans ses *infos* et que l'import contient `info1` avec une valeur différente et `info3`, alors `info1` sera mis à jour avec sa nouvelle valeur, `info2` ne changera pas et `info3` sera créé.
+Par exemple, si une entité existante possède `info1` et `info2` dans ses `infos` et que l'import contient `info1` avec une valeur différente et `info3`, alors `info1` sera mis à jour avec sa nouvelle valeur, `info2` ne changera pas et `info3` sera créé.
+
+Un exemple pratique dans un paragraphe suivant permettra de mieux saisie la différente entre `set` et `create`.
 
 ### Delete
-*Delete* supprime une entité désignée par son identifiant. Si l'entité
-n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import
-s'arrêtera et les modifications de l'import en cours ne seront pas répercutées
-sur le référentiel de Canopsis
+`delete` supprime une entité désignée par son identifiant (champ `_id`). Si l'entité n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
-Pour fonctionner correctement, les champs *_id* et *action* sont obligatoires.
+Pour fonctionner correctement, les champs `_id` et `action` sont obligatoires.
 
-Lors de la suppression de l'entité, les champs *impact* et *depends* des entités
-ayant une relation avec celle supprimée verront les références à l'entité
-détruite supprimées.
-
+Lors de la suppression de l'entité, les champs `impact` et `depends` des entités ayant une relation avec celle supprimée verront les références à l'entité détruite supprimées.
 
 ### Update
-*Update* met à jour l'entité désignée par son identifiant. Si l'entité désignée
-par *_id* n'existe pas initialement dans le contexte graphe, une erreur sera
-déclenchée, l'import s'arrêtera et les modifications ne seront pas répercutées
-dans le contexte graphe.
+`update` met à jour l'entité désignée par son `_id`. Si l'entité désignée par `_id` n'existe pas initialement dans le contexte graphe, une erreur sera déclenchée, l'import s'arrêtera et les modifications ne seront pas répercutées dans le référentiel.
 
-Les champs *_id* et *action* sont obligatoires.
+Les champs `_id` et `action` sont obligatoires.
 
-Pour la mise à jour, tous les champs présents dans l'action hormis *action* et
-*action_properties* seront recopiés dans l'entité à mettre à jour.
+Pour la mise à jour, tous les champs présents dans l'action hormis `action` et `action_properties` seront recopiés dans l'entité à mettre à jour.
 
 ### Enable
-*Enable* passe l'état de l'entité à *enable*. Si l'entité n'existe pas dans le
-contexte graphe, une erreur sera déclenchée, l'import s'arrêtera et les
-modifications ne seront pas répercutées dans le contexte graphe.
+L'action `enable` va activer une entité, c'est-à-dire que le champ `enabled` de l'entité sera mis à `True`. Si l'entité n'existe pas dans le contexte graphe, une erreur sera déclenchée, l'import s'arrêtera et les modifications ne seront pas répercutées dans le contexte graphe.
 
-Les champs *_id* et *action_properties* sont obligatoires. Le champ
-*action_properties* doit avoir un champ *enable* contenant soit un entier
-représentant un timestamp soit une liste d'horodatage correspondant à
-l'activation de l'entité.
+Les champs `_id`, `action` et `action_properties` sont obligatoires. Le champ `action_properties` doit avoir un champ `enable` contenant soit un entier
+représentant un timestamp soit une liste d'horodatage correspondant à l'activation de l'entité.
 
 ### Disable
-*Disable* passe l'état de l'entité à *disable*. Si l'entité n'existe pas dans
-le contexte graphe, une erreur sera déclenchée, l'import s'arrêtera et les
-modifications ne seront pas répercutées dans le contexte graphe.
+`disable` réalise l'action contraire du `enable`, à savoir désactiver une entité.
 
-Les champs *_id* et *action_properties* sont obligatoires. Le champ
-*action_properties* doit avoir un champ *disable* contenant soit un entier
-représentant un timestamp soit une liste d'horodatage correspondant à la
-désactivation de l'entité.
+Les champs `_id`, `action` et `action_properties` sont obligatoires. Le champ `action_properties` doit avoir un champ `disable` correspondant à la désactivation de l'entité.
 
+# Liens
+## Description des champs des liens
+La liste `links` représente toutes les relations entres les entités. Ces liens sont stockés sous forme d'objet JSON avec ces différents champs :
+* Le champ **`_id`** contient l'identifiant de l'action, il peut prendre n'importe quelle valeur.
+* Le champ **`from`** contient l'identifiant de l'entité de départ du lien
+* Le champ **`to`** contient l'identifiant de l'entité d'arrivée du lien
+* Le champ **`action`** contient le type de l'action à réaliser sous forme d'une chaine de caractères.
 
-# Présentation des actions sur les liens
-## Description des champs
-La liste *links* contient une liste d'actions représentée sous forme d'objet.
+Pour tous les liens, les champs `from`, `to` et `action` sont obligatoires.
 
-  * Le champ **_id** contient l'identifiant de l'action, il peut
-  prendre n'importe quelle valeur.
-  * Le champ **from** contient l'identifiant de l'entité de départ du lien
-  * Le champ **to** contient l'identifiant de l'entité d'arrivée du lien
-  * Le champ **action** contient le type de l'action à réaliser sous forme d'une
-  chaine de caractères. Actuellement, il y a 3 actions supportées : "create",
-  "delete"et "update".
+Les liens décrits dans les actions sont des liens de type *impact-depends*, c'est-à-dire qu'ils représentent des liens dont l'entité de départ (champ `from` dans le lien) contient dans son champ `impact` une référence à l'entité d'arrivée du lien. Par conséquent, l'entité d'arrivée du lien (champ `to`) contiendra une référence à l'entité de départ dans son champ `depends`.
 
-Les liens décrits dans les actions sont des liens de type *impact-depends*,
-c'est-à-dire qu'ils représentent des liens dont l'entité de départ contient
-dans son champ *impact* une référence à l'entité d'arrivée du lien. Par
-conséquent, l'entité d'arrivée du lien contiendra une référence à l'entité de
-départ dans son champ *depends*.
+## Description des actions sur les liens
 
-Pour toutes les actions, les champs *from*, *to* et *action* sont obligatoires.
+Il y a deux actions supportées sur les liens : `create` et `delete`.
 
 ### Create
-*Create* crée un lien entre les deux entités définis à l'aide des champs
-*to* et *from* selon les modalités définies ci-dessus. Si au moins une des deux
-entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import
-s'arrêtera et les modifications de l'import en cours ne seront pas répercutées
-sur le référentiel de Canopsis.
+`create` crée un lien entre les deux entités définis à l'aide des champs `to` et `from` selon les modalités définies ci-dessus. Si au moins une des deux entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
 ### Delete
-*Delete* supprime un lien entres les deux entités définis à l'aide des champs
-*to* et *from* selon les modalités définis ci-dessus. Si au moins une des deux
-entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import
-s'arrêtera et les modifications de l'import en cours ne seront pas répercutées
-sur le référentiel de Canopsis.
-
-### Update, Enable, Disable
-Les actions *update*, *enable*, *disable* on été prévus pour un usage futur,
-ils ne sont donc pas pour le moment implementés pour les actions sur les liens.
-Par conséquent, leur utilisation déclenchera une erreur et l'import
-s'interrompra.
-
+`delete` supprime un lien entres les deux entités définis à l'aide des champs `to` et `from` selon les modalités définis ci-dessus. Si au moins une des deux
+entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
 # Fonctionnement de l'import
 Afin d'exécuter un nouvel import, il faut tout d'abord téléverser le fichier
