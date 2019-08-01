@@ -31,6 +31,17 @@ Voici une liste des principales données et la manière de la récupérer.
 | Message de l'ACK    | `{{ .Alarm.Value.ACK.Message }}`    |
 | `abc` dans l'entité | `{{ .Entity.Infos.abc.Value }}`     |
 
+Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est possible de récupérer l'information de différents manières.
+
+| Champ                             | Résultat                                                                  |
+|:----------------------------------|:--------------------------------------------------------------------------|
+| `{{ .Event.Timestamp.Day }}`      | Jour (sous forme d'entier)                                                |
+| `{{ .Event.Timestamp.Minute }}`   | Minutes (sous forme d'entier)                                             |
+| `{{ .Event.Timestamp.Second }}`   | Secondes (sous forme d'entier)                                            |
+| `{{ .Event.Timestamp.String }}`   | Chaîne de caractères représentant la date suivant un formatage par défaut |
+| `{{ .Event.Timestamp.Unix }}`     | Timestamp UNIX                                                            |
+| `{{ .Event.Timestamp.UnixNano }}` | Timestamp UNIX en nanosecondes                                            |
+
 !!! attention
     Les champs enrichis depuis un événement ou via l'event filter se retrouvent au niveau de l'entité et sont sensibles à la casse. Par exemple un champ enrichi intitulé `switch` dans l'entité sera traduit en `{{ .Entity.Infos.switch.Value }}`.
 

@@ -13,7 +13,7 @@
         dark
         )
           div.v-btn.v-btn--flat.theme--dark(
-          :data-test="`dropButton-groupName-${group.name}`",
+          :data-test="`dropDownButton-group-${group._id}`",
           slot="activator"
           )
             span {{ group.name }}
@@ -27,7 +27,7 @@
             )
               v-icon(small) edit
             v-icon(dark) arrow_drop_down
-          v-list(:data-test="`dropZone-groupName-${group.name}`")
+          v-list(:data-test="`dropDownZone-group-${group._id}`")
             v-list-tile(
             v-for="view in group.views",
             :key="view._id",
@@ -36,7 +36,7 @@
               v-list-tile-title
                 span {{ view.title }}
                 v-btn.edit-view-button(
-                :data-test="`editViewButton-viewTitle-${view.title}`",
+                :data-test="`editViewButton-view-${view._id}`",
                 v-show="checkViewEditButtonAccessById(view._id)",
                 color="grey darken-2",
                 depressed,
@@ -46,7 +46,7 @@
                 )
                   v-icon(small) edit
                 v-btn.duplicate-view-button(
-                :data-test="`copyViewButton-viewTitle-${view.title}`",
+                :data-test="`copyViewButton-view-${view._id}`",
                 v-show="isEditingMode",
                 depressed,
                 small,
