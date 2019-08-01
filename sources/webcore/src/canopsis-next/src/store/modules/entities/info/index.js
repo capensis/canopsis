@@ -28,6 +28,7 @@ export default {
     edition: state => state.edition,
     stack: state => state.stack,
     description: state => state.description,
+    language: state => state.language,
     isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
     isCASAuthEnabled: state => state.isCASAuthEnabled,
     casConfig: state => state.casConfig,
@@ -43,6 +44,7 @@ export default {
       state.appTitle = userInterface.app_title;
       state.footer = userInterface.footer;
       state.description = userInterface.login_page_description;
+      state.language = userInterface.language;
 
       state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
       state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
@@ -52,6 +54,7 @@ export default {
     [types.FETCH_APP_INFOS](state, {
       version,
       logo,
+      language,
       appTitle,
       edition,
       stack,
@@ -61,6 +64,7 @@ export default {
       state.appTitle = appTitle;
       state.edition = edition;
       state.stack = stack;
+      state.language = language;
     },
   },
   actions: {
@@ -72,7 +76,11 @@ export default {
           login_config: loginConfig,
         } = await request.get(API_ROUTES.infos.login);
 
-        commit(types.FETCH_LOGIN_INFOS, { version, userInterface, loginConfig });
+        commit(types.FETCH_LOGIN_INFOS, {
+          version,
+          userInterface: userInterface || {},
+          loginConfig: loginConfig || {},
+        });
       } catch (err) {
         console.error(err);
       }
@@ -100,7 +108,9 @@ export default {
           },
         );
 
-        dispatch('i18n/setGlobalLocale', language, { root: true });
+        if (language) {
+          dispatch('i18n/setGlobalLocale', language, { root: true });
+        }
       } catch (err) {
         console.error(err);
       }

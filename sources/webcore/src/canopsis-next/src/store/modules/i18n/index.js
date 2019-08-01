@@ -19,7 +19,7 @@ export default {
     },
   },
   actions: {
-    setLocale({ state, commit }, { locale, priority = LOCALE_PRIORITIES.default }) {
+    setLocale({ state, commit }, { locale = DEFAULT_LOCALE, priority = LOCALE_PRIORITIES.default }) {
       if (state.localePriority <= priority) {
         Vue.set(i18n, 'locale', locale);
 

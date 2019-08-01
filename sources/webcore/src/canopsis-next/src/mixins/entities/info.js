@@ -15,6 +15,7 @@ export default {
       edition: 'edition',
       stack: 'stack',
       description: 'description',
+      language: 'language',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
