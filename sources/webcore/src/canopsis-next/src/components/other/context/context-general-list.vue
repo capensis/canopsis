@@ -41,7 +41,7 @@ div
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { getContextWidgetSearchByText } from '@/helpers/entities-search';
+import { getContextSearchByText } from '@/helpers/widget-search';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 
@@ -75,7 +75,7 @@ export default {
     submit() {
       this.fetchContextEntities({
         params: {
-          _filter: getContextWidgetSearchByText(this.searchingText),
+          _filter: getContextSearchByText(this.searchingText),
         },
       });
     },

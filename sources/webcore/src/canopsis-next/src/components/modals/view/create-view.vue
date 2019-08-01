@@ -50,7 +50,7 @@
             deletable-chips,
             )
             v-combobox(
-            data-test="viewFieldGroupId",
+            data-test="viewFieldGroupIds",
             ref="combobox",
             v-model="groupName",
             :items="groupNames",

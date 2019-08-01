@@ -1,5 +1,3 @@
-const RANDOM = Math.random().toString(36).substring(6);
-
 module.exports.CREDENTIALS = {
   admin: {
     username: 'root',
@@ -22,7 +20,7 @@ module.exports.USERS = {
 };
 
 module.exports.NAVIGATION = {
-  groups: {
+  LEFT_SIDEBAR: {
     text: 'view',
     counts: 2,
     create: {
@@ -35,22 +33,4 @@ module.exports.NAVIGATION = {
       prefix: 'edit',
     },
   },
-};
-
-module.exports.USER = {
-  username: 'test-username',
-  firstname: 'test-firstname',
-  lastname: 'test-lastname',
-  email: 'test-email@example.com',
-  password: 'test-password',
-  role: 1,
-  language: 2,
-  navigationType: 1,
-};
-
-module.exports.VIEW = {
-  name: `test-name-${RANDOM}`,
-  title: `test-title-${RANDOM}`,
-  description: `test-description-${RANDOM}`,
-  group: `test-group-${RANDOM}`,
 };

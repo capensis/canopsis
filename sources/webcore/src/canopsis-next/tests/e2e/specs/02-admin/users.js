@@ -1,10 +1,41 @@
 // http://nightwatchjs.org/guide#usage
-const { generateTemporaryUser } = require('../../helpers/entities');
+
+const { USERS } = require('../../constants');
+
+const TEMPORARY_DATA = {};
+
+const onCreateUser = (browser, {
+  username, firstname, lastname, email, password,
+}) => {
+  browser.page.admin.users()
+    .clickAddButton();
+
+  browser.page.modals.admin.createUser()
+    .verifyModalOpened()
+    .setUsername(username)
+    .setFirstName(firstname)
+    .setLastName(lastname)
+    .setEmail(email)
+    .setPassword(password)
+    .selectRole()
+    .selectLanguage()
+    .clickSubmitButton()
+    .verifyModalClosed();
+};
+
+const onCreateTemporaryObject = ({ prefix, text, index }) => {
+  const i = typeof index === 'number' ? `-${index}` : '';
+  return {
+    username: `${prefix}-${text}${i}-name`,
+    firstname: `${prefix}-${text}${i}-firstname`,
+    lastname: `${prefix}-${text}${i}-lastname`,
+    email: `${prefix}-${text}${i}-email@example.com`,
+    password: `${prefix}-${text}${i}-password`,
+  };
+};
 
 module.exports = {
   async before(browser, done) {
-    browser.globals.users = {};
-
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
@@ -12,27 +43,25 @@ module.exports = {
   },
 
   async after(browser, done) {
-    delete browser.globals.users;
-
     await browser.completed.logout()
       .end(done);
   },
 
   'Create new user with some name': (browser) => {
-    const { users } = browser.globals;
+    const { text, create: { prefix } } = USERS;
 
-    users.create = generateTemporaryUser('create');
+    TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
 
-    browser.completed.createUser(users.create, ({ userResponseData }) => {
-      users.create = {
-        ...users.create,
-        userResponseData,
-      };
-    });
+    browser.page.admin.users()
+      .navigate()
+      .verifyPageElementsBefore();
+
+    onCreateUser(browser, TEMPORARY_DATA[prefix]);
   },
 
   'Login by created user credentials': (browser) => {
-    const { username, password } = browser.globals.users.create;
+    const { create: { prefix } } = USERS;
+    const { username, password } = TEMPORARY_DATA[prefix];
 
     browser.completed.logout()
       .maximizeWindow()
@@ -44,15 +73,15 @@ module.exports = {
       .maximizeWindow()
       .completed.loginAsAdmin();
 
-    const { users } = browser.globals;
+    const { text, create, edit: { prefix } } = USERS;
 
-    users.edit = generateTemporaryUser('edit');
+    TEMPORARY_DATA[prefix] = onCreateTemporaryObject({ text, prefix });
 
-    const userSelector = users.create.username;
+    const userSelector = TEMPORARY_DATA[create.prefix].username;
 
     const {
       username, firstname, lastname, email, password,
-    } = users.edit;
+    } = TEMPORARY_DATA[prefix];
 
     browser.page.admin.users()
       .navigate()
@@ -78,7 +107,8 @@ module.exports = {
   },
 
   'Login by disabled user credentials': (browser) => {
-    const { username, password } = browser.globals.users.edit;
+    const { edit: { prefix } } = USERS;
+    const { username, password } = TEMPORARY_DATA[prefix];
 
     browser.completed.logout()
       .maximizeWindow()
@@ -86,43 +116,40 @@ module.exports = {
   },
 
   'Remove user with some username': (browser) => {
-    const { users } = browser.globals;
-
     browser.completed.loginAsAdmin();
 
-    const createUser = users.create.username;
-    const editUser = users.edit.username;
+    const { create, edit } = USERS;
+    const createUser = TEMPORARY_DATA[create.prefix].username;
+    const editUser = TEMPORARY_DATA[edit.prefix].username;
 
-    browser.completed.deleteUser(createUser, ({ responseData }) => {
-      users.create = {
-        ...users.create,
-        deleteData: responseData,
-      };
-    });
+    browser.page.admin.users()
+      .navigate()
+      .verifyPageUserBefore(createUser)
+      .clickDeleteButton(createUser);
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
+      .verifyModalClosed();
 
-    browser.completed.deleteUser(editUser, ({ responseData }) => {
-      users.edit = {
-        ...users.edit,
-        deleteData: responseData,
-      };
-    });
+    browser.page.admin.users()
+      .verifyPageUserBefore(editUser)
+      .clickDeleteButton(editUser);
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
+      .verifyModalClosed();
   },
 
   'Create mass users with some name': (browser) => {
-    const { users } = browser.globals;
+    const { text, counts, mass: { prefix } } = USERS;
 
-    users.mass = [];
+    TEMPORARY_DATA[prefix] = [];
 
-    for (let index = 0; index < 5; index += 1) {
-      users.mass.push(generateTemporaryUser('mass'));
+    for (let index = 0; index < counts; index += 1) {
+      TEMPORARY_DATA[prefix].push(onCreateTemporaryObject({ text, prefix, index }));
     }
 
-    users.mass.map((user, index) => browser.completed.createUser(user, ({ userResponseData }) => {
-      users.mass[index] = {
-        ...users.mass[index],
-        userResponseData,
-      };
-    }));
+    TEMPORARY_DATA[prefix].map(user => onCreateUser(browser, user));
   },
 
   'Check pagination users table': (browser) => {
@@ -136,13 +163,13 @@ module.exports = {
   },
 
   'Delete mass users with some name': (browser) => {
-    const { users } = browser.globals;
+    const { mass: { prefix } } = USERS;
 
     browser.page.admin.users()
       .selectRange()
       .defaultPause();
 
-    users.mass.map(user => browser.page.admin.users()
+    TEMPORARY_DATA[prefix].map(user => browser.page.admin.users()
       .verifyPageUserBefore(user.username)
       .clickOptionCheckbox(user.username)
       .defaultPause());

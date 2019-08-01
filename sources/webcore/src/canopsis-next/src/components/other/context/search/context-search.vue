@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { getContextWidgetSearchByText } from '@/helpers/entities-search';
+import { getContextSearchByText } from '@/helpers/widget-search';
 
 import searchMixin from '@/mixins/search';
 
@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     requestData() {
-      return getContextWidgetSearchByText(this.searchingText);
+      return getContextSearchByText(this.searchingText);
     },
   },
 };

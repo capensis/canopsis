@@ -30,7 +30,7 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
-    'app_title', 'footer',  'login_page_description', 'logo', 'language'
+    'app_title', 'footer',  'login_page_description', 'logo'
 ]
 
 VALID_CANOPSIS_EDITIONS = [
@@ -39,10 +39,6 @@ VALID_CANOPSIS_EDITIONS = [
 
 VALID_CANOPSIS_STACKS = [
     'go', 'python'
-]
-
-VALID_CANOPSIS_LANGUAGES = [
-    'en', 'fr'
 ]
 
 
@@ -115,7 +111,7 @@ def get_login_config(ws):
     return {"login_config": login_config}
 
 
-def check_values(ws, edition, stack):
+def check_edition_and_stack(ws, edition, stack):
     if edition is not None and edition not in VALID_CANOPSIS_EDITIONS:
         ws.logger.error("edition is an invalid value : {}".format(edition))
         return False
@@ -154,12 +150,12 @@ def exports(ws):
             name=CanopsisVersionManager.COLLECTION)
 
         try:
-            ok = check_values(
+            ok = check_edition_and_stack(
                 ws, doc.get("edition"), doc.get("stack"))
             if ok:
                 success = CanopsisVersionManager(version_collection).\
-                    put_canopsis_document(
-                        doc.get("edition"), doc.get("stack"), None)
+                    put_canopsis_document(doc.get("edition"),
+                                          doc.get("stack"), None)
 
                 if not success:
                     return gen_json_error({'description': 'failed to update edition/stack'},
@@ -186,12 +182,10 @@ def exports(ws):
         user_interface = get_user_interface().get("user_interface", None)
         if user_interface is not None:
             for key in user_interface.keys():
-                if key not in ['app_title', 'logo', 'language']:
+                if key not in ['app_title', 'logo']:
                     user_interface.pop(key)
             cservices.update(user_interface)
-        ws.logger.error(get_version())
         cservices.update(get_version())
-        ws.logger.warning(cservices)
 
         return gen_json(cservices)
 
@@ -215,16 +209,6 @@ def exports(ws):
         for key in interface.keys():
             if key not in VALID_USER_INTERFACE_PARAMS:
                 interface.pop(key)
-
-        language = interface.get('language', None)
-        if language is not None and language not in VALID_CANOPSIS_LANGUAGES:
-            ws.logger.error(
-                "language is an invalid value : {}".format(language))
-            return gen_json_error(
-                {'description': "language is an invalid value : {}".format(
-                    language)},
-                HTTP_ERROR
-            )
 
         user_interface_manager = UserInterfaceManager(
             *UserInterfaceManager.provide_default_basics())

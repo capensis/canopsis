@@ -20,16 +20,14 @@ class UserInterface(object):
     FOOTER = 'footer'
     LOGIN_PAGE_DESCRIPTION = 'login_page_description'
     LOGO = 'logo'
-    LANGUAGE = 'language'
 
-    def __init__(self, _id, app_title=None, footer=None, login_page_description=None, logo=None, language=None, *args, **kwargs):
+    def __init__(self, _id, app_title=None, footer=None, login_page_description=None, logo=None, *args, **kwargs):
 
         self._id = _id
         self.app_title = app_title
         self.footer = footer
         self.login_page_description = login_page_description
         self.logo = logo
-        self.language = language
 
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
@@ -50,8 +48,7 @@ class UserInterface(object):
             self.APP_TITLE: self.app_title,
             self.FOOTER: self.footer,
             self.LOGIN_PAGE_DESCRIPTION: self.login_page_description,
-            self.LOGO: self.logo,
-            self.LANGUAGE: self.language
+            self.LOGO: self.logo
         }
 
         return dictionnary

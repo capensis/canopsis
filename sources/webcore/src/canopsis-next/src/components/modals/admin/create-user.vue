@@ -71,9 +71,8 @@
           v-model="form.ui_language",
           :items="languages",
           )
-        v-layout(data-test="navigationTypeLayout", row)
+        v-layout(row)
           v-select.mt-0(
-          data-test="navigationType",
           v-model="form.groupsNavigationType",
           :label="$t('parameters.groupsNavigationType.title')",
           :items="groupsNavigationItems",
@@ -148,7 +147,6 @@ export default {
   data() {
     return {
       pending: true,
-      languages: ['fr', 'en'],
       form: {
         _id: '',
         firstname: '',
@@ -194,6 +192,10 @@ export default {
           value: GROUPS_NAVIGATION_TYPES.topBar,
         },
       ];
+    },
+
+    languages() {
+      return Object.keys(this.$i18n.messages);
     },
   },
   async mounted() {

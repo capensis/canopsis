@@ -20,28 +20,12 @@ const commands = {
     return this.customClick('@addViewButton');
   },
 
-  clickEditModeButton() {
-    const { activeEditModeButton } = this.elements;
-
-    this.api.element(activeEditModeButton.locateStrategy, activeEditModeButton.selector, ({ status }) => {
-      if (status === -1) {
-        this.customClick('@editModeButton');
-      }
-    });
-
-    return this;
+  clickEditViewButton() {
+    return this.customClick('@editViewButton');
   },
 
   clickSettingsViewButton() {
-    const { activeSettingsViewButton } = this.elements;
-
-    this.api.element(activeSettingsViewButton.locateStrategy, activeSettingsViewButton.selector, ({ status }) => {
-      if (status === -1) {
-        this.customClick('@settingsViewButton');
-      }
-    });
-
-    return this;
+    return this.customClick('@settingsViewButton');
   },
 };
 
@@ -49,10 +33,8 @@ const commands = {
 module.exports = {
   elements: {
     addViewButton: sel('addViewButton'),
-    editModeButton: sel('editModeButton'),
-    activeEditModeButton: `.v-btn--active${sel('editModeButton')}`,
+    editViewButton: sel('editViewButton'),
     settingsViewButton: sel('settingsViewButton'),
-    activeSettingsViewButton: `.v-btn--active${sel('settingsViewButton')}`,
     settingsWrapper: '.v-speed-dial',
     controlsWrapper: '.v-speed-dial .v-speed-dial__list',
   },

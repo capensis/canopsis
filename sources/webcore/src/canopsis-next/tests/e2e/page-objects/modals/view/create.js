@@ -1,5 +1,4 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
-const { isArray } = require('lodash');
 
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 const { DEFAULT_PAUSE } = require('../../../config');
@@ -26,8 +25,8 @@ const commands = {
     );
     return this;
   },
-  clearViewGroupId() {
-    return this.customClearValue('@viewFieldGroupId');
+  clearViewGroupIds() {
+    return this.customClearValue('@viewFieldGroupIds');
   },
   setViewName(value) {
     return this.customSetValue('@viewFieldName', value);
@@ -39,37 +38,12 @@ const commands = {
     return this.customSetValue('@viewFieldDescription', value);
   },
   setViewGroupTags(value) {
-    if (isArray(value)) {
-      value.forEach(tag =>
-        this.customSetValue('@viewFieldGroupTags', tag)
-          .customKeyup('@viewFieldGroupTags', 'ENTER'));
-    } else {
-      this.customSetValue('@viewFieldGroupTags', value)
-        .customKeyup('@viewFieldGroupTags', 'ENTER');
-    }
-
-    return this;
+    return this.customSetValue('@viewFieldGroupTags', value)
+      .customKeyup('@viewFieldGroupTags', 'ENTER');
   },
-  setViewGroupId(value) {
-    return this.customSetValue('@viewFieldGroupId', value)
-      .customKeyup('@viewFieldGroupId', 'ENTER');
-  },
-  setViewEnabled(value) {
-    const { viewFieldEnabledActive } = this.elements;
-
-    this.api.element(
-      viewFieldEnabledActive.locateStrategy,
-      viewFieldEnabledActive.selector,
-      ({ status }) => {
-        const isActive = status !== -1;
-
-        if (isActive !== value) {
-          this.customClick('@viewFieldEnabled');
-        }
-      },
-    );
-
-    return this;
+  setViewGroupIds(value) {
+    return this.customSetValue('@viewFieldGroupIds', value)
+      .customKeyup('@viewFieldGroupIds', 'ENTER');
   },
   clickViewEnabled() {
     return this.customClick('@viewFieldEnabled');
@@ -91,10 +65,9 @@ module.exports = modalCreator(modalSelector, {
       viewFieldTitle: sel('viewFieldTitle'),
       viewFieldDescription: sel('viewFieldDescription'),
       viewFieldEnabled: `.v-input${sel('viewFieldEnabled')} .v-input--selection-controls__ripple`,
-      viewFieldEnabledActive: `.v-input.v-input--is-label-active${sel('viewFieldEnabled')} .v-input--selection-controls__ripple`,
       viewFieldGroupTags: sel('viewFieldGroupTags'),
       viewFieldGroupTagsChipsRemove: sel('.v-input.v-select--chips .v-select__selections .v-chip .v-chip__close'),
-      viewFieldGroupId: sel('viewFieldGroupId'),
+      viewFieldGroupIds: sel('viewFieldGroupIds'),
       viewSubmitButton: sel('viewSubmitButton'),
       viewDeleteButton: sel('viewDeleteButton'),
     }),

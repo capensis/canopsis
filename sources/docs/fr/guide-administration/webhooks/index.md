@@ -20,7 +20,6 @@ Dans une installation Docker, l'image `canopsis/engine-axe-cat` remplace l'image
 ### Activation par paquets
 
 Pour pouvoir utiliser les webhooks avec une installation par paquets, il faut :
-
 *  compiler le plugin webhooks dans le répertoire contenant le plugin webhooks `CGO_ENABLED=1 go build -buildmode=plugin -o webhookPlugin.so main.go`
 *  lancer le moteur `axe` avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`. Sauf configuration spécifique, `webhookPlugin.so` se trouve dans `/plugins/axepostprocessor`.
 

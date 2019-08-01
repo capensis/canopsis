@@ -5,11 +5,7 @@
   transition="slide-y-reverse-transition",
   v-bind="wrapperProps"
   )
-    v-tooltip(
-    slot="activator",
-    :right="tooltipRight",
-    :left="tooltipLeft",
-    )
+    v-tooltip(slot="activator", right)
       v-btn.primary(
       data-test="settingsViewButton",
       slot="activator",
@@ -19,13 +15,9 @@
         v-icon settings
         v-icon close
       span {{ $t('layout.sideBar.buttons.settings') }}
-    v-tooltip(
-    v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
-    :right="tooltipRight",
-    :left="tooltipLeft",
-    )
+    v-tooltip(v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess", right)
       v-btn(
-      data-test="editModeButton",
+      data-test="editViewButton",
       slot="activator",
       :input-value="isEditingMode",
       color="blue darken-4",
@@ -37,11 +29,7 @@
         v-icon(dark) edit
         v-icon(dark) done
       span {{ $t('layout.sideBar.buttons.edit') }}
-    v-tooltip(
-    v-if="hasCreateAnyViewAccess",
-    :right="tooltipRight",
-    :left="tooltipLeft",
-    )
+    v-tooltip(v-if="hasCreateAnyViewAccess", right)
       v-btn(
       data-test="addViewButton",
       slot="activator",
@@ -65,14 +53,6 @@ export default {
   mixins: [modalMixin, rightsTechnicalViewMixin],
   props: {
     isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
-    tooltipRight: {
-      type: Boolean,
-      default: false,
-    },
-    tooltipLeft: {
       type: Boolean,
       default: false,
     },

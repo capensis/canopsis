@@ -152,10 +152,12 @@ def exports(ws):
         """
         session_manager.keep_alive(username)
 
-    @route(ws.application.get, payload=['username'])
-    def sessionstart(username):
+    @ws.application.get('/sessionstart')
+    def sessionstart():
         """
         Start a new session.
         """
+        username = request.get('username', None)
+
         session_manager.session_start(username)
         return {}

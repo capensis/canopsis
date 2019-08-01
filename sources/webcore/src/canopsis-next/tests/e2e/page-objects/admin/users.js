@@ -46,18 +46,6 @@ const commands = {
     return this.customClick('@nextButton');
   },
 
-  setSearchingText(value) {
-    return this.customSetValue('@searchingTextField', value);
-  },
-
-  clickSubmitSearchButton() {
-    return this.customClick('@submitSearchButton');
-  },
-
-  clickClearSearchButton() {
-    return this.customClick('@clearSearchButton');
-  },
-
   selectRange(idx = 5) {
     return this.customClick('@selectRangeField')
       .waitForElementVisible(this.el('@selectRangeItemOption', idx))
@@ -75,9 +63,6 @@ module.exports = {
   elements: {
     dataTable: '.v-datatable',
     addButton: sel('addButton'),
-    searchingTextField: sel('searchingTextField'),
-    submitSearchButton: sel('submitSearchButton'),
-    clearSearchButton: sel('clearSearchButton'),
     editButton: `%s ${sel('editButton')}`,
     deleteButton: `%s ${sel('deleteButton')}`,
     massDeleteButton: sel('massDeleteButton'),

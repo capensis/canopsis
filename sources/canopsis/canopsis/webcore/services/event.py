@@ -65,14 +65,6 @@ def transform_event(ws, event):
         ws.logger.info(
             u'Role added to the event. event_type = {}, role = {}'.format(event_type, role))
 
-    # Long output must be a string
-    long_output = new_event.get("long_output")
-    if long_output is not None:
-        if not isinstance(long_output, basestring):
-            new_event["long_output"] = ""
-            ws.logger.warn(u'Long output field is not a string : {}. Replacing it by ""'.format(
-                type(long_output)))
-
     return new_event
 
 
