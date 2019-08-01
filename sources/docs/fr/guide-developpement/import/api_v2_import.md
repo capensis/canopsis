@@ -70,9 +70,7 @@ représentant les entités dans le contexte graphe.
 ## Description des actions
 ### Create
 *Create* crée une nouvelle entité dans le contexte graphe. Si une entité
-existe déjà avec le même identifiant, une erreur est déclenchée, l'import
-s'arrêtera et les modifications de l'import en cours ne seront pas répercutées
-sur le référentiel de Canopsis.
+existe déjà avec le même identifiant, une **mise à jour complète** de l'entité sera effectuée. Les nouvelles données vont écraser l'entité courante en base de données.
 
 Pour fonctionner correctement, les champs *_id*, *type* et *action* sont
 obligatoires.
@@ -87,7 +85,9 @@ dans la nouvelle entité sera initialisé avec une valeur par défaut.
   * et le champ *infos* par un objet vide.
 
 ### Set
+*Set*, comme *create*, crée une nouvelle entité dans le contexte graphe. La différence est que l'action *Set* procède à une **mise à jour partielle** de l'entité. Seuls les champs fournis dans les données d'import impacteront l'entité.
 
+Par exemple, si une entité existante possède `info1` et `info2` dans ses *infos* et que l'import contient `info1` avec une valeur différente et `info3`, alors `info1` sera mis à jour avec sa nouvelle valeur, `info2` ne changera pas et `info3` sera créé.
 
 ### Delete
 *Delete* supprime une entité désignée par son identifiant. Si l'entité
