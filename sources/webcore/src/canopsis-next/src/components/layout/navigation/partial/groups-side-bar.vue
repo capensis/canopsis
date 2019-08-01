@@ -38,7 +38,7 @@
         :color="getColor(view._id)",
         )
           router-link.panel-item-content-link(
-          :data-test="`linkView-viewTitle-${view.title}`"
+          :data-test="`linkView-view-${view._id}`"
           :title="view.title",
           :to="getViewLink(view)",
           )
