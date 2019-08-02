@@ -2,6 +2,32 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.24.0 - Due date : 2019-07-18
+
+ - [Build] Build Docker images with "yarn" instead of "npm"
+ - [Build] Fix missing initialisation.toml file in Go engine packages
+ - [Build] Don't strip Go binaries in CentOS packages, to keep debug information
+ - [Build] Fix RabbitMQ download link when running "canoctl deploy"
+ - [API] Fix search on entities informations in get-alarms
+ - [Go] Add formattedDate and replace functions to webhooks templates
+ - [Go] Fix missing last_update_date computation
+ - [UI] Add a label to « Actions » columns, on all tables
+ - [UI] Add "description", "logo", and "login page footer" parameters on parameters view + Add a right to access this view
+ - [UI] Harmonize default view selector modal
+ - [UI] Fix – Close all modals on page change
+ - [UI – Listalarm] Add dynamic date selector for live reporting functionnality
+ - [UI – Listalarm] Add a setting to send (or not) a message with fast-ack events
+ - [UI – Listalarm] Fix – Available actions on alarms that are not ack
+ - [UI – Listalarm] Fix "More infos" action’s icon
+ - [UI – Service Weather] Fix issue with templates not being displayed in the tiles
+ - [UI – Stats] Add helpers on stats settings
+ - [UI - Stats] Fix – Trend icon
+ - [UI – Tests] Add fundations for e2e tests
+ - [UI – Tests] Add e2e tests – Topbar
+ - [UI – Tests] Add e2e tests – Users administration’s panel
+ - [UI – Tests] Add e2e tests – Left sidebar
+ - [UI – Weather] Change « More infos » modal header’s color according to watcher’s state
+
 ## Canopsis 3.23.0 - Due date : 2019-07-05
 
  - [Documentation] Add entity filters examples in Pbehavior use case documentation

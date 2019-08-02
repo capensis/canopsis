@@ -19,12 +19,12 @@
       v-expansion-panel-content.secondary.white--text(
       v-for="group in availableGroups",
       :key="group._id",
-      :data-test="`panel-groupName-${group.name}`"
+      :data-test="`panel-group-${group._id}`"
       )
         div.panel-header(slot="header")
           span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
-          :data-test="`editGroupButton-groupName-${group.name}`",
+          :data-test="`editGroupButton-group-${group._id}`",
           v-show="isEditingMode",
           depressed,
           small,
@@ -46,7 +46,7 @@
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
-                    :data-test="`editViewButton-viewTitle-${view.title}`",
+                    :data-test="`editViewButton-view-${view._id}`",
                     v-show="checkViewEditButtonAccessById(view._id)",
                     depressed,
                     small,
@@ -55,7 +55,7 @@
                     )
                       v-icon(small) edit
                     v-btn.ma-0(
-                    :data-test="`copyViewButton-viewTitle-${view.title}`",
+                    :data-test="`copyViewButton-view-${view._id}`",
                     v-show="isEditingMode",
                     depressed,
                     small,
@@ -66,6 +66,7 @@
           v-divider
     v-divider
     groups-settings-button(
+    tooltipRight,
     :isEditingMode="isEditingMode",
     @toggleEditingMode="toggleEditingMode"
     )
