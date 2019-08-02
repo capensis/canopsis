@@ -12,13 +12,6 @@
         )
     v-layout(row)
       v-flex
-        v-select(
-        v-model="form.language",
-        :items="languages",
-        :label="$t('parameters.userInterfaceForm.fields.language')"
-        )
-    v-layout(row)
-      v-flex
         span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.footer') }}
         text-editor(
         v-model="form.footer",
@@ -60,7 +53,7 @@
 </template>
 
 <script>
-import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
+import { DEFAULT_APP_TITLE } from '@/config';
 
 import { getFileDataUrlContent } from '@/helpers/file-select';
 
@@ -88,16 +81,12 @@ export default {
       logoFile: null,
       form: {
         appTitle: DEFAULT_APP_TITLE,
-        language: DEFAULT_LOCALE,
         footer: '',
         description: '',
       },
     };
   },
   computed: {
-    languages() {
-      return Object.keys(this.$i18n.messages);
-    },
     textEditorConfig() {
       return { disabled: this.disabled };
     },
@@ -111,7 +100,6 @@ export default {
     initForm() {
       this.form = {
         appTitle: this.appTitle || DEFAULT_APP_TITLE,
-        language: this.language || DEFAULT_LOCALE,
         footer: this.footer || '',
         description: this.description || '',
       };
@@ -133,7 +121,6 @@ export default {
           const data = {
             app_title: this.form.appTitle,
             footer: this.form.footer,
-            language: this.form.language,
             login_page_description: this.form.description,
           };
 

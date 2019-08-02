@@ -29,8 +29,7 @@ from canopsis.common.mongo_store import MongoStore
 from pymongo.errors import ConnectionFailure
 from canopsis.common import root_path
 from canopsis.version import (get_version_file_path, CANOPSIS_EDITION_ARG,
-                              CANOPSIS_STACK_ARG, CANOPSIS_VERSION_ARG,
-                              read_version_file)
+                              CANOPSIS_STACK_ARG, CANOPSIS_VERSION_ARG, read_version_file)
 
 COMMANDS = [root_path + "/bin/schema2db",
             [root_path + "/bin/canopsis-filldb", "--yes"]]

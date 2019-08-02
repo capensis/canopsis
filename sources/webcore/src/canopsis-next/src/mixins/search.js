@@ -20,6 +20,7 @@ export default {
     submit() {
       this.$emit('update:query', {
         ...this.query,
+
         page: 1,
         [this.requestParam]: this.requestData,
       });

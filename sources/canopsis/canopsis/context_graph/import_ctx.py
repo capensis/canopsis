@@ -251,11 +251,12 @@ class ContextGraphImport(ContextGraph):
     # import_checker
     A_DELETE = "delete"
     A_CREATE = "create"
+    A_SET = "set"
     A_UPDATE = "update"
     A_DISABLE = "disable"
     A_ENABLE = "enable"
 
-    __A_PATTERN = "^delete$|^create$|^update$|^disable$|^enable$"
+    __A_PATTERN = "^delete$|^create$|^update$|^set$|^disable$|^enable$"
     __T_PATTERN = "^resource$|^component$|^connector$|^watcher$"
     __CI_REQUIRED = [K_ID,
                      K_ACTION,
@@ -512,7 +513,7 @@ class ContextGraphImport(ContextGraph):
 
         self.update[ci[self.K_ID]] = entity
 
-    def __a_create_entity(self, ci):
+    def __a_set_entity(self, ci):
         """Create an entity with a ci and store it into self.update
 
         If the new entity is initially store in the context, a ValueError will
@@ -526,7 +527,57 @@ class ContextGraphImport(ContextGraph):
             desc = ("The ci of id {} match an existing entity. Updating it."
                     .format(ci["_id"]))
             self.logger.info(desc)
-            dict_merge(ci, self.entities_to_update[ci[self.K_ID]])
+            entity_to_update = self.entities_to_update[ci[self.K_ID]].copy()
+            dict_merge(entity_to_update, ci)
+            ci = entity_to_update
+
+        # set default value for required fields
+        if self.K_NAME not in ci:
+            ci[self.K_NAME] = ci[self.K_ID]
+
+        if self.K_DEPENDS not in ci:
+            ci[self.K_DEPENDS] = set()
+        else:
+            ci[self.K_DEPENDS] = set(ci[self.K_DEPENDS])
+
+        if self.K_IMPACT not in ci:
+            ci[self.K_IMPACT] = set()
+        else:
+            ci[self.K_IMPACT] = set(ci[self.K_IMPACT])
+
+        if self.K_MEASUREMENTS not in ci:
+            ci[self.K_MEASUREMENTS] = []
+
+        if self.K_INFOS not in ci:
+            ci[self.K_INFOS] = {}
+
+        for key in [self.K_ACTION, self.K_PROPERTIES]:
+            try:
+                del ci[key]
+            except KeyError:
+                self.logger.debug("No key {0} in ci of id {1}."
+                                  .format(key, ci[self.K_ID]))
+
+        entity = {}
+        for key in ci:
+            entity[key] = ci[key]
+
+        self.update[ci[self.K_ID]] = entity
+
+    def __a_create_entity(self, ci):
+        """Create an entity with a ci and store it into self.update
+
+        If the new entity is initially store in the context, a ValueError will
+        be raised.
+
+        :param ci: the ci (see the JSON specification).
+        """
+        # TODO handle the creation of the name if needed and if the id
+        # match the id scheme used in canopsis
+        if ci[self.K_ID] in self.entities_to_update:
+            desc = ("The ci of id {} match an existing entity. Overriding it."
+                    .format(ci["_id"]))
+            self.logger.info(desc)
 
         # set default value for required fields
         if self.K_NAME not in ci:
@@ -741,7 +792,7 @@ class ContextGraphImport(ContextGraph):
         fd = open(file_, 'r')
 
         # In case the previous import failed and/or raise an exception, we\
-            # clean now
+        # clean now
         self.clean_attributes()
 
         start = time.time()
@@ -769,6 +820,8 @@ class ContextGraphImport(ContextGraph):
                 self.__a_create_entity(ci)
             elif ci[self.K_ACTION] == self.A_UPDATE:
                 self.__a_update_entity(ci)
+            elif ci[self.K_ACTION] == self.A_SET:
+                self.__a_set_entity(ci)
             elif ci[self.K_ACTION] == self.A_DISABLE:
                 self.__a_disable_entity(ci)
             elif ci[self.K_ACTION] == self.A_ENABLE:

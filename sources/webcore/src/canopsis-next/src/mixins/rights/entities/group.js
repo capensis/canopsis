@@ -7,7 +7,7 @@ export default {
       return this.groups.reduce((acc, group) => {
         const views = group.views.filter(view => this.checkReadAccess(view._id));
 
-        if (views.length) {
+        if (views.length || this.isEditingMode) {
           acc.push({ ...group, views });
         }
 
