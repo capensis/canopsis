@@ -66,11 +66,86 @@ Les champs dans la section [Description des champs d'entités](#Description-des-
 * et le champ `infos` par un objet vide.
 
 #### Set
-`set`, comme `create`, crée une nouvelle entité dans le contexte graphe. La différence est que l'action *Set* procède à une **mise à jour partielle** de l'entité. Seuls les champs fournis dans les données d'import impacteront l'entité.
+`set`, comme `create`, crée une nouvelle entité dans le contexte graphe. La différence est que l'action `set` procède à une **mise à jour partielle** de l'entité. Seuls les champs fournis dans les données d'import impacteront l'entité.
 
 Par exemple, si une entité existante possède `info1` et `info2` dans ses `infos` et que l'import contient `info1` avec une valeur différente et `info3`, alors `info1` sera mis à jour avec sa nouvelle valeur, `info2` ne changera pas et `info3` sera créé.
 
-Un exemple pratique dans un paragraphe suivant permettra de mieux saisie la différente entre `set` et `create`.
+Un exemple pratique dans le paragraphe suivant permettra de mieux saisie la différente entre `set` et `create`.
+
+## Différence entre l'action create et l'action set
+
+Imaginions une nouvelle entité `france` qui possède au départ deux informations (champ `infos` dans l'objet JSON) : `capitale` et `metropole1`.
+
+```json
+{
+    "_id" : "france",
+    "infos" : {
+        "capitale" : {
+            "name" : "capitale",
+            "value" : "Poitiers",
+            "description" : "Capitale de la France"
+        },
+        "metropole1" : {
+            "name" : "metropole1",
+            "value" : "Lyon",
+            "description" : "Agglomération française"
+        }
+    },
+    "action":""
+}
+```
+
+On importe cette entité en base mais on se rend compte trop tard que la `capitale` est incorrecte. On décide donc de mettre à jour l'entité avec `capitale` et d'en profiter pour ajouter le champ supplémentaire `metropole2`, qui vaut `Marseille`.
+
+La deuxième appel à l'API d'import aura cette forme.
+
+```json
+{
+    "_id" : "france",
+    "infos" : {
+        "capitale" : {
+            "name" : "capitale",
+            "value" : "Paris",
+            "description" : "Capitale corrigée de la France"
+        },
+        "metropole2" : {
+            "name" : "metropole2",
+            "value" : "Marseille",
+            "description" : "Une autre agglomération française"
+        }
+    },
+    "action":""
+}
+```
+
+Avec le premier appel à l'API d'import (`{"capitale":"Poitiers", "metropole1":"Lyon"}`). Les actions `create` et `set` sont identiques, elles vont créer en base de données l'entité `france`. La différence se fait lors du second appel à l'API (`{"capitale":"Paris", "metropole2":"Marseille"}`).
+
+L'action `create` procède àune **mise à jour complète** de l'entité, c'est-à-dire les données précédentes vont être écrasées. En base de données, on se retrouve donc avec la `capitale` qui vaut `Paris`, `metropole1` qui a disparu et `metropole2` qui est présent.
+
+L'action `set` est quant à elle une **mise à jour partielle**, en fournissant seulement les champs avec de nouvelles données (et par conséquent conserver le reste de l'entité). On retrouve donc dans l'entité la `capitale` qui vaut `Paris`, `metropole1` qui vaut toujours `Lyon` et qui n'a pas été impacté par le nouvel import et `metropole2` qui vaut `Marseille`.
+
+```json
+{
+    "_id" : "france",
+    "infos" : {
+        "capitale" : {
+            "name" : "capitale",
+            "value" : "Paris",
+            "description" : "Capitale corrigée de la France"
+        },
+        "metropole1" : {
+            "name" : "metropole1",
+            "value" : "Lyon",
+            "description" : "Agglomération française"
+        },
+        "metropole2" : {
+            "name" : "metropole2",
+            "value" : "Marseille",
+            "description" : "Une autre agglomération française"
+        }
+    }
+}
+```
 
 #### Delete
 `delete` supprime une entité désignée par son identifiant (champ `_id`). Si l'entité n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
@@ -248,7 +323,7 @@ Lorsqu'un import est téléversé alors qu'un autre est en cours d'exécution, l
 }
 ```
 
-## Import en cours
+### Import en cours
 Lorsqu'un import est en cours de traitement, l'interrogation de la route précédemment citée avec l'identifiant du nouvel import retournera un objet JSON dont le `status` sera à **`ongoing`**.
 ```json
 {
@@ -258,13 +333,13 @@ Lorsqu'un import est en cours de traitement, l'interrogation de la route précé
 }
 ```
 
-## Import terminé
+### Import terminé
 Lorsqu'un import est traité complétement sans erreur, la route précédemment citée retourne un objet JSON avec le `status` à **`done`**, le nombre d'entités supprimées dans `stats.deleted`, le nombres d'entités mises à jour ou créées `stats.updated` et le temps d'exécution de l'import dans le champ `exec_time`.
 ```json
 {
   "status": "done",
   "exec_time": "00:03:58",
-  "_id": "6ac1deb9-1049-41f3-9e85-48d694deaab3",
+  "_id": "c3090ed6-5b17-4c75-ad23-82238cffa62f",
   "creation": "Mon Aug 28 17:41:27 2017",
   "stats": {
     "deleted": 0,
@@ -279,23 +354,8 @@ En cas d'erreur, la route précédemment citée retourne un objet JSON contenant
 {
   "status": "failed",
   "info": "ValueError(u'The ci of id connector_0 match an existing entity.',)",
-  "_id": "6ac1deb9-1049-41f3-9e85-48d694deaab3",
+  "_id": "c3090ed6-5b17-4c75-ad23-82238cffa62f",
   "creation": "Mon Aug 28 17:41:27 2017",
   "exec_time": "00:02:55"
 }
 ```
-
-### Relancer manuellement un import
-
-Lorsqu'un job est bloqué en pending, il est possible de relancer manuellement la tâche d'importation en publiant un event forgé dans la queue `task_importctx` :
-```json
-{
-  "jobid": "importctx_2c0c0b49-129a-41aa-bccd-cc23de478bbc",
-  "jobs_uuid": "2c0c0b49-129a-41aa-bccd-cc23de478bbc"
-}
-```
-(remplacer par l'id de votre job ; voir par exemple dans `/opt/canopsis/tmp` le nom du fichier json en attente d'importation ou dans la collection `default_importctx`)
-
-## Exemples d'actions dans l'import
-
-(Différence entre `set` et `create`)
