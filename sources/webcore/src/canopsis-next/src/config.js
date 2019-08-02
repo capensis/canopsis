@@ -8,6 +8,8 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
+export const DEFAULT_WEATHER_LIMIT = 120;
+
 export const DEFAULT_LOCALE = 'en';
 
 export const LOCALE_PRIORITIES = {
@@ -89,4 +91,32 @@ export const API_ROUTES = {
     app: '/api/internal/app_info',
     userInterface: '/api/internal/user_interface',
   },
+};
+
+export const COLORS = {
+  primary: '#2fab63',
+  secondary: '#2b3e4f',
+  state: {
+    ok: '#00a65a',
+    minor: '#fcdc00',
+    major: '#ff9900',
+    critical: '#f56954',
+    pause: '#808080',
+  },
+  status: {
+    off: 'black',
+    ongoing: 'grey',
+    stealthy: 'gold',
+    flapping: 'orange',
+    cancelled: 'red',
+    unknown: 'black',
+  },
+  entitiesEvents: {
+    ack: '#9c27b0',
+    ackRemove: '#9c27b0',
+    declareTicket: '#2196f3',
+    snooze: '#e91e63',
+    done: '#00a65a',
+  },
+  statsDefault: '#dddddd',
 };

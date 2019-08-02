@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
   :class="itemClasses",
-  :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
+  :style="{ height: itemHeight + 'em', backgroundColor: color}",
   tile,
   @click.native="showAdditionalInfoModal"
   )
@@ -9,9 +9,9 @@
       v-icon help
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
-        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
+        v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
         v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
-        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
+        v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
         v-if="isBothModalType && hasAlarmsListAccess",
@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import { find } from 'lodash';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import {
@@ -29,8 +28,6 @@ import {
   USERS_RIGHTS,
   WIDGET_TYPES,
   WATCHER_STATES_COLORS,
-  WATCHER_PBEHAVIOR_COLOR,
-  PBEHAVIOR_TYPES,
   WEATHER_ICONS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
@@ -75,51 +72,16 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
     },
 
-    isPaused() {
-      return this.watcher.active_pb_all;
+    color() {
+      return WATCHER_STATES_COLORS[this.watcher.tileColor];
     },
 
-    hasWatcherPbehavior() {
-      return this.watcher.active_pb_watcher;
-    },
-
-    format() {
-      if (!this.isPaused && !this.hasWatcherPbehavior) {
-        const state = this.watcher.state.val;
-
-        return {
-          icon: WEATHER_ICONS[state],
-          color: WATCHER_STATES_COLORS[state],
-        };
-      }
-
-      const pbehaviors = this.hasWatcherPbehavior ? this.watcher.watcher_pbehavior : this.watcher.pbehavior;
-
-      const maintenancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.maintenance });
-      const outOfSurveillancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
-
-      let icon = WEATHER_ICONS.pause;
-
-      if (maintenancePbehavior) {
-        icon = WEATHER_ICONS.maintenance;
-      } else if (outOfSurveillancePbehavior) {
-        icon = WEATHER_ICONS.outOfSurveillance;
-      }
-
-      return {
-        color: WATCHER_PBEHAVIOR_COLOR,
-        icon,
-      };
+    icon() {
+      return WEATHER_ICONS[this.watcher.tileIcon];
     },
 
     secondaryIcon() {
-      if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
-        return WEATHER_ICONS.maintenance;
-      } else if (this.watcher.pbehavior.every(value => value.type_ === PBEHAVIOR_TYPES.outOfSurveillance)) {
-        return WEATHER_ICONS.outOfSurveillance;
-      }
-
-      return WEATHER_ICONS.pause;
+      return WEATHER_ICONS[this.watcher.tileSecondaryIcon];
     },
 
     compiledTemplate() {
@@ -146,7 +108,7 @@ export default {
     },
 
     isBlinking() {
-      return this.watcher.action_required;
+      return this.watcher.isActionRequired;
     },
 
     isBothModalType() {
@@ -172,7 +134,7 @@ export default {
       this.showModal({
         name: MODALS.watcher,
         config: {
-          color: this.format.color,
+          color: this.color,
           watcher: this.watcher,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,

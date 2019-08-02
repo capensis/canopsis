@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -52,10 +54,22 @@ export default {
       ];
     },
   },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
+    getQuery() {
+      const query = omit(this.query, [
+        'page',
+        'sortKey',
+        'sortDir',
+      ]);
+
+      if (this.query.sortKey) {
+        query.orderby = this.query.sortKey;
+        query.direction = this.query.sortDir;
+      }
+
+      return query;
+    },
+
     fetchList() {
       this.fetchWatchersList({
         filter: this.widget.parameters.mfilter.filter,
