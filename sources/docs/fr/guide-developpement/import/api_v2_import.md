@@ -2,7 +2,7 @@
 
 Cette API permet d'importer un référentiel externe (autrement appelé *contexte graphe* ou *context graph*) au format JSON dans Canopsis.
 
-Un context graph est consitué d'un ensemble d'entités et des relations entre elles. Les entités vont enrichir les alarmes en leur rajoutant du contexte. Par exemple, si un équipement qui envoie une alarme dans Canopsis et qu'une entité représente cet équipement est présent, l'alarme sera entichie avec toutes les informations que contient l'entité. Ces informations peuvent être de toute sorte : adresse IP, OS installé, date de mise en service, criticité de l'équipement, responsable à contacter en cas de panne, etc.
+Un context graph est consitué d'un ensemble d'entités et des relations entre elles. Les entités vont enrichir les alarmes en leur rajoutant du contexte. Par exemple, si un équipement qui envoie une alarme dans Canopsis et qu'une entité représente cet équipement est présent, l'alarme sera enrichie avec toutes les informations que contient l'entité. Ces informations peuvent être de toute sorte : adresse IP, OS installé, date de mise en service, criticité de l'équipement, responsable à contacter en cas de panne, etc.
 
 L'API propose différentes routes pour téléverser un import ou suivre son évolution.
 
@@ -12,7 +12,7 @@ Un référentiel externe est constitué de deux types de données : les entités
 
 Au moment de l'import, on va donc séparer ces deux types d'éléments dans un objet JSON. On va retrouver les entités dans le champ `cis` (venant de *Configuration Items*) et les relations entre les entités dans `links`.
 
-Dans chaque entité présent dans la liste `cis` et dans chaque lien présent dans la liste `links`, le champ `action` va définir comment l'élément sera importé dans le contexte graphe.
+Dans chaque entité présente dans la liste `cis` et dans chaque lien présent dans la liste `links`, le champ `action` va définir comment l'élément sera importé dans le contexte graphe.
 
 ```json
 {
@@ -45,14 +45,14 @@ La liste `cis` est une liste d'entités représentée sous forme d'objet JSON. C
 * Le champ **`_id`** contient l'identifiant de l'entité, sous la forme d'une chaine de caractères, qui est concerné par l'action.
 * Le champ **`type`** contient le type de l'entité sous forme d'une chaine de caractères. Ce champ ne peut prendre qu'une valeur parmi les 4 suivantes : `resource`, `component`, `connector`, `watcher`.
 * Le champ **`infos`** contient les informations complémentaires. Ce sont des données totalement personnalisables que l'utilisateur peut modifier.
-* Le champ **`measurements`** contient un ensemble de chaine de caractères correspondant aux métriques liées à l'entité.
+* Le champ **`measurements`** contient un ensemble de chaînes de caractères correspondant aux métriques liées à l'entité.
 * Le champ **`name`** contient le nom de l'entité sous forme de chaine de caractères.
 * Le champ **`action`** contient le type de l'action à réaliser au moment de l'import.
 * Le champ **`action_properties`** vient en complément du champ action en spécifiant des informations complémentaires pour la bonne réalisation de l'action.
 
 ### Description des actions sur les entités
 
-Il existe 6 actions supportés sur les entités au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `update`, `disable` et `enable`.
+Il existe 6 actions supportées sur les entités au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `update`, `disable` et `enable`.
 
 #### Create
 `create` crée une nouvelle entité dans le contexte graphe. Si une entité existe déjà avec le même identifiant, une **mise à jour complète** de l'entité sera effectuée. Les nouvelles données vont écraser l'entité courante en base de données.
@@ -97,7 +97,7 @@ Imaginions une nouvelle entité `france` qui possède au départ deux informatio
 
 On importe cette entité en base mais on se rend compte trop tard que la `capitale` est incorrecte. On décide donc de mettre à jour l'entité avec `capitale` et d'en profiter pour ajouter le champ supplémentaire `metropole2`, qui vaut `Marseille`.
 
-La deuxième appel à l'API d'import aura cette forme.
+Le deuxième appel à l'API d'import aura cette forme.
 
 ```json
 {
@@ -118,9 +118,9 @@ La deuxième appel à l'API d'import aura cette forme.
 }
 ```
 
-Avec le premier appel à l'API d'import (`{"capitale":"Poitiers", "metropole1":"Lyon"}`). Les actions `create` et `set` sont identiques, elles vont créer en base de données l'entité `france`. La différence se fait lors du second appel à l'API (`{"capitale":"Paris", "metropole2":"Marseille"}`).
+Avec le premier appel à l'API d'import (`{"capitale":"Poitiers", "metropole1":"Lyon"}`), les actions `create` et `set` sont identiques : elles vont créer en base de données l'entité `france`. La différence se fait lors du second appel à l'API (`{"capitale":"Paris", "metropole2":"Marseille"}`).
 
-L'action `create` procède àune **mise à jour complète** de l'entité, c'est-à-dire les données précédentes vont être écrasées. En base de données, on se retrouve donc avec la `capitale` qui vaut `Paris`, `metropole1` qui a disparu et `metropole2` qui est présent.
+L'action `create` procède à une **mise à jour complète** de l'entité, c'est-à-dire les données précédentes vont être écrasées. En base de données, on se retrouve donc avec la `capitale` qui vaut `Paris`, `metropole1` qui a disparu et `metropole2` qui est présent.
 
 L'action `set` est quant à elle une **mise à jour partielle**, en fournissant seulement les champs avec de nouvelles données (et par conséquent conserver le reste de l'entité). On retrouve donc dans l'entité la `capitale` qui vaut `Paris`, `metropole1` qui vaut toujours `Lyon` et qui n'a pas été impacté par le nouvel import et `metropole2` qui vaut `Marseille`.
 
@@ -189,21 +189,21 @@ Les liens décrits dans les actions sont des liens de type *impact-depends*, c'e
 Il y a deux actions supportées sur les liens : `create` et `delete`.
 
 #### Create
-`create` crée un lien entre les deux entités définis à l'aide des champs `to` et `from` selon les modalités définies ci-dessus. Si au moins une des deux entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
+`create` crée un lien entre les deux entités définies à l'aide des champs `to` et `from` selon les modalités définies ci-dessus. Si au moins une des deux entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
 #### Delete
-`delete` supprime un lien entres les deux entités définis à l'aide des champs `to` et `from` selon les modalités définis ci-dessus. Si au moins une des deux
+`delete` supprime un lien entre les deux entités définies à l'aide des champs `to` et `from` selon les modalités définis ci-dessus. Si au moins une des deux
 entités n'existe pas dans le contexte graphe, une erreur est déclenchée, l'import s'arrêtera et les modifications de l'import en cours ne seront pas répercutées sur le référentiel de Canopsis.
 
 # Fonctionnement de l'import
 
 Pour importer un référentiel, il faut envoyer les données au format JSON sur la `PUT api/contextgraph/import`. Le serveur retournera un objet JSON contenant l'identifiant de l'import (`import_id`). Sur le serveur, l'import sera stocké sous la forme d'un fichier afin que la *task* responsable s'occupe de l'import.
 
-Lors du traitement de l'import par la tâche, si le fichier est mal formé ou qu'une anomalie est survenue lors du traitement d'une action, l'import est annulé et les modifications ne sont pas répercutées sur le contexte graphe. Si aucune erreur n'est rencontré, le contexte graphe sera mis à jour.
+Lors du traitement de l'import par la tâche, si le fichier est mal formé ou qu'une anomalie est survenue lors du traitement d'une action, l'import est annulé et les modifications ne sont pas répercutées sur le contexte graphe. Si aucune erreur n'est rencontrée, le contexte graphe sera mis à jour.
 
-Dans tous les cas, la progression et le résultat de l'import sont disponibles via la route `GET api/contextgraph/import/status/<import_id>` accessible en GET. La route retourne un objet JSON contenant au moins les champs `_id` (identifiant de l'import), `creation` (date à laquelle l'import a été envoyé à Canopsis) et `status`. Ce `status` est le statut de l'import et peut prendre quatre : `pending` (en attente), `ongoing` (en cours), `failed` (échec de l'import), `done` (succès de l'import).
+Dans tous les cas, la progression et le résultat de l'import sont disponibles via la route `GET api/contextgraph/import/status/<import_id>` accessible en GET. La route retourne un objet JSON contenant au moins les champs `_id` (identifiant de l'import), `creation` (date à laquelle l'import a été envoyé à Canopsis) et `status`. Ce `status` est le statut de l'import et peut prendre quatre valeurs : `pending` (en attente), `ongoing` (en cours), `failed` (échec de l'import), `done` (succès de l'import).
 
-Dans le cas où l'import est `failed` ou `done`, la route `GET api/contextgraph/import/status/<import_id>` retourne des informations supplémentaires : temps d'exécution, nombre d'élémens impactés ou raison de l'échec.
+Dans le cas où l'import est `failed` ou `done`, la route `GET api/contextgraph/import/status/<import_id>` retourne des informations supplémentaires : temps d'exécution, nombre d'éléments impactés ou raison de l'échec.
 
 Différents exemples de retour des routes `PUT api/contextgraph/import` et `GET api/contextgraph/import/status/<import_id>` sont disponibles dans le paragraphe qui suit.
 
@@ -334,7 +334,7 @@ Lorsqu'un import est en cours de traitement, l'interrogation de la route précé
 ```
 
 ### Import terminé
-Lorsqu'un import est traité complétement sans erreur, la route précédemment citée retourne un objet JSON avec le `status` à **`done`**, le nombre d'entités supprimées dans `stats.deleted`, le nombres d'entités mises à jour ou créées `stats.updated` et le temps d'exécution de l'import dans le champ `exec_time`.
+Lorsqu'un import est traité complétement sans erreur, la route précédemment citée retourne un objet JSON avec le `status` à **`done`**, le nombre d'entités supprimées dans `stats.deleted`, le nombre d'entités mises à jour ou créées `stats.updated` et le temps d'exécution de l'import dans le champ `exec_time`.
 ```json
 {
   "status": "done",
@@ -349,7 +349,7 @@ Lorsqu'un import est traité complétement sans erreur, la route précédemment 
 ```
 
 ## Échec de l'import
-En cas d'erreur, la route précédemment citée retourne un objet JSON contenantun status **`failed`**, une description de l'erreur dans le champ **`infos`** et le temps d'exécution total de l'import dans **`exec_time`**.
+En cas d'erreur, la route précédemment citée retourne un objet JSON contenant un status **`failed`**, une description de l'erreur dans le champ **`infos`** et le temps d'exécution total de l'import dans **`exec_time`**.
 ```json
 {
   "status": "failed",
