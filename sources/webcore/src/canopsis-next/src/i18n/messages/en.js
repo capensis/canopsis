@@ -1091,6 +1091,7 @@ export default {
       title: 'User interface',
       fields: {
         appTitle: 'App title',
+        language: 'Default user interface language',
         footer: 'Login footer',
         description: 'Login page description',
         logo: 'Logo',

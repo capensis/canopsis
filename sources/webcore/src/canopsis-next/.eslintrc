@@ -8,7 +8,7 @@
     "vue"
   ],
   "globals": {
-    "sel": true,
+    "sel": true
   },
   "rules": {
     "default-case": "off",

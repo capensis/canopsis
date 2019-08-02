@@ -12,6 +12,12 @@ export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
+export const LOCALE_PRIORITIES = {
+  default: 1,
+  global: 2,
+  personal: 3,
+};
+
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
 export const VUETIFY_ANIMATION_DELAY = 300;
