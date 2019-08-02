@@ -42,6 +42,7 @@ Dans chaque entité présente dans la liste `cis` et dans chaque lien présent d
 ### Description des champs d'entités
 
 La liste `cis` est une liste d'entités représentée sous forme d'objet JSON. Chaque entité possède ces différents champs :
+
 * Le champ **`_id`** contient l'identifiant de l'entité, sous la forme d'une chaine de caractères, qui est concerné par l'action.
 * Le champ **`type`** contient le type de l'entité sous forme d'une chaine de caractères. Ce champ ne peut prendre qu'une valeur parmi les 4 suivantes : `resource`, `component`, `connector`, `watcher`.
 * Le champ **`infos`** contient les informations complémentaires. Ce sont des données totalement personnalisables que l'utilisateur peut modifier.
@@ -60,6 +61,7 @@ Il existe 6 actions supportées sur les entités au moment de l'import d'un cont
 Pour fonctionner correctement, les champs `_id`, `type` et `action` sont obligatoires.
 
 Les champs dans la section [Description des champs d'entités](#Description-des-champs-d'entités) vont être copiés tels quels dans la nouvelle entité, à l'exception d'`action` et d'`action_properties`. Si le champ n'existe pas, le champ dans la nouvelle entité sera initialisé avec une valeur par défaut :
+
 * `name` sera initialisé avec la valeur du champ `_id`
 * `depends` et `impact` seront initialisés avec une liste vide
 * `measurements` sera initialisé avec une liste vide
@@ -175,6 +177,7 @@ Les champs `_id`, `action` et `action_properties` sont obligatoires. Le champ `a
 ## Liens
 ### Description des champs des liens
 La liste `links` représente toutes les relations entres les entités. Ces liens sont stockés sous forme d'objet JSON avec ces différents champs :
+
 * Le champ **`_id`** contient l'identifiant de l'action, il peut prendre n'importe quelle valeur.
 * Le champ **`from`** contient l'identifiant de l'entité de départ du lien
 * Le champ **`to`** contient l'identifiant de l'entité d'arrivée du lien
