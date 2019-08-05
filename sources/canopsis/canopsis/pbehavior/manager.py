@@ -34,7 +34,7 @@ from pymongo import DESCENDING
 import pytz
 
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection
+from canopsis.common.collection import MongoCollection, CollectionError
 from canopsis.common.utils import singleton_per_scope
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
@@ -228,7 +228,7 @@ class PBehaviorManager(object):
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
             type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
-            exdate=None):
+            exdate=None, pbh_id=None):
         """
         Method creates pbehavior record
 
@@ -299,8 +299,11 @@ class PBehaviorManager(object):
                 else:
                     raise ValueError("The message field is missing")
 
+        if pbh_id is None:
+            pbh_id = str(uuid4())
+
         pb_kwargs = {
-            PBehavior.ID: str(uuid4()),
+            PBehavior.ID: pbh_id,
             PBehavior.NAME: name,
             PBehavior.FILTER: filter,
             PBehavior.AUTHOR: author,
@@ -323,8 +326,12 @@ class PBehaviorManager(object):
             data.update(comments=[])
         else:
             for comment in data.comments:
-                comment.update({'_id': str(uuid4())})
-        result = self.collection.insert(data.to_dict())
+                comment.update({'_id': pbh_id})
+        try:
+            result = self.collection.insert(data.to_dict())
+        except CollectionError:
+            # when inserting already existing id
+            raise ValueError("Trying to insert PBehavior with already existing _id")
 
         return result
 
