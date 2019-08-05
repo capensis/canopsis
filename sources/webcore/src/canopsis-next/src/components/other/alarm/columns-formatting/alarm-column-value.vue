@@ -4,7 +4,6 @@
     v-if="popupData",
     v-model="isInfoPopupOpen",
     :close-on-content-click="false",
-    :close-on-click="false",
     :open-on-click="false",
     offset-x
     )
@@ -16,9 +15,10 @@
             v-icon(small) help
       v-card(dark)
         v-card-title.primary.pa-2.white--text
-          h4 {{ $t('alarmList.infoPopup') }}
-          v-btn.ma-0.ml-3(icon, small, @click="hideInfoPopup")
-            v-icon(small, color="error") close
+          v-layout(justify-space-between, align-center)
+            h4 {{ $t('alarmList.infoPopup') }}
+            v-btn.ma-0.ml-3(icon, small, @click="hideInfoPopup")
+              v-icon(small, color="error") close
         v-card-text.pa-2(v-html="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
