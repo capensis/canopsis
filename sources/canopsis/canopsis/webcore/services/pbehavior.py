@@ -233,7 +233,7 @@ class RouteHandlerPBehavior(object):
     def get_by_eid(self, eid):
         return self.pb_manager.get_pbehaviors_by_eid(eid)
 
-    def read(self, _id):
+    def read(self, _id, limit, skip):
         """
         Read a pbehavior.
 
@@ -254,7 +254,7 @@ class RouteHandlerPBehavior(object):
             raise ValueError("_id should be str, a list, None (null) not {}"
                              .format(type(_id)))
 
-        return self.pb_manager.read(_id)
+        return self.pb_manager.read(_id, limit, skip)
 
     def update(self, _id, **kwargs):
         """
@@ -466,13 +466,13 @@ def exports(ws):
     @route(
         ws.application.get,
         name='pbehavior/read',
-        payload=['_id']
+        payload=['_id', 'limit', 'skip']
     )
-    def read(_id=None):
+    def read(_id=None, limit=None, skip=None):
         """
         Get a pbehavior.
         """
-        return rhpb.read(_id)
+        return rhpb.read(_id, limit, skip)
 
     @route(
         ws.application.put,

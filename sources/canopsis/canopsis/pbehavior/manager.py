@@ -205,7 +205,7 @@ class PBehaviorManager(object):
         self.collection = pb_collection
         self.currently_active_pb = set()
 
-    def get(self, _id, query=None):
+    def get(self, _id, query=None, limit=None, skip=None):
         """Get pbehavior by id.
 
         When _id is None, all the pbehaviors are returned. This behavior
@@ -217,7 +217,12 @@ class PBehaviorManager(object):
         :param dict query: filtering options
         """
         if _id is None:
-            return list(self.collection.find({}))
+            pipeline = [{"$match": {}}]
+            if skip is not None:
+                pipeline.append({"$skip": skip})
+            if limit is not None:
+                pipeline.append({"$limit": limit})
+            return list(self.collection.aggregate(pipeline))
 
         return self.collection.find_one({"_id": _id}, query)
 
@@ -364,11 +369,11 @@ class PBehaviorManager(object):
 
         return pbehaviors
 
-    def read(self, _id=None):
+    def read(self, _id=None, limit=None, skip=None):
         """Get pbehavior or list pbehaviors.
         :param str _id: pbehavior id, _id may be equal to None
         """
-        result = self.get(_id)
+        result = self.get(_id, limit=limit, skip=skip)
 
         return result if _id else list(result)
 
@@ -632,7 +637,6 @@ class PBehaviorManager(object):
                 exdate = self.__convert_timestamp(date, tz_name)
                 rec_set.exdate(exdate)
 
-
         rec_set.rrule(rrule.rrulestr(pbehavior[PBehavior.RRULE],
                                      dtstart=start))
         return rec_set
@@ -657,7 +661,6 @@ class PBehaviorManager(object):
         start = self.__convert_timestamp(pbehavior[PBehavior.TSTART], tz_name)
         stop = self.__convert_timestamp(pbehavior[PBehavior.TSTOP], tz_name)
         duration = stop - start  # pbehavior duration
-
 
         rec_start = rec_set.before(now)
 
@@ -1062,8 +1065,8 @@ class PBehaviorManager(object):
         :rtype: int
         """
         if PBehavior.RRULE not in pbh or\
-            pbh[PBehavior.RRULE] is None or\
-            pbh[PBehavior.RRULE] == "":
+                pbh[PBehavior.RRULE] is None or\
+                pbh[PBehavior.RRULE] == "":
             #pbh is simple
             pbh_last_tstop = pbh[PBehavior.TSTOP]
         else:
@@ -1081,7 +1084,8 @@ class PBehaviorManager(object):
             if last_tstart is None:
                 return int((now - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
             last_tstop_dt = last_tstart + duration
-            pbh_last_tstop = int((last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
+            pbh_last_tstop = int(
+                (last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
         return pbh_last_tstop
 
     def get_ok_ko_timestamp(self, entity_id):
@@ -1092,9 +1096,9 @@ class PBehaviorManager(object):
         :param str entity_id: the entity id needing the ok ko timestamp
         :rtype: int
         """
-        #get today at midnight timestamp as base return timestamp
-        #because each alarm ok ko counter is soft-reseted at midnight
-        #midnight at local timezone
+        # get today at midnight timestamp as base return timestamp
+        # because each alarm ok ko counter is soft-reseted at midnight
+        # midnight at local timezone
         today_at_midnight = date.today()
         ret_timestamp = int(today_at_midnight.strftime("%s"))
 
@@ -1104,12 +1108,12 @@ class PBehaviorManager(object):
             tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
             now_dt = self.__convert_timestamp(now, tz_name)
             if self.check_active_pbehavior(now, pbh):
-                #if a pbh is active, then the ok ko counter 
-                #is supposed to be inactive
+                # if a pbh is active, then the ok ko counter
+                # is supposed to be inactive
                 return now
-            
+
             pbh_last_tstop = self._get_last_tstop(pbh, now_dt)
             if now > pbh_last_tstop > ret_timestamp:
-                #keeping the most recent timestamp that still is in the past
+                # keeping the most recent timestamp that still is in the past
                 ret_timestamp = pbh_last_tstop
         return ret_timestamp
