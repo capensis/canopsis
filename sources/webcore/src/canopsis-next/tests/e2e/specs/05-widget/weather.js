@@ -24,13 +24,14 @@ module.exports = {
     delete browser.globals.temporary;
   },
 
-  'Create new view and tab with some name': (browser) => {
-    const { temporary } = browser.globals;
-
+  'Create test view': (browser) => {
     browser.completed.view.create(generateTemporaryView(), (view) => {
-      temporary.view = view;
+      browser.globals.temporary.view = view;
     });
-    const textFieldEditor = browser.page.modals.common.textFieldEditor();
+  },
+
+  'Create test tab': (browser) => {
+    const { temporary } = browser.globals;
     const tab = `tab-${uid()}`;
 
     browser.page.layout.groupsSideBar()
@@ -41,13 +42,15 @@ module.exports = {
       .clickMenuViewButton()
       .clickAddViewButton();
 
-    textFieldEditor.verifyModalOpened()
+    browser.page.modals.common.textFieldEditor()
+      .verifyModalOpened()
       .setField(tab);
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${temporary.view._id}`,
       5000,
-      () => textFieldEditor.clickSubmitButton(),
+      () => browser.page.modals.common.textFieldEditor()
+        .clickSubmitButton(),
       ({ responseData, requestData }) => temporary.view = {
         tab,
         ...temporary.view,
@@ -58,9 +61,24 @@ module.exports = {
       },
     );
 
-    textFieldEditor.verifyModalClosed();
+    browser.page.modals.common.textFieldEditor()
+      .verifyModalClosed();
+  },
+
+  'Open test tab': (browser) => {
+    const { temporary } = browser.globals;
 
     browser.page.view()
       .clickTab(temporary.view.tabId);
+  },
+
+  'Create widget weather with some name': (browser) => {
+    browser.page.view()
+      .clickAddWidgetButton();
+
+    browser.page.modals.view.createWidget()
+      .verifyModalOpened()
+      .clickWidget('ServiceWeather')
+      .verifyModalClosed();
   },
 };
