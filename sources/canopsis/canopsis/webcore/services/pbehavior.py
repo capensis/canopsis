@@ -233,7 +233,7 @@ class RouteHandlerPBehavior(object):
     def get_by_eid(self, eid):
         return self.pb_manager.get_pbehaviors_by_eid(eid)
 
-    def read(self, _id, limit, skip):
+    def read(self, _id, limit=None, skip=None):
         """
         Read a pbehavior.
 
@@ -472,7 +472,7 @@ def exports(ws):
         """
         Get a pbehavior.
         """
-        return rhpb.read(_id, limit, skip)
+        return rhpb.read(_id, limit=limit, skip=skip)
 
     @route(
         ws.application.put,
