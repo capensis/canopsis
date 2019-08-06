@@ -121,6 +121,10 @@ Si l'API renvoie une réponse sous forme de json imbriqué, il faut prendre en c
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
+Dans le cas où le service externe répond avec un statut (par exemple `200 OK`) mais ne fournit pas de ressource, il est possible d'ajouter dans le `declare_ticket` d'un webhook le champ `empty_response` qui vaut `true`. Dans ce cas, tous les autres champs du `declare_ticket` sont ignorés et un step `declareticket` sera créé avec un numéro de ticket qui vaut `"N/A"`.
+
+Si `empty_response` n'est pas présent ou qu'il vaut `false`, le `declare_ticket` du webhook se comporte de manière habituelle.
+
 ### Exemples
 
 ```json
