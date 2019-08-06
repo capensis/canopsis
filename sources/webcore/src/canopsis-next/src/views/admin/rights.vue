@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container.admin-rights
+  v-container.admin-rights(data-test="adminRightsPage")
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.rights') }}
     div.progress-wrapper
       v-fade-transition
@@ -7,7 +7,7 @@
           v-progress-circular(indeterminate, color="primary")
       v-tabs(fixed-tabs)
         template(v-for="(rights, groupKey) in groupedRights")
-          v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
+          v-tab(:data-test="`tab-${groupKey}`", :key="`tab-${groupKey}`") {{ groupKey }}
           v-tab-item(:key="`tab-item-${groupKey}`")
             v-card(v-if="hasReadAnyRoleAccess")
               v-card-text
@@ -38,19 +38,43 @@
         direction="left",
         transition="slide-y-reverse-transition"
         )
-          v-btn(slot="activator", color="primary", fab, v-model="fab")
+          v-btn(data-test="addButton", slot="activator", color="primary", fab, v-model="fab")
             v-icon add
             v-icon close
           v-tooltip(v-if="hasCreateAnyUserAccess", top)
-            v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateUserModal")
+            v-btn(
+            data-test="createUser",
+            slot="activator",
+            fab,
+            dark,
+            small,
+            color="indigo",
+            @click.stop="showCreateUserModal"
+            )
               v-icon people
             span {{ $t('modals.createUser.title') }}
           v-tooltip(v-if="hasCreateAnyRoleAccess", top)
-            v-btn(slot="activator", fab, dark, small, color="deep-purple ", @click.stop="showCreateRoleModal")
+            v-btn(
+            data-test="createRole",
+            slot="activator",
+            fab,
+            dark,
+            small,
+            color="deep-purple ",
+            @click.stop="showCreateRoleModal"
+            )
               v-icon supervised_user_circle
             span {{ $t('modals.createRole.title') }}
           v-tooltip(v-if="hasCreateAnyActionAccess", top)
-            v-btn(slot="activator", fab, dark, small, color="teal", @click.stop="showCreateRightModal")
+            v-btn(
+            data-test="createRight",
+            slot="activator",
+            fab,
+            dark,
+            small,
+            color="teal",
+            @click.stop="showCreateRightModal"
+            )
               v-icon verified_user
             span {{ $t('modals.createRight.title') }}
 </template>

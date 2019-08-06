@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createRightModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createRight.title') }}
@@ -7,6 +7,7 @@
       v-form
         v-layout(row)
           v-text-field(
+          data-test="rightID",
           :label="$t('modals.createRight.fields.id')",
           v-model="form._id",
           data-vv-name="id",
@@ -15,10 +16,11 @@
           )
         v-layout(row)
           v-text-field(
+          data-test="rightDescription",
           :label="$t('modals.createRight.fields.description')",
           v-model="form.desc",
           )
-        v-layout(row)
+        v-layout(data-test="typeLayout", row)
           v-select(
           :label="$t('modals.createRight.fields.type')",
           v-model="form.type",
@@ -27,7 +29,7 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+      v-btn.primary(data-test="submitButton", @click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
