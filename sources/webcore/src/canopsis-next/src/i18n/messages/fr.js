@@ -25,6 +25,7 @@ export default {
     author: 'Auteur',
     submit: 'Soumettre',
     cancel: 'Annuler',
+    continue: 'Continuer',
     options: 'Options',
     type: 'Type',
     quitEditing: 'Quitter le mode d\'édition',
@@ -450,6 +451,14 @@ export default {
         output: 'Note',
         ackResources: 'Ack ressources',
       },
+    },
+    confirmAckWithTicket: {
+      continueAndAssociateTicket: 'Continuer et associer un ticket',
+      infoMessage: `Un numéro de ticket a été renseigné.
+        Peut-être souhaitiez-vous associer un ticket à cet incident.
+        Si tel est le cas, cliquez sur le bouton "Continuer et associer un ticket".
+        Pour continuer l'action d'acquittement sans prendre en compte le numéro de ticket,
+        cliquez sur le bouton "Continuer".`,
     },
     createSnoozeEvent: {
       title: 'Snooze',

@@ -27,6 +27,7 @@ export default {
     author: 'Author',
     submit: 'Submit',
     cancel: 'Cancel',
+    continue: 'Continue',
     options: 'Options',
     type: 'Type',
     quitEditing: 'Quit editing',
@@ -492,6 +493,14 @@ export default {
         output: 'Note',
         ackResources: 'Ack resources',
       },
+    },
+    confirmAckWithTicket: {
+      continueAndAssociateTicket: 'Continue and associate ticket',
+      infoMessage: `A ticket number has been specified.
+        Maybe you wanted to associate this ticket number to the alarm.
+        If so, click on "Continue and associate ticket" button.
+        To continue the ack action without taking ticket number into account,
+        click on "Continue" button.`,
     },
     createSnoozeEvent: {
       title: 'Snooze',

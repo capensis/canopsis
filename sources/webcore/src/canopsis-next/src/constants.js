@@ -32,6 +32,7 @@ export const ENTITIES_TYPES = {
 
 export const MODALS = {
   createAckEvent: 'create-ack-event',
+  confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
   createCancelEvent: 'create-cancel-event',
   createChangeStateEvent: 'create-change-state-event',

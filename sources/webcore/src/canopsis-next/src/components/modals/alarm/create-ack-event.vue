@@ -35,8 +35,8 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit(false)") {{ $t('common.actions.ack') }}
-      v-btn.warning(@click.prevent="submit(true)") {{ $t('common.actions.acknowledgeAndReport') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
+      v-btn.warning(@click.prevent="submitWithTicket") {{ $t('common.actions.acknowledgeAndReport') }}
 </template>
 
 <script>
@@ -93,18 +93,16 @@ export default {
       return this.createEventAction({ data: assocTicketEventData });
     },
 
-    async submit(withTicket) {
+    async submitWithTicket() {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
         await this.createAckEvent();
 
-        if (withTicket) {
-          if (this.form.ticket) {
-            await this.createAssocTicketEvent();
-          } else {
-            await this.createDeclareTicketEvent();
-          }
+        if (this.form.ticket) {
+          await this.createAssocTicketEvent();
+        } else {
+          await this.createDeclareTicketEvent();
         }
 
         if (this.config && this.config.afterSubmit) {
@@ -112,6 +110,40 @@ export default {
         }
 
         this.hideModal();
+      }
+    },
+
+    async submit() {
+      const formIsValid = await this.$validator.validateAll();
+
+      if (formIsValid) {
+        if (this.form.ticket) {
+          this.showModal({
+            name: MODALS.confirmAckWithTicket,
+            config: {
+              continueAction: async () => {
+                await this.createAckEvent();
+
+                if (this.config && this.config.afterSubmit) {
+                  await this.config.afterSubmit();
+                }
+
+                this.hideModal();
+              },
+              continueWithTicketAction: async () => {
+                this.submitWithTicket();
+              },
+            },
+          });
+        } else {
+          await this.createAckEvent();
+
+          if (this.config && this.config.afterSubmit) {
+            await this.config.afterSubmit();
+          }
+
+          this.hideModal();
+        }
       }
     },
   },
