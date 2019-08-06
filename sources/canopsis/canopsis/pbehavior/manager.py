@@ -218,11 +218,32 @@ class PBehaviorManager(object):
         """
         if _id is None:
             pipeline = [{"$match": {}}]
+
+            total_count_data = list(self.collection.aggregate(
+                pipeline + [{'$count': 'total_count'}]))
+
+            if(len(total_count_data) == 1):
+                try:
+                    total_count = total_count_data[0]["total_count"]
+                except (IndexError, KeyError):
+                    self.logger.error(
+                        "Exception while trying to reach total_count")
+                    return {"total_count": 0, "count": 0, "data": []}
+            else:
+                self.logger.error(
+                    "The aggregate returned unexpected data about total_count")
+                return {"total_count": 0, "count": 0, "data": []}
+
             if skip is not None:
                 pipeline.append({"$skip": skip})
             if limit is not None:
                 pipeline.append({"$limit": limit})
-            return list(self.collection.aggregate(pipeline))
+
+            pbhs = list(self.collection.aggregate(pipeline))
+
+            return {"total_count": total_count,
+                    "count": len(pbhs),
+                    "data": pbhs}
 
         return self.collection.find_one({"_id": _id}, query)
 
@@ -375,7 +396,7 @@ class PBehaviorManager(object):
         """
         result = self.get(_id, limit=limit, skip=skip)
 
-        return result if _id else list(result)
+        return result
 
     def update(self, _id, **kwargs):
         """
