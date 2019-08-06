@@ -25,6 +25,11 @@ const commands = {
       .customClick('@addViewButton');
   },
 
+  clickAddWidgetButton() {
+    return this.waitForElementVisible('@addWidgetButton')
+      .customClick('@addWidgetButton');
+  },
+
   clickEditViewButton() {
     return this.waitForElementVisible('@editViewButton')
       .customClick('@editViewButton');
@@ -67,6 +72,7 @@ module.exports = {
     viewPageById: sel('view-page-%s'),
     controlViewLayout: `${sel('controlViewLayout')} .v-speed-dial`,
     menuViewButton: `${sel('controlViewLayout')} .v-speed-dial ${sel('menuViewButton')}`,
+    addWidgetButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('addWidgetButton')}`,
     addViewButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('addViewButton')}`,
     editViewButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('editViewButton')}`,
     submitMoveTab: sel('submitMoveTab'),
