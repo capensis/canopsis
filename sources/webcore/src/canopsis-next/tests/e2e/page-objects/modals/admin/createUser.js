@@ -45,6 +45,11 @@ const commands = {
       .waitForElementVisible(this.el('@roleItemOption', index))
       .customClick(this.el('@roleItemOption', index));
   },
+  selectLastRole() {
+    return this.customClick('@roleField')
+      .waitForElementVisible('@roleLastItemOption')
+      .customClick('@roleLastItemOption');
+  },
 
   selectLanguage(index = 1) {
     return this.customClick('@languageField')
@@ -92,6 +97,7 @@ module.exports = modalCreator(modalSelector, {
     }),
 
     roleItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    roleLastItemOption: '.menuable__content__active .v-select-list [role="listitem"]:last-child',
     languageItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     navigationTypeOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
   },
