@@ -1027,6 +1027,7 @@ export default {
     },
   },
   filterSelector: {
+    defaultFilter: 'Default filter',
     fields: {
       mixFilters: 'Mix filters',
     },
