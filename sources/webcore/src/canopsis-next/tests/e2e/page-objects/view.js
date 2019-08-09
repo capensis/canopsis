@@ -64,11 +64,31 @@ const commands = {
     return this.waitForElementVisible('@settingsWrapper')
       .assert.visible('@settingsViewButton');
   },
+
+  clickDeleteRowButton() {
+    return this.customClick('@deleteRowButton');
+  },
+
+  clickDeleteWidgetButton() {
+    return this.customClick('@deleteWidgetButton');
+  },
+
+  clickCopyWidgetButton() {
+    return this.customClick('@copyWidgetButton');
+  },
+
+  clickEditWidgetButton() {
+    return this.customClick('@editWidgetButton');
+  },
   el,
 };
 
 module.exports = {
   elements: {
+    deleteRowButton: sel('deleteRowButton'),
+    deleteWidgetButton: sel('deleteWidgetButton'),
+    copyWidgetButton: sel('copyWidgetButton'),
+    editWidgetButton: sel('editWidgetButton'),
     viewPageById: sel('view-page-%s'),
     controlViewLayout: `${sel('controlViewLayout')} .v-speed-dial`,
     menuViewButton: `${sel('controlViewLayout')} .v-speed-dial ${sel('menuViewButton')}`,
