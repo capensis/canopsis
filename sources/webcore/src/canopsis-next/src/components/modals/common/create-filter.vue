@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createFilterModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}

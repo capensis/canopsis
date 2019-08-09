@@ -28,20 +28,23 @@
           :title="$t('settings.moreInfosModal')"
           )
       v-divider
-      v-list-group
+      v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-weather-template(
+          data-test="weatherTemplate",
           v-model="settings.widget.parameters.blockTemplate",
           :title="$t('settings.weatherTemplate')"
           )
           v-divider
           field-weather-template(
+          data-test="modalTemplate",
           v-model="settings.widget.parameters.modalTemplate",
           :title="$t('settings.modalTemplate')"
           )
           v-divider
           field-weather-template(
+          data-test="entityTemplate",
           v-model="settings.widget.parameters.entityTemplate",
           :title="$t('settings.entityTemplate')"
           )
@@ -91,7 +94,7 @@
           )
           v-divider
           field-modal-type(v-model="settings.widget.parameters.modalType")
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitWeather", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

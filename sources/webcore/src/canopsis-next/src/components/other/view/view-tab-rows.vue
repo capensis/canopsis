@@ -4,6 +4,7 @@
       v-flex(xs12)
         v-layout.hide-on-full-screen(justify-end)
           v-btn.ma-2(
+          data-test="deleteRowButton",
           v-if="isEditingMode && hasUpdateAccess",
           @click.stop="showDeleteRowModal(row)",
           small,
@@ -19,16 +20,19 @@
           v-layout(justify-end)
             template(v-if="isEditingMode && hasUpdateAccess")
               v-btn.ma-1(
+              data-test="deleteWidgetButton",
               @click="showDeleteWidgetModal(row._id, widget)",
               small,
               color="error",
               ) {{ $t('view.deleteWidget') }}
               v-btn.ma-1(
+              data-test="copyWidgetButton",
               @click="showSelectViewTabModal(widget)",
               icon
               )
                 v-icon file_copy
               v-btn.ma-1(
+              data-test="editWidgetButton",
               @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
               icon
               )

@@ -5,6 +5,7 @@
       v-layout.fill-height(v-show="!watchersPending", wrap)
         v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
           weather-item.weatherItem(
+          :data-test="item.entity_id"
           :watcher="item",
           :widget="widget",
           :template="widget.parameters.blockTemplate",

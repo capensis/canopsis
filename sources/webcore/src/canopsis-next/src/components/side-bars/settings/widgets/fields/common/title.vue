@@ -3,7 +3,12 @@
     v-list-tile(slot="activator") {{ title }}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
-      v-text-field(:value="value", @input="$emit('input', $event)", :placeholder="$t('settings.widgetTitle')")
+      v-text-field(
+      data-test="widgetTitleField",
+      :value="value",
+      @input="$emit('input', $event)",
+      :placeholder="$t('settings.widgetTitle')"
+      )
 </template>
 
 <script>
