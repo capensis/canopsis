@@ -74,11 +74,60 @@ module.exports = {
 
   'Create widget weather with some name': (browser) => {
     browser.page.view()
+      .clickEditViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
       .clickWidget('ServiceWeather')
+      .verifyModalClosed();
+
+    browser.completed.widget.setCommonField({
+      row: 'row',
+      sm: 13,
+      md: 13,
+      lg: 13,
+      title: 'Weather widget',
+      periodRefresh: 120,
+    });
+
+    browser.page.widget.weather()
+      .clickSubmitWeather();
+  },
+
+  'Edit widget weather with some name': (browser) => {
+    browser.page.view()
+      .clickEditWidgetButton();
+
+    browser.completed.widget.setCommonField({
+      sm: 10,
+      md: 10,
+      lg: 10,
+      title: 'Weather widget(edited)',
+      periodRefresh: 180,
+    });
+
+    browser.page.widget.weather()
+      .clickSubmitWeather();
+  },
+
+  'Delete widget weather with some name': (browser) => {
+    browser.page.view()
+      .clickDeleteWidgetButton();
+
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
+      .verifyModalClosed();
+  },
+
+  'Delete row with some name': (browser) => {
+    browser.page.view()
+      .clickDeleteRowButton();
+
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
       .verifyModalClosed();
   },
 };
