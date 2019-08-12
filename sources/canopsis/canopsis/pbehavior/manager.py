@@ -205,7 +205,7 @@ class PBehaviorManager(object):
         self.collection = pb_collection
         self.currently_active_pb = set()
 
-    def get(self, _id, query=None, limit=None, skip=None):
+    def get(self, _id, limit=None, skip=None):
         """Get pbehavior by id.
 
         When _id is None, all the pbehaviors are returned. This behavior
@@ -216,36 +216,38 @@ class PBehaviorManager(object):
         :param str id: pbehavior id
         :param dict query: filtering options
         """
+        pipeline = []
         if _id is None:
-            pipeline = [{"$match": {}}]
+            pipeline.append({"$match": {}})
+        else:
+            pipeline.append({"$match": {"_id": _id}})
 
-            total_count_data = list(self.collection.aggregate(
-                pipeline + [{'$count': 'total_count'}]))
+        total_count_data = list(self.collection.aggregate(
+            pipeline + [{'$count': 'total_count'}]))
 
-            if(len(total_count_data) == 1):
-                try:
-                    total_count = total_count_data[0]["total_count"]
-                except (IndexError, KeyError):
-                    self.logger.error(
-                        "Exception while trying to reach total_count")
-                    return {"total_count": 0, "count": 0, "data": []}
-            else:
+        if(len(total_count_data) == 1):
+            try:
+                total_count = total_count_data[0]["total_count"]
+            except (IndexError, KeyError):
                 self.logger.error(
-                    "The aggregate returned unexpected data about total_count")
+                    "Exception while trying to reach total_count")
                 return {"total_count": 0, "count": 0, "data": []}
+        else:
+            self.logger.error(
+                "The aggregate returned unexpected data about total_count")
+            return {"total_count": 0, "count": 0, "data": []}
 
+        if _id is None:
             if skip is not None:
                 pipeline.append({"$skip": skip})
             if limit is not None:
                 pipeline.append({"$limit": limit})
 
-            pbhs = list(self.collection.aggregate(pipeline))
+        pbhs = list(self.collection.aggregate(pipeline))
 
-            return {"total_count": total_count,
-                    "count": len(pbhs),
-                    "data": pbhs}
-
-        return self.collection.find_one({"_id": _id}, query)
+        return {"total_count": total_count,
+                "count": len(pbhs),
+                "data": pbhs}
 
     def create(
             self,
