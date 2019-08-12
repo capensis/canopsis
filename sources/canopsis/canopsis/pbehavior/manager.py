@@ -546,6 +546,10 @@ class PBehaviorManager(object):
         if not pbehavior:
             return None
 
+        pbehavior = pbehavior.get('data')[0]
+        if not pbehavior:
+            return None
+
         _comments = pbehavior[PBehavior.COMMENTS]
         if not _comments:
             return None
