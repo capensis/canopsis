@@ -8,10 +8,13 @@ from pymongo import errors
 from redlock import Redlock
 
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.redis_sentinel_store import RedisSentinelStore
 from canopsis.common import root_path
 from canopsis.confng import Configuration, Ini
 from canopsis.logger import Logger
 import os
+
+VALIDITY_TIME = 12  # seconds
 
 
 class AlertLock(object):
@@ -65,7 +68,9 @@ class AlertLock(object):
         """
             remove locks older than 13 seconds
         """
-        self.lock_collection.remove({'timestamp': {'$lt': time() - 13}})
+        self.lock_collection.remove(
+            {'timestamp': {'$lt': time() - (VALIDITY_TIME + 1)}}
+        )
 
 
 class AlertLockRedis(object):
@@ -89,7 +94,8 @@ class AlertLockRedis(object):
         redis_port = int(config.get('port', cls.DEFAULT_DB_PORT))
         redis_db_num = int(config.get('dbnum', cls.DEFAULT_DB_NUM))
         redlock = Redlock(
-            [{'host': redis_host, 'port': redis_port, 'db': redis_db_num}])
+            [{'host': redis_host, 'port': redis_port, 'db': redis_db_num}]
+        )
 
         logger = Logger.get('lock', cls.LOG_PATH)
 
@@ -106,11 +112,11 @@ class AlertLockRedis(object):
         """
             create a document in lock collection
         """
-        lock_id = 'redlock_{0}'.format(entity_id)
-        stop = self.redlock.lock(lock_id, 12000)
+        lock_id = 'redlock_{}'.format(entity_id)
+        stop = self.redlock.lock(lock_id, VALIDITY_TIME * 1000)
         while type(stop) == bool:
             sleep(0.2)
-            stop = self.redlock.lock(lock_id, 12000)
+            stop = self.redlock.lock(lock_id, VALIDITY_TIME * 1000)
         return stop
 
     def unlock(self, lock):
@@ -118,3 +124,27 @@ class AlertLockRedis(object):
             remove lock documentt
         """
         return self.redlock.unlock(lock)
+
+
+class AlertLockRedisSentinel(object):
+    LOG_PATH = 'var/log/alert_lock.log'
+
+    @classmethod
+    def provide_default_basics(cls):
+        redis_sentinel_store = RedisSentinelStore.get_default()
+        logger = Logger.get('lock', cls.LOG_PATH)
+        return logger, redis_sentinel_store
+
+    def __init__(self, logger, redis_sentinel_store):
+        self.redis_sentinel_store = redis_sentinel_store
+        self.logger = logger
+
+    def lock(self, entity_id):
+        lock_id = 'redlock_{}'.format(entity_id)
+        while self.redis_sentinel_store.exists(lock_id):
+            sleep(0.1)
+        self.redis_sentinel_store.set(lock_id, lock_id, ex=VALIDITY_TIME)
+
+    def unlock(self, entity_id):
+        lock_id = 'redlock_{}'.format(entity_id)
+        self.redis_sentinel_store.remove(lock_id)

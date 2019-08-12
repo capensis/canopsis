@@ -32,7 +32,6 @@ from datetime import datetime
 from operator import itemgetter
 from time import time, mktime
 
-from canopsis.alerts import DEFAULT_AUTHOR
 from canopsis.alarms.models import AlarmState
 from canopsis.alerts.enums import AlarmField, States, AlarmFilterField
 from canopsis.alerts.filter import AlarmFilters
@@ -52,7 +51,7 @@ from canopsis.confng import Configuration, Ini
 from canopsis.confng.helpers import cfg_to_array, cfg_to_bool
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import get_routingkey
-from canopsis.lock.manager import AlertLockRedis
+from canopsis.lock.manager import AlertLockRedisSentinel
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
 from canopsis.models.entity import Entity
@@ -61,6 +60,7 @@ from canopsis.timeserie.timewindow import get_offset_timewindow
 from canopsis.statsng.enums import StatCounters, StatStateIntervals
 from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
+from canopsis.alerts import DEFAULT_AUTHOR
 
 # register tasks manually
 import canopsis.alerts.tasks as __alerts_tasks
@@ -134,14 +134,18 @@ class Alerts(object):
         alerts_ = self.config.get(self.ALERTS_CAT, {})
         self.extra_fields = cfg_to_array(alerts_.get('extra_fields',
                                                      DEFAULT_EXTRA_FIELDS))
-        self.record_last_event_date = cfg_to_bool(alerts_.get('record_last_event_date',
-                                                              DEFAULT_RECORD_LAST_EVENT_DATE))
+        self.record_last_event_date = cfg_to_bool(
+            alerts_.get('record_last_event_date',
+                        DEFAULT_RECORD_LAST_EVENT_DATE)
+        )
 
         self.update_longoutput_fields = alerts_.get("update_long_output",
-                                                          False)
+                                                    False)
         filter_ = self.config.get(self.FILTER_CAT, {})
         self.filter_author = filter_.get('author', DEFAULT_AUTHOR)
-        self.lock_manager = AlertLockRedis(*AlertLockRedis.provide_default_basics())
+        self.lock_manager = AlertLockRedisSentinel(
+            *AlertLockRedisSentinel.provide_default_basics()
+        )
 
     @classmethod
     def provide_default_basics(cls):
@@ -590,7 +594,7 @@ class Alerts(object):
         event_type = event['event_type']
         initial_state = None
 
-        lock_id = self.lock_manager.lock(entity_id)
+        self.lock_manager.lock(entity_id)
         if event_type in [Check.EVENT_TYPE, 'watcher']:
             initial_state = event["state"]
             alarm = self.get_current_alarm(entity_id)
@@ -601,10 +605,10 @@ class Alerts(object):
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
-                    self.lock_manager.unlock(lock_id)
+                    self.lock_manager.unlock(entity_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
-                    self.lock_manager.unlock(lock_id)
+                    self.lock_manager.unlock(entity_id)
                     return
                 # Check is not OK
                 alarm = self.make_alarm(entity_id, event)
@@ -614,10 +618,10 @@ class Alerts(object):
                 initial_state = alarm["value"]["state"]["val"]
                 value = alarm.get(self.alerts_storage.VALUE)
                 if self.is_hard_limit_reached(value):
-                    self.lock_manager.unlock(lock_id)
+                    self.lock_manager.unlock(entity_id)
                     return
                 if not self.check_if_the_entity_is_enabled(entity_id):
-                    self.lock_manager.unlock(lock_id)
+                    self.lock_manager.unlock(entity_id)
                     return
 
                 alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -649,9 +653,10 @@ class Alerts(object):
         else:
             self.execute_task('alerts.useraction.{}'.format(event_type),
                               event=event,
-                              author=event.get(self.AUTHOR, self.filter_author),
+                              author=event.get(
+                                  self.AUTHOR, self.filter_author),
                               entity_id=entity_id)
-        self.lock_manager.unlock(lock_id)
+        self.lock_manager.unlock(entity_id)
 
     def execute_task(self, name, event, entity_id,
                      author=None, new_state=None, diff_counter=None):
@@ -1058,7 +1063,8 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
+        self.logger.info(
+            "DEPRECATED: see the canopsis.alarms package instead.")
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:
@@ -1085,7 +1091,8 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
+        self.logger.info(
+            "DEPRECATED: see the canopsis.alarms package instead.")
 
         now = int(time())
 
@@ -1111,7 +1118,8 @@ class Alerts(object):
         :deprecated: see canopsis.alarms
         """
 
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
+        self.logger.info(
+            "DEPRECATED: see the canopsis.alarms package instead.")
         now = int(time())
         if alarms is None:
             result = self.get_alarms(resolved=False, snoozed=True)
@@ -1147,7 +1155,8 @@ class Alerts(object):
         :return: a list of unresolved alarms (excluding locally processed alarms)
         :deprecated: see canopsis.alarms
         """
-        self.logger.info("DEPRECATED: see the canopsis.alarms package instead.")
+        self.logger.info(
+            "DEPRECATED: see the canopsis.alarms package instead.")
 
         for data_id in alarms:
             for docalarm in alarms[data_id]:
@@ -1235,7 +1244,7 @@ class Alerts(object):
                 alarm = lifter.get_and_check_alarm(docalarm)
                 if not alarm:
                     self.logger.debug('AlarmFilter {}: Filter condition is invalid'
-                                    .format(lifter._id))
+                                      .format(lifter._id))
                     continue
 
                 new_value = alarm[storage.Key.VALUE]
@@ -1255,7 +1264,7 @@ class Alerts(object):
                         # Too soon to execute one more time all tasks
                         continue
                     self.logger.info('Rerunning tasks on {} after {} hours'
-                                    .format(alarm_id, lifter.limit))
+                                     .format(alarm_id, lifter.limit))
 
                 # Getting most recent step message
                 steps = new_value[AlarmField.steps.value]
@@ -1283,7 +1292,8 @@ class Alerts(object):
                 for task in lifter.tasks:
 
                     if vstate in new_value:
-                        event[vstate] = new_value[vstate]['val']  # for changestate
+                        # for changestate
+                        event[vstate] = new_value[vstate]['val']
 
                     if 'systemaction.state_increase' in task:
                         event[vstate] = event[vstate] + 1
@@ -1291,7 +1301,7 @@ class Alerts(object):
                         event[vstate] = event[vstate] - 1
 
                     self.logger.info('Automatically execute {} on {}'
-                                    .format(task, alarm_id))
+                                     .format(task, alarm_id))
 
                     updated_alarm_value = self.execute_task(
                         name=task,
