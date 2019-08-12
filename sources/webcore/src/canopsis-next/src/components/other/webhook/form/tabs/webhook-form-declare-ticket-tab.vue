@@ -1,5 +1,11 @@
 <template lang="pug">
   div
+    v-switch(
+    v-if="!disabled",
+    :input-value="emptyResponse",
+    :label="$t('webhook.tabs.declareTicket.emptyResponse')",
+    @change="$emit('updateEmptyReponseField', $event)"
+    )
     text-pairs(
     :textLabel="$t('webhook.tabs.declareTicket.fields.text')",
     :valueLabel="$t('webhook.tabs.declareTicket.fields.value')",
@@ -26,6 +32,10 @@ export default {
       default: () => [],
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    emptyResponse: {
       type: Boolean,
       default: false,
     },

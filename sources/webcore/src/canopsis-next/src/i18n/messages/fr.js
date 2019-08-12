@@ -1017,6 +1017,7 @@ export default {
         },
       },
       declareTicket: {
+        emptyResponse: 'Réponse vide',
         title: 'Déclarer un ticket',
         fields: {
           text: 'Clé',
