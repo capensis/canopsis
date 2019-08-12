@@ -131,8 +131,8 @@ class TestPbehaviorWebservice(TestCase):
         pbehavior = self.rhpb.read(pb_id, None, None)
 
         self.assertIsInstance(pbehavior, dict)
-        self.assertEquals(pbehavior.get('data')[0].get('data')[
-                          0].get('name'), self.VALID_PB.get('name'))
+        self.assertEquals(pbehavior.get('data')[0].get(
+            'name'), self.VALID_PB.get('name'))
 
     def test_update_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
@@ -175,8 +175,8 @@ class TestPbehaviorWebservice(TestCase):
 
         pbehavior = self.rhpb.read(pb_id, None, None)
 
-        self.assertEquals(pbehavior.get('data')[0].get('data')[
-                          0].get('name'), self.VALID_PB.get('name'))
+        self.assertEquals(pbehavior.get('data')[0].get(
+            'name'), self.VALID_PB.get('name'))
 
         delres = self.rhpb.delete(pb_id)
         self.assertEquals(delres.get('deletedCount'), 1)
@@ -203,8 +203,7 @@ class TestPbehaviorWebservice(TestCase):
 
         pbehavior = self.rhpb.read(pb_id, None, None)
 
-        comments = pbehavior.get('data')[0].get('data')[
-            0].get('comments')
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(comments[0].get('author'), 'pb_test')
         self.assertEquals(comments[0].get('message'), 'pb_comment_msg')
@@ -230,8 +229,7 @@ class TestPbehaviorWebservice(TestCase):
             pb_id, c1, author='pb_test_new', message='pb_comment_new')
 
         pbehavior = self.rhpb.read(pb_id, None, None)
-        comments = pbehavior.get('data')[0].get('data')[
-            0].get('comments')
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(len(comments), 1)
         self.assertEquals(comments[0].get('author'), 'pb_test_new')
@@ -246,8 +244,7 @@ class TestPbehaviorWebservice(TestCase):
         self.assertIsInstance(c1, str)
 
         pbehavior = self.rhpb.read(pb_id, None, None)
-        comments = pbehavior.get('data')[0].get('data')[
-            0].get('comments')
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(len(comments), 1)
 
@@ -256,8 +253,7 @@ class TestPbehaviorWebservice(TestCase):
         self.assertEquals(res.get('deletedCount'), 1)
 
         pbehavior = self.rhpb.read(pb_id, None, None)
-        comments = pbehavior.get('data')[0].get('data')[
-            0].get('comments')
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(len(comments), 0)
 

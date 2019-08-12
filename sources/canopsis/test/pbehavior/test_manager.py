@@ -104,8 +104,8 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
 
     def test_read(self):
-        pb = self.pbm.read(_id=self.pbehavior_id)
-        pbs = self.pbm.read()
+        pb = self.pbm.read(_id=self.pbehavior_id).get('data')[0]
+        pbs = self.pbm.read().get('data')[0]
         self.assertTrue(pb is not None)
         self.assertTrue(isinstance(pbs, list))
         self.assertEqual(len(pbs), 1)
@@ -124,7 +124,7 @@ class TestManager(BaseTest):
 
     def test_delete(self):
         self.pbm.delete(_id=self.pbehavior_id)
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertTrue(pb is None)
 
     def test_create_pbehavior_comment(self):
@@ -159,8 +159,8 @@ class TestManager(BaseTest):
         self.assertEqual(pb['comments'][0]['author'], new_author)
         self.assertEqual(pb['comments'][0]['message'], new_message)
 
-        pb2 = self.pbm.get('id_does_not_exist')
-        self.assertIsNone(pb2)
+        pb2 = self.pbm.get('id_does_not_exist').get('data')[0]
+        self.assertEqual(pb2, [])
 
     def test_delete_pbehavior_comment(self):
         self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
@@ -168,7 +168,7 @@ class TestManager(BaseTest):
         self.assertEqual(len(pb['comments']), 2)
 
         self.pbm.delete_pbehavior_comment(self.pbehavior_id, self.comment_id)
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertEqual(len(pb['comments']), 1)
 
     def test_get_pbehaviors(self):
@@ -193,7 +193,7 @@ class TestManager(BaseTest):
     def test_compute_pbehaviors_filters(self):
         self.pbm.context._put_entities(self.entities)
         self.pbm.compute_pbehaviors_filters()
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
 
         self.assertTrue(pb is not None)
         self.assertTrue('eids' in pb)
