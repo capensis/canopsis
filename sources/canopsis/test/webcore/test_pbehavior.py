@@ -156,7 +156,7 @@ class TestPbehaviorWebservice(TestCase):
         res = self.rhpb.update(pb_id, **updated_pb)
         self.assertIsInstance(res, dict)
 
-        updated_pb = self.rhpb.read(pb_id)
+        updated_pb = self.rhpb.read(pb_id).get('data')[0]
         self.assertEquals(updated_pb.get('name'), 'pb_new_name')
         self.assertEquals(updated_pb.get('author'), 'pb_new_author')
         self.assertEquals(updated_pb.get('filter'), {u"new": "filter"})
@@ -181,8 +181,8 @@ class TestPbehaviorWebservice(TestCase):
         delres = self.rhpb.delete(pb_id)
         self.assertEquals(delres.get('deletedCount'), 1)
 
-        pbehavior = self.rhpb.read(pb_id, None, None)
-        self.assertIsNone(pbehavior)
+        pbehavior = self.rhpb.read(pb_id, None, None).get('data')
+        self.assertEquals(pbehavior, [])
 
     def test_create_comments_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
