@@ -19,7 +19,11 @@
                   tbody
                     tr(v-for="right in rights", :key="`right-title-${right._id}`")
                       td {{ right.desc }}
-                      td(v-for="role in roles", :key="`role-right-${role._id}`")
+                      td(
+                      v-for="role in roles",
+                      :key="`role-right-${role._id}`",
+                      :data-test="`role-${role._id}-right-${right._id}`",
+                      )
                         v-checkbox-functional(
                         v-for="(checkbox, index) in getCheckboxes(role, right)",
                         :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
@@ -28,7 +32,7 @@
                         :disabled="!hasUpdateAnyActionAccess"
                         )
     v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+      v-btn.primary(data-test="submitRightButton", @click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
     .fab(v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess")
       v-layout(column)
