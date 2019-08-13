@@ -2,8 +2,8 @@
 
 const qs = require('qs');
 const {
-  generateTemporaryUser,
-  generateTemporaryRight,
+  // generateTemporaryUser,
+  // generateTemporaryRight,
   generateTemporaryRole,
 } = require('../../helpers/entities');
 
@@ -45,42 +45,42 @@ module.exports = {
     browser.refresh();
   },
 
-  'Create new right': (browser) => {
-    const { temporary } = browser.globals;
+  // 'Create new right': (browser) => {
+  //   const { temporary } = browser.globals;
 
-    temporary.right = generateTemporaryRight();
+  //   temporary.right = generateTemporaryRight();
 
-    const {
-      ID,
-      description,
-    } = temporary.right;
+  //   const {
+  //     ID,
+  //     description,
+  //   } = temporary.right;
 
-    const adminCreateRight = browser.page.modals.admin.createRight();
+  //   const adminCreateRight = browser.page.modals.admin.createRight();
 
-    browser.page.admin.right()
-      .clickAddButton()
-      .clickCreateRight();
+  //   browser.page.admin.right()
+  //     .clickAddButton()
+  //     .clickCreateRight();
 
-    adminCreateRight.verifyModalOpened()
-      .setRightID(ID)
-      .setRightDescription(description);
+  //   adminCreateRight.verifyModalOpened()
+  //     .setRightID(ID)
+  //     .setRightDescription(description);
 
-    browser.waitForFirstXHR(
-      API_ROUTES.action,
-      1000,
-      () => adminCreateRight.clickSubmitButton(),
-      ({ responseData, requestData }) => {
-        const requestParsedData = qs.parse(requestData);
+  //   browser.waitForFirstXHR(
+  //     API_ROUTES.action,
+  //     1000,
+  //     () => adminCreateRight.clickSubmitButton(),
+  //     ({ responseData, requestData }) => {
+  //       const requestParsedData = qs.parse(requestData);
 
-        return temporary.right = {
-          ...temporary.right,
-          ...JSON.parse(requestParsedData),
-          ...JSON.parse(responseData),
-        };
-      },
-    );
-    adminCreateRight.verifyModalClosed();
-  },
+  //       return temporary.right = {
+  //         ...temporary.right,
+  //         ...JSON.parse(requestParsedData),
+  //         ...JSON.parse(responseData),
+  //       };
+  //     },
+  //   );
+  //   adminCreateRight.verifyModalClosed();
+  // },
 
   'Create new user role (put special rights)': (browser) => {
     const { temporary } = browser.globals;
@@ -95,6 +95,7 @@ module.exports = {
     const adminCreateRole = browser.page.modals.admin.createRole();
 
     browser.page.admin.right()
+      .clickAddButton()
       .clickCreateRole();
 
     adminCreateRole.verifyModalOpened()
@@ -103,14 +104,13 @@ module.exports = {
 
     browser.waitForFirstXHR(
       API_ROUTES.role.create,
-      1000,
+      5000,
       () => adminCreateRole.clickSubmitButton(),
       ({ responseData, requestData }) => {
         const requestParsedData = qs.parse(requestData);
-
         return temporary.role = {
           ...temporary.role,
-          ...JSON.parse(requestParsedData),
+          ...JSON.parse(requestParsedData.role),
           ...JSON.parse(responseData),
         };
       },
@@ -118,51 +118,91 @@ module.exports = {
     adminCreateRole.verifyModalClosed();
   },
 
-  'Create user with this new role': (browser) => {
-    const { temporary } = browser.globals;
+  // 'Create user with this new role': (browser) => {
+  //   const { temporary } = browser.globals;
 
-    temporary.user = generateTemporaryUser('user');
+  //   temporary.user = generateTemporaryUser('user');
 
-    const {
-      username,
-      firstname,
-      lastname,
-      email,
-      password,
-    } = temporary.user;
+  //   const {
+  //     username,
+  //     firstname,
+  //     lastname,
+  //     email,
+  //     password,
+  //   } = temporary.user;
 
-    const adminCreateUser = browser.page.modals.admin.createUser();
+  //   const adminCreateUser = browser.page.modals.admin.createUser();
 
+
+  //   browser.page.admin.right()
+  //     .clickCreateUser();
+
+  //   adminCreateUser.verifyModalOpened()
+  //     .setUsername(username)
+  //     .setFirstName(firstname)
+  //     .setLastName(lastname)
+  //     .setEmail(email)
+  //     .setPassword(password)
+  //     .selectLastRole()
+  //     .selectLanguage()
+  //     .selectNavigationType();
+
+  //   browser.waitForFirstXHR(
+  //     API_ROUTES.user.create,
+  //     5000,
+  //     () => adminCreateUser.clickSubmitButton(),
+  //     ({ responseData, requestData }) => {
+  //       const requestParsedData = qs.parse(requestData);
+
+  //       return temporary.user = {
+  //         ...temporary.user,
+  //         ...JSON.parse(requestParsedData.user),
+  //         ...JSON.parse(responseData),
+  //       };
+  //     },
+  //   );
+  //   adminCreateUser.verifyModalClosed();
+  // },
+
+
+  // 'Login by new role user credentials': (browser) => {
+  //   const { username, password } = browser.globals.user;
+  //   browser.completed.logout()
+  //     .maximizeWindow()
+  //     .completed.loginDisabledUser(username, password);
+
+  //   browser.api.pause(10000);
+  // },
+
+  'Change right for new role': (browser) => {
+    const { role } = browser.globals.temporary;
 
     browser.page.admin.right()
-      .clickCreateUser();
+      .clickCheckbox(role.name, 'listalarm_ack', 1);
 
-    adminCreateUser.verifyModalOpened()
-      .setUsername(username)
-      .setFirstName(firstname)
-      .setLastName(lastname)
-      .setEmail(email)
-      .setPassword(password)
-      .selectLastRole()
-      .selectLanguage()
-      .selectNavigationType();
+    browser.page.admin.right()
+      .clickTab('view');
 
-    browser.waitForFirstXHR(
-      API_ROUTES.user.create,
-      1000,
-      () => adminCreateUser.clickSubmitButton(),
-      ({ responseData, requestData }) => {
-        const requestParsedData = qs.parse(requestData);
+    browser.page.admin.right()
+      .clickCheckbox(role.name, '875df4c2-027b-4549-8add-e20ed7ff7d4f', 1)
+      .clickCheckbox(role.name, '875df4c2-027b-4549-8add-e20ed7ff7d4f', 2)
+      .clickCheckbox(role.name, '875df4c2-027b-4549-8add-e20ed7ff7d4f', 3);
 
-        return temporary.user = {
-          ...temporary.user,
-          ...JSON.parse(requestParsedData.user),
-          ...JSON.parse(responseData),
-        };
-      },
-    );
-    adminCreateUser.verifyModalClosed();
+    browser.page.admin.right()
+      .clickTab('technical');
+
+    browser.page.admin.right()
+      .clickCheckbox(role.name, 'models_userview', 1)
+      .clickCheckbox(role.name, 'models_userview', 2)
+      .clickCheckbox(role.name, 'models_userview', 3)
+      .clickCheckbox(role.name, 'models_userview', 4);
+
+    browser.page.admin.right().clickSubmitRightButton();
+
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
+      .verifyModalClosed();
   },
-
 
 };
