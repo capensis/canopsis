@@ -3,14 +3,14 @@
     v-layout
     v-fade-transition
       v-layout.fill-height(v-if="!watchersPending", wrap)
-        v-alert(type="error", :value="true", v-if="hasNoData && hasError")
+        v-alert(type="error", :value="true", v-if="hasNoData && this.watchersError")
           v-layout(align-center)
             div.mr-4 {{ $t('errors.default') }}
             v-tooltip(top)
               v-icon(slot="activator") help
               div(v-if="watchersError.name") {{ $t('common.name') }}: {{ watchersError.name }}
               div(v-if="watchersError.description") {{ $t('common.description') }}: {{ watchersError.description }}
-        v-alert(type="info", :value="true", v-else-if="hasNoData") No data
+        v-alert(type="info", :value="true", v-else-if="hasNoData") {{ $t('tables.noData') }}
         v-flex(v-else, v-for="item in watchers", :key="item._id", :class="flexSize")
           weather-item.weatherItem(
           :watcher="item",
@@ -61,9 +61,6 @@ export default {
     },
     hasNoData() {
       return this.watchers.length === 0;
-    },
-    hasError() {
-      return this.watchersError && this.watchersError !== {};
     },
   },
   mounted() {

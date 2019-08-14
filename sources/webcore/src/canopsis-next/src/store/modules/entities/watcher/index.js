@@ -36,6 +36,7 @@ export default {
       Vue.set(state.widgets, widgetId, {
         ...state.widgets[widgetId],
         pending: true,
+        error: null,
       });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds }) {
@@ -45,7 +46,7 @@ export default {
         allIds,
       });
     },
-    [types.FETCH_LIST_FAILED](state, { widgetId, error }) {
+    [types.FETCH_LIST_FAILED](state, { widgetId, error = {} }) {
       Vue.set(state.widgets, widgetId, {
         ...state.widgets[widgetId],
         pending: false,
