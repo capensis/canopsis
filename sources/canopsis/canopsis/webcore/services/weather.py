@@ -575,7 +575,7 @@ def _remove_inactive_pbh(pbehaviors):
     :param pbehavior: a list of pbehavior.
     :return list: a list without any inactive pbehavior
     """
-    now = time.time()
+    now = int(time.time())
 
     active_pbh = []
     for pbh in pbehaviors:
@@ -805,7 +805,7 @@ def exports(ws):
             return gen_json_error({"name": "Can not parse sort direction.",
                                    "description": str(error)}, 400)
 
-        pipeline_result = mongo_collection.aggregate(pipeline)
+        pipeline_result = mongo_collection.aggregate(pipeline, allowDiskUse=True)
 
         result = []
         for watcher in pipeline_result:
