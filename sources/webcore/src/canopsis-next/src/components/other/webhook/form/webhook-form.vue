@@ -96,7 +96,7 @@ export default {
           },
           on: {
             input: event => this.updateField('declare_ticket', event),
-            updateEmptyReponseField: event => this.updateField('emptyResponse', event),
+            'update:emptyResponse': event => this.updateField('emptyResponse', event),
           },
         },
       ];
