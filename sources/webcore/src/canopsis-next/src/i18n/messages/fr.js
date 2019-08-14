@@ -914,6 +914,7 @@ export default {
     },
   },
   filterSelector: {
+    defaultFilter: 'Filtre par défaut',
     fields: {
       mixFilters: 'Mix de filtres',
     },
