@@ -702,6 +702,13 @@ export default {
       externalData: 'Données externes',
       onSuccess: 'En cas de succès',
       onFailure: 'En cas d\'échec',
+      tooltips: {
+        addValueRuleField: 'Ajouter une règle',
+        editValueRuleField: 'Editer la règle',
+        addObjectRuleField: 'Ajouter un groupe',
+        editObjectRuleField: 'Editer le groupe',
+        removeRuleField: 'Supprimer le groupe/la règle',
+      },
     },
     viewTab: {
       create: {
