@@ -1,3 +1,4 @@
+import sha1 from 'sha1';
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
@@ -487,6 +488,16 @@ export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
 export function getViewsWidgetsIdsMappings(oldView, newView) {
   return oldView.tabs.reduce((acc, tab, index) =>
     acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
+}
+
+export function prepareUserByData(data, user = generateUser()) {
+  const result = { ...user, ...omit(data, ['password']) };
+
+  if (data.password && data.password !== '') {
+    result.shadowpasswd = sha1(data.password);
+  }
+
+  return result;
 }
 
 

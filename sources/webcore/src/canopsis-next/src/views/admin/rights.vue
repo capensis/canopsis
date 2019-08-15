@@ -56,13 +56,12 @@
 </template>
 
 <script>
-import sha1 from 'sha1';
-import { get, omit, isEmpty, isUndefined, transform } from 'lodash';
+import { get, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
 import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES, NOT_COMPLETED_USER_RIGHTS_KEYS } from '@/constants';
 import {
-  generateUser,
+  prepareUserByData,
   generateRoleRightByChecksum,
 } from '@/helpers/entities';
 
@@ -177,17 +176,7 @@ export default {
       this.showModal({
         name: MODALS.createUser,
         config: {
-          action: async (data) => {
-            const user = { ...generateUser() };
-
-            if (data.password && data.password !== '') {
-              user.shadowpasswd = sha1(data.password);
-            }
-
-            await this.createUser({ data: { ...user, ...omit(data, ['password']) } });
-
-            await this.fetchUsersListWithPreviousParams();
-          },
+          action: data => this.createUser({ data: prepareUserByData(data) }),
         },
       });
     },
