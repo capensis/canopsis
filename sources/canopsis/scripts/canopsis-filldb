@@ -37,5 +37,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     mgr = MigrationTool(canopsis_version=args.canopsis_version,
-                        canopsis_stack=args.canopsis_stack, canopsis_edition=args.canopsis_edition)
+                        canopsis_stack=args.canopsis_stack,
+                        canopsis_edition=args.canopsis_edition)
     mgr.fill(yes=args.yes, reinit_auth=args.reinit)

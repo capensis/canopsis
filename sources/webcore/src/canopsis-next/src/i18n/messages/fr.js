@@ -231,6 +231,7 @@ export default {
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
     columnNames: 'Nom des colonnes',
+    orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
     defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
     elementsPerPage: 'Élements par page',
@@ -316,6 +317,7 @@ export default {
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
+    limit: 'Limite',
     height: 'Hauteur',
     margin: {
       title: 'Marges',
@@ -700,6 +702,13 @@ export default {
       externalData: 'Données externes',
       onSuccess: 'En cas de succès',
       onFailure: 'En cas d\'échec',
+      tooltips: {
+        addValueRuleField: 'Ajouter une règle',
+        editValueRuleField: 'Editer la règle',
+        addObjectRuleField: 'Ajouter un groupe',
+        editObjectRuleField: 'Editer le groupe',
+        removeRuleField: 'Supprimer le groupe/la règle',
+      },
     },
     viewTab: {
       create: {
@@ -905,6 +914,7 @@ export default {
     },
   },
   filterSelector: {
+    defaultFilter: 'Filtre par défaut',
     fields: {
       mixFilters: 'Mix de filtres',
     },
@@ -1015,6 +1025,7 @@ export default {
         },
       },
       declareTicket: {
+        emptyResponse: 'Réponse vide',
         title: 'Déclarer un ticket',
         fields: {
           text: 'Clé',

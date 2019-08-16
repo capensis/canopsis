@@ -71,7 +71,7 @@ class Session(object):
         """
         now = time()
         self.session_collection.update({'_id': username},
-                                       {'last_check': now})
+                                       {'$set': {'last_check': now}})
 
         return now
 

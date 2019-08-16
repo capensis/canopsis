@@ -255,6 +255,7 @@ export default {
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
     columnNames: 'Column names',
+    orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
     elementsPerPage: 'Elements per page',
@@ -345,6 +346,7 @@ export default {
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
+    limit: 'Limit',
     height: 'Height',
     margin: {
       title: 'Block margins',
@@ -1025,6 +1027,7 @@ export default {
     },
   },
   filterSelector: {
+    defaultFilter: 'Default filter',
     fields: {
       mixFilters: 'Mix filters',
     },
@@ -1089,6 +1092,7 @@ export default {
       title: 'User interface',
       fields: {
         appTitle: 'App title',
+        language: 'Default user interface language',
         footer: 'Login footer',
         description: 'Login page description',
         logo: 'Logo',
@@ -1145,6 +1149,7 @@ export default {
       },
       declareTicket: {
         title: 'Declare ticket',
+        emptyResponse: 'Empty response',
         fields: {
           text: 'Key',
           value: 'Value',

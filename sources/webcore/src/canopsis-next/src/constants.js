@@ -1,3 +1,4 @@
+import { COLORS } from '@/config';
 import featuresService from '@/services/features';
 
 export const CRUD_ACTIONS = {
@@ -119,37 +120,46 @@ export const ENTITIES_STATUSES = {
 
 export const ENTITIES_STATES_STYLES = {
   [ENTITIES_STATES.ok]: {
-    color: 'green',
+    color: COLORS.state.ok,
     text: 'ok',
     icon: 'assistant_photo',
   },
   [ENTITIES_STATES.minor]: {
-    color: '#FCDC00',
+    color: COLORS.state.minor,
     text: 'minor',
     icon: 'assistant_photo',
   },
   [ENTITIES_STATES.major]: {
-    color: 'orange',
+    color: COLORS.state.major,
     text: 'major',
     icon: 'assistant_photo',
   },
   [ENTITIES_STATES.critical]: {
-    color: 'red',
+    color: COLORS.state.critical,
     text: 'critical',
     icon: 'assistant_photo',
   },
 };
 
+export const WATCHER_STATES = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+  pause: 'pause',
+};
+
 export const WATCHER_STATES_COLORS = {
-  [ENTITIES_STATES.ok]: '#00a65a',
-  [ENTITIES_STATES.minor]: '#fcdc00',
-  [ENTITIES_STATES.major]: '#ff9900',
-  [ENTITIES_STATES.critical]: '#f56954',
+  [WATCHER_STATES.ok]: ENTITIES_STATES_STYLES[ENTITIES_STATES.ok].color,
+  [WATCHER_STATES.minor]: ENTITIES_STATES_STYLES[ENTITIES_STATES.minor].color,
+  [WATCHER_STATES.major]: ENTITIES_STATES_STYLES[ENTITIES_STATES.major].color,
+  [WATCHER_STATES.critical]: ENTITIES_STATES_STYLES[ENTITIES_STATES.critical].color,
+  [WATCHER_STATES.pause]: COLORS.state.pause,
 };
 
 export const PBEHAVIOR_TYPES = {
   maintenance: 'Maintenance',
-  outOfSurveillance: 'Hors plage horaire de surveillance',
+  unmonitored: 'Hors plage horaire de surveillance',
   pause: 'pause',
 };
 
@@ -162,40 +172,38 @@ export const PAUSE_REASONS = {
 };
 
 export const WEATHER_ICONS = {
-  [ENTITIES_STATES.ok]: 'wb_sunny',
-  [ENTITIES_STATES.minor]: 'person',
-  [ENTITIES_STATES.major]: 'person',
-  [ENTITIES_STATES.critical]: 'wb_cloudy',
+  [WATCHER_STATES.ok]: 'wb_sunny',
+  [WATCHER_STATES.minor]: 'person',
+  [WATCHER_STATES.major]: 'person',
+  [WATCHER_STATES.critical]: 'wb_cloudy',
   maintenance: 'build',
-  outOfSurveillance: 'brightness_3',
-  pause: 'pause',
+  unmonitored: 'brightness_3',
+  [WATCHER_STATES.pause]: 'pause',
 };
-
-export const WATCHER_PBEHAVIOR_COLOR = '#808080';
 
 export const ENTITY_STATUS_STYLES = {
   [ENTITIES_STATUSES.off]: {
-    color: 'black',
+    color: COLORS.status.off,
     text: 'off',
     icon: 'keyboard_arrow_up',
   },
   [ENTITIES_STATUSES.ongoing]: {
-    color: 'grey',
+    color: COLORS.status.ongoing,
     text: 'ongoing',
     icon: 'keyboard_arrow_up',
   },
   [ENTITIES_STATUSES.stealthy]: {
-    color: 'gold',
+    color: COLORS.status.stealthy,
     text: 'stealthy',
     icon: 'keyboard_arrow_up',
   },
   [ENTITIES_STATUSES.flapping]: {
-    color: 'orange',
+    color: COLORS.status.flapping,
     text: 'flapping',
     icon: 'keyboard_arrow_up',
   },
   [ENTITIES_STATUSES.cancelled]: {
-    color: 'red',
+    color: COLORS.status.cancelled,
     text: 'cancelled',
     icon: 'keyboard_arrow_up',
   },
@@ -242,7 +250,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
 
 export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.ack]: {
-    color: '#9c27b0',
+    color: COLORS.entitiesEvents.ack,
     icon: 'playlist_add_check',
   },
   [EVENT_ENTITY_TYPES.fastAck]: {
@@ -255,11 +263,11 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'list',
   },
   [EVENT_ENTITY_TYPES.ackRemove]: {
-    color: '#9c27b0',
+    color: COLORS.entitiesEvents.ackRemove,
     icon: 'not_interested',
   },
   [EVENT_ENTITY_TYPES.declareTicket]: {
-    color: '#2196f3',
+    color: COLORS.entitiesEvents.declareTicket,
     icon: 'report_problem',
   },
   [EVENT_ENTITY_TYPES.assocTicket]: {
@@ -272,11 +280,11 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'thumbs_up_down',
   },
   [EVENT_ENTITY_TYPES.snooze]: {
-    color: '#e91e63',
+    color: COLORS.entitiesEvents.snooze,
     icon: 'alarm',
   },
   [EVENT_ENTITY_TYPES.done]: {
-    color: 'green',
+    color: COLORS.entitiesEvents.done,
     icon: 'assignment_turned_in',
   },
   [EVENT_ENTITY_TYPES.validate]: {
@@ -294,7 +302,7 @@ export const EVENT_ENTITY_STYLE = {
 };
 
 export const UNKNOWN_VALUE_STYLE = {
-  color: 'black',
+  color: COLORS.status.unknown,
   text: 'Invalid val',
   icon: 'clear',
 };
@@ -526,7 +534,7 @@ export const STATS_QUICK_RANGES = {
   },
 };
 
-export const STATS_DEFAULT_COLOR = '#DDDDDD';
+export const STATS_DEFAULT_COLOR = COLORS.statsDefault;
 
 export const STATS_DISPLAY_MODE = {
   value: 'value',
@@ -541,10 +549,10 @@ export const STATS_DISPLAY_MODE_PARAMETERS = {
     critical: 30,
   },
   colors: {
-    ok: '#66BB6A',
-    minor: '#FCDC00',
-    major: '#FFA726',
-    critical: '#FF7043',
+    ok: COLORS.state.ok,
+    minor: COLORS.state.minor,
+    major: COLORS.state.major,
+    critical: COLORS.state.critical,
   },
 };
 
@@ -567,10 +575,10 @@ export const WIDGET_MIN_SIZE = 3;
 
 export const STATS_CALENDAR_COLORS = {
   alarm: {
-    ok: '#66BB6A',
-    minor: '#FCDC00',
-    major: '#FFA726',
-    critical: '#FF7043',
+    ok: COLORS.state.ok,
+    minor: COLORS.state.minor,
+    major: COLORS.state.major,
+    critical: COLORS.state.critical,
   },
 };
 

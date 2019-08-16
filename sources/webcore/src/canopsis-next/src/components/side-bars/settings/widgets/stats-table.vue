@@ -21,7 +21,8 @@
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
           v-model="settings.widget.parameters.sort",
-          :columns="defaultSortColumns"
+          :columns="defaultSortColumns",
+          :columnsLabel="$t('settings.columnName')"
           )
           v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}

@@ -28,9 +28,17 @@
           :title="$t('settings.moreInfosModal')"
           )
       v-divider
+      field-number(v-model="settings.widget.parameters.limit", :title="$t('settings.limit')")
+      v-divider
       v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
+          field-default-sort-column(
+          v-model="settings.widget.parameters.sort",
+          :columns="sortColumns",
+          :columnsLabel="$t('settings.orderBy')"
+          )
+          v-divider
           field-weather-template(
           data-test="weatherTemplate",
           v-model="settings.widget.parameters.blockTemplate",
@@ -109,6 +117,7 @@ import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
@@ -117,6 +126,7 @@ import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldNumber from './fields/common/number.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
@@ -128,6 +138,7 @@ export default {
     FieldTitle,
     FieldPeriodicRefresh,
     FieldFilterEditor,
+    FieldDefaultSortColumn,
     FieldWeatherTemplate,
     FieldGridSize,
     FieldSlider,
@@ -136,6 +147,7 @@ export default {
     FieldDefaultElementsPerPage,
     FieldInfoPopup,
     FieldTextEditor,
+    FieldNumber,
   },
   mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
@@ -146,6 +158,13 @@ export default {
         rowId,
         widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
       },
+      sortColumns: [
+        { label: 'name', value: 'name' },
+        { label: 'state', value: 'state' },
+        { label: 'status', value: 'status' },
+        { label: 'criticity', value: 'criticity' },
+        { label: 'org', value: 'org' },
+      ],
     };
   },
   methods: {
