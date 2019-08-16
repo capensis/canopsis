@@ -60,13 +60,17 @@ import { get, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
 import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES, NOT_COMPLETED_USER_RIGHTS_KEYS } from '@/constants';
-import { generateRoleRightByChecksum } from '@/helpers/entities';
+import {
+  prepareUserByData,
+  generateRoleRightByChecksum,
+} from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
+import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
@@ -84,6 +88,7 @@ export default {
     modalMixin,
     entitiesRightMixin,
     entitiesRoleMixin,
+    entitiesUserMixin,
     entitiesViewGroupMixin,
     rightsTechnicalUserMixin,
     rightsTechnicalRoleMixin,
@@ -170,6 +175,9 @@ export default {
     showCreateUserModal() {
       this.showModal({
         name: MODALS.createUser,
+        config: {
+          action: data => this.createUser({ data: prepareUserByData(data) }),
+        },
       });
     },
 
