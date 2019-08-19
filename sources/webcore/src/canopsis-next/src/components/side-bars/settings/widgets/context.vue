@@ -15,7 +15,8 @@
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
           v-model="settings.widget.parameters.sort",
-          :columns="settings.widget.parameters.widgetColumns"
+          :columns="settings.widget.parameters.widgetColumns",
+          :columnsLabel="$t('settings.columnName')"
           )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")

@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       filter-selector(
-      :label="$t('settings.selectAFilter')",
+      :label="$t('filterSelector.defaultFilter')",
       :entitiesType="this.entitiesType",
       :value="value",
       :filters="filters",

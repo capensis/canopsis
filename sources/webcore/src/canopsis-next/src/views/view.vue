@@ -9,7 +9,7 @@
       :updateViewMethod="data => updateView({ id, data })",
       )
     .fab
-      v-layout(column)
+      v-layout(data-test="controlViewLayout", column)
         v-tooltip(left)
           v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
             v-icon refresh
@@ -20,7 +20,14 @@
         direction="left",
         transition="slide-y-reverse-transition"
         )
-          v-btn(slot="activator", :input-value="isVSpeedDialOpen", color="primary", dark, fab)
+          v-btn(
+          data-test="menuViewButton",
+          slot="activator",
+          :input-value="isVSpeedDialOpen",
+          color="primary",
+          dark,
+          fab,
+          )
             v-icon menu
             v-icon close
           v-tooltip(top)
@@ -36,7 +43,15 @@
               v-icon fullscreen_exit
             span alt + enter / command + enter
           v-tooltip(v-if="hasUpdateAccess", top)
-            v-btn(slot="activator", fab, dark, small, @click.stop="toggleViewEditingMode", v-model="isEditingMode")
+            v-btn(
+            data-test="editViewButton",
+            slot="activator",
+            fab,
+            dark,
+            small,
+            @click.stop="toggleViewEditingMode",
+            v-model="isEditingMode"
+            )
               v-icon edit
               v-icon done
             span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
@@ -54,6 +69,7 @@
             span {{ $t('common.addWidget') }}
           v-tooltip(top)
             v-btn(
+            data-test="addViewButton",
             v-if="hasUpdateAccess",
             slot="activator",
             fab,

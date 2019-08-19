@@ -65,7 +65,7 @@ Voici un exemple de configuration (user_interface.json) :
 Pour soumettre cette configuration, vous pouvez utiliser *curl* comme suit : 
 
 ````
-curl -X POST -H "Content-type: application/json" -d @user_interface.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/api/internal/user_interface'
+curl -u "user:password" -X POST -H "Content-type: application/json" -d @user_interface.json 'http://IP_CANOPSIS:PORT_CANOPSIS/api/internal/user_interface'
 ````
 
 Le résultat renvoyé doit être de type :

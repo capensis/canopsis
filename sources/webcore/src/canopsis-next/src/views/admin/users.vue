@@ -57,12 +57,9 @@
 </template>
 
 <script>
-import sha1 from 'sha1';
-import { omit, cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
 
-import { generateUser } from '@/helpers/entities';
+import { prepareUserByData } from '@/helpers/entities';
 import { getUsersSearchByText } from '@/helpers/entities-search';
 
 import modalMixin from '@/mixins/modal';
@@ -141,13 +138,7 @@ export default {
           title: this.$t('modals.editUser.title'),
           user,
           action: async (data) => {
-            const editedUser = cloneDeep(user);
-
-            if (data.password && data.password !== '') {
-              editedUser.shadowpasswd = sha1(data.password);
-            }
-
-            await this.createUser({ data: { ...editedUser, ...omit(data, ['password']) } });
+            await this.createUser({ data: prepareUserByData(data, user) });
 
             const requests = [this.fetchUsersListWithPreviousParams()];
 
@@ -164,13 +155,7 @@ export default {
         name: MODALS.createUser,
         config: {
           action: async (data) => {
-            const user = { ...generateUser() };
-
-            if (data.password && data.password !== '') {
-              user.shadowpasswd = sha1(data.password);
-            }
-
-            await this.createUser({ data: { ...user, ...omit(data, ['password']) } });
+            await this.createUser({ data: prepareUserByData(data) });
 
             await this.fetchUsersListWithPreviousParams();
           },

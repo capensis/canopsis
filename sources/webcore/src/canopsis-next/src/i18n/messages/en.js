@@ -27,6 +27,7 @@ export default {
     author: 'Author',
     submit: 'Submit',
     cancel: 'Cancel',
+    continue: 'Continue',
     options: 'Options',
     type: 'Type',
     quitEditing: 'Quit editing',
@@ -95,7 +96,8 @@ export default {
     filter: 'Filter',
     actions: {
       close: 'Close',
-      acknowledgeAndReport: 'Acknowledge and report an incident',
+      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
       [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
@@ -255,6 +257,7 @@ export default {
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
     columnNames: 'Column names',
+    orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
     elementsPerPage: 'Elements per page',
@@ -345,6 +348,7 @@ export default {
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
+    limit: 'Limit',
     height: 'Height',
     margin: {
       title: 'Block margins',
@@ -490,6 +494,14 @@ export default {
         output: 'Note',
         ackResources: 'Ack resources',
       },
+    },
+    confirmAckWithTicket: {
+      continueAndAssociateTicket: 'Continue and associate ticket',
+      infoMessage: `A ticket number has been specified.
+        Maybe you wanted to associate this ticket number to the alarm.
+        If so, click on "Continue and associate ticket" button.
+        To continue the ack action without taking ticket number into account,
+        click on "Continue" button.`,
     },
     createSnoozeEvent: {
       title: 'Snooze',
@@ -1025,6 +1037,7 @@ export default {
     },
   },
   filterSelector: {
+    defaultFilter: 'Default filter',
     fields: {
       mixFilters: 'Mix filters',
     },
@@ -1089,6 +1102,7 @@ export default {
       title: 'User interface',
       fields: {
         appTitle: 'App title',
+        language: 'Default user interface language',
         footer: 'Login footer',
         description: 'Login page description',
         logo: 'Logo',
@@ -1145,6 +1159,7 @@ export default {
       },
       declareTicket: {
         title: 'Declare ticket',
+        emptyResponse: 'Empty response',
         fields: {
           text: 'Key',
           value: 'Value',

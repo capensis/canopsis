@@ -25,6 +25,7 @@ export default {
     author: 'Auteur',
     submit: 'Soumettre',
     cancel: 'Annuler',
+    continue: 'Continuer',
     options: 'Options',
     type: 'Type',
     quitEditing: 'Quitter le mode d\'édition',
@@ -87,7 +88,8 @@ export default {
     links: 'Liens',
     actions: {
       close: 'Fermer',
-      acknowledgeAndReport: 'Acquitter et signaler un incident',
+      acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+      acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
       saveChanges: 'Sauvegarder',
       reportIncident: 'Signaler un incident',
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
@@ -231,6 +233,7 @@ export default {
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
     columnNames: 'Nom des colonnes',
+    orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
     defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
     elementsPerPage: 'Élements par page',
@@ -316,6 +319,7 @@ export default {
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
+    limit: 'Limite',
     height: 'Hauteur',
     margin: {
       title: 'Marges',
@@ -448,6 +452,14 @@ export default {
         output: 'Note',
         ackResources: 'Ack ressources',
       },
+    },
+    confirmAckWithTicket: {
+      continueAndAssociateTicket: 'Continuer et associer un ticket',
+      infoMessage: `Un numéro de ticket a été renseigné.
+        Peut-être souhaitiez-vous associer un ticket à cet incident.
+        Si tel est le cas, cliquez sur le bouton "Continuer et associer un ticket".
+        Pour continuer l'action d'acquittement sans prendre en compte le numéro de ticket,
+        cliquez sur le bouton "Continuer".`,
     },
     createSnoozeEvent: {
       title: 'Snooze',
@@ -700,6 +712,13 @@ export default {
       externalData: 'Données externes',
       onSuccess: 'En cas de succès',
       onFailure: 'En cas d\'échec',
+      tooltips: {
+        addValueRuleField: 'Ajouter une règle',
+        editValueRuleField: 'Editer la règle',
+        addObjectRuleField: 'Ajouter un groupe',
+        editObjectRuleField: 'Editer le groupe',
+        removeRuleField: 'Supprimer le groupe/la règle',
+      },
     },
     viewTab: {
       create: {
@@ -905,6 +924,7 @@ export default {
     },
   },
   filterSelector: {
+    defaultFilter: 'Filtre par défaut',
     fields: {
       mixFilters: 'Mix de filtres',
     },
@@ -1015,6 +1035,7 @@ export default {
         },
       },
       declareTicket: {
+        emptyResponse: 'Réponse vide',
         title: 'Déclarer un ticket',
         fields: {
           text: 'Clé',

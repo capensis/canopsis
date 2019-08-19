@@ -37,7 +37,11 @@
         :key="view._id",
         :color="getColor(view._id)",
         )
-          router-link.panel-item-content-link(:title="view.title", :to="getViewLink(view)")
+          router-link.panel-item-content-link(
+          :data-test="`linkView-view-${view._id}`"
+          :title="view.title",
+          :to="getViewLink(view)",
+          )
             v-card-text.panel-item-content
               v-layout(align-center, justify-space-between)
                 v-flex
@@ -66,6 +70,7 @@
           v-divider
     v-divider
     groups-settings-button(
+    tooltipRight,
     :isEditingMode="isEditingMode",
     @toggleEditingMode="toggleEditingMode"
     )

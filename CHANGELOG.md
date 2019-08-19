@@ -2,6 +2,30 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.25.0 - Due date : 2019-08-02
+
+ - [Documentation] Add documentation for importctx API
+ - [Documentation] Document CpsTime fields, such as .Unix
+ - [Build] Build Docker Go engines and Debian/CentOS Go packages with the same Go version
+ - [Build] Fix unneccessary snmp-mibs-downloader dependency in Core, it was meant for CAT
+ - [Build] Add canopsis-engines-go-cat packages for Debian and CentOS
+ - [Build] Improve Go engines Docker Makefiles portability for macOS
+ - [API - importctx] Fix "create" action and add a "set" action
+ - [API - pbehavior] Fix a TypeError when dealing with a future date
+ - [Go] Bump Go engines to Go 1.12.7, fixes dlv attachment on che and axe
+ - [Go] Port long_output feature from Python to Go
+ - [Service Weather] Refactor Service Weather route to significantly improve performance
+ - [UI] Add search fields on Users and Roles administration views
+ - [UI] Add an internal configuration for specific modals width
+ - [UI] Enable empty views groups deletion
+ - [UI] Fix – Roles mass deletion
+ - [UI] Fix – Tooltips position on views menu
+ - [UI – Listalarm] Fix Ack with ticket workflow
+ - [UI – Tests] Add e2e tests for horizontal views menu
+ - [UI – Tests] Add e2e tests commands for views management
+ - [UI - Translations] Make the global default language configurable
+ - [UI – Webhooks] Fix – Webhooks deletion
+
 ## Canopsis 3.24.0 - Due date : 2019-07-18
 
  - [Build] Build Docker images with "yarn" instead of "npm"
@@ -11,7 +35,7 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
  - [API] Fix search on entities informations in get-alarms
  - [Go] Add formattedDate and replace functions to webhooks templates
  - [Go] Fix missing last_update_date computation
- - [UI] Add a label to « Actions » columns, on all tables
+ - [UI] Add a label to "Actions" columns, on all tables
  - [UI] Add "description", "logo", and "login page footer" parameters on parameters view + Add a right to access this view
  - [UI] Harmonize default view selector modal
  - [UI] Fix – Close all modals on page change
@@ -26,7 +50,7 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
  - [UI – Tests] Add e2e tests – Topbar
  - [UI – Tests] Add e2e tests – Users administration’s panel
  - [UI – Tests] Add e2e tests – Left sidebar
- - [UI – Weather] Change « More infos » modal header’s color according to watcher’s state
+ - [UI – Weather] Change "More infos" modal header’s color according to watcher’s state
 
 ## Canopsis 3.23.0 - Due date : 2019-07-05
 
@@ -503,7 +527,7 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
 - [email2canopsis] : now decode encoded subject line
 - [Go]: new Action engine (especially pbehaviors from regex)
 - [Go]: send alarm resolution informations to stats engine
-- [Python] : fix « Socket Error 104 » while engines communicate with rabbitmq
+- [Python] : fix "Socket Error 104" while engines communicate with rabbitmq
 - [Tool] : env2cfg can now handle mongo replicaset option
 - [UI] : add rights for items in engine menu
 - [UI] : fix `has_active_pb` flag not correctly calculated

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 import { setInSeveral, unsetInSeveralWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
@@ -8,20 +8,31 @@ export default {
     webhookToForm(webhook) {
       const patternsCustomizer = value => value || [];
 
-      return setInSeveral(webhook, {
-        declare_ticket: objectToTextPairs,
-        'request.headers': objectToTextPairs,
-        'hook.event_patterns': patternsCustomizer,
-        'hook.alarm_patterns': patternsCustomizer,
-        'hook.entity_patterns': patternsCustomizer,
-      });
+      const declareTicket = omit(webhook.declare_ticket, ['empty_response']);
+
+      return {
+        emptyResponse: webhook.declare_ticket.empty_response,
+        ...setInSeveral(webhook, {
+          declare_ticket: () => objectToTextPairs(declareTicket),
+          'request.headers': objectToTextPairs,
+          'hook.event_patterns': patternsCustomizer,
+          'hook.alarm_patterns': patternsCustomizer,
+          'hook.entity_patterns': patternsCustomizer,
+        }),
+      };
     },
     formToWebhook(form) {
       const patternsCondition = value => !value || !value.length;
       const hasAuth = get(form, 'request.auth');
 
       const pathValuesMap = {
-        declare_ticket: textPairsToObject,
+        declare_ticket: (value) => {
+          const newValue = textPairsToObject(value);
+
+          newValue.empty_response = form.emptyResponse;
+
+          return newValue;
+        },
         'request.headers': textPairsToObject,
       };
 
@@ -32,7 +43,7 @@ export default {
         });
       }
 
-      const webhook = setInSeveral(form, pathValuesMap);
+      const webhook = setInSeveral(omit(form, ['emptyResponse']), pathValuesMap);
 
       return unsetInSeveralWithConditions(webhook, {
         'hook.event_patterns': patternsCondition,
