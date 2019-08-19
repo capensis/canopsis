@@ -3,7 +3,7 @@
     v-layout
     v-fade-transition
       v-layout.fill-height(v-if="!watchersPending", wrap)
-        v-alert(type="error", :value="true", v-if="hasNoData && this.watchersError")
+        v-alert(type="error", :value="true", v-if="hasNoData && watchersError")
           v-layout(align-center)
             div.mr-4 {{ $t('errors.default') }}
             v-tooltip(top)
