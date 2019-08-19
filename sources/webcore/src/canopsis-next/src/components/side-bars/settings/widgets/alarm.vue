@@ -69,7 +69,7 @@
             v-model="settings.widget.parameters.fastAckOutput",
             )
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
