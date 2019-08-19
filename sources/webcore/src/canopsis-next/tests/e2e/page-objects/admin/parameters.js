@@ -17,17 +17,19 @@ const commands = {
       .waitForElementVisible(this.el('@languageOption', index))
       .customClick(this.el('@languageOption', index));
   },
+  clearFooter() {
+    return this.customClearRTE('@footerField');
+  },
+  clearDescription() {
+    return this.customClearRTE('@descriptionField');
+  },
   setFooter(value) {
-    return this.url('https://xdsoft.net/jodit/')
-      .customClick('@footerField')
-      .sendKeys('@footerField', value)
-      .pause(50000);
+    return this.customClick('@footerField')
+      .sendKeys('@footerField', value);
   },
   setDescription(value) {
-    return this.url('https://xdsoft.net/jodit/')
-      .customClick('@descriptionField')
-      .sendKeys('@descriptionField', value)
-      .pause(50000);
+    return this.customClick('@descriptionField')
+      .sendKeys('@descriptionField', value);
   },
   clickSubmitButton() {
     return this.customClick('@submitButton');
@@ -44,7 +46,9 @@ module.exports = {
     appTitle: sel('appTitle'),
     languageField: `${sel('languageLayout')} .v-input__slot`,
     languageOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    footerFieldSource: `${sel('footerLayout')} .jodit_toolbar_btn`,
     footerField: `${sel('footerLayout')} .jodit_wysiwyg`,
+    descriptionFieldSource: `${sel('descriptionLayout')} .jodit_toolbar_btn`,
     descriptionField: `${sel('descriptionLayout')} .jodit_wysiwyg`,
     fileSelector: `input${sel('fileSelector')}`,
     submitButton: sel('submitButton'),
