@@ -1,3 +1,5 @@
+import { STATS_TYPES } from '@/constants';
+
 import widgetStatsQueryMixin from './stats-query';
 
 export default {
@@ -72,6 +74,11 @@ export default {
     options() {
       return {
         annotation: this.annotationLine,
+        tooltips: {
+          callbacks: {
+            label: this.tooltipLabel,
+          },
+        },
       };
     },
   },
@@ -122,6 +129,33 @@ export default {
       } finally {
         this.pending = false;
       }
+    },
+
+    tooltipLabel(tooltipItem, data) {
+      const PROPERTIES_FILTERS_MAP = {
+        [STATS_TYPES.stateRate.value]: value => this.$options.filters.percentage(value),
+        [STATS_TYPES.ackTimeSla.value]: value => this.$options.filters.percentage(value),
+        [STATS_TYPES.resolveTimeSla.value]: value => this.$options.filters.percentage(value),
+        [STATS_TYPES.timeInState.value]: value => this.$options.filters.duration({ value }),
+        [STATS_TYPES.mtbf.value]: value => this.$options.filters.duration({ value }),
+      };
+
+      const { stats } = this.query;
+
+      const statObject = stats ? stats[data.datasets[tooltipItem.datasetIndex].label] : null;
+      let label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+      if (label) {
+        label += ': ';
+      }
+
+      if (statObject && PROPERTIES_FILTERS_MAP[statObject.stat]) {
+        label += PROPERTIES_FILTERS_MAP[statObject.stat](tooltipItem.yLabel);
+      } else {
+        label += tooltipItem.yLabel;
+      }
+
+      return label;
     },
   },
 };
