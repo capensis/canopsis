@@ -12,10 +12,10 @@
             v-flex(xs12)
               v-layout(row)
                 v-flex(xs6) {{ item.name }}
-                  span(v-show="item.value") :
-                template(v-if="item.value")
+                  span(v-show="item.isValueRule") :
+                template(v-if="item.isValueRule")
                   v-flex(v-if="isSimpleValueRule(item.value)")
-                    span.body-1.font-italic {{ item.value }}
+                    span.body-1.font-italic {{ item.value | treeViewValue }}
                   v-flex(v-else)
                     v-layout(column)
                       v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { isObject, dropRight } from 'lodash';
+import { isObject, isString, isNull, dropRight, has } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -37,6 +37,17 @@ import formMixin from '@/mixins/form';
 import modalMixin from '@/mixins/modal';
 
 export default {
+  filters: {
+    treeViewValue(value) {
+      if (isString(value)) {
+        return `"${value}"`;
+      } else if (isNull(value)) {
+        return 'null';
+      }
+
+      return value;
+    },
+  },
   mixins: [formMixin, modalMixin],
   model: {
     prop: 'pattern',
@@ -104,7 +115,7 @@ export default {
       const { actionsMap } = this;
 
       return (treeViewItem) => {
-        if (treeViewItem.value) {
+        if (has(treeViewItem, 'value')) {
           return [
             actionsMap.editValueRuleField,
             actionsMap.removeRuleField,
@@ -154,9 +165,10 @@ export default {
           path,
           name: key,
           id: path.join('.'),
+          isValueRule: this.isValueRule(value),
         };
 
-        if (this.isValueRule(value)) {
+        if (item.isValueRule) {
           item.value = value;
         } else {
           item.children = this.parsePatternToTreeview(value, path);

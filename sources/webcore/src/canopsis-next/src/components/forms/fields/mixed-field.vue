@@ -26,7 +26,7 @@
     :name="name",
     :disabled="disabled",
     :solo-inverted="soloInverted",
-    :hide-details="hideDetails"
+    :hide-details="hideDetails",
     :flat="flat",
     :error-messages="errorMessages",
     single-line,
@@ -34,17 +34,23 @@
     @input="updateTextFieldValue",
     )
     v-switch.ma-0.ml-3.mixed-field__switch(
-    v-else,
+    v-else-if="inputType === $constants.FILTER_INPUT_TYPES.boolean",
     :inputValue="value",
     :label="switchLabel",
     :disabled="disabled",
     hide-details,
     @change="updateModel"
     )
+    v-text-field.mixed-field__text(
+    v-else,
+    :error-messages="errorMessages",
+    value="null",
+    disabled
+    )
 </template>
 
 <script>
-import { isBoolean, isNumber, isNan } from 'lodash';
+import { isBoolean, isNumber, isNan, isNull } from 'lodash';
 
 import { FILTER_INPUT_TYPES } from '@/constants';
 
@@ -102,6 +108,7 @@ export default {
         { text: 'String', value: FILTER_INPUT_TYPES.string },
         { text: 'Number', value: FILTER_INPUT_TYPES.number },
         { text: 'Boolean', value: FILTER_INPUT_TYPES.boolean },
+        { text: 'Null', value: FILTER_INPUT_TYPES.null },
       ],
     };
   },
@@ -115,6 +122,8 @@ export default {
         return FILTER_INPUT_TYPES.boolean;
       } else if (isNumber(this.value)) {
         return FILTER_INPUT_TYPES.number;
+      } else if (isNull(this.value)) {
+        return FILTER_INPUT_TYPES.null;
       }
 
       return FILTER_INPUT_TYPES.string;
@@ -129,6 +138,7 @@ export default {
         [FILTER_INPUT_TYPES.string]: 'title',
         [FILTER_INPUT_TYPES.number]: 'exposure_plus_1',
         [FILTER_INPUT_TYPES.boolean]: 'toggle_on',
+        [FILTER_INPUT_TYPES.null]: 'space_bar',
       };
 
       return type => TYPES_ICONS_MAP[type];
@@ -144,7 +154,10 @@ export default {
           this.updateModel(Boolean(this.value));
           break;
         case FILTER_INPUT_TYPES.string:
-          this.updateModel(isNan(this.value) ? '' : String(this.value));
+          this.updateModel((isNan(this.value) || isNull(this.value)) ? '' : String(this.value));
+          break;
+        case FILTER_INPUT_TYPES.null:
+          this.updateModel(null);
           break;
       }
     },

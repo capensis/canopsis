@@ -198,7 +198,7 @@ def exports(ws):
     @ws.application.get('/logged_in')
     def logged_in():
         # Route used when came back from auth backend
-        redirect('/static/canopsis/index.html')
+        redirect('/static/canopsis-next/dist/index.html')
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_login})
     def autologin(authkey=''):

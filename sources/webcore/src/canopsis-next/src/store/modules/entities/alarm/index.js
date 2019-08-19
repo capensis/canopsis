@@ -51,12 +51,16 @@ export default {
     },
   },
   actions: {
-    async fetchListWithoutStore({ dispatch }, { params }) {
+    async fetchListWithoutStore({ dispatch }, { params, withoutCatch = false }) {
       try {
         const { data: [result] } = await request.get(API_ROUTES.alarmList, { params });
 
         return result;
       } catch (err) {
+        if (withoutCatch) {
+          throw err;
+        }
+
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         return { alarms: [], total: 0 };

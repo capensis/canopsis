@@ -27,6 +27,7 @@ export default {
     author: 'Author',
     submit: 'Submit',
     cancel: 'Cancel',
+    continue: 'Continue',
     options: 'Options',
     type: 'Type',
     quitEditing: 'Quit editing',
@@ -95,7 +96,8 @@ export default {
     filter: 'Filter',
     actions: {
       close: 'Close',
-      acknowledgeAndReport: 'Acknowledge and report an incident',
+      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
       [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
@@ -255,6 +257,7 @@ export default {
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
     columnNames: 'Column names',
+    orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
     elementsPerPage: 'Elements per page',
@@ -265,6 +268,7 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
+    fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
@@ -274,6 +278,7 @@ export default {
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
+      draggable: 'Try dragging an item',
     },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
@@ -289,6 +294,9 @@ export default {
     },
     statsDateInterval: {
       monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
+      fields: {
+        quickRanges: 'Quick ranges',
+      },
       quickRanges: {
         [STATS_QUICK_RANGES.custom.value]: 'Custom',
         [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
@@ -340,6 +348,7 @@ export default {
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
+    limit: 'Limit',
     height: 'Height',
     margin: {
       title: 'Block margins',
@@ -485,6 +494,14 @@ export default {
         output: 'Note',
         ackResources: 'Ack resources',
       },
+    },
+    confirmAckWithTicket: {
+      continueAndAssociateTicket: 'Continue and associate ticket',
+      infoMessage: `A ticket number has been specified.
+        Maybe you wanted to associate this ticket number to the alarm.
+        If so, click on "Continue and associate ticket" button.
+        To continue the ack action without taking ticket number into account,
+        click on "Continue" button.`,
     },
     createSnoozeEvent: {
       title: 'Snooze',
@@ -796,6 +813,9 @@ export default {
       errors: {
         endDateLessOrEqualStartDate: 'End date should be after start date',
       },
+      info: {
+        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
+      },
     },
     createSnmpRule: {
       create: {
@@ -971,6 +991,7 @@ export default {
     lineNotEmpty: 'This line is not empty',
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
+    statsRequestProblem: 'An error occurred while retrieving stats data',
   },
   calendar: {
     today: 'Today',
@@ -1016,6 +1037,7 @@ export default {
     },
   },
   filterSelector: {
+    defaultFilter: 'Default filter',
     fields: {
       mixFilters: 'Mix filters',
     },
@@ -1076,6 +1098,16 @@ export default {
         topBar: 'Top bar',
       },
     },
+    userInterfaceForm: {
+      title: 'User interface',
+      fields: {
+        appTitle: 'App title',
+        language: 'Default user interface language',
+        footer: 'Login footer',
+        description: 'Login page description',
+        logo: 'Logo',
+      },
+    },
   },
   view: {
     errors: {
@@ -1127,6 +1159,7 @@ export default {
       },
       declareTicket: {
         title: 'Declare ticket',
+        emptyResponse: 'Empty response',
         fields: {
           text: 'Key',
           value: 'Value',
@@ -1138,6 +1171,9 @@ export default {
     custom: {
       tstop: {
         after: 'The {0} should be after than {1}',
+      },
+      logo: {
+        size: 'The {0} size must be less than {1} KB.',
       },
     },
   },

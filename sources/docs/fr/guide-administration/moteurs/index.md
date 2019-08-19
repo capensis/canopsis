@@ -32,6 +32,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | che            | Supprime les évènements invalides, gère le contexte, et enrichit les évènements. |                    |
 | heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.       |                    |
 | stat           | Calcule des statistiques sur les états des alarmes.                              |                    |
+| watcher        | Calcule les états des [watchers](../watchers/index.md).                          |                    |
 
 ### Moteurs Python
 
@@ -70,8 +71,6 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ```
   -autoDeclareTickets
         Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
-  -autoRecomputeWatchers
-        Recalcule automatiquement l'état des watchers chaque minute.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
@@ -82,12 +81,10 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue
-        Publie les événements sur cette queue. (par défaut "Engine_action")
+        Publie les événements sur cette queue. (par défaut "Engine_watcher")
   -version
         version infos
 ```
-
-Le flag `autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur axe.  
 
 ### Utilisation de engine-che
 
@@ -134,6 +131,25 @@ Le flag `autoRecomputeWatchers` permet de s'assurer que l'état des watchers est
   -version
         version infos
 ```
+
+### Utilisation de engine-watcher
+
+!!! info
+    Disponible à partir de Canopsis 3.23.0.
+
+```
+  -autoRecomputeWatchers
+        Recalcule automatiquement l'état des watchers chaque minute.
+  -d    debug
+  -printEventOnError
+        Afficher les évènements sur les erreurs de traitement.
+  -publishQueue string
+        Publie les événements sur cette queue. (par défaut "Engine_action")
+  -version
+        version infos
+```
+
+Le flag `-autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur watcher.
 
 ## Changer le niveau de log d'un moteur
 

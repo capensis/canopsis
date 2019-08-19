@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import appMixin from '@/mixins/app';
-import entitiesInfoMixin from '@/mixins/entities/info';
+import authMixin from '@/mixins/auth';
 
 import TopBar from './partial/top-bar.vue';
 import GroupsSideBar from './partial/groups-side-bar.vue';
@@ -16,14 +15,11 @@ export default {
     TopBar,
     GroupsSideBar,
   },
-  mixins: [appMixin, entitiesInfoMixin],
+  mixins: [authMixin],
   data() {
     return {
       isOpen: false,
     };
-  },
-  mounted() {
-    this.fetchAppInfos();
   },
   methods: {
     toggleSideBar() {

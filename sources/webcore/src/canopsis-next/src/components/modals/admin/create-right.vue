@@ -71,6 +71,9 @@ export default {
           this.addSuccessPopup({ text: this.$t('success.default') });
           this.hideModal();
         }
+        if (this.config.action) {
+          await this.config.action();
+        }
       } catch (err) {
         this.addErrorPopup({ text: this.$t('errors.default') });
       }

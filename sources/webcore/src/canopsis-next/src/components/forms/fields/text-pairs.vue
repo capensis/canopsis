@@ -23,21 +23,21 @@
         v-flex.pa-1(xs6)
           v-text-field(
           v-if="!mixed",
+          v-validate="valueValidationRules",
           :value="item[itemValue]",
           :label="valueLabel",
           :disabled="disabled",
           :name="getValueFieldName(index)",
           :error-messages="getCollectedErrorMessages(getValueFieldName(index))",
-          v-validate="valueValidationRules",
           @input="updateFieldInArrayItem(index, itemValue, $event)"
           )
           mixed-field(
           v-else
+          v-validate="valueValidationRules",
           :value="item[itemValue]",
           :name="getValueFieldName(index)",
           :disabled="disabled",
           :error-messages="getCollectedErrorMessages(getValueFieldName(index))",
-          v-validate="valueValidationRules",
           @input="updateFieldInArrayItem(index, itemValue, $event)"
           )
         .text-pair__delete-button

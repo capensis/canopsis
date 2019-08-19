@@ -10,6 +10,7 @@
   dark
   )
     draggable.d-flex(
+    data-test="draggable-wrap",
     v-if="tabs.length",
     :value="tabs",
     :options="draggableOptions",
@@ -17,6 +18,7 @@
     @input="$emit('update:tabs', $event)"
     )
       v-tab.draggable-item(
+      :data-test="`tab-${tab._id}`",
       v-for="tab in tabs",
       :key="tab._id",
       :disabled="isTabsChanged",
@@ -26,6 +28,7 @@
       )
         span {{ tab.title }}
         v-btn(
+        data-test="editTab",
         v-show="hasUpdateAccess && isEditingMode",
         small,
         flat,
@@ -34,6 +37,7 @@
         )
           v-icon(small) edit
         v-btn(
+        data-test="copyTab",
         v-show="hasUpdateAccess && isEditingMode",
         small,
         flat,
@@ -42,6 +46,7 @@
         )
           v-icon(small) file_copy
         v-btn(
+        data-test="deleteTab",
         v-show="hasUpdateAccess && isEditingMode",
         small,
         flat,

@@ -21,3 +21,11 @@ Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonct
 Plusieurs options sont disponibles pour personnaliser l'interface de Canopsis.
 
 Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
+
+## Les helpers Handlebars
+
+A différents endroits de l'interface de Canopsis, le texte affiché est personnalisable grâce au langage Handlebars.
+
+Différents helpers sont disponibles pour ajouter un peu de logique dans ces templates.
+
+Pour plus de détails, rendez-vous [ici](./helpers/index.md)

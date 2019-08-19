@@ -1,5 +1,6 @@
 <template lang="pug">
-  shared-mass-actions-panel(:actions="filteredActions")
+  div
+    shared-mass-actions-panel(:actions="filteredActions")
 </template>
 
 <script>
@@ -55,7 +56,7 @@ export default {
           type: alarmsListActionsTypes.fastAck,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
-          method: this.createAckEvent,
+          method: this.createMassFastAckEvent,
         },
         {
           type: alarmsListActionsTypes.ackRemove,
@@ -90,29 +91,6 @@ export default {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
       };
-    },
-  },
-  methods: {
-    createAckEvent() {
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
-    },
-
-    showAddPbehaviorModal() {
-      this.showModal({
-        name: MODALS.createPbehavior,
-        config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: this.items.map(item => item.d) },
-            },
-          },
-          action: data => this.createPbehavior({
-            data,
-            parents: this.items,
-            parentsType: ENTITIES_TYPES.alarm,
-          }),
-        },
-      });
     },
   },
 };

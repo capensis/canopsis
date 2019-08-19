@@ -15,6 +15,9 @@
           :label="$t('settings.statsAnnotationLine.value')",
           :disabled="!annotationLine.enabled",
           type="number",
+          :name="valueName"
+          :error-messages="errors ? errors.collect(valueName) : []",
+          v-validate="'numeric'"
           @input="updateField('value', $event)"
           )
         v-flex(xs12)
@@ -49,10 +52,15 @@ export default {
     prop: 'annotationLine',
     event: 'input',
   },
+  inject: ['$validator'],
   props: {
     annotationLine: {
       type: Object,
       default: () => ({}),
+    },
+    valueName: {
+      type: String,
+      default: 'annotationLine.value',
     },
   },
   methods: {

@@ -46,12 +46,12 @@ import { find, isNull, pickBy } from 'lodash';
 import {
   CRUD_ACTIONS,
   MODALS,
-  WATCHER_PBEHAVIOR_COLOR,
   WATCHER_STATES_COLORS,
   WEATHER_ICONS,
   EVENT_ENTITY_STYLE,
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
+  ENTITIES_STATES_STYLES,
   PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
   USERS_RIGHTS,
@@ -154,28 +154,29 @@ export default {
   computed: {
     color() {
       if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
-        return WATCHER_PBEHAVIOR_COLOR;
+        return WATCHER_STATES_COLORS.pause;
       }
 
-      return WATCHER_STATES_COLORS[this.state];
+      return ENTITIES_STATES_STYLES[this.state].color;
     },
 
     mainIcons() {
+      const state = ENTITIES_STATES_STYLES[this.entity.state.val].text;
       const mainIcons = [];
       if (!this.isPaused && !this.hasActivePbehavior) {
-        mainIcons.push(WEATHER_ICONS[this.entity.state.val]);
+        mainIcons.push(WEATHER_ICONS[state]);
       }
 
       const pausePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.pause });
       const maintenancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.maintenance });
-      const outOfSurveillancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
+      const outOfSurveillancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.unmonitored });
 
       if (maintenancePbehavior) {
         mainIcons.push(WEATHER_ICONS.maintenance);
       }
 
       if (outOfSurveillancePbehavior) {
-        mainIcons.push(WEATHER_ICONS.outOfSurveillance);
+        mainIcons.push(WEATHER_ICONS.unmonitored);
       }
 
       if (pausePbehavior) {

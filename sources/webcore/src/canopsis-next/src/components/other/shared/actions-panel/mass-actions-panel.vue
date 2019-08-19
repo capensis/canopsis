@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    mq-layout(mq="l")
+    mq-layout(mq="l+")
       actions-panel-item(
       v-for="(action, index) in actions",
       v-bind="action",

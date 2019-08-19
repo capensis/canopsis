@@ -4,7 +4,7 @@
       v-flex(xs11)
         div.subheading {{ title }}
       v-layout
-        v-switch.ma-0.pa-0(:input-value="value", @change="$emit('input', $event)", hide-details)
+        v-switch.ma-0.pa-0(color="primary", :input-value="value", @change="$emit('input', $event)", hide-details)
 </template>
 
 <script>

@@ -14,7 +14,7 @@ cat > ${deb_path}/DEBIAN/control << EOF
 Package: ${deb_name}
 Architecture: ${arch}
 Maintainer: Capensis
-Depends: base-files, bash, ca-certificates, libsasl2-2, libxml2, libxslt1.1, lsb-base, libffi6, libgmp10, libgnutlsxx28, libgnutls-openssl27, libhogweed2, libicu52, libidn11, libnettle4, libp11-kit0, libpsl0, libssl1.0.0, libtasn1-6, libxmlsec1, libxmlsec1-openssl, libldap-2.4-2, python, python2.7, rsync, snmp, smitools, sudo
+Depends: base-files, bash, ca-certificates, dirmngr, libsasl2-2, libxml2, libxslt1.1, lsb-base, libffi6, libgmp10, libgnutlsxx28, libgnutls-openssl27, libhogweed2, libicu52, libidn11, libnettle4, libp11-kit0, libpsl0, libssl1.0.0, libtasn1-6, libxmlsec1, libxmlsec1-openssl, libldap-2.4-2, python, python2.7, rsync, snmp, smitools, sudo
 Version: ${deb_version}-${deb_release}
 Description: Canopsis with CAT package.
 EOF

@@ -4,6 +4,7 @@
       v-switch(
       :label="$t('filterSelector.fields.mixFilters')",
       :input-value="isMultiple",
+      color="primary",
       :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateIsMultipleFlag"
       )
@@ -13,8 +14,8 @@
       :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateCondition"
       )
-        v-radio(label="AND", value="$and")
-        v-radio(label="OR", value="$or")
+        v-radio(label="AND", value="$and", color="primary")
+        v-radio(label="OR", value="$or", color="primary")
     v-flex(v-show="!hideSelect", v-bind="flexProps.select")
       v-select(
       :value="value",

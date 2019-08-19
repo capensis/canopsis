@@ -1,7 +1,8 @@
 <template lang="pug">
   div
-    v-card
+    v-card.position-relative
       progress-overlay(:pending="pending")
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       v-data-table(
       :items="stats",
       :headers="tableHeaders",
@@ -18,7 +19,13 @@
               v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
                 div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
               div.caption
-                template(v-if="item[query.stat.title].trend >= 0") + {{ item[query.stat.title].trend }}
+                div(v-if="hasTrend(item[query.stat.title])")
+                  sub.ml-2
+                    v-icon.caption(
+                    small,
+                    :color="item[query.stat.title].trend | trendColor"
+                    ) {{ item[query.stat.title].trend | trendIcon }}
+                  sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
 </template>
 
 <script>
@@ -29,22 +36,27 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
+import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
     ProgressOverlay,
+    StatsAlertOverlay,
   },
   mixins: [
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
+    widgetStatsTableWrapperMixin,
   ],
   props: {
     widget: {
@@ -54,7 +66,9 @@ export default {
   },
   data() {
     return {
-      pending: false,
+      pending: true,
+      hasError: false,
+      serverErrorMessage: null,
       stats: [],
       pagination: {
         page: 1,
@@ -147,24 +161,31 @@ export default {
     },
 
     async fetchList() {
-      const { limit, sortOrder } = this.query;
+      try {
+        const { limit, sortOrder } = this.query;
 
-      this.pending = true;
+        this.pending = true;
+        this.hasError = false;
+        this.serverErrorMessage = null;
 
-      const { values } = await this.fetchStatsListWithoutStore({
-        params: this.getQuery(),
-      });
+        const { values } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
 
-      this.stats = values;
-      this.pagination = {
-        page: 1,
-        sortBy: this.statColumn,
-        totalItems: values.length,
-        rowsPerPage: limit || PAGINATION_LIMIT,
-        descending: sortOrder === SORT_ORDERS.desc,
-      };
-
-      this.pending = false;
+        this.stats = values;
+        this.pagination = {
+          page: 1,
+          sortBy: this.statColumn,
+          totalItems: values.length,
+          rowsPerPage: limit || PAGINATION_LIMIT,
+          descending: sortOrder === SORT_ORDERS.desc,
+        };
+      } catch (err) {
+        this.hasError = true;
+        this.serverErrorMessage = err.description || null;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

@@ -9,7 +9,8 @@ La queue du moteur est placée juste après le moteur Axe.
 Une action se déclenche si un des champs d'une alarme (désigné dans `fields`) va correspondre à une regex (`regex`, voir [re2 syntax](https://github.com/google/re2/wiki/Syntax)).
 
 Les types d'actions disponibles sont :
-* `pbehavior`, qui va poser un [PBehavior](../../guide-developpement/PBehavior/index.md);
+
+* `pbehavior`, qui va poser un [PBehavior](../../guide-developpement/PBehavior/index.md) ;
 * `snooze`, qui va poser des snooze automatiques sur les alarmes lors de leur création.
 
 ## Collection

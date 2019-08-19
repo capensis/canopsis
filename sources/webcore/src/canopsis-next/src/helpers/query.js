@@ -1,7 +1,7 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, LIVE_REPORTING_INTERVALS } from '@/constants';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
+import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
 import prepareMainFilterToQueryFilter from './filter';
 
@@ -52,7 +52,8 @@ export function convertAlarmWidgetToQuery(widget) {
   }
 
   if (query.resolved) {
-    query.interval = LIVE_REPORTING_INTERVALS.last30Days;
+    query.tstart = STATS_QUICK_RANGES.last30Days.start;
+    query.tstop = STATS_QUICK_RANGES.last30Days.stop;
   }
 
   if (widgetColumns) {
@@ -90,11 +91,12 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertWeatherWidgetToQuery(widget) {
-  const query = {
-    filter: widget.parameters.mfilter.filter,
-  };
+  const { limit } = widget.parameters;
 
-  return query;
+  return {
+    ...convertSortToQuery(widget),
+    limit: limit || DEFAULT_WEATHER_LIMIT,
+  };
 }
 
 /**

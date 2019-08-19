@@ -2,7 +2,7 @@ import { mergeWith, get, has, isArray, isFunction, flow, uniq } from 'lodash';
 
 class Features {
   constructor() {
-    const features = require.context('@/features/', true, /index\.js$/);
+    const features = require.context('../features/', true, /index\.js$/);
 
     this.features = features.keys().map(key => features(key).default).reduce((acc, plugin) =>
       mergeWith(acc, plugin, (objValue, srcValue) => {

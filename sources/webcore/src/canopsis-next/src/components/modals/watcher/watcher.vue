@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    v-card-title.primary.white--text
+    v-card-title.white--text(:style="{ backgroundColor: color }")
       v-layout(justify-space-between, align-center)
         span.headline {{ watcher.display_name }}
         v-btn(icon, dark, @click.native="hideModal")
@@ -66,6 +66,9 @@ export default {
   computed: {
     watcher() {
       return this.config.watcher;
+    },
+    color() {
+      return this.config.color;
     },
   },
   mounted() {

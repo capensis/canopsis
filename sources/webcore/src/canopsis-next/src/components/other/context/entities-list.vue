@@ -158,7 +158,7 @@ export default {
 
     headers() {
       if (this.hasColumns) {
-        return [...this.columns, { text: '', sortable: false }];
+        return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
       }
 
       return [];

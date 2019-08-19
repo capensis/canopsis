@@ -5,7 +5,7 @@
 
 L'API Webhooks permet de consulter, créer et supprimer des Webhooks.
 
-### Creation de Webhook
+### Création de Webhook
 
 Crée un nouveau Webhook à partir du corps de la requête.
 
@@ -15,7 +15,7 @@ Crée un nouveau Webhook à partir du corps de la requête.
 
 **Authentification requise** : Oui
 
-**Permissions requise** : Aucune
+**Permissions requises** : Aucune
 
 **Exemple de corps de requête** :
 ```json
@@ -60,7 +60,7 @@ Crée un nouveau Webhook à partir du corps de la requête.
 }
 ```
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
@@ -174,7 +174,7 @@ Supprime un Webhook en fonction de son `id`.
 
 **Authentification requise** : Oui
 
-**Permissions requise** : Aucune
+**Permissions requises** : Aucune
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le webhook avec l'`id` `declare_external_ticket` :
 
@@ -224,7 +224,7 @@ Récupère un ou plusieurs Webhook crée en base.
 
 **Authentification requise** : Oui
 
-**Permissions requise** : Aucune
+**Permissions requises** : Aucune
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le webhook avec l'`id` `declare_external_ticket` :
 
@@ -307,9 +307,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_
 }
 ```
 
-#### Récupération de tous les Webhooks en base de données.
+#### Récupération de tous les Webhooks en base de données
 
-Récupèr tous les Webhooks stocké en base
+Récupère tous les Webhooks stockés en base
 
 **URL** : `/api/v2/webhook`
 
@@ -317,7 +317,7 @@ Récupèr tous les Webhooks stocké en base
 
 **Authentification requise** : Oui
 
-**Permissions requise** : Aucune
+**Permissions requises** : Aucune
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les webhooks :
 

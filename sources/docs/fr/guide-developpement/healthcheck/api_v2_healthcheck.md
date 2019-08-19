@@ -76,6 +76,7 @@ Renvoie un résumé de l'état.
 ### Description du résumé
 
 La réponse contient les champs suivants :
+
 * amqp, cache, database, engines, timeseries : un message d'erreur associé à chacque service ; rien s'il n'y a pas d'erreur détectée ;
 * timestamp : le moment de création du résultat ;
 * overall : un booléen pour savoir si l'état global est bon ou mauvais.

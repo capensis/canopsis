@@ -16,6 +16,7 @@ import featuresService from '@/services/features';
 
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
+import ConfirmAckWithTicket from './alarm/confirm-ack-with-ticket.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
 import CreateCancelEvent from './alarm/create-cancel-event.vue';
 import CreateChangeStateEvent from './alarm/create-change-state-event.vue';
@@ -65,6 +66,7 @@ export default {
   components: {
     ModalWrapper,
     CreateAckEvent,
+    ConfirmAckWithTicket,
     CreateAssociateTicketEvent,
     CreateCancelEvent,
     CreateChangeStateEvent,
@@ -131,6 +133,8 @@ export default {
         [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.watcher]: { maxWidth: 920, lazy: true },
+
+        ...featuresService.get('components.modals.dialogPropsMap'),
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },
     };

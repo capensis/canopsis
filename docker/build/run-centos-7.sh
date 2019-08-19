@@ -33,11 +33,13 @@ yum install -y \
     libevent \
     libffi \
     libicu \
+    libsmi \
     libtasn1 \
     libxml2 \
     libxslt \
     nettle \
     net-snmp \
+    net-snmp-utils \
     openldap \
     openssl \
     python \

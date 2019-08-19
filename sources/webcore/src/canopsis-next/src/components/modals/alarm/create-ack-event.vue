@@ -13,17 +13,14 @@
         v-layout(row)
           v-text-field(
           :label="$t('modals.createAckEvent.fields.ticket')",
-          :error-messages="errors.collect('ticket')",
           v-model="form.ticket",
-          v-validate="'required'",
-          data-vv-name="ticket"
           )
         v-layout(row)
           v-textarea(
           :label="$t('modals.createAckEvent.fields.output')",
           :error-messages="errors.collect('output')",
           v-model="form.output",
-          v-validate="'required'",
+          v-validate="isNoteRequired ? 'required' : ''",
           data-vv-name="output",
           )
         v-layout(row)
@@ -39,12 +36,11 @@
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
-      v-btn.warning(
-      @click.prevent="submitWithDeclare",
-      ) {{ $t('common.actions.acknowledgeAndReport') }}
+      v-btn.warning(@click.prevent="submitWithTicket") {{ submitWithTicketBtnLabel }}
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
@@ -73,22 +69,36 @@ export default {
       },
     };
   },
+  computed: {
+    isNoteRequired() {
+      return this.config && this.config.isNoteRequired;
+    },
+
+    submitWithTicketBtnLabel() {
+      return this.form.ticket ? this.$t('common.actions.acknowledgeAndAssociateTicket') : this.$t('common.actions.acknowledgeAndDeclareTicket');
+    },
+  },
   methods: {
-    async create(withDeclare) {
+    createAckEvent() {
       const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
 
-      await this.createEventAction({
-        data: ackEventData,
-      });
+      return this.createEventAction({ data: ackEventData });
+    },
 
-      if (withDeclare) {
-        const declareTicketEventData =
-          this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
+    createDeclareTicketEvent() {
+      const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, omit(this.form, ['ticket']));
 
-        await this.createEventAction({
-          data: declareTicketEventData,
-        });
-      }
+      return this.createEventAction({ data: declareTicketEventData });
+    },
+
+    createAssocTicketEvent() {
+      const assocTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
+
+      return this.createEventAction({ data: assocTicketEventData });
+    },
+
+    async createAckEventAndCloseModal() {
+      await this.createAckEvent();
 
       if (this.config && this.config.afterSubmit) {
         await this.config.afterSubmit();
@@ -97,25 +107,35 @@ export default {
       this.hideModal();
     },
 
-    async submitWithDeclare() {
+    async submitWithTicket() {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
-        await this.create(true);
+        if (this.form.ticket) {
+          await this.createAssocTicketEvent();
+        } else {
+          await this.createDeclareTicketEvent();
+        }
+
+        this.createAckEventAndCloseModal();
       }
     },
 
     async submit() {
-      this.errors.clear();
+      const formIsValid = await this.$validator.validateAll();
 
-      if (this.config && this.config.isNoteRequired) {
-        const formIsValid = await this.$validator.validate('output');
-
-        if (formIsValid) {
-          await this.create();
+      if (formIsValid) {
+        if (this.form.ticket) {
+          this.showModal({
+            name: MODALS.confirmAckWithTicket,
+            config: {
+              continueAction: this.createAckEventAndCloseModal,
+              continueWithTicketAction: this.submitWithTicket,
+            },
+          });
+        } else {
+          this.createAckEventAndCloseModal();
         }
-      } else {
-        await this.create();
       }
     },
   },
