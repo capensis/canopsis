@@ -2,8 +2,6 @@
 
 module.exports = {
   async before(browser, done) {
-    browser.globals.parameters = {};
-
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
@@ -11,8 +9,6 @@ module.exports = {
   },
 
   async after(browser, done) {
-    delete browser.globals.parameters;
-
     await browser.completed.logout()
       .end(done);
   },
@@ -24,7 +20,9 @@ module.exports = {
       .clearAppTitle()
       .setAppTitle('TestAppTitle')
       .selectLanguage(2)
+      .clearFooter()
       .setFooter('TestFooter')
+      .clearDescription()
       .setDescription('TestDescription')
       .clickSubmitButton();
   },
