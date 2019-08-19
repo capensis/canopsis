@@ -12,7 +12,7 @@
           div(v-if="column.isHtml", v-html="sanitizedValue")
           div(v-else, v-bind="component.bind", v-on="component.on")
           v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
-            v-icon(small) help
+            v-icon(small) info
       v-card(dark)
         v-card-title.primary.pa-2.white--text
           v-layout(justify-space-between, align-center)
