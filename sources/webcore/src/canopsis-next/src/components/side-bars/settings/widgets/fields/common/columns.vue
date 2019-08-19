@@ -1,25 +1,42 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="columnNames")
     v-list-tile(slot="activator")
       div(:class="validationHeaderClass") {{ $t('settings.columnNames') }}
     v-container
-      v-card.my-2(v-for="(column, index) in columns", :key="`settings-column-${index}`")
+      v-card.my-2(
+      v-for="(column, index) in columns",
+      :data-test="`settings-column-${index + 1}`",
+      :key="`settings-column-${index}`"
+      )
         v-layout.pt-2(justify-space-between)
           v-flex(xs3)
             v-layout.text-xs-center.pl-2(justify-space-between)
               v-flex(xs1)
-                v-btn(icon, @click.prevent="up(index)")
+                v-btn(
+                data-test="upButton",
+                icon,
+                @click.prevent="up(index)"
+                )
                   v-icon arrow_upward
               v-flex(xs5)
-                v-btn(icon, @click.prevent="down(index)")
+                v-btn(
+                data-test="downButton",
+                icon,
+                @click.prevent="down(index)"
+                )
                   v-icon arrow_downward
           v-flex.d-flex(xs3)
             div.text-xs-right.pr-2
-              v-btn(icon, @click.prevent="removeItemFromArray(index)")
+              v-btn(
+              data-test="closeButton",
+              icon,
+              @click.prevent="removeItemFromArray(index)"
+              )
                 v-icon(color="red") close
         v-layout(justify-center wrap)
           v-flex(xs11)
             v-text-field(
+            data-test="labelField",
             v-validate="'required'",
             :placeholder="$t('common.label')",
             :error-messages="errors.collect(`label[${index}]`)",
@@ -29,6 +46,7 @@
             )
           v-flex(xs11)
             v-text-field(
+            data-test="valueField",
             v-validate="'required'",
             :placeholder="$t('common.value')",
             :error-messages="errors.collect(`value[${index}]`)",
@@ -38,11 +56,12 @@
             )
           v-flex(v-if="withHtml", xs11)
             v-switch(
+            data-test="htmlSwitch",
             :label="$t('settings.columns.isHtml')",
             :input-value="column.isHtml",
             @change="updateFieldInArrayItem(index, 'isHtml', $event)"
             )
-      v-btn(color="primary", @click.prevent="add") {{ $t('common.add') }}
+      v-btn(data-test="addButton", color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>

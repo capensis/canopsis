@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="defaultSortColumn")
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
-    v-container
+    v-container(data-test="sortContainer")
       v-select(
       :value="value.column",
       :items="columns",

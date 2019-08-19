@@ -12,7 +12,7 @@
       v-divider
       field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
       v-divider
-      v-list-group
+      v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
