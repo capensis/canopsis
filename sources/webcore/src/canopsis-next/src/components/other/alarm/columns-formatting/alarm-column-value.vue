@@ -5,14 +5,20 @@
     v-model="isInfoPopupOpen",
     :close-on-content-click="false",
     :open-on-click="false",
-    offset-y
+    offset-x
     )
       div(slot="activator")
-        div(v-if="column.isHtml", v-html="sanitizedValue")
-        div(v-else, v-bind="component.bind", v-on="component.on")
+        v-layout(align-center)
+          div(v-if="column.isHtml", v-html="sanitizedValue")
+          div(v-else, v-bind="component.bind", v-on="component.on")
+          v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
+            v-icon(small) help
       v-card(dark)
         v-card-title.primary.pa-2.white--text
-          h4 {{ $t('alarmList.infoPopup') }}
+          v-layout(justify-space-between, align-center)
+            h4 {{ $t('alarmList.infoPopup') }}
+            v-btn.ma-0.ml-3(icon, small, @click="hideInfoPopup", color="white")
+              v-icon(small, color="error") close
         v-card-text.pa-2(v-html="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
@@ -172,9 +178,6 @@ export default {
           is: 'ellipsis',
           text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
         },
-        on: {
-          textClicked: this.showInfoPopup,
-        },
       };
     },
   },
@@ -183,6 +186,9 @@ export default {
       if (this.popupData) {
         this.isInfoPopupOpen = true;
       }
+    },
+    hideInfoPopup() {
+      this.isInfoPopupOpen = false;
     },
   },
 };
