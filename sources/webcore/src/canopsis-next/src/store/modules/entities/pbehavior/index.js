@@ -62,13 +62,13 @@ export default {
           route: API_ROUTES.pbehavior.list,
           schema: [schemas.pbehavior],
           params,
-          dataPreparer: d => d.data,
+          dataPreparer: d => d.data[0].data,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
           meta: {
-            total: data.total,
+            total: data.data[0].total_count,
           },
         });
       } catch (err) {
