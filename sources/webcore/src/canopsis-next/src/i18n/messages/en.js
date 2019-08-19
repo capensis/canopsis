@@ -96,7 +96,8 @@ export default {
     filter: 'Filter',
     actions: {
       close: 'Close',
-      acknowledgeAndReport: 'Acknowledge and report an incident',
+      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
       [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',

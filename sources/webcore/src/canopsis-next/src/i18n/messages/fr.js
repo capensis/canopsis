@@ -88,7 +88,8 @@ export default {
     links: 'Liens',
     actions: {
       close: 'Fermer',
-      acknowledgeAndReport: 'Acquitter et signaler un incident',
+      acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
+      acknowledgeAndAssociateTicket: 'Acquitter et associer un ticket',
       saveChanges: 'Sauvegarder',
       reportIncident: 'Signaler un incident',
       [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
