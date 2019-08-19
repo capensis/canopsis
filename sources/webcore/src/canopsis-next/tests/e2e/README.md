@@ -87,6 +87,11 @@ Planned tests
     * Rights
         - [ ] Create new right with some name
         - [ ] Adds right new role
+    * Parameters
+        - [x] Edit app title
+        - [x] Switch language
+        - [x] Edit footer text
+        - [x] Edit description text
 3. Layout
     * Top Bar
         - [x] Open current user modal
