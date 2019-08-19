@@ -8,7 +8,7 @@
     offset-x
     )
       div(slot="activator")
-        v-layout
+        v-layout(align-center)
           div(v-if="column.isHtml", v-html="sanitizedValue")
           div(v-else, v-bind="component.bind", v-on="component.on")
           v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
@@ -17,7 +17,7 @@
         v-card-title.primary.pa-2.white--text
           v-layout(justify-space-between, align-center)
             h4 {{ $t('alarmList.infoPopup') }}
-            v-btn.ma-0.ml-3(icon, small, @click="hideInfoPopup")
+            v-btn.ma-0.ml-3(icon, small, @click="hideInfoPopup", color="white")
               v-icon(small, color="error") close
         v-card-text.pa-2(v-html="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
