@@ -116,11 +116,19 @@ Pour plus d'informations, vous pouvez consulter la [documentation sur les templa
 
 Si `declare_ticket` est défini, les données récupérées du service externe sont stockées dans l'alarme et un step `declareticket` est ajouté à l'alarme.
 
+#### Récupération des données externes
+
 Dans `declare_ticket`, le champ `ticket_id` définit le champ où se trouve l'identifiant du ticket créé via le service externe. Par exemple, si l'API retourne l'id dans le champ `numberTicket`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "numberTicket"`.
 
 Si l'API renvoie une réponse sous forme de JSON imbriqué, il faut prendre en compte le chemin d'accès. Par exemple, si l'API retourne une réponse de type ` {"result": {"number": "numéro d’incident"}}`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "result.number"`.
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
+
+#### Réponse vide du service externe
+
+Dans le cas où le service externe renvoie une réponse (par exemple `200 OK`) mais sans contenu, il est possible d'ajouter le champ `empty_response` eu `declare_ticket`. Si le champ `empty_response` est présent et vaut `true` alors tous les autres champs du `declare_ticket` sont ignorés. Un step `declareticket` est créé avec un numéro de ticket qui vaut `"N/A"`.
+
+Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'il vaut `false`, alors le webhook se comporte comme d'habitude.
 
 ### Exemples
 
