@@ -211,9 +211,9 @@ module.exports = {
       .defaultPause();
     browser.page.modals.view.createGroup().verifyModalOpened()
       .clickDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.layout.popup()
@@ -241,9 +241,9 @@ module.exports = {
       .defaultPause();
     browser.page.modals.view.createGroup().verifyModalOpened()
       .clickDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.layout.popup()

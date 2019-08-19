@@ -139,16 +139,16 @@ module.exports = {
 
     browser.page.view()
       .clickDeleteTab(tabId);
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.view()
       .clickDeleteTab(copyTabId);
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 

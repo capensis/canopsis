@@ -49,7 +49,7 @@ module.exports = {
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
-    await browser.completed.view.create(generateTemporaryView(), (view) => {
+    browser.completed.view.create(generateTemporaryView(), (view) => {
       browser.globals.defaultViewData = {
         viewId: view._id,
         groupId: view.group_id,
@@ -65,10 +65,12 @@ module.exports = {
     delete browser.globals.roles;
 
     browser.completed.view.delete(groupId, viewId, () => {
-      delete browser.globals.defaultViewData;
-    });
+      browser.completed.view.deleteGroup(groupId, () => {
+        delete browser.globals.defaultViewData;
 
-    browser.end(done);
+        browser.end(done);
+      });
+    });
   },
 
   'Create new role with data from constants': (browser) => {
