@@ -7,11 +7,20 @@
             v-list-tile-content {{ filter.title }}
           v-list-tile-action(v-if="hasAccessToEditFilter")
             v-layout
-              v-btn.ma-1(icon, @click="showEditFilterModal(index)")
+              v-btn.ma-1(
+              :data-test="`editFilter-${filter.title}`",
+              icon,
+              @click="showEditFilterModal(index)"
+              )
                 v-icon edit
-              v-btn.ma-1(icon, @click="showDeleteFilterModal(index)")
+              v-btn.ma-1(
+              :data-test="`deleteFilter-${filter.title}`",
+              icon,
+              @click="showDeleteFilterModal(index)"
+              )
                 v-icon delete
     v-btn.ml-0(
+    data-test="addFilter",
     v-if="hasAccessToAddFilter",
     color="primary",
     @click.prevent="showCreateFilterModal"

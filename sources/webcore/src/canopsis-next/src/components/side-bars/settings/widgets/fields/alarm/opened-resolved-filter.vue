@@ -1,9 +1,10 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="filterOnOpenResolved")
     v-list-tile(slot="activator") {{$t('settings.filterOnOpenResolved')}}
     v-container
       v-layout
         v-checkbox(
+        data-test="openFilter",
         color="primary",
         :label="$t('settings.open')",
         v-model="value.opened",
@@ -11,6 +12,7 @@
         hide-details
         )
         v-checkbox(
+        data-test="resolvedFilter",
         color="primary",
         :label="$t('settings.resolved')",
         v-model="value.resolved",

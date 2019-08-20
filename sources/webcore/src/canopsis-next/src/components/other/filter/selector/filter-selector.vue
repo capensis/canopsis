@@ -2,6 +2,7 @@
   v-layout(align-center, row, wrap)
     v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
       v-switch(
+      data-test="mixFilters",
       :label="$t('filterSelector.fields.mixFilters')",
       :input-value="isMultiple",
       :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
@@ -13,9 +14,13 @@
       :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateCondition"
       )
-        v-radio(label="AND", value="$and")
-        v-radio(label="OR", value="$or")
-    v-flex(v-show="!hideSelect", v-bind="flexProps.select")
+        v-radio(data-test="andFilters", label="AND", value="$and")
+        v-radio(data-test="orFilters", label="OR", value="$or")
+    v-flex(
+    data-test="selectFilters",
+    v-show="!hideSelect",
+    v-bind="flexProps.select"
+    )
       v-select(
       :value="value",
       :items="preparedFilters",

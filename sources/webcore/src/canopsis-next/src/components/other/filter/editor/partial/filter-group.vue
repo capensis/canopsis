@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.my-1.pa-2
+  v-card.my-1.pa-2(data-test="filter-group")
     v-radio-group(
     :value="group.condition",
     @change="updateField('condition', $event)",
@@ -7,11 +7,12 @@
     mandatory,
     row
     )
-      v-radio(label="AND", value="$and", color="blue darken-4")
-      v-radio(label="OR", value="$or", color="blue darken-4")
+      v-radio(data-test="radioAnd", label="AND", value="$and", color="blue darken-4")
+      v-radio(data-test="radioOr", label="OR", value="$or", color="blue darken-4")
     v-layout.text-xs-center(wrap, justify-space-around)
       v-flex(xs5, md3)
         v-btn(
+        data-test="addRule",
         @click="addRule",
         outline,
         block,
@@ -20,6 +21,7 @@
         ) {{$t("filterEditor.buttons.addRule")}}
       v-flex(xs5, md3)
         v-btn(
+        data-test="addGroup",
         @click="addGroup",
         outline,
         block,
@@ -28,6 +30,7 @@
         ) {{$t("filterEditor.buttons.addGroup")}}
       v-flex(xs5, md3)
         v-btn(
+        data-test="deleteGroup",
         v-if="!isInitial",
         @click="$emit('deleteGroup')",
         color="red darken-4",
