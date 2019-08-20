@@ -23,9 +23,10 @@ module.exports = {
       .clickSubmitButton()
       .verifyModalClosed();
 
-    delete browser.globals.views;
+    browser.completed.logout()
+      .end(done);
 
-    browser.end(done);
+    delete browser.globals.views;
   },
 
   'Add view with name from constants': (browser) => {

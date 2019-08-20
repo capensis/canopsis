@@ -40,8 +40,6 @@ const createRole = (browser, {
 };
 
 module.exports = {
-  asyncHookTimeout: 30000,
-
   async before(browser, done) {
     browser.globals.roles = [];
     browser.globals.defaultViewData = {};
@@ -49,27 +47,23 @@ module.exports = {
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
+    done();
+  },
+
+  after(browser, done) {
+    delete browser.globals.defaultViewData;
+    delete browser.globals.roles;
+
+    browser.completed.logout()
+      .end(done);
+  },
+
+  'Create test view': (browser) => {
     browser.completed.view.create(generateTemporaryView(), (view) => {
       browser.globals.defaultViewData = {
         viewId: view._id,
         groupId: view.group_id,
       };
-
-      done();
-    });
-  },
-
-  after(browser, done) {
-    const { groupId, viewId } = browser.globals.defaultViewData;
-
-    delete browser.globals.roles;
-
-    browser.completed.view.delete(groupId, viewId, () => {
-      browser.completed.view.deleteGroup(groupId, () => {
-        delete browser.globals.defaultViewData;
-
-        browser.end(done);
-      });
     });
   },
 
@@ -191,5 +185,12 @@ module.exports = {
     const rolesPage = browser.page.admin.roles();
 
     browser.completed.refreshPage(API_ROUTES.role.list, () => rolesPage.clickRefreshButton());
+  },
+
+  'Delete test view': (browser) => {
+    const { groupId, viewId } = browser.globals.defaultViewData;
+
+    browser.completed.view.delete(groupId, viewId);
+    browser.completed.view.deleteGroup(groupId);
   },
 };

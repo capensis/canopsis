@@ -42,12 +42,13 @@ module.exports.command = function createUser(user = { ...USER }, callback = () =
     1000,
     () => adminCreateUser.clickSubmitButton(),
     ({ responseData, requestData }) => {
+      adminCreateUser.verifyModalClosed();
+
       const requestParsedData = qs.parse(requestData);
 
-      return callback({ ...JSON.parse(requestParsedData.user), ...JSON.parse(responseData) });
+      callback({ ...JSON.parse(requestParsedData.user), ...JSON.parse(responseData) });
     },
   );
-  adminCreateUser.verifyModalClosed();
 
   return this;
 };

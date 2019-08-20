@@ -50,7 +50,7 @@
           v-btn(
           slot="activator",
           color="primary",
-          data-test="addButton"
+          data-test="addButton",
           fab,
           @click.stop="showCreateRoleModal"
           )

@@ -41,8 +41,10 @@ module.exports.command = function deleteGroup(groupId, callback = () => {}) {
     `${API_ROUTES.viewGroup}/${groupId}`,
     5000,
     () => confirmation.clickSubmitButton(),
-    ({ responseData }) => callback(JSON.parse(responseData)),
-  );
+    ({ responseData }) => {
+      confirmation.verifyModalClosed();
 
-  confirmation.verifyModalClosed();
+      callback(JSON.parse(responseData));
+    },
+  );
 };

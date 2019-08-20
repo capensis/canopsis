@@ -75,10 +75,12 @@ module.exports.command = function copyView(groupId, viewId, view, callback = () 
     new RegExp(`${API_ROUTES.view}$`),
     5000,
     () => modalViewCreate.clickViewSubmitButton(),
-    ({ responseData, requestData }) => callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) }),
-  );
+    ({ responseData, requestData }) => {
+      modalViewCreate.verifyModalClosed();
 
-  modalViewCreate.verifyModalClosed();
+      callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) });
+    },
+  );
 
   return this;
 };

@@ -7,6 +7,7 @@ const { generateTemporaryView } = require('../../helpers/entities');
 module.exports = {
   async before(browser, done) {
     browser.globals.views = {};
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
@@ -14,7 +15,7 @@ module.exports = {
   },
 
   async after(browser, done) {
-    await browser.completed.logout()
+    browser.completed.logout()
       .end(done);
 
     delete browser.globals.views;
@@ -154,6 +155,8 @@ module.exports = {
 
   'Delete test view': (browser) => {
     const { view } = browser.globals.views;
+
     browser.completed.view.delete(view.group_id, view._id);
+    browser.completed.view.deleteGroup(view.group_id);
   },
 };

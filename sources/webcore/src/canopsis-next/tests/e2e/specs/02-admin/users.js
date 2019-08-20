@@ -12,10 +12,10 @@ module.exports = {
     done();
   },
 
-  async after(browser, done) {
+  after(browser, done) {
     delete browser.globals.users;
 
-    await browser.completed.logout()
+    browser.completed.logout()
       .end(done);
   },
 

@@ -43,10 +43,12 @@ module.exports.command = function deleteView(groupId, viewId, callback = () => {
     `${API_ROUTES.view}/${viewId}`,
     5000,
     () => confirmation.clickSubmitButton(),
-    ({ responseData }) => callback(JSON.parse(responseData)),
-  );
+    ({ responseData }) => {
+      confirmation.verifyModalClosed();
 
-  confirmation.verifyModalClosed();
+      callback(JSON.parse(responseData));
+    },
+  );
 
   return this;
 };
