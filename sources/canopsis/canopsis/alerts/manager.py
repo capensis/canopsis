@@ -1230,7 +1230,7 @@ class Alerts(object):
             # This prevents the archive method from modifying this alarm
             # between the time we get the alarm from the database and the time
             # we update it in the database.
-            lock_id = self.lock_manager.lock(alarm_id)
+            self.lock_manager.lock(alarm_id)
 
             try:
                 # Get the alarm's value (which may have been modified by an
@@ -1323,7 +1323,7 @@ class Alerts(object):
 
                 self.update_current_alarm(docalarm, new_value)
             finally:
-                self.lock_manager.unlock(lock_id)
+                self.lock_manager.unlock(alarm_id)
 
     def publish_new_alarm_stats(self, alarm, author):
         """
