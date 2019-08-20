@@ -3,16 +3,11 @@
 const WAIT_PAUSE = 500;
 
 module.exports.command = function customClearRTE(selector) {
-  const { RIGHT_ARROW, BACK_SPACE } = this.Keys;
+  const { CONTROL, DELETE } = this.Keys;
 
-  this.waitForElementVisible(selector)
-    .click(selector)
-    .getText(selector, (result) => {
-      const chars = result.value.split('');
-
-      chars.forEach(() => this.sendKeys(selector, RIGHT_ARROW));
-      chars.forEach(() => this.sendKeys(selector, BACK_SPACE));
-    })
+  this.customClick(selector)
+    .sendKeys(selector, [CONTROL, 'a'])
+    .sendKeys(selector, DELETE)
     .pause(WAIT_PAUSE);
 
   return this;

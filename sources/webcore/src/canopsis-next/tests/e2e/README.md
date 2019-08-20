@@ -92,6 +92,12 @@ Planned tests
         - [x] Switch language
         - [x] Edit footer text
         - [x] Edit description text
+        - [ ] Upload logo
+        - [ ] Check global language
+        - [ ] Check app title
+        - [ ] Check footer
+        - [ ] Check description
+        - [ ] Check logo
 3. Layout
     * Top Bar
         - [x] Open current user modal

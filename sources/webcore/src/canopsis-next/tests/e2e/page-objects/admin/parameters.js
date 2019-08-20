@@ -46,7 +46,6 @@ module.exports = {
     appTitle: sel('appTitle'),
     languageField: `${sel('languageLayout')} .v-input__slot`,
     languageOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    footerFieldSource: `${sel('footerLayout')} .jodit_toolbar_btn`,
     footerField: `${sel('footerLayout')} .jodit_wysiwyg`,
     descriptionFieldSource: `${sel('descriptionLayout')} .jodit_toolbar_btn`,
     descriptionField: `${sel('descriptionLayout')} .jodit_wysiwyg`,
