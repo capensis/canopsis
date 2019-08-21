@@ -66,8 +66,8 @@ const commands = {
     return this.customClick(this.el('@columnHtml', index));
   },
 
-  clickColumnAdd(index = 1) {
-    return this.customClick(this.el('@columnAdd', index));
+  clickColumnAdd() {
+    return this.customClick('@columnAdd');
   },
 
   clickDefaultNumberOfElementsPerPage() {
@@ -117,6 +117,48 @@ const commands = {
       .customClick(this.el('@optionSelect', index));
   },
 
+  clickInfoPopupButton() {
+    return this.customClick('@infoPopupButton');
+  },
+
+  clickCreateEditMore() {
+    return this.customClick('@createEditMore');
+  },
+
+  clickDeleteMore() {
+    return this.customClick('@deleteMore');
+  },
+
+  clickEnableHtml() {
+    return this.customClick('@enableHtml');
+  },
+
+  clickAckGroup() {
+    return this.customClick('@ackGroup')
+      .defaultPause();
+  },
+
+  clickIsAckNoteRequired() {
+    return this.customClick('@isAckNoteRequired');
+  },
+
+  clickIsMultiAckEnabled() {
+    return this.customClick('@isMultiAckEnabled');
+  },
+
+  clickFastAckOutput() {
+    return this.customClick('@fastAckOutput')
+      .defaultPause();
+  },
+
+  clickFastAckOutputSwitch() {
+    return this.customClick('@fastAckOutputSwitch');
+  },
+
+  setFastAckOutputText(value) {
+    return this.customSetValue('@fastAckOutputText', value);
+  },
+
   el,
 };
 
@@ -149,6 +191,16 @@ module.exports = {
     andFilters: `div${sel('andFilters')} .v-input--selection-controls__ripple`,
     orFilters: `div${sel('orFilters')} .v-input--selection-controls__ripple`,
     selectFilters: `${sel('selectFilters')} .v-input__slot`,
+    infoPopupButton: sel('infoPopupButton'),
+    createEditMore: sel('createEditMore'),
+    deleteMore: sel('deleteMore'),
+    enableHtml: `${sel('isHtmlEnabledOnTimeLine')} ${sel('switcherLayout')} .v-input--selection-controls__ripple`,
+    isAckNoteRequired: `${sel('isAckNoteRequired')} ${sel('switcherLayout')} .v-input--selection-controls__ripple`,
+    isMultiAckEnabled: `${sel('isMultiAckEnabled')} ${sel('switcherLayout')} .v-input--selection-controls__ripple`,
+    ackGroup: sel('ackGroup'),
+    fastAckOutput: sel('fastAckOutput'),
+    fastAckOutputSwitch: `${sel('fastAckOutput')} .v-input--switch .v-input--selection-controls__ripple`,
+    fastAckOutputText: `${sel('fastAckOutput')} .v-text-field input`,
   },
   commands: [commands],
 };
