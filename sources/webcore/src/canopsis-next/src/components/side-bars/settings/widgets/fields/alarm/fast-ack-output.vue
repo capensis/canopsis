@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="fastAckOutput")
     v-list-tile(slot="activator") {{ $t('settings.fastAckOutput') }}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container

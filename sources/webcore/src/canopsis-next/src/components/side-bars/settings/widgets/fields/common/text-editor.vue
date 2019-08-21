@@ -4,12 +4,18 @@
       div.subheading {{ title }}
       v-layout(justify-end)
         v-btn.primary(
+        data-test="createEditMore",
         small,
         @click="openTextEditorModal"
         )
           span(v-show="isValueEmpty") {{ $t('common.create') }}
           span(v-show="!isValueEmpty") {{ $t('common.edit') }}
-        v-btn.error(v-show="!isValueEmpty", small, @click="deleteMoreInfoTemplate")
+        v-btn.error(
+        data-test="deleteMore",
+        v-show="!isValueEmpty",
+        small,
+        @click="deleteMoreInfoTemplate"
+        )
           v-icon delete
 </template>
 

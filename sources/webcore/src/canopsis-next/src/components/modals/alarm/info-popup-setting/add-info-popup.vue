@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="addInfoPopup")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
-    v-card-text
+    v-card-text(data-test="addInfoPopupFields")
       v-select(
       v-model="form.selectedColumn",
       :items="config.columns",
@@ -22,7 +22,7 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit", type="submit") {{ $t('common.submit') }}
+      v-btn.primary(data-test="submitButton", @click="submit", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

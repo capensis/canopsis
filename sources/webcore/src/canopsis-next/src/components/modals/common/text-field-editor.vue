@@ -3,9 +3,8 @@
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
-    v-card-text
+    v-card-text(data-test="textField")
       v-text-field(
-      data-test="textField",
       v-model="text",
       v-validate="field.validationRules",
       :name="field.name",
