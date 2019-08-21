@@ -114,6 +114,100 @@ module.exports = {
       .clickOpenFilter()
       .clickResolvedFilter()
       .clickFilters()
+      .clickAddFilter();
+
+    browser.page.modals.common.createFilter()
+      .verifyModalOpened()
+      .setFilterTitle('FilterTitle1')
+      .clickRadioOr()
+      .clickAddRule()
+      .selectFieldRule(2)
+      .selectOperatorRule(2)
+      .clickSubmitFilter()
+      .verifyModalClosed();
+
+    browser.page.widget.alarms()
+      .clickAddFilter();
+
+    browser.page.modals.common.createFilter()
+      .verifyModalOpened()
+      .setFilterTitle('FilterTitle2')
+      .clickRadioOr()
+      .clickAddRule()
+      .selectFieldRule(1)
+      .selectOperatorRule(1)
+      .clickSubmitFilter()
+      .verifyModalClosed();
+
+    browser.page.widget.alarms()
+      .clickMixFilters()
+      .clickOrFilters()
+      .selectFilters(1)
+      .selectFilters(2)
+      .clickInfoPopupButton();
+
+    browser.page.modals.alarm.infoPopupSetting()
+      .verifyModalOpened()
+      .clickAddPopup();
+
+    browser.page.modals.alarm.addInfoPopup()
+      .verifyModalOpened()
+      .selectSelectedColumn(2)
+      .setTemplate('Template')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    browser.page.modals.alarm.infoPopupSetting()
+      .clickEditPopup();
+
+    browser.page.modals.alarm.addInfoPopup()
+      .verifyModalOpened()
+      .selectSelectedColumn(1)
+      .setTemplate('End')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    browser.page.modals.alarm.infoPopupSetting()
+      .clickDeletePopup()
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    browser.page.widget.alarms()
+      .clickCreateEditMore();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .setRTE('More')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    browser.page.widget.alarms()
+      .clickCreateEditMore();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .setRTE(' info...')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    browser.page.widget.alarms()
+      .clickDeleteMore();
+
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
+      .verifyModalClosed();
+
+    browser.page.widget.alarms()
+      .clickEnableHtml()
+      .clickAckGroup()
+      .clickIsAckNoteRequired()
+      .clickIsMultiAckEnabled()
+      .clickFastAckOutput()
+      .clickFastAckOutputSwitch()
+      .setFastAckOutputText('test');
+
+    browser.page.widget.alarms()
       .clickSubmitAlarms();
   },
 
