@@ -99,6 +99,10 @@ const commands = {
       .defaultPause();
   },
 
+  clickAddFilter() {
+    return this.customClick('@addFilter');
+  },
+
   clickMixFilters() {
     return this.customClick('@mixFilters');
   },
@@ -188,8 +192,8 @@ module.exports = {
     editFilter: sel('editFilter-%s'),
     deleteFilter: sel('deleteFilter-%s'),
     mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
-    andFilters: `div${sel('andFilters')} .v-input--selection-controls__ripple`,
-    orFilters: `div${sel('orFilters')} .v-input--selection-controls__ripple`,
+    andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
+    orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
     selectFilters: `${sel('selectFilters')} .v-input__slot`,
     infoPopupButton: sel('infoPopupButton'),
     createEditMore: sel('createEditMore'),

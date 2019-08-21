@@ -1,5 +1,7 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
+const el = require('../../../helpers/el');
+
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
 const commands = {
@@ -17,6 +19,8 @@ const commands = {
     return this.customClick('@template')
       .sendKeys('@template', value);
   },
+
+  el,
 };
 
 const modalSelector = sel('addInfoPopup');

@@ -1,5 +1,7 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
+const el = require('../../../helpers/el');
+
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
 const commands = {
@@ -43,6 +45,8 @@ const commands = {
   clearInputRule() {
     return this.customClearValue('@inputRule');
   },
+
+  el,
 };
 
 const modalSelector = sel('createFilterModal');
@@ -59,9 +63,9 @@ module.exports = modalCreator(modalSelector, {
       deleteGroup: sel('deleteGroup'),
       fieldRule: `${sel('fieldRule')} .v-input__slot`,
       operatorRule: `${sel('operatorRule')} .v-input__slot`,
-      optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
       inputRule: `${sel('inputRule')} .mixed-field div.v-input:nth-of-type(2) input`,
     }),
+    optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
   },
   commands: [commands],
 });
