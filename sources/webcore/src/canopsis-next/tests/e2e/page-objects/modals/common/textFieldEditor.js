@@ -3,11 +3,9 @@
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
 const commands = {
-  clearField() {
-    return this.customClearValue('@textField');
-  },
   setField(value) {
-    return this.customSetValue('@textField', value);
+    return this.customClick('@textField')
+      .sendKeys('@textField', value);
   },
   clickSubmitButton() {
     return this.customClick('@submitButton');
@@ -19,7 +17,7 @@ const modalSelector = sel('textFieldEditorModal');
 module.exports = modalCreator(modalSelector, {
   elements: {
     ...elementsWrapperCreator(modalSelector, {
-      textField: sel('textField'),
+      textField: `${sel('textField')} .jodit_wysiwyg`,
       submitButton: sel('submitButton'),
     }),
   },
