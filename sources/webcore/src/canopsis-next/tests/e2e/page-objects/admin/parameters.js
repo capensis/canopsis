@@ -6,34 +6,55 @@ const commands = {
   verifyPageElementsBefore() {
     return this.waitForElementVisible('@page');
   },
+
   clearAppTitle() {
     return this.customClearValue('@appTitle');
   },
+
   setAppTitle(value) {
     return this.customSetValue('@appTitle', value);
   },
+
   selectLanguage(index = 1) {
     return this.customClick('@languageField')
       .waitForElementVisible(this.el('@languageOption', index))
       .customClick(this.el('@languageOption', index));
   },
+
   clearFooter() {
     return this.customClearRTE('@footerField');
   },
+
   clearDescription() {
     return this.customClearRTE('@descriptionField');
   },
+
   setFooter(value) {
     return this.customClick('@footerField')
       .sendKeys('@footerField', value);
   },
+
   setDescription(value) {
     return this.customClick('@descriptionField')
       .sendKeys('@descriptionField', value);
   },
+
   clickSubmitButton() {
     return this.customClick('@submitButton');
   },
+
+  verifyAppTitle(text) {
+    return this.assert.containsText('@appTitleElement', text);
+  },
+
+  verifyLoginDescription(text) {
+    return this.assert.containsText('@loginDescriptionElement', text);
+  },
+
+  verifyLoginFooter(text) {
+    return this.assert.containsText('@loginFooterElement', text);
+  },
+
   el,
 };
 
@@ -50,6 +71,9 @@ module.exports = {
     descriptionFieldSource: `${sel('descriptionLayout')} .jodit_toolbar_btn`,
     descriptionField: `${sel('descriptionLayout')} .jodit_wysiwyg`,
     fileSelector: `input${sel('fileSelector')}`,
+    appTitleElement: '#main-navigation .v-toolbar__title',
+    loginDescriptionElement: '#main-content .mainContainer .description',
+    loginFooterElement: `${sel('loginFormFooter')}`,
     submitButton: sel('submitButton'),
   },
   commands: [commands],

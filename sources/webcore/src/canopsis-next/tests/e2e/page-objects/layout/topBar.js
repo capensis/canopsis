@@ -36,6 +36,10 @@ const commands = {
   clickLogoutButton() {
     return this.customClick('@logoutButton');
   },
+
+  getLogoutButtonText(callback) {
+    return this.getText('@logoutButton', callback);
+  },
 };
 
 module.exports = {

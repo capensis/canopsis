@@ -29,8 +29,11 @@ module.exports.command = function createUser(user = { ...USER }, callback = () =
     .setEmail(email)
     .setPassword(password)
     .selectRole(role)
-    .selectLanguage(language)
     .selectNavigationType(navigationType);
+
+  if (language) {
+    adminCreateUser.selectLanguage(language);
+  }
 
   this.waitForFirstXHR(
     API_ROUTES.user.create,
