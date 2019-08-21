@@ -35,8 +35,8 @@
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit(false)") {{ $t('common.actions.ack') }}
-      v-btn.warning(@click.prevent="submit(true)") {{ $t('common.actions.acknowledgeAndReport') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
+      v-btn.warning(@click.prevent="submitWithTicket") {{ submitWithTicketBtnLabel }}
 </template>
 
 <script>
@@ -73,6 +73,10 @@ export default {
     isNoteRequired() {
       return this.config && this.config.isNoteRequired;
     },
+
+    submitWithTicketBtnLabel() {
+      return this.form.ticket ? this.$t('common.actions.acknowledgeAndAssociateTicket') : this.$t('common.actions.acknowledgeAndDeclareTicket');
+    },
   },
   methods: {
     createAckEvent() {
@@ -93,25 +97,45 @@ export default {
       return this.createEventAction({ data: assocTicketEventData });
     },
 
-    async submit(withTicket) {
+    async createAckEventAndCloseModal() {
+      await this.createAckEvent();
+
+      if (this.config && this.config.afterSubmit) {
+        await this.config.afterSubmit();
+      }
+
+      this.hideModal();
+    },
+
+    async submitWithTicket() {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
-        await this.createAckEvent();
-
-        if (withTicket) {
-          if (this.form.ticket) {
-            await this.createAssocTicketEvent();
-          } else {
-            await this.createDeclareTicketEvent();
-          }
+        if (this.form.ticket) {
+          await this.createAssocTicketEvent();
+        } else {
+          await this.createDeclareTicketEvent();
         }
 
-        if (this.config && this.config.afterSubmit) {
-          await this.config.afterSubmit();
-        }
+        this.createAckEventAndCloseModal();
+      }
+    },
 
-        this.hideModal();
+    async submit() {
+      const formIsValid = await this.$validator.validateAll();
+
+      if (formIsValid) {
+        if (this.form.ticket) {
+          this.showModal({
+            name: MODALS.confirmAckWithTicket,
+            config: {
+              continueAction: this.createAckEventAndCloseModal,
+              continueWithTicketAction: this.submitWithTicket,
+            },
+          });
+        } else {
+          this.createAckEventAndCloseModal();
+        }
       }
     },
   },

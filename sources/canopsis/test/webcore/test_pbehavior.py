@@ -81,6 +81,7 @@ class TestPbehavior(TestCase):
     def test_check_values_valid_pb(self):
         check_values(self.VALID_PB)
 
+
 class TestPbehaviorWebservice(TestCase):
 
     INVALID_PB = {
@@ -127,15 +128,16 @@ class TestPbehaviorWebservice(TestCase):
         pb_id = self.rhpb.create(**self.VALID_PB)
         self.assertIsInstance(pb_id, str)
 
-        pbehavior = self.rhpb.read(pb_id)
+        pbehavior = self.rhpb.read(pb_id, None, None)
 
         self.assertIsInstance(pbehavior, dict)
-        self.assertEquals(pbehavior.get('name'), self.VALID_PB.get('name'))
+        self.assertEquals(pbehavior.get('data')[0].get(
+            'name'), self.VALID_PB.get('name'))
 
     def test_update_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
 
-        pbehavior = self.rhpb.read(pb_id)
+        pbehavior = self.rhpb.read(pb_id,  None, None).get('data')[0]
 
         self.assertEquals(pbehavior.get('name'), self.VALID_PB.get('name'))
 
@@ -154,48 +156,54 @@ class TestPbehaviorWebservice(TestCase):
         res = self.rhpb.update(pb_id, **updated_pb)
         self.assertIsInstance(res, dict)
 
-
-        updated_pb = self.rhpb.read(pb_id)
+        updated_pb = self.rhpb.read(pb_id).get('data')[0]
         self.assertEquals(updated_pb.get('name'), 'pb_new_name')
         self.assertEquals(updated_pb.get('author'), 'pb_new_author')
         self.assertEquals(updated_pb.get('filter'), {u"new": "filter"})
-        self.assertEquals(updated_pb.get('tstart'), pbehavior.get('tstart') * 10)
+        self.assertEquals(updated_pb.get('tstart'),
+                          pbehavior.get('tstart') * 10)
         self.assertEquals(updated_pb.get('tstop'), pbehavior.get('tstop') * 10)
         self.assertEquals(updated_pb.get('rrule'), 'FREQ=DAILY;BYDAY=SU')
         self.assertEquals(updated_pb.get('enabled'), True)
-        self.assertListEqual(updated_pb.get('comments'), [{'author': 'test', 'message': 'test'}])
+        self.assertListEqual(updated_pb.get('comments'), [
+                             {'author': 'test', 'message': 'test'}])
         self.assertEquals(updated_pb.get('connector'), 'test_pb_new')
         self.assertEquals(updated_pb.get('connector_name'), 'test_pb_new')
 
     def test_delete_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
 
-        pbehavior = self.rhpb.read(pb_id)
+        pbehavior = self.rhpb.read(pb_id, None, None)
 
-        self.assertEquals(pbehavior.get('name'), self.VALID_PB.get('name'))
+        self.assertEquals(pbehavior.get('data')[0].get(
+            'name'), self.VALID_PB.get('name'))
 
         delres = self.rhpb.delete(pb_id)
         self.assertEquals(delres.get('deletedCount'), 1)
 
-        pbehavior = self.rhpb.read(pb_id)
-        self.assertIsNone(pbehavior)
+        pbehavior = self.rhpb.read(pb_id, None, None).get('data')
+        self.assertEquals(pbehavior, [])
 
     def test_create_comments_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
 
-        c1 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg')
-        c2 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg2')
-        c3 = self.rhpb.create_comment(pb_id, author='pb_test2', message='pb_comment_msg')
-        c4 = self.rhpb.create_comment(pb_id, author='pb_test2', message='pb_comment_msg2')
+        c1 = self.rhpb.create_comment(
+            pb_id, author='pb_test', message='pb_comment_msg')
+        c2 = self.rhpb.create_comment(
+            pb_id, author='pb_test', message='pb_comment_msg2')
+        c3 = self.rhpb.create_comment(
+            pb_id, author='pb_test2', message='pb_comment_msg')
+        c4 = self.rhpb.create_comment(
+            pb_id, author='pb_test2', message='pb_comment_msg2')
 
         self.assertIsInstance(c1, str)
         self.assertIsInstance(c2, str)
         self.assertIsInstance(c3, str)
         self.assertIsInstance(c4, str)
 
-        pbehavior = self.rhpb.read(pb_id)
+        pbehavior = self.rhpb.read(pb_id, None, None)
 
-        comments = pbehavior.get('comments')
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(comments[0].get('author'), 'pb_test')
         self.assertEquals(comments[0].get('message'), 'pb_comment_msg')
@@ -212,14 +220,16 @@ class TestPbehaviorWebservice(TestCase):
     def test_update_comment_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
 
-        c1 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg')
+        c1 = self.rhpb.create_comment(
+            pb_id, author='pb_test', message='pb_comment_msg')
 
         self.assertIsInstance(c1, str)
 
-        self.rhpb.update_comment(pb_id, c1, author='pb_test_new', message='pb_comment_new')
+        self.rhpb.update_comment(
+            pb_id, c1, author='pb_test_new', message='pb_comment_new')
 
-        pbehavior = self.rhpb.read(pb_id)
-        comments = pbehavior.get('comments')
+        pbehavior = self.rhpb.read(pb_id, None, None)
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(len(comments), 1)
         self.assertEquals(comments[0].get('author'), 'pb_test_new')
@@ -228,12 +238,13 @@ class TestPbehaviorWebservice(TestCase):
     def test_delete_comment_pb(self):
         pb_id = self.rhpb.create(**self.VALID_PB)
 
-        c1 = self.rhpb.create_comment(pb_id, author='pb_test', message='pb_comment_msg')
+        c1 = self.rhpb.create_comment(
+            pb_id, author='pb_test', message='pb_comment_msg')
 
         self.assertIsInstance(c1, str)
 
-        pbehavior = self.rhpb.read(pb_id)
-        comments = pbehavior.get('comments')
+        pbehavior = self.rhpb.read(pb_id, None, None)
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(len(comments), 1)
 
@@ -241,10 +252,11 @@ class TestPbehaviorWebservice(TestCase):
 
         self.assertEquals(res.get('deletedCount'), 1)
 
-        pbehavior = self.rhpb.read(pb_id)
-        comments = pbehavior.get('comments')
+        pbehavior = self.rhpb.read(pb_id, None, None)
+        comments = pbehavior.get('data')[0].get('comments')
 
         self.assertEquals(len(comments), 0)
+
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

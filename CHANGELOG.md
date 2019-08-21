@@ -2,6 +2,22 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.26.0 - Due date : 2019-08-19
+
+ - [UI – Listalarm] Improve « info popup » UX
+ - [UI – CRUD Pbehaviors] Add pagination parameters
+ - [UI – Listalarm] Improve ack with ticket action workflow
+ - [UI – Service weather] Add a message when there are no data to display and when there was an error fetching data
+ - [UI – CRUD Webhooks] Add « empty_response » field
+ - [UI] Clarified « Default filter » field label
+ - [UI] Add translations on pattern edition fields
+ - [UI – Tests] e2e tests – Add basic functions for views management
+ - [UI – CRUD Rights] Fix – User creation
+ - [UI – CRUD Rights] Fix – Page refresh after new right creation
+ - [UI – Tests] e2e tests – Empty group deletion
+ - [API] Pagination de la route des PBehaviors
+ - [Webhook] Ajout du champ empty_response
+
 ## Canopsis 3.25.0 - Due date : 2019-08-02
 
  - [Documentation] Add documentation for importctx API
@@ -64,7 +80,7 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
  - [Build] Remove -s -w ldflags to keep debugging symbols in Go engines
  - [Build] Fix missing package dependencies for SNMP on Debian and CentOS
  - [Go] Add CPS_DEBUG_TRACE option to axe and watcher engines
- - [Go] Move watcher functionality from axe to a dedicated new watcher engine 
+ - [Go] Move watcher functionality from axe to a dedicated new watcher engine
  - [Go] Add runtime warnings about TicketService being deprecated and now replaced by Webhooks
  - [Go] Added missing declareticket trigger to action and webhooks
  - [Python] Remove tracebacks on AMQP connection errors due to loss of heartbeat

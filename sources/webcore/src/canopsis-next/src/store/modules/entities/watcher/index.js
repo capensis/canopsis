@@ -27,6 +27,7 @@ export default {
     getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
       rootGetters['entities/getList'](ENTITIES_TYPES.watcher, get(state.widgets[widgetId], 'allIds', [])),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
+    getErrorByWidgetId: state => widgetId => get(state.widgets[widgetId], 'error'),
     getItem: (state, getters, rootState, rootGetters) => id =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.watcher, id),
   },
@@ -35,6 +36,7 @@ export default {
       Vue.set(state.widgets, widgetId, {
         ...state.widgets[widgetId],
         pending: true,
+        error: null,
       });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds }) {
@@ -44,10 +46,11 @@ export default {
         allIds,
       });
     },
-    [types.FETCH_LIST_FAILED](state, { widgetId }) {
+    [types.FETCH_LIST_FAILED](state, { widgetId, error = {} }) {
       Vue.set(state.widgets, widgetId, {
         ...state.widgets[widgetId],
         pending: false,
+        error,
       });
     },
   },
@@ -68,10 +71,6 @@ export default {
       return request.put(`${API_ROUTES.watcherng}/${data._id}`, data);
     },
 
-    removeWatcherNg() {
-
-    },
-
     async fetchList({ dispatch, commit }, { widgetId, params, filter } = {}) {
       try {
         const requestFilter = filter || '{}';
@@ -89,7 +88,10 @@ export default {
           allIds: normalizedData.result,
         });
       } catch (err) {
-        commit(types.FETCH_LIST_FAILED, { widgetId });
+        commit(types.FETCH_LIST_FAILED, {
+          widgetId,
+          error: err,
+        });
 
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
