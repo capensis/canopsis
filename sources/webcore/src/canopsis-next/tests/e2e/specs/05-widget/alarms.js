@@ -92,6 +92,28 @@ module.exports = {
     });
 
     browser.page.widget.alarms()
+      .clickAdvancedSettings()
+      .clickDefaultSortColumn()
+      .selectSortColumn(2)
+      .selectSortOrder(2)
+      .clickColumnNames()
+      .clickColumnDown(1)
+      .clearColumnLabel(2)
+      .setColumnLabel(2, 'Connector')
+      .clearColumnValue(2)
+      .setColumnValue(2, 'alarm.v.connector')
+      .clickColumnHtml(2)
+      .clickColumnUp(2)
+      .clickColumnClose(1)
+      .clickColumnAdd()
+      .setColumnLabel(8, 'Connector')
+      .setColumnValue(8, 'alarm.v.connector')
+      .clickDefaultNumberOfElementsPerPage()
+      .selectElementsPerPage(3)
+      .clickFilterOnOpenResolved()
+      .clickOpenFilter()
+      .clickResolvedFilter()
+      .clickFilters()
       .clickSubmitAlarms();
   },
 
