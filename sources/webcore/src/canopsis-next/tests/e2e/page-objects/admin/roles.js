@@ -1,11 +1,6 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
-const sel = require('../../helpers/sel');
-
-function getUserSelector(id) {
-  return sel(`user-${id}`);
-}
 
 const commands = {
   verifyPageElementsBefore() {
@@ -13,9 +8,9 @@ const commands = {
       .assert.visible('@addButton');
   },
 
-  verifyPageUserBefore(id) {
+  verifyPageRoleBefore(id) {
     return this.waitForElementVisible('@dataTable')
-      .assert.visible(getUserSelector(id));
+      .assert.visible(sel(`role-${id}`));
   },
 
   verifyMassDeleteButton() {
@@ -27,15 +22,15 @@ const commands = {
   },
 
   clickOptionCheckbox(id) {
-    return this.customClick(this.el('@optionCheckbox', getUserSelector(id)));
+    return this.customClick(this.el('@optionCheckbox', sel(`role-${id}`)));
   },
 
   clickEditButton(id) {
-    return this.customClick(this.el('@editButton', getUserSelector(id)));
+    return this.customClick(this.el('@editButton', sel(`role-${id}`)));
   },
 
   clickDeleteButton(id) {
-    return this.customClick(this.el('@deleteButton', getUserSelector(id)));
+    return this.customClick(this.el('@deleteButton', sel(`role-${id}`)));
   },
 
   clickMassDeleteButton() {
@@ -50,6 +45,11 @@ const commands = {
     return this.customClick('@nextButton');
   },
 
+  clickRefreshButton() {
+    return this.customClick('@refreshButton');
+  },
+
+
   setSearchingText(value) {
     return this.customSetValue('@searchingTextField', value);
   },
@@ -62,10 +62,10 @@ const commands = {
     return this.customClick('@clearSearchButton');
   },
 
-  selectRange(idx = 5) {
+  selectRange(index = 5) {
     return this.customClick('@selectRangeField')
-      .waitForElementVisible(this.el('@selectRangeItemOption', idx))
-      .customClick(this.el('@selectRangeItemOption', idx));
+      .waitForElementVisible(this.el('@selectRangeItemOption', index))
+      .customClick(this.el('@selectRangeItemOption', index));
   },
 
   el,
@@ -73,18 +73,19 @@ const commands = {
 
 module.exports = {
   url() {
-    return `${process.env.VUE_DEV_SERVER_URL}admin/users`;
+    return `${process.env.VUE_DEV_SERVER_URL}admin/roles`;
   },
   elements: {
     dataTable: '.v-datatable',
     dataTableUserItem: '.v-datatable tbody tr',
-    addButton: sel('addButton'),
     searchingTextField: sel('searchingTextField'),
     submitSearchButton: sel('submitSearchButton'),
     clearSearchButton: sel('clearSearchButton'),
+    addButton: sel('addButton'),
     editButton: `%s ${sel('editButton')}`,
     deleteButton: `%s ${sel('deleteButton')}`,
     massDeleteButton: sel('massDeleteButton'),
+    refreshButton: sel('refreshButton'),
     selectRangeField: '.v-datatable .v-datatable__actions__select .v-input__control',
     selectRangeItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     prevButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Previous page"]',

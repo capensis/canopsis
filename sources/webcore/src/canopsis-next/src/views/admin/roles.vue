@@ -10,7 +10,7 @@
           @clear="applySearchFilter",
           )
         v-flex(v-show="hasDeleteAnyRoleAccess && selected.length", xs4)
-          v-btn(@click="showRemoveSelectedRolesModal", icon)
+          v-btn(@click="showRemoveSelectedRolesModal", data-test="massDeleteButton", icon)
             v-icon delete
       v-data-table(
       v-model="selected",
@@ -24,20 +24,36 @@
       select-all,
       )
         template(slot="items", slot-scope="props")
-          tr
+          tr(:data-test="`role-${props.item._id}`")
             td
-              v-checkbox(v-model="props.selected", primary, hide-details)
+              v-checkbox(v-model="props.selected", data-test="optionCheckbox", primary, hide-details)
             td {{ props.item._id }}
             td
-              v-btn.ma-0(v-if="hasUpdateAnyRoleAccess", @click="showEditRoleModal(props.item._id)", icon)
+              v-btn.ma-0(
+              v-if="hasUpdateAnyRoleAccess",
+              data-test="editButton",
+              icon,
+              @click="showEditRoleModal(props.item._id)"
+              )
                 v-icon edit
-              v-btn.ma-0(v-if="hasDeleteAnyRoleAccess", @click="showRemoveRoleModal(props.item._id)", icon)
+              v-btn.ma-0(
+              v-if="hasDeleteAnyRoleAccess",
+              data-test="deleteButton",
+              icon,
+              @click="showRemoveRoleModal(props.item._id)"
+              )
                 v-icon(color="error") delete
     .fab(v-if="hasCreateAnyRoleAccess")
       v-layout(column)
         refresh-btn(@click="fetchList")
         v-tooltip(left)
-          v-btn(slot="activator", fab, color="primary", @click.stop="showCreateRoleModal")
+          v-btn(
+          slot="activator",
+          color="primary",
+          data-test="addButton",
+          fab,
+          @click.stop="showCreateRoleModal"
+          )
             v-icon add
           span {{ $t('modals.createRole.title') }}
 </template>

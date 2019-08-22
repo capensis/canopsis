@@ -23,9 +23,10 @@ module.exports = {
       .clickSubmitButton()
       .verifyModalClosed();
 
-    delete browser.globals.views;
+    browser.completed.logout()
+      .end(done);
 
-    browser.end(done);
+    delete browser.globals.views;
   },
 
   'Add view with name from constants': (browser) => {
@@ -198,9 +199,9 @@ module.exports = {
     browser.page.modals.view.create()
       .verifyModalOpened()
       .clickViewDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.layout.popup()
@@ -211,9 +212,9 @@ module.exports = {
       .defaultPause();
     browser.page.modals.view.createGroup().verifyModalOpened()
       .clickDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.layout.popup()
@@ -228,9 +229,9 @@ module.exports = {
     browser.page.modals.view.create()
       .verifyModalOpened()
       .clickViewDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.layout.popup()
@@ -241,9 +242,9 @@ module.exports = {
       .defaultPause();
     browser.page.modals.view.createGroup().verifyModalOpened()
       .clickDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
 
     browser.page.layout.popup()

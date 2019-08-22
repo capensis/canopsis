@@ -66,10 +66,6 @@ const commands = {
     return this.customClick('@enabled');
   },
 
-  clickSubmitButton() {
-    return this.customClick('@submitButton');
-  },
-
   el,
 };
 

@@ -1,4 +1,5 @@
 // http://nightwatchjs.org/guide#usage
+const { API_ROUTES } = require('../../../../src/config');
 const { generateTemporaryUser } = require('../../helpers/entities');
 
 module.exports = {
@@ -11,24 +12,38 @@ module.exports = {
     done();
   },
 
-  async after(browser, done) {
+  after(browser, done) {
     delete browser.globals.users;
 
-    await browser.completed.logout()
+    browser.completed.logout()
       .end(done);
   },
 
   'Create new user with some name': (browser) => {
     const { users } = browser.globals;
+    const generatedUser = generateTemporaryUser();
 
-    users.create = generateTemporaryUser('create');
+    browser.completed.user.create(generatedUser, user => users.create = { ...user, ...generatedUser });
+  },
 
-    browser.completed.createUser(users.create, ({ userResponseData }) => {
-      users.create = {
-        ...users.create,
-        userResponseData,
-      };
-    });
+  'Check searching': (browser) => {
+    const { create: user } = browser.globals.users;
+    const usersPage = browser.page.admin.users();
+
+    usersPage.setSearchingText(user._id)
+      .waitForFirstXHR(API_ROUTES.user.list, 5000, () => usersPage.clickSubmitSearchButton(), ({ responseData }) => {
+        const { data } = JSON.parse(responseData);
+
+        browser.assert.ok(data.every(item => item._id === user._id));
+        browser.assert.elementsCount(usersPage.elements.dataTableUserItem.selector, 1);
+
+        usersPage.verifyPageUserBefore(user._id);
+      })
+      .waitForFirstXHR(API_ROUTES.user.list, 5000, () => usersPage.clickClearSearchButton(), ({ responseData }) => {
+        const { data } = JSON.parse(responseData);
+
+        browser.assert.ok(data.some(item => item._id !== user._id));
+      });
   },
 
   'Login by created user credentials': (browser) => {
@@ -48,7 +63,7 @@ module.exports = {
 
     users.edit = generateTemporaryUser('edit');
 
-    const userSelector = users.create.username;
+    const userSelector = users.create._id;
 
     const {
       username, firstname, lastname, email, password,
@@ -93,14 +108,14 @@ module.exports = {
     const createUser = users.create.username;
     const editUser = users.edit.username;
 
-    browser.completed.deleteUser(createUser, ({ responseData }) => {
+    browser.completed.user.delete(createUser, ({ responseData }) => {
       users.create = {
         ...users.create,
         deleteData: responseData,
       };
     });
 
-    browser.completed.deleteUser(editUser, ({ responseData }) => {
+    browser.completed.user.delete(editUser, ({ responseData }) => {
       users.edit = {
         ...users.edit,
         deleteData: responseData,
@@ -117,7 +132,7 @@ module.exports = {
       users.mass.push(generateTemporaryUser('mass'));
     }
 
-    users.mass.map((user, index) => browser.completed.createUser(user, ({ userResponseData }) => {
+    users.mass.map((user, index) => browser.completed.user.create(user, ({ userResponseData }) => {
       users.mass[index] = {
         ...users.mass[index],
         userResponseData,
@@ -150,9 +165,9 @@ module.exports = {
     browser.page.admin.users()
       .verifyMassDeleteButton()
       .clickMassDeleteButton();
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 };
