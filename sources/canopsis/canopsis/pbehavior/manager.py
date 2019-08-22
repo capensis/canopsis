@@ -258,6 +258,8 @@ class PBehaviorManager(object):
         24 hours clock system and the timezone is the name of the timezone. The
         month, the day of the month, the hour, the minute and second are
         zero-padded.
+        :param str pbh_id: Optional id for pbh. If not specified or none, a
+        random id will be generated
         :raises ValueError: invalid RRULE
         :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid

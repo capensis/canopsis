@@ -376,7 +376,7 @@ def exports(ws):
         required keys: name str, filter dict, comments list of dict with
         author message, tstart int, tstop int, author str
 
-        optionnal keys: rrule str, enabled bool
+        optionnal keys: rrule str, enabled bool, _id str
 
         :raises ValueError: invalid keys sent.
         """
