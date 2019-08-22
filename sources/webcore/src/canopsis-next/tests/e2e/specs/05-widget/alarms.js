@@ -82,133 +82,57 @@ module.exports = {
       .clickWidget('AlarmsList')
       .verifyModalClosed();
 
-    browser.completed.widget.setCommonField({
-      row: 'row',
-      sm: 13,
-      md: 13,
-      lg: 13,
-      title: 'Alarms widget',
-      periodRefresh: 120,
+    browser.completed.widget.createAlarmsList({
+      common: {
+        row: 'row',
+        sm: 13,
+        md: 13,
+        lg: 13,
+        title: 'Alarms widget',
+        periodRefresh: 120,
+      },
+      advanced: {
+        sort: {
+          name: 2,
+          order: 2,
+        },
+        defaultNumberOfElementsPerPage: {
+          count: 3,
+        },
+        filterOnOpenResolved: {
+          open: true,
+          resolved: true,
+        },
+        filters: {
+          add: {
+            title: 'FilterTitle',
+            or: true,
+            rule: {
+              field: 2,
+              operator: 2,
+            },
+          },
+        },
+        infoPopap: {
+          add: {
+            column: 2,
+            template: 'Template',
+          },
+        },
+        moreInfo: {
+          text: 'Text',
+        },
+        enableHtml: true,
+        ackGroup: {
+          isAckNoteRequired: true,
+          isMultiAckEnabled: true,
+          fastAckOutput: {
+            enabled: true,
+            output: 'Output',
+          },
+        },
+      },
     });
-
-    browser.page.widget.alarms()
-      .clickAdvancedSettings()
-      .clickDefaultSortColumn()
-      .selectSortColumn(2)
-      .selectSortOrder(2)
-      .clickColumnNames()
-      .clickColumnDown(1)
-      .clearColumnLabel(2)
-      .setColumnLabel(2, 'Connector')
-      .clearColumnValue(2)
-      .setColumnValue(2, 'alarm.v.connector')
-      .clickColumnHtml(2)
-      .clickColumnUp(2)
-      .clickColumnClose(1)
-      .clickColumnAdd()
-      .setColumnLabel(8, 'Connector')
-      .setColumnValue(8, 'alarm.v.connector')
-      .clickDefaultNumberOfElementsPerPage()
-      .selectElementsPerPage(3)
-      .clickFilterOnOpenResolved()
-      .clickOpenFilter()
-      .clickResolvedFilter()
-      .clickFilters()
-      .clickAddFilter();
-
-    browser.page.modals.common.createFilter()
-      .verifyModalOpened()
-      .setFilterTitle('FilterTitle1')
-      .clickRadioOr()
-      .clickAddRule()
-      .selectFieldRule(2)
-      .selectOperatorRule(2)
-      .clickSubmitFilter()
-      .verifyModalClosed();
-
-    browser.page.widget.alarms()
-      .clickAddFilter();
-
-    browser.page.modals.common.createFilter()
-      .verifyModalOpened()
-      .setFilterTitle('FilterTitle2')
-      .clickRadioOr()
-      .clickAddRule()
-      .selectFieldRule(1)
-      .selectOperatorRule(1)
-      .clickSubmitFilter()
-      .verifyModalClosed();
-
-    browser.page.widget.alarms()
-      .clickMixFilters()
-      .clickOrFilters()
-      .selectFilters(1)
-      .selectFilters(2)
-      .clickInfoPopupButton();
-
-    browser.page.modals.alarm.infoPopupSetting()
-      .verifyModalOpened()
-      .clickAddPopup();
-
-    browser.page.modals.alarm.addInfoPopup()
-      .verifyModalOpened()
-      .selectSelectedColumn(2)
-      .setTemplate('Template')
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.modals.alarm.infoPopupSetting()
-      .clickEditPopup();
-
-    browser.page.modals.alarm.addInfoPopup()
-      .verifyModalOpened()
-      .selectSelectedColumn(1)
-      .setTemplate('End')
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.modals.alarm.infoPopupSetting()
-      .clickDeletePopup()
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.widget.alarms()
-      .clickCreateEditMore();
-
-    browser.page.modals.common.textEditor()
-      .verifyModalOpened()
-      .setRTE('More')
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.widget.alarms()
-      .clickCreateEditMore();
-
-    browser.page.modals.common.textEditor()
-      .verifyModalOpened()
-      .setRTE(' info...')
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    browser.page.widget.alarms()
-      .clickDeleteMore();
-
-    browser.page.modals.confirmation()
-      .verifyModalOpened()
-      .clickConfirmButton()
-      .verifyModalClosed();
-
-    browser.page.widget.alarms()
-      .clickEnableHtml()
-      .clickAckGroup()
-      .clickIsAckNoteRequired()
-      .clickIsMultiAckEnabled()
-      .clickFastAckOutput()
-      .clickFastAckOutputSwitch()
-      .setFastAckOutputText('test');
-
-    browser.page.widget.alarms()
-      .clickSubmitAlarms();
   },
 
   'Edit widget weather with some name': (browser) => {
