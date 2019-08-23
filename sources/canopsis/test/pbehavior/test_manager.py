@@ -104,18 +104,19 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
 
     def test_read(self):
-        pb = self.pbm.read(_id=self.pbehavior_id)
-        pbs = self.pbm.read()
+        pb = self.pbm.read(_id=self.pbehavior_id).get('data')[0]
+        pbs = self.pbm.read().get('data')
         self.assertTrue(pb is not None)
         self.assertTrue(isinstance(pbs, list))
         self.assertEqual(len(pbs), 1)
-        self.assertEqual(pbs[0][PBehavior.TYPE], self.pbehavior[PBehavior.TYPE])
+        self.assertEqual(pbs[0][PBehavior.TYPE],
+                         self.pbehavior[PBehavior.TYPE])
         self.assertEqual(pbs[0]['reason'], self.pbehavior['reason'])
 
     def test_update(self):
         self.pbm.update(self.pbehavior_id, name='test_name2',
                         connector=None, connector_name=None)
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertTrue(pb is not None)
         self.assertEqual(pb['name'], 'test_name2')
         self.assertEqual(pb['connector'], 'test_connector')
@@ -123,19 +124,20 @@ class TestManager(BaseTest):
 
     def test_delete(self):
         self.pbm.delete(_id=self.pbehavior_id)
-        pb = self.pbm.get(self.pbehavior_id)
-        self.assertTrue(pb is None)
+        pb = self.pbm.get(self.pbehavior_id).get('data')
+        self.assertTrue(len(pb) == 0)
 
     def test_create_pbehavior_comment(self):
         self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertTrue('comments' in pb)
         self.assertTrue(isinstance(pb['comments'], list))
         self.assertEqual(len(pb['comments']), 2)
 
-        self.pbm._update_pbehavior(self.pbehavior_id, {'$set': {'comments': []}})
+        self.pbm._update_pbehavior(
+            self.pbehavior_id, {'$set': {'comments': []}})
         self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertTrue('comments' in pb)
         self.assertTrue(isinstance(pb['comments'], list))
         self.assertEqual(len(pb['comments']), 1)
@@ -152,21 +154,21 @@ class TestManager(BaseTest):
         self.assertEqual(result['message'], new_message)
         self.assertEqual(result['author'], new_author)
 
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertTrue(isinstance(pb['comments'], list))
         self.assertEqual(pb['comments'][0]['author'], new_author)
         self.assertEqual(pb['comments'][0]['message'], new_message)
 
-        pb2 = self.pbm.get('id_does_not_exist')
-        self.assertIsNone(pb2)
+        pb2 = self.pbm.get('id_does_not_exist').get('data')
+        self.assertEqual(pb2, [])
 
     def test_delete_pbehavior_comment(self):
         self.pbm.create_pbehavior_comment(self.pbehavior_id, 'author', 'msg')
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertEqual(len(pb['comments']), 2)
 
         self.pbm.delete_pbehavior_comment(self.pbehavior_id, self.comment_id)
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
         self.assertEqual(len(pb['comments']), 1)
 
     def test_get_pbehaviors(self):
@@ -191,7 +193,7 @@ class TestManager(BaseTest):
     def test_compute_pbehaviors_filters(self):
         self.pbm.context._put_entities(self.entities)
         self.pbm.compute_pbehaviors_filters()
-        pb = self.pbm.get(self.pbehavior_id)
+        pb = self.pbm.get(self.pbehavior_id).get('data')[0]
 
         self.assertTrue(pb is not None)
         self.assertTrue('eids' in pb)
@@ -208,7 +210,7 @@ class TestManager(BaseTest):
         })
         pb_id = self.pbm.create(**pb)
         self.pbm.compute_pbehaviors_filters()
-        pb = self.pbm.get(pb_id)
+        pb = self.pbm.get(pb_id).get('data')[0]
 
         self.assertTrue(pb is not None)
         self.assertTrue('eids' in pb)
@@ -257,9 +259,11 @@ class TestManager(BaseTest):
         self.pbm.collection.insert(
             [pbehavior_1, pbehavior_2, pbehavior_3, pbehavior_4])
 
-        self.entities[0]['timestamp'] = timegm((now + timedelta(days=2)).timetuple())
+        self.entities[0]['timestamp'] = timegm(
+            (now + timedelta(days=2)).timetuple())
         self.entities[1]['timestamp'] = timegm(now.timetuple())
-        self.entities[2]['timestamp'] = timegm((now - timedelta(days=2)).timetuple())
+        self.entities[2]['timestamp'] = timegm(
+            (now - timedelta(days=2)).timetuple())
 
         self.pbm.context._put_entities(self.entities)
 
@@ -287,8 +291,10 @@ class TestManager(BaseTest):
         )
         self.pbm.collection.insert(pbehavior_1)
 
-        self.entities[0]['timestamp'] = timegm((now - timedelta(days=2)).timetuple())
-        self.entities[1]['timestamp'] = timegm((now - timedelta(seconds=2)).timetuple())
+        self.entities[0]['timestamp'] = timegm(
+            (now - timedelta(days=2)).timetuple())
+        self.entities[1]['timestamp'] = timegm(
+            (now - timedelta(seconds=2)).timetuple())
         self.pbm.context._put_entities(self.entities)
 
         # Check is a passed pbehavior is detected as not triggered
@@ -463,8 +469,10 @@ class TestManager(BaseTest):
     def test_check_active_pbehavior_2(self):
         timestamps = []
 
-        timestamps.append((False, 1529154801-24*3600))  # Vendredi 15 Juin 2018 15h13
-        timestamps.append((True, 1529154801-24*3600+5*3600))  # Vendredi 15 Juin 2018 20h13
+        # Vendredi 15 Juin 2018 15h13
+        timestamps.append((False, 1529154801-24*3600))
+        timestamps.append((True, 1529154801-24*3600+5*3600)
+                          )  # Vendredi 15 Juin 2018 20h13
         timestamps.append((True, 1529154801))  # Samedi 16 Juin 2018 15h13
         timestamps.append((True, 1529290800))  # Lundi 18 Juin 2018 05h00
 
@@ -476,8 +484,8 @@ class TestManager(BaseTest):
         timestamps.append((False, 1529308800+7*24*3600*5))
 
         timestamps.append((True, 1529740800))  # Samedi 23 Juin 2018 10h00
-        timestamps.append((True, 1529740800+7*24*3600)) # +7j
-        timestamps.append((True, 1529740800+7*24*3600*2)) # ...
+        timestamps.append((True, 1529740800+7*24*3600))  # +7j
+        timestamps.append((True, 1529740800+7*24*3600*2))  # ...
         timestamps.append((True, 1529740800+7*24*3600*3))
         timestamps.append((True, 1529740800+7*24*3600*4))
         timestamps.append((True, 1529740800+7*24*3600*5))

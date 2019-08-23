@@ -41,14 +41,16 @@ Une règle est un document JSON contenant les paramètres suivants :
        - `password` (optionnel) : mot de passé employé pour l'authentification HTTP
      - `headers` (optionnel) : les en-têtes de la requête
      - `method` (requis) : méthode HTTP
-     - `payload` (requis) : le corps de la requête qui sera envoyé. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier json. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
-     - `url` (requis) : l'url du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
+     - `payload` (requis) : le corps de la requête qui sera envoyée. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier JSON. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
+     - `url` (requis) : l'URL du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
  - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme.
-     - `ticket_id` est le mom du champs de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
+     - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
+     - `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
 
 Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
-- `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL;
-- `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance;
+
+- `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
+- `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
 - `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
 ### Activation d'un webhook
@@ -109,17 +111,25 @@ Par exemple, ce webhook va être activé si le trigger reçu par le moteur corre
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
 
-Pour plus d'informations, vous pouvez consulter la [documentaion sur les templates](templates-golang.md).
+Pour plus d'informations, vous pouvez consulter la [documentation sur les templates](templates-golang.md).
 
 ### Données externes
 
 Si `declare_ticket` est défini, les données récupérées du service externe sont stockées dans l'alarme et un step `declareticket` est ajouté à l'alarme.
 
+#### Récupération des données externes
+
 Dans `declare_ticket`, le champ `ticket_id` définit le champ où se trouve l'identifiant du ticket créé via le service externe. Par exemple, si l'API retourne l'id dans le champ `numberTicket`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "numberTicket"`.
 
-Si l'API renvoie une réponse sous forme de json imbriqué, il faut prendre en compte le chemin d'accès. Par exemple, si l'API retourne une réponse de type ` {"result": {"number": "numéro d’incident"}}`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "result.number"`.
+Si l'API renvoie une réponse sous forme de JSON imbriqué, il faut prendre en compte le chemin d'accès. Par exemple, si l'API retourne une réponse de type ` {"result": {"number": "numéro d’incident"}}`, il faudra ajouter dans `declare_ticket` la ligne `"ticket_id" : "result.number"`.
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
+
+#### Réponse vide du service externe
+
+Dans le cas où le service externe renvoie une réponse (par exemple `200 OK`) mais sans contenu, il est possible d'ajouter le champ `empty_response` au `declare_ticket`. Si le champ `empty_response` est présent et vaut `true` alors tous les autres champs du `declare_ticket` sont ignorés. Un step `declareticket` est créé avec un numéro de ticket qui vaut `"N/A"`.
+
+Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'il vaut `false`, alors le webhook se comporte comme d'habitude.
 
 ### Exemples
 

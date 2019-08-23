@@ -203,6 +203,22 @@ module.exports = {
       .clickConfirmButton()
       .verifyModalClosed();
 
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
+
+    browser.page.layout.topBar()
+      .clickEditGroupButton(views.create.group_id)
+      .defaultPause();
+    browser.page.modals.view.createGroup().verifyModalOpened()
+      .clickDeleteButton();
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
+      .verifyModalClosed();
+
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
+
     browser.page.layout.topBar()
       .clickDropdownButton(views.edit.group_id)
       .verifyDropdownZone(views.edit.group_id)
@@ -212,6 +228,19 @@ module.exports = {
     browser.page.modals.view.create()
       .verifyModalOpened()
       .clickViewDeleteButton();
+    browser.page.modals.confirmation()
+      .verifyModalOpened()
+      .clickConfirmButton()
+      .verifyModalClosed();
+
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
+
+    browser.page.layout.topBar()
+      .clickEditGroupButton(views.edit.group_id)
+      .defaultPause();
+    browser.page.modals.view.createGroup().verifyModalOpened()
+      .clickDeleteButton();
     browser.page.modals.confirmation()
       .verifyModalOpened()
       .clickConfirmButton()

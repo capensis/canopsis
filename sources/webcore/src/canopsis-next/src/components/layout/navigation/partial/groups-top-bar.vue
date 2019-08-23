@@ -56,6 +56,7 @@
                 )
                   v-icon(small) file_copy
     groups-settings-button(
+    tooltipLeft,
     :isEditingMode="isEditingMode",
     :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
     :buttonProps="{ fab: true, dark: true, small: true }",

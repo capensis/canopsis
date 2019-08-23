@@ -63,6 +63,7 @@ export default {
       },
       declare_ticket: [],
       disable_if_active_pbehavior: false,
+      emptyResponse: false,
     };
 
     return {

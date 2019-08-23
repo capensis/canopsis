@@ -11,7 +11,11 @@
     v-fade-transition
       div
         .v-overlay.v-overlay--active(v-show="view && isTabsChanged")
-          v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+          v-btn(
+          data-test="submitMoveTab",
+          color="primary",
+          @click="submit"
+          ) {{ $t('common.submit') }}
           v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
     :view="view",

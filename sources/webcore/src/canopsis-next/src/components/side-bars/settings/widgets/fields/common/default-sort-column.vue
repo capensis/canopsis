@@ -5,7 +5,7 @@
       v-select(
       :value="value.column",
       :items="columns",
-      :label="$t('settings.columnName')",
+      :label="columnsLabel",
       item-text="label",
       item-value="value",
       @change="updateField('column', $event)"
@@ -42,6 +42,10 @@ export default {
     columns: {
       type: Array,
       default: () => [],
+    },
+    columnsLabel: {
+      type: String,
+      default: null,
     },
   },
   computed: {

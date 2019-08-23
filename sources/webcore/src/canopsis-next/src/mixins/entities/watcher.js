@@ -16,6 +16,7 @@ export default {
     ...mapGetters({
       getWatchersListByWidgetId: 'getListByWidgetId',
       getWatchersPendingByWidgetId: 'getPendingByWidgetId',
+      getWatchersErrorByWidgetId: 'getErrorByWidgetId',
       getWatcher: 'getItem',
     }),
     watchers() {
@@ -23,6 +24,9 @@ export default {
     },
     watchersPending() {
       return this.getWatchersPendingByWidgetId(this.widget._id);
+    },
+    watchersError() {
+      return this.getWatchersErrorByWidgetId(this.widget._id);
     },
   },
   methods: {

@@ -25,10 +25,15 @@ from __future__ import unicode_literals
 
 import copy
 import json
+import time
 
 from operator import itemgetter
 from bottle import request
 
+from canopsis.common.enumerations import FastEnum
+from canopsis.models.entity import Entity
+from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.watcher.filtering import WatcherFilter
 from canopsis.alerts.enums import AlarmField, AlarmFilterField
 from canopsis.alerts.manager import Alerts
@@ -44,10 +49,375 @@ alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
 context_manager = alarm_manager.context_manager
 pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
-DEFAULT_LIMIT = '120'
+WATCHER_COLLECTION = "default_entities"
+mongo = MongoStore.get_default()
+collection = mongo.get_collection(WATCHER_COLLECTION)
+
+mongo_collection = MongoCollection(collection)
+
+DEFAULT_LIMIT = 120
 DEFAULT_START = '0'
 DEFAULT_SORT = False
 DEFAULT_PB_TYPES = []
+DEFAULT_DIRECTION = "ASC"
+
+
+class TileColor(FastEnum):
+    PAUSE = "pause"
+    OK = "ok"
+    MINOR = "minor"
+    MAJOR = "major"
+    CRITICAL = "critical"
+
+
+TILE_COLOR_SELECTOR = [TileColor.OK,
+                       TileColor.MINOR,
+                       TileColor.MAJOR,
+                       TileColor.CRITICAL]
+
+
+class TileIcon(FastEnum):
+    PAUSE = "pause"
+    MAINTENANCE = "maintenance"
+    UNMONITORED = "unmonitored"
+    OK = "ok"
+    MINOR = "minor"
+    MAJOR = "major"
+    CRITICAL = "critical"
+
+
+TILE_ICON_SELECTOR = [TileIcon.OK,
+                      TileIcon.MINOR,
+                      TileIcon.MAJOR,
+                      TileIcon.CRITICAL]
+
+
+class ResultKey(FastEnum):
+    """
+    Contains the key use to handle the watcher retrieve from the
+    watcher pipeline and the rearrange watcher.
+    """
+    ID = AlarmField._id.value
+    INFOS = Entity.INFOS
+    LINKS = "links"
+    NAME = Entity.NAME
+    STATE = "state"
+    ALARM = "alarm"
+    PBEHAVIORS = "pbehaviors"
+    MFILTER = "mfilter"
+    WATCHED_ENT_PBH = "watched_entities_pbehaviors"
+    WATCHED_ENT_ALRM = "watched_entities_alarm"
+    ALRM_VALUE = "v"
+    ALRM_STATUS = AlarmField.status.value
+    ALRM_STATE = AlarmField.state.value
+    ALRM_SNOOZE = AlarmField.snooze.value
+    ALRM_ACK = AlarmField.ack.value
+    ALARM_FILTER = AlarmField.alarmfilter.value
+    ALRM_CONNECTOR = "connector"
+    ALRM_CONNECTOR_NAME = "connector_name"
+    ALRM_LAST_UPDATE = AlarmField.last_update_date.value
+    ALRM_COMPONENT = "component"
+    ALRM_RESOURCE = "resource"
+    ENT = "watched_entities"
+    ENT_ID = Entity._ID
+
+
+class __TileData(object):
+    """
+    This object represents one element (a tile) of the array return by the
+    weather API. Every __TileData attribute represent a field of the returned
+    elements.
+
+    Be careful, this object is used with the vars built-in method. Any new
+    instance attribute will be returned by the API.
+    """
+
+    def __init__(self, watcher):
+        """
+        Create a new instance.
+
+        :param dict: a watcher dict from the watcher pipeline.
+        """
+        self.entity_id = watcher[ResultKey.ID]
+        self.infos = watcher[ResultKey.INFOS]
+        self.sla_tex = ""
+        self.display_name = watcher[ResultKey.NAME]
+        self.linklist = []
+        self.mfilter = watcher.get(ResultKey.MFILTER, "")
+        for key, value in watcher.get(ResultKey.LINKS, {}).items():
+            self.linklist.append({'cat_name': key, 'links': value})
+
+        self.watcher_pbehavior = watcher[ResultKey.PBEHAVIORS]
+
+        self.automatic_action_timer = self.__get_next_run(watcher)
+
+        state = watcher.get(ResultKey.STATE, 0)
+        if isinstance(state, int):
+            self.state = {'val': state}
+        else:
+            self.state = {'val': 0}
+
+        if not len(watcher[ResultKey.ALARM]) == 0:
+            alarm = watcher[ResultKey.ALARM][0]
+            alarm = alarm[ResultKey.ALRM_VALUE]
+            self.state = alarm[ResultKey.ALRM_STATE]
+            self.status = alarm[ResultKey.ALRM_STATUS]
+            self.snooze = alarm.get(ResultKey.ALRM_SNOOZE, None)
+            self.ack = alarm.get(ResultKey.ALRM_ACK, None)
+            self.connector = alarm[ResultKey.ALRM_CONNECTOR]
+            self.connector_name = alarm[ResultKey.ALRM_CONNECTOR_NAME]
+            self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE]
+            self.component = alarm[ResultKey.ALRM_COMPONENT]
+            self.resource = alarm.get(ResultKey.ALRM_RESOURCE, None)
+
+        # properties of the tile
+        self.isActionRequired = self.__is_action_required(watcher)
+        self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
+        self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS]) != 0
+        self.tileColor = self.__get_tile_color(watcher)
+        self.tileIcon = self.__get_tile_icon(watcher)
+        self.tileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
+
+    @classmethod
+    def __is_action_required(cls, watcher):
+        """
+        Return if an action is required on the watcher.
+
+        An action is required if a watched entity have an opened alarm without
+        any `ack`.
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return boolean: True if an action is required, False otherwise.
+        """
+
+        watcher_alarm = watcher.get(ResultKey.ALARM, None)
+        if watcher_alarm is None:
+            return False
+
+        if len(watcher[ResultKey.PBEHAVIORS]) != 0:
+            return False
+
+        for entity in watcher[ResultKey.ENT]:
+            if entity[ResultKey.ALARM] is None:
+                continue
+
+            alarm_value = entity[ResultKey.ALARM][ResultKey.ALRM_VALUE]
+            if alarm_value.get(ResultKey.ALRM_ACK, None) is None:
+                if len(entity[ResultKey.PBEHAVIORS]) == 0:
+                    return True
+
+        return False
+
+    @classmethod
+    def __is_all_entities_paused(cls, watcher):
+        """
+        Return if every watched entities of a watcher have at least
+        one active pbehavior.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return boolean: True if all watched entities have an active
+        pbehavior, False otherwise.
+        """
+        for entity in watcher[ResultKey.ENT]:
+            if len(entity[ResultKey.PBEHAVIORS]) == 0:
+                return False
+        return True
+
+    @classmethod
+    def __get_tile_color(cls, watcher):
+        """
+        Return a string that indicate the color to use to render the watcher
+        tile.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return str: 'TileColor.PAUSE' if they are at least one active
+        pbehavior on the watcher or an active pbehavior on every watched
+        entities.
+        'TileColor.OK' if the watcher state is 0.
+        'TileColor.MINOR' if the watcher state is 1.
+        'TileColor.MAJOR' if the watcher state is 2.
+        'TileColor.CRITICAL' if the watcher state is 3.
+        """
+        watched_ent_paused = 0
+        watcher_state = 0
+
+        for ent in watcher[ResultKey.ENT]:
+            if len(ent[ResultKey.PBEHAVIORS]) > 0:
+                watched_ent_paused += 1
+
+        if len(watcher[ResultKey.ALARM]) > 0:
+            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
+            watcher_state = alarm[ResultKey.ALRM_STATE]["val"]
+
+        if len(watcher[ResultKey.ENT]) > 0 and \
+           len(watcher[ResultKey.ENT]) == watched_ent_paused:
+            return TileColor.PAUSE
+
+        if len(watcher[ResultKey.PBEHAVIORS]) > 0:
+            return TileColor.PAUSE
+
+        return TILE_COLOR_SELECTOR[watcher_state]
+
+    @classmethod
+    def __get_tile_icon(cls, watcher):
+        """
+        Return a string that indicate the primary tile icon to used to render
+        the watcher tile.
+
+        'TileIcon.OK', 'TileIcon.MINOR', 'TileIcon.MAJOR',
+        'TileIcon.CRITICAL' are return if they are no active pbehavior on the
+        watcher or if not every watched entities have an active pbehavior.
+
+        'TileIcon.PAUSE', 'TileIcon.MAINTENANCE',
+        'TileIcon.UNMONITORED' are display if the given watcher is under
+        an active pbehavior or if every watched entities have at least one
+        active pbehavior. The icon string returned depends on the 'type_' of
+        active pbehaviors on the watcher and on the watched entities. If
+        at least one 'maintenance' pbehavior is present,
+        'TileIcon.MAINTENANCE' will be returned. Then if at least one
+        'Hors plage horaire de surveillance' pbehavior is present,
+        'TileIcon.UNMONITORED' will be returned. Finally, if no
+        'maintenance' pbehavior or 'Hors plage horaire de surveillance'
+        pbehavior are present, return 'TileIcon.PAUSE'.
+        """
+        has_maintenance = False
+        has_out_of_surveillance = False
+        has_pause = False
+
+        watched_ent_paused = 0
+
+        for ent in watcher[ResultKey.ENT]:
+            if len(ent[ResultKey.PBEHAVIORS]) > 0:
+                watched_ent_paused += 1
+
+        if watched_ent_paused == len(watcher[ResultKey.ENT]) and\
+           len(watcher[ResultKey.PBEHAVIORS]) == 0:
+
+            for ent in watcher[ResultKey.ENT]:
+                for pbh in ent[ResultKey.PBEHAVIORS]:
+                    if pbh["type_"] == "Hors plage horaire de surveillance":
+                        has_out_of_surveillance = True
+                    elif pbh["type_"] == "Maintenance":
+                        has_maintenance = True
+                    elif pbh["type_"] in ["pause", "Pause"]:
+                        has_pause = True
+
+        else:
+            for pbh in watcher[ResultKey.PBEHAVIORS]:
+                if pbh["type_"] == "Hors plage horaire de surveillance":
+                    has_out_of_surveillance = True
+                elif pbh["type_"] == "Maintenance":
+                    has_maintenance = True
+                elif pbh["type_"] in ["pause", "Pause"]:
+                    has_pause = True
+
+        if has_maintenance:
+            return TileIcon.MAINTENANCE
+        if has_pause:
+            return TileIcon.PAUSE
+        if has_out_of_surveillance:
+            return TileIcon.UNMONITORED
+
+        watcher_state = 0
+        if len(watcher[ResultKey.ALARM]) > 0:
+            alarm = watcher[ResultKey.ALARM][0][ResultKey.ALRM_VALUE]
+            watcher_state = alarm[ResultKey.ALRM_STATE]["val"]
+
+        return TILE_ICON_SELECTOR[watcher_state]
+
+
+    @classmethod
+    def __get_tile_secondary_icon(cls, watcher):
+        """
+        Return a string that indicate the secondary tile icon to used to render
+        the watcher tile or None
+
+        'TileIcon.PAUSE', 'TileIcon.MAINTENANCE',
+        'TileIcon.UNMONITORED' are returned if they are some (not all)
+        watched entities with an active pbehavior.
+
+        The icon string returned depends on the 'type_' of active pbehaviors on
+        the watche watched entities. If at least one 'maintenance' pbehavior is
+        present, 'TileIcon.MAINTENANCE' will be returned. Then if at least one
+        'Hors plage horaire de surveillance' pbehavior is present,
+        'TileIcon.UNMONITORED' will be returned. Finally, if no
+        'maintenance' pbehavior or 'Hors plage horaire de surveillance'
+        pbehavior are present, return 'TileIcon.PAUSE'.
+
+        If every watched entities are under an active pbehavior, they are
+        no secondary icon displayed on the tile, so None are returned.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return str: 'TileIcon.PAUSE' or 'TileIcon.MAINTENANCE' or
+        'TileIcon.UNMONITORED' or None
+        """
+        has_maintenance = False
+        has_out_of_surveillance = False
+        has_pause = False
+        paused_watched_ent = 0
+
+        for ent in watcher[ResultKey.ENT]:
+            if not ent["enabled"]:
+                continue
+            if len(ent[ResultKey.PBEHAVIORS]) > 0:
+                paused_watched_ent += 1
+            for pbh in ent[ResultKey.PBEHAVIORS]:
+                if pbh["type_"] == "Hors plage horaire de surveillance":
+                    has_out_of_surveillance = True
+                elif pbh["type_"] == "Maintenance":
+                    has_maintenance = True
+                elif pbh["type_"] in ["pause", "Pause"]:
+                    has_pause = True
+
+        if paused_watched_ent == len(watcher[ResultKey.ENT]):
+            return None
+
+        if has_maintenance:
+            return TileIcon.MAINTENANCE
+        if has_pause:
+            return TileIcon.PAUSE
+        if has_out_of_surveillance:
+            return TileIcon.UNMONITORED
+
+        return None
+
+    @classmethod
+    def __get_next_run(cls, watcher):
+        """
+        Return the smallest next_run field value from all the watched entities
+        alarms.
+
+        :param dict watcher: a watcher with his pbehaviors, watched entities
+        and their active pbehaviors(see _rework_watcher_pipeline_element
+        function).
+        :return int: the smallest next_run.
+        """
+        next_runs = []
+        for ent in watcher[ResultKey.ENT]:
+            if ent[ResultKey.ALARM] is not None:
+                alarm = ent[ResultKey.ALARM]
+
+                alarmfilter = None
+                try:
+                    alarmfilter = alarm[ResultKey.ALRM_VALUE]
+                    alarmfilter = alarmfilter[ResultKey.ALARM_FILTER]
+                except KeyError:
+                    continue
+
+                if isinstance(alarmfilter, dict) \
+                   and AlarmFilterField.next_run.value in alarmfilter:
+                    next_runs.append(alarmfilter[AlarmFilterField.next_run.value])
+
+        if len(next_runs) > 0:
+            return min(next_runs)
+        return None
 
 
 def __format_pbehavior(pbehavior):
@@ -120,7 +490,6 @@ def get_ok_ko(influx_client, entity_id, timestamp):
                        "\"eid\"='{}'"
     query_last_ko = query_last_event + " and \"ko\"=1"
 
-
     # Why did I use a double '\' ? It's simple, for some mystical reason,
     # somewhere between the call of influxdbstg.raw_query and the HTTP
     # request is sent, the escaped simple quote are deescaped. So like the
@@ -160,34 +529,36 @@ def get_ok_ko(influx_client, entity_id, timestamp):
     return stats
 
 
-def pbehavior_types(pbehaviors):
+def _pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
-    :param pbehaviors
+
+    :param dict watcher: one element from the query
+    :return set: a set of string.
     """
     pb_types = set()
 
-    for pb in pbehaviors:
-        pb_type = pb.get('type_', None)
+    pbehaviors = watcher[ResultKey.PBEHAVIORS][:]  # create a new list
+    for ent in watcher[ResultKey.ENT]:
+        pbehaviors += ent[ResultKey.PBEHAVIORS]
+
+    for pbh in pbehaviors:
+        pb_type = pbh.get('type_', None)
         if pb_type is not None:
             pb_types.add(pb_type)
 
     return pb_types
 
 
-def watcher_status(watcher, pbehavior_eids_merged):
-    """
-    watcher_status
+def _watcher_status(watcher):
 
-    :param dict watcher: watcher entity document
-    :param set pbehavior_eids_merged: set with eids
-    :returns: has active pb status (or all), has all active pb status
-    :rtype: (bool, bool)
-    """
-    bool_set = set([e in pbehavior_eids_merged for e in watcher['depends']])
+    ent_with_active_pbh = set()
 
-    at_least_one = True in bool_set
-    if at_least_one and False in bool_set:
+    for ent in watcher[ResultKey.ENT]:
+        ent_with_active_pbh.add(len(ent[ResultKey.PBEHAVIORS]) > 0)
+
+    at_least_one = True in ent_with_active_pbh
+    if at_least_one and False in ent_with_active_pbh:
         # has_active_pbh
         return True, False
     elif at_least_one:
@@ -197,108 +568,194 @@ def watcher_status(watcher, pbehavior_eids_merged):
     return False, False
 
 
-def get_active_pbehaviors_on_watchers(watchers,
-                                      active_pb_dict,
-                                      active_pb_dict_full):
+def _remove_inactive_pbh(pbehaviors):
     """
-    get_active_pbehaviors_on_watchers.
+    Return a list without the inactive pbehavior of at the time of call.
 
-    :param list watchers:
-    :param list active_pb_dict:
-    :param list active_pb_dict_full: list of pbehavior dict
-    :returns: dict of watcher with list of active pbehavior
+    :param pbehavior: a list of pbehavior.
+    :return list: a list without any inactive pbehavior
     """
-    active_pb_on_watchers = {}
-    active_watcher_pbehaviors = {}
+    now = time.time()
 
-    for watcher in watchers:
-        tmp_pbh = []
-        tmp_wpbh = []
-        watcher_depends = set(watcher.get('depends', []))
+    active_pbh = []
+    for pbh in pbehaviors:
+        if pbehavior_manager.check_active_pbehavior(now, pbh):
+            active_pbh.append(pbh)
 
-        for pb_id, eids in active_pb_dict.items():
-            # add pbehaviors linked to this watcher's entities
-            for eid in eids:
-                if eid in watcher_depends:
-                    tmp_pbh.append(active_pb_dict_full[pb_id])
-
-            # add pbehaviors linked to this watcher
-            if watcher['_id'] in active_pb_dict[pb_id]:
-                wpb = active_pb_dict_full[pb_id]
-                wpb['isActive'] = True
-                tmp_wpbh.append(wpb)
-
-        for pbh in tmp_pbh:
-            pbh['isActive'] = True
-
-        active_pb_on_watchers[watcher['_id']] = tmp_pbh
-        active_watcher_pbehaviors[watcher['_id']] = tmp_wpbh
-
-    return active_pb_on_watchers, active_watcher_pbehaviors
+    return active_pbh
 
 
-def is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_pbehaviors):
-
-    watcher_alarm = alarm_dict.get(watcher["_id"], None)
-    if watcher_alarm is None:
-        return False
-
-    entities_alarm = {}
-    entities_pbh = {}
-    for key in watcher["depends"]:
-        entities_alarm[key] = alarm_dict.get(key, None)
-        entities_pbh[key] = active_pbehaviors.get(key, None)
-
-    w_pbh = active_watchers_pbehaviors[watcher["_id"]]
-    if len(w_pbh) != 0:
-        return False
-
-    for entity in entities_alarm:
-        if entities_alarm[entity] is None:
-            continue
-
-        if entities_alarm[entity].get("ack", None) is None:
-            if entities_pbh[entity] is None:
-                return True
-
-    return False
-
-
-def get_next_run_alert(watcher_depends, alert_next_run_dict):
+def _parse_direction(direction):
     """
-    get the next run of alarm filter
+    Parse the sort direction retrieved from the request.
 
-    :param watcher_depends: list of eids
-    :param alert_next_run_dict: dict with next run infos for alarm filter
-    :returns: a timestamp with next alarm filter information or None
+    If direction is `ASC`, retrun 1. If direction is `DESC` return -1.
+    If the value does not match `ASC` or `DESC` raise a ValueError exception.
+
+    :param int direction: 1 or -1
+    :return str: `ASC` or `DESC`
     """
-    list_next_run = []
-    for depend in watcher_depends:
-        tmp_next_run = alert_next_run_dict.get(depend, None)
-        if tmp_next_run:
-            list_next_run.append(tmp_next_run)
-    if list_next_run:
-        return min(list_next_run)
-
-    return None
+    if direction == "ASC":
+        return 1
+    elif direction == "DESC":
+        return -1
+    else:
+        raise ValueError("Direction must be 'ASC' or 'DESC' not {}.".format(
+            direction))
 
 
-def alert_not_ack_in_watcher(watcher_depends, alarm_dict):
+def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
     """
-    alert_not_ack_in_watcher check if an alert is not ack in watcher depends
+    Return the aggregation pipeline use to retrieve every watcher, their
+    alarm and pbehavior and their
+    watched entities and their respective alarm and pbehavior.
 
-    :param watcher_depends: list of depends
-    :param alarm_dict: alarm dict
-    :rtype: bool
+    :param watcher_filter:
+    :param limit: the number of watcher (tile) to return
+    :param start: the number of watcher to skip
+    :param orderby: the watcher field use the sort the result
+    :param direction: the direction of the sort 'ASC' or 'DESC'
+    :return list: return a list of mongodb aggregation stage
     """
-    for depend in watcher_depends:
-        tmp_alarm = alarm_dict.get(depend, {})
-        if (tmp_alarm != {}
-                and tmp_alarm.get('ack', None) is None
-                and tmp_alarm.get('state', {}).get('val', 0) != 0):
-            return True
+    # Select the watchers
+    select_watcher_stage = {"$match": watcher_filter}
 
-    return False
+    # Pagination
+    skip = {"$skip": start}
+
+    # Retrieve opened alarm for the watchers
+    # I use the `$graphLookup` stage in order to retrieve only the opened alarms
+    # with the `restrictSearchWithMatch` option.
+    alarms = {"$graphLookup":
+              {"from": "periodical_alarm",
+               "startWith": "$_id",
+               "connectFromField": "_id",
+               "connectToField": "d",
+               "restrictSearchWithMatch": {'v.resolved': None},
+               "as": "alarm",
+               "maxDepth": 0}}
+
+    # Retrieve every pbehaviors on the watcher
+    pbehaviors = {"$lookup":
+                  {"from": "default_pbehavior",
+                   "localField": "_id",
+                   "foreignField": "eids",
+                   "as": "pbehaviors"}}
+
+    # Retrieve watched entities
+    entities = {"$lookup":
+                {"from": "default_entities",
+                 "localField": "depends",
+                 "foreignField": "_id",
+                 "as": "watched_entities"}}
+
+    # Retrieve every pbehaviors on the watched entities
+    pbehaviors_watched_ent = {"$graphLookup":
+                              {"from": "default_pbehavior",
+                               "startWith": "$watched_entities._id",
+                               "connectFromField": "watched_entities._id",
+                               "connectToField": "eids",
+                               "maxDepth": 0,
+                               "as": "watched_entities_pbehaviors"}}
+
+    # Retrieve every opened alarm on the watched entities
+    # I use the `$graphLookup` stage in order to retrieve only the opened
+    # alarms with the `restrictSearchWithMatch` option.
+    alarm_watched_ent = {"$graphLookup":
+                         {"from": "periodical_alarm",
+                          "startWith": "$watched_entities._id",
+                          "connectFromField": "_id",
+                          "connectToField": "d",
+                          "as": "watched_entities_alarm",
+                          "restrictSearchWithMatch": {'v.resolved': None},
+                          "maxDepth": 0}}
+
+    # Genenate the pipeline
+    pipeline = [select_watcher_stage,
+                skip,
+                alarms,
+                pbehaviors,
+                entities,
+                pbehaviors_watched_ent,
+                alarm_watched_ent]
+
+    # Insert optionnal stage limit
+    if limit is not None:
+        pipeline.insert(2, {"$limit": limit})
+
+    # Insert optionnal stage orderby
+    if orderby is not None:
+        direction = _parse_direction(direction)
+        pipeline.insert(1, {"$sort": {orderby: direction}})
+
+    return pipeline
+
+
+def _rework_watcher_pipeline_element(watcher, logger):
+    """Return a rearrange element from the watcher pipeline.
+
+    This function will remove every inactive pbehaviors from the fields
+    `ResultKey.PBEHAVIORS` and `ResultKey.WATCHED_ENT_PBH`.
+
+    Then create a dict with every watched entities with the respective alarm
+    and pbehaviors. It will be store under the ResultKey.ENT field.
+
+    :param dict watcher: an element from the watcher pipeline
+    :return dict: a rearrange watcher that respect the following pattern
+
+    {
+        "ResultKey.ID": str,
+        "ResultKey.ALARM": list of alarm,
+        "depends": list of str,
+        "enabled_history": list of int,
+        "enabled": boolean,
+        "impact": list of str,
+        "ResultKey.INFOS": dict,
+        "ResultKey.LINKS": dict,
+        "measurements": dict,
+        "ResultKey.MFILTER": str,
+        "ResultKey.NAME": str,
+        "ResultKey.PBEHAVIORS": list of pbehavior,
+        "ResultKey.STATE": int,
+        "type": str,
+        "ResultKey.ENT": list of entities, their respective pbehaviors
+            and alarms
+    }
+    """
+    # remove the inactive pbehaviors from the pipeline result
+    pbhs = watcher[ResultKey.PBEHAVIORS]
+    watcher[ResultKey.PBEHAVIORS] = _remove_inactive_pbh(pbhs)
+    pbhs = watcher[ResultKey.WATCHED_ENT_PBH]
+    watcher[ResultKey.WATCHED_ENT_PBH] = _remove_inactive_pbh(pbhs)
+
+    # assign watched entities pbehaviors to the correct entities
+    entities = {}
+    for entity in watcher[ResultKey.ENT]:
+        entity[ResultKey.PBEHAVIORS] = []
+        entity[ResultKey.ALARM] = None
+        entities[entity[ResultKey.ENT_ID]] = entity
+
+    for pbh in watcher[ResultKey.WATCHED_ENT_PBH]:
+        for ent_id in pbh["eids"]:
+            try:
+                entities[ent_id][ResultKey.PBEHAVIORS].append(pbh)
+            except KeyError:
+                logger.error("Can not find entities {} in the"
+                             "pipeline result".format(ent_id))
+
+    # assign watched entities alarms to the correct entities
+    for alarm in watcher[ResultKey.WATCHED_ENT_ALRM]:
+        try:
+            entities[alarm["d"]][ResultKey.ALARM] = alarm
+        except KeyError:
+            logger.error("Can not find entities {} in the"
+                         "pipeline result".format(alarm["d"]))
+
+    watcher[ResultKey.ENT] = entities.values()
+    del watcher[ResultKey.WATCHED_ENT_PBH]
+    del watcher[ResultKey.WATCHED_ENT_ALRM]
+
+    return watcher
 
 
 def exports(ws):
@@ -312,158 +769,65 @@ def exports(ws):
     )
     def get_watcher(watcher_filter):
         """
-        Get a list of watchers from a mongo filter.
+        Return a list of tile ready to be displayed by the front-end.
+
+        For more informations, see the __TileData object.
 
         :param dict watcher_filter: a mongo filter to find watchers
-        :rtype: dict
+        :rtype: list of __TileData as a JSON
         """
-        limit = request.query.limit or DEFAULT_LIMIT
+        limit = request.query.limit or None
         start = request.query.start or DEFAULT_START
-        sort = request.query.sort or DEFAULT_SORT
+        orderby = request.query.orderby or None
+        direction = request.query.direction or None
 
-        # FIXIT: service weather has no pagination capability at all.
         try:
-            #start = int(start)
-            start = 0
+            start = int(start)
         except ValueError:
             start = int(DEFAULT_START)
-        try:
-            #limit = int(limit)
-            limit = None
-        except ValueError:
-            limit = int(DEFAULT_LIMIT)
+        if limit is not None:
+            try:
+                limit = int(limit)
+            except ValueError:
+                limit = DEFAULT_LIMIT
 
         wf = WatcherFilter()
         watcher_filter['type'] = 'watcher'
         watcher_filter = wf.filter(watcher_filter)
 
-        watcher_list = context_manager.get_entities(
-            query=watcher_filter,
-            limit=limit,
-            start=start,
-            sort=sort
-        )
+        try:
+            pipeline = _generate_tile_pipeline(watcher_filter,
+                                               limit,
+                                               start,
+                                               orderby,
+                                               direction)
+        except ValueError as error:
+            return gen_json_error({"name": "Can not parse sort direction.",
+                                   "description": str(error)}, 400)
 
-        depends_merged = set([])
-        active_pb_dict = {}
-        active_pb_dict_full = {}
-        alarm_watchers_ids = []
-        entity_watchers_ids = []
-        alarm_dict = {}
-        merged_pbehaviors_eids = set([])
-        next_run_dict = {}
-        watchers = []
+        pipeline_result = mongo_collection.aggregate(pipeline)
 
-        # List all activated pbh eids, ordered by pbh id
-        actives_pb = pbehavior_manager.get_all_active_pbehaviors()
+        result = []
+        for watcher in pipeline_result:
+            watcher = _rework_watcher_pipeline_element(watcher, ws.logger)
 
-        for pbh in actives_pb:
-            active_pb_dict[pbh['_id']] = set(pbh.get('eids', []))
-            active_pb_dict_full[pbh['_id']] = pbh
+            # This part should not exist and must be considered deprecated.
+            # This filter has to be done inside the aggregation pipeline but
+            # currently it is impossible as there is no way to check if a
+            # pbehavior is active directly inside the database.
 
-        # List all watcher ids on entities and alarms
-        for watcher in watcher_list:
-            for depends_id in watcher['depends']:
-                depends_merged.add(depends_id)
-            entity_watchers_ids.append(watcher['_id'])
-            alarm_watchers_ids.append(watcher['_id'])
-
-        active_pbehaviors, active_watchers_pbehaviors = get_active_pbehaviors_on_watchers(
-            watcher_list,
-            active_pb_dict,
-            active_pb_dict_full
-        )
-        # List all actived pbh eids
-        for eids_tab in active_pb_dict.values():
-            for eid in eids_tab:
-                merged_pbehaviors_eids.add(eid)
-
-        # List alarm values has a dict
-        alarm_list = alarmreader_manager.get(
-            filter_={'v.resolved': None}
-        )['alarms']
-
-        for alarm in alarm_list:
-            alarm_dict[alarm['d']] = alarm['v']
-
-        # List all next_run timers, grouped by alarm
-        alerts_list_on_depends = alarmreader_manager.get(
-            filter_={'d': {'$in': list(depends_merged)}}
-        )['alarms']
-        for alert in alerts_list_on_depends:
-            if 'alarmfilter' in alert['v']:
-                alarmfilter = alert['v']['alarmfilter']
-                if isinstance(alarmfilter, dict) and "next_run" in alarmfilter:
-                    next_run_dict[alert['d']] = alarmfilter['next_run']
-
-        for watcher in watcher_list:
-            enriched_entity = {}
-            tmp_alarm = alarm_dict.get(
-                '{}'.format(watcher['_id']),
-                []
+            some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
+                watcher
             )
-            tmp_links = []
-            for k, val in watcher['links'].items():
-                tmp_links.append({'cat_name': k, 'links': val})
 
-            enriched_entity['entity_id'] = watcher['_id']
-            enriched_entity['infos'] = watcher['infos']
-            enriched_entity['criticity'] = watcher['infos'].get('criticity', '')
-            enriched_entity['org'] = watcher['infos'].get('org', '')
-            enriched_entity['sla_text'] = ''  # when sla
-            enriched_entity['display_name'] = watcher['name']
-            enriched_entity['linklist'] = tmp_links
-            if isinstance(watcher.get('state', 0), int):
-                enriched_entity['state'] = {'val': watcher.get('state', 0)}
-            else:
-                enriched_entity['state'] = {'val': 0}
+            if wf.match(all_watched_ent_paused,
+                        some_watched_ent_paused,
+                        len(watcher[ResultKey.PBEHAVIORS]) > 0,
+                        _pbehavior_types(watcher)):
+                tileData = __TileData(watcher)
+                result.append(vars(tileData))
 
-            if tmp_alarm != []:
-                enriched_entity['state'] = tmp_alarm['state']
-                enriched_entity['status'] = tmp_alarm['status']
-                enriched_entity['snooze'] = tmp_alarm.get('snooze')
-                enriched_entity['ack'] = tmp_alarm.get('ack')
-                enriched_entity['connector'] = tmp_alarm['connector']
-                enriched_entity['connector_name'] = (
-                    tmp_alarm['connector_name']
-                )
-                enriched_entity['last_update_date'] = tmp_alarm.get(
-                    'last_update_date', None
-                )
-                enriched_entity['component'] = tmp_alarm['component']
-                if tmp_alarm.get('resource', ''):
-                    enriched_entity['resource'] = tmp_alarm['resource']
-
-            enriched_entity['pbehavior'] = active_pbehaviors.get(watcher['_id'], [])
-            enriched_entity['watcher_pbehavior'] = active_watchers_pbehaviors.get(watcher['_id'], [])
-            # using get instead of direct access to accomodate for new watchers
-            # new watchers don't have mfilter field, thus get permits to have both new and old watchers
-            enriched_entity["mfilter"] = watcher.get("mfilter", {})
-            enriched_entity['alerts_not_ack'] = alert_not_ack_in_watcher(
-                watcher['depends'],
-                alarm_dict,
-            )
-            enriched_entity['action_required'] = is_action_required(watcher, alarm_dict, active_pbehaviors, active_watchers_pbehaviors)
-            wstatus = watcher_status(watcher, merged_pbehaviors_eids)
-            enriched_entity["active_pb_some"] = wstatus[0]
-            enriched_entity["active_pb_all"] = wstatus[1]
-            enriched_entity['active_pb_watcher'] = len(enriched_entity['watcher_pbehavior']) > 0
-            tmp_next_run = get_next_run_alert(
-                watcher.get('depends', []),
-                next_run_dict
-            )
-            if tmp_next_run is not None:
-                enriched_entity['automatic_action_timer'] = tmp_next_run
-
-            watcher_pb_types = pbehavior_types(enriched_entity['pbehavior'])
-            watcher_pb_types |= pbehavior_types(enriched_entity['watcher_pbehavior'])
-
-            if wf.match(wstatus[1], wstatus[0], enriched_entity['active_pb_watcher'], pb_types=watcher_pb_types) is True:
-                watchers.append(enriched_entity)
-
-        watchers = sorted(watchers, key=itemgetter("display_name"))
-
-        return gen_json(watchers)
+        return gen_json(result)
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
     def weatherwatchers(watcher_id):

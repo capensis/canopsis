@@ -92,9 +92,11 @@ export default {
           bind: {
             declareTicket: this.form.declare_ticket,
             disabled: this.disabled,
+            emptyResponse: this.form.emptyResponse,
           },
           on: {
             input: event => this.updateField('declare_ticket', event),
+            'update:emptyResponse': event => this.updateField('emptyResponse', event),
           },
         },
       ];

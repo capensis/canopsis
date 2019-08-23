@@ -1,5 +1,6 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
+import { DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
 import prepareMainFilterToQueryFilter from './filter';
@@ -96,11 +97,12 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertWeatherWidgetToQuery(widget) {
-  const query = {
-    filter: widget.parameters.mfilter.filter,
-  };
+  const { limit } = widget.parameters;
 
-  return query;
+  return {
+    ...convertSortToQuery(widget),
+    limit: limit || DEFAULT_WEATHER_LIMIT,
+  };
 }
 
 /**

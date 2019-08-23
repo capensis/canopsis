@@ -27,13 +27,17 @@ Il faut vérifier les ports utilisés par `docker-compose.yml`.
 
 Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en utilisation sur le nœud d'installation.
 
+### Logrotate
+
+La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
+
 ## Installation
 
 - Cloner le dépôt Canopsis : https://git.canopsis.net/canopsis/canopsis
 - Actuellement, les conteneurs sont gérés dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
 - Dans ce dépôt, un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisée.
-  
-  
+
+
     - Troubleshooting : Si vous rencontrez une erreur de ce type lors d'un `docker-compose up -d` ou un `docker-compose --version`  
     ```bash
     bash: /usr/bin/docker-compose: Aucun fichier ou dossier de ce type
@@ -120,4 +124,35 @@ Removing canopsis_influxdb_1       ... done
 Removing canopsis_mongodb_1        ... done
 Removing canopsis_redis_1          ... done
 Removing network canopsis_default
+```
+
+## Rétention des logs
+
+Vous pouvez mettre en place une politique de rétention de logs à l'aide de `logrotate`.
+
+Fichier à créer :
+
+```bash
+vim /etc/logrotate.d/docker-container`
+```
+
+Contenu du fichier :
+
+```ini
+/var/lib/docker/containers/*/*.log {
+  rotate 7
+  daily
+  compress
+  minsize 100M
+  notifempty
+  missingok
+  delaycompress
+  copytruncate
+}
+```
+
+Pour vérifier la bonne exécution de la configuration de logrotate pour Docker, vous pouvez lancer la commande :
+
+```bash
+logrotate -fv /etc/logrotate.d/docker-container
 ```

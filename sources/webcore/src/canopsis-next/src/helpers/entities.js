@@ -1,6 +1,10 @@
+import sha1 from 'sha1';
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
+
+import { DEFAULT_WEATHER_LIMIT } from '@/config';
+
 import {
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
@@ -127,12 +131,16 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.weather:
       specialParameters = {
         mfilter: {},
+        sort: {
+          order: SORT_ORDERS.asc,
+        },
         blockTemplate: '',
         modalTemplate: '',
         entityTemplate: '',
         columnSM: 6,
         columnMD: 4,
         columnLG: 3,
+        limit: DEFAULT_WEATHER_LIMIT,
         margin: {
           top: 1,
           right: 1,
@@ -144,6 +152,7 @@ export function generateWidgetByType(type) {
         alarmsList: alarmsListDefaultParameters,
       };
       break;
+
     case WIDGET_TYPES.statsHistogram:
       specialParameters = {
         mfilter: {},
@@ -480,6 +489,23 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
     acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
 }
 
+/**
+ * Prepare user object for request
+ *
+ * @param {Object} data
+ * @param {Object} [user=generateUser()]
+ * @returns {{}}
+ */
+export function prepareUserByData(data, user = generateUser()) {
+  const result = { ...user, ...omit(data, ['password']) };
+
+  if (data.password && data.password !== '') {
+    result.shadowpasswd = sha1(data.password);
+  }
+
+  return result;
+}
+
 
 export default {
   generateWidgetByType,
@@ -495,4 +521,6 @@ export default {
 
   getViewsTabsWidgetsIdsMappings,
   getViewsWidgetsIdsMappings,
+
+  prepareUserByData,
 };
