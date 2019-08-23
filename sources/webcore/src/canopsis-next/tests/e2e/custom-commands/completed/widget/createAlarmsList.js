@@ -36,7 +36,7 @@ module.exports.command = function createAlarmsList({
         alarmsWidget.selectSortColumn(name);
       }
       if (order) {
-        alarmsWidget.selectSortColumn(order);
+        alarmsWidget.selectSortOrder(order);
       }
     }
 
