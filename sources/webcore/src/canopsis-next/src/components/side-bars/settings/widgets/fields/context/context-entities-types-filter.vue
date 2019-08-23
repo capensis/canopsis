@@ -1,10 +1,11 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="contextTypeOfEntities")
     v-list-tile(slot="activator") {{ $t('settings.contextTypeOfEntities.title') }}
     v-container
       v-checkbox(
       v-for="(entitiesType, index) in entitiesTypes",
       v-bind="entitiesType",
+      data-test="entitiesTypeCheckbox",
       :key="`entities-type-${index}`",
       :input-value="value",
       @change="$emit('input', $event)",
