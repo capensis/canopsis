@@ -1,5 +1,7 @@
 # Logstash vers Canopsis
 
+Transforme tout entrant Logstash en évènements Canopsis (ex : logs, requêtes http…).
+
 ## Introduction
 
 Cette documentation détaille la remontée des logs vers Canopsis via Logstash.

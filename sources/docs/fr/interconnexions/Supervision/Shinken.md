@@ -1,13 +1,15 @@
 # Shinken
 
+Convertit des évènements de supervision Shinken en évènements Canopsis.
+
 ### Configuration
 
 #### Pré requis
 
-Le module broker vous permet la perte de connexion et la reconnexion avec le 
+Le module broker vous permet la perte de connexion et la reconnexion avec le
 bus de messages Canopsis AMQP sans perte d'évènements.
-Vous devriez envisager de définir `maxqueuelength` (le nombre maximal d'évènements à conserver 
-en cas de perte de connexion). 
+Vous devriez envisager de définir `maxqueuelength` (le nombre maximal d'évènements à conserver
+en cas de perte de connexion).
 
 ```
 easy_install kombu
@@ -15,7 +17,7 @@ easy_install kombu
 
 #### Setup
 
-Le module broker Canopsis est présent de manière native dans la distribution Shinken. 
+Le module broker Canopsis est présent de manière native dans la distribution Shinken.
 Vous aurez besoin d'au moins la version dev. 
 
 Vous devez uniquement activer le module broker et au moins configurer l'adresse de l'hôte Canopsis.
@@ -46,13 +48,13 @@ define module {
 }
 ```
 
-Lorsque vous souhaitez connecter Shinken sur Canopsis, il existe un 
-conflit de ports MongoDB . Vous devez donc changer votre configuration Shinken et 
+Lorsque vous souhaitez connecter Shinken sur Canopsis, il existe un
+conflit de ports MongoDB . Vous devez donc changer votre configuration Shinken et
 le fichier `/etc/mongodb.conf` :
 
 ```
     port=27018
-``` 
+```
 
 Et redémarrer le service
 

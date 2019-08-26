@@ -1,5 +1,9 @@
 # Connecteur LibreNMS vers Canopsis
 
+## Description
+
+Convertit des évènements de supervision LibreNMS en évènements Canopsis.
+
 ## Fonctionnement général
 
 Il est important de noter que ce connecteur n'envoie que des alertes.
