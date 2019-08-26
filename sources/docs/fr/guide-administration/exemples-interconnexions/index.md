@@ -10,6 +10,6 @@ Voici quelques exemples de connecteurs et configurations associées.
 *  [Logstash](../../interconnexions/Transport/Logstash.md)
 *  [Send_event](../../interconnexions/Transport/send_event.md)
 
-## Voir tous les connecteurs disponibles
+## Voir toutes les interconnexions disponibles
 
 - [Cliquez ici](../../interconnexions/index.md)
