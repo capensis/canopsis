@@ -607,6 +607,7 @@ export const USERS_RIGHTS = {
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
       snmpRule: 'models_exploitation_snmpRule',
+      action: 'models_exploitation_action',
     },
   },
   business: {

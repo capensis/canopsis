@@ -106,6 +106,12 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.snmpRule,
         },
+        {
+          route: { name: 'exploitation-actions' },
+          text: 'Actions',
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.exploitation.action,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));
