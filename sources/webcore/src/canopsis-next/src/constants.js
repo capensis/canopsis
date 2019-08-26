@@ -28,6 +28,7 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
   snmpRule: 'snmpRule',
+  action: 'action',
 };
 
 export const MODALS = {
