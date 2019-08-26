@@ -106,6 +106,7 @@ export default {
             appTitle,
             edition,
             stack,
+            language,
           },
         );
 
