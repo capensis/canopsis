@@ -2,11 +2,13 @@ import { isEmpty, isEqual } from 'lodash';
 
 import { SORT_ORDERS } from '@/constants';
 
+import vuetifyPagination from '../pagination/vuetify-pagination';
+
 export default {
+  mixins: [vuetifyPagination],
   data() {
     return {
       query: {},
-      pagination: {},
     };
   },
   watch: {
@@ -15,6 +17,7 @@ export default {
         this.fetchList();
       }
     },
+
     pagination(value, oldValue) {
       if (!isEqual(value, oldValue)) {
         this.query = {

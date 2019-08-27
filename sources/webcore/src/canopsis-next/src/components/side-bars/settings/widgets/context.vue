@@ -19,6 +19,8 @@
           :columnsLabel="$t('settings.columnName')"
           )
           v-divider
+          field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
+          v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
           v-divider
           template(v-if="hasAccessToListFilters")
@@ -48,6 +50,7 @@ import defaultItemsPerPageMixin from '@/mixins/pagination/default-items-per-page
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
+import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldContextEntitiesTypesFilter from './fields/context/context-entities-types-filter.vue';
@@ -64,6 +67,7 @@ export default {
     FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,
+    FieldDefaultElementsPerPage,
     FieldColumns,
     FieldFilters,
     FieldContextEntitiesTypesFilter,
@@ -103,11 +107,13 @@ export default {
   },
   created() {
     const { widget_preferences: widgetPreference } = this.userPreference;
+
     this.settings.widget_preferences = {
       selectedTypes: get(widgetPreference, 'selectedTypes', []),
       viewFilters: get(widgetPreference, 'viewFilters', []),
       mainFilter: get(widgetPreference, 'mainFilter', {}),
       mainFilterCondition: get(widgetPreference, 'mainFilterCondition', FILTER_DEFAULT_VALUES.condition),
+      itemsPerPage: get(widgetPreference, 'itemsPerPage', this.defaultItemsPerPage),
     };
   },
   methods: {

@@ -75,7 +75,12 @@ export default {
     RefreshBtn,
     SearchField,
   },
-  mixins: [modalMixin, viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
+  mixins: [
+    modalMixin,
+    viewQuery,
+    entitiesUserMixin,
+    rightsTechnicalUserMixin,
+  ],
   data() {
     return {
       searchingText: '',

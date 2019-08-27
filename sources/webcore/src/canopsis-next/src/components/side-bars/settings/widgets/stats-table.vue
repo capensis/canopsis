@@ -25,15 +25,18 @@
           :columnsLabel="$t('settings.columnName')"
           )
           v-divider
+          field-default-elements-per-page(v-model="settings.widget.parameters.limit")
+          v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { has, cloneDeep } from 'lodash';
 
 import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import defaultItemsPerPageMixin from '@/mixins/pagination/default-items-per-page';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -41,6 +44,7 @@ import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatsSelector from './fields/stats/stats-selector.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
+import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 
 export default {
   name: SIDE_BARS.statsTableSettings,
@@ -54,8 +58,12 @@ export default {
     FieldStatsSelector,
     FieldFilterEditor,
     FieldDefaultSortColumn,
+    FieldDefaultElementsPerPage,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [
+    widgetSettingsMixin,
+    defaultItemsPerPageMixin,
+  ],
   data() {
     const { widget, rowId } = this.config;
 
@@ -70,6 +78,11 @@ export default {
     defaultSortColumns() {
       return Object.keys(this.settings.widget.parameters.stats).map(key => ({ label: key, value: key }));
     },
+  },
+  mounted() {
+    if (!has(this.settings.widget, 'parameters.limit')) {
+      this.$set(this.settings.widget.parameters, 'limit', this.defaultItemsPerPage);
+    }
   },
 };
 

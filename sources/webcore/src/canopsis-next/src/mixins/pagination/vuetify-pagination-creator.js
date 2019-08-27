@@ -1,29 +1,11 @@
-import { PAGINATION_LIMIT } from '@/config';
-
-import defaultItemsPerPageMixin from './default-items-per-page';
+import vuetifyPagination from './vuetify-pagination';
 
 export default function (itemsKey) {
   return {
-    mixins: [defaultItemsPerPageMixin],
-
-    data() {
-      return {
-        pagination: {
-          rowsPerPage: PAGINATION_LIMIT,
-          page: 1,
-        },
-      };
-    },
+    mixins: [vuetifyPagination],
     watch: {
       [itemsKey](value) {
         this.$set(this.pagination, 'totalItems', value.length);
-      },
-
-      defaultItemsPerPage: {
-        immediate: true,
-        handler(value) {
-          this.$set(this.pagination, 'rowsPerPage', value);
-        },
       },
     },
   };

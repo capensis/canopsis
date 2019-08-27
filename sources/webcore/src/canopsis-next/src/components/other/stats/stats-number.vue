@@ -163,7 +163,7 @@ export default {
 
     async fetchList() {
       try {
-        const { limit, sortOrder } = this.query;
+        const { limit = PAGINATION_LIMIT, sortOrder } = this.query;
 
         this.pending = true;
         this.hasError = false;
@@ -176,9 +176,9 @@ export default {
         this.stats = values;
         this.pagination = {
           page: 1,
+          rowsPerPage: limit,
           sortBy: this.statColumn,
           totalItems: values.length,
-          rowsPerPage: limit || PAGINATION_LIMIT,
           descending: sortOrder === SORT_ORDERS.desc,
         };
       } catch (err) {

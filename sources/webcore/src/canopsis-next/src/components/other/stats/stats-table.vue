@@ -39,7 +39,6 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
-import defaultItemsPerPageMixin from '@/mixins/pagination/default-items-per-page';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
@@ -63,7 +62,6 @@ export default {
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
     widgetStatsTableWrapperMixin,
-    defaultItemsPerPageMixin,
   ],
   props: {
     widget: {
@@ -112,14 +110,6 @@ export default {
       ];
     },
   },
-  watch: {
-    defaultItemsPerPage: {
-      immediate: true,
-      handler(value) {
-        this.$set(this.pagination, 'rowsPerPage', value);
-      },
-    },
-  },
   methods: {
     getQuery() {
       const {
@@ -143,7 +133,7 @@ export default {
 
     async fetchList() {
       try {
-        const { sort = {} } = this.widget.parameters;
+        const { limit = PAGINATION_LIMIT, sort = {} } = this.widget.parameters;
 
         this.pending = true;
         this.hasError = false;
@@ -160,7 +150,7 @@ export default {
           sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
           totalItems: values.length,
           descending: sort.order === SORT_ORDERS.desc,
-          rowsPerPage: this.pagination.rowsPerPage,
+          rowsPerPage: limit,
         };
       } catch (err) {
         this.hasError = true;
