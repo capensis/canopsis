@@ -59,3 +59,8 @@ module.exports.VIEW = {
   description: `test-description-${RANDOM}`,
   group: `test-group-${RANDOM}`,
 };
+
+module.exports.LANGUAGES_POSITIONS = {
+  en: 1,
+  fr: 2,
+};

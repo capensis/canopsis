@@ -155,7 +155,7 @@ export default {
         mail: '',
         password: '',
         role: null,
-        ui_language: 'fr',
+        ui_language: '',
         enable: true,
         defaultview: '',
         groupsNavigationType: GROUPS_NAVIGATION_TYPES.sideBar,
