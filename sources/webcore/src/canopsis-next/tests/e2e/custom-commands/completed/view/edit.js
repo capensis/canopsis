@@ -75,10 +75,12 @@ module.exports.command = function editView(groupId, viewId, view, callback = () 
     `${API_ROUTES.view}/${viewId}`,
     5000,
     () => modalViewCreate.clickViewSubmitButton(),
-    ({ responseData, requestData }) => callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) }),
-  );
+    ({ responseData, requestData }) => {
+      modalViewCreate.verifyModalClosed();
 
-  modalViewCreate.verifyModalClosed();
+      callback({ ...JSON.parse(requestData), ...JSON.parse(responseData) });
+    },
+  );
 
   return this;
 };

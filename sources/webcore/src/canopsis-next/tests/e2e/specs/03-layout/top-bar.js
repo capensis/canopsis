@@ -9,7 +9,8 @@ module.exports = {
   },
 
   after(browser, done) {
-    browser.end(done);
+    browser.completed.logout()
+      .end(done);
   },
 
   'Open current user modal': (browser) => {

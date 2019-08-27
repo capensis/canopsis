@@ -16,3 +16,8 @@ module.exports.generateTemporaryUser = (prefix = '', suffix = uid()) => ({
   email: `${prefix}email-${suffix}@example.com`,
   password: `${prefix}password-${suffix}`,
 });
+
+module.exports.generateTemporaryRole = (prefix = '', suffix = uid()) => ({
+  name: `${prefix}name-${suffix}`,
+  description: `${prefix}description-${suffix}`,
+});

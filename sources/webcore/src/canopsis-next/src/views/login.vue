@@ -118,6 +118,7 @@ export default {
 
         if (formIsValid) {
           await this.login(this.form);
+          await this.fetchAppInfos();
 
           if (this.$route.query.redirect && this.$route.query.redirect !== '/') {
             this.$router.push(this.$route.query.redirect);
