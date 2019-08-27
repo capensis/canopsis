@@ -15,6 +15,7 @@ export default {
   methods: {
     ...mapActions({
       fetchActionsList: 'fetchList',
+      createAction: 'create',
       removeAction: 'remove',
     }),
   },

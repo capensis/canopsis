@@ -16,7 +16,7 @@
                         v-layout(align-center)
                           span.font-weight-bold Author
                           span : {{ action.parameters.author }}
-                  template(v-if="action.type === 'pbehavior'")
+                  template(v-if="action.type === $constants.ACTION_TYPES.pbehavior")
                     v-flex(xs6)
                       v-list-tile
                         v-list-tile-avatar
@@ -32,7 +32,7 @@
                         v-list-tile-content
                           v-layout(align-center)
                             span.font-weight-bold Type
-                            span : {{ action.parameters.type }}
+                            span : {{ action.parameters.type_ }}
                     v-flex(xs6)
                       v-list-tile
                         v-list-tile-avatar
@@ -57,7 +57,7 @@
                           v-layout(align-center)
                             span.font-weight-bold End
                             span : {{ action.parameters.tstop | date('long') }}
-                  template(v-if="action.type === 'snooze'")
+                  template(v-if="action.type === $constants.ACTION_TYPES.snooze")
                     v-flex(xs6)
                       v-list-tile
                         v-list-tile-avatar
@@ -65,7 +65,7 @@
                         v-list-tile-content
                           v-layout(align-center)
                             span.font-weight-bold Duration
-                            span : {{ action.parameters.duration | duration }}
+                            span : {{ action.parameters.duration }}
                     v-flex(xs12)
                       v-list-tile
                         v-list-tile-avatar

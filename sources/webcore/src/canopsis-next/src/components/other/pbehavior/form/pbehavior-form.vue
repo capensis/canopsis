@@ -25,7 +25,7 @@
       name="tstop",
       @input="updateField('tstop', $event)"
       )
-    v-layout(row)
+    v-layout(v-if="!noFilter", row)
       v-btn.primary(type="button", @click="showCreateFilterModal") {{ $t('common.filter') }}
     r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
     v-layout(row)
@@ -76,6 +76,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    noFilter: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

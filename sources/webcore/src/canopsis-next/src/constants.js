@@ -78,6 +78,7 @@ export const MODALS = {
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
+  createAction: 'create-action',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -919,6 +920,13 @@ export const SNMP_STATE_TYPES = {
   simple: 'simple',
   template: 'template',
 };
+
+export const ACTION_TYPES = {
+  snooze: 'snooze',
+  pbehavior: 'pbehavior',
+};
+
+export const ACTION_AUTHOR = 'engine-action';
 
 export const CANOPSIS_STACK = {
   go: 'go',

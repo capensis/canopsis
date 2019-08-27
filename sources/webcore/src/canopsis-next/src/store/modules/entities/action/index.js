@@ -54,6 +54,19 @@ export default {
       }
     },
 
+    async create({ dispatch }, { data }) {
+      try {
+        await request.post(API_ROUTES.actions, data);
+
+        await dispatch('popup/add', { type: 'success', text: i18n.t('modals.createAction.success.create') }, { root: true });
+      } catch (err) {
+        console.error(err);
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+
+        throw err;
+      }
+    },
+
     async remove({ dispatch }, { id }) {
       try {
         await request.delete(`${API_ROUTES.actions}/${id}`);
