@@ -55,7 +55,7 @@ module.exports = {
         tab,
         ...temporary.view,
         tabId: JSON.parse(requestData).tabs
-          .filter(item => item.title === tab)[0]._id,
+          .find(item => item.title === tab)._id,
         ...JSON.parse(requestData),
         ...JSON.parse(responseData),
       },
@@ -82,13 +82,32 @@ module.exports = {
       .clickWidget('ServiceWeather')
       .verifyModalClosed();
 
-    browser.completed.widget.setCommonField({
+    browser.completed.widget.setCommonFields({
       row: 'row',
-      sm: 13,
-      md: 13,
-      lg: 13,
+      size: {
+        sm: 12,
+        md: 12,
+        lg: 12,
+      },
+      advanced: true,
+      parameters: {
+        limit: 121,
+        sort: {
+          order: 1,
+        },
+        margin: {
+          top: 3,
+          right: 3,
+          bottom: 3,
+          left: 3,
+        },
+        columnSM: 12,
+        columnMD: 12,
+        columnLG: 12,
+        heightFactor: 20,
+      },
       title: 'Weather widget',
-      periodRefresh: 120,
+      periodicRefresh: 140,
     });
 
     browser.page.widget.weather()
@@ -99,12 +118,14 @@ module.exports = {
     browser.page.view()
       .clickEditWidgetButton();
 
-    browser.completed.widget.setCommonField({
-      sm: 10,
-      md: 10,
-      lg: 10,
+    browser.completed.widget.setCommonFields({
+      size: {
+        sm: 10,
+        md: 10,
+        lg: 10,
+      },
       title: 'Weather widget(edited)',
-      periodRefresh: 180,
+      periodicRefresh: 180,
     });
 
     browser.page.widget.weather()
@@ -115,9 +136,9 @@ module.exports = {
     browser.page.view()
       .clickDeleteWidgetButton();
 
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 
@@ -125,9 +146,9 @@ module.exports = {
     browser.page.view()
       .clickDeleteRowButton();
 
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 };
