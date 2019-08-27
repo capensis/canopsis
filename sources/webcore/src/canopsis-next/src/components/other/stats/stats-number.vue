@@ -7,6 +7,7 @@
       :items="stats",
       :headers="tableHeaders",
       :pagination.sync="pagination"
+      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
       )
         template(
           slot="items",

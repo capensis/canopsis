@@ -75,11 +75,11 @@
 <script>
 import { get, cloneDeep } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import defaultItemsPerPageMixin from '@/mixins/pagination/default-items-per-page';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -117,7 +117,12 @@ export default {
     FieldSwitcher,
     FieldFastAckOutput,
   },
-  mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
+  mixins: [
+    authMixin,
+    widgetSettingsMixin,
+    defaultItemsPerPageMixin,
+    sideBarSettingsWidgetAlarmMixin,
+  ],
   data() {
     const { widget, rowId } = this.config;
 
@@ -125,9 +130,7 @@ export default {
       settings: {
         rowId,
         widget: this.prepareAlarmWidgetSettings(cloneDeep(widget), true),
-        widget_preferences: {
-          itemsPerPage: PAGINATION_LIMIT,
-        },
+        widget_preferences: {},
       },
     };
   },
@@ -148,7 +151,7 @@ export default {
     const { widget_preferences: widgetPreference } = this.userPreference;
 
     this.settings.widget_preferences = {
-      itemsPerPage: get(widgetPreference, 'itemsPerPage', PAGINATION_LIMIT),
+      itemsPerPage: get(widgetPreference, 'itemsPerPage', this.defaultItemsPerPage),
     };
   },
   methods: {

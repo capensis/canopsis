@@ -78,6 +78,13 @@
           :label="$t('parameters.groupsNavigationType.title')",
           :items="groupsNavigationItems",
           )
+        v-layout(data-test="itemsPerPageLayout", row)
+          v-select.mt-0(
+          data-test="itemsPerPage",
+          v-model="form.itemsPerPage",
+          :label="$t('parameters.itemsPerPage.title')",
+          :items="$config.PAGINATION_PER_PAGE_VALUES",
+          )
         v-layout(row, align-center, v-if="!isNew")
           div {{ $t('common.authKey') }}: {{ config.user.authkey }}
           v-tooltip(left)
@@ -112,6 +119,7 @@
 <script>
 import { pick } from 'lodash';
 
+import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -159,6 +167,7 @@ export default {
         enable: true,
         defaultview: '',
         groupsNavigationType: GROUPS_NAVIGATION_TYPES.sideBar,
+        itemsPerPage: PAGINATION_LIMIT,
       },
     };
   },
@@ -214,10 +223,15 @@ export default {
         'enable',
         'defaultview',
         'groupsNavigationType',
+        'itemsPerPage',
       ]);
 
       if (!this.form.groupsNavigationType) {
         this.form.groupsNavigationType = GROUPS_NAVIGATION_TYPES.sideBar;
+      }
+
+      if (!this.form.itemsPerPage) {
+        this.form.itemsPerPage = PAGINATION_LIMIT;
       }
     }
 

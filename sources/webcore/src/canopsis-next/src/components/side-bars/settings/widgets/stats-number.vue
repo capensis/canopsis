@@ -29,10 +29,12 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { has, cloneDeep } from 'lodash';
+
+import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
-import { SIDE_BARS } from '@/constants';
+import defaultItemsPerPageMixin from '@/mixins/pagination/default-items-per-page';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -58,7 +60,10 @@ export default {
     FieldDefaultElementsPerPage,
     FieldSortOrder,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [
+    widgetSettingsMixin,
+    defaultItemsPerPageMixin,
+  ],
   data() {
     const { widget, rowId } = this.config;
 
@@ -68,6 +73,11 @@ export default {
         widget: cloneDeep(widget),
       },
     };
+  },
+  mounted() {
+    if (!has(this.settings.widget, 'parameters.limit')) {
+      this.$set(this.settings.widget.parameters, 'limit', this.defaultItemsPerPage);
+    }
   },
 };
 </script>

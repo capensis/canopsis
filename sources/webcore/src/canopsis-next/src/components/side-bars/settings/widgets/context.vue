@@ -43,6 +43,7 @@ import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import defaultItemsPerPageMixin from '@/mixins/pagination/default-items-per-page';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -70,6 +71,7 @@ export default {
   mixins: [
     authMixin,
     widgetSettingsMixin,
+    defaultItemsPerPageMixin,
   ],
   data() {
     const { widget, rowId } = this.config;

@@ -1108,6 +1108,9 @@ export default {
         logo: 'Logo',
       },
     },
+    itemsPerPage: {
+      title: 'Default items per page',
+    },
   },
   view: {
     errors: {
