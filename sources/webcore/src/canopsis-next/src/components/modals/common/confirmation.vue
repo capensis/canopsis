@@ -7,7 +7,7 @@
       v-layout(wrap, justify-center)
         v-btn.primary(
         @click.prevent="submit",
-        data-test="confirmButton",
+        data-test="submitButton",
         :loading="submitting",
         :disabled="submitting"
         ) {{ $t('common.yes') }}

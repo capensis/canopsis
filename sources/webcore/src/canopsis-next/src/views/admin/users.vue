@@ -10,7 +10,7 @@
           @clear="applySearchFilter",
           )
         v-flex(v-show="hasDeleteAnyUserAccess && selected.length", xs4)
-          v-btn(@click="showRemoveSelectedUsersModal", icon, data-test="massDeleteButton")
+          v-btn(@click="showRemoveSelectedUsersModal", data-test="massDeleteButton", icon)
             v-icon delete
       v-data-table(
       v-model="selected",
@@ -26,7 +26,7 @@
         template(slot="items", slot-scope="props")
           tr(:data-test="`user-${props.item._id}`")
             td
-              v-checkbox(v-model="props.selected", data-test="optionCheckbox" primary, hide-details)
+              v-checkbox(v-model="props.selected", data-test="optionCheckbox", primary, hide-details)
             td {{ props.item.id }}
             td {{ props.item.role }}
             td
