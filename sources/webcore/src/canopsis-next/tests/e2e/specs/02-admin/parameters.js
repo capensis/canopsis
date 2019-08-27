@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 const uid = require('uid');
 
+const { LANGUAGES_POSITIONS } = require('../../constants');
 const { generateTemporaryUser } = require('../../helpers/entities');
 
 module.exports = {
@@ -21,7 +22,7 @@ module.exports = {
   'Create temporary user without interface language': (browser) => {
     const user = generateTemporaryUser();
 
-    browser.completed.createUser(user, (createdUser) => {
+    browser.completed.user.create(user, (createdUser) => {
       browser.globals.user = {
         ...createdUser,
 
@@ -39,19 +40,21 @@ module.exports = {
       .verifyPageElementsBefore()
       .clearAppTitle()
       .setAppTitle(hash)
-      .selectLanguage(1)
+      .selectLanguage(LANGUAGES_POSITIONS.fr)
       .clearFooter()
       .setFooter(hash)
       .clearDescription()
       .setDescription(hash)
       .clickSubmitButton();
   },
+
   'Check parameters app title on page': (browser) => {
     const { hash } = browser.globals;
 
     browser.page.admin.parameters()
       .verifyAppTitle(hash);
   },
+
   'Check parameters login values on page': (browser) => {
     const { hash } = browser.globals;
 
@@ -61,48 +64,62 @@ module.exports = {
       .verifyLoginDescription(hash)
       .verifyLoginFooter(hash);
   },
+
   'Caching of temporary user first interface language': (browser) => {
     const { user } = browser.globals;
 
     browser.completed.login(user._id, user.password);
 
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
+
     browser.page.layout.topBar()
       .clickUserDropdown()
       .getLogoutButtonText(({ value }) => {
         browser.globals.logoutButtonText = value;
-      });
+      })
+      .clickLogoutButton();
 
-    browser.completed.logout();
+    browser.page.auth.logout()
+      .verifyPageElementsAfter();
   },
+
   'Change parameters global language': (browser) => {
     browser.completed.loginAsAdmin();
 
     browser.page.admin.parameters()
       .navigate()
-      .selectLanguage(2)
+      .selectLanguage(LANGUAGES_POSITIONS.en)
       .clickSubmitButton();
 
     browser.completed.logout();
   },
+
   'Check temporary user second interface language': (browser) => {
     const { user } = browser.globals;
     const { logoutButtonText } = browser.globals;
 
     browser.completed.login(user._id, user.password);
 
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
+
     browser.page.layout.topBar()
       .clickUserDropdown()
       .getLogoutButtonText(({ value }) => {
         browser.assert.notEqual(value, logoutButtonText);
-      });
+      })
+      .clickLogoutButton();
 
-    browser.completed.logout();
+    browser.page.auth.logout()
+      .verifyPageElementsAfter();
   },
+
   'Delete temporary user': (browser) => {
     const { user } = browser.globals;
 
     browser.completed.loginAsAdmin();
-    browser.completed.deleteUser(user._id, () => {
+    browser.completed.user.delete(user._id, () => {
       delete browser.globals.user;
     });
   },
