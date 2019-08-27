@@ -967,6 +967,20 @@ export default {
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
   },
+  actions: {
+    title: 'Actions',
+    addAction: 'Ajouter une action',
+    table: {
+      id: 'Id',
+      type: 'Type',
+      expand: {
+        tabs: {
+          general: 'Général',
+          hook: 'Hook',
+        },
+      },
+    },
+  },
   layout: {
     sideBar: {
       buttons: {

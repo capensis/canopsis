@@ -1,3 +1,5 @@
+import request from '@/services/request';
+import i18n from '@/i18n';
 import schemas from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
@@ -34,17 +36,31 @@ export default {
   },
   actions: {
     async fetchList({ dispatch, commit }, { params } = {}) {
-      commit(types.FETCH_LIST);
+      try {
+        commit(types.FETCH_LIST);
 
-      const { normalizedData } = await dispatch('entities/fetch', {
-        route: API_ROUTES.actions,
-        schema: [schemas.action],
-        params,
-      }, { root: true });
+        const { normalizedData } = await dispatch('entities/fetch', {
+          route: API_ROUTES.actions,
+          schema: [schemas.action],
+          params,
+        }, { root: true });
 
-      commit(types.FETCH_LIST_COMPLETED, {
-        allIds: normalizedData.result,
-      });
+        commit(types.FETCH_LIST_COMPLETED, {
+          allIds: normalizedData.result,
+        });
+      } catch (err) {
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        commit(types.FETCH_LIST_FAILED);
+      }
+    },
+
+    async remove({ dispatch }, { id }) {
+      try {
+        await request.delete(`${API_ROUTES.actions}/${id}`);
+        await dispatch('entities/removeFromStore', { id, type: ENTITIES_TYPES.action }, { root: true });
+      } catch (err) {
+        console.warn(err);
+      }
     },
   },
 };

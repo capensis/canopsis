@@ -1080,6 +1080,20 @@ export default {
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
+  actions: {
+    title: 'Actions',
+    addAction: 'Add Action',
+    table: {
+      id: 'Id',
+      type: 'Type',
+      expand: {
+        tabs: {
+          general: 'General',
+          hook: 'Hook',
+        },
+      },
+    },
+  },
   layout: {
     sideBar: {
       buttons: {

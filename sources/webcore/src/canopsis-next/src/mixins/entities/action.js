@@ -1,15 +1,21 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions } = createNamespacedHelpers('action');
+const { mapGetters, mapActions } = createNamespacedHelpers('action');
 
 /**
  * @mixin
  */
 export default {
-  computed: {},
+  computed: {
+    ...mapGetters({
+      actions: 'items',
+      actionsPending: 'pending',
+    }),
+  },
   methods: {
     ...mapActions({
       fetchActionsList: 'fetchList',
+      removeAction: 'remove',
     }),
   },
 };
