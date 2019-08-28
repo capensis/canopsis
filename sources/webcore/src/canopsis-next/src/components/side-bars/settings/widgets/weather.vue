@@ -14,7 +14,7 @@
       v-divider
       field-filter-editor(v-model="settings.widget.parameters.mfilter", :hidden-fields="['title']")
       v-divider
-      v-list-group
+      v-list-group(data-test='alarmsList')
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns", withHtml)
@@ -40,19 +40,19 @@
           )
           v-divider
           field-weather-template(
-          data-test="weatherTemplate",
+          data-test="widgetTemplateWeatherItem",
           v-model="settings.widget.parameters.blockTemplate",
           :title="$t('settings.weatherTemplate')"
           )
           v-divider
           field-weather-template(
-          data-test="modalTemplate",
+          data-test="widgetTemplateModal",
           v-model="settings.widget.parameters.modalTemplate",
           :title="$t('settings.modalTemplate')"
           )
           v-divider
           field-weather-template(
-          data-test="entityTemplate",
+          data-test="widgetTemplateEntities",
           v-model="settings.widget.parameters.entityTemplate",
           :title="$t('settings.entityTemplate')"
           )
@@ -75,7 +75,7 @@
           :title="$t('settings.columnLG')"
           )
           v-divider
-          v-list-group(data-test="widgetMarginBlock")
+          v-list-group(data-test="widgetMargin")
             v-list-tile(slot="activator") {{ $t('settings.margin.title') }}
             v-list.grey.lighten-4.px-2.py-0(expand)
               field-slider(

@@ -12,6 +12,8 @@ module.exports.command = function setCommonFields({
     limit,
     margin,
     heightFactor,
+    modalType,
+    alarmsList,
   } = {},
   periodicRefresh,
   advanced = false,
@@ -28,9 +30,9 @@ module.exports.command = function setCommonFields({
 
   if (size) {
     common
-      .setSlider('sm', size.sm)
-      .setSlider('md', size.md)
-      .setSlider('lg', size.lg);
+      .setRowSize('sm', size.sm)
+      .setRowSize('md', size.md)
+      .setRowSize('lg', size.lg);
   }
 
   if (title) {
@@ -48,6 +50,10 @@ module.exports.command = function setCommonFields({
       .setPeriodicRefreshField(periodicRefresh);
   }
 
+  if (alarmsList) {
+    common.clickAlarmList();
+  }
+
   if (limit) {
     common
       .clickWidgetLimit()
@@ -62,8 +68,8 @@ module.exports.command = function setCommonFields({
   if (sort) {
     common
       .clickDefaultSortColumn()
-      .selectSortOrderBy(2)
-      .selectSortOrders(2);
+      .selectSortOrderBy(sort.orderBy)
+      .selectSortOrders(sort.order);
   }
 
   if (columnSM) {
@@ -91,6 +97,12 @@ module.exports.command = function setCommonFields({
     common
       .clickHeightFactor()
       .setHeightFactor(heightFactor);
+  }
+
+  if (modalType) {
+    common
+      .clickModalType()
+      .clickModalTypeField(modalType);
   }
 
   return this;

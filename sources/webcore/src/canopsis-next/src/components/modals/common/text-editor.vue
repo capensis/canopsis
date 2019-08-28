@@ -7,8 +7,8 @@
       text-editor-component(v-model="text")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
+      v-btn(data-test="textEditorCancelButton", @click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(data-test="textEditorSubmitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

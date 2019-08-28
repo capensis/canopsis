@@ -2,6 +2,11 @@
 
 const uid = require('uid');
 const { API_ROUTES } = require('../../../../src/config');
+const {
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  SERVICE_WEATHER_WIDGET_SORT_FIELD,
+  SORT_ORDERS,
+} = require('../../constants');
 const { generateTemporaryView } = require('../../helpers/entities');
 
 module.exports = {
@@ -73,6 +78,9 @@ module.exports = {
   },
 
   'Create widget weather with some name': (browser) => {
+    const common = browser.page.widget.common();
+    const weather = browser.page.widget.weather();
+
     browser.page.view()
       .clickEditViewButton()
       .clickAddWidgetButton();
@@ -91,9 +99,10 @@ module.exports = {
       },
       advanced: true,
       parameters: {
-        limit: 121,
+        limit: 140,
         sort: {
-          order: 1,
+          order: SORT_ORDERS.desc,
+          orderBy: SERVICE_WEATHER_WIDGET_SORT_FIELD.status,
         },
         margin: {
           top: 3,
@@ -101,17 +110,52 @@ module.exports = {
           bottom: 3,
           left: 3,
         },
+        alarmsList: {},
         columnSM: 12,
         columnMD: 12,
         columnLG: 12,
         heightFactor: 20,
+        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList,
       },
       title: 'Weather widget',
       periodicRefresh: 140,
     });
 
-    browser.page.widget.weather()
-      .clickSubmitWeather();
+    common.clickEditFilter();
+
+    browser.page.modals.view.createFilter()
+      .verifyModalOpened()
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    weather.clickTemplateWeatherItem();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .setField('Template weather item text')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    weather.clickTemplateModal();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .setField('Template modal text')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    weather.clickTemplateEntities();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .setField('Template entities text')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    weather.clickSubmitWeather();
   },
 
   'Edit widget weather with some name': (browser) => {

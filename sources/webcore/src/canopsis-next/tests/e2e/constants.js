@@ -59,3 +59,23 @@ module.exports.VIEW = {
   description: `test-description-${RANDOM}`,
   group: `test-group-${RANDOM}`,
 };
+
+module.exports.SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
+  moreInfo: 1,
+  alarmList: 2,
+  both: 3,
+};
+
+module.exports.SERVICE_WEATHER_WIDGET_SORT_FIELD = {
+  name: 1,
+  state: 2,
+  status: 3,
+  criticity: 4,
+  org: 5,
+};
+
+
+module.exports.SORT_ORDERS = {
+  asc: 0,
+  desc: 1,
+};

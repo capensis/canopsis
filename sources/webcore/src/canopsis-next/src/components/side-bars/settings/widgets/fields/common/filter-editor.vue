@@ -5,12 +5,13 @@
         .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optional') }})
       div
         v-btn.primary(
+        data-test="openWidgetFilterEditModal"
         small,
         @click="openFilterModal"
         )
           span(v-show="isValueEmpty") {{ $t('common.create') }}
           span(v-show="!isValueEmpty") {{ $t('common.edit') }}
-        v-btn.error(v-show="!isValueEmpty", small, @click="deleteFilter")
+        v-btn.error(data-test="openWidgetFilterDeleteModal", v-show="!isValueEmpty", small, @click="deleteFilter")
           v-icon delete
 </template>
 

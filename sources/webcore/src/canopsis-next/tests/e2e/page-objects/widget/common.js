@@ -5,6 +5,13 @@ const el = require('../../helpers/el');
 const commands = {
   el,
 
+  setSlider(element, value) {
+    return this.dragAndDrop(
+      this.el('@sliderThumb', element),
+      this.el('@sliderTicks', element, value),
+    );
+  },
+
   clickPeriodicRefresh() {
     return this.customClick('@periodicRefresh')
       .defaultPause();
@@ -61,11 +68,11 @@ const commands = {
       .customKeyup('@rowGridSizeCombobox', this.api.Keys.ENTER);
   },
 
-  setSlider(slider, value) {
-    return this.dragAndDrop(
-      this.el('@sliderThumb', slider),
+  setRowSize(slider, value) {
+    return this.setSlider(
+      this.el('@rowSize', slider),
       // The unit is added, because along with 0, the slider has 13 elements.
-      this.el('@sliderTicks', slider, value + 1),
+      value + 1,
     );
   },
 
@@ -87,6 +94,11 @@ const commands = {
       .defaultPause();
   },
 
+  clickAlarmList() {
+    return this.customClick('@alarmsList')
+      .defaultPause();
+  },
+
   clickDefaultSortColumn() {
     return this.customClick('@defaultSortColumn')
       .defaultPause();
@@ -105,11 +117,8 @@ const commands = {
   },
 
   setColumn(size, value) {
-    return this.customClick(this.el('@column', size))
-      .dragAndDrop(
-        this.el('@columnThumb', size),
-        this.el('@columnTicks', size, value + 1),
-      );
+    return this.customClick(this.el('@columnHeader', size))
+      .setSlider(this.el('@column', size), value + 1);
   },
 
   clickMarginBlock() {
@@ -118,23 +127,37 @@ const commands = {
   },
 
   setMargin(position, value) {
-    return this.customClick(this.el('@margin', position))
-      .dragAndDrop(
-        this.el('@marginThumb', position),
-        this.el('@marginTicks', position, value + 1),
-      );
+    return this.customClick(this.el('@marginHeader', position))
+      .setSlider(this.el('@margin', position), value + 1);
   },
 
   clickHeightFactor() {
-    return this.customClick('@widgetHeightFactory')
+    return this.customClick('@widgetHeightFactoryHeader')
       .defaultPause();
   },
 
   setHeightFactor(value) {
-    return this.dragAndDrop(
-      this.el('@heightFactoryThumb'),
-      this.el('@heightFactoryTicks', value),
-    );
+    return this.setSlider(this.el('@widgetHeightFactory'), value);
+  },
+
+  clickModalType() {
+    return this.customClick('@modalType')
+      .defaultPause();
+  },
+
+  clickModalTypeField(value = 1) {
+    return this.customClick(this.el('@modalTypeField', value))
+      .defaultPause();
+  },
+
+  clickEditFilter() {
+    return this.customClick('@openWidgetFilterEditModal')
+      .defaultPause();
+  },
+
+  clickDeleteFilter() {
+    return this.customClick('@openWidgetFilterDeleteModal')
+      .defaultPause();
   },
 };
 
@@ -152,13 +175,16 @@ module.exports = {
     rowGridSize: sel('rowGridSize'),
     rowGridSizeCombobox: sel('rowGridSizeCombobox'),
 
-    sliderThumb: `div${sel('slider-%s')} .v-slider__thumb`,
-    sliderTicks: `div${sel('slider-%s')} .v-slider__ticks:nth-child(%s)`,
+    rowSize: `div${sel('slider-%s')}`,
+
+    sliderThumb: '%s .v-slider__thumb',
+    sliderTicks: '%s .v-slider__ticks:nth-child(%s)',
 
     widgetLimit: sel('widgetLimit'),
     widgetLimitField: `${sel('widgetLimit')} .v-text-field__slot input`,
 
     advancedSettings: sel('advancedSettings'),
+    alarmsList: sel('alarmsList'),
 
     defaultSortColumn: sel('defaultSortColumn'),
     defaultSortColumnOrderByField: `${sel('defaultSortColumnOrderByLayout')} .v-input__slot`,
@@ -166,18 +192,21 @@ module.exports = {
     defaultSortColumnOrdersField: `${sel('defaultSortColumnOrdersLayout')} .v-input__slot`,
     defaultSortColumnOrdersOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
 
-    column: `${sel('column%s')} .v-list__group__header`,
-    columnThumb: `${sel('column%s')} .v-slider__thumb`,
-    columnTicks: `${sel('column%s')} .v-slider__ticks:nth-child(%s)`,
+    columnHeader: `${sel('column%s')} .v-list__group__header`,
+    column: sel('column%s'),
 
-    marginBlock: `${sel('widgetMarginBlock')} .v-list__group__header`,
-    margin: `${sel('widget-margin-%s')} .v-list__group__header`,
-    marginThumb: `${sel('widget-margin-%s')} .v-slider__thumb`,
-    marginTicks: `${sel('widget-margin-%s')} .v-slider__ticks:nth-child(%s)`,
+    marginBlock: `${sel('widgetMargin')} .v-list__group__header`,
+    marginHeader: `${sel('widget-margin-%s')} .v-list__group__header`,
+    margin: sel('widget-margin-%s'),
 
-    widgetHeightFactory: `${sel('widgetHeightFactory')} .v-list__group__header`,
-    heightFactoryThumb: `${sel('widgetHeightFactory')} .v-slider__thumb`,
-    heightFactoryTicks: `${sel('widgetHeightFactory')} .v-slider__ticks:nth-child(%s)`,
+    widgetHeightFactoryHeader: `${sel('widgetHeightFactory')} .v-list__group__header`,
+    widgetHeightFactory: sel('widgetHeightFactory'),
+
+    modalType: `${sel('modalType')} .v-list__group__header`,
+    modalTypeField: `${sel('modalTypeGroup')} .v-radio:nth-of-type(%s) .v-label`,
+
+    openWidgetFilterEditModal: sel('openWidgetFilterEditModal'),
+    openWidgetFilterDeleteModal: sel('openWidgetFilterDeleteModal'),
   },
   commands: [commands],
 };
