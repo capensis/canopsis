@@ -16,6 +16,7 @@ export default {
     ...mapActions({
       fetchActionsList: 'fetchList',
       createAction: 'create',
+      updateAction: 'update',
       removeAction: 'remove',
     }),
   },

@@ -67,6 +67,14 @@ export default {
       }
     },
 
+    async update({ dispatch }, { data, id }) {
+      await dispatch('entities/update', {
+        route: `${API_ROUTES.actions}/${id}`,
+        schema: schemas.action,
+        body: data,
+      }, { root: true });
+    },
+
     async remove({ dispatch }, { id }) {
       try {
         await request.delete(`${API_ROUTES.actions}/${id}`);

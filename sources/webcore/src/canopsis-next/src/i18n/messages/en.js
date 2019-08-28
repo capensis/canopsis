@@ -1090,6 +1090,18 @@ export default {
         tabs: {
           general: 'General',
           hook: 'Hook',
+          author: 'Author',
+          pbehavior: {
+            name: 'Name',
+            type: 'Type',
+            reason: 'Reason',
+            start: 'Start',
+            end: 'End',
+          },
+          snooze: {
+            message: 'Message',
+            duration: 'Duration',
+          },
         },
       },
     },

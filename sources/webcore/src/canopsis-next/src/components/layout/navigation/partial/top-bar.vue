@@ -108,8 +108,8 @@ export default {
         },
         {
           route: { name: 'exploitation-actions' },
-          text: 'Actions',
-          icon: 'assignment',
+          text: this.$t('actions.title'),
+          icon: 'linear_scale',
           right: USERS_RIGHTS.technical.exploitation.action,
         },
       ];

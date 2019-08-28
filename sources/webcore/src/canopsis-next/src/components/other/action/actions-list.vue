@@ -30,7 +30,7 @@
             td
               v-layout
                 v-flex
-                  v-btn(icon, small, @click.stop="")
+                  v-btn(icon, small, @click.stop="showEditActionModal(props.item)")
                     v-icon edit
                   v-btn.error--text(icon, small, @click.stop="showDeleteActionModal(props.item._id)")
                     v-icon(color="error") delete
@@ -59,6 +59,10 @@ export default {
   mixins: [entitiesActionMixin],
   props: {
     showDeleteActionModal: {
+      type: Function,
+      default: () => () => {},
+    },
+    showEditActionModal: {
       type: Function,
       default: () => () => {},
     },

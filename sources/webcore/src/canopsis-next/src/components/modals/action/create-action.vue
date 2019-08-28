@@ -34,9 +34,7 @@
               type="number"
               )
             template(v-if="form.type === $constants.ACTION_TYPES.pbehavior")
-              pbehavior-form(v-model="pbehaviorParameters", noFilter)
-              pbehavior-exdates-form.mt-2(v-show="pbehaviorParameters.rrule", v-model="pbehaviorParameters.exdate")
-              pbehavior-comments-form.mt-2(v-model="pbehaviorParameters.comments")
+              pbehavior-form(v-model="pbehaviorParameters")
           v-tab Hook
           v-tab-item
             v-select(
@@ -57,13 +55,12 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { MODALS, ACTION_TYPES, ACTION_AUTHOR, WEBHOOK_TRIGGERS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
-import PbehaviorExdatesForm from '@/components/other/pbehavior/form/pbehavior-exdates-form.vue';
-import PbehaviorCommentsForm from '@/components/other/pbehavior/form/pbehavior-comments-form.vue';
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
@@ -73,35 +70,59 @@ export default {
   },
   components: {
     PbehaviorForm,
-    PbehaviorExdatesForm,
-    PbehaviorCommentsForm,
     PatternsList,
   },
   mixins: [modalInnerMixin],
   data() {
-    return {
-      form: {
-        _id: '',
-        type: ACTION_TYPES.snooze,
-        hook: {
-          event_patterns: [],
-          triggers: [],
-        },
+    // Default form
+    let form = {
+      _id: '',
+      type: ACTION_TYPES.snooze,
+      hook: {
+        event_patterns: [],
+        triggers: [],
       },
-      pbehaviorParameters: {
+    };
+
+    // Default 'pbehavior' action parameters
+    const pbehaviorParameters = {
+      general: {
         name: '',
         tstart: new Date(),
         tstop: new Date(),
-        rrule: '',
+        rrule: null,
         reason: '',
         type_: '',
-        comments: [],
-        exdate: [],
       },
-      snoozeParameters: {
-        message: '',
-        duration: 60,
-      },
+      comments: [],
+      exdate: [],
+    };
+
+    // Default 'snooze' action parameters
+    let snoozeParameters = {
+      message: '',
+      duration: 60,
+    };
+
+    if (this.modal.config.item) {
+      const { item } = this.modal.config;
+
+      form = omit(item, ['parameters']);
+
+      // If editing a 'pbehavior' action, prepare pbehavior's data. If editing a 'snooze' action copy snooze's data
+      if (item.type === ACTION_TYPES.pbehavior) {
+        pbehaviorParameters.general = omit(this.$options.filters.pbehaviorToForm(item.parameters), ['filter']);
+        pbehaviorParameters.comments = this.$options.filters.commentsToPbehaviorComments(item.parameters.comments);
+        pbehaviorParameters.exdate = this.$options.filters.exdateToPbehaviorExdate(item.parameters.exdate);
+      } else if (item.type === ACTION_TYPES.snooze) {
+        snoozeParameters = { ...snoozeParameters, ...item.parameters };
+      }
+    }
+
+    return {
+      form,
+      pbehaviorParameters,
+      snoozeParameters,
       actionTypes: Object.values(ACTION_TYPES),
       availableTriggers: Object.values(WEBHOOK_TRIGGERS),
     };
@@ -117,7 +138,12 @@ export default {
           if (this.form.type === ACTION_TYPES.snooze) {
             data.parameters = { ...this.snoozeParameters };
           } else if (this.form.type === ACTION_TYPES.pbehavior) {
-            data.parameters = { ...this.pbehaviorParameters };
+            const pbehavior = this.$options.filters.formToPbehavior(this.pbehaviorParameters.general);
+
+            pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.pbehaviorParameters.comments);
+            pbehavior.exdate = this.$options.filters.exdateToPbehaviorExdate(this.pbehaviorParameters.exdate);
+
+            data.parameters = { ...pbehavior };
           }
 
           data.parameters.author = ACTION_AUTHOR;
