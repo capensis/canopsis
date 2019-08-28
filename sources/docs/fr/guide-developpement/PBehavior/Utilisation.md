@@ -50,6 +50,7 @@ Les attributs du corps sont les suivants :
 
 | Name            | type    | nullable | Description                                                 |
 |-----------------|---------|----------|-------------------------------------------------------------|
+| \_id            | string  | Yes      | Identifiant du Pbehavior (optionnel)                        |
 | connector       | string  | No       | Identifiant du connecteur d'entité                          |
 | name            | string  | No       | Display name du pbehavior                                   |
 | author          | string  | No       | Nom de l'auteur                                             |
@@ -62,7 +63,6 @@ Les attributs du corps sont les suivants :
 | rrule           | string  | Yes      | Rrule (récurrence)                                          |
 | tstart          | integer | No       | Timestamp de la date de départ                              |
 | tstop           | integer | No       | Timestamp de la date de fin                                 |
-| \_id            | string  | No       | Indentifiant du Pbehavior                                   |
 | eids            | array   | No       | tableau du \_ids pour les entités impactées.                |
 | timezone        | string  | Yes      | La timezone à utiliser pour le calcul des dates             |
 | exdate          | array   | Yes      | La liste des occurrences à ignorer sous forme de timestamps |
