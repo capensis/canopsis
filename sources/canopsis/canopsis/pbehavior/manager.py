@@ -21,7 +21,7 @@
 """
 Managing PBehavior.
 """
-
+import re
 from calendar import timegm
 from datetime import datetime, date
 from dateutil import tz, rrule
@@ -205,7 +205,7 @@ class PBehaviorManager(object):
         self.collection = pb_collection
         self.currently_active_pb = set()
 
-    def get(self, _id, limit=None, skip=None):
+    def get(self, _id, search=None, limit=None, skip=None):
         """Get pbehavior by id.
 
         When _id is None, all the pbehaviors are returned. This behavior
@@ -218,7 +218,18 @@ class PBehaviorManager(object):
         """
         pipeline = []
         if _id is None:
-            pipeline.append({"$match": {}})
+            if search is not None:
+                or_query = [
+                    {"name": re.compile(str(search), re.IGNORECASE)},
+                    {"reason": re.compile(str(search), re.IGNORECASE)},
+                    {"author": re.compile(str(search), re.IGNORECASE)},
+                    {"type_": re.compile(str(search), re.IGNORECASE)},
+                    {"eids": {"$elemMatch": {
+                        "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}}
+                ]
+                pipeline.append({"$match": {"$or": or_query}})
+            else:
+                pipeline.append({"$match": {}})
         else:
             pipeline.append({"$match": {"_id": _id}})
 
@@ -401,11 +412,11 @@ class PBehaviorManager(object):
 
         return pbehaviors
 
-    def read(self, _id=None, limit=None, skip=None):
+    def read(self, _id=None, search=None, limit=None, skip=None):
         """Get pbehavior or list pbehaviors.
         :param str _id: pbehavior id, _id may be equal to None
         """
-        result = self.get(_id, limit=limit, skip=skip)
+        result = self.get(_id, search=search, limit=limit, skip=skip)
 
         return result
 
