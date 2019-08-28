@@ -54,7 +54,7 @@
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                     span {{ $t('login.errors.incorrectEmailOrPassword') }}
               v-divider
-              v-layout(v-if="footer", v-html="footer")
+              v-layout(v-if="footer", v-html="footer", data-test="loginFormFooter")
       v-card.mt-2(v-show="isCASAuthEnabled")
         v-card-text
           div.pa-3

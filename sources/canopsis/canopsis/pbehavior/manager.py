@@ -21,7 +21,7 @@
 """
 Managing PBehavior.
 """
-
+import re
 from calendar import timegm
 from datetime import datetime, date
 from dateutil import tz, rrule
@@ -34,7 +34,7 @@ from pymongo import DESCENDING
 import pytz
 
 from canopsis.common.mongo_store import MongoStore
-from canopsis.common.collection import MongoCollection
+from canopsis.common.collection import MongoCollection, CollectionError
 from canopsis.common.utils import singleton_per_scope
 from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
@@ -205,7 +205,7 @@ class PBehaviorManager(object):
         self.collection = pb_collection
         self.currently_active_pb = set()
 
-    def get(self, _id, limit=None, skip=None):
+    def get(self, _id, search=None, limit=None, skip=None):
         """Get pbehavior by id.
 
         When _id is None, all the pbehaviors are returned. This behavior
@@ -218,7 +218,18 @@ class PBehaviorManager(object):
         """
         pipeline = []
         if _id is None:
-            pipeline.append({"$match": {}})
+            if search is not None:
+                or_query = [
+                    {"name": re.compile(str(search), re.IGNORECASE)},
+                    {"reason": re.compile(str(search), re.IGNORECASE)},
+                    {"author": re.compile(str(search), re.IGNORECASE)},
+                    {"type_": re.compile(str(search), re.IGNORECASE)},
+                    {"eids": {"$elemMatch": {
+                        "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}}
+                ]
+                pipeline.append({"$match": {"$or": or_query}})
+            else:
+                pipeline.append({"$match": {}})
         else:
             pipeline.append({"$match": {"_id": _id}})
 
@@ -256,7 +267,7 @@ class PBehaviorManager(object):
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
             type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
-            exdate=None):
+            exdate=None, pbh_id=None):
         """
         Method creates pbehavior record
 
@@ -286,6 +297,8 @@ class PBehaviorManager(object):
         24 hours clock system and the timezone is the name of the timezone. The
         month, the day of the month, the hour, the minute and second are
         zero-padded.
+        :param str pbh_id: Optional id for pbh. If not specified or none, a
+        random id will be generated
         :raises ValueError: invalid RRULE
         :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
@@ -327,8 +340,11 @@ class PBehaviorManager(object):
                 else:
                     raise ValueError("The message field is missing")
 
+        if pbh_id is None:
+            pbh_id = str(uuid4())
+
         pb_kwargs = {
-            PBehavior.ID: str(uuid4()),
+            PBehavior.ID: pbh_id,
             PBehavior.NAME: name,
             PBehavior.FILTER: filter,
             PBehavior.AUTHOR: author,
@@ -351,8 +367,12 @@ class PBehaviorManager(object):
             data.update(comments=[])
         else:
             for comment in data.comments:
-                comment.update({'_id': str(uuid4())})
-        result = self.collection.insert(data.to_dict())
+                comment.update({'_id': pbh_id})
+        try:
+            result = self.collection.insert(data.to_dict())
+        except CollectionError:
+            # when inserting already existing id
+            raise ValueError("Trying to insert PBehavior with already existing _id")
 
         return result
 
@@ -392,11 +412,11 @@ class PBehaviorManager(object):
 
         return pbehaviors
 
-    def read(self, _id=None, limit=None, skip=None):
+    def read(self, _id=None, search=None, limit=None, skip=None):
         """Get pbehavior or list pbehaviors.
         :param str _id: pbehavior id, _id may be equal to None
         """
-        result = self.get(_id, limit=limit, skip=skip)
+        result = self.get(_id, search=search, limit=limit, skip=skip)
 
         return result
 

@@ -79,3 +79,8 @@ module.exports.SORT_ORDERS = {
   asc: 0,
   desc: 1,
 };
+
+module.exports.LANGUAGES_POSITIONS = {
+  en: 1,
+  fr: 2,
+};
