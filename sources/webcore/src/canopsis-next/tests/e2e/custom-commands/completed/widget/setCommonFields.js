@@ -51,7 +51,11 @@ module.exports.command = function setCommonFields({
   }
 
   if (alarmsList) {
-    common.clickAlarmList();
+    common
+      .clickAlarmList()
+      .clickElementsPerPage()
+      .selectElementsPerPage(alarmsList.perPage)
+      .clickElementsPerPage();
   }
 
   if (limit) {

@@ -4,11 +4,15 @@ const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-
 
 const commands = {
   clickField() {
-    return this.customSetValue('@textareaField');
+    return this.customClick('@textareaField');
   },
 
   setField(value) {
-    return this.customSetValue('@textareaField', value);
+    return this.sendKeys('@textareaField', value);
+  },
+
+  clearField() {
+    return this.customClearRTE('@textareaField');
   },
 };
 

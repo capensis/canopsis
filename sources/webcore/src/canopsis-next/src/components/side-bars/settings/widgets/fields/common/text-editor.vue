@@ -7,10 +7,10 @@
         small,
         @click="openTextEditorModal"
         )
-          span(v-show="isValueEmpty") {{ $t('common.create') }}
-          span(v-show="!isValueEmpty") {{ $t('common.edit') }}
+          span(data-test="createButton", v-show="isValueEmpty") {{ $t('common.create') }}
+          span(data-test="editButton", v-show="!isValueEmpty") {{ $t('common.edit') }}
         v-btn.error(v-show="!isValueEmpty", small, @click="deleteMoreInfoTemplate")
-          v-icon delete
+          v-icon(data-test="deleteButton",) delete
 </template>
 
 <script>

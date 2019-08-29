@@ -106,14 +106,14 @@ const commands = {
 
   selectSortOrderBy(index = 1) {
     return this.customClick('@defaultSortColumnOrderByField')
-      .waitForElementVisible(this.el('@defaultSortColumnOrderByOption', index))
-      .customClick(this.el('@defaultSortColumnOrderByOption', index));
+      .waitForElementVisible(this.el('@selectOption', index))
+      .customClick(this.el('@selectOption', index));
   },
 
   selectSortOrders(index = 1) {
     return this.customClick('@defaultSortColumnOrdersField')
-      .waitForElementVisible(this.el('@defaultSortColumnOrdersOption', index))
-      .customClick(this.el('@defaultSortColumnOrdersOption', index));
+      .waitForElementVisible(this.el('@selectOption', index))
+      .customClick(this.el('@selectOption', index));
   },
 
   setColumn(size, value) {
@@ -159,10 +159,33 @@ const commands = {
     return this.customClick('@openWidgetFilterDeleteModal')
       .defaultPause();
   },
+
+  clickCreateMoreInfos() {
+    return this.customClick('@moreInfoTemplateCreateButton')
+      .defaultPause();
+  },
+
+  clickEditMoreInfos() {
+    return this.customClick('@moreInfoTemplateEditButton')
+      .defaultPause();
+  },
+
+  clickElementsPerPage() {
+    return this.customClick('@elementsPerPage')
+      .defaultPause();
+  },
+
+  selectElementsPerPage(index = 1) {
+    return this.customClick('@elementsPerPageField')
+      .waitForElementVisible(this.el('@selectOption', index))
+      .customClick(this.el('@selectOption', index));
+  },
 };
 
 module.exports = {
   elements: {
+    selectOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+
     periodicRefresh: sel('periodicRefresh'),
     periodicRefreshSwitchInput: `input${sel('periodicRefreshSwitch')}`,
     periodicRefreshSwitch: `.v-input${sel('periodicRefreshSwitch')} .v-input--selection-controls__ripple`,
@@ -184,29 +207,34 @@ module.exports = {
     widgetLimitField: `${sel('widgetLimit')} .v-text-field__slot input`,
 
     advancedSettings: sel('advancedSettings'),
-    alarmsList: sel('alarmsList'),
+    alarmsList: sel('widgetAlarmsList'),
 
     defaultSortColumn: sel('defaultSortColumn'),
     defaultSortColumnOrderByField: `${sel('defaultSortColumnOrderByLayout')} .v-input__slot`,
-    defaultSortColumnOrderByOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     defaultSortColumnOrdersField: `${sel('defaultSortColumnOrdersLayout')} .v-input__slot`,
-    defaultSortColumnOrdersOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
 
-    columnHeader: `${sel('column%s')} .v-list__group__header`,
+    columnHeader: sel('column%s'),
     column: sel('column%s'),
 
-    marginBlock: `${sel('widgetMargin')} .v-list__group__header`,
-    marginHeader: `${sel('widget-margin-%s')} .v-list__group__header`,
+    marginBlock: sel('widgetMargin'),
+    marginHeader: sel('widget-margin-%s'),
     margin: sel('widget-margin-%s'),
 
-    widgetHeightFactoryHeader: `${sel('widgetHeightFactory')} .v-list__group__header`,
+    widgetHeightFactoryHeader: sel('widgetHeightFactory'),
     widgetHeightFactory: sel('widgetHeightFactory'),
 
-    modalType: `${sel('modalType')} .v-list__group__header`,
+    modalType: sel('modalType'),
     modalTypeField: `${sel('modalTypeGroup')} .v-radio:nth-of-type(%s) .v-label`,
 
     openWidgetFilterEditModal: sel('openWidgetFilterEditModal'),
     openWidgetFilterDeleteModal: sel('openWidgetFilterDeleteModal'),
+
+    elementsPerPage: sel('elementsPerPage'),
+    elementsPerPageField: `${sel('elementsPerPageFieldContainer')} .v-input__slot`,
+
+    moreInfoTemplateCreateButton: `${sel('widgetMoreInfoTemplate')} ${sel('createButton')}`,
+    moreInfoTemplateEditButton: `${sel('widgetMoreInfoTemplate')} ${sel('editButton')}`,
+    moreInfoTemplateDeleteButton: `${sel('widgetMoreInfoTemplate')} ${sel('deleteButton')}`,
   },
   commands: [commands],
 };

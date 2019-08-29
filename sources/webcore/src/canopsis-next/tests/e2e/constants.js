@@ -76,11 +76,19 @@ module.exports.SERVICE_WEATHER_WIDGET_SORT_FIELD = {
 
 
 module.exports.SORT_ORDERS = {
-  asc: 0,
-  desc: 1,
+  asc: 1,
+  desc: 2,
 };
 
 module.exports.LANGUAGES_POSITIONS = {
   en: 1,
   fr: 2,
+};
+
+module.exports.PAGINATION_PER_PAGE_VALUES = {
+  FIVE: 1,
+  TEN: 2,
+  TWENTY: 3,
+  FIFTY: 4,
+  HUNDRED: 5,
 };

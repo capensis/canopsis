@@ -5,6 +5,7 @@ const { API_ROUTES } = require('../../../../src/config');
 const {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SERVICE_WEATHER_WIDGET_SORT_FIELD,
+  PAGINATION_PER_PAGE_VALUES,
   SORT_ORDERS,
 } = require('../../constants');
 const { generateTemporaryView } = require('../../helpers/entities');
@@ -110,7 +111,9 @@ module.exports = {
           bottom: 3,
           left: 3,
         },
-        alarmsList: {},
+        alarmsList: {
+          perPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
+        },
         columnSM: 12,
         columnMD: 12,
         columnLG: 12,
@@ -126,6 +129,15 @@ module.exports = {
     browser.page.modals.view.createFilter()
       .verifyModalOpened()
       .clickCancelButton()
+      .verifyModalClosed();
+
+    common.clickCreateMoreInfos();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .setField('More infos popup')
+      .clickSubmitButton()
       .verifyModalClosed();
 
     weather.clickTemplateWeatherItem();
@@ -159,10 +171,35 @@ module.exports = {
   },
 
   'Edit widget weather with some name': (browser) => {
+    const common = browser.page.widget.common();
+    const weather = browser.page.widget.weather();
+
     browser.page.view()
       .clickEditWidgetButton();
 
     browser.completed.widget.setCommonFields({
+      advanced: true,
+      parameters: {
+        limit: 180,
+        sort: {
+          order: SORT_ORDERS.asc,
+          orderBy: SERVICE_WEATHER_WIDGET_SORT_FIELD.criticity,
+        },
+        margin: {
+          top: 2,
+          right: 2,
+          bottom: 2,
+          left: 2,
+        },
+        alarmsList: {
+          perPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
+        },
+        columnSM: 6,
+        columnMD: 6,
+        columnLG: 6,
+        heightFactor: 10,
+        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
+      },
       size: {
         sm: 10,
         md: 10,
@@ -172,8 +209,54 @@ module.exports = {
       periodicRefresh: 180,
     });
 
-    browser.page.widget.weather()
-      .clickSubmitWeather();
+    common.clickEditFilter();
+
+    browser.page.modals.view.createFilter()
+      .verifyModalOpened()
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    common.clickEditMoreInfos();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .clearField()
+      .setField('More infos popup(edited)')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    weather.clickTemplateWeatherItem();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .clearField()
+      .setField('Template weather item text(edited)')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    weather.clickTemplateModal();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .clearField()
+      .setField('Template modal text(edited)')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    weather.clickTemplateEntities();
+
+    browser.page.modals.common.textEditor()
+      .verifyModalOpened()
+      .clickField()
+      .clearField()
+      .setField('Template entities text(edited)')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    weather.clickSubmitWeather();
   },
 
   'Delete widget weather with some name': (browser) => {
