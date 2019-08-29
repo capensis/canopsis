@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "unit": "vue-cli-service test:unit",
     "e2e": "vue-cli-service test:e2e --mode=developement --config ./tests/e2e/nightwatch.config.js",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "lint:pug": "pug-lint-vue lint:pug"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -73,6 +74,7 @@
     "nightwatch-record": "^0.2.0",
     "node-sass": "^4.7.2",
     "pug": "^2.0.3",
+    "pug-lint-vue": "^0.3.0",
     "pug-loader": "^2.4.0",
     "pug-plain-loader": "^1.0.0",
     "randomstring": "^1.1.5",
