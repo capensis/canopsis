@@ -403,6 +403,9 @@ export default {
     columns: {
       isHtml: 'Is it HTML?',
     },
+    liveReporting: {
+      title: 'Live reporting',
+    },
   },
   modals: {
     contextInfos: {
