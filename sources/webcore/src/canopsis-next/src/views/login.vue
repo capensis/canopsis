@@ -61,7 +61,7 @@
             div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
             v-btn.my-4(
             :href="casHref",
-            color="primary",
+            color="primary"
             ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.secondary.darken-1.footer
       a(:href="$constants.CANOPSIS_DOCUMENTATION", target="_blank") {{ $t('login.documentation') }}

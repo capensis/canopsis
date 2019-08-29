@@ -31,7 +31,7 @@
     :error-messages="errorMessages",
     single-line,
     dense,
-    @input="updateTextFieldValue",
+    @input="updateTextFieldValue"
     )
     v-switch.ma-0.ml-3.mixed-field__switch(
     v-else-if="inputType === $constants.FILTER_INPUT_TYPES.boolean",

@@ -15,7 +15,7 @@
           span {{ $t('modals.createWebhook.tooltips.id') }}
       v-switch(
       v-model="form.disable_if_active_pbehavior",
-      :label="$t('webhook.disableIfActivePbehavior')",
+      :label="$t('webhook.disableIfActivePbehavior')"
       )
       webhook-form(v-model="form")
     v-divider

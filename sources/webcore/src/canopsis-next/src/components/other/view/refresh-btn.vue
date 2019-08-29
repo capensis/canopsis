@@ -3,7 +3,7 @@
     v-btn(
     slot="activator",
     color="secondary",
-    data-test="refreshButton"
+    data-test="refreshButton",
     fab,
     dark,
     icon,

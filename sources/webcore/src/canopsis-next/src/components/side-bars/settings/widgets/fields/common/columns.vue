@@ -17,7 +17,7 @@
             div.text-xs-right.pr-2
               v-btn(icon, @click.prevent="removeItemFromArray(index)")
                 v-icon(color="red") close
-        v-layout(justify-center wrap)
+        v-layout(justify-center, wrap)
           v-flex(xs11)
             v-text-field(
             v-validate="'required'",
@@ -32,7 +32,7 @@
             v-validate="'required'",
             :placeholder="$t('common.value')",
             :error-messages="errors.collect(`value[${index}]`)",
-            :value="column.value"
+            :value="column.value",
             :name="`value[${index}]`",
             @input="updateFieldInArrayItem(index, 'value', $event)"
             )

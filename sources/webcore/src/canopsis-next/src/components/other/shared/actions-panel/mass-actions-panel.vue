@@ -8,7 +8,7 @@
       )
     mq-layout(mq="t")
       v-menu(bottom, left, @click.native.stop)
-        v-btn(icon slot="activator")
+        v-btn(icon, slot="activator")
           v-icon more_vert
         v-list
           actions-panel-item(

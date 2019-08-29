@@ -8,6 +8,5 @@
   "requireLowerCaseTags": true,
   "validateAttributeQuoteMarks": "\"",
   "validateAttributeSeparator": { "separator": ", ", "multiLineSeparator": ",\n" },
-  "validateDivTags": true,
   "validateIndentation": 2
 }

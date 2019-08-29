@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container(fluid).pa-3
+  v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
       div.subheading {{ title }}
       v-btn.primary(

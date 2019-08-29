@@ -9,7 +9,7 @@
       @change="$emit('input', $event)",
       hide-details,
       single-line,
-      dense,
+      dense
       )
 </template>
 

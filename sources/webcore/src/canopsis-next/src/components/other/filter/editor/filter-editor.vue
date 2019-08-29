@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
+    v-tabs.filter-editor(v-model="activeTab", slider-color="blue darken-4", centered)
       v-tab(:disabled="isRequestStringChanged") {{ $t('filterEditor.tabs.visualEditor') }}
       v-tab-item
         v-container.pa-1
@@ -16,14 +16,14 @@
         v-model="requestString",
         v-validate="'json'",
         :label="$t('filterEditor.tabs.advancedEditor')",
-        :error-messages="errors.collect('requestString')"
+        :error-messages="errors.collect('requestString')",
         data-vv-validate-on="none",
         name="requestString",
         rows="10",
         @input="updateRequestString"
         )
         v-layout(justify-center)
-          v-flex(xs10 md-6)
+          v-flex(xs10, md-6)
             v-alert(:value="parseError", type="error") {{ parseError }}
         v-btn(
         :disabled="!isRequestStringChanged || errors.has('requestString')",

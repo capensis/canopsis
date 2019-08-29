@@ -5,7 +5,7 @@
         span.headline {{ $t('modals.createAckEvent.title') }}
     v-card-text
       v-container
-        v-layout(row align-center)
+        v-layout(row, align-center)
           v-flex.text-xs-center
             alarm-general-table(:items="items")
         v-layout(row)
@@ -13,7 +13,7 @@
         v-layout(row)
           v-text-field(
           :label="$t('modals.createAckEvent.fields.ticket')",
-          v-model="form.ticket",
+          v-model="form.ticket"
           )
         v-layout(row)
           v-textarea(
@@ -21,7 +21,7 @@
           :error-messages="errors.collect('output')",
           v-model="form.output",
           v-validate="isNoteRequired ? 'required' : ''",
-          data-vv-name="output",
+          data-vv-name="output"
           )
         v-layout(row)
           v-tooltip(top)

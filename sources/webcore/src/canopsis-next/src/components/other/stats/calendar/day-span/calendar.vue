@@ -20,8 +20,8 @@
             v-icon arrow_drop_down
           v-list
             v-list-tile(
-            v-for="type in types"
-            :key="type.id"
+            v-for="type in types",
+            :key="type.id",
             @click="currentType = type"
             )
               v-list-tile-content
@@ -33,7 +33,7 @@
         v-on="$listeners",
         v-bind="{$scopedSlots}",
         :calendar="calendar",
-        @view-day="viewDay",
+        @view-day="viewDay"
         )
 </template>
 

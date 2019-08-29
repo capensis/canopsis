@@ -29,7 +29,7 @@
                         :disabled="!isActionBtnEnable(action.eventType)",
                         depressed,
                         small,
-                        light,
+                        light
                         )
                           v-icon {{ action.icon }}
                         span {{ $t(`common.actions.${action.eventType}`) }}

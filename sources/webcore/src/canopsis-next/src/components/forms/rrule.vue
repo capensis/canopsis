@@ -23,7 +23,7 @@
                 :items="weekDays",
                 multiple,
                 chips,
-                @input="changeRRuleOption",
+                @input="changeRRuleOption"
                 )
               div
                 v-text-field(
@@ -68,7 +68,7 @@
                     @input="changeRRuleOption",
                     v-validate="{ regex: advancedFieldRegex }",
                     data-vv-name="bysetpos",
-                    persistent-hint,
+                    persistent-hint
                     )
                   span {{ $t('rRule.fields.bysetpos.tooltip') }}
               div

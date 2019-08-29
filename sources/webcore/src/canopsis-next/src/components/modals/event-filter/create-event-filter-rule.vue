@@ -1,5 +1,5 @@
 <template lang="pug">
-   v-card
+  v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
@@ -28,12 +28,12 @@
           v-select(
           :label="$t('modals.eventFilterRule.onSuccess')",
           v-model="enrichmentOptions.onSuccess",
-          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)",
+          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)"
           )
           v-select(
           :label="$t('modals.eventFilterRule.onFailure')",
           v-model="enrichmentOptions.onFailure",
-          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)",
+          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)"
           )
     v-divider
     v-alert(:value="errors.has('actions')", type="error") {{ $t('eventFilter.actionsRequired') }}

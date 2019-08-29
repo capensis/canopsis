@@ -90,7 +90,6 @@ import { omit, pick, isEmpty } from 'lodash';
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
-
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/time-line/time-line.vue';

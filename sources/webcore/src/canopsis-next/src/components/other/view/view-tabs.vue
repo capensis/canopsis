@@ -2,7 +2,7 @@
   v-tabs.view-tabs(
   ref="tabs",
   :key="vTabsKey",
-  :value="$route.fullPath"
+  :value="$route.fullPath",
   :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
   :hide-slider="isTabsChanged",
   color="secondary lighten-2",

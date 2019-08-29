@@ -39,7 +39,7 @@
             v-divider
           field-info-popup(
           v-model="settings.widget.parameters.infoPopups",
-          :columns="settings.widget.parameters.widgetColumns",
+          :columns="settings.widget.parameters.widgetColumns"
           )
           v-divider
           field-text-editor(
@@ -49,7 +49,7 @@
           v-divider
           field-switcher(
           v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
-          :title="$t('settings.isHtmlEnabledOnTimeLine')",
+          :title="$t('settings.isHtmlEnabledOnTimeLine')"
           )
           v-divider
           v-list-group
@@ -57,12 +57,12 @@
             v-list.grey.lighten-4.px-2.py-0(expand)
             field-switcher(
             v-model="settings.widget.parameters.isAckNoteRequired",
-            :title="$t('settings.isAckNoteRequired')",
+            :title="$t('settings.isAckNoteRequired')"
             )
             v-divider
             field-switcher(
             v-model="settings.widget.parameters.isMultiAckEnabled",
-            :title="$t('settings.isMultiAckEnabled')",
+            :title="$t('settings.isMultiAckEnabled')"
             )
             v-divider
             field-fast-ack-output(

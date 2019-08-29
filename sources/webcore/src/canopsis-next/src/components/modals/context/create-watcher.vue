@@ -6,7 +6,7 @@
     v-tabs(slider-color="primary")
       v-tab(
       v-for="tab in tabs",
-      :key="tab.name",
+      :key="tab.name"
       ) {{ tab.name }}
       v-tab-item
         v-form
@@ -17,7 +17,7 @@
               v-model="form.name",
               :error-messages="errors.collect('name')",
               data-vv-name="name",
-              v-validate="'required'",
+              v-validate="'required'"
               )
           v-layout(wrap, justify-center)
             v-flex(xs11)
@@ -27,7 +27,7 @@
                 v-model="form.output_template",
                 :error-messages="errors.collect('output_template')",
                 data-vv-name="output_template",
-                v-validate="'required'",
+                v-validate="'required'"
                 )
       v-tab-item
         v-card

@@ -42,7 +42,7 @@
       :rule="rule",
       :possibleFields="possibleFields",
       @deleteRule="deleteRule(ruleKey)",
-      @update:rule="updateRule(ruleKey, $event)",
+      @update:rule="updateRule(ruleKey, $event)"
       )
 
     div(v-for="(group, groupKey) in group.groups", :key="groupKey")
@@ -50,7 +50,7 @@
       :group="group",
       :possibleFields="possibleFields",
       @deleteGroup="deleteGroup(groupKey)",
-      @update:group="updateGroup(groupKey, $event)",
+      @update:group="updateGroup(groupKey, $event)"
       )
 </template>
 

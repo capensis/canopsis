@@ -11,12 +11,12 @@
           v-model="form._id",
           data-vv-name="id",
           v-validate="'required'",
-          :error-messages="errors.collect('id')",
+          :error-messages="errors.collect('id')"
           )
         v-layout(row)
           v-text-field(
           :label="$t('modals.createRight.fields.description')",
-          v-model="form.desc",
+          v-model="form.desc"
           )
         v-layout(row)
           v-select(

@@ -4,12 +4,12 @@
     v-container
       v-slider(
       :value="value",
-      :max="max"
-      :min="min"
-      ticks="always"
-      @input="$emit('input', $event)"
+      :max="max",
+      :min="min",
+      ticks="always",
+      @input="$emit('input', $event)",
       always-dirty,
-      thumb-label,
+      thumb-label
       )
 </template>
 

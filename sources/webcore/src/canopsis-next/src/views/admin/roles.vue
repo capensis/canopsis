@@ -7,7 +7,7 @@
           search-field(
           v-model="searchingText",
           @submit="applySearchFilter",
-          @clear="applySearchFilter",
+          @clear="applySearchFilter"
           )
         v-flex(v-show="hasDeleteAnyRoleAccess && selected.length", xs4)
           v-btn(@click="showRemoveSelectedRolesModal", data-test="massDeleteButton", icon)
@@ -20,8 +20,8 @@
       :pagination.sync="pagination",
       :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
       :total-items="rolesMeta.total",
-      item-key="id"
-      select-all,
+      item-key="id",
+      select-all
       )
         template(slot="items", slot-scope="props")
           tr(:data-test="`role-${props.item._id}`")

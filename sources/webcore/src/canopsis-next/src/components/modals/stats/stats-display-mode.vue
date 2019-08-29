@@ -12,7 +12,7 @@
             v-card.my-1(
             v-for="criticity in $constants.STATS_CRITICITY",
             :key="criticity",
-            color="secondary darken-1",
+            color="secondary darken-1"
             )
               v-card-title {{ criticity }}
               v-card-text
@@ -20,7 +20,7 @@
                   v-text-field(
                   type="number",
                   :label="$t('common.value')",
-                  v-model="form.parameters.criticityLevels[criticity]",
+                  v-model="form.parameters.criticityLevels[criticity]"
                   )
                   v-layout
                     v-btn(

@@ -7,10 +7,10 @@
       v-text-field(
       data-test="modalGroupNameField",
       :label="$t('modals.group.fields.name')",
-      :error-messages="errors.collect('name')"
+      :error-messages="errors.collect('name')",
       v-model="form.name",
       v-validate="'required'",
-      name="name",
+      name="name"
       )
     v-divider
     v-layout.py-1(justify-end)

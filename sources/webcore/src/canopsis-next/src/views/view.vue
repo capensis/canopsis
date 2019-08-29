@@ -6,7 +6,7 @@
       :view="view",
       :isEditingMode="isEditingMode",
       :hasUpdateAccess="hasUpdateAccess",
-      :updateViewMethod="data => updateView({ id, data })",
+      :updateViewMethod="data => updateView({ id, data })"
       )
     .fab
       v-layout(data-test="controlViewLayout", column)
@@ -26,18 +26,18 @@
           :input-value="isVSpeedDialOpen",
           color="primary",
           dark,
-          fab,
+          fab
           )
             v-icon menu
             v-icon close
           v-tooltip(top)
             v-btn(
             slot="activator",
-            v-model="isFullScreenMode"
+            v-model="isFullScreenMode",
             fab,
             dark,
             small,
-            @click="toggleFullScreenMode",
+            @click="toggleFullScreenMode"
             )
               v-icon fullscreen
               v-icon fullscreen_exit
@@ -63,7 +63,7 @@
             dark,
             small,
             color="indigo",
-            @click.stop="showCreateWidgetModal",
+            @click.stop="showCreateWidgetModal"
             )
               v-icon add
             span {{ $t('common.addWidget') }}
@@ -83,10 +83,10 @@
         v-tooltip(v-else, left)
           v-btn(
           slot="activator",
-          v-model="isFullScreenMode"
+          v-model="isFullScreenMode",
           fab,
           dark,
-          @click="toggleFullScreenMode",
+          @click="toggleFullScreenMode"
           )
             v-icon fullscreen
             v-icon fullscreen_exit

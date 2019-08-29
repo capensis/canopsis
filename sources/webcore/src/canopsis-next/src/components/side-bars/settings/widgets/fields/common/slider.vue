@@ -6,10 +6,10 @@
       :value="value",
       :max="max",
       :min="min",
-      ticks="always"
-      @input="$emit('input', $event)"
+      ticks="always",
+      @input="$emit('input', $event)",
       always-dirty,
-      thumb-label,
+      thumb-label
       )
 </template>
 

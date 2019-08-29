@@ -20,7 +20,7 @@
             )
         v-alert.mb-2(
         :value="isPeriodMonth",
-        type="info",
+        type="info"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         date-interval-selector.my-1(
         v-model="dateSelectorForm",
@@ -29,8 +29,8 @@
         @update:stopObjectValue="updateStopObjectValue"
         )
         v-alert.mb-2(
-        :value="isPeriodMonth"
-        type="info",
+        :value="isPeriodMonth",
+        type="info"
         ) {{ monthIntervalMessage }}
       v-divider
       v-layout.py-1(justify-end)

@@ -27,7 +27,7 @@
     :accept="accept",
     @change="change"
     )
-    div.mt-2(v-if="!hideDetails")
+    .mt-2(v-if="!hideDetails")
       .error--text(v-for="error in errorMessages", :key="error") {{ error }}
 </template>
 

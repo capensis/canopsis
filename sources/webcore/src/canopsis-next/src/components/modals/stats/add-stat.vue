@@ -10,14 +10,14 @@
           v-model="form.stat",
           hide-details,
           :items="statsTypes",
-          return-object,
+          return-object
           )
           v-text-field(
           :placeholder="$t('common.title')",
           v-model="form.title",
           :error-messages="errors.collect('title')",
           v-validate="'required'",
-          data-vv-name="title",
+          data-vv-name="title"
           )
           v-card(v-if="form.stat.options.length || config.withTrend", color="secondary white--text", dark)
             v-card-title {{ $t('common.parameters') }}
@@ -31,14 +31,14 @@
               )
               template(v-for="option in form.stat.options")
                 v-switch(
-                v-if="option === $constants.STATS_OPTIONS.recursive"
+                v-if="option === $constants.STATS_OPTIONS.recursive",
                 :label="$t('common.recursive')",
                 v-model="form.parameters.recursive",
                 hide-details,
                 color="primary"
                 )
                 v-select(
-                v-else-if="option === $constants.STATS_OPTIONS.states"
+                v-else-if="option === $constants.STATS_OPTIONS.states",
                 :placeholder="$t('common.states')",
                 :items="stateTypes",
                 v-model="form.parameters.states",
@@ -47,7 +47,7 @@
                 hide-details
                 )
                 v-combobox(
-                v-else-if="option === $constants.STATS_OPTIONS.authors"
+                v-else-if="option === $constants.STATS_OPTIONS.authors",
                 :placeholder="$t('common.authors')",
                 v-model="form.parameters.authors",
                 hide-details,
@@ -60,7 +60,7 @@
                 v-validate="{ required: true, regex: /^(<|>|<=|>=)\\s*\\d+$/ }",
                 :placeholder="$t('common.sla')",
                 :error-messages="errors.collect('sla')",
-                :hide-details="!errors.has('sla')"
+                :hide-details="!errors.has('sla')",
                 name="sla"
                 )
                   v-tooltip(slot="append", left)

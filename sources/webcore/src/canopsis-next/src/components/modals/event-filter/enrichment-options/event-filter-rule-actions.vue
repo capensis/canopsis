@@ -13,11 +13,11 @@
             v-model="form.type",
             return-object,
             item-text="value",
-            :label="$t('common.type')",
+            :label="$t('common.type')"
             )
             component(
-            v-for="option in form.type.options"
-            :is="getComponentByOption(option)"
+            v-for="option in form.type.options",
+            :is="getComponentByOption(option)",
             :key="option.value",
             v-model="form[option.value]",
             :label="option.text",

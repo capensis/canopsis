@@ -69,14 +69,14 @@
           data-test="language",
           :label="$t('modals.createUser.fields.language')",
           v-model="form.ui_language",
-          :items="languages",
+          :items="languages"
           )
         v-layout(data-test="navigationTypeLayout", row)
           v-select.mt-0(
           data-test="navigationType",
           v-model="form.groupsNavigationType",
           :label="$t('parameters.groupsNavigationType.title')",
-          :items="groupsNavigationItems",
+          :items="groupsNavigationItems"
           )
         v-layout(row, align-center, v-if="!isNew")
           div {{ $t('common.authKey') }}: {{ config.user.authkey }}
@@ -95,11 +95,11 @@
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
           v-switch(
-          data-test="enabled"
+          data-test="enabled",
           color="primary",
           :label="$t('modals.createUser.fields.enabled')",
           :disabled="onlyUserPrefs",
-          v-model="form.enable",
+          v-model="form.enable"
           )
         v-layout
           view-selector(v-model="form.defaultview")

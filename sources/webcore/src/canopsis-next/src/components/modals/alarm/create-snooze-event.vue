@@ -18,9 +18,9 @@
               )
             v-flex(xs4)
               v-select(:items="availableTypes", v-model="form.durationType", item-value="key")
-                template(slot="selection" slot-scope="data")
+                template(slot="selection", slot-scope="data")
                   div.input-group__selections__comma {{ $tc(data.item.text, 2) }}
-                template(slot="item" slot-scope="data")
+                template(slot="item", slot-scope="data")
                   div.list__tile__title {{ $tc(data.item.text, 2) }}
       v-divider
       v-layout.py-1(justify-end)

@@ -11,13 +11,13 @@
       return-object,
       name="column",
       v-validate="'required'",
-      :error-messages="errors.collect('column')",
+      :error-messages="errors.collect('column')"
       )
       text-editor(
       v-model="form.template",
       name="template",
       v-validate="'required'",
-      :error-messages="errors.collect('template')",
+      :error-messages="errors.collect('template')"
       )
     v-divider
     v-layout.py-1(justify-end)

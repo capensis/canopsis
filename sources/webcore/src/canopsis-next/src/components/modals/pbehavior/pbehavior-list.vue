@@ -18,7 +18,7 @@
               v-for="action in availableActions",
               :key="action.name",
               @click="() => action.action(props.item)",
-              icon,
+              icon
               )
                 v-icon {{ action.icon }}
       v-divider

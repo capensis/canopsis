@@ -67,35 +67,35 @@
               v-model="settings.widget.parameters.margin.top",
               :title="$t('settings.margin.top')",
               :min="0",
-              :max="5",
+              :max="5"
               )
               v-divider
               field-slider(
               v-model="settings.widget.parameters.margin.right",
               :title="$t('settings.margin.right')",
               :min="0",
-              :max="5",
+              :max="5"
               )
               v-divider
               field-slider(
               v-model="settings.widget.parameters.margin.bottom",
               :title="$t('settings.margin.bottom')",
               :min="0",
-              :max="5",
+              :max="5"
               )
               v-divider
               field-slider(
               v-model="settings.widget.parameters.margin.left",
               :title="$t('settings.margin.left')",
               :min="0",
-              :max="5",
+              :max="5"
               )
           v-divider
           field-slider(
           v-model="settings.widget.parameters.heightFactor",
           :title="$t('settings.height')",
           :min="1",
-          :max="20",
+          :max="20"
           )
           v-divider
           field-modal-type(v-model="settings.widget.parameters.modalType")

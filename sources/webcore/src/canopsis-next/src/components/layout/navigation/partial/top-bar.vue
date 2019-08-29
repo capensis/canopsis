@@ -1,8 +1,8 @@
 <template lang="pug">
   v-toolbar.top-bar.primary(
-    dense,
-    fixed,
-    app,
+  dense,
+  fixed,
+  app
   )
     v-toolbar-side-icon.ml-2.white--text(
     v-if="isShownGroupsSideBar",

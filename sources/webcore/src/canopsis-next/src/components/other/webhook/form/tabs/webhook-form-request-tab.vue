@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout(justify-space-between, align-center)
-      v-flex(xs6).pa-1
+      v-flex.pa-1(xs6)
         v-select(
         :value="request.method",
         :items="availableMethods",
@@ -12,7 +12,7 @@
         :error-messages="errors.collect('request.method')",
         @input="updateField('method', $event)"
         )
-      v-flex(xs6).pa-1
+      v-flex.pa-1(xs6)
         v-text-field(
         :value="request.url",
         :disabled="disabled",
@@ -28,14 +28,14 @@
       template(v-if="withAuth")
         v-flex(xs12)
           h4.ml-1 {{ $t('webhook.tabs.request.fields.auth') }}
-        v-flex(xs6).pa-1
+        v-flex.pa-1(xs6)
           v-text-field(
           :value="request | get('auth.username')",
           :disabled="disabled",
           :label="$t('webhook.tabs.request.fields.username')",
           @input="updateField('auth.username', $event)"
           )
-        v-flex(xs6).pa-1
+        v-flex.pa-1(xs6)
           v-text-field(
           :value="request | get('auth.password')",
           :disabled="disabled",

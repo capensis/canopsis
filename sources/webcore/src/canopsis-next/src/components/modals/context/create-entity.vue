@@ -7,7 +7,7 @@
       v-tab(
       v-for="tab in tabs",
       :key="tab.name",
-      @click.prevent="currentComponent = tab.component",
+      @click.prevent="currentComponent = tab.component"
       ) {{ tab.name }}
       v-tab-item
         keep-alive

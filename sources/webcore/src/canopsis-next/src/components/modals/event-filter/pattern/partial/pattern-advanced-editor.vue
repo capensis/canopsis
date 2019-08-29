@@ -4,7 +4,7 @@
     v-btn(
     :color="isInvalidJSON ? 'error' : 'primary'",
     :disabled="isInvalidJSON",
-    @click="save",
+    @click="save"
     ) {{ isInvalidJSON ? $t('errors.JSONNotValid') : $t('common.save') }}
 </template>
 

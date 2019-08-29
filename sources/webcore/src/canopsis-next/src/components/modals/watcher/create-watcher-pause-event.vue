@@ -10,16 +10,16 @@
       :label="$t('modals.createPause.comment')",
       v-model="form.comment",
       v-validate="'required'",
-      :error-messages="errors.collect('comment')"
-      name="comment",
+      :error-messages="errors.collect('comment')",
+      name="comment"
       )
       v-select(
       :label="$t('modals.createPause.reason')",
       v-model="form.reason",
       :items="reasons",
       v-validate="'required'",
-      :error-messages="errors.collect('reason')"
-      name="reason",
+      :error-messages="errors.collect('reason')",
+      name="reason"
       )
     v-divider
     v-layout.py-1(justify-end)

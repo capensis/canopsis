@@ -2,7 +2,7 @@
   v-navigation-drawer(
   v-model="isOpen",
   :stateless="hasModals",
-  v-bind="navigationDrawerProps",
+  v-bind="navigationDrawerProps"
   )
     div(v-if="title")
       v-toolbar(color="secondary")

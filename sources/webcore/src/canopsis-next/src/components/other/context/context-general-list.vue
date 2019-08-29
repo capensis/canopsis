@@ -1,35 +1,35 @@
 <template lang="pug">
-div
+  div
     v-toolbar.toolbar.white(dense, flat)
       v-text-field(
       label="Search",
       v-model="searchingText",
       hide-details,
       single-line,
-      @keyup.enter="submit",
+      @keyup.enter="submit"
       )
       v-btn(icon, @click="submit")
         v-icon search
     v-btn.green.white--text(
-      v-show="selectedEntities.length",
-      @click="$emit('update:selectedIds',selectedEntities)"
+    v-show="selectedEntities.length",
+    @click="$emit('update:selectedIds',selectedEntities)"
     ) Add selection
     v-data-table(
-      :no-data-text="this.$t('tables.noData')",
-      :headers="headers",
-      :items="contextEntities",
-      :loading="pending",
-      v-model="selectedEntities",
-      select-all,
-      item-key="_id",
+    :no-data-text="this.$t('tables.noData')",
+    :headers="headers",
+    :items="contextEntities",
+    :loading="pending",
+    v-model="selectedEntities",
+    select-all,
+    item-key="_id"
     )
       template(slot="items", slot-scope="props")
         td
           v-checkbox(
-            v-model="props.selected",
-            :value="props._id",
-            primary,
-            hide-details,
+          v-model="props.selected",
+          :value="props._id",
+          primary,
+          hide-details
           )
         td.text-xs-left {{ props.item.name }}
         td.text-xs-left {{ props.item._id}}

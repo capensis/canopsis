@@ -7,7 +7,7 @@
           search-field(
           v-model="searchingText",
           @submit="applySearchFilter",
-          @clear="applySearchFilter",
+          @clear="applySearchFilter"
           )
         v-flex(v-show="hasDeleteAnyUserAccess && selected.length", xs4)
           v-btn(@click="showRemoveSelectedUsersModal", data-test="massDeleteButton", icon)

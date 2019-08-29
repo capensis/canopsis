@@ -14,7 +14,7 @@
               data-vv-name="minor",
               v-validate="'required|min_value:0'",
               :error-messages="errors.collect('minor')",
-              @input="updateField('minor', parseInt($event, 10))",
+              @input="updateField('minor', parseInt($event, 10))"
               )
         v-flex(xs12)
           v-layout(align-center, justify-space-around)

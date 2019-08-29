@@ -8,7 +8,7 @@
         v-list-group(v-for="group in availableGroups", :key="group._id")
           v-list-tile(
           slot="activator",
-          :data-test="`selectView-group-${group._id}`",
+          :data-test="`selectView-group-${group._id}`"
           )
             v-list-tile-title {{ group.name }}
           v-list-tile(

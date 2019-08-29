@@ -3,7 +3,7 @@
     v-text-field(
     :value="value",
     :label="$t('common.search')",
-    data-test="searchingTextField"
+    data-test="searchingTextField",
     hide-details,
     single-line,
     @keyup.enter="submit",

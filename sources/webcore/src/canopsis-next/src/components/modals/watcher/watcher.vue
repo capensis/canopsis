@@ -25,7 +25,7 @@
     v-layout.py-1(justify-end, align-center)
       v-alert.ma-0.pa-1.pr-2(
       :value="eventsQueue.length",
-      type="info",
+      type="info"
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-tooltip(top)

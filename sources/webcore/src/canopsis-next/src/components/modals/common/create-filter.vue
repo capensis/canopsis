@@ -10,9 +10,9 @@
       v-model="form.title",
       v-validate="'required'",
       :label="$t('modals.filter.fields.title')",
-      :error-messages="errors.collect('title')"
+      :error-messages="errors.collect('title')",
       name="title",
-      required,
+      required
       )
       filter-editor(
       v-if="!hiddenFields.includes('filter')",

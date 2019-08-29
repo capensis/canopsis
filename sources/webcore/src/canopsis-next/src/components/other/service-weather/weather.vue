@@ -16,8 +16,8 @@
           :watcher="item",
           :widget="widget",
           :template="widget.parameters.blockTemplate",
-          :isEditingMode="isEditingMode",
-        )
+          :isEditingMode="isEditingMode"
+          )
     v-fade-transition
       v-layout(v-if="watchersPending", column)
         v-flex(xs12)

@@ -26,10 +26,10 @@
         :key="`slider-${slider.key}`",
         v-bind="slider.bind",
         v-on="slider.on",
-        ticks="always"
+        ticks="always",
         always-dirty,
         thumb-label,
-        :data-vv-name="`slider-${slider.key}`"
+        :data-vv-name="`slider-${slider.key}`",
         v-validate="'min_value:3'"
         )
 </template>

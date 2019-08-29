@@ -32,7 +32,7 @@
           @input="updateFieldInArrayItem(index, itemValue, $event)"
           )
           mixed-field(
-          v-else
+          v-else,
           v-validate="valueValidationRules",
           :value="item[itemValue]",
           :name="getValueFieldName(index)",

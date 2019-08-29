@@ -22,7 +22,7 @@
           :class="{ 'v-picker__title__btn--active': isActiveSecondsTab }",
           @click="showSecondsTabInTimeTab"
           ) {{ value | date('ss', true, '--') }}
-    div.date-time-picker__body
+    .date-time-picker__body
       v-fade-transition
         v-date-picker(
         v-if="isActiveDateTab",
@@ -31,7 +31,7 @@
         color="primary",
         no-title,
         @input="updateDate",
-        @change="showHoursTabInTimeTab",
+        @change="showHoursTabInTimeTab"
         )
       v-fade-transition
         v-time-picker(
@@ -44,7 +44,7 @@
         format="24hr",
         no-title,
         @input="updateTime",
-        @change="showDateTab",
+        @change="showDateTab"
         )
     slot(name="footer")
 </template>

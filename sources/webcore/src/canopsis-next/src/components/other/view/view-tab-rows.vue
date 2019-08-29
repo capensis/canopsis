@@ -1,13 +1,13 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
-    v-layout(v-for="row in rows", :key="row._id" wrap)
+    v-layout(v-for="row in rows", :key="row._id", wrap)
       v-flex(xs12)
         v-layout.hide-on-full-screen(justify-end)
           v-btn.ma-2(
           v-if="isEditingMode && hasUpdateAccess",
           @click.stop="showDeleteRowModal(row)",
           small,
-          color="error",
+          color="error"
           ) {{ $t('view.deleteRow') }} - {{ row.title }}
       v-flex(
       v-for="widget in row.widgets",
@@ -21,7 +21,7 @@
               v-btn.ma-1(
               @click="showDeleteWidgetModal(row._id, widget)",
               small,
-              color="error",
+              color="error"
               ) {{ $t('view.deleteWidget') }}
               v-btn.ma-1(
               @click="showSelectViewTabModal(widget)",
@@ -37,7 +37,7 @@
         :is="widgetsComponentsMap[widget.type]",
         :widget="widget",
         :tabId="tab._id",
-        :isEditingMode="isEditingMode",
+        :isEditingMode="isEditingMode"
         )
 </template>
 

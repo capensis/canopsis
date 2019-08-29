@@ -10,7 +10,7 @@
       :items="items",
       item-key="name",
       :headers="tableHeaders",
-      :no-data-text="$t('modals.createEntity.manageInfos.noInfos')",
+      :no-data-text="$t('modals.createEntity.manageInfos.noInfos')"
       )
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}

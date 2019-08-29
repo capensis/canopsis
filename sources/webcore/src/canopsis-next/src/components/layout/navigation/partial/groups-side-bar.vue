@@ -2,10 +2,10 @@
   v-navigation-drawer.side-bar.secondary(
   v-model="isOpen",
   :width="$config.SIDE_BAR_WIDTH",
-  :class="{ editing: isEditingMode }"
-  data-test="groupsSideBar"
+  :class="{ editing: isEditingMode }",
+  data-test="groupsSideBar",
   disable-resize-watcher,
-  app,
+  app
   )
     div.brand.ma-0.secondary.lighten-1
       img.logo(:src="appLogo")
@@ -35,12 +35,12 @@
         v-card(
         v-for="view in group.views",
         :key="view._id",
-        :color="getColor(view._id)",
+        :color="getColor(view._id)"
         )
           router-link.panel-item-content-link(
-          :data-test="`linkView-view-${view._id}`"
+          :data-test="`linkView-view-${view._id}`",
           :title="view.title",
-          :to="getViewLink(view)",
+          :to="getViewLink(view)"
           )
             v-card-text.panel-item-content
               v-layout(align-center, justify-space-between)

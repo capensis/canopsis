@@ -15,7 +15,7 @@
             v-model="form.name",
             data-vv-name="name",
             v-validate="'required'",
-            :error-messages="errors.collect('name')",
+            :error-messages="errors.collect('name')"
             )
             v-text-field(
             data-test="viewFieldTitle",
@@ -23,13 +23,13 @@
             v-model="form.title",
             data-vv-name="title",
             v-validate="'required'",
-            :error-messages="errors.collect('title')",
+            :error-messages="errors.collect('title')"
             )
             v-text-field(
             data-test="viewFieldDescription",
             :label="$t('common.description')",
             v-model="form.description",
-            data-vv-name="description",
+            data-vv-name="description"
             )
             v-switch(
             data-test="viewFieldEnabled",
@@ -47,7 +47,7 @@
             multiple,
             append-icon,
             chips,
-            deletable-chips,
+            deletable-chips
             )
             v-combobox(
             data-test="viewFieldGroupId",
@@ -55,7 +55,7 @@
             v-model="groupName",
             :items="groupNames",
             :label="$t('modals.view.fields.groupIds')",
-            :search-input.sync="search"
+            :search-input.sync="search",
             data-vv-name="group",
             v-validate="'required'",
             :error-messages="errors.collect('group')",

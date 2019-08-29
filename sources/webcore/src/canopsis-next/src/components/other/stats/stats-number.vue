@@ -9,9 +9,9 @@
       :pagination.sync="pagination"
       )
         template(
-          slot="items",
-          slot-scope="{ item }",
-          xs12
+        slot="items",
+        slot-scope="{ item }",
+        xs12
         )
           td {{ item.entity.name }}
           td

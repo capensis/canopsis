@@ -8,7 +8,7 @@
     v-tooltip(
     slot="activator",
     :right="tooltipRight",
-    :left="tooltipLeft",
+    :left="tooltipLeft"
     )
       v-btn.primary(
       data-test="settingsViewButton",
@@ -22,7 +22,7 @@
     v-tooltip(
     v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
     :right="tooltipRight",
-    :left="tooltipLeft",
+    :left="tooltipLeft"
     )
       v-btn(
       data-test="editModeButton",
@@ -40,7 +40,7 @@
     v-tooltip(
     v-if="hasCreateAnyViewAccess",
     :right="tooltipRight",
-    :left="tooltipLeft",
+    :left="tooltipLeft"
     )
       v-btn(
       data-test="addViewButton",

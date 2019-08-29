@@ -1,15 +1,15 @@
 <template lang="pug">
-v-speed-dial.d-inline-block(
+  v-speed-dial.d-inline-block(
   direction="left",
   transition="scale-transition"
   )
-  v-btn.primary(slot="activator", dark, fab, small)
-    v-icon add
-    v-icon close
-  v-tooltip(v-for="button in buttons", :key="button.label", top)
-    v-btn(slot="activator", :color="button.color", @click.prevent="button.action", fab, dark, small)
-      v-icon {{ button.icon }}
-    span {{ button.label }}
+    v-btn.primary(slot="activator", dark, fab, small)
+      v-icon add
+      v-icon close
+    v-tooltip(v-for="button in buttons", :key="button.label", top)
+      v-btn(slot="activator", :color="button.color", @click.prevent="button.action", fab, dark, small)
+        v-icon {{ button.icon }}
+      span {{ button.label }}
 </template>
 
 <script>

@@ -25,7 +25,7 @@
             @click="addAdvancedRuleField",
             :disabled="!availableOperators.length > 0",
             icon,
-            small,
+            small
             )
               v-icon add
           v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
@@ -38,9 +38,7 @@
               :error-messages="errors.collect('fieldKey')"
               )
             v-flex.pl-1(xs9)
-              mixed-field(
-              v-model="field.value"
-              )
+              mixed-field(v-model="field.value")
             v-flex
               v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
                 v-icon(color="error") delete

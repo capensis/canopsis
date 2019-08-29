@@ -41,7 +41,7 @@
       :pagination.sync="vDataTablePagination",
       item-key="_id",
       select-all,
-      hide-actions,
+      hide-actions
       )
         template(slot="progress")
           v-fade-transition

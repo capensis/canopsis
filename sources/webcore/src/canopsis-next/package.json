@@ -8,7 +8,7 @@
     "unit": "vue-cli-service test:unit",
     "e2e": "vue-cli-service test:e2e --mode=developement --config ./tests/e2e/nightwatch.config.js",
     "lint": "vue-cli-service lint",
-    "lint:pug": "pug-lint-vue lint:pug"
+    "lint:pug": "pug-lint-vue"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -103,6 +103,7 @@
     ],
     "*.vue": [
       "vue-cli-service lint",
+      "pug-lint-vue",
       "git add"
     ]
   }

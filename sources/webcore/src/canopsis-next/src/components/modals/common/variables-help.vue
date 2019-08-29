@@ -19,13 +19,13 @@
         template(slot="append", slot-scope="props", v-if="props.leaf")
           v-tooltip(left)
             v-btn(
-              v-clipboard:copy="props.item.path",
-              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
-              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
-              slot="activator",
-              small,
-              icon
-              )
+            v-clipboard:copy="props.item.path",
+            v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
+            v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+            slot="activator",
+            small,
+            icon
+            )
               v-icon file_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
 </template>

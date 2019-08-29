@@ -28,7 +28,7 @@
             :filters.sync="settings.widget.parameters.viewFilters",
             :condition.sync="settings.widget.parameters.mainFilterCondition",
             :hasAccessToAddFilter="hasAccessToAddFilter",
-            :hasAccessToEditFilter="hasAccessToEditFilter",
+            :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")

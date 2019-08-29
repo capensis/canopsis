@@ -23,11 +23,11 @@
     :isTabsChanged="isTabsChanged",
     :isEditingMode="isEditingMode",
     :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateViewMethod(data)",
+    :updateViewMethod="data => updateViewMethod(data)"
     )
       view-tab-rows(
       slot-scope="props",
-      v-bind="props",
+      v-bind="props"
       )
 </template>
 
