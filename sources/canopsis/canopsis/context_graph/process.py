@@ -374,7 +374,7 @@ def update_context(presence, ids, in_db, event):
     :param event: the current event
     """
     extra_infos = {}
-    for field in context_graph_manager.extra_fields:
+    for field in context_graph_manager.extra_fields.split(','):
         if field in event.keys():
             extra_infos[field] = event[field]
 
