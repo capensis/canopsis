@@ -5,8 +5,8 @@
         span.headline {{ $t('modals.variablesHelp.variables') }}
     v-card-text
       v-treeview(
-      :items="config.variables",
-      item-key="name"
+        :items="config.variables",
+        item-key="name"
       )
         template(slot="prepend", slot-scope="props", v-if="props.item.isArray")
           div.caption.font-italic (Array)
@@ -19,12 +19,12 @@
         template(slot="append", slot-scope="props", v-if="props.leaf")
           v-tooltip(left)
             v-btn(
-            v-clipboard:copy="props.item.path",
-            v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
-            v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
-            slot="activator",
-            small,
-            icon
+              v-clipboard:copy="props.item.path",
+              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
+              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+              slot="activator",
+              small,
+              icon
             )
               v-icon file_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}

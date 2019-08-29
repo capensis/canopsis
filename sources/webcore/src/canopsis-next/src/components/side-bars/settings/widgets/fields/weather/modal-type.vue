@@ -4,16 +4,16 @@
     v-container
       v-radio-group(:value="value", @change="$emit('input', $event)")
         v-radio(
-        :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo",
-        :label="$t('settings.serviceWeatherModalTypes.fields.moreInfo')"
+          :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo",
+          :label="$t('settings.serviceWeatherModalTypes.fields.moreInfo')"
         )
         v-radio(
-        :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList",
-        :label="$t('settings.serviceWeatherModalTypes.fields.alarmList')"
+          :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList",
+          :label="$t('settings.serviceWeatherModalTypes.fields.alarmList')"
         )
         v-radio(
-        :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.both",
-        :label="$t('settings.serviceWeatherModalTypes.fields.both')"
+          :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.both",
+          :label="$t('settings.serviceWeatherModalTypes.fields.both')"
         )
 </template>
 

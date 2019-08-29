@@ -22,8 +22,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
 /**
-   * Modal to add a time filter on alarm-list
-   */
+ * Modal to add a time filter on alarm-list
+ */
 export default {
   name: MODALS.editLiveReporting,
   $_veeValidate: {

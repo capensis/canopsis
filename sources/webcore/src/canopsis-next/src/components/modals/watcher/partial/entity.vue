@@ -6,11 +6,11 @@
           v-flex.pa-2(v-for="(icon, index) in mainIcons", :key="index")
             v-icon(color="white", small) {{ icon }}
           v-flex.pl-1.white--text.subheading.entity-title(
-          xs12,
+            xs12,
           )
             v-layout(align-center)
               div.mr-1.entityName(
-              v-resize-text="{maxFontSize: '16px'}",
+                v-resize-text="{maxFontSize: '16px'}",
               ) {{ { entity } | get(entityNameField, false, entityNameField) }}
               v-btn.mx-1.white(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color", small, dark, icon)
                 v-icon(small) {{ icon.icon }}
@@ -24,12 +24,12 @@
                     div(v-for="action in availableActions", :key="action.eventType")
                       v-tooltip(top)
                         v-btn(
-                        slot="activator",
-                        @click.stop="action.action",
-                        :disabled="!isActionBtnEnable(action.eventType)",
-                        depressed,
-                        small,
-                        light
+                          slot="activator",
+                          @click.stop="action.action",
+                          :disabled="!isActionBtnEnable(action.eventType)",
+                          depressed,
+                          small,
+                          light
                         )
                           v-icon {{ action.icon }}
                         span {{ $t(`common.actions.${action.eventType}`) }}

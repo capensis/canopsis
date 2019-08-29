@@ -5,26 +5,26 @@
         context-search(:query.sync="query")
       v-flex
         pagination(
-        v-if="hasColumns",
-        :page="query.page",
-        :limit="query.limit",
-        :total="contextEntitiesMeta.total",
-        type="top",
-        @input="updateQueryPage"
+          v-if="hasColumns",
+          :page="query.page",
+          :limit="query.limit",
+          :total="contextEntitiesMeta.total",
+          type="top",
+          @input="updateQueryPage"
         )
       v-flex
         filter-selector(
-        :label="$t('settings.selectAFilter')",
-        :filters="viewFilters",
-        :lockedFilters="widgetViewFilters",
-        :value="mainFilter",
-        :condition="mainFilterCondition",
-        :hasAccessToEditFilter="hasAccessToEditFilter",
-        :hasAccessToUserFilter="hasAccessToUserFilter",
-        :hasAccessToListFilter="hasAccessToListFilter",
-        @input="updateSelectedFilter",
-        @update:condition="updateSelectedCondition",
-        @update:filters="updateFilters"
+          :label="$t('settings.selectAFilter')",
+          :filters="viewFilters",
+          :lockedFilters="widgetViewFilters",
+          :value="mainFilter",
+          :condition="mainFilterCondition",
+          :hasAccessToEditFilter="hasAccessToEditFilter",
+          :hasAccessToUserFilter="hasAccessToUserFilter",
+          :hasAccessToListFilter="hasAccessToListFilter",
+          @input="updateSelectedFilter",
+          @update:condition="updateSelectedCondition",
+          @update:filters="updateFilters"
         )
       v-flex.ml-4
         mass-actions-panel(:itemsIds="selectedIds")
@@ -33,15 +33,15 @@
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
-      v-model="selected",
-      :items="contextEntities",
-      :headers="headers",
-      :loading="contextEntitiesPending",
-      :total-items="contextEntitiesMeta.total",
-      :pagination.sync="vDataTablePagination",
-      item-key="_id",
-      select-all,
-      hide-actions
+        v-model="selected",
+        :items="contextEntities",
+        :headers="headers",
+        :loading="contextEntitiesPending",
+        :total-items="contextEntitiesMeta.total",
+        :pagination.sync="vDataTablePagination",
+        item-key="_id",
+        select-all,
+        hide-actions
       )
         template(slot="progress")
           v-fade-transition
@@ -52,17 +52,17 @@
           td
             v-checkbox(primary, hide-details, v-model="props.selected")
           td(
-          v-for="column in columns",
-          @click="props.expanded = !props.expanded"
+            v-for="column in columns",
+            @click="props.expanded = !props.expanded"
           )
             div(v-if="column.value === 'enabled'")
               v-icon(
-              :color="props.item.enabled ? 'primary' : 'error'"
+                :color="props.item.enabled ? 'primary' : 'error'"
               ) {{ props.item.enabled ? 'check' : 'clear' }}
             ellipsis(
-            v-else,
-            :text="props.item | get(column.value, null, '')",
-            :maxLetters="column.maxLetters"
+              v-else,
+              :text="props.item | get(column.value, null, '')",
+              :maxLetters="column.maxLetters"
             )
           td
             actions-panel(:item="props.item", :isEditingMode="isEditingMode")
@@ -71,10 +71,10 @@
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
-          :page="query.page",
-          :limit="query.limit",
-          :total="contextEntitiesMeta.total",
-          @input="updateQueryPage"
+            :page="query.page",
+            :limit="query.limit",
+            :total="contextEntitiesMeta.total",
+            @input="updateQueryPage"
           )
         v-flex(xs2)
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")

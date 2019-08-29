@@ -1,11 +1,11 @@
 <template lang="pug">
   v-select.select.pa-0(
-  :items="items",
-  :value="value",
-  @input="$emit('input', $event)",
-  hide-details,
-  single-line,
-  dense
+    :items="items",
+    :value="value",
+    @input="$emit('input', $event)",
+    hide-details,
+    single-line,
+    dense
   )
 </template>
 

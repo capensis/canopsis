@@ -20,27 +20,27 @@
         v-layout(justify-center, wrap)
           v-flex(xs11)
             v-text-field(
-            v-validate="'required'",
-            :placeholder="$t('common.label')",
-            :error-messages="errors.collect(`label[${index}]`)",
-            :name="`label[${index}]`",
-            :value="column.label",
-            @input="updateFieldInArrayItem(index, 'label', $event)"
+              v-validate="'required'",
+              :placeholder="$t('common.label')",
+              :error-messages="errors.collect(`label[${index}]`)",
+              :name="`label[${index}]`",
+              :value="column.label",
+              @input="updateFieldInArrayItem(index, 'label', $event)"
             )
           v-flex(xs11)
             v-text-field(
-            v-validate="'required'",
-            :placeholder="$t('common.value')",
-            :error-messages="errors.collect(`value[${index}]`)",
-            :value="column.value",
-            :name="`value[${index}]`",
-            @input="updateFieldInArrayItem(index, 'value', $event)"
+              v-validate="'required'",
+              :placeholder="$t('common.value')",
+              :error-messages="errors.collect(`value[${index}]`)",
+              :value="column.value",
+              :name="`value[${index}]`",
+              @input="updateFieldInArrayItem(index, 'value', $event)"
             )
           v-flex(v-if="withHtml", xs11)
             v-switch(
-            :label="$t('settings.columns.isHtml')",
-            :input-value="column.isHtml",
-            @change="updateFieldInArrayItem(index, 'isHtml', $event)"
+              :label="$t('settings.columns.isHtml')",
+              :input-value="column.isHtml",
+              @change="updateFieldInArrayItem(index, 'isHtml', $event)"
             )
       v-btn(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>

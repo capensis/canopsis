@@ -5,9 +5,9 @@
         span.headline {{ config.title }}
     v-tabs(slider-color="primary")
       v-tab(
-      v-for="tab in tabs",
-      :key="tab.name",
-      @click.prevent="currentComponent = tab.component"
+        v-for="tab in tabs",
+        :key="tab.name",
+        @click.prevent="currentComponent = tab.component"
       ) {{ tab.name }}
       v-tab-item
         keep-alive

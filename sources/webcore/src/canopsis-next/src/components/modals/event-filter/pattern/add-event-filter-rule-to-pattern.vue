@@ -7,35 +7,35 @@
       v-form
         v-switch(:label="$t('modals.eventFilterRule.advanced')", v-model="form.advancedMode", hide-details)
         v-text-field(
-        v-model="form.field",
-        :label="$t('modals.eventFilterRule.field')",
-        name="field",
-        v-validate="'required'",
-        :error-messages="errors.collect('field')"
+          v-model="form.field",
+          :label="$t('modals.eventFilterRule.field')",
+          name="field",
+          v-validate="'required'",
+          :error-messages="errors.collect('field')"
         )
         mixed-field(
-        v-if="!form.advancedMode",
-        v-model="form.value",
-        :label="$t('modals.eventFilterRule.value')"
+          v-if="!form.advancedMode",
+          v-model="form.value",
+          :label="$t('modals.eventFilterRule.value')"
         )
         template(v-else)
           v-layout(align-center, justify-center)
             h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
             v-btn(
-            @click="addAdvancedRuleField",
-            :disabled="!availableOperators.length > 0",
-            icon,
-            small
+              @click="addAdvancedRuleField",
+              :disabled="!availableOperators.length > 0",
+              icon,
+              small
             )
               v-icon add
           v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
             v-flex(xs3)
               v-select(
-              :items="getAvailableOperatorsForRule(field)",
-              v-model="field.key",
-              name="fieldKey",
-              v-validate="'required'",
-              :error-messages="errors.collect('fieldKey')"
+                :items="getAvailableOperatorsForRule(field)",
+                v-model="field.key",
+                name="fieldKey",
+                v-validate="'required'",
+                :error-messages="errors.collect('fieldKey')"
               )
             v-flex.pl-1(xs9)
               mixed-field(v-model="field.value")

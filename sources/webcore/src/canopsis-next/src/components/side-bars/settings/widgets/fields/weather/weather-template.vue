@@ -3,8 +3,8 @@
     v-layout(align-center, justify-space-between)
       div.subheading {{ title }}
       v-btn.primary(
-      small,
-      @click="showTextEditorModal"
+        small,
+        @click="showTextEditorModal"
       ) {{ $t('common.show') }}/{{ $t('common.edit') }}
 </template>
 

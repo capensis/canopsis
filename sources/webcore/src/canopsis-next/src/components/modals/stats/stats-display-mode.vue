@@ -10,22 +10,22 @@
           v-card-title {{ $t('common.parameters') }}
           v-card-text
             v-card.my-1(
-            v-for="criticity in $constants.STATS_CRITICITY",
-            :key="criticity",
-            color="secondary darken-1"
+              v-for="criticity in $constants.STATS_CRITICITY",
+              :key="criticity",
+              color="secondary darken-1"
             )
               v-card-title {{ criticity }}
               v-card-text
                 v-layout(align-center)
                   v-text-field(
-                  type="number",
-                  :label="$t('common.value')",
-                  v-model="form.parameters.criticityLevels[criticity]"
+                    type="number",
+                    :label="$t('common.value')",
+                    v-model="form.parameters.criticityLevels[criticity]"
                   )
                   v-layout
                     v-btn(
-                    :style="{ backgroundColor: form.parameters.colors[criticity] }",
-                    @click="openColorPickerModal(criticity)"
+                      :style="{ backgroundColor: form.parameters.colors[criticity] }",
+                      @click="openColorPickerModal(criticity)"
                     ) {{ $t('settings.statsNumbers.selectAColor') }}
       v-divider
       v-layout.py-1(justify-end)

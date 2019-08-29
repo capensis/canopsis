@@ -3,8 +3,8 @@
     v-layout.pa-3(row)
       v-flex(md3)
         v-btn.ds-skinny-button(
-        depressed,
-        @click="setToday"
+          depressed,
+          @click="setToday"
         )
           span {{ $t('calendar.today') }}
       v-flex.text-sm-center(md6)
@@ -20,20 +20,20 @@
             v-icon arrow_drop_down
           v-list
             v-list-tile(
-            v-for="type in types",
-            :key="type.id",
-            @click="currentType = type"
+              v-for="type in types",
+              :key="type.id",
+              @click="currentType = type"
             )
               v-list-tile-content
                 v-list-tile-title {{ type.label }}
     v-container.ds-calendar-container(fluid, fill-height)
       ds-gestures(@swipeleft="next", @swiperight="prev")
         ds-calendar(
-        ref="calendar",
-        v-on="$listeners",
-        v-bind="{$scopedSlots}",
-        :calendar="calendar",
-        @view-day="viewDay"
+          ref="calendar",
+          v-on="$listeners",
+          v-bind="{$scopedSlots}",
+          :calendar="calendar",
+          @view-day="viewDay"
         )
 </template>
 

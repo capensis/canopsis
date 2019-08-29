@@ -3,8 +3,8 @@
     div(v-if="alarm.v.ack")
       v-tooltip(top)
         v-icon.badge.purple.white--text(
-        small,
-        slot="activator"
+          small,
+          slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.ack].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.ack') }}
@@ -14,21 +14,21 @@
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
         v-icon.badge.blue.white--text(
-        small,
-        slot="activator"
+          small,
+          slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.declareTicket].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
           div {{ $t('common.by') }} : {{ alarm.v.ticket.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ticket.t | date('long') }}
           div(
-          v-if="alarm.v.ticket.val"
+            v-if="alarm.v.ticket.val"
           ) {{ $t('alarmList.actions.iconsFields.ticketNumber') }} : {{ alarm.v.ticket.val }}
     div(v-if="alarm.v.canceled")
       v-tooltip(top)
         v-icon.badge.blue-grey.white--text(
-        small,
-        slot="activator"
+          small,
+          slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.delete].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
@@ -38,8 +38,8 @@
     div(v-if="alarm.v.snooze")
       v-tooltip(top)
         v-icon.badge.pink.white--text(
-        small,
-        slot="activator"
+          small,
+          slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.snooze].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
@@ -49,8 +49,8 @@
     div(v-if="pbehaviors.length")
       v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(
-        small,
-        slot="activator"
+          small,
+          slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.pbehaviorAdd].icon }}
         div
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
@@ -61,9 +61,9 @@
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
             div(
-            v-show="pbehavior.comments && pbehavior.comments.length",
-            v-for="comment in pbehavior.comments",
-            :key="comment._id"
+              v-show="pbehavior.comments && pbehavior.comments.length",
+              v-for="comment in pbehavior.comments",
+              :key="comment._id"
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
               div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider

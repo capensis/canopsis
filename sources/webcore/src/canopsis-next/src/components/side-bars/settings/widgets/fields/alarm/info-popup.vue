@@ -4,8 +4,8 @@
       div.subheading {{ $t('settings.infoPopup.title') }}
       v-layout(justify-end)
         v-btn.primary(
-        small,
-        @click="edit"
+          small,
+          @click="edit"
         ) {{ $t('common.create') }}/{{ $t('common.edit') }}
 </template>
 

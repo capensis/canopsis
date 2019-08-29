@@ -1,56 +1,56 @@
 <template lang="pug">
   v-card.my-1.pa-2
     v-radio-group(
-    :value="group.condition",
-    @change="updateField('condition', $event)",
-    hide-details,
-    mandatory,
-    row
+      :value="group.condition",
+      @change="updateField('condition', $event)",
+      hide-details,
+      mandatory,
+      row
     )
       v-radio(label="AND", value="$and", color="blue darken-4")
       v-radio(label="OR", value="$or", color="blue darken-4")
     v-layout.text-xs-center(wrap, justify-space-around)
       v-flex(xs5, md3)
         v-btn(
-        @click="addRule",
-        outline,
-        block,
-        small,
-        flat
+          @click="addRule",
+          outline,
+          block,
+          small,
+          flat
         ) {{$t("filterEditor.buttons.addRule")}}
       v-flex(xs5, md3)
         v-btn(
-        @click="addGroup",
-        outline,
-        block,
-        small,
-        flat
+          @click="addGroup",
+          outline,
+          block,
+          small,
+          flat
         ) {{$t("filterEditor.buttons.addGroup")}}
       v-flex(xs5, md3)
         v-btn(
-        v-if="!isInitial",
-        @click="$emit('deleteGroup')",
-        color="red darken-4",
-        outline,
-        block,
-        small,
-        flat
+          v-if="!isInitial",
+          @click="$emit('deleteGroup')",
+          color="red darken-4",
+          outline,
+          block,
+          small,
+          flat
         ) {{$t("filterEditor.buttons.deleteGroup")}}
 
     div(v-for="(rule, ruleKey) in group.rules", :key="ruleKey")
       filter-rule(
-      :rule="rule",
-      :possibleFields="possibleFields",
-      @deleteRule="deleteRule(ruleKey)",
-      @update:rule="updateRule(ruleKey, $event)"
+        :rule="rule",
+        :possibleFields="possibleFields",
+        @deleteRule="deleteRule(ruleKey)",
+        @update:rule="updateRule(ruleKey, $event)"
       )
 
     div(v-for="(group, groupKey) in group.groups", :key="groupKey")
       filter-group.filterGroup(
-      :group="group",
-      :possibleFields="possibleFields",
-      @deleteGroup="deleteGroup(groupKey)",
-      @update:group="updateGroup(groupKey, $event)"
+        :group="group",
+        :possibleFields="possibleFields",
+        @deleteGroup="deleteGroup(groupKey)",
+        @update:group="updateGroup(groupKey, $event)"
       )
 </template>
 

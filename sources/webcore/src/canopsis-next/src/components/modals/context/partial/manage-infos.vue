@@ -7,10 +7,10 @@
             v-icon add
           span {{ $t('modals.createEntity.manageInfos.addInfo') }}
       v-data-table(
-      :items="items",
-      item-key="name",
-      :headers="tableHeaders",
-      :no-data-text="$t('modals.createEntity.manageInfos.noInfos')"
+        :items="items",
+        item-key="name",
+        :headers="tableHeaders",
+        :no-data-text="$t('modals.createEntity.manageInfos.noInfos')"
       )
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}

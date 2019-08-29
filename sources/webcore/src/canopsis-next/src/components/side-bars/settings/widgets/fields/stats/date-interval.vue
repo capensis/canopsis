@@ -4,8 +4,8 @@
       div.subheading Date interval
       div
         v-btn.primary(
-        small,
-        @click="showEditModal"
+          small,
+          @click="showEditModal"
         ) {{ $t('common.edit') }}
 </template>
 

@@ -5,19 +5,19 @@
         span.headline {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
     v-card-text
       v-select(
-      v-model="form.selectedColumn",
-      :items="config.columns",
-      item-text="label",
-      return-object,
-      name="column",
-      v-validate="'required'",
-      :error-messages="errors.collect('column')"
+        v-model="form.selectedColumn",
+        :items="config.columns",
+        item-text="label",
+        return-object,
+        name="column",
+        v-validate="'required'",
+        :error-messages="errors.collect('column')"
       )
       text-editor(
-      v-model="form.template",
-      name="template",
-      v-validate="'required'",
-      :error-messages="errors.collect('template')"
+        v-model="form.template",
+        name="template",
+        v-validate="'required'",
+        :error-messages="errors.collect('template')"
       )
     v-divider
     v-layout.py-1(justify-end)

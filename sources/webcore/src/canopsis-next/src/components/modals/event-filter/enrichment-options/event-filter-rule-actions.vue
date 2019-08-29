@@ -9,21 +9,21 @@
         v-card-text
           v-form(ref="form")
             v-select(
-            :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES)",
-            v-model="form.type",
-            return-object,
-            item-text="value",
-            :label="$t('common.type')"
+              :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES)",
+              v-model="form.type",
+              return-object,
+              item-text="value",
+              :label="$t('common.type')"
             )
             component(
-            v-for="option in form.type.options",
-            :is="getComponentByOption(option)",
-            :key="option.value",
-            v-model="form[option.value]",
-            :label="option.text",
-            :name="option.value",
-            :error-messages="errors.collect(option.value)",
-            v-validate="getValidationRulesByOption(option)"
+              v-for="option in form.type.options",
+              :is="getComponentByOption(option)",
+              :key="option.value",
+              v-model="form[option.value]",
+              :label="option.text",
+              :name="option.value",
+              :error-messages="errors.collect(option.value)",
+              v-validate="getValidationRulesByOption(option)"
             )
           v-btn.primary(@click="addAction") {{ $t('common.add') }}
     v-container

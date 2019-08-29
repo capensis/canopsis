@@ -1,16 +1,16 @@
 <template lang="pug">
   .mixed-field(:class="{ 'mixed-field__solo-inverted': soloInverted }")
     v-select.mixed-field__type-selector(
-    :items="types",
-    :value="inputType",
-    :label="label",
-    :disabled="disabled",
-    :solo-inverted="soloInverted",
-    :flat="flat",
-    :error-messages="errorMessages",
-    hide-details,
-    dense,
-    @input="updateType"
+      :items="types",
+      :value="inputType",
+      :label="label",
+      :disabled="disabled",
+      :solo-inverted="soloInverted",
+      :flat="flat",
+      :error-messages="errorMessages",
+      hide-details,
+      dense,
+      @input="updateType"
     )
       template(slot="selection", slot-scope="{ parent, item, index }")
         v-icon.mixed-field__type-selector-icon(small) {{ getInputTypeIcon(item.value) }}
@@ -20,32 +20,32 @@
         v-list-tile-content
           v-list-tile-title {{ item.text }}
     v-text-field.mixed-field__text(
-    v-if="isInputTypeText",
-    :type="inputType === $constants.FILTER_INPUT_TYPES.number ? 'number' : 'text'",
-    :value="value",
-    :name="name",
-    :disabled="disabled",
-    :solo-inverted="soloInverted",
-    :hide-details="hideDetails",
-    :flat="flat",
-    :error-messages="errorMessages",
-    single-line,
-    dense,
-    @input="updateTextFieldValue"
+      v-if="isInputTypeText",
+      :type="inputType === $constants.FILTER_INPUT_TYPES.number ? 'number' : 'text'",
+      :value="value",
+      :name="name",
+      :disabled="disabled",
+      :solo-inverted="soloInverted",
+      :hide-details="hideDetails",
+      :flat="flat",
+      :error-messages="errorMessages",
+      single-line,
+      dense,
+      @input="updateTextFieldValue"
     )
     v-switch.ma-0.ml-3.mixed-field__switch(
-    v-else-if="inputType === $constants.FILTER_INPUT_TYPES.boolean",
-    :inputValue="value",
-    :label="switchLabel",
-    :disabled="disabled",
-    hide-details,
-    @change="updateModel"
+      v-else-if="inputType === $constants.FILTER_INPUT_TYPES.boolean",
+      :inputValue="value",
+      :label="switchLabel",
+      :disabled="disabled",
+      hide-details,
+      @change="updateModel"
     )
     v-text-field.mixed-field__text(
-    v-else,
-    :error-messages="errorMessages",
-    value="null",
-    disabled
+      v-else,
+      :error-messages="errorMessages",
+      value="null",
+      disabled
     )
 </template>
 
@@ -233,8 +233,8 @@ export default {
         min-width: 30px;
 
         & /deep/ .v-avatar {
-          width: 20px!important;
-          height: 20px!important;
+          width: 20px !important;
+          height: 20px !important;
         }
       }
     }

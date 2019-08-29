@@ -3,20 +3,20 @@
     v-layout
       v-flex
         v-text-field(
-        :value="value",
-        :label="label",
-        :name="name",
-        :error-messages="errorMessages",
-        @focus="focus",
-        @blur="blur",
-        @input="updateModel($event)"
+          :value="value",
+          :label="label",
+          :name="name",
+          :error-messages="errorMessages",
+          @focus="focus",
+          @blur="blur",
+          @input="updateModel($event)"
         )
       v-flex
         date-time-picker-button(
-        :value="objectValue",
-        :roundHours="roundHours",
-        :useSeconds="useSeconds",
-        @input="updateObjectField"
+          :value="objectValue",
+          :roundHours="roundHours",
+          :useSeconds="useSeconds",
+          @input="updateObjectField"
         )
 </template>
 

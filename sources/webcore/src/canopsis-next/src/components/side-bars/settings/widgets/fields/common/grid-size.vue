@@ -3,13 +3,13 @@
     v-list-tile(slot="activator") {{ title }}
     v-container
       v-slider(
-      :value="value",
-      :max="max",
-      :min="min",
-      ticks="always",
-      @input="$emit('input', $event)",
-      always-dirty,
-      thumb-label
+        :value="value",
+        :max="max",
+        :min="min",
+        ticks="always",
+        @input="$emit('input', $event)",
+        always-dirty,
+        thumb-label
       )
 </template>
 

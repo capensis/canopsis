@@ -2,10 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
@@ -16,9 +16,9 @@
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
-          v-model="settings.widget.parameters.sort",
-          :columns="settings.widget.parameters.widgetColumns",
-          :columnsLabel="$t('settings.columnName')"
+            v-model="settings.widget.parameters.sort",
+            :columns="settings.widget.parameters.widgetColumns",
+            :columnsLabel="$t('settings.columnName')"
           )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns", withHtml)
@@ -29,44 +29,44 @@
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
-            v-model="settings.widget.parameters.mainFilter",
-            :entitiesType="$constants.ENTITIES_TYPES.alarm",
-            :filters.sync="settings.widget.parameters.viewFilters",
-            :condition.sync="settings.widget.parameters.mainFilterCondition",
-            :hasAccessToAddFilter="hasAccessToAddFilter",
-            :hasAccessToEditFilter="hasAccessToEditFilter"
+              v-model="settings.widget.parameters.mainFilter",
+              :entitiesType="$constants.ENTITIES_TYPES.alarm",
+              :filters.sync="settings.widget.parameters.viewFilters",
+              :condition.sync="settings.widget.parameters.mainFilterCondition",
+              :hasAccessToAddFilter="hasAccessToAddFilter",
+              :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
           field-info-popup(
-          v-model="settings.widget.parameters.infoPopups",
-          :columns="settings.widget.parameters.widgetColumns"
+            v-model="settings.widget.parameters.infoPopups",
+            :columns="settings.widget.parameters.widgetColumns"
           )
           v-divider
           field-text-editor(
-          v-model="settings.widget.parameters.moreInfoTemplate",
-          :title="$t('settings.moreInfosModal')"
+            v-model="settings.widget.parameters.moreInfoTemplate",
+            :title="$t('settings.moreInfosModal')"
           )
           v-divider
           field-switcher(
-          v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
-          :title="$t('settings.isHtmlEnabledOnTimeLine')"
+            v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
+            :title="$t('settings.isHtmlEnabledOnTimeLine')"
           )
           v-divider
           v-list-group
             v-list-tile(slot="activator") Ack
             v-list.grey.lighten-4.px-2.py-0(expand)
             field-switcher(
-            v-model="settings.widget.parameters.isAckNoteRequired",
-            :title="$t('settings.isAckNoteRequired')"
+              v-model="settings.widget.parameters.isAckNoteRequired",
+              :title="$t('settings.isAckNoteRequired')"
             )
             v-divider
             field-switcher(
-            v-model="settings.widget.parameters.isMultiAckEnabled",
-            :title="$t('settings.isMultiAckEnabled')"
+              v-model="settings.widget.parameters.isMultiAckEnabled",
+              :title="$t('settings.isMultiAckEnabled')"
             )
             v-divider
             field-fast-ack-output(
-            v-model="settings.widget.parameters.fastAckOutput",
+              v-model="settings.widget.parameters.fastAckOutput",
             )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}

@@ -6,18 +6,18 @@
       v-layout
         v-flex
           v-switch(
-          v-model="value.enabled",
-          @change="updateField('enabled', $event)",
-          color="primary",
-          hide-details
+            v-model="value.enabled",
+            @change="updateField('enabled', $event)",
+            color="primary",
+            hide-details
           )
         v-flex
           v-text-field.pt-0(
-          type="number",
-          :value="value.interval",
-          :disabled="!value.enabled",
-          @input="updateField('interval', $event)",
-          hide-details
+            type="number",
+            :value="value.interval",
+            :disabled="!value.enabled",
+            @input="updateField('interval', $event)",
+            hide-details
           )
 </template>
 

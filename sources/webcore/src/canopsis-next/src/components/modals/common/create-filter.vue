@@ -6,19 +6,19 @@
     v-divider
     v-card-text
       v-text-field(
-      v-if="!hiddenFields.includes('title')",
-      v-model="form.title",
-      v-validate="'required'",
-      :label="$t('modals.filter.fields.title')",
-      :error-messages="errors.collect('title')",
-      name="title",
-      required
+        v-if="!hiddenFields.includes('title')",
+        v-model="form.title",
+        v-validate="'required'",
+        :label="$t('modals.filter.fields.title')",
+        :error-messages="errors.collect('title')",
+        name="title",
+        required
       )
       filter-editor(
-      v-if="!hiddenFields.includes('filter')",
-      v-model="form.filter",
-      :entitiesType="entitiesType",
-      required
+        v-if="!hiddenFields.includes('filter')",
+        v-model="form.filter",
+        :entitiesType="entitiesType",
+        required
       )
     v-divider
     v-layout.py-1(justify-end)

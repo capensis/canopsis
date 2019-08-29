@@ -2,10 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
@@ -20,9 +20,9 @@
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
-          v-model="settings.widget.parameters.sort",
-          :columns="defaultSortColumns",
-          :columnsLabel="$t('settings.columnName')"
+            v-model="settings.widget.parameters.sort",
+            :columns="defaultSortColumns",
+            :columnsLabel="$t('settings.columnName')"
           )
           v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}

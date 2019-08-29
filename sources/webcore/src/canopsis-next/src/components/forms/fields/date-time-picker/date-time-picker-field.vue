@@ -1,29 +1,29 @@
 <template lang="pug">
   v-menu(
-  ref="menu",
-  v-model="opened",
-  content-class="date-time-picker",
-  transition="slide-y-transition",
-  max-width="290px",
-  :close-on-content-click="false",
-  right,
-  lazy
+    ref="menu",
+    v-model="opened",
+    content-class="date-time-picker",
+    transition="slide-y-transition",
+    max-width="290px",
+    :close-on-content-click="false",
+    right,
+    lazy
   )
     div(slot="activator")
       v-text-field(
-      readonly,
-      :label="label",
-      :error-messages="errorMessages",
-      :value="value | date(useSeconds ? 'dateTimePickerWithSeconds' : 'dateTimePicker', true)",
-      :append-icon="clearable ? 'close' : ''",
-      @click:append="clear"
+        readonly,
+        :label="label",
+        :error-messages="errorMessages",
+        :value="value | date(useSeconds ? 'dateTimePickerWithSeconds' : 'dateTimePicker', true)",
+        :append-icon="clearable ? 'close' : ''",
+        @click:append="clear"
       )
     date-time-picker(
-    :value="value",
-    :roundHours="roundHours",
-    :opened="opened",
-    :useSeconds="useSeconds",
-    @input="$emit('input', $event)"
+      :value="value",
+      :roundHours="roundHours",
+      :opened="opened",
+      :useSeconds="useSeconds",
+      @input="$emit('input', $event)"
     )
 </template>
 

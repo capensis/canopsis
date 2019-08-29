@@ -12,23 +12,23 @@
           v-divider.my-3
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createAckEvent.fields.ticket')",
-          v-model="form.ticket"
+            :label="$t('modals.createAckEvent.fields.ticket')",
+            v-model="form.ticket"
           )
         v-layout(row)
           v-textarea(
-          :label="$t('modals.createAckEvent.fields.output')",
-          :error-messages="errors.collect('output')",
-          v-model="form.output",
-          v-validate="isNoteRequired ? 'required' : ''",
-          data-vv-name="output"
+            :label="$t('modals.createAckEvent.fields.output')",
+            :error-messages="errors.collect('output')",
+            v-model="form.output",
+            v-validate="isNoteRequired ? 'required' : ''",
+            data-vv-name="output"
           )
         v-layout(row)
           v-tooltip(top)
             v-checkbox(
-            slot="activator",
-            v-model="ack_resources",
-            :label="$t('modals.createAckEvent.fields.ackResources')"
+              slot="activator",
+              v-model="ack_resources",
+              :label="$t('modals.createAckEvent.fields.ackResources')"
             )
               span(slot-name="label") {{  }}
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}

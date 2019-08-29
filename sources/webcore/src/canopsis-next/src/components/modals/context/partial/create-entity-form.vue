@@ -3,50 +3,50 @@
     v-container(fluid)
       v-layout(row)
         v-text-field(
-        :label="$t('common.name')",
-        :value="form.name",
-        @input="updateField('name', $event)",
-        :error-messages="errors.collect('name')",
-        v-validate="'required'",
-        data-vv-name="name"
+          :label="$t('common.name')",
+          :value="form.name",
+          @input="updateField('name', $event)",
+          :error-messages="errors.collect('name')",
+          v-validate="'required'",
+          data-vv-name="name"
         )
       v-layout(row)
         v-textarea(
-        :label="$t('common.description')",
-        :value="form.description",
-        @input="updateField('description', $event)",
-        data-vv-name="description",
-        :error-messages="errors.collect('description')"
+          :label="$t('common.description')",
+          :value="form.description",
+          @input="updateField('description', $event)",
+          data-vv-name="description",
+          :error-messages="errors.collect('description')"
         )
       v-layout(row)
         v-switch(
-        color="primary",
-        :label="$t('common.enabled')",
-        :input-value="form.enabled",
-        @change="updateField('enabled', $event)"
+          color="primary",
+          :label="$t('common.enabled')",
+          :input-value="form.enabled",
+          @change="updateField('enabled', $event)"
         )
         v-select(
-        :items="types",
-        :value="entityType",
-        data-vv-name="type",
-        v-validate="'required'",
-        :error-messages="errors.collect('type')",
-        @input="updateField('type', $event)",
-        :label="$t('modals.createEntity.fields.type')",
-        single-line
+          :items="types",
+          :value="entityType",
+          data-vv-name="type",
+          v-validate="'required'",
+          :error-messages="errors.collect('type')",
+          @input="updateField('type', $event)",
+          :label="$t('modals.createEntity.fields.type')",
+          single-line
         )
       v-layout(wrap)
         v-flex(xs12)
           entities-select(
-          :label="$t('modals.createEntity.fields.impact')",
-          :entities="form.impact",
-          @updateEntities="updateImpact"
+            :label="$t('modals.createEntity.fields.impact')",
+            :entities="form.impact",
+            @updateEntities="updateImpact"
           )
         v-flex(xs12)
           entities-select(
-          :label="$t('modals.createEntity.fields.depends')",
-          :entities="form.depends",
-          @updateEntities="updateDepends"
+            :label="$t('modals.createEntity.fields.depends')",
+            :entities="form.depends",
+            @updateEntities="updateDepends"
           )
 </template>
 

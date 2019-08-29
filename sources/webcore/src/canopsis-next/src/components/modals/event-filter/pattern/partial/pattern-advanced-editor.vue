@@ -2,9 +2,9 @@
   div
     v-textarea(:value="patternValue", @input="checkValidity", rows="15")
     v-btn(
-    :color="isInvalidJSON ? 'error' : 'primary'",
-    :disabled="isInvalidJSON",
-    @click="save"
+      :color="isInvalidJSON ? 'error' : 'primary'",
+      :disabled="isInvalidJSON",
+      @click="save"
     ) {{ isInvalidJSON ? $t('errors.JSONNotValid') : $t('common.save') }}
 </template>
 

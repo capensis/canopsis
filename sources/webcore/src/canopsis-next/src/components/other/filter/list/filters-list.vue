@@ -12,9 +12,9 @@
               v-btn.ma-1(icon, @click="showDeleteFilterModal(index)")
                 v-icon delete
     v-btn.ml-0(
-    v-if="hasAccessToAddFilter",
-    color="primary",
-    @click.prevent="showCreateFilterModal"
+      v-if="hasAccessToAddFilter",
+      color="primary",
+      @click.prevent="showCreateFilterModal"
     ) {{ $t('common.add') }}
 </template>
 

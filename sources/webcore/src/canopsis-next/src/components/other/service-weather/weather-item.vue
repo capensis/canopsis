@@ -1,9 +1,9 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
-  :class="itemClasses",
-  :style="{ height: itemHeight + 'em', backgroundColor: color}",
-  tile,
-  @click.native="showAdditionalInfoModal"
+    :class="itemClasses",
+    :style="{ height: itemHeight + 'em', backgroundColor: color}",
+    tile,
+    @click.native="showAdditionalInfoModal"
   )
     v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
       v-icon help
@@ -14,9 +14,9 @@
         v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
-        v-if="isBothModalType && hasAlarmsListAccess",
-        flat,
-        @click.stop="showAlarmListModal"
+          v-if="isBothModalType && hasAlarmsListAccess",
+          flat,
+          @click.stop="showAlarmListModal"
         ) {{ $t('serviceWeather.seeAlarms') }}
 </template>
 
@@ -236,8 +236,12 @@ export default {
   }
 
   @keyframes blink {
-    0% { opacity: 1 }
-    50% { opacity: 0.3 }
+    0% {
+      opacity: 1
+    }
+    50% {
+      opacity: 0.3
+    }
   }
 
   .blinking {

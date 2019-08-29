@@ -5,31 +5,31 @@
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
-            v-model="tstartDateString",
-            v-validate="tstartRules",
-            :label="$t('common.startDate')",
-            :dateObjectPreparer="getDateObjectPreparer('start')",
-            name="tstart",
-            roundHours,
-            @update:objectValue="$emit('update:startObjectValue', $event)"
+              v-model="tstartDateString",
+              v-validate="tstartRules",
+              :label="$t('common.startDate')",
+              :dateObjectPreparer="getDateObjectPreparer('start')",
+              name="tstart",
+              roundHours,
+              @update:objectValue="$emit('update:startObjectValue', $event)"
             )
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
-            v-model="tstopDateString",
-            v-validate="tstopRules",
-            :label="$t('common.endDate')",
-            :dateObjectPreparer="getDateObjectPreparer('stop')",
-            name="tstop",
-            roundHours,
-            @update:objectValue="$emit('update:stopObjectValue', $event)"
+              v-model="tstopDateString",
+              v-validate="tstopRules",
+              :label="$t('common.endDate')",
+              :dateObjectPreparer="getDateObjectPreparer('stop')",
+              name="tstop",
+              roundHours,
+              @update:objectValue="$emit('update:stopObjectValue', $event)"
             )
       v-flex.pl-1(xs6)
         v-select(
-        v-model="range",
-        :items="quickRanges",
-        :label="$t('settings.statsDateInterval.fields.quickRanges')",
-        return-object
+          v-model="range",
+          :items="quickRanges",
+          :label="$t('settings.statsDateInterval.fields.quickRanges')",
+          return-object
         )
 </template>
 

@@ -7,22 +7,22 @@
       v-form
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createRight.fields.id')",
-          v-model="form._id",
-          data-vv-name="id",
-          v-validate="'required'",
-          :error-messages="errors.collect('id')"
+            :label="$t('modals.createRight.fields.id')",
+            v-model="form._id",
+            data-vv-name="id",
+            v-validate="'required'",
+            :error-messages="errors.collect('id')"
           )
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createRight.fields.description')",
-          v-model="form.desc"
+            :label="$t('modals.createRight.fields.description')",
+            v-model="form.desc"
           )
         v-layout(row)
           v-select(
-          :label="$t('modals.createRight.fields.type')",
-          v-model="form.type",
-          :items="types"
+            :label="$t('modals.createRight.fields.type')",
+            v-model="form.type",
+            :items="types"
           )
     v-divider
     v-layout.py-1(justify-end)

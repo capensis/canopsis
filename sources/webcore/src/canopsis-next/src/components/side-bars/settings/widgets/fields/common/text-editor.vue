@@ -4,8 +4,8 @@
       div.subheading {{ title }}
       v-layout(justify-end)
         v-btn.primary(
-        small,
-        @click="openTextEditorModal"
+          small,
+          @click="openTextEditorModal"
         )
           span(v-show="isValueEmpty") {{ $t('common.create') }}
           span(v-show="!isValueEmpty") {{ $t('common.edit') }}

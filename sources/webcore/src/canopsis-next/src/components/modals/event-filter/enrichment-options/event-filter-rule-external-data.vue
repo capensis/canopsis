@@ -9,8 +9,8 @@
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
-      :disabled="error",
-      @click.prevent="submit"
+        :disabled="error",
+        @click.prevent="submit"
       ) {{ error ? $t('errors.JSONNotValid') : $t('common.submit') }}
 </template>
 

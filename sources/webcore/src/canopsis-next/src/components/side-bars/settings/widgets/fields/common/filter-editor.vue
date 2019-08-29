@@ -5,8 +5,8 @@
         .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optional') }})
       div
         v-btn.primary(
-        small,
-        @click="openFilterModal"
+          small,
+          @click="openFilterModal"
         )
           span(v-show="isValueEmpty") {{ $t('common.create') }}
           span(v-show="!isValueEmpty") {{ $t('common.edit') }}

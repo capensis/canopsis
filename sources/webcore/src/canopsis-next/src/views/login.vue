@@ -19,36 +19,36 @@
                   li(v-if="isLDAPAuthEnabled") {{ $t('login.LDAP') }}
             v-flex.mt-1
               v-text-field(
-              :label="$t('common.username')",
-              :error-messages="errors.collect('username')",
-              v-model="form.username",
-              v-validate="'required'",
-              color="primary",
-              name="username",
-              data-test="username",
-              autofocus,
-              clearable,
-              outline
+                :label="$t('common.username')",
+                :error-messages="errors.collect('username')",
+                v-model="form.username",
+                v-validate="'required'",
+                color="primary",
+                name="username",
+                data-test="username",
+                autofocus,
+                clearable,
+                outline
               )
             v-flex
               v-text-field(
-              :label="$t('common.password')",
-              :error-messages="errors.collect('password')",
-              v-model="form.password",
-              v-validate="'required'",
-              color="primary",
-              name="password",
-              type="password",
-              data-test="password",
-              clearable,
-              outline
+                :label="$t('common.password')",
+                :error-messages="errors.collect('password')",
+                v-model="form.password",
+                v-validate="'required'",
+                color="primary",
+                name="password",
+                type="password",
+                data-test="password",
+                clearable,
+                outline
               )
             v-flex
               v-layout.mb-1(justify-space-between, align-center)
                 v-btn.ma-0(
-                type="submit",
-                color="primary",
-                data-test="submitButton"
+                  type="submit",
+                  color="primary",
+                  data-test="submitButton"
                 ) {{ $t('common.connect') }}
                 v-flex(v-if="hasServerError", xs9, data-test="errorLogin")
                   v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
@@ -60,8 +60,8 @@
           div.pa-3
             div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
             v-btn.my-4(
-            :href="casHref",
-            color="primary"
+              :href="casHref",
+              color="primary"
             ) {{ casConfig | get('title', null, $t('login.loginWithCAS')) }}
     div.secondary.darken-1.footer
       a(:href="$constants.CANOPSIS_DOCUMENTATION", target="_blank") {{ $t('login.documentation') }}
@@ -150,22 +150,13 @@ export default {
     grid-template-columns: 1fr 8fr 1fr;
     grid-template-rows: 5% auto auto 15% auto;
 
-    grid-template-areas:
-      ". . ."
-      ". description ."
-      ". form ."
-      ". . ."
-      "footer footer footer";
+    grid-template-areas: ". . ." ". description ." ". form ." ". . ." "footer footer footer";
 
     @media (min-width: 900px) {
       grid-template-columns: auto 40% 1% 40% auto;
       grid-template-rows: auto auto auto auto;
 
-      grid-template-areas:
-        ". . . . ."
-        ". description . form ."
-        ". . . . ."
-        "footer footer footer footer footer";
+      grid-template-areas: ". . . . ." ". description . form ." ". . . . ." "footer footer footer footer footer";
     }
 
     @media (min-width: 1200px) {

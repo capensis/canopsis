@@ -2,10 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
@@ -24,8 +24,8 @@
           field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
           v-divider
           field-text-editor(
-          v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
-          :title="$t('settings.moreInfosModal')"
+            v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
+            :title="$t('settings.moreInfosModal')"
           )
       v-divider
       field-number(v-model="settings.widget.parameters.limit", :title="$t('settings.limit')")
@@ -34,24 +34,24 @@
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
-          v-model="settings.widget.parameters.sort",
-          :columns="sortColumns",
-          :columnsLabel="$t('settings.orderBy')"
+            v-model="settings.widget.parameters.sort",
+            :columns="sortColumns",
+            :columnsLabel="$t('settings.orderBy')"
           )
           v-divider
           field-weather-template(
-          v-model="settings.widget.parameters.blockTemplate",
-          :title="$t('settings.weatherTemplate')"
+            v-model="settings.widget.parameters.blockTemplate",
+            :title="$t('settings.weatherTemplate')"
           )
           v-divider
           field-weather-template(
-          v-model="settings.widget.parameters.modalTemplate",
-          :title="$t('settings.modalTemplate')"
+            v-model="settings.widget.parameters.modalTemplate",
+            :title="$t('settings.modalTemplate')"
           )
           v-divider
           field-weather-template(
-          v-model="settings.widget.parameters.entityTemplate",
-          :title="$t('settings.entityTemplate')"
+            v-model="settings.widget.parameters.entityTemplate",
+            :title="$t('settings.entityTemplate')"
           )
           v-divider
           field-grid-size(v-model="settings.widget.parameters.columnSM", :title="$t('settings.columnSM')")
@@ -64,38 +64,38 @@
             v-list-tile(slot="activator") {{ $t('settings.margin.title') }}
             v-list.grey.lighten-4.px-2.py-0(expand)
               field-slider(
-              v-model="settings.widget.parameters.margin.top",
-              :title="$t('settings.margin.top')",
-              :min="0",
-              :max="5"
+                v-model="settings.widget.parameters.margin.top",
+                :title="$t('settings.margin.top')",
+                :min="0",
+                :max="5"
               )
               v-divider
               field-slider(
-              v-model="settings.widget.parameters.margin.right",
-              :title="$t('settings.margin.right')",
-              :min="0",
-              :max="5"
+                v-model="settings.widget.parameters.margin.right",
+                :title="$t('settings.margin.right')",
+                :min="0",
+                :max="5"
               )
               v-divider
               field-slider(
-              v-model="settings.widget.parameters.margin.bottom",
-              :title="$t('settings.margin.bottom')",
-              :min="0",
-              :max="5"
+                v-model="settings.widget.parameters.margin.bottom",
+                :title="$t('settings.margin.bottom')",
+                :min="0",
+                :max="5"
               )
               v-divider
               field-slider(
-              v-model="settings.widget.parameters.margin.left",
-              :title="$t('settings.margin.left')",
-              :min="0",
-              :max="5"
+                v-model="settings.widget.parameters.margin.left",
+                :title="$t('settings.margin.left')",
+                :min="0",
+                :max="5"
               )
           v-divider
           field-slider(
-          v-model="settings.widget.parameters.heightFactor",
-          :title="$t('settings.height')",
-          :min="1",
-          :max="20"
+            v-model="settings.widget.parameters.heightFactor",
+            :title="$t('settings.height')",
+            :min="1",
+            :max="20"
           )
           v-divider
           field-modal-type(v-model="settings.widget.parameters.modalType")

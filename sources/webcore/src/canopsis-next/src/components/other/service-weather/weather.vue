@@ -13,10 +13,10 @@
         v-alert(type="info", :value="true", v-else-if="hasNoData") {{ $t('tables.noData') }}
         v-flex(v-else, v-for="item in watchers", :key="item._id", :class="flexSize")
           weather-item.weatherItem(
-          :watcher="item",
-          :widget="widget",
-          :template="widget.parameters.blockTemplate",
-          :isEditingMode="isEditingMode"
+            :watcher="item",
+            :widget="widget",
+            :template="widget.parameters.blockTemplate",
+            :isEditingMode="isEditingMode"
           )
     v-fade-transition
       v-layout(v-if="watchersPending", column)

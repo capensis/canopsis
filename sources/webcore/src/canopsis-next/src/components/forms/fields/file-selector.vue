@@ -5,27 +5,27 @@
         v-btn(icon, flat, small, @click="removeFileFromSelections(file.name)")
           v-icon(small) close
     .file-selector-button-wrapper(
-    :class="{ disabled: fullDisabled }",
-    v-on="wrapperListeners"
+      :class="{ disabled: fullDisabled }",
+      v-on="wrapperListeners"
     )
       slot(
-      name="activator",
-      :disabled="fullDisabled",
-      :loading="loading",
-      :on="scopedActivatorSlotListeners"
-      )
-        v-btn(
+        name="activator",
         :disabled="fullDisabled",
         :loading="loading",
-        v-on="scopedActivatorSlotListeners"
+        :on="scopedActivatorSlotListeners"
+      )
+        v-btn(
+          :disabled="fullDisabled",
+          :loading="loading",
+          v-on="scopedActivatorSlotListeners"
         )
           v-icon cloud_upload
     input.hidden(
-    ref="fileInput",
-    type="file",
-    :multiple="multiple",
-    :accept="accept",
-    @change="change"
+      ref="fileInput",
+      type="file",
+      :multiple="multiple",
+      :accept="accept",
+      @change="change"
     )
     .mt-2(v-if="!hideDetails")
       .error--text(v-for="error in errorMessages", :key="error") {{ error }}

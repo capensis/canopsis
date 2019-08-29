@@ -4,18 +4,18 @@
     v-container
       v-layout
         v-checkbox(
-        color="primary",
-        :label="$t('settings.open')",
-        v-model="value.opened",
-        @change="updateField('opened', $event)",
-        hide-details
+          color="primary",
+          :label="$t('settings.open')",
+          v-model="value.opened",
+          @change="updateField('opened', $event)",
+          hide-details
         )
         v-checkbox(
-        color="primary",
-        :label="$t('settings.resolved')",
-        v-model="value.resolved",
-        @change="updateField('resolved', $event)",
-        hide-details
+          color="primary",
+          :label="$t('settings.resolved')",
+          v-model="value.resolved",
+          @change="updateField('resolved', $event)",
+          hide-details
         )
 </template>
 

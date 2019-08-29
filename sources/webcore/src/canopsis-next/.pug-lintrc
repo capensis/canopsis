@@ -7,6 +7,6 @@
   "requireIdLiteralsBeforeAttributes": true,
   "requireLowerCaseTags": true,
   "validateAttributeQuoteMarks": "\"",
-  "validateAttributeSeparator": { "separator": ", ", "multiLineSeparator": ",\n" },
+  "validateAttributeSeparator": { "separator": ", ", "multiLineSeparator": ",\n  " },
   "validateIndentation": 2
 }

@@ -5,23 +5,23 @@
       v-layout(row, wrap)
         v-flex(xs4)
           search-field(
-          v-model="searchingText",
-          @submit="applySearchFilter",
-          @clear="applySearchFilter"
+            v-model="searchingText",
+            @submit="applySearchFilter",
+            @clear="applySearchFilter"
           )
         v-flex(v-show="hasDeleteAnyRoleAccess && selected.length", xs4)
           v-btn(@click="showRemoveSelectedRolesModal", data-test="massDeleteButton", icon)
             v-icon delete
       v-data-table(
-      v-model="selected",
-      :headers="headers",
-      :items="roles",
-      :loading="rolesPending",
-      :pagination.sync="pagination",
-      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-      :total-items="rolesMeta.total",
-      item-key="id",
-      select-all
+        v-model="selected",
+        :headers="headers",
+        :items="roles",
+        :loading="rolesPending",
+        :pagination.sync="pagination",
+        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
+        :total-items="rolesMeta.total",
+        item-key="id",
+        select-all
       )
         template(slot="items", slot-scope="props")
           tr(:data-test="`role-${props.item._id}`")
@@ -30,17 +30,17 @@
             td {{ props.item._id }}
             td
               v-btn.ma-0(
-              v-if="hasUpdateAnyRoleAccess",
-              data-test="editButton",
-              icon,
-              @click="showEditRoleModal(props.item._id)"
+                v-if="hasUpdateAnyRoleAccess",
+                data-test="editButton",
+                icon,
+                @click="showEditRoleModal(props.item._id)"
               )
                 v-icon edit
               v-btn.ma-0(
-              v-if="hasDeleteAnyRoleAccess",
-              data-test="deleteButton",
-              icon,
-              @click="showRemoveRoleModal(props.item._id)"
+                v-if="hasDeleteAnyRoleAccess",
+                data-test="deleteButton",
+                icon,
+                @click="showRemoveRoleModal(props.item._id)"
               )
                 v-icon(color="error") delete
     .fab(v-if="hasCreateAnyRoleAccess")
@@ -48,11 +48,11 @@
         refresh-btn(@click="fetchList")
         v-tooltip(left)
           v-btn(
-          slot="activator",
-          color="primary",
-          data-test="addButton",
-          fab,
-          @click.stop="showCreateRoleModal"
+            slot="activator",
+            color="primary",
+            data-test="addButton",
+            fab,
+            @click.stop="showCreateRoleModal"
           )
             v-icon add
           span {{ $t('modals.createRole.title') }}

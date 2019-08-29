@@ -8,10 +8,10 @@
 
 <script>
 /**
-* Component to set the title of a widget
-*
-* @prop {String} [value] - Value of the title
-*/
+ * Component to set the title of a widget
+ *
+ * @prop {String} [value] - Value of the title
+ */
 export default {
   props: {
     value: String,
