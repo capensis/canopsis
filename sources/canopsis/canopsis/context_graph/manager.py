@@ -222,10 +222,10 @@ class ContextGraph(object):
                            id,
                            name,
                            etype,
-                           depends=[],
-                           impact=[],
-                           measurements={},
-                           infos={},
+                           depends=None,
+                           impact=None,
+                           measurements=None,
+                           infos=None,
                            **kwargs):
         """
         Create an entity with following information and put it state at enable.
@@ -247,6 +247,14 @@ class ContextGraph(object):
 
         :return: a dict
         """
+        if depends is None:
+            depends = []
+        if impact is None:
+            impact = []
+        if measurements is None:
+            measurements = {}
+        if infos is None:
+            infos = {}
         ent = {
             '_id': id,
             'type': etype,
