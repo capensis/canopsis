@@ -43,7 +43,7 @@ yum update
 ```
 
 !!! attention
-    La procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée ([Bug #1431](https://git.canopsis.net/canopsis/canopsis/issues/1431)).
+    Avant Canopsis 3.27.0, la procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée.
 
 Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour.
 
