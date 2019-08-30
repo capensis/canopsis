@@ -1,16 +1,11 @@
 <template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      div.subheading {{ title }}
-      v-layout(justify-end)
-        v-btn.primary(
-        small,
-        @click="openTextEditorModal"
-        )
-          span(data-test="createButton", v-show="isValueEmpty") {{ $t('common.create') }}
-          span(data-test="editButton", v-show="!isValueEmpty") {{ $t('common.edit') }}
-        v-btn.error(v-show="!isValueEmpty", small, @click="deleteMoreInfoTemplate")
-          v-icon(data-test="deleteButton",) delete
+  settings-button-field(
+  :isEmpty="isValueEmpty",
+  @create="openTextEditorModal",
+  @edit="openTextEditorModal",
+  @delete="deleteMoreInfoTemplate",
+  )
+    .subheading(slot="title") {{ title }}
 </template>
 
 <script>
@@ -18,7 +13,10 @@ import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 
+import SettingsButtonField from '../partials/button-field.vue';
+
 export default {
+  components: { SettingsButtonField },
   mixins: [modalMixin],
   props: {
     value: {
