@@ -47,19 +47,13 @@ Considérons l'événement suivant :
 En publiant cet événement, l'attribut **client** ne sera pas interprété car il ne participe pas à la spécification d'un événement.  
 Vous souhaitez néanmoins que cette information soit disponible pour l'entité **ressource-doc1/composant-doc1**.  
 
-2 options du moteur **che** vont vous permettre de systématiser cette prise en charge.
-
-```
--enrichContext
-```
-
-Cette option active l'enrichissment à partir d'un événement.
+Une option du moteur **che** va vous permettre de systématiser cette prise en charge.  
 
 ````
 -enrichInclude "client"
 ````
 
-Cette option va permettre l'ajout de l'attribut **client** dans la champ **infos** de l'entité correspondante.  
+Ainsi, l'attribut **client** sera ajouté dans la champ **infos** de l'entité correspondante.  
 Pour rendre cette valeur visible sur l'interface de Canopsis, il faut ensuite l'ajouter manuellement. Pour cela, 2 solutions :
 
 * Pour un widget de manière générale (Plus d'infos / Info popup / Template) : **{{ entity.infos.client.value }}**
@@ -109,7 +103,7 @@ On commence à ajouter une règle via le menu adéquat
 
 ![Ajout d'une règle ](./img/event_filter_ajout_regle.png "Ajout d'une règle")  
 
-Ensuite on définit sur quels événements seront exécutés cette règle.
+Ensuite on définit sur quels événements sera exécutée cette règle. 
 Dans notre cas, nous utilisons un critère tel que **connector_name**.  
 
 ![Définition du pattern ](./img/event_filter_edit_pattern.png "Définition du pattern")
