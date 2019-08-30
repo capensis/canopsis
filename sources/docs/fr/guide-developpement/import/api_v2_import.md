@@ -55,7 +55,7 @@ La liste `cis` est une liste d'entités représentée sous forme d'objet JSON. C
 
 ### Description des actions sur les entités
 
-Les actions suivantes peuvent être réalisées sur les entités, au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `updat€`, `disable` et `enable`.
+Les actions suivantes peuvent être réalisées sur les entités, au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `update`, `disable` et `enable`.
 
 #### Create
 
