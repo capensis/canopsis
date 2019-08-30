@@ -1,7 +1,11 @@
 // http://nightwatchjs.org/guide#usage
 
+const { generateTemporaryView } = require('../../helpers/entities');
+
 module.exports = {
   async before(browser, done) {
+    browser.globals.defaultViewData = {};
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
@@ -11,6 +15,15 @@ module.exports = {
   after(browser, done) {
     browser.completed.logout()
       .end(done);
+  },
+
+  'Create test view': (browser) => {
+    browser.completed.view.create(generateTemporaryView(), (view) => {
+      browser.globals.defaultViewData = {
+        viewId: view._id,
+        groupId: view.group_id,
+      };
+    });
   },
 
   'Open current user modal': (browser) => {
@@ -29,12 +42,13 @@ module.exports = {
   'Select current user default view': (browser) => {
     const createUserModal = browser.page.modals.admin.createUser();
     const selectViewModal = browser.page.modals.view.selectView();
+    const { viewId, groupId } = browser.globals.defaultViewData;
 
     createUserModal.clickSelectDefaultViewButton();
 
     selectViewModal.verifyModalOpened()
-      .browseGroupById('05b2e049-b3c4-4c5b-94a5-6e7ff142b28c') // TODO: use from some constants file when we will use fixtures
-      .browseViewById('875df4c2-027b-4549-8add-e20ed7ff7d4f')
+      .browseGroupById(groupId)
+      .browseViewById(viewId)
       .verifyModalClosed();
 
     createUserModal.clickSubmitButton()
@@ -42,8 +56,17 @@ module.exports = {
   },
 
   'Check default view': (browser) => {
+    const { viewId } = browser.globals.defaultViewData;
+
     browser.url(process.env.VUE_DEV_SERVER_URL)
       .page.view()
-      .verifyPageElementsBeforeById('875df4c2-027b-4549-8add-e20ed7ff7d4f'); // TODO: use from some constants file when we will use fixtures
+      .verifyPageElementsBeforeById(viewId);
+  },
+
+  'Delete test view': (browser) => {
+    const { groupId, viewId } = browser.globals.defaultViewData;
+
+    browser.completed.view.delete(groupId, viewId);
+    browser.completed.view.deleteGroup(groupId);
   },
 };
