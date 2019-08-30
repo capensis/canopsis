@@ -12,7 +12,7 @@ Pour aider les pilotes des centres d'opérations, il est indispensable d'enrichi
 
 L'idée est donc de classer les alarmes, apporter de l'information objective sur des météos de services, afin de faciliter la prise de décision.  
 
-Plusieurs possibilités sont offertes dans Canopsis : 
+Plusieurs possibilités sont offertes dans Canopsis :
 
 * Enrichissement systématique depuis les événements
 * Enrichissement conditionné par des règles de gestion appliquées aux événements (CAT)
@@ -20,7 +20,7 @@ Plusieurs possibilités sont offertes dans Canopsis :
 
 
 !!! Warning
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs GO. 
+    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs GO.
 
 ## Enrichissement depuis les événements
 
@@ -31,13 +31,13 @@ Considérons l'événement suivant :
 
 ````json
 {
-  "resource": "ressource-doc1", 
-  "event_type": "check", 
-  "component": "composant-doc1", 
-  "connector": "cas-d-usage", 
-  "source_type": "resource", 
-  "state": 2, 
-  "connector_name": "cas-usage-enrichissement-evenement", 
+  "resource": "ressource-doc1",
+  "event_type": "check",
+  "component": "composant-doc1",
+  "connector": "cas-d-usage",
+  "source_type": "resource",
+  "state": 2,
+  "connector_name": "cas-usage-enrichissement-evenement",
   "output": "doc cas d'usage",
   "client": "client-doc1"
 }
@@ -47,25 +47,31 @@ Considérons l'événement suivant :
 En publiant cet événement, l'attribut **client** ne sera pas interprété car il ne participe pas à la spécification d'un événement.  
 Vous souhaitez néanmoins que cette information soit disponible pour l'entité **ressource-doc1/composant-doc1**.  
 
-Une option du moteur **che** va vous permettre de systématiser cette prise en charge.  
+2 options du moteur **che** vont vous permettre de systématiser cette prise en charge.
+
+```
+-enrichContext
+```
+
+Cette option active l'enrichissment à partir d'un événement.
 
 ````
 -enrichInclude "client"
 ````
 
-Ainsi, l'attribut **client** sera ajouté dans la champ **infos** de l'entité correspondante.  
-Pour rendre cette valeur visible sur l'interface de Canopsis, il faut ensuite l'ajouter manuellement. Pour cela, 2 solutions : 
+Cette option va permettre l'ajout de l'attribut **client** dans la champ **infos** de l'entité correspondante.  
+Pour rendre cette valeur visible sur l'interface de Canopsis, il faut ensuite l'ajouter manuellement. Pour cela, 2 solutions :
 
 * Pour un widget de manière générale (Plus d'infos / Info popup / Template) : **{{ entity.infos.client.value }}**
 * Pour une colonne de bac à alarmes : **entity.infos.client.value**
 
-![Nom des colonnes ](./img/enrichissement_evenement_colonnes.png "Nom des colonnes ") 
+![Nom des colonnes ](./img/enrichissement_evenement_colonnes.png "Nom des colonnes ")
 ![Bac à alarmes ](./img/enrichissement_evenement_baa.png "Bac à alarmes ")
 
 
 ## Enrichissement via des règles de gestion
 
-Dans Canopsis, il existe la possibilité de définir des règles **event-filter** dont le but est de 
+Dans Canopsis, il existe la possibilité de définir des règles **event-filter** dont le but est de
 
 * manipuler les attributs d'un événement, d'une alarme, d'une entité
 * d'enrichir les entités
@@ -73,7 +79,7 @@ Dans Canopsis, il existe la possibilité de définir des règles **event-filter*
 
 La documentation complète se trouve [sur cette page](../../../guide-administration/event-filter/)
 
-Prenons le cas d'usage suivant : 
+Prenons le cas d'usage suivant :
 
 !!! note ""
     Si l'événement contient un attribut *"groupe" : "grp1"* alors l'entité appartient aus domaine métier "Logistique"
@@ -82,13 +88,13 @@ Considérons l'événement suivant :
 
 ````json
 {
-  "resource": "ressource-doc2", 
-  "event_type": "check", 
-  "component": "composant-doc2", 
-  "connector": "cas-d-usage", 
-  "source_type": "resource", 
-  "state": 2, 
-  "connector_name": "cas-usage-enrichissement-regle", 
+  "resource": "ressource-doc2",
+  "event_type": "check",
+  "component": "composant-doc2",
+  "connector": "cas-d-usage",
+  "source_type": "resource",
+  "state": 2,
+  "connector_name": "cas-usage-enrichissement-regle",
   "output": "doc cas d'usage",
   "groupe": "grp1"
 }
@@ -103,7 +109,7 @@ On commence à ajouter une règle via le menu adéquat
 
 ![Ajout d'une règle ](./img/event_filter_ajout_regle.png "Ajout d'une règle")  
 
-Ensuite on définit sur quels événements seront exécutés cette règle. 
+Ensuite on définit sur quels événements seront exécutés cette règle.
 Dans notre cas, nous utilisons un critère tel que **connector_name**.  
 
 ![Définition du pattern ](./img/event_filter_edit_pattern.png "Définition du pattern")
@@ -142,4 +148,3 @@ Voici un exemple avec **ressource-doc1**.
 Puis avec **ressource-doc2**.  
 
 ![Contexte ](./img/consulter_contexte2.png "Consulter le contexte ")
-
