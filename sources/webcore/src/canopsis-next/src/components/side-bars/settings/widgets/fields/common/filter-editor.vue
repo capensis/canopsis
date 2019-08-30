@@ -1,17 +1,13 @@
 <template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      div.subheading {{ $t('settings.filterEditor') }}
-        .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optional') }})
-      div
-        v-btn.primary(
-          small,
-          @click="openFilterModal"
-        )
-          span(v-show="isValueEmpty") {{ $t('common.create') }}
-          span(v-show="!isValueEmpty") {{ $t('common.edit') }}
-        v-btn.error(v-show="!isValueEmpty", small, @click="deleteFilter")
-          v-icon delete
+  settings-button-field(
+    :title="$t('settings.liveReporting.title')",
+    :isEmpty="isValueEmpty",
+    @create="openFilterModal",
+    @edit="openFilterModal",
+    @delete="deleteFilter"
+  )
+    .subheading(slot="title") {{ $t('settings.filterEditor') }}
+      .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optional') }})
 </template>
 
 <script>
@@ -21,7 +17,10 @@ import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 
+import SettingsButtonField from '../partials/button-field.vue';
+
 export default {
+  components: { SettingsButtonField },
   mixins: [modalMixin],
   props: {
     value: {
