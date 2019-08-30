@@ -150,13 +150,22 @@ export default {
     grid-template-columns: 1fr 8fr 1fr;
     grid-template-rows: 5% auto auto 15% auto;
 
-    grid-template-areas: ". . ." ". description ." ". form ." ". . ." "footer footer footer";
+    grid-template-areas:
+      ". . ."
+      ". description ."
+      ". form ."
+      ". . ."
+      "footer footer footer";
 
     @media (min-width: 900px) {
       grid-template-columns: auto 40% 1% 40% auto;
       grid-template-rows: auto auto auto auto;
 
-      grid-template-areas: ". . . . ." ". description . form ." ". . . . ." "footer footer footer footer footer";
+      grid-template-areas:
+        ". . . . ."
+        ". description . form ."
+        ". . . . ."
+        "footer footer footer footer footer";
     }
 
     @media (min-width: 1200px) {

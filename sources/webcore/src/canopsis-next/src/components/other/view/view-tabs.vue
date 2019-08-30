@@ -113,8 +113,7 @@ export default {
     },
     updateViewMethod: {
       type: Function,
-      default: () => {
-      },
+      default: () => {},
     },
   },
   computed: {
