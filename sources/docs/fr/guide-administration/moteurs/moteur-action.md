@@ -21,8 +21,19 @@ Les actions sont stockées dans la collection Mongo `default_action` (voir [API 
 {
     "_id" : "xyz",
     "type": "pbehavior",
-    "fields" : ["Resource", "Component"],
-    "regex" : ".*whale.*",
+    "hook": {
+        "event_patterns": [
+            {
+                "resource": "CPU_2"
+            },
+            {
+                "resource": "HDD_2"
+            }
+        ],
+        "triggers": [
+            "create"
+        ]
+    },
     "parameters" : {
         "author" : "whalefact",
         "name" : "Big",

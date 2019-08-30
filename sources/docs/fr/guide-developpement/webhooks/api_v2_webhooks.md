@@ -21,6 +21,7 @@ Crée un nouveau Webhook à partir du corps de la requête.
 ```json
 {
     "_id" : "declare_external_ticket",
+    "disable_if_active_pbehavior": false,
     "hook" : {
         "triggers" : [
             "create"
@@ -65,6 +66,7 @@ Crée un nouveau Webhook à partir du corps de la requête.
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "_id" : "declare_external_ticket",
+    "disable_if_active_pbehavior": false,
     "hook" : {
         "triggers" : [
             "create"
@@ -163,6 +165,120 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 }
 ```
 
+### Modification de Webhook
+
+Modifie un Webhook à partir du corps de la requête.
+
+**URL** : `/api/v2/webhook/<webhook_id>`
+
+**Méthode** : `PUT`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de corps de requête** :
+```json
+{
+    "_id" : "declare_external_ticket",
+    "disable_if_active_pbehavior": true,
+    "hook" : {
+        "triggers" : [
+            "create"
+        ],
+        "event_patterns" : [
+            {
+                "connector" : "zabbix2",
+            }
+        ],
+        "entity_patterns" : [
+            {
+                "infos" : {
+                    "output" : {
+                        "value": {"regex_match": "MemoryDisk.*"}
+                    }
+                }
+            }
+        ]
+    },
+    "request" : {
+        "method" : "PUT",
+        "auth" : {
+            "username" : "ABC",
+            "password" : "a!(b)-c_"
+        },
+        "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
+        "headers" : {
+            "Content-type" : "application/json"
+        },
+        "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "declare_ticket" : {
+        "ticket_id" : "id",
+        "ticket_creation_date" : "timestamp",
+        "priority" : "priority"
+    }
+}
+```
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut envoyer le JSON ci-dessus pour modifier la règle dont l'`_id` vaut `declare_external_ticket` :
+
+```sh
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+    "_id" : "declare_external_ticket",
+    "disable_if_active_pbehavior": true,
+    "hook" : {
+        "triggers" : [
+            "create"
+        ],
+        "event_patterns" : [
+            {
+                "connector" : "zabbix2",
+            }
+        ],
+        "entity_patterns" : [
+            {
+                "infos" : {
+                    "output" : {
+                        "value": {"regex_match": "MemoryDisk.*"}
+                    }
+                }
+            }
+        ]
+    },
+    "request" : {
+        "method" : "PUT",
+        "auth" : {
+            "username" : "ABC",
+            "password" : "a!(b)-c_"
+        },
+        "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
+        "headers" : {
+            "Content-type" : "application/json"
+        },
+        "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "declare_ticket" : {
+        "ticket_id" : "id",
+        "ticket_creation_date" : "timestamp",
+        "priority" : "priority"
+    }
+}' 'http://<Canopsis_URL>/api/v2/webhook/declare_external_ticket'
+```
+
+#### Réponse en cas de réussite
+
+**Condition** : le Webhook est modifié
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
+
+```json
+{  
+}
+```
+
 
 ### Suppression de Webhook
 
@@ -184,7 +300,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_extern
 
 #### Réponse en cas de réussite
 
-**Condition** : La suppresion du Webhook a réussi.
+**Condition** : La suppression du Webhook a réussi.
 
 **Code** : `200 OK`
 
