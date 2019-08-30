@@ -282,7 +282,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules/6dacc23
 
 #### Récupération de toutes les règles en base de données
 
-Récupère tous les Webhooks stockés en base
+Récupère toutes les règles stockées en base
 
 **URL** : `/api/v2/eventfilter/rules`
 
@@ -292,7 +292,7 @@ Récupère tous les Webhooks stockés en base
 
 **Permissions requises** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les webhooks :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer toutes les règles :
 
 ```sh
 curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules'
