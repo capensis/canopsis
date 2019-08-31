@@ -29,7 +29,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | [action](moteur-action.md)          | Applique des actions définies par l'utilisateur.                                 |                    |
 | axe            | Gère le cycle de vie des alarmes.                                                |                    |
 | [axe@**webhooks**](../webhooks/index.md)   | Gère le système de webhooks vers des services externes.                                                | ✅                 |
-| che            | Supprime les évènements invalides, gère le contexte, et enrichit les évènements. |                    |
+| che            | Supprime les évènements invalides, gère le contexte, et enrichit les évènements via sa fonctionnalité d'[event-filter](../event-filter/index.md). |                    |
 | heartbeat      | Surveille des entités, et lève des alarmes en cas d'absence d'information.       |                    |
 | stat           | Calcule des statistiques sur les états des alarmes.                              |                    |
 | watcher        | Calcule les états des [watchers](../watchers/index.md).                          |                    |
