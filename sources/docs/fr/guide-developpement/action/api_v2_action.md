@@ -244,15 +244,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/actions/action_id_pbeh
 
 **Condition** : La suppression de l'Action a réussi.
 
-**Code** : `200 OK`
-
-**Exemple du corps de la réponse** :
-
-```json
-{
-    true
-}
-```
+Renvoie un booléen.
 
 ### Récupération des Actions
 

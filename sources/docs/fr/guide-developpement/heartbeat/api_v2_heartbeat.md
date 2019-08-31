@@ -2,7 +2,7 @@
 
 L'API HeartBeat permet de consulter, créer et supprimer des HeartBeats.
 
-### Creation de Heartbeat
+### Création de Heartbeat
 
 Crée un nouveau HeartBeat à partir du corps de la requête.
 
