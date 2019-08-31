@@ -5,6 +5,8 @@
 
 L'API Webhooks permet de consulter, créer, modifier et supprimer des Webhooks.
 
+Pour plus d'informations sur ce qu'est un webhook, consulter la [documentation sur les Webhooks](../../guide-administration/webhooks/index.md).
+
 ### Création de Webhook
 
 Crée un nouveau Webhook à partir du corps de la requête.
