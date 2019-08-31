@@ -1,6 +1,6 @@
 # API Action
 
-L'API Action permet de consulter, créer et supprimer des Actions sur les alarmes.
+L'API Action permet de consulter, créer, modifier et supprimer des Actions sur les alarmes.
 
 ### Création d'Actions
 

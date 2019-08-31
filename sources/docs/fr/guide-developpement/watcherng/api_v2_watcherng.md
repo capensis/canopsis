@@ -1,6 +1,6 @@
 # API Watchers
 
-L'API Watchers permet de consulter, créer et supprimer des Watchers.
+L'API Watchers permet de consulter, créer, modifier et supprimer des Watchers.
 
 ### Creation de watcher
 

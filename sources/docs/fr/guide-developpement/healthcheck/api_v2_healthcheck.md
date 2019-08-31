@@ -33,11 +33,29 @@ Les paramètres sont :
 
 ### Récupérer l'état global
 
-```
-GET /api/v2/healthcheck/
+Renvoie un résumé de l'état.
+
+**URL** : `/api/v2/healthcheck/`
+
+**Méthode** : `GET`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'état général :
+
+```sh
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/healthcheck/'
 ```
 
-Renvoie un résumé de l'état.
+##### Réponse en cas de réussite
+
+**Condition** : aucune.
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
 
 ```json
 {
@@ -55,19 +73,36 @@ Le bon fonctionnement général est annoncé par la clef **overall** qui doit ê
 
 ### Récupérer l'état des services
 
-```
-GET /api/v2/healthcheck/?criticals=amqp,cache,database,engines,time_series
+Récupère l'état de services en particulier.
+
+**URL** : `/api/v2/healthcheck/?criticals=<id_des_services>`
+
+**Méthode** : `GET`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'état des services `amqp`, `cache`, `database` et `engines` :
+
+```sh
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/healthcheck/?criticals=amqp,cache,database,engines'
 ```
 
-Renvoie un résumé de l'état.
+##### Réponse en cas de réussite
+
+**Condition** : aucune.
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
 
 ```json
 {
     "amqp": "",
     "cache": "",
     "database": "",
-    "engines": "",
-    "time_series": "",
+    "engines": "",    
     "timestamp": 1541774674,
     "overall": true
 }
