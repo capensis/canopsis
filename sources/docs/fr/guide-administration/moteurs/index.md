@@ -13,9 +13,9 @@ Un moteur a **plusieurs rôles** :
 
 Un moteur peut avoir les **propriétés** suivantes :
 
-*  un type (the python module to load)
-*  un nom (must be unique)
-*  un identifiant (0, 1, 2, 3, ..., must be unique)
+*  un type (le module python à charger)
+*  un nom (obligatoirement unique)
+*  un identifiant (0, 1, 2, 3, ..., obligatoirement unique)
 *  un niveau de log (debug, info, warning, or error)
 
 Le listing des moteurs peut être réalisé grâce à cette commande : `systemctl list-units "canopsis*"`
@@ -45,7 +45,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | **datametrie**                                                 | Gère le connecteur datametrie.                           | ✅             |
 | [canopsis-engine@**event_filter-event_filter**.service](moteur-event_filter.md)          | Applique des règles de filtrage.                         |                    |
 | canopsis-engine@**metric-metric**.service                      | Stocke les données de métrologie des évènements.         |                    |
-| canopsis-engine@**dynamic-pbehavior**.service                  | Gère les périodes de maintenance.                        |                    |
+| [canopsis-engine@**dynamic-pbehavior**.service](moteur-pbehavior.md)                  | Gère les périodes de maintenance.                        |                    |
 | canopsis-engine@**scheduler-scheduler**.service                | Envoyer un travail à des gestionnaires de tâches.        |                    |
 | [canopsis-engine-cat@**snmp**](moteur-snmp.md)                                                       | Gère les traps SNMP.                                     | ✅             |
 | canopsis-engine@**task_dataclean-task_dataclean**.service      | Gestionnaire pour supprimer anciennes données.           |                    |
