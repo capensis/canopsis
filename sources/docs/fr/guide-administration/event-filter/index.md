@@ -4,7 +4,7 @@ L'event-filter est une fonctionnalité du moteur `che` permettant de définir de
 règles manipulant les évènements.
 
 Les règles sont définies dans la collection MongoDB `eventfilter`, et
-peuvent-être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/event-filter/api.md).
+peuvent être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/event-filter/api.md).
 
 Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la
 partie [Exemples](#exemples).
