@@ -14,8 +14,6 @@ next = [moteur_suivant],[moteur_suivant2]
 
 Dans le fichier `amqp2engines.conf` il y a `event.processing` et `beat.processing` : le premier permet de lire les évènements, le second permet de configurer leur traitement périodique.
 
-Tous les moteurs peuvent communiquer avec MongoDB et InfluxDB.
-
 ## Go
 
 L'enchainement des moteurs Go de Canopsis se configure à leur lancement via l'option `-publishQueue`.
@@ -24,7 +22,9 @@ Dans le cadre d'un déploiement d'une stack Go, il faut modifier l'option du `en
 
 À la place, il faut le faire publier dans la file du moteur Axe.
 
-Pour cela, exécuter les commandes suivantes :
+### Paquets
+
+Pour une installation Paquets, exécuter les commandes suivantes :
 
 Créer du fichier de configuration de l'Engine Che
 
@@ -35,14 +35,54 @@ echo "ExecStart=" >> /etc/systemd/system/canopsis-engine-go@engine-che.service.d
 echo "ExecStart=/usr/bin/env /opt/canopsis/bin/%i -publishQueue Engine_axe" >> /etc/systemd/system/canopsis-engine-go@engine-che.service.d/override.conf
 ```
 
-Recharger le démon de `systemctl` puis redémarrer le moteur Che pour prendre en compte le nouveau fichier.
-
-```sh
+Recharger systemd pour prendre en compte la modification.
+```shell
 systemctl daemon-reload
-systemctl start canopsis-engine-go@engine-che
+```
+Terminer en redémarrant le moteur.
+```shell
+systemctl restart canopsis-engine-go@engine-che
+```
+Et vérifier son nouveau statut :
+```shell
+systemctl status canopsis-engine-go@engine-che
 ```
 
+### Docker
+
+Pour une installation Docker, modifier le service `Che` du docker-compose :
+
+```yaml
+  che:
+    image: canopsis/engine-che:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    restart: unless-stopped
+    command: /engine-che -d
+```
+
+Ajouter la commande ` -publishQueue Engine_axe` :
+
+```yaml
+  che:
+    image: canopsis/engine-che:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    restart: unless-stopped
+    command: /engine-che -d -publishQueue Engine_axe
+```
+
+Redémarrer le moteur `Che` pour lui faire prendre en compte la modification.
+
+```sh
+docker-compose up -d che
+```
+
+## Interactions avec les bases de données
+
 Tous les moteurs peuvent communiquer avec MongoDB et InfluxDB.
+
+Les moteurs `Action` et `Heartbeat` peuvent communiquer avec Redis.
 
 ## Représentation
 
