@@ -183,7 +183,14 @@ module.exports = {
       .clickSubmitButton()
       .verifyModalClosed();
 
-    weather.clickSubmitWeather();
+    browser.waitForFirstXHR(
+      API_ROUTES.userPreferences,
+      5000,
+      () => weather.clickSubmitWeather(),
+      ({ responseData }) => {
+        browser.globals.temporary.widgetId = JSON.parse(responseData).data[0].widget_id;
+      },
+    );
   },
 
   'Edit widget weather with some name': (browser) => {
@@ -191,7 +198,7 @@ module.exports = {
     const weather = browser.page.widget.weather();
 
     browser.page.view()
-      .clickEditWidgetButton();
+      .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.setCommonFields({
       advanced: true,
@@ -289,7 +296,7 @@ module.exports = {
 
   'Delete widget weather with some name': (browser) => {
     browser.page.view()
-      .clickDeleteWidgetButton();
+      .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 
     browser.page.modals.common.confirmation()
       .verifyModalOpened()
@@ -299,7 +306,7 @@ module.exports = {
 
   'Delete row with some name': (browser) => {
     browser.page.view()
-      .clickDeleteRowButton();
+      .clickDeleteRowButton(1);
 
     browser.page.modals.common.confirmation()
       .verifyModalOpened()

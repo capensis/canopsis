@@ -65,30 +65,30 @@ const commands = {
       .assert.visible('@settingsViewButton');
   },
 
-  clickDeleteRowButton() {
-    return this.customClick('@deleteRowButton');
+  clickDeleteRowButton(index = 0) {
+    return this.customClick(this.el('@deleteRowButton', index));
   },
 
-  clickDeleteWidgetButton() {
-    return this.customClick('@deleteWidgetButton');
+  clickDeleteWidgetButton(id) {
+    return this.customClick(this.el('@deleteWidgetButton', id));
   },
 
-  clickCopyWidgetButton() {
-    return this.customClick('@copyWidgetButton');
+  clickCopyWidgetButton(id) {
+    return this.customClick(this.el('@copyWidgetButton', id));
   },
 
-  clickEditWidgetButton() {
-    return this.customClick('@editWidgetButton');
+  clickEditWidgetButton(id) {
+    return this.customClick(this.el('@editWidgetButton', id));
   },
   el,
 };
 
 module.exports = {
   elements: {
-    deleteRowButton: sel('deleteRowButton'),
-    deleteWidgetButton: sel('deleteWidgetButton'),
-    copyWidgetButton: sel('copyWidgetButton'),
-    editWidgetButton: sel('editWidgetButton'),
+    deleteRowButton: `${sel('deleteRowButton')}:nth-child(%s)`,
+    deleteWidgetButton: `${sel('deleteWidgetButton-%s')}`,
+    copyWidgetButton: `${sel('copyWidgetButton-%s')}`,
+    editWidgetButton: `${sel('editWidgetButton-%s')}`,
     viewPageById: sel('view-page-%s'),
     controlViewLayout: `${sel('controlViewLayout')} .v-speed-dial`,
     menuViewButton: `${sel('controlViewLayout')} .v-speed-dial ${sel('menuViewButton')}`,
