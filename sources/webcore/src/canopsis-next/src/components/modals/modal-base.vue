@@ -60,6 +60,7 @@ import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
 import SelectViewTab from './view/select-view-tab.vue';
+import CreateHeartbeat from './heartbeat/create-heartbeat.vue';
 
 export default {
   name: 'modal-base',
@@ -110,6 +111,7 @@ export default {
     CreateWebhook,
     CreateSnmpRule,
     SelectViewTab,
+    CreateHeartbeat,
 
     ...featuresService.get('components.modals.components'),
   },
