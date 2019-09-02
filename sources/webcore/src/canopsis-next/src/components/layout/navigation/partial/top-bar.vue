@@ -106,6 +106,12 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.snmpRule,
         },
+        {
+          route: { name: 'exploitation-heartbeats' },
+          text: this.$t('heartbeats.title'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.exploitation.heartbeat,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));
