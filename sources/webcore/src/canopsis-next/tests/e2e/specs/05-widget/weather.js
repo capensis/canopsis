@@ -98,6 +98,8 @@ module.exports = {
         md: 12,
         lg: 12,
       },
+      title: 'Weather widget',
+      periodicRefresh: 140,
       advanced: true,
       parameters: {
         limit: 140,
@@ -120,11 +122,25 @@ module.exports = {
         heightFactor: 20,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList,
       },
-      title: 'Weather widget',
-      periodicRefresh: 140,
     });
 
-    common.clickEditFilter();
+    common
+      .clickColumnNames()
+      .editColumnName(1, {
+        value: 'alarm.v.changeConnector',
+        label: 'Connector(changed)',
+        isHtml: true,
+      })
+      .clickColumnNameDownWard(1)
+      .clickColumnNameUpWard(2)
+      .clickDeleteColumnName(2)
+      .clickAddColumnName()
+      .editColumnName(8, {
+        value: 'alarm.v.connector',
+        label: 'New column',
+        isHtml: true,
+      })
+      .clickCreateFilter();
 
     browser.page.modals.view.createFilter()
       .verifyModalOpened()
@@ -209,7 +225,19 @@ module.exports = {
       periodicRefresh: 180,
     });
 
-    common.clickEditFilter();
+    common
+      .clickColumnNames()
+      .editColumnName(1, {
+        value: 'alarm.v.connector',
+        label: 'Connector(edited)',
+        isHtml: true,
+      })
+      .editColumnName(8, {
+        value: 'alarm.v.connector_name',
+        label: 'New column(edited)',
+        isHtml: false,
+      })
+      .clickCreateFilter();
 
     browser.page.modals.view.createFilter()
       .verifyModalOpened()

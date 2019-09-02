@@ -3,13 +3,13 @@
     v-layout(align-center, justify-space-between)
       slot(name="title")
       v-layout(justify-end)
-        v-btn.primary(v-if="props.isEmpty", small, @click="listeners.create")
+        v-btn.primary(data-test="createButton", v-if="props.isEmpty", small, @click="listeners.create")
           span {{ parent.$t('common.create') }}
         template(v-else)
-          v-btn.primary(small, @click="listeners.edit")
+          v-btn.primary(data-test="editButton", small, @click="listeners.edit")
             span {{ parent.$t('common.edit') }}
           v-btn.error(small, @click="listeners.delete")
-            v-icon delete
+            v-icon(data-test="deleteButton") delete
 </template>
 
 <script>

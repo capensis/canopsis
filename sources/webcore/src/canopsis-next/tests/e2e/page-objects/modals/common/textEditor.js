@@ -2,6 +2,8 @@
 
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
+const modalSelector = sel('textEditorModal');
+
 const commands = {
   clickField() {
     return this.customClick('@textareaField');
@@ -15,8 +17,6 @@ const commands = {
     return this.customClearRTE('@textareaField');
   },
 };
-
-const modalSelector = sel('textEditorModal');
 
 module.exports = modalCreator(modalSelector, {
   elements: {

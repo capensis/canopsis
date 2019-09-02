@@ -12,7 +12,11 @@
       v-divider
       field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hidden-fields="['title']")
+      field-filter-editor(
+      data-test="widgetFilterEditor",
+      v-model="settings.widget.parameters.mfilter",
+      :hidden-fields="['title']"
+      )
       v-divider
       v-list-group(data-test="widgetAlarmsList")
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}

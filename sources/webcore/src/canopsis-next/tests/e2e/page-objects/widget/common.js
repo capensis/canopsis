@@ -13,8 +13,7 @@ const commands = {
   },
 
   clickPeriodicRefresh() {
-    return this.customClick('@periodicRefresh')
-      .defaultPause();
+    return this.customClick('@periodicRefresh');
   },
 
   togglePeriodicRefreshSwitch(checked = false) {
@@ -38,8 +37,7 @@ const commands = {
   },
 
   clickWidgetTitle() {
-    return this.customClick('@widgetTitle')
-      .defaultPause();
+    return this.customClick('@widgetTitle');
   },
 
   setWidgetTitleField(value) {
@@ -55,8 +53,7 @@ const commands = {
   },
 
   clickRowGridSize() {
-    return this.customClick('@rowGridSize')
-      .defaultPause();
+    return this.customClick('@rowGridSize');
   },
 
   clearRow() {
@@ -77,8 +74,7 @@ const commands = {
   },
 
   clickWidgetLimit() {
-    return this.customClick('@widgetLimit')
-      .defaultPause();
+    return this.customClick('@widgetLimit');
   },
 
   clearWidgetLimitField() {
@@ -90,18 +86,15 @@ const commands = {
   },
 
   clickAdvancedSettings() {
-    return this.customClick('@advancedSettings')
-      .defaultPause();
+    return this.customClick('@advancedSettings');
   },
 
   clickAlarmList() {
-    return this.customClick('@alarmsList')
-      .defaultPause();
+    return this.customClick('@alarmsList');
   },
 
   clickDefaultSortColumn() {
-    return this.customClick('@defaultSortColumn')
-      .defaultPause();
+    return this.customClick('@defaultSortColumn');
   },
 
   selectSortOrderBy(index = 1) {
@@ -122,8 +115,7 @@ const commands = {
   },
 
   clickMarginBlock() {
-    return this.customClick('@marginBlock')
-      .defaultPause();
+    return this.customClick('@marginBlock');
   },
 
   setMargin(position, value) {
@@ -132,8 +124,7 @@ const commands = {
   },
 
   clickHeightFactor() {
-    return this.customClick('@widgetHeightFactoryHeader')
-      .defaultPause();
+    return this.customClick('@widgetHeightFactoryHeader');
   },
 
   setHeightFactor(value) {
@@ -141,44 +132,107 @@ const commands = {
   },
 
   clickModalType() {
-    return this.customClick('@modalType')
-      .defaultPause();
+    return this.customClick('@modalType');
   },
 
   clickModalTypeField(value = 1) {
-    return this.customClick(this.el('@modalTypeField', value))
-      .defaultPause();
+    return this.customClick(this.el('@modalTypeField', value));
+  },
+
+  clickCreateFilter() {
+    return this.customClick('@openWidgetFilterCreateModal');
   },
 
   clickEditFilter() {
-    return this.customClick('@openWidgetFilterEditModal')
-      .defaultPause();
+    return this.customClick('@openWidgetFilterEditModal');
   },
 
   clickDeleteFilter() {
-    return this.customClick('@openWidgetFilterDeleteModal')
-      .defaultPause();
+    return this.customClick('@openWidgetFilterDeleteModal');
   },
 
   clickCreateMoreInfos() {
-    return this.customClick('@moreInfoTemplateCreateButton')
-      .defaultPause();
+    return this.customClick('@moreInfoTemplateCreateButton');
   },
 
   clickEditMoreInfos() {
-    return this.customClick('@moreInfoTemplateEditButton')
-      .defaultPause();
+    return this.customClick('@moreInfoTemplateEditButton');
   },
 
   clickElementsPerPage() {
-    return this.customClick('@elementsPerPage')
-      .defaultPause();
+    return this.customClick('@elementsPerPage');
   },
 
   selectElementsPerPage(index = 1) {
     return this.customClick('@elementsPerPageField')
       .waitForElementVisible(this.el('@selectOption', index))
       .customClick(this.el('@selectOption', index));
+  },
+
+  clickColumnNames() {
+    return this.customClick('@columnNames');
+  },
+
+  clickAddColumnName() {
+    return this.customClick(this.el('@columnNameAddButton'));
+  },
+
+  clickDeleteColumnName(index) {
+    return this.customClick(this.el('@columnNameDeleteButton', index));
+  },
+
+  clickColumnNameUpWard(index = 1) {
+    return this.customClick(this.el('@columnNameUpWardButton', index));
+  },
+
+  clickColumnNameDownWard(index = 1) {
+    return this.customClick(this.el('@columnNameDownWardButton', index));
+  },
+
+  clickColumnNameLabel(index = 1) {
+    return this.customClick(this.el('@columnNameLabelField', index));
+  },
+
+  clearColumnNameLabel(index = 1) {
+    return this.customClearValue(this.el('@columnNameLabelField', index));
+  },
+
+  setColumnNameLabel(index = 1, value) {
+    return this.customSetValue(this.el('@columnNameLabelField', index), value);
+  },
+
+  clickColumnNameValue(index = 1) {
+    return this.customClick(this.el('@columnNameValueField', index));
+  },
+
+  clearColumnNameValue(index = 1) {
+    return this.customClearValue(this.el('@columnNameValueField', index));
+  },
+
+  setColumnNameValue(index = 1, value) {
+    return this.customSetValue(this.el('@columnNameValueField', index), value);
+  },
+
+  clickColumnNameSwitch(index = 1) {
+    return this.customClick(this.el('@columnNameSwitchField', index));
+  },
+
+  toggleColumnNameSwitch(index, checked = false) {
+    return this.getAttribute(this.el('@columnNameSwitchFieldInput', index), 'aria-checked', ({ value }) => {
+      if (value === 'false' && checked) {
+        this.clickColumnNameSwitch(index);
+      }
+    });
+  },
+
+  editColumnName(index = 1, { label, value, isHtml = false }) {
+    return this.clickColumnNameLabel(index)
+      .clearColumnNameLabel(index, label)
+      .setColumnNameLabel(index, label)
+      .clickColumnNameValue(index)
+      .clearColumnNameValue(index)
+      .setColumnNameValue(index, value)
+      .toggleColumnNameSwitch(index, isHtml);
   },
 };
 
@@ -226,8 +280,9 @@ module.exports = {
     modalType: sel('modalType'),
     modalTypeField: `${sel('modalTypeGroup')} .v-radio:nth-of-type(%s) .v-label`,
 
-    openWidgetFilterEditModal: sel('openWidgetFilterEditModal'),
-    openWidgetFilterDeleteModal: sel('openWidgetFilterDeleteModal'),
+    openWidgetFilterCreateModal: `${sel('widgetFilterEditor')} ${sel('createButton')}`,
+    openWidgetFilterDeleteModal: `${sel('widgetFilterEditor')} ${sel('deleteButton')}`,
+    openWidgetFilterEditModal: `${sel('widgetMoreInfoTemplate')} ${sel('editButton')}`,
 
     elementsPerPage: sel('elementsPerPage'),
     elementsPerPageField: `${sel('elementsPerPageFieldContainer')} .v-input__slot`,
@@ -235,6 +290,17 @@ module.exports = {
     moreInfoTemplateCreateButton: `${sel('widgetMoreInfoTemplate')} ${sel('createButton')}`,
     moreInfoTemplateEditButton: `${sel('widgetMoreInfoTemplate')} ${sel('editButton')}`,
     moreInfoTemplateDeleteButton: `${sel('widgetMoreInfoTemplate')} ${sel('deleteButton')}`,
+
+    columnNames: sel('columnNames'),
+    columnNameAddButton: sel('columnNameAddButton'),
+
+    columnNameUpWardButton: `${sel('columnName')}:nth-child(%s) ${sel('columnNameUpWard')}`,
+    columnNameDownWardButton: `${sel('columnName')}:nth-child(%s) ${sel('columnNameDownWard')}`,
+    columnNameLabelField: `${sel('columnName')}:nth-child(%s) ${sel('columnNameLabel')}`,
+    columnNameValueField: `${sel('columnName')}:nth-child(%s) ${sel('columnNameValue')}`,
+    columnNameSwitchFieldInput: `${sel('columnName')}:nth-child(%s) input${sel('columnNameSwitch')}`,
+    columnNameSwitchField: `${sel('columnName')}:nth-child(%s) .v-input${sel('columnNameSwitch')} .v-input--selection-controls__ripple`,
+    columnNameDeleteButton: `${sel('columnName')}:nth-child(%s) ${sel('columnNameDeleteButton')}`,
   },
   commands: [commands],
 };
