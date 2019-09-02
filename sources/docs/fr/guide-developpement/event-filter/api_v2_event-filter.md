@@ -138,7 +138,7 @@ Modifie une règle à partir du corps de la requête.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut envoyer le JSON ci-dessus pour modifier la règle dont l'`_id` vaut `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
 
 ```sh
-curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "type": "enrichment",
     "pattern": {
         "component": "192.168.0.8"
