@@ -2,13 +2,12 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
-## Canopsis 3.27.0 - Due date : 2019-08-30
+## Canopsis 3.27.0 - Due date : 2019-09-02
 
  - [Documentation] Mention that -enrichContext flag is required when doing enrichment in Go engines
  - [Packaging] Upgrading to a newer Canopsis release doesn't reset the authkey anymore
  - [API] Allow to set the pbehavior’s id on creation
  - [API] Add search option in pbehaviors API
- - [Go] Use zerolog in go engines
  - [UI] Fix – Get app infos after login
  - [UI] Fix – Text editor going on top of top-bar on parameters view
  - [UI – Stats] Data format harmonization (durations, percentage) on stats widgets
