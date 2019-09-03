@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-list
-      v-list-tile.pa-0(v-for="(filter, index) in filters", :key="filter.value")
+      v-list-tile.pa-0(v-for="(filter, index) in filters", :key="filter.title")
         v-layout
           v-flex(xs12)
             v-list-tile-content {{ filter.title }}
@@ -44,6 +44,11 @@ export default {
       validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
     },
   },
+  computed: {
+    existsTitles() {
+      return this.filters.map(({ title }) => title);
+    },
+  },
   methods: {
     showCreateFilterModal() {
       this.showModal({
@@ -51,6 +56,7 @@ export default {
         config: {
           title: this.$t('modals.filter.create.title'),
           entitiesType: this.entitiesType,
+          existsTitles: this.existsTitles,
           action: (newFilter) => {
             this.$emit('create:filter', newFilter);
             this.$emit('update:filters', [...this.filters, newFilter]);
@@ -68,6 +74,7 @@ export default {
           title: this.$t('modals.filter.edit.title'),
           filter,
           entitiesType: this.entitiesType,
+          existsTitles: this.existsTitles,
           action: (newFilter) => {
             this.$emit('update:filter', newFilter, index);
             this.$emit('update:filters', this.filters.map((v, i) => (index === i ? newFilter : v)));
