@@ -4,7 +4,28 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ title }}
     v-card-text
-      v-btn(@click="showEditPatternModal") {{ $t('modals.eventFilterRule.editPattern') }}
+      v-form
+        v-layout(align-center)
+          v-flex(xs3)
+            v-text-field(
+              v-model="periodForm.periodValue",
+              v-validate="'required'",
+              :label="$t('modals.statsDateInterval.fields.periodValue')",
+              :error-messages="errors.collect('periodValue')",
+              type="number",
+              name="periodValue"
+            )
+          v-flex
+            v-select(
+              v-model="periodForm.periodUnit",
+              v-validate="'required'",
+              :items="periodUnits",
+              :label="$t('modals.statsDateInterval.fields.periodUnit')",
+              :error-messages="errors.collect('periodUnit')",
+              name="periodUnit"
+            )
+        v-layout
+          v-btn(@click="showEditPatternModal") {{ $t('modals.eventFilterRule.editPattern') }}
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
@@ -12,7 +33,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, HEARTBEAT_DURATION_UNITS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -27,9 +48,12 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
+      periodForm: {
+        periodValue: '',
+        periodUnit: '',
+      },
       form: {
         pattern: {},
-        expected_interval: '',
       },
     };
   },
@@ -40,6 +64,19 @@ export default {
       }
 
       return this.$t('modals.createHeartbeat.create.title');
+    },
+
+    periodUnits() {
+      return [
+        {
+          text: this.$tc('common.times.minute'),
+          value: HEARTBEAT_DURATION_UNITS.minute,
+        },
+        {
+          text: this.$tc('common.times.hour'),
+          value: HEARTBEAT_DURATION_UNITS.hour,
+        },
+      ];
     },
   },
   methods: {
@@ -58,6 +95,13 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
+        // const { periodValue, periodUnit } = this.periodForm;
+        // const { pattern } = this.form;
+        // const data = {
+        //   pattern,
+        //   expected_interval: `${periodValue}${periodUnit}`,
+        // };
+
         this.hideModal();
       }
     },
