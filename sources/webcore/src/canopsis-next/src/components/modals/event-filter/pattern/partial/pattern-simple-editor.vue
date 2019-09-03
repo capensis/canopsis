@@ -62,6 +62,10 @@ export default {
       type: Array,
       required: true,
     },
+    isSimplePattern: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -200,6 +204,7 @@ export default {
       this.showModal({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
+          isSimple: this.isSimplePattern,
           operators: this.operators,
           action: (newRule) => {
             this.updateField([...parentPath, newRule.field], newRule.value);

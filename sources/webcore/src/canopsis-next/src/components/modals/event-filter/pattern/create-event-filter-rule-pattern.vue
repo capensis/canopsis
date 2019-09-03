@@ -8,7 +8,11 @@
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
       v-tabs-items(v-model="activeTab")
         v-tab-item
-          pattern-simple-editor(v-model="pattern", :operators="operators")
+          pattern-simple-editor(
+          v-model="pattern",
+          :operators="operators",
+          :isSimplePattern="config.isSimplePattern"
+          )
         v-tab-item
           pattern-advanced-editor(v-model="pattern")
     v-divider
