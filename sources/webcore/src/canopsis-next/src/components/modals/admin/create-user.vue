@@ -55,7 +55,7 @@
           v-select(
           :label="$t('modals.createUser.fields.role')",
           v-model="form.role",
-          :items="roles",
+          :items="rolesList",
           item-text="_id",
           item-value="_id",
           data-vv-name="role",
@@ -200,7 +200,8 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchRolesList({ params: { limit: 0 } });
+    const { data } = await this.fetchRolesListWithoutStore({ params: { limit: 0 } });
+    this.rolesList = data;
 
     if (!this.isNew) {
       this.form = pick(this.config.user, [
