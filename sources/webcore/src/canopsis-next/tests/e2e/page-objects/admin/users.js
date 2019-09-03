@@ -3,15 +3,19 @@
 const el = require('../../helpers/el');
 const sel = require('../../helpers/sel');
 
+function getUserSelector(id) {
+  return sel(`user-${id}`);
+}
+
 const commands = {
   verifyPageElementsBefore() {
     return this.waitForElementVisible('@dataTable')
       .assert.visible('@addButton');
   },
 
-  verifyPageUserBefore(userSelector) {
+  verifyPageUserBefore(id) {
     return this.waitForElementVisible('@dataTable')
-      .assert.visible(this.sel(`user-${userSelector}`));
+      .assert.visible(getUserSelector(id));
   },
 
   verifyMassDeleteButton() {
@@ -22,16 +26,16 @@ const commands = {
     return this.customClick('@addButton');
   },
 
-  clickOptionCheckbox(userSelector) {
-    return this.customClick(this.el('@optionCheckbox', this.sel(`user-${userSelector}`)));
+  clickOptionCheckbox(id) {
+    return this.customClick(this.el('@optionCheckbox', getUserSelector(id)));
   },
 
-  clickEditButton(userSelector) {
-    return this.customClick(this.el('@editButton', this.sel(`user-${userSelector}`)));
+  clickEditButton(id) {
+    return this.customClick(this.el('@editButton', getUserSelector(id)));
   },
 
-  clickDeleteButton(userSelector) {
-    return this.customClick(this.el('@deleteButton', this.sel(`user-${userSelector}`)));
+  clickDeleteButton(id) {
+    return this.customClick(this.el('@deleteButton', getUserSelector(id)));
   },
 
   clickMassDeleteButton() {
@@ -65,7 +69,6 @@ const commands = {
   },
 
   el,
-  sel,
 };
 
 module.exports = {
@@ -74,6 +77,7 @@ module.exports = {
   },
   elements: {
     dataTable: '.v-datatable',
+    dataTableUserItem: '.v-datatable tbody tr',
     addButton: sel('addButton'),
     searchingTextField: sel('searchingTextField'),
     submitSearchButton: sel('submitSearchButton'),

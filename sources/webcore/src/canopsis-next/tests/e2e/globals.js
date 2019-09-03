@@ -3,6 +3,7 @@
 const nightWatchRecord = require('nightwatch-record');
 
 module.exports = {
+  asyncHookTimeout: 20000,
   waitForConditionTimeout: 5000,
 
   beforeEach(browser, done) {

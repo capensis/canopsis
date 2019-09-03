@@ -1,5 +1,6 @@
 <template lang="pug">
   v-speed-dial(
+  data-test="settingsWrapper",
   v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
   v-model="isVSpeedDialOpen",
   transition="slide-y-reverse-transition",

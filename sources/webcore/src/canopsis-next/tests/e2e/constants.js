@@ -21,6 +21,11 @@ module.exports.USERS = {
   },
 };
 
+module.exports.ROLES = {
+  text: 'role',
+  counts: 3,
+};
+
 module.exports.NAVIGATION = {
   groups: {
     text: 'view',
@@ -53,4 +58,37 @@ module.exports.VIEW = {
   title: `test-title-${RANDOM}`,
   description: `test-description-${RANDOM}`,
   group: `test-group-${RANDOM}`,
+};
+
+module.exports.SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
+  moreInfo: 1,
+  alarmList: 2,
+  both: 3,
+};
+
+module.exports.SERVICE_WEATHER_WIDGET_SORT_FIELD = {
+  name: 1,
+  state: 2,
+  status: 3,
+  criticity: 4,
+  org: 5,
+};
+
+
+module.exports.SORT_ORDERS = {
+  asc: 1,
+  desc: 2,
+};
+
+module.exports.LANGUAGES_POSITIONS = {
+  en: 1,
+  fr: 2,
+};
+
+module.exports.PAGINATION_PER_PAGE_VALUES = {
+  FIVE: 1,
+  TEN: 2,
+  TWENTY: 3,
+  FIFTY: 4,
+  HUNDRED: 5,
 };

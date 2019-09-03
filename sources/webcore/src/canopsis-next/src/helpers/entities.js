@@ -93,6 +93,7 @@ export function generateWidgetByType(type) {
         viewFilters: [],
         mainFilter: null,
         infoPopups: [],
+        liveReporting: {},
         periodicRefresh: {
           enabled: false,
           interval: 60,

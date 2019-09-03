@@ -37,6 +37,8 @@
             :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
+          field-live-reporting(v-model="settings.widget.parameters.liveReporting")
+          v-divider
           field-info-popup(
           v-model="settings.widget.parameters.infoPopups",
           :columns="settings.widget.parameters.widgetColumns",
@@ -89,6 +91,7 @@ import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
+import FieldLiveReporting from './fields/common/live-reporting.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
@@ -111,6 +114,7 @@ export default {
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
+    FieldLiveReporting,
     FieldPeriodicRefresh,
     FieldDefaultElementsPerPage,
     FieldOpenedResolvedFilter,

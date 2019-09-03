@@ -36,13 +36,20 @@ const commands = {
   clickLogoutButton() {
     return this.customClick('@logoutButton');
   },
+
+  getLogoutButtonText(callback) {
+    return this.getText('@logoutButtonText', callback);
+  },
 };
+
+const logoutButtonSelector = sel('logoutButton');
 
 module.exports = {
   elements: {
     userTopBarDropdownButton: sel('userTopBarDropdownButton'),
     userProfileButton: sel('userProfileButton'),
-    logoutButton: sel('logoutButton'),
+    logoutButton: logoutButtonSelector,
+    logoutButtonText: `${logoutButtonSelector} .ml-2`,
     dropdownButton: sel('dropDownButton-group-%s'),
     dropdownZone: `.v-menu__content ${sel('dropDownZone-group-%s')}`,
     editGroupButton: `${sel('dropDownButton-group-%s')} .v-btn${sel('editGroupButton')}`,

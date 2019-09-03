@@ -2,24 +2,29 @@
 
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
+const modalSelector = sel('textEditorModal');
+
 const commands = {
-  setRTE(value) {
-    return this.customClick('@textRTE')
-      .sendKeys('@textRTE', value);
+  clickField() {
+    return this.customClick('@textareaField');
   },
-  clickSubmitButton() {
-    return this.customClick('@submitButton');
+
+  setField(value) {
+    return this.sendKeys('@textareaField', value);
+  },
+
+  clearField() {
+    return this.customClearRTE('@textareaField');
   },
 };
-
-const modalSelector = sel('textEditorModal');
 
 module.exports = modalCreator(modalSelector, {
   elements: {
     ...elementsWrapperCreator(modalSelector, {
-      textRTE: `${sel('jodit')} .jodit_wysiwyg`,
-      submitButton: sel('submitButton'),
+      submitButton: sel('textEditorSubmitButton'),
+      cancelButton: sel('textEditorCancelButton'),
     }),
+    textareaField: `${sel('textEditorModal')} .jodit_wysiwyg`,
   },
   commands: [commands],
 });

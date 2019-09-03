@@ -23,9 +23,14 @@
       )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(
+      data-test="createFilterCancelButton",
+      @click="hideModal",
+      depressed,
+      flat
+      ) {{ $t('common.cancel') }}
       v-btn.primary(
-      data-test="submitFilter",
+      data-test="createFilterSubmitButton",
       :disabled="errors.any()",
       @click="submit"
       ) {{ $t('common.submit') }}

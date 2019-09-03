@@ -20,19 +20,19 @@
           v-layout(justify-end)
             template(v-if="isEditingMode && hasUpdateAccess")
               v-btn.ma-1(
-              data-test="deleteWidgetButton",
               @click="showDeleteWidgetModal(row._id, widget)",
+              :data-test="`deleteWidgetButton-${widget._id}`",
               small,
               color="error",
               ) {{ $t('view.deleteWidget') }}
               v-btn.ma-1(
-              data-test="copyWidgetButton",
               @click="showSelectViewTabModal(widget)",
+              :data-test="`copyWidgetButton-${widget._id}`",
               icon
               )
                 v-icon file_copy
               v-btn.ma-1(
-              data-test="editWidgetButton",
+              :data-test="`editWidgetButton-${widget._id}`",
               @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
               icon
               )

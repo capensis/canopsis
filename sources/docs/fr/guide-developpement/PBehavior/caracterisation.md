@@ -4,7 +4,7 @@ Un pbehavior se caractérise par les informations suivantes.
 
 | Champ  | Type   | Description |
 | -------| ------ | ----------- |
-| `_id` | ? | Identifiant unique du comportement, généré par MongoDB lui-même. |
+| `_id` | str | Identifiant unique du comportement, généré par MongoDB ou précisé à la création du pbehavior. |
 | `eids` | liste | Liste d'identifiants d'entité qui correspond au filtre précédent. |
 | `name` | string | Type de pbehavior. `downtime` est la seule valeur acceptée. |
 | `author` | string | Auteur ou application ayant créé le pbehavior. |

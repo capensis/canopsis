@@ -3,7 +3,7 @@ const { API_ROUTES } = require('../../../../../src/config');
 
 module.exports.command = function deleteView(groupId, viewId, callback = () => {}) {
   const topBar = this.page.layout.topBar();
-  const confirmation = this.page.modals.confirmation();
+  const confirmation = this.page.modals.common.confirmation();
   const navigation = this.page.layout.navigation();
   const createUser = this.page.modals.admin.createUser();
   const groupsSideBar = this.page.layout.groupsSideBar();
@@ -42,11 +42,13 @@ module.exports.command = function deleteView(groupId, viewId, callback = () => {
   this.waitForFirstXHR(
     `${API_ROUTES.view}/${viewId}`,
     5000,
-    () => confirmation.clickConfirmButton(),
-    ({ responseData }) => callback(JSON.parse(responseData)),
-  );
+    () => confirmation.clickSubmitButton(),
+    ({ responseData }) => {
+      confirmation.verifyModalClosed();
 
-  confirmation.verifyModalClosed();
+      callback(JSON.parse(responseData));
+    },
+  );
 
   return this;
 };

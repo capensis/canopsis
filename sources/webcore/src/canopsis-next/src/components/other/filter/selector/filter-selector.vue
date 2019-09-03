@@ -5,6 +5,7 @@
       data-test="mixFilters",
       :label="$t('filterSelector.fields.mixFilters')",
       :input-value="isMultiple",
+      color="primary",
       :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
       @change="updateIsMultipleFlag"
       )
