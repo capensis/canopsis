@@ -461,7 +461,7 @@ class ContextGraphImport(ContextGraph):
                 self.update[ent_id] = self.entities_to_update[ent_id].copy()
             try:
                 self.update[ent_id][self.K_IMPACT].remove(id_)
-            except ValueError:
+            except (ValueError, KeyError):
                 raise ValueError("Try to remove {0} from impacts field of"
                                  "entity {1}.".format(id_, ent_id))
 
@@ -475,7 +475,7 @@ class ContextGraphImport(ContextGraph):
                 self.update[ent_id] = self.entities_to_update[ent_id].copy()
             try:
                 self.update[ent_id][self.K_DEPENDS].remove(id_)
-            except ValueError:
+            except (ValueError, KeyError):
                 raise ValueError("Try to remove {0} from impacts field of"
                                  "entity {1}.".format(id_, ent_id))
 
