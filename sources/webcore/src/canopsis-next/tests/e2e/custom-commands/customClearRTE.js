@@ -2,7 +2,7 @@
 
 const WAIT_PAUSE = 500;
 
-module.exports.command = function customClearValue(selector) {
+module.exports.command = function customClearRTE(selector) {
   const { CONTROL, DELETE } = this.Keys;
 
   this.customClick(selector)

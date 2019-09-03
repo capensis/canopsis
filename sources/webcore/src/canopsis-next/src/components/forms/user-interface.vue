@@ -1,30 +1,43 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(
+  data-test="userInterfaceForm",
+  @submit.prevent="submit"
+  )
     v-layout(row)
       v-flex.text-xs-center
         .title {{ $t('parameters.userInterfaceForm.title') }}
     v-layout(row)
       v-flex
         v-text-field(
+        data-test="appTitle",
         v-model="form.appTitle",
         :disabled="disabled",
         :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
-    v-layout(row)
+    v-layout(
+    data-test="languageLayout",
+    row
+    )
       v-flex
         v-select(
         v-model="form.language",
         :items="languages",
         :label="$t('parameters.userInterfaceForm.fields.language')"
         )
-    v-layout(row)
+    v-layout(
+    data-test="footerLayout",
+    row
+    )
       v-flex
         span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.footer') }}
         text-editor(
         v-model="form.footer",
         :config="textEditorConfig"
         )
-    v-layout.mt-3(row)
+    v-layout.mt-3(
+    data-test="descriptionLayout",
+    row
+    )
       v-flex
         span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.description') }}
         text-editor(
@@ -36,6 +49,7 @@
         span.theme--light.v-label.file-selector__label {{ $t('parameters.userInterfaceForm.fields.logo') }}
         v-layout(row)
           file-selector.mt-1(
+          data-test="fileSelector",
           ref="fileSelector",
           v-validate="`image|size:${$config.MAX_LOGO_SIZE_IN_KB}`",
           :error-messages="errors.collect('logo')",
@@ -53,6 +67,7 @@
         @click="reset"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
+        data-test="submitButton",
         :disabled="submitting",
         :loading="submitting",
         type="submit"

@@ -45,17 +45,17 @@ Dans chaque entité présente dans la liste `cis` et dans chaque lien présent d
 
 La liste `cis` est une liste d'entités représentée sous forme d'objet JSON. Chaque entité possède ces différents champs :
 
-* **`_id`** (chaîne de caractères) : identifiant de l'entité concernée par l'action.
-* **`type`** (chaîne de caractères) : type de l'entité. Valeurs possibles : `resource`, `component`, `connector`, ou `watcher`.
+* **`_id`** (chaîne de caractères) : identifiant de l'entité concernée par l'action.
+* **`type`** (chaîne de caractères) : type de l'entité. Valeurs possibles : `resource`, `component`, `connector`, ou `watcher`.
 * **`infos`** : informations complémentaires. Ce sont des données totalement personnalisables que l'utilisateur peut modifier.
 * **`measurements`** : ensemble de chaînes de caractères correspondant aux métriques liées à l'entité.
-* **`name`** (chaîne de caractères) : nom de l'entité.
-* **`action`** (chaîne de caractères) : type de l'action à réaliser au moment de l'import.
+* **`name`** (chaîne de caractères) : nom de l'entité.
+* **`action`** (chaîne de caractères) : type de l'action à réaliser au moment de l'import.
 * **`action_properties`** : vient en complément du champ `action` en spécifiant des informations complémentaires pour la bonne réalisation de l'action.
 
 ### Description des actions sur les entités
 
-Les actions suivantes peuvent être réalisées sur les entités, au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `update`, `disable` et `enable`.
+Les actions suivantes peuvent être réalisées sur les entités, au moment de l'import d'un contexte graphe : `create`, `set`, `delete`, `update`, `disable` et `enable`.
 
 #### Create
 
@@ -187,9 +187,9 @@ Les champs `_id`, `action` et `action_properties` sont obligatoires. Le champ `a
 
 La liste `links` représente toutes les relations entre les entités. Ces liens sont stockés sous forme d'objet JSON avec ces différents champs :
 
-* **`_id`** (chaîne de caractères) : identifiant de l'action, il peut prendre n'importe quelle valeur.
-* **`from`** (chaîne de caractères) : identifiant de l'entité de départ du lien.
-* **`to`** (chaîne de caractères) : identifiant de l'entité d'arrivée du lien.
+* **`_id`** (chaîne de caractères) : identifiant de l'action, il peut prendre n'importe quelle valeur.
+* **`from`** (chaîne de caractères) : identifiant de l'entité de départ du lien.
+* **`to`** (chaîne de caractères) : identifiant de l'entité d'arrivée du lien.
 * **`action`** (chaîne de caractères) : type de l'action à réaliser.
 
 Pour tous les liens, les champs `from`, `to` et `action` sont obligatoires.
@@ -198,7 +198,7 @@ Les liens décrits dans les actions sont des liens de type *impact-depends*, c'e
 
 ### Description des actions sur les liens
 
-Deux actions sont possibles sur les liens : `create` et `delete`.
+Deux actions sont possibles sur les liens : `create` et `delete`.
 
 #### Create
 

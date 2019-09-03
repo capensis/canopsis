@@ -1,7 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 const qs = require('qs');
-const { USER } = require('../../constants');
-const { API_ROUTES } = require('../../../../src/config');
+const { USER } = require('../../../constants');
+const { API_ROUTES } = require('../../../../../src/config');
 
 module.exports.command = function createUser(user = { ...USER }, callback = () => {}) {
   const {
@@ -18,8 +18,13 @@ module.exports.command = function createUser(user = { ...USER }, callback = () =
   const adminUsersPage = this.page.admin.users();
   const adminCreateUser = this.page.modals.admin.createUser();
 
-  adminUsersPage.navigate()
-    .verifyPageElementsBefore()
+  this.url(({ value }) => {
+    if (value !== adminUsersPage.url()) {
+      adminUsersPage.navigate();
+    }
+  });
+
+  adminUsersPage.verifyPageElementsBefore()
     .clickAddButton();
 
   adminCreateUser.verifyModalOpened()
@@ -29,19 +34,24 @@ module.exports.command = function createUser(user = { ...USER }, callback = () =
     .setEmail(email)
     .setPassword(password)
     .selectRole(role)
-    .selectLanguage(language)
     .selectNavigationType(navigationType);
+
+  if (language) {
+    adminCreateUser.selectLanguage(language);
+  }
 
   this.waitForFirstXHR(
     API_ROUTES.user.create,
     1000,
     () => adminCreateUser.clickSubmitButton(),
     ({ responseData, requestData }) => {
+      adminCreateUser.verifyModalClosed();
+
       const requestParsedData = qs.parse(requestData);
-      return callback({ ...JSON.parse(requestParsedData.user), ...JSON.parse(responseData) });
+
+      callback({ ...JSON.parse(requestParsedData.user), ...JSON.parse(responseData) });
     },
   );
-  adminCreateUser.verifyModalClosed();
 
   return this;
 };

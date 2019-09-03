@@ -34,6 +34,7 @@ export function convertSortToQuery({ parameters }) {
 export function convertAlarmWidgetToQuery(widget) {
   const {
     alarmsStateFilter = {},
+    liveReporting = {},
     widgetColumns,
     itemsPerPage,
     mainFilter,
@@ -51,7 +52,10 @@ export function convertAlarmWidgetToQuery(widget) {
     query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
-  if (query.resolved) {
+  if (!isEmpty(liveReporting)) {
+    query.tstart = liveReporting.tstart;
+    query.tstop = liveReporting.tstop;
+  } else if (query.resolved) {
     query.tstart = STATS_QUICK_RANGES.last30Days.start;
     query.tstop = STATS_QUICK_RANGES.last30Days.stop;
   }
