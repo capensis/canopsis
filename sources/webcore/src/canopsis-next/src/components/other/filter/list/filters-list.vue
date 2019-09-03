@@ -45,7 +45,7 @@ export default {
     },
   },
   computed: {
-    existsTitles() {
+    existingTitles() {
       return this.filters.map(({ title }) => title);
     },
   },
@@ -56,7 +56,7 @@ export default {
         config: {
           title: this.$t('modals.filter.create.title'),
           entitiesType: this.entitiesType,
-          existsTitles: this.existsTitles,
+          existingTitles: this.existingTitles,
           action: (newFilter) => {
             this.$emit('create:filter', newFilter);
             this.$emit('update:filters', [...this.filters, newFilter]);
@@ -74,7 +74,7 @@ export default {
           title: this.$t('modals.filter.edit.title'),
           filter,
           entitiesType: this.entitiesType,
-          existsTitles: this.existsTitles,
+          existingTitles: this.existingTitles,
           action: (newFilter) => {
             this.$emit('update:filter', newFilter, index);
             this.$emit('update:filters', this.filters.map((v, i) => (index === i ? newFilter : v)));

@@ -35,7 +35,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    existsTitles: {
+    existingTitles: {
       type: Array,
       default: () => [],
     },
@@ -53,7 +53,7 @@ export default {
           title: this.$t('modals.filter.create.title'),
           filter: this.value,
           hiddenFields: this.hiddenFields,
-          existsTitles: this.existsTitles,
+          existingTitles: this.existingTitles,
           action: filterObject => this.$emit('input', filterObject),
         },
       });

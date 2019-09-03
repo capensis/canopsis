@@ -60,8 +60,8 @@ export default {
     title() {
       return this.config.title || this.$t('modals.filter.create.title');
     },
-    existsTitles() {
-      return this.config.existsTitles || [];
+    existingTitles() {
+      return this.config.existingTitles || [];
     },
     initialTitle() {
       return this.config.filter && this.config.filter.title;
@@ -71,7 +71,7 @@ export default {
     this.$validator.extend('unique-title', {
       getMessage: () => this.$t('validator.unique'),
       validate: value => (this.initialTitle && this.initialTitle === value) ||
-        !this.existsTitles.find(title => title === value),
+        !this.existingTitles.find(title => title === value),
     });
   },
   methods: {
