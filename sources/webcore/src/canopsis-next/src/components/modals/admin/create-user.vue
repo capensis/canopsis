@@ -199,10 +199,10 @@ export default {
       ];
     },
   },
-  async mounted() {
-    const { data } = await this.fetchRolesListWithoutStore({ params: { limit: 0 } });
-    this.rolesList = data;
-
+  async created() {
+    this.rolesList = (await this.fetchRolesListWithoutStore({ params: { limit: 0 } })).data;
+  },
+  mounted() {
     if (!this.isNew) {
       this.form = pick(this.config.user, [
         '_id',
