@@ -6,8 +6,7 @@
 
 Les watchers sont une fonctionnalité permettant de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
 
-Les watchers sont définis dans la collection MongoDB `default_entities`, et
-peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/watcherng/api_v2_watcherng.md).
+Les watchers sont définis dans la collection MongoDB `default_entities`, et peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/watcherng/api_v2_watcherng.md).
 
 Des exemples pratiques d'utilisation des watchers sont disponibles dans la partie [Exemples](#exemples).
 

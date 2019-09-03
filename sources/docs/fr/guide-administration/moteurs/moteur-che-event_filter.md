@@ -1,30 +1,62 @@
-# Event-filter
+# Che - Event-filter
 
-L'event-filter est une fonctionnalité du moteur `che` permettant de définir des
-règles manipulant les évènements.
+!!! note
+    Cette page concerne l'event-filter nouvelle génération, disponible uniquement
+    avec le moteur GO `event_filter`.
 
-Les règles sont définies dans la collection MongoDB `eventfilter`, et
-peuvent être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/event-filter/api.md).
+L'event-filter est une fonctionnalité du moteur [`che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
 
-Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la
-partie [Exemples](#exemples).
+Les règles sont définies dans la collection MongoDB `eventfilter`, et peuvent être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/event-filter/api_v2_event-filter.md).
+
+Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la partie [Exemples](#exemples).
+
+## Activation du plugin d'enrichissement depuis une ressource externe
+
+!!! note
+    Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
+
+L['event-filter](moteur-che-event_filter.md) peut utiliser des sources de données externes pour enrichir les évènements. Ces sources externes (à l'exception de `entity`) sont des [plugins](../../guide-developpement/plugins/event-filter-data-source.md) disponibles dans Canopsis CAT.
+
+Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
+
+### Activation avec Docker
+
+Les plugins doivent-être ajoutés dans un volume dans l'image docker, et leur emplacement doit-être précisé dans la commande. Par exemple, avec `docker-compose` :
+
+```yaml
+  che:
+    image: canopsis/engine-che:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    restart: unless-stopped
+    command: /engine-che -dataSourceDirectory /data-source-plugins
+    volumes:
+      - "./plugins:/data-source-plugins"
+```
+
+Dans une installation Docker, l'image `canopsis/engine-axe-cat` remplace l'image par défaut `canopsis/engine-axe`. Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé : `engine-axe -postProcessorsDirectory /plugins/axepostprocessor`
+
+Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
+
+L'exécutable `engine-che` accepte une option `-dataSourceDirectory` permettant de préciser le dossier contenant les plugins. Par défaut, ce dossier est celui contenant `engine-che`.
+
+### Activation par paquets
+
+Pour pouvoir utiliser l'enrichissement depuis une ressource externe, il faut :
+
+*  lancer le moteur `che` avec l'option `-dataSourceDirectory <dossier contenant les plugins>`. Par défaut, ce dossier est celui contenant `engine-che`.
+
 
 ## Règles
 
 Une règle est un document JSON contenant les paramètres suivants :
 
- - `_id` (optionnel) : un identifiant unique (généré automatiquement s'il n'est
-   pas défini par l'utilisateur).
- - `description` (optionnel) : une description de la règle de la règle, donnée
-   par l'utilisateur.
- - `type` (requis) : le type de la règle (voir [Types de
-   règles](#types-de-règles) pour plus de détails).
- - `pattern` (optionnel) : un pattern permettant de sélectionner les évènements
-   auxquels la règle doit être appliquée. Si le pattern n'est pas précisé, la
-   règle est appliquée à tous les évènements (voir [Patterns](#patterns) pour
-   plus de détails).
- - `priority` (optionnel, 0 par défaut) : la priorité de la règle. Les règles
-   sont appliquées par ordre de priorité croissante.
+ - `_id` (optionnel) : un identifiant unique (généré automatiquement s'il n'est pas défini par l'utilisateur).
+ - `description` (optionnel) : une description de la règle de la règle, donnée par l'utilisateur.
+ - `type` (requis) : le type de la règle (voir [Types de règles](#types-de-règles) pour plus de détails).
+ - `pattern` (optionnel) : un pattern permettant de sélectionner les évènements auxquels la règle doit être appliquée. Si le pattern n'est pas précisé, la
+   règle est appliquée à tous les évènements (voir [Patterns](#patterns) pour plus de détails).
+ - `priority` (optionnel, 0 par défaut) : la priorité de la règle. Les règles sont appliquées par ordre de priorité croissante.
  - `enabled` (optionnel, `true` par défaut) : `false` pour désactiver la règle.
 
 #### Exemple
@@ -39,48 +71,33 @@ Une règle est un document JSON contenant les paramètres suivants :
 }
 ```
 
-Le `type` de cette règle vaut `drop`, indiquant que c'est une règle qui
-supprime les évènements.
+Le `type` de cette règle vaut `drop`, indiquant que c'est une règle qui supprime les évènements.
 
-Le `pattern` de cette règle sélectionne les évènements dont la ressource vaut
-`invalid_resource` (voir [Patterns](#patterns) pour plus de détails).
+Le `pattern` de cette règle sélectionne les évènements dont la ressource vaut`invalid_resource` (voir [Patterns](#patterns) pour plus de détails).
 
-Cette règle supprime donc les évènements dont la ressource vaut
-`invalid_resource`.
+Cette règle supprime donc les évènements dont la ressource vaut `invalid_resource`.
 
 ### Application des règles
 
-Lors de la réception d'un évènement par le moteur `che`, les règles sont
-parcourues par ordre de priorité croissante. Si l'évènement est reconnu par le
-`pattern` d'une règle, celle-ci est appliquée à l'évènement. Le traitement
-effectué dépend du `type` de la règle (voir [Types de règles](#types-de-règles)
-pour plus de détails).
+Lors de la réception d'un évènement par le moteur `che`, les règles sont parcourues par ordre de priorité croissante. Si l'évènement est reconnu par le `pattern` d'une règle, celle-ci est appliquée à l'évènement. Le traitement effectué dépend du `type` de la règle (voir [Types de règles](#types-de-règles) pour plus de détails).
 
-**Note :** Pour pouvoir être traité par Canopsis, un évènement doit respecter
-la condition suivante :
+**Note :** Pour pouvoir être traité par Canopsis, un évènement doit respecter la condition suivante :
 
- - son champ `source_type` vaut `component`, et son champ `component` est
-   défini et ne vaut pas `""`; *ou*
- - son champ `source_type` vaut `resource`, et ses champs `component` et
-   `resource` sont définis et ne valent pas `""`.
+ - son champ `source_type` vaut `component`, et son champ `component` est défini et ne vaut pas `""`; *ou*
+ - son champ `source_type` vaut `resource`, et ses champs `component` et `resource` sont définis et ne valent pas `""`.
 
-Les évènements ne respectant pas cette condition en entrée du moteur `che` ou
-en sortie de l'event-filter sont supprimés.
+Les évènements ne respectant pas cette condition en entrée du moteur `che` ou en sortie de l'event-filter sont supprimés.
 
 
 ### Patterns
 
-Le pattern d'une règle permet de sélectionner les évènements auxquels elle doit
-être appliquée.
+Le pattern d'une règle permet de sélectionner les évènements auxquels elle doit être appliquée.
 
 #### Patterns simples
 
-Un pattern peut être défini comme un objet JSON contenant les valeurs de
-certains champs d'un évènement.
+Un pattern peut être défini comme un objet JSON contenant les valeurs de certains champs d'un évènement.
 
-Par exemple, une règle contenant le pattern suivant sera appliquée aux
-évènements dont le composant vaut `component_name` et dont la ressource vaut
-`resource_name` :
+Par exemple, une règle contenant le pattern suivant sera appliquée aux évènements dont le composant vaut `component_name` et dont la ressource vaut `resource_name` :
 
 ```json
 "pattern": {
@@ -91,18 +108,12 @@ Par exemple, une règle contenant le pattern suivant sera appliquée aux
 
 #### Patterns avancés
 
-Pour plus d'expressivité, il est possible d'associer à un champ un objet
-contenant des couples `operateur: valeur`. Les opérateurs disponibles sont :
+Pour plus d'expressivité, il est possible d'associer à un champ un objet contenant des couples `operateur: valeur`. Les opérateurs disponibles sont :
 
  - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
- - `regex_match` : filtre la valeur d'une clé selon une expression régulière.
-   La syntaxe des expressions régulières est celle de
-   [go](https://golang.org/pkg/regexp/syntax/), et est similaire à celle
-   acceptée par Perl et Python.
+ - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est celle de [go](https://golang.org/pkg/regexp/syntax/), et est similaire à celle acceptée par Perl et Python.
 
-Par exemple, le pattern suivant sélectionne les évènements dont l'état est
-compris entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une
-expression régulière :
+Par exemple, le pattern suivant sélectionne les évènements dont l'état est compris entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
 
 ```json
 "pattern": {
@@ -115,12 +126,9 @@ expression régulière :
 
 #### Drop
 
-Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évènement est
-supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est
-ignoré par Canopsis.
+Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évènement est supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est ignoré par Canopsis.
 
-Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur
-`che` l'affiche sur sa sortie de log :
+Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur `che` l'affiche sur sa sortie de log :
 
 ```
 2019/05/02 12:45:19 event dropped by event filter: {"hostgroups":["HG_FOOBAR"],"event_type":"check","execution_time":2.139087200164795,"timestamp":1556793914,"component":"foobar","state_type":0,"source_type":"resource","resource":"PING","current_attempt":1,"connector":"foobar","long_output":"","state":2,"connector_name":"foobar","output":"foo","command_name":"foo","perf_data":"","max_attempts":2}
@@ -128,56 +136,36 @@ Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le m
 
 #### Break
 
-Lorsqu'une règle de type `break` est appliquée à un évènement, cet évènement
-sort de l'event-filter. Les règles suivantes ne sont pas appliquées, et
-l'évènement est traité par Canopsis.
+Lorsqu'une règle de type `break` est appliquée à un évènement, cet évènement sort de l'event-filter. Les règles suivantes ne sont pas appliquées, et l'évènement est traité par Canopsis.
 
 #### Enrichment
 
-Les règles de types `enrichment` sont des règles d'enrichissement, qui
-permettent d'appliquer des actions modifiant les évènements.
+Les règles de types `enrichment` sont des règles d'enrichissement, qui permettent d'appliquer des actions modifiant les évènements.
 
 ## Règles d'enrichissement
 
-Les règles de types `enrichment` sont des règles d'enrichissement, qui
-permettent d'appliquer des actions modifiant les évènements.
+Les règles de types `enrichment` sont des règles d'enrichissement, qui permettent d'appliquer des actions modifiant les évènements.
 
-Ces règles peuvent avoir les paramètres suivants (en plus de `type`, `pattern`,
-`priority` et `enabled`) :
+Ces règles peuvent avoir les paramètres suivants (en plus de `type`, `pattern`, `priority` et `enabled`) :
 
- - `actions` (requis) : une liste d'actions à appliquer à l'évènement (voir
-   [Actions](#actions) pour plus de détails).
- - `external_data` (optionnel) : des sources de données externes (voir
-   [Données externes](#données-externes) pour plus de détails).
- - `on_success` (optionnel, `pass` par défaut) : le résultat de la règle en cas
-   de succès (`pass`, `break` ou `drop`).
- - `on_failure` (optionnel, `pass` par défaut) : le résultat de la règle en cas
-   d'échec (`pass`, `break` ou `drop`).
+ - `actions` (requis) : une liste d'actions à appliquer à l'évènement (voir [Actions](#actions) pour plus de détails).
+ - `external_data` (optionnel) : des sources de données externes (voir [Données externes](#données-externes) pour plus de détails).
+ - `on_success` (optionnel, `pass` par défaut) : le résultat de la règle en cas de succès (`pass`, `break` ou `drop`).
+ - `on_failure` (optionnel, `pass` par défaut) : le résultat de la règle en cas d'échec (`pass`, `break` ou `drop`).
 
-Lorsqu'une règle d'enrichissement est appliquée, les données externes sont
-récupérées, puis les règles sont appliquées, dans l'ordre dans lequel elles ont
-été définies. Si la récupération de données ou l'exécution d'une action échoue,
-l'application de la règle est interrompue, et son résultat sera la valeur de
-`on_failure`. Sinon, son résultat est la valeur de `on_success`.
+Lorsqu'une règle d'enrichissement est appliquée, les données externes sont récupérées, puis les règles sont appliquées, dans l'ordre dans lequel elles ont été définies. Si la récupération de données ou l'exécution d'une action échoue, l'application de la règle est interrompue, et son résultat sera la valeur de `on_failure`. Sinon, son résultat est la valeur de `on_success`.
 
-Si le résultat de la règle est `drop`, l'évènement est supprimé. Les règles
-suivantes ne sont pas appliquées à cet évènement, et il est ignoré par
-Canopsis.
+Si le résultat de la règle est `drop`, l'évènement est supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est ignoré par Canopsis.
 
-Si le résultat de la règle est `break`, l'évènement sort de l'event-filter. Les
-règles suivantes ne sont pas appliquées.
+Si le résultat de la règle est `break`, l'évènement sort de l'event-filter. Les règles suivantes ne sont pas appliquées.
 
 Si le résultat de la règle est `pass`, l'exécution de l'event-filter continue.
 
 ### Actions
 
-Une action est un objet JSON contenant un champ `type` indiquant le type de
-l'action, et des paramètres. Les actions disponibles sont précisées ci-dessous.
+Une action est un objet JSON contenant un champ `type` indiquant le type de l'action, et des paramètres. Les actions disponibles sont précisées ci-dessous.
 
-**Note :** Les actions utilisent la représentation interne à Canopsis des
-évènements. Voir [Champs des évènements](#champs-des-évènements) pour la
-correspondance entre les noms des champs des évènements en JSON et dans la
-représentation de Canopsis.
+**Note :** Les actions utilisent la représentation interne à Canopsis des évènements. Voir [Champs des évènements](#champs-des-évènements) pour la correspondance entre les noms des champs des évènements en JSON et dans la représentation de Canopsis.
 
 #### `set_field`
 
@@ -188,8 +176,7 @@ Les paramètres de l'action sont :
  - `name` (requis) : le nom du champ.
  - `value` (requis) : la nouvelle valeur du champ.
 
-Par exemple, l'action suivante remplace l'état d'un évènement par un état
-critique :
+Par exemple, l'action suivante remplace l'état d'un évènement par un état critique :
 
 ```json
 {
@@ -670,22 +657,22 @@ des évènements.
 
 ### Champs des évènements
 
-| Évènement JSON | Représentation interne de Canopsis | Notes |
-| -------------- | ---------------------------------- | ----- |
-| connector      | Connector                          |       |
-| connector_name | ConnectorName                      |       |
-| event_type     | EventType                          |       |
-| component      | Component                          |       |
-| resource       | Resource                           |       |
-| perf_data      | PerfData                           |       |
-| status         | Status                             |       |
-| timestamp      | Timestamp                          |       |
-| state_type     | StateType                          |       |
-| source_type    | SourceType                         |       |
-| long_output    | LongOutput                         |       |
-| state          | State                              |       |
-| output         | Output                             |       |
-| author         | Author                             |       |
-| ticket         | Ticket                             |       |
-| debug          | Debug                              |       |
-| current_entity | Entity                             | Ce champ n'est pas défini au début de l'exécution de l'event-filter. Pour y accéder, ou pour modifier les informations de l'entité, il faut utiliser une [règle ajoutant les entités aux évènements](#ajout-de-lentité-correspondant-à-un-évènement). |
+| Évènement JSON | Représentation interne de Canopsis |                                                                                                                         Notes                                                                                                                         |
+| -------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   connector    |             Connector              |                                                                                                                                                                                                                                                       |
+| connector_name |           ConnectorName            |                                                                                                                                                                                                                                                       |
+|   event_type   |             EventType              |                                                                                                                                                                                                                                                       |
+|   component    |             Component              |                                                                                                                                                                                                                                                       |
+|    resource    |              Resource              |                                                                                                                                                                                                                                                       |
+|   perf_data    |              PerfData              |                                                                                                                                                                                                                                                       |
+|     status     |               Status               |                                                                                                                                                                                                                                                       |
+|   timestamp    |             Timestamp              |                                                                                                                                                                                                                                                       |
+|   state_type   |             StateType              |                                                                                                                                                                                                                                                       |
+|  source_type   |             SourceType             |                                                                                                                                                                                                                                                       |
+|  long_output   |             LongOutput             |                                                                                                                                                                                                                                                       |
+|     state      |               State                |                                                                                                                                                                                                                                                       |
+|     output     |               Output               |                                                                                                                                                                                                                                                       |
+|     author     |               Author               |                                                                                                                                                                                                                                                       |
+|     ticket     |               Ticket               |                                                                                                                                                                                                                                                       |
+|     debug      |               Debug                |                                                                                                                                                                                                                                                       |
+| current_entity |               Entity               | Ce champ n'est pas défini au début de l'exécution de l'event-filter. Pour y accéder, ou pour modifier les informations de l'entité, il faut utiliser une [règle ajoutant les entités aux évènements](#ajout-de-lentité-correspondant-à-un-évènement). |

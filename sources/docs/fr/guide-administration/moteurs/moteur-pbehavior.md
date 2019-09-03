@@ -2,7 +2,8 @@
 
 Les *pbehaviors* (pour *periodical behaviors*) sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes par exemple).
 
-Les pbehaviors peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md).
+
+Les pbehaviors sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md).
 
 ## Fonctionnement
 

@@ -2,6 +2,8 @@
 
 Le moteur heartbeat permet de créer des alarmes en l'absence d'événements correspondant à un pattern donné durant un intervalle donné.
 
+Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent être ajoutées et modifiées avec l'[API Heartbeat](../../heartbeat/api_v2_heartbeat.md).
+
 ## Fonctionnement
 
 La queue du moteur est placée juste après l'exchange `canopsis.events`.
@@ -11,6 +13,14 @@ Un `heartbeat` est une règle qui définit un pattern d'événement entrant et u
 Passé cet intervalle de temps, si le moteur n'a pas traité d'événements correspondant au pattern donné, il lèvera automatiquement une alarme.
 
 L'alarme levée reste en cours jusqu'à l'arrivée d'un nouvel événement correspondant au pattern donné.
+
+### Options de l'engine-heartbeat
+
+```
+  -d    debug
+  -version
+        version infos
+```
 
 #### Patterns
 

@@ -2,16 +2,27 @@
 
 Le moteur action permet de déclencher conditionnellement des actions sur des alarmes.
 
+Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../action/api_v2_action.md).
+
 ## Fonctionnement
 
-La queue du moteur est placée juste après le moteur Axe.
-
-Une action se déclenche si un des champs d'une alarme (désigné dans `fields`) va correspondre à une regex (`regex`, voir [re2 syntax](https://github.com/google/re2/wiki/Syntax)).
+La queue du moteur est placée juste après le moteur [Axe](moteur-axe.md).
 
 Les types d'actions disponibles sont :
 
-* `pbehavior`, qui va poser un [PBehavior](../../guide-developpement/PBehavior/index.md) ;
+* `pbehavior`, qui va poser un [PBehavior](../../guide-developpement/moteurs/moteur-pbehavior.md)
 * `snooze`, qui va poser des snooze automatiques sur les alarmes lors de leur création.
+
+Une action est composée en un document Json contenant les paramètres suivants :
+
+- `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+- `type` : `[pbehavior](../../guide-developpement/moteurs/moteur-pbehavior.md)` ou `snooze`.
+- `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
+    - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
+    - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
+    - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
+    - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
+- `parameters` (requis) : les informations nécessaires correspondant au type d'action.
 
 ## Collection
 
@@ -61,6 +72,3 @@ Un exemple d'action concernant le snooze automatique (le `type` d'action est don
     }
 }
 ```
-
-!!! attention
-    Les valeurs dans le tableau des `fields` sont sensibles à la casse, il faut utiliser les majuscules (`Resource`, `Component`, etc).

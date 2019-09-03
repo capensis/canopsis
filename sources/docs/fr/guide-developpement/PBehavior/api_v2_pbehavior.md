@@ -1,220 +1,321 @@
-# Utilisation des pbehaviors
+# API PBehavior
 
-# API PBehaviors
+L'API PBehavior permet de consulter, créer et supprimer des plages de maintenance.
 
-Les pbehaviors sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance par exemple).
+Pour plus d'informations sur ce qu'est un PBehavior, consulter la [documentation du moteur PBehavior](../../guide-administration/moteurs/moteur-pbehavior.md).
 
-**Note sur les attributs tstart et tstop d'un pbehavior**
+### Création d'un pbehavior
 
-Les comportements sont similaires aux évènements de calendrier, avec une récurrence facultative.
-Les paramètres tstart et tstop servent à définir les dates de début et de fin de la première occurrence d'évènement.
-Lorsque l'évènement est répété, ces attributs sont utilisés pour définir la durée de chaque instance, en fonction des heures de début et de fin de la première instance.
+Crée un nouveau PBehavior à partir du corps de la requête.
 
-Par exemple, le comportement ci-dessous commence à 11 heures et se termine une heure plus tard tous les matins à partir du 2018/06/18 :
+**URL** : `/api/v2/pbehavior`
 
-```js
+**Méthode** : `POST`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de corps de requête** :
+```json
 {
-   // --snip --
-   "rrule": "FREQ=WEEKLY;WKST=MO",
-   "tstart": 1529312400, //Le 2018/06/18 at 11
-   "tstop": 1529316000, // Le 2018/06/18 at 12
-   // -- snip --
+	"author": "root",
+	"name": "Pbehavior test 1",
+	"tstart": 1567439123,
+	"tstop": 1569599100,
+	"filter": {
+		"$or": [{
+			"impact": {
+				"$in": ["pbehavior_test_1"]
+			}
+		}, {
+			"$and": [{
+				"type": "component"
+			}, {
+				"name": "pbehavior_test_1"
+			}]
+		}]
+	},
+	"type_": "Hors plage horaire de surveillance",
+	"reason": "Problème d'habilitation",
+	"rrule": null,
+	"comments": [],
+	"exdate": []
 }
 ```
 
-**Lorsque l'évènement est récurrent, la date de la dernière occurrence est stockée dans l'attribut `UNTIL` de l' évènement.rrule**
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
+```sh
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+	"author": "root",
+	"name": "Pbehavior test 1",
+	"tstart": 1567439123,
+	"tstop": 1569599100,
+	"filter": {
+		"$or": [{
+			"impact": {
+				"$in": ["pbehavior_test_1"]
+			}
+		}, {
+			"$and": [{
+				"type": "component"
+			}, {
+				"name": "pbehavior_test_1"
+			}]
+		}]
+	},
+	"type_": "Hors plage horaire de surveillance",
+	"reason": "Problème d'habilitation",
+	"rrule": null,
+	"comments": [],
+	"exdate": []
+}' 'http://<Canopsis_URL>/api/v2/pbehavior'
+```
 
-## Créer un pbehavior
+#### Réponse en cas de réussite
 
-#### URL
+**Condition** : le pbehavior est créé
 
-  `POST /api/v2/pbehavior`
+**Code** : `200 OK`
 
-#### POST exemple
-
-JSON :
+**Exemple du corps de la réponse** :
 
 ```json
 {
-    "name": "imagine",
-    "author": "lennon",
-    "filter": {"_id": "all_the_people"},
-    "rrule": "",
-    "tstart": 0,
-    "tstop": 1000
+    "e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2"
 }
 ```
 
-Les attributs du corps sont les suivants :
+---
 
-|      Name       |  type   | nullable |                         Description                         |
-| --------------- | ------- | -------- | ----------------------------------------------------------- |
-|    connector    | string  |    No    |             Identifiant du connecteur d'entité              |
-|      name       | string  |    No    |                  Display name du pbehavior                  |
-|     author      | string  |    No    |                       Nom de l'auteur                       |
-|     enabled     | boolean |    No    |            Si le pbehavior est déclenché ou non             |
-|     reason      | string  |   Yes    |             motif d'administration (optionnel)              |
-|    comments     |  array  |   Yes    |                    Commentaires (option)                    |
-|     filter      | string  |    No    |                   filtre d'entité (JSON)                    |
-|     type\_      | string  |    No    |                      type de Pbehavior                      |
-| connector\_name | string  |    No    |                  Display name du connector                  |
-|      rrule      | string  |   Yes    |                     Rrule (récurrence)                      |
-|     tstart      | integer |    No    |               Timestamp de la date de départ                |
-|      tstop      | integer |    No    |                 Timestamp de la date de fin                 |
-|      \_id       | string  |    No    |                  Indentifiant du Pbehavior                  |
-|      eids       |  array  |    No    |        tableau du \_ids pour les entités impactées.         |
-|    timezone     | string  |   Yes    |       La timezone à utiliser pour le calcul des dates       |
-|     exdate      |  array  |   Yes    | La liste des occurrences à ignorer sous forme de timestamps |
+### Modification de PBehavior
 
+Modifie un pbehavior à partir du corps de la requête.
 
-Réponse : UID de l'élément inséré
+**URL** : `/api/v2/pbehavior/<pbehavior_id>`
 
+**Méthode** : `PUT`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de corps de requête** :
 ```json
-"b72e841a-d9d1-11e7-9a70-022abfd0f78f"
+{
+	"author": "root",
+	"name": "Pbehavior test 1",
+	"tstart": 1567439123,
+	"tstop": 1569599100,
+	"filter": {
+		"$or": [{
+			"impact": {
+				"$in": ["pbehavior_test_1"]
+			}
+		}, {
+			"$and": [{
+				"type": "component"
+			}, {
+				"name": "pbehavior_test_1"
+			}]
+		}]
+	},
+	"type_": "Hors plage horaire de surveillance",
+	"reason": "Problème d'habilitation",
+  "rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+	"comments": [],
+	"exdate": []
+}
 ```
 
-## Récupérer les pbehaviors d'une entité
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut envoyer le JSON ci-dessus pour modifier le pbehavior dont l'`_id` vaut `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
 
-Cette route répertorie les pbehaviors existant sur une entité, identifiée par son eid (Entity ID)
-
-#### URL
-
-`GET /api/v2/pbehavior_byeid/<entityid>`
-
-#### Parameters
-
-* entityid l'ID de l'entité cible.
-
-#### Réponse
-
-```json
-[
-    {
-        "connector": "canopsis",
-        "name": "imagine",
-        "author": "lennon",
-        "enabled": true,
-        "reason": "",
-        "comments": null,
-        "filter": "{\"_id\": \"580059AB4B100031\"}",
-        "type_": "generic",
-        "connector_name": "canopsis",
-        "rrule": "FREQ=WEEKLY;COUNT=30;WKST=MO",
-        "tstart": 1529312725,
-        "tstop": 1592471125,
-        "_id": "dd4cbc2c-72d6-11e8-a732-0242ac12001a",
-        "isActive": true,
-        "eids": [
-            "580059AB4B100031"
-        ],
-        "exdate" : [
-            1592471125
-        ],
-        "timezone": "Europe/Paris"
-    }
-]
+```sh
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
+	"author": "root",
+	"name": "Pbehavior test 1",
+	"tstart": 1567439123,
+	"tstop": 1569599100,
+	"filter": {
+		"$or": [{
+			"impact": {
+				"$in": ["pbehavior_test_1"]
+			}
+		}, {
+			"$and": [{
+				"type": "component"
+			}, {
+				"name": "pbehavior_test_1"
+			}]
+		}]
+	},
+	"type_": "Hors plage horaire de surveillance",
+	"reason": "Problème d'habilitation",
+  "rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+	"comments": [],
+	"exdate": []
+}' 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
 ```
 
-Les attributs de réponse sont les suivants :
+#### Réponse en cas de réussite
 
-|      Name       |  type   | nullable |                         Description                         |
-| --------------- | ------- | -------- | ----------------------------------------------------------- |
-|    connector    | string  |    No    |             Identifier of the entity connector              |
-|      name       | string  |    No    |                Display name of the pbehavior                |
-|     author      | string  |    No    |                         Author name                         |
-|     enabled     | boolean |    No    |             Should the pbehavior trigger or not             |
-|     reason      | string  |   yes    |              Administrative reason (optionnal)              |
-|    comments     |  array  |   yes    |                      Comments (option)                      |
-|     filter      | string  |    No    |                   Entities filter (json)                    |
-|     type\_      | string  |    No    |                       Pbehavior type                        |
-| connector\_name | string  |    No    |            Display name of the entity connector             |
-|      rrule      | string  |   yes    |                     Rrule (recurrence)                      |
-|     tstart      | integer |    No    |                 Timestamp of the start date                 |
-|      tstop      | integer |    No    |                     Timestamp  end date                     |
-|      \_id       | string  |    No    |                    Pbehavior identifier                     |
-|      eids       |  array  |    No    |          Array of \_ids for the impacted entities.          |
-|    isActive     | boolean |    No    |              Is the pbehavior currently active              |
-|    timeszone    | string  |   yes    |       La timezone à utiliser pour le calcul des dates       |
-|     exdate      |  array  |   Yes    | La liste des occurrences à ignorer sous forme de timestamps |
+**Condition** : le pbehavior est modifié
 
+**Code** : `200 OK`
 
-## Supprimer un pbehavior
-
-Cette route permet de supprimer un pbehavior.
-
-#### URL
-
-  `DELETE /api/v2/pbehavior/<pbehavior_id>`
-
-#### Exemple de suppression
-
-Response: a status object
+**Exemple du corps de la réponse** :
 
 ```json
 {
-    "deletedCount": 1,
-    "acknowledged": true
+	"name": "PBehavior de test",
+	"author": "root",
+	"reason": "Probl\u00e8me d'habilitation",
+	"filter": "{\"$or\": [{\"impact\": {\"$in\": [\"pbehavior_test_1\"]}}, {\"$and\": [{\"type\": \"pbehavior_test_1\"}, {\"name\": \"pbehavior_test_1\"}]}]}",
+	"type_": "Hors plage horaire de surveillance",
+	"exdate": [],
+	"tstart": 1567429156,
+	"tstop": 1567601940
 }
 ```
 
-## Update un pbeahvior
+---
 
-#### URL
+### Suppression de PBehavior
 
-  `PUT /api/v2/pbehavior/<pbehavior_id>`
+Supprime un PBehavior en fonction de son `id`.
 
-#### PUT exemple
+**URL** : `/api/v2/pbehavior/<pbehavior_id>`
 
-JSON :
+**Méthode** : `DELETE`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le PBehavior avec l'`id` `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
+
+```sh
+curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
+```
+
+#### Réponse en cas de réussite
+
+**Condition** : La suppression du pbehavior a réussi.
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
 
 ```json
 {
-    "name": "country_roads",
-    "author": "john denver",
-    "filter": {"_id": "take_me_home"},
-    "rrule": "",
-    "tstart": 0,
-    "tstop": 1000
+	"deletedCount": 1,
+	"acknowledged": true
 }
 ```
 
-Réponse : le pbevior modifié
+---
+
+### Récupération des pbehaviors
+
+Récupère un ou plusieurs pbehaviors appliquées sur une entité, via l'`eid` (pour `entity id`).
+
+#### Récupération d'un pbehavior par eid
+
+**URL** : `/api/v2/pbehavior_byeid/<entity_id>`
+
+**Méthode** : `GET`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer les pbehaviors s'appliquant à l'entité dont l'`_id` est `disk2/pbehavior_test_1` :
+
+```sh
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior_byeid/disk2/pbehavior_test_1'
+```
+
+##### Réponse en cas de réussite
+
+**Condition** : Au moins un pbehavior appliqué à une entité correspondant à l'`id` est trouvée.
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
+
+```json
+[{
+	"name": "Pbehavior test 1",
+	"author": "root",
+	"eids": ["pbehavior_test_1", "disk2/pbehavior_test_1"],
+	"reason": "Probl\u00e8me d'habilitation",
+	"filter": "{\"$or\": [{\"impact\": {\"$in\": [\"pbehavior_test_1\"]}}, {\"$and\": [{\"type\": \"component\"}, {\"name\": \"pbehavior_test_1\"}]}]}",
+	"type_": "Hors plage horaire de surveillance",
+	"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+	"tstart": 1567439123,
+	"tstop": 1569599100,
+	"_id": "4c441d4e-9cc8-4f84-be73-9a4e97ba5e74",
+	"isActive": true,
+	"exdate": []
+}]
+```
+
+---
+
+#### Récupération de tous les pbehaviors en base de données
+
+Récupère tous les pbehaviors stockés en base
+
+**URL** : `/pbehavior/read`
+
+**Méthode** : `GET`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+**Supporter la pagination** : Oui
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les pbehaviors :
+
+```sh
+curl -X GET -u root:root 'http://<Canopsis_URL>/pbehavior/read'
+```
+
+##### Réponse en cas de réussite
+
+**Condition** : aucune.
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
 
 ```json
 {
-    "filter": "{\"_id\": \"take_me_home\"}",
-    "name": "country_roads",
-    "author": "john denver",
-    "enabled": true,
-    "type_": "generic",
-    "comments": null,
-    "connector": "canopsis",
-    "reason": "",
-    "connector_name": "canopsis",
-    "eids": [],
-    "tstart": 0,
-    "tstop": 1000,
-    "timezone": "Europe/Paris",
-    "rrule": "",
-    "exdate": []
+	"total": 1,
+	"data": [{
+		"count": 1,
+		"total_count": 1,
+		"data": [{
+			"connector": "canopsis",
+			"name": "Pbehavior test 1",
+			"author": "root",
+			"enabled": true,
+			"reason": "Probl\u00e8me d'habilitation",
+			"comments": [],
+			"filter": "{\"$or\": [{\"impact\": {\"$in\": [\"pbehavior_test_1\"]}}, {\"$and\": [{\"type\": \"component\"}, {\"name\": \"pbehavior_test_1\"}]}]}",
+			"type_": "Hors plage horaire de surveillance",
+			"connector_name": "canopsis",
+			"eids": [],
+			"tstart": 1567439123,
+			"timezone": "Europe/Paris",
+			"tstop": 1569599100,
+			"_id": "aaa9d5c3-b245-481f-b23a-844893cb3cfe",
+			"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+			"exdate": []
+		}]
+	}],
+	"success": true
 }
-```
-
-## Forcer le calcul de pbehaviors
-
-Cette route impose un nouveau calcul pour tous les comportements.
-
-#### URL
-
-`GET /api/v2/compute-pbehaviors`
-
-#### GET exemple
-
-/api/v2/compute-pbehaviors
-
-Réponse: les calculs ont-ils été traités ?
-
-```json
-true
 ```

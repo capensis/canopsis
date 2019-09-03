@@ -2,7 +2,6 @@
 
 L'API healthcheck permet d'obtenir l'état de fonctionnement de Canopsis ; par exemple elle permet de savoir si les services nécessaires sont disponibles.
 
-
 ## Configuration
 
 La configuration de l'API healthcheck est dans le fichier `/opt/canopsis/etc/healthcheck/manager.conf`.

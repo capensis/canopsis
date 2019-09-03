@@ -63,10 +63,13 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 
 [Présentation de toutes les routes disponibles](API.md)
 
-  * Pbehavior
-  * Event-filter
-  * [Internal](internal/api_internal.md)
+  * [Action](action/api_v2_action.md)
+  * [Event-filter](event-filter/api_v2_event-filter.md)
   * [Healthcheck](healthcheck/api_v2_healthcheck.md)
+  * [Heartbeat](heartbeat/api_v2_heartbeat.md)
+  * [Import](impor/api_v2_import.md)
+  * [Internal](internal/api_internal.md)
+  * [Pbehavior](PBehavior/api_v2_pbehavior.md)
   * [Webhooks](webhooks/api_v2_webhooks.md)
   * [Watcher NG](watcherng/api_v2_watcherng.md)
 
