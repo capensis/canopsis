@@ -515,39 +515,6 @@ class UpdateEntity(BaseTest):
     def test_update_entity_update_impact_insert_single(self):
         self.__test_single("impact", "depends")
 
-    def test_update_entity_update_impact_missing_ids(self):
-        not_id = "no_an_entity_id"
-        self.ent1["depends"] = [not_id]
-        desc = "Could not find some entity in database."
-        with self.assertRaisesRegexp(ValueError, desc):
-            self.manager.update_entity(self.ent1)
-
-        entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
-        self.assertEqualEntities(self.ent2, entity)
-
-        entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
-        self.assertEqualEntities(self.ent3, entity)
-
-        entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
-        self.assertEqualEntities(self.ent4, entity)
-
-    def test_update_entity_update_depends_missing_ids(self):
-        not_id = "no_an_entity_id"
-        self.ent1["depends"] = [not_id]
-
-        desc = "Could not find some entity in database."
-        with self.assertRaisesRegexp(ValueError, desc):
-            self.manager.update_entity(self.ent1)
-
-        entity = self.manager.get_entities_by_id(self.ent2["_id"])[0]
-        self.assertEqualEntities(self.ent2, entity)
-
-        entity = self.manager.get_entities_by_id(self.ent3["_id"])[0]
-        self.assertEqualEntities(self.ent3, entity)
-
-        entity = self.manager.get_entities_by_id(self.ent4["_id"])[0]
-        self.assertEqualEntities(self.ent4, entity)
-
     def test_update_other_fields(self):
         new_entity = self.ent1.copy()
         new_entity['infos'] = {"Change": True}
@@ -572,21 +539,6 @@ class UpdateDependancies(BaseTest):
 
         with self.assertRaisesRegexp(ValueError, desc.format(None)):
             self.manager._ContextGraph__update_dependancies(None, None, None)
-
-    def test_update_dependancies_entity_not_found_in_db(self):
-
-        status = {"deletions": ["ent2", "ent3"]}
-
-        desc = "Could not find some entity in database."
-        with self.assertRaisesRegexp(ValueError, desc):
-            self.manager._ContextGraph__update_dependancies(None, status,
-                                                            "impact")
-
-        status = {"insertions": ["ent2", "ent3"],
-                  "deletions": []}
-        with self.assertRaisesRegexp(ValueError, desc):
-            self.manager._ContextGraph__update_dependancies(None, status,
-                                                            "impact")
 
     def __test(self, from_, to, delete):
 
