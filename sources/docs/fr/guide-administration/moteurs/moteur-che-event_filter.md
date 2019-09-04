@@ -34,7 +34,7 @@ Les plugins doivent-être ajoutés dans un volume dans l'image docker, et leur e
       - "./plugins:/data-source-plugins"
 ```
 
-Dans une installation Docker, l'image `canopsis/engine-axe-cat` remplace l'image par défaut `canopsis/engine-axe`. Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé : `engine-axe -postProcessorsDirectory /plugins/axepostprocessor`
+Dans une installation Docker, l'image `canopsis/engine-che-cat` remplace l'image par défaut `canopsis/engine-che`. Le moteur `che` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin d'enrichissement externe soit chargé : `engine-che -dataSourceDirectory /data-source-plugins`
 
 Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
 
