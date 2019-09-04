@@ -107,7 +107,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 Modifie une règle à partir du corps de la requête.
 
-**URL** : `/api/v2/eventfilter/rules/<rule_id>
+**URL** : `/api/v2/eventfilter/rules/<rule_id>``
 
 **Méthode** : `PUT`
 
