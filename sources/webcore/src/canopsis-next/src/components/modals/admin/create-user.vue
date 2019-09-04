@@ -55,7 +55,7 @@
           v-select(
           :label="$t('modals.createUser.fields.role')",
           v-model="form.role",
-          :items="rolesList",
+          :items="roles",
           item-text="_id",
           item-value="_id",
           data-vv-name="role",
@@ -110,13 +110,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
 
 import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
-import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewMixin from '@/mixins/entities/view/index';
 import popupMixin from '@/mixins/popup';
@@ -124,6 +124,8 @@ import popupMixin from '@/mixins/popup';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import ViewSelector from './partial/view-selector.vue';
+
+const { mapActions } = createNamespacedHelpers('role');
 
 /**
  * Modal to create an entity (watcher, resource, component, connector)
@@ -140,13 +142,13 @@ export default {
   mixins: [
     authMixin,
     modalInnerMixin,
-    entitiesRoleMixin,
     entitiesUserMixin,
     entitiesViewMixin,
     popupMixin,
   ],
   data() {
     return {
+      roles: [],
       pending: true,
       form: {
         _id: '',
@@ -199,10 +201,10 @@ export default {
       ];
     },
   },
-  async created() {
-    this.rolesList = (await this.fetchRolesListWithoutStore({ params: { limit: 0 } })).data;
-  },
-  mounted() {
+  async mounted() {
+    const { data: roles } = await this.fetchRolesListWithoutStore({ params: { limit: 0 } });
+    this.roles = roles;
+
     if (!this.isNew) {
       this.form = pick(this.config.user, [
         '_id',
@@ -225,6 +227,9 @@ export default {
     this.pending = false;
   },
   methods: {
+    ...mapActions({
+      fetchRolesListWithoutStore: 'fetchListWithoutStore',
+    }),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
