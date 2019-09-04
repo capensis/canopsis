@@ -8,7 +8,7 @@
       v-text-field(
       v-if="!hiddenFields.includes('title')",
       v-model="form.title",
-      v-validate="'required'",
+      v-validate="'required|unique-title'",
       :label="$t('modals.filter.fields.title')",
       :error-messages="errors.collect('title')"
       name="title",
@@ -60,6 +60,19 @@ export default {
     title() {
       return this.config.title || this.$t('modals.filter.create.title');
     },
+    existingTitles() {
+      return this.config.existingTitles || [];
+    },
+    initialTitle() {
+      return this.config.filter && this.config.filter.title;
+    },
+  },
+  created() {
+    this.$validator.extend('unique-title', {
+      getMessage: () => this.$t('validator.unique'),
+      validate: value => (this.initialTitle && this.initialTitle === value) ||
+        !this.existingTitles.find(title => title === value),
+    });
   },
   methods: {
     async submit() {
