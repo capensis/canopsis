@@ -39,7 +39,7 @@ Crée une nouvelle Action à partir du corps de la requête.
         "author": "System",
         "type": "Pause",
         "rrule": "",
-        "reason": "",
+        "reason": "Problème d\'habilitation",
         "tstart": 0,
         "tstop": 253402297199
     }
@@ -70,7 +70,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
         "author": "System",
         "type": "Pause",
         "rrule": "",
-        "reason": "Problème d'habilitation",
+        "reason": "Problème d\'habilitation",
         "tstart": 0,
         "tstop": 4170912120
     }
