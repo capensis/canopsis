@@ -25,7 +25,7 @@ Les plugins doivent-être ajoutés dans un volume dans l'image docker, et leur e
 
 ```yaml
   che:
-    image: canopsis/engine-che:${CANOPSIS_IMAGE_TAG}
+    image: canopsis/engine-che-cat:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     restart: unless-stopped
