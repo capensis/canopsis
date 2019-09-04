@@ -1,5 +1,7 @@
 # Sources de données pour l'event-filter
 
+Cette page porte sur le plugin à intégrer au moteur [che](../../guide-administration/moteurs/moteur-che.md) pour pouvoir utiliser la fonction d'enrichissement par sources externes pour l'[event-filter du moteur che](../../guide-administration/moteurs/moteur-che-event_filter.md)
+
 Une source de données externe est un module go exportant une variable
 `DataSourceFactory` qui implémente l'interface `DataSourceFactory` (définie
 dans
