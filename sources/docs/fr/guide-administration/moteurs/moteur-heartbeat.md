@@ -2,7 +2,7 @@
 
 Le moteur heartbeat permet de créer des alarmes en l'absence d'événements correspondant à un pattern donné durant un intervalle donné.
 
-Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent être ajoutées et modifiées avec l'[API Heartbeat](../../heartbeat/api_v2_heartbeat.md).
+Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent être ajoutés et modifiés avec l'[API Heartbeat](../../heartbeat/api_v2_heartbeat.md).
 
 ## Fonctionnement
 
