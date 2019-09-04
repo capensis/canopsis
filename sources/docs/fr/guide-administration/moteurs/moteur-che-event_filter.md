@@ -2,7 +2,7 @@
 
 !!! note
     Cette page concerne l'event-filter nouvelle génération, disponible uniquement
-    avec le moteur GO `event_filter`.
+    avec le moteur GO `che`.
 
 L'event-filter est une fonctionnalité du moteur [`che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
 
