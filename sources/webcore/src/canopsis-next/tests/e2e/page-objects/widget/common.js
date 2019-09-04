@@ -234,6 +234,27 @@ const commands = {
       .setColumnNameValue(index, value)
       .toggleColumnNameSwitch(index, isHtml);
   },
+
+  clickFilterOnOpenResolved() {
+    return this.customClick('@filterOnOpenResolved')
+      .defaultPause();
+  },
+
+  toggleOpenFilter(checked = true) {
+    return this.getAttribute('@openFilterInput', 'aria-checked', ({ value }) => {
+      if (value === 'false' && checked) {
+        this.customClick('@openFilter');
+      }
+    });
+  },
+
+  toggleResolvedFilter(checked = false) {
+    return this.getAttribute('@resolvedFilterInput', 'aria-checked', ({ value }) => {
+      if (value === 'false' && checked) {
+        this.customClick('@resolvedFilter');
+      }
+    });
+  },
 };
 
 module.exports = {
@@ -301,6 +322,12 @@ module.exports = {
     columnNameSwitchFieldInput: `${sel('columnName')}:nth-child(%s) input${sel('columnNameSwitch')}`,
     columnNameSwitchField: `${sel('columnName')}:nth-child(%s) .v-input${sel('columnNameSwitch')} .v-input--selection-controls__ripple`,
     columnNameDeleteButton: `${sel('columnName')}:nth-child(%s) ${sel('columnNameDeleteButton')}`,
+
+    filterOnOpenResolved: sel('filterOnOpenResolved'),
+    openFilter: `div${sel('openFilter')} .v-input--selection-controls__ripple`,
+    openFilterInput: `input${sel('openFilter')}`,
+    resolvedFilter: `div${sel('resolvedFilter')} .v-input--selection-controls__ripple`,
+    resolvedFilterInput: `input${sel('resolvedFilter')}`,
   },
   commands: [commands],
 };

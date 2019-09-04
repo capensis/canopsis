@@ -75,7 +75,6 @@ module.exports = {
 
   'Create widget alarms with some name': (browser) => {
     const common = browser.page.widget.common();
-    const textEditor = browser.page.modals.common.textEditor();
     const alarms = browser.page.widget.alarms();
 
     browser.page.view()
@@ -87,7 +86,7 @@ module.exports = {
       .clickWidget('AlarmsList')
       .verifyModalClosed();
 
-    browser.completed.widget.setCommonFields({
+    browser.completed.widget.createAlarmsList({
       row: 'row',
       size: {
         sm: 12,
@@ -103,6 +102,20 @@ module.exports = {
           orderBy: SERVICE_ALARMS_WIDGET_SORT_FIELD.component,
         },
         elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
+        openedResolvedFilter: {
+          open: true,
+          resolve: true,
+        },
+        ack: {
+          isAckNoteRequired: true,
+          isMultiAckEnabled: true,
+          fastAckOutput: {
+            enabled: true,
+            output: 'Output',
+          },
+        },
+        moreInfos: 'More infos popup',
+        enableHtml: true,
       },
     });
 
@@ -121,25 +134,10 @@ module.exports = {
         value: 'alarm.v.connector',
         label: 'New column',
         isHtml: true,
-      })
-      .clickCreateMoreInfos();
-
-
-    textEditor.verifyModalOpened()
-      .clickField()
-      .setField('More infos popup')
-      .clickSubmitButton()
-      .verifyModalClosed();
+      });
 
     // browser.completed.widget.createAlarmsList({
     //   advanced: {
-    //     defaultNumberOfElementsPerPage: {
-    //       count: 3,
-    //     },
-    //     filterOnOpenResolved: {
-    //       open: true,
-    //       resolved: true,
-    //     },
     //     filters: {
     //       add: {
     //         title: 'FilterTitle',
@@ -154,18 +152,6 @@ module.exports = {
     //       add: {
     //         column: 2,
     //         template: 'Template',
-    //       },
-    //     },
-    //     moreInfo: {
-    //       text: 'Text',
-    //     },
-    //     enableHtml: true,
-    //     ackGroup: {
-    //       isAckNoteRequired: true,
-    //       isMultiAckEnabled: true,
-    //       fastAckOutput: {
-    //         enabled: true,
-    //         output: 'Output',
     //       },
     //     },
     //   },
@@ -211,7 +197,7 @@ module.exports = {
     browser.page.view()
       .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
@@ -221,7 +207,7 @@ module.exports = {
     browser.page.view()
       .clickDeleteRowButton(1);
 
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();

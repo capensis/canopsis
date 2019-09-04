@@ -15,6 +15,7 @@ module.exports.command = function setCommonFields({
     modalType,
     alarmsList,
     elementsPerPage,
+    openedResolvedFilter,
   } = {},
   periodicRefresh,
   advanced = false,
@@ -111,6 +112,13 @@ module.exports.command = function setCommonFields({
     common
       .clickModalType()
       .clickModalTypeField(modalType);
+  }
+
+  if (openedResolvedFilter) {
+    common
+      .clickFilterOnOpenResolved()
+      .toggleOpenFilter(openedResolvedFilter.open)
+      .toggleResolvedFilter(openedResolvedFilter.resolve);
   }
 
   return this;
