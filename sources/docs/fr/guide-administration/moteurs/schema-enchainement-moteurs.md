@@ -50,7 +50,7 @@ systemctl status canopsis-engine-go@engine-che
 
 ### Docker
 
-Pour une installation Docker, modifier le service `Che` du docker-compose :
+Pour une installation Docker, modifier le service `che` du docker-compose :
 
 ```yaml
   che:
