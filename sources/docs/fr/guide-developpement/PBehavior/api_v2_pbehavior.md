@@ -218,7 +218,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8cc
 
 ### Récupération des pbehaviors
 
-Récupère un ou plusieurs pbehaviors appliquées sur une entité, via l'`eid` (pour `entity id`).
+Récupère un ou plusieurs pbehaviors appliqués sur une entité, via l'`eid` (pour `entity id`).
 
 #### Récupération d'un pbehavior par eid
 
@@ -238,7 +238,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior_byeid/disk2/pbe
 
 ##### Réponse en cas de réussite
 
-**Condition** : Au moins un pbehavior appliqué à une entité correspondant à l'`id` est trouvée.
+**Condition** : Au moins un pbehavior appliqué à une entité correspondant à l'`id` est trouvé.
 
 **Code** : `200 OK`
 
