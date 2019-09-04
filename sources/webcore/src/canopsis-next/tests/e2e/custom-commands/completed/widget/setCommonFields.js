@@ -14,6 +14,7 @@ module.exports.command = function setCommonFields({
     heightFactor,
     modalType,
     alarmsList,
+    elementsPerPage,
   } = {},
   periodicRefresh,
   advanced = false,
@@ -42,6 +43,14 @@ module.exports.command = function setCommonFields({
       .setWidgetTitleField(title);
   }
 
+  if (advanced) {
+    common.clickAdvancedSettings();
+  }
+
+  if (alarmsList) {
+    common.clickAlarmList();
+  }
+
   if (periodicRefresh) {
     common
       .clickPeriodicRefresh()
@@ -50,11 +59,10 @@ module.exports.command = function setCommonFields({
       .setPeriodicRefreshField(periodicRefresh);
   }
 
-  if (alarmsList) {
+  if (elementsPerPage) {
     common
-      .clickAlarmList()
       .clickElementsPerPage()
-      .selectElementsPerPage(alarmsList.perPage)
+      .selectElementsPerPage(elementsPerPage)
       .clickElementsPerPage();
   }
 
@@ -63,10 +71,6 @@ module.exports.command = function setCommonFields({
       .clickWidgetLimit()
       .clearWidgetLimitField()
       .setWidgetLimitField(limit);
-  }
-
-  if (advanced) {
-    common.clickAdvancedSettings();
   }
 
   if (sort) {

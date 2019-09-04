@@ -101,6 +101,7 @@ module.exports = {
       title: 'Weather widget',
       periodicRefresh: 140,
       advanced: true,
+      alarmsList: true,
       parameters: {
         limit: 140,
         sort: {
@@ -113,9 +114,7 @@ module.exports = {
           bottom: 3,
           left: 3,
         },
-        alarmsList: {
-          perPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
-        },
+        elementPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
         columnSM: 12,
         columnMD: 12,
         columnLG: 12,

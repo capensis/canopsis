@@ -74,6 +74,15 @@ module.exports.SERVICE_WEATHER_WIDGET_SORT_FIELD = {
   org: 5,
 };
 
+module.exports.SERVICE_ALARMS_WIDGET_SORT_FIELD = {
+  connector: 1,
+  connectorName: 2,
+  component: 3,
+  resource: 4,
+  output: 5,
+  extraDetails: 6,
+};
+
 
 module.exports.SORT_ORDERS = {
   asc: 1,

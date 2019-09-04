@@ -36,7 +36,11 @@
           :title="$t('settings.moreInfosModal')"
           )
       v-divider
-      field-number(data-test='widgetLimit', v-model="settings.widget.parameters.limit", :title="$t('settings.limit')")
+      field-number(
+      data-test='widgetLimit',
+      v-model="settings.widget.parameters.limit",
+      :title="$t('settings.limit')"
+      )
       v-divider
       v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}

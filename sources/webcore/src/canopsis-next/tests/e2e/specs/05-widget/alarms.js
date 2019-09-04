@@ -2,6 +2,7 @@
 
 const uid = require('uid');
 const { API_ROUTES } = require('../../../../src/config');
+const { SERVICE_ALARMS_WIDGET_SORT_FIELD, SORT_ORDERS, PAGINATION_PER_PAGE_VALUES } = require('../../constants');
 const { generateTemporaryView } = require('../../helpers/entities');
 
 module.exports = {
@@ -73,6 +74,10 @@ module.exports = {
   },
 
   'Create widget alarms with some name': (browser) => {
+    const common = browser.page.widget.common();
+    const textEditor = browser.page.modals.common.textEditor();
+    const alarms = browser.page.widget.alarms();
+
     browser.page.view()
       .clickEditViewButton()
       .clickAddWidgetButton();
@@ -82,92 +87,143 @@ module.exports = {
       .clickWidget('AlarmsList')
       .verifyModalClosed();
 
-    browser.completed.widget.createAlarmsList({
-      common: {
-        row: 'row',
-        sm: 13,
-        md: 13,
-        lg: 13,
-        title: 'Alarms widget',
-        periodRefresh: 120,
+    browser.completed.widget.setCommonFields({
+      row: 'row',
+      size: {
+        sm: 12,
+        md: 12,
+        lg: 12,
       },
-      advanced: {
+      title: 'Alarms widget',
+      advanced: true,
+      periodicRefresh: 140,
+      parameters: {
         sort: {
-          name: 2,
-          order: 2,
+          order: SORT_ORDERS.desc,
+          orderBy: SERVICE_ALARMS_WIDGET_SORT_FIELD.component,
         },
-        defaultNumberOfElementsPerPage: {
-          count: 3,
-        },
-        filterOnOpenResolved: {
-          open: true,
-          resolved: true,
-        },
-        filters: {
-          add: {
-            title: 'FilterTitle',
-            or: true,
-            rule: {
-              field: 2,
-              operator: 2,
-            },
-          },
-        },
-        infoPopap: {
-          add: {
-            column: 2,
-            template: 'Template',
-          },
-        },
-        moreInfo: {
-          text: 'Text',
-        },
-        enableHtml: true,
-        ackGroup: {
-          isAckNoteRequired: true,
-          isMultiAckEnabled: true,
-          fastAckOutput: {
-            enabled: true,
-            output: 'Output',
-          },
-        },
+        elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
       },
     });
+
+    common
+      .clickColumnNames()
+      .editColumnName(1, {
+        value: 'alarm.v.changeConnector',
+        label: 'Connector(changed)',
+        isHtml: true,
+      })
+      .clickColumnNameDownWard(1)
+      .clickColumnNameUpWard(2)
+      .clickDeleteColumnName(2)
+      .clickAddColumnName()
+      .editColumnName(8, {
+        value: 'alarm.v.connector',
+        label: 'New column',
+        isHtml: true,
+      })
+      .clickCreateMoreInfos();
+
+
+    textEditor.verifyModalOpened()
+      .clickField()
+      .setField('More infos popup')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    // browser.completed.widget.createAlarmsList({
+    //   advanced: {
+    //     defaultNumberOfElementsPerPage: {
+    //       count: 3,
+    //     },
+    //     filterOnOpenResolved: {
+    //       open: true,
+    //       resolved: true,
+    //     },
+    //     filters: {
+    //       add: {
+    //         title: 'FilterTitle',
+    //         or: true,
+    //         rule: {
+    //           field: 2,
+    //           operator: 2,
+    //         },
+    //       },
+    //     },
+    //     infoPopap: {
+    //       add: {
+    //         column: 2,
+    //         template: 'Template',
+    //       },
+    //     },
+    //     moreInfo: {
+    //       text: 'Text',
+    //     },
+    //     enableHtml: true,
+    //     ackGroup: {
+    //       isAckNoteRequired: true,
+    //       isMultiAckEnabled: true,
+    //       fastAckOutput: {
+    //         enabled: true,
+    //         output: 'Output',
+    //       },
+    //     },
+    //   },
+    // });
+
+    browser.waitForFirstXHR(
+      API_ROUTES.userPreferences,
+      5000,
+      () => alarms.clickSubmitAlarms(),
+      ({ responseData }) => {
+        browser.globals.temporary.widgetId = JSON.parse(responseData).data[0].widget_id;
+      },
+    );
   },
 
-  'Edit widget weather with some name': (browser) => {
+  'Edit widget alarms with some name': (browser) => {
     browser.page.view()
-      .clickEditWidgetButton();
+      .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
-    browser.completed.widget.setCommonField({
-      sm: 10,
-      md: 10,
-      lg: 10,
+    browser.completed.widget.setCommonFields({
+      size: {
+        sm: 10,
+        md: 10,
+        lg: 10,
+      },
       title: 'Alarms widget(edited)',
-      periodRefresh: 180,
+      advanced: true,
+      periodicRefresh: 180,
+      parameters: {
+        sort: {
+          order: SORT_ORDERS.desc,
+          orderBy: SERVICE_ALARMS_WIDGET_SORT_FIELD.connector,
+        },
+        elementsPerPage: PAGINATION_PER_PAGE_VALUES.TWENTY,
+      },
     });
 
     browser.page.widget.alarms()
       .clickSubmitAlarms();
   },
 
-  'Delete widget weather with some name': (browser) => {
+  'Delete widget alarms with some name': (browser) => {
     browser.page.view()
-      .clickDeleteWidgetButton();
+      .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 
     browser.page.modals.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 
   'Delete row with some name': (browser) => {
     browser.page.view()
-      .clickDeleteRowButton();
+      .clickDeleteRowButton(1);
 
     browser.page.modals.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 };

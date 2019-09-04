@@ -45,6 +45,7 @@
           )
           v-divider
           field-text-editor(
+          data-test="widgetMoreInfoTemplate",
           v-model="settings.widget.parameters.moreInfoTemplate",
           :title="$t('settings.moreInfosModal')"
           )
