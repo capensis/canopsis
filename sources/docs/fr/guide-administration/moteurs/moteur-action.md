@@ -13,7 +13,7 @@ Les types d'actions disponibles sont :
 * `pbehavior`, qui va poser un [PBehavior](../../guide-developpement/moteurs/moteur-pbehavior.md)
 * `snooze`, qui va poser des snooze automatiques sur les alarmes lors de leur création.
 
-Une action est composée en un document Json contenant les paramètres suivants :
+Une action est composée d'un JSON contenant les paramètres suivants :
 
 - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
 - `type` : `[pbehavior](../../guide-developpement/moteurs/moteur-pbehavior.md)` ou `snooze`.
