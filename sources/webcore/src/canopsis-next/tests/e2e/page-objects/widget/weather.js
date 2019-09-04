@@ -25,9 +25,9 @@ module.exports = {
   elements: {
     submitWeather: sel('submitWeather'),
 
-    templateWeatherItem: `${sel('widgetTemplateWeatherItem')} ${sel('showEditButton')}`,
-    templateModal: `${sel('widgetTemplateModal')} ${sel('showEditButton')}`,
-    templateEntities: `${sel('widgetTemplateEntities')} ${sel('showEditButton')}`,
+    templateWeatherItem: `${sel('widgetTemplateWeatherItem')} ${sel('showEditorModalButton')}`,
+    templateModal: `${sel('widgetTemplateModal')} ${sel('showEditorModalButton')}`,
+    templateEntities: `${sel('widgetTemplateEntities')} ${sel('showEditorModalButton')}`,
   },
   commands: [commands],
 };

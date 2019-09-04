@@ -16,9 +16,9 @@ const commands = {
     return this.customClick('@periodicRefresh');
   },
 
-  togglePeriodicRefreshSwitch(checked = false) {
+  setPeriodicRefreshSwitch(checked = false) {
     return this.getAttribute('@periodicRefreshSwitchInput', 'aria-checked', ({ value }) => {
-      if (value === 'false' && checked) {
+      if (value !== String(checked)) {
         this.clickPeriodicRefreshSwitch('@periodicRefreshSwitch');
       }
     });
@@ -217,9 +217,9 @@ const commands = {
     return this.customClick(this.el('@columnNameSwitchField', index));
   },
 
-  toggleColumnNameSwitch(index, checked = false) {
+  setColumnNameSwitch(index, checked = false) {
     return this.getAttribute(this.el('@columnNameSwitchFieldInput', index), 'aria-checked', ({ value }) => {
-      if (value === 'false' && checked) {
+      if (value !== String(checked)) {
         this.clickColumnNameSwitch(index);
       }
     });
@@ -232,7 +232,7 @@ const commands = {
       .clickColumnNameValue(index)
       .clearColumnNameValue(index)
       .setColumnNameValue(index, value)
-      .toggleColumnNameSwitch(index, isHtml);
+      .setColumnNameSwitch(index, isHtml);
   },
 };
 
