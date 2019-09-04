@@ -110,7 +110,7 @@ Dans le cas où la `rrule` est présente, `tstart` et `tstop` seront recalculés
 #### Exdate
 
 Il est possible d'empêcher l'exécution d'une occurrence d'un pbehavior, à l'aide
-du champ exdate. Exdate est une liste de timestamp correspondant au début
+du champ `exdate`. `Exdate` est une liste de timestamps correspondant au début
 d'une occurence à empêcher.
 
 ## Timezone
