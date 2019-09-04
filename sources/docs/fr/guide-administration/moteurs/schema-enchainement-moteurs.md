@@ -82,7 +82,7 @@ docker-compose up -d che
 
 Tous les moteurs peuvent communiquer avec MongoDB et InfluxDB.
 
-Les moteurs `Action` et `Heartbeat` peuvent communiquer avec Redis.
+Les moteurs `action` et `heartbeat` peuvent communiquer avec Redis.
 
 ## Représentation
 
