@@ -2,7 +2,7 @@
 
 Dans Canopsis, le traitement des événements par le moteur [axe](../moteurs/moteur-axe) peut déclencher des actions qui correspondent à des `triggers`.
 
-Ces `triggers` peuvent servir comme point de déclenchement pour les [actions](../moteur-action.md) et les [webhooks](../moteur-axe-webhooks.md).
+Ces `triggers` peuvent servir comme point de déclenchement pour les [actions](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-axe-webhooks.md).
 
 Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"uncancel"`, et `"unsnooze"`.
 

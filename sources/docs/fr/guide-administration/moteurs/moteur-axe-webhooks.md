@@ -32,7 +32,7 @@ Une règle est un document JSON contenant les paramètres suivants :
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
-     - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteurècheèevent_filter.md).
+     - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
      - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
  - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le webhook si un pbehavior est actif sur l'entité.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :

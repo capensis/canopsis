@@ -2,7 +2,7 @@
 
 L'API HeartBeat permet de consulter, créer et supprimer des HeartBeats.
 
-Pour plus d'informations sur ce qu'est un heartbeat, consulter la [documentation du moteur Heartbeat](../../guide-administration/moteur-heartbeat.md).
+Pour plus d'informations sur ce qu'est un heartbeat, consulter la [documentation du moteur Heartbeat](../../guide-administration/moteurs/moteur-heartbeat.md).
 
 ### Création de Heartbeat
 

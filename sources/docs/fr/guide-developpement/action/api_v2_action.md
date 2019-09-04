@@ -2,7 +2,7 @@
 
 L'API Action permet de consulter, créer, modifier et supprimer des Actions sur les alarmes.
 
-Pour plus d'informations sur ce qu'est une action, consulter la [documentation du moteur Action](../../guide-administration/moteur-action.md).
+Pour plus d'informations sur ce qu'est une action, consulter la [documentation du moteur Action](../../guide-administration/moteurs/moteur-action.md).
 
 ### Création d'Actions
 

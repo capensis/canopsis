@@ -23,7 +23,7 @@ Un watcher est un document JSON contenant les paramètres suivants :
 
  - `_id` (optionnel): l'identifiant du watcher (généré automatiquement ou choisi par l'utilisateur).
  - `name` (requis) : Le nom du watcher, qui sera utilisé dans la météo de services.
- - `entities` (requis) : La liste des patterns permettant de filtrer les entités surveillées. Le format des patterns est le même que pour l'[event-filter](../event-filter/index.md).
+ - `entities` (requis) : La liste des patterns permettant de filtrer les entités surveillées. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
  - `state` (requis) : Un document contenant :
     - `method` (requis) : Le nom de la méthode de calcul de l'état du watcher en fonction des alarmes ouvertes sur les entités. Actuellement, seule la méthode `worst` est implémentée.
     - Les différents paramètres des méthodes ci-dessus.

@@ -2,7 +2,7 @@
 
 L'API Watchers permet de consulter, créer et supprimer des Watchers.
 
-Pour plus d'informations sur ce qu'est un watcher, consulter la [documentation sur les Watchers](../../guide-administration/moteur-watcher.md).
+Pour plus d'informations sur ce qu'est un watcher, consulter la [documentation sur les Watchers](../../guide-administration/moteurs/moteur-watcher.md).
 
 ### Creation de watcher
 

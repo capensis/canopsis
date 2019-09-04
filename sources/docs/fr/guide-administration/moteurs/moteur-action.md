@@ -2,7 +2,7 @@
 
 Le moteur action permet de déclencher conditionnellement des actions sur des alarmes.
 
-Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../action/api_v2_action.md).
+Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/action/api_v2_action.md).
 
 ## Fonctionnement
 
@@ -10,7 +10,7 @@ La file du moteur est placée juste après le moteur [Axe](moteur-axe.md).
 
 Les types d'actions disponibles sont :
 
-* `pbehavior`, qui va poser un [PBehavior](../../guide-developpement/moteurs/moteur-pbehavior.md)
+* `pbehavior`, qui va poser un [PBehavior](moteur-pbehavior.md)
 * `snooze`, qui va poser des snooze automatiques sur les alarmes lors de leur création.
 
 Une action est composée d'un JSON contenant les paramètres suivants :
