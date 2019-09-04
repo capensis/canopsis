@@ -27,7 +27,7 @@ Si l'événement correspond à une action (comme la mise d'un ACK), l'alarme va 
   -featureStatEvents
         Envoie les évènements de statistiques
   -postProcessorsDirectory
-        Le répetoire contenant les plugins de post-traitement (par défaut ".")
+        Le répertoire contenant les plugins de post-traitement (par défaut ".")
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue
