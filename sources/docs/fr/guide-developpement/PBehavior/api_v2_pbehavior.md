@@ -275,7 +275,7 @@ Récupère tous les pbehaviors stockés en base
 
 **Permissions requises** : Aucune
 
-**Supporter la pagination** : Oui
+**Supporte la pagination** : Oui
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les pbehaviors :
 
