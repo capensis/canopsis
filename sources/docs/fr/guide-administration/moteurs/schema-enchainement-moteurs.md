@@ -80,9 +80,11 @@ docker-compose up -d che
 
 ## Interactions avec les bases de données
 
-Tous les moteurs peuvent communiquer avec MongoDB et InfluxDB.
+Tous les moteurs peuvent communiquer avec MongoDB.
 
-Les moteurs `action` et `heartbeat` peuvent communiquer avec Redis.
+Seul `stat` communique avec InfluxDB.
+
+Seuls `axe` et `heartbeat` communiquent communiquent avec Redis.
 
 ## Représentation
 
