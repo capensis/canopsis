@@ -6,7 +6,7 @@ Dans la version CAT, il permet aussi d'appliquer des [`webhooks`](moteur-axe-web
 
 ## Fonctionnement
 
-La queue du moteur est placée juste après le moteur [che](moteur-che.md).
+La file du moteur est placée juste après le moteur [che](moteur-che.md).
 
 À l'arrivée dans sa file, le moteur axe va transformer les événements en alarmes qu'il va créer et enrichir.
 

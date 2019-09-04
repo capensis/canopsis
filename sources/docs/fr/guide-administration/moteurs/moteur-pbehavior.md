@@ -7,7 +7,7 @@ Les pbehaviors sont définis dans la collection MongoDB `default_pbehavior`, et 
 
 ## Fonctionnement
 
-Dans une stack en Go classique, la queue du moteur `pbehavior` n'est pas alimentée.
+Dans une stack en Go classique, la file du moteur `pbehavior` n'est pas alimentée.
 
 Un PBehavior contient un filtre (`filter`) qui est appliqué sur une entité.
 

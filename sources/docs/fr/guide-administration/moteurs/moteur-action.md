@@ -6,7 +6,7 @@ Les actions sont définies dans la collection MongoDB `default_action`, et peuve
 
 ## Fonctionnement
 
-La queue du moteur est placée juste après le moteur [Axe](moteur-axe.md).
+La file du moteur est placée juste après le moteur [Axe](moteur-axe.md).
 
 Les types d'actions disponibles sont :
 

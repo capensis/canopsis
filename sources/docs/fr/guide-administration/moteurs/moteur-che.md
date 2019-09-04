@@ -4,7 +4,7 @@ Le moteur che permet d'enrichir les événements (via son [`event-filter`](moteu
 
 ## Fonctionnement
 
-La queue du moteur est placée juste après l'exchange `canopsis.events`.
+La file du moteur est placée juste après l'exchange `canopsis.events`.
 
 À l'arrivée dans sa file, le moteur che va leur appliquer les règles d'enrichissement de son [`event-filter`](moteur-che-event_filter.md).
 

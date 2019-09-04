@@ -6,7 +6,7 @@ Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent 
 
 ## Fonctionnement
 
-La queue du moteur est placée juste après l'exchange `canopsis.events`.
+La file du moteur est placée juste après l'exchange `canopsis.events`.
 
 Un `heartbeat` est une règle qui définit un pattern d'événement entrant et un intervalle de temps.
 
