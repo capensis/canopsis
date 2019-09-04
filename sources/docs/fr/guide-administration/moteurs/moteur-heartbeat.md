@@ -24,7 +24,7 @@ L'alarme levée reste en cours jusqu'à l'arrivée d'un nouvel événement corre
 
 #### Patterns
 
-Les patterns supportés sont une version simplifiée de ceux utilisés pour l'[event-filter](../../event-filter/index.md).
+Les patterns acceptés sont une version simplifiée de ceux utilisés pour l'[event-filter](../../event-filter/index.md).
 
 Les valeurs supportées sont uniquement de type `string` et la seule condition supportée est de type `equal` (pas d'expression régulière, de `not equal`, etc.)
 
