@@ -117,7 +117,7 @@ d'une occurence à empêcher.
 
 L'exécution de chaque pbehavior se fait dans une timezone particulière.
 Lorsqu'un pbehavior ne contient pas de champ timezone, la timezone utilisée
-sera celle définie dans le fichier de configuration `etc/pbehavior/manager.conf`
+sera celle définie dans le fichier de configuration `/opt/canopsis/etc/pbehavior/manager.conf`
 sous le champ `default_timezone`.
 
 Si le fichier de configuration n'existe pas ou si le champ `default_timezone`
