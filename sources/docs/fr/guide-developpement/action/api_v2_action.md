@@ -108,7 +108,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ---
 
-**Condition** : Si un NOM_DE_L_API similaire existe déjà en base.
+**Condition** : Si une action similaire existe déjà en base.
 
 **Code** : `400 BAD REQUEST`
 
@@ -224,7 +224,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ---
 
-### Suppression de NOM_DE_L_API
+### Suppression de l'ation
 
 Supprime une Action en fonction de son `id`.
 
