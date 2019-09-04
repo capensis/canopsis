@@ -110,7 +110,7 @@ module.exports = {
       .clickWidget('ServiceWeather')
       .verifyModalClosed();
 
-    browser.completed.widget.createWeather(weatherWidget, ({ response }) => {
+    browser.completed.widget.createServiceWeather(weatherWidget, ({ response }) => {
       browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
   },
@@ -178,7 +178,7 @@ module.exports = {
     browser.page.view()
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
-    browser.completed.widget.createWeather(weatherWidget);
+    browser.completed.widget.createServiceWeather(weatherWidget);
   },
 
   'Delete widget weather with some name': (browser) => {

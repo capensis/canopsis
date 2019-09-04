@@ -2,7 +2,7 @@
 
 const { API_ROUTES } = require('../../../../../src/config');
 
-module.exports.command = function createWeather(
+module.exports.command = function createServiceWeather(
   {
     parameters: {
       filter,
