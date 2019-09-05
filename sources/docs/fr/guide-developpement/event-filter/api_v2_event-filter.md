@@ -2,7 +2,7 @@
 
 L'API Event-Filter permet de consulter, créer et supprimer des règles d'enrichissement.
 
-Pour plus d'informations sur ce qu'est une règle d'enrichissement, consulter la [documentation du moteur Che](../../guide-administration/moteurs/event-filter/index.md).
+Pour plus d'informations sur ce qu'est une règle d'enrichissement, consulter la [documentation du moteur Che](../../guide-administration/moteurs/moteur-che-event_filter.md).
 
 ### Création d'une règle
 
