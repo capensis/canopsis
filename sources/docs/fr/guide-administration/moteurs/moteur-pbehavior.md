@@ -2,7 +2,7 @@
 
 Les *pbehaviors* (pour *periodical behaviors*) sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes par exemple).
 
-Ils permettent de créer un équivalent des « downtimes », à savoir indiquer qu'une entité n’est pas active.
+Ils permettent de créer des « downtimes », à savoir indiquer qu'une entité est en pause.
 
 Les pbehaviors sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md).
 
