@@ -5,7 +5,7 @@
         span.headline {{ title }}
     v-card-text
       v-form
-        v-layout(align-center)
+        v-layout(row, wrap)
           v-flex(xs3)
             v-text-field(
               v-model="periodForm.periodValue",
@@ -26,6 +26,7 @@
             )
         v-layout
           v-btn(@click="showEditPatternModal") {{ $t('modals.eventFilterRule.editPattern') }}
+    v-alert(:value="errors.has('pattern')", type="error") {{ $t('modals.createHeartbeat.patternRequired') }}
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
@@ -33,8 +34,11 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
 import { MODALS, HEARTBEAT_DURATION_UNITS } from '@/constants';
 
+import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 
 /**
@@ -45,7 +49,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin],
+  mixins: [popupMixin, modalInnerMixin],
   data() {
     return {
       periodForm: {
@@ -79,6 +83,14 @@ export default {
       ];
     },
   },
+  created() {
+    this.$validator.attach({
+      name: 'pattern',
+      rules: 'required:true',
+      getter: () => !isEmpty(this.form.pattern),
+      context: () => this,
+    });
+  },
   methods: {
     showEditPatternModal() {
       this.showModal({
@@ -86,23 +98,35 @@ export default {
         config: {
           isSimplePattern: true,
           pattern: this.form.pattern,
-          action: pattern => this.form.pattern = pattern,
+          action: (pattern) => {
+            this.form.pattern = pattern;
+
+            this.$validator.validate('pattern');
+          },
         },
       });
     },
 
     async submit() {
-      const isValid = await this.$validator.validateAll();
+      try {
+        const isValid = await this.$validator.validateAll();
 
-      if (isValid) {
-        // const { periodValue, periodUnit } = this.periodForm;
-        // const { pattern } = this.form;
-        // const data = {
-        //   pattern,
-        //   expected_interval: `${periodValue}${periodUnit}`,
-        // };
+        if (isValid) {
+          const { periodValue, periodUnit } = this.periodForm;
+          const { pattern } = this.form;
+          const data = {
+            pattern,
+            expected_interval: `${periodValue}${periodUnit}`,
+          };
 
-        this.hideModal();
+          if (this.config.action) {
+            await this.config.action(data);
+          }
+
+          this.hideModal();
+        }
+      } catch (err) {
+        this.addErrorPopup({ text: err.description });
       }
     },
   },

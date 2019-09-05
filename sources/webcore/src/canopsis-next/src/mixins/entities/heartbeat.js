@@ -16,8 +16,8 @@ export default {
     ...mapActions({
       fetchHeartbeatsList: 'fetchList',
       refreshHeartbeatsList: 'fetchListWithPreviousParams',
-      createHeartbeats: 'create',
-      removeHeartbeats: 'remove',
+      createHeartbeat: 'create',
+      removeHeartbeat: 'remove',
     }),
   },
 };

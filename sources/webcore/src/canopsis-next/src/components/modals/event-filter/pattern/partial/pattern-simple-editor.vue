@@ -204,8 +204,8 @@ export default {
       this.showModal({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
-          isSimple: this.isSimplePattern,
           operators: this.operators,
+          isSimple: this.isSimplePattern,
           action: (newRule) => {
             this.updateField([...parentPath, newRule.field], newRule.value);
 
@@ -229,6 +229,7 @@ export default {
           ruleKey: name,
           ruleValue: value,
           operators: this.operators,
+          isSimple: this.isSimplePattern,
           action: (newRule) => {
             const newPath = [...dropRight(path, 1), newRule.field];
 
