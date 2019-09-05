@@ -1,8 +1,11 @@
 # Post-traitement du moteur Axe
 
-Le moteur [axe](../../guide-administration/moteurs/moteur-axe.md) nécessite l'utilisation du plugin de post-processing pour pouvoir utiliser la fonction [Webhooks](../../guide-administration/moteurs/moteur-axe-webhooks.md).
+Les plugins de post-processing permettent d'appliquer des traitements aux alarmes après leur modification par le moteur [axe](../../guide-administration/moteurs/moteur-axe.md).
 
-Ce plugin de post-processing est un module go exportant une variable
+Les plugins de post-processing suivants sont disponibles dans Canopsis :
+  - [Webhooks](../../guide-administration/moteurs/moteur-axe-webhooks.md)
+
+Un plugin de post-processing est un module go exportant une variable
 `AxePostProcessor` qui implémente l'interface `AxePostProcessor` (définie
 dans
 `git.canopsis.net/canopsis/go-revolution/cmd/engine-axe/plugins.go`).
