@@ -53,8 +53,8 @@ module.exports = {
     activeEditModeButton: `.v-btn--active${sel('editModeButton')}`,
     settingsViewButton: sel('settingsViewButton'),
     activeSettingsViewButton: `.v-btn--active${sel('settingsViewButton')}`,
-    settingsWrapper: '.v-speed-dial',
-    controlsWrapper: '.v-speed-dial .v-speed-dial__list',
+    settingsWrapper: sel('settingsWrapper'),
+    controlsWrapper: `${sel('settingsWrapper')} .v-speed-dial__list`,
   },
   commands: [commands],
 };
