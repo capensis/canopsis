@@ -55,7 +55,7 @@ module.exports.command = function setCommonFields({
   if (periodicRefresh) {
     common
       .clickPeriodicRefresh()
-      .togglePeriodicRefreshSwitch(true)
+      .setPeriodicRefreshSwitch(true)
       .clearPeriodicRefreshField()
       .setPeriodicRefreshField(periodicRefresh);
   }
