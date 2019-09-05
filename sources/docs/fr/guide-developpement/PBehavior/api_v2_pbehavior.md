@@ -151,7 +151,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 		}]
 	},
 	"type_": "Hors plage horaire de surveillance",
-	"reason": "Problème d'\habilitation",
+	"reason": "Problème d\'habilitation",
   "rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
 	"comments": [],
 	"exdate": []
