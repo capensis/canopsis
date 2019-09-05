@@ -84,7 +84,7 @@ Tous les moteurs peuvent communiquer avec MongoDB.
 
 Seul `stat` communique avec InfluxDB.
 
-Seuls `axe` et `heartbeat` communiquent communiquent avec Redis.
+Seuls `action`, `axe` et `heartbeat` communiquent communiquent avec Redis.
 
 ## Représentation
 
