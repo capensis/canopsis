@@ -181,7 +181,7 @@ Modifie une action à partir du corps de la requête.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut envoyer le JSON ci-dessus pour modifier l'Action dont l'`_id` vaut `action_id_pbehavior` :
 
 ```sh
-curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "_id": "action_id",
     "type": "pbehavior",
     "hook": {
@@ -319,7 +319,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/actions/action_id_pbehavi
 
 ---
 
-#### Récupération de toutes les ACtions en base de données
+#### Récupération de toutes les Actions en base de données
 
 Récupère toutes les Actions stockées en base
 
