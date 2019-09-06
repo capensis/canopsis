@@ -59,7 +59,7 @@ Les actions sont stockées dans la collection Mongo `default_action` (voir [API 
 
 Un exemple d'action concernant le snooze automatique (le `type` d'action est donc `snooze`). Il a lieu à la création de l'alarme et si le champ `resource` de l'événement contient les termes `CPU`  ou `HDD`.
 
-Dans les `parameters`, on définit la durée du snooze (600 secondes, soit 10 minutes dans cet exemple), l'auteur et le message accompgnant le snooze.
+Dans les `parameters`, on définit la durée du snooze (600 secondes, soit 10 minutes dans cet exemple), l'auteur et le message accompagnant le snooze.
 
 ```JSON
 {
