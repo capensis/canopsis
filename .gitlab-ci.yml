@@ -17,6 +17,7 @@ variables:
   CANOPSIS_ENV_CONFIRM: "0"
   CANOPSIS_SKIP_GO: "1"
   CANOPSIS_BUILD_NEXT: "0"
+  GOPATH: "$PWD/../"
 
 stage_test:
   stage: test
