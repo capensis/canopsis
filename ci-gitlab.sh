@@ -8,6 +8,10 @@ git submodule update --init
 
 # override .env default variable
 export CANOPSIS_IMAGE_TAG=${CANOPSIS_DISTRIBUTION}-ci-test
+export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}"_"$(git rev-parse --short HEAD)
+
+echo "${CANOPSIS_IMAGE_TAG}"
+echo "${COMPOSE_PROJECT_NAME}"
 
 docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} up -d
 ./docker/wait-provisionning.sh docker-compose.ci.yml ${COMPOSE_PROJECT_NAME}
