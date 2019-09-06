@@ -2,27 +2,27 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
+        span.headline {{ $t('modals.createHeartbeat.create.title') }}
     v-card-text
       v-form
         v-layout(row, wrap)
           v-flex(xs3)
             v-text-field(
-              v-model="periodForm.periodValue",
-              v-validate="'required'",
-              :label="$t('modals.statsDateInterval.fields.periodValue')",
-              :error-messages="errors.collect('periodValue')",
-              type="number",
-              name="periodValue"
+            v-model="periodForm.periodValue",
+            v-validate="'required'",
+            :label="$t('modals.statsDateInterval.fields.periodValue')",
+            :error-messages="errors.collect('periodValue')",
+            type="number",
+            name="periodValue"
             )
           v-flex
             v-select(
-              v-model="periodForm.periodUnit",
-              v-validate="'required'",
-              :items="periodUnits",
-              :label="$t('modals.statsDateInterval.fields.periodUnit')",
-              :error-messages="errors.collect('periodUnit')",
-              name="periodUnit"
+            v-model="periodForm.periodUnit",
+            v-validate="'required'",
+            :items="periodUnits",
+            :label="$t('modals.statsDateInterval.fields.periodUnit')",
+            :error-messages="errors.collect('periodUnit')",
+            name="periodUnit"
             )
         v-layout
           v-btn(@click="showEditPatternModal") {{ $t('modals.eventFilterRule.editPattern') }}
@@ -62,14 +62,6 @@ export default {
     };
   },
   computed: {
-    title() {
-      if (this.config.heartbeat) {
-        return this.$t('modals.createHeartbeat.edit.title');
-      }
-
-      return this.$t('modals.createHeartbeat.create.title');
-    },
-
     periodUnits() {
       return [
         {

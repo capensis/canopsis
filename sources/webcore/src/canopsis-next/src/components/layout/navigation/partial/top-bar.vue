@@ -108,7 +108,7 @@ export default {
         },
         {
           route: { name: 'exploitation-heartbeats' },
-          text: this.$t('heartbeats.title'),
+          text: this.$t('heartbeat.title'),
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.heartbeat,
         },
