@@ -25,6 +25,11 @@ const commands = {
       .customClick('@addViewButton');
   },
 
+  clickAddWidgetButton() {
+    return this.waitForElementVisible('@addWidgetButton')
+      .customClick('@addWidgetButton');
+  },
+
   clickEditViewButton() {
     return this.waitForElementVisible('@editViewButton')
       .customClick('@editViewButton');
@@ -59,14 +64,35 @@ const commands = {
     return this.waitForElementVisible('@settingsWrapper')
       .assert.visible('@settingsViewButton');
   },
+
+  clickDeleteRowButton(index = 0) {
+    return this.customClick(this.el('@deleteRowButton', index));
+  },
+
+  clickDeleteWidgetButton(id) {
+    return this.customClick(this.el('@deleteWidgetButton', id));
+  },
+
+  clickCopyWidgetButton(id) {
+    return this.customClick(this.el('@copyWidgetButton', id));
+  },
+
+  clickEditWidgetButton(id) {
+    return this.customClick(this.el('@editWidgetButton', id));
+  },
   el,
 };
 
 module.exports = {
   elements: {
+    deleteRowButton: `${sel('deleteRowButton')}:nth-child(%s)`,
+    deleteWidgetButton: `${sel('deleteWidgetButton-%s')}`,
+    copyWidgetButton: `${sel('copyWidgetButton-%s')}`,
+    editWidgetButton: `${sel('editWidgetButton-%s')}`,
     viewPageById: sel('view-page-%s'),
     controlViewLayout: `${sel('controlViewLayout')} .v-speed-dial`,
     menuViewButton: `${sel('controlViewLayout')} .v-speed-dial ${sel('menuViewButton')}`,
+    addWidgetButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('addWidgetButton')}`,
     addViewButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('addViewButton')}`,
     editViewButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('editViewButton')}`,
     submitMoveTab: sel('submitMoveTab'),

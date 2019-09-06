@@ -21,3 +21,8 @@ module.exports.generateTemporaryRole = (prefix = '', suffix = uid()) => ({
   name: `${prefix}name-${suffix}`,
   description: `${prefix}description-${suffix}`,
 });
+
+module.exports.generateTemporaryWeather = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Weather-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

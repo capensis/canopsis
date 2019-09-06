@@ -57,6 +57,7 @@
             span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
           v-tooltip(top)
             v-btn(
+            data-test="addWidgetButton",
             v-if="hasUpdateAccess",
             slot="activator",
             fab,

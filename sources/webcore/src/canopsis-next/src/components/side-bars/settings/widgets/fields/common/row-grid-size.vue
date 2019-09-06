@@ -1,9 +1,10 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="rowGridSize")
     v-list-tile(slot="activator")
       div(:class="validationHeaderClass") {{ $t('settings.rowGridSize.title') }}
     v-container
       v-combobox(
+      data-test="rowGridSizeCombobox"
       ref="combobox",
       v-model="row",
       @blur="blurRow",
@@ -23,6 +24,7 @@
       div
         v-slider(
         v-for="slider in sliders",
+        :data-test="`slider-${slider.key}`"
         :key="`slider-${slider.key}`",
         v-bind="slider.bind",
         v-on="slider.on",

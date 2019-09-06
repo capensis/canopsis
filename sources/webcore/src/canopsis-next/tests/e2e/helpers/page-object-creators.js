@@ -13,7 +13,7 @@ module.exports.elementsWrapperCreator = function elementsWrapperCreator(selector
 };
 
 module.exports.modalCreator = function modalCreator(selector, pageObject) {
-  const { submitButton, cancelButton } = pageObject.elements;
+  const { submitButton, cancelButton, deleteButton } = pageObject.elements;
   const preparedPageObjectCommands = pageObject.commands && pageObject.commands.length ? pageObject.commands : [{}];
 
   return {
@@ -42,6 +42,12 @@ module.exports.modalCreator = function modalCreator(selector, pageObject) {
         if (cancelButton) {
           commands.clickCancelButton = function clickCancelButton() {
             return this.customClick(cancelButton);
+          };
+        }
+
+        if (deleteButton) {
+          commands.clickDeleteButton = function clickDeleteButton() {
+            return this.customClick(deleteButton);
           };
         }
 

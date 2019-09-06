@@ -4,6 +4,11 @@ const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-
 const el = require('../../../helpers/el');
 
 const commands = {
+  verifyModalOpened() {
+    return this.waitForElementVisible('@modalSelector')
+      .waitForElementNotVisible('@progressOverlay');
+  },
+
   setUsername(value) {
     return this.customSetValue('@usernameField', value);
   },
@@ -85,8 +90,10 @@ module.exports = modalCreator(modalSelector, {
       selectDefaultViewButton: sel('selectDefaultViewButton'),
       enabled: `.v-input${sel('enabled')} .v-input--selection-controls__ripple`,
       submitButton: sel('submitButton'),
+      progressOverlay: sel('progressOverlay'),
     }),
 
+    modalSelector,
     roleItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     languageItemOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     navigationTypeOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
