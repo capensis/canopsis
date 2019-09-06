@@ -57,18 +57,34 @@ Les actions sont stockées dans la collection Mongo `default_action` (voir [API 
 }
 ```
 
-Un exemple d'action concernant le snooze automatique (le `type` d'action est donc `snooze`). Les champs `fields` et `regex` indiquent sur quelles actions on veut peut poser le snooze. Dans les `parameters`, on définit la durée du snooze (600 secondes, soit 10 minutes dans cet exemple), l'auteur et le message accompgnant le snooze.
+Un exemple d'action concernant le snooze automatique (le `type` d'action est donc `snooze`). Il a lieu à la création de l'alarme et si le champ `resource` de l'événement contient les termes `CPU`  ou `HDD`.
 
-```json
+Dans les `parameters`, on définit la durée du snooze (600 secondes, soit 10 minutes dans cet exemple), l'auteur et le message accompagnant le snooze.
+
+```JSON
 {
-    "_id" : "temporisation-10m",
-    "type": "snooze",
-    "fields" : ["Resource", "Component"],
-    "regex" : "(FS|HARDWARE)",
-    "parameters" : {
-        "author" : "action",
-        "message" : "Temporisation de l'alarme pendant 10 minutes",
-        "duration" : 600
-    }
+	"_id": "temporisation-10m",
+	"type": "snooze",
+	"hook": {
+		"event_patterns": [{
+				"resource": {
+					"regex_match": "CPU"
+				}
+			},
+			{
+				"resource": {
+					"regex_match": "HDD"
+				}
+			}
+		],
+		"triggers": [
+			"create"
+		]
+	},
+	"parameters": {
+		"author": "action",
+		"message": "Temporisation de l'alarme pendant 10 minutes",
+		"duration": 600
+	}
 }
 ```

@@ -226,7 +226,7 @@ Modifie un Webhook à partir du corps de la requête.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut envoyer le JSON ci-dessus pour modifier la règle dont l'`_id` vaut `declare_external_ticket` :
 
 ```sh
-curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "_id" : "declare_external_ticket",
     "disable_if_active_pbehavior": true,
     "hook" : {
