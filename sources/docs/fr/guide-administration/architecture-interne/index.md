@@ -22,4 +22,9 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 *  [Documentation base de données](../troubleshooting/bdd-requetes-de-base.md)
 *  [Documentation Web UI](../../guide-utilisation/interface/index.md)
 
+## Documentation des mécaniques spécifiques internes à Canopsis
+
+* [Templates Golang](templates-golang.md)
+* [Triggers](triggers.md)
+
 Plus de détails sur [l'enchaînement des moteurs](../moteurs/schema-enchainement-moteurs.md).

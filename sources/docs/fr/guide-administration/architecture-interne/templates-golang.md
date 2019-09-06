@@ -18,7 +18,7 @@ Les variables stockent des informations sur les alarmes, les événements et les
 Voici une liste des principales données et la manière de la récupérer.
 
 | Nom du champ        | Valeur                              |
-|:--------------------|:------------------------------------|
+|:------------------- |:----------------------------------- |
 | Composant           | `{{ .Alarm.Value.Component }}`      |
 | Ressource           | `{{ .Alarm.Value.Resource }}`       |
 | Message             | `{{ .Alarm.Value.State.Message }}`  |
@@ -34,7 +34,7 @@ Voici une liste des principales données et la manière de la récupérer.
 Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est possible de récupérer l'information de différents manières.
 
 | Champ                             | Résultat                                                                  |
-|:----------------------------------|:--------------------------------------------------------------------------|
+|:--------------------------------- |:------------------------------------------------------------------------- |
 | `{{ .Event.Timestamp.Day }}`      | Jour (sous forme d'entier)                                                |
 | `{{ .Event.Timestamp.Minute }}`   | Minutes (sous forme d'entier)                                             |
 | `{{ .Event.Timestamp.Second }}`   | Secondes (sous forme d'entier)                                            |
@@ -124,19 +124,19 @@ Cette fonction prend en paramètre une chaîne qui est le format attendu de la d
 
  Le tableau ci-dessous montre quelques directives qui sont reconnues, ainsi que leur correspondance avec la fonction `date` dans les systèmes UNIX.
 
-| Directive pour les templates | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition | Exemples |
-|:-----------|:-------|:-----------|:-------|
-| `Mon` | `%a` | Abréviation du jour de la semaine | Mon..Sun |
-| `Monday` | `%A` | Nom du jour de la semaine  | Monday..Sunday |
-| `Jan` | `%b` | Abréviation du nom du mois | Jan..Dec |
-| `January` | `%B` | Nom du mois  | January..December |
-| `01` | `%d` | Jour du mois | 01..31 |
-| `15` | `%k` | Heure (sur 24 heures) | 0..23 |
-| `02` | `%m` | Mois | 01..12 |
-| `04` | `%M` | Minute | 01..59 |
-| `05` | `%S` | Seconde | 01..61 |
-| `2006` | `%Y` | Année | 1970, 1984, 2019... |
-| `MST` | `%Z` | Fuseau horaire | CEST, EDT, JST... |
+| Directive pour les templates | Correspondance UNIX ([date](http://www.linux-france.org/article/man-fr/man1/date-1.html)) | Définition                        | Exemples            |
+|:---------------------------- |:----------------------------------------------------------------------------------------- |:--------------------------------- |:------------------- |
+| `Mon`                        | `%a`                                                                                      | Abréviation du jour de la semaine | Mon..Sun            |
+| `Monday`                     | `%A`                                                                                      | Nom du jour de la semaine         | Monday..Sunday      |
+| `Jan`                        | `%b`                                                                                      | Abréviation du nom du mois        | Jan..Dec            |
+| `January`                    | `%B`                                                                                      | Nom du mois                       | January..December   |
+| `01`                         | `%d`                                                                                      | Jour du mois                      | 01..31              |
+| `15`                         | `%k`                                                                                      | Heure (sur 24 heures)             | 0..23               |
+| `02`                         | `%m`                                                                                      | Mois                              | 01..12              |
+| `04`                         | `%M`                                                                                      | Minute                            | 01..59              |
+| `05`                         | `%S`                                                                                      | Seconde                           | 01..61              |
+| `2006`                       | `%Y`                                                                                      | Année                             | 1970, 1984, 2019... |
+| `MST`                        | `%Z`                                                                                      | Fuseau horaire                    | CEST, EDT, JST...   |
 
 Ainsi, pour afficher transformer un champ en une date au format `heure:minute:seconde`, il faudra utiliser `formattedDate \"15:04:05\"` (même si le champ dans l'alarme ou l'événement ne correspondent pas à cette heure).
 

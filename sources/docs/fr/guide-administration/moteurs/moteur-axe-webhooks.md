@@ -1,4 +1,4 @@
-# Webhooks
+# Axe - Webhooks
 
 !!! note
     Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
@@ -11,7 +11,7 @@ Des exemples pratiques d'utilisation des webhooks sont disponibles dans la parti
 
 ## Activation du plugin webhooks
 
-Les webhooks sont implémentés sous la forme d'un plugin à ajouter dans le moteur `axe`. Ce plugin n'est disponible qu'avec une installation CAT de Canopsis.
+Les webhooks sont implémentés sous la forme d'un [plugin](../../guide-developpement/plugins/axe-post-processor.md) à ajouter dans le moteur `axe`. Ce plugin n'est disponible qu'avec une installation CAT de Canopsis.
 
 ### Activation avec Docker
 
@@ -32,8 +32,8 @@ Une règle est un document JSON contenant les paramètres suivants :
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
-     - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](../event-filter/index.md).
-     - `triggers` (requis) : Liste de triggers. Au moins un de ces triggers doit avoir eu lieu pour que le webhook soit appelé.
+     - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
+     - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
  - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le webhook si un pbehavior est actif sur l'entité.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
@@ -55,27 +55,9 @@ Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont util
 
 ### Activation d'un webhook
 
-Le champ `hook` représente les conditions d'activation d'un webhook. Il contient obligatoirement `triggers` qui est un tableau de triggers et éventuellement des `patterns` sur les alarmes, les entités et les évènements.
+Le champ `hook` représente les conditions d'activation d'un webhook. Il contient obligatoirement [`triggers`](../architecture-interne/triggers.md) qui est un tableau de triggers et éventuellement des `patterns` sur les alarmes, les entités et les évènements.
 
-Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"uncancel"`, et `"unsnooze"`.
-
-| Nom                      | Description                                              |
-|:-------------------------|:---------------------------------------------------------|
-| `"ack"`                  | Acquittement d'une alerte                                |
-| `"ackremove"`            | Suppression de l'acquittement                            |
-| `"assocticket"`          | Association d'un ticket à l'alarme                       |
-| `"cancel"`               | Annulation de l'évènement                                |
-| `"changestate"`          | Modification et verrouillage de la criticité de l'alarme |
-| `"comment"`              | Envoi d'un commentaire                                   |
-| `"create"`               | Création de l'évènement                                  |
-| `"declareticket"`        | Déclaration d'un ticket à l'alarme                       |
-| `"done"`                 | Fin de l'alarme                                          |
-| `"resolve"`              | Résolution de l'alarme                                   |
-| `"snooze"`               | Report de l'alarme                                       |
-| `"statedec"`             | Diminution de la criticité de l'alarme                   |
-| `"stateinc"`             | Augmentation de la criticité de l'alarme                 |
-| `"uncancel"`             | Retablissement de l'alarme                               |
-| `"unsnooze"`             | Fin du report de l'alarme                                |
+Pour plus d'informations sur les `triggers` disponibles, consulter la [`documentation sur les triggers`](../architecture-interne/triggers.md)
 
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
 
@@ -111,7 +93,7 @@ Par exemple, ce webhook va être activé si le trigger reçu par le moteur corre
 
 Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
 
-Pour plus d'informations, vous pouvez consulter la [documentation sur les templates](templates-golang.md).
+Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
 
 ### Données externes
 

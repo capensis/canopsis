@@ -111,23 +111,6 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 }
 ```
 
-### Event Downtime Structure
-
-```javascript
-{
-    'event_type': 'downtime',   // mandatory
-
-    'author':               // Downtime author, mandatory
-    'output':               // Downtime comment, mandatory
-    'start':                // UNIX timestamp for downtime's start, mandatory
-    'end':                  // UNIX timestamp for downtime's end, mandatory
-    'duration':             // Downtime's duration, mandatory
-    'entry':                // Downtime's schedule date/time (as a UNIX timestamp), mandatory
-    'fixed':                // Does the downtime starts at 'start' or at next check after 'start' ?, mandatory
-    'downtime_id':          // Downtime's identifier, mandatory
-}
-```
-
 ### Event SNMP Structure
 
 ```javascript
@@ -204,16 +187,10 @@ Dans MongoDB, il contient les champs suivants.
 Type | Description |
 -----|-------------|
 check | Utilisé pour envoyer le résultat d'un check (depuis Nagios, Icinga,...)  |
-comment | Utilisé pour envoyer un commentaire |
-selector | Envoyé par l'engine selector |
-sla |  Envoyé par l'engine selector sla |
 statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |
 statduration | Utilisé pour ajouter une durée dans l'engine statistics |
 statstateinterval | Utilisé pour ajouter un état d'intervalle dans l'engine statistics |
-trap | Utilisé pour envoyer des traps SNMP|
-user | Utilisé par l'utilisateur pour evoyer des informations |
 ack | Utilisé pour acquitter une alerte |
-downtime | Utilisé pour programmer un downtime |
 cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
 uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
 ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
