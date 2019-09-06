@@ -17,7 +17,6 @@ variables:
   CANOPSIS_ENV_CONFIRM: "0"
   CANOPSIS_SKIP_GO: "1"
   CANOPSIS_BUILD_NEXT: "0"
-  GOPATH: "${CI_PROJECT_DIR}"
 
 stage_test:
   stage: test
@@ -44,11 +43,13 @@ build_next:
       - develop
    after_script:
      - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next kill
+     - sleep 10
      - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next rm -sf
      - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next down
 
 after_script:
   - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
+  - sleep 10
   - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
   - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
   - docker volume prune -f
