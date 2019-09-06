@@ -117,8 +117,8 @@ module.exports.command = function setCommonFields({
   if (openedResolvedFilter) {
     common
       .clickFilterOnOpenResolved()
-      .toggleOpenFilter(openedResolvedFilter.open)
-      .toggleResolvedFilter(openedResolvedFilter.resolve);
+      .setOpenFilter(openedResolvedFilter.open)
+      .setResolvedFilter(openedResolvedFilter.resolve);
   }
 
   return this;

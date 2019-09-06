@@ -6,12 +6,12 @@
     v-card-text
       v-layout(justify-end)
         v-btn(
-        data-test="addPopup",
-        @click="addPopup",
-        icon,
-        fab,
-        small,
-        color="secondary"
+          data-test="infoPopupAddPopup",
+          @click="addPopup",
+          icon,
+          fab,
+          small,
+          color="secondary"
         )
           v-icon add
       v-layout(column)
@@ -20,18 +20,33 @@
             v-layout(justify-space-between)
               div {{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}
               div
-                v-btn(data-test="deletePopup", @click="deletePopup(index)", icon, small)
+                v-btn(
+                  data-test="infoPopupDeletePopup",
+                  @click="deletePopup(index)",
+                  icon,
+                  small
+                )
                   v-icon(color="error") delete
-                v-btn(data-test="editPopup", @click="editPopup(index, popup)", icon, small)
+                v-btn(
+                  data-test="infoPopupEditPopup",
+                  @click="editPopup(index, popup)",
+                  icon,
+                  small
+                )
                   v-icon(color="primary") edit
           v-card-text
             p {{ $t('modals.infoPopupSetting.template') }}:
             v-textarea(:value="popup.template", disabled, dark)
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(
+        data-test="infoPopupCancelButton"
+        @click="hideModal",
+        depressed,
+        flat
+      ) {{ $t('common.cancel') }}
       v-btn.primary(
-      data-test="submitButton"
+      data-test="infoPopupSubmitButton"
       @click="submit",
       type="submit"
       ) {{ $t('common.submit') }}

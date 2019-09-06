@@ -5,10 +5,6 @@ const el = require('../../../helpers/el');
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
 const commands = {
-  clickSubmitButton() {
-    return this.customClick('@submitButton');
-  },
-
   selectSelectedColumn(index = 1) {
     return this.customClick('@selectedColumn')
       .waitForElementVisible(this.el('@optionSelect', index))
@@ -17,7 +13,7 @@ const commands = {
 
   setTemplate(value) {
     return this.customClick('@template')
-      .sendKeys('@template', value);
+      .sendKeys('@template', value);addInfoPopupLayout
   },
 
   el,
@@ -28,9 +24,11 @@ const modalSelector = sel('addInfoPopup');
 module.exports = modalCreator(modalSelector, {
   elements: {
     ...elementsWrapperCreator(modalSelector, {
-      selectedColumn: `${sel('addInfoPopupFields')} .v-input__slot`,
-      template: `${sel('addInfoPopupFields')} .jodit_wysiwyg`,
-      submitButton: sel('submitButton'),
+      selectedColumn: `${sel('addInfoPopupLayout')} .v-input__slot`,
+      template: `${sel('addInfoPopupLayout')} .jodit_wysiwyg`,
+
+      submitButton: sel('addInfoSubmitButton'),
+      cancelButton: sel('addInfoCancelButton'),
     }),
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
   },

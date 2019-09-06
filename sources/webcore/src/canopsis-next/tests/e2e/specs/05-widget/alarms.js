@@ -1,9 +1,12 @@
 // http://nightwatchjs.org/guide#usage
 
-const uid = require('uid');
-const { API_ROUTES } = require('../../../../src/config');
-const { SERVICE_ALARMS_WIDGET_SORT_FIELD, SORT_ORDERS, PAGINATION_PER_PAGE_VALUES } = require('../../constants');
-const { generateTemporaryView } = require('../../helpers/entities');
+const {
+  ALARMS_WIDGET_INFO_POPUP_COLUMNS,
+  ALARMS_WIDGET_SORT_FIELD,
+  SORT_ORDERS,
+  PAGINATION_PER_PAGE_VALUES,
+} = require('../../constants');
+const { generateTemporaryView, generateTemporaryAlarms } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
@@ -31,81 +34,30 @@ module.exports = {
     });
   },
 
-  'Create test tab': (browser) => {
-    const { temporary } = browser.globals;
-    const tab = `tab-${uid()}`;
-
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(temporary.view.group_id)
-      .clickLinkView(temporary.view._id);
-
-    browser.page.view()
-      .clickMenuViewButton()
-      .clickAddViewButton();
-
-    browser.page.modals.common.textFieldEditor()
-      .verifyModalOpened()
-      .setField(tab);
-
-    browser.waitForFirstXHR(
-      `${API_ROUTES.view}/${temporary.view._id}`,
-      5000,
-      () => browser.page.modals.common.textFieldEditor()
-        .clickSubmitButton(),
-      ({ responseData, requestData }) => temporary.view = {
-        tab,
-        ...temporary.view,
-        tabId: JSON.parse(requestData).tabs
-          .filter(item => item.title === tab)[0]._id,
-        ...JSON.parse(requestData),
-        ...JSON.parse(responseData),
-      },
-    );
-
-    browser.page.modals.common.textFieldEditor()
-      .verifyModalClosed();
-  },
-
-  'Open test tab': (browser) => {
-    const { temporary } = browser.globals;
-
-    browser.page.view()
-      .clickTab(temporary.view.tabId);
-  },
-
   'Create widget alarms with some name': (browser) => {
-    const common = browser.page.widget.common();
-    const alarms = browser.page.widget.alarms();
-
-    browser.page.view()
-      .clickEditViewButton()
-      .clickAddWidgetButton();
-
-    browser.page.modals.view.createWidget()
-      .verifyModalOpened()
-      .clickWidget('AlarmsList')
-      .verifyModalClosed();
-
-    browser.completed.widget.createAlarmsList({
-      row: 'row',
+    const alarmsWidget = {
+      ...generateTemporaryAlarms(),
       size: {
         sm: 12,
         md: 12,
         lg: 12,
       },
-      title: 'Alarms widget',
       advanced: true,
       periodicRefresh: 140,
       parameters: {
         sort: {
           order: SORT_ORDERS.desc,
-          orderBy: SERVICE_ALARMS_WIDGET_SORT_FIELD.component,
+          orderBy: ALARMS_WIDGET_SORT_FIELD.component,
         },
         elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
         openedResolvedFilter: {
           open: true,
           resolve: true,
         },
+        infoPopups: [{
+          column: ALARMS_WIDGET_INFO_POPUP_COLUMNS.connectorName,
+          template: 'Info popup template',
+        }],
         ack: {
           isAckNoteRequired: true,
           isMultiAckEnabled: true,
@@ -116,25 +68,51 @@ module.exports = {
         },
         moreInfos: 'More infos popup',
         enableHtml: true,
+        newColumnNames: [{
+          index: 9,
+          data: {
+            value: 'alarm.v.connector',
+            label: 'New column',
+            isHtml: true,
+          },
+        }],
+        editColumnNames: [{
+          index: 1,
+          data: {
+            value: 'alarm.v.changeConnector',
+            label: 'Connector(changed)',
+            isHtml: true,
+          },
+        }],
+        moveColumnNames: [{
+          index: 1,
+          down: true,
+        }, {
+          index: 2,
+          up: true,
+        }],
+        deleteColumnNames: [2],
       },
-    });
+    };
+    const { temporary } = browser.globals;
+    const view = browser.page.view();
+    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    common
-      .clickColumnNames()
-      .editColumnName(1, {
-        value: 'alarm.v.changeConnector',
-        label: 'Connector(changed)',
-        isHtml: true,
-      })
-      .clickColumnNameDownWard(1)
-      .clickColumnNameUpWard(2)
-      .clickDeleteColumnName(2)
-      .clickAddColumnName()
-      .editColumnName(8, {
-        value: 'alarm.v.connector',
-        label: 'New column',
-        isHtml: true,
-      });
+    groupsSideBar.clickPanelHeader(temporary.view.group_id)
+      .clickLinkView(temporary.view._id);
+
+    view.clickMenuViewButton()
+      .clickEditViewButton()
+      .clickAddWidgetButton();
+
+    browser.page.modals.view.createWidget()
+      .verifyModalOpened()
+      .clickWidget('AlarmsList')
+      .verifyModalClosed();
+
+    browser.completed.widget.createAlarmsList(alarmsWidget, ({ response }) => {
+      browser.globals.temporary.widgetId = response.data[0].widget_id;
+    });
 
     // browser.completed.widget.createAlarmsList({
     //   advanced: {
@@ -156,15 +134,6 @@ module.exports = {
     //     },
     //   },
     // });
-
-    browser.waitForFirstXHR(
-      API_ROUTES.userPreferences,
-      5000,
-      () => alarms.clickSubmitAlarms(),
-      ({ responseData }) => {
-        browser.globals.temporary.widgetId = JSON.parse(responseData).data[0].widget_id;
-      },
-    );
   },
 
   'Edit widget alarms with some name': (browser) => {
@@ -183,7 +152,7 @@ module.exports = {
       parameters: {
         sort: {
           order: SORT_ORDERS.desc,
-          orderBy: SERVICE_ALARMS_WIDGET_SORT_FIELD.connector,
+          orderBy: ALARMS_WIDGET_SORT_FIELD.connector,
         },
         elementsPerPage: PAGINATION_PER_PAGE_VALUES.TWENTY,
       },

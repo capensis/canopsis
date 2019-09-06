@@ -74,7 +74,7 @@ module.exports.SERVICE_WEATHER_WIDGET_SORT_FIELD = {
   org: 5,
 };
 
-module.exports.SERVICE_ALARMS_WIDGET_SORT_FIELD = {
+module.exports.ALARMS_WIDGET_SORT_FIELD = {
   connector: 1,
   connectorName: 2,
   component: 3,
@@ -100,4 +100,15 @@ module.exports.PAGINATION_PER_PAGE_VALUES = {
   TWENTY: 3,
   FIFTY: 4,
   HUNDRED: 5,
+};
+
+module.exports.ALARMS_WIDGET_INFO_POPUP_COLUMNS = {
+  connector: 1,
+  connectorName: 2,
+  component: 3,
+  resource: 4,
+  output: 5,
+  extraDetails: 6,
+  state: 7,
+  status: 8,
 };

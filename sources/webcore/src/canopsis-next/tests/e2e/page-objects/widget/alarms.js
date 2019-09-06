@@ -8,8 +8,7 @@ const commands = {
   },
 
   clickFilters() {
-    return this.customClick('@filters')
-      .defaultPause();
+    return this.customClick('@filters');
   },
 
   clickAddFilter() {
@@ -38,38 +37,56 @@ const commands = {
     return this.customClick('@infoPopupButton');
   },
 
-  toggleEnableHtml(checked = false) {
+  setEnableHtml(checked = false) {
     return this.getAttribute('@enableHtmlInput', 'aria-checked', ({ value }) => {
-      if (value === 'false' && checked) {
+      if (value !== String(checked)) {
         this.customClick('@enableHtml');
       }
     });
   },
 
   clickAckGroup() {
-    return this.customClick('@ackGroup')
-      .defaultPause();
+    return this.customClick('@ackGroup');
   },
 
-  clickIsAckNoteRequired() {
-    return this.customClick('@isAckNoteRequired');
+  setIsAckNoteRequired(checked = false) {
+    return this.getAttribute('@isAckNoteRequiredInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@isAckNoteRequired');
+      }
+    });
   },
 
-  clickIsMultiAckEnabled() {
-    return this.customClick('@isMultiAckEnabled');
+  setIsMultiAckEnabled(checked = false) {
+    return this.getAttribute('@isMultiAckEnabledInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@isMultiAckEnabled');
+      }
+    });
   },
 
   clickFastAckOutput() {
-    return this.customClick('@fastAckOutput')
-      .defaultPause();
+    return this.customClick('@fastAckOutput');
   },
 
-  clickFastAckOutputSwitch() {
-    return this.customClick('@fastAckOutputSwitch');
+  setFastAckOutputSwitch(checked = false) {
+    return this.getAttribute('@fastAckOutputSwitchInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@fastAckOutputSwitch');
+      }
+    });
+  },
+
+  clickFastAckOutputText() {
+    return this.customClick('@fastAckOutputField');
+  },
+
+  clearFastAckOutputText() {
+    return this.customClearValue('@fastAckOutputField');
   },
 
   setFastAckOutputText(value) {
-    return this.customSetValue('@fastAckOutputText', value);
+    return this.customSetValue('@fastAckOutputField', value);
   },
 
   el,
@@ -99,8 +116,9 @@ module.exports = {
     isMultiAckEnabledInput: `${sel('isMultiAckEnabled')} input${sel('switcherField')}`,
     ackGroup: sel('ackGroup'),
     fastAckOutput: sel('fastAckOutput'),
-    fastAckOutputSwitch: `${sel('fastAckOutput')} .v-input--switch .v-input--selection-controls__ripple`,
-    fastAckOutputText: `${sel('fastAckOutput')} .v-text-field input`,
+    fastAckOutputSwitch: `div${sel('fastAckOutputSwitch')} .v-input--selection-controls__ripple`,
+    fastAckOutputSwitchInput: `input${sel('fastAckOutputSwitch')}`,
+    fastAckOutputField: sel('fastAckOutputField'),
   },
   commands: [commands],
 };

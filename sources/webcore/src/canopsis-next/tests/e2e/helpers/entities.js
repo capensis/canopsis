@@ -26,3 +26,8 @@ module.exports.generateTemporaryWeather = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Weather-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryAlarms = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Alarms-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

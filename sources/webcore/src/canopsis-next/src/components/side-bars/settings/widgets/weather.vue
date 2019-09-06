@@ -26,7 +26,7 @@
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider
           field-info-popup(
-          data-test="widgetInfoPopups",
+          data-test="widgetInfoPopup",
           v-model="settings.widget.parameters.alarmsList.infoPopups"
           )
           v-divider

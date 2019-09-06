@@ -1,22 +1,65 @@
 // http://nightwatchjs.org/guide#usage
 
+const { API_ROUTES } = require('../../../../../src/config');
+
 module.exports.command = function createAlarmsList({
   parameters: {
     ack,
     moreInfos,
     enableHtml = false,
+    infoPopups,
+    newColumnNames,
+    editColumnNames,
+    moveColumnNames,
+    deleteColumnNames,
     ...parameters
   } = {},
   ...fields
-}) {
+}, callback = () => {}) {
   const common = this.page.widget.common();
   const textEditor = this.page.modals.common.textEditor();
-  // const addInfoPopup = this.page.modals.alarm.addInfoPopup();
-  // const infoPopupSetting = this.page.modals.alarm.infoPopupSetting();
+  const addInfoPopup = this.page.modals.common.addInfoPopup();
+  const infoPopupModal = this.page.modals.common.infoPopupSetting();
   // const createFilter = this.page.modals.common.createFilter();
   const alarms = this.page.widget.alarms();
 
   this.completed.widget.setCommonFields({ ...fields, parameters });
+
+  if (newColumnNames || editColumnNames || moveColumnNames || deleteColumnNames) {
+    common.clickColumnNames();
+  }
+
+  if (newColumnNames) {
+    newColumnNames.forEach(({ index, data }) => {
+      common
+        .clickAddColumnName()
+        .editColumnName(index, data);
+    });
+  }
+
+  if (editColumnNames) {
+    editColumnNames.forEach(({ index, data }) => {
+      common.editColumnName(index, data);
+    });
+  }
+
+  if (moveColumnNames) {
+    moveColumnNames.forEach(({ index, up, down }) => {
+      if (up) {
+        common.clickColumnNameUpWard(index);
+      }
+
+      if (down) {
+        common.clickColumnNameDownWard(index);
+      }
+    });
+  }
+
+  if (deleteColumnNames) {
+    deleteColumnNames.forEach((index) => {
+      common.clickDeleteColumnName(index);
+    });
+  }
 
   if (moreInfos) {
     common.clickCreateMoreInfos();
@@ -29,196 +72,52 @@ module.exports.command = function createAlarmsList({
   }
 
   if (enableHtml) {
-    alarms.toggleEnableHtml(enableHtml);
+    alarms.setEnableHtml(enableHtml);
   }
 
   if (ack) {
-    const {
-      isAckNoteRequired,
-      isMultiAckEnabled,
-      fastAckOutput,
-    } = ack;
+    alarms.clickAckGroup()
+      .setIsAckNoteRequired(ack.isAckNoteRequired)
+      .setIsMultiAckEnabled(ack.isMultiAckEnabled);
 
-    alarms.clickAckGroup();
-
-    if (isAckNoteRequired) {
-      alarms.clickIsAckNoteRequired();
+    if (ack.fastAckOutput) {
+      alarms.clickFastAckOutput()
+        .setFastAckOutputSwitch(ack.fastAckOutput.enabled);
     }
 
-    if (isMultiAckEnabled) {
-      alarms.clickIsMultiAckEnabled();
-    }
-
-    if (fastAckOutput) {
-      const {
-        enabled,
-        output,
-      } = fastAckOutput;
-      alarms.clickFastAckOutput();
-
-      if (enabled) {
-        alarms.clickFastAckOutputSwitch();
-      }
-      if (enabled && output) {
-        alarms.setFastAckOutputText(output);
-      }
+    if (ack.fastAckOutput.enabled) {
+      alarms.clickFastAckOutputText()
+        .clearFastAckOutputText()
+        .setFastAckOutputText(ack.fastAckOutput.output);
     }
   }
 
+  if (infoPopups) {
+    common.clickInfoPopup();
 
-  // if (common && advanced) {
-  //   const {
-  //     sort,
-  //     columnNames,
-  //     defaultNumberOfElementsPerPage,
-  //     filterOnOpenResolved,
-  //     filters,
-  //     infoPopap,
-  //     moreInfo,
-  //     enableHtml,
-  //     ackGroup,
-  //   } = advanced;
-  //   alarmsWidget.clickAdvancedSettings();
-  //
-  //   if (sort) {
-  //     const { name, order } = sort;
-  //     alarmsWidget.clickDefaultSortColumn();
-  //
-  //     if (name) {
-  //       alarmsWidget.selectSortColumn(name);
-  //     }
-  //     if (order) {
-  //       alarmsWidget.selectSortColumn(order);
-  //     }
-  //   }
-  //
-  //   if (columnNames) {
-  //     const { add } = columnNames;
-  //     alarmsWidget.clickColumnNames();
-  //
-  //     if (add) {
-  //       const {
-  //         position,
-  //         label,
-  //         value,
-  //       } = add;
-  //       alarmsWidget.clickColumnAdd();
-  //
-  //       if (position) {
-  //         if (label) {
-  //           alarmsWidget.setColumnLabel(position, label);
-  //         }
-  //         if (value) {
-  //           alarmsWidget.setColumnValue(position, value);
-  //         }
-  //       }
-  //     }
-  //   }
-  //
-  //   if (defaultNumberOfElementsPerPage) {
-  //     const { count } = defaultNumberOfElementsPerPage;
-  //     alarmsWidget.clickDefaultNumberOfElementsPerPage();
-  //
-  //     if (count) {
-  //       alarmsWidget.selectElementsPerPage(count);
-  //     }
-  //   }
-  //
-  //   if (filterOnOpenResolved) {
-  //     const { open, resolved } = filterOnOpenResolved;
-  //     alarmsWidget.clickFilterOnOpenResolved();
-  //
-  //     if (open) {
-  //       alarmsWidget.clickOpenFilter();
-  //     }
-  //     if (resolved) {
-  //       alarmsWidget.clickResolvedFilter();
-  //     }
-  //   }
-  //
-  //   if (filters) {
-  //     const { add } = filters;
-  //     alarmsWidget.clickFilters();
-  //
-  //     if (add) {
-  //       const {
-  //         title, or, and, rule,
-  //       } = add;
-  //
-  //       alarmsWidget.clickAddFilter();
-  //
-  //       createFilter.verifyModalOpened();
-  //
-  //       if (title) {
-  //         createFilter.setFilterTitle(title);
-  //       }
-  //       if (or) {
-  //         createFilter.clickRadioOr();
-  //       }
-  //       if (and) {
-  //         createFilter.clickRadioAnd();
-  //       }
-  //       if (rule) {
-  //         const { field, operator } = rule;
-  //         createFilter.clickAddRule();
-  //
-  //         if (field) {
-  //           createFilter.selectFieldRule(field);
-  //         }
-  //         if (operator) {
-  //           createFilter.selectOperatorRule(operator);
-  //         }
-  //       }
-  //       createFilter.clickSubmitFilter()
-  //         .verifyModalClosed();
-  //     }
-  //   }
-  //
-  //   if (infoPopap) {
-  //     const { add } = infoPopap;
-  //     alarmsWidget.clickInfoPopupButton();
-  //
-  //     infoPopupSetting.verifyModalOpened();
-  //     if (add) {
-  //       const { column, template } = add;
-  //       infoPopupSetting.clickAddPopup();
-  //
-  //       addInfoPopup.verifyModalOpened();
-  //
-  //       if (column) {
-  //         addInfoPopup.selectSelectedColumn(column);
-  //       }
-  //       if (template) {
-  //         addInfoPopup.setTemplate(template);
-  //       }
-  //
-  //       addInfoPopup.clickSubmitButton()
-  //         .verifyModalClosed();
-  //     }
-  //     infoPopupSetting.clickSubmitButton()
-  //       .verifyModalClosed();
-  //   }
-  //
-  //   if (moreInfo) {
-  //     const { text } = moreInfo;
-  //     alarmsWidget.clickCreateEditMore();
-  //
-  //     textEditor.verifyModalOpened();
-  //
-  //     if (text) {
-  //       textEditor.setRTE(text);
-  //     }
-  //
-  //     textEditor.clickSubmitButton()
-  //       .verifyModalClosed();
-  //   }
-  //
-  //   if (enableHtml) {
-  //     alarmsWidget.clickEnableHtml();
-  //   }
-  // }
-  //
-  // if (common) {
-  //   alarmsWidget.clickSubmitAlarms();
-  // }
+    infoPopupModal.verifyModalOpened();
+
+    infoPopups.forEach(({ field, template }) => {
+      infoPopupModal.clickAddPopup();
+
+      addInfoPopup.verifyModalOpened()
+        .selectSelectedColumn(field)
+        .setTemplate(template)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    });
+
+    infoPopupModal.clickSubmitButton()
+      .verifyModalClosed();
+  }
+
+  this.waitForFirstXHR(
+    API_ROUTES.userPreferences,
+    5000,
+    () => alarms.clickSubmitAlarms(),
+    ({ responseData, requestData }) => callback({
+      response: JSON.parse(responseData),
+      request: JSON.parse(requestData),
+    }),
+  );
 };

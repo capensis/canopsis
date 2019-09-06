@@ -236,24 +236,27 @@ const commands = {
   },
 
   clickFilterOnOpenResolved() {
-    return this.customClick('@filterOnOpenResolved')
-      .defaultPause();
+    return this.customClick('@filterOnOpenResolved');
   },
 
-  toggleOpenFilter(checked = true) {
+  setOpenFilter(checked = true) {
     return this.getAttribute('@openFilterInput', 'aria-checked', ({ value }) => {
-      if (value === 'false' && checked) {
+      if (value !== String(checked)) {
         this.customClick('@openFilter');
       }
     });
   },
 
-  toggleResolvedFilter(checked = false) {
+  setResolvedFilter(checked = false) {
     return this.getAttribute('@resolvedFilterInput', 'aria-checked', ({ value }) => {
-      if (value === 'false' && checked) {
+      if (value !== String(checked)) {
         this.customClick('@resolvedFilter');
       }
     });
+  },
+
+  clickInfoPopup() {
+    return this.customClick('@widgetInfoPopup');
   },
 };
 
@@ -328,6 +331,8 @@ module.exports = {
     openFilterInput: `input${sel('openFilter')}`,
     resolvedFilter: `div${sel('resolvedFilter')} .v-input--selection-controls__ripple`,
     resolvedFilterInput: `input${sel('resolvedFilter')}`,
+
+    widgetInfoPopup: sel('infoPopupButton'),
   },
   commands: [commands],
 };
