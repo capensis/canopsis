@@ -112,3 +112,8 @@ module.exports.ALARMS_WIDGET_INFO_POPUP_COLUMNS = {
   state: 7,
   status: 8,
 };
+
+module.exports.FILTERS_TYPE = {
+  AND: 'and',
+  OR: 'or',
+};

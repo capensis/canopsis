@@ -14,12 +14,23 @@ module.exports.command = function setCommonFields({
     heightFactor,
     modalType,
     alarmsList,
+    advanced,
     elementsPerPage,
+    infoPopups,
+    moreInfos,
     openedResolvedFilter,
+    newColumnNames,
+    editColumnNames,
+    moveColumnNames,
+    deleteColumnNames,
+    filters,
   } = {},
   periodicRefresh,
-  advanced = false,
 }) {
+  const addInfoPopup = this.page.modals.common.addInfoPopup();
+  const createFilter = this.page.modals.common.createFilter();
+  const textEditor = this.page.modals.common.textEditor();
+  const infoPopupModal = this.page.modals.common.infoPopupSetting();
   const common = this.page.widget.common();
 
   if (row) {
@@ -119,6 +130,110 @@ module.exports.command = function setCommonFields({
       .clickFilterOnOpenResolved()
       .setOpenFilter(openedResolvedFilter.open)
       .setResolvedFilter(openedResolvedFilter.resolve);
+  }
+
+  if (filters) {
+    common.clickFilters()
+      .setMixFilters(filters.isMix);
+
+    if (filters.isMix) {
+      common.setFiltersType(filters.type);
+    }
+
+    if (filters.newItems) {
+      common.clickAddFilter();
+      createFilter.verifyModalOpened();
+
+      filters.newItems.forEach((item, index) => {
+        if (index !== 0) {
+          createFilter.clickAddGroup();
+        }
+
+        createFilter
+          .setFilterTitle(item.title)
+          .setFilterType(item.type)
+          .clickAddRule()
+          .selectFieldRule(item.rule)
+          .selectOperatorRule(item.operator)
+          .clearInputRule()
+          .setInputRule(item.value);
+      });
+
+      createFilter
+        .clickSubmitButton()
+        .verifyModalClosed();
+    }
+
+    if (filters.selected) {
+      filters.selected.forEach((index) => {
+        common.selectFilter(index);
+      });
+    }
+  }
+
+  if (infoPopups) {
+    common.clickInfoPopup();
+
+    infoPopupModal.verifyModalOpened();
+
+    infoPopups.forEach(({ field, template }) => {
+      infoPopupModal.clickAddPopup();
+
+      addInfoPopup.verifyModalOpened()
+        .selectSelectedColumn(field)
+        .setTemplate(template)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    });
+
+    infoPopupModal.clickSubmitButton()
+      .verifyModalClosed();
+  }
+
+  if (moreInfos) {
+    common.clickCreateMoreInfos();
+
+    textEditor.verifyModalOpened()
+      .clickField()
+      .setField(moreInfos)
+      .clickSubmitButton()
+      .verifyModalClosed();
+  }
+
+  if (newColumnNames || editColumnNames || moveColumnNames || deleteColumnNames) {
+    common.clickColumnNames();
+  }
+
+  if (newColumnNames) {
+    newColumnNames.forEach(({ index, data }) => {
+      common
+        .clickAddColumnName()
+        .editColumnName(index, data);
+    });
+  }
+
+  if (editColumnNames) {
+    editColumnNames.forEach(({ index, data }) => {
+      common.editColumnName(index, data);
+    });
+  }
+
+  if (moveColumnNames) {
+    moveColumnNames.forEach(({ index, up, down }) => {
+      if (up) {
+        common.clickColumnNameUpWard(index);
+      }
+
+      if (down) {
+        common.clickColumnNameDownWard(index);
+      }
+    });
+  }
+
+  if (deleteColumnNames) {
+    deleteColumnNames.forEach((index) => {
+      common.clickDeleteColumnName(index);
+    });
   }
 
   return this;

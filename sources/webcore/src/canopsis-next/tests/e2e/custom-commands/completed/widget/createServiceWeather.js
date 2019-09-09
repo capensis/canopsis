@@ -6,14 +6,9 @@ module.exports.command = function createServiceWeather(
   {
     parameters: {
       filter,
-      moreInfos,
       blockTemplate,
       modalTemplate,
       entityTemplate,
-      newColumnNames,
-      editColumnNames,
-      moveColumnNames,
-      deleteColumnNames,
       ...parameters
     },
     ...fields
@@ -29,58 +24,12 @@ module.exports.command = function createServiceWeather(
     parameters,
   });
 
-  if (newColumnNames || editColumnNames || moveColumnNames || deleteColumnNames) {
-    common.clickColumnNames();
-  }
-
-  if (newColumnNames) {
-    newColumnNames.forEach(({ index, data }) => {
-      common
-        .clickAddColumnName()
-        .editColumnName(index, data);
-    });
-  }
-
-  if (editColumnNames) {
-    editColumnNames.forEach(({ index, data }) => {
-      common.editColumnName(index, data);
-    });
-  }
-
-  if (moveColumnNames) {
-    moveColumnNames.forEach(({ index, up, down }) => {
-      if (up) {
-        common.clickColumnNameUpWard(index);
-      }
-
-      if (down) {
-        common.clickColumnNameDownWard(index);
-      }
-    });
-  }
-
-  if (deleteColumnNames) {
-    deleteColumnNames.forEach((index) => {
-      common.clickDeleteColumnName(index);
-    });
-  }
-
   if (filter) {
     common.clickCreateFilter();
 
     this.page.modals.view.createFilter()
       .verifyModalOpened()
       .clickCancelButton()
-      .verifyModalClosed();
-  }
-
-  if (moreInfos) {
-    common.clickCreateMoreInfos();
-
-    textEditor.verifyModalOpened()
-      .clickField()
-      .setField(moreInfos)
-      .clickSubmitButton()
       .verifyModalClosed();
   }
 

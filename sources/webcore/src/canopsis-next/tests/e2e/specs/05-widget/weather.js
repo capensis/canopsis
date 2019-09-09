@@ -43,9 +43,9 @@ module.exports = {
         lg: 12,
       },
       periodicRefresh: 140,
-      advanced: true,
-      alarmsList: true,
       parameters: {
+        advanced: true,
+        alarmsList: true,
         limit: 140,
         sort: {
           order: SORT_ORDERS.desc,
@@ -116,7 +116,6 @@ module.exports = {
 
   'Edit widget weather with some name': (browser) => {
     const weatherWidget = {
-      advanced: true,
       parameters: {
         limit: 180,
         sort: {
@@ -129,9 +128,8 @@ module.exports = {
           bottom: 2,
           left: 2,
         },
-        alarmsList: {
-          perPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
-        },
+        advanced: true,
+        alarmsList: true,
         columnSM: 6,
         columnMD: 6,
         columnLG: 6,

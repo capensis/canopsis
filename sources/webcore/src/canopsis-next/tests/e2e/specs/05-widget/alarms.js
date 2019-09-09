@@ -5,6 +5,7 @@ const {
   ALARMS_WIDGET_SORT_FIELD,
   SORT_ORDERS,
   PAGINATION_PER_PAGE_VALUES,
+  FILTERS_TYPE,
 } = require('../../constants');
 const { generateTemporaryView, generateTemporaryAlarms } = require('../../helpers/entities');
 
@@ -92,6 +93,18 @@ module.exports = {
           up: true,
         }],
         deleteColumnNames: [2],
+        filters: {
+          isMix: true,
+          type: FILTERS_TYPE.OR,
+          newItems: [{
+            title: 'Filter title',
+            type: FILTERS_TYPE.OR,
+            rule: 1,
+            operator: 1,
+            valueType: 1,
+            value: 123,
+          }],
+        },
       },
     };
     const { temporary } = browser.globals;
@@ -113,27 +126,6 @@ module.exports = {
     browser.completed.widget.createAlarmsList(alarmsWidget, ({ response }) => {
       browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
-
-    // browser.completed.widget.createAlarmsList({
-    //   advanced: {
-    //     filters: {
-    //       add: {
-    //         title: 'FilterTitle',
-    //         or: true,
-    //         rule: {
-    //           field: 2,
-    //           operator: 2,
-    //         },
-    //       },
-    //     },
-    //     infoPopap: {
-    //       add: {
-    //         column: 2,
-    //         template: 'Template',
-    //       },
-    //     },
-    //   },
-    // });
   },
 
   'Edit widget alarms with some name': (browser) => {
