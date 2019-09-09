@@ -42,7 +42,7 @@
         small,
         flat,
         icon,
-        @click.prevent="showDuplicateTabModal(tab)"
+        @click.prevent="showSelectViewModal(tab)"
         )
           v-icon(small) file_copy
         v-btn(
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
@@ -81,6 +82,8 @@ import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+
+const { mapGetters: viewMapGetters, mapActions: viewMapActions } = createNamespacedHelpers('view');
 
 export default {
   components: { Draggable },
@@ -117,6 +120,10 @@ export default {
     },
   },
   computed: {
+    ...viewMapGetters({
+      getViewById: 'getItemById',
+    }),
+
     vTabsKey() {
       return this.view.tabs.map(tab => tab._id).join('-');
     },
@@ -146,6 +153,10 @@ export default {
     },
   },
   methods: {
+    ...viewMapActions({
+      updateView: 'update',
+    }),
+
     showUpdateTabModal(tab) {
       this.showModal({
         name: MODALS.textFieldEditor,
@@ -166,8 +177,17 @@ export default {
       });
     },
 
-    showDuplicateTabModal(tab) {
+    showSelectViewModal(tab) {
       this.showModal({
+        name: MODALS.selectView,
+        config: {
+          action: viewId => this.showDuplicateTabModalWithPromise(tab, viewId),
+        },
+      });
+    },
+
+    showDuplicateTabModalWithPromise(tab, viewId) {
+      return new Promise(resolve => this.showModal({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.viewTab.duplicate.title'),
@@ -176,9 +196,13 @@ export default {
             label: this.$t('modals.viewTab.fields.title'),
             validationRules: 'required',
           },
-          action: title => this.duplicateTabAction(tab, title),
+          action: async (title) => {
+            await this.duplicateTabAction(tab, viewId, title);
+
+            resolve();
+          },
         },
-      });
+      }));
     },
 
     showDeleteTabModal(tab) {
@@ -190,7 +214,7 @@ export default {
       });
     },
 
-    async duplicateTabAction(tab, title) {
+    async duplicateTabAction(tab, viewId, title) {
       const newTab = {
         ...generateCopyOfViewTab(tab),
 
@@ -200,8 +224,37 @@ export default {
       const widgetsIdsMappings = getViewsTabsWidgetsIdsMappings(tab, newTab);
 
       await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
+      await this.addTabIntoSpecialView(newTab, viewId);
 
-      return this.addTab(newTab);
+      this.$router.push({
+        name: 'view',
+        params: {
+          id: viewId,
+        },
+        query: {
+          tabId: newTab._id,
+        },
+      });
+    },
+
+    addTabIntoSpecialView(tab, viewId) {
+      const view = this.getViewById(viewId);
+
+      if (!view) {
+        throw new Error('View was not found');
+      }
+
+      const data = {
+        ...view,
+
+        tabs: [...view.tabs, tab],
+      };
+
+      return this.updateView({
+        data,
+
+        id: viewId,
+      });
     },
 
     updateTab(tab) {
