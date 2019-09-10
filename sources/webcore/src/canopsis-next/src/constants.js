@@ -73,6 +73,7 @@ export const MODALS = {
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
   eventFilterRuleExternalData: 'event-filter-rule-external-data',
+  eventFilterRuleCreateAction: 'event-filter-rule-create-action',
   filtersList: 'filters-list',
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
@@ -864,6 +865,17 @@ export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
       },
     },
   },
+};
+
+export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_MAP = {
+  [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField.value]: EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField,
+  [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate.value]:
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
+
+  [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate.value]:
+    EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
+
+  [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy.value]: EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
 };
 
 export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {

@@ -73,6 +73,7 @@ export default {
 
     return {
       actions: [],
+      editableActionId: null,
       form: {
         type: enrichmentActionsTypes.setField,
         name: '',
@@ -99,6 +100,25 @@ export default {
   methods: {
     isRequired(actionType, option) {
       return actionType.options[option.value].required;
+    },
+
+    showCreateActionModal() {
+      this.showModal({
+        name: MODALS.eventFilterRuleCreateAction,
+        config: {
+          action: ruleAction => this.actions.push(ruleAction),
+        },
+      });
+    },
+
+    showEditActionModal(index) {
+      this.showModal({
+        name: MODALS.eventFilterRuleCreateAction,
+        config: {
+          ruleAction: this.actions[index],
+          action: ruleAction => this.$set(this.actions, index, ruleAction),
+        },
+      });
     },
 
     async addAction() {
