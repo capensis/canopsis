@@ -34,6 +34,7 @@ Le schéma en base est proche, puisqu'il s'agit de ces paramètres, ajoutés à 
 ### Méthodes
 
 Actuellement, seule la méthode `worst` est implémentée.
+
 - `worst` : L'état du watcher est l'état de la pire alarme ouverte sur les entités surveillées.
 
 ### Templates

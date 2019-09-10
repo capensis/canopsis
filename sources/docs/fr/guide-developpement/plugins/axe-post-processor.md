@@ -4,7 +4,7 @@ Les plugins de post-processing permettent d'appliquer des traitements aux alarme
 
 Les plugins de post-processing suivants sont disponibles dans Canopsis :
 
-  - [Webhooks](../../guide-administration/moteurs/moteur-axe-webhooks.md)
+*  [Webhooks](../../guide-administration/moteurs/moteur-axe-webhooks.md)
 
 Un plugin de post-processing est un module go exportant une variable
 `AxePostProcessor` qui implémente l'interface `AxePostProcessor` (définie
