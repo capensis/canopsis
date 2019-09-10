@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { isUndefined, isNull } from 'lodash';
+import { isUndefined, isNull, get, isNaN } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
@@ -110,6 +110,44 @@ export default {
     },
   },
   methods: {
+    customSort(items, index, isDescending) {
+      if (isNull(index)) {
+        return items;
+      }
+
+      return items.sort((a, b) => {
+        let sortA = get(a, index);
+        let sortB = get(b, index);
+
+        if (isDescending) {
+          [sortA, sortB] = [sortB, sortA];
+        }
+        // Check if both are numbers
+        if (!isNaN(sortA) && !isNaN(sortB)) {
+          return sortA - sortB;
+        }
+        // Check if both cannot be evaluated
+        if (sortA === null) {
+          if (sortB === null) {
+            return 0;
+          }
+
+          return -1;
+        }
+
+        [sortA, sortB] = [sortA, sortB].map(s => (s || '').toString().toLocaleLowerCase());
+
+        if (sortA > sortB) {
+          return 1;
+        }
+
+        if (sortA < sortB) {
+          return -1;
+        }
+
+        return 0;
+      });
+    },
     getQuery() {
       const {
         stats,
