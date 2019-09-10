@@ -4,7 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.eventFilterRule.addAction') }}
     v-card-text
-      v-form(ref="form")
+      v-form
         v-select(
           v-model="form.type",
           :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES)",
@@ -24,7 +24,7 @@
         )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -37,11 +37,32 @@ import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 
+import MixedField from '@/components/forms/fields/mixed-field.vue';
+
 export default {
   name: MODALS.createRight,
   $_veeValidate: {
     validator: 'new',
   },
+  filters: {
+    ruleActionToForm(ruleAction) {
+      const type = EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_MAP[ruleAction.type];
+
+      return {
+        ...ruleAction,
+
+        type,
+      };
+    },
+    formToRuleAction(form) {
+      return {
+        ...pick(form, Object.keys(form.type.options)),
+
+        type: form.type.value,
+      };
+    },
+  },
+  components: { MixedField },
   mixins: [popupMixin, modalInnerMixin, entitiesRightMixin],
   data() {
     const enrichmentActionsTypes = cloneDeep(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES);
@@ -60,13 +81,11 @@ export default {
     };
   },
   computed: {
-    computed: {
-      getComponentByOption() {
-        return (option = {}) => (option.value === 'value' ? 'mixed-field' : 'v-text-field');
-      },
-      getValidationRulesByOption() {
-        return (option = {}) => option.required && 'required';
-      },
+    getComponentByOption() {
+      return (option = {}) => (option.value === 'value' ? 'mixed-field' : 'v-text-field');
+    },
+    getValidationRulesByOption() {
+      return (option = {}) => option.required && 'required';
     },
   },
   mounted() {
@@ -75,8 +94,7 @@ export default {
 
       this.form = {
         ...this.form,
-
-        type: EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_MAP[ruleAction.type],
+        ...this.$options.filters.ruleActionToForm(ruleAction),
       };
     }
   },
@@ -85,16 +103,12 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const data = {
-          type: this.form.type.value,
-          ...pick(this.form, Object.keys(this.form.type.options)),
-        };
+        const data = this.$options.filters.formToRuleAction(this.form);
 
         if (this.config.action) {
           await this.config.action(data);
         }
 
-        this.addSuccessPopup({ text: this.$t('success.default') });
         this.hideModal();
       }
     },
