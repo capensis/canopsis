@@ -1,24 +1,24 @@
 # Liste des interconnexions Canopsis
 
-Les interconnexions sont les canaux par lesquels Canopsis communique avec d’autres applications. Elles peuvent être réparties en 3 catégories :  
+Les interconnexions sont les canaux par lesquels Canopsis communique avec d’autres applications. Elles peuvent être réparties en trois catégories :
 
-- Les [connecteurs](#connecteurs) alimentent Canopsis en évènements transmis par des sources extérieures.
-- Les [drivers](#drivers) amènent le référentiel qui permettra d’enrichir les évènements.
-- Les [notifications](#notifications) sont émises par Canopsis vers différents outils à partir de jeux de règles et de déclencheurs.
+1.  Les [connecteurs](#connecteurs) alimentent Canopsis en évènements transmis par des sources extérieures.
+2.  Les [drivers](#drivers) amènent le référentiel qui permettra d’enrichir les évènements.
+3.  Les [notifications](#notifications) sont émises par Canopsis vers différents outils à partir de jeux de règles et de déclencheurs.
 
 En complément, Canopsis embarque des [API](#exploitation-par-les-api) que l'on peut utiliser pour l'exploitation.
 
-# Connecteurs
+## Connecteurs
 
 Un connecteur permet d’envoyer à Canopsis des évènements à partir de sources d'informations extérieures.
 
-## Base de données
+### Base de données
 
 | **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | [SQL](Base-de-donnees/Mysql-MariaDB-PostgreSQL-Oracle.md) | Mysql, PostgeSQL, Oracle, DB2 et MSSQL | OpenCore | Oui | Outil de marché | Toutes versions |
 
-## Transport
+### Transport
 
 | **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
@@ -26,7 +26,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | [Email](Transport/Mail.md) | Messages provenant d’une boîte mail **POP3** | CAT | Oui | Outil de marché | Toutes versions |
 | [Send_event](Transport/send_event.md) | Script Python (version 2.x et 3.x) exécutable en environnement Linux ou Windows | OpenCore | Oui | Outil de marché | Toutes versions |
 
-## Supervision
+### Supervision
 
 | **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
@@ -43,13 +43,13 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | [Nokia NSP](Supervision/NokiaNSP.md) | [Version 19.3](https://www.nokia.com/networks/products/network-services-platform/) | CAT | Non | Outil client | Version ≥ 3  |
 | [Cisco IoT FND](Supervision/Ciscoiotfnd.md) | [Version North Bound](https://www.cisco.com/c/en/us/products/cloud-systems-management/iot-field-network-director/index.html) API Release 3.0 | CAT | Non | Outil client | Version ≥ 3 |
 
-# Drivers
+## Drivers
 
 Le driver permet de peupler le référentiel interne Canopsis en vue de l’enrichissement des évènements.
 
-**NB :** Chaque driver dans ce tableau est à considérer comme un framework de synchronisation qui doit être adapté à chaque contexte client (modèle de données, champs à synchroniser, liens applicatifs…)
+**NB :** Chaque driver dans ce tableau est à considérer comme un framework de synchronisation qui doit être adapté à chaque contexte client (modèle de données, champs à synchroniser, liens applicatifs…).
 
-## Référentiel
+### Référentiel
 
 | **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
@@ -58,17 +58,17 @@ Le driver permet de peupler le référentiel interne Canopsis en vue de l’enri
 | Easyvista | [Easyvista](https://www.easyvista.com/fr) | CAT | Non | Outil client | Version ≥ 3.25 |
 | CSV | Sources de données CSV spécifiques | CAT | Non | Outil client | Version ≥ 3.25 |
 
-# Notifications
+## Notifications
 
 Canopsis permet d’émettre des notifications vers différents outils à partir d’un jeu de règles et de déclencheurs (créations d’alarmes, ACK, changements d’état…). Les possibilités de notifications offertes par Canopsis sont toutes dépendantes du modèle de données de l’outil cible (la création d’un ticket d’incident Snow n’est pas forcément identique d’une instance à l’autre).
 
-## Générique
+### Générique
 
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | [Webhooks](../guide-administration/webhooks/) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 
-## Transport
+### Transport
 
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
@@ -76,7 +76,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 | [IM](../guide-utilisation/cas-d-usage/notifications/) | Toute messagerie instantanée disposant d’une API qui accepte des requêtes HTTP | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 | Email | Tout serveur email disposant d’une API qui accepte des requêtes HTTP | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 
-## Ticketing
+### Ticketing
 
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
@@ -84,7 +84,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 | Zelos | Zelos | CAT | Non | Outil client | Version ≥ 2 (moteurs Python) |
 | Observer | Observer | CAT | Non |  Outil client| Version ≥ 3 (moteurs Go) |
 
-# Exploitation par les API
+## Exploitation par les API
 
 | **Nom** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:---------:|:----------:|:-----------:|:------------:|

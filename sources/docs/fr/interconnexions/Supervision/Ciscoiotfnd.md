@@ -1,6 +1,7 @@
 # Connecteur Cisco IoT FND `iotfnd2canopsis`
 
-# /!\ Documentation CAT /!\
+!!! attention
+    Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
 
 ## Description
 
@@ -12,13 +13,13 @@ Il prend en paramètre un fichier de configuration INI (`-c CONFIG`).
 
 Ce script nécessite Python (compatible avec les versions 3.x) et quelques modules supplémentaires.
 
-Cet environnement est mis en place à l'aide de virtualenv et pip.
+Cet environnement est mis en place à l'aide de `virtualenv` et `pip`.
 
 ### Installation sous Windows
 
-Installer Python à l'aide de l'installateur disponible ici : https://www.python.org/downloads/windows/
+Installer Python à l'aide de l'installateur disponible ici : <https://www.python.org/downloads/windows/>.
 
-Puis, pour installer Pip, récupérer le script suivant : https://bootstrap.pypa.io/get-pip.py
+Puis, pour installer Pip, récupérer le script suivant : <https://bootstrap.pypa.io/get-pip.py>
 
 Lancer un PowerShell, et exécuter ce script :
 ```powershell
@@ -52,30 +53,32 @@ PS C:\> .\scripts\activate.bat
 
 ### Installation sous Linux
 
+**Note :** sous CentOS, EPEL est nécessaire.
+
 On installe pip :
-```shell
-# Pour Debian / Ubuntu
-$ sudo apt-get install python3-pip
-# Pour Red Hat / CentOS
-$ sudo yum install python3-pip
+```sh
+# Pour Debian
+apt install python3-pip
+# Pour CentOS
+yum install python3-pip
 ```
 
 On installe et on met en place virtualenv :
-```shell
-$ pip3 install virtualenv
-$ mkdir -p ~/venv/iotfnd2canopsis
-$ virtualenv ~/venv/iotfnd2canopsis
+```sh
+pip3 install virtualenv
+mkdir -p ~/venv/iotfnd2canopsis
+virtualenv ~/venv/iotfnd2canopsis
 ```
 
 On peut maintenant appeler pip pour installer les dépendances :
-```shell
-$ . ~/venv/iotfnd2canopsis/bin/activate
+```sh
+. ~/venv/iotfnd2canopsis/bin/activate
 (virtualenv) pip install ConfigParser kombu zeep
 ```
 
 Le connecteur est maintenant prêt à être utilisé :
-```shell
-$ . ~/venv/iotfnd2canopsis/bin/activate
+```sh
+. ~/venv/iotfnd2canopsis/bin/activate
 (virtualenv) python iotfnd2canopsis.py -c iotfnd2canopsis.ini
 ```
 
@@ -86,35 +89,35 @@ $ . ~/venv/iotfnd2canopsis/bin/activate
 Ce script attend *obligatoirement* un fichier `.ini`, passé en paramètre avec l'option `-c`.
 
 Par exemple :
-```shell
+```sh
 (virtualenv) python iotfnd2canopsis.py -c iotfnd2canopsis.ini
 ```
 
 Voici un exemple de fichier INI associé :
 ```ini
 [amqp]
-    url = amqp://cpsrabbit:canopsis@localhost:5672/canopsis
+url = amqp://cpsrabbit:canopsis@localhost:5672/canopsis
 
 [iotfnd]
-    url = https://localhost/nbapi/issue?wsdl
-    username = USER
-    password = PASS
-    timestamp_file_path = /tmp/iotfnd2canopsis.timestamp
-    count = 1000
-    query = issue:down issueStatus:OPEN
+url = https://localhost/nbapi/issue?wsdl
+username = USER
+password = PASS
+timestamp_file_path = /tmp/iotfnd2canopsis.timestamp
+count = 1000
+query = issue:down issueStatus:OPEN
 
 [event]
-    connector.constant = iotfnd
-    connector_name.constant = iotfnd
-    event_type.constant = check
-    source_type.constant = component
-    component.value = eid
-    output.value = issueMessage
-    timestamp.value = issueLastUpdateTimestamp
-    state.value = state
+connector.constant = iotfnd
+connector_name.constant = iotfnd
+event_type.constant = check
+source_type.constant = component
+component.value = eid
+output.value = issueMessage
+timestamp.value = issueLastUpdateTimestamp
+state.value = state
 ```
 
-Il contient l'URL du serveur AMQP à interroger et la liste des évènements à y envoyer. Ces événements sont créés à partir des issues qu'on va récupérer via l'API IOT FND.
+Il contient l'URL du serveur AMQP à interroger et la liste des évènements à y envoyer. Ces événements sont créés à partir des *issues* que l'on va récupérer via l'API IOT FND.
 
 Dans cet exemple, l'URL est définie dans le premier bloc : on se connecte au serveur `localhost` sur le port `5672`, avec les identifiants `cpsrabbit:canopsis`, sur la ressource `/canopsis`.
 
@@ -137,4 +140,4 @@ Voici un exemple d'issue récupéré directement de l'API IOT FND :
 
 Après avoir configuré le fichier INI, vérifiez que vous êtes bien dans le virtualenv et que vous utilisez une version de Python 3.X (``python --version``). Si c'est le cas, vous pouvez lancer le script avec la commande : `python iotfnd2canopsis.py -c iotfnd2canopsis.ini`. Après la fin du script, vous pouvez consulter Canopsis et vérifier que les issues de l'API IOT FND se retrouvent dans Canopsis.
 
-Le script Python est un script _one shot_, c'est-à-dire qu'il n'ira chercher les issues et qu'il enverra qu'une fois au cours de son éxécution. Pour envoyer les issues vers Canopsis de manière périodique, il vous faudra utiliser un ordonnanceur (par exemple, `crontab` ou `Schtasks.exe`).
+Le script Python s'arrête après chaque utilisation, c'est-à-dire qu'il doit lancé à chaque fois que l'on souhaite exécuter à nouveau le traitement. Pour envoyer les issues vers Canopsis de manière régulière, il vous faudra utiliser un ordonnanceur (par exemple, `crontab` ou `Schtasks.exe`).
