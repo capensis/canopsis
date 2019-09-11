@@ -1,15 +1,17 @@
 # Trap Snmp Custom
 
+Réceptionne des traps SNMP, les traduit grâce à des traitements spécifiques souhaités et les convertit en évènements.
+
 !!! attention
     Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
+
+## Fonctionnement
 
 L'engine SNMP permet le traitement des traps SNMP (par le biais du connecteur
 snmp2canopsis). En l'abscence de MIB, il est désormais possible d'effectuer un
 traitement spécifique en passant par une classe python construite pour l'occasion.
 
-## Fonctionnement
-
-Le moteur de traitement custom pour les traps SNMP se déclenche lorsqu'aucune
+Le moteur de traitement custom pour les traps SNMP se déclenche dans le cas où aucune
 rule ne correspond à la trap reçue.
 
 Le moteur va alors exécuter une fonction d'identification (match) dans chacune

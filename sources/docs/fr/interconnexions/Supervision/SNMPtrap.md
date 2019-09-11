@@ -1,5 +1,7 @@
 # snmpTrap
 
+Réceptionne les traps SNMP, les traduit grâce à un jeu de règles et les convertit en évènements.
+
 !!! attention
     Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
 

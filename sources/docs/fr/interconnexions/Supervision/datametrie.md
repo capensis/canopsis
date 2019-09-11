@@ -6,7 +6,7 @@
 
 ### Description
 
-Accède à l'API de Datametrie, et transforme les informations recueillis en event Canopsis.
+Accède à l'API de Datametrie et transforme les indicateurs recueillis en évènements Canopsis.
 
 ### Utilisation
 

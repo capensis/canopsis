@@ -1,8 +1,8 @@
 # Connector Livestatus2Canopsis
 
-## Objectif
+## Description
 
-Ce connecteur récupère les évènements de Livestatus (pour obtenir les résultats des vérifications de Nagios, Icinga2, Centreon ...)
+Convertit des évènements de supervision Icinga 2 en évènements Canopsis.
 
 ## Structure
 
@@ -51,12 +51,12 @@ Ce fichier contient le connecteur de classe. Dans cette classe, il existe quelqu
 
 * **Processing** convertit les données d'entrée en données Canopsis mais publie également un évènement.
 
-## Configuration 
+## Configuration
 La configuration de ce connecteur ce fait dans `./etc/config.json`
 
 * `wait_loop` :  le temps d'attente pour fermer la connexion lors de la demande de livestatus.
 
-## Attribu : 
+## Attribu :
 * `state_changed` : est défini lorsque `state` est différent de `last_state` et peut être utiliser pour limiter l'utilisation de la bande passante lorsqu'il utilisé pour envoyer un évènement via Canopsis2Canopsis (CAT).
 
 # Installation
@@ -80,7 +80,7 @@ yum install git-core python supervisord
 
 via git:
 
-``` 
+```
     mkdir /opt/canopsis-connectors/
     git clone https://git.canopsis.net/canopsis-connectors/connector-livestatus2canopsis.git
     git clone -b develop git@git.canopsis.net:canopsis-connectors/connector-libs.git connector-libs
@@ -184,4 +184,3 @@ Pour stopper seulement un processus.
 	service supervisord status
 	supervisord stop "Nom inside the status return"
 ```
-

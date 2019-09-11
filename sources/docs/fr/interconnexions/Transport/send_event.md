@@ -1,5 +1,7 @@
 # Python send_event connector to Canopsis / AMQP
 
+Un connecteur universel qui permet de publier des évènements dans Canopsis (utilisé par des ordonnanceurs, des scripts, des applications maison…).
+
 ## Pré requis
 
 [Kombu](https://pypi.org/project/kombu/)
@@ -8,7 +10,7 @@
 
 usage: `python sendevent2canopsisamqp.py [-h] -c CONFIG [-p PARAMS_JSON]`
 
-Ce script Python permet d'envoyer des évènements vers une instance Canopsis avec AMQP.
+Ce script envoie les évènements vers l'instance Canopsis via AMQP.
 
 Il prend en paramètre un fichier de configuration INI (`-c CONFIG`), et optionnellement des valeurs JSON complémentaires (`-p PARAMS_JSON`).
 
@@ -92,13 +94,13 @@ Ce script attend *obligatoirement* un fichier `.ini`, passé en paramètre avec 
 Par exemple :
 ```shell
 (virtualenv) python sendevent2canopsisamqp.py -c sendevent2canopsisamqp.ini
-``` 
+```
 
 Voici un exemple de fichier INI associé :
 ```ini
 [amqp]
 url=amqp://cpsrabbit:canopsis@localhost:5672/canopsis
- 
+
 [event]
 connector.constant=toto
 connector_name.constant=toto

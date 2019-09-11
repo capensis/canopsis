@@ -1,5 +1,7 @@
 # Connecteur Zabbix vers Canopsis (connector-zabbix2canopsis)
 
+Convertit des alertes issues de triggers Zabbix en évènements Canopsis.
+
 ## Installation
 
 ### Installation des dépendances
