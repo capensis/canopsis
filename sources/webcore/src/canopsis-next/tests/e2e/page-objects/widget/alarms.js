@@ -59,6 +59,18 @@ const commands = {
     return this.customSetValue('@fastAckOutputField', value);
   },
 
+  clickCreateLiveReporting() {
+    return this.customClick('@liveReportingCreateButton');
+  },
+
+  clickEditLiveReporting() {
+    return this.customClick('@liveReportingEditButton');
+  },
+
+  clickDeleteLiveReporting() {
+    return this.customClick('@liveReportingDeleteButton');
+  },
+
   el,
 };
 
@@ -78,6 +90,10 @@ module.exports = {
     fastAckOutputSwitch: `div${sel('fastAckOutputSwitch')} .v-input--selection-controls__ripple`,
     fastAckOutputSwitchInput: `input${sel('fastAckOutputSwitch')}`,
     fastAckOutputField: sel('fastAckOutputField'),
+
+    liveReportingCreateButton: `${sel('liveReporting')} + div > ${sel('createButton')}`,
+    liveReportingEditButton: `${sel('liveReporting')} + div > ${sel('editButton')}`,
+    liveReportingDeleteButton: `${sel('liveReporting')} + div > ${sel('deleteButton')}`,
   },
   commands: [commands],
 };

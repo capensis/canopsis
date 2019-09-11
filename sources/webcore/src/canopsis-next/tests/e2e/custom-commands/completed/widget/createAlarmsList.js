@@ -6,11 +6,13 @@ module.exports.command = function createAlarmsList({
   parameters: {
     ack,
     enableHtml = false,
+    liveReporting,
     ...parameters
   } = {},
   ...fields
 }, callback = () => {}) {
   const alarms = this.page.widget.alarms();
+  const liveReportingModal = this.page.modals.common.liveReporting();
 
   this.completed.widget.setCommonFields({ ...fields, parameters });
 
@@ -33,6 +35,43 @@ module.exports.command = function createAlarmsList({
         .clearFastAckOutputText()
         .setFastAckOutputText(ack.fastAckOutput.output);
     }
+  }
+
+  if (liveReporting) {
+    alarms.clickCreateLiveReporting();
+    liveReportingModal.verifyModalOpened()
+      .selectRange(liveReporting.range);
+
+    if (liveReporting.calendarStartDate) {
+      liveReportingModal.clickStartDateButton()
+        .selectCalendarDay(liveReporting.calendarStartDate.day)
+        .clickDatePickerHoursTab()
+        .selectCalendarHour(liveReporting.calendarStartDate.hour)
+        .clickDatePickerMinutesTab()
+        .selectCalendarMinute(liveReporting.calendarStartDate.minute);
+    }
+
+    if (liveReporting.calendarEndDate) {
+      liveReportingModal.clickEndDateButton()
+        .selectCalendarDay(liveReporting.calendarEndDate.day)
+        .clickDatePickerHoursTab()
+        .selectCalendarHour(liveReporting.calendarEndDate.hour)
+        .clickDatePickerMinutesTab()
+        .selectCalendarMinute(liveReporting.calendarEndDate.minute);
+    }
+
+    if (liveReporting.endDate) {
+      liveReportingModal.clearEndDate()
+        .setEndDate(liveReporting.endDate);
+    }
+
+    if (liveReporting.startDate) {
+      liveReportingModal.clearStartDate()
+        .setStartDate(liveReporting.startDate);
+    }
+
+    liveReportingModal.clickSubmitButton()
+      .verifyModalClosed();
   }
 
   this.waitForFirstXHR(

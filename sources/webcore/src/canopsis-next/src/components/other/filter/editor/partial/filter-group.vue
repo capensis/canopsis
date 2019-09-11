@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.my-1.pa-2(data-test="filter-group")
+  v-card.my-1.pa-2(data-test="filterGroup")
     v-radio-group(
     :value="group.condition",
     @change="updateField('condition', $event)",
@@ -40,16 +40,20 @@
         flat
         ) {{$t("filterEditor.buttons.deleteGroup")}}
 
-    div(v-for="(rule, ruleKey) in group.rules", :key="ruleKey")
+    div(data-test="filterRuleLayout")
       filter-rule(
+      v-for="(rule, ruleKey) in group.rules",
+      :key="ruleKey"
       :rule="rule",
       :possibleFields="possibleFields",
       @deleteRule="deleteRule(ruleKey)",
       @update:rule="updateRule(ruleKey, $event)",
       )
 
-    div(v-for="(group, groupKey) in group.groups", :key="groupKey")
+    div(data-test="filterGroupLayout")
       filter-group.filterGroup(
+      v-for="(group, groupKey) in group.groups",
+      :key="groupKey"
       :group="group",
       :possibleFields="possibleFields",
       @deleteGroup="deleteGroup(groupKey)",

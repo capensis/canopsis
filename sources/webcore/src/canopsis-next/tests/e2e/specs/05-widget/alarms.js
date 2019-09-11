@@ -6,6 +6,10 @@ const {
   SORT_ORDERS,
   PAGINATION_PER_PAGE_VALUES,
   FILTERS_TYPE,
+  VALUE_TYPES,
+  INTERVAL_RANGES,
+  FILTER_OPERATORS,
+  FILTER_COLUMNS,
 } = require('../../constants');
 const { generateTemporaryView, generateTemporaryAlarms } = require('../../helpers/entities');
 
@@ -43,9 +47,9 @@ module.exports = {
         md: 12,
         lg: 12,
       },
-      advanced: true,
       periodicRefresh: 140,
       parameters: {
+        advanced: true,
         sort: {
           order: SORT_ORDERS.desc,
           orderBy: ALARMS_WIDGET_SORT_FIELD.component,
@@ -93,16 +97,43 @@ module.exports = {
           up: true,
         }],
         deleteColumnNames: [2],
+        liveReporting: {
+          calendarStartDate: {
+            minute: 0,
+            hour: 12,
+            day: 12,
+          },
+          endDate: '13/09/2019 00:00',
+          range: INTERVAL_RANGES.CUSTOM,
+        },
         filters: {
           isMix: true,
           type: FILTERS_TYPE.OR,
-          newItems: [{
-            title: 'Filter title',
+          title: 'Filter title',
+          selected: [1],
+          groups: [{
             type: FILTERS_TYPE.OR,
-            rule: 1,
-            operator: 1,
-            valueType: 1,
-            value: 123,
+            items: [{
+              rule: FILTER_COLUMNS.CONNECTOR,
+              operator: FILTER_OPERATORS.EQUAL,
+              valueType: VALUE_TYPES.STRING,
+              value: 'value',
+              groups: [{
+                type: FILTERS_TYPE.OR,
+                items: [{
+                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
+                  operator: FILTER_OPERATORS.IN,
+                  valueType: VALUE_TYPES.BOOLEAN,
+                  value: true,
+                }],
+              }],
+            }, {
+              type: FILTERS_TYPE.AND,
+              rule: FILTER_COLUMNS.CONNECTOR_NAME,
+              operator: FILTER_OPERATORS.NOT_EQUAL,
+              valueType: VALUE_TYPES.NUMBER,
+              value: 136,
+            }],
           }],
         },
       },
@@ -115,7 +146,6 @@ module.exports = {
       .clickLinkView(temporary.view._id);
 
     view.clickMenuViewButton()
-      .clickEditViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
@@ -130,6 +160,7 @@ module.exports = {
 
   'Edit widget alarms with some name': (browser) => {
     browser.page.view()
+      .clickEditViewButton()
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.setCommonFields({
@@ -139,9 +170,9 @@ module.exports = {
         lg: 10,
       },
       title: 'Alarms widget(edited)',
-      advanced: true,
       periodicRefresh: 180,
       parameters: {
+        advanced: true,
         sort: {
           order: SORT_ORDERS.desc,
           orderBy: ALARMS_WIDGET_SORT_FIELD.connector,

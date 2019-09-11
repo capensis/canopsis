@@ -140,33 +140,19 @@ module.exports.command = function setCommonFields({
       common.setFiltersType(filters.type);
     }
 
-    if (filters.newItems) {
+    if (filters.groups) {
       common.clickAddFilter();
-      createFilter.verifyModalOpened();
-
-      filters.newItems.forEach((item, index) => {
-        if (index !== 0) {
-          createFilter.clickAddGroup();
-        }
-
-        createFilter
-          .setFilterTitle(item.title)
-          .setFilterType(item.type)
-          .clickAddRule()
-          .selectFieldRule(item.rule)
-          .selectOperatorRule(item.operator)
-          .clearInputRule()
-          .setInputRule(item.value);
-      });
-
-      createFilter
+      createFilter.verifyModalOpened()
+        .clearFilterTitle()
+        .setFilterTitle(filters.title)
+        .fillFilterGroups(filters.groups)
         .clickSubmitButton()
         .verifyModalClosed();
     }
 
     if (filters.selected) {
-      filters.selected.forEach((index) => {
-        common.selectFilter(index);
+      filters.selected.forEach((element) => {
+        common.selectFilter(element);
       });
     }
   }

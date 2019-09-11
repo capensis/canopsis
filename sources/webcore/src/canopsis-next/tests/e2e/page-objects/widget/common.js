@@ -100,14 +100,14 @@ const commands = {
 
   selectSortOrderBy(index = 1) {
     return this.customClick('@defaultSortColumnOrderByField')
-      .waitForElementVisible(this.el('@selectOption', index))
-      .customClick(this.el('@selectOption', index));
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 
   selectSortOrders(index = 1) {
     return this.customClick('@defaultSortColumnOrdersField')
-      .waitForElementVisible(this.el('@selectOption', index))
-      .customClick(this.el('@selectOption', index));
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 
   setColumn(size, value) {
@@ -160,14 +160,18 @@ const commands = {
     return this.customClick('@moreInfoTemplateEditButton');
   },
 
+  clickDeleteMoreInfos() {
+    return this.customClick('@moreInfoTemplateDeleteButton');
+  },
+
   clickElementsPerPage() {
     return this.customClick('@elementsPerPage');
   },
 
   selectElementsPerPage(index = 1) {
     return this.customClick('@elementsPerPageField')
-      .waitForElementVisible(this.el('@selectOption', index))
-      .customClick(this.el('@selectOption', index));
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 
   clickColumnNames() {
@@ -295,7 +299,7 @@ const commands = {
 
 module.exports = {
   elements: {
-    selectOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
 
     periodicRefresh: sel('periodicRefresh'),
     periodicRefreshSwitchInput: `input${sel('periodicRefreshSwitch')}`,
