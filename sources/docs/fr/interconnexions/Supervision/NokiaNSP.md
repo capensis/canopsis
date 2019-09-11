@@ -1,56 +1,53 @@
 # Connecteur Nokia NSP `nokiansp2canopsis`
 
-# /!\ Documentation CAT /!\
+!!! attention
+    Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
 
 ## Description
 
-Convertit des évènements de supervision [Nokia NSP](https://networks.nokia.com/products/network-services-platform) (Network Services Platform) en évènements Canopsis.
+Convertit des évènements de supervision [Nokia NSP](https://www.nokia.com/networks/products/network-services-platform/) (*Network Services Platform*) en évènements Canopsis.
 
 Il envoie les alarmes du composant *Fault Management* de la solution Nokia NSP vers Canopsis via AMQP.
 
 ## Installation
 
-Le script nécessite Python 3 version 3.5 ou supérieure, ainsi que l'outil
-`virtualenv` dans lequel nous mettrons en place les modules utiles.
+Le script nécessite Python 3 (version 3.5 ou supérieure), ainsi que l'outil `virtualenv`.
 
-### Mise en œuvre sous EL7
+### Sur CentOS 7
 
-Sur CentOS / RHEL 7 : Python 3.6 peut être installé depuis le dépôt
-[EPEL][epel].
+Sur CentOS, Python 3.6 peut être installé depuis le dépôt [EPEL](https://fedoraproject.org/wiki/EPEL).
 
-[epel]: https://fedoraproject.org/wiki/EPEL
-
-```console
-# yum install epel-release
-# yum install python36 python36-virtualenv
+```sh
+yum install epel-release
+yum install python36 python36-virtualenv
 ```
 
 Dans le dossier `connector-nokiansp2canopsis`, mettre en place le *virtualenv* :
 
-```console
-$ virtualenv-3.6 venv
+```sh
+virtualenv-3.6 venv
 ```
 
-### Mise en œuvre sous Debian 9
+### Sur Debian 9
 
 Sur Debian 9, la version de Python 3 distribuée est une version 3.5.
 
-```console
-# apt install python3 virtualenv
+```sh
+apt install python3 virtualenv
 ```
 
 Dans le dossier `connector-nokiansp2canopsis`, mettre en place le *virtualenv* :
 
-```console
-$ virtualenv -p python3 venv
+```sh
+virtualenv -p python3 venv
 ```
 
 ### Suite et fin de mise en œuvre (toutes distributions)
 
 Activer le *virtualenv* et y installer les dépendances grâce à `pip` :
 
-```console
-$ . venv/bin/activate
+```sh
+. venv/bin/activate
 (venv) $ pip install pika requests
 ```
 
@@ -60,13 +57,11 @@ Le connecteur peut à présent être exécuté dans cet environnement.
 
 ### Configuration
 
-Le script du connecteur doit obligatoirement être invoqué avec un fichier de
-configuration au format INI, qu'il convient d'indiquer avec l'option `-c` /
-`--config`.
+Le script du connecteur doit obligatoirement être invoqué avec un fichier de configuration au format INI, qu'il convient d'indiquer avec l'option `-c` / `--config`.
 
 Exemple :
 
-```console
+```sh
 (venv) $ ./nokiansp2canopsis.py -c nokiansp2canopsis.ini
 ```
 
@@ -105,56 +100,37 @@ major = 2
 critical = 3
 ```
 
-Les valeurs de configuration peuvent ainsi être adaptées à l'environnement
-où le connecteur est intégré, pour les différentes sections décrites ci-après.
+Les valeurs de configuration peuvent ainsi être adaptées à l'environnement où le connecteur est intégré, pour les différentes sections suivantes.
 
-#### Section `amqp`
+#### Section `[amqp]`
 
-Cette section contient une unique clé, `url`, pour indiquer les coordonnées
-du serveur AMQP auquel envoyer les évènements.
+Cette section contient une unique clé, `url`, pour indiquer les coordonnées du serveur AMQP auquel envoyer les évènements.
 
-La syntaxe d'URI `amqp://` fait l'objet d'une [spécification][amqp_uri_scheme].
+La syntaxe d'URI `amqp://` fait l'objet d'une [spécification](https://www.rabbitmq.com/uri-spec.html).
 
-[amqp_uri_scheme]: https://www.rabbitmq.com/uri-spec.html
+#### Section `[nokiansp]`
 
-#### Section `nokiansp`
+Les paramètres de cette section concernent la connexion à l'outil source, ici l'API Nokia NSP.
 
-Les paramètres de cette section concernent la connexion à l'outil source, ici
-l'API Nokia NSP.
+*  `host` : nom d'hôte ou adresse IP de l'instance Nokia NSP
+*  `username`, `password` : authentification sur l'API Nokia NSP
+*  `ssl_verify` : (`True` ou `False`) active ou non la vérification de validité du certificat SSL lors de la communication avec l'API
+*  `timeout` : temps en secondes au bout duquel le connecteur interrompt la requête à l'API NSP en l'absence de réponse
 
-- `host` : nom d'hôte ou adresse IP de l'instance Nokia NSP
-- `username`, `password` : authentification sur l'API Nokia NSP
-- `ssl_verify` : (`True` ou `False`) active ou non la vérification de validité
-du certificat SSL lors de la communication avec l'API
-- `timeout` : temps en secondes au bout duquel le connecteur interrompt la
-requête à l'API NSP en l'absence de réponse
+Afin de filtrer les alarmes à envoyer à l'hyperviseur et pour détecter la résolution des alarmes NSP, le connecteur enregistre l'horodatage de la dernière alarme rencontrée ainsi que la liste des alarmes en cours.
 
-Afin de filtrer les alarmes à envoyer à l'hyperviseur et pour détecter la
-résolution des alarmes NSP, le connecteur enregistre l'horodatage de la dernière
-alarme rencontrée ainsi que la liste des alarmes en cours.
-
-- le paramètre `timestamp_file_path` définit le chemin du fichier où sauvegarder
-le dernier horodatage ;
-- le paramètre `alarms_file_path` définit le chemin du fichier où sauvegarder
-les alarmes.
+*  le paramètre `timestamp_file_path` définit le chemin du fichier où sauvegarder le dernier horodatage ;
+*  le paramètre `alarms_file_path` définit le chemin du fichier où sauvegarder les alarmes.
 
 Sauf cas particulier, ces deux chemins n'ont pas besoin d'être changés.
 
-#### Section `event`
+#### Section `[event]`
 
-Cette section définit l'ensemble des clés et leur contenu pour renseigner
-les évènements envoyés à Canopsis.
+Cette section définit l'ensemble des clés et leur contenu pour renseigner les évènements envoyés à Canopsis. Voir la [documentation sur la structure des évènements Canopsis](../../guide-developpement/struct-event.md).
 
-La documentation officielle de Canopsis décrit la
-[structure d'un évènement][canopsis_struct_event].
+Chaque clé notée `<key>.constant` sera renseignée avec la valeur notée dans le fichier de configuration.
 
-[canopsis_struct_event]: https://doc.canopsis.net/guide-developpement/struct-event/
-
-Chaque clé notée `<key>.constant` sera renseignée avec la valeur notée dans le
-fichier de configuration.
-
-Chaque clé notée `<key>.value` sera renseignée dynamiquement d'après une
-information présente dans la structure de l'alarme obtenue de NSP.
+Chaque clé notée `<key>.value` sera renseignée dynamiquement d'après une information présente dans la structure de l'alarme obtenue de NSP.
 
 Exemple :
 
@@ -164,54 +140,48 @@ output.value = probableCause
 
 Traduction :
 
-> Le champ `output` de l'évènement Canopsis sera rempli avec le contenu du
-> champ `probableCause` présent dans la structure de l'alarme Nokia NSP.
+> Le champ `output` de l'évènement Canopsis sera rempli avec le contenu du champ `probableCause` présent dans la structure de l'alarme Nokia NSP.
 
-Cas particulier : les champs calculés `canopsisState` et `canopsisComponent`
-sont construits dans le code du connecteur d'après des règles plus complexes.
+Cas particulier : les champs calculés `canopsisState` et `canopsisComponent` sont construits dans le code du connecteur d'après des règles plus complexes.
 
-#### Section `states`
+#### Section `[states]`
 
-Cette section permet de configurer la correspondance entre les noms des
-niveaux de sévérité dans l'outil Nokia NSP et les valeurs numériques attendues
-par Canopsis pour représenter l'état du check.
+Cette section permet de configurer la correspondance entre les noms des niveaux de sévérité dans l'outil Nokia NSP et les valeurs numériques attendues par Canopsis pour représenter l'état du check.
 
-Niveaux Canopsis : 0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL.
+Niveaux Canopsis :
 
-Si un nom de sévérité Nokia NSP n'est pas défini dans la configuration, le
-connecteur lui associera par défaut la valeur 0 (niveau INFO, c'est-à-dire OK).
+*  0 - INFO
+*  1 - MINOR
+*  2 - MAJOR
+*  3 - CRITICAL.
+
+Si un nom de sévérité Nokia NSP n'est pas défini dans la configuration, le connecteur lui associera par défaut la valeur 0 (niveau `INFO`, c'est-à-dire OK).
 
 ### Exécution
 
-Une fois la configuration renseignée, le connecteur peut être invoqué depuis
-le *virtualenv*.
+Une fois la configuration renseignée, le connecteur peut être invoqué depuis le *virtualenv*.
 
-```console
+```sh
 (venv) $ ./nokiansp2canopsis.py -c nokiansp2canopsis.ini
 ```
 
 ### Planification
 
-Le script est un programme dont l'exécution est ponctuelle. Son lancement doit
-être assuré par un planificateur.
+Le script est un programme dont l'exécution est ponctuelle. Son lancement doit être assuré par un planificateur.
 
-Par exemple, pour un lancement par `cron`, un script comme ci-dessous peut être
-mis en place pour exécuter le programme dans l'environnement adéquat :
+Par exemple, pour un lancement par `cron`, un script comme ci-dessous peut être mis en place pour exécuter le programme dans l'environnement adéquat :
 
-```bash
-#!/bin/bash
+```sh
+#!/bin/sh
 
 cd /opt/connector-nokiansp2canopsis
 . venv/bin/activate
 python nokiansp2canopsis.py -c nokiansp2canopsis.ini
 ```
 
-L'entrée en `crontab` pour déclenchement toutes les 5 minutes peut alors être
-exprimée ainsi :
+L'entrée en `crontab` pour déclenchement toutes les 5 minutes peut alors être exprimée ainsi, dans un fichier `/etc/cron.d/nokiansp2canopsis` :
 
-`/etc/cron.d/nokiansp2canopsis`
-
-```
+```sh
 # crontab for nokiansp2canopsis
 
 */5 * * * * user /opt/connector-nokiansp2canopsis/nokiansp2canopsis.sh
@@ -220,9 +190,8 @@ exprimée ainsi :
 ### Exemples d'exécution
 
 Le script affiche en sortie les évènements envoyés à l'hyperviseur.
-S'il arrive à joindre le service AMQP, il envoie au moins un évènement
-intitulé *heartbeat* indiquant la bonne exécution du processus ou, le cas
-échéant, l'erreur rencontrée lors des requêtes à l'API Nokia NSP.
+
+S'il arrive à joindre le service AMQP, il envoie au moins un évènement intitulé *heartbeat* indiquant la bonne exécution du processus ou, le cas échéant, l'erreur rencontrée lors des requêtes à l'API Nokia NSP.
 
 Exemple de sortie avec *heartbeat* OK :
 
