@@ -124,7 +124,7 @@ Dans cet exemple, l'URL est définie dans le premier bloc : on se connecte au se
 Dans le deuxième bloc, on peut définir différents filtres pour le paramètre `query`. Dans tous les cas, le `lastUpdateTime` est ajouté automatiquement à la requête et il est mis à jour après chaque appel à l'API. `lastUpdateTime` correspond au datetime défini dans le fichier `timestamp_file_path` ou à `time.now()`. Pour plus d'informations sur les filtres, [vous pouvez consulter la documentation de l'API IOT FND](https://www.cisco.com/c/en/us/td/docs/routers/connectedgrid/iot_fnd/api_guide/3_0/IoT-FND_NB_API/issue.html#87674 "North Bound API User Guide for the Cisco IoT Field Network Director").
 
 Voici un exemple d'issue récupéré directement de l'API IOT FND :
-```json
+```
 {
     'eid': 'IERZwd-ZXJ0aWZpY2F0-57F3CC7+9429C098',
     'issueLastUpdateTime': datetime.datetime(2018, 1, 9, 16, 20, 32, 913000, tzinfo=<isodate.tzinfo.Utc object at 0x7f0697849518>),
