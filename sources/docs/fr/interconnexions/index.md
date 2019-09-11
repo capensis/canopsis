@@ -6,7 +6,7 @@ Les interconnexions sont les canaux par lesquels Canopsis communique avec d’au
 - Les [drivers](#drivers) amènent le référentiel qui permettra d’enrichir les évènements.
 - Les [notifications](#notifications) sont émises par Canopsis vers différents outils à partir de jeux de règles et de déclencheurs.
 
-En complément Canopsis embarque des [API](#exploitation-par-les-api) que l'on peut utiliser pour l'exploitation.
+En complément, Canopsis embarque des [API](#exploitation-par-les-api) que l'on peut utiliser pour l'exploitation.
 
 # Connecteurs
 
@@ -14,13 +14,13 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ## Base de données
 
-| **Nom** | **Source(s)** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | [SQL](Base-de-donnees/Mysql-MariaDB-PostgreSQL-Oracle.md) | Mysql, PostgeSQL, Oracle, DB2 et MSSQL | OpenCore | Oui | Outil de marché | Toutes versions |
 
 ## Transport
 
-| **Nom** | **Source(s)** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | [Logstash](Transport/Logstash.md) | [Liste des sources](https://www.elastic.co/guide/en/logstash/current/input-plugins.html) | OpenCore | Oui | Outil de marché | Toutes versions |
 | [Email](Transport/Mail.md) | Messages provenant d’une boîte mail **POP3** | CAT | Oui | Outil de marché | Toutes versions |
@@ -28,7 +28,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ## Supervision
 
-| **Nom** | **Source(s)** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | [Snmp Trap](Supervision/SNMPtrap.md) | Tout trap SNMP respectant la [RFC1157](https://www.rfc-editor.org/rfc/pdfrfc/rfc1157.txt.pdf) | CAT | Oui | Outil de marché | Toutes versions |
 | [Snmp Trap Custom](Supervision/SNMPtrap_custom.md) | Tout trap SNMP nécessitant un traitement spécifique | CAT | Oui | Outil de marché | Version ≥ 3 |
@@ -51,7 +51,7 @@ Le driver permet de peupler le référentiel interne Canopsis en vue de l’enri
 
 ## Référentiel
 
-| **Nom** | **Source(s)** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | iTop | Version [Pro 1.3.4-3287](https://www.combodo.com/itop) et [Community 2.4](https://www.combodo.com/itop) | CAT | Non | Outil client | Version ≥ 3.25 |
 | Service Now | Version [Madrid](https://www.servicenow.fr/) | CAT | Non | Outil client | Version ≥ 3.25 |
@@ -64,13 +64,13 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 ## Générique
 
-| **Nom** | **Destination(s)** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | [Webhooks](../guide-administration/webhooks/) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 
 ## Transport
 
-| **Nom** | **Destination(s)** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | [Logstash](../guide-utilisation/cas-d-usage/notifications/) | [Liste des destinations](https://www.elastic.co/guide/en/logstash/current/output-plugins.html) | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 | [IM](../guide-utilisation/cas-d-usage/notifications/) | Toute messagerie instantanée disposant d’une API qui accepte des requêtes HTTP | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
@@ -78,7 +78,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 ## Ticketing
 
-| **Nom** | **Destination(s)** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | Service Now | Version [Madrid](https://www.servicenow.fr/) | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 | Zelos | Zelos | CAT | Non | Outil client | Version ≥ 2 (moteurs Python) |
@@ -86,7 +86,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 # Exploitation par les API
 
-| **Nom** | **Edition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
+| **Nom** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:---------:|:----------:|:-----------:|:------------:|
 | [Publication d’évènement](../guide-developpement/API/) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
 | [Manipulation de Plage de Maintenance](../guide-utilisation/interface/pbehaviors/) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
