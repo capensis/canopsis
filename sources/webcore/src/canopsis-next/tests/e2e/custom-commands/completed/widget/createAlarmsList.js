@@ -5,6 +5,7 @@ const { API_ROUTES } = require('../../../../../src/config');
 module.exports.command = function createAlarmsList({
   parameters: {
     ack,
+    filters,
     enableHtml = false,
     liveReporting,
     ...parameters
@@ -12,6 +13,7 @@ module.exports.command = function createAlarmsList({
   ...fields
 }, callback = () => {}) {
   const alarms = this.page.widget.alarms();
+  const createFilter = this.page.modals.common.createFilter();
   const liveReportingModal = this.page.modals.common.liveReporting();
 
   this.completed.widget.setCommonFields({ ...fields, parameters });
@@ -37,6 +39,31 @@ module.exports.command = function createAlarmsList({
     }
   }
 
+  if (filters) {
+    alarms.clickFilters()
+      .setMixFilters(filters.isMix);
+
+    if (filters.isMix) {
+      alarms.setFiltersType(filters.type);
+    }
+
+    if (filters.groups) {
+      alarms.clickAddFilter();
+      createFilter.verifyModalOpened()
+        .clearFilterTitle()
+        .setFilterTitle(filters.title)
+        .fillFilterGroups(filters.groups)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    }
+
+    if (filters.selected) {
+      filters.selected.forEach((element) => {
+        alarms.selectFilter(element);
+      });
+    }
+  }
+
   if (liveReporting) {
     alarms.clickCreateLiveReporting();
     liveReportingModal.verifyModalOpened()
@@ -44,6 +71,7 @@ module.exports.command = function createAlarmsList({
 
     if (liveReporting.calendarStartDate) {
       liveReportingModal.clickStartDateButton()
+        .clickDatePickerDayTab()
         .selectCalendarDay(liveReporting.calendarStartDate.day)
         .clickDatePickerHoursTab()
         .selectCalendarHour(liveReporting.calendarStartDate.hour)
@@ -62,11 +90,13 @@ module.exports.command = function createAlarmsList({
 
     if (liveReporting.endDate) {
       liveReportingModal.clearEndDate()
+        .clickEndDate()
         .setEndDate(liveReporting.endDate);
     }
 
     if (liveReporting.startDate) {
       liveReportingModal.clearStartDate()
+        .clickStartDate()
         .setStartDate(liveReporting.startDate);
     }
 

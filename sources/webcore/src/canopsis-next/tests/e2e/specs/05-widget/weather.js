@@ -4,6 +4,10 @@ const {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SERVICE_WEATHER_WIDGET_SORT_FIELD,
   PAGINATION_PER_PAGE_VALUES,
+  FILTERS_TYPE,
+  FILTER_OPERATORS,
+  FILTER_COLUMNS,
+  VALUE_TYPES,
   SORT_ORDERS,
 } = require('../../constants');
 const { generateTemporaryView, generateTemporaryWeather } = require('../../helpers/entities');
@@ -63,7 +67,32 @@ module.exports = {
         columnLG: 12,
         heightFactor: 20,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList,
-        filter: {},
+        filter: {
+          groups: [{
+            type: FILTERS_TYPE.OR,
+            items: [{
+              rule: FILTER_COLUMNS.CONNECTOR,
+              operator: FILTER_OPERATORS.EQUAL,
+              valueType: VALUE_TYPES.STRING,
+              value: 'value',
+              groups: [{
+                type: FILTERS_TYPE.OR,
+                items: [{
+                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
+                  operator: FILTER_OPERATORS.IN,
+                  valueType: VALUE_TYPES.BOOLEAN,
+                  value: true,
+                }],
+              }],
+            }, {
+              type: FILTERS_TYPE.AND,
+              rule: FILTER_COLUMNS.CONNECTOR_NAME,
+              operator: FILTER_OPERATORS.NOT_EQUAL,
+              valueType: VALUE_TYPES.NUMBER,
+              value: 136,
+            }],
+          }],
+        },
         moreInfos: 'More infos popup',
         blockTemplate: 'Template weather item text',
         modalTemplate: 'Template modal text',
@@ -101,7 +130,6 @@ module.exports = {
       .clickLinkView(temporary.view._id);
 
     view.clickMenuViewButton()
-      .clickEditViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
@@ -173,6 +201,7 @@ module.exports = {
     };
 
     browser.page.view()
+      .clickEditViewButton()
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.createServiceWeather(weatherWidget);

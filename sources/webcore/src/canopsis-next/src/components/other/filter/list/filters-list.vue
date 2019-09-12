@@ -8,22 +8,22 @@
           v-list-tile-action(v-if="hasAccessToEditFilter")
             v-layout
               v-btn.ma-1(
-              :data-test="`editFilter-${filter.title}`",
-              icon,
-              @click="showEditFilterModal(index)"
+                icon,
+                :data-test="`editFilter-${filter.title}`",
+                @click="showEditFilterModal(index)"
               )
                 v-icon edit
               v-btn.ma-1(
-              :data-test="`deleteFilter-${filter.title}`",
-              icon,
-              @click="showDeleteFilterModal(index)"
+                icon,
+                :data-test="`deleteFilter-${filter.title}`",
+                @click="showDeleteFilterModal(index)"
               )
                 v-icon delete
     v-btn.ml-0(
-    data-test="addFilter",
-    v-if="hasAccessToAddFilter",
-    color="primary",
-    @click.prevent="showCreateFilterModal"
+      data-test="addFilter",
+      v-if="hasAccessToAddFilter",
+      color="primary",
+      @click.prevent="showCreateFilterModal"
     ) {{ $t('common.add') }}
 </template>
 

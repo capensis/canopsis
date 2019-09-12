@@ -12,52 +12,52 @@
     v-layout.text-xs-center(wrap, justify-space-around)
       v-flex(xs5, md3)
         v-btn(
-        data-test="addRule",
-        @click="addRule",
-        outline,
-        block,
-        small,
-        flat
+          data-test="addRule",
+          outline,
+          block,
+          small,
+          flat,
+          @click="addRule"
         ) {{$t("filterEditor.buttons.addRule")}}
       v-flex(xs5, md3)
         v-btn(
-        data-test="addGroup",
-        @click="addGroup",
-        outline,
-        block,
-        small,
-        flat
+          data-test="addGroup",
+          outline,
+          block,
+          small,
+          flat,
+          @click="addGroup"
         ) {{$t("filterEditor.buttons.addGroup")}}
       v-flex(xs5, md3)
         v-btn(
-        data-test="deleteGroup",
-        v-if="!isInitial",
-        @click="$emit('deleteGroup')",
-        color="red darken-4",
-        outline,
-        block,
-        small,
-        flat
+          data-test="deleteGroup",
+          v-if="!isInitial",
+          color="red darken-4",
+          outline,
+          block,
+          small,
+          flat,
+          @click="$emit('deleteGroup')",
         ) {{$t("filterEditor.buttons.deleteGroup")}}
 
     div(data-test="filterRuleLayout")
       filter-rule(
-      v-for="(rule, ruleKey) in group.rules",
-      :key="ruleKey"
-      :rule="rule",
-      :possibleFields="possibleFields",
-      @deleteRule="deleteRule(ruleKey)",
-      @update:rule="updateRule(ruleKey, $event)",
+        v-for="(rule, ruleKey) in group.rules",
+        :key="ruleKey"
+        :rule="rule",
+        :possibleFields="possibleFields",
+        @deleteRule="deleteRule(ruleKey)",
+        @update:rule="updateRule(ruleKey, $event)",
       )
 
     div(data-test="filterGroupLayout")
       filter-group.filterGroup(
-      v-for="(group, groupKey) in group.groups",
-      :key="groupKey"
-      :group="group",
-      :possibleFields="possibleFields",
-      @deleteGroup="deleteGroup(groupKey)",
-      @update:group="updateGroup(groupKey, $event)",
+        v-for="(group, groupKey) in group.groups",
+        :key="groupKey"
+        :group="group",
+        :possibleFields="possibleFields",
+        @deleteGroup="deleteGroup(groupKey)",
+        @update:group="updateGroup(groupKey, $event)",
       )
 </template>
 

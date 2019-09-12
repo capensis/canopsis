@@ -24,13 +24,17 @@ const commands = {
   },
 
   setFilterType(groupSelector, type) {
-    return this.getAttribute(this.el('@radioAndInput', groupSelector), 'aria-checked', ({ value }) => {
-      if (value === 'true' && type === FILTERS_TYPE.OR) {
-        this.customClick(this.el('@radioOr', groupSelector));
-      } else if (value === 'false' && type === FILTERS_TYPE.AND) {
-        this.customClick(this.el('@radioAnd', groupSelector));
-      }
-    });
+    return this.getAttribute(
+      this.el('@radioAndInput', groupSelector),
+      'aria-checked',
+      ({ value }) => {
+        if (value === 'true' && type === FILTERS_TYPE.OR) {
+          this.customClick(this.el('@radioOr', groupSelector));
+        } else if (value === 'false' && type === FILTERS_TYPE.AND) {
+          this.customClick(this.el('@radioAnd', groupSelector));
+        }
+      },
+    );
   },
 
   clickAddRule(groupSelector) {

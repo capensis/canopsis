@@ -22,7 +22,11 @@ const commands = {
     return this.customClick('@startDateField');
   },
 
-  clickDatePickerDateTab() {
+  setStartDate(value) {
+    return this.customSetValue('@startDateField', value);
+  },
+
+  clickDatePickerDayTab() {
     return this.customClick('@datePickerDateTab');
   },
 
@@ -60,10 +64,6 @@ const commands = {
     return this;
   },
 
-  setStartDate(value) {
-    return this.customSetValue('@startDateField', value);
-  },
-
   clearEndDate() {
     return this.customClearValue('@endDateField');
   },
@@ -96,7 +96,6 @@ module.exports = modalCreator(modalSelector, {
     datePickerDateTab: sel('datePickerDateTab'),
     datePickerHoursTab: sel('datePickerHoursTab'),
     datePickerMinutesTab: sel('datePickerMinutesTab'),
-    datePickerSecondsTab: sel('datePickerSecondsTab'),
     datePickerClock: '.v-time-picker-clock__inner .v-time-picker-clock__item:nth-of-type(%s)',
 
     startDateField: `${sel('intervalStart')} ${sel('dateTimePickerTextField')}`,

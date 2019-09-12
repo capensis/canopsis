@@ -23,12 +23,10 @@ module.exports.command = function setCommonFields({
     editColumnNames,
     moveColumnNames,
     deleteColumnNames,
-    filters,
   } = {},
   periodicRefresh,
 }) {
   const addInfoPopup = this.page.modals.common.addInfoPopup();
-  const createFilter = this.page.modals.common.createFilter();
   const textEditor = this.page.modals.common.textEditor();
   const infoPopupModal = this.page.modals.common.infoPopupSetting();
   const common = this.page.widget.common();
@@ -130,31 +128,6 @@ module.exports.command = function setCommonFields({
       .clickFilterOnOpenResolved()
       .setOpenFilter(openedResolvedFilter.open)
       .setResolvedFilter(openedResolvedFilter.resolve);
-  }
-
-  if (filters) {
-    common.clickFilters()
-      .setMixFilters(filters.isMix);
-
-    if (filters.isMix) {
-      common.setFiltersType(filters.type);
-    }
-
-    if (filters.groups) {
-      common.clickAddFilter();
-      createFilter.verifyModalOpened()
-        .clearFilterTitle()
-        .setFilterTitle(filters.title)
-        .fillFilterGroups(filters.groups)
-        .clickSubmitButton()
-        .verifyModalClosed();
-    }
-
-    if (filters.selected) {
-      filters.selected.forEach((element) => {
-        common.selectFilter(element);
-      });
-    }
   }
 
   if (infoPopups) {

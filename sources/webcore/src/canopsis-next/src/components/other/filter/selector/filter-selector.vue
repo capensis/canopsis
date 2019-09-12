@@ -2,12 +2,12 @@
   v-layout(align-center, row, wrap)
     v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
       v-switch(
-      data-test="mixFilters",
-      :label="$t('filterSelector.fields.mixFilters')",
-      :input-value="isMultiple",
-      color="primary",
-      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
-      @change="updateIsMultipleFlag"
+        data-test="mixFilters",
+        color="primary",
+        :label="$t('filterSelector.fields.mixFilters')",
+        :input-value="isMultiple",
+        :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+        @change="updateIsMultipleFlag"
       )
     v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
       v-radio-group(

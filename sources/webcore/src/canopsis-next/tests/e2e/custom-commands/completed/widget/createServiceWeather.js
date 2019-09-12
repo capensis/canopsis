@@ -17,6 +17,7 @@ module.exports.command = function createServiceWeather(
 ) {
   const common = this.page.widget.common();
   const weather = this.page.widget.weather();
+  const createFilter = this.page.modals.common.createFilter();
   const textEditor = this.page.modals.common.textEditor();
 
   this.completed.widget.setCommonFields({
@@ -27,8 +28,9 @@ module.exports.command = function createServiceWeather(
   if (filter) {
     common.clickCreateFilter();
 
-    this.page.modals.view.createFilter()
+    createFilter
       .verifyModalOpened()
+      .fillFilterGroups(filter.groups)
       .clickCancelButton()
       .verifyModalClosed();
   }

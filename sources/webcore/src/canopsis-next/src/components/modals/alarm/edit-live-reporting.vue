@@ -9,15 +9,15 @@
       v-divider
       v-layout.py-1(justify-end)
         v-btn(
-        @click="hideModal",
-        depressed,
-        flat,
-        data-test="liveReportingCancelButton"
+          @click="hideModal",
+          depressed,
+          flat,
+          data-test="liveReportingCancelButton"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-        @click="submit",
-        :disabled="errors.any()",
-        data-test="liveReportingApplyButton"
+          @click="submit",
+          :disabled="errors.any()",
+          data-test="liveReportingApplyButton"
         ) {{ $t('common.apply') }}
 </template>
 

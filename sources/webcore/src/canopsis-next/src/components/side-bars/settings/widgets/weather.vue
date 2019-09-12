@@ -31,15 +31,15 @@
           )
           v-divider
           field-text-editor(
-          data-test="widgetMoreInfoTemplate",
-          v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
-          :title="$t('settings.moreInfosModal')"
+            data-test="widgetMoreInfoTemplate",
+            v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
+            :title="$t('settings.moreInfosModal')"
           )
       v-divider
       field-number(
-      data-test='widgetLimit',
-      v-model="settings.widget.parameters.limit",
-      :title="$t('settings.limit')"
+        data-test="widgetLimit",
+        v-model="settings.widget.parameters.limit",
+        :title="$t('settings.limit')"
       )
       v-divider
       v-list-group(data-test="advancedSettings")
