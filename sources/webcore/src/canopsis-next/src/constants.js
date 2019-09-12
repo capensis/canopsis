@@ -28,6 +28,7 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
   snmpRule: 'snmpRule',
+  heartbeat: 'heartbeat',
 };
 
 export const MODALS = {
@@ -77,6 +78,7 @@ export const MODALS = {
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
+  createHeartbeat: 'create-heartbeat',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -607,6 +609,7 @@ export const USERS_RIGHTS = {
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
       snmpRule: 'models_exploitation_snmpRule',
+      heartbeat: 'models_exploitation_heartbeat',
     },
   },
   business: {
@@ -935,3 +938,8 @@ export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
+
+export const HEARTBEAT_DURATION_UNITS = {
+  minute: 'm',
+  hour: 'h',
+};
