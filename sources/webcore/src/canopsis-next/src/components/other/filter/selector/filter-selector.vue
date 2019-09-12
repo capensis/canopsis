@@ -95,7 +95,7 @@ export default {
     },
     itemValue: {
       type: String,
-      default: 'filter',
+      default: 'title',
     },
     condition: {
       type: String,

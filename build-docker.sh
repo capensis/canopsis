@@ -68,7 +68,6 @@ function build() {
 
     if [ "${CANOPSIS_DISTRIBUTION}" = "all" ]; then
         build_for_distribution "debian-9"
-        build_for_distribution "debian-8"
         build_for_distribution "centos-7"
     else
         build_for_distribution "${CANOPSIS_DISTRIBUTION}"

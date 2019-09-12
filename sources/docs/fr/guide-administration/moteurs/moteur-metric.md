@@ -5,9 +5,10 @@ Le moteur `metric` est un moteur qui enregistre les données de performance envo
 ## Modèle de données
 
 Les données de performances sont sauvegardées dans un *measurement* InfluxDB ayant le même nom que la métrique. Ce *measurement* peut contenir trois champs :
- - `value` : la valeur de la métrique
- - `warn` : le seuil d'avertissement (peut valoir `null`)
- - `crit` : le seuil critique (peut valoir `null`)
+
+*  `value` : la valeur de la métrique
+*  `warn` : le seuil d'avertissement (peut valoir `null`)
+*  `crit` : le seuil critique (peut valoir `null`)
 
 Il contient également les tags `connector`, `connector_name`, `component` et `resource`. Il est possible d'ajouter des informations sur l'entité avec l'option `tags` de la configuration.
 

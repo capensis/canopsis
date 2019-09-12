@@ -46,11 +46,11 @@ Pour créer des règles de transformations il faut se logger sur la page dédié
 !!! Note
     L'accès à cette page est régi par le droit `models_exploitation_snmpRule` de type CRUD.
     Veillez à octroyer les permissions dans la matrice des droits ![Droit SNMPRULE](img/droit_snmprule.png)
-    
+
 
 Une règle de transformation consiste à convertir des `OID` en valeurs compréhensibles et associer les attributs nécessaires à un message Canopsis.
 
-Dans l'exemple du connecteur [`snmp2canopsis`](../../guide-connecteurs/Infrastructure/SNMPtrap.md), nous souhaitons obtenir le message suivant :
+Dans l'exemple du connecteur [`snmp2canopsis`](../../interconnexions/Supervision/SNMPtrap.md), nous souhaitons obtenir le message suivant :
 
 ```json
 {
