@@ -107,3 +107,4 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.25.0](../../notes-de-version/3.25.0.md)
 *  [3.26.0](../../notes-de-version/3.26.0.md)
 *  [3.27.0](../../notes-de-version/3.27.0.md)
+*  [3.28.0](../../notes-de-version/3.28.0.md)

@@ -2,6 +2,24 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.28.0 - Due date : 2019-09-12
+
+ - [Documentation] Big improvements in most guides of doc.canopsis.net
+ - [Documentation] Add CAS authentication documentation
+ - [Documentation] Fix API requests in Action engine documentation
+ - [Packaging] Delete Debian 8 compatibility
+ - [Packaging] Add an explicit dependency on an equal version of canopsis-engines-go, when installing canopsis-engines-go-cat
+ - [Packaging] Upgrade from Go 1.12.7 to 1.12.9, in the provided binaries
+ - [Packaging] Work around a compatibility problem between CentOS 7's old Python and pybars3
+ - [UI] Fix the roles list pagination when the create modal is opened
+ - [UI] Add an "Edit Action" button to the event-filter CRUD
+ - [UI] Add a new Heartbeat CRUD
+ - [UI - Listalarm] Fix issue when two identical filters are created
+ - [UI - Listalarm] Fix "doesn't contain" filter
+ - [UI - Stats] Exclude "No data" when sorting values in a stats table
+ - [UI - Tests] Add tests for Weather widget
+ - [UI - Tests] Add tests for the language settings of the Top bar
+
 ## Canopsis 3.27.0 - Due date : 2019-09-02
 
  - [Documentation] Mention that -enrichContext flag is required when doing enrichment in Go engines
