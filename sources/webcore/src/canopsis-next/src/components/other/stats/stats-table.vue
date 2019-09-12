@@ -6,7 +6,8 @@
       v-data-table(
       :items="stats",
       :headers="columns",
-      :pagination.sync="pagination"
+      :pagination.sync="pagination",
+      :custom-sort="customSort"
       )
         template(slot="items", slot-scope="{ item }")
           td {{ item.entity.name }}
@@ -32,6 +33,8 @@ import { isUndefined, isNull } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
+
+import { dataTableCustomSortWithNullIgnoring } from '@/helpers/sort';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -110,6 +113,8 @@ export default {
     },
   },
   methods: {
+    customSort: dataTableCustomSortWithNullIgnoring,
+
     getQuery() {
       const {
         stats,
