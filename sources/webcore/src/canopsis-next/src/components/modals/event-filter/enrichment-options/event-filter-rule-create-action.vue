@@ -15,8 +15,8 @@
         component(
           v-for="option in form.type.options"
           v-model="form[option.value]",
-          v-validate="getValidationRulesByOption(option)",
-          :is="getComponentByOption(option)",
+          v-validate="$options.filters.validationRulesByOption(option)",
+          :is="option | componentByOption",
           :key="option.value",
           :label="option.text",
           :name="option.value",
@@ -61,6 +61,12 @@ export default {
         type: form.type.value,
       };
     },
+    componentByOption({ value } = {}) {
+      return value === 'value' ? 'mixed-field' : 'v-text-field';
+    },
+    validationRulesByOption({ required } = {}) {
+      return required && 'required';
+    },
   },
   components: { MixedField },
   mixins: [popupMixin, modalInnerMixin, entitiesRightMixin],
@@ -79,14 +85,6 @@ export default {
         to: '',
       },
     };
-  },
-  computed: {
-    getComponentByOption() {
-      return (option = {}) => (option.value === 'value' ? 'mixed-field' : 'v-text-field');
-    },
-    getValidationRulesByOption() {
-      return (option = {}) => option.required && 'required';
-    },
   },
   mounted() {
     if (this.config.ruleAction) {
