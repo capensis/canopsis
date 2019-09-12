@@ -1148,11 +1148,25 @@ class PBehaviorManager(object):
         # get today at midnight timestamp as base return timestamp
         # because each alarm ok ko counter is soft-reseted at midnight
         # midnight at local timezone
+        ret_timestamp = self.get_last_tstop_from_eid(entity_id)
         today_at_midnight = date.today()
-        ret_timestamp = int(today_at_midnight.strftime("%s"))
+        tam_timestamp = int(today_at_midnight.strftime("%s"))
+        if ret_timestamp < tam_timestamp:
+            return tam_timestamp
+        return ret_timestamp
 
+    def get_last_tstop_from_eid(self, entity_id):
+        """
+        Get the timestamp corresponding to
+        the last pbehavior stop for that entity_id
+        If pbh is active, then now timestamp is returned
+        If no pbh is found, then 0 is returned
+
+        :param str entity_id: the entity id needing the last pbh timestamp
+        :rtype: int
+        """
         now = int(time())
-
+        ret_timestamp = 0
         for pbh in self.get_pbehaviors(entity_id):
             tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
             now_dt = self.__convert_timestamp(now, tz_name)
