@@ -1,4 +1,7 @@
+import { USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
+
 import { createNamespacedHelpers } from 'vuex';
+import { isMatch } from 'lodash';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
@@ -27,5 +30,20 @@ export default {
       fetchAppInfos: 'fetchAppInfos',
       updateUserInterface: 'updateUserInterface',
     }),
+
+    checkAppInfoAccessByRight(right) {
+      const rightAppInfoRules = USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right];
+
+      if (!rightAppInfoRules) {
+        return true;
+      }
+
+      const appInfo = {
+        stack: this.stack,
+        edition: this.edition,
+      };
+
+      return isMatch(appInfo, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right]);
+    },
   },
 };

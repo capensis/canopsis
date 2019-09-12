@@ -955,3 +955,15 @@ export const HEARTBEAT_DURATION_UNITS = {
   minute: 'm',
   hour: 'h',
 };
+
+export const EXPLOITATION_PAGES_RULES = {
+  eventFilter: { stack: CANOPSIS_STACK.go },
+  webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+};
+
+export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
+  [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
+  [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
+  [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
+};
