@@ -25,7 +25,8 @@ pika<0.12.0
 polib<1.2.0
 procfs<0.6.0
 psutil<5.5.0
-pybars3==0.9.6
+# This fork is required for CentOS 7 compatibility. See canopsis#1791
+pybars3 @ https://git.canopsis.net/canopsis/pybars3/-/archive/0.9.6-999/pybars3-0.9.6-999.tar.gz#sha1=a537276514d74d0643521324ebf8f6b58c11465e
 pymongo<3.7.0
 pyparsing<2.3.0
 python-ldap<3.0.0
