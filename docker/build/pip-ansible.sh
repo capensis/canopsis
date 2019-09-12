@@ -10,11 +10,6 @@ repver="${ID}-${VERSION_ID}"
 source ${CPS_HOME}/venv-ansible/bin/activate
 source /etc/os-release
 
-pyopenssl="pyOpenSSL"
-if [ "${VERSION_ID}" = "8" ]&&[ "${ID}" = "debian" ]; then
-    pyopenssl="pyOpenSSL==17.5.0"
-fi
-
 pip install -U setuptools pip
 
 # jmespath is required by ansible role repository adder maat
@@ -22,7 +17,7 @@ pip install -U setuptools pip
 # influxdb is required for the modified ansible role influxdb
 # pyopenssl is required to fix compatibility between systems
 # finally ansible 2.4 is required to avoid role compat problems
-pip install -U setuptools pip wheel jmespath "pymongo==3.5.0" "influxdb==5.1.0" "${pyopenssl}" "ansible==2.4.4"
+pip install -U setuptools pip wheel jmespath "pymongo==3.5.0" "influxdb==5.1.0" "pyOpenSSL" "ansible==2.4.4"
 
 rm -rf /tmp/pipbuild
 rm -rf ~/.cache

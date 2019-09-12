@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.my-2.pa-0
+  v-card.my-2.pa-0(data-test="filterRule")
     v-layout(justify-end)
       v-btn(
       data-test="deleteRule",

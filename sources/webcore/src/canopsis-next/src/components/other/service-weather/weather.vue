@@ -2,8 +2,16 @@
   div
     v-layout
     v-fade-transition
-      v-layout.fill-height(v-show="!watchersPending", wrap)
-        v-flex(v-for="item in watchers", :key="item._id", :class="flexSize")
+      v-layout.fill-height(v-if="!watchersPending", wrap)
+        v-alert(type="error", :value="true", v-if="hasNoData && watchersError")
+          v-layout(align-center)
+            div.mr-4 {{ $t('errors.default') }}
+            v-tooltip(top)
+              v-icon(slot="activator") help
+              div(v-if="watchersError.name") {{ $t('common.name') }}: {{ watchersError.name }}
+              div(v-if="watchersError.description") {{ $t('common.description') }}: {{ watchersError.description }}
+        v-alert(type="info", :value="true", v-else-if="hasNoData") {{ $t('tables.noData') }}
+        v-flex(v-else, v-for="item in watchers", :key="item._id", :class="flexSize")
           weather-item.weatherItem(
           :data-test="item.entity_id"
           :watcher="item",
@@ -12,7 +20,7 @@
           :isEditingMode="isEditingMode",
         )
     v-fade-transition
-      v-layout(v-show="watchersPending", column)
+      v-layout(v-if="watchersPending", column)
         v-flex(xs12)
           v-layout(justify-center)
             v-progress-circular(indeterminate, color="primary")
@@ -53,6 +61,9 @@ export default {
         `md${this.widget.parameters.columnMD}`,
         `lg${this.widget.parameters.columnLG}`,
       ];
+    },
+    hasNoData() {
+      return this.watchers.length === 0;
     },
   },
   methods: {

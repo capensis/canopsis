@@ -65,6 +65,8 @@ export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idA
 
 export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { idAttribute: '_id' });
 
+export const heartbeatSchema = new schema.Entity(ENTITIES_TYPES.heartbeat, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -82,4 +84,5 @@ export default {
   [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
   [ENTITIES_TYPES.webhook]: webhookSchema,
   [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
+  [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
 };

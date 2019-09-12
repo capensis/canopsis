@@ -1,5 +1,11 @@
 # Sources de données pour l'event-filter
 
+Les plugins de sources de données permettent d'utiliser des données externes à Canopsis dans les règles de l'[event-filter du moteur che](../../guide-administration/moteurs/moteur-che-event_filter.md).
+
+Les plugins de sources de données suivantes sont disponibles dans Canopsis :
+
+ - [Collection MongoDB](../../../guide-administration/moteurs/moteur-che-event_filter/#collection-mongodb)
+
 Une source de données externe est un module go exportant une variable
 `DataSourceFactory` qui implémente l'interface `DataSourceFactory` (définie
 dans

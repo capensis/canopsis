@@ -15,7 +15,7 @@ We have the following project structure:
 ```
 e2e
 ├── custom-assertions        # Folder with assertions
-│   └── elementCount.js      # Special global assertion
+│   └── elementsCount.js     # Special global assertion
 ├── custom-commands          # Folder with commands
 │   ├── completed            # Folder with completed commands. Completed ui action. For example: login, logout and etc.
 │   │   └── login.js         # Completed ui command
@@ -77,33 +77,47 @@ Planned tests
         - [x] Check pagination users table
         - [x] Delete mass users with some name
     * Roles
-        - [ ] Create new role with some name
-        - [ ] Edit role with some name
-        - [ ] Remove role with some username
-        - [ ] Create mass roles with some name
-        - [ ] Search roles
-        - [ ] Check pagination roles table
-        - [ ] Delete mass roles with some name
+        - [x] Create new role with some name
+        - [x] Edit role with some name
+        - [x] Remove role with some username
+        - [x] Create mass roles with some name
+        - [x] Search roles
+        - [x] Check pagination roles table
+        - [x] Delete mass roles with some name
+        - [ ] Check role default view working
     * Rights
         - [ ] Create new right with some name
         - [ ] Adds right new role
+    * Parameters
+        - [x] Edit app title
+        - [x] Switch language
+        - [x] Edit footer text
+        - [x] Edit description text
+        - [ ] Upload logo
+        - [x] Check global language
+        - [x] Check app title
+        - [x] Check login footer
+        - [x] Check login description
+        - [ ] Check logo
 3. Layout
     * Top Bar
         - [x] Open current user modal
         - [x] Select current user default view
         - [x] Check default view
+        - [ ] Switch user language
+        - [ ] Check user interface language
     * Group Side Bar
         - [x] Add view with some name from constants
         - [x] Checking view copy with name from constants
         - [x] Editing test view with name from constants
         - [x] Deleting all test items view with name from constants
-        - [ ] Deleting all test group with name from constants
+        - [x] Deleting all test group with name from constants
     * Group Top Bar
         - [x] Add view with some name from constants
         - [x] Checking view copy with name from constants
         - [x] Editing test view with name from constants
         - [x] Deleting all test items view with name from constants
-        - [ ] Deleting all test group with name from constants
+        - [x] Deleting all test group with name from constants
 4. View
     * Base functions
         - [ ] View open by `id`

@@ -16,3 +16,18 @@ module.exports.generateTemporaryUser = (prefix = '', suffix = uid()) => ({
   email: `${prefix}email-${suffix}@example.com`,
   password: `${prefix}password-${suffix}`,
 });
+
+module.exports.generateTemporaryRole = (prefix = '', suffix = uid()) => ({
+  name: `${prefix}name-${suffix}`,
+  description: `${prefix}description-${suffix}`,
+});
+
+module.exports.generateTemporaryWeather = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Weather-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
+
+module.exports.generateTemporaryAlarms = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Alarms-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

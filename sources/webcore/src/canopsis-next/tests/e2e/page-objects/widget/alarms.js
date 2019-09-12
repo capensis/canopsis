@@ -1,166 +1,107 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
+const { FILTERS_TYPE } = require('../../constants');
 
 const commands = {
   clickSubmitAlarms() {
     return this.customClick('@submitAlarms');
   },
 
-  clickAdvancedSettings() {
-    return this.customClick('@advancedSettings')
-      .defaultPause();
+  setEnableHtml(checked = false) {
+    return this.getAttribute('@enableHtmlInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@enableHtml');
+      }
+    });
   },
 
-  clickDefaultSortColumn() {
-    return this.customClick('@defaultSortColumn')
-      .defaultPause();
+  clickAckGroup() {
+    return this.customClick('@ackGroup');
   },
 
-  selectSortColumn(index = 1) {
-    return this.customClick('@sortColumn')
-      .waitForElementVisible(this.el('@optionSelect', index))
-      .customClick(this.el('@optionSelect', index));
+  setIsAckNoteRequired(checked = false) {
+    return this.getAttribute('@isAckNoteRequiredInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@isAckNoteRequired');
+      }
+    });
   },
 
-  selectSortOrder(index = 1) {
-    return this.customClick('@sortOrder')
-      .waitForElementVisible(this.el('@optionSelect', index))
-      .customClick(this.el('@optionSelect', index));
+  setIsMultiAckEnabled(checked = false) {
+    return this.getAttribute('@isMultiAckEnabledInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@isMultiAckEnabled');
+      }
+    });
   },
 
-  clickColumnNames() {
-    return this.customClick('@columnNames')
-      .defaultPause();
+  clickFastAckOutput() {
+    return this.customClick('@fastAckOutput');
   },
 
-  clickColumnUp(index = 1) {
-    return this.customClick(this.el('@columnUp', index));
+  setFastAckOutputSwitch(checked = false) {
+    return this.getAttribute('@fastAckOutputSwitchInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@fastAckOutputSwitch');
+      }
+    });
   },
 
-  clickColumnDown(index = 1) {
-    return this.customClick(this.el('@columnDown', index));
+  clickFastAckOutputText() {
+    return this.customClick('@fastAckOutputField');
   },
 
-  clickColumnClose(index = 1) {
-    return this.customClick(this.el('@columnClose', index));
+  clearFastAckOutputText() {
+    return this.customClearValue('@fastAckOutputField');
   },
 
-  clearColumnLabel(index = 1) {
-    return this.customClearValue(this.el('@columnLabel', index));
+  setFastAckOutputText(value) {
+    return this.customSetValue('@fastAckOutputField', value);
   },
 
-  setColumnLabel(index = 1, value) {
-    return this.customSetValue(this.el('@columnLabel', index), value);
+  clickCreateLiveReporting() {
+    return this.customClick('@liveReportingCreateButton');
   },
 
-  clearColumnValue(index = 1) {
-    return this.customClearValue(this.el('@columnValue', index));
-  },
-
-  setColumnValue(index = 1, value) {
-    return this.customSetValue(this.el('@columnValue', index), value);
-  },
-
-  clickColumnHtml(index = 1) {
-    return this.customClick(this.el('@columnHtml', index));
-  },
-
-  clickColumnAdd() {
-    return this.customClick('@columnAdd');
-  },
-
-  clickDefaultNumberOfElementsPerPage() {
-    return this.customClick('@defaultNumberOfElementsPerPage')
-      .defaultPause();
-  },
-
-  selectElementsPerPage(index = 1) {
-    return this.customClick('@elementsPerPage')
-      .waitForElementVisible(this.el('@optionSelect', index))
-      .customClick(this.el('@optionSelect', index));
-  },
-
-  clickFilterOnOpenResolved() {
-    return this.customClick('@filterOnOpenResolved')
-      .defaultPause();
-  },
-
-  clickOpenFilter() {
-    return this.customClick('@openFilter');
-  },
-
-  clickResolvedFilter() {
-    return this.customClick('@resolvedFilter');
-  },
-
-  clickFilters() {
-    return this.customClick('@filters')
-      .defaultPause();
-  },
-
-  clickAddFilter() {
-    return this.customClick('@addFilter');
-  },
-
-  clickMixFilters() {
-    return this.customClick('@mixFilters');
-  },
-
-  clickAndFilters() {
-    return this.customClick('@andFilters');
-  },
-
-  clickOrFilters() {
-    return this.customClick('@orFilters');
-  },
-
-  selectFilters(index = 1) {
+  selectFilter(index = 1) {
     return this.customClick('@selectFilters')
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
   },
 
-  clickInfoPopupButton() {
-    return this.customClick('@infoPopupButton');
+  clickEditLiveReporting() {
+    return this.customClick('@liveReportingEditButton');
   },
 
-  clickCreateEditMore() {
-    return this.customClick('@createEditMore');
+  clickDeleteLiveReporting() {
+    return this.customClick('@liveReportingDeleteButton');
   },
 
-  clickDeleteMore() {
-    return this.customClick('@deleteMore');
+  clickFilters() {
+    return this.customClick('@filters');
   },
 
-  clickEnableHtml() {
-    return this.customClick('@enableHtml');
+  setMixFilters(checked = false) {
+    return this.getAttribute('@mixFiltersInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@mixFilters');
+      }
+    });
   },
 
-  clickAckGroup() {
-    return this.customClick('@ackGroup')
-      .defaultPause();
+  setFiltersType(type) {
+    return this.getAttribute('@andFiltersInput', 'aria-checked', ({ value }) => {
+      if (value === 'true' && type === FILTERS_TYPE.OR) {
+        this.customClick('@orFilters');
+      } else if (value === 'false' && type === FILTERS_TYPE.AND) {
+        this.customClick('@andFilters');
+      }
+    });
   },
 
-  clickIsAckNoteRequired() {
-    return this.customClick('@isAckNoteRequired');
-  },
-
-  clickIsMultiAckEnabled() {
-    return this.customClick('@isMultiAckEnabled');
-  },
-
-  clickFastAckOutput() {
-    return this.customClick('@fastAckOutput')
-      .defaultPause();
-  },
-
-  clickFastAckOutputSwitch() {
-    return this.customClick('@fastAckOutputSwitch');
-  },
-
-  setFastAckOutputText(value) {
-    return this.customSetValue('@fastAckOutputText', value);
+  clickAddFilter() {
+    return this.customClick('@addFilter');
   },
 
   el,
@@ -168,43 +109,37 @@ const commands = {
 
 module.exports = {
   elements: {
-    advancedSettings: sel('advancedSettings'),
     submitAlarms: sel('submitAlarms'),
-    defaultSortColumn: sel('defaultSortColumn'),
-    sortColumn: `${sel('sortContainer')} div.v-input:nth-child(1) .v-input__slot`,
-    sortOrder: `${sel('sortContainer')} div.v-input:nth-child(2) .v-input__slot`,
+
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    columnNames: sel('columnNames'),
-    columnUp: `${sel('settings-column-%s')} ${sel('upButton')}`,
-    columnDown: `${sel('settings-column-%s')} ${sel('downButton')}`,
-    columnClose: `${sel('settings-column-%s')} ${sel('closeButton')}`,
-    columnLabel: `${sel('settings-column-%s')} ${sel('labelField')}`,
-    columnValue: `${sel('settings-column-%s')} ${sel('valueField')}`,
-    columnHtml: `${sel('settings-column-%s')} div${sel('htmlSwitch')} .v-input--selection-controls__ripple`,
-    columnAdd: `${sel('columnNames')} ${sel('addButton')}`,
-    defaultNumberOfElementsPerPage: sel('defaultNumberOfElementsPerPage'),
-    elementsPerPage: `${sel('elementsPerPage')} .v-input__slot`,
-    filterOnOpenResolved: sel('filterOnOpenResolved'),
-    openFilter: `div${sel('openFilter')} .v-input--selection-controls__ripple`,
-    resolvedFilter: `div${sel('resolvedFilter')} .v-input--selection-controls__ripple`,
-    filters: sel('filters'),
-    addFilter: sel('addFilter'),
-    editFilter: sel('editFilter-%s'),
-    deleteFilter: sel('deleteFilter-%s'),
-    mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
-    andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
-    orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
-    selectFilters: `${sel('selectFilters')} .v-input__slot`,
-    infoPopupButton: sel('infoPopupButton'),
-    createEditMore: sel('createEditMore'),
-    deleteMore: sel('deleteMore'),
-    enableHtml: `${sel('isHtmlEnabledOnTimeLine')} ${sel('switcherLayout')} .v-input--selection-controls__ripple`,
-    isAckNoteRequired: `${sel('isAckNoteRequired')} ${sel('switcherLayout')} .v-input--selection-controls__ripple`,
-    isMultiAckEnabled: `${sel('isMultiAckEnabled')} ${sel('switcherLayout')} .v-input--selection-controls__ripple`,
+
+    enableHtml: `${sel('isHtmlEnabledOnTimeLine')} div${sel('switcherField')}`,
+    enableHtmlInput: `${sel('isHtmlEnabledOnTimeLine')} input${sel('switcherField')}`,
+
+    isAckNoteRequired: `${sel('isAckNoteRequired')} div${sel('switcherField')}`,
+    isAckNoteRequiredInput: `${sel('isAckNoteRequired')} input${sel('switcherField')}`,
+    isMultiAckEnabled: `${sel('isMultiAckEnabled')} div${sel('switcherField')}`,
+    isMultiAckEnabledInput: `${sel('isMultiAckEnabled')} input${sel('switcherField')}`,
     ackGroup: sel('ackGroup'),
     fastAckOutput: sel('fastAckOutput'),
-    fastAckOutputSwitch: `${sel('fastAckOutput')} .v-input--switch .v-input--selection-controls__ripple`,
-    fastAckOutputText: `${sel('fastAckOutput')} .v-text-field input`,
+    fastAckOutputSwitch: `div${sel('fastAckOutputSwitch')} .v-input--selection-controls__ripple`,
+    fastAckOutputSwitchInput: `input${sel('fastAckOutputSwitch')}`,
+    fastAckOutputField: sel('fastAckOutputField'),
+
+    liveReportingCreateButton: `${sel('liveReporting')} + div > ${sel('createButton')}`,
+    liveReportingEditButton: `${sel('liveReporting')} + div > ${sel('editButton')}`,
+    liveReportingDeleteButton: `${sel('liveReporting')} + div > ${sel('deleteButton')}`,
+
+    filters: sel('filters'),
+    mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
+    mixFiltersInput: `input${sel('mixFilters')}`,
+    addFilter: sel('addFilter'),
+    andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
+    andFiltersInput: `input${sel('andFilters')}`,
+    orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
+    editFilter: sel('editFilter-%s'),
+    deleteFilter: sel('deleteFilter-%s'),
+    selectFilters: `${sel('selectFilters')} .v-input__slot`,
   },
   commands: [commands],
 };

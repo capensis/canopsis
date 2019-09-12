@@ -1,205 +1,116 @@
 // http://nightwatchjs.org/guide#usage
 
+const { API_ROUTES } = require('../../../../../src/config');
+
 module.exports.command = function createAlarmsList({
-  common,
-  advanced,
-}) {
-  const textEditor = this.page.modals.common.textEditor();
-  const addInfoPopup = this.page.modals.alarm.addInfoPopup();
-  const infoPopupSetting = this.page.modals.alarm.infoPopupSetting();
+  parameters: {
+    ack,
+    filters,
+    enableHtml = false,
+    liveReporting,
+    ...parameters
+  } = {},
+  ...fields
+}, callback = () => {}) {
+  const alarms = this.page.widget.alarms();
   const createFilter = this.page.modals.common.createFilter();
-  const alarmsWidget = this.page.widget.alarms();
+  const liveReportingModal = this.page.modals.common.liveReporting();
 
-  if (common) {
-    this.completed.widget.setCommonField(common);
+  this.completed.widget.setCommonFields({ ...fields, parameters });
+
+  if (enableHtml) {
+    alarms.setEnableHtml(enableHtml);
   }
 
-  if (common && advanced) {
-    const {
-      sort,
-      columnNames,
-      defaultNumberOfElementsPerPage,
-      filterOnOpenResolved,
-      filters,
-      infoPopap,
-      moreInfo,
-      enableHtml,
-      ackGroup,
-    } = advanced;
-    alarmsWidget.clickAdvancedSettings();
+  if (ack) {
+    alarms.clickAckGroup()
+      .setIsAckNoteRequired(ack.isAckNoteRequired)
+      .setIsMultiAckEnabled(ack.isMultiAckEnabled);
 
-    if (sort) {
-      const { name, order } = sort;
-      alarmsWidget.clickDefaultSortColumn();
-
-      if (name) {
-        alarmsWidget.selectSortColumn(name);
-      }
-      if (order) {
-        alarmsWidget.selectSortOrder(order);
-      }
+    if (ack.fastAckOutput) {
+      alarms.clickFastAckOutput()
+        .setFastAckOutputSwitch(ack.fastAckOutput.enabled);
     }
 
-    if (columnNames) {
-      const { add } = columnNames;
-      alarmsWidget.clickColumnNames();
+    if (ack.fastAckOutput.enabled) {
+      alarms.clickFastAckOutputText()
+        .clearFastAckOutputText()
+        .setFastAckOutputText(ack.fastAckOutput.output);
+    }
+  }
 
-      if (add) {
-        const {
-          position,
-          label,
-          value,
-        } = add;
-        alarmsWidget.clickColumnAdd();
+  if (filters) {
+    alarms.clickFilters()
+      .setMixFilters(filters.isMix);
 
-        if (position) {
-          if (label) {
-            alarmsWidget.setColumnLabel(position, label);
-          }
-          if (value) {
-            alarmsWidget.setColumnValue(position, value);
-          }
-        }
-      }
+    if (filters.isMix) {
+      alarms.setFiltersType(filters.type);
     }
 
-    if (defaultNumberOfElementsPerPage) {
-      const { count } = defaultNumberOfElementsPerPage;
-      alarmsWidget.clickDefaultNumberOfElementsPerPage();
-
-      if (count) {
-        alarmsWidget.selectElementsPerPage(count);
-      }
-    }
-
-    if (filterOnOpenResolved) {
-      const { open, resolved } = filterOnOpenResolved;
-      alarmsWidget.clickFilterOnOpenResolved();
-
-      if (open) {
-        alarmsWidget.clickOpenFilter();
-      }
-      if (resolved) {
-        alarmsWidget.clickResolvedFilter();
-      }
-    }
-
-    if (filters) {
-      const { add } = filters;
-      alarmsWidget.clickFilters();
-
-      if (add) {
-        const {
-          title, or, and, rule,
-        } = add;
-
-        alarmsWidget.clickAddFilter();
-
-        createFilter.verifyModalOpened();
-
-        if (title) {
-          createFilter.setFilterTitle(title);
-        }
-        if (or) {
-          createFilter.clickRadioOr();
-        }
-        if (and) {
-          createFilter.clickRadioAnd();
-        }
-        if (rule) {
-          const { field, operator } = rule;
-          createFilter.clickAddRule();
-
-          if (field) {
-            createFilter.selectFieldRule(field);
-          }
-          if (operator) {
-            createFilter.selectOperatorRule(operator);
-          }
-        }
-        createFilter.clickSubmitFilter()
-          .verifyModalClosed();
-      }
-    }
-
-    if (infoPopap) {
-      const { add } = infoPopap;
-      alarmsWidget.clickInfoPopupButton();
-
-      infoPopupSetting.verifyModalOpened();
-      if (add) {
-        const { column, template } = add;
-        infoPopupSetting.clickAddPopup();
-
-        addInfoPopup.verifyModalOpened();
-
-        if (column) {
-          addInfoPopup.selectSelectedColumn(column);
-        }
-        if (template) {
-          addInfoPopup.setTemplate(template);
-        }
-
-        addInfoPopup.clickSubmitButton()
-          .verifyModalClosed();
-      }
-      infoPopupSetting.clickSubmitButton()
+    if (filters.groups) {
+      alarms.clickAddFilter();
+      createFilter.verifyModalOpened()
+        .clearFilterTitle()
+        .setFilterTitle(filters.title)
+        .fillFilterGroups(filters.groups)
+        .clickSubmitButton()
         .verifyModalClosed();
     }
 
-    if (moreInfo) {
-      const { text } = moreInfo;
-      alarmsWidget.clickCreateEditMore();
-
-      textEditor.verifyModalOpened();
-
-      if (text) {
-        textEditor.setRTE(text);
-      }
-
-      textEditor.clickSubmitButton()
-        .verifyModalClosed();
-    }
-
-    if (enableHtml) {
-      alarmsWidget.clickEnableHtml();
-    }
-
-    if (ackGroup) {
-      const {
-        isAckNoteRequired,
-        isMultiAckEnabled,
-        fastAckOutput,
-      } = ackGroup;
-
-      alarmsWidget.clickAckGroup();
-
-      if (isAckNoteRequired) {
-        alarmsWidget.clickIsAckNoteRequired();
-      }
-
-      if (isMultiAckEnabled) {
-        alarmsWidget.clickIsMultiAckEnabled();
-      }
-
-      if (fastAckOutput) {
-        const {
-          enabled,
-          output,
-        } = fastAckOutput;
-        alarmsWidget.clickFastAckOutput();
-
-        if (enabled) {
-          alarmsWidget.clickFastAckOutputSwitch();
-        }
-        if (enabled && output) {
-          alarmsWidget.setFastAckOutputText(output);
-        }
-      }
+    if (filters.selected) {
+      filters.selected.forEach((element) => {
+        alarms.selectFilter(element);
+      });
     }
   }
 
-  if (common) {
-    alarmsWidget.clickSubmitAlarms();
+  if (liveReporting) {
+    alarms.clickCreateLiveReporting();
+    liveReportingModal.verifyModalOpened()
+      .selectRange(liveReporting.range);
+
+    if (liveReporting.calendarStartDate) {
+      liveReportingModal.clickStartDateButton()
+        .clickDatePickerDayTab()
+        .selectCalendarDay(liveReporting.calendarStartDate.day)
+        .clickDatePickerHoursTab()
+        .selectCalendarHour(liveReporting.calendarStartDate.hour)
+        .clickDatePickerMinutesTab()
+        .selectCalendarMinute(liveReporting.calendarStartDate.minute);
+    }
+
+    if (liveReporting.calendarEndDate) {
+      liveReportingModal.clickEndDateButton()
+        .selectCalendarDay(liveReporting.calendarEndDate.day)
+        .clickDatePickerHoursTab()
+        .selectCalendarHour(liveReporting.calendarEndDate.hour)
+        .clickDatePickerMinutesTab()
+        .selectCalendarMinute(liveReporting.calendarEndDate.minute);
+    }
+
+    if (liveReporting.endDate) {
+      liveReportingModal.clearEndDate()
+        .clickEndDate()
+        .setEndDate(liveReporting.endDate);
+    }
+
+    if (liveReporting.startDate) {
+      liveReportingModal.clearStartDate()
+        .clickStartDate()
+        .setStartDate(liveReporting.startDate);
+    }
+
+    liveReportingModal.clickSubmitButton()
+      .verifyModalClosed();
   }
+
+  this.waitForFirstXHR(
+    API_ROUTES.userPreferences,
+    5000,
+    () => alarms.clickSubmitAlarms(),
+    ({ responseData, requestData }) => callback({
+      response: JSON.parse(responseData),
+      request: JSON.parse(requestData),
+    }),
+  );
 };

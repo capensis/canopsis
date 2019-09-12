@@ -5,16 +5,29 @@ const commands = {
     return this.customClick('@submitWeather');
   },
 
-  clickAdvancedSettings() {
-    return this.customClick('@advancedSettings')
+  clickTemplateWeatherItem() {
+    return this.customClick('@templateWeatherItem')
+      .defaultPause();
+  },
+
+  clickTemplateModal() {
+    return this.customClick('@templateModal')
+      .defaultPause();
+  },
+
+  clickTemplateEntities() {
+    return this.customClick('@templateEntities')
       .defaultPause();
   },
 };
 
 module.exports = {
   elements: {
-    advancedSettings: sel('advancedSettings'),
     submitWeather: sel('submitWeather'),
+
+    templateWeatherItem: `${sel('widgetTemplateWeatherItem')} ${sel('showEditorModalButton')}`,
+    templateModal: `${sel('widgetTemplateModal')} ${sel('showEditorModalButton')}`,
+    templateEntities: `${sel('widgetTemplateEntities')} ${sel('showEditorModalButton')}`,
   },
   commands: [commands],
 };

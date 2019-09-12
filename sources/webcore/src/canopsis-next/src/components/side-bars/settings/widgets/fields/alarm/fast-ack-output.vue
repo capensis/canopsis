@@ -4,12 +4,14 @@
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
       v-switch(
+      data-test="fastAckOutputSwitch"
       color="primary",
       :label="$t('common.enabled')",
       :input-value="value.enabled",
       @change="updateField('enabled', $event)"
       )
       v-text-field(
+      data-test="fastAckOutputField"
       :label="$t('tables.alarmGeneral.output')",
       :value="value.value",
       :disabled="!value.enabled",

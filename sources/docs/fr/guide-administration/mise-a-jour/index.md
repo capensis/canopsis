@@ -23,7 +23,7 @@ Pour une mise à jour vers une version `X.Y.Z` de Canopsis :
 
 Cette procédure s'applique aux mises à jour intermédiaires (3.4.0 vers 3.5.0) et aux mises à jour de correctifs (3.5.0 vers 3.5.1).
 
-Vous devez **impérativement** lire chacune des [notes de version](../../notes-de-version/index.md) vous séparant de votre version précédente à votre version cible, avant de procéder à une mise à jour.
+Vous devez **impérativement** lire chacune des [notes de version](../../index.md) vous séparant de votre version précédente à votre version cible, avant de procéder à une mise à jour.
 
 ### Mise à jour en installation par paquets
 
@@ -43,7 +43,7 @@ yum update
 ```
 
 !!! attention
-    La procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée ([Bug #1431](https://git.canopsis.net/canopsis/canopsis/issues/1431)).
+    Avant Canopsis 3.27.0, la procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée.
 
 Il faut ensuite lancer le script `canopsinit` (en tant qu'utilisateur Unix `canopsis`) pour appliquer les éventuelles procédures automatisées de mise à jour.
 
@@ -69,7 +69,7 @@ Puis, redémarrer l'ensemble des moteurs Canopsis :
 /opt/canopsis/bin/canopsis-systemd restart
 ```
 
-Appliquer toute éventuelle procédure supplémentaire décrite dans les [notes de version](../../notes-de-version/index.md) qui vous concernent.
+Appliquer toute éventuelle procédure supplémentaire décrite dans les [notes de version](../../index.md) qui vous concernent.
 
 Vous pouvez alors vous connecter à nouveau sur l'interface Canopsis pour valider que tout fonctionne correctement.
 
@@ -105,3 +105,5 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.23.0](../../notes-de-version/3.23.0.md)
 *  [3.24.0](../../notes-de-version/3.24.0.md)
 *  [3.25.0](../../notes-de-version/3.25.0.md)
+*  [3.26.0](../../notes-de-version/3.26.0.md)
+*  [3.27.0](../../notes-de-version/3.27.0.md)

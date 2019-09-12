@@ -42,17 +42,17 @@ const commands = {
     if (isArray(value)) {
       value.forEach(tag =>
         this.customSetValue('@viewFieldGroupTags', tag)
-          .customKeyup('@viewFieldGroupTags', 'ENTER'));
+          .customKeyup('@viewFieldGroupTags', this.api.Keys.ENTER));
     } else {
       this.customSetValue('@viewFieldGroupTags', value)
-        .customKeyup('@viewFieldGroupTags', 'ENTER');
+        .customKeyup('@viewFieldGroupTags', this.api.Keys.ENTER);
     }
 
     return this;
   },
   setViewGroupId(value) {
     return this.customSetValue('@viewFieldGroupId', value)
-      .customKeyup('@viewFieldGroupId', 'ENTER');
+      .customKeyup('@viewFieldGroupId', this.api.Keys.ENTER);
   },
   setViewEnabled(value) {
     const { viewFieldEnabledActive } = this.elements;

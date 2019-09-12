@@ -9,8 +9,8 @@ Une tuile correspond à l'état d'un *observateur*, qui est calculé selon des r
 
 !!! note
     Nous souhaitons représenter l'état de l'application *E-Commerce* sur une météo des services.
-    Cette application est dépendante de 3 scénarios applicatifs : 
-    
+    Cette application est dépendante de 3 scénarios applicatifs :
+
     * Accès plate-forme
     * Workflow commande
     * Mon compte utilisateur
@@ -21,7 +21,7 @@ La première étape consiste à créer un observateur E-Commerce qui va regroupe
 D'un point de vue "structuration de données", nous allons utiliser un critère de parentalité entre les sous-éléments constituants et l'observateur.  
 
 L'observateur est une entité du contexte de Canopsis qui porte un filtre de sélection d'éléments.  
-Dans notre cas il s'agit de : 
+Dans notre cas il s'agit de :
 
 ````
 "entity.infos.app.value" : "E-Commerce"
@@ -79,7 +79,7 @@ La modale :
     Notez le helper *entities* qui est fourni directement par Canopsis et qui vous permet d'itérer sur l'ensemble des sous-éléments de l'observateur.
 
 
-Le rendu final sera 
+Le rendu final sera
 
 ![Rendu](./img/mds_widget_rendu.png "Widget rendu")  
 
@@ -100,9 +100,9 @@ Le filtre de l'observateur concerne l'attribut *app* qui doit valoir "E-Commerce
 
 ![Constituants](./img/mds_constituants1.png "Constituants")  
 
-Vous pouvez publier des événements sur ces 3 scénarios (avec par exemple le [connecteur send-event](/guide-connecteurs/Infrastructure/send_event/)
+Vous pouvez publier des événements sur ces 3 scénarios (avec par exemple le [connecteur send-event](/interconnexions/Transport/send_event/)
 
-Les résultats observés seront alors : 
+Les résultats observés seront alors :
 
 ![Résultats](./img/mds_resultat1.png "Résultats")  
 ![Résultats](./img/mds_resultat2.png "Résultats")  

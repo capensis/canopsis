@@ -14,7 +14,8 @@ module.exports = {
   },
 
   after(browser, done) {
-    browser.end(done);
+    browser.completed.logout()
+      .end(done);
 
     delete browser.globals.views;
   },

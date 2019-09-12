@@ -16,6 +16,7 @@ import featuresService from '@/services/features';
 
 import ModalWrapper from './modal-wrapper.vue';
 import CreateAckEvent from './alarm/create-ack-event.vue';
+import ConfirmAckWithTicket from './alarm/confirm-ack-with-ticket.vue';
 import CreateAssociateTicketEvent from './alarm/create-associate-ticket-event.vue';
 import CreateCancelEvent from './alarm/create-cancel-event.vue';
 import CreateChangeStateEvent from './alarm/create-change-state-event.vue';
@@ -55,16 +56,19 @@ import CreateEventFilterRulePattern from './event-filter/pattern/create-event-fi
 import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
+import EventFilterRuleCreateAction from './event-filter/enrichment-options/event-filter-rule-create-action.vue';
 import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
 import SelectViewTab from './view/select-view-tab.vue';
+import CreateHeartbeat from './heartbeat/create-heartbeat.vue';
 
 export default {
   name: 'modal-base',
   components: {
     ModalWrapper,
     CreateAckEvent,
+    ConfirmAckWithTicket,
     CreateAssociateTicketEvent,
     CreateCancelEvent,
     CreateChangeStateEvent,
@@ -104,10 +108,12 @@ export default {
     AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
+    EventFilterRuleCreateAction,
     FiltersList,
     CreateWebhook,
     CreateSnmpRule,
     SelectViewTab,
+    CreateHeartbeat,
 
     ...featuresService.get('components.modals.components'),
   },
