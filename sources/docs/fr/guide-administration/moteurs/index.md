@@ -13,10 +13,10 @@ Un moteur a **plusieurs rôles** :
 
 Un moteur peut avoir les **propriétés** suivantes :
 
-*  un type (le module python à charger)
+*  un type (le module Python à charger)
 *  un nom (obligatoirement unique)
 *  un identifiant (0, 1, 2, 3, ..., obligatoirement unique)
-*  un niveau de log (debug, info, warning, or error)
+*  un niveau de log (debug, info, warning, ou error)
 
 Le listing des moteurs peut être réalisé grâce à cette commande : `systemctl list-units "canopsis*"`
 
