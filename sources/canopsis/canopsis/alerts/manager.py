@@ -1272,7 +1272,6 @@ class Alerts(object):
                     except KeyError:
                         # if alarmfilter[AlarmFilterField.postpone.value] doesn't exists then do as false
                         last = datetime.fromtimestamp(max(executions))
-
                     if last + lifter.limit > now:
                         # Too soon to execute one more time all tasks
                         continue
