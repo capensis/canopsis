@@ -7,6 +7,7 @@ const {
   VALUE_TYPES,
   FILTER_OPERATORS,
   CONTEXT_FILTER_COLUMNS,
+  CONTEXT_TYPE_OF_ENTITIES,
 } = require('../../constants');
 const { generateTemporaryView, generateTemporaryContext } = require('../../helpers/entities');
 
@@ -103,10 +104,10 @@ module.exports = {
           }],
         },
         typeOfEntities: [{
-          index: 1,
+          index: CONTEXT_TYPE_OF_ENTITIES.CONNECTOR,
           value: true,
         }, {
-          index: 2,
+          index: CONTEXT_TYPE_OF_ENTITIES.COMPONENT,
           value: true,
         }],
       },
@@ -137,10 +138,23 @@ module.exports = {
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.setCommonFields({
-      sm: 10,
-      md: 10,
-      lg: 10,
+      size: {
+        sm: 6,
+        md: 6,
+        lg: 6,
+      },
       title: 'Context widget(edited)',
+      parameters: {
+        advanced: true,
+        sort: {
+          order: SORT_ORDERS.asc,
+          orderBy: CONTEXT_WIDGET_SORT_FIELD.name,
+        },
+        typeOfEntities: [{
+          index: CONTEXT_TYPE_OF_ENTITIES.CONNECTOR,
+          value: false,
+        }],
+      },
     });
 
     browser.page.widget.context()

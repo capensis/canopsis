@@ -13,11 +13,15 @@ const commands = {
   },
 
   selectEntitiesTypeCheckbox(index, checked) {
-    return this.getAttribute('@entitiesTypeCheckboxInput', 'aria-checked', ({ value }) => {
-      if (value !== String(checked)) {
-        this.customClick(this.el('@entitiesTypeCheckbox', index));
-      }
-    });
+    return this.getAttribute(
+      this.el('@entitiesTypeCheckboxInput', index),
+      'aria-checked',
+      ({ value }) => {
+        if (value !== String(checked)) {
+          this.customClick(this.el('@entitiesTypeCheckbox', index));
+        }
+      },
+    );
   },
 
   el,
@@ -29,8 +33,8 @@ module.exports = {
 
     contextTypeOfEntities: sel('contextTypeOfEntities'),
 
-    entitiesTypeCheckbox: `div.v-input${sel('entitiesTypeCheckbox')}:nth-of-type(%s) .v-input--selection-controls__ripple`,
-    entitiesTypeCheckboxInput: `input${sel('entitiesTypeCheckbox')}:nth-of-type(%s)`,
+    entitiesTypeCheckbox: `div${sel('entitiesTypeCheckbox')}:nth-of-type(%s) .v-input--selection-controls__ripple`,
+    entitiesTypeCheckboxInput: `div${sel('entitiesTypeCheckbox')}:nth-of-type(%s) input${sel('entitiesTypeCheckbox')}`,
   },
   commands: [commands],
 };

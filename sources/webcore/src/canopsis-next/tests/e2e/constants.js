@@ -180,3 +180,10 @@ module.exports.CONTEXT_FILTER_COLUMNS = {
   NAME: 1,
   TYPE: 2,
 };
+
+module.exports.CONTEXT_TYPE_OF_ENTITIES = {
+  COMPONENT: 1,
+  CONNECTOR: 2,
+  RESOURCE: 3,
+  WATCHER: 4,
+};
