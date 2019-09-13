@@ -58,7 +58,7 @@ export async function checkAppInfoAccessForRoute(to = {}) {
 
   store.dispatch('popup/add', { text: i18n.t('common.notFound') });
 
-  throw new Error();
+  throw new Error('Application don\'t have access to the page');
 }
 
 /**
@@ -91,7 +91,7 @@ export async function checkUserAccessForRoute(to = {}) {
 
   store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
 
-  throw new Error();
+  throw new Error('User don\'t have access to page');
 }
 
 export default {

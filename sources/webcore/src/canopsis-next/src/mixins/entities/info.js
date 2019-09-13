@@ -39,8 +39,8 @@ export default {
       }
 
       const appInfo = {
-        stack: this.stack,
         edition: this.edition,
+        stack: this.stack,
       };
 
       return isMatch(appInfo, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right]);
