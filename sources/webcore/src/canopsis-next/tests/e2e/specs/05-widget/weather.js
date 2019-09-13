@@ -9,8 +9,9 @@ const {
   FILTER_COLUMNS,
   VALUE_TYPES,
   SORT_ORDERS,
+  WEATHER_TYPES,
 } = require('../../constants');
-const { generateTemporaryView, generateTemporaryWeather } = require('../../helpers/entities');
+const { generateTemporaryView, generateTemporaryWeatherWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
@@ -22,10 +23,6 @@ module.exports = {
   },
 
   after(browser, done) {
-    const { view } = browser.globals.temporary;
-
-    browser.completed.view.delete(view.group_id, view._id);
-
     browser.completed.logout()
       .end(done);
 
@@ -34,13 +31,16 @@ module.exports = {
 
   'Create test view': (browser) => {
     browser.completed.view.create(generateTemporaryView(), (view) => {
-      browser.globals.temporary.view = view;
+      browser.globals.defaultViewData = {
+        viewId: view._id,
+        groupId: view.group_id,
+      };
     });
   },
 
   'Create widget weather with some name': (browser) => {
     const weatherWidget = {
-      ...generateTemporaryWeather(),
+      ...generateTemporaryWeatherWidget(),
       size: {
         sm: 12,
         md: 12,
@@ -122,19 +122,19 @@ module.exports = {
         deleteColumnNames: [2],
       },
     };
-    const { temporary } = browser.globals;
+    const { groupId, viewId } = browser.globals.defaultViewData;
     const view = browser.page.view();
+    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(temporary.view.group_id)
-      .clickLinkView(temporary.view._id);
+    groupsSideBar.clickPanelHeader(groupId)
+      .clickLinkView(viewId);
 
     view.clickMenuViewButton()
       .clickAddWidgetButton();
 
-    browser.page.modals.view.createWidget()
+    browser.page.modals.view.createWidgetModal()
       .verifyModalOpened()
-      .clickWidget('ServiceWeather')
+      .clickWidget(WEATHER_TYPES.weather)
       .verifyModalClosed();
 
     browser.completed.widget.createServiceWeather(weatherWidget, ({ response }) => {
@@ -225,5 +225,12 @@ module.exports = {
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
+  },
+
+  'Delete test view': (browser) => {
+    const { groupId, viewId } = browser.globals.defaultViewData;
+
+    browser.completed.view.delete(groupId, viewId);
+    browser.completed.view.deleteGroup(groupId);
   },
 };

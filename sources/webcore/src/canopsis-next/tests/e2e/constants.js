@@ -176,6 +176,19 @@ module.exports.FILTER_COLUMNS = {
   RESOURCE: 4,
 };
 
+module.exports.WEATHER_TYPES = {
+  alarmList: 'AlarmsList',
+  context: 'Context',
+  weather: 'ServiceWeather',
+  statsHistogram: 'StatsHistogram',
+  statsCurves: 'StatsCurves',
+  statsTable: 'StatsTable',
+  statsCalendar: 'StatsCalendar',
+  statsNumber: 'StatsNumber',
+  statsPareto: 'StatsPareto',
+  text: 'Text',
+};
+
 module.exports.CONTEXT_FILTER_COLUMNS = {
   NAME: 1,
   TYPE: 2,
