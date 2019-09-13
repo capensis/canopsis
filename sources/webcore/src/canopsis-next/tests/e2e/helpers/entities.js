@@ -32,7 +32,7 @@ module.exports.generateTemporaryAlarmsWidget = (prefix = '', suffix = uid()) => 
   row: `${prefix}row-${suffix}`,
 });
 
-module.exports.generateTemporaryContext = (prefix = '', suffix = uid()) => ({
+module.exports.generateTemporaryContextWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Context-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
