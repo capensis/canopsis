@@ -170,3 +170,16 @@ module.exports.FILTER_COLUMNS = {
   COMPONENT: 3,
   RESOURCE: 4,
 };
+
+module.exports.WEATHER_TYPES = {
+  alarmList: 'AlarmsList',
+  context: 'Context',
+  weather: 'ServiceWeather',
+  statsHistogram: 'StatsHistogram',
+  statsCurves: 'StatsCurves',
+  statsTable: 'StatsTable',
+  statsCalendar: 'StatsCalendar',
+  statsNumber: 'StatsNumber',
+  statsPareto: 'StatsPareto',
+  text: 'Text',
+};

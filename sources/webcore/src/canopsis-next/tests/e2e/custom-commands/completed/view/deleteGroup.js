@@ -7,7 +7,7 @@ module.exports.command = function deleteGroup(groupId, callback = () => {}) {
   const createUser = this.page.modals.admin.createUser();
   const confirmation = this.page.modals.common.confirmation();
   const groupsSideBar = this.page.layout.groupsSideBar();
-  const modalCreateGroup = this.page.modals.view.createGroup();
+  const modalCreateGroup = this.page.modals.view.createGroupModal();
 
   groupsSideBar.groupsSideBarButtonElement(({ status }) => {
     if (status === -1) {

@@ -5,6 +5,7 @@ module.exports.command = function setCommonFields({
   row,
   title,
   parameters: {
+    filter,
     sort,
     columnSM,
     columnMD,
@@ -26,9 +27,10 @@ module.exports.command = function setCommonFields({
   } = {},
   periodicRefresh,
 }) {
-  const addInfoPopup = this.page.modals.common.addInfoPopup();
-  const textEditor = this.page.modals.common.textEditor();
-  const infoPopupModal = this.page.modals.common.infoPopupSetting();
+  const addInfoPopupModal = this.page.modals.common.addInfoPopupModal();
+  const textEditorModal = this.page.modals.common.textEditorModal();
+  const infoPopupModal = this.page.modals.common.infoPopupSettingModal();
+  const createFilterModal = this.page.modals.common.createFilterModal();
   const common = this.page.widget.common();
 
   if (row) {
@@ -59,6 +61,16 @@ module.exports.command = function setCommonFields({
 
   if (alarmsList) {
     common.clickAlarmList();
+  }
+
+  if (filter) {
+    common.clickCreateFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .fillFilterGroups(filter.groups)
+      .clickCancelButton()
+      .verifyModalClosed();
   }
 
   if (periodicRefresh) {
@@ -138,7 +150,7 @@ module.exports.command = function setCommonFields({
     infoPopups.forEach(({ field, template }) => {
       infoPopupModal.clickAddPopup();
 
-      addInfoPopup.verifyModalOpened()
+      addInfoPopupModal.verifyModalOpened()
         .selectSelectedColumn(field)
         .setTemplate(template)
         .clickSubmitButton()
@@ -152,7 +164,7 @@ module.exports.command = function setCommonFields({
   if (moreInfos) {
     common.clickCreateMoreInfos();
 
-    textEditor.verifyModalOpened()
+    textEditorModal.verifyModalOpened()
       .clickField()
       .setField(moreInfos)
       .clickSubmitButton()

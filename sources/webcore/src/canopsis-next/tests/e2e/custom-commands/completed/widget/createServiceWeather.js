@@ -5,7 +5,6 @@ const { API_ROUTES } = require('../../../../../src/config');
 module.exports.command = function createServiceWeather(
   {
     parameters: {
-      filter,
       blockTemplate,
       modalTemplate,
       entityTemplate,
@@ -15,30 +14,18 @@ module.exports.command = function createServiceWeather(
   },
   callback = () => {},
 ) {
-  const common = this.page.widget.common();
   const weather = this.page.widget.weather();
-  const createFilter = this.page.modals.common.createFilter();
-  const textEditor = this.page.modals.common.textEditor();
+  const textEditorModal = this.page.modals.common.textEditorModal();
 
   this.completed.widget.setCommonFields({
     ...fields,
     parameters,
   });
 
-  if (filter) {
-    common.clickCreateFilter();
-
-    createFilter
-      .verifyModalOpened()
-      .fillFilterGroups(filter.groups)
-      .clickCancelButton()
-      .verifyModalClosed();
-  }
-
   if (blockTemplate) {
     weather.clickTemplateWeatherItem();
 
-    textEditor.verifyModalOpened()
+    textEditorModal.verifyModalOpened()
       .clickField()
       .setField(blockTemplate)
       .clickSubmitButton()
@@ -48,7 +35,7 @@ module.exports.command = function createServiceWeather(
   if (modalTemplate) {
     weather.clickTemplateModal();
 
-    textEditor
+    textEditorModal
       .verifyModalOpened()
       .clickField()
       .setField(modalTemplate)
@@ -59,7 +46,7 @@ module.exports.command = function createServiceWeather(
   if (entityTemplate) {
     weather.clickTemplateEntities();
 
-    textEditor
+    textEditorModal
       .verifyModalOpened()
       .clickField()
       .setField(entityTemplate)
