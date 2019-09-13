@@ -30,17 +30,18 @@ La configuration de l'authentification se fait au moyen d'une requête sur l’A
 
 Voici la liste de paramètres nécessaires à la configuration LDAP :
 
-| Attribut     | Description                                                                                                                                | Exemple                                                        |
-|--------------|--------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
-| ldap_uri     | Chaîne de connexion LDAP                                                                                                                   | ldaps://ldap.example.com                                       |
-| host         | Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                                    | ldap.example.com                                               |
-| port         | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                              | 389                                                            |
-| admin_dn     | Bind DN : DN du compte utilisé pour lire l'annuaire                                                                                        | uid=svccanopsis,ou=Special,dc=example,dc=com                   |
-| admin_passwd | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire                                                                   |                                                                |
-| user_dn      | DN de base où rechercher les utilisateurs                                                                                                  | ou=People,dc=example,dc=com                                    |
-| ufilter      | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s`                       | uid=%s                                                         |
-| attrs        | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
-| default_role | Rôle Canopsis par défaut au moment de la première connexion                                                                                | Visualisation                                                  |
+| Attribut      | Description                                                                                                                                | Exemple                                                        |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| ldap_uri      | Chaîne de connexion LDAP                                                                                                                   | ldaps://ldap.example.com                                       |
+| host          | Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                                    | ldap.example.com                                               |
+| port          | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                              | 389                                                            |
+| admin_dn      | Bind DN : DN du compte utilisé pour lire l'annuaire                                                                                        | uid=svccanopsis,ou=Special,dc=example,dc=com                   |
+| admin_passwd  | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire                                                                   |                                                                |
+| user_dn       | DN de base où rechercher les utilisateurs                                                                                                  | ou=People,dc=example,dc=com                                    |
+| ufilter       | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s`                       | uid=%s                                                         |
+| username_attr | Attribut portant le nom d'utilisateur dans l'objet de l'annuaire                                                                           | uid                                                            |
+| attrs         | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
+| default_role  | Rôle Canopsis par défaut au moment de la première connexion                                                                                | Visualisation                                                  |
 
 La configuration se fait dans un fichier JSON : **ldapconfig.json**
 
@@ -54,6 +55,7 @@ La configuration se fait dans un fichier JSON : **ldapconfig.json**
     "admin_passwd": "********",
     "user_dn": "ou=People,dc=example,dc=com",
     "ufilter": "uid=%s",
+    "username_attr": "uid",
     "attrs": {
         "mail": "mail",
         "firstname": "givenName",
