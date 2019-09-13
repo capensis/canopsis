@@ -18,6 +18,7 @@ module.exports.command = function setCommonFields({
     elementsPerPage,
     infoPopups,
     moreInfos,
+    filters,
     openedResolvedFilter,
     newColumnNames,
     editColumnNames,
@@ -29,6 +30,7 @@ module.exports.command = function setCommonFields({
   const addInfoPopup = this.page.modals.common.addInfoPopup();
   const textEditor = this.page.modals.common.textEditor();
   const infoPopupModal = this.page.modals.common.infoPopupSetting();
+  const createFilter = this.page.modals.common.createFilter();
   const common = this.page.widget.common();
 
   if (row) {
@@ -193,6 +195,31 @@ module.exports.command = function setCommonFields({
     deleteColumnNames.forEach((index) => {
       common.clickDeleteColumnName(index);
     });
+  }
+
+  if (filters) {
+    common.clickFilters()
+      .setMixFilters(filters.isMix);
+
+    if (filters.isMix) {
+      common.setFiltersType(filters.type);
+    }
+
+    if (filters.groups) {
+      common.clickAddFilter();
+      createFilter.verifyModalOpened()
+        .clearFilterTitle()
+        .setFilterTitle(filters.title)
+        .fillFilterGroups(filters.groups)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    }
+
+    if (filters.selected) {
+      filters.selected.forEach((element) => {
+        common.selectFilter(element);
+      });
+    }
   }
 
   return this;

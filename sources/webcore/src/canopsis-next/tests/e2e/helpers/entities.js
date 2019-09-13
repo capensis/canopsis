@@ -31,3 +31,8 @@ module.exports.generateTemporaryAlarms = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Alarms-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryContext = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Context-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

@@ -83,6 +83,11 @@ module.exports.ALARMS_WIDGET_SORT_FIELD = {
   extraDetails: 6,
 };
 
+module.exports.CONTEXT_WIDGET_SORT_FIELD = {
+  name: 1,
+  type: 2,
+};
+
 
 module.exports.SORT_ORDERS = {
   asc: 1,
@@ -169,4 +174,9 @@ module.exports.FILTER_COLUMNS = {
   CONNECTOR_NAME: 2,
   COMPONENT: 3,
   RESOURCE: 4,
+};
+
+module.exports.CONTEXT_FILTER_COLUMNS = {
+  NAME: 1,
+  TYPE: 2,
 };

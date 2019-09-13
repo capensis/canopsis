@@ -1,8 +1,14 @@
 // http://nightwatchjs.org/guide#usage
 
-const uid = require('uid');
-const { API_ROUTES } = require('../../../../src/config');
-const { generateTemporaryView } = require('../../helpers/entities');
+const {
+  CONTEXT_WIDGET_SORT_FIELD,
+  SORT_ORDERS,
+  FILTERS_TYPE,
+  VALUE_TYPES,
+  FILTER_OPERATORS,
+  CONTEXT_FILTER_COLUMNS,
+} = require('../../constants');
+const { generateTemporaryView, generateTemporaryContext } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
@@ -30,51 +36,89 @@ module.exports = {
     });
   },
 
-  'Create test tab': (browser) => {
+  'Create widget context with some name': (browser) => {
+    const contextWidget = {
+      ...generateTemporaryContext(),
+      size: {
+        sm: 12,
+        md: 12,
+        lg: 12,
+      },
+      parameters: {
+        advanced: true,
+        sort: {
+          order: SORT_ORDERS.desc,
+          orderBy: CONTEXT_WIDGET_SORT_FIELD.type,
+        },
+        newColumnNames: [{
+          index: 3,
+          data: {
+            value: 'connector',
+            label: 'New column',
+          },
+        }],
+        editColumnNames: [{
+          index: 1,
+          data: {
+            value: 'connector',
+            label: 'Connector(changed)',
+          },
+        }],
+        moveColumnNames: [{
+          index: 1,
+          down: true,
+        }, {
+          index: 2,
+          up: true,
+        }],
+        deleteColumnNames: [2],
+        filters: {
+          isMix: true,
+          type: FILTERS_TYPE.OR,
+          title: 'Filter title',
+          selected: [1],
+          groups: [{
+            type: FILTERS_TYPE.OR,
+            items: [{
+              rule: CONTEXT_FILTER_COLUMNS.NAME,
+              operator: FILTER_OPERATORS.EQUAL,
+              valueType: VALUE_TYPES.STRING,
+              value: 'value',
+              groups: [{
+                type: FILTERS_TYPE.OR,
+                items: [{
+                  rule: CONTEXT_FILTER_COLUMNS.NAME,
+                  operator: FILTER_OPERATORS.IN,
+                  valueType: VALUE_TYPES.BOOLEAN,
+                  value: true,
+                }],
+              }],
+            }, {
+              type: FILTERS_TYPE.AND,
+              rule: CONTEXT_FILTER_COLUMNS.TYPE,
+              operator: FILTER_OPERATORS.NOT_EQUAL,
+              valueType: VALUE_TYPES.NUMBER,
+              value: 136,
+            }],
+          }],
+        },
+        typeOfEntities: [{
+          index: 1,
+          value: true,
+        }, {
+          index: 2,
+          value: true,
+        }],
+      },
+    };
     const { temporary } = browser.globals;
-    const tab = `tab-${uid()}`;
+    const view = browser.page.view();
+    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(temporary.view.group_id)
+    groupsSideBar.clickPanelHeader(temporary.view.group_id)
       .clickLinkView(temporary.view._id);
 
-    browser.page.view()
-      .clickMenuViewButton()
-      .clickAddViewButton();
-
-    browser.page.modals.common.textFieldEditor()
-      .verifyModalOpened()
-      .setField(tab);
-
-    browser.waitForFirstXHR(
-      `${API_ROUTES.view}/${temporary.view._id}`,
-      5000,
-      () => browser.page.modals.common.textFieldEditor()
-        .clickSubmitButton(),
-      ({ responseData, requestData }) => temporary.view = {
-        tab,
-        ...temporary.view,
-        tabId: JSON.parse(requestData).tabs
-          .filter(item => item.title === tab)[0]._id,
-        ...JSON.parse(requestData),
-        ...JSON.parse(responseData),
-      },
-    );
-
-    browser.page.modals.common.textFieldEditor()
-      .verifyModalClosed();
-  },
-
-  'Open test tab': (browser) => {
-    const { temporary } = browser.globals;
-
-    browser.page.view()
-      .clickTab(temporary.view.tabId);
-  },
-
-  'Create widget alarms with some name': (browser) => {
-    browser.page.view()
-      .clickEditViewButton()
+    view.clickMenuViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
@@ -82,44 +126,17 @@ module.exports = {
       .clickWidget('Context')
       .verifyModalClosed();
 
-    browser.completed.widget.createContext({
-      common: {
-        row: 'row',
-        sm: 13,
-        md: 13,
-        lg: 13,
-        title: 'Context widget',
-      },
-      advanced: {
-        sort: {
-          name: 2,
-          order: 2,
-        },
-        filters: {
-          add: {
-            title: 'FilterTitle',
-            or: true,
-            rule: {
-              field: 2,
-              operator: 2,
-            },
-          },
-        },
-        typeOfEntities: {
-          component: true,
-          connector: true,
-          resource: true,
-          watcher: true,
-        },
-      },
+    browser.completed.widget.createContext(contextWidget, ({ response }) => {
+      browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
   },
 
-  'Edit widget weather with some name': (browser) => {
+  'Edit widget context with some name': (browser) => {
     browser.page.view()
-      .clickEditWidgetButton();
+      .clickEditViewButton()
+      .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
-    browser.completed.widget.setCommonField({
+    browser.completed.widget.setCommonFields({
       sm: 10,
       md: 10,
       lg: 10,
@@ -130,23 +147,23 @@ module.exports = {
       .clickSubmitContext();
   },
 
-  'Delete widget weather with some name': (browser) => {
+  'Delete widget context with some name': (browser) => {
     browser.page.view()
-      .clickDeleteWidgetButton();
+      .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 
   'Delete row with some name': (browser) => {
     browser.page.view()
-      .clickDeleteRowButton();
+      .clickDeleteRowButton(1);
 
-    browser.page.modals.confirmation()
+    browser.page.modals.common.confirmation()
       .verifyModalOpened()
-      .clickConfirmButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   },
 };
