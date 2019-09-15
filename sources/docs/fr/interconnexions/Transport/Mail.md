@@ -5,14 +5,11 @@
 
 ## Introduction
 
-Cette documentation détaille la remontée des logs vers Canopsis via le connecteur `email2canopsis`.
+Le connecteur email2canopsis permet de lire des emails dans une boite aux lettres POP3 pour les convertir en événements Canopsis (grâce à un système de template).
 
 ## Fonctionnement
 
-Le connecteur email2canopsis permet de lire des emails dans une boite aux lettres POP3 pour les convertir en événements Canopsis.
-
 Les événements générés embarquent des attributs dont les valeurs sont contenues dans les emails et parsés par un mécanisme de template.
-
 
 ### Configuration
 

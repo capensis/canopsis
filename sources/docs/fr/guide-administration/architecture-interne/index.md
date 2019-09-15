@@ -17,7 +17,7 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 
 ## Documentation des différentes parties
 
-*  [Documentation connecteurs](../../guide-connecteurs/index.md)
+*  [Documentation interconnexions](../../interconnexions/index.md)
 *  [Documentation moteurs](../moteurs/index.md)
 *  [Documentation base de données](../troubleshooting/bdd-requetes-de-base.md)
 *  [Documentation Web UI](../../guide-utilisation/interface/index.md)

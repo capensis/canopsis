@@ -1,6 +1,8 @@
 # connecteur de base de données SQL vers Canopsis / AMQP
 
-## Sommaire 
+Permet de transformer des résultats de requêtes SQL en évènements Canopsis via AMQP.
+
+## Sommaire
 
 [MySQL/MariaDB](#mysql-mariadb)  
 [PostGreSQL](#postgresql)  
@@ -16,8 +18,6 @@
 ## Description
 
 usage: `python connector-sql2canopsis.py [-h] -c CONFIG [-l LOGLEVEL]`
-
-Ce script Python permet d'exécuter des requêtes SQL et de publier ses résultats vers Canopsis avec AMQP.
 
 Il prend obligatoirement en paramètre un fichier de configuration INI (`-c CONFIG`) et optionnellement un degré d'alerte (`-l LOGLEVEL`).
 
@@ -231,6 +231,6 @@ Lorsque plusieurs métriques sont utilisées pour générer des évènements, le
 
 Pour ce qui est de DB2, l'un des systèmes de gestion de base de données propriétaire d'IBM, veillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/#production-ready), ou encore [ici](https://github.com/ibmdb/python-ibmdb).
 
-### MSSQL 
+### MSSQL
 
 Pour ce qui est de DB2, le système de gestion de base de données propriétaire de Microsoft, veillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/mssql.html), ou encore [ici](https://docs.sqlalchemy.org/en/latest/core/engines.html#microsoft-sql-server).

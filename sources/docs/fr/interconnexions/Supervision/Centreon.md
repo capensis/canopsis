@@ -5,7 +5,9 @@
 
 ## Description
 
-Le connecteur `connector-centreon-engine` est un module Broker permettant l'envoi d'évènements de Centreon vers Canopsis. Il est écrit en C++, et des modules pré-compilés sont disponibles pour certains environnements. Ce module est open-source et disponible sous la licence Apache 2.0.
+Le connecteur convertit des évènements de supervision Centreon en évènements Canopsis.
+
+Il est écrit en C++, et des modules pré-compilés sont disponibles pour certains environnements. Ce module est open-source et disponible sous la licence Apache 2.0.
 
 Ce module vient s'ajouter dans une instance Centreon existante, et doit ensuite être configuré depuis l'interface web de Centreon afin de rediriger le trafic vers Canopsis.
 
