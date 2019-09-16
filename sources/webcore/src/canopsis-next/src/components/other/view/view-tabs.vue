@@ -224,7 +224,7 @@ export default {
       const widgetsIdsMappings = getViewsTabsWidgetsIdsMappings(tab, newTab);
 
       await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
-      await this.addTabIntoSpecialView(newTab, viewId);
+      await this.addTabIntoViewById(newTab, viewId);
 
       this.$router.push({
         name: 'view',
@@ -234,26 +234,6 @@ export default {
         query: {
           tabId: newTab._id,
         },
-      });
-    },
-
-    addTabIntoSpecialView(tab, viewId) {
-      const view = this.getViewById(viewId);
-
-      if (!view) {
-        throw new Error('View was not found');
-      }
-
-      const data = {
-        ...view,
-
-        tabs: [...view.tabs, tab],
-      };
-
-      return this.updateView({
-        data,
-
-        id: viewId,
       });
     },
 
@@ -279,6 +259,26 @@ export default {
       };
 
       return this.updateViewMethod(view);
+    },
+
+    addTabIntoViewById(tab, viewId) {
+      const view = this.getViewById(viewId);
+
+      if (!view) {
+        throw new Error('View was not found');
+      }
+
+      const data = {
+        ...view,
+
+        tabs: [...view.tabs, tab],
+      };
+
+      return this.updateView({
+        data,
+
+        id: viewId,
+      });
     },
 
     deleteTab(tabId) {
