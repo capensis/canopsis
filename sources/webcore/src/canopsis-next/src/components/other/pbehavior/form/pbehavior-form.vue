@@ -6,7 +6,7 @@
     v-model="form.exdate",
     @input="updateField('exdate', $event)"
     )
-    pbehavior-comments-form.mt-2(v-model="form.comments", @input="updateField('comments', $event)")
+    pbehavior-comments-form.mt-2(v-model="form.comments", @input="updateField('comments', $event)", :author="author")
 </template>
 
 <script>
@@ -31,6 +31,9 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    author: {
+      type: String,
     },
   },
 };

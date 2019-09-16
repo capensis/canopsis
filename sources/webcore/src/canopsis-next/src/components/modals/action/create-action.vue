@@ -34,7 +34,7 @@
               type="number"
               )
             template(v-if="form.type === $constants.ACTION_TYPES.pbehavior")
-              pbehavior-form(v-model="pbehaviorParameters")
+              pbehavior-form(v-model="pbehaviorParameters", :author="$constants.ACTION_AUTHOR")
           v-tab Hook
           v-tab-item
             v-select(
