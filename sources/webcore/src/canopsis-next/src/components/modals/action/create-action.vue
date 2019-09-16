@@ -11,6 +11,7 @@
         label="Id",
         :error-messages="errors.collect('id')",
         name="id",
+        :disabled="modal.config.item"
         )
         v-select(
         v-validate="'required'",
