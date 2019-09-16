@@ -1,7 +1,8 @@
 <template lang="pug">
-  v-card.my-2.pa-0
+  v-card.my-2.pa-0(data-test="filterRule")
     v-layout(justify-end)
       v-btn(
+      data-test="deleteRule",
       @click="$emit('deleteRule')",
       color="red",
       small,
@@ -11,7 +12,7 @@
       )
         v-icon close
     v-layout.px-2(row, wrap, justify-space-around)
-      v-flex.pa-1(xs12, md4)
+      v-flex.pa-1(data-test="fieldRule", xs12, md4)
         v-combobox.my-2(
         :items="possibleFields",
         :value="rule.field",
@@ -21,7 +22,7 @@
         dense,
         flat
         )
-      v-flex.pa-1(xs12, md4)
+      v-flex.pa-1(data-test="operatorRule", xs12, md4)
         v-combobox.my-2(
         :value="rule.operator",
         :items="operators",
@@ -31,7 +32,7 @@
         dense,
         flat
         )
-      v-flex.pa-1(xs12, md4)
+      v-flex.pa-1(data-test="inputRule", xs12, md4)
         mixed-field.my-2(
         v-show="isShownInputField",
         :value="rule.input",

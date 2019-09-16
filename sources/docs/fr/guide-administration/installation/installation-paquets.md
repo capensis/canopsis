@@ -6,14 +6,13 @@ L'ensemble des procédures décrites doivent être réalisées avec l'utilisateu
 
 ## Pré-requis
 
-Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch* ») ou sur CentOS 7.
-
-!!! attention
-    Les prochaines versions de Canopsis ne seront bientôt plus compatibles avec **Debian 8** (« *jessie* »). Pensez à mettre à jour votre environnement vers Debian 9 pour continuer de profiter des mises à jour de l'outil.
+Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch* ») et CentOS 7. Les binaires sont compilés pour l'architecture x86-64.
 
 ## Installation des paquets
 
 ### Sur Debian 9
+
+**Attention :** Sur Debian 9, le paquet Canopsis Cat à partir de la version 3.24.0 nécessite d'activer les dépôts `non-free` de Debian.
 
 Application des dernières mises à jour de votre système :
 ```sh

@@ -5,6 +5,7 @@
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
+            data-test="intervalStart",
             v-model="tstartDateString",
             v-validate="tstartRules",
             :label="$t('common.startDate')",
@@ -16,6 +17,7 @@
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
+            data-test="intervalStop",
             v-model="tstopDateString",
             v-validate="tstopRules",
             :label="$t('common.endDate')",
@@ -24,7 +26,7 @@
             roundHours,
             @update:objectValue="$emit('update:stopObjectValue', $event)"
             )
-      v-flex.pl-1(xs6)
+      v-flex.pl-1(xs6, data-test="intervalRange")
         v-select(
         v-model="range",
         :items="quickRanges",

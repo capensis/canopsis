@@ -1,10 +1,10 @@
 const util = require('util');
 
-module.exports = function el(elementName, data) {
+module.exports = function el(elementName, ...args) {
   const element = elementName[0] === '@' ? this.elements[elementName.slice(1)] : elementName;
 
-  if (data) {
-    return util.format(element.selector, data);
+  if (args.length) {
+    return util.format(element.selector, ...args);
   }
 
   return element.selector;

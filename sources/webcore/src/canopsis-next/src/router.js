@@ -21,6 +21,7 @@ import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
 import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationActions from '@/views/exploitation/actions.vue';
+import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 
 Vue.use(Router);
 
@@ -151,6 +152,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.action,
+      },
+    },
+  },
+  {
+    path: '/exploitation/heartbeats',
+    name: 'exploitation-heartbeats',
+    component: ExploitationHeartbeats,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.heartbeat,
       },
     },
   },

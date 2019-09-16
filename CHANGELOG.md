@@ -2,21 +2,52 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.28.0 - Due date : 2019-09-12
+
+ - [Documentation] Big improvements in most guides of doc.canopsis.net
+ - [Documentation] Add CAS authentication documentation
+ - [Documentation] Fix API requests in Action engine documentation
+ - [Packaging] Delete Debian 8 compatibility
+ - [Packaging] Add an explicit dependency on an equal version of canopsis-engines-go, when installing canopsis-engines-go-cat
+ - [Packaging] Upgrade from Go 1.12.7 to 1.12.9, in the provided binaries
+ - [Packaging] Work around a compatibility problem between CentOS 7's old Python and pybars3
+ - [UI] Fix the roles list pagination when the create modal is opened
+ - [UI] Add an "Edit Action" button to the event-filter CRUD
+ - [UI] Add a new Heartbeat CRUD
+ - [UI - Listalarm] Fix issue when two identical filters are created
+ - [UI - Listalarm] Fix "doesn't contain" filter
+ - [UI - Stats] Exclude "No data" when sorting values in a stats table
+ - [UI - Tests] Add tests for Weather widget
+ - [UI - Tests] Add tests for the language settings of the Top bar
+
+## Canopsis 3.27.0 - Due date : 2019-09-02
+
+ - [Documentation] Mention that -enrichContext flag is required when doing enrichment in Go engines
+ - [Packaging] Upgrading to a newer Canopsis release doesn't reset the authkey anymore
+ - [API] Allow to set the pbehavior’s id on creation
+ - [API] Add search option in pbehaviors API
+ - [UI] Fix – Get app infos after login
+ - [UI] Fix – Text editor going on top of top-bar on parameters view
+ - [UI – Stats] Data format harmonization (durations, percentage) on stats widgets
+ - [UI – Listalarm] Add a default period filter setting
+ - [UI – Tests] e2e – Roles management view
+ - [UI – Tests] e2e – Parameters view
+
 ## Canopsis 3.26.0 - Due date : 2019-08-19
 
- - [UI – Listalarm] Improve « info popup » UX
+ - [UI – Listalarm] Improve "info popup" UX
  - [UI – CRUD Pbehaviors] Add pagination parameters
  - [UI – Listalarm] Improve ack with ticket action workflow
- - [UI – Service weather] Add a message when there are no data to display and when there was an error fetching data
- - [UI – CRUD Webhooks] Add « empty_response » field
- - [UI] Clarified « Default filter » field label
+ - [UI – Service weather] Add a message when there is no data to display and when there was an error fetching data
+ - [UI – CRUD Webhooks] Add "empty_response" field
+ - [UI] Clarified "Default filter" field label
  - [UI] Add translations on pattern edition fields
  - [UI – Tests] e2e tests – Add basic functions for views management
  - [UI – CRUD Rights] Fix – User creation
  - [UI – CRUD Rights] Fix – Page refresh after new right creation
  - [UI – Tests] e2e tests – Empty group deletion
- - [API] Pagination de la route des PBehaviors
- - [Webhook] Ajout du champ empty_response
+ - [API] Add pagination in pbehavior route
+ - [Webhook] Add empty_response field
 
 ## Canopsis 3.25.0 - Due date : 2019-08-02
 

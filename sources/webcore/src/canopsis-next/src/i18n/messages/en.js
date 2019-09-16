@@ -403,6 +403,9 @@ export default {
     columns: {
       isHtml: 'Is it HTML?',
     },
+    liveReporting: {
+      title: 'Live reporting',
+    },
   },
   modals: {
     contextInfos: {
@@ -861,6 +864,19 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
+    createHeartbeat: {
+      create: {
+        title: 'Create webhook',
+        success: 'Heartbeat successfully created !',
+      },
+      remove: {
+        success: 'Heartbeat successfully removed !',
+      },
+      massRemove: {
+        success: 'Heartbeats successfully removed !',
+      },
+      patternRequired: 'Pattern is required',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1214,6 +1230,16 @@ export default {
   },
   serviceWeather: {
     seeAlarms: 'See alarms',
+  },
+
+  heartbeat: {
+    title: 'Heartbeats',
+    table: {
+      fields: {
+        id: 'ID',
+        expectedInterval: 'Expected interval',
+      },
+    },
   },
 
   ...featureService.get('i18n.en'),

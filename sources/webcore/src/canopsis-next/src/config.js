@@ -92,6 +92,7 @@ export const API_ROUTES = {
     app: '/api/internal/app_info',
     userInterface: '/api/internal/user_interface',
   },
+  heartbeat: '/api/v2/heartbeat/',
 };
 
 export const COLORS = {

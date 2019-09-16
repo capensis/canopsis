@@ -16,7 +16,7 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 ### Composants disponibles dans Canopsis
 
-*  [Liste des différents connecteurs](../guide-connecteurs/)
+*  [Liste des différentes interconnexions](../interconnexions/)
 *  [Liste des différents moteurs](moteurs/index.md)
 
 ### Administration quotidienne

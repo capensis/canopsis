@@ -56,11 +56,13 @@ import CreateEventFilterRulePattern from './event-filter/pattern/create-event-fi
 import AddEventFilterRuleToPattern from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
 import EventFilterRuleActions from './event-filter/enrichment-options/event-filter-rule-actions.vue';
 import EventFilterRuleExternalData from './event-filter/enrichment-options/event-filter-rule-external-data.vue';
+import EventFilterRuleCreateAction from './event-filter/enrichment-options/event-filter-rule-create-action.vue';
 import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
 import SelectViewTab from './view/select-view-tab.vue';
 import CreateAction from './action/create-action.vue';
+import CreateHeartbeat from './heartbeat/create-heartbeat.vue';
 
 export default {
   name: 'modal-base',
@@ -107,11 +109,13 @@ export default {
     AddEventFilterRuleToPattern,
     EventFilterRuleActions,
     EventFilterRuleExternalData,
+    EventFilterRuleCreateAction,
     FiltersList,
     CreateWebhook,
     CreateSnmpRule,
     SelectViewTab,
     CreateAction,
+    CreateHeartbeat,
 
     // Import all modals from specific 'features'
     ...featuresService.get('components.modals.components'),

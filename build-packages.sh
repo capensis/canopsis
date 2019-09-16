@@ -29,7 +29,6 @@ function build_package_for_distribution() {
 
 if [ "${CANOPSIS_DISTRIBUTION}" = "all" ]; then
     build_package_for_distribution "debian-9"
-    build_package_for_distribution "debian-8"
     build_package_for_distribution "centos-7"
 else
     build_package_for_distribution "${CANOPSIS_DISTRIBUTION}"

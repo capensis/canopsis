@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.my-1.pa-2
+  v-card.my-1.pa-2(data-test="filterGroup")
     v-radio-group(
     :value="group.condition",
     @change="updateField('condition', $event)",
@@ -7,50 +7,57 @@
     mandatory,
     row
     )
-      v-radio(label="AND", value="$and", color="blue darken-4")
-      v-radio(label="OR", value="$or", color="blue darken-4")
+      v-radio(data-test="radioAnd", label="AND", value="$and", color="blue darken-4")
+      v-radio(data-test="radioOr", label="OR", value="$or", color="blue darken-4")
     v-layout.text-xs-center(wrap, justify-space-around)
       v-flex(xs5, md3)
         v-btn(
-        @click="addRule",
-        outline,
-        block,
-        small,
-        flat
+          data-test="addRule",
+          outline,
+          block,
+          small,
+          flat,
+          @click="addRule"
         ) {{$t("filterEditor.buttons.addRule")}}
       v-flex(xs5, md3)
         v-btn(
-        @click="addGroup",
-        outline,
-        block,
-        small,
-        flat
+          data-test="addGroup",
+          outline,
+          block,
+          small,
+          flat,
+          @click="addGroup"
         ) {{$t("filterEditor.buttons.addGroup")}}
       v-flex(xs5, md3)
         v-btn(
-        v-if="!isInitial",
-        @click="$emit('deleteGroup')",
-        color="red darken-4",
-        outline,
-        block,
-        small,
-        flat
+          data-test="deleteGroup",
+          v-if="!isInitial",
+          color="red darken-4",
+          outline,
+          block,
+          small,
+          flat,
+          @click="$emit('deleteGroup')",
         ) {{$t("filterEditor.buttons.deleteGroup")}}
 
-    div(v-for="(rule, ruleKey) in group.rules", :key="ruleKey")
+    div(data-test="filterRuleLayout")
       filter-rule(
-      :rule="rule",
-      :possibleFields="possibleFields",
-      @deleteRule="deleteRule(ruleKey)",
-      @update:rule="updateRule(ruleKey, $event)",
+        v-for="(rule, ruleKey) in group.rules",
+        :key="ruleKey"
+        :rule="rule",
+        :possibleFields="possibleFields",
+        @deleteRule="deleteRule(ruleKey)",
+        @update:rule="updateRule(ruleKey, $event)",
       )
 
-    div(v-for="(group, groupKey) in group.groups", :key="groupKey")
+    div(data-test="filterGroupLayout")
       filter-group.filterGroup(
-      :group="group",
-      :possibleFields="possibleFields",
-      @deleteGroup="deleteGroup(groupKey)",
-      @update:group="updateGroup(groupKey, $event)",
+        v-for="(group, groupKey) in group.groups",
+        :key="groupKey"
+        :group="group",
+        :possibleFields="possibleFields",
+        @deleteGroup="deleteGroup(groupKey)",
+        @update:group="updateGroup(groupKey, $event)",
       )
 </template>
 

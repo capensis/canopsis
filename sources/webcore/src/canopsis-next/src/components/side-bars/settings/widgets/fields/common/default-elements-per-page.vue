@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="elementsPerPage")
     v-list-tile(slot="activator") {{$t('settings.defaultNumberOfElementsPerPage')}}
-    v-container
+    v-container(data-test="elementsPerPageFieldContainer",)
       v-select.select(
       :label="$t('settings.elementsPerPage')",
       :items="$config.PAGINATION_PER_PAGE_VALUES",

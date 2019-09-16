@@ -88,11 +88,24 @@ Planned tests
     * Rights
         - [ ] Create new right with some name
         - [ ] Adds right new role
+    * Parameters
+        - [x] Edit app title
+        - [x] Switch language
+        - [x] Edit footer text
+        - [x] Edit description text
+        - [ ] Upload logo
+        - [x] Check global language
+        - [x] Check app title
+        - [x] Check login footer
+        - [x] Check login description
+        - [ ] Check logo
 3. Layout
     * Top Bar
         - [x] Open current user modal
         - [x] Select current user default view
         - [x] Check default view
+        - [ ] Switch user language
+        - [ ] Check user interface language
     * Group Side Bar
         - [x] Add view with some name from constants
         - [x] Checking view copy with name from constants
@@ -120,7 +133,7 @@ Planned tests
         - [ ] Delete row
     * Alarm list
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Header
             - [ ] Search
@@ -148,7 +161,7 @@ Planned tests
             - [ ] Pages
     * Context explorer
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Header
             - [ ] Search
@@ -169,7 +182,7 @@ Planned tests
             - [ ] Pages
     * Service weather
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Widget
             - [ ] Help

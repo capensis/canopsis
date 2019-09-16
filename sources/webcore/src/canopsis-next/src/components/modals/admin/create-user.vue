@@ -110,13 +110,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
 
 import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
-import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewMixin from '@/mixins/entities/view/index';
 import popupMixin from '@/mixins/popup';
@@ -124,6 +124,8 @@ import popupMixin from '@/mixins/popup';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import ViewSelector from './partial/view-selector.vue';
+
+const { mapActions } = createNamespacedHelpers('role');
 
 /**
  * Modal to create an entity (watcher, resource, component, connector)
@@ -140,13 +142,13 @@ export default {
   mixins: [
     authMixin,
     modalInnerMixin,
-    entitiesRoleMixin,
     entitiesUserMixin,
     entitiesViewMixin,
     popupMixin,
   ],
   data() {
     return {
+      roles: [],
       pending: true,
       form: {
         _id: '',
@@ -155,7 +157,7 @@ export default {
         mail: '',
         password: '',
         role: null,
-        ui_language: 'fr',
+        ui_language: '',
         enable: true,
         defaultview: '',
         groupsNavigationType: GROUPS_NAVIGATION_TYPES.sideBar,
@@ -200,7 +202,8 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchRolesList({ params: { limit: 0 } });
+    const { data: roles } = await this.fetchRolesListWithoutStore({ params: { limit: 0 } });
+    this.roles = roles;
 
     if (!this.isNew) {
       this.form = pick(this.config.user, [
@@ -224,6 +227,9 @@ export default {
     this.pending = false;
   },
   methods: {
+    ...mapActions({
+      fetchRolesListWithoutStore: 'fetchListWithoutStore',
+    }),
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

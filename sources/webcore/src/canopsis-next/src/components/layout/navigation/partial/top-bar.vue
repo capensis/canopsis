@@ -112,6 +112,12 @@ export default {
           icon: 'linear_scale',
           right: USERS_RIGHTS.technical.exploitation.action,
         },
+        {
+          route: { name: 'exploitation-heartbeats' },
+          text: this.$t('heartbeat.title'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.exploitation.heartbeat,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));
