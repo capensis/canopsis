@@ -6,7 +6,7 @@
         v-flex(xs4)
           search-field(v-model="searchingText")
         v-flex(v-show="selected.length", xs4)
-          v-btn(icon, @click="")
+          v-btn(icon, @click="showDeleteSelectedActionsModal(selected)")
             v-icon(color="error") delete
       v-data-table(
       v-model="selected",
@@ -63,6 +63,10 @@ export default {
       default: () => () => {},
     },
     showEditActionModal: {
+      type: Function,
+      default: () => () => {},
+    },
+    showDeleteSelectedActionsModal: {
       type: Function,
       default: () => () => {},
     },
