@@ -300,7 +300,16 @@ const commands = {
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
   },
+
+  clickStatsSelect() {
+    return this.customClick('@statsSelector');
+  },
+
+  clickAddStat() {
+    return this.customClick('@addStatButton');
+  },
 };
+
 
 module.exports = {
   elements: {
@@ -386,6 +395,9 @@ module.exports = {
     editFilter: sel('editFilter-%s'),
     deleteFilter: sel('deleteFilter-%s'),
     selectFilters: `${sel('selectFilters')} .v-input__slot`,
+
+    statsSelector: sel('statsSelector'),
+    addStatButton: sel('addStatButton'),
   },
   commands: [commands],
 };

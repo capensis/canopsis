@@ -21,6 +21,7 @@ module.exports.command = function setCommonFields({
     moreInfos,
     filters,
     openedResolvedFilter,
+    statsSelector,
     newColumnNames,
     editColumnNames,
     moveColumnNames,
@@ -32,6 +33,7 @@ module.exports.command = function setCommonFields({
   const textEditorModal = this.page.modals.common.textEditor();
   const infoPopupModal = this.page.modals.common.infoPopupSetting();
   const createFilterModal = this.page.modals.common.createFilter();
+  const addStatModal = this.page.modals.stats.addStat();
   const common = this.page.widget.common();
 
   if (row) {
@@ -94,6 +96,57 @@ module.exports.command = function setCommonFields({
       .clickWidgetLimit()
       .clearWidgetLimitField()
       .setWidgetLimitField(limit);
+  }
+
+  if (statsSelector) {
+    common.clickStatsSelect();
+
+    if (statsSelector.newStats) {
+      common.clickAddStat();
+
+      statsSelector.newStats.forEach((stat) => {
+        addStatModal
+          .verifyModalOpened()
+          .selectStatType(stat.type)
+          .clickStatTitle()
+          .clearStatTitle()
+          .setStatTitle(stat.title);
+
+        if (typeof stat.trend === 'boolean') {
+          addStatModal.setStatTrend(stat.trend);
+        }
+
+        if (typeof stat.recursive === 'boolean') {
+          addStatModal.setStatRecursive(stat.recursive);
+        }
+
+        if (stat.states) {
+          addStatModal
+            .clickStatStates()
+            .setStatStates(stat.states)
+            .clickParameters();
+        }
+
+        if (stat.authors) {
+          addStatModal
+            .clickStatAuthors()
+            .clearStatAuthors()
+            .setStatAuthors(stat.authors)
+            .clickParameters();
+        }
+
+        if (stat.sla) {
+          addStatModal
+            .clickStatSla()
+            .clearStatSla()
+            .setStatSla(stat.sla);
+        }
+
+        addStatModal
+          .clickSubmitButton()
+          .verifyModalClosed();
+      });
+    }
   }
 
   if (sort) {

@@ -176,7 +176,7 @@ module.exports.FILTER_COLUMNS = {
   RESOURCE: 4,
 };
 
-module.exports.WEATHER_TYPES = {
+module.exports.WIDGETS_TYPES = {
   alarmList: 'AlarmsList',
   context: 'Context',
   weather: 'ServiceWeather',

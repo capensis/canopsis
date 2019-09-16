@@ -9,7 +9,7 @@ const {
   FILTER_COLUMNS,
   VALUE_TYPES,
   SORT_ORDERS,
-  WEATHER_TYPES,
+  WIDGETS_TYPES,
 } = require('../../constants');
 const { generateTemporaryView, generateTemporaryWeatherWidget } = require('../../helpers/entities');
 
@@ -134,7 +134,7 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget(WEATHER_TYPES.weather)
+      .clickWidget(WIDGETS_TYPES.weather)
       .verifyModalClosed();
 
     browser.completed.widget.createServiceWeather(weatherWidget, ({ response }) => {
