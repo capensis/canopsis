@@ -34,6 +34,9 @@
         "models_exploitation_snmpRule": {
             "checksum": 15
         },
+        "models_exploitation_action": {
+            "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
