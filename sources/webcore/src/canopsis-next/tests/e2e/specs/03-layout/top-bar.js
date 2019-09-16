@@ -97,6 +97,17 @@ module.exports = {
       .clickUserDropdown();
   },
 
+  'Reset default view': (browser) => {
+    browser.page.layout.topBar()
+      .clickUserDropdown()
+      .clickUserProfileButton();
+
+    browser.page.modals.admin.createUser()
+      .verifyModalOpened()
+      .clickRemoveDefaultViewButton()
+      .verifyModalClosed();
+  },
+
   'Delete test view': (browser) => {
     const { groupId, viewId } = browser.globals.defaultViewData;
 

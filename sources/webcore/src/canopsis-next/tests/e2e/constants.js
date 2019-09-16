@@ -183,3 +183,8 @@ module.exports.WEATHER_TYPES = {
   statsPareto: 'StatsPareto',
   text: 'Text',
 };
+
+module.exports.NAVIGATION_TYPES = {
+  sideBar: 1,
+  topBar: 2,
+};
