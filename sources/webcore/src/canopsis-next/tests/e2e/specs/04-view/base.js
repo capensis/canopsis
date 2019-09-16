@@ -39,14 +39,14 @@ module.exports = {
       .clickMenuViewButton()
       .clickAddViewButton();
 
-    browser.page.modals.common.textFieldEditorModal()
+    browser.page.modals.common.textFieldEditor()
       .verifyModalOpened()
       .setField(tab);
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.view._id}`,
       5000,
-      () => browser.page.modals.common.textFieldEditorModal()
+      () => browser.page.modals.common.textFieldEditor()
         .clickSubmitButton(),
       ({ responseData, requestData }) => views.view = {
         tab,
@@ -58,7 +58,7 @@ module.exports = {
       },
     );
 
-    browser.page.modals.common.textFieldEditorModal()
+    browser.page.modals.common.textFieldEditor()
       .verifyModalClosed();
   },
 
@@ -77,7 +77,7 @@ module.exports = {
       .clickEditViewButton()
       .clickEditTab(views.view.tabId);
 
-    browser.page.modals.common.textFieldEditorModal()
+    browser.page.modals.common.textFieldEditor()
       .verifyModalOpened()
       .clearField()
       .setField(tab);
@@ -85,7 +85,7 @@ module.exports = {
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.view._id}`,
       5000,
-      () => browser.page.modals.common.textFieldEditorModal()
+      () => browser.page.modals.common.textFieldEditor()
         .clickSubmitButton(),
       ({ responseData, requestData }) => views.view = {
         tab,
@@ -95,7 +95,7 @@ module.exports = {
       },
     );
 
-    browser.page.modals.common.textFieldEditorModal()
+    browser.page.modals.common.textFieldEditor()
       .verifyModalClosed();
   },
 
@@ -106,14 +106,14 @@ module.exports = {
     browser.page.view()
       .clickCopyTab(views.view.tabId);
 
-    browser.page.modals.common.textFieldEditorModal()
+    browser.page.modals.common.textFieldEditor()
       .verifyModalOpened()
       .setField(copyTab);
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.view._id}`,
       5000,
-      () => browser.page.modals.common.textFieldEditorModal()
+      () => browser.page.modals.common.textFieldEditor()
         .clickSubmitButton(),
       ({ responseData, requestData }) => views.view = {
         copyTab,
@@ -125,7 +125,7 @@ module.exports = {
       },
     );
 
-    browser.page.modals.common.textFieldEditorModal()
+    browser.page.modals.common.textFieldEditor()
       .verifyModalClosed();
   },
 

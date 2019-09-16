@@ -28,10 +28,10 @@ module.exports.command = function setCommonFields({
   } = {},
   periodicRefresh,
 }) {
-  const addInfoPopupModal = this.page.modals.common.addInfoPopupModal();
-  const textEditorModal = this.page.modals.common.textEditorModal();
-  const infoPopupModal = this.page.modals.common.infoPopupSettingModal();
-  const createFilterModal = this.page.modals.common.createFilterModal();
+  const addInfoPopupModal = this.page.modals.common.addInfoPopup();
+  const textEditorModal = this.page.modals.common.textEditor();
+  const infoPopupModal = this.page.modals.common.infoPopupSetting();
+  const createFilterModal = this.page.modals.common.createFilter();
   const common = this.page.widget.common();
 
   if (row) {

@@ -12,7 +12,7 @@ module.exports.command = function createAlarmsList({
   ...fields
 }, callback = () => {}) {
   const alarms = this.page.widget.alarms();
-  const liveReportingModal = this.page.modals.common.liveReportingModal();
+  const liveReportingModal = this.page.modals.common.liveReporting();
 
   this.completed.widget.setCommonFields({ ...fields, parameters });
 

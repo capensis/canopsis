@@ -39,7 +39,7 @@ module.exports = {
   'Editing test view with name from constants': (browser) => {
     const navigation = browser.page.layout.navigation();
     const groupsSideBar = browser.page.layout.groupsSideBar();
-    const modalCreateGroup = browser.page.modals.view.createGroupModal();
+    const modalCreateGroup = browser.page.modals.view.createGroup();
 
     const [createdView] = browser.globals.views;
     const groupName = `group-${uid()}`;
