@@ -161,7 +161,7 @@ Planned tests
             - [ ] Pages
     * Context explorer
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Header
             - [ ] Search

@@ -83,6 +83,11 @@ module.exports.ALARMS_WIDGET_SORT_FIELD = {
   extraDetails: 6,
 };
 
+module.exports.CONTEXT_WIDGET_SORT_FIELD = {
+  name: 1,
+  type: 2,
+};
+
 
 module.exports.SORT_ORDERS = {
   asc: 1,
@@ -182,4 +187,16 @@ module.exports.WEATHER_TYPES = {
   statsNumber: 'StatsNumber',
   statsPareto: 'StatsPareto',
   text: 'Text',
+};
+
+module.exports.CONTEXT_FILTER_COLUMNS = {
+  NAME: 1,
+  TYPE: 2,
+};
+
+module.exports.CONTEXT_TYPE_OF_ENTITIES = {
+  COMPONENT: 1,
+  CONNECTOR: 2,
+  RESOURCE: 3,
+  WATCHER: 4,
 };
