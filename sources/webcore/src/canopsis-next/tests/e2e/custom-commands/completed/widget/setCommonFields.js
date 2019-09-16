@@ -5,6 +5,7 @@ module.exports.command = function setCommonFields({
   row,
   title,
   parameters: {
+    filter,
     sort,
     columnSM,
     columnMD,
@@ -14,10 +15,22 @@ module.exports.command = function setCommonFields({
     heightFactor,
     modalType,
     alarmsList,
+    advanced,
+    elementsPerPage,
+    infoPopups,
+    moreInfos,
+    openedResolvedFilter,
+    newColumnNames,
+    editColumnNames,
+    moveColumnNames,
+    deleteColumnNames,
   } = {},
   periodicRefresh,
-  advanced = false,
 }) {
+  const addInfoPopupModal = this.page.modals.common.addInfoPopup();
+  const textEditorModal = this.page.modals.common.textEditor();
+  const infoPopupModal = this.page.modals.common.infoPopupSetting();
+  const createFilterModal = this.page.modals.common.createFilter();
   const common = this.page.widget.common();
 
   if (row) {
@@ -42,6 +55,24 @@ module.exports.command = function setCommonFields({
       .setWidgetTitleField(title);
   }
 
+  if (advanced) {
+    common.clickAdvancedSettings();
+  }
+
+  if (alarmsList) {
+    common.clickAlarmList();
+  }
+
+  if (filter) {
+    common.clickCreateFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .fillFilterGroups(filter.groups)
+      .clickCancelButton()
+      .verifyModalClosed();
+  }
+
   if (periodicRefresh) {
     common
       .clickPeriodicRefresh()
@@ -50,11 +81,10 @@ module.exports.command = function setCommonFields({
       .setPeriodicRefreshField(periodicRefresh);
   }
 
-  if (alarmsList) {
+  if (elementsPerPage) {
     common
-      .clickAlarmList()
       .clickElementsPerPage()
-      .selectElementsPerPage(alarmsList.perPage)
+      .selectElementsPerPage(elementsPerPage)
       .clickElementsPerPage();
   }
 
@@ -63,10 +93,6 @@ module.exports.command = function setCommonFields({
       .clickWidgetLimit()
       .clearWidgetLimitField()
       .setWidgetLimitField(limit);
-  }
-
-  if (advanced) {
-    common.clickAdvancedSettings();
   }
 
   if (sort) {
@@ -107,6 +133,78 @@ module.exports.command = function setCommonFields({
     common
       .clickModalType()
       .clickModalTypeField(modalType);
+  }
+
+  if (openedResolvedFilter) {
+    common
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(openedResolvedFilter.open)
+      .setResolvedFilter(openedResolvedFilter.resolve);
+  }
+
+  if (infoPopups) {
+    common.clickInfoPopup();
+
+    infoPopupModal.verifyModalOpened();
+
+    infoPopups.forEach(({ field, template }) => {
+      infoPopupModal.clickAddPopup();
+
+      addInfoPopupModal.verifyModalOpened()
+        .selectSelectedColumn(field)
+        .setTemplate(template)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    });
+
+    infoPopupModal.clickSubmitButton()
+      .verifyModalClosed();
+  }
+
+  if (moreInfos) {
+    common.clickCreateMoreInfos();
+
+    textEditorModal.verifyModalOpened()
+      .clickField()
+      .setField(moreInfos)
+      .clickSubmitButton()
+      .verifyModalClosed();
+  }
+
+  if (newColumnNames || editColumnNames || moveColumnNames || deleteColumnNames) {
+    common.clickColumnNames();
+  }
+
+  if (newColumnNames) {
+    newColumnNames.forEach(({ index, data }) => {
+      common
+        .clickAddColumnName()
+        .editColumnName(index, data);
+    });
+  }
+
+  if (editColumnNames) {
+    editColumnNames.forEach(({ index, data }) => {
+      common.editColumnName(index, data);
+    });
+  }
+
+  if (moveColumnNames) {
+    moveColumnNames.forEach(({ index, up, down }) => {
+      if (up) {
+        common.clickColumnNameUpWard(index);
+      }
+
+      if (down) {
+        common.clickColumnNameDownWard(index);
+      }
+    });
+  }
+
+  if (deleteColumnNames) {
+    deleteColumnNames.forEach((index) => {
+      common.clickDeleteColumnName(index);
+    });
   }
 
   return this;

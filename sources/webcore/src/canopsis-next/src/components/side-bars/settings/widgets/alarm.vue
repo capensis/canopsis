@@ -12,7 +12,7 @@
       v-divider
       field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
       v-divider
-      v-list-group
+      v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
@@ -45,24 +45,28 @@
           )
           v-divider
           field-text-editor(
+          data-test="widgetMoreInfoTemplate",
           v-model="settings.widget.parameters.moreInfoTemplate",
           :title="$t('settings.moreInfosModal')"
           )
           v-divider
           field-switcher(
+          data-test="isHtmlEnabledOnTimeLine",
           v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
           :title="$t('settings.isHtmlEnabledOnTimeLine')",
           )
           v-divider
-          v-list-group
+          v-list-group(data-test="ackGroup")
             v-list-tile(slot="activator") Ack
             v-list.grey.lighten-4.px-2.py-0(expand)
             field-switcher(
+            data-test="isAckNoteRequired",
             v-model="settings.widget.parameters.isAckNoteRequired",
             :title="$t('settings.isAckNoteRequired')",
             )
             v-divider
             field-switcher(
+            data-test="isMultiAckEnabled",
             v-model="settings.widget.parameters.isMultiAckEnabled",
             :title="$t('settings.isMultiAckEnabled')",
             )
@@ -71,7 +75,7 @@
             v-model="settings.widget.parameters.fastAckOutput",
             )
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

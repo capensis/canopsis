@@ -26,17 +26,21 @@
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider
           field-info-popup(
-          data-test="widgetInfoPopups",
+          data-test="widgetInfoPopup",
           v-model="settings.widget.parameters.alarmsList.infoPopups"
           )
           v-divider
           field-text-editor(
-          data-test="widgetMoreInfoTemplate",
-          v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
-          :title="$t('settings.moreInfosModal')"
+            data-test="widgetMoreInfoTemplate",
+            v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
+            :title="$t('settings.moreInfosModal')"
           )
       v-divider
-      field-number(data-test='widgetLimit', v-model="settings.widget.parameters.limit", :title="$t('settings.limit')")
+      field-number(
+        data-test="widgetLimit",
+        v-model="settings.widget.parameters.limit",
+        :title="$t('settings.limit')"
+      )
       v-divider
       v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}

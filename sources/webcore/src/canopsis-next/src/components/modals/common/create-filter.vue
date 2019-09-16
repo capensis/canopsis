@@ -6,6 +6,7 @@
     v-divider
     v-card-text
       v-text-field(
+      data-test="filterTitle",
       v-if="!hiddenFields.includes('title')",
       v-model="form.title",
       v-validate="'required|unique-title'",

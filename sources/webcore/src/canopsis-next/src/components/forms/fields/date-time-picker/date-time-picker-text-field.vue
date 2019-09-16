@@ -3,6 +3,7 @@
     v-layout
       v-flex
         v-text-field(
+        data-test="dateTimePickerTextField",
         :value="value",
         :label="label",
         :name="name",
