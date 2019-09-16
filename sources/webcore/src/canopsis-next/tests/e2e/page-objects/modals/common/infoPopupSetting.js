@@ -2,7 +2,7 @@
 
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
-const modalSelector = sel('infoPopupSetting');
+const modalSelector = sel('infoPopupSettingModal');
 
 const commands = {
   clickAddPopup() {
