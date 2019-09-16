@@ -13,13 +13,13 @@ const commands = {
 
   setTemplate(value) {
     return this.customClick('@template')
-      .sendKeys('@template', value);addInfoPopupLayout
+      .sendKeys('@template', value);
   },
 
   el,
 };
 
-const modalSelector = sel('addInfoPopup');
+const modalSelector = sel('addInfoPopupModal');
 
 module.exports = modalCreator(modalSelector, {
   elements: {

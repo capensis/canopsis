@@ -9,7 +9,7 @@ const createRole = (browser, {
 }) => {
   const rolesPage = browser.page.admin.roles();
   const createRoleModal = browser.page.modals.admin.createRole();
-  const selectViewModal = browser.page.modals.view.selectViewModal();
+  const selectViewModal = browser.page.modals.view.selectView();
 
   rolesPage.clickAddButton();
 

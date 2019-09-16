@@ -77,7 +77,7 @@
             dark,
             small,
             color="green",
-            @click.stop="showCreateTabModal"
+            @click.stop="createTab"
             )
               v-icon add
             span {{ $t('common.addTab') }}

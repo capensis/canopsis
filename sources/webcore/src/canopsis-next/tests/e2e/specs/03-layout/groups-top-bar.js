@@ -142,7 +142,7 @@ module.exports = {
 
     views.create.group = generateTemporaryView('create').group;
 
-    browser.page.modals.view.createGroupModal()
+    browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clearGroupName()
       .setGroupName(views.create.group)
@@ -210,7 +210,7 @@ module.exports = {
     browser.page.layout.topBar()
       .clickEditGroupButton(views.create.group_id)
       .defaultPause();
-    browser.page.modals.view.createGroupModal()
+    browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clickDeleteButton();
     browser.page.modals.common.confirmation()
@@ -241,7 +241,7 @@ module.exports = {
     browser.page.layout.topBar()
       .clickEditGroupButton(views.edit.group_id)
       .defaultPause();
-    browser.page.modals.view.createGroupModal()
+    browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clickDeleteButton();
     browser.page.modals.common.confirmation()

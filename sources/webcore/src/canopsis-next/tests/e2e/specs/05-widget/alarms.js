@@ -148,7 +148,7 @@ module.exports = {
     view.clickMenuViewButton()
       .clickAddWidgetButton();
 
-    browser.page.modals.view.createWidgetModal()
+    browser.page.modals.view.createWidget()
       .verifyModalOpened()
       .clickWidget(WEATHER_TYPES.alarmList)
       .verifyModalClosed();

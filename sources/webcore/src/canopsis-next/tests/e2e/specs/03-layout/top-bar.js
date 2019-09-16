@@ -41,7 +41,7 @@ module.exports = {
 
   'Select current user default view and interface language': (browser) => {
     const createUserModal = browser.page.modals.admin.createUser();
-    const selectViewModal = browser.page.modals.view.selectViewModal();
+    const selectViewModal = browser.page.modals.view.selectView();
     const { viewId, groupId } = browser.globals.defaultViewData;
 
     createUserModal.selectLanguage(LANGUAGES_POSITIONS.fr)

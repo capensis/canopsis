@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card(data-test="addInfoPopup")
+  v-card(data-test="addInfoPopupModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
