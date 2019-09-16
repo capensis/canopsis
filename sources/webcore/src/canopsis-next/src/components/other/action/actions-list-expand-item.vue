@@ -79,35 +79,13 @@
       v-tab-item
         v-layout.py-3.secondary.lighten-2(row)
           v-flex(xs12, sm6, offset-sm3)
-            v-card
-              v-card-text
-                v-list(two-line)
-                  v-list-tile(v-if="!action.parameters.comments || !action.parameters.comments.length")
-                    v-list-tile-content
-                      v-list-tile-title {{ $t('tables.noData') }}
-                  template(v-for="(comment, index) in action.parameters.comments")
-                    v-list-tile(:key="comment._id")
-                      v-list-tile-content
-                        v-list-tile-title {{ comment.author }}
-                        v-list-tile-sub-title {{ comment.message }}
-                    v-divider(v-if="index < action.parameters.comments.length - 1", :key="`divider-${index}`")
-      v-tab(v-if="rRule") {{ $t('pbehaviors.rrule') }}
-      v-tab-item
-        v-layout.py-3.secondary.lighten-2(row)
-          v-flex(xs12, sm6, offset-sm3)
-            v-card
-              v-card-text()
-                v-layout(row)
-                  v-flex(xs2)
-                    strong {{ $t('rRule.stringLabel') }}
-                  v-flex(xs10)
-                    p.rrule-paragraph {{ rRuleString }}
-                v-layout(row)
-                  v-flex(xs2)
-                    strong {{ $t('rRule.textLabel') }}
-                  v-flex(xs10)
-                    p.rrule-paragraph {{ rRuleText }}
-
+            pbehavior-comments(:comments="action.parameters.comments")
+      template(v-if="action.parameters.rrule")
+        v-tab {{ $t('pbehaviors.rrule') }}
+        v-tab-item
+          v-layout.py-3.secondary.lighten-2(row)
+            v-flex(xs12, sm6, offset-sm3)
+              pbehavior-rrule(:rrule="action.parameters.rrule")
     v-tab {{ $t('actions.table.expand.tabs.hook') }}
     v-tab-item
       v-layout.py-3.secondary.lighten-2(row)
@@ -139,10 +117,14 @@ import { rrulestr } from 'rrule';
 import { WEBHOOK_TRIGGERS } from '@/constants';
 
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+import PbehaviorComments from '@/components/other/pbehavior/exploitation/partials/pbehavior-comments.vue';
+import PbehaviorRrule from '@/components/other/pbehavior/exploitation/partials/pbehavior-rrule.vue';
 
 export default {
   components: {
     PatternsList,
+    PbehaviorComments,
+    PbehaviorRrule,
   },
   props: {
     action: {
