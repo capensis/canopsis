@@ -8,6 +8,7 @@
     :solo-inverted="soloInverted",
     :flat="flat",
     :error-messages="errorMessages",
+    data-test="mixedInputType",
     hide-details,
     dense,
     @input="updateType"
@@ -21,6 +22,7 @@
           v-list-tile-title {{ item.text }}
     v-text-field.mixed-field__text(
     v-if="isInputTypeText",
+    data-test="mixedInput",
     :type="inputType === $constants.FILTER_INPUT_TYPES.number ? 'number' : 'text'",
     :value="value",
     :name="name",
@@ -38,12 +40,14 @@
     :inputValue="value",
     :label="switchLabel",
     :disabled="disabled",
+    data-test="mixedInputSwitch",
     hide-details,
     @change="updateModel"
     )
     v-text-field.mixed-field__text(
     v-else,
     :error-messages="errorMessages",
+    data-test="mixedInput",
     value="null",
     disabled
     )

@@ -4,9 +4,14 @@ const {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SERVICE_WEATHER_WIDGET_SORT_FIELD,
   PAGINATION_PER_PAGE_VALUES,
+  FILTERS_TYPE,
+  FILTER_OPERATORS,
+  FILTER_COLUMNS,
+  VALUE_TYPES,
   SORT_ORDERS,
+  WEATHER_TYPES,
 } = require('../../constants');
-const { generateTemporaryView, generateTemporaryWeather } = require('../../helpers/entities');
+const { generateTemporaryView, generateTemporaryWeatherWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
@@ -18,10 +23,6 @@ module.exports = {
   },
 
   after(browser, done) {
-    const { view } = browser.globals.temporary;
-
-    browser.completed.view.delete(view.group_id, view._id);
-
     browser.completed.logout()
       .end(done);
 
@@ -30,21 +31,25 @@ module.exports = {
 
   'Create test view': (browser) => {
     browser.completed.view.create(generateTemporaryView(), (view) => {
-      browser.globals.temporary.view = view;
+      browser.globals.defaultViewData = {
+        viewId: view._id,
+        groupId: view.group_id,
+      };
     });
   },
 
   'Create widget weather with some name': (browser) => {
     const weatherWidget = {
-      ...generateTemporaryWeather(),
+      ...generateTemporaryWeatherWidget(),
       size: {
         sm: 12,
         md: 12,
         lg: 12,
       },
       periodicRefresh: 140,
-      advanced: true,
       parameters: {
+        advanced: true,
+        alarmsList: true,
         limit: 140,
         sort: {
           order: SORT_ORDERS.desc,
@@ -56,15 +61,38 @@ module.exports = {
           bottom: 3,
           left: 3,
         },
-        alarmsList: {
-          perPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
-        },
+        elementPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
         columnSM: 12,
         columnMD: 12,
         columnLG: 12,
         heightFactor: 20,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList,
-        filter: {},
+        filter: {
+          groups: [{
+            type: FILTERS_TYPE.OR,
+            items: [{
+              rule: FILTER_COLUMNS.CONNECTOR,
+              operator: FILTER_OPERATORS.EQUAL,
+              valueType: VALUE_TYPES.STRING,
+              value: 'value',
+              groups: [{
+                type: FILTERS_TYPE.OR,
+                items: [{
+                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
+                  operator: FILTER_OPERATORS.IN,
+                  valueType: VALUE_TYPES.BOOLEAN,
+                  value: true,
+                }],
+              }],
+            }, {
+              type: FILTERS_TYPE.AND,
+              rule: FILTER_COLUMNS.CONNECTOR_NAME,
+              operator: FILTER_OPERATORS.NOT_EQUAL,
+              valueType: VALUE_TYPES.NUMBER,
+              value: 136,
+            }],
+          }],
+        },
         moreInfos: 'More infos popup',
         blockTemplate: 'Template weather item text',
         modalTemplate: 'Template modal text',
@@ -94,20 +122,19 @@ module.exports = {
         deleteColumnNames: [2],
       },
     };
-    const { temporary } = browser.globals;
+    const { groupId, viewId } = browser.globals.defaultViewData;
     const view = browser.page.view();
+    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    browser.page.layout.groupsSideBar()
-      .clickPanelHeader(temporary.view.group_id)
-      .clickLinkView(temporary.view._id);
+    groupsSideBar.clickPanelHeader(groupId)
+      .clickLinkView(viewId);
 
     view.clickMenuViewButton()
-      .clickEditViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget('ServiceWeather')
+      .clickWidget(WEATHER_TYPES.weather)
       .verifyModalClosed();
 
     browser.completed.widget.createServiceWeather(weatherWidget, ({ response }) => {
@@ -117,7 +144,6 @@ module.exports = {
 
   'Edit widget weather with some name': (browser) => {
     const weatherWidget = {
-      advanced: true,
       parameters: {
         limit: 180,
         sort: {
@@ -130,9 +156,8 @@ module.exports = {
           bottom: 2,
           left: 2,
         },
-        alarmsList: {
-          perPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
-        },
+        advanced: true,
+        alarmsList: true,
         columnSM: 6,
         columnMD: 6,
         columnLG: 6,
@@ -176,6 +201,7 @@ module.exports = {
     };
 
     browser.page.view()
+      .clickEditViewButton()
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.createServiceWeather(weatherWidget);
@@ -199,5 +225,12 @@ module.exports = {
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
+  },
+
+  'Delete test view': (browser) => {
+    const { groupId, viewId } = browser.globals.defaultViewData;
+
+    browser.completed.view.delete(groupId, viewId);
+    browser.completed.view.deleteGroup(groupId);
   },
 };

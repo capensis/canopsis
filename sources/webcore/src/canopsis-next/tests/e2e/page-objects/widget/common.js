@@ -99,14 +99,14 @@ const commands = {
 
   selectSortOrderBy(index = 1) {
     return this.customClick('@defaultSortColumnOrderByField')
-      .waitForElementVisible(this.el('@selectOption', index))
-      .customClick(this.el('@selectOption', index));
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 
   selectSortOrders(index = 1) {
     return this.customClick('@defaultSortColumnOrdersField')
-      .waitForElementVisible(this.el('@selectOption', index))
-      .customClick(this.el('@selectOption', index));
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 
   setColumn(size, value) {
@@ -159,14 +159,18 @@ const commands = {
     return this.customClick('@moreInfoTemplateEditButton');
   },
 
+  clickDeleteMoreInfos() {
+    return this.customClick('@moreInfoTemplateDeleteButton');
+  },
+
   clickElementsPerPage() {
     return this.customClick('@elementsPerPage');
   },
 
   selectElementsPerPage(index = 1) {
     return this.customClick('@elementsPerPageField')
-      .waitForElementVisible(this.el('@selectOption', index))
-      .customClick(this.el('@selectOption', index));
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 
   clickColumnNames() {
@@ -234,11 +238,35 @@ const commands = {
       .setColumnNameValue(index, value)
       .setColumnNameSwitch(index, isHtml);
   },
+
+  clickFilterOnOpenResolved() {
+    return this.customClick('@filterOnOpenResolved');
+  },
+
+  setOpenFilter(checked = true) {
+    return this.getAttribute('@openFilterInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@openFilter');
+      }
+    });
+  },
+
+  setResolvedFilter(checked = false) {
+    return this.getAttribute('@resolvedFilterInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@resolvedFilter');
+      }
+    });
+  },
+
+  clickInfoPopup() {
+    return this.customClick('@widgetInfoPopup');
+  },
 };
 
 module.exports = {
   elements: {
-    selectOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
 
     periodicRefresh: sel('periodicRefresh'),
     periodicRefreshSwitchInput: `input${sel('periodicRefreshSwitch')}`,
@@ -301,6 +329,14 @@ module.exports = {
     columnNameSwitchFieldInput: `${sel('columnName')}:nth-child(%s) input${sel('columnNameSwitch')}`,
     columnNameSwitchField: `${sel('columnName')}:nth-child(%s) .v-input${sel('columnNameSwitch')} .v-input--selection-controls__ripple`,
     columnNameDeleteButton: `${sel('columnName')}:nth-child(%s) ${sel('columnNameDeleteButton')}`,
+
+    filterOnOpenResolved: sel('filterOnOpenResolved'),
+    openFilter: `div${sel('openFilter')} .v-input--selection-controls__ripple`,
+    openFilterInput: `input${sel('openFilter')}`,
+    resolvedFilter: `div${sel('resolvedFilter')} .v-input--selection-controls__ripple`,
+    resolvedFilterInput: `input${sel('resolvedFilter')}`,
+
+    widgetInfoPopup: sel('infoPopupButton'),
   },
   commands: [commands],
 };

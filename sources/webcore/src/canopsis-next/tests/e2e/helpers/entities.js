@@ -22,7 +22,12 @@ module.exports.generateTemporaryRole = (prefix = '', suffix = uid()) => ({
   description: `${prefix}description-${suffix}`,
 });
 
-module.exports.generateTemporaryWeather = (prefix = '', suffix = uid()) => ({
+module.exports.generateTemporaryWeatherWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Weather-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
+
+module.exports.generateTemporaryAlarmsWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Alarms-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });

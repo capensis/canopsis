@@ -210,7 +210,8 @@ module.exports = {
     browser.page.layout.topBar()
       .clickEditGroupButton(views.create.group_id)
       .defaultPause();
-    browser.page.modals.view.createGroup().verifyModalOpened()
+    browser.page.modals.view.createGroup()
+      .verifyModalOpened()
       .clickDeleteButton();
     browser.page.modals.common.confirmation()
       .verifyModalOpened()
@@ -240,7 +241,8 @@ module.exports = {
     browser.page.layout.topBar()
       .clickEditGroupButton(views.edit.group_id)
       .defaultPause();
-    browser.page.modals.view.createGroup().verifyModalOpened()
+    browser.page.modals.view.createGroup()
+      .verifyModalOpened()
       .clickDeleteButton();
     browser.page.modals.common.confirmation()
       .verifyModalOpened()
