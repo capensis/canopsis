@@ -70,7 +70,7 @@
             span {{ $t('common.addWidget') }}
           v-tooltip(top)
             v-btn(
-            data-test="addViewButton",
+            data-test="addTabButton",
             v-if="hasUpdateAccess",
             slot="activator",
             fab,

@@ -27,33 +27,21 @@
       ripple
       )
         span {{ tab.title }}
-        v-btn(
-        data-test="editTab",
-        v-show="hasUpdateAccess && isEditingMode",
-        small,
-        flat,
-        icon,
-        @click.prevent="showUpdateTabModal(tab)"
+        update-tab-btn(
+          v-show="hasUpdateAccess && isEditingMode",
+          :tab="tab",
+          :updateTabMethod="updateTab"
         )
-          v-icon(small) edit
-        v-btn(
-        data-test="copyTab",
-        v-show="hasUpdateAccess && isEditingMode",
-        small,
-        flat,
-        icon,
-        @click.prevent="showSelectViewModal(tab)"
+        clone-tab-btn(
+          v-show="hasUpdateAccess && isEditingMode",
+          :tab="tab"
         )
-          v-icon(small) file_copy
-        v-btn(
-        data-test="deleteTab",
-        v-show="hasUpdateAccess && isEditingMode",
-        small,
-        flat,
-        icon,
-        @click.prevent="showDeleteTabModal(tab)"
+        delete-tab-btn(
+          v-show="hasUpdateAccess && isEditingMode",
+          :tab="tab",
+          :view="view",
+          :updateViewMethod="updateViewMethod"
         )
-          v-icon(small) delete
     template(v-if="$scopedSlots.default")
       v-tab-item(
       v-for="tab in tabs",
@@ -70,28 +58,25 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { MODALS } from '@/constants';
 
-import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
-
-import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
-const { mapGetters: viewMapGetters, mapActions: viewMapActions } = createNamespacedHelpers('view');
+import UpdateTabBtn from './buttons/update-tab-btn.vue';
+import CloneTabBtn from './buttons/clone-tab-btn.vue';
+import DeleteTabBtn from './buttons/delete-tab-btn.vue';
 
 export default {
-  components: { Draggable },
+  components: {
+    Draggable,
+    UpdateTabBtn,
+    CloneTabBtn,
+    DeleteTabBtn,
+  },
   mixins: [
-    authMixin,
-    modalMixin,
     vuetifyTabsMixin,
-    entitiesUserPreferenceMixin,
   ],
   props: {
     view: {
@@ -120,10 +105,6 @@ export default {
     },
   },
   computed: {
-    ...viewMapGetters({
-      getViewById: 'getItemById',
-    }),
-
     vTabsKey() {
       return this.view.tabs.map(tab => tab._id).join('-');
     },
@@ -153,90 +134,6 @@ export default {
     },
   },
   methods: {
-    ...viewMapActions({
-      updateView: 'update',
-    }),
-
-    showUpdateTabModal(tab) {
-      this.showModal({
-        name: MODALS.textFieldEditor,
-        config: {
-          title: this.$t('modals.viewTab.edit.title'),
-          field: {
-            name: 'text',
-            label: this.$t('modals.viewTab.fields.title'),
-            value: tab.title,
-            validationRules: 'required',
-          },
-          action: (title) => {
-            const newTab = { ...tab, title };
-
-            return this.updateTab(newTab);
-          },
-        },
-      });
-    },
-
-    showSelectViewModal(tab) {
-      this.showModal({
-        name: MODALS.selectView,
-        config: {
-          action: viewId => this.showDuplicateTabModalWithPromise(tab, viewId),
-        },
-      });
-    },
-
-    showDuplicateTabModalWithPromise(tab, viewId) {
-      return new Promise(resolve => this.showModal({
-        name: MODALS.textFieldEditor,
-        config: {
-          title: this.$t('modals.viewTab.duplicate.title'),
-          field: {
-            name: 'text',
-            label: this.$t('modals.viewTab.fields.title'),
-            validationRules: 'required',
-          },
-          action: async (title) => {
-            await this.duplicateTabAction(tab, viewId, title);
-
-            resolve();
-          },
-        },
-      }));
-    },
-
-    showDeleteTabModal(tab) {
-      this.showModal({
-        name: MODALS.confirmation,
-        config: {
-          action: () => this.deleteTab(tab._id),
-        },
-      });
-    },
-
-    async duplicateTabAction(tab, viewId, title) {
-      const newTab = {
-        ...generateCopyOfViewTab(tab),
-
-        title,
-      };
-
-      const widgetsIdsMappings = getViewsTabsWidgetsIdsMappings(tab, newTab);
-
-      await this.copyUserPreferencesByWidgetsIdsMappings(widgetsIdsMappings);
-      await this.addTabIntoViewById(newTab, viewId);
-
-      this.$router.push({
-        name: 'view',
-        params: {
-          id: viewId,
-        },
-        query: {
-          tabId: newTab._id,
-        },
-      });
-    },
-
     updateTab(tab) {
       const view = {
         ...this.view,
@@ -247,44 +144,6 @@ export default {
 
           return viewTab;
         }),
-      };
-
-      return this.updateViewMethod(view);
-    },
-
-    addTab(tab) {
-      const view = {
-        ...this.view,
-        tabs: [...this.view.tabs, tab],
-      };
-
-      return this.updateViewMethod(view);
-    },
-
-    addTabIntoViewById(tab, viewId) {
-      const view = this.getViewById(viewId);
-
-      if (!view) {
-        throw new Error('View was not found');
-      }
-
-      const data = {
-        ...view,
-
-        tabs: [...view.tabs, tab],
-      };
-
-      return this.updateView({
-        data,
-
-        id: viewId,
-      });
-    },
-
-    deleteTab(tabId) {
-      const view = {
-        ...this.view,
-        tabs: this.view.tabs.filter(viewTab => viewTab._id !== tabId),
       };
 
       return this.updateViewMethod(view);
