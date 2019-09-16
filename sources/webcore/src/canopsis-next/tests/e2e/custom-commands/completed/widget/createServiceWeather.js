@@ -15,7 +15,7 @@ module.exports.command = function createServiceWeather(
   callback = () => {},
 ) {
   const weather = this.page.widget.weather();
-  const textEditorModal = this.page.modals.common.textEditorModal();
+  const textEditorModal = this.page.modals.common.textEditor();
 
   this.completed.widget.setCommonFields({
     ...fields,
