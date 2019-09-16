@@ -864,6 +864,20 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
+    createAction: {
+      create: {
+        title: 'Create action',
+        success: 'Action successfully created !',
+      },
+      tabs: {
+        general: 'General',
+        hook: 'Hook',
+      },
+      fields: {
+        message: 'Message',
+        duration: 'Duration',
+      },
+    },
     createHeartbeat: {
       create: {
         title: 'Create webhook',

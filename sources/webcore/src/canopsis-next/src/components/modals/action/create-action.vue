@@ -2,7 +2,7 @@
   v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        span.headline Create Action
+        span.headline {{ $t('modals.createAction.create.title') }}
     v-card-text
       v-form
         v-text-field(
@@ -21,21 +21,21 @@
         name="type"
         )
         v-tabs(centered, slider-color="primary")
-          v-tab Général
+          v-tab {{ $t('modals.createAction.tabs.general') }}
           v-tab-item
             template(v-if="form.type === $constants.ACTION_TYPES.snooze")
               v-textarea(
               v-model="snoozeParameters.message",
-              label="Message",
+              :label="$t('modals.createAction.fields.message')",
               )
               v-text-field(
               v-model="snoozeParameters.duration",
-              label="Duration",
+              :label="$t('modals.createAction.fields.duration')",
               type="number"
               )
             template(v-if="form.type === $constants.ACTION_TYPES.pbehavior")
               pbehavior-form(v-model="pbehaviorParameters", :author="$constants.ACTION_AUTHOR")
-          v-tab Hook
+          v-tab {{ $t('modals.createAction.tabs.hook') }}
           v-tab-item
             v-select(
             v-model="form.hook.triggers",

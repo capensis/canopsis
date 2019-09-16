@@ -750,6 +750,20 @@ export default {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
       },
     },
+    createAction: {
+      create: {
+        title: 'Créer une action',
+        success: 'Action créée avec succès !',
+      },
+      tabs: {
+        general: 'Général',
+        hook: 'Hook',
+      },
+      fields: {
+        message: 'Message',
+        duration: 'Durée',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
