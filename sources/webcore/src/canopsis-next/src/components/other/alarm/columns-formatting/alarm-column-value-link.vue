@@ -1,9 +1,9 @@
 <template lang="pug" functional>
   div
     a(
-    :href="props.link.link",
-    target="_blank",
-    @click.stop=""
+      :href="props.link.link",
+      target="_blank",
+      @click.stop=""
     ) {{ props.link.label }}
 </template>
 

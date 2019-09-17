@@ -4,18 +4,18 @@
       div(:class="validationHeaderClass") {{ $t('settings.rowGridSize.title') }}
     v-container
       v-combobox(
-      data-test="rowGridSizeCombobox"
-      ref="combobox",
-      v-model="row",
-      @blur="blurRow",
-      :items="availableRows",
-      :label="$t('settings.rowGridSize.fields.row')",
-      :search-input.sync="search",
-      data-vv-name="row",
-      v-validate="'required'",
-      :error-messages="errors.collect('row')",
-      item-text="title",
-      item-value="title"
+        data-test="rowGridSizeCombobox",
+        ref="combobox",
+        v-model="row",
+        @blur="blurRow",
+        :items="availableRows",
+        :label="$t('settings.rowGridSize.fields.row')",
+        :search-input.sync="search",
+        data-vv-name="row",
+        v-validate="'required'",
+        :error-messages="errors.collect('row')",
+        item-text="title",
+        item-value="title"
       )
         template(slot="no-data")
           v-list-tile
@@ -23,16 +23,16 @@
               v-list-tile-title(v-html="$t('settings.rowGridSize.noData')")
       div
         v-slider(
-        v-for="slider in sliders",
-        :data-test="`slider-${slider.key}`"
-        :key="`slider-${slider.key}`",
-        v-bind="slider.bind",
-        v-on="slider.on",
-        ticks="always"
-        always-dirty,
-        thumb-label,
-        :data-vv-name="`slider-${slider.key}`"
-        v-validate="'min_value:3'"
+          v-for="slider in sliders",
+          :data-test="`slider-${slider.key}`",
+          :key="`slider-${slider.key}`",
+          v-bind="slider.bind",
+          v-on="slider.on",
+          ticks="always",
+          always-dirty,
+          thumb-label,
+          :data-vv-name="`slider-${slider.key}`",
+          v-validate="'min_value:3'"
         )
 </template>
 

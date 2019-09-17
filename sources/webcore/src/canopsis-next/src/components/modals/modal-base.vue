@@ -1,9 +1,9 @@
 <template lang="pug">
   modal-wrapper(
-  v-if="modal",
-  :key="modal.id",
-  :modal="modal",
-  :dialogProps="getDialogProps(modal)",
+    v-if="modal",
+    :key="modal.id",
+    :modal="modal",
+    :dialogProps="getDialogProps(modal)"
   )
     component(:is="modal.name", :modal="modal")
     modal-base(:modals="modals", :index="index + 1")

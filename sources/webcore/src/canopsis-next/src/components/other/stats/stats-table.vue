@@ -4,10 +4,10 @@
       progress-overlay(:pending="pending")
       stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       v-data-table(
-      :items="stats",
-      :headers="columns",
-      :pagination.sync="pagination",
-      :custom-sort="customSort"
+        :items="stats",
+        :headers="columns",
+        :pagination.sync="pagination",
+        :custom-sort="customSort"
       )
         template(slot="items", slot-scope="{ item }")
           td {{ item.entity.name }}
@@ -21,8 +21,8 @@
                   div(v-if="hasTrend(item[key])")
                     sub.ml-2
                       v-icon.caption(
-                      small,
-                      :color="item[key].trend | trendColor"
+                        small,
+                        :color="item[key].trend | trendColor"
                       ) {{ item[key].trend | trendIcon }}
                     sub {{ item[key].trend | formatValue(property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}

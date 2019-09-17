@@ -3,19 +3,19 @@
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       filter-selector(
-      :label="$t('filterSelector.defaultFilter')",
-      :entitiesType="this.entitiesType",
-      :value="value",
-      :filters="filters",
-      :condition="condition",
-      :hideSelect="hideSelect",
-      :hasAccessToAddFilter="hasAccessToAddFilter",
-      :hasAccessToEditFilter="hasAccessToEditFilter",
-      hideSelectIcon,
-      long,
-      @input="$emit('input', $event)",
-      @update:condition="$emit('update:condition', $event)",
-      @update:filters="updateFilters"
+        :label="$t('filterSelector.defaultFilter')",
+        :entitiesType="this.entitiesType",
+        :value="value",
+        :filters="filters",
+        :condition="condition",
+        :hideSelect="hideSelect",
+        :hasAccessToAddFilter="hasAccessToAddFilter",
+        :hasAccessToEditFilter="hasAccessToEditFilter",
+        hideSelectIcon,
+        long,
+        @input="$emit('input', $event)",
+        @update:condition="$emit('update:condition', $event)",
+        @update:filters="updateFilters"
       )
 </template>
 

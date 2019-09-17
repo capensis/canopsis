@@ -3,26 +3,26 @@
     v-list-tile(slot="activator") {{ $t('settings.contextTypeOfEntities.title') }}
     v-container
       v-checkbox(
-      v-for="(entitiesType, index) in entitiesTypes",
-      v-bind="entitiesType",
-      data-test="entitiesTypeCheckbox",
-      :key="`entities-type-${index}`",
-      :input-value="value",
-      @change="$emit('input', $event)",
-      color="primary",
-      hide-details
+        v-for="(entitiesType, index) in entitiesTypes",
+        v-bind="entitiesType",
+        data-test="entitiesTypeCheckbox",
+        :key="`entities-type-${index}`",
+        :input-value="value",
+        color="primary",
+        hide-details,
+        @change="$emit('input', $event)"
       )
 </template>
 
 <script>
 
 /**
-* Component to select entities type to filter on entities-list
-*
-* @prop {Array} [value] - Array of selected entities types values to filter on
-*
-* @event value#input
-*/
+ * Component to select entities type to filter on entities-list
+ *
+ * @prop {Array} [value] - Array of selected entities types values to filter on
+ *
+ * @event value#input
+ */
 export default {
   props: {
     value: {

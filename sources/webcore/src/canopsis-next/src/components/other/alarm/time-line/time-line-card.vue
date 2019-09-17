@@ -3,9 +3,9 @@
     template(v-if="step._t !== 'statecounter'")
       .header
         alarm-chips.chips.pr-2(
-        v-if="!isStepTypeAction",
-        :value="step.val",
-        :type="stepType"
+          v-if="!isStepTypeAction",
+          :value="step.val",
+          :type="stepType"
         )
         p {{ stepTitle }}
       .content

@@ -5,33 +5,33 @@
         alarm-list-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
-        v-if="hasColumns",
-        :page="query.page",
-        :limit="query.limit",
-        :total="alarmsMeta.total",
-        type="top",
-        @input="updateQueryPage"
+          v-if="hasColumns",
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total",
+          type="top",
+          @input="updateQueryPage"
         )
       v-flex
         filter-selector(
-        :label="$t('settings.selectAFilter')",
-        :filters="viewFilters",
-        :lockedFilters="widgetViewFilters",
-        :value="mainFilter",
-        :condition="mainFilterCondition",
-        :hasAccessToEditFilter="hasAccessToEditFilter",
-        :hasAccessToUserFilter="hasAccessToUserFilter",
-        :hasAccessToListFilter="hasAccessToListFilter",
-        @input="updateSelectedFilter",
-        @update:condition="updateSelectedCondition",
-        @update:filters="updateFilters"
+          :label="$t('settings.selectAFilter')",
+          :filters="viewFilters",
+          :lockedFilters="widgetViewFilters",
+          :value="mainFilter",
+          :condition="mainFilterCondition",
+          :hasAccessToEditFilter="hasAccessToEditFilter",
+          :hasAccessToUserFilter="hasAccessToUserFilter",
+          :hasAccessToListFilter="hasAccessToListFilter",
+          @input="updateSelectedFilter",
+          @update:condition="updateSelectedCondition",
+          @update:filters="updateFilters"
         )
       v-flex
         v-chip.primary.white--text(
-        v-if="activeRange",
-        close,
-        label,
-        @input="removeHistoryFilter"
+          v-if="activeRange",
+          close,
+          label,
+          @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
         v-btn(@click="showEditLiveReportModal", icon, small)
           v-icon(:color="activeRange ? 'primary' : 'black'") schedule
@@ -40,18 +40,18 @@
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
-      :class="vDataTableClass",
-      v-model="selected",
-      :items="alarms",
-      :headers="headers",
-      :total-items="alarmsMeta.total",
-      :pagination.sync="vDataTablePagination",
-      :loading="alarmsPending",
-      ref="dataTable",
-      item-key="_id",
-      hide-actions,
-      select-all,
-      expand
+        :class="vDataTableClass",
+        v-model="selected",
+        :items="alarms",
+        :headers="headers",
+        :total-items="alarmsMeta.total",
+        :pagination.sync="vDataTablePagination",
+        :loading="alarmsPending",
+        ref="dataTable",
+        item-key="_id",
+        hide-actions,
+        select-all,
+        expand
       )
         template(slot="progress")
           v-fade-transition
@@ -63,8 +63,8 @@
             td
               v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
-            v-for="column in columns",
-            @click="props.expanded = !props.expanded"
+              v-for="column in columns",
+              @click="props.expanded = !props.expanded"
             )
               alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
             td
@@ -74,10 +74,10 @@
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
-          :page="query.page",
-          :limit="query.limit",
-          :total="alarmsMeta.total",
-          @input="updateQueryPage"
+            :page="query.page",
+            :limit="query.limit",
+            :total="alarmsMeta.total",
+            @input="updateQueryPage"
           )
         v-spacer
         v-flex(xs2)
@@ -90,7 +90,6 @@ import { omit, pick, isEmpty } from 'lodash';
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
-
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/time-line/time-line.vue';

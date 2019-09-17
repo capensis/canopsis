@@ -10,11 +10,11 @@
             state-criticity-field(v-model="form.state", :stateValues="availableStateValues")
           v-layout.mt-4(row)
             v-text-field(
-            :label="$t('modals.createChangeStateEvent.fields.output')",
-            :error-messages="errors.collect('output')",
-            v-model="form.output",
-            v-validate="'required'",
-            data-vv-name="output"
+              :label="$t('modals.createChangeStateEvent.fields.output')",
+              :error-messages="errors.collect('output')",
+              v-model="form.output",
+              v-validate="'required'",
+              data-vv-name="output"
             )
       v-divider
       v-layout.py-1(justify-end)

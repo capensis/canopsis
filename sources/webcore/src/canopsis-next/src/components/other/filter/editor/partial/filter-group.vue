@@ -1,11 +1,11 @@
 <template lang="pug">
   v-card.my-1.pa-2(data-test="filterGroup")
     v-radio-group(
-    :value="group.condition",
-    @change="updateField('condition', $event)",
-    hide-details,
-    mandatory,
-    row
+      :value="group.condition",
+      @change="updateField('condition', $event)",
+      hide-details,
+      mandatory,
+      row
     )
       v-radio(data-test="radioAnd", label="AND", value="$and", color="blue darken-4")
       v-radio(data-test="radioOr", label="OR", value="$or", color="blue darken-4")
@@ -37,27 +37,27 @@
           block,
           small,
           flat,
-          @click="$emit('deleteGroup')",
+          @click="$emit('deleteGroup')"
         ) {{$t("filterEditor.buttons.deleteGroup")}}
 
     div(data-test="filterRuleLayout")
       filter-rule(
         v-for="(rule, ruleKey) in group.rules",
-        :key="ruleKey"
+        :key="ruleKey",
         :rule="rule",
         :possibleFields="possibleFields",
         @deleteRule="deleteRule(ruleKey)",
-        @update:rule="updateRule(ruleKey, $event)",
+        @update:rule="updateRule(ruleKey, $event)"
       )
 
     div(data-test="filterGroupLayout")
       filter-group.filterGroup(
         v-for="(group, groupKey) in group.groups",
-        :key="groupKey"
+        :key="groupKey",
         :group="group",
         :possibleFields="possibleFields",
         @deleteGroup="deleteGroup(groupKey)",
-        @update:group="updateGroup(groupKey, $event)",
+        @update:group="updateGroup(groupKey, $event)"
       )
 </template>
 

@@ -3,52 +3,52 @@
     .v-picker__title.primary.text-xs-center
       span.v-date-time-picker-title(:class="{ 'use-seconds': useSeconds }")
         span.v-picker__title__btn(
-        data-test="datePickerDateTab",
-        @click="showDateTab",
-        :class="{ 'v-picker__title__btn--active': isActiveDateTab }"
+          data-test="datePickerDateTab",
+          @click="showDateTab",
+          :class="{ 'v-picker__title__btn--active': isActiveDateTab }"
         ) {{ value | date('datePicker', true, '--/--/----') }}
         span &nbsp;
         span.v-picker__title__btn(
-        data-test="datePickerHoursTab",
-        :class="{ 'v-picker__title__btn--active': isActiveHoursTab }",
-        @click="showHoursTabInTimeTab"
+          data-test="datePickerHoursTab",
+          :class="{ 'v-picker__title__btn--active': isActiveHoursTab }",
+          @click="showHoursTabInTimeTab"
         ) {{ value | date('HH', true, '--') }}
         span :
         span.v-picker__title__btn(
-        data-test="datePickerMinutesTab",
-        :class="{ 'v-picker__title__btn--active': isActiveMinutesTab }",
-        @click="showMinutesTabInTimeTab"
+          data-test="datePickerMinutesTab",
+          :class="{ 'v-picker__title__btn--active': isActiveMinutesTab }",
+          @click="showMinutesTabInTimeTab"
         ) {{ value | date('mm', true, '--') }}
         template(v-if="useSeconds")
           span :
           span.v-picker__title__btn(
-          data-test="datePickerSecondsTab",
-          :class="{ 'v-picker__title__btn--active': isActiveSecondsTab }",
-          @click="showSecondsTabInTimeTab"
+            data-test="datePickerSecondsTab",
+            :class="{ 'v-picker__title__btn--active': isActiveSecondsTab }",
+            @click="showSecondsTabInTimeTab"
           ) {{ value | date('ss', true, '--') }}
-    div.date-time-picker__body
+    .date-time-picker__body
       v-fade-transition
         v-date-picker(
-        v-if="isActiveDateTab",
-        :locale="$i18n.locale",
-        :value="value | date('YYYY-MM-DD', true, null)",
-        color="primary",
-        no-title,
-        @input="updateDate",
-        @change="showHoursTabInTimeTab",
+          v-if="isActiveDateTab",
+          :locale="$i18n.locale",
+          :value="value | date('YYYY-MM-DD', true, null)",
+          color="primary",
+          no-title,
+          @input="updateDate",
+          @change="showHoursTabInTimeTab"
         )
       v-fade-transition
         v-time-picker(
-        v-show="isActiveTimeTab",
-        ref="timePicker",
-        :value="value | date('timePickerWithSeconds', true, null)",
-        :allowed-minutes="allowedMinutes",
-        :useSeconds="useSeconds",
-        color="primary",
-        format="24hr",
-        no-title,
-        @input="updateTime",
-        @change="showDateTab",
+          v-show="isActiveTimeTab",
+          ref="timePicker",
+          :value="value | date('timePickerWithSeconds', true, null)",
+          :allowed-minutes="allowedMinutes",
+          :useSeconds="useSeconds",
+          color="primary",
+          format="24hr",
+          no-title,
+          @input="updateTime",
+          @change="showDateTab"
         )
     slot(name="footer")
 </template>
@@ -239,6 +239,7 @@ export default {
     .v-card {
       box-shadow: none;
     }
+
     .v-date-picker-table--date .v-btn {
       height: 35px;
       width: 35px;

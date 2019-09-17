@@ -14,10 +14,10 @@
                 div {{ view.title }}
               v-list.pa-0
                 v-list-tile.secondary.lighten-2(
-                v-for="tab in view.tabs",
-                :key="tab._id",
-                ripple,
-                @click="selectTab(tab._id, view._id)"
+                  v-for="tab in view.tabs",
+                  :key="tab._id",
+                  ripple,
+                  @click="selectTab(tab._id, view._id)"
                 )
                   v-list-tile-title.body-1.pl-4 {{ tab.title }}
 </template>

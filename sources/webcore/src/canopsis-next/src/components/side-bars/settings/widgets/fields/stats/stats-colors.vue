@@ -7,8 +7,8 @@
           div {{ key }}:
         v-flex
           v-btn(
-          :style="{ backgroundColor: value[key] }",
-          @click="showColorPickerModal(key)"
+            :style="{ backgroundColor: value[key] }",
+            @click="showColorPickerModal(key)"
           ) {{ $t('settings.statsColor.pickColor') }}
 </template>
 

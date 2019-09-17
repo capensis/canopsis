@@ -2,10 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
@@ -17,8 +17,8 @@
       field-stat-selector(v-model="settings.widget.parameters.stat")
       v-divider
       field-stats-colors(
-      :stats="stats",
-      v-model="settings.widget.parameters.statsColors"
+        :stats="stats",
+        v-model="settings.widget.parameters.statsColors"
       )
       v-divider
     v-btn.primary(@click="submit") {{ $t('common.save') }}

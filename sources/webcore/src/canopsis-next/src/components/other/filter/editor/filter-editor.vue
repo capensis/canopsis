@@ -1,33 +1,33 @@
 <template lang="pug">
   div(data-test="filterEditor")
-    v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
+    v-tabs.filter-editor(v-model="activeTab", slider-color="blue darken-4", centered)
       v-tab(:disabled="isRequestStringChanged") {{ $t('filterEditor.tabs.visualEditor') }}
       v-tab-item
         v-container.pa-1
           filter-group(
-          :group="filter",
-          :possibleFields="possibleFields",
-          isInitial,
-          @update:group="updateFilter"
+            :group="filter",
+            :possibleFields="possibleFields",
+            isInitial,
+            @update:group="updateFilter"
           )
       v-tab(@click="openAdvancedTab") {{ $t('filterEditor.tabs.advancedEditor') }}
       v-tab-item
         v-textarea(
-        v-model="requestString",
-        v-validate="'json'",
-        :label="$t('filterEditor.tabs.advancedEditor')",
-        :error-messages="errors.collect('requestString')"
-        data-vv-validate-on="none",
-        name="requestString",
-        rows="10",
-        @input="updateRequestString"
+          v-model="requestString",
+          v-validate="'json'",
+          :label="$t('filterEditor.tabs.advancedEditor')",
+          :error-messages="errors.collect('requestString')",
+          data-vv-validate-on="none",
+          name="requestString",
+          rows="10",
+          @input="updateRequestString"
         )
         v-layout(justify-center)
-          v-flex(xs10 md-6)
+          v-flex(xs10, md-6)
             v-alert(:value="parseError", type="error") {{ parseError }}
         v-btn(
-        :disabled="!isRequestStringChanged || errors.has('requestString')",
-        @click="parseRequestStringToFilter"
+          :disabled="!isRequestStringChanged || errors.has('requestString')",
+          @click="parseRequestStringToFilter"
         ) {{ $t('common.parse') }}
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
 </template>

@@ -1,10 +1,10 @@
 <template lang="pug">
   settings-button-field(
-  :title="$t('settings.liveReporting.title')",
-  :isEmpty="isValueEmpty",
-  @create="openFilterModal",
-  @edit="openFilterModal",
-  @delete="deleteFilter",
+    :title="$t('settings.liveReporting.title')",
+    :isEmpty="isValueEmpty",
+    @create="openFilterModal",
+    @edit="openFilterModal",
+    @delete="deleteFilter"
   )
     .subheading(slot="title") {{ $t('settings.filterEditor') }}
       .font-italic.caption.ml-1(v-show="!required") ({{ $t('common.optional') }})

@@ -5,40 +5,40 @@
     v-flex(xs12)
       slot(v-if="!items.length", name="no-data")
       v-layout.text-pair(
-      v-for="(item, index) in items",
-      :key="item[itemKey]",
-      justify-space-between,
-      align-center
+        v-for="(item, index) in items",
+        :key="item[itemKey]",
+        justify-space-between,
+        align-center
       )
         v-flex.pa-1(xs6)
           v-text-field(
-          :value="item[itemText]",
-          :label="textLabel",
-          :disabled="disabled",
-          :name="getTextFieldName(index)",
-          :error-messages="getCollectedErrorMessages(getTextFieldName(index))",
-          v-validate="textValidationRules",
-          @input="updateFieldInArrayItem(index, itemText, $event)"
+            :value="item[itemText]",
+            :label="textLabel",
+            :disabled="disabled",
+            :name="getTextFieldName(index)",
+            :error-messages="getCollectedErrorMessages(getTextFieldName(index))",
+            v-validate="textValidationRules",
+            @input="updateFieldInArrayItem(index, itemText, $event)"
           )
         v-flex.pa-1(xs6)
           v-text-field(
-          v-if="!mixed",
-          v-validate="valueValidationRules",
-          :value="item[itemValue]",
-          :label="valueLabel",
-          :disabled="disabled",
-          :name="getValueFieldName(index)",
-          :error-messages="getCollectedErrorMessages(getValueFieldName(index))",
-          @input="updateFieldInArrayItem(index, itemValue, $event)"
+            v-if="!mixed",
+            v-validate="valueValidationRules",
+            :value="item[itemValue]",
+            :label="valueLabel",
+            :disabled="disabled",
+            :name="getValueFieldName(index)",
+            :error-messages="getCollectedErrorMessages(getValueFieldName(index))",
+            @input="updateFieldInArrayItem(index, itemValue, $event)"
           )
           mixed-field(
-          v-else
-          v-validate="valueValidationRules",
-          :value="item[itemValue]",
-          :name="getValueFieldName(index)",
-          :disabled="disabled",
-          :error-messages="getCollectedErrorMessages(getValueFieldName(index))",
-          @input="updateFieldInArrayItem(index, itemValue, $event)"
+            v-else,
+            v-validate="valueValidationRules",
+            :value="item[itemValue]",
+            :name="getValueFieldName(index)",
+            :disabled="disabled",
+            :error-messages="getCollectedErrorMessages(getValueFieldName(index))",
+            @input="updateFieldInArrayItem(index, itemValue, $event)"
           )
         .text-pair__delete-button
           v-btn(v-if="!disabled", icon, @click="removeItemFromArray(index)")

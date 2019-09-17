@@ -5,38 +5,38 @@
       v-layout(row, wrap)
         v-flex(xs12)
           v-switch(
-          :input-value="annotationLine.enabled",
-          :label="$t('settings.statsAnnotationLine.enabled')",
-          @change="updateField('enabled', $event)"
+            :input-value="annotationLine.enabled",
+            :label="$t('settings.statsAnnotationLine.enabled')",
+            @change="updateField('enabled', $event)"
           )
         v-flex(xs12)
           v-text-field(
-          :value="annotationLine.value",
-          :label="$t('settings.statsAnnotationLine.value')",
-          :disabled="!annotationLine.enabled",
-          type="number",
-          :name="valueName"
-          :error-messages="errors ? errors.collect(valueName) : []",
-          v-validate="'numeric'"
-          @input="updateField('value', $event)"
+            :value="annotationLine.value",
+            :label="$t('settings.statsAnnotationLine.value')",
+            :disabled="!annotationLine.enabled",
+            type="number",
+            :name="valueName",
+            :error-messages="errors ? errors.collect(valueName) : []",
+            v-validate="'numeric'",
+            @input="updateField('value', $event)"
           )
         v-flex(xs12)
           v-text-field(
-          :value="annotationLine.label",
-          :label="$t('settings.statsAnnotationLine.label')",
-          :disabled="!annotationLine.enabled",
-          @input="updateField('label', $event)"
+            :value="annotationLine.label",
+            :label="$t('settings.statsAnnotationLine.label')",
+            :disabled="!annotationLine.enabled",
+            @input="updateField('label', $event)"
           )
         v-flex(xs12)
           v-btn(
-          :style="{ backgroundColor: annotationLine.lineColor }",
-          :disabled="!annotationLine.enabled",
-          @click="showColorPickerModal('lineColor')"
+            :style="{ backgroundColor: annotationLine.lineColor }",
+            :disabled="!annotationLine.enabled",
+            @click="showColorPickerModal('lineColor')"
           ) {{ $t('settings.statsAnnotationLine.pickLineColor') }}
           v-btn(
-          :style="{ backgroundColor: annotationLine.labelColor }",
-          :disabled="!annotationLine.enabled",
-          @click="showColorPickerModal('labelColor')"
+            :style="{ backgroundColor: annotationLine.labelColor }",
+            :disabled="!annotationLine.enabled",
+            @click="showColorPickerModal('labelColor')"
           ) {{ $t('settings.statsAnnotationLine.pickLabelColor') }}
 </template>
 

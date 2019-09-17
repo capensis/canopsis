@@ -1,9 +1,9 @@
 <template>
   <svg
-    class="webhook-svg-icon"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 50 50"
-    version="1.1"
+      class="webhook-svg-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 50 50"
+      version="1.1"
   >
     <g id="surface1">
       <path d="M 25 4 C 19.488281 4 15 8.488281 15 14 C 15 17.289063 16.632813 20.175781 19.09375 22 L 14.15625
