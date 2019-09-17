@@ -755,6 +755,12 @@ export default {
         title: 'Créer une action',
         success: 'Action créée avec succès !',
       },
+      edit: {
+        success: 'Action éditée avec succès !',
+      },
+      remove: {
+        success: 'Action supprimée avec succès !',
+      },
       tabs: {
         general: 'Général',
         hook: 'Hook',

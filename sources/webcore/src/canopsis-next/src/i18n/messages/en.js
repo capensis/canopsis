@@ -869,6 +869,12 @@ export default {
         title: 'Create action',
         success: 'Action successfully created !',
       },
+      edit: {
+        success: 'Action successfully edited !',
+      },
+      remove: {
+        success: 'Action successfully removed !',
+      },
       tabs: {
         general: 'General',
         hook: 'Hook',
