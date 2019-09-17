@@ -3,14 +3,14 @@
     v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $t('common.links') }}
     v-list(dark, dense)
       v-list-tile-content(
-      v-for="(categoryLinks, category) in linkList",
-      :key="category"
+        v-for="(categoryLinks, category) in linkList",
+        :key="category"
       )
         template(v-if="hasAccessToCategory(category)")
           v-list-tile-title.px-2.font-weight-bold.category {{ category }}
           v-list-tile(
-          v-for="(link, index) in categoryLinks",
-          :key="index"
+            v-for="(link, index) in categoryLinks",
+            :key="index"
           )
             alarm-column-value-link(:link="link")
 </template>

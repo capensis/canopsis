@@ -4,20 +4,20 @@
     v-container
       v-layout
         v-checkbox(
-        data-test="openFilter",
-        color="primary",
-        :label="$t('settings.open')",
-        v-model="value.opened",
-        @change="updateField('opened', $event)"
-        hide-details
+          v-model="value.opened",
+          :label="$t('settings.open')",
+          data-test="openFilter",
+          color="primary",
+          hide-details,
+          @change="updateField('opened', $event)"
         )
         v-checkbox(
-        data-test="resolvedFilter",
-        color="primary",
-        :label="$t('settings.resolved')",
-        v-model="value.resolved",
-        @change="updateField('resolved', $event)"
-        hide-details
+          v-model="value.resolved",
+          :label="$t('settings.resolved')",
+          data-test="resolvedFilter",
+          color="primary",
+          hide-details,
+          @change="updateField('resolved', $event)"
         )
 </template>
 

@@ -11,7 +11,7 @@
           fab,
           small,
           color="secondary",
-          @click="addPopup",
+          @click="addPopup"
         )
           v-icon add
       v-layout(column)
@@ -24,14 +24,14 @@
                   data-test="infoPopupDeletePopup",
                   icon,
                   small,
-                  @click="deletePopup(index)",
+                  @click="deletePopup(index)"
                 )
                   v-icon(color="error") delete
                 v-btn(
                   data-test="infoPopupEditPopup",
                   icon,
                   small,
-                  @click="editPopup(index, popup)",
+                  @click="editPopup(index, popup)"
                 )
                   v-icon(color="primary") edit
           v-card-text
@@ -43,12 +43,12 @@
         data-test="infoPopupCancelButton",
         depressed,
         flat,
-        @click="hideModal",
+        @click="hideModal"
       ) {{ $t('common.cancel') }}
       v-btn.primary(
-        data-test="infoPopupSubmitButton"
-        type="submit"
-        @click="submit",
+        data-test="infoPopupSubmitButton",
+        type="submit",
+        @click="submit"
       ) {{ $t('common.submit') }}
 </template>
 

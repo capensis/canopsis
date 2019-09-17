@@ -4,23 +4,23 @@
       progress-overlay(:pending="pending")
       stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       ds-calendar(
-      :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
-      :events="events",
-      @change="changeCalendar",
-      @edit="editEvent"
+        :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
+        :events="events",
+        @change="changeCalendar",
+        @edit="editEvent"
       )
         v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
           v-card-text
             v-layout(
-            v-for="(event, index) in calendarEvent.data.meta.events",
-            :key="`popover-event-${index}`",
-            row,
-            wrap
+              v-for="(event, index) in calendarEvent.data.meta.events",
+              :key="`popover-event-${index}`",
+              row,
+              wrap
             )
               v-flex(xs12)
                 div.ds-calendar-event(
-                :style="{ backgroundColor: getStyleColor(details, event) }",
-                @click="editEvent(event)"
+                  :style="{ backgroundColor: getStyleColor(details, event) }",
+                  @click="editEvent(event)"
                 )
                   strong {{ event.data.title }}
                   p {{ event.data.description }}
@@ -241,7 +241,7 @@ export default {
         left: 0;
         top: 0;
         width: 100%;
-        height: 100%!important;
+        height: 100% !important;
         padding: 4px;
 
         .v-menu__activator {
@@ -254,10 +254,12 @@ export default {
           display: flex;
           height: 100%;
           width: 100%;
+
           & > span {
             margin: auto;
             text-align: center;
           }
+
           .ds-ev-description {
             display: none;
           }

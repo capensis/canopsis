@@ -4,32 +4,32 @@
       div(:class="validationHeaderClass") {{ $t('settings.advancedSettings') }}
     v-list.grey.lighten-4.px-2.py-0(expand)
       field-filters(
-      :filters="value.filters",
-      hideSelect,
-      @update:filters="updateField('filters', $event)"
+        :filters="value.filters",
+        hideSelect,
+        @update:filters="updateField('filters', $event)"
       )
       v-divider
       field-opened-resolved-filter(
-      :value="value.alarmsStateFilter",
-      @input="updateField('alarmsStateFilter', $event)"
+        :value="value.alarmsStateFilter",
+        @input="updateField('alarmsStateFilter', $event)"
       )
       v-divider
       field-switcher(
-      :value="value.considerPbehaviors",
-      :title="$t('settings.considerPbehaviors.title')",
-      @input="updateField('considerPbehaviors', $event)"
+        :value="value.considerPbehaviors",
+        :title="$t('settings.considerPbehaviors.title')",
+        @input="updateField('considerPbehaviors', $event)"
       )
       v-divider
       field-criticity-levels(
-      :levels="value.criticityLevels",
-      @input="updateField('criticityLevels', $event)"
+        :levels="value.criticityLevels",
+        @input="updateField('criticityLevels', $event)"
       )
       v-divider
       field-levels-colors-selector(
-      :levelsColors="value.criticityLevelsColors",
-      colorType="hex",
-      hideSuffix,
-      @input="updateField('criticityLevelsColors', $event)"
+        :levelsColors="value.criticityLevelsColors",
+        colorType="hex",
+        hideSuffix,
+        @input="updateField('criticityLevelsColors', $event)"
       )
 </template>
 

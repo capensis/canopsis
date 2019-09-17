@@ -2,23 +2,23 @@
   div
     slot(v-if="isPatternsEmpty", name="no-data")
       v-alert.ma-2(
-      :value="true",
-      type="info"
+        :value="true",
+        type="info"
       ) {{ disabled ? $t('patternsList.noDataDisabled') : $t('patternsList.noData') }}
     v-layout(
-    v-for="(pattern, index) in patterns",
-    :key="`${$options.filters.json(pattern)}${index}`",
-    row,
-    wrap,
-    align-center
+      v-for="(pattern, index) in patterns",
+      :key="`${$options.filters.json(pattern)}${index}`",
+      row,
+      wrap,
+      align-center
     )
       v-flex(:class="disabled ? 'xs12' : 'xs11'")
         v-textarea(
-        :value="pattern | json",
-        rows="7",
-        no-resize,
-        readonly,
-        disabled
+          :value="pattern | json",
+          rows="7",
+          no-resize,
+          readonly,
+          disabled
         )
       v-flex.text-xs-center(v-if="!disabled", xs1)
         div

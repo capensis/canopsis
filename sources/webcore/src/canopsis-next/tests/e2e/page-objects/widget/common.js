@@ -1,6 +1,7 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
+const { FILTERS_TYPE } = require('../../constants');
 
 const commands = {
   el,
@@ -229,14 +230,19 @@ const commands = {
     });
   },
 
-  editColumnName(index = 1, { label, value, isHtml = false }) {
-    return this.clickColumnNameLabel(index)
+  editColumnName(index = 1, { label, value, isHtml }) {
+    this.clickColumnNameLabel(index)
       .clearColumnNameLabel(index, label)
       .setColumnNameLabel(index, label)
       .clickColumnNameValue(index)
       .clearColumnNameValue(index)
-      .setColumnNameValue(index, value)
-      .setColumnNameSwitch(index, isHtml);
+      .setColumnNameValue(index, value);
+
+    if (typeof isHtml === 'boolean') {
+      this.setColumnNameSwitch(index, isHtml);
+    }
+
+    return this;
   },
 
   clickFilterOnOpenResolved() {
@@ -261,6 +267,38 @@ const commands = {
 
   clickInfoPopup() {
     return this.customClick('@widgetInfoPopup');
+  },
+
+  clickFilters() {
+    return this.customClick('@filters');
+  },
+
+  setMixFilters(checked = false) {
+    return this.getAttribute('@mixFiltersInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@mixFilters');
+      }
+    });
+  },
+
+  setFiltersType(type) {
+    return this.getAttribute('@andFiltersInput', 'aria-checked', ({ value }) => {
+      if (value === 'true' && type === FILTERS_TYPE.OR) {
+        this.customClick('@orFilters');
+      } else if (value === 'false' && type === FILTERS_TYPE.AND) {
+        this.customClick('@andFilters');
+      }
+    });
+  },
+
+  clickAddFilter() {
+    return this.customClick('@addFilter');
+  },
+
+  selectFilter(index = 1) {
+    return this.customClick('@selectFilters')
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 };
 
@@ -337,6 +375,17 @@ module.exports = {
     resolvedFilterInput: `input${sel('resolvedFilter')}`,
 
     widgetInfoPopup: sel('infoPopupButton'),
+
+    filters: sel('filters'),
+    mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
+    mixFiltersInput: `input${sel('mixFilters')}`,
+    addFilter: sel('addFilter'),
+    andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
+    andFiltersInput: `input${sel('andFilters')}`,
+    orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
+    editFilter: sel('editFilter-%s'),
+    deleteFilter: sel('deleteFilter-%s'),
+    selectFilters: `${sel('selectFilters')} .v-input__slot`,
   },
   commands: [commands],
 };

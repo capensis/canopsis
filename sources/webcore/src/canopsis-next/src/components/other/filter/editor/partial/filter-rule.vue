@@ -2,44 +2,44 @@
   v-card.my-2.pa-0(data-test="filterRule")
     v-layout(justify-end)
       v-btn(
-      data-test="deleteRule",
-      @click="$emit('deleteRule')",
-      color="red",
-      small,
-      flat,
-      dark,
-      fab
+        data-test="deleteRule",
+        @click="$emit('deleteRule')",
+        color="red",
+        small,
+        flat,
+        dark,
+        fab
       )
         v-icon close
     v-layout.px-2(row, wrap, justify-space-around)
       v-flex.pa-1(data-test="fieldRule", xs12, md4)
         v-combobox.my-2(
-        :items="possibleFields",
-        :value="rule.field",
-        @input="updateField('field', $event)",
-        solo-inverted,
-        hide-details,
-        dense,
-        flat
+          :items="possibleFields",
+          :value="rule.field",
+          @input="updateField('field', $event)",
+          solo-inverted,
+          hide-details,
+          dense,
+          flat
         )
       v-flex.pa-1(data-test="operatorRule", xs12, md4)
         v-combobox.my-2(
-        :value="rule.operator",
-        :items="operators",
-        @input="updateField('operator', $event)",
-        solo-inverted,
-        hide-details,
-        dense,
-        flat
+          :value="rule.operator",
+          :items="operators",
+          @input="updateField('operator', $event)",
+          solo-inverted,
+          hide-details,
+          dense,
+          flat
         )
       v-flex.pa-1(data-test="inputRule", xs12, md4)
         mixed-field.my-2(
-        v-show="isShownInputField",
-        :value="rule.input",
-        solo-inverted,
-        hide-details,
-        flat,
-        @input="updateField('input', $event)"
+          v-show="isShownInputField",
+          :value="rule.input",
+          solo-inverted,
+          hide-details,
+          flat,
+          @input="updateField('input', $event)"
         )
 </template>
 
@@ -171,8 +171,8 @@ export default {
     min-width: 30px;
 
     & /deep/ .v-avatar {
-      width: 20px!important;
-      height: 20px!important;
+      width: 20px !important;
+      height: 20px !important;
     }
   }
 

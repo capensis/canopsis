@@ -1,30 +1,30 @@
 <template lang="pug">
   v-tabs.view-tabs(
-  ref="tabs",
-  :key="vTabsKey",
-  :value="$route.fullPath"
-  :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
-  :hide-slider="isTabsChanged",
-  color="secondary lighten-2",
-  slider-color="primary",
-  dark
+    ref="tabs",
+    :key="vTabsKey",
+    :value="$route.fullPath",
+    :class="{ hidden: this.tabs.length < 2 && !isEditingMode, 'tabs-editing': isEditingMode }",
+    :hide-slider="isTabsChanged",
+    color="secondary lighten-2",
+    slider-color="primary",
+    dark
   )
     draggable.d-flex(
-    data-test="draggable-wrap",
-    v-if="tabs.length",
-    :value="tabs",
-    :options="draggableOptions",
-    @end="onDragEnd",
-    @input="$emit('update:tabs', $event)"
+      data-test="draggable-wrap",
+      v-if="tabs.length",
+      :value="tabs",
+      :options="draggableOptions",
+      @end="onDragEnd",
+      @input="$emit('update:tabs', $event)"
     )
       v-tab.draggable-item(
-      :data-test="`tab-${tab._id}`",
-      v-for="tab in tabs",
-      :key="tab._id",
-      :disabled="isTabsChanged",
-      :to="getTabHrefById(tab._id)",
-      exact,
-      ripple
+        :data-test="`tab-${tab._id}`",
+        v-for="tab in tabs",
+        :key="tab._id",
+        :disabled="isTabsChanged",
+        :to="getTabHrefById(tab._id)",
+        exact,
+        ripple
       )
         span {{ tab.title }}
         update-tab-btn(
@@ -44,16 +44,16 @@
         )
     template(v-if="$scopedSlots.default")
       v-tab-item(
-      v-for="tab in tabs",
-      :key="tab._id",
-      :value="getTabHrefById(tab._id)",
-      lazy
+        v-for="tab in tabs",
+        :key="tab._id",
+        :value="getTabHrefById(tab._id)",
+        lazy
       )
         slot(
-        :tab="tab",
-        :isEditingMode="isEditingMode",
-        :hasUpdateAccess="hasUpdateAccess",
-        :updateTabMethod="updateTab"
+          :tab="tab",
+          :isEditingMode="isEditingMode",
+          :hasUpdateAccess="hasUpdateAccess",
+          :updateTabMethod="updateTab"
         )
 </template>
 
@@ -187,7 +187,7 @@ export default {
       opacity: 1;
 
       button {
-        color: rgba(255,255,255,0.3) !important;
+        color: rgba(255, 255, 255, 0.3) !important;
         box-shadow: none !important;
         pointer-events: none;
       }

@@ -9,8 +9,8 @@
           td {{ props.item.connector_name }}
           td
             v-icon(
-            small,
-            :color="props.item.enabled ? 'primary' : 'error'"
+              small,
+              :color="props.item.enabled ? 'primary' : 'error'"
             ) {{ props.item.enabled ? 'check' : 'clear'}}
           td {{ props.item.tstart | date('long') }}
           td {{ props.item.tstop | date('long') }}
@@ -20,15 +20,15 @@
           td
             template(v-if="hasAccessToDeletePbehavior")
               v-btn(
-              icon,
-              small,
-              @click.stop="showEditPbehaviorModal(props.item)"
+                icon,
+                small,
+                @click.stop="showEditPbehaviorModal(props.item)"
               )
                 v-icon edit
               v-btn(
-              icon,
-              small,
-              @click="showDeletePbehaviorModal(props.item._id)"
+                icon,
+                small,
+                @click="showDeletePbehaviorModal(props.item._id)"
               )
                 v-icon(color="error") delete
 </template>

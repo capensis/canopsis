@@ -14,9 +14,9 @@
           span {{ $t('settings.statsSelect.draggable') }}
       v-list.secondary(dark)
         draggable(
-        :value="orderedStats",
-        :options="draggableOptions",
-        @input="updateStatsPositions"
+          :value="orderedStats",
+          :options="draggableOptions",
+          @input="updateStatsPositions"
         )
           v-list-group(v-for="stat in orderedStats", :key="stat.title")
             v-list-tile(slot="activator")

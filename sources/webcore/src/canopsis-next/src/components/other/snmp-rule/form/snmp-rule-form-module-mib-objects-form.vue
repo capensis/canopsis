@@ -5,39 +5,39 @@
       v-flex(xs12)
         v-menu(:items="items", full-width, offset-y, max-height="200")
           v-text-field.vars-input.pt-0(
-          slot="activator",
-          :value="form.value",
-          :label="$t('modals.createSnmpRule.fields.moduleMibObjects.vars')",
-          hide-details,
-          @input="updateField('value', $event)"
+            slot="activator",
+            :value="form.value",
+            :label="$t('modals.createSnmpRule.fields.moduleMibObjects.vars')",
+            hide-details,
+            @input="updateField('value', $event)"
           )
             template(slot="append", v-if="large")
               v-btn(
-              :class="{ active: isVisible }",
-              icon,
-              @click.stop="toggleVisibility"
+                :class="{ active: isVisible }",
+                icon,
+                @click.stop="toggleVisibility"
               )
                 v-icon attach_file
           v-list
             v-list-tile(
-            v-for="(item, index) in items",
-            :key="index",
-            @click="updateSelectableInput(item)"
+              v-for="(item, index) in items",
+              :key="index",
+              @click="updateSelectableInput(item)"
             )
               v-list-tile-title {{ item }}
       v-expand-transition(v-if="large")
         v-flex(v-show="isVisible", xs12)
           v-text-field(
-          :value="form.regex",
-          :label="$t('modals.createSnmpRule.fields.moduleMibObjects.regex')",
-          hide-details,
-          @input="updateField('regex', $event)"
+            :value="form.regex",
+            :label="$t('modals.createSnmpRule.fields.moduleMibObjects.regex')",
+            hide-details,
+            @input="updateField('regex', $event)"
           )
           v-text-field(
-          :value="form.formatter",
-          :label="$t('modals.createSnmpRule.fields.moduleMibObjects.formatter')",
-          hide-details,
-          @input="updateField('formatter', $event)"
+            :value="form.formatter",
+            :label="$t('modals.createSnmpRule.fields.moduleMibObjects.formatter')",
+            hide-details,
+            @input="updateField('formatter', $event)"
           )
 </template>
 

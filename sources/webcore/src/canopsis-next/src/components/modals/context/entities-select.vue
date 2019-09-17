@@ -3,16 +3,15 @@
     v-expansion-panel-content.grey.darken-2.white--text
       div.white--text(slot="header") {{ label }}
       v-card
-          v-layout(wrap)
-            v-chip(v-for="entity in entities",
-                    :key="entity._id",
-                    close,
-                    @input="removeEntity(entity)"
-                    ) {{ entity }}
-          v-btn.red.white--text(v-show="entities.length", @click="clear", small) Clear
-          context-general-list(
-            @update:selectedIds="updateEntities($event)",
-          )
+        v-layout(wrap)
+          v-chip(
+            v-for="entity in entities",
+            :key="entity._id",
+            close,
+            @input="removeEntity(entity)"
+          ) {{ entity }}
+        v-btn.red.white--text(v-show="entities.length", @click="clear", small) Clear
+        context-general-list(@update:selectedIds="updateEntities($event)")
 </template>
 
 <script>
@@ -69,36 +68,36 @@ export default {
 
 <style scoped>
   .addContainer {
-    display :flex;
+    display: flex;
     align-items: center;
     align-content: flex-start;
   }
-  .entities{
+
+  .entities {
     width: 50%;
     white-space: nowrap;
     overflow: auto;
   }
-  .label{
+
+  .label {
     width: 16%;
   }
-  .scrollbar::-webkit-scrollbar-track
-  {
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+
+  .scrollbar::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     background-color: #F5F5F5;
   }
 
-  .scrollbar::-webkit-scrollbar
-  {
+  .scrollbar::-webkit-scrollbar {
     height: 3px;
   }
 
-  .scrollbar::-webkit-scrollbar-thumb
-  {
+  .scrollbar::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
     background-color: darkgray;
     height: 0;
   }

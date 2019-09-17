@@ -2,38 +2,38 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      v-list-group
+      v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
-          v-model="settings.widget.parameters.sort",
-          :columns="settings.widget.parameters.widgetColumns",
-          :columnsLabel="$t('settings.columnName')"
+            v-model="settings.widget.parameters.sort",
+            :columns="settings.widget.parameters.widgetColumns",
+            :columnsLabel="$t('settings.columnName')"
           )
           v-divider
           field-columns(v-model="settings.widget.parameters.widgetColumns")
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
-            v-model="settings.widget.parameters.mainFilter",
-            :entitiesType="$constants.ENTITIES_TYPES.entity",
-            :filters.sync="settings.widget.parameters.viewFilters",
-            :condition.sync="settings.widget.parameters.mainFilterCondition",
-            :hasAccessToAddFilter="hasAccessToAddFilter",
-            :hasAccessToEditFilter="hasAccessToEditFilter",
+              v-model="settings.widget.parameters.mainFilter",
+              :entitiesType="$constants.ENTITIES_TYPES.entity",
+              :filters.sync="settings.widget.parameters.viewFilters",
+              :condition.sync="settings.widget.parameters.mainFilterCondition",
+              :hasAccessToAddFilter="hasAccessToAddFilter",
+              :hasAccessToEditFilter="hasAccessToEditFilter"
             )
             v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitContext", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

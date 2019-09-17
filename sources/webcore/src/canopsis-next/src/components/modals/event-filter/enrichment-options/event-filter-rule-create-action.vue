@@ -13,7 +13,7 @@
           return-object
         )
         component(
-          v-for="option in form.type.options"
+          v-for="option in form.type.options",
           v-model="form[option.value]",
           v-validate="$options.filters.validationRulesByOption(option)",
           :is="option | componentByOption",
