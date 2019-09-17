@@ -2,11 +2,11 @@
   div(:data-test="`view-page-${id}`")
     v-fade-transition
       view-tabs-wrapper(
-      v-if="isViewTabsReady",
-      :view="view",
-      :isEditingMode="isEditingMode",
-      :hasUpdateAccess="hasUpdateAccess",
-      :updateViewMethod="data => updateView({ id, data })",
+        v-if="isViewTabsReady",
+        :view="view",
+        :isEditingMode="isEditingMode",
+        :hasUpdateAccess="hasUpdateAccess",
+        :updateViewMethod="data => updateView({ id, data })"
       )
     .fab
       v-layout(data-test="controlViewLayout", column)
@@ -15,79 +15,79 @@
             v-icon refresh
           span {{ $t('common.refresh') }}
         v-speed-dial(
-        v-if="hasUpdateAccess",
-        v-model="isVSpeedDialOpen",
-        direction="left",
-        transition="slide-y-reverse-transition"
+          v-if="hasUpdateAccess",
+          v-model="isVSpeedDialOpen",
+          direction="left",
+          transition="slide-y-reverse-transition"
         )
           v-btn(
-          data-test="menuViewButton",
-          slot="activator",
-          :input-value="isVSpeedDialOpen",
-          color="primary",
-          dark,
-          fab,
+            data-test="menuViewButton",
+            slot="activator",
+            :input-value="isVSpeedDialOpen",
+            color="primary",
+            dark,
+            fab
           )
             v-icon menu
             v-icon close
           v-tooltip(top)
             v-btn(
-            slot="activator",
-            v-model="isFullScreenMode"
-            fab,
-            dark,
-            small,
-            @click="toggleFullScreenMode",
+              slot="activator",
+              v-model="isFullScreenMode",
+              fab,
+              dark,
+              small,
+              @click="toggleFullScreenMode"
             )
               v-icon fullscreen
               v-icon fullscreen_exit
             span alt + enter / command + enter
           v-tooltip(v-if="hasUpdateAccess", top)
             v-btn(
-            data-test="editViewButton",
-            slot="activator",
-            fab,
-            dark,
-            small,
-            @click.stop="toggleViewEditingMode",
-            v-model="isEditingMode"
+              data-test="editViewButton",
+              slot="activator",
+              fab,
+              dark,
+              small,
+              @click.stop="toggleViewEditingMode",
+              v-model="isEditingMode"
             )
               v-icon edit
               v-icon done
             span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
           v-tooltip(top)
             v-btn(
-            data-test="addWidgetButton",
-            v-if="hasUpdateAccess",
-            slot="activator",
-            fab,
-            dark,
-            small,
-            color="indigo",
-            @click.stop="showCreateWidgetModal",
+              data-test="addWidgetButton",
+              v-if="hasUpdateAccess",
+              slot="activator",
+              fab,
+              dark,
+              small,
+              color="indigo",
+              @click.stop="showCreateWidgetModal"
             )
               v-icon add
             span {{ $t('common.addWidget') }}
           v-tooltip(top)
             v-btn(
-            data-test="addViewButton",
-            v-if="hasUpdateAccess",
-            slot="activator",
-            fab,
-            dark,
-            small,
-            color="green",
-            @click.stop="showCreateTabModal"
+              data-test="addViewButton",
+              v-if="hasUpdateAccess",
+              slot="activator",
+              fab,
+              dark,
+              small,
+              color="green",
+              @click.stop="showCreateTabModal"
             )
               v-icon add
             span {{ $t('common.addTab') }}
         v-tooltip(v-else, left)
           v-btn(
-          slot="activator",
-          v-model="isFullScreenMode"
-          fab,
-          dark,
-          @click="toggleFullScreenMode",
+            slot="activator",
+            v-model="isFullScreenMode",
+            fab,
+            dark,
+            @click="toggleFullScreenMode"
           )
             v-icon fullscreen
             v-icon fullscreen_exit

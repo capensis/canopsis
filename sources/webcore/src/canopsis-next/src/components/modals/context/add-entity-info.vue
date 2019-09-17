@@ -6,26 +6,26 @@
     v-card-text
       v-form
         v-text-field(
-        :label="$t('common.name')",
-        v-model="form.name",
-        v-validate="'required|unique-name'",
-        data-vv-name="name",
-        :error-messages="errors.collect('name')"
+          :label="$t('common.name')",
+          v-model="form.name",
+          v-validate="'required|unique-name'",
+          data-vv-name="name",
+          :error-messages="errors.collect('name')"
         )
         v-text-field(
-        :label="$t('common.description')",
-        v-model="form.description",
-        v-validate="'required'",
-        data-vv-name="description",
-        :error-messages="errors.collect('description')"
+          :label="$t('common.description')",
+          v-model="form.description",
+          v-validate="'required'",
+          data-vv-name="description",
+          :error-messages="errors.collect('description')"
         )
         v-textarea(
-        :label="$t('common.value')",
-        v-model="form.value",
-        v-validate,
-        data-vv-rule="'required'",
-        data-vv-name="value",
-        :error-messages="errors.collect('value')"
+          :label="$t('common.value')",
+          v-model="form.value",
+          v-validate,
+          data-vv-rule="'required'",
+          data-vv-name="value",
+          :error-messages="errors.collect('value')"
         )
       v-divider
       v-layout.py-1(justify-end)

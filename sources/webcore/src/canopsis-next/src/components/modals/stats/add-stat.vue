@@ -7,61 +7,61 @@
       v-container
         v-container.pt-0(fluid)
           v-select(
-          v-model="form.stat",
-          hide-details,
-          :items="statsTypes",
-          return-object,
+            v-model="form.stat",
+            hide-details,
+            :items="statsTypes",
+            return-object
           )
           v-text-field(
-          :placeholder="$t('common.title')",
-          v-model="form.title",
-          :error-messages="errors.collect('title')",
-          v-validate="'required'",
-          data-vv-name="title",
+            :placeholder="$t('common.title')",
+            v-model="form.title",
+            :error-messages="errors.collect('title')",
+            v-validate="'required'",
+            data-vv-name="title"
           )
           v-card(v-if="form.stat.options.length || config.withTrend", color="secondary white--text", dark)
             v-card-title {{ $t('common.parameters') }}
             v-card-text
               v-switch(
-              v-if="config.withTrend",
-              :label="$t('common.trend')",
-              v-model="form.trend",
-              hide-details,
-              color="primary"
+                v-if="config.withTrend",
+                :label="$t('common.trend')",
+                v-model="form.trend",
+                hide-details,
+                color="primary"
               )
               template(v-for="option in form.stat.options")
                 v-switch(
-                v-if="option === $constants.STATS_OPTIONS.recursive"
-                :label="$t('common.recursive')",
-                v-model="form.parameters.recursive",
-                hide-details,
-                color="primary"
+                  v-if="option === $constants.STATS_OPTIONS.recursive",
+                  :label="$t('common.recursive')",
+                  v-model="form.parameters.recursive",
+                  hide-details,
+                  color="primary"
                 )
                 v-select(
-                v-else-if="option === $constants.STATS_OPTIONS.states"
-                :placeholder="$t('common.states')",
-                :items="stateTypes",
-                v-model="form.parameters.states",
-                multiple,
-                chips,
-                hide-details
+                  v-else-if="option === $constants.STATS_OPTIONS.states",
+                  :placeholder="$t('common.states')",
+                  :items="stateTypes",
+                  v-model="form.parameters.states",
+                  multiple,
+                  chips,
+                  hide-details
                 )
                 v-combobox(
-                v-else-if="option === $constants.STATS_OPTIONS.authors"
-                :placeholder="$t('common.authors')",
-                v-model="form.parameters.authors",
-                hide-details,
-                chips,
-                multiple
+                  v-else-if="option === $constants.STATS_OPTIONS.authors",
+                  :placeholder="$t('common.authors')",
+                  v-model="form.parameters.authors",
+                  hide-details,
+                  chips,
+                  multiple
                 )
                 v-text-field(
-                v-else-if="option === $constants.STATS_OPTIONS.sla",
-                v-model="form.parameters.sla",
-                v-validate="{ required: true, regex: /^(<|>|<=|>=)\\s*\\d+$/ }",
-                :placeholder="$t('common.sla')",
-                :error-messages="errors.collect('sla')",
-                :hide-details="!errors.has('sla')"
-                name="sla"
+                  v-else-if="option === $constants.STATS_OPTIONS.sla",
+                  v-model="form.parameters.sla",
+                  v-validate="{ required: true, regex: /^(<|>|<=|>=)\\s*\\d+$/ }",
+                  :placeholder="$t('common.sla')",
+                  :error-messages="errors.collect('sla')",
+                  :hide-details="!errors.has('sla')",
+                  name="sla"
                 )
                   v-tooltip(slot="append", left)
                     v-icon(slot="activator", dark) help_outline

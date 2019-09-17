@@ -5,10 +5,10 @@
         v-flex(xs3)
           v-text-field(v-model="infosSearchingText", :label="$t('context.moreInfos.infosSearchLabel')", dark)
       v-data-table(
-      :items="items",
-      item-key="item.name",
-      :headers="headers",
-      :search="infosSearchingText"
+        :items="items",
+        item-key="item.name",
+        :headers="headers",
+        :search="infosSearchingText"
       )
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}

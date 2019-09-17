@@ -2,10 +2,10 @@
   div
     span(@click.stop="textClicked") {{ shortenedText }}
     v-menu(
-    v-if="!isShort",
-    v-model="isFullTextMenuOpen",
-    :close-on-content-click="false",
-    :open-on-click="false"
+      v-if="!isShort",
+      v-model="isFullTextMenuOpen",
+      :close-on-content-click="false",
+      :open-on-click="false"
     )
       span.ml-1(slot="activator", small, depressed, @click.stop="openFullTextMenu") ...
       v-card(dark)

@@ -4,8 +4,8 @@
       .subheading(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
         .font-italic.caption.ml-1 ({{ $t('settings.statsNumbers.defaultStat') }})
       v-btn.primary(
-      small,
-      @click="openAddStatModal"
+        small,
+        @click="openAddStatModal"
       ) {{ $t('common.select') }}
 </template>
 

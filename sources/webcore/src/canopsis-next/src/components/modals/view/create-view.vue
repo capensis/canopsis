@@ -10,56 +10,56 @@
         v-layout(wrap, justify-center)
           v-flex(xs11)
             v-text-field(
-            data-test="viewFieldName",
-            :label="$t('common.name')",
-            v-model="form.name",
-            data-vv-name="name",
-            v-validate="'required'",
-            :error-messages="errors.collect('name')",
+              data-test="viewFieldName",
+              :label="$t('common.name')",
+              v-model="form.name",
+              data-vv-name="name",
+              v-validate="'required'",
+              :error-messages="errors.collect('name')"
             )
             v-text-field(
-            data-test="viewFieldTitle",
-            :label="$t('common.title')",
-            v-model="form.title",
-            data-vv-name="title",
-            v-validate="'required'",
-            :error-messages="errors.collect('title')",
+              data-test="viewFieldTitle",
+              :label="$t('common.title')",
+              v-model="form.title",
+              data-vv-name="title",
+              v-validate="'required'",
+              :error-messages="errors.collect('title')"
             )
             v-text-field(
-            data-test="viewFieldDescription",
-            :label="$t('common.description')",
-            v-model="form.description",
-            data-vv-name="description",
+              data-test="viewFieldDescription",
+              :label="$t('common.description')",
+              v-model="form.description",
+              data-vv-name="description"
             )
             v-switch(
-            data-test="viewFieldEnabled",
-            v-model="form.enabled",
-            :label="$t('common.enabled')"
+              data-test="viewFieldEnabled",
+              v-model="form.enabled",
+              :label="$t('common.enabled')"
             )
         v-layout(wrap, justify-center)
           v-flex(xs11)
             v-combobox(
-            data-test="viewFieldGroupTags",
-            v-model="form.tags",
-            :label="$t('modals.view.fields.groupTags')",
-            tags,
-            clearable,
-            multiple,
-            append-icon,
-            chips,
-            deletable-chips,
+              data-test="viewFieldGroupTags",
+              v-model="form.tags",
+              :label="$t('modals.view.fields.groupTags')",
+              tags,
+              clearable,
+              multiple,
+              append-icon,
+              chips,
+              deletable-chips
             )
             v-combobox(
-            data-test="viewFieldGroupId",
-            ref="combobox",
-            v-model="groupName",
-            :items="groupNames",
-            :label="$t('modals.view.fields.groupIds')",
-            :search-input.sync="search"
-            data-vv-name="group",
-            v-validate="'required'",
-            :error-messages="errors.collect('group')",
-            @change="closeComboboxMenuOnChange()"
+              data-test="viewFieldGroupId",
+              ref="combobox",
+              v-model="groupName",
+              :items="groupNames",
+              :label="$t('modals.view.fields.groupIds')",
+              :search-input.sync="search",
+              data-vv-name="group",
+              v-validate="'required'",
+              :error-messages="errors.collect('group')",
+              @change="closeComboboxMenuOnChange()"
             )
               template(slot="no-data")
                 v-list-tile
@@ -72,9 +72,9 @@
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(data-test="viewSubmitButton", v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
       v-btn.error(
-      data-test="viewDeleteButton",
-      v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
-      @click="remove"
+        data-test="viewDeleteButton",
+        v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
+        @click="remove"
       ) {{ $t('common.delete') }}
 </template>
 
@@ -316,7 +316,7 @@ export default {
         /**
          * If we got a view in modal's config, and if we're not duplicating a view, that
          * means we're editing a view
-        */
+         */
         if (!this.config.isDuplicating && this.config.view) {
           this.addErrorPopup({ text: this.$t('modals.view.fail.edit') });
         }

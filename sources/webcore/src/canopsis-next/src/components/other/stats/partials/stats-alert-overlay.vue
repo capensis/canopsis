@@ -42,6 +42,6 @@ export default {
 
 <style>
   .alert-tooltip .alert-tooltip-icon {
-    color: rgba(0,0,0,.3) !important;
+    color: rgba(0, 0, 0, .3) !important;
   }
 </style>

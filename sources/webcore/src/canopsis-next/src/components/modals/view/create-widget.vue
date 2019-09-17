@@ -6,10 +6,10 @@
     v-card-text
       v-layout(row, wrap)
         v-flex.my-1(
-        xs12,
-        v-for="widgetType in widgetsTypes",
-        :key="widgetType.value",
-        @click="selectWidgetType(widgetType.value)"
+          xs12,
+          v-for="widgetType in widgetsTypes",
+          :key="widgetType.value",
+          @click="selectWidgetType(widgetType.value)"
         )
           v-card.widgetType(:data-test="`widget-${widgetType.value}`")
             v-card-title(primary-title)

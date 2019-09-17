@@ -4,9 +4,9 @@
       progress-overlay(:pending="pending")
       stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
       v-data-table(
-      :items="stats",
-      :headers="tableHeaders",
-      :pagination.sync="pagination"
+        :items="stats",
+        :headers="tableHeaders",
+        :pagination.sync="pagination"
       )
         template(
           slot="items",
@@ -22,8 +22,8 @@
                 div(v-if="hasTrend(item[query.stat.title])")
                   sub.ml-2
                     v-icon.caption(
-                    small,
-                    :color="item[query.stat.title].trend | trendColor"
+                      small,
+                      :color="item[query.stat.title].trend | trendColor"
                     ) {{ item[query.stat.title].trend | trendIcon }}
                   sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
 </template>

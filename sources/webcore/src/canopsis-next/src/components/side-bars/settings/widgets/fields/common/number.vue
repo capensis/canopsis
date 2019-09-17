@@ -8,10 +8,10 @@
 
 <script>
 /**
-* Component to select a Number type setting
-*
-* @prop {Number} [value] - Value
-*/
+ * Component to select a Number type setting
+ *
+ * @prop {Number} [value] - Value
+ */
 export default {
   props: {
     value: Number,

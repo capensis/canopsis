@@ -1,12 +1,12 @@
 <template lang="pug">
-div
+  div
     v-toolbar.toolbar.white(dense, flat)
       v-text-field(
-      label="Search",
-      v-model="searchingText",
-      hide-details,
-      single-line,
-      @keyup.enter="submit",
+        label="Search",
+        v-model="searchingText",
+        hide-details,
+        single-line,
+        @keyup.enter="submit"
       )
       v-btn(icon, @click="submit")
         v-icon search
@@ -21,7 +21,7 @@ div
       :loading="pending",
       v-model="selectedEntities",
       select-all,
-      item-key="_id",
+      item-key="_id"
     )
       template(slot="items", slot-scope="props")
         td
@@ -29,7 +29,7 @@ div
             v-model="props.selected",
             :value="props._id",
             primary,
-            hide-details,
+            hide-details
           )
         td.text-xs-left {{ props.item.name }}
         td.text-xs-left {{ props.item._id}}

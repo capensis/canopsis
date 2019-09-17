@@ -5,10 +5,10 @@
     v-layout(v-for="(comment, index) in comments", :key="comment.key", row, wrap, allign-center)
       v-flex(xs11)
         v-textarea(
-        :disabled="!!comment._id",
-        :label="$t('modals.createPbehavior.fields.message')",
-        :value="comment.message",
-        @input="updateFieldInArrayItem(index, 'message', $event)"
+          :disabled="!!comment._id",
+          :label="$t('modals.createPbehavior.fields.message')",
+          :value="comment.message",
+          @input="updateFieldInArrayItem(index, 'message', $event)"
         )
       v-flex(xs1)
         v-btn(color="error", icon, @click="removeItemFromArray(index)")

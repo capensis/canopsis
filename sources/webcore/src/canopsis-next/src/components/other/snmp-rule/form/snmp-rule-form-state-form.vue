@@ -4,19 +4,19 @@
     v-layout(row, wrap)
       v-flex(xs12)
         v-switch(
-        :input-value="form.type",
-        :false-value="$constants.SNMP_STATE_TYPES.simple",
-        :true-value="$constants.SNMP_STATE_TYPES.template",
-        :label="$t('modals.createSnmpRule.fields.state.labels.toCustom')",
-        @change="updateTypeField"
+          :input-value="form.type",
+          :false-value="$constants.SNMP_STATE_TYPES.simple",
+          :true-value="$constants.SNMP_STATE_TYPES.template",
+          :label="$t('modals.createSnmpRule.fields.state.labels.toCustom')",
+          @change="updateTypeField"
         )
     v-divider(light)
     template(v-if="isTemplate")
       snmp-rule-form-module-mib-objects-form(
-      :form="form.stateoid",
-      :items="items",
-      :label="$t('modals.createSnmpRule.fields.state.labels.defineVar')",
-      @input="updateField('stateoid', $event)"
+        :form="form.stateoid",
+        :items="items",
+        :label="$t('modals.createSnmpRule.fields.state.labels.defineVar')",
+        @input="updateField('stateoid', $event)"
       )
       v-layout(row, wrap)
         v-flex(xs12)
@@ -26,16 +26,16 @@
                 strong.state-title {{ $t(`modals.createChangeStateEvent.states.${key}`) }}
             v-flex(xs10)
               v-text-field(
-              :value="form[key]",
-              :placeholder="$t('modals.createSnmpRule.fields.state.labels.writeTemplate')",
-              @input="updateField(key, $event)"
+                :value="form[key]",
+                :placeholder="$t('modals.createSnmpRule.fields.state.labels.writeTemplate')",
+                @input="updateField(key, $event)"
               )
     template(v-else)
       v-layout.mt-3(row, wrap)
         v-flex(xs12)
           state-criticity-field(
-          :value="form.state",
-          @input="updateField('state', $event)"
+            :value="form.state",
+            @input="updateField('state', $event)"
           )
 </template>
 

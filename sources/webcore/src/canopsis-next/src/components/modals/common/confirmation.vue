@@ -6,10 +6,10 @@
     v-card-text
       v-layout(wrap, justify-center)
         v-btn.primary(
-        @click.prevent="submit",
-        data-test="submitButton",
-        :loading="submitting",
-        :disabled="submitting"
+          @click.prevent="submit",
+          data-test="submitButton",
+          :loading="submitting",
+          :disabled="submitting"
         ) {{ $t('common.yes') }}
         v-btn.error(@click="hideModal") {{ $t('common.no') }}
 </template>

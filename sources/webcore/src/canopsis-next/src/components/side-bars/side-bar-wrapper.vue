@@ -1,8 +1,8 @@
 <template lang="pug">
   v-navigation-drawer(
-  v-model="isOpen",
-  :stateless="hasModals",
-  v-bind="navigationDrawerProps",
+    v-model="isOpen",
+    :stateless="hasModals",
+    v-bind="navigationDrawerProps"
   )
     div(v-if="title")
       v-toolbar(color="secondary")

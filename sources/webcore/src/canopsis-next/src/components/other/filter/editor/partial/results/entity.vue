@@ -1,11 +1,11 @@
 <template lang="pug">
   v-data-table.elevation-1(
-  :headers="headers",
-  :items="items",
-  :pagination.sync="pagination",
-  :total-items="meta.total",
-  :rows-per-page-items="rowsPerPageItems",
-  :loading="pending"
+    :headers="headers",
+    :items="items",
+    :pagination.sync="pagination",
+    :total-items="meta.total",
+    :rows-per-page-items="rowsPerPageItems",
+    :loading="pending"
   )
     template(slot="items", slot-scope="{ item }")
       td {{ item._id }}
