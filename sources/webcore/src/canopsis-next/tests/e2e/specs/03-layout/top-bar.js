@@ -93,18 +93,32 @@ module.exports = {
       .clickUserDropdown()
       .getLogoutButtonText(({ value }) => {
         browser.assert.notEqual(value, logoutButtonText);
-      })
-      .clickUserDropdown();
+      });
   },
 
   'Reset default view': (browser) => {
-    browser.page.layout.topBar()
-      .clickUserDropdown()
-      .clickUserProfileButton();
+    const topBar = browser.page.layout.topBar();
+    const createUserModal = browser.page.modals.admin.createUser();
+    const selectViewModal = browser.page.modals.view.selectView();
 
-    browser.page.modals.admin.createUser()
-      .verifyModalOpened()
-      .clickRemoveDefaultViewButton()
+    const { currentUser: { defaultview: defaultViewId } } = browser.globals;
+
+    topBar.clickUserProfileButton();
+
+    createUserModal.verifyModalOpened();
+
+    if (defaultViewId) {
+      createUserModal.clickSelectDefaultViewButton();
+
+      selectViewModal.verifyModalOpened()
+        .browseGroupByViewId(defaultViewId)
+        .browseViewById(defaultViewId)
+        .verifyModalClosed();
+    } else {
+      createUserModal.clickRemoveDefaultViewButton();
+    }
+
+    createUserModal.clickSubmitButton()
       .verifyModalClosed();
   },
 

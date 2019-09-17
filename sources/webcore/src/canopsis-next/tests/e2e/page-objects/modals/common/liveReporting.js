@@ -31,9 +31,7 @@ const commands = {
   },
 
   selectCalendarDay(value) {
-    this.api.useXpath()
-      .click(this.el('@dateDayField', value));
-    return this;
+    return this.customClickXpath(this.el('@dateDayField', value));
   },
 
   clickDatePickerHoursTab() {
