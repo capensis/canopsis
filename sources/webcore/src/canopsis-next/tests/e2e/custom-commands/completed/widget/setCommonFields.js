@@ -19,6 +19,7 @@ module.exports.command = function setCommonFields({
     elementsPerPage,
     infoPopups,
     moreInfos,
+    filters,
     openedResolvedFilter,
     newColumnNames,
     editColumnNames,
@@ -205,6 +206,31 @@ module.exports.command = function setCommonFields({
     deleteColumnNames.forEach((index) => {
       common.clickDeleteColumnName(index);
     });
+  }
+
+  if (filters) {
+    common.clickFilters()
+      .setMixFilters(filters.isMix);
+
+    if (filters.isMix) {
+      common.setFiltersType(filters.type);
+    }
+
+    if (filters.groups) {
+      common.clickAddFilter();
+      createFilterModal.verifyModalOpened()
+        .clearFilterTitle()
+        .setFilterTitle(filters.title)
+        .fillFilterGroups(filters.groups)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    }
+
+    if (filters.selected) {
+      filters.selected.forEach((element) => {
+        common.selectFilter(element);
+      });
+    }
   }
 
   return this;
