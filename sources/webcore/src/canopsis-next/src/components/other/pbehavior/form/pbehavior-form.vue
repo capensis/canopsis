@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    pbehavior-general-form(v-model="form.general")
+    pbehavior-general-form(v-model="form.general", :noFilter="noFilter")
     pbehavior-exdates-form.mt-2(
     v-show="form.general.rrule",
     v-model="form.exdate",
@@ -34,6 +34,10 @@ export default {
     },
     author: {
       type: String,
+    },
+    noFilter: {
+      type: Boolean,
+      default: false,
     },
   },
 };

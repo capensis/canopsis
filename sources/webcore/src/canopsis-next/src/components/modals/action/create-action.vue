@@ -35,7 +35,7 @@
               type="number"
               )
             template(v-if="form.type === $constants.ACTION_TYPES.pbehavior")
-              pbehavior-form(v-model="pbehaviorParameters", :author="$constants.ACTION_AUTHOR")
+              pbehavior-form(v-model="pbehaviorParameters", :author="$constants.ACTION_AUTHOR", :noFilter="true")
           v-tab {{ $t('modals.createAction.tabs.hook') }}
           v-tab-item
             webhook-form-hook-tab(
