@@ -1,23 +1,25 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('action');
+import popupMixin from '@/mixins/popup';
 
-/**
- * @mixin
- */
+const { mapActions, mapGetters } = createNamespacedHelpers('action');
+
 export default {
+  mixins: [popupMixin],
   computed: {
     ...mapGetters({
-      actions: 'items',
       actionsPending: 'pending',
+      actions: 'items',
     }),
   },
   methods: {
     ...mapActions({
       fetchActionsList: 'fetchList',
+      refreshActionsList: 'fetchListWithPreviousParams',
       createAction: 'create',
-      updateAction: 'update',
       removeAction: 'remove',
+      updateAction: 'update',
     }),
   },
 };
+
