@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="addInfoPopupModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
-    v-card-text
+    v-card-text(data-test="addInfoPopupLayout")
       v-select(
         v-model="form.selectedColumn",
         :items="config.columns",
@@ -11,18 +11,27 @@
         return-object,
         name="column",
         v-validate="'required'",
-        :error-messages="errors.collect('column')"
+        :error-messages="errors.collect('column')",
       )
       text-editor(
         v-model="form.template",
         name="template",
         v-validate="'required'",
-        :error-messages="errors.collect('template')"
+        :error-messages="errors.collect('template')",
       )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit", type="submit") {{ $t('common.submit') }}
+      v-btn(
+        flat,
+        depressed,
+        data-test="addInfoCancelButton",
+        @click="hideModal",
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        type="submit",
+        data-test="addInfoSubmitButton",
+        @click="submit",
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>

@@ -133,7 +133,7 @@ Planned tests
         - [ ] Delete row
     * Alarm list
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Header
             - [ ] Search
@@ -161,7 +161,7 @@ Planned tests
             - [ ] Pages
     * Context explorer
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Header
             - [ ] Search
@@ -182,7 +182,7 @@ Planned tests
             - [ ] Pages
     * Service weather
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Widget
             - [ ] Help

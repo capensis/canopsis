@@ -2,6 +2,8 @@
 
 L'API Watchers permet de consulter, créer et supprimer des Watchers.
 
+Pour plus d'informations sur ce qu'est un watcher, consulter la [documentation sur les Watchers](../../guide-administration/moteurs/moteur-watcher.md).
+
 ### Creation de watcher
 
 Crée un nouveau watcher à partir du corps de la requête.
@@ -40,7 +42,22 @@ Crée un nouveau watcher à partir du corps de la requête.
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
-
+    "_id": "h4z25rzg6rt-64rge354-5re4g",
+    "name": "Client Capensis",
+    "type": "watcher",
+    "entities": [{
+        "infos": {
+            "customer": {
+                "value": "capensis"
+            }
+        }
+    }, {
+        "_id": {"regex_match": ".+/comp"}
+    }],
+    "state": {
+        "method": "worst"
+    },
+    "output_template": "Alarmes critiques : {{.State.Critical}}"
 }' 'http://<Canopsis_URL>/api/v2/watcherng'
 ```
 
@@ -101,6 +118,77 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 }
 ```
 
+### Modification de watcher
+
+Modifie un nouveau watcher à partir du corps de la requête.
+
+**URL** : `/api/v2/watcherng/<watcher_id>`
+
+**Méthode** : `PUT`
+
+**Authentification requise** : Oui
+
+**Permissions requise** : Aucune
+
+**Exemple de corps de requête** :
+```json
+{
+    "_id": "h4z25rzg6rt-64rge354-5re4g",
+    "name": "Client Capensis",
+    "type": "watcher",
+    "entities": [{
+        "infos": {
+            "customer": {
+                "value": "capensis"
+            }
+        }
+    }, {
+        "_id": {"regex_match": ".+/comp"}
+    }],
+    "state": {
+        "method": "worst"
+    },
+    "output_template": "Alarmes Majeures : {{.State.Major}}"
+}
+```
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
+
+```sh
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
+    "_id": "h4z25rzg6rt-64rge354-5re4g",
+    "name": "Client Capensis",
+    "type": "watcher",
+    "entities": [{
+        "infos": {
+            "customer": {
+                "value": "capensis"
+            }
+        }
+    }, {
+        "_id": {"regex_match": ".+/comp"}
+    }],
+    "state": {
+        "method": "worst"
+    },
+    "output_template": "Alarmes Majeures : {{.State.Major}}"
+}' 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
+```
+
+#### Réponse en cas de réussite
+
+**Condition** : le watcher est créé
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
+
+```json
+{
+}
+```
+
+---
 
 ### Suppression de watcher
 

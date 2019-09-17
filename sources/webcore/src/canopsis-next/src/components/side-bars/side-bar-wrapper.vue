@@ -9,7 +9,7 @@
         v-list
           v-list-tile
             v-list-tile-title.white--text {{ title }}
-        v-btn(@click.stop="hideSideBar", icon)
+        v-btn(data-test="closeWidget", @click.stop="hideSideBar", icon)
           v-icon(color="white") close
       v-divider
       // @slot use this slot default

@@ -3,11 +3,13 @@
 const WAIT_PAUSE = 500;
 
 module.exports.command = function customClearValue(selector) {
-  const { CONTROL, DELETE } = this.Keys;
+  const { BACK_SPACE, END } = this.Keys;
 
   this.customClick(selector)
-    .sendKeys(selector, [CONTROL, 'a'])
-    .sendKeys(selector, DELETE)
+    .sendKeys(selector, [END])
+    .getValue(selector, (result) => {
+      this.sendKeys(selector, new Array(result.value.length).fill(BACK_SPACE));
+    })
     .pause(WAIT_PAUSE);
 
   return this;

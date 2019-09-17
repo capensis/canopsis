@@ -1,6 +1,6 @@
 <template lang="pug">
-  div
-    v-tabs.filter-editor(v-model="activeTab", slider-color="blue darken-4", centered)
+  div(data-test="filterEditor")
+    v-tabs.filter-editor(v-model="activeTab" slider-color="blue darken-4" centered)
       v-tab(:disabled="isRequestStringChanged") {{ $t('filterEditor.tabs.visualEditor') }}
       v-tab-item
         v-container.pa-1

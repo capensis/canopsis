@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="liveReportingModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.liveReporting.editLiveReporting') }}
@@ -8,8 +8,17 @@
       date-interval-selector(v-model="form")
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click="submit", :disabled="errors.any()") {{ $t('common.apply') }}
+        v-btn(
+          @click="hideModal",
+          depressed,
+          flat,
+          data-test="liveReportingCancelButton"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          @click="submit",
+          :disabled="errors.any()",
+          data-test="liveReportingApplyButton"
+        ) {{ $t('common.apply') }}
 </template>
 
 <script>

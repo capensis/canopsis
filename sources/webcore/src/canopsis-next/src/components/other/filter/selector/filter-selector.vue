@@ -2,9 +2,10 @@
   v-layout(align-center, row, wrap)
     v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
       v-switch(
+        data-test="mixFilters",
+        color="primary",
         :label="$t('filterSelector.fields.mixFilters')",
         :input-value="isMultiple",
-        color="primary",
         :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
         @change="updateIsMultipleFlag"
       )
@@ -14,9 +15,13 @@
         :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
         @change="updateCondition"
       )
-        v-radio(label="AND", value="$and", color="primary")
-        v-radio(label="OR", value="$or", color="primary")
-    v-flex(v-show="!hideSelect", v-bind="flexProps.select")
+        v-radio(data-test="andFilters", label="AND", value="$and")
+        v-radio(data-test="orFilters", label="OR", value="$or")
+    v-flex(
+    data-test="selectFilters",
+    v-show="!hideSelect",
+    v-bind="flexProps.select"
+    )
       v-select(
         :value="value",
         :items="preparedFilters",
@@ -90,7 +95,7 @@ export default {
     },
     itemValue: {
       type: String,
-      default: 'filter',
+      default: 'title',
     },
     condition: {
       type: String,

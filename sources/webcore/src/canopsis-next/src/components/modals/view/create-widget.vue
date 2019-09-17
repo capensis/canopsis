@@ -1,5 +1,5 @@
 <template lang='pug'>
-  v-card
+  v-card(data-test="createWidgetModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.widgetCreation.title') }}
@@ -11,7 +11,7 @@
           :key="widgetType.value",
           @click="selectWidgetType(widgetType.value)"
         )
-          v-card.widgetType
+          v-card.widgetType(:data-test="`widget-${widgetType.value}`")
             v-card-title(primary-title)
               v-layout(wrap, justify-between)
                 v-flex(xs11)

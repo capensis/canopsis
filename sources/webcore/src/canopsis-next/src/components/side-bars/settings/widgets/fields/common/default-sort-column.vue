@@ -1,20 +1,22 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="defaultSortColumn")
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
     v-container
-      v-select(
+      v-layout(data-test="defaultSortColumnOrderByLayout", row)
+        v-select(
         :value="value.column",
         :items="columns",
         :label="columnsLabel",
         item-text="label",
         item-value="value",
         @change="updateField('column', $event)"
-      )
-      v-select(
+        )
+      v-layout(data-test="defaultSortColumnOrdersLayout", row)
+        v-select(
         :value="value.order",
-        @input="updateField('order', $event)",
         :items="orders"
-      )
+        @input="updateField('order', $event)",
+        )
 </template>
 
 <script>

@@ -21,3 +21,18 @@ module.exports.generateTemporaryRole = (prefix = '', suffix = uid()) => ({
   name: `${prefix}name-${suffix}`,
   description: `${prefix}description-${suffix}`,
 });
+
+module.exports.generateTemporaryWeatherWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Weather-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
+
+module.exports.generateTemporaryAlarmsWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Alarms-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
+
+module.exports.generateTemporaryContextWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Context-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

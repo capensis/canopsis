@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="filters")
     v-list-tile(slot="activator") {{ $t('settings.filters') }}
     v-container
       filter-selector(

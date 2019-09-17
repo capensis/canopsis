@@ -10,7 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      v-list-group
+      v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
@@ -33,7 +33,7 @@
             v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitContext", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

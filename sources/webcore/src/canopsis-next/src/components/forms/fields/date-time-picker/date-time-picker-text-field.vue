@@ -3,13 +3,14 @@
     v-layout
       v-flex
         v-text-field(
-          :value="value",
-          :label="label",
-          :name="name",
-          :error-messages="errorMessages",
-          @focus="focus",
-          @blur="blur",
-          @input="updateModel($event)"
+        data-test="dateTimePickerTextField",
+        :value="value",
+        :label="label",
+        :name="name",
+        :error-messages="errorMessages",
+        @focus="focus",
+        @blur="blur",
+        @input="updateModel($event)"
         )
       v-flex
         date-time-picker-button(

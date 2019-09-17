@@ -1,23 +1,25 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="periodicRefresh")
     v-list-tile(slot="activator") {{$t('settings.periodicRefresh')}}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
       v-layout
         v-flex
           v-switch(
-            v-model="value.enabled",
-            @change="updateField('enabled', $event)",
-            color="primary",
-            hide-details
+          data-test="periodicRefreshSwitch",
+          v-model="value.enabled",
+          @change="updateField('enabled', $event)",
+          color="primary",
+          hide-details
           )
         v-flex
           v-text-field.pt-0(
-            type="number",
-            :value="value.interval",
-            :disabled="!value.enabled",
-            @input="updateField('interval', $event)",
-            hide-details
+          data-test="periodicRefreshField",
+          type="number",
+          :value="value.interval",
+          :disabled="!value.enabled",
+          @input="updateField('interval', $event)",
+          hide-details
           )
 </template>
 

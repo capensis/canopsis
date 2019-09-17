@@ -5,7 +5,7 @@
     @edit="showEditLiveReportingModal",
     @delete="removeLiveReporting"
   )
-    .subheading(slot="title") {{ $t('settings.liveReporting.title') }}
+    .subheading(slot="title", data-test="liveReporting") {{ $t('settings.liveReporting.title') }}
 </template>
 
 <script>

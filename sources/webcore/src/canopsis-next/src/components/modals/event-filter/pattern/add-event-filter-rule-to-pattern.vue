@@ -5,7 +5,12 @@
         span.headline {{ $t('modals.eventFilterRule.addAField') }}
     v-card-text
       v-form
-        v-switch(:label="$t('modals.eventFilterRule.advanced')", v-model="form.advancedMode", hide-details)
+        v-switch(
+        v-if="!config.isSimple",
+        v-model="form.advancedMode",
+        :label="$t('modals.eventFilterRule.advanced')",
+        hide-details
+        )
         v-text-field(
           v-model="form.field",
           :label="$t('modals.eventFilterRule.field')",
@@ -13,35 +18,41 @@
           v-validate="'required'",
           :error-messages="errors.collect('field')"
         )
-        mixed-field(
+        v-text-field(
+        v-if="config.isSimple",
+        v-model="form.value",
+        :label="$t('modals.eventFilterRule.value')"
+        )
+        template(v-else)
+          mixed-field(
           v-if="!form.advancedMode",
           v-model="form.value",
           :label="$t('modals.eventFilterRule.value')"
-        )
-        template(v-else)
-          v-layout(align-center, justify-center)
-            h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
-            v-btn(
+          )
+          template(v-else)
+            v-layout(align-center, justify-center)
+              h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
+              v-btn(
               @click="addAdvancedRuleField",
               :disabled="!availableOperators.length > 0",
               icon,
-              small
-            )
-              v-icon add
-          v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
-            v-flex(xs3)
-              v-select(
+              small,
+              )
+                v-icon add
+            v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
+              v-flex(xs3)
+                v-select(
                 :items="getAvailableOperatorsForRule(field)",
                 v-model="field.key",
                 name="fieldKey",
                 v-validate="'required'",
                 :error-messages="errors.collect('fieldKey')"
-              )
-            v-flex.pl-1(xs9)
-              mixed-field(v-model="field.value")
-            v-flex
-              v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
-                v-icon(color="error") delete
+                )
+              v-flex.pl-1(xs9)
+                mixed-field(v-model="field.value")
+              v-flex
+                v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
+                  v-icon(color="error") delete
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}

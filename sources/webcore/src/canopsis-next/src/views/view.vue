@@ -57,13 +57,14 @@
             span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
           v-tooltip(top)
             v-btn(
-              v-if="hasUpdateAccess",
-              slot="activator",
-              fab,
-              dark,
-              small,
-              color="indigo",
-              @click.stop="showCreateWidgetModal"
+            data-test="addWidgetButton",
+            v-if="hasUpdateAccess",
+            slot="activator",
+            fab,
+            dark,
+            small,
+            color="indigo",
+            @click.stop="showCreateWidgetModal",
             )
               v-icon add
             span {{ $t('common.addWidget') }}

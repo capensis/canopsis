@@ -3,8 +3,14 @@
     v-layout(align-center, justify-space-between)
       v-flex(xs11)
         div.subheading {{ title }}
-      v-layout
-        v-switch.ma-0.pa-0(color="primary", :input-value="value", @change="$emit('input', $event)", hide-details)
+      v-layout(data-test="switcherLayout")
+        v-switch.ma-0.pa-0(
+          data-test="switcherField",
+          hide-details
+          color="primary",
+          :input-value="value",
+          @change="$emit('input', $event)",
+        )
 </template>
 
 <script>
