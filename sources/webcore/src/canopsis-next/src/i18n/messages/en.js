@@ -866,7 +866,7 @@ export default {
     },
     createHeartbeat: {
       create: {
-        title: 'Create webhook',
+        title: 'Create heartbeat',
         success: 'Heartbeat successfully created !',
       },
       remove: {
