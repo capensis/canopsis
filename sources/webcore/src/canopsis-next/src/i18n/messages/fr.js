@@ -750,6 +750,32 @@ export default {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
       },
     },
+    statsDateInterval: {
+      title: 'Stats - Interval de dates',
+      fields: {
+        periodValue: 'Période',
+        periodUnit: 'Unité',
+      },
+      errors: {
+        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
+      },
+      info: {
+        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
+      },
+    },
+    createHeartbeat: {
+      create: {
+        title: 'Créer un heartbeat',
+        success: 'Heartbeat créé avec succès !',
+      },
+      remove: {
+        success: 'Heartbeat supprimé avec succès !',
+      },
+      massRemove: {
+        success: 'Heartbeats supprimés avec succès !',
+      },
+      patternRequired: 'Un pattern est requis',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1063,6 +1089,16 @@ export default {
   serviceWeather: {
     seeAlarms: 'Voir les alarmes',
   },
+  heartbeat: {
+    title: 'Heartbeats',
+    table: {
+      fields: {
+        id: 'ID',
+        expectedInterval: 'Interval',
+      },
+    },
+  },
+
 
   ...featureService.get('i18n.fr'),
 };
