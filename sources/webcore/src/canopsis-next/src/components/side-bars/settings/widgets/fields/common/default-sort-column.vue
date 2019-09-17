@@ -4,18 +4,18 @@
     v-container
       v-layout(data-test="defaultSortColumnOrderByLayout", row)
         v-select(
-        :value="value.column",
-        :items="columns",
-        :label="columnsLabel",
-        item-text="label",
-        item-value="value",
-        @change="updateField('column', $event)"
+          :value="value.column",
+          :items="columns",
+          :label="columnsLabel",
+          item-text="label",
+          item-value="value",
+          @change="updateField('column', $event)"
         )
       v-layout(data-test="defaultSortColumnOrdersLayout", row)
         v-select(
-        :value="value.order",
-        :items="orders"
-        @input="updateField('order', $event)",
+          :value="value.order",
+          :items="orders",
+          @input="updateField('order', $event)"
         )
 </template>
 

@@ -2,13 +2,13 @@
   v-card.my-2.pa-0(data-test="filterRule")
     v-layout(justify-end)
       v-btn(
-      data-test="deleteRule",
-      @click="$emit('deleteRule')",
-      color="red",
-      small,
-      flat,
-      dark,
-      fab
+        data-test="deleteRule",
+        @click="$emit('deleteRule')",
+        color="red",
+        small,
+        flat,
+        dark,
+        fab
       )
         v-icon close
     v-layout.px-2(row, wrap, justify-space-around)

@@ -3,28 +3,28 @@
     .v-picker__title.primary.text-xs-center
       span.v-date-time-picker-title(:class="{ 'use-seconds': useSeconds }")
         span.v-picker__title__btn(
-        data-test="datePickerDateTab",
-        @click="showDateTab",
-        :class="{ 'v-picker__title__btn--active': isActiveDateTab }"
+          data-test="datePickerDateTab",
+          @click="showDateTab",
+          :class="{ 'v-picker__title__btn--active': isActiveDateTab }"
         ) {{ value | date('datePicker', true, '--/--/----') }}
         span &nbsp;
         span.v-picker__title__btn(
-        data-test="datePickerHoursTab",
-        :class="{ 'v-picker__title__btn--active': isActiveHoursTab }",
-        @click="showHoursTabInTimeTab"
+          data-test="datePickerHoursTab",
+          :class="{ 'v-picker__title__btn--active': isActiveHoursTab }",
+          @click="showHoursTabInTimeTab"
         ) {{ value | date('HH', true, '--') }}
         span :
         span.v-picker__title__btn(
-        data-test="datePickerMinutesTab",
-        :class="{ 'v-picker__title__btn--active': isActiveMinutesTab }",
-        @click="showMinutesTabInTimeTab"
+          data-test="datePickerMinutesTab",
+          :class="{ 'v-picker__title__btn--active': isActiveMinutesTab }",
+          @click="showMinutesTabInTimeTab"
         ) {{ value | date('mm', true, '--') }}
         template(v-if="useSeconds")
           span :
           span.v-picker__title__btn(
-          data-test="datePickerSecondsTab",
-          :class="{ 'v-picker__title__btn--active': isActiveSecondsTab }",
-          @click="showSecondsTabInTimeTab"
+            data-test="datePickerSecondsTab",
+            :class="{ 'v-picker__title__btn--active': isActiveSecondsTab }",
+            @click="showSecondsTabInTimeTab"
           ) {{ value | date('ss', true, '--') }}
     .date-time-picker__body
       v-fade-transition

@@ -3,14 +3,14 @@
     v-list-tile(slot="activator") {{ $t('settings.contextTypeOfEntities.title') }}
     v-container
       v-checkbox(
-      v-for="(entitiesType, index) in entitiesTypes",
-      v-bind="entitiesType",
-      data-test="entitiesTypeCheckbox",
-      :key="`entities-type-${index}`",
-      :input-value="value",
-      @change="$emit('input', $event)",
-      color="primary",
-      hide-details
+        v-for="(entitiesType, index) in entitiesTypes",
+        v-bind="entitiesType",
+        data-test="entitiesTypeCheckbox",
+        :key="`entities-type-${index}`",
+        :input-value="value",
+        color="primary",
+        hide-details,
+        @change="$emit('input', $event)"
       )
 </template>
 

@@ -9,21 +9,21 @@
     lazy
   )
     v-btn(
-    data-test="dateTimePickerButton",
-    slot="activator",
-    color="secondary",
-    icon,
-    fab,
-    small
+      data-test="dateTimePickerButton",
+      slot="activator",
+      color="secondary",
+      icon,
+      fab,
+      small
     )
       v-icon calendar_today
     date-time-picker(
-    data-test="dateTimePickerCalendar",
-    :value="value",
-    :opened="isMenuOpen",
-    :roundHours="roundHours",
-    :useSeconds="useSeconds",
-    @input="updateModel($event)"
+      data-test="dateTimePickerCalendar",
+      :value="value",
+      :opened="isMenuOpen",
+      :roundHours="roundHours",
+      :useSeconds="useSeconds",
+      @input="updateModel($event)"
     )
 </template>
 

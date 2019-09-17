@@ -8,21 +8,21 @@
         v-layout(row, wrap)
           v-flex(xs3)
             v-text-field(
-            v-model="periodForm.periodValue",
-            v-validate="'required'",
-            :label="$t('modals.statsDateInterval.fields.periodValue')",
-            :error-messages="errors.collect('periodValue')",
-            type="number",
-            name="periodValue"
+              v-model="periodForm.periodValue",
+              v-validate="'required'",
+              :label="$t('modals.statsDateInterval.fields.periodValue')",
+              :error-messages="errors.collect('periodValue')",
+              type="number",
+              name="periodValue"
             )
           v-flex
             v-select(
-            v-model="periodForm.periodUnit",
-            v-validate="'required'",
-            :items="periodUnits",
-            :label="$t('modals.statsDateInterval.fields.periodUnit')",
-            :error-messages="errors.collect('periodUnit')",
-            name="periodUnit"
+              v-model="periodForm.periodUnit",
+              v-validate="'required'",
+              :items="periodUnits",
+              :label="$t('modals.statsDateInterval.fields.periodUnit')",
+              :error-messages="errors.collect('periodUnit')",
+              name="periodUnit"
             )
         v-layout
           v-btn(@click="showEditPatternModal") {{ $t('modals.eventFilterRule.editPattern') }}

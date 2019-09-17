@@ -18,9 +18,9 @@
         v-radio(data-test="andFilters", label="AND", value="$and")
         v-radio(data-test="orFilters", label="OR", value="$or")
     v-flex(
-    data-test="selectFilters",
-    v-show="!hideSelect",
-    v-bind="flexProps.select"
+      data-test="selectFilters",
+      v-show="!hideSelect",
+      v-bind="flexProps.select"
     )
       v-select(
         :value="value",

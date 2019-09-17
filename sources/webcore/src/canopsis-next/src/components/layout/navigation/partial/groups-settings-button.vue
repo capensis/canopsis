@@ -1,10 +1,10 @@
 <template lang="pug">
   v-speed-dial(
-  data-test="settingsWrapper",
-  v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
-  v-model="isVSpeedDialOpen",
-  transition="slide-y-reverse-transition",
-  v-bind="wrapperProps"
+    data-test="settingsWrapper",
+    v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
+    v-model="isVSpeedDialOpen",
+    transition="slide-y-reverse-transition",
+    v-bind="wrapperProps"
   )
     v-tooltip(
       slot="activator",

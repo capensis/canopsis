@@ -5,26 +5,26 @@
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
-            data-test="intervalStart",
-            v-model="tstartDateString",
-            v-validate="tstartRules",
-            :label="$t('common.startDate')",
-            :dateObjectPreparer="getDateObjectPreparer('start')",
-            name="tstart",
-            roundHours,
-            @update:objectValue="$emit('update:startObjectValue', $event)"
+              data-test="intervalStart",
+              v-model="tstartDateString",
+              v-validate="tstartRules",
+              :label="$t('common.startDate')",
+              :dateObjectPreparer="getDateObjectPreparer('start')",
+              name="tstart",
+              roundHours,
+              @update:objectValue="$emit('update:startObjectValue', $event)"
             )
         v-layout(align-center)
           v-flex
             date-time-picker-text-field(
-            data-test="intervalStop",
-            v-model="tstopDateString",
-            v-validate="tstopRules",
-            :label="$t('common.endDate')",
-            :dateObjectPreparer="getDateObjectPreparer('stop')",
-            name="tstop",
-            roundHours,
-            @update:objectValue="$emit('update:stopObjectValue', $event)"
+              data-test="intervalStop",
+              v-model="tstopDateString",
+              v-validate="tstopRules",
+              :label="$t('common.endDate')",
+              :dateObjectPreparer="getDateObjectPreparer('stop')",
+              name="tstop",
+              roundHours,
+              @update:objectValue="$emit('update:stopObjectValue', $event)"
             )
       v-flex.pl-1(xs6, data-test="intervalRange")
         v-select(

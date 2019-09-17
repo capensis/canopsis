@@ -6,10 +6,10 @@
     v-card-text
       v-form
         v-switch(
-        v-if="!config.isSimple",
-        v-model="form.advancedMode",
-        :label="$t('modals.eventFilterRule.advanced')",
-        hide-details
+          v-if="!config.isSimple",
+          v-model="form.advancedMode",
+          :label="$t('modals.eventFilterRule.advanced')",
+          hide-details
         )
         v-text-field(
           v-model="form.field",
@@ -19,34 +19,34 @@
           :error-messages="errors.collect('field')"
         )
         v-text-field(
-        v-if="config.isSimple",
-        v-model="form.value",
-        :label="$t('modals.eventFilterRule.value')"
+          v-if="config.isSimple",
+          v-model="form.value",
+          :label="$t('modals.eventFilterRule.value')"
         )
         template(v-else)
           mixed-field(
-          v-if="!form.advancedMode",
-          v-model="form.value",
-          :label="$t('modals.eventFilterRule.value')"
+            v-if="!form.advancedMode",
+            v-model="form.value",
+            :label="$t('modals.eventFilterRule.value')"
           )
           template(v-else)
             v-layout(align-center, justify-center)
               h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
               v-btn(
-              @click="addAdvancedRuleField",
-              :disabled="!availableOperators.length > 0",
-              icon,
-              small,
+                @click="addAdvancedRuleField",
+                :disabled="!availableOperators.length > 0",
+                icon,
+                small
               )
                 v-icon add
             v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
               v-flex(xs3)
                 v-select(
-                :items="getAvailableOperatorsForRule(field)",
-                v-model="field.key",
-                name="fieldKey",
-                v-validate="'required'",
-                :error-messages="errors.collect('fieldKey')"
+                  :items="getAvailableOperatorsForRule(field)",
+                  v-model="field.key",
+                  name="fieldKey",
+                  v-validate="'required'",
+                  :error-messages="errors.collect('fieldKey')"
                 )
               v-flex.pl-1(xs9)
                 mixed-field(v-model="field.value")
