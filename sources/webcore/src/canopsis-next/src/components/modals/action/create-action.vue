@@ -38,15 +38,8 @@
               pbehavior-form(v-model="pbehaviorParameters", :author="$constants.ACTION_AUTHOR")
           v-tab {{ $t('modals.createAction.tabs.hook') }}
           v-tab-item
-            v-select(
-            v-model="form.hook.triggers",
-            :items="availableTriggers",
-            :label="$t('webhook.tabs.hook.fields.triggers')",
-            multiple,
-            chips
-            )
-            patterns-list(
-            v-model="form.hook.event_patterns",
+            webhook-form-hook-tab(
+            v-model="form.hook",
             :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
             )
     v-divider
@@ -61,8 +54,10 @@ import { MODALS, ACTION_TYPES, ACTION_AUTHOR, WEBHOOK_TRIGGERS } from '@/constan
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import { unsetInSeveralWithConditions } from '@/helpers/immutable';
+
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
-import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
 
 export default {
   name: MODALS.createAction,
@@ -71,7 +66,7 @@ export default {
   },
   components: {
     PbehaviorForm,
-    PatternsList,
+    WebhookFormHookTab,
   },
   mixins: [modalInnerMixin],
   data() {
@@ -81,6 +76,8 @@ export default {
       type: ACTION_TYPES.snooze,
       hook: {
         event_patterns: [],
+        alarm_patterns: [],
+        entity_patterns: [],
         triggers: [],
       },
     };
@@ -134,10 +131,18 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
-          const data = { ...this.form };
+          let data = { ...this.form };
+
+          const patternsCondition = value => !value || !value.length;
+
+          data = unsetInSeveralWithConditions(data, {
+            'hook.event_patterns': patternsCondition,
+            'hook.alarm_patterns': patternsCondition,
+            'hook.entity_patterns': patternsCondition,
+          });
 
           if (this.form.type === ACTION_TYPES.snooze) {
-            data.parameters = { ...this.snoozeParameters };
+            data.parameters = { ...this.snoozeParameters, duration: parseInt(this.snoozeParameters.duration, 10) };
           } else if (this.form.type === ACTION_TYPES.pbehavior) {
             const pbehavior = this.$options.filters.formToPbehavior(this.pbehaviorParameters.general);
 
