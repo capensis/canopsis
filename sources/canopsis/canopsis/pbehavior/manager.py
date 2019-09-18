@@ -1107,19 +1107,24 @@ class PBehaviorManager(object):
 
         Warning : this method might return a timestamp greater than the now
                   timestamp, which means the pbehavior is currently running
+                  It can also return 0 when the pbh hasn't started running 
+                  yet
 
 
         :param Dict[str, Any] pbh: a pbehavior
         :param datetime now: datetime corresponding to now
         :rtype: int
         """
+        tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+        if pbh[PBehavior.TSTART] > now:
+            # when pbh hasn't started yet, we return 0 in order to exclude pbh
+            return 0
         if PBehavior.RRULE not in pbh or\
                 pbh[PBehavior.RRULE] is None or\
                 pbh[PBehavior.RRULE] == "":
             #pbh is simple
             pbh_last_tstop = pbh[PBehavior.TSTOP]
         else:
-            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
             # convert the timestamp to a datetime in the pbehavior's timezone
             start = self.__convert_timestamp(pbh[PBehavior.TSTART], tz_name)
             stop = self.__convert_timestamp(pbh[PBehavior.TSTOP], tz_name)
@@ -1128,10 +1133,9 @@ class PBehaviorManager(object):
             rec_set = self._get_recurring_pbehavior_rruleset(pbh)
             last_tstart = rec_set.before(now)
             # when the pbh is recurrent but hasn't started running yet
-            # we return now, which ensures this pbh isn't used in
-            # ok ko timestamp computing
+            # we return 0, which ensures this pbh isn't used
             if last_tstart is None:
-                return int((now - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
+                return 0
             last_tstop_dt = last_tstart + duration
             pbh_last_tstop = int(
                 (last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())

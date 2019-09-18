@@ -55,7 +55,7 @@ from canopsis.event import get_routingkey
 from canopsis.lock.manager import AlertLockRedis
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
-from canopsis.pbehavior import PBehaviorManager
+from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.models.entity import Entity
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
