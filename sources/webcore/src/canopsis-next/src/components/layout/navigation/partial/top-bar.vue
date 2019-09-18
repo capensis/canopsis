@@ -114,7 +114,9 @@ export default {
         },
       ];
 
-      return links.filter(({ right }) => this.checkReadAccess(right));
+      return links.filter(({ right }) =>
+        this.checkAppInfoAccessByRight(right) &&
+        this.checkReadAccess(right));
     },
 
     administrationLinks() {
