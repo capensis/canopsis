@@ -308,6 +308,10 @@ const commands = {
   clickAddStat() {
     return this.customClick('@addStatButton');
   },
+
+  clickEditDateInterval() {
+    return this.customClick('@editDateInterval');
+  },
 };
 
 
@@ -398,6 +402,8 @@ module.exports = {
 
     statsSelector: sel('statsSelector'),
     addStatButton: sel('addStatButton'),
+
+    editDateInterval: `${sel('dateInterval')} ${sel('editButton')}`,
   },
   commands: [commands],
 };

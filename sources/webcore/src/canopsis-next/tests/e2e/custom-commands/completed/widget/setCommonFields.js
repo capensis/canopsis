@@ -17,6 +17,7 @@ module.exports.command = function setCommonFields({
     alarmsList,
     advanced,
     elementsPerPage,
+    dateInterval,
     infoPopups,
     moreInfos,
     filters,
@@ -34,6 +35,8 @@ module.exports.command = function setCommonFields({
   const infoPopupModal = this.page.modals.common.infoPopupSetting();
   const createFilterModal = this.page.modals.common.createFilter();
   const addStatModal = this.page.modals.stats.addStat();
+  const statsDateIntervalModal = this.page.modals.stats.statsDateInterval();
+  const dateIntervalField = this.page.fields.dateInterval();
   const common = this.page.widget.common();
 
   if (row) {
@@ -73,6 +76,64 @@ module.exports.command = function setCommonFields({
       .verifyModalOpened()
       .fillFilterGroups(filter.groups)
       .clickCancelButton()
+      .verifyModalClosed();
+  }
+
+
+  if (dateInterval) {
+    common.clickEditDateInterval();
+
+    statsDateIntervalModal.verifyModalOpened()
+      .selectPeriodUnit(dateInterval.period);
+
+    if (dateInterval.periodValue !== undefined) {
+      statsDateIntervalModal
+        .clearPeriodValue()
+        .clickPeriodValue()
+        .setPeriodValue(dateInterval.periodValue);
+    }
+
+    if (dateInterval.range) {
+      dateIntervalField.selectRange(dateInterval.range);
+    }
+
+    if (dateInterval.calendarStartDate) {
+      dateIntervalField
+        .clickStartDateButton()
+        .clickDatePickerDayTab()
+        .selectCalendarDay(dateInterval.calendarStartDate.day)
+        .clickDatePickerHoursTab()
+        .selectCalendarHour(dateInterval.calendarStartDate.hour)
+        .clickDatePickerMinutesTab()
+        .selectCalendarMinute(dateInterval.calendarStartDate.minute);
+    }
+
+    if (dateInterval.calendarEndDate) {
+      dateIntervalField
+        .clickEndDateButton()
+        .selectCalendarDay(dateInterval.calendarEndDate.day)
+        .clickDatePickerHoursTab()
+        .selectCalendarHour(dateInterval.calendarEndDate.hour)
+        .clickDatePickerMinutesTab()
+        .selectCalendarMinute(dateInterval.calendarEndDate.minute);
+    }
+
+    if (dateInterval.endDate) {
+      dateIntervalField
+        .clearEndDate()
+        .clickEndDate()
+        .setEndDate(dateInterval.endDate);
+    }
+
+    if (dateInterval.startDate) {
+      dateIntervalField
+        .clearStartDate()
+        .clickStartDate()
+        .setStartDate(dateInterval.startDate);
+    }
+
+    statsDateIntervalModal
+      .clickSubmitButton()
       .verifyModalClosed();
   }
 

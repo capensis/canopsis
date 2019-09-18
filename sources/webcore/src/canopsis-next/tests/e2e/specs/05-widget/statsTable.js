@@ -5,6 +5,7 @@ const {
   FILTERS_TYPE,
   VALUE_TYPES,
   INTERVAL_RANGES,
+  INTERVAL_PERIODS,
   FILTER_OPERATORS,
   FILTER_COLUMNS,
   STAT_TYPES,
@@ -55,6 +56,7 @@ module.exports = {
           },
           endDate: '13/09/2019 00:00',
           range: INTERVAL_RANGES.CUSTOM,
+          period: INTERVAL_PERIODS.HOUR,
         },
         statsSelector: {
           newStats: [{

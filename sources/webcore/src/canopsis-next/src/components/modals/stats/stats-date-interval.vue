@@ -8,11 +8,12 @@
         v-layout
           v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
+              data-test="intervalPeriodValue",
               type="number",
               v-model="periodForm.periodValue",
               :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
-          v-flex
+          v-flex(data-test="intervalPeriodUnit")
             v-select.pt-0(
               v-model="periodForm.periodUnit",
               :items="periodUnits",
@@ -34,8 +35,17 @@
         ) {{ monthIntervalMessage }}
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click="submit", :disabled="errors.any()") {{ $t('common.submit') }}
+        v-btn(
+          data-test="statsDateIntervalCancelButton",
+          depressed,
+          flat,
+          @click="hideModal"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          data-test="statsDateIntervalSubmitButton",
+          @click="submit",
+          :disabled="errors.any()"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>

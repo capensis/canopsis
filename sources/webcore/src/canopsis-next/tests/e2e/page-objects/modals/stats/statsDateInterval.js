@@ -6,107 +6,28 @@ const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-
 const modalSelector = sel('statsDateIntervalModal');
 
 const commands = {
-  selectStatType(index = 1) {
-    return this.customClick('@statType')
+  selectPeriodUnit(index = 1) {
+    return this.customClick('@intervalPeriodUnit')
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
   },
 
-  clickStatTitle() {
-    return this.customClick('@statTitle');
+  selectRange(index = 1) {
+    return this.customClick('@intervalRange')
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
   },
 
-  clearStatTitle() {
-    return this.customClearValue('@statTitle');
+  clearPeriodValue() {
+    return this.customClearValue('@intervalPeriodValue');
   },
 
-  setStatTitle(value) {
-    return this.customSetValue('@statTitle', value);
+  clickPeriodValue() {
+    return this.customClick('@intervalPeriodValue');
   },
 
-  setStatTrend(checked) {
-    return this.getAttribute('@statTrendInput', 'aria-checked', ({ value }) => {
-      if (value !== String(checked)) {
-        this.customClick('@statTrend');
-      }
-    });
-  },
-
-  setStatRecursive(checked) {
-    return this.getAttribute('@statRecursiveInput', 'aria-checked', ({ value }) => {
-      if (value !== String(checked)) {
-        this.customClick('@statRecursive');
-      }
-    });
-  },
-
-  clickStatStates() {
-    return this.customClick('@statStates');
-  },
-
-  setStatState(index, checked) {
-    return this.getAttribute(
-      this.el('@statStatesOptionInput', index),
-      'aria-checked',
-      ({ value }) => {
-        if (value !== String(checked)) {
-          this.customClick(this.el('@statStatesOption', index));
-        }
-      },
-    );
-  },
-
-  setStatStates(states = []) {
-    states.forEach(({ index, checked }) => {
-      this.setStatState(index, checked);
-    });
-    return this;
-  },
-
-  clickStatAuthors() {
-    return this.customClick('@statAuthors');
-  },
-
-  clearStatAuthors() {
-    return this.customClearValue('@statAuthors');
-  },
-
-  setStatAuthor(value) {
-    return this.customSetValue('@statAuthors', value)
-      .customKeyup('@statAuthors', this.api.Keys.ENTER);
-  },
-
-  setStatAuthors(authors) {
-    authors.forEach((author) => {
-      this.setStatAuthor(author);
-    });
-    return this;
-  },
-
-  removeAuthor(value) {
-    this.api
-      .useXpath()
-      .customClick(this.el('@statAuthorXPath', value));
-
-    this.sendKeys('@statAuthors', this.api.Keys.BACK_SPACE);
-
-    return this;
-  },
-
-  clickParameters() {
-    return this.customClick('@statParameters');
-  },
-
-  clickStatSla() {
-    return this.customClick('@statSla');
-  },
-
-  clearStatSla() {
-    return this.customClearValue('@statSla');
-  },
-
-  setStatSla(value) {
-    return this.customSetValue('@statSla', value);
+  setPeriodValue(value) {
+    return this.customSetValue('@intervalPeriodValue', value);
   },
 
   el,
@@ -115,33 +36,15 @@ const commands = {
 module.exports = modalCreator(modalSelector, {
   elements: {
     ...elementsWrapperCreator(modalSelector, {
-      cancelButton: sel('addStatCancelButton'),
-      submitButton: sel('addStatSubmitButton'),
+      cancelButton: sel('statsDateIntervalCancelButton'),
+      submitButton: sel('statsDateIntervalSubmitButton'),
     }),
-    optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s) .v-list__tile__content',
 
-    addStatModal: sel('addStatModal'),
+    intervalPeriodValue: `input${sel('intervalPeriodValue')}`,
 
-    statType: `${sel('addStatModal')} div${sel('statTypeLayout')} .v-input__slot`,
+    intervalPeriodUnit: `${sel('intervalPeriodUnit')} .v-input__control`,
 
-    statTitle: `${sel('addStatModal')} ${sel('statTitle')}`,
-
-    statSla: `${sel('addStatModal')} ${sel('statSla')}`,
-
-    statTrend: `${sel('addStatModal')} div${sel('statTrend')} .v-input__slot`,
-    statTrendInput: `${sel('addStatModal')} input${sel('statTrend')}`,
-
-    statRecursive: `${sel('addStatModal')} div${sel('statRecursive')} .v-input__slot`,
-    statRecursiveInput: `${sel('addStatModal')} input${sel('statRecursive')}`,
-
-    statStates: `${sel('addStatModal')} ${sel('statStates')} .v-input__slot`,
-    statStatesOption: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    statStatesOptionInput: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s) input',
-
-    statAuthors: `${sel('addStatModal')} input${sel('statAuthors')}`,
-    statAuthorXPath: './/*[@data-test=\'addStatModal\']//div[@class=\'v-select__selections\']//span[span[@class=\'v-chip__content\' and contains(text(), \'%s\')]]',
-
-    statParameters: sel('statParameters'),
+    optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
   },
   commands: [commands],
 });

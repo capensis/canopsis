@@ -229,3 +229,10 @@ module.exports.STAT_STATES = {
   MAJOR: 3,
   CRITICAL: 4,
 };
+
+module.exports.INTERVAL_PERIODS = {
+  HOUR: 1,
+  DAY: 2,
+  WEEK: 3,
+  MONTH: 4,
+};
