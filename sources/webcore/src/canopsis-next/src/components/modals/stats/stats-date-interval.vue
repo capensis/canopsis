@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="statsDateIntervalModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.statsDateInterval.title') }}

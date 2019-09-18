@@ -3,7 +3,7 @@
 const el = require('../../../helpers/el');
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
-const modalSelector = sel('addStatModal');
+const modalSelector = sel('statsDateIntervalModal');
 
 const commands = {
   selectStatType(index = 1) {
