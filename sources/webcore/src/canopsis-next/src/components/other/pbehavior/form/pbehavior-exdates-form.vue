@@ -5,9 +5,9 @@
     v-layout(v-for="(exdate, index) in exdates", :key="exdate.key", row)
       v-flex
         date-time-picker-field(
-        :value="exdate.value",
-        useSeconds,
-        @input="updateFieldInArrayItem(index, 'value', $event)"
+          :value="exdate.value",
+          useSeconds,
+          @input="updateFieldInArrayItem(index, 'value', $event)"
         )
         v-btn(color="error", icon, @click="removeItemFromArray(index)")
           v-icon delete

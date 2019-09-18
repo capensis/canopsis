@@ -1,11 +1,11 @@
 // http://nightwatchjs.org/guide#usage
 
-const WAIT_PAUSE = 500;
+const { DEFAULT_PAUSE } = require('../config');
 
 module.exports.command = function customClick(selector) {
   this.waitForElementVisible(selector)
     .click(selector)
-    .pause(WAIT_PAUSE);
+    .pause(DEFAULT_PAUSE);
 
   return this;
 };

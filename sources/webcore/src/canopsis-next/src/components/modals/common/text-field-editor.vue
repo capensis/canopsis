@@ -5,12 +5,12 @@
         span.headline {{ config.title }}
     v-card-text
       v-text-field(
-      data-test="textField",
-      v-model="text",
-      v-validate="field.validationRules",
-      :name="field.name",
-      :label="field.label",
-      :error-messages="errors.collect(field.name)"
+        data-test="textField",
+        v-model="text",
+        v-validate="field.validationRules",
+        :name="field.name",
+        :label="field.label",
+        :error-messages="errors.collect(field.name)"
       )
     v-divider
     v-layout.py-1(justify-end)

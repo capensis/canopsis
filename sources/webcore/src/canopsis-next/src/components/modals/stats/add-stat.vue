@@ -10,7 +10,7 @@
             v-model="form.stat",
             hide-details,
             :items="statsTypes",
-            return-object,
+            return-object
           )
           v-text-field(
             data-test="statTitle",
@@ -18,7 +18,7 @@
             v-model="form.title",
             :error-messages="errors.collect('title')",
             v-validate="'required'",
-            data-vv-name="title",
+            data-vv-name="title"
           )
           v-card(v-if="form.stat.options.length || config.withTrend", color="secondary white--text", dark)
             v-card-title(data-test="statParameters") {{ $t('common.parameters') }}
@@ -34,7 +34,7 @@
               template(v-for="option in form.stat.options")
                 v-switch(
                   data-test="statRecursive",
-                  v-if="option === $constants.STATS_OPTIONS.recursive"
+                  v-if="option === $constants.STATS_OPTIONS.recursive",
                   :label="$t('common.recursive')",
                   v-model="form.parameters.recursive",
                   hide-details,
@@ -51,7 +51,7 @@
                   )
                 v-combobox(
                   data-test="statAuthors",
-                  v-else-if="option === $constants.STATS_OPTIONS.authors"
+                  v-else-if="option === $constants.STATS_OPTIONS.authors",
                   :placeholder="$t('common.authors')",
                   v-model="form.parameters.authors",
                   hide-details,
@@ -65,7 +65,7 @@
                   v-validate="{ required: true, regex: /^(<|>|<=|>=)\\s*\\d+$/ }",
                   :placeholder="$t('common.sla')",
                   :error-messages="errors.collect('sla')",
-                  :hide-details="!errors.has('sla')"
+                  :hide-details="!errors.has('sla')",
                   name="sla"
                 )
                   v-tooltip(slot="append", left)

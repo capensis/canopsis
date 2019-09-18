@@ -10,6 +10,10 @@ const commands = {
     return this.customClick(this.el('@groupById', id));
   },
 
+  browseGroupByViewId(viewId) {
+    return this.customClickXpath(this.el('@groupByViewId', viewId));
+  },
+
   browseViewById(id) {
     return this.customClick(this.el('@viewById', id));
   },
@@ -21,6 +25,11 @@ module.exports = modalCreator(modalSelector, {
   elements: {
     groupById: sel('selectView-group-%s'),
     viewById: sel('selectView-view-%s'),
+
+    groupByViewId: {
+      locateStrategy: 'xpath',
+      selector: '//div[contains(@class, "v-list__group")][div[div[a[contains(@data-test, "%s")]]]]//div[contains(@data-test, "selectView-group-")]',
+    },
   },
   commands: [commands],
 });

@@ -6,33 +6,33 @@
     v-divider
     v-card-text
       v-text-field(
-      data-test="filterTitle",
-      v-if="!hiddenFields.includes('title')",
-      v-model="form.title",
-      v-validate="'required|unique-title'",
-      :label="$t('modals.filter.fields.title')",
-      :error-messages="errors.collect('title')"
-      name="title",
-      required,
+        data-test="filterTitle",
+        v-if="!hiddenFields.includes('title')",
+        v-model="form.title",
+        v-validate="'required|unique-title'",
+        :label="$t('modals.filter.fields.title')",
+        :error-messages="errors.collect('title')",
+        name="title",
+        required
       )
       filter-editor(
-      v-if="!hiddenFields.includes('filter')",
-      v-model="form.filter",
-      :entitiesType="entitiesType",
-      required
+        v-if="!hiddenFields.includes('filter')",
+        v-model="form.filter",
+        :entitiesType="entitiesType",
+        required
       )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(
-      data-test="createFilterCancelButton",
-      @click="hideModal",
-      depressed,
-      flat
+        data-test="createFilterCancelButton",
+        @click="hideModal",
+        depressed,
+        flat
       ) {{ $t('common.cancel') }}
       v-btn.primary(
-      data-test="createFilterSubmitButton",
-      :disabled="errors.any()",
-      @click="submit"
+        data-test="createFilterSubmitButton",
+        :disabled="errors.any()",
+        @click="submit"
       ) {{ $t('common.submit') }}
 </template>
 

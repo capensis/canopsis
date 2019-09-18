@@ -5,12 +5,12 @@
         span.headline {{ $t('common.filters') }}
     v-card-text
       filters-list-component(
-      :filters.sync="filters",
-      :hasAccessToAddFilter="config.hasAccessToAddFilter",
-      :hasAccessToEditFilter="config.hasAccessToEditFilter",
-      @create:filter="createFilter",
-      @update:filter="updateFilter",
-      @delete:filter="deleteFilter"
+        :filters.sync="filters",
+        :hasAccessToAddFilter="config.hasAccessToAddFilter",
+        :hasAccessToEditFilter="config.hasAccessToEditFilter",
+        @create:filter="createFilter",
+        @update:filter="updateFilter",
+        @delete:filter="deleteFilter"
       )
 </template>
 

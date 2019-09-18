@@ -86,6 +86,7 @@ export default {
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Forbidden',
+    notFound: 'Not found',
     search: 'Search',
     filters: 'Filters',
     webhooks: 'Webhooks',
@@ -866,7 +867,7 @@ export default {
     },
     createHeartbeat: {
       create: {
-        title: 'Create webhook',
+        title: 'Create heartbeat',
         success: 'Heartbeat successfully created !',
       },
       remove: {

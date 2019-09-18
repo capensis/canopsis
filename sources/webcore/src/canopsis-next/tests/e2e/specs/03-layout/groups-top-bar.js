@@ -1,5 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 const { API_ROUTES } = require('../../../../src/config');
+const { NAVIGATION_TYPES } = require('../../constants');
 const { generateTemporaryView } = require('../../helpers/entities');
 
 module.exports = {
@@ -13,16 +14,6 @@ module.exports = {
   },
 
   after(browser, done) {
-    browser.page.layout.topBar()
-      .clickUserDropdown()
-      .clickUserProfileButton();
-
-    browser.page.modals.admin.createUser()
-      .verifyModalOpened()
-      .selectNavigationType(1)
-      .clickSubmitButton()
-      .verifyModalClosed();
-
     browser.completed.logout()
       .end(done);
 
@@ -38,13 +29,16 @@ module.exports = {
       name, title, description, group,
     } = views.create;
 
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
+
     browser.page.layout.topBar()
       .clickUserDropdown()
       .clickUserProfileButton();
 
     browser.page.modals.admin.createUser()
       .verifyModalOpened()
-      .selectNavigationType(2)
+      .selectNavigationType(NAVIGATION_TYPES.topBar)
       .clickSubmitButton()
       .verifyModalClosed();
 
@@ -251,5 +245,18 @@ module.exports = {
 
     browser.page.layout.popup()
       .clickOnEveryPopupsCloseIcons();
+  },
+
+  'Reset user data': (browser) => {
+    browser.page.layout.topBar()
+      .clickUserDropdown()
+      .clickUserProfileButton();
+
+    browser.page.modals.admin.createUser()
+      .verifyModalOpened()
+      .selectNavigationType(NAVIGATION_TYPES.sideBar)
+      .clickRemoveDefaultViewButton()
+      .clickSubmitButton()
+      .verifyModalClosed();
   },
 };

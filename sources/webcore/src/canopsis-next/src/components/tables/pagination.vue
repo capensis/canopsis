@@ -3,9 +3,9 @@
     ul.v-pagination(v-if="type === 'top'")
       li
         button.v-pagination__navigation(
-        :disabled="isPreviousPageDisabled",
-        :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }",
-        @click="previous"
+          :disabled="isPreviousPageDisabled",
+          :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }",
+          @click="previous"
         )
           v-icon chevron_left
       span {{ page }}
@@ -13,19 +13,19 @@
       span {{ totalPages }}
       li
         button.v-pagination__navigation(
-        :disabled="page >= totalPages",
-        :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
-        @click="next"
+          :disabled="page >= totalPages",
+          :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
+          @click="next"
         )
           v-icon chevron_right
     div(v-else)
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
       |  {{ last }} {{ $t('common.of') }} {{ total }} {{ $t('common.entries') }}
       v-pagination(
-      :value="page",
-      :total-visible="$config.PAGINATION_TOTAL_VISIBLE",
-      :length="totalPages",
-      @input="updatePage"
+        :value="page",
+        :total-visible="$config.PAGINATION_TOTAL_VISIBLE",
+        :length="totalPages",
+        @input="updatePage"
       )
 </template>
 
@@ -122,9 +122,10 @@ export default {
     pointer-events: none;
   }
 
-  .container{
+  .container {
     flex-direction: column;
   }
+
   span {
     padding-left: 1%;
   }

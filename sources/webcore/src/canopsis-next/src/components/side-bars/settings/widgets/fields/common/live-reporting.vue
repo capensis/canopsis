@@ -1,9 +1,9 @@
 <template lang="pug">
   settings-button-field(
-  :isEmpty="isValueEmpty",
-  @create="showEditLiveReportingModal",
-  @edit="showEditLiveReportingModal",
-  @delete="removeLiveReporting",
+    :isEmpty="isValueEmpty",
+    @create="showEditLiveReportingModal",
+    @edit="showEditLiveReportingModal",
+    @delete="removeLiveReporting"
   )
     .subheading(slot="title", data-test="liveReporting") {{ $t('settings.liveReporting.title') }}
 </template>

@@ -4,25 +4,25 @@
     v-layout(row, wrap)
       v-flex.pr-1(xs6)
         v-autocomplete.pt-0(
-        :value="form.moduleName",
-        :items="modules",
-        :search-input.sync="searchInput",
-        :loading="modulesPending",
-        :placeholder="$t('modals.createSnmpRule.fields.oid.labels.module')",
-        hide-no-data,
-        hide-details,
-        @change="selectModule"
+          :value="form.moduleName",
+          :items="modules",
+          :search-input.sync="searchInput",
+          :loading="modulesPending",
+          :placeholder="$t('modals.createSnmpRule.fields.oid.labels.module')",
+          hide-no-data,
+          hide-details,
+          @change="selectModule"
         )
       v-flex.pl-1(xs6)
         v-select.pt-0(
-        :value="form.mibName",
-        :items="moduleMibs",
-        :loading="moduleMibsPending",
-        item-text="name",
-        hide-details,
-        offset-y,
-        return-object,
-        @input="selectMib"
+          :value="form.mibName",
+          :items="moduleMibs",
+          :loading="moduleMibsPending",
+          item-text="name",
+          hide-details,
+          offset-y,
+          return-object,
+          @input="selectMib"
         )
 </template>
 

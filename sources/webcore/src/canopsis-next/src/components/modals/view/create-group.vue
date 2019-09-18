@@ -5,24 +5,24 @@
         span.headline {{ title }}
     v-card-text
       v-text-field(
-      data-test="modalGroupNameField",
-      :label="$t('modals.group.fields.name')",
-      :error-messages="errors.collect('name')"
-      v-model="form.name",
-      v-validate="'required'",
-      name="name",
+        data-test="modalGroupNameField",
+        :label="$t('modals.group.fields.name')",
+        :error-messages="errors.collect('name')",
+        v-model="form.name",
+        v-validate="'required'",
+        name="name"
       )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
-      @click="submit",
-      data-test="createGroupSubmitButton"
+        @click="submit",
+        data-test="createGroupSubmitButton"
       ) {{ $t('common.submit') }}
       v-btn.error(
-      v-if="config.group && hasDeleteAnyViewAccess",
-      @click="remove",
-      data-test="createGroupDeleteButton"
+        v-if="config.group && hasDeleteAnyViewAccess",
+        @click="remove",
+        data-test="createGroupDeleteButton"
       ) {{ $t('common.delete') }}
 </template>
 

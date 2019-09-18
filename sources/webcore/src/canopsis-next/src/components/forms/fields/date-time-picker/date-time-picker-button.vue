@@ -1,29 +1,29 @@
 <template lang="pug">
   v-menu(
-  v-model="isMenuOpen",
-  content-class="date-time-picker",
-  transition="slide-y-transition",
-  max-width="290px",
-  :close-on-content-click="false",
-  right,
-  lazy
+    v-model="isMenuOpen",
+    content-class="date-time-picker",
+    transition="slide-y-transition",
+    max-width="290px",
+    :close-on-content-click="false",
+    right,
+    lazy
   )
     v-btn(
-    data-test="dateTimePickerButton",
-    slot="activator",
-    color="secondary",
-    icon,
-    fab,
-    small
+      data-test="dateTimePickerButton",
+      slot="activator",
+      color="secondary",
+      icon,
+      fab,
+      small
     )
       v-icon calendar_today
     date-time-picker(
-    data-test="dateTimePickerCalendar",
-    :value="value",
-    :opened="isMenuOpen",
-    :roundHours="roundHours",
-    :useSeconds="useSeconds",
-    @input="updateModel($event)"
+      data-test="dateTimePickerCalendar",
+      :value="value",
+      :opened="isMenuOpen",
+      :roundHours="roundHours",
+      :useSeconds="useSeconds",
+      @input="updateModel($event)"
     )
 </template>
 

@@ -50,7 +50,7 @@ export default {
 <style lang="scss">
   .text-editor-modal {
     .quill-editor {
-      .ql-editor{
+      .ql-editor {
         min-height: 120px !important;
         max-height: 300px;
         overflow: hidden;

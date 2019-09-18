@@ -8,98 +8,98 @@
       v-form
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createUser.fields.username')",
-          v-model="form._id",
-          data-vv-name="username",
-          v-validate="'required'",
-          :disabled="onlyUserPrefs",
-          :error-messages="errors.collect('username')",
-          data-test="username"
+            :label="$t('modals.createUser.fields.username')",
+            v-model="form._id",
+            data-vv-name="username",
+            v-validate="'required'",
+            :disabled="onlyUserPrefs",
+            :error-messages="errors.collect('username')",
+            data-test="username"
           )
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createUser.fields.firstName')",
-          v-model="form.firstname",
-          :disabled="onlyUserPrefs",
-          data-test="firstName"
+            :label="$t('modals.createUser.fields.firstName')",
+            v-model="form.firstname",
+            :disabled="onlyUserPrefs",
+            data-test="firstName"
           )
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createUser.fields.lastName')",
-          v-model="form.lastname",
-          :disabled="onlyUserPrefs",
-          data-test="lastName"
+            :label="$t('modals.createUser.fields.lastName')",
+            v-model="form.lastname",
+            :disabled="onlyUserPrefs",
+            data-test="lastName"
           )
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createUser.fields.email')",
-          v-model="form.mail",
-          data-vv-name="email",
-          v-validate="'required|email'",
-          :error-messages="errors.collect('email')",
-          :disabled="onlyUserPrefs",
-          data-test="email"
+            :label="$t('modals.createUser.fields.email')",
+            v-model="form.mail",
+            data-vv-name="email",
+            v-validate="'required|email'",
+            :error-messages="errors.collect('email')",
+            :disabled="onlyUserPrefs",
+            data-test="email"
           )
         v-layout(row)
           v-text-field(
-          type="password",
-          :label="$t('modals.createUser.fields.password')",
-          v-model="form.password",
-          data-vv-name="password",
-          v-validate="passwordRules",
-          :error-messages="errors.collect('password')",
-          :disabled="onlyUserPrefs",
-          data-test="password"
+            type="password",
+            :label="$t('modals.createUser.fields.password')",
+            v-model="form.password",
+            data-vv-name="password",
+            v-validate="passwordRules",
+            :error-messages="errors.collect('password')",
+            :disabled="onlyUserPrefs",
+            data-test="password"
           )
         v-layout(data-test="roleLayout", row)
           v-select(
-          :label="$t('modals.createUser.fields.role')",
-          v-model="form.role",
-          :items="roles",
-          item-text="_id",
-          item-value="_id",
-          data-vv-name="role",
-          v-validate="'required'",
-          :disabled="onlyUserPrefs",
-          :error-messages="errors.collect('role')",
-          data-test="role"
+            :label="$t('modals.createUser.fields.role')",
+            v-model="form.role",
+            :items="roles",
+            item-text="_id",
+            item-value="_id",
+            data-vv-name="role",
+            v-validate="'required'",
+            :disabled="onlyUserPrefs",
+            :error-messages="errors.collect('role')",
+            data-test="role"
           )
         v-layout(data-test="languageLayout", row)
           v-select(
-          data-test="language",
-          :label="$t('modals.createUser.fields.language')",
-          v-model="form.ui_language",
-          :items="languages",
+            data-test="language",
+            :label="$t('modals.createUser.fields.language')",
+            v-model="form.ui_language",
+            :items="languages"
           )
         v-layout(data-test="navigationTypeLayout", row)
           v-select.mt-0(
-          data-test="navigationType",
-          v-model="form.groupsNavigationType",
-          :label="$t('parameters.groupsNavigationType.title')",
-          :items="groupsNavigationItems",
+            data-test="navigationType",
+            v-model="form.groupsNavigationType",
+            :label="$t('parameters.groupsNavigationType.title')",
+            :items="groupsNavigationItems"
           )
         v-layout(row, align-center, v-if="!isNew")
           div {{ $t('common.authKey') }}: {{ config.user.authkey }}
           v-tooltip(left)
             v-btn(
-            v-clipboard:copy="config.user.authkey",
-            v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
-            v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
-            slot="activator",
-            small,
-            fab,
-            icon,
-            depressed
+              v-clipboard:copy="config.user.authkey",
+              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
+              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+              slot="activator",
+              small,
+              fab,
+              icon,
+              depressed
             )
               v-icon file_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
         v-layout(row)
           v-switch(
-          data-test="enabled"
-          color="primary",
-          :label="$t('modals.createUser.fields.enabled')",
-          :disabled="onlyUserPrefs",
-          v-model="form.enable",
+            data-test="enabled",
+            color="primary",
+            :label="$t('modals.createUser.fields.enabled')",
+            :disabled="onlyUserPrefs",
+            v-model="form.enable"
           )
         v-layout
           view-selector(v-model="form.defaultview")

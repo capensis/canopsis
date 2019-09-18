@@ -9,16 +9,16 @@
       v-layout.mt-2.mb-1(wrap, justify-end)
         v-btn(@click="hideModal", flat) {{ $t('common.cancel') }}
         v-btn(
-        @click.prevent="submit",
-        :loading="submitting",
-        :disabled="submitting",
-        color="primary"
+          @click.prevent="submit",
+          :loading="submitting",
+          :disabled="submitting",
+          color="primary"
         ) {{ $t('common.continue') }}
         v-btn(
-        @click.prevent="submitWithTicket",
-        :loading="submitting",
-        :disabled="submitting",
-        color="warning"
+          @click.prevent="submitWithTicket",
+          :loading="submitting",
+          :disabled="submitting",
+          color="warning"
         ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
 </template>
 

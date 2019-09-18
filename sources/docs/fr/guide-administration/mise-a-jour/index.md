@@ -52,7 +52,7 @@ Si vous utilisez la configuration « moteurs Python uniquement » et « éditi
 su - canopsis -c "canopsinit"
 ```
 
-**En revanche**, si vous installez une version de Canopsis supérieure ou égale à 3.17.0, et que vous utilisez une configuration « moteurs Go » et « édition Canopsis CAT », lancer :
+**En revanche**, si vous installez une version de Canopsis supérieure ou égale à 3.17.0, et que vous utilisez une configuration « moteurs Go » et « édition Canopsis CAT », lancer :
 ```sh
 # Valeurs acceptées : --canopsis-edition core OU cat, --canopsis-stack python OU go.
 # "core" et "python" sont les valeurs par défaut.
@@ -107,3 +107,4 @@ Celles-ci sont décrites dans les documents suivants, branche par branche :
 *  [3.25.0](../../notes-de-version/3.25.0.md)
 *  [3.26.0](../../notes-de-version/3.26.0.md)
 *  [3.27.0](../../notes-de-version/3.27.0.md)
+*  [3.28.0](../../notes-de-version/3.28.0.md)

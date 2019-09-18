@@ -8,29 +8,29 @@
         v-layout
           v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
-            type="number",
-            v-model="periodForm.periodValue",
-            :label="$t('modals.statsDateInterval.fields.periodValue')"
+              type="number",
+              v-model="periodForm.periodValue",
+              :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
           v-flex
             v-select.pt-0(
-            v-model="periodForm.periodUnit",
-            :items="periodUnits",
-            :label="$t('modals.statsDateInterval.fields.periodUnit')"
+              v-model="periodForm.periodUnit",
+              :items="periodUnits",
+              :label="$t('modals.statsDateInterval.fields.periodUnit')"
             )
         v-alert.mb-2(
-        :value="isPeriodMonth",
-        type="info",
+          :value="isPeriodMonth",
+          type="info"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         date-interval-selector.my-1(
-        v-model="dateSelectorForm",
-        tstopRules="after_custom:tstart",
-        @update:startObjectValue="updateStartObjectValue",
-        @update:stopObjectValue="updateStopObjectValue"
+          v-model="dateSelectorForm",
+          tstopRules="after_custom:tstart",
+          @update:startObjectValue="updateStartObjectValue",
+          @update:stopObjectValue="updateStopObjectValue"
         )
         v-alert.mb-2(
-        :value="isPeriodMonth"
-        type="info",
+          :value="isPeriodMonth",
+          type="info"
         ) {{ monthIntervalMessage }}
       v-divider
       v-layout.py-1(justify-end)

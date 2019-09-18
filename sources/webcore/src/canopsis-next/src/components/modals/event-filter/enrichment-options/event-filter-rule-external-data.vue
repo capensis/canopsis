@@ -1,5 +1,5 @@
 <template lang="pug">
-   v-card
+  v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.eventFilterRule.externalData') }}
@@ -9,8 +9,8 @@
     v-layout.pa-2(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
-      @click.prevent="submit",
-      :disabled="error",
+        :disabled="error",
+        @click.prevent="submit"
       ) {{ error ? $t('errors.JSONNotValid') : $t('common.submit') }}
 </template>
 

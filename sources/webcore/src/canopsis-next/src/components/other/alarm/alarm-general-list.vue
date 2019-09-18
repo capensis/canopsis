@@ -2,9 +2,9 @@
   div
     v-subheader {{ $t('tables.alarmGeneral.title') }}
     v-data-table(
-    :headers="headers",
-    :items="items",
-    hide-actions
+      :headers="headers",
+      :items="items",
+      hide-actions
     )
       template(slot="items", slot-scope="props")
         td.text-xs-left {{ props.item.v.state.a }}

@@ -11,28 +11,28 @@
       )
     v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
       v-radio-group(
-      :value="condition",
-      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
-      @change="updateCondition"
+        :value="condition",
+        :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+        @change="updateCondition"
       )
         v-radio(data-test="andFilters", label="AND", value="$and")
         v-radio(data-test="orFilters", label="OR", value="$or")
     v-flex(
-    data-test="selectFilters",
-    v-show="!hideSelect",
-    v-bind="flexProps.select"
+      data-test="selectFilters",
+      v-show="!hideSelect",
+      v-bind="flexProps.select"
     )
       v-select(
-      :value="value",
-      :items="preparedFilters",
-      :label="label",
-      :itemText="itemText",
-      :itemValue="itemValue",
-      :multiple="isMultiple",
-      :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
-      return-object,
-      clearable,
-      @input="updateSelectedFilter"
+        :value="value",
+        :items="preparedFilters",
+        :label="label",
+        :itemText="itemText",
+        :itemValue="itemValue",
+        :multiple="isMultiple",
+        :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+        return-object,
+        clearable,
+        @input="updateSelectedFilter"
       )
         template(slot="item", slot-scope="{ parent, item, tile }")
           v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
@@ -41,20 +41,20 @@
             v-list-tile-title
               span {{ item[itemText] }}
               v-icon.ml-2(
-              v-show="!hideSelectIcon",
-              :color="tile.props.value ? parent.color : ''",
-              small
+                v-show="!hideSelectIcon",
+                :color="tile.props.value ? parent.color : ''",
+                small
               ) {{ item.locked ? 'lock' : 'person' }}
     v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
       v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
       filters-list(
-      v-else,
-      :filters="filters",
-      :entitiesType="entitiesType",
-      @create:filter="createFilter",
-      @update:filter="updateFilter",
-      @delete:filter="deleteFilter"
+        v-else,
+        :filters="filters",
+        :entitiesType="entitiesType",
+        @create:filter="createFilter",
+        @update:filter="updateFilter",
+        @delete:filter="deleteFilter"
       )
 </template>
 
