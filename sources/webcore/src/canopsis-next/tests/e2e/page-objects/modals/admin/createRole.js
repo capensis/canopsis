@@ -14,6 +14,10 @@ const commands = {
   clickSelectDefaultViewButton() {
     return this.customClick('@selectDefaultViewButton');
   },
+
+  clickRemoveDefaultViewButton() {
+    return this.customClick('@removeDefaultViewButton');
+  },
 };
 
 const modalSelector = sel('createRoleModal');
@@ -24,6 +28,7 @@ module.exports = modalCreator(modalSelector, {
       nameField: sel('name'),
       descriptionField: sel('description'),
       selectDefaultViewButton: sel('selectDefaultViewButton'),
+      removeDefaultViewButton: sel('removeDefaultViewButton'),
       submitButton: sel('submitButton'),
     }),
   },

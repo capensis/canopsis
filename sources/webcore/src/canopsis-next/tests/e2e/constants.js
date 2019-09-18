@@ -189,6 +189,11 @@ module.exports.WEATHER_TYPES = {
   text: 'Text',
 };
 
+module.exports.NAVIGATION_TYPES = {
+  sideBar: 1,
+  topBar: 2,
+};
+
 module.exports.CONTEXT_FILTER_COLUMNS = {
   NAME: 1,
   TYPE: 2,
