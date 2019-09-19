@@ -163,9 +163,9 @@ module.exports.command = function setCommonFields({
     common.clickStatsSelect();
 
     if (statsSelector.newStats) {
-      common.clickAddStat();
-
       statsSelector.newStats.forEach((stat) => {
+        common.clickAddStat();
+
         addStatModal
           .verifyModalOpened()
           .selectStatType(stat.type)

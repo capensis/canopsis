@@ -70,6 +70,17 @@ module.exports = {
             ],
             authors: ['first', 'second'],
             sla: '<=2',
+          }, {
+            type: STAT_TYPES.RESOLVED_TIME_SLA,
+            title: 'title 2',
+            trend: false,
+            recursive: false,
+            states: [
+              { index: STAT_STATES.OK, checked: true },
+              { index: STAT_STATES.MINOR, checked: true },
+            ],
+            authors: ['first', 'second'],
+            sla: '<=2',
           }],
         },
         sort: {

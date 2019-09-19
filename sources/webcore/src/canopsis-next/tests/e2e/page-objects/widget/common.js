@@ -312,6 +312,25 @@ const commands = {
   clickEditDateInterval() {
     return this.customClick('@editDateInterval');
   },
+
+  moveStatItem(fromIndex, toIndex) {
+    return this.dragAndDrop(
+      this.el('@statItem', fromIndex),
+      this.el('@statItem', toIndex),
+    );
+  },
+
+  clickStatItem(index) {
+    return this.customClick(this.el('@statItem', index));
+  },
+
+  removeStatItem(index) {
+    return this.customClick(this.el('@statItemDeleteButton', this.el('@statItem', index)));
+  },
+
+  editStatItem(index) {
+    return this.customClick(this.el('@statItemEditButton', this.el('@statItem', index)));
+  },
 };
 
 
@@ -404,6 +423,10 @@ module.exports = {
     addStatButton: sel('addStatButton'),
 
     editDateInterval: `${sel('dateInterval')} ${sel('editButton')}`,
+
+    statItem: `${sel('statItem')}:nth-child(%s)`,
+    statItemEditButton: `%s ${sel('statItemEditButton')}`,
+    statItemDeleteButton: `%s  ${sel('statItemDeleteButton')}`,
   },
   commands: [commands],
 };
