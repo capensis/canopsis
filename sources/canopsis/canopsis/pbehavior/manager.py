@@ -1116,7 +1116,8 @@ class PBehaviorManager(object):
         :rtype: int
         """
         tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
-        if pbh[PBehavior.TSTART] > now:
+        start = self.__convert_timestamp(pbh[PBehavior.TSTART], tz_name)
+        if start > now:
             # when pbh hasn't started yet, we return 0 in order to exclude pbh
             return 0
         if PBehavior.RRULE not in pbh or\

@@ -1218,7 +1218,9 @@ class Alerts(object):
                 value[AlarmField.alarmfilter.value][NEXT] = next_run
                 self.update_current_alarm(docalarm, value)
 
-            date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
+            last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
+            date_stamp = max(docalarm[storage.TIMESTAMP], last_tstop)
+            date = datetime.fromtimestamp(date_stamp)
             # Continue only if the limit condition is valid
             if date + lifter.limit > now:
                 self.logger.debug('AlarmFilter {}: Limit condition is invalid'
@@ -1255,7 +1257,7 @@ class Alerts(object):
                         continue
 
                     last_execution = datetime.fromtimestamp(max(executions))
-                    last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(new_value.get(AlarmField.resource.value, ""))
+                    last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
                     last = max(last_execution, last_tstop)
                     if last + lifter.limit > now:
                         # Too soon to execute one more time all tasks
