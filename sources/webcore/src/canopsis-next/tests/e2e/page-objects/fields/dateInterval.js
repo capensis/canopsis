@@ -96,7 +96,6 @@ module.exports = {
     endDateField: `${sel('intervalStop')} ${sel('dateTimePickerTextField')}`,
     endDateButton: `${sel('intervalStop')} ${sel('dateTimePickerButton')}`,
     endDateCalendar: `${sel('intervalStop')} ${sel('dateTimePickerCalendar')}`,
-    endDateDayField: './/div[@class=\'v-date-picker-table\']/[@class=\'v-btn__content\' and contains(text(), "%s")]',
 
     intervalRange: `${sel('intervalRange')} .v-input__control`,
 

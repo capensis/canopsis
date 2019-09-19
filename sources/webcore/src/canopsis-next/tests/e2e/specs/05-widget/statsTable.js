@@ -70,49 +70,38 @@ module.exports = {
             ],
             authors: ['first', 'second'],
             sla: '<=2',
-          }, {
-            type: STAT_TYPES.RESOLVED_TIME_SLA,
-            title: 'title 2',
-            trend: false,
-            recursive: false,
-            states: [
-              { index: STAT_STATES.OK, checked: true },
-              { index: STAT_STATES.MINOR, checked: true },
-            ],
-            authors: ['first', 'second'],
-            sla: '<=2',
           }],
         },
         sort: {
           order: SORT_ORDERS.desc,
           orderBy: 1,
         },
-        // filter: {
-        //   groups: [{
-        //     type: FILTERS_TYPE.OR,
-        //     items: [{
-        //       rule: FILTER_COLUMNS.CONNECTOR,
-        //       operator: FILTER_OPERATORS.EQUAL,
-        //       valueType: VALUE_TYPES.STRING,
-        //       value: 'value',
-        //       groups: [{
-        //         type: FILTERS_TYPE.OR,
-        //         items: [{
-        //           rule: FILTER_COLUMNS.CONNECTOR_NAME,
-        //           operator: FILTER_OPERATORS.IN,
-        //           valueType: VALUE_TYPES.BOOLEAN,
-        //           value: true,
-        //         }],
-        //       }],
-        //     }, {
-        //       type: FILTERS_TYPE.AND,
-        //       rule: FILTER_COLUMNS.CONNECTOR_NAME,
-        //       operator: FILTER_OPERATORS.NOT_EQUAL,
-        //       valueType: VALUE_TYPES.NUMBER,
-        //       value: 136,
-        //     }],
-        //   }],
-        // },
+        filter: {
+          groups: [{
+            type: FILTERS_TYPE.OR,
+            items: [{
+              rule: FILTER_COLUMNS.CONNECTOR,
+              operator: FILTER_OPERATORS.EQUAL,
+              valueType: VALUE_TYPES.STRING,
+              value: 'value',
+              groups: [{
+                type: FILTERS_TYPE.OR,
+                items: [{
+                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
+                  operator: FILTER_OPERATORS.IN,
+                  valueType: VALUE_TYPES.BOOLEAN,
+                  value: true,
+                }],
+              }],
+            }, {
+              type: FILTERS_TYPE.AND,
+              rule: FILTER_COLUMNS.CONNECTOR_NAME,
+              operator: FILTER_OPERATORS.NOT_EQUAL,
+              valueType: VALUE_TYPES.NUMBER,
+              value: 136,
+            }],
+          }],
+        },
       },
     };
     const { groupId, viewId } = browser.globals.defaultViewData;
@@ -146,7 +135,7 @@ module.exports = {
         md: 10,
         lg: 10,
       },
-      title: 'Alarms widget(edited)',
+      title: 'Stats table widget(edited)',
       parameters: {
         filter: {
           groups: [{
