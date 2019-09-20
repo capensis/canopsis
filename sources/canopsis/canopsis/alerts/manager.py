@@ -1256,9 +1256,8 @@ class Alerts(object):
                         # Already repeated enough times
                         continue
 
-                    last_execution = datetime.fromtimestamp(max(executions))
                     last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-                    last = max(last_execution, last_tstop)
+                    last = datetime.fromtimestamp(max(max(executions), last_tstop))
                     if last + lifter.limit > now:
                         # Too soon to execute one more time all tasks
                         continue
