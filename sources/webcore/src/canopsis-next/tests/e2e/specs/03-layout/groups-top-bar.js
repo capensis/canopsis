@@ -224,6 +224,7 @@ module.exports = {
     browser.page.modals.view.create()
       .verifyModalOpened()
       .clickViewDeleteButton();
+
     browser.page.modals.common.confirmation()
       .verifyModalOpened()
       .clickSubmitButton()
@@ -235,9 +236,11 @@ module.exports = {
     browser.page.layout.topBar()
       .clickEditGroupButton(views.edit.group_id)
       .defaultPause();
+
     browser.page.modals.view.createGroup()
       .verifyModalOpened()
       .clickDeleteButton();
+
     browser.page.modals.common.confirmation()
       .verifyModalOpened()
       .clickSubmitButton()
@@ -255,7 +258,6 @@ module.exports = {
     browser.page.modals.admin.createUser()
       .verifyModalOpened()
       .selectNavigationType(NAVIGATION_TYPES.sideBar)
-      .clickRemoveDefaultViewButton()
       .clickSubmitButton()
       .verifyModalClosed();
   },
