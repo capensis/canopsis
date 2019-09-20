@@ -10,22 +10,26 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      v-list-group
+      v-list-group(data-test="widgetAlarmsList")
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns", withHtml)
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider
-          field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
+          field-info-popup(
+            data-test="widgetInfoPopup",
+            v-model="settings.widget.parameters.alarmsList.infoPopups"
+          )
           v-divider
           field-text-editor(
+            data-test="widgetMoreInfoTemplate",
             v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
             :title="$t('settings.moreInfosModal')"
           )
       v-divider
       stats-calendar-advanced-form(v-model="settings.widget.parameters")
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitStatsCalendarButton", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

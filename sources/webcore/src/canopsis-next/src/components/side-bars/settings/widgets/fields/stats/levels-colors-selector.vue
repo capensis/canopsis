@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="levelsColorsSelector")
     v-list-tile(slot="activator") {{$t('settings.colorsSelector.title')}}
     v-container
       v-layout(wrap)
-        v-flex(xs12, v-for="level in $constants.STATS_CRITICITY", :key="level")
+        v-flex(data-test="`levelsColor-${level}`", xs12, v-for="level in $constants.STATS_CRITICITY", :key="level")
           v-layout(align-center)
             v-btn(@click="showColorPickerModal(level)", small) {{ getButtonText(level) }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: levelsColors[level] }") {{ levelsColors[level] }}
