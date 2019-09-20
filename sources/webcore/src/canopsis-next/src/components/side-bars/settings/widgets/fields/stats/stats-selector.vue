@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="statsSelector")
     v-list-tile(slot="activator")
       div(:class="validationHeaderClass") {{ $t('settings.statsSelect.title') }}
         .font-italic.caption.ml-1(v-if="required") ({{ $t('settings.statsSelect.required') }})
@@ -7,7 +7,7 @@
     v-container
       v-alert(:value="errors.has('stats')", type="error") {{ $t('settings.statsSelect.required') }}
       v-layout(justify-space-between)
-        v-btn(@click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
+        v-btn(data-test="addStatButton", @click="showAddStatModal") {{ $t('modals.addStat.title.add') }}
         v-tooltip(v-if="!draggableOptions.disabled", left)
           v-btn(slot="activator", icon)
             v-icon help_outline
@@ -18,15 +18,27 @@
           :options="draggableOptions",
           @input="updateStatsPositions"
         )
-          v-list-group(v-for="stat in orderedStats", :key="stat.title")
+          v-list-group(data-test="statItem", v-for="stat in orderedStats", :key="stat.title")
             v-list-tile(slot="activator")
               v-list-tile-content
                 v-list-tile-title(:class="{ draggable: !draggableOptions.disabled }") {{ stat.title }}
               v-list-tile-action
                 v-layout
-                  v-btn.primary.mx-1(@click.stop="showEditStatModal(stat.title, stat)", fab, small, depressed)
+                  v-btn.primary.mx-1(
+                    data-test="statItemEditButton",
+                    fab,
+                    small,
+                    depressed,
+                    @click.stop="showEditStatModal(stat.title, stat)"
+                  )
                     v-icon edit
-                  v-btn.error(@click.stop="showDeleteStatModal(stat.title)", fab, small, depressed)
+                  v-btn.error(
+                    data-test="statItemDeleteButton",
+                    fab,
+                    small,
+                    depressed,
+                    @click.stop="showDeleteStatModal(stat.title)"
+                  )
                     v-icon delete
             v-list-tile
               v-list-tile-title {{ $t('common.stat') }}: {{ stat.stat }}

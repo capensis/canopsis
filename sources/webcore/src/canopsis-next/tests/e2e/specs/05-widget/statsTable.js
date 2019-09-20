@@ -1,16 +1,18 @@
 // http://nightwatchjs.org/guide#usage
 
 const {
-  CONTEXT_WIDGET_SORT_FIELD,
   SORT_ORDERS,
   FILTERS_TYPE,
   VALUE_TYPES,
+  INTERVAL_RANGES,
+  INTERVAL_PERIODS,
   FILTER_OPERATORS,
-  CONTEXT_FILTER_COLUMNS,
-  CONTEXT_TYPE_OF_ENTITIES,
+  FILTER_COLUMNS,
+  STAT_TYPES,
+  STAT_STATES,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { generateTemporaryView, generateTemporaryContextWidget } = require('../../helpers/entities');
+const { generateTemporaryView, generateTemporaryStatsTableWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
@@ -37,9 +39,9 @@ module.exports = {
     });
   },
 
-  'Create widget context with some name': (browser) => {
-    const contextWidget = {
-      ...generateTemporaryContextWidget(),
+  'Create widget stats table with some name': (browser) => {
+    const statsTableWidget = {
+      ...generateTemporaryStatsTableWidget(),
       size: {
         sm: 12,
         md: 12,
@@ -47,48 +49,46 @@ module.exports = {
       },
       parameters: {
         advanced: true,
+        dateInterval: {
+          calendarStartDate: {
+            minute: 0,
+            hour: 12,
+            day: 12,
+          },
+          endDate: '13/09/2019 00:00',
+          range: INTERVAL_RANGES.CUSTOM,
+          period: INTERVAL_PERIODS.HOUR,
+        },
+        statsSelector: {
+          newStats: [{
+            type: STAT_TYPES.RESOLVED_TIME_SLA,
+            title: 'title',
+            trend: false,
+            recursive: false,
+            states: [
+              { index: STAT_STATES.OK, checked: true },
+              { index: STAT_STATES.MINOR, checked: true },
+            ],
+            authors: ['first', 'second'],
+            sla: '<=2',
+          }],
+        },
         sort: {
           order: SORT_ORDERS.desc,
-          orderBy: CONTEXT_WIDGET_SORT_FIELD.type,
+          orderBy: 1,
         },
-        newColumnNames: [{
-          index: 3,
-          data: {
-            value: 'connector',
-            label: 'New column',
-          },
-        }],
-        editColumnNames: [{
-          index: 1,
-          data: {
-            value: 'connector',
-            label: 'Connector(changed)',
-          },
-        }],
-        moveColumnNames: [{
-          index: 1,
-          down: true,
-        }, {
-          index: 2,
-          up: true,
-        }],
-        deleteColumnNames: [2],
-        filters: {
-          isMix: true,
-          type: FILTERS_TYPE.OR,
-          title: 'Filter title',
-          selected: [1],
+        filter: {
           groups: [{
             type: FILTERS_TYPE.OR,
             items: [{
-              rule: CONTEXT_FILTER_COLUMNS.NAME,
+              rule: FILTER_COLUMNS.CONNECTOR,
               operator: FILTER_OPERATORS.EQUAL,
               valueType: VALUE_TYPES.STRING,
               value: 'value',
               groups: [{
                 type: FILTERS_TYPE.OR,
                 items: [{
-                  rule: CONTEXT_FILTER_COLUMNS.NAME,
+                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
                   operator: FILTER_OPERATORS.IN,
                   valueType: VALUE_TYPES.BOOLEAN,
                   value: true,
@@ -96,20 +96,13 @@ module.exports = {
               }],
             }, {
               type: FILTERS_TYPE.AND,
-              rule: CONTEXT_FILTER_COLUMNS.TYPE,
+              rule: FILTER_COLUMNS.CONNECTOR_NAME,
               operator: FILTER_OPERATORS.NOT_EQUAL,
               valueType: VALUE_TYPES.NUMBER,
               value: 136,
             }],
           }],
         },
-        typeOfEntities: [{
-          index: CONTEXT_TYPE_OF_ENTITIES.CONNECTOR,
-          value: true,
-        }, {
-          index: CONTEXT_TYPE_OF_ENTITIES.COMPONENT,
-          value: true,
-        }],
       },
     };
     const { groupId, viewId } = browser.globals.defaultViewData;
@@ -124,44 +117,55 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget(WIDGET_TYPES.context)
+      .clickWidget(WIDGET_TYPES.statsTable)
       .verifyModalClosed();
 
-    browser.completed.widget.createContext(contextWidget, ({ response }) => {
+    browser.completed.widget.createStatsTable(statsTableWidget, ({ response }) => {
       browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
   },
 
-  'Edit widget context with some name': (browser) => {
+  'Edit widget stats table with some name': (browser) => {
     browser.page.view()
       .clickEditViewButton()
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.setCommonFields({
       size: {
-        sm: 6,
-        md: 6,
-        lg: 6,
+        sm: 10,
+        md: 10,
+        lg: 10,
       },
-      title: 'Context widget(edited)',
+      title: 'Stats table widget(edited)',
       parameters: {
-        advanced: true,
-        sort: {
-          order: SORT_ORDERS.asc,
-          orderBy: CONTEXT_WIDGET_SORT_FIELD.name,
+        filter: {
+          groups: [{
+            type: FILTERS_TYPE.OR,
+            items: [{
+              rule: FILTER_COLUMNS.CONNECTOR,
+              operator: FILTER_OPERATORS.EQUAL,
+              valueType: VALUE_TYPES.STRING,
+              value: 'value',
+              groups: [{
+                type: FILTERS_TYPE.OR,
+                items: [{
+                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
+                  operator: FILTER_OPERATORS.IN,
+                  valueType: VALUE_TYPES.BOOLEAN,
+                  value: true,
+                }],
+              }],
+            }],
+          }],
         },
-        typeOfEntities: [{
-          index: CONTEXT_TYPE_OF_ENTITIES.CONNECTOR,
-          value: false,
-        }],
       },
     });
 
-    browser.page.widget.context()
-      .clickSubmitContext();
+    browser.page.widget.statsTable()
+      .clickSubmitStatsTable();
   },
 
-  'Delete widget context with some name': (browser) => {
+  'Delete widget stats table with some name': (browser) => {
     browser.page.view()
       .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 
