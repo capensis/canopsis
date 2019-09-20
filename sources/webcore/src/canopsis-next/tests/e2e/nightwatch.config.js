@@ -6,7 +6,19 @@
 process.env.VUE_CLI_BABEL_TARGET_NODE = true;
 process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
 
-require('@babel/register');
+require('@babel/register')({
+  plugins: [
+    'require-context-hook',
+    ['babel-plugin-module-resolver', {
+      root: ['.'],
+      alias: {
+        '@': './src',
+      },
+    }],
+  ],
+});
+
+require('babel-plugin-require-context-hook/register')();
 
 const path = require('path');
 const deepmerge = require('deepmerge');
