@@ -38,6 +38,9 @@ from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.middleware import Middleware
 from canopsis.statsng.event_publisher import StatEventPublisher
 from canopsis.watcher.manager import Watcher
+from canopsis.logger.logger import Logger, OutputNull
+from canopsis.common.mongo_store import MongoStore
+from canopsis.pbehavior.manager import PBehaviorManager
 
 
 class BaseTest(TestCase):
@@ -83,6 +86,19 @@ class BaseTest(TestCase):
 
         self.event_publisher = Mock(spec=StatEventPublisher)
 
+
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection("default_testpbehavior")
+        pb_collection = MongoCollection(collection)
+
+        logger = Logger.get('test_pb', None, output_cls=OutputNull)
+
+        config = Configuration.load(PBehaviorManager.CONF_PATH, Ini)
+
+        self.pbm = PBehaviorManager(config=config,
+                                    logger=logger,
+                                    pb_collection=pb_collection)
+
         self.manager = Alerts(config=conf,
                               logger=self.logger,
                               alerts_storage=self.alerts_storage,
@@ -90,7 +106,8 @@ class BaseTest(TestCase):
                               filter_storage=self.filter_storage,
                               context_graph=self.cg_manager,
                               watcher=self.watcher_manager,
-                              event_publisher=self.event_publisher)
+                              event_publisher=self.event_publisher,
+                              pbehavior=self.pbm)
 
     def tearDown(self):
         """Teardown"""
