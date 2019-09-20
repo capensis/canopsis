@@ -65,7 +65,7 @@
                         v-list-tile-content
                           v-layout(align-center)
                             span.font-weight-bold {{ $t('actions.table.expand.tabs.snooze.duration') }}
-                            span : {{ action.parameters.duration }}
+                            span : {{ action.parameters.duration | duration }}
                     v-flex(xs12)
                       v-list-tile
                         v-list-tile-avatar

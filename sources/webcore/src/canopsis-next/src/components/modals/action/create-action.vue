@@ -101,7 +101,7 @@ export default {
       message: '',
       duration: {
         duration: 1,
-        durationType: DURATION_UNITS.minute,
+        durationType: DURATION_UNITS.minute.value,
       },
     };
 
