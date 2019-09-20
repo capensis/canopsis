@@ -29,11 +29,7 @@
               v-model="snoozeParameters.message",
               :label="$t('modals.createAction.fields.message')",
               )
-              v-text-field(
-              v-model="snoozeParameters.duration",
-              :label="$t('modals.createAction.fields.duration')",
-              type="number"
-              )
+              duration-field(:duration="snoozeParameters.duration")
             template(v-if="form.type === $constants.ACTION_TYPES.pbehavior")
               pbehavior-form(v-model="pbehaviorParameters", :author="$constants.ACTION_AUTHOR", :noFilter="true")
           v-tab {{ $t('modals.createAction.tabs.hook') }}
@@ -49,8 +45,9 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { omit } from 'lodash';
-import { MODALS, ACTION_TYPES, ACTION_AUTHOR, WEBHOOK_TRIGGERS } from '@/constants';
+import { MODALS, ACTION_TYPES, ACTION_AUTHOR, WEBHOOK_TRIGGERS, DURATION_UNITS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -58,6 +55,7 @@ import { unsetInSeveralWithConditions } from '@/helpers/immutable';
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
+import DurationField from '@/components/forms/fields/duration.vue';
 
 export default {
   name: MODALS.createAction,
@@ -67,6 +65,7 @@ export default {
   components: {
     PbehaviorForm,
     WebhookFormHookTab,
+    DurationField,
   },
   mixins: [modalInnerMixin],
   data() {
@@ -99,7 +98,10 @@ export default {
     // Default 'snooze' action parameters
     let snoozeParameters = {
       message: '',
-      duration: 60,
+      duration: {
+        duration: 1,
+        durationType: DURATION_UNITS.minute,
+      },
     };
 
     if (this.modal.config.item) {
@@ -142,7 +144,12 @@ export default {
           });
 
           if (this.form.type === ACTION_TYPES.snooze) {
-            data.parameters = { ...this.snoozeParameters, duration: parseInt(this.snoozeParameters.duration, 10) };
+            const duration = moment.duration(
+              parseInt(this.snoozeParameters.duration.duration, 10),
+              this.snoozeParameters.duration.durationType,
+            ).asSeconds();
+
+            data.parameters = { ...this.snoozeParameters, duration };
           } else if (this.form.type === ACTION_TYPES.pbehavior) {
             const pbehavior = this.$options.filters.formToPbehavior(this.pbehaviorParameters.general);
 
