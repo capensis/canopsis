@@ -6,11 +6,11 @@ const {
   INTERVAL_RANGES,
   FILTER_OPERATORS,
   FILTER_COLUMNS,
-  WIDGETS_TYPES,
   STAT_TYPES,
   STAT_STATES,
   INTERVAL_PERIODS,
 } = require('../../constants');
+const { WIDGET_TYPES } = require('@/constants');
 const { generateTemporaryView, generateTemporaryTextWidget } = require('../../helpers/entities');
 
 module.exports = {
@@ -112,7 +112,7 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget(WIDGETS_TYPES.text)
+      .clickWidget(WIDGET_TYPES.text)
       .verifyModalClosed();
 
     browser.completed.widget.createText(textWidget, ({ response }) => {

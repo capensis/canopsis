@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 
-const { API_ROUTES } = require('../../../../../src/config');
+const { API_ROUTES } = require('@/config');
 
 module.exports.command = function createServiceWeather(
   {
