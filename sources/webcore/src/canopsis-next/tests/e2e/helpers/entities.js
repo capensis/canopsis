@@ -36,3 +36,8 @@ module.exports.generateTemporaryContextWidget = (prefix = '', suffix = uid()) =>
   title: `${prefix}Context-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryStatsTableWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}StatsTable-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

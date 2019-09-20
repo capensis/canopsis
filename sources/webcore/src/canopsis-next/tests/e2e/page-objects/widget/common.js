@@ -300,7 +300,32 @@ const commands = {
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
   },
+
+  clickStatsSelect() {
+    return this.customClick('@statsSelector');
+  },
+
+  clickAddStat() {
+    return this.customClick('@addStatButton');
+  },
+
+  clickEditDateInterval() {
+    return this.customClick('@editDateInterval');
+  },
+
+  clickStatItem(index) {
+    return this.customClick(this.el('@statItem', index));
+  },
+
+  removeStatItem(index) {
+    return this.customClick(this.el('@statItemDeleteButton', index));
+  },
+
+  editStatItem(index) {
+    return this.customClick(this.el('@statItemEditButton', index));
+  },
 };
+
 
 module.exports = {
   elements: {
@@ -386,6 +411,15 @@ module.exports = {
     editFilter: sel('editFilter-%s'),
     deleteFilter: sel('deleteFilter-%s'),
     selectFilters: `${sel('selectFilters')} .v-input__slot`,
+
+    statsSelector: sel('statsSelector'),
+    addStatButton: sel('addStatButton'),
+
+    editDateInterval: `${sel('dateInterval')} ${sel('editButton')}`,
+
+    statItem: `${sel('statItem')}:nth-child(%s)`,
+    statItemEditButton: `${sel('statItem')}:nth-child(%s) ${sel('statItemEditButton')}`,
+    statItemDeleteButton: `${sel('statItem')}:nth-child(%s)  ${sel('statItemDeleteButton')}`,
   },
   commands: [commands],
 };

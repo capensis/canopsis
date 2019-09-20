@@ -12,11 +12,15 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval", :hiddenFields="['periodValue']")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
+      field-filter-editor(
+        data-test="widgetFilterEditor",
+        v-model="settings.widget.parameters.mfilter",
+        :hiddenFields="['title']"
+      )
       v-divider
       field-stats-selector(v-model="settings.widget.parameters.stats", required, withTrend, withSorting)
       v-divider
-      v-list-group
+      v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-default-sort-column(
@@ -25,7 +29,7 @@
             :columnsLabel="$t('settings.columnName')"
           )
           v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitStatsTable", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

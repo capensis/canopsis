@@ -176,19 +176,6 @@ module.exports.FILTER_COLUMNS = {
   RESOURCE: 4,
 };
 
-module.exports.WEATHER_TYPES = {
-  alarmList: 'AlarmsList',
-  context: 'Context',
-  weather: 'ServiceWeather',
-  statsHistogram: 'StatsHistogram',
-  statsCurves: 'StatsCurves',
-  statsTable: 'StatsTable',
-  statsCalendar: 'StatsCalendar',
-  statsNumber: 'StatsNumber',
-  statsPareto: 'StatsPareto',
-  text: 'Text',
-};
-
 module.exports.NAVIGATION_TYPES = {
   sideBar: 1,
   topBar: 2,
@@ -204,4 +191,35 @@ module.exports.CONTEXT_TYPE_OF_ENTITIES = {
   CONNECTOR: 2,
   RESOURCE: 3,
   WATCHER: 4,
+};
+
+module.exports.STAT_TYPES = {
+  ALARMS_CREATED: 1,
+  ALARMS_RESOLVED: 2,
+  ALARMS_CANCELED: 3,
+  ALARMS_ACKNOWLEDGED: 4,
+  ACK_TIME_SLA: 5,
+  RESOLVED_TIME_SLA: 6,
+  TIME_IN_STATE: 7,
+  STATE_RATE: 8,
+  MTBF: 9,
+  CURRENT_STATE: 10,
+  ONGOING_ALARMS: 11,
+  CURRENT_ONGOING_ALARMS: 12,
+  CURRENT_ONGOING_ALARMS_WITH_ACK: 13,
+  CURRENT_ONGOING_ALARMS_WITHOUT_ACK: 14,
+};
+
+module.exports.STAT_STATES = {
+  OK: 1,
+  MINOR: 2,
+  MAJOR: 3,
+  CRITICAL: 4,
+};
+
+module.exports.INTERVAL_PERIODS = {
+  HOUR: 1,
+  DAY: 2,
+  WEEK: 3,
+  MONTH: 4,
 };
