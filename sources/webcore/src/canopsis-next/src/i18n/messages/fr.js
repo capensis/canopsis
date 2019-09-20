@@ -1008,6 +1008,7 @@ export default {
           snooze: {
             message: 'Message',
             duration: 'Durée',
+            noMessage: 'Aucun message n\'est défini',
           },
         },
       },

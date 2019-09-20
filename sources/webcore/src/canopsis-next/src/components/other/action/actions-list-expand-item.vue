@@ -73,7 +73,10 @@
                         v-list-tile-content
                           v-layout(align-center)
                             span.font-weight-bold {{ $t('actions.table.expand.tabs.snooze.message') }}
-                            span : {{ action.parameters.message }}
+                            span(v-if="action.parameters.message") : {{ action.parameters.message }}
+                            span.font-italic.font-weight-light.caption(
+                              v-else
+                            ) : {{ $t('actions.table.expand.tabs.snooze.noMessage') }}
     template(v-if="action.type === $constants.ACTION_TYPES.pbehavior")
       v-tab {{ $t('pbehaviors.tabs.comments') }}
       v-tab-item

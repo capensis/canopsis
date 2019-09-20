@@ -1137,6 +1137,7 @@ export default {
           snooze: {
             message: 'Message',
             duration: 'Duration',
+            noMessage: 'No message is set',
           },
         },
       },
