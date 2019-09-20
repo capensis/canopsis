@@ -51,6 +51,7 @@ import { MODALS, ACTION_TYPES, ACTION_AUTHOR, WEBHOOK_TRIGGERS, DURATION_UNITS }
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import uuid from '@/helpers/uuid';
 import { unsetInSeveralWithConditions } from '@/helpers/immutable';
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
@@ -71,7 +72,7 @@ export default {
   data() {
     // Default form
     let form = {
-      _id: '',
+      _id: uuid('action'),
       type: ACTION_TYPES.snooze,
       hook: {
         event_patterns: [],
