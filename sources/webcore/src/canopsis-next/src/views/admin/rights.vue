@@ -82,7 +82,7 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
-import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 
 export default {
   components: {

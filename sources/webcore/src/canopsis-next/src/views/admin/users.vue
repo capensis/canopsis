@@ -67,7 +67,7 @@ import viewQuery from '@/mixins/view/query';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
-import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 export default {

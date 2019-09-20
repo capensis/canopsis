@@ -1,19 +1,11 @@
 // http://nightwatchjs.org/guide#usage
 
-const { API_ROUTES } = require('../../../../../src/config');
+const { API_ROUTES } = require('@/config');
 
-module.exports.command = function createStatsTable({
-  parameters: {
-    ...parameters
-  } = {},
-  ...fields
-}, callback = () => {}) {
+module.exports.command = function createStatsTable(fields, callback = () => {}) {
   const statsTableWidget = this.page.widget.statsTable();
 
-  this.completed.widget.setCommonFields({
-    ...fields,
-    parameters,
-  });
+  this.completed.widget.setCommonFields(fields);
 
   this.waitForFirstXHR(
     API_ROUTES.userPreferences,

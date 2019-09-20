@@ -176,19 +176,6 @@ module.exports.FILTER_COLUMNS = {
   RESOURCE: 4,
 };
 
-module.exports.WIDGETS_TYPES = {
-  alarmList: 'AlarmsList',
-  context: 'Context',
-  weather: 'ServiceWeather',
-  statsHistogram: 'StatsHistogram',
-  statsCurves: 'StatsCurves',
-  statsTable: 'StatsTable',
-  statsCalendar: 'StatsCalendar',
-  statsNumber: 'StatsNumber',
-  statsPareto: 'StatsPareto',
-  text: 'Text',
-};
-
 module.exports.NAVIGATION_TYPES = {
   sideBar: 1,
   topBar: 2,

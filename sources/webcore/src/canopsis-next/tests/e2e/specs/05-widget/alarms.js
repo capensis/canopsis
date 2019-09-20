@@ -10,8 +10,8 @@ const {
   INTERVAL_RANGES,
   FILTER_OPERATORS,
   FILTER_COLUMNS,
-  WIDGETS_TYPES,
 } = require('../../constants');
+const { WIDGET_TYPES } = require('@/constants');
 const { generateTemporaryView, generateTemporaryAlarmsWidget } = require('../../helpers/entities');
 
 module.exports = {
@@ -150,7 +150,7 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget(WIDGETS_TYPES.alarmList)
+      .clickWidget(WIDGET_TYPES.alarmList)
       .verifyModalClosed();
 
     browser.completed.widget.createAlarmsList(alarmsWidget, ({ response }) => {
