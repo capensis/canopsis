@@ -11,6 +11,7 @@ const {
   STAT_TYPES,
   STAT_STATES,
 } = require('../../constants');
+const { WIDGET_TYPES } = require('@/constants');
 const { generateTemporaryView, generateTemporaryStatsTableWidget } = require('../../helpers/entities');
 
 module.exports = {
@@ -116,7 +117,7 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget('StatsTable')
+      .clickWidget(WIDGET_TYPES.statsTable)
       .verifyModalClosed();
 
     browser.completed.widget.createStatsTable(statsTableWidget, ({ response }) => {
