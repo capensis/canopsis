@@ -11,7 +11,7 @@ BuildRequires: rsync
 Requires: zlib libevent libcurl libtool openssl bzip2 cyrus-sasl openldap libcurl python openldap libxml2 libxslt rsync librsync libacl libxslt libffi xmlsec1 xmlsec1-openssl libtool net-snmp epel-release sudo
 
 %description
-Canopsis with CAT package.
+Canopsis open-core package.
 
 %install
 mkdir -p %{buildroot}/usr/lib/systemd/system
