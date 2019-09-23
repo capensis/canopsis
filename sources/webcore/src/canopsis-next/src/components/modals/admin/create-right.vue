@@ -26,14 +26,13 @@
           )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import { MODALS, USERS_RIGHTS_TYPES } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 import { generateRight } from '@/helpers/entities';
@@ -43,7 +42,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [popupMixin, modalInnerMixin, entitiesRightMixin],
+  mixins: [modalInnerMixin, entitiesRightMixin],
   data() {
     return {
       types: [
@@ -68,14 +67,14 @@ export default {
 
           await this.createRight({ data });
 
-          this.addSuccessPopup({ text: this.$t('success.default') });
-          this.hideModal();
+          this.$popups.addSuccess({ text: this.$t('success.default') });
+          this.$modals.hide();
         }
         if (this.config.action) {
           await this.config.action();
         }
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('errors.default') });
+        this.$popups.addError({ text: this.$t('errors.default') });
       }
     },
   },

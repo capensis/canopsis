@@ -36,7 +36,6 @@ import { MODALS, WIDGET_TYPES } from '@/constants';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
-import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
@@ -48,7 +47,7 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: { ProgressOverlay, DsCalendar, StatsAlertOverlay },
-  mixins: [modalMixin, widgetQueryMixin],
+  mixins: [widgetQueryMixin],
   props: {
     widget: {
       type: Object,
@@ -151,7 +150,7 @@ export default {
         widgetParameters.mainFilter = meta.filter;
       }
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.alarmsList,
         config: {
           query,

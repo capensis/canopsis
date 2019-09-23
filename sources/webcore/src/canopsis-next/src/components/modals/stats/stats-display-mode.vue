@@ -29,7 +29,7 @@
                     ) {{ $t('settings.statsNumbers.selectAColor') }}
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     openColorPickerModal(level) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
@@ -77,7 +77,7 @@ export default {
         await this.config.action(this.form);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

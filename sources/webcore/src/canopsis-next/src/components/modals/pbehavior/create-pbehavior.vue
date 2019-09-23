@@ -9,7 +9,7 @@
       pbehavior-comments-form.mt-2(v-model="comments")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
@@ -124,7 +124,7 @@ export default {
           await this.config.action(pbehavior);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

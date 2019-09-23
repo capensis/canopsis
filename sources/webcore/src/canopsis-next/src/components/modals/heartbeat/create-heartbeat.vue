@@ -29,7 +29,7 @@
     v-alert(:value="errors.has('pattern')", type="error") {{ $t('modals.createHeartbeat.patternRequired') }}
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -38,7 +38,6 @@ import { isEmpty } from 'lodash';
 
 import { MODALS, HEARTBEAT_DURATION_UNITS } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 
 /**
@@ -49,7 +48,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [popupMixin, modalInnerMixin],
+  mixins: [modalInnerMixin],
   data() {
     return {
       periodForm: {
@@ -85,7 +84,7 @@ export default {
   },
   methods: {
     showEditPatternModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createEventFilterRulePattern,
         config: {
           isSimplePattern: true,
@@ -115,10 +114,10 @@ export default {
             await this.config.action(data);
           }
 
-          this.hideModal();
+          this.$modals.hide();
         }
       } catch (err) {
-        this.addErrorPopup({ text: err.description });
+        this.$popups.addError({ text: err.description });
       }
     },
   },

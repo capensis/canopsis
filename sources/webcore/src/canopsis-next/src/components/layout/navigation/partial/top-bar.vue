@@ -60,7 +60,6 @@ import { omit, cloneDeep } from 'lodash';
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -75,7 +74,6 @@ export default {
   components: { GroupsTopBar },
   mixins: [
     authMixin,
-    modalMixin,
     entitiesUserMixin,
     entitiesInfoMixin,
   ],
@@ -152,7 +150,7 @@ export default {
   },
   methods: {
     showEditUserModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createUser,
         config: {
           title: this.$t('common.profile'),

@@ -69,7 +69,7 @@
             span {{ form.group_id }}
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(data-test="viewSubmitButton", v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
       v-btn.error(
         data-test="viewDeleteButton",
@@ -91,7 +91,6 @@ import {
 } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
@@ -111,7 +110,6 @@ export default {
   },
   mixins: [
     authMixin,
-    popupMixin,
     modalInnerMixin,
     entitiesViewMixin,
     entitiesRoleMixin,
@@ -214,7 +212,7 @@ export default {
 
         return this.fetchCurrentUser();
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('modals.view.errors.rightCreating') });
+        this.$popups.addError({ text: this.$t('modals.view.errors.rightCreating') });
 
         return Promise.resolve();
       }
@@ -235,14 +233,14 @@ export default {
           })),
         ]);
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('modals.view.errors.rightRemoving') });
+        this.$popups.addError({ text: this.$t('modals.view.errors.rightRemoving') });
 
         return Promise.resolve();
       }
     },
 
     remove() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -253,10 +251,10 @@ export default {
                 this.fetchGroupsList(),
               ]);
 
-              this.addSuccessPopup({ text: this.$t('modals.view.success.delete') });
-              this.hideModal();
+              this.$popups.addSuccess({ text: this.$t('modals.view.success.delete') });
+              this.$modals.hide();
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('modals.view.fail.delete') });
+              this.$popups.addError({ text: this.$t('modals.view.fail.delete') });
             }
           },
         },
@@ -297,7 +295,7 @@ export default {
 
             const response = await this.createView({ data });
             await this.createRightByViewId(response._id);
-            this.addSuccessPopup({ text: this.$t('modals.view.success.create') });
+            this.$popups.addSuccess({ text: this.$t('modals.view.success.create') });
           } else {
             const data = {
               ...this.config.view,
@@ -306,11 +304,11 @@ export default {
             };
 
             await this.updateView({ id: this.config.view._id, data });
-            this.addSuccessPopup({ text: this.$t('modals.view.success.edit') });
+            this.$popups.addSuccess({ text: this.$t('modals.view.success.edit') });
           }
 
           await this.fetchGroupsList();
-          this.hideModal();
+          this.$modals.hide();
         }
       } catch (err) {
         /**
@@ -318,9 +316,9 @@ export default {
          * means we're editing a view
          */
         if (!this.config.isDuplicating && this.config.view) {
-          this.addErrorPopup({ text: this.$t('modals.view.fail.edit') });
+          this.$popups.addError({ text: this.$t('modals.view.fail.edit') });
         }
-        this.addErrorPopup({ text: this.$t('modals.view.fail.create') });
+        this.$popups.addError({ text: this.$t('modals.view.fail.create') });
         console.error(err.description);
       }
     },

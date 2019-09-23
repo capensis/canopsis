@@ -51,7 +51,7 @@ export default {
         await this.config.action({ tabId, viewId });
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

@@ -5,8 +5,6 @@
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal';
-
 /**
  * Wrapper for each modal window
  *
@@ -14,7 +12,6 @@ import modalMixin from '@/mixins/modal';
  * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
  */
 export default {
-  mixins: [modalMixin],
   props: {
     modal: {
       type: Object,
@@ -36,7 +33,7 @@ export default {
         return !this.modal.hidden && this.ready;
       },
       set() {
-        this.hideModal({ id: this.modal.id });
+        this.$modals.hide({ id: this.modal.id });
       },
     },
   },

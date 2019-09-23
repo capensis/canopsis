@@ -63,8 +63,6 @@ import { MODALS } from '@/constants';
 
 import { getRolesSearchByText } from '@/helpers/entities-search';
 
-import popupMixin from '@/mixins/popup';
-import modalMixin from '@/mixins/modal';
 import viewQuery from '@/mixins/view/query';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
@@ -78,8 +76,6 @@ export default {
     SearchField,
   },
   mixins: [
-    popupMixin,
-    modalMixin,
     viewQuery,
     entitiesRoleMixins,
     rightsTechnicalRoleMixin,
@@ -106,7 +102,7 @@ export default {
   },
   methods: {
     showRemoveRoleModal(id) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -114,9 +110,9 @@ export default {
               await this.removeRole({ id });
               await this.fetchRolesListWithPreviousParams();
 
-              this.addSuccessPopup({ text: this.$t('success.default') });
+              this.$popups.addSuccess({ text: this.$t('success.default') });
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('errors.default') });
+              this.$popups.addError({ text: this.$t('errors.default') });
             }
           },
         },
@@ -124,7 +120,7 @@ export default {
     },
 
     showRemoveSelectedRolesModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -133,9 +129,9 @@ export default {
               await this.fetchRolesListWithPreviousParams();
               this.selected = [];
 
-              this.addSuccessPopup({ text: this.$t('success.default') });
+              this.$popups.addSuccess({ text: this.$t('success.default') });
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('errors.default') });
+              this.$popups.addError({ text: this.$t('errors.default') });
             }
           },
         },
@@ -143,7 +139,7 @@ export default {
     },
 
     showEditRoleModal(roleId) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createRole,
         config: {
           title: this.$t('modals.editRole.title'),
@@ -153,7 +149,7 @@ export default {
     },
 
     showCreateRoleModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createRole,
       });
     },

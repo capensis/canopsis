@@ -11,7 +11,7 @@
           compact(v-model="color")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -49,7 +49,7 @@ export default {
         await this.config.action(result);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

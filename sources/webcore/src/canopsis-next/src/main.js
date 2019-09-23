@@ -28,6 +28,9 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
+import ModalsPlugin from '@/plugins/modals';
+import PopupsPlugin from '@/plugins/popups';
+
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
@@ -109,6 +112,9 @@ Vue.use(VeeValidate, {
     fr: frValidationMessages,
   },
 });
+
+Vue.use(ModalsPlugin, { store });
+Vue.use(PopupsPlugin, { store });
 
 Vue.config.productionTip = false;
 

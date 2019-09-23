@@ -10,7 +10,6 @@ import ModalBase from './modal-base.vue';
 
 const {
   mapGetters: modalMapGetters,
-  mapActions: modalMapActions,
 } = createNamespacedHelpers('modal');
 
 /**
@@ -27,16 +26,11 @@ export default {
     $route: {
       handler() {
         if (this.modals && this.modals.length) {
-          this.modals.map(modal => this.hideModalAction({ id: modal.id }));
+          this.modals.map(modal => this.$modals.hide({ id: modal.id }));
         }
       },
       deep: true,
     },
-  },
-  methods: {
-    ...modalMapActions({
-      hideModalAction: 'hide',
-    }),
   },
 };
 </script>

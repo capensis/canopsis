@@ -967,3 +967,10 @@ export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
 };
+
+export const POPUP_TYPES = {
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
+};

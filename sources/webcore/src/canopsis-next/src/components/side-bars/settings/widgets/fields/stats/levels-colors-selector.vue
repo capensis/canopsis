@@ -12,11 +12,10 @@
 <script>
 import { MODALS, STATS_CALENDAR_COLORS, STATS_CRITICITY } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [modalMixin, formMixin],
+  mixins: [formMixin],
   model: {
     prop: 'levelsColors',
     event: 'input',
@@ -54,7 +53,7 @@ export default {
   },
   methods: {
     showColorPickerModal(level) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
