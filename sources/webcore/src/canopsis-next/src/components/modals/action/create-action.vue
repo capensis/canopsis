@@ -4,40 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createAction.create.title') }}
     v-card-text
-      v-form
-        v-text-field(
-        v-validate="'required'",
-        v-model="form._id",
-        label="Id",
-        :error-messages="errors.collect('id')",
-        name="id",
-        :disabled="!!modal.config.item && !modal.config.isDuplicating"
-        )
-        v-select(
-        v-validate="'required'",
-        v-model="form.type",
-        label="Type",
-        :items="actionTypes"
-        :error-messages="errors.collect('type')",
-        name="type"
-        )
-        v-tabs(centered, slider-color="primary")
-          v-tab {{ $t('modals.createAction.tabs.general') }}
-          v-tab-item
-            template(v-if="form.type === $constants.ACTION_TYPES.snooze")
-              v-textarea(
-              v-model="snoozeParameters.message",
-              :label="$t('modals.createAction.fields.message')",
-              )
-              duration-field(:duration="snoozeParameters.duration")
-            template(v-if="form.type === $constants.ACTION_TYPES.pbehavior")
-              pbehavior-form(v-model="pbehaviorParameters", :author="$constants.ACTION_AUTHOR", :noFilter="true")
-          v-tab {{ $t('modals.createAction.tabs.hook') }}
-          v-tab-item
-            webhook-form-hook-tab(
-            v-model="form.hook",
-            :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
-            )
+      action-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
@@ -54,9 +21,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import uuid from '@/helpers/uuid';
 import { unsetInSeveralWithConditions } from '@/helpers/immutable';
 
-import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
-import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
-import DurationField from '@/components/forms/fields/duration.vue';
+import ActionForm from '@/components/other/action/form/action-form.vue';
 
 export default {
   name: MODALS.createAction,
@@ -64,9 +29,7 @@ export default {
     validator: 'new',
   },
   components: {
-    PbehaviorForm,
-    WebhookFormHookTab,
-    DurationField,
+    ActionForm,
   },
   filters: {
     actionToForm(action = {}) {
@@ -101,9 +64,9 @@ export default {
       };
 
       // Get basic action parameters
-      const form = {
+      const generalParameters = {
         _id: action._id || uuid('action'),
-        type: action.type || ACTION_TYPES.snooze,
+        type: action.type || ACTION_TYPES.pbehavior,
         hook: action.hook || defaultHook,
       };
 
@@ -150,30 +113,31 @@ export default {
       }
 
       return {
-        form,
+        generalParameters,
         snoozeParameters,
         pbehaviorParameters,
       };
     },
   },
   mixins: [modalInnerMixin],
-
   data() {
     const { item } = this.modal.config;
 
     return {
-      ...this.$options.filters.actionToForm(item),
-      actionTypes: Object.values(ACTION_TYPES),
+      form: this.$options.filters.actionToForm(item),
       availableTriggers: Object.values(WEBHOOK_TRIGGERS),
     };
   },
   methods: {
     async submit() {
-      const isValid = await this.$validator.validateAll();
+      const isBaseFormValid = await this.$validator.validateAll();
+      const isPbehaviorFormValid = await this.$validator.validateAll('pbehavior');
+      const isSnoozeFormValid = await this.$validator.validateAll('snooze');
+      const isHookFormValid = await this.$validator.validateAll('hook');
 
-      if (isValid) {
+      if (isBaseFormValid && isPbehaviorFormValid && isSnoozeFormValid && isHookFormValid) {
         if (this.config.action) {
-          let data = { ...this.form };
+          let data = { ...this.form.generalParameters };
 
           const patternsCondition = value => !value || !value.length;
 
@@ -183,18 +147,19 @@ export default {
             'hook.entity_patterns': patternsCondition,
           });
 
-          if (this.form.type === ACTION_TYPES.snooze) {
+          if (this.form.generalParameters.type === ACTION_TYPES.snooze) {
             const duration = moment.duration(
-              parseInt(this.snoozeParameters.duration.duration, 10),
-              this.snoozeParameters.duration.durationType,
+              parseInt(this.form.snoozeParameters.duration.duration, 10),
+              this.form.snoozeParameters.duration.durationType,
             ).asSeconds();
 
-            data.parameters = { ...this.snoozeParameters, duration };
-          } else if (this.form.type === ACTION_TYPES.pbehavior) {
-            const pbehavior = this.$options.filters.formToPbehavior(this.pbehaviorParameters.general);
+            data.parameters = { ...this.form.snoozeParameters, duration };
+          } else if (this.form.generalParameters.type === ACTION_TYPES.pbehavior) {
+            const pbehavior = this.$options.filters.formToPbehavior(this.form.pbehaviorParameters.general);
 
-            pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.pbehaviorParameters.comments);
-            pbehavior.exdate = this.$options.filters.exdateToPbehaviorExdate(this.pbehaviorParameters.exdate);
+            pbehavior.comments =
+              this.$options.filters.commentsToPbehaviorComments(this.form.pbehaviorParameters.comments);
+            pbehavior.exdate = this.$options.filters.exdateToPbehaviorExdate(this.form.pbehaviorParameters.exdate);
 
             data.parameters = { ...pbehavior };
           }
