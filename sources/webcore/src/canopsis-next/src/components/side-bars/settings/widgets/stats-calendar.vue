@@ -17,7 +17,10 @@
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider
-          field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
+          field-info-popup(
+            :columns="settings.widget.parameters.alarmsList.widgetColumns",
+            v-model="settings.widget.parameters.alarmsList.infoPopups"
+          )
           v-divider
           field-text-editor(
             v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
