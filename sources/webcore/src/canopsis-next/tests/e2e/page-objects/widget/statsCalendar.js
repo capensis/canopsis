@@ -47,7 +47,7 @@ const commands = {
     return this.customSetValue('@criticityLevelsCritical', value);
   },
 
-  setConsiderPbehaviors(checked = true) {
+  setConsiderPbehaviors(checked = false) {
     return this.getAttribute('@widgetConsiderPbehaviorsInput', 'aria-checked', ({ value }) => {
       if (value !== String(checked)) {
         this.customClick('@widgetConsiderPbehaviors');

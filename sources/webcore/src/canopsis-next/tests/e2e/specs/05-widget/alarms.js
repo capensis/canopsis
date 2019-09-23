@@ -1,7 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
 const {
-  ALARMS_WIDGET_INFO_POPUP_COLUMNS,
+  INFO_POPUP_DEFAULT_COLUMNS,
   ALARMS_WIDGET_SORT_FIELD,
   SORT_ORDERS,
   PAGINATION_PER_PAGE_VALUES,
@@ -60,7 +60,7 @@ module.exports = {
           resolve: true,
         },
         infoPopups: [{
-          column: ALARMS_WIDGET_INFO_POPUP_COLUMNS.connectorName,
+          column: INFO_POPUP_DEFAULT_COLUMNS.connectorName,
           template: 'Info popup template',
         }],
         ack: {

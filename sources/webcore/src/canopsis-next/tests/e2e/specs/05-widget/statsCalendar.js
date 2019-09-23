@@ -6,6 +6,7 @@ const {
   FILTER_OPERATORS,
   CONTEXT_FILTER_COLUMNS,
   PAGINATION_PER_PAGE_VALUES,
+  INFO_POPUP_DEFAULT_COLUMNS,
 } = require('../../constants');
 const { WIDGET_TYPES, STATS_CRITICITY } = require('@/constants');
 const { generateTemporaryView, generateTemporaryStatsCalendarWidget } = require('../../helpers/entities');
@@ -65,6 +66,14 @@ module.exports = {
           index: 2,
           up: true,
         }],
+        infoPopups: [{
+          column: INFO_POPUP_DEFAULT_COLUMNS.connectorName,
+          template: 'Info popup template',
+        }],
+        openedResolvedFilter: {
+          open: true,
+          resolve: true,
+        },
         deleteColumnNames: [2],
         elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
         moreInfos: 'More infos popup',

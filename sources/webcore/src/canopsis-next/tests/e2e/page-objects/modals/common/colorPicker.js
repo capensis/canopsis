@@ -25,7 +25,7 @@ module.exports = modalCreator(modalSelector, {
       cancelButton: sel('colorPickerCancelButton'),
     }),
 
-    chromeColorPickerField: `${sel('colorPickerChrome')} input.vc-input__input`,
+    chromeColorPickerField: `${sel('colorPickerChrome')} .vc-editable-input input.vc-input__input`,
   },
   commands: [commands],
 });
