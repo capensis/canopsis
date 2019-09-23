@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form()
+  v-form
     v-text-field(
     v-model="form.generalParameters._id",
     label="Id",

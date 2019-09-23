@@ -66,7 +66,7 @@ export default {
       // Get basic action parameters
       const generalParameters = {
         _id: action._id || uuid('action'),
-        type: action.type || ACTION_TYPES.pbehavior,
+        type: action.type || ACTION_TYPES.snooze,
         hook: action.hook || defaultHook,
       };
 
@@ -130,12 +130,9 @@ export default {
   },
   methods: {
     async submit() {
-      const isBaseFormValid = await this.$validator.validateAll();
-      const isPbehaviorFormValid = await this.$validator.validateAll('pbehavior');
-      const isSnoozeFormValid = await this.$validator.validateAll('snooze');
-      const isHookFormValid = await this.$validator.validateAll('hook');
+      const isFormValid = await this.$validator.validateAll();
 
-      if (isBaseFormValid && isPbehaviorFormValid && isSnoozeFormValid && isHookFormValid) {
+      if (isFormValid) {
         if (this.config.action) {
           let data = { ...this.form.generalParameters };
 
