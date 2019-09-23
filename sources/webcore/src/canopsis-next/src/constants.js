@@ -969,26 +969,26 @@ export const HEARTBEAT_DURATION_UNITS = {
 export const DURATION_UNITS = {
   minute: {
     text: 'common.times.minute',
-    value: 'minute',
+    value: 'm',
   },
   hour: {
     text: 'common.times.hour',
-    value: 'hour',
+    value: 'h',
   },
   day: {
     text: 'common.times.day',
-    value: 'day',
+    value: 'd',
   },
   week: {
     text: 'common.times.week',
-    value: 'week',
+    value: 'w',
   },
   month: {
     text: 'common.times.month',
-    value: 'month',
+    value: 'M',
   },
   year: {
     text: 'common.times.year',
-    value: 'year',
+    value: 'y',
   },
 };

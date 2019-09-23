@@ -11,7 +11,7 @@
         label="Id",
         :error-messages="errors.collect('id')",
         name="id",
-        :disabled="modal.config.item"
+        :disabled="!!modal.config.item && !modal.config.isDuplicating"
         )
         v-select(
         v-validate="'required'",
@@ -68,62 +68,101 @@ export default {
     WebhookFormHookTab,
     DurationField,
   },
-  mixins: [modalInnerMixin],
-  data() {
-    // Default form
-    let form = {
-      _id: uuid('action'),
-      type: ACTION_TYPES.snooze,
-      hook: {
+  filters: {
+    actionToForm(action = {}) {
+      const defaultHook = {
         event_patterns: [],
         alarm_patterns: [],
         entity_patterns: [],
         triggers: [],
-      },
-    };
+      };
 
-    // Default 'pbehavior' action parameters
-    const pbehaviorParameters = {
-      general: {
-        name: '',
-        tstart: new Date(),
-        tstop: new Date(),
-        rrule: null,
-        reason: '',
-        type_: '',
-      },
-      comments: [],
-      exdate: [],
-    };
+      // Default 'snooze' action parameters
+      const snoozeParameters = {
+        message: '',
+        duration: {
+          duration: 1,
+          durationType: DURATION_UNITS.minute.value,
+        },
+      };
 
-    // Default 'snooze' action parameters
-    let snoozeParameters = {
-      message: '',
-      duration: {
-        duration: 1,
-        durationType: DURATION_UNITS.minute.value,
-      },
-    };
+      // Default 'pbehavior' action parameters
+      const pbehaviorParameters = {
+        general: {
+          name: '',
+          tstart: new Date(),
+          tstop: new Date(),
+          rrule: null,
+          reason: '',
+          type_: '',
+        },
+        comments: [],
+        exdate: [],
+      };
 
-    if (this.modal.config.item) {
-      const { item } = this.modal.config;
+      // Get basic action parameters
+      const form = {
+        _id: action._id || uuid('action'),
+        type: action.type || ACTION_TYPES.snooze,
+        hook: action.hook || defaultHook,
+      };
 
-      form = omit(item, ['parameters']);
+      // If action's type is "snooze", get snooze parameters
+      if (action.type === ACTION_TYPES.snooze) {
+        let duration = {
+          duration: 1,
+          durationType: DURATION_UNITS.minute.value,
+        };
 
-      // If editing a 'pbehavior' action, prepare pbehavior's data. If editing a 'snooze' action copy snooze's data
-      if (item.type === ACTION_TYPES.pbehavior) {
-        pbehaviorParameters.general = omit(this.$options.filters.pbehaviorToForm(item.parameters), ['filter']);
-        pbehaviorParameters.comments = this.$options.filters.commentsToPbehaviorComments(item.parameters.comments);
-        pbehaviorParameters.exdate = this.$options.filters.exdateToPbehaviorExdate(item.parameters.exdate);
-      } else if (item.type === ACTION_TYPES.snooze) {
-        snoozeParameters = { ...snoozeParameters, ...item.parameters };
+        if (action.parameters && action.parameters.duration) {
+          const durationUnits = Object.values(DURATION_UNITS).map(unit => unit.value);
+
+          // Check for the lowest possible unit to convert the duration in.
+          const foundUnit = durationUnits.find(unit => moment.duration(action.parameters.duration, 'seconds').as(unit) % 1 === 0);
+
+          duration = {
+            duration: moment.duration(action.parameters.duration, 'seconds').as(foundUnit),
+            durationType: foundUnit,
+          };
+
+          snoozeParameters.duration = duration;
+        }
+
+        if (action.parameters && action.parameters.message) {
+          snoozeParameters.message = action.parameters.message;
+        }
       }
-    }
+
+      // If action's type is "pbehavior", get pbehavior parameters
+      if (action.type === ACTION_TYPES.pbehavior) {
+        if (action.parameters) {
+          pbehaviorParameters.general = omit(this.$options.filters.pbehaviorToForm(action.parameters), ['filter']);
+
+          if (action.parameters.comments) {
+            pbehaviorParameters.comments =
+              this.$options.filters.commentsToPbehaviorComments(action.parameters.comments);
+          }
+
+          if (action.parameters.exdate) {
+            pbehaviorParameters.exdate = this.$options.filters.exdateToPbehaviorExdate(action.parameters.exdate);
+          }
+        }
+      }
+
+      return {
+        form,
+        snoozeParameters,
+        pbehaviorParameters,
+      };
+    },
+  },
+  mixins: [modalInnerMixin],
+
+  data() {
+    const { item } = this.modal.config;
 
     return {
-      form,
-      pbehaviorParameters,
-      snoozeParameters,
+      ...this.$options.filters.actionToForm(item),
       actionTypes: Object.values(ACTION_TYPES),
       availableTriggers: Object.values(WEBHOOK_TRIGGERS),
     };

@@ -32,6 +32,8 @@
                 v-flex
                   v-btn(icon, small, @click.stop="showEditActionModal(props.item)")
                     v-icon edit
+                  v-btn(icon, small, @click.stop="showDuplicateActionModal(props.item)")
+                    v-icon file_copy
                   v-btn.error--text(icon, small, @click.stop="showDeleteActionModal(props.item._id)")
                     v-icon(color="error") delete
         template(slot="expand", slot-scope="{ item }")
@@ -67,6 +69,10 @@ export default {
       default: () => () => {},
     },
     showDeleteSelectedActionsModal: {
+      type: Function,
+      default: () => () => {},
+    },
+    showDuplicateActionModal: {
       type: Function,
       default: () => () => {},
     },
