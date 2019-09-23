@@ -7,7 +7,7 @@ const {
   CONTEXT_FILTER_COLUMNS,
   PAGINATION_PER_PAGE_VALUES,
 } = require('../../constants');
-const { WIDGET_TYPES } = require('@/constants');
+const { WIDGET_TYPES, STATS_CRITICITY } = require('@/constants');
 const { generateTemporaryView, generateTemporaryStatsCalendarWidget } = require('../../helpers/entities');
 
 module.exports = {
@@ -68,6 +68,18 @@ module.exports = {
         deleteColumnNames: [2],
         elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
         moreInfos: 'More infos popup',
+        criticityLevels: {
+          minor: 20,
+          major: 30,
+          critical: 40,
+        },
+        colorsSelector: {
+          [STATS_CRITICITY.ok]: '#111111',
+          [STATS_CRITICITY.minor]: '#444444',
+          [STATS_CRITICITY.major]: '#666666',
+          [STATS_CRITICITY.critical]: '#ffffff',
+        },
+        considerPbehaviors: false,
         filters: {
           title: 'Filter title',
           groups: [{

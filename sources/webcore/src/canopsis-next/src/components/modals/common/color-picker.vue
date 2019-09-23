@@ -1,18 +1,18 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="colorPickerModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
     v-card-text
       v-layout
         v-flex
-          chrome(v-model="color")
+          chrome(data-test="colorPickerChrome", v-model="color")
         v-flex
-          compact(v-model="color")
+          compact(data-test="colorPickerCompact", v-model="color")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+      v-btn(data-test="colorPickerCancelButton", @click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(data-test="colorPickerSubmitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
