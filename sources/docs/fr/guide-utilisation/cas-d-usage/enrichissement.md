@@ -100,7 +100,7 @@ Considérons l'événement suivant :
 }
 ````
 
-Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des événements de la documentation de l'event-filter du moteur che](../../../guide-administration/moteurs/moteur-che-event_filter/#champs-des-evenements).  
+Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des événements de la documentation de l'event-filter du moteur che](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).  
 Dans notre cas, l'attribut **groupe** est personalisé et sera donc positionné *automatiquement* dans un dictionnaire *extrainfos*.  
 
 On commence en ajoutant une règle via le menu adéquat
@@ -119,7 +119,7 @@ Dernière étape, nous allons récupérer le contenu de l'attribut **groupe** et
 
 !!! Warning
     Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire.  
-    Une règle de [copie d'entité](../../../guide-administration/moteurs/moteur-che-event_filter/#ajout-dinformations-a-lentite) doit être présente
+    Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente
 
 Le résultat pourra être observé sur un bac à alarmes par exemple :  
 

@@ -86,7 +86,7 @@ Le rendu final sera
 ## Scénario
 
 La phase de préparation est terminée.  
-Les éléments ont été paramétrés de manière manuelle, il est bien entendu beaucoup intéressant d'utiliser un mécanisme d'enrichissement par [synchronisation de référentiel externe](../enrichissement/#enrichissement-via-referentiels-externes) pour s'éviter ces opérations.  
+Les éléments ont été paramétrés de manière manuelle, il est bien entendu beaucoup intéressant d'utiliser un mécanisme d'enrichissement par [synchronisation de référentiel externe](enrichissement.md#enrichissement-via-referentiels-externes) pour s'éviter ces opérations.  
 
 Nous allons à présent simuler des alarmes sur les sous-éléments constituants et observer le comportement de la tuile de météo.  
 
@@ -108,6 +108,6 @@ Les résultats observés seront alors :
 ![Résultats](./img/mds_resultat2.png "Résultats")  
 
 
-Depuis cette modale, vous pourrez au final exécuter les [actions adéquates](/guide-utilisation/interface/widgets/meteo-des-services/#les-actions) de prise en charge des alarmes.  
+Depuis cette modale, vous pourrez au final exécuter les [actions adéquates](../interface/widgets/meteo-des-services/index.md#les-actions) de prise en charge des alarmes.  
 
 ![Actions](./img/mds_actions.png "Actions")  
