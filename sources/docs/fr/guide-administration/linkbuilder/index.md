@@ -33,7 +33,7 @@ L'URL pourrait être de la forme :
 
 !!! Note
     Notez que les variables attachées à l'alarme sont préfixées avec *alarm* tandis que les variables attachées à l'entité ne le sont pas.
-    Par ailleurs, n'hésitez pas à utiliser le [mécanisme d'enrichissement](../event-filter/) pour utiliser les variables dans le linkbuilder
+    Par ailleurs, n'hésitez pas à utiliser le [mécanisme d'enrichissement](../moteurs/moteur-che-event_filter/) pour utiliser les variables dans le linkbuilder
 
 Pour aboutir à ce résultat, une configuration doit être insérée via l'API *associativetable*.
 
@@ -73,7 +73,7 @@ Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
 Notez qu'un redémarrage du moteur `webserver` est nécessaire.
 
 !!! Warning
-    Les liens sont générés à la volée et ne sont en aucun cas stockés. 
+    Les liens sont générés à la volée et ne sont en aucun cas stockés.
 
 ## Visualisation frontend
 
@@ -133,9 +133,9 @@ Vous devez les insérer par l'intermédiaire du formulaire.
 Voici un récapitulatif des droits à appliquer.  
 
 
-| Widget             | Droits associés                                              | Portée                                                        |
-| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Bac à alarmes      | listalarm_links                                              | Visualisation de l'ensemble des liens sur le bac à alarmes, quelle que soit la catégorie |
-|                    | listalarm_links_Nom_de_la_Catégorie  (Ex : **listalarm_links_Documentation**) | Visualisation des liens de la catégorie donnée en suffixe (sur le bac à alarmes) |
-| Météo des services | serviceweather_entityLinks                                   | Visualisation de l'ensemble des liens sur la météo des services, quelle que soit la catégorie |
-|                    | serviceweather_entityLinks_Nom_de_la_Catégorie (Ex : **serviceweather_entityLinks_Gestion des tickets**) | Visualisation des liens de la catégorie donnée en suffixe (sur la météo des services) |
+|       Widget       |                                             Droits associés                                              |                                            Portée                                             |
+| ------------------ | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+|   Bac à alarmes    |                                             listalarm_links                                              |   Visualisation de l'ensemble des liens sur le bac à alarmes, quelle que soit la catégorie    |
+|                    |              listalarm_links_Nom_de_la_Catégorie  (Ex : **listalarm_links_Documentation**)               |       Visualisation des liens de la catégorie donnée en suffixe (sur le bac à alarmes)        |
+| Météo des services |                                        serviceweather_entityLinks                                        | Visualisation de l'ensemble des liens sur la météo des services, quelle que soit la catégorie |
+|                    | serviceweather_entityLinks_Nom_de_la_Catégorie (Ex : **serviceweather_entityLinks_Gestion des tickets**) |     Visualisation des liens de la catégorie donnée en suffixe (sur la météo des services)     |

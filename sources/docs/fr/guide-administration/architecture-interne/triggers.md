@@ -1,6 +1,6 @@
 # Triggers (Go)
 
-Dans Canopsis, le traitement des événements par le moteur [axe](../moteurs/moteur-axe) peut déclencher des actions qui correspondent à des `triggers`.
+Dans Canopsis, le traitement des événements par le moteur [axe](../../moteurs/moteur-axe) peut déclencher des actions qui correspondent à des `triggers`.
 
 Ces `triggers` peuvent servir comme point de déclenchement pour les [actions](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-axe-webhooks.md).
 

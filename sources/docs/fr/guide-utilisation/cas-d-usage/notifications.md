@@ -12,14 +12,14 @@ Une option du moteur **axe** va vous permettre de prendre en charge cette foncti
 -postProcessorsDirectory /plugins/axepostprocessor/
 ````
 
-La documentation complète est disponible [ici](../../../guide-administration/webhooks/)
+La documentation complète est disponible [ici](../../../guide-administration/moteurs/moteur-axe-webhooks/)
 
 
 ## Mattermost
 
 Nous partons du principe que vous possédez une URL Mattermost valide pour publier du contenu.  
 
-Prenons le cas d'usage suivant : 
+Prenons le cas d'usage suivant :
 
 !!! note ""
     Je souhaite notifier Mattermost depuis Canopsis dans les cas suivants :
@@ -30,7 +30,7 @@ Pour cela, RDV sur le menu des **webhooks**
 ![Menu Webhooks](./img/notification_mattermost_menu.png "Menu Webhooks")  
 
 
-Vous devez créer un règle comme suit : 
+Vous devez créer un règle comme suit :
 
 **Choix des triggers**
 
@@ -48,13 +48,13 @@ Pour vérifier le résultat, nous considérons l'événement suivant :
 
 ````json
 {
-  "resource": "ressource-doc3", 
-  "event_type": "check", 
-  "component": "composant-doc3", 
-  "connector": "cas-d-usage", 
-  "source_type": "resource", 
-  "state": 2, 
-  "connector_name": "cas-usage-notification-mattermost", 
+  "resource": "ressource-doc3",
+  "event_type": "check",
+  "component": "composant-doc3",
+  "connector": "cas-d-usage",
+  "source_type": "resource",
+  "state": 2,
+  "connector_name": "cas-usage-notification-mattermost",
   "output": "doc cas d'usage"
 }
 
@@ -67,7 +67,7 @@ Une fois publié, vous pourrez consulter votre canal Mattermost
 ## Logstash
 
 Nous partons du principe que vous possédez un logstash à l'écoute.  
-Pour information, voici la configuration minimaliste utilisée pour l'exemple : 
+Pour information, voici la configuration minimaliste utilisée pour l'exemple :
 
 ````
 input {
@@ -78,13 +78,13 @@ input {
 }
 
 output {
-  stdout { 
+  stdout {
     codec => rubydebug
-  } 
+  }
 }
 ````
 
-Prenons le cas d'usage suivant : 
+Prenons le cas d'usage suivant :
 
 !!! note ""
     Je souhaite envoyer un message HTTP à Logstash depuis Canopsis dans les cas suivants :
@@ -95,7 +95,7 @@ Pour cela, RDV sur le menu des **webhooks**
 ![Menu Webhooks](./img/notification_mattermost_menu.png "Menu Webhooks")  
 
 
-Vous devez créer un règle comme suit : 
+Vous devez créer un règle comme suit :
 
 **Choix des triggers et pattern**
 
@@ -109,13 +109,13 @@ Pour vérifier le résultat, nous considérons l'événement suivant :
 
 ````json
 {
-  "resource": "ressource-doc4", 
-  "event_type": "check", 
-  "component": "composant-doc4", 
-  "connector": "cas-d-usage", 
-  "source_type": "resource", 
-  "state": 2, 
-  "connector_name": "cas-usage-notification-logstash", 
+  "resource": "ressource-doc4",
+  "event_type": "check",
+  "component": "composant-doc4",
+  "connector": "cas-d-usage",
+  "source_type": "resource",
+  "state": 2,
+  "connector_name": "cas-usage-notification-logstash",
   "output": "doc cas d'usage"
 }
 
