@@ -1218,10 +1218,14 @@ class Alerts(object):
                 value[AlarmField.alarmfilter.value][NEXT] = next_run
                 self.update_current_alarm(docalarm, value)
 
-            if AlarmFilterField.postpone.value in lifter and lifter[AlarmFilterField.postpone.value]:
-                last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-                date_stamp = max(docalarm[storage.TIMESTAMP], last_tstop)
-            else:
+            try:
+                if lifter[AlarmFilterField.postpone.value]:
+                    last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
+                    date_stamp = max(docalarm[storage.TIMESTAMP], last_tstop)
+                else:
+                    date_stamp = docalarm[storage.TIMESTAMP]
+            except KeyError:
+                # if alarmfilter[AlarmFilterField.postpone.value] doesn't exists then do as false
                 date_stamp = docalarm[storage.TIMESTAMP]
             date = datetime.fromtimestamp(date_stamp)
             # Continue only if the limit condition is valid
@@ -1259,11 +1263,16 @@ class Alerts(object):
                         # Already repeated enough times
                         continue
 
-                    if AlarmFilterField.postpone.value in alarmfilter and alarmfilter[AlarmFilterField.postpone.value]:
-                        last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-                        last = datetime.fromtimestamp(max(max(executions), last_tstop))
-                    else:
+                    try:
+                        if alarmfilter[AlarmFilterField.postpone.value]:
+                            last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
+                            last = datetime.fromtimestamp(max(max(executions), last_tstop))
+                        else:
+                            last = datetime.fromtimestamp(max(executions))
+                    except KeyError:
+                        # if alarmfilter[AlarmFilterField.postpone.value] doesn't exists then do as false
                         last = datetime.fromtimestamp(max(executions))
+
                     if last + lifter.limit > now:
                         # Too soon to execute one more time all tasks
                         continue
