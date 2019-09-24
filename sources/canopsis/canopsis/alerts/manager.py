@@ -1218,7 +1218,7 @@ class Alerts(object):
                 value[AlarmField.alarmfilter.value][NEXT] = next_run
                 self.update_current_alarm(docalarm, value)
 
-            if lifter[AlarmFilterField.postpone.value]:
+            if lifter.get(AlarmFilterField.postpone.value, False):
                 last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
                 date_stamp = max(docalarm[storage.TIMESTAMP], last_tstop)
             else:
@@ -1259,7 +1259,7 @@ class Alerts(object):
                         # Already repeated enough times
                         continue
 
-                    if alarmfilter[AlarmFilterField.postpone.value]:
+                    if alarmfilter.get(AlarmFilterField.postpone.value, False):
                         last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
                         last = datetime.fromtimestamp(max(max(executions), last_tstop))
                     else:
