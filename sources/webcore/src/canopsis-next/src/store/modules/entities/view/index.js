@@ -74,7 +74,7 @@ export default {
 
         commit(entitiesTypes.ENTITIES_UPDATE, entities, { root: true });
       } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
         console.warn(err);
       }
     },

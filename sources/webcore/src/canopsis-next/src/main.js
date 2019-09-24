@@ -118,13 +118,6 @@ Vue.use(PopupsPlugin, { store });
 
 Vue.config.productionTip = false;
 
-/**
- * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
- */
-window.addEventListener('unhandledrejection', () => {
-  store.dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') });
-});
-
 if (process.env.NODE_ENV === 'development') {
   Vue.config.devtools = true;
   Vue.config.performance = true;

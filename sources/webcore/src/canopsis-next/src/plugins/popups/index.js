@@ -1,19 +1,55 @@
-import { POPUP_TYPES } from '@/constants';
+import popupsStoreModule from './store';
+
+import ThePopups from './components/the-popups.vue';
 
 export default {
-  install(Vue, { store }) {
+  install(Vue, {
+    store, i18n, moduleName = 'popups', componentName = 'the-popups',
+  } = {}) {
+    if (!store || !i18n) {
+      throw new Error('Missing required options.');
+    }
+
+    Vue.component(componentName, ThePopups);
+
+    store.registerModule(moduleName, popupsStoreModule);
+
     Object.defineProperty(Vue.prototype, '$popups', {
       get() {
         return {
-          add: popup => store.dispatch('popup/add', popup),
-          remove: ({ id } = {}) => store.dispatch('popup/remove', { id }),
+          moduleName,
 
-          success: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.success }),
-          info: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.info }),
-          warning: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.warning }),
-          error: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.error }),
+          add(popup) {
+            return store.dispatch(`${moduleName}/add`, popup);
+          },
+          remove({ id }) {
+            return store.dispatch(`${moduleName}/remove`, { id });
+          },
+
+          success(popup) {
+            return store.dispatch(`${moduleName}/success`, popup);
+          },
+
+          info(popup) {
+            return store.dispatch(`${moduleName}/info`, popup);
+          },
+
+          warning(popup) {
+            return store.dispatch(`${moduleName}/warning`, popup);
+          },
+
+          error(popup) {
+            return store.dispatch(`${moduleName}/error`, popup);
+          },
         };
       },
+    });
+
+    /**
+     * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
+     */
+    window.addEventListener('unhandledrejection', () => {
+      store.dispatch(`${moduleName}/add`, { type: 'error', text: i18n.t('errors.default') });
     });
   },
 };

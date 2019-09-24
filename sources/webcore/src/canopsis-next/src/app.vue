@@ -6,7 +6,7 @@
         router-view(:key="routeViewKey")
     side-bars
     modals
-    popups
+    the-popups
 </template>
 
 
@@ -14,7 +14,6 @@
 import Navigation from '@/components/layout/navigation/index.vue';
 import SideBars from '@/components/side-bars/index.vue';
 import Modals from '@/components/modals/index.vue';
-import Popups from '@/components/popups/index.vue';
 
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
@@ -26,7 +25,6 @@ export default {
     Navigation,
     SideBars,
     Modals,
-    Popups,
   },
   mixins: [authMixin, entitiesInfoMixin],
   data() {
