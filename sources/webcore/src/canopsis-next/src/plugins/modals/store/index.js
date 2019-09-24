@@ -63,7 +63,7 @@ export default {
      */
     hide({ commit, state }, { id } = {}) {
       if (!id) {
-        throw new Error('[modal/hide] Missed required parameter');
+        throw new Error('Missed required parameter');
       }
 
       commit(types.HIDE, { id });

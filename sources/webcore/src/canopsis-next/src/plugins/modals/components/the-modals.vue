@@ -6,11 +6,11 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import ModalBase from './modal-base.vue';
+import ModalBase from '@/components/modals/modal-base.vue';
 
 const {
   mapGetters: modalMapGetters,
-} = createNamespacedHelpers('modal');
+} = createNamespacedHelpers('modals');
 
 /**
  * Wrapper for all modal windows

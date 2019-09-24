@@ -4,10 +4,10 @@ import ThePopups from './components/the-popups.vue';
 
 export default {
   install(Vue, {
-    store, i18n, moduleName = 'popups', componentName = 'the-popups',
+    store, moduleName = 'popups', componentName = 'the-popups',
   } = {}) {
-    if (!store || !i18n) {
-      throw new Error('Missing required options.');
+    if (!store) {
+      throw new Error('Missing store option.');
     }
 
     Vue.component(componentName, ThePopups);
@@ -43,13 +43,6 @@ export default {
           },
         };
       },
-    });
-
-    /**
-     * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
-     */
-    window.addEventListener('unhandledrejection', () => {
-      store.dispatch(`${moduleName}/add`, { type: 'error', text: i18n.t('errors.default') });
     });
   },
 };

@@ -15,7 +15,6 @@ import featuresService from '@/services/features';
 
 import authModule from './modules/auth';
 import i18nModule from './modules/i18n';
-import modalModule from './modules/modal';
 import eventModule from './modules/event';
 import queryModule from './modules/query';
 import sideBarModule from './modules/side-bar';
@@ -40,7 +39,6 @@ export default new Vuex.Store({
   modules: {
     auth: authModule,
     i18n: i18nModule,
-    modal: modalModule,
     event: eventModule,
     query: queryModule,
     sideBar: sideBarModule,
