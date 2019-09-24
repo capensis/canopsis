@@ -140,7 +140,7 @@ export default {
             await this.updateSeveralPbehaviorComments({ pbehavior, comments });
 
             this.fetchList();
-            this.$popups.addSuccess({ text: this.$t('success.default') });
+            this.$popups.success({ text: this.$t('success.default') });
           },
         },
       });

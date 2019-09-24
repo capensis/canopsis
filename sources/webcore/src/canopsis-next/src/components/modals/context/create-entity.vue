@@ -113,7 +113,7 @@ export default {
           this.$modals.hide();
         } catch (err) {
           console.error(err);
-          this.$popups.addError({ text: this.$t('error.default') });
+          this.$popups.error({ text: this.$t('error.default') });
         }
       }
 

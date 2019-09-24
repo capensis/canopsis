@@ -8,10 +8,10 @@ export default {
           add: popup => store.dispatch('popup/add', popup),
           remove: ({ id } = {}) => store.dispatch('popup/remove', { id }),
 
-          addSuccess: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.success }),
-          addInfo: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.info }),
-          addWarning: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.warning }),
-          addError: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.error }),
+          success: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.success }),
+          info: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.info }),
+          warning: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.warning }),
+          error: popup => store.dispatch('popup/add', { ...popup, type: POPUP_TYPES.error }),
         };
       },
     });

@@ -99,11 +99,11 @@ export default {
           await this.createRole({ data: { ...formData, ...this.form } });
           await this.fetchRolesListWithPreviousParams();
 
-          this.$popups.addSuccess({ text: this.$t('success.default') });
+          this.$popups.success({ text: this.$t('success.default') });
           this.$modals.hide();
         }
       } catch (err) {
-        this.$popups.addError({ text: this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
   },

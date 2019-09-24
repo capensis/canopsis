@@ -67,14 +67,14 @@ export default {
 
           await this.createRight({ data });
 
-          this.$popups.addSuccess({ text: this.$t('success.default') });
+          this.$popups.success({ text: this.$t('success.default') });
           this.$modals.hide();
         }
         if (this.config.action) {
           await this.config.action();
         }
       } catch (err) {
-        this.$popups.addError({ text: this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
   },

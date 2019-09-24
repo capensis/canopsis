@@ -76,7 +76,7 @@ export default {
 
               this.$modals.hide();
             } catch (err) {
-              this.$popups.addError({ text: this.$t('modals.group.errors.isNotEmpty') });
+              this.$popups.error({ text: this.$t('modals.group.errors.isNotEmpty') });
             }
           },
         },

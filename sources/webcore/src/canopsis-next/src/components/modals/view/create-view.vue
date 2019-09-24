@@ -212,7 +212,7 @@ export default {
 
         return this.fetchCurrentUser();
       } catch (err) {
-        this.$popups.addError({ text: this.$t('modals.view.errors.rightCreating') });
+        this.$popups.error({ text: this.$t('modals.view.errors.rightCreating') });
 
         return Promise.resolve();
       }
@@ -233,7 +233,7 @@ export default {
           })),
         ]);
       } catch (err) {
-        this.$popups.addError({ text: this.$t('modals.view.errors.rightRemoving') });
+        this.$popups.error({ text: this.$t('modals.view.errors.rightRemoving') });
 
         return Promise.resolve();
       }
@@ -251,10 +251,10 @@ export default {
                 this.fetchGroupsList(),
               ]);
 
-              this.$popups.addSuccess({ text: this.$t('modals.view.success.delete') });
+              this.$popups.success({ text: this.$t('modals.view.success.delete') });
               this.$modals.hide();
             } catch (err) {
-              this.$popups.addError({ text: this.$t('modals.view.fail.delete') });
+              this.$popups.error({ text: this.$t('modals.view.fail.delete') });
             }
           },
         },
@@ -295,7 +295,7 @@ export default {
 
             const response = await this.createView({ data });
             await this.createRightByViewId(response._id);
-            this.$popups.addSuccess({ text: this.$t('modals.view.success.create') });
+            this.$popups.success({ text: this.$t('modals.view.success.create') });
           } else {
             const data = {
               ...this.config.view,
@@ -304,7 +304,7 @@ export default {
             };
 
             await this.updateView({ id: this.config.view._id, data });
-            this.$popups.addSuccess({ text: this.$t('modals.view.success.edit') });
+            this.$popups.success({ text: this.$t('modals.view.success.edit') });
           }
 
           await this.fetchGroupsList();
@@ -316,9 +316,9 @@ export default {
          * means we're editing a view
          */
         if (!this.config.isDuplicating && this.config.view) {
-          this.$popups.addError({ text: this.$t('modals.view.fail.edit') });
+          this.$popups.error({ text: this.$t('modals.view.fail.edit') });
         }
-        this.$popups.addError({ text: this.$t('modals.view.fail.create') });
+        this.$popups.error({ text: this.$t('modals.view.fail.create') });
         console.error(err.description);
       }
     },

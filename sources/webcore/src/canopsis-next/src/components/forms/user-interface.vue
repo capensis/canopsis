@@ -159,7 +159,7 @@ export default {
           await this.updateUserInterface({ data });
           await this.fetchAllInfos();
 
-          this.$popups.addSuccess({ text: this.$t('success.default') });
+          this.$popups.success({ text: this.$t('success.default') });
           this.reset();
         }
       } catch (err) {

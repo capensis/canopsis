@@ -35,17 +35,17 @@ export default {
 
     async updateContextEntityWithPopup(data) {
       await this.updateContextEntity({ data });
-      this.$popups.addSuccess({ text: this.$t('modals.createEntity.success.edit') });
+      this.$popups.success({ text: this.$t('modals.createEntity.success.edit') });
     },
 
     async createContextEntityWithPopup(data) {
       await this.createContextEntity({ data });
-      this.$popups.addSuccess({ text: this.$t('modals.createEntity.success.create') });
+      this.$popups.success({ text: this.$t('modals.createEntity.success.create') });
     },
 
     async duplicateContextEntityWithPopup(data) {
       await this.createContextEntity({ data });
-      this.$popups.addSuccess({ text: this.$t('modals.createEntity.success.duplicate') });
+      this.$popups.success({ text: this.$t('modals.createEntity.success.duplicate') });
     },
   },
 };

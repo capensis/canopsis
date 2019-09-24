@@ -85,7 +85,7 @@ export default {
           action: async (data) => {
             await this.createPbehavior({ data });
 
-            this.$popups.addSuccess({ text: this.$t('success.default') });
+            this.$popups.success({ text: this.$t('success.default') });
           },
         },
       });

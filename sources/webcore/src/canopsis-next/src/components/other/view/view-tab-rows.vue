@@ -157,7 +157,7 @@ export default {
       const widgets = row.widgets || [];
 
       if (widgets.length > 0) {
-        this.$popups.addError({ text: this.$t('errors.lineNotEmpty') });
+        this.$popups.error({ text: this.$t('errors.lineNotEmpty') });
       } else {
         this.$modals.show({
           name: MODALS.confirmation,

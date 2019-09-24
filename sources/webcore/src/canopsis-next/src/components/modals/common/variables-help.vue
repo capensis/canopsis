@@ -20,8 +20,8 @@
           v-tooltip(left)
             v-btn(
               v-clipboard:copy="props.item.path",
-              v-clipboard:success="() => $popups.addSuccess({ text: $t('success.pathCopied') })",
-              v-clipboard:error="() => $popups.addError({ text: $t('errors.default') })",
+              v-clipboard:success="() => $popups.success({ text: $t('success.pathCopied') })",
+              v-clipboard:error="() => $popups.error({ text: $t('errors.default') })",
               slot="activator",
               small,
               icon

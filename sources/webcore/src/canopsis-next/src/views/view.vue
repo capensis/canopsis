@@ -201,7 +201,7 @@ export default {
           });
         }
       } else {
-        this.$popups.addWarning({ text: this.$t('view.errors.emptyTabs') });
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
@@ -222,7 +222,7 @@ export default {
           },
         });
       } else {
-        this.$popups.addWarning({ text: this.$t('view.errors.emptyTabs') });
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 

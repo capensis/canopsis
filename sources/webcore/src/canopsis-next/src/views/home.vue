@@ -47,7 +47,7 @@ export default {
     },
 
     addRedirectInfoPopup(text) {
-      return this.$popups.addInfo({ text, autoClose: 10000 });
+      return this.$popups.info({ text, autoClose: 10000 });
     },
   },
 };

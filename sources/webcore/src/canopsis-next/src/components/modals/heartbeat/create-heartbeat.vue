@@ -117,7 +117,7 @@ export default {
           this.$modals.hide();
         }
       } catch (err) {
-        this.$popups.addError({ text: err.description });
+        this.$popups.error({ text: err.description });
       }
     },
   },

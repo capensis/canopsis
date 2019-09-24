@@ -172,7 +172,7 @@ export default {
           },
         });
       } catch (err) {
-        this.$popups.addError({
+        this.$popups.error({
           text: this.$t('errors.default'),
         });
       }

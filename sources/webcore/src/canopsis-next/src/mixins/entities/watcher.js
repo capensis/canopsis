@@ -45,7 +45,7 @@ export default {
         await this.createWatcher({ data });
       }
 
-      this.$popups.addSuccess({ text: this.$t('modals.createWatcher.success.create') });
+      this.$popups.success({ text: this.$t('modals.createWatcher.success.create') });
     },
 
     async duplicateWatcherWithPopup(data) {
@@ -55,7 +55,7 @@ export default {
         await this.createWatcher({ data });
       }
 
-      this.$popups.addSuccess({ text: this.$t('modals.createWatcher.success.duplicate') });
+      this.$popups.success({ text: this.$t('modals.createWatcher.success.duplicate') });
     },
 
     async editWatcherWithPopup(data) {
@@ -65,7 +65,7 @@ export default {
         await this.editWatcher({ data });
       }
 
-      this.$popups.addSuccess({ text: this.$t('modals.createWatcher.success.edit') });
+      this.$popups.success({ text: this.$t('modals.createWatcher.success.edit') });
     },
   },
 };

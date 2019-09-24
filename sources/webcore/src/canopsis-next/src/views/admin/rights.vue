@@ -243,12 +243,12 @@ export default {
           await this.fetchCurrentUser();
         }
 
-        this.$popups.addSuccess({ text: this.$t('success.default') });
+        this.$popups.success({ text: this.$t('success.default') });
         this.clearChangedRoles();
 
         this.pending = false;
       } catch (err) {
-        this.$popups.addError({ text: this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
 
