@@ -460,14 +460,14 @@ class PBehaviorManager(object):
         return None
 
     def __get_and_check_pbehavior(self, _id, **kwargs):
-        pb_value = self.get(_id)
-
-        if pb_value is None:
-            raise ValueError("The id does not match any pebahvior")
+        try:
+            pb_value = self.get(_id).get('data')[0]
+        except (TypeError, KeyError, IndexError):
+            raise ValueError("The id does not match any pbehavior")
 
         check_valid_rrule(kwargs.get('rrule', ''))
 
-        pbehavior = PBehavior(**self.get(_id))
+        pbehavior = PBehavior(**pb_value)
         new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
