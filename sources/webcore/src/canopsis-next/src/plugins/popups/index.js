@@ -3,11 +3,9 @@ import popupsStoreModule from './store';
 import ThePopups from './components/the-popups.vue';
 
 export default {
-  install(Vue, {
-    store, moduleName = 'popups', componentName = 'the-popups',
-  } = {}) {
+  install(Vue, { store, moduleName = 'popups', componentName = 'the-popups' } = {}) {
     if (!store) {
-      throw new Error('Missing store option.');
+      throw new Error('Missing store option');
     }
 
     Vue.component(componentName, ThePopups);
