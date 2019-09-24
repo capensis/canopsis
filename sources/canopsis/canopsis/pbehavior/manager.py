@@ -367,7 +367,9 @@ class PBehaviorManager(object):
             data.update(comments=[])
         else:
             for comment in data.comments:
-                comment.update({'_id': pbh_id})
+                # Add a unique id to each comment, so that it can be
+                # manipulated with the /pbehavior/comment API
+                comment['_id'] = str(uuid4())
         try:
             result = self.collection.insert(data.to_dict())
         except CollectionError:
