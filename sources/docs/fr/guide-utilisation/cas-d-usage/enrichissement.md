@@ -77,7 +77,7 @@ Dans Canopsis, il existe la possibilité de définir des règles **event-filter*
 * d'enrichir les entités
 * d'enrichir les entités à partir d'une collection de données externe (CAT)
 
-La documentation complète se trouve [sur cette page](../../../guide-administration/moteurs/moteur-che-event_filter/)
+La documentation complète se trouve [sur cette page](../../guide-administration/moteurs/moteur-che-event_filter.md)
 
 Prenons le cas d'usage suivant :
 
@@ -100,7 +100,7 @@ Considérons l'événement suivant :
 }
 ````
 
-Chose importante, les attributs pris en charge sont inscrits [ici](../../../guide-administration/moteurs/moteur-che-event_filter/#champs-des-evenements).  
+Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des événements de la documentation de l'event-filter du moteur che](../../../guide-administration/moteurs/moteur-che-event_filter/#champs-des-evenements).  
 Dans notre cas, l'attribut **groupe** est personalisé et sera donc positionné *automatiquement* dans un dictionnaire *extrainfos*.  
 
 On commence en ajoutant une règle via le menu adéquat

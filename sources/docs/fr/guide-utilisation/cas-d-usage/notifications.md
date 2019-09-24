@@ -12,7 +12,7 @@ Une option du moteur **axe** va vous permettre de prendre en charge cette foncti
 -postProcessorsDirectory /plugins/axepostprocessor/
 ````
 
-La documentation complète est disponible [ici](../../../guide-administration/moteurs/moteur-axe-webhooks/)
+La documentation complète est disponible [sur la page des Webhooks du moteur Axe](../../guide-administration/moteurs/moteur-axe-webhooks.md).
 
 
 ## Mattermost

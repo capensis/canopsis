@@ -69,7 +69,7 @@ yum install canopsis-core
 !!! attention
     La commande suivante ne doit être exécutée que lors de votre **première** installation de Canopsis, sans quoi certains éléments de configuration seront totalement réinitialisés.
 
-    Pour procéder à une mise jour de Canopsis, voir [la documentation de mise à jour](../../mise-a-jour/).
+    Pour procéder à une mise jour de Canopsis, voir [la documentation de mise à jour](../mise-a-jour/index.md).
 
 Une fois le paquet installé, vous pouvez déployer une configuration **mono-instance** à l'aide de la commande suivante :
 ```sh

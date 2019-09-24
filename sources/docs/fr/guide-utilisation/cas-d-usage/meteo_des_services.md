@@ -1,7 +1,7 @@
 # Météo des Services
 
 La météo des services permet de représenter des états agrégés de services selon différentes règles.  
-La documentation complète est disponible [ici](../../../guide-utilisation/interface/widgets/meteo-des-services/)
+La documentation complète est disponible [ici](../../guide-utilisation/interface/widgets/meteo-des-services/index.md)
 
 
 L'interface Canopsis utilise des *tuiles* pour représenter ces états.  
@@ -100,7 +100,7 @@ Le filtre de l'observateur concerne l'attribut *app* qui doit valoir "E-Commerce
 
 ![Constituants](./img/mds_constituants1.png "Constituants")  
 
-Vous pouvez publier des événements sur ces 3 scénarios (avec par exemple le [connecteur send-event](/interconnexions/Transport/send_event/)
+Vous pouvez publier des événements sur ces 3 scénarios (avec par exemple le [connecteur send-event](../../interconnexions/Transport/send_event.md)
 
 Les résultats observés seront alors :
 

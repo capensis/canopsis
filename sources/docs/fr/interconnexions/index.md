@@ -66,14 +66,14 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
-| [Webhooks](../guide-administration/moteurs/moteur-axe-webhooks/) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
+| [Webhooks](../guide-administration/moteurs/moteur-axe-webhooks.md) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 
 ### Transport
 
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
-| [Logstash](../guide-utilisation/cas-d-usage/notifications/) | [Liste des destinations](https://www.elastic.co/guide/en/logstash/current/output-plugins.html) | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
-| [IM](../guide-utilisation/cas-d-usage/notifications/) | Toute messagerie instantanée disposant d’une API qui accepte des requêtes HTTP | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
+| [Logstash](../guide-utilisation/cas-d-usage/notifications.md) | [Liste des destinations](https://www.elastic.co/guide/en/logstash/current/output-plugins.html) | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
+| [IM](../guide-utilisation/cas-d-usage/notifications.md) | Toute messagerie instantanée disposant d’une API qui accepte des requêtes HTTP | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 | Email | Tout serveur email disposant d’une API qui accepte des requêtes HTTP | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 
 ### Ticketing
@@ -88,6 +88,6 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:---------:|:----------:|:-----------:|:------------:|
-| [Publication d’évènement](../guide-developpement/API/) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
-| [Manipulation de Plage de Maintenance](../guide-utilisation/interface/pbehaviors/) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
-| [Récupération de l’état de Santé de Canopsis](../guide-developpement/healthcheck/api_v2_healthcheck/) | OpenCore | Oui |  Outil de marché | Version ≥ 3.4 |
+| [Publication d’évènement](../guide-developpement/API.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
+| [Manipulation de Plage de Maintenance](../guide-utilisation/interface/pbehaviors/index.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
+| [Récupération de l’état de Santé de Canopsis](../guide-developpement/healthcheck/api_v2_healthcheck.md) | OpenCore | Oui |  Outil de marché | Version ≥ 3.4 |

@@ -33,7 +33,7 @@ L'URL pourrait être de la forme :
 
 !!! Note
     Notez que les variables attachées à l'alarme sont préfixées avec *alarm* tandis que les variables attachées à l'entité ne le sont pas.
-    Par ailleurs, n'hésitez pas à utiliser le [mécanisme d'enrichissement](../moteurs/moteur-che-event_filter/) pour utiliser les variables dans le linkbuilder
+    Par ailleurs, n'hésitez pas à utiliser le [mécanisme d'enrichissement](../moteurs/moteur-che-event_filter.md) pour utiliser les variables dans le linkbuilder
 
 Pour aboutir à ce résultat, une configuration doit être insérée via l'API *associativetable*.
 
@@ -73,7 +73,7 @@ Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
 Notez qu'un redémarrage du moteur `webserver` est nécessaire.
 
 !!! Warning
-    Les liens sont générés à la volée et ne sont en aucun cas stockés. 
+    Les liens sont générés à la volée et ne sont en aucun cas stockés.
 
 ## Visualisation frontend
 
