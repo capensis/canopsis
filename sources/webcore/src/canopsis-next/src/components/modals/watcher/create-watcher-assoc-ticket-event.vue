@@ -7,11 +7,11 @@
           v-icon close
     v-card-text
       v-text-field(
-      :label="$t('modals.createAssociateTicket.fields.ticket')",
-      v-model="ticket",
-      name="ticket",
-      v-validate="'required'",
-      :error-messages="errors.collect('ticket')"
+        :label="$t('modals.createAssociateTicket.fields.ticket')",
+        v-model="ticket",
+        name="ticket",
+        v-validate="'required'",
+        :error-messages="errors.collect('ticket')"
       )
     v-divider
     v-layout.py-1(justify-end)

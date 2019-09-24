@@ -6,10 +6,10 @@
       v-layout(data-test="switcherLayout")
         v-switch.ma-0.pa-0(
           data-test="switcherField",
-          hide-details
           color="primary",
           :input-value="value",
-          @change="$emit('input', $event)",
+          hide-details,
+          @change="$emit('input', $event)"
         )
 </template>
 

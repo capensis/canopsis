@@ -2,8 +2,8 @@
   div
     template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.snooze")
       v-textarea(
-      v-model="form.snoozeParameters.message",
-      :label="$t('modals.createAction.fields.message')",
+        v-model="form.snoozeParameters.message",
+        :label="$t('modals.createAction.fields.message')"
       )
       duration-field(:duration="form.snoozeParameters.duration")
     template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")

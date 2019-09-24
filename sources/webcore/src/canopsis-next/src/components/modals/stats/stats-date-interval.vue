@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="statsDateIntervalModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.statsDateInterval.title') }}
@@ -8,34 +8,44 @@
         v-layout
           v-flex(xs3, v-if="!hiddenFields.includes('periodValue')")
             v-text-field.pt-0(
-            type="number",
-            v-model="periodForm.periodValue",
-            :label="$t('modals.statsDateInterval.fields.periodValue')"
+              data-test="intervalPeriodValue",
+              type="number",
+              v-model="periodForm.periodValue",
+              :label="$t('modals.statsDateInterval.fields.periodValue')"
             )
-          v-flex
+          v-flex(data-test="intervalPeriodUnit")
             v-select.pt-0(
-            v-model="periodForm.periodUnit",
-            :items="periodUnits",
-            :label="$t('modals.statsDateInterval.fields.periodUnit')"
+              v-model="periodForm.periodUnit",
+              :items="periodUnits",
+              :label="$t('modals.statsDateInterval.fields.periodUnit')"
             )
         v-alert.mb-2(
-        :value="isPeriodMonth",
-        type="info",
+          :value="isPeriodMonth",
+          type="info"
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         date-interval-selector.my-1(
-        v-model="dateSelectorForm",
-        tstopRules="after_custom:tstart",
-        @update:startObjectValue="updateStartObjectValue",
-        @update:stopObjectValue="updateStopObjectValue"
+          v-model="dateSelectorForm",
+          tstopRules="after_custom:tstart",
+          @update:startObjectValue="updateStartObjectValue",
+          @update:stopObjectValue="updateStopObjectValue"
         )
         v-alert.mb-2(
-        :value="isPeriodMonth"
-        type="info",
+          :value="isPeriodMonth",
+          type="info"
         ) {{ monthIntervalMessage }}
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click="submit", :disabled="errors.any()") {{ $t('common.submit') }}
+        v-btn(
+          data-test="statsDateIntervalCancelButton",
+          depressed,
+          flat,
+          @click="hideModal"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          data-test="statsDateIntervalSubmitButton",
+          @click="submit",
+          :disabled="errors.any()"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>

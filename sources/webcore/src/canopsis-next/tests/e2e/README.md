@@ -193,7 +193,7 @@ Planned tests
             - [ ] Edit widget
     * Stats table
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
     * Stats calendar
         * Base functions
@@ -215,7 +215,7 @@ Planned tests
             - [ ] Edit widget
     * Text
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
 6. Exploitation
     * Event filter

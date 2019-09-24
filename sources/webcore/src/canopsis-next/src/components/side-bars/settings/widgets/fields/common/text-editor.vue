@@ -1,9 +1,9 @@
 <template lang="pug">
   settings-button-field(
-  :isEmpty="isValueEmpty",
-  @create="openTextEditorModal",
-  @edit="openTextEditorModal",
-  @delete="deleteMoreInfoTemplate",
+    :isEmpty="isValueEmpty",
+    @create="openTextEditorModal",
+    @edit="openTextEditorModal",
+    @delete="deleteMoreInfoTemplate"
   )
     .subheading(slot="title") {{ title }}
 </template>

@@ -20,14 +20,12 @@ const commands = {
       .customClick('@menuViewButton');
   },
 
-  clickAddViewButton() {
-    return this.waitForElementVisible('@addViewButton')
-      .customClick('@addViewButton');
+  clickAddTabButton() {
+    return this.customClick('@addTabButton');
   },
 
   clickAddWidgetButton() {
-    return this.waitForElementVisible('@addWidgetButton')
-      .customClick('@addWidgetButton');
+    return this.customClick('@addWidgetButton');
   },
 
   clickEditViewButton() {
@@ -93,7 +91,7 @@ module.exports = {
     controlViewLayout: `${sel('controlViewLayout')} .v-speed-dial`,
     menuViewButton: `${sel('controlViewLayout')} .v-speed-dial ${sel('menuViewButton')}`,
     addWidgetButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('addWidgetButton')}`,
-    addViewButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('addViewButton')}`,
+    addTabButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('addTabButton')}`,
     editViewButton: `${sel('controlViewLayout')} .v-speed-dial__list ${sel('editViewButton')}`,
     submitMoveTab: sel('submitMoveTab'),
     tab: sel('tab-%s'),

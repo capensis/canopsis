@@ -1,13 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Cookies from 'js-cookie';
-import { isEmpty, isFunction } from 'lodash';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
-import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
+import { USERS_RIGHTS } from '@/constants';
 import store from '@/store';
-import i18n from '@/i18n';
-import { checkUserAccess } from '@/helpers/right';
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -197,42 +195,16 @@ router.beforeEach((to, from, next) => {
   return next();
 });
 
-/**
- * if route has requiresRight we will wait currentUser object and check right
- */
-router.beforeResolve((to, from, next) => {
-  if (to.meta.requiresLogin && to.meta.requiresRight) {
-    const { requiresRight } = to.meta;
-    const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
-    const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
+router.beforeResolve(async (to, from, next) => {
+  try {
+    await checkAppInfoAccessForRoute(to);
+    await checkUserAccessForRoute(to);
 
-    const checkProcess = (user) => {
-      if (checkUserAccess(user, rightId, rightMask)) {
-        next();
-      } else {
-        store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
-
-        next({
-          name: 'home',
-        });
-      }
-    };
-
-    if (isEmpty(store.getters['auth/currentUser'])) {
-      const unwatch = store.watch(
-        state => state.auth.currentUser,
-        (currentUser) => {
-          if (!isEmpty(currentUser)) {
-            unwatch();
-            checkProcess(currentUser);
-          }
-        },
-      );
-    } else {
-      checkProcess(store.getters['auth/currentUser']);
-    }
-  } else {
     next();
+  } catch (err) {
+    next({
+      name: 'home',
+    });
   }
 });
 

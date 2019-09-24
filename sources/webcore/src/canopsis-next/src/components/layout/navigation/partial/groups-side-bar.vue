@@ -1,46 +1,46 @@
 <template lang="pug">
   v-navigation-drawer.side-bar.secondary(
-  v-model="isOpen",
-  :width="$config.SIDE_BAR_WIDTH",
-  :class="{ editing: isEditingMode }"
-  data-test="groupsSideBar"
-  disable-resize-watcher,
-  app,
+    v-model="isOpen",
+    :width="$config.SIDE_BAR_WIDTH",
+    :class="{ editing: isEditingMode }",
+    data-test="groupsSideBar",
+    disable-resize-watcher,
+    app
   )
     div.brand.ma-0.secondary.lighten-1
       img.logo(:src="appLogo")
       div.version {{ version }}
     v-expansion-panel.panel(
-    v-if="hasReadAnyViewAccess",
-    expand,
-    focusable,
-    dark
+      v-if="hasReadAnyViewAccess",
+      expand,
+      focusable,
+      dark
     )
       v-expansion-panel-content.secondary.white--text(
-      v-for="group in availableGroups",
-      :key="group._id",
-      :data-test="`panel-group-${group._id}`"
+        v-for="group in availableGroups",
+        :key="group._id",
+        :data-test="`panel-group-${group._id}`"
       )
         div.panel-header(slot="header")
           span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
-          :data-test="`editGroupButton-group-${group._id}`",
-          v-show="isEditingMode",
-          depressed,
-          small,
-          icon,
-          @click.stop="showEditGroupModal(group)"
+            :data-test="`editGroupButton-group-${group._id}`",
+            v-show="isEditingMode",
+            depressed,
+            small,
+            icon,
+            @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
         v-card(
-        v-for="view in group.views",
-        :key="view._id",
-        :color="getColor(view._id)",
+          v-for="view in group.views",
+          :key="view._id",
+          :color="getColor(view._id)"
         )
           router-link.panel-item-content-link(
-          :data-test="`linkView-view-${view._id}`"
-          :title="view.title",
-          :to="getViewLink(view)",
+            :data-test="`linkView-view-${view._id}`",
+            :title="view.title",
+            :to="getViewLink(view)"
           )
             v-card-text.panel-item-content
               v-layout(align-center, justify-space-between)
@@ -50,29 +50,29 @@
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
-                    :data-test="`editViewButton-view-${view._id}`",
-                    v-show="checkViewEditButtonAccessById(view._id)",
-                    depressed,
-                    small,
-                    icon,
-                    @click.prevent="showEditViewModal(view)"
+                      :data-test="`editViewButton-view-${view._id}`",
+                      v-show="checkViewEditButtonAccessById(view._id)",
+                      depressed,
+                      small,
+                      icon,
+                      @click.prevent="showEditViewModal(view)"
                     )
                       v-icon(small) edit
                     v-btn.ma-0(
-                    :data-test="`copyViewButton-view-${view._id}`",
-                    v-show="isEditingMode",
-                    depressed,
-                    small,
-                    icon,
-                    @click.prevent="showDuplicateViewModal(view)"
+                      :data-test="`copyViewButton-view-${view._id}`",
+                      v-show="isEditingMode",
+                      depressed,
+                      small,
+                      icon,
+                      @click.prevent="showDuplicateViewModal(view)"
                     )
                       v-icon(small) file_copy
           v-divider
     v-divider
     groups-settings-button(
-    tooltipRight,
-    :isEditingMode="isEditingMode",
-    @toggleEditingMode="toggleEditingMode"
+      tooltipRight,
+      :isEditingMode="isEditingMode",
+      @toggleEditingMode="toggleEditingMode"
     )
 </template>
 

@@ -5,17 +5,17 @@
         span.headline {{ title }}
     v-card-text
       v-text-field(
-      v-model="form._id",
-      :label="$t('modals.createWebhook.fields.id')",
-      :readonly="isDisabledIdField",
-      :disabled="isDisabledIdField"
+        v-model="form._id",
+        :label="$t('modals.createWebhook.fields.id')",
+        :readonly="isDisabledIdField",
+        :disabled="isDisabledIdField"
       )
         v-tooltip(slot="append", left)
           v-icon(slot="activator") help_outline
           span {{ $t('modals.createWebhook.tooltips.id') }}
       v-switch(
-      v-model="form.disable_if_active_pbehavior",
-      :label="$t('webhook.disableIfActivePbehavior')",
+        v-model="form.disable_if_active_pbehavior",
+        :label="$t('webhook.disableIfActivePbehavior')"
       )
       webhook-form(v-model="form")
     v-divider

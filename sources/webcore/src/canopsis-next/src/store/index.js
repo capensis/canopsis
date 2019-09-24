@@ -23,6 +23,7 @@ import sideBarModule from './modules/side-bar';
 import entitiesModules from './modules/entities';
 
 import entitiesPlugin from './plugins/entities';
+import watchOncePlugin from './plugins/watch-once';
 
 Vue.use(Vuex);
 
@@ -49,5 +50,5 @@ export default new Vuex.Store({
     ...entitiesModules,
     ...featuresService.get('store.modules'),
   },
-  plugins: [entitiesPlugin],
+  plugins: [entitiesPlugin, watchOncePlugin],
 });

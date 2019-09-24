@@ -5,23 +5,23 @@
       v-layout(row, wrap)
         v-flex(xs4)
           search-field(
-          v-model="searchingText",
-          @submit="applySearchFilter",
-          @clear="applySearchFilter",
+            v-model="searchingText",
+            @submit="applySearchFilter",
+            @clear="applySearchFilter"
           )
         v-flex(v-show="hasDeleteAnyUserAccess && selected.length", xs4)
           v-btn(@click="showRemoveSelectedUsersModal", data-test="massDeleteButton", icon)
             v-icon delete
       v-data-table(
-      v-model="selected",
-      :headers="headers",
-      :items="users",
-      :pagination.sync="pagination",
-      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-      :total-items="usersMeta.total",
-      :loading="usersPending",
-      item-key="_id",
-      select-all
+        v-model="selected",
+        :headers="headers",
+        :items="users",
+        :pagination.sync="pagination",
+        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
+        :total-items="usersMeta.total",
+        :loading="usersPending",
+        item-key="_id",
+        select-all
       )
         template(slot="items", slot-scope="props")
           tr(:data-test="`user-${props.item._id}`")
@@ -34,17 +34,17 @@
             td
               div
                 v-btn(
-                v-if="hasUpdateAnyUserAccess",
-                data-test="editButton",
-                @click="showEditUserModal(props.item)",
-                icon
+                  v-if="hasUpdateAnyUserAccess",
+                  data-test="editButton",
+                  @click="showEditUserModal(props.item)",
+                  icon
                 )
                   v-icon edit
                 v-btn(
-                v-if="hasDeleteAnyUserAccess",
-                data-test="deleteButton",
-                @click="showRemoveUserModal(props.item._id)",
-                icon
+                  v-if="hasDeleteAnyUserAccess",
+                  data-test="deleteButton",
+                  @click="showRemoveUserModal(props.item._id)",
+                  icon
                 )
                   v-icon(color="error") delete
     .fab(v-if="hasCreateAnyUserAccess")
@@ -67,7 +67,7 @@ import viewQuery from '@/mixins/view/query';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
-import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 export default {

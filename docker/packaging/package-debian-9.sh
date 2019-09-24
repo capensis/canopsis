@@ -16,7 +16,7 @@ Architecture: ${arch}
 Maintainer: Capensis
 Depends: base-files, bash, ca-certificates, dirmngr, libsasl2-2, libxml2, libxslt1.1, lsb-base, libffi6, libgmp10, libgnutls30, libgnutlsxx28, libgnutls-openssl27, libhogweed4, libicu57, libidn11, libnettle6, libp11-kit0, libpsl5, libssl1.1, libtasn1-6, libxmlsec1, libxmlsec1-openssl, libldap-2.4-2, python, python2.7, rsync, sudo, snmp, smitools, sudo
 Version: ${deb_version}-${deb_release}
-Description: Canopsis with CAT package.
+Description: Canopsis open-core package.
 EOF
 
 cat > ${deb_path}/DEBIAN/preinst << EOF

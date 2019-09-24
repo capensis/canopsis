@@ -8,8 +8,8 @@ const {
   FILTER_OPERATORS,
   CONTEXT_FILTER_COLUMNS,
   CONTEXT_TYPE_OF_ENTITIES,
-  WEATHER_TYPES,
 } = require('../../constants');
+const { WIDGET_TYPES } = require('@/constants');
 const { generateTemporaryView, generateTemporaryContextWidget } = require('../../helpers/entities');
 
 module.exports = {
@@ -124,7 +124,7 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget(WEATHER_TYPES.context)
+      .clickWidget(WIDGET_TYPES.context)
       .verifyModalClosed();
 
     browser.completed.widget.createContext(contextWidget, ({ response }) => {

@@ -5,8 +5,8 @@
         .font-italic.caption.ml-1 ({{ $t('common.optional') }})
       div
         v-btn.primary(
-        small,
-        @click="showStatDisplayModeModal"
+          small,
+          @click="showStatDisplayModeModal"
         ) {{ $t('common.edit') }}
 </template>
 

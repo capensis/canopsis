@@ -67,6 +67,10 @@ const commands = {
     return this.customClick('@selectDefaultViewButton');
   },
 
+  clickRemoveDefaultViewButton() {
+    return this.customClick('@removeDefaultViewButton');
+  },
+
   clickEnabled() {
     return this.customClick('@enabled');
   },
@@ -88,6 +92,7 @@ module.exports = modalCreator(modalSelector, {
       languageField: `${sel('languageLayout')} .v-input__slot`,
       navigationTypeField: `${sel('navigationTypeLayout')} .v-input__slot`,
       selectDefaultViewButton: sel('selectDefaultViewButton'),
+      removeDefaultViewButton: sel('removeDefaultViewButton'),
       enabled: `.v-input${sel('enabled')} .v-input--selection-controls__ripple`,
       submitButton: sel('submitButton'),
       progressOverlay: sel('progressOverlay'),

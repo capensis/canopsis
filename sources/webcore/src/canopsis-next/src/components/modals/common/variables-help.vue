@@ -5,8 +5,8 @@
         span.headline {{ $t('modals.variablesHelp.variables') }}
     v-card-text
       v-treeview(
-      :items="config.variables",
-      item-key="name"
+        :items="config.variables",
+        item-key="name"
       )
         template(slot="prepend", slot-scope="props", v-if="props.item.isArray")
           div.caption.font-italic (Array)
@@ -25,7 +25,7 @@
               slot="activator",
               small,
               icon
-              )
+            )
               v-icon file_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
 </template>

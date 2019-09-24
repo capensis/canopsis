@@ -21,11 +21,11 @@
                       td {{ right.desc }}
                       td(v-for="role in roles", :key="`role-right-${role._id}`")
                         v-checkbox-functional(
-                        v-for="(checkbox, index) in getCheckboxes(role, right)",
-                        :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
-                        v-bind="checkbox.bind",
-                        v-on="checkbox.on",
-                        :disabled="!hasUpdateAnyActionAccess"
+                          v-for="(checkbox, index) in getCheckboxes(role, right)",
+                          :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
+                          v-bind="checkbox.bind",
+                          v-on="checkbox.on",
+                          :disabled="!hasUpdateAnyActionAccess"
                         )
     v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
@@ -34,9 +34,9 @@
       v-layout(column)
         refresh-btn(@click="fetchRightsList")
         v-speed-dial(
-        v-model="fab",
-        direction="left",
-        transition="slide-y-reverse-transition"
+          v-model="fab",
+          direction="left",
+          transition="slide-y-reverse-transition"
         )
           v-btn(slot="activator", color="primary", fab, v-model="fab")
             v-icon add
@@ -59,7 +59,13 @@
 import { get, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
-import { MODALS, USERS_RIGHTS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES, NOT_COMPLETED_USER_RIGHTS_KEYS } from '@/constants';
+import {
+  MODALS,
+  USERS_RIGHTS,
+  USERS_RIGHTS_MASKS,
+  USERS_RIGHTS_TYPES,
+  NOT_COMPLETED_USER_RIGHTS_KEYS,
+} from '@/constants';
 import {
   prepareUserByData,
   generateRoleRightByChecksum,
@@ -76,7 +82,7 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
-import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 
 export default {
   components: {

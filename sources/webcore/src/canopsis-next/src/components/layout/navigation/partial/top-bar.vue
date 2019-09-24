@@ -2,12 +2,12 @@
   v-toolbar.top-bar.primary(
     dense,
     fixed,
-    app,
+    app
   )
     v-toolbar-side-icon.ml-2.white--text(
-    v-if="isShownGroupsSideBar",
-    data-test="groupsSideBarButton",
-    @click="$emit('toggleSideBar')"
+      v-if="isShownGroupsSideBar",
+      data-test="groupsSideBarButton",
+      @click="$emit('toggleSideBar')"
     )
     v-layout.topBarBrand(v-else, fill-height, align-center)
       img.canopsisLogo(src="@/assets/canopsis.png")
@@ -120,7 +120,9 @@ export default {
         },
       ];
 
-      return links.filter(({ right }) => this.checkReadAccess(right));
+      return links.filter(({ right }) =>
+        this.checkAppInfoAccessByRight(right) &&
+        this.checkReadAccess(right));
     },
 
     administrationLinks() {

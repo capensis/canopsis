@@ -1,11 +1,12 @@
 <template lang="pug">
-  v-container.pa-3(fluid)
+  v-container.pa-3(fluid, data-test="dateInterval")
     v-layout(align-center, justify-space-between)
       div.subheading Date interval
       div
         v-btn.primary(
-        small,
-        @click="showEditModal"
+          data-test="editButton",
+          small,
+          @click="showEditModal"
         ) {{ $t('common.edit') }}
 </template>
 

@@ -1,13 +1,18 @@
 <template lang="pug">
   v-layout(align-center)
     v-btn(
-    data-test="selectDefaultViewButton",
-    color="secondary",
-    small,
-    @click="showViewSelectModal"
+      data-test="selectDefaultViewButton",
+      color="secondary",
+      small,
+      @click="showViewSelectModal"
     ) {{ $t('user.selectDefaultView') }}
     div {{ defaultViewTitle }}
-    v-btn(v-if="value", icon, @click="clearDefaultView")
+    v-btn(
+      v-if="value",
+      data-test="removeDefaultViewButton",
+      icon,
+      @click="clearDefaultView"
+    )
       v-icon(color="error") clear
 </template>
 

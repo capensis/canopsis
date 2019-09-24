@@ -7,11 +7,11 @@
         div(:class="vTabItemInnerWrapperClass")
           div(:class="vTabItemInnerClass")
             component(
-            ref="forms",
-            :is="tab.component",
-            :class="webhookTabClass",
-            v-bind="tab.bind",
-            v-on="tab.on"
+              ref="forms",
+              :is="tab.component",
+              :class="webhookTabClass",
+              v-bind="tab.bind",
+              v-on="tab.on"
             )
 </template>
 

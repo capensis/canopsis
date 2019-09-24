@@ -1,30 +1,36 @@
 <template lang="pug">
   v-form
     v-text-field(
-    v-model="form.generalParameters._id",
-    label="Id",
+      v-model="form.generalParameters._id",
+      label="Id",
+      name="id",
+      v-validate="'required'",
+      :error-messages="errors.collect('id')"
     )
     v-select(
-    v-model="form.generalParameters.type",
-    label="Type",
-    :items="actionTypes"
+      v-model="form.generalParameters.type",
+      label="Type",
+      :items="actionTypes",
+      name="type",
+      v-validate="'required'",
+      :error-messages="errors.collect('type')"
     )
     v-tabs(centered, slider-color="primary")
       v-tab
         .validation-header(
-        :class="{ 'error--text': hasGeneralFormAnyError }"
+          :class="{ 'error--text': hasGeneralFormAnyError }"
         ) {{ $t('modals.createAction.tabs.general') }}
       v-tab-item
         action-general-tab(v-model="form", ref="generalForm")
       v-tab
         .validation-header(
-        :class="{ 'error--text': hasHookFormAnyError }"
+          :class="{ 'error--text': hasHookFormAnyError }"
         ) {{ $t('modals.createAction.tabs.hook') }}
       v-tab-item
         webhook-form-hook-tab(
-        ref="hookForm",
-        v-model="form.generalParameters.hook",
-        :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+          ref="hookForm",
+          v-model="form.generalParameters.hook",
+          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
         )
 </template>
 
@@ -38,6 +44,7 @@ import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-for
 import ActionGeneralTab from './tabs/action-general-tab.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     ActionGeneralTab,
     WebhookFormHookTab,

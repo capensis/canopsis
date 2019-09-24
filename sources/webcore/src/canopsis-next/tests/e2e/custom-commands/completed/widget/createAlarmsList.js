@@ -13,6 +13,7 @@ module.exports.command = function createAlarmsList({
 }, callback = () => {}) {
   const alarms = this.page.widget.alarms();
   const liveReportingModal = this.page.modals.common.liveReporting();
+  const dateIntervalField = this.page.fields.dateInterval();
 
   this.completed.widget.setCommonFields({ ...fields, parameters });
 
@@ -39,11 +40,14 @@ module.exports.command = function createAlarmsList({
 
   if (liveReporting) {
     alarms.clickCreateLiveReporting();
-    liveReportingModal.verifyModalOpened()
-      .selectRange(liveReporting.range);
+    liveReportingModal.verifyModalOpened();
+
+    if (liveReporting.range) {
+      dateIntervalField.selectRange(liveReporting.range);
+    }
 
     if (liveReporting.calendarStartDate) {
-      liveReportingModal.clickStartDateButton()
+      dateIntervalField.clickStartDateButton()
         .clickDatePickerDayTab()
         .selectCalendarDay(liveReporting.calendarStartDate.day)
         .clickDatePickerHoursTab()
@@ -53,7 +57,7 @@ module.exports.command = function createAlarmsList({
     }
 
     if (liveReporting.calendarEndDate) {
-      liveReportingModal.clickEndDateButton()
+      dateIntervalField.clickEndDateButton()
         .selectCalendarDay(liveReporting.calendarEndDate.day)
         .clickDatePickerHoursTab()
         .selectCalendarHour(liveReporting.calendarEndDate.hour)
@@ -62,13 +66,13 @@ module.exports.command = function createAlarmsList({
     }
 
     if (liveReporting.endDate) {
-      liveReportingModal.clearEndDate()
+      dateIntervalField.clearEndDate()
         .clickEndDate()
         .setEndDate(liveReporting.endDate);
     }
 
     if (liveReporting.startDate) {
-      liveReportingModal.clearStartDate()
+      dateIntervalField.clearStartDate()
         .clickStartDate()
         .setStartDate(liveReporting.startDate);
     }

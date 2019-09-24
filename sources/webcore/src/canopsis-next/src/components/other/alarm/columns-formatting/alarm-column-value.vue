@@ -1,11 +1,11 @@
 <template lang="pug">
   div
     v-menu(
-    v-if="popupData",
-    v-model="isInfoPopupOpen",
-    :close-on-content-click="false",
-    :open-on-click="false",
-    offset-x
+      v-if="popupData",
+      v-model="isInfoPopupOpen",
+      :close-on-content-click="false",
+      :open-on-click="false",
+      offset-x
     )
       div(slot="activator")
         v-layout(align-center)

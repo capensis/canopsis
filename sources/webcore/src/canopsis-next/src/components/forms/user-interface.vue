@@ -1,7 +1,7 @@
 <template lang="pug">
   v-form(
-  data-test="userInterfaceForm",
-  @submit.prevent="submit"
+    data-test="userInterfaceForm",
+    @submit.prevent="submit"
   )
     v-layout(row)
       v-flex.text-xs-center
@@ -9,68 +9,68 @@
     v-layout(row)
       v-flex
         v-text-field(
-        data-test="appTitle",
-        v-model="form.appTitle",
-        :disabled="disabled",
-        :label="$t('parameters.userInterfaceForm.fields.appTitle')"
+          data-test="appTitle",
+          v-model="form.appTitle",
+          :disabled="disabled",
+          :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
     v-layout(
-    data-test="languageLayout",
-    row
+      data-test="languageLayout",
+      row
     )
       v-flex
         v-select(
-        v-model="form.language",
-        :items="languages",
-        :label="$t('parameters.userInterfaceForm.fields.language')"
+          v-model="form.language",
+          :items="languages",
+          :label="$t('parameters.userInterfaceForm.fields.language')"
         )
     v-layout(
-    data-test="footerLayout",
-    row
+      data-test="footerLayout",
+      row
     )
       v-flex
         span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.footer') }}
         text-editor(
-        v-model="form.footer",
-        :config="textEditorConfig"
+          v-model="form.footer",
+          :config="textEditorConfig"
         )
     v-layout.mt-3(
-    data-test="descriptionLayout",
-    row
+      data-test="descriptionLayout",
+      row
     )
       v-flex
         span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.description') }}
         text-editor(
-        v-model="form.description",
-        :config="textEditorConfig"
+          v-model="form.description",
+          :config="textEditorConfig"
         )
     v-layout.mt-3(row)
       v-flex
         span.theme--light.v-label.file-selector__label {{ $t('parameters.userInterfaceForm.fields.logo') }}
         v-layout(row)
           file-selector.mt-1(
-          data-test="fileSelector",
-          ref="fileSelector",
-          v-validate="`image|size:${$config.MAX_LOGO_SIZE_IN_KB}`",
-          :error-messages="errors.collect('logo')",
-          :disabled="disabled",
-          accept="image/*",
-          name="logo",
-          withFilesList,
-          @change="changeLogoFile"
+            data-test="fileSelector",
+            ref="fileSelector",
+            v-validate="`image|size:${$config.MAX_LOGO_SIZE_IN_KB}`",
+            :error-messages="errors.collect('logo')",
+            :disabled="disabled",
+            accept="image/*",
+            name="logo",
+            withFilesList,
+            @change="changeLogoFile"
           )
     template(v-if="!disabled")
       v-divider.mt-3
       v-layout.mt-3(row, justify-end)
         v-btn(
-        flat,
-        @click="reset"
+          flat,
+          @click="reset"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-        data-test="submitButton",
-        :disabled="submitting",
-        :loading="submitting",
-        type="submit"
+          data-test="submitButton",
+          :disabled="submitting",
+          :loading="submitting",
+          type="submit"
         ) {{ $t('common.submit') }}
 </template>
 

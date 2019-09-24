@@ -2,10 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
@@ -17,11 +17,14 @@
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider
-          field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
+          field-info-popup(
+            :columns="settings.widget.parameters.alarmsList.widgetColumns",
+            v-model="settings.widget.parameters.alarmsList.infoPopups"
+          )
           v-divider
           field-text-editor(
-          v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
-          :title="$t('settings.moreInfosModal')"
+            v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
+            :title="$t('settings.moreInfosModal')"
           )
       v-divider
       stats-calendar-advanced-form(v-model="settings.widget.parameters")

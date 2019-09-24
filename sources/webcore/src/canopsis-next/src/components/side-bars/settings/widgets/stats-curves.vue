@@ -2,10 +2,10 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
@@ -17,13 +17,13 @@
       field-stats-selector(v-model="settings.widget.parameters.stats", required)
       v-divider
       field-stats-colors(
-      :stats="settings.widget.parameters.stats",
-      v-model="settings.widget.parameters.statsColors"
+        :stats="settings.widget.parameters.stats",
+        v-model="settings.widget.parameters.statsColors"
       )
       v-divider
       field-stats-points-styles(
-      :stats="settings.widget.parameters.stats",
-      v-model="settings.widget.parameters.statsPointsStyles"
+        :stats="settings.widget.parameters.stats",
+        v-model="settings.widget.parameters.statsPointsStyles"
       )
       v-divider
       field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
