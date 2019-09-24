@@ -1218,8 +1218,11 @@ class Alerts(object):
                 value[AlarmField.alarmfilter.value][NEXT] = next_run
                 self.update_current_alarm(docalarm, value)
 
-            last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-            date_stamp = max(docalarm[storage.TIMESTAMP], last_tstop)
+            if lifter[AlarmFilterField.postpone.value]:
+                last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
+                date_stamp = max(docalarm[storage.TIMESTAMP], last_tstop)
+            else:
+                date_stamp = docalarm[storage.TIMESTAMP]
             date = datetime.fromtimestamp(date_stamp)
             # Continue only if the limit condition is valid
             if date + lifter.limit > now:
@@ -1256,8 +1259,11 @@ class Alerts(object):
                         # Already repeated enough times
                         continue
 
-                    last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-                    last = datetime.fromtimestamp(max(max(executions), last_tstop))
+                    if alarmfilter[AlarmFilterField.postpone.value]:
+                        last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
+                        last = datetime.fromtimestamp(max(max(executions), last_tstop))
+                    else:
+                        last = datetime.fromtimestamp(max(executions))
                     if last + lifter.limit > now:
                         # Too soon to execute one more time all tasks
                         continue

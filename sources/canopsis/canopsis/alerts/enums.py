@@ -71,3 +71,4 @@ class AlarmFilterField(DefaultEnum):
 
     runs = 'runs'  # trace runs
     next_run = 'next_run'  # stamp of the next run
+    postpone = 'postpone_if_active_pbehavior'
