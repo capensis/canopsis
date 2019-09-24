@@ -1263,7 +1263,6 @@ class Alerts(object):
                         # Already repeated enough times
                         continue
 
-<<<<<<< HEAD
                     try:
                         if alarmfilter[AlarmFilterField.postpone.value]:
                             last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
@@ -1273,10 +1272,6 @@ class Alerts(object):
                     except KeyError:
                         # if alarmfilter[AlarmFilterField.postpone.value] doesn't exists then do as false
                         last = datetime.fromtimestamp(max(executions))
-=======
-                    last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-                    last = datetime.fromtimestamp(max(max(executions), last_tstop))
->>>>>>> c829083a4... fix(report alarm filter): fixed datetime to int comparison
                     if last + lifter.limit > now:
                         # Too soon to execute one more time all tasks
                         continue
