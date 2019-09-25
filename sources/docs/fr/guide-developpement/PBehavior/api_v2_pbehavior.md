@@ -93,6 +93,8 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 Modifie un pbehavior à partir du corps de la requête.
 
+Les champs `eids` et `comments` des pBehaviors ne sont pas modifiables avec cette route. Ils ne sont pas pris en compte s'ils sont présents dans le corps de la requête.
+
 **URL** : `/api/v2/pbehavior/<pbehavior_id>`
 
 **Méthode** : `PUT`
