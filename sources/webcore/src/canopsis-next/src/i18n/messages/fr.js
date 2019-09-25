@@ -487,13 +487,46 @@ export default {
     },
     createPbehavior: {
       title: 'Ajouter un comportement périodique',
-      fields: {
-        name: 'Nom',
-        start: 'Début',
-        stop: 'Fin',
-        reason: 'Raison',
-        type: 'Type',
-        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
+      steps: {
+        general: {
+          title: 'Paramètres généraux',
+          general: 'Général',
+          dates: 'Dates',
+          fields: {
+            enabled: 'Activé',
+            name: 'Nom',
+            reason: 'Raison',
+            type: 'Type',
+            start: 'Début',
+            stop: 'Fin',
+            timezone: 'Fuseau horaire',
+          },
+        },
+        filter: {
+          title: 'Filtre',
+        },
+        rrule: {
+          title: 'Règle de récurrence',
+          exdate: 'Dates d\'exclusion',
+          buttons: {
+            addExdate: 'Ajouter une date d\'exclusion',
+          },
+          fields: {
+            rRuleQuestion: 'Ajouter une règle de récurrence au comportement périodique ?',
+          },
+        },
+        comments: {
+          title: 'Commentaires',
+          buttons: {
+            addComment: 'Ajouter un commentaire',
+          },
+          fields: {
+            message: 'Message',
+          },
+        },
+      },
+      errors: {
+        invalid: 'Invalide',
       },
       success: {
         create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
@@ -943,10 +976,10 @@ export default {
         name: 'Nom',
         type: 'Type',
       },
-      errors: {
-        invalidJSON: 'JSON non valide',
-        required: 'Merci d\'ajouter au moins une règle valide',
-      },
+    },
+    errors: {
+      invalidJSON: 'JSON non valide',
+      required: 'Merci d\'ajouter au moins une règle valide',
     },
   },
   filterSelector: {

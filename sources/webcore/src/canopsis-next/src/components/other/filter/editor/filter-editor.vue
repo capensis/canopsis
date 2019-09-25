@@ -42,6 +42,8 @@ import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
+
 import FilterGroup from './partial/filter-group.vue';
 import FilterResultsAlarm from './partial/results/alarm.vue';
 import FilterResultsEntity from './partial/results/entity.vue';
@@ -60,6 +62,7 @@ export default {
     FilterResultsAlarm,
     FilterResultsEntity,
   },
+  mixins: [formValidationHeaderMixin],
   props: {
     value: {
       type: [String, Object],
