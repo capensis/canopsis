@@ -83,7 +83,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ```json
 {
-    "e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2"
+	"e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2"
 }
 ```
 
@@ -123,7 +123,7 @@ Modifie un pbehavior à partir du corps de la requête.
 	},
 	"type_": "Hors plage horaire de surveillance",
 	"reason": "Autre",
-  "rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+	"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
 	"comments": [],
 	"exdate": []
 }
@@ -152,7 +152,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 	},
 	"type_": "Hors plage horaire de surveillance",
 	"reason": "Autre",
-  "rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+	"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
 	"comments": [],
 	"exdate": []
 }' 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
