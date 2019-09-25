@@ -17,6 +17,13 @@ import { MODALS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import commentsToPbehaviorComments from '@/helpers/forms/pbehavior/comments-to-pbehavior-comments';
+import formToPbehavior from '@/helpers/forms/pbehavior/form-to-pbehavior';
+import pbehaviorToForm from '@/helpers/forms/pbehavior/pbehavior-to-form';
+import pbehaviorToComments from '@/helpers/forms/pbehavior/pbehavior-to-comments';
+import exdatesToPbehaviorExdates from '@/helpers/forms/pbehavior/exdates-to-pbehavior-exdates';
+import pbehaviorToExdates from '@/helpers/forms/pbehavior/pbehavior-to-exdates';
+
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 
 export default {
@@ -33,9 +40,9 @@ export default {
 
     return {
       form: {
-        general: this.$options.filters.pbehaviorToForm(pbehavior),
-        exdate: this.$options.filters.pbehaviorToExdate(pbehavior),
-        comments: this.$options.filters.pbehaviorToComments(pbehavior),
+        general: pbehaviorToForm(pbehavior),
+        exdate: pbehaviorToExdates(pbehavior),
+        comments: pbehaviorToComments(pbehavior),
       },
     };
   },
@@ -44,10 +51,10 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        const pbehavior = this.$options.filters.formToPbehavior(this.form.general);
+        const pbehavior = formToPbehavior(this.form.general);
 
-        pbehavior.comments = this.$options.filters.commentsToPbehaviorComments(this.form.comments);
-        pbehavior.exdate = this.$options.filters.exdateToPbehaviorExdate(this.form.exdate);
+        pbehavior.comments = commentsToPbehaviorComments(this.form.comments);
+        pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
 
         if (!pbehavior.author) {
           pbehavior.author = this.currentUser._id;
