@@ -126,7 +126,7 @@ class PBehavior(BasePBehavior):
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
-                        EXDATE)
+                        TIMEZONE, EXDATE)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
