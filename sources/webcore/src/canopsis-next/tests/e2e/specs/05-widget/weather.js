@@ -3,6 +3,7 @@
 const {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SERVICE_WEATHER_WIDGET_SORT_FIELD,
+  INFO_POPUP_DEFAULT_COLUMNS,
   PAGINATION_PER_PAGE_VALUES,
   FILTERS_TYPE,
   FILTER_OPERATORS,
@@ -61,6 +62,10 @@ module.exports = {
           bottom: 3,
           left: 3,
         },
+        infoPopups: [{
+          column: INFO_POPUP_DEFAULT_COLUMNS.connectorName,
+          template: 'Info popup template',
+        }],
         elementPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
         columnSM: 12,
         columnMD: 12,
@@ -171,7 +176,6 @@ module.exports = {
       },
       title: 'Weather widget(edited)',
       periodicRefresh: 180,
-      filter: {},
       moreInfos: 'More infos popup(edited)',
       blockTemplate: 'Template weather item text(edited)',
       modalTemplate: 'Template modal text(edited)',
