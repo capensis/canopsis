@@ -46,3 +46,8 @@ module.exports.generateTemporaryTextWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Text-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryStatsCalendarWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Calendar-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

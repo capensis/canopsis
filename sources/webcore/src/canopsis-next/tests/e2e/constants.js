@@ -107,7 +107,7 @@ module.exports.PAGINATION_PER_PAGE_VALUES = {
   HUNDRED: 5,
 };
 
-module.exports.ALARMS_WIDGET_INFO_POPUP_COLUMNS = {
+module.exports.INFO_POPUP_DEFAULT_COLUMNS = {
   connector: 1,
   connectorName: 2,
   component: 3,
