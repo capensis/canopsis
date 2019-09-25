@@ -5,7 +5,7 @@
         v-model="form.snoozeParameters.message",
         :label="$t('modals.createAction.fields.message')"
       )
-      duration-field(:duration="form.snoozeParameters.duration")
+      duration-field(v-model="form.snoozeParameters.duration")
     template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
       pbehavior-form(v-model="form.pbehaviorParameters", :author="$constants.ACTION_AUTHOR", :noFilter="true")
 </template>

@@ -4,7 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createAction.create.title') }}
     v-card-text
-      action-form(v-model="form")
+      action-form(v-model="form", :disableId="modal.config && !modal.config.isDuplicating")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
@@ -14,7 +14,7 @@
 <script>
 import moment from 'moment';
 import { omit } from 'lodash';
-import { MODALS, ACTION_TYPES, ACTION_AUTHOR, WEBHOOK_TRIGGERS, DURATION_UNITS } from '@/constants';
+import { MODALS, ACTION_TYPES, ACTION_AUTHOR, DURATION_UNITS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -121,11 +121,17 @@ export default {
   },
   mixins: [modalInnerMixin],
   data() {
-    const { item } = this.modal.config;
+    const { item, isDuplicating } = this.modal.config;
+
+    const form = this.$options.filters.actionToForm(item);
+
+    // If we're duplicating an action, generate a new unique id
+    if (isDuplicating) {
+      form.generalParameters._id = uuid('action');
+    }
 
     return {
-      form: this.$options.filters.actionToForm(item),
-      availableTriggers: Object.values(WEBHOOK_TRIGGERS),
+      form,
     };
   },
   methods: {

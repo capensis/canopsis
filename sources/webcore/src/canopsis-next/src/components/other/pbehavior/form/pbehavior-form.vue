@@ -1,12 +1,12 @@
 <template lang="pug">
   div
-    pbehavior-general-form(v-model="form.general", :noFilter="noFilter")
+    pbehavior-general-form(:form="form.general", @input="updateField('general', $event)", :noFilter="noFilter")
     pbehavior-exdates-form.mt-2(
-    v-show="form.general.rrule",
-    v-model="form.exdate",
-    @input="updateField('exdate', $event)"
+      v-show="form.general.rrule",
+      :exdates="form.exdate",
+      @input="updateField('exdate', $event)"
     )
-    pbehavior-comments-form.mt-2(v-model="form.comments", @input="updateField('comments', $event)", :author="author")
+    pbehavior-comments-form.mt-2(:comments="form.comments", @input="updateField('comments', $event)", :author="author")
 </template>
 
 <script>

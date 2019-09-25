@@ -5,7 +5,8 @@
       label="Id",
       name="id",
       v-validate="'required'",
-      :error-messages="errors.collect('id')"
+      :error-messages="errors.collect('id')",
+      :disabled="disableId"
     )
     v-select(
       v-model="form.generalParameters.type",
@@ -58,6 +59,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    disableId: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
