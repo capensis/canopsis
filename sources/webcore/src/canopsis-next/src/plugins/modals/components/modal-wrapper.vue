@@ -17,10 +17,6 @@ export default {
       type: Object,
       required: true,
     },
-    dialogProps: {
-      type: Object,
-      default: () => ({}),
-    },
   },
   data() {
     return {
@@ -35,6 +31,16 @@ export default {
       set() {
         this.$modals.hide({ id: this.modal.id });
       },
+    },
+    dialogProps() {
+      const defaultDialogProps = { maxWidth: 700, lazy: true };
+      const { dialogPropsMap = {} } = this.$modals;
+
+      return {
+        ...defaultDialogProps,
+        ...dialogPropsMap[this.modal.name],
+        ...this.modal.dialogProps,
+      };
     },
   },
   mounted() {

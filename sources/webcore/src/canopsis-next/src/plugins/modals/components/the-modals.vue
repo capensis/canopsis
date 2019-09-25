@@ -4,23 +4,15 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-import ModalBase from '@/components/modals/modal-base.vue';
-
-const {
-  mapGetters: modalMapGetters,
-} = createNamespacedHelpers('modals');
 
 /**
  * Wrapper for all modal windows
  */
 export default {
-  components: {
-    ModalBase,
-  },
   computed: {
-    ...modalMapGetters(['modals']),
+    modals() {
+      return this.$store.getters[`${this.$modals.moduleName}/modals`];
+    },
   },
   watch: {
     $route: {
