@@ -52,7 +52,6 @@ module.exports.generateTemporaryStatsCalendarWidget = (prefix = '', suffix = uid
   row: `${prefix}row-${suffix}`,
 });
 
-
 module.exports.generateTemporaryStatsHistogramWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Stats-Histogram-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
