@@ -126,7 +126,7 @@ class PBehavior(BasePBehavior):
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
-                        EXDATE)
+                        TIMEZONE, EXDATE)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -367,7 +367,9 @@ class PBehaviorManager(object):
             data.update(comments=[])
         else:
             for comment in data.comments:
-                comment.update({'_id': pbh_id})
+                # Add a unique id to each comment, so that it can be
+                # manipulated with the /pbehavior/comment API
+                comment['_id'] = str(uuid4())
         try:
             result = self.collection.insert(data.to_dict())
         except CollectionError:
@@ -458,14 +460,14 @@ class PBehaviorManager(object):
         return None
 
     def __get_and_check_pbehavior(self, _id, **kwargs):
-        pb_value = self.get(_id)
-
-        if pb_value is None:
-            raise ValueError("The id does not match any pebahvior")
+        try:
+            pb_value = self.get(_id).get('data')[0]
+        except (TypeError, KeyError, IndexError):
+            raise ValueError("The id does not match any pbehavior")
 
         check_valid_rrule(kwargs.get('rrule', ''))
 
-        pbehavior = PBehavior(**self.get(_id))
+        pbehavior = PBehavior(**pb_value)
         new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
