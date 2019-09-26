@@ -32,7 +32,7 @@
       v-divider
       field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
       v-divider
-    v-btn.primary(data-test="submitStatsCurvesSubmitButton", @click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="statsCurvesSubmitButton", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

@@ -4,7 +4,7 @@ const el = require('../../helpers/el');
 
 const commands = {
   clickSubmitStatsCurves() {
-    return this.customClick('@submitStatsCurvesSubmitButton');
+    return this.customClick('@statsCurvesSubmitButton');
   },
 
   el,
@@ -12,7 +12,7 @@ const commands = {
 
 module.exports = {
   elements: {
-    submitStatsCurvesSubmitButton: sel('submitStatsCurvesSubmitButton'),
+    statsCurvesSubmitButton: sel('statsCurvesSubmitButton'),
   },
   commands: [commands],
 };

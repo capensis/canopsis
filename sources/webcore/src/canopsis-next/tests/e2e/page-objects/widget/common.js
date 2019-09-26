@@ -483,10 +483,10 @@ module.exports = {
     statItemEditButton: `${sel('statItem')}:nth-child(%s) ${sel('statItemEditButton')}`,
     statItemDeleteButton: `${sel('statItem')}:nth-child(%s)  ${sel('statItemDeleteButton')}`,
 
-    statsColor: sel('widgetStatsColor'),
+    statsColor: sel('statsColor'),
     statsColorPickButton: sel('statsColorPickButton-%s'),
 
-    widgetStatsAnnotationLine: sel('widgetStatsAnnotationLine'),
+    widgetStatsAnnotationLine: sel('statsAnnotationLine'),
     annotationEnabledInput: `input${sel('annotationEnabled')}`,
     annotationEnabled: `div${sel('annotationEnabled')} .v-input__slot`,
     annotationValue: sel('annotationValue'),

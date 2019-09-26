@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group(data-test="widgetStatsAnnotationLine")
+  v-list-group(data-test="statsAnnotationLine")
     v-list-tile(slot="activator") {{ $t('settings.statsAnnotationLine.title') }}
     v-container(fluid)
       v-layout(row, wrap)
