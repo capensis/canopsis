@@ -99,13 +99,13 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
 mkdir -p $GOPATH/{bin,src}
-mkdir -p $GOPATH/src/git.canopsis.net/canopsis/go-revolution
+mkdir -p $GOPATH/src/git.canopsis.net/canopsis/go-engines
 ```
 
 Cloner le projet :
 
 ```sh
-git clone https://git.canopsis.net/canopsis/go-revolution.git -b develop $GOPATH/src/git.canopsis.net/canopsis/go-revolution
+git clone https://git.canopsis.net/canopsis/go-engines.git -b develop $GOPATH/src/git.canopsis.net/canopsis/go-engines
 ```
 
 Installer Glide: https://glide.sh/
@@ -113,14 +113,14 @@ Installer Glide: https://glide.sh/
 Initialiser le projet :
 
 ```sh
-cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
+cd $GOPATH/src/git.canopsis.net/canopsis/go-engines/
 make init
 ```
 
 Lancer le build :
 
 ```sh
-cd $GOPATH/src/git.canopsis.net/canopsis/go-revolution/
+cd $GOPATH/src/git.canopsis.net/canopsis/go-engines/
 make
 ```
 
@@ -140,7 +140,7 @@ export CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost/canopsis"
 export CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost/canopsis"
 export CPS_REDIS_URL="redis://nouser:dbpassword@host:port/0"
 export CPS_INFLUX_URL="http://cpsinflux:canopsis@host:8086"
-export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-revolution/default_configuration.toml"
+export CPS_DEFAULT_CFG="$GOPATH/src/git.canopsis.net/canopsis/go-engines/default_configuration.toml"
 ```
 
 #### Paramètres spécifiques au développement
@@ -202,7 +202,7 @@ make docker_images TAG=develop
 
 Pour que le provisionning soit complet (reinit), il faut supprimer le volume mongo et perdre toutes les données:
 ```sh
-docker volume rm go-revolution_mongodbdata
+docker volume rm go-engines_mongodbdata
 ```
 
 Pour ne construire qu’un seul projet :
@@ -335,7 +335,7 @@ make test
 ## Utiliser la bibliothèque Canopsis
 
 ```go
-import "git.canopsis.net/canopsis/go-revolution/canopsis"
+import "git.canopsis.net/canopsis/go-engines/canopsis"
 ```
 
 ## Builder les images
