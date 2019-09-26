@@ -23,6 +23,7 @@ module.exports.command = function setCommonFields({
     filters,
     openedResolvedFilter,
     statsSelector,
+    statsPointsStyles,
     annotationLine,
     statsColors,
     newColumnNames,
@@ -78,7 +79,7 @@ module.exports.command = function setCommonFields({
     createFilterModal
       .verifyModalOpened()
       .fillFilterGroups(filter.groups)
-      .clickCancelButton()
+      .clickSubmitButton()
       .verifyModalClosed();
   }
 
@@ -226,6 +227,14 @@ module.exports.command = function setCommonFields({
         .setColorField(statColor.color)
         .clickSubmitButton()
         .verifyModalClosed();
+    });
+  }
+
+  if (statsPointsStyles) {
+    statsPointsStyles.forEach((statColor) => {
+      common
+        .clickStatsPointsStyles()
+        .selectStatsPointsStylesType(statColor.title, statColor.type);
     });
   }
 

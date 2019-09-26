@@ -377,6 +377,15 @@ const commands = {
     return this.customClick('@annotationLabelColorButton');
   },
 
+  clickStatsPointsStyles() {
+    return this.customClick('@statsPointsStyles');
+  },
+
+  selectStatsPointsStylesType(title, index = 1) {
+    return this.customClick(this.el('@statsPointsStyleSelect', title))
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
+  },
 };
 
 
@@ -484,6 +493,9 @@ module.exports = {
     annotationLabel: sel('annotationLabel'),
     annotationLineColorButton: sel('annotationLineColorButton'),
     annotationLabelColorButton: sel('annotationLabelColorButton'),
+
+    statsPointsStyles: sel('statsPointsStyle'),
+    statsPointsStyleSelect: `${sel('statsPointsStyleSelect-%s')} .v-input__slot`,
   },
   commands: [commands],
 };
