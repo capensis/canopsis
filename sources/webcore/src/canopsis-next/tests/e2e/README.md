@@ -211,7 +211,7 @@ Planned tests
             - [ ] Pages
     * Pareto diagram
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
     * Text
         * Base functions

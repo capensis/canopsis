@@ -215,22 +215,6 @@ module.exports.command = function setCommonFields({
     }
   }
 
-  if (statsColors) {
-    statsColors.forEach((statColor) => {
-      common
-        .clickStatsColor()
-        .clickStatsColorItem(statColor.title);
-
-      colorPickerModal
-        .verifyModalOpened()
-        .clickColorField()
-        .clearColorField()
-        .setColorField(statColor.color)
-        .clickSubmitButton()
-        .verifyModalClosed();
-    });
-  }
-
   if (statSelector) {
     common.clickStatSelectButton();
 
@@ -274,6 +258,22 @@ module.exports.command = function setCommonFields({
     addStatModal
       .clickSubmitButton()
       .verifyModalClosed();
+  }
+
+  if (statsColors) {
+    statsColors.forEach((statColor) => {
+      common
+        .clickStatsColor()
+        .clickStatsColorItem(statColor.title);
+
+      colorPickerModal
+        .verifyModalOpened()
+        .clickColorField()
+        .clearColorField()
+        .setColorField(statColor.color)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    });
   }
 
   if (statsPointsStyles) {
