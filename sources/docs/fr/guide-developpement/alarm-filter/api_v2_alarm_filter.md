@@ -19,7 +19,7 @@ Crée une nouvelle action à partir du corps de la requête.
 **Exemple de corps de requête** :
 ```json
 {
-    "entity_filter": {"v.state.val": 1},
+    "entity_filter": "{\"v.state.val\": 1}",
     "condition": {},
     "tasks": [
         "alerts.useraction.state_increase"
@@ -93,7 +93,7 @@ Modifie une action à partir du corps de la requête.
 ```json
 {
     "_id": "ad8457d0-d593-492e-bb41-c701d396b0b2",
-    "entity_filter": {"v.state.val": 1},
+    "entity_filter": "{\"v.state.val\": 2}",
     "condition": {},
     "tasks": [
         "alerts.useraction.state_increase"
