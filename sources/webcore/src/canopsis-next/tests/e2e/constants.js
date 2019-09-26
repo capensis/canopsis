@@ -236,3 +236,8 @@ module.exports.STATS_CURVES_POINTS_STYLES = {
   STAR: 9,
   TRIANGLE: 10,
 };
+
+module.exports.STATS_DISPLAY_MODE = {
+  VALUE: 1,
+  CRITICITY: 2,
+};
