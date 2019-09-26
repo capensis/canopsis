@@ -137,28 +137,6 @@ module.exports = {
         lg: 10,
       },
       title: 'Stats table widget(edited)',
-      parameters: {
-        filter: {
-          groups: [{
-            type: FILTERS_TYPE.OR,
-            items: [{
-              rule: FILTER_COLUMNS.CONNECTOR,
-              operator: FILTER_OPERATORS.EQUAL,
-              valueType: VALUE_TYPES.STRING,
-              value: 'value',
-              groups: [{
-                type: FILTERS_TYPE.OR,
-                items: [{
-                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
-                  operator: FILTER_OPERATORS.IN,
-                  valueType: VALUE_TYPES.BOOLEAN,
-                  value: true,
-                }],
-              }],
-            }],
-          }],
-        },
-      },
     });
 
     browser.page.widget.statsTable()
