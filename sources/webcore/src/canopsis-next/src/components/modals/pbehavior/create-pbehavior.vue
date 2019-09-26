@@ -17,12 +17,14 @@ import { MODALS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import commentsToPbehaviorComments from '@/helpers/forms/pbehavior/comments-to-pbehavior-comments';
-import formToPbehavior from '@/helpers/forms/pbehavior/form-to-pbehavior';
-import pbehaviorToForm from '@/helpers/forms/pbehavior/pbehavior-to-form';
-import pbehaviorToComments from '@/helpers/forms/pbehavior/pbehavior-to-comments';
-import exdatesToPbehaviorExdates from '@/helpers/forms/pbehavior/exdates-to-pbehavior-exdates';
-import pbehaviorToExdates from '@/helpers/forms/pbehavior/pbehavior-to-exdates';
+import {
+  commentsToPbehaviorComments,
+  formToPbehavior,
+  pbehaviorToForm,
+  pbehaviorToComments,
+  exdatesToPbehaviorExdates,
+  pbehaviorToExdates,
+} from '@/helpers/forms/pbehavior';
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 

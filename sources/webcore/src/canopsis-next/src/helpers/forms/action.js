@@ -4,12 +4,14 @@ import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 import { unsetInSeveralWithConditions } from '@/helpers/immutable';
-import pbehaviorToForm from '@/helpers/forms/pbehavior/pbehavior-to-form';
-import pbehaviorToComments from '@/helpers/forms/pbehavior/pbehavior-to-comments';
-import pbehaviorToExdates from '@/helpers/forms/pbehavior/pbehavior-to-exdates';
-import formToPbehavior from '@/helpers/forms/pbehavior/form-to-pbehavior';
-import commentsToPbehaviorComments from '@/helpers/forms/pbehavior/comments-to-pbehavior-comments';
-import exdatesToPbehaviorExdates from '@/helpers/forms/pbehavior/exdates-to-pbehavior-exdates';
+import {
+  pbehaviorToForm,
+  pbehaviorToComments,
+  pbehaviorToExdates,
+  formToPbehavior,
+  commentsToPbehaviorComments,
+  exdatesToPbehaviorExdates,
+} from '@/helpers/forms/pbehavior';
 
 export function actionToForm(action = {}) {
   const defaultHook = {
