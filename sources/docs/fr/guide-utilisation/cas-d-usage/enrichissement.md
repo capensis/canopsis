@@ -20,7 +20,7 @@ Plusieurs possibilités sont offertes dans Canopsis :
 
 
 !!! Warning
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs GO.
+    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go.
 
 ## Enrichissement depuis les événements
 

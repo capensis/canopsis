@@ -2,7 +2,7 @@
 
 !!! note
     Cette page concerne l'event-filter ancienne génération, disponible uniquement
-    avec le moteur python `event_filter`.
+    avec le moteur Python `event_filter`.
 
 Le moteur `event_filter` permet d'exécuter, sur des évènements, des actions prédéfinies par l'utilisateur.
 

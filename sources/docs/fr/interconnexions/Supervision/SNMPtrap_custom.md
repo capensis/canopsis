@@ -9,7 +9,7 @@ Réceptionne des traps SNMP, les traduit grâce à des traitements spécifiques 
 
 L'engine SNMP permet le traitement des traps SNMP (par le biais du connecteur
 snmp2canopsis). En l'abscence de MIB, il est désormais possible d'effectuer un
-traitement spécifique en passant par une classe python construite pour l'occasion.
+traitement spécifique en passant par une classe Python construite pour l'occasion.
 
 Le moteur de traitement custom pour les traps SNMP se déclenche dans le cas où aucune
 rule ne correspond à la trap reçue.
