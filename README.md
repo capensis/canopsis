@@ -1,4 +1,4 @@
-# Go-revolution
+# Canopsis Go-engines (Open Core)
 
 Nouveaux moteurs pour Canopsis.
 
