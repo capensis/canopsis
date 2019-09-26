@@ -1,7 +1,8 @@
 <template lang="pug">
   v-form
     v-text-field(
-      v-model="form.generalParameters._id",
+      :value="form.generalParameters._id",
+      @input="updateField('generalParameters._id', $event)",
       label="Id",
       name="id",
       v-validate="'required'",
@@ -9,12 +10,13 @@
       :disabled="disableId"
     )
     v-select(
-      v-model="form.generalParameters.type",
+      :value="form.generalParameters.type",
+      @input="updateField('generalParameters.type', $event)",
       label="Type",
       :items="actionTypes",
-      name="type",
+      name="actionType",
       v-validate="'required'",
-      :error-messages="errors.collect('type')"
+      :error-messages="errors.collect('actionType')"
     )
     v-tabs(centered, slider-color="primary")
       v-tab
@@ -22,7 +24,7 @@
           :class="{ 'error--text': hasGeneralFormAnyError }"
         ) {{ $t('modals.createAction.tabs.general') }}
       v-tab-item
-        action-general-tab(v-model="form", ref="generalForm")
+        action-general-tab(:value="form", ref="generalForm", @input="updateModel($event)")
       v-tab
         .validation-header(
           :class="{ 'error--text': hasHookFormAnyError }"
@@ -30,7 +32,8 @@
       v-tab-item
         webhook-form-hook-tab(
           ref="hookForm",
-          v-model="form.generalParameters.hook",
+          :hook="form.generalParameters.hook",
+          @input="updateField('generalParameters.hook', $event)",
           :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
         )
 </template>

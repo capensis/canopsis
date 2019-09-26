@@ -1,13 +1,22 @@
 <template lang="pug">
   div
-    template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.snooze")
+    template(v-if="value.generalParameters.type === $constants.ACTION_TYPES.snooze")
       v-textarea(
-        v-model="form.snoozeParameters.message",
+        :value="value.snoozeParameters.message",
+        @input="updateField('snoozeParameters.message', $event)",
         :label="$t('modals.createAction.fields.message')"
       )
-      duration-field(v-model="form.snoozeParameters.duration")
-    template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
-      pbehavior-form(v-model="form.pbehaviorParameters", :author="$constants.ACTION_AUTHOR", :noFilter="true")
+      duration-field(
+        :value="value.snoozeParameters.duration",
+        @input="updateField('snoozeParameters.duration', $event)"
+      )
+    template(v-if="value.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
+      pbehavior-form(
+        :form="value.pbehaviorParameters",
+        @input="updateField('pbehaviorParameters', $event)",
+        :author="$constants.ACTION_AUTHOR",
+        :noFilter="true"
+      )
 </template>
 
 <script>
@@ -28,7 +37,7 @@ export default {
     event: 'input',
   },
   props: {
-    form: {
+    value: {
       type: Object,
       required: true,
     },
