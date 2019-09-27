@@ -70,6 +70,12 @@ export default {
           title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showActionModal(MODALS.createCancelEvent),
         },
+        {
+          type: alarmsListActionsTypes.cancel,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
+          title: this.$t('alarmList.actions.titles.snooze'),
+          method: this.showActionModal(MODALS.createSnoozeEvent),
+        },
       ],
     };
   },
