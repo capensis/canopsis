@@ -4,7 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createAction.create.title') }}
     v-card-text
-      action-form(v-model="form", :disableId="modal.config.item && !modal.config.isDuplicating")
+      action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}

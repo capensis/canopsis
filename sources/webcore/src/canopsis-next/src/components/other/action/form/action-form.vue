@@ -7,7 +7,7 @@
       name="id",
       v-validate="'required'",
       :error-messages="errors.collect('id')",
-      :disabled="disableId"
+      :disabled="disabledId"
     )
     v-select(
       :value="form.generalParameters.type",
@@ -18,13 +18,13 @@
       v-validate="'required'",
       :error-messages="errors.collect('actionType')"
     )
-    v-tabs(centered, slider-color="primary")
+    v-tabs(fixed-tabs, slider-color="primary")
       v-tab
         .validation-header(
           :class="{ 'error--text': hasGeneralFormAnyError }"
         ) {{ $t('modals.createAction.tabs.general') }}
       v-tab-item
-        action-general-tab(:value="form", ref="generalForm", @input="updateModel($event)")
+        action-general-tab(:form="form", ref="generalForm", @input="updateModel($event)")
       v-tab
         .validation-header(
           :class="{ 'error--text': hasHookFormAnyError }"
@@ -63,7 +63,7 @@ export default {
       type: Object,
       required: true,
     },
-    disableId: {
+    disabledId: {
       type: Boolean,
       default: false,
     },
