@@ -1,16 +1,31 @@
 // http://nightwatchjs.org/guide#usage
 
+const { createAdminUser, removeUser } = require('../../helpers/api');
+
 module.exports = {
-  before(browser, done) {
-    browser.maximizeWindow(done);
+  async before(browser, done) {
+    browser.maximizeWindow();
+
+    const { data } = await createAdminUser();
+
+    browser.globals.credentials = {
+      password: data.password,
+      username: data._id,
+    };
+
+    done();
   },
 
-  after(browser, done) {
+  async after(browser, done) {
+    await removeUser(browser.globals.credentials.username);
+
     browser.end(done);
   },
 
   'Correct user credentials login': (browser) => {
-    browser.completed.loginAsAdmin();
+    const { username, password } = browser.globals.credentials;
+
+    browser.completed.login(username, password);
   },
 
   'Authorized user logout': (browser) => {
