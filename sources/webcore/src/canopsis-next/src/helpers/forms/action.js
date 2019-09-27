@@ -13,7 +13,7 @@ import {
   exdatesToPbehaviorExdates,
 } from '@/helpers/forms/pbehavior';
 
-export function actionToForm(action = {}) {
+export function actionToForm(action) {
   const data = generateAction();
 
   if (!action) {
