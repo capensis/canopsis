@@ -4,7 +4,7 @@ Canopsis est capable de *réagir* en fonction de critères objectifs afin de not
 Ce guide vous propose d'interagir avec Mattermost et avec Logstash.  
 
 !!! Warning
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs GO dans l'édition CAT de Canopsis.  
+    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go dans l'édition CAT de Canopsis.
 
 Une option du moteur **axe** va vous permettre de prendre en charge cette fonctionnalité.
 
