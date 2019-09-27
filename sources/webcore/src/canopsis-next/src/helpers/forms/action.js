@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { omit } from 'lodash';
+import { omit, pick } from 'lodash';
 import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
 
 import { unsetInSeveralWithConditions } from '@/helpers/immutable';
@@ -16,17 +16,11 @@ import {
 export function actionToForm(action = {}) {
   const data = generateAction();
 
-  if (action._id) {
-    data.generalParameters._id = action._id;
+  if (!action) {
+    return data;
   }
 
-  if (action.type) {
-    data.generalParameters.type = action.type;
-  }
-
-  if (action.hook) {
-    data.generalParameters.hook = action.hook;
-  }
+  data.generalParameters = pick(action, ['_id', 'type', 'hook']);
 
   // If action's type is "snooze", get snooze parameters
   if (action.type === ACTION_TYPES.snooze) {
