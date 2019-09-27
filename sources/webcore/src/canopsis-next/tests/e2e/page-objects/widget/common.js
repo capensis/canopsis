@@ -386,6 +386,10 @@ const commands = {
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
   },
+
+  clickStatSelectButton() {
+    return this.customClick('@statSelectButton');
+  },
 };
 
 
@@ -476,6 +480,8 @@ module.exports = {
 
     statsSelector: sel('statsSelector'),
     addStatButton: sel('addStatButton'),
+
+    statSelectButton: `${sel('statSelector')} ${sel('selectButton')}`,
 
     editDateInterval: `${sel('dateInterval')} ${sel('editButton')}`,
 
