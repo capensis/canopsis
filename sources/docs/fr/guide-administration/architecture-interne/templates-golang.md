@@ -204,7 +204,7 @@ Ce premier exemple va envoyer toujours le même payload simple, sans utilisation
 
 ```json
 {
-    "payload" : "{{ $c := .Alarm.Value.Component }} {{ $r := .Alarm.Value.Resource }} {\"component\":\"{{$c}}\",\"ressource\":\"{{$r}}\"}"
+    "payload" : "{{ $c := .Alarm.Value.Component }} {{ $r := .Alarm.Value.Resource }} {\"component\":\"{{$c}}\",\"resource\":\"{{$r}}\"}"
 }
 ```
 
@@ -213,7 +213,7 @@ Ici, le payload sera différent en fonction du composant et de la ressource. Le 
 ```json
 {
     "component":"127.0.0.1",
-    "ressource":"HDD"
+    "resource":"HDD"
 }
 ```
 
@@ -230,7 +230,7 @@ On définit trois variables que sont `$comp`, `$reso` et `$val` puis on complèt
 ```json
 {
     "component":"127.0.0.1",
-    "ressource":"HDD",
+    "resource":"HDD",
     "parity": "even",
     "value": 2
 }

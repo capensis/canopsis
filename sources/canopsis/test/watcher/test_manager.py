@@ -226,7 +226,8 @@ class ComputeState(BaseTest):
                                     filter_storage=filter_storage,
                                     context_graph=self.context_graph_manager,
                                     watcher=self.manager,
-                                    event_publisher=event_publisher)
+                                    event_publisher=event_publisher,
+                                    pbehavior=self.pbm)
 
         # Creating entity
         self.type_ = 'resource'

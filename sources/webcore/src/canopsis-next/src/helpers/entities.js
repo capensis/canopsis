@@ -13,6 +13,8 @@ import {
   STATS_DISPLAY_MODE_PARAMETERS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SORT_ORDERS,
+  ACTION_TYPES,
+  DURATION_UNITS,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -458,6 +460,55 @@ export function generateCopyOfView(view) {
 
       ...omit(tab, ['_id', 'rows']),
     })),
+  };
+}
+
+/**
+ * Generate an 'action' entity
+ * @returns {Object}
+ */
+export function generateAction() {
+  const defaultHook = {
+    event_patterns: [],
+    alarm_patterns: [],
+    entity_patterns: [],
+    triggers: [],
+  };
+
+  // Get basic action parameters
+  const generalParameters = {
+    _id: uuid('action'),
+    type: ACTION_TYPES.snooze,
+    hook: defaultHook,
+  };
+
+  // Default 'snooze' action parameters
+  const snoozeParameters = {
+    message: '',
+    duration: {
+      duration: 1,
+      durationType: DURATION_UNITS.minute.value,
+    },
+  };
+
+  // Default 'pbehavior' action parameters
+  const pbehaviorParameters = {
+    general: {
+      name: '',
+      tstart: new Date(),
+      tstop: new Date(),
+      rrule: null,
+      reason: '',
+      type_: '',
+    },
+    comments: [],
+    exdate: [],
+  };
+
+  return {
+    generalParameters,
+    snoozeParameters,
+    pbehaviorParameters,
   };
 }
 

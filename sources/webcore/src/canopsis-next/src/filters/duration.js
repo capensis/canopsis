@@ -14,11 +14,9 @@ moment.updateLocale('fr', momentDurationFrLocale);
  *
  * @returns {String}
  */
-export default function ({
-  value = 0,
-  locale = i18n.locale || DEFAULT_LOCALE,
-  format = 'D __ H _ m _ s _',
-}) {
+export default function (value = 0, locale = i18n.locale || DEFAULT_LOCALE, format = 'D __ H _ m _ s _') {
+  const durationValue = value.value ? value.value : value;
+
   moment.locale(locale);
-  return moment.duration(value, 'seconds').format(format, { trim: 'both final' }) || '0s';
+  return moment.duration(durationValue, 'seconds').format(format, { trim: 'both final' }) || '0s';
 }

@@ -61,6 +61,7 @@ import FiltersList from './common/filters-list.vue';
 import CreateWebhook from './webhook/create-webhook.vue';
 import CreateSnmpRule from './snmp-rule/create-snmp-rule.vue';
 import SelectViewTab from './view/select-view-tab.vue';
+import CreateAction from './action/create-action.vue';
 import CreateHeartbeat from './heartbeat/create-heartbeat.vue';
 
 export default {
@@ -113,8 +114,10 @@ export default {
     CreateWebhook,
     CreateSnmpRule,
     SelectViewTab,
+    CreateAction,
     CreateHeartbeat,
 
+    // Import all modals from specific 'features'
     ...featuresService.get('components.modals.components'),
   },
   props: {
@@ -138,6 +141,7 @@ export default {
         [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
         [MODALS.watcher]: { maxWidth: 920, lazy: true },
 
+        // Import all modals option from specific 'features' configurations
         ...featuresService.get('components.modals.dialogPropsMap'),
       },
       defaultDialogProps: { maxWidth: 700, lazy: true },

@@ -174,8 +174,10 @@ class AlarmFilter(object):
     TASKS = 'tasks'
     FORMAT = 'output_format'
     REPEAT = 'repeat'
+    POSTPONE = 'postpone_if_active_pbehavior'
 
     DEFAULT_REPEAT_NUMBER = 1
+    DEFAULT_POSTPONE = False
 
     def __init__(self, element, logger, storage=None, alarm_storage=None):
         self.element = element  # has persisted in the db
@@ -189,6 +191,8 @@ class AlarmFilter(object):
         # Map and converter element parts as attribute
         if self.REPEAT not in self.element:
             self[self.REPEAT] = self.DEFAULT_REPEAT_NUMBER
+        if self.POSTPONE not in self.element:
+            self[self.POSTPONE] = self.DEFAULT_POSTPONE
         for k, value in self.element.items():
             self[k] = value
 

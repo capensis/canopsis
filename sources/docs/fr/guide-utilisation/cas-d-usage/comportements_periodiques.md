@@ -22,7 +22,7 @@ Nous considérons l'application `ERP` (sous forme d'observateur) composée des e
 
 ![Situation initiale](./img/pbh_situation_initiale.png "Situation Initiale")  
 
-## Plages de services
+## Plages de services
 
 ### Définition de la plage de service
 

@@ -107,6 +107,12 @@ export default {
           right: USERS_RIGHTS.technical.exploitation.snmpRule,
         },
         {
+          route: { name: 'exploitation-actions' },
+          text: this.$t('actions.title'),
+          icon: 'linear_scale',
+          right: USERS_RIGHTS.technical.exploitation.action,
+        },
+        {
           route: { name: 'exploitation-heartbeats' },
           text: this.$t('heartbeat.title'),
           icon: 'assignment',

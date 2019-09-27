@@ -27,7 +27,7 @@ Crée un nouveau HeartBeat à partir du corps de la requête.
 }
 ```
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
@@ -41,7 +41,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 #### Réponse en cas de réussite
 
-**Condition** : l'HeartBeat est crée
+**Condition** : l'HeartBeat est créé
 
 **Code** : `200 OK`
 
@@ -166,7 +166,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4
 
 ### Récupération des HeartBeats
 
-Récupère un ou plusieurs HeartBeat crée en base.
+Récupère un ou plusieurs HeartBeats créés en base.
 
 #### Récupération d'un HeartBeat par id
 
@@ -186,7 +186,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 
 ##### Réponse en cas de réussite
 
-**Condition** : Un HeartBeat correspondant à l'`id est trouvé.
+**Condition** : Un HeartBeat correspondant à l'`id` est trouvé.
 
 **Code** : `200 OK`
 
@@ -205,7 +205,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 
 ##### Réponse en cas d'erreur
 
-**Condition** : Aucun HeartBeat correspondant à l'`id n'est trouvé.
+**Condition** : Aucun HeartBeat correspondant à l'`id` n'est trouvé.
 
 **Code** : `404 NOT FOUND`
 
@@ -232,9 +232,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 }
 ```
 
-#### Récupération de tous les HeartBeat en base de données.
+#### Récupération de tous les HeartBeats en base de données
 
-Récupèr tous les HeartBeats stocké en base
+Récupère tous les HeartBeats stockés en base
 
 **URL** : `/api/v2/heartbeat/`
 
