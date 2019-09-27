@@ -61,3 +61,8 @@ module.exports.generateTemporaryStatsCurvesWidget = (prefix = '', suffix = uid()
   title: `${prefix}Stats-Curves-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryStatsNumberWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Number-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

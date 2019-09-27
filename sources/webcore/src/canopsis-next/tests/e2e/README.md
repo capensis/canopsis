@@ -205,7 +205,7 @@ Planned tests
             - [ ] Edit widget
     * Stats number
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
         * Footer
             - [ ] Pages
