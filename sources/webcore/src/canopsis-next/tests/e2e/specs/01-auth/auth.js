@@ -18,8 +18,11 @@ module.exports = {
 
   async after(browser, done) {
     await removeUser(browser.globals.credentials.username);
+    await browser.end();
 
-    browser.end(done);
+    delete browser.globals.credentials;
+
+    done();
   },
 
   'Correct user credentials login': (browser) => {

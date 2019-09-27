@@ -1,10 +1,9 @@
-const axios = require('axios');
 const qs = require('qs');
-const sha1 = require('sha1');
+const axios = require('axios');
 const faker = require('faker');
 
-const { API_ROUTES } = require('@/config');
-const { generateUser } = require('@/helpers/entities');
+const { API_ROUTES, DEFAULT_LOCALE } = require('@/config');
+const { generateUser, prepareUserByData } = require('@/helpers/entities');
 
 const { CREDENTIALS } = require('../constants');
 
@@ -31,11 +30,7 @@ function authAsAdmin() {
 async function createUser(user) {
   const { headers } = await authAsAdmin();
 
-  const userData = { ...user };
-
-  if (userData.password && userData.password !== '') {
-    userData.shadowpasswd = sha1(userData.password);
-  }
+  const userData = prepareUserByData(user);
 
   const result = await request.post(API_ROUTES.user.create, qs.stringify({ user: JSON.stringify(userData) }), {
     headers: {
@@ -44,7 +39,8 @@ async function createUser(user) {
     },
   });
 
-  result.data._id = userData._id;
+  result.data._id = user._id;
+  result.data.password = user.password;
 
   return result;
 }
@@ -58,6 +54,7 @@ function createAdminUser(defaultUser) {
     user.mail = faker.internet.email();
     user.firstname = faker.name.firstName();
     user.lastname = faker.name.lastName();
+    user.ui_language = DEFAULT_LOCALE;
     user.role = 'admin';
   }
 
@@ -68,7 +65,9 @@ async function removeUser(id) {
   const { headers } = await authAsAdmin();
 
   return request.delete(`${API_ROUTES.user.remove}/${id}`, {
-    Cookie: headers['set-cookie'],
+    headers: {
+      Cookie: headers['set-cookie'],
+    },
   });
 }
 
