@@ -56,3 +56,8 @@ module.exports.generateTemporaryStatsHistogramWidget = (prefix = '', suffix = ui
   title: `${prefix}Stats-Histogram-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryStatsCurvesWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Curves-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

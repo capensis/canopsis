@@ -189,7 +189,7 @@ Planned tests
             - [ ] Info
     * Stats histogram
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
     * Stats table
         * Base functions
@@ -197,11 +197,11 @@ Planned tests
             - [ ] Edit widget
     * Stats calendar
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
     * Stats curves
         * Base functions
-            - [ ] Create widget
+            - [x] Create widget
             - [ ] Edit widget
     * Stats number
         * Base functions

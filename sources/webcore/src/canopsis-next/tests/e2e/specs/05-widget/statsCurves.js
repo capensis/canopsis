@@ -1,18 +1,18 @@
 // http://nightwatchjs.org/guide#usage
 
 const {
-  SORT_ORDERS,
   FILTERS_TYPE,
   VALUE_TYPES,
-  INTERVAL_RANGES,
-  INTERVAL_PERIODS,
   FILTER_OPERATORS,
   FILTER_COLUMNS,
+  INTERVAL_RANGES,
   STAT_TYPES,
   STAT_STATES,
+  INTERVAL_PERIODS,
+  STATS_CURVES_POINTS_STYLES,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { generateTemporaryView, generateTemporaryStatsTableWidget } = require('../../helpers/entities');
+const { generateTemporaryView, generateTemporaryStatsCurvesWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
@@ -39,16 +39,15 @@ module.exports = {
     });
   },
 
-  'Create widget stats table with some name': (browser) => {
-    const statsTableWidget = {
-      ...generateTemporaryStatsTableWidget(),
+  'Create widget stats curves with some name': (browser) => {
+    const statsCurves = {
+      ...generateTemporaryStatsCurvesWidget(),
       size: {
         sm: 12,
         md: 12,
         lg: 12,
       },
       parameters: {
-        advanced: true,
         dateInterval: {
           calendarStartDate: {
             minute: 0,
@@ -58,12 +57,38 @@ module.exports = {
           endDate: '13/09/2019 00:00',
           range: INTERVAL_RANGES.CUSTOM,
           period: INTERVAL_PERIODS.HOUR,
+          periodValue: 2,
+        },
+        filter: {
+          groups: [{
+            type: FILTERS_TYPE.OR,
+            items: [{
+              rule: FILTER_COLUMNS.NAME,
+              operator: FILTER_OPERATORS.EQUAL,
+              valueType: VALUE_TYPES.STRING,
+              value: 'value',
+              groups: [{
+                type: FILTERS_TYPE.OR,
+                items: [{
+                  rule: FILTER_COLUMNS.NAME,
+                  operator: FILTER_OPERATORS.IN,
+                  valueType: VALUE_TYPES.BOOLEAN,
+                  value: true,
+                }],
+              }],
+            }, {
+              type: FILTERS_TYPE.AND,
+              rule: FILTER_COLUMNS.TYPE,
+              operator: FILTER_OPERATORS.NOT_EQUAL,
+              valueType: VALUE_TYPES.NUMBER,
+              value: 136,
+            }],
+          }],
         },
         statsSelector: {
           newStats: [{
             type: STAT_TYPES.RESOLVED_TIME_SLA,
             title: 'title',
-            trend: false,
             recursive: false,
             states: [
               { index: STAT_STATES.OK, checked: true },
@@ -73,35 +98,20 @@ module.exports = {
             sla: '<=2',
           }],
         },
-        sort: {
-          order: SORT_ORDERS.desc,
-          orderBy: 1,
-        },
-        filter: {
-          groups: [{
-            type: FILTERS_TYPE.OR,
-            items: [{
-              rule: FILTER_COLUMNS.CONNECTOR,
-              operator: FILTER_OPERATORS.EQUAL,
-              valueType: VALUE_TYPES.STRING,
-              value: 'value',
-              groups: [{
-                type: FILTERS_TYPE.OR,
-                items: [{
-                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
-                  operator: FILTER_OPERATORS.IN,
-                  valueType: VALUE_TYPES.BOOLEAN,
-                  value: true,
-                }],
-              }],
-            }, {
-              type: FILTERS_TYPE.AND,
-              rule: FILTER_COLUMNS.CONNECTOR_NAME,
-              operator: FILTER_OPERATORS.NOT_EQUAL,
-              valueType: VALUE_TYPES.NUMBER,
-              value: 136,
-            }],
-          }],
+        statsColors: [{
+          title: 'title',
+          color: '#666666',
+        }],
+        statsPointsStyles: [{
+          title: 'title',
+          type: STATS_CURVES_POINTS_STYLES.CROSS,
+        }],
+        annotationLine: {
+          isEnabled: true,
+          value: 12,
+          label: 'Label',
+          labelColor: '#111111',
+          lineColor: '#444444',
         },
       },
     };
@@ -117,33 +127,33 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget(WIDGET_TYPES.statsTable)
+      .clickWidget(WIDGET_TYPES.statsCurves)
       .verifyModalClosed();
 
-    browser.completed.widget.createStatsTable(statsTableWidget, ({ response }) => {
+    browser.completed.widget.createStatsCurves(statsCurves, ({ response }) => {
       browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
   },
 
-  'Edit widget stats table with some name': (browser) => {
+  'Edit widget stats curves with some name': (browser) => {
     browser.page.view()
       .clickEditViewButton()
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.setCommonFields({
       size: {
-        sm: 10,
-        md: 10,
-        lg: 10,
+        sm: 6,
+        md: 6,
+        lg: 6,
       },
-      title: 'Stats table widget(edited)',
+      title: 'Stats curves widget(edited)',
     });
 
-    browser.page.widget.statsTable()
-      .clickSubmitStatsTable();
+    browser.page.widget.statsCurves()
+      .clickSubmitStatsCurves();
   },
 
-  'Delete widget stats table with some name': (browser) => {
+  'Delete widget stats curves with some name': (browser) => {
     browser.page.view()
       .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 

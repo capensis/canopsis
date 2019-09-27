@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group(data-test="widgetStatsColor")
+  v-list-group(data-test="statsColor")
     v-list-tile(slot="activator") {{ $t('settings.statsColor.title') }}
     v-container(fluid)
       v-layout(v-for="(stat, key) in stats", align-center, :key="key")
