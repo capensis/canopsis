@@ -34,12 +34,15 @@ export default {
       type: Array,
       required: true,
     },
+    author: {
+      type: String,
+    },
   },
   methods: {
     addComment() {
       this.addItemIntoArray({
         key: uid(),
-        author: this.currentUser._id,
+        author: this.author || this.currentUser._id,
         message: '',
       });
     },
