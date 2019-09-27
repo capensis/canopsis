@@ -16,11 +16,16 @@ import {
 export function actionToForm(action = {}) {
   const data = generateAction();
 
-  if (action) {
-    data.generalParameters = {
-      ...data.generalParameters,
-      ...action.generalParameters,
-    };
+  if (action._id) {
+    data.generalParameters._id = action._id;
+  }
+
+  if (action.type) {
+    data.generalParameters.type = action.type;
+  }
+
+  if (action.hook) {
+    data.generalParameters.hook = action.hook;
   }
 
   // If action's type is "snooze", get snooze parameters
