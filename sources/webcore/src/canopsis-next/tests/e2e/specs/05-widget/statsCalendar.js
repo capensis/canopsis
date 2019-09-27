@@ -1,18 +1,15 @@
 // http://nightwatchjs.org/guide#usage
 
 const {
-  INFO_POPUP_DEFAULT_COLUMNS,
-  ALARMS_WIDGET_SORT_FIELD,
-  SORT_ORDERS,
-  PAGINATION_PER_PAGE_VALUES,
   FILTERS_TYPE,
   VALUE_TYPES,
-  INTERVAL_RANGES,
   FILTER_OPERATORS,
-  FILTER_COLUMNS,
+  CONTEXT_FILTER_COLUMNS,
+  PAGINATION_PER_PAGE_VALUES,
+  INFO_POPUP_DEFAULT_COLUMNS,
 } = require('../../constants');
-const { WIDGET_TYPES } = require('@/constants');
-const { generateTemporaryView, generateTemporaryAlarmsWidget } = require('../../helpers/entities');
+const { WIDGET_TYPES, STATS_CRITICITY } = require('@/constants');
+const { generateTemporaryView, generateTemporaryStatsCalendarWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
@@ -39,54 +36,27 @@ module.exports = {
     });
   },
 
-  'Create widget alarms with some name': (browser) => {
-    const alarmsWidget = {
-      ...generateTemporaryAlarmsWidget(),
+  'Create widget stats calendar with some name': (browser) => {
+    const statsCalendar = {
+      ...generateTemporaryStatsCalendarWidget(),
       size: {
         sm: 12,
         md: 12,
         lg: 12,
       },
-      periodicRefresh: 140,
       parameters: {
-        advanced: true,
-        sort: {
-          order: SORT_ORDERS.desc,
-          orderBy: ALARMS_WIDGET_SORT_FIELD.component,
-        },
-        elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
-        openedResolvedFilter: {
-          open: true,
-          resolve: true,
-        },
-        infoPopups: [{
-          column: INFO_POPUP_DEFAULT_COLUMNS.connectorName,
-          template: 'Info popup template',
-        }],
-        ack: {
-          isAckNoteRequired: true,
-          isMultiAckEnabled: true,
-          fastAckOutput: {
-            enabled: true,
-            output: 'Output',
-          },
-        },
-        moreInfos: 'More infos popup',
-        enableHtml: true,
         newColumnNames: [{
           index: 9,
           data: {
-            value: 'alarm.v.connector',
+            value: 'connector',
             label: 'New column',
-            isHtml: true,
           },
         }],
         editColumnNames: [{
           index: 1,
           data: {
-            value: 'alarm.v.changeConnector',
+            value: 'connector',
             label: 'Connector(changed)',
-            isHtml: true,
           },
         }],
         moveColumnNames: [{
@@ -96,32 +66,42 @@ module.exports = {
           index: 2,
           up: true,
         }],
-        deleteColumnNames: [2],
-        liveReporting: {
-          calendarStartDate: {
-            minute: 0,
-            hour: 12,
-            day: 12,
-          },
-          endDate: '13/09/2019 00:00',
-          range: INTERVAL_RANGES.CUSTOM,
+        infoPopups: [{
+          column: INFO_POPUP_DEFAULT_COLUMNS.connectorName,
+          template: 'Info popup template',
+        }],
+        openedResolvedFilter: {
+          open: true,
+          resolve: true,
         },
+        deleteColumnNames: [2],
+        elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
+        moreInfos: 'More infos popup',
+        criticityLevels: {
+          minor: 20,
+          major: 30,
+          critical: 40,
+        },
+        colorsSelector: {
+          [STATS_CRITICITY.ok]: '#111111',
+          [STATS_CRITICITY.minor]: '#444444',
+          [STATS_CRITICITY.major]: '#666666',
+          [STATS_CRITICITY.critical]: '#ffffff',
+        },
+        considerPbehaviors: false,
         filters: {
-          isMix: true,
-          type: FILTERS_TYPE.OR,
           title: 'Filter title',
-          selected: [1],
           groups: [{
             type: FILTERS_TYPE.OR,
             items: [{
-              rule: FILTER_COLUMNS.CONNECTOR,
+              rule: CONTEXT_FILTER_COLUMNS.NAME,
               operator: FILTER_OPERATORS.EQUAL,
               valueType: VALUE_TYPES.STRING,
               value: 'value',
               groups: [{
                 type: FILTERS_TYPE.OR,
                 items: [{
-                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
+                  rule: CONTEXT_FILTER_COLUMNS.NAME,
                   operator: FILTER_OPERATORS.IN,
                   valueType: VALUE_TYPES.BOOLEAN,
                   value: true,
@@ -129,7 +109,7 @@ module.exports = {
               }],
             }, {
               type: FILTERS_TYPE.AND,
-              rule: FILTER_COLUMNS.CONNECTOR_NAME,
+              rule: CONTEXT_FILTER_COLUMNS.TYPE,
               operator: FILTER_OPERATORS.NOT_EQUAL,
               valueType: VALUE_TYPES.NUMBER,
               value: 136,
@@ -150,42 +130,34 @@ module.exports = {
 
     browser.page.modals.view.createWidget()
       .verifyModalOpened()
-      .clickWidget(WIDGET_TYPES.alarmList)
+      .clickWidget(WIDGET_TYPES.statsCalendar)
       .verifyModalClosed();
 
-    browser.completed.widget.createAlarmsList(alarmsWidget, ({ response }) => {
+    browser.completed.widget.createStatsCalendar(statsCalendar, ({ response }) => {
       browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
   },
 
-  'Edit widget alarms with some name': (browser) => {
+  'Edit widget stats calendar with some name': (browser) => {
     browser.page.view()
       .clickEditViewButton()
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.setCommonFields({
       size: {
-        sm: 10,
-        md: 10,
-        lg: 10,
+        sm: 6,
+        md: 6,
+        lg: 6,
       },
-      title: 'Alarms widget(edited)',
-      periodicRefresh: 180,
-      parameters: {
-        advanced: true,
-        sort: {
-          order: SORT_ORDERS.desc,
-          orderBy: ALARMS_WIDGET_SORT_FIELD.connector,
-        },
-        elementsPerPage: PAGINATION_PER_PAGE_VALUES.TWENTY,
-      },
+      title: 'Stats calendar widget(edited)',
+      parameters: {},
     });
 
-    browser.page.widget.alarms()
-      .clickSubmitAlarms();
+    browser.page.widget.statsCalendar()
+      .clickSubmitStatsCalendar();
   },
 
-  'Delete widget alarms with some name': (browser) => {
+  'Delete widget stats calendar with some name': (browser) => {
     browser.page.view()
       .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 

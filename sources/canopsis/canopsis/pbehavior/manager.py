@@ -126,7 +126,7 @@ class PBehavior(BasePBehavior):
 
     _EDITABLE_FIELDS = (NAME, FILTER, TSTART, TSTOP, RRULE, ENABLED,
                         CONNECTOR, CONNECTOR_NAME, AUTHOR, TYPE, REASON,
-                        EXDATE)
+                        TIMEZONE, EXDATE)
 
     def __init__(self, **kwargs):
         if PBehavior.FILTER in kwargs:
@@ -367,7 +367,9 @@ class PBehaviorManager(object):
             data.update(comments=[])
         else:
             for comment in data.comments:
-                comment.update({'_id': pbh_id})
+                # Add a unique id to each comment, so that it can be
+                # manipulated with the /pbehavior/comment API
+                comment['_id'] = str(uuid4())
         try:
             result = self.collection.insert(data.to_dict())
         except CollectionError:
@@ -458,14 +460,14 @@ class PBehaviorManager(object):
         return None
 
     def __get_and_check_pbehavior(self, _id, **kwargs):
-        pb_value = self.get(_id)
-
-        if pb_value is None:
-            raise ValueError("The id does not match any pebahvior")
+        try:
+            pb_value = self.get(_id).get('data')[0]
+        except (TypeError, KeyError, IndexError):
+            raise ValueError("The id does not match any pbehavior")
 
         check_valid_rrule(kwargs.get('rrule', ''))
 
-        pbehavior = PBehavior(**self.get(_id))
+        pbehavior = PBehavior(**pb_value)
         new_data = {k: v for k, v in kwargs.items() if v is not None}
         pbehavior.update(**new_data)
 
@@ -1105,19 +1107,25 @@ class PBehaviorManager(object):
 
         Warning : this method might return a timestamp greater than the now
                   timestamp, which means the pbehavior is currently running
+                  It can also return 0 when the pbh hasn't started running 
+                  yet
 
 
         :param Dict[str, Any] pbh: a pbehavior
         :param datetime now: datetime corresponding to now
         :rtype: int
         """
+        tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+        start = self.__convert_timestamp(pbh[PBehavior.TSTART], tz_name)
+        if start > now:
+            # when pbh hasn't started yet, we return 0 in order to exclude pbh
+            return 0
         if PBehavior.RRULE not in pbh or\
                 pbh[PBehavior.RRULE] is None or\
                 pbh[PBehavior.RRULE] == "":
             #pbh is simple
             pbh_last_tstop = pbh[PBehavior.TSTOP]
         else:
-            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
             # convert the timestamp to a datetime in the pbehavior's timezone
             start = self.__convert_timestamp(pbh[PBehavior.TSTART], tz_name)
             stop = self.__convert_timestamp(pbh[PBehavior.TSTOP], tz_name)
@@ -1126,10 +1134,9 @@ class PBehaviorManager(object):
             rec_set = self._get_recurring_pbehavior_rruleset(pbh)
             last_tstart = rec_set.before(now)
             # when the pbh is recurrent but hasn't started running yet
-            # we return now, which ensures this pbh isn't used in
-            # ok ko timestamp computing
+            # we return 0, which ensures this pbh isn't used
             if last_tstart is None:
-                return int((now - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
+                return 0
             last_tstop_dt = last_tstart + duration
             pbh_last_tstop = int(
                 (last_tstop_dt - datetime(1970, 1, 1, tzinfo=tz.UTC)).total_seconds())
@@ -1146,11 +1153,25 @@ class PBehaviorManager(object):
         # get today at midnight timestamp as base return timestamp
         # because each alarm ok ko counter is soft-reseted at midnight
         # midnight at local timezone
+        ret_timestamp = self.get_last_tstop_from_eid(entity_id)
         today_at_midnight = date.today()
-        ret_timestamp = int(today_at_midnight.strftime("%s"))
+        tam_timestamp = int(today_at_midnight.strftime("%s"))
+        if ret_timestamp < tam_timestamp:
+            return tam_timestamp
+        return ret_timestamp
 
+    def get_last_tstop_from_eid(self, entity_id):
+        """
+        Get the timestamp corresponding to
+        the last pbehavior stop for that entity_id
+        If pbh is active, then now timestamp is returned
+        If no pbh is found, then 0 is returned
+
+        :param str entity_id: the entity id needing the last pbh timestamp
+        :rtype: int
+        """
         now = int(time())
-
+        ret_timestamp = 0
         for pbh in self.get_pbehaviors(entity_id):
             tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
             now_dt = self.__convert_timestamp(now, tz_name)

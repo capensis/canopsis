@@ -38,7 +38,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 | Moteur                                                                                          | Description                                              | CAT ? |
 |:----------------------------------------------------------------------------------------------- |:-------------------------------------------------------- |:-----:|
-| canopsis-engine@**dynamic-alerts**.service                                                      | Gère le cycle de vie des alarmes.                        |       |
+| canopsis-engine@**dynamic-alerts**.service                                                      | Gère le cycle de vie des alarmes et l'[alarm-filter](moteur-alerts-alarm-filter.md). |       |
 | canopsis-engine@**cleaner-cleaner_alerts**.service                                              | Supprime les évènements invalides.                       |       |
 | canopsis-engine@**cleaner-cleaner_events**.service                                              | Supprime les évènements invalides.                       |       |
 | canopsis-engine@**dynamic-context-graph**.service                                               | Stocke les données contextuelles des évènements.         |       |
