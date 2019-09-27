@@ -23,6 +23,8 @@ module.exports.command = function setCommonFields({
     filters,
     openedResolvedFilter,
     statsSelector,
+    annotationLine,
+    statsColors,
     newColumnNames,
     editColumnNames,
     moveColumnNames,
@@ -37,6 +39,7 @@ module.exports.command = function setCommonFields({
   const addStatModal = this.page.modals.stats.addStat();
   const statsDateIntervalModal = this.page.modals.stats.statsDateInterval();
   const dateIntervalField = this.page.fields.dateInterval();
+  const colorPickerModal = this.page.modals.common.colorPicker();
   const common = this.page.widget.common();
 
   if (row) {
@@ -207,6 +210,57 @@ module.exports.command = function setCommonFields({
           .clickSubmitButton()
           .verifyModalClosed();
       });
+    }
+  }
+
+  if (statsColors) {
+    statsColors.forEach((statColor) => {
+      common
+        .clickStatsColor()
+        .clickStatsColorItem(statColor.title);
+
+      colorPickerModal
+        .verifyModalOpened()
+        .clickColorField()
+        .clearColorField()
+        .setColorField(statColor.color)
+        .clickSubmitButton()
+        .verifyModalClosed();
+    });
+  }
+
+  if (annotationLine) {
+    common
+      .clickAnnotationLine()
+      .setAnnotationLineEnabled(annotationLine.isEnabled);
+
+    if (annotationLine.isEnabled) {
+      common
+        .clickAnnotationValue()
+        .clearAnnotationValue()
+        .setAnnotationValue(annotationLine.value)
+        .clickAnnotationLabel()
+        .clearAnnotationLabel()
+        .setAnnotationLabel(annotationLine.label)
+        .clickAnnotationLineColor();
+
+      colorPickerModal
+        .verifyModalOpened()
+        .clickColorField()
+        .clearColorField()
+        .setColorField(annotationLine.lineColor)
+        .clickSubmitButton()
+        .verifyModalClosed();
+
+      common.clickAnnotationLabelColor();
+
+      colorPickerModal
+        .verifyModalOpened()
+        .clickColorField()
+        .clearColorField()
+        .setColorField(annotationLine.labelColor)
+        .clickSubmitButton()
+        .verifyModalClosed();
     }
   }
 

@@ -324,6 +324,59 @@ const commands = {
   editStatItem(index) {
     return this.customClick(this.el('@statItemEditButton', index));
   },
+
+  clickStatsColor() {
+    return this.customClick('@statsColor');
+  },
+
+  clickStatsColorItem(title) {
+    return this.customClick(this.el('@statsColorPickButton', title));
+  },
+
+  clickAnnotationLine() {
+    return this.customClick('@widgetStatsAnnotationLine');
+  },
+
+  setAnnotationLineEnabled(checked = false) {
+    return this.getAttribute('@annotationEnabledInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@annotationEnabled');
+      }
+    });
+  },
+
+  clickAnnotationValue() {
+    return this.customClick('@annotationValue');
+  },
+
+  clearAnnotationValue() {
+    return this.customClearValue('@annotationValue');
+  },
+
+  setAnnotationValue(value) {
+    return this.customSetValue('@annotationValue', value);
+  },
+
+  clickAnnotationLabel() {
+    return this.customClick('@annotationLabel');
+  },
+
+  clearAnnotationLabel() {
+    return this.customClearValue('@annotationLabel');
+  },
+
+  setAnnotationLabel(value) {
+    return this.customSetValue('@annotationLabel', value);
+  },
+
+  clickAnnotationLineColor() {
+    return this.customClick('@annotationLineColorButton');
+  },
+
+  clickAnnotationLabelColor() {
+    return this.customClick('@annotationLabelColorButton');
+  },
+
 };
 
 
@@ -420,6 +473,17 @@ module.exports = {
     statItem: `${sel('statItem')}:nth-child(%s)`,
     statItemEditButton: `${sel('statItem')}:nth-child(%s) ${sel('statItemEditButton')}`,
     statItemDeleteButton: `${sel('statItem')}:nth-child(%s)  ${sel('statItemDeleteButton')}`,
+
+    statsColor: sel('widgetStatsColor'),
+    statsColorPickButton: sel('statsColorPickButton-%s'),
+
+    widgetStatsAnnotationLine: sel('widgetStatsAnnotationLine'),
+    annotationEnabledInput: `input${sel('annotationEnabled')}`,
+    annotationEnabled: `div${sel('annotationEnabled')} .v-input__slot`,
+    annotationValue: sel('annotationValue'),
+    annotationLabel: sel('annotationLabel'),
+    annotationLineColorButton: sel('annotationLineColorButton'),
+    annotationLabelColorButton: sel('annotationLabelColorButton'),
   },
   commands: [commands],
 };
