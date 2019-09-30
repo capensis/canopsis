@@ -241,3 +241,8 @@ module.exports.STATS_DISPLAY_MODE = {
   VALUE: 1,
   CRITICITY: 2,
 };
+
+module.exports.PARETO_STATS_TITLES = {
+  ACCUMULATION: 'Accumulation',
+  ALARMS_CREATED: 'Alarmes créées',
+};
