@@ -66,6 +66,10 @@ export const entitiesModule = {
           return cache.get(state[type][id]);
         }
 
+        if (!state[type][id]) {
+          return undefined;
+        }
+
         const result = denormalize(id, schema, state);
 
         cache.set(state[type][id], result);
