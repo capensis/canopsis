@@ -12,44 +12,47 @@ const {
   FILTER_COLUMNS,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { generateTemporaryView, generateTemporaryAlarmsWidget } = require('../../helpers/entities');
+const { createWidgetView, removeViewGroup, removeWidgetView } = require('../../helpers/api');
+const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
+
+    const { groupId, viewId } = await createWidgetView();
+
+    browser.globals.defaultViewData = {
+      groupId,
+      viewId,
+    };
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
+
+    await browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
 
     done();
   },
 
-  after(browser, done) {
-    browser.completed.logout()
+  async after(browser, done) {
+    browser.completed
+      .logout()
       .end(done);
 
-    delete browser.globals.temporary;
-  },
+    await removeWidgetView(browser.globals.defaultViewData.viewId);
+    await removeViewGroup(browser.globals.defaultViewData.groupId);
 
-  'Create test view': (browser) => {
-    browser.completed.view.create(generateTemporaryView(), (view) => {
-      browser.globals.defaultViewData = {
-        viewId: view._id,
-        groupId: view.group_id,
-      };
-    });
+    delete browser.globals.credentials;
+
+    done();
   },
 
   'Create widget alarms with some name': (browser) => {
     const alarmsWidget = {
       ...generateTemporaryAlarmsWidget(),
-      size: {
-        sm: 12,
-        md: 12,
-        lg: 12,
-      },
       periodicRefresh: 140,
       parameters: {
-        advanced: true,
         sort: {
           order: SORT_ORDERS.desc,
           orderBy: ALARMS_WIDGET_SORT_FIELD.component,
@@ -142,7 +145,9 @@ module.exports = {
     const view = browser.page.view();
     const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    groupsSideBar.clickPanelHeader(groupId)
+    groupsSideBar
+      .clickGroupsSideBarButton()
+      .clickPanelHeader(groupId)
       .clickLinkView(viewId);
 
     view.clickMenuViewButton()
@@ -203,12 +208,5 @@ module.exports = {
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
-  },
-
-  'Delete test view': (browser) => {
-    const { groupId, viewId } = browser.globals.defaultViewData;
-
-    browser.completed.view.delete(groupId, viewId);
-    browser.completed.view.deleteGroup(groupId);
   },
 };

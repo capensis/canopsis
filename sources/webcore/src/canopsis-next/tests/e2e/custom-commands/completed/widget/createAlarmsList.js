@@ -15,7 +15,13 @@ module.exports.command = function createAlarmsList({
   const liveReportingModal = this.page.modals.common.liveReporting();
   const dateIntervalField = this.page.fields.dateInterval();
 
-  this.completed.widget.setCommonFields({ ...fields, parameters });
+  this.completed.widget.setCommonFields({
+    ...fields,
+    parameters: {
+      advanced: true,
+      ...parameters,
+    },
+  });
 
   if (enableHtml) {
     alarms.setEnableHtml(enableHtml);

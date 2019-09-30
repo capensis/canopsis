@@ -30,6 +30,11 @@ module.exports.generateTemporaryWeatherWidget = (prefix = '', suffix = uid()) =>
 module.exports.generateTemporaryAlarmsWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Alarms-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
 });
 
 module.exports.generateTemporaryContextWidget = (prefix = '', suffix = uid()) => ({
