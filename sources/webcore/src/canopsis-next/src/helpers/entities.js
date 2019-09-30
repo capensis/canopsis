@@ -1,5 +1,5 @@
 import sha1 from 'sha1';
-import { get, omit, cloneDeep } from 'lodash';
+import { omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
@@ -31,11 +31,6 @@ export function generateWidgetByType(type) {
     _id: uuid(`widget_${type}`),
     title: '',
     parameters: {},
-    size: {
-      sm: 3,
-      md: 3,
-      lg: 3,
-    },
   };
 
   const alarmsListDefaultParameters = {
@@ -281,19 +276,6 @@ export function generateWidgetByType(type) {
 }
 
 /**
- * Generate view row
- *
- * @returns {Object}
- */
-export function generateViewRow() {
-  return {
-    _id: uuid('view-row'),
-    title: '',
-    widgets: [],
-  };
-}
-
-/**
  * Generate view tab
  *
  * @returns {Object}
@@ -302,7 +284,8 @@ export function generateViewTab() {
   return {
     _id: uuid('view-tab'),
     title: '',
-    rows: [],
+    widgets: [],
+    layout: [],
   };
 }
 
@@ -428,13 +411,15 @@ export function generateRoleRightByChecksum(checksum) {
  * @param {Object} tab
  * @returns {Object}
  */
-export function generateCopyOfViewTab(tab) {
+// TODO: Repair
+
+export function generateCopyOfViewTab(/* tab */) {
+  return true;
+  /*
   return {
     ...generateViewTab(),
 
     rows: tab.rows.map(row => ({
-      ...generateViewRow(),
-
       title: row.title,
       widgets: row.widgets.map(widget => ({
         ...generateWidgetByType(widget.type),
@@ -442,7 +427,9 @@ export function generateCopyOfViewTab(tab) {
       })),
     })),
   };
+  */
 }
+
 
 /**
  * Generate copy of view
@@ -458,7 +445,7 @@ export function generateCopyOfView(view) {
     tabs: view.tabs.map(tab => ({
       ...generateCopyOfViewTab(tab),
 
-      ...omit(tab, ['_id', 'rows']),
+      ...omit(tab, ['_id']),
     })),
   };
 }
@@ -519,6 +506,8 @@ export function generateAction() {
  * @param {Object} newTab
  * @returns {Array.<{ oldId: number, newId: number }>}
  */
+// TODO: Repair
+/*
 export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
   return oldTab.rows.reduce((acc, row, rowIndex) => {
     const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
@@ -529,6 +518,7 @@ export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
     return acc.concat(widgetsIds);
   }, []);
 }
+*/
 
 /**
  * Get mappings for widgets from old view to new view
@@ -537,10 +527,13 @@ export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
  * @param {Object} newView
  * @returns {Array.<{ oldId: number, newId: number }>}
  */
+// TODO: Repair
+/*
 export function getViewsWidgetsIdsMappings(oldView, newView) {
   return oldView.tabs.reduce((acc, tab, index) =>
     acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
 }
+*/
 
 export function prepareUserByData(data, user = generateUser()) {
   const result = { ...user, ...omit(data, ['password']) };
@@ -555,7 +548,6 @@ export function prepareUserByData(data, user = generateUser()) {
 
 export default {
   generateWidgetByType,
-  generateViewRow,
   generateView,
   generateUserPreferenceByWidgetAndUser,
   generateUser,
@@ -565,6 +557,8 @@ export default {
   generateCopyOfViewTab,
   generateCopyOfView,
 
+  /*
   getViewsTabsWidgetsIdsMappings,
   getViewsWidgetsIdsMappings,
+  */
 };

@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import queryMixin from '@/mixins/query';
@@ -7,7 +6,7 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
-import { viewSchema, viewTabSchema, viewRowSchema, widgetSchema } from '@/store/schemas';
+import { viewSchema, viewTabSchema, widgetSchema } from '@/store/schemas';
 
 import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
 
@@ -30,7 +29,6 @@ export default {
       normalizedEntities: {
         [viewSchema.key]: {},
         [viewTabSchema.key]: {},
-        [viewRowSchema.key]: {},
         [widgetSchema.key]: {},
       },
     };
@@ -90,16 +88,6 @@ export default {
       );
     },
 
-    createRow(row) {
-      const tab = this.normalizedEntities.viewTab[this.tabId];
-
-      this.updateNormalizedEntity(viewRowSchema.key, row);
-      this.updateNormalizedEntity(viewTabSchema.key, {
-        ...tab,
-        rows: [...tab.rows, row._id],
-      });
-    },
-
     isFormValid() {
       if (this.$validator) {
         return this.$validator.validateAll();
@@ -133,43 +121,18 @@ export default {
           },
         };
 
-        const oldRowId = this.config.rowId;
-        const newRowId = this.settings.rowId;
-
-        /**
-         * Put widget into local normalized store
-         */
-
-        this.updateNormalizedEntity(widgetSchema.key, widget);
-
-        if (oldRowId !== newRowId) {
-          if (oldRowId) {
-            const oldRow = get(this.normalizedEntities, `${viewRowSchema.key}.${oldRowId}`, { widgets: [] });
-
-            /**
-             * Remove widget from old row in local normalized store
-             */
-            this.updateNormalizedEntity(viewRowSchema.key, {
-              ...oldRow,
-              widgets: oldRow.widgets.filter(oldWidget => oldWidget !== widget._id),
-            });
-          }
-
-          const newRow = get(this.normalizedEntities, `${viewRowSchema.key}.${newRowId}`, { widgets: [] });
-
-          /**
-           * Put widget into new row in local normalized store
-           */
-          this.updateNormalizedEntity(viewRowSchema.key, {
-            ...newRow,
-            widgets: [
-              ...newRow.widgets.filter(oldWidget => oldWidget !== widget._id),
-              widget._id,
-            ],
-          });
-        }
-
         const view = denormalize(this.activeView._id, viewSchema, this.normalizedEntities);
+        const tabIndex = view.tabs.findIndex(item => item._id === this.tabId);
+
+        view.tabs[tabIndex].widgets.push(widget);
+        // TODO: Default size value thanks to widget type + Compute default position
+        view.tabs[tabIndex].layout.push({
+          i: widget._id,
+          x: 0,
+          y: 0,
+          w: 12,
+          h: 3,
+        });
 
         await Promise.all([
           this.createUserPreference({ userPreference }),

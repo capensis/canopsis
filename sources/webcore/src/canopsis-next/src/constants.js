@@ -19,7 +19,6 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  viewRow: 'viewRow',
   viewTab: 'viewTab',
   widget: 'widget',
   stat: 'stat',
