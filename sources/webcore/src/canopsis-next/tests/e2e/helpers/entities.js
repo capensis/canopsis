@@ -66,3 +66,8 @@ module.exports.generateTemporaryStatsNumberWidget = (prefix = '', suffix = uid()
   title: `${prefix}Stats-Number-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryParetoDiagramWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Pareto-Diagram-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
