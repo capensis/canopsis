@@ -27,7 +27,11 @@ export default {
   data() {
     return {
       infosSearchingText: '',
-      headers: [
+    };
+  },
+  computed: {
+    headers() {
+      return [
         {
           text: this.$t('common.name'),
           value: 'name',
@@ -40,10 +44,9 @@ export default {
           text: this.$t('common.value'),
           value: 'value',
         },
-      ],
-    };
-  },
-  computed: {
+      ];
+    },
+
     items() {
       return Object.keys(this.infos).map(info => ({
         name: info,

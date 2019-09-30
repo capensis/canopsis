@@ -88,11 +88,6 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      headers: [],
-    };
-  },
   computed: {
     withAuth: {
       get() {

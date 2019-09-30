@@ -83,8 +83,8 @@
           v-tooltip(left)
             v-btn(
               v-clipboard:copy="config.user.authkey",
-              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
-              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+              v-clipboard:success="addPathCopiedSuccessPopup",
+              v-clipboard:error="addPathCopiedErrorPopup",
               slot="activator",
               small,
               fab,
@@ -230,6 +230,15 @@ export default {
     ...mapActions({
       fetchRolesListWithoutStore: 'fetchListWithoutStore',
     }),
+
+    addPathCopiedSuccessPopup() {
+      return this.addSuccessPopup({ text: this.$t('success.pathCopied') });
+    },
+
+    addPathCopiedErrorPopup() {
+      return this.addErrorPopup({ text: this.$t('errors.default') });
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

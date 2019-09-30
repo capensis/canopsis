@@ -50,7 +50,16 @@ export default {
     return {
       searchingText: '',
       selectedEntities: [],
-      headers: [
+    };
+  },
+  computed: {
+    ...mapGetters({
+      contextEntities: 'itemsGeneralList',
+      pending: 'pendingGeneralList',
+    }),
+
+    headers() {
+      return [
         {
           text: this.$t('tables.contextList.name'),
           sortable: false,
@@ -59,14 +68,8 @@ export default {
           text: this.$t('tables.contextList.id'),
           sortable: false,
         },
-      ],
-    };
-  },
-  computed: {
-    ...mapGetters({
-      contextEntities: 'itemsGeneralList',
-      pending: 'pendingGeneralList',
-    }),
+      ];
+    },
   },
   methods: {
     ...mapActions({

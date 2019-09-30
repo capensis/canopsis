@@ -17,7 +17,7 @@
               v-btn.mx-0(
                 v-for="action in availableActions",
                 :key="action.name",
-                @click="() => action.action(props.item)",
+                @click="action.action(props.item)",
                 icon
               )
                 v-icon {{ action.icon }}

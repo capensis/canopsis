@@ -28,9 +28,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      headers: [
+  computed: {
+    headers() {
+      return [
         {
           text: this.$t('tables.alarmGeneral.author'),
           sortable: false,
@@ -47,8 +47,8 @@ export default {
           text: this.$t('tables.alarmGeneral.resource'),
           sortable: false,
         },
-      ],
-    };
+      ];
+    },
   },
 };
 </script>

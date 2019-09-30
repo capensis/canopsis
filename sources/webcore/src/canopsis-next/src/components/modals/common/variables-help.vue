@@ -20,8 +20,8 @@
           v-tooltip(left)
             v-btn(
               v-clipboard:copy="props.item.path",
-              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
-              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+              v-clipboard:success="addCopiedPathSuccessPopup",
+              v-clipboard:error="addCopiedPathErrorPopup",
               slot="activator",
               small,
               icon
@@ -41,5 +41,13 @@ export default {
   name: MODALS.variablesHelp,
   components: { Ellipsis },
   mixins: [modalInnerMixin, popupMixin],
+  methods: {
+    addCopiedPathSuccessPopup() {
+      return this.addSuccessPopup({ text: this.$t('success.pathCopied') });
+    },
+    addCopiedPathErrorPopup() {
+      return this.addErrorPopup({ text: this.$t('errors.default') });
+    },
+  },
 };
 </script>
