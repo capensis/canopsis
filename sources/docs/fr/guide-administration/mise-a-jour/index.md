@@ -66,7 +66,7 @@ systemctl daemon-reload
 
 Puis, redémarrer l'ensemble des moteurs Canopsis :
 ```sh
-/opt/canopsis/bin/canopsis-systemd restart
+canoctl restart
 ```
 
 Appliquer toute éventuelle procédure supplémentaire décrite dans les [notes de version](../../index.md) qui vous concernent.

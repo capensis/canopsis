@@ -71,7 +71,7 @@ mongodump --username cpsmongo --password votre_password --db canopsis --out /pat
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.
 ```shell
-/opt/canopsis/bin/canopsis-systemd stop
+canoctl stop
 ```
 
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichier externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
@@ -88,7 +88,7 @@ mongorestore --username cpsmongo --password votre_password --db canopsis /path/t
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 ```shell
-/opt/canopsis/bin/canopsis-systemd start
+canoctl start
 ```
 
 ## InfluxDB
@@ -108,7 +108,7 @@ influxd backup -portable -database canopsis /path/to/backup
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.
 ```shell
-/opt/canopsis/bin/canopsis-systemd stop
+canoctl stop
 ```
 
 Utilisez la commande `influxd restore`. De préférence, récupérez la sauvegarde depuis un système de fichier externe à la machine (NAS, SAN).Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#restore).
@@ -130,5 +130,5 @@ influxd restore -portable /path/to/backup
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 
 ```shell
-/opt/canopsis/bin/canopsis-systemd start
+canoctl start
 ```
