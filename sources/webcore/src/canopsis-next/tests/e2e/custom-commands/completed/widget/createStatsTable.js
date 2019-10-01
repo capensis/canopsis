@@ -2,10 +2,19 @@
 
 const { API_ROUTES } = require('@/config');
 
-module.exports.command = function createStatsTable(fields, callback = () => {}) {
+module.exports.command = function createStatsTable({
+  parameters,
+  ...fields
+}, callback = () => {}) {
   const statsTableWidget = this.page.widget.statsTable();
 
-  this.completed.widget.setCommonFields(fields);
+  this.completed.widget.setCommonFields({
+    parameters: {
+      advanced: true,
+      ...parameters,
+    },
+    ...fields,
+  });
 
   this.waitForFirstXHR(
     API_ROUTES.userPreferences,

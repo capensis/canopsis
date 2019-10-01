@@ -12,38 +12,33 @@ const {
   FILTER_COLUMNS,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { createWidgetView, removeViewGroup, removeWidgetView } = require('../../helpers/api');
+const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
-
-    const { groupId, viewId } = await createWidgetView();
-
-    browser.globals.defaultViewData = {
-      groupId,
-      viewId,
-    };
+    browser.globals.defaultViewData = await createWidgetView();
 
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
-    await browser.page.layout.popup()
+    browser.page.layout.popup()
       .clickOnEveryPopupsCloseIcons();
 
     done();
   },
 
   async after(browser, done) {
-    browser.completed
-      .logout()
+    const { viewId, groupId } = browser.globals.defaultViewData;
+
+    browser.completed.logout()
       .end(done);
 
-    await removeWidgetView(browser.globals.defaultViewData.viewId);
-    await removeViewGroup(browser.globals.defaultViewData.groupId);
+    await removeWidgetView(viewId, groupId);
 
-    delete browser.globals.credentials;
+    delete browser.globals.defaultViewData;
+    delete browser.globals.temporary;
 
     done();
   },
@@ -142,15 +137,14 @@ module.exports = {
       },
     };
     const { groupId, viewId } = browser.globals.defaultViewData;
-    const view = browser.page.view();
-    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    groupsSideBar
+    browser.page.layout.groupsSideBar()
       .clickGroupsSideBarButton()
       .clickPanelHeader(groupId)
       .clickLinkView(viewId);
 
-    view.clickMenuViewButton()
+    browser.page.view()
+      .clickMenuViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()

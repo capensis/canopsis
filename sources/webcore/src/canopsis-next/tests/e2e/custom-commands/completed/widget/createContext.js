@@ -13,7 +13,10 @@ module.exports.command = function createContext({
 
   this.completed.widget.setCommonFields({
     ...fields,
-    parameters,
+    parameters: {
+      advanced: true,
+      ...parameters,
+    },
   });
 
   if (typeOfEntities) {

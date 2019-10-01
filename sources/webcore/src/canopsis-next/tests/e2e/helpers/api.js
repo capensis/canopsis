@@ -96,7 +96,7 @@ async function createViewGroup(group, options = {}) {
 }
 
 async function removeViewGroup(groupId, options = {}) {
-  return request.post(`${API_ROUTES.viewGroup}/${groupId}`, options);
+  return request.delete(`${API_ROUTES.viewGroup}/${groupId}`, options);
 }
 
 async function getRoleList(role = 'admin', options = {}) {
@@ -119,7 +119,7 @@ async function addRightsForView(viewId, options = {}) {
 }
 
 function removeRightsForView(viewId, options = {}) {
-  return request.post(`${API_ROUTES.action}/${viewId}`, options);
+  return request.delete(`${API_ROUTES.action}/${viewId}`, options);
 }
 
 async function createUserRole(role, rights, options = {}) {
@@ -172,7 +172,7 @@ async function createWidgetView(viewDefault) {
   };
 }
 
-async function removeWidgetView(viewId) {
+async function removeWidgetView(viewId, groupId) {
   const response = await authAsAdmin();
 
   const options = {
@@ -188,6 +188,7 @@ async function removeWidgetView(viewId) {
   await removeRightsForView(viewId, options);
 
   await Promise.all(roles.map(role => createUserRole(role, omit(role.rights, [viewId]), options)));
+  await removeViewGroup(groupId, options);
 }
 
 module.exports.auth = auth;
@@ -197,4 +198,3 @@ module.exports.createAdminUser = createAdminUser;
 module.exports.removeUser = removeUser;
 module.exports.createWidgetView = createWidgetView;
 module.exports.removeWidgetView = removeWidgetView;
-module.exports.removeViewGroup = removeViewGroup;
