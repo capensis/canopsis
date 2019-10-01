@@ -6,7 +6,7 @@ Deploy Canopsis by ansible or mount it in a vagrantbox
 Requirements
 ------------
 
-- Ansible 2.4.3 - Use a virtualenv and `pip install "ansible<2.4.4"`
+- Ansible 2.4.6 - Use a virtualenv and `pip install "ansible==2.4.6"`
 - Host using ansible as to get right on git.canopsis.com to fetch canopsis sources (ex: ssh\_key)
 
 ### Optional
