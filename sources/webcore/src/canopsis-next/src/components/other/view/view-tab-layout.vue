@@ -1,13 +1,16 @@
 <template lang="pug">
   grid-layout(
-    :layout.sync="tab.layout",
+    :layout="tab.layout",
+    @layout-updated="$emit('input', $event)",
+    :autoSize="true",
+    :row-height="12"
   )
     grid-item(
       v-for="item in tab.layout",
       :x="item.x",
       :y="item.y",
-      :w="item.w",
       :h="item.h",
+      :w="item.w",
       :i="item.i",
       :key="item.i"
     )
@@ -93,6 +96,9 @@ export default {
           widget: foundWidget,
         };
       };
+    },
+    minHeight() {
+      return 20;
     },
   },
 };

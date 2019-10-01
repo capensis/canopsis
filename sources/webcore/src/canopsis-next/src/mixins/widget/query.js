@@ -53,9 +53,14 @@ export default {
     },
   },
   watch: {
-    query(value, oldValue) {
+    async query(value, oldValue) {
       if (!isEqual(value, oldValue) && !isEmpty(value)) {
-        this.fetchList();
+        await this.fetchList();
+      }
+
+      // Mostly useful for tables widgets, force layout to adapt to widget height, after fetching data
+      if (this.$parent.autoSize) {
+        this.$parent.autoSize();
       }
     },
     tabQueryNonce(value, oldValue) {
