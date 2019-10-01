@@ -31,10 +31,7 @@ export default {
       state.allIds.push(id);
     },
     [types.HIDE](state, { id }) {
-      Vue.set(state.byId, id, {
-        ...state.byId[id],
-        hidden: true,
-      });
+      Vue.set(state.byId[id], 'hidden', true);
     },
     [types.HIDE_COMPLETED](state, { id }) {
       state.allIds = state.allIds.filter(value => value !== id);
