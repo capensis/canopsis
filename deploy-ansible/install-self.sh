@@ -13,6 +13,5 @@ user_home=$(su - canopsis -c 'echo -n ${HOME}')
 source ${user_home}/venv-ansible/bin/activate
 
 ansible-playbook playbook/canopsis-standalone.yml \
-    -e "canopsis_init_db=true" \
     -i inventory.self \
     --skip-tags=cps_install_package

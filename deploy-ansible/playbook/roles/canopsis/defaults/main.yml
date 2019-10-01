@@ -10,7 +10,6 @@ canopsis_bin: "{{ canopsis_home}}/bin"
 canopsis_user: canopsis
 canopsis_group: canopsis
 
-canopsis_init_db: false
 
 canopsis_amqp_host: localhost
 canopsis_amqp_user: canopsis
