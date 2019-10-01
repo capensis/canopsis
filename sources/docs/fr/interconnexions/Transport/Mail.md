@@ -20,7 +20,7 @@ Le fichier de configuration du connecteur est `/opt/canopsis_connectors/email2ca
 [amqp]
 url=amqp://cpsrabbit:canopsis@vip-dvp-hypervision-rabbitmq.si3si.int/canopsis
 
-# Url d'un redis pour activer le renvoi automatique du dernier état connu des événements
+# URL d'un Redis pour activer le renvoi automatique du dernier état connu des événements
 [redis]
 url=redis://redis:6379/0
 
@@ -31,11 +31,11 @@ popserver=webmail.test.net
 port=995
 # Doit-on négocier en SSL ou en PLAIN ?
 overssl=True
-# Login de la bal
+# Identifiant de la BAL
 user=email2canopsis
 # Mot de passe associé
 password=
-# Dossier d'archivage des mails (active si présent)
+# Dossier d'archivage des emails (active si présent)
 archive_folder=
 
 [event]
@@ -63,7 +63,7 @@ Il faut donc vérifier que les URL qui y figurent sont les bonnes.
 
 #### Configuration de la Boîte aux Lettres
 
-Le bloc `[mail]` contient la configuration pour la connexion à la boîte aux lettres POP3 dont les mails seront convertis en événements Canopsis.
+Le bloc `[mail]` contient la configuration pour la connexion à la boîte aux lettres POP3 dont les emails seront convertis en événements Canopsis.
 
 Il faut donc vérifier que les différents champs sont bien remplis.
 
@@ -71,7 +71,7 @@ Il faut donc vérifier que les différents champs sont bien remplis.
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc et que le contenu du mail corresponde bien au template appliqué à cette même adresse email.
+Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc et que le contenu de l'email corresponde bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
@@ -85,11 +85,11 @@ template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 
 Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit correspondre au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
 
-### Configuration du template de mail
+### Configuration du template d'email
 
 #### Principe du template
 
-Les templates permettent d'analyser un mail en suivant quelques régles de transformations simples.
+Les templates permettent d'analyser un email en suivant quelques régles de transformations simples.
 
 Un fichier template devrait ressembler à quelque chose comme suit :
 
@@ -112,7 +112,7 @@ Les clefs sont divisées en deux parties, séparées par un point :
 Les actions peuvent être les suivantes :
 
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
-* *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont appliquables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2, ...
+* *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
 
 La partie droite décrit les régles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
 
@@ -127,7 +127,7 @@ La partie droite décrit les régles de transformations (où a, b et c sont des 
 - `line(a).before(e)` sélectionne tous les mots avant e
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
 
-MAIL_DATE est automatiquement convertie en objet date, inutile d'applique d'action 'dateformat' dessus.
+MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une action 'dateformat' dessus.
 
 !!! attention
     Les numéros de lignes et de mots commencent à partir de 0, non de 1.
