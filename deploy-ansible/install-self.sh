@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # this script is used to deploy a fully working canopsis after the package
 # has been installed manually.
 
