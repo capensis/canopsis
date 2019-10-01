@@ -69,8 +69,6 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ### Utilisation de engine-axe
 
 ```
-  -autoDeclareTickets
-        Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
