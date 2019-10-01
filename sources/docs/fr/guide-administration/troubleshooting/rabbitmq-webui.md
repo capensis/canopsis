@@ -7,7 +7,7 @@ en cours de traitement sur les diférents moteurs de Canopsis.
 **Rappel :**
 L'interface de RabbitMQ est accessible via l'URL ```http://localhost:15672/```
 
-## Queues
+## Gestion des files
 
 Rendez-vous ici :
 
@@ -56,14 +56,13 @@ Afin de recevoir un message l'option *get messages* permet  d'inspecter manuelle
 
 ## Policy
 
-Afin d’éviter de remplir inutilement les queues de RabbitMQ, il est possible de mettre en place une policy.
+Afin d’éviter de remplir inutilement les files de RabbitMQ, il est possible de mettre en place une *policy*.
 
 La procédure est la suivante :
 
 ![img](img/rabbitmq_policy.png)
 
-Ensuite, vous devez voir apparaître votre policy sur les queues dans l’onglet Queues.
-
+Ensuite, vous devez voir apparaître votre policy sur les files dans l’onglet « Queues ».
 
 ## Aller plus loins
 
