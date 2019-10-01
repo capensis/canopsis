@@ -3,7 +3,9 @@
     :layout="tab.layout",
     @layout-updated="$emit('input', $event)",
     :autoSize="true",
-    :row-height="12"
+    :row-height="12",
+    :is-draggable="isEditingMode",
+    :is-resizable="isEditingMode"
   )
     grid-item(
       v-for="item in tab.layout",
@@ -16,7 +18,9 @@
     )
       component(
         :is="component(item.i).is",
-        :widget="component(item.i).widget"
+        :widget="component(item.i).widget",
+        :isEditingMode="isEditingMode",
+        :tabId="tab._id"
       )
 </template>
 

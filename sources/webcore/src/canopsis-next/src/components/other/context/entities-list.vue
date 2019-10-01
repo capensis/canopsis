@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  v-card
     v-layout.white(justify-space-between, align-center)
       v-flex
         context-search(:query.sync="query")
@@ -218,9 +218,9 @@ export default {
 
       return query;
     },
-    fetchList() {
+    async fetchList() {
       if (this.hasColumns) {
-        this.fetchContextEntitiesList({
+        await this.fetchContextEntitiesList({
           widgetId: this.widget._id,
           params: this.getQuery(),
         });
