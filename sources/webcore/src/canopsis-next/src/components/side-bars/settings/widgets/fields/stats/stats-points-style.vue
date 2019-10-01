@@ -1,12 +1,16 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="statsPointsStyle")
     v-list-tile(slot="activator") {{ $t('settings.statsPointsStyles.title') }}
     v-container(fluid)
       v-layout(v-for="(stat, key) in stats", align-center, :key="key")
         v-flex
           div {{ key }}:
-        v-flex
-          v-select(:items="pointsStyles", :value="value[key]", @change="updateField(key, $event)")
+        v-flex(:data-test="`statsPointsStyleSelect-${key}`")
+          v-select(
+            :items="pointsStyles",
+            :value="value[key]",
+            @change="updateField(key, $event)"
+          )
 </template>
 
 <script>

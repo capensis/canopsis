@@ -2,6 +2,37 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.29.0 - Due date : 2019-09-27
+
+ - [Documentation] Add alarm-filter documentation
+ - [Documentation] Fix some 404 hyperlinks
+ - [Documentation] Fix some resource/ressource spelling mistakes in API examples
+ - [Docker] "init" and Open-core Go engine images are now public
+ - [API] Remove TicketAPI API
+ - [API] Prevent PUT /api/v2/pbehavior/<id> from removing the pbehaviors' comments and timezone
+ - [Go] Release Go engines as open-source. Go plugins remain in CAT
+ - [Go] Remove TicketAPI service
+ - [Python] Add `postpone_if_active_pbehavior` option to alarm filter
+ - [UI] Add a linter for pug templates
+ - [UI] Filter available CRUDs by canopsis stack
+ - [UI] Add possibility to clone a tab to another view
+ - [UI] Add "module-resolver" Babel's plugin
+ - [UI - Event filter] Add possibility to edit an action
+ - [UI - Heartbeat] Add default rights for Heartbeat's CRUD
+ - [UI - Heartbeat] Fix - Wrong labels
+ - [UI - Heartbeat] Fix - Delete action
+ - [UI - Heartbeat] Fix - Rights application
+ - [UI - List alarm] Fix - Column selector on info popup setting
+ - [UI - Tests] Tests e2e - Basic stats histograms widget function
+ - [UI - Tests] Tests e2e - Basic stats table widget function
+ - [UI - Tests] Tests e2e - Basic stats calendar widget function
+ - [UI - Tests] Tests e2e - Basic stats curves widget function
+ - [UI - Tests] Tests e2e - Basic text widget function
+ - [UI - Tests] Tests e2e - Basic alarmlist widget function
+ - [UI - Tests] Tests e2e - Remove user's default view
+ - [UI - Tests] Tests e2e - Fix topbar tests
+ - [UI - Tests] Tests e2e - Basic context explorer widget function
+
 ## Canopsis 3.28.0 - Due date : 2019-09-12
 
  - [Documentation] Big improvements in most guides of doc.canopsis.net

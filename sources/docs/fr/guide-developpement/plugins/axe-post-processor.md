@@ -9,7 +9,7 @@ Les plugins de post-processing suivants sont disponibles dans Canopsis :
 Un plugin de post-processing est un module go exportant une variable
 `AxePostProcessor` qui implémente l'interface `AxePostProcessor` (définie
 dans
-`git.canopsis.net/canopsis/go-revolution/cmd/engine-axe/plugins.go`).
+`git.canopsis.net/canopsis/go-engines/cmd/engine-axe/plugins.go`).
 
 Les plugins sont compilés avec `go build -buildmode=plugin`, qui crée un
 fichier `.so`. Ils doivent être recompilés à chaque version de Canopsis.
@@ -22,8 +22,8 @@ package main
 import (
     "log"
 
-    "git.canopsis.net/canopsis/go-revolution/lib/canopsis/alarm"
-    "git.canopsis.net/canopsis/go-revolution/lib/canopsis/types"
+    "git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
+    "git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
 )
 
 type dummyPostProcessor struct{}

@@ -9,7 +9,7 @@ Les plugins de sources de données suivantes sont disponibles dans Canopsis :
 Une source de données externe est un module go exportant une variable
 `DataSourceFactory` qui implémente l'interface `DataSourceFactory` (définie
 dans
-`git.canopsis.net/canopsis/go-revolution/lib/canopsis/eventfilter/data_source.go`).
+`git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/data_source.go`).
 
 Les plugins sont compilés avec `go build -buildmode=plugin`, qui crée un
 fichier `.so`. Ils doivent être recompilés à chaque version de Canopsis.
@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"strings"
 
-	"git.canopsis.net/canopsis/go-revolution/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter"
 )
 
 type dummyDataSourceFactory struct{}

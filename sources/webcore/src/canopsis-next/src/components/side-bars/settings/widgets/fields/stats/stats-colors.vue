@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="statsColor")
     v-list-tile(slot="activator") {{ $t('settings.statsColor.title') }}
     v-container(fluid)
       v-layout(v-for="(stat, key) in stats", align-center, :key="key")
@@ -7,6 +7,7 @@
           div {{ key }}:
         v-flex
           v-btn(
+            :data-test="`statsColorPickButton-${key}`",
             :style="{ backgroundColor: value[key] }",
             @click="showColorPickerModal(key)"
           ) {{ $t('settings.statsColor.pickColor') }}

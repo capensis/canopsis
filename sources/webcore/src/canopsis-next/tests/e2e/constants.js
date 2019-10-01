@@ -223,3 +223,26 @@ module.exports.INTERVAL_PERIODS = {
   WEEK: 3,
   MONTH: 4,
 };
+
+module.exports.STATS_CURVES_POINTS_STYLES = {
+  CIRCLE: 1,
+  CROSS: 2,
+  CROSS_ROT: 3,
+  DASH: 4,
+  LINE: 5,
+  RECT: 6,
+  RECT_ROUNDED: 7,
+  RECT_ROT: 8,
+  STAR: 9,
+  TRIANGLE: 10,
+};
+
+module.exports.STATS_DISPLAY_MODE = {
+  VALUE: 1,
+  CRITICITY: 2,
+};
+
+module.exports.PARETO_STATS_TITLES = {
+  ACCUMULATION: 'Accumulation',
+  ALARMS_CREATED: 'Alarmes créées',
+};

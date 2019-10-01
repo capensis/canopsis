@@ -56,3 +56,23 @@ module.exports.generateTemporaryStatsCalendarWidget = (prefix = '', suffix = uid
   title: `${prefix}Stats-Calendar-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
 });
+
+module.exports.generateTemporaryStatsHistogramWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Histogram-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
+
+module.exports.generateTemporaryStatsCurvesWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Curves-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
+
+module.exports.generateTemporaryStatsNumberWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Number-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});
+
+module.exports.generateTemporaryParetoDiagramWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Pareto-Diagram-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+});

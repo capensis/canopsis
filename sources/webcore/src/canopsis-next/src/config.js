@@ -59,6 +59,7 @@ export const API_ROUTES = {
     },
   },
   pbehaviorById: '/api/v2/pbehavior_byeid',
+  actions: '/api/v2/actions',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/api/v2/views',

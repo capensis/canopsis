@@ -12,7 +12,11 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
+      field-filter-editor(
+        data-test="widgetFilterEditor",
+        v-model="settings.widget.parameters.mfilter",
+        :hiddenFields="['title']"
+      )
       v-divider
       field-stats-selector(v-model="settings.widget.parameters.stats", required)
       v-divider
@@ -23,7 +27,7 @@
       v-divider
       field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
       v-divider
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitStatsHistogramButton", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
