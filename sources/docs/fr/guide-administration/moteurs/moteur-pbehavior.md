@@ -125,7 +125,7 @@ n'existe pas, la timezone `Europe/Paris` sera utilisée.
 
 ## Collection
 
-Les pbehaviors sont stockés dans la collection Mongo `default_pbehavior` (voir [API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md) pour la création des pbehaviors).
+Les pbehaviors sont stockés dans la collection MongoDB `default_pbehavior` (voir [API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md) pour la création des pbehaviors).
 
 Un exemple de pbehavior appliqué pour une plage de maintenance sans `rrule` avec la raison `Problème d'habilitation` et le type `Maintenance` aux alarmes dont le composant est `pbehavior_test_1`.
 

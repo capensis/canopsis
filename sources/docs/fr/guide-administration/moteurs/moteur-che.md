@@ -42,7 +42,7 @@ Il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre
 
 ## Collection
 
-Les entités sont stockées dans la collection Mongo `default_entities`.
+Les entités sont stockées dans la collection MongoDB `default_entities`.
 
 Le champ `type` de l'objet définit le type de l'entité. Par exemple, avec une ressource, son champ `type` vaut `resource` :
 

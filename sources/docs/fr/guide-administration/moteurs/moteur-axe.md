@@ -38,7 +38,7 @@ Si l'événement correspond à une action (comme la mise d'un ACK), l'alarme va 
 
 ## Collection
 
-Les alarmes sont stockées dans la collection Mongo `periodical_alarm`.
+Les alarmes sont stockées dans la collection MongoDB `periodical_alarm`.
 
 L'`_id` est générée automatiquement.
 
