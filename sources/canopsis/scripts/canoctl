@@ -8,6 +8,11 @@ function help_usage() {
     exit 1
 }
 
+if [ "$(id -u)" -ne 0 ]; then
+    echo "$0: must be run as root"
+    exit 1
+fi
+
 while [ 1 ]; do
     case $1 in
         start|status|restart|stop)
