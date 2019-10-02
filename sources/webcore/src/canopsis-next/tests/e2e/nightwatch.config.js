@@ -70,6 +70,11 @@ module.exports = deepmerge({
 
   selenium: seleniumConfig,
 
+  test_workers: {
+    enabled: process.env.TEST_WORKERS_ENABLED === 'true',
+    workers: Number(process.env.TEST_WORKERS_COUNT),
+  },
+
   test_settings: {
     default: {
       selenium_host: seleniumConfig.host,
