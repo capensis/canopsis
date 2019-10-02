@@ -2,9 +2,12 @@
 set -e
 set -o pipefail
 
+# TODO: make "deploy" the default for "deploy-go", at some point.
+
 function help_usage() {
-    echo "$0 [start|status|restart|stop|deploy]"
-    echo "  deploy: stop services then play ansible playbook"
+    echo "$0 [start|status|restart|stop|deploy|deploy-python|deploy-go]"
+    echo "  deploy|deploy-python: stop services then play ansible playbook (with Python engines)"
+    echo "  deploy-go: stop services then play ansible playbook (with Go engines)"
     exit 1
 }
 
@@ -19,9 +22,14 @@ while [ 1 ]; do
             /opt/canopsis/bin/canopsis-systemd $1
             exit $?
             ;;
-        deploy)
+        deploy|deploy-python)
             $0 stop
-            /opt/canopsis/deploy-ansible/install-self.sh
+            /opt/canopsis/deploy-ansible/install-self.sh deploy-python
+            exit $?
+            ;;
+        deploy-go)
+            $0 stop
+            /opt/canopsis/deploy-ansible/install-self.sh deploy-go
             exit $?
             ;;
         *)
