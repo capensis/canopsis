@@ -22,9 +22,9 @@ export default {
   namespaced: true,
   state: {
     widgets: {},
-    fetchingParams: {},
     allIdsGeneralList: [],
     pendingGeneralList: false,
+    fetchingParamsGeneralList: false,
   },
   getters: {
     getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
@@ -40,24 +40,19 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
+      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
+    },
+    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
+      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
+    },
+    [types.FETCH_LIST_FAILED](state, { widgetId }) {
+      Vue.setSeveral(state.widgets, widgetId, { pending: false });
+    },
+    [types.FETCH_LIST](state, { widgetId, params }) {
       Vue.set(state.widgets, widgetId, {
         ...state.widgets[widgetId],
         pending: true,
         fetchingParams: params,
-      });
-    },
-    [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        allIds,
-        meta,
-        pending: false,
-      });
-    },
-    [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
       });
     },
     [types.FETCH_GENERAL_LIST](state, { params }) {

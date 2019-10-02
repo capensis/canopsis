@@ -29,34 +29,13 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
-      if (!state.widgets[widgetId]) {
-        Vue.set(state.widgets, widgetId, {
-          pending: true,
-          fetchingParams: params,
-        });
-      } else {
-        Vue.set(state.widgets[widgetId], 'pending', true);
-        Vue.set(state.widgets[widgetId], 'fetchingParams', params);
-      }
+      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      if (!state.widgets[widgetId]) {
-        Vue.set(state.widgets, widgetId, {
-          pending: false,
-          allIds,
-          meta,
-        });
-      } else {
-        Vue.set(state.widgets[widgetId], 'pending', false);
-        Vue.set(state.widgets[widgetId], 'allIds', allIds);
-        Vue.set(state.widgets[widgetId], 'meta', meta);
-      }
+      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
     },
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { pending: false });
     },
   },
   actions: {
