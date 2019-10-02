@@ -6,7 +6,7 @@
 
 Votre système hôte pour Docker doit disposer d'un noyau Linux suffisamment récent. Canopsis nécessite l'utilisation **d'un noyau Linux 4.4 minimum**.
 
-Les noyaux installés par défaut sur Debian 8 ou CentOS 7 ne sont donc **pas suffisants** pour héberger un environnement Docker Canopsis.
+Le noyau installé par défaut sur CentOS 7 n'est donc **pas suffisant** pour héberger un environnement Docker Canopsis.
 
 Vérifier votre version du noyau à l'aide de la commande suivante :
 ```sh
