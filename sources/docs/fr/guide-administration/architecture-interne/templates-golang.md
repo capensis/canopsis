@@ -276,9 +276,6 @@ Voici un exemple avec la syntaxe Go qui va générer le résultat attendu.
 }
 ```
 
-!!! attention
-    Le formatage UNIX ne fonctionne **pas** avec cette fonction. L'appel `formattedDate \"%Y-%m-%d %H:%M:%S\"` ne sera pas reconnu par Go. Par conséquent, la chaîne sera renvoyée à l'identique et produira ce JSON incorrect : `{"moment": "%Y-%m-%d %H:%M:%S"}`
-
 #### Fonctions en série
 
 Enfin, on peut enchaîner plusieurs fonctions afin de transformer des variables. Dans le cas suivant, on va transformer la variable `.Event.Output` qui vaut `c0ffee - beef- facade      -a5a5a5`.
