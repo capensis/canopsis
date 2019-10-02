@@ -1,0 +1,13 @@
+---
+
+- name: Check that Go engines are installed
+  stat: path=/opt/canopsis/etc/initialisation.toml
+  register: go-init-file-check
+
+- fail:
+    msg: "The canopsis-engines-go package must be installed in order to activate Canopsis Go engines"
+  when: go-init-file-check.stat.exists == False
+
+
+#/opt/canopsis/bin/init -conf /opt/canopsis/etc/initialisation.toml
+

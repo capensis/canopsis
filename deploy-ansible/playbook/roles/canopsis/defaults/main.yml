@@ -10,7 +10,6 @@ canopsis_bin: "{{ canopsis_home}}/bin"
 canopsis_user: canopsis
 canopsis_group: canopsis
 
-
 canopsis_amqp_host: localhost
 canopsis_amqp_user: canopsis
 canopsis_amqp_userid: cpsrabbit
@@ -43,12 +42,26 @@ canopsis_pkg_edition: 'core'
 canopsis_pkg_debian: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}.amd64.{{ ansible_distribution_release }}.deb'
 canopsis_pkg_redhat: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.rpm'
 
-# supported options are:
-#  module:  module to be used
-#  name:    engine name
-#  state:   started|stopped
-#  enabled: yes|no -> enable or not the service. useful to remove some engines
-canopsis_engines:
+# use 'go' if you want to use Go engines
+canopsis_engines_type: "python"
+
+# Default Python engines which haven't been replaced by a Go engine, yet
+canopsis_common_engines:
+  -
+    module: dynamic
+    name: pbehavior
+  -
+    module: scheduler
+    name: scheduler
+  -
+    module: task_importctx
+    name: task_importctx
+  -
+    module: task_mail
+    name: task_mail
+
+# When choosing canopsis_engines_type: "python"
+canopsis_python_engines:
   -
     module: dynamic
     name: alerts
@@ -65,35 +78,18 @@ canopsis_engines:
     module: event_filter
     name: event_filter
   -
-    module: eventstore
-    name: eventstore
-    state: stopped
-  -
-    module: dynamic
-    name: pbehavior
-  -
-    module: dynamic
-    name: perfdata
-    state: stopped
-    enabled: no
-  -
-    module: scheduler
-    name: scheduler
-  -
-    module: selector
-    name: selector
-    state: stopped
-    enabled: no
-  -
-    module: task_dataclean
-    name: task_dataclean
-  -
-    module: task_importctx
-    name: task_importctx
-  -
-    module: task_mail
-    name: task_mail
-  -
     module: dynamic
     name: watcher
-    state: stopped
+
+# When choosing canopsis_engines_type: "go"
+canopsis_go_engines:
+  -
+    name: engine-action
+  -
+    name: engine-axe
+  -
+    name: engine-che
+  -
+    name: engine-heartbeat
+  -
+    name: engine-watcher
