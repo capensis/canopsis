@@ -10,7 +10,7 @@ La nouvelle interface « UIv3 » est accessible depuis l'adresse <http://localho
 
 Les identifiants de connexion ar défaut sont `root` / `root`.
 
-Parcourez ensuite [le guide d'utilisation](../../../guide-utilisation/index.md) pour en apprendre davantage sur l'interface web de Canopsis.
+Parcourez ensuite [le guide d'utilisation](../../guide-utilisation/index.md) pour en apprendre davantage sur l'interface web de Canopsis.
 
 ## Accès aux composants internes de Canopsis
 
