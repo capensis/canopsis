@@ -6,7 +6,7 @@ Les plugins de sources de données suivantes sont disponibles dans Canopsis :
 
  - [Collection MongoDB](../../../guide-administration/moteurs/moteur-che-event_filter/#collection-mongodb)
 
-Une source de données externe est un module go exportant une variable
+Une source de données externe est un module Go exportant une variable
 `DataSourceFactory` qui implémente l'interface `DataSourceFactory` (définie
 dans
 `git.canopsis.net/canopsis/go-engines/lib/canopsis/eventfilter/data_source.go`).
