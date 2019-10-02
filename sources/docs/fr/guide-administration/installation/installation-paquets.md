@@ -75,3 +75,5 @@ Une fois le paquet installé, vous pouvez déployer une configuration **mono-ins
 ```sh
 canoctl deploy
 ```
+
+Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).

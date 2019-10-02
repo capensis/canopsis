@@ -73,6 +73,8 @@ canopsis_webserver_1        /bin/sh -c /entrypoint.sh        Up       0.0.0.0:28
 
 Les services doivent être en état `Up` ou `Exit 0`.
 
+Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
+
 ## Arrêt de l'environnement Docker Compose 
 
 ```sh
