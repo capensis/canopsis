@@ -21,7 +21,7 @@ export default {
   name: MODALS.alarmsList,
   components: { AlarmsListWidget },
   mixins: [modalInnerMixin, queryMixin],
-  created() {
+  mounted() {
     this.mergeQuery({
       id: this.config.widget._id,
       query: this.config.query,
