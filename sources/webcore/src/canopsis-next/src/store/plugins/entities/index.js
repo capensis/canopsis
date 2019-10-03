@@ -3,10 +3,11 @@ import { get, pick, uniq, mergeWith } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
-import ClearableWeakMap from '@/services/weak-map';
 import schemas from '@/store/schemas';
 import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from '@/helpers/store';
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
+
+import cache from './cache';
 
 const entitiesModuleName = 'entities';
 
@@ -18,30 +19,6 @@ const internalTypes = {
 };
 
 let registeredGetters = [];
-
-const cache = new ClearableWeakMap();
-
-function clearCacheForParents(state, parents) {
-  parents.forEach((parent) => {
-    const entity = get(state, [parent.type, parent.id]);
-
-    if (entity) {
-      cache.delete(entity);
-
-      if (entity._embedded && entity._embedded.parents) {
-        clearCacheForParents(state, entity._embedded.parents);
-      }
-    }
-  });
-}
-
-function clearCacheForEntity(state, key, entity) {
-  cache.delete(entity);
-
-  if (entity._embedded && entity._embedded.parents) {
-    clearCacheForParents(state, entity._embedded.parents);
-  }
-}
 
 export const entitiesModule = {
   namespaced: true,
@@ -124,7 +101,7 @@ export const entitiesModule = {
           Vue.set(state, type, entities[type]);
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
-            clearCacheForEntity(state, key, entity);
+            cache.clearForEntity(state, entity);
 
             Vue.set(state[type], key, entity);
           });
@@ -150,7 +127,7 @@ export const entitiesModule = {
               return undefined;
             });
 
-            clearCacheForEntity(state, key, newEntity);
+            cache.clearForEntity(state, newEntity);
 
             Vue.set(state[type], key, newEntity);
           });
