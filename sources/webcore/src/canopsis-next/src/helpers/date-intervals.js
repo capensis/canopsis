@@ -55,6 +55,10 @@ export function parseStringToDateInterval(dateString, type) {
  * @return {*}
  */
 export function dateParse(date, type, format) {
+  if (typeof date === 'number') {
+    return moment.unix(date);
+  }
+
   const momentDate = moment(date, format, true);
 
   if (!momentDate.isValid()) {

@@ -85,9 +85,10 @@
 </template>
 
 <script>
-import { omit, pick, isEmpty } from 'lodash';
+import { omit, isEmpty } from 'lodash';
+import moment from 'moment';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { DATETIME_FORMATS, MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
@@ -219,7 +220,8 @@ export default {
       this.showModal({
         name: MODALS.editLiveReporting,
         config: {
-          ...pick(this.query, ['tstart', 'tstop']),
+          tstart: moment.unix(this.query.tstart).format(DATETIME_FORMATS.dateTimePicker),
+          tstop: moment.unix(this.query.tstop).format(DATETIME_FORMATS.dateTimePicker),
           action: params => this.query = { ...this.query, ...params },
         },
       });
