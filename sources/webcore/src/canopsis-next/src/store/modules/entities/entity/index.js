@@ -48,13 +48,6 @@ export default {
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
       Vue.setSeveral(state.widgets, widgetId, { pending: false });
     },
-    [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: true,
-        fetchingParams: params,
-      });
-    },
     [types.FETCH_GENERAL_LIST](state, { params }) {
       state.pendingGeneralList = true;
       state.fetchingParamsGeneralList = params;

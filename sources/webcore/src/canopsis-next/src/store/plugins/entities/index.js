@@ -39,17 +39,19 @@ export const entitiesModule = {
           return null;
         }
 
-        if (cache.has(state[type][id])) {
-          return cache.get(state[type][id]);
+        const entity = state[type][id];
+
+        if (!entity) {
+          return undefined;
         }
 
-        if (!state[type][id]) {
-          return undefined;
+        if (cache.has(entity)) {
+          return cache.get(entity);
         }
 
         const result = denormalize(id, schema, state);
 
-        cache.set(state[type][id], result);
+        cache.set(entity, result);
 
         return result;
       };
@@ -86,6 +88,8 @@ export const entitiesModule = {
      * @param {Object.<string, Object>} entities - Object of entities
      */
     [internalTypes.ENTITIES_REPLACE](state, entities) {
+      cache.clear();
+
       Object.keys(state).forEach((type) => {
         Vue.set(state, type, entities[type] || {});
       });
@@ -143,9 +147,9 @@ export const entitiesModule = {
       Object.keys(entities).forEach((type) => {
         if (state[type]) {
           Object.entries(entities[type]).forEach(([key, entity]) => {
-            Vue.delete(state[type], key);
-
             cache.delete(entity);
+
+            Vue.delete(state[type], key);
           });
         }
       });
@@ -189,8 +193,6 @@ export const entitiesModule = {
         }, {});
 
       commit(internalTypes.ENTITIES_REPLACE, entities);
-
-      cache.clear();
     },
 
     /**
