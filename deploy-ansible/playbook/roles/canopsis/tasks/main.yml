@@ -16,19 +16,34 @@
   tags:
     - cps_rabbitmq
 
-- import_tasks: config-canopsis.yml
+- import_tasks: config-common-engines.yml
   tags:
     - cps_config
+
+- import_tasks: config-go-engines.yml
+  tags:
+    - cps_config
+  when: canopsis_engines_type == "go"
+
+- import_tasks: init-python-engines
+  tags:
+    - cps_python_engines
+  when: canopsis_engines_type == "python"
+
+- import_tasks: init-go-engines
+  tags:
+    - cps_go_engines
+  when: canopsis_engines_type == "go"
+
+- import_tasks: init-common-engines
+  tags:
+    - cps_common_engines
 
 - import_tasks: init-db.yml
   become: true
   become_user: "{{ canopsis_user }}"
   tags:
     - cps_initdb
-
-- import_tasks: canopsis.yml
-  tags:
-    - cps_start
 
 - import_tasks: canopsis-dev.yml
   tags:
