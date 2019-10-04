@@ -1,5 +1,4 @@
 ---
-
 - name: Start and enable Canopsis common engines
   systemd:
     name: "canopsis-engine@{{ item.module }}-{{ item.name }}.service"

@@ -1,5 +1,4 @@
 ---
-
 - name: Create canopsis-engine-go .service directory
   file: path=/etc/systemd/system/canopsis-engine-go@.service.d state=directory
 
@@ -13,7 +12,7 @@
 
 - name: Install che.conf .service file, to override -publishQueue setting
   copy:
-    src: che.conf
+    src: go-engines/che.conf
     dest: "/etc/systemd/system/canopsis-engine-go@engine-che.service.d/che.conf"
 
 - name: Reload systemd
@@ -22,10 +21,10 @@
 
 - name: Override amqp2engines.conf to disable most Python engines
   copy:
-    src: amqp2engines.conf
+    src: go-engines/amqp2engines.conf
     dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
 
 - name: Install a copy initialisation.toml, without Engine_stat bindings
   copy:
-    src: initialisation-without-engine-stat.toml
+    src: go-engines/initialisation-without-engine-stat.toml
     dest: "{{ canopsis_home }}/etc/initialisation-without-engine-stat.toml"
