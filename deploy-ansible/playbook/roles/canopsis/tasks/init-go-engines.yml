@@ -9,6 +9,8 @@
     state: stopped
     enabled: false
   with_items: "{{ canopsis_python_engines }}"
+  register: ansiblecrap
+  failed_when: "ansiblecrap is failed and 'Could not find the requested service' not in ansiblecrap.msg"
 
 - name: Initializing RabbitMQ for Go engines
   shell: "{{ canopsis_home }}/bin/init -conf {{ canopsis_home }}/etc/initialisation-without-engine-stat.toml"
