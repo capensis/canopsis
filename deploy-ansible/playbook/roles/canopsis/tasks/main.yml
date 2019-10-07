@@ -1,9 +1,4 @@
 ---
-- include_tasks: "{{ ansible_os_family }}.yml"
-  tags:
-    - cps_system
-    - cps_install
-
 - import_tasks: config-mongodb.yml
   tags:
     - cps_mongodb

@@ -1,6 +1,4 @@
 ---
-canopsis_pkg_version: '2.5.15'
-
 canopsis_dev_src_path:
 canopsis_dev_with_deps: true
 canopsis_dev_without_deps: false
@@ -34,12 +32,6 @@ canopsis_influxdb_db: canopsis
 canopsis_redis_host: localhost
 canopsis_redis_port: 6379
 canopsis_redis_dbnum: 0
-
-# use 'cat' if you install canopsis-cat
-canopsis_pkg_edition: 'core'
-
-canopsis_pkg_debian: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}.amd64.{{ ansible_distribution_release }}.deb'
-canopsis_pkg_redhat: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.rpm'
 
 # use 'go' if you want to use Go engines
 canopsis_engines_type: "python"

@@ -23,5 +23,4 @@ source ${user_home}/venv-ansible/bin/activate
 
 ansible-playbook playbook/canopsis-standalone.yml \
     -e "canopsis_engines_type=$engines_type" \
-    -i inventory.self \
-    --skip-tags=cps_install_package
+    -i inventory.self
