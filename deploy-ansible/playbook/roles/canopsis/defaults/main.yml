@@ -63,6 +63,9 @@ canopsis_python_engines:
     module: dynamic
     name: context-graph
   -
+    module: eventstore
+    name: eventstore
+  -
     module: dynamic
     name: watcher
 
