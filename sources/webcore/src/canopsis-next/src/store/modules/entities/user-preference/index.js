@@ -15,6 +15,9 @@ export const types = {
 
 export default {
   namespaced: true,
+  state: {
+    pending: false,
+  },
   getters: {
     getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
       const currentUser = rootGetters['auth/currentUser'];
@@ -29,7 +32,9 @@ export default {
     },
   },
   mutations: {
-    [types.FETCH_LIST]: state => state.pending = true,
+    [types.FETCH_LIST]: (state) => {
+      state.pending = true;
+    },
     [types.FETCH_LIST_COMPLETED]: (state) => {
       state.pending = false;
     },

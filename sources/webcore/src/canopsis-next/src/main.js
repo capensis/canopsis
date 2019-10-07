@@ -28,6 +28,8 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
+import SetSeveralPlugin from '@/plugins/set-several';
+
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
@@ -109,6 +111,8 @@ Vue.use(VeeValidate, {
     fr: frValidationMessages,
   },
 });
+
+Vue.use(SetSeveralPlugin);
 
 Vue.config.productionTip = false;
 
