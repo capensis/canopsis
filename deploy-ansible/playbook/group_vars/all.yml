@@ -20,5 +20,3 @@ mongodb_root_admin_name: root
 mongodb_root_admin_password: root
 mongodb_user_admin_name: admin
 mongodb_user_admin_password: admin
-
-#canopsis_pkg_version: '2.5.15'
