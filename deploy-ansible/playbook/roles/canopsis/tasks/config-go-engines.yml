@@ -23,8 +23,3 @@
   copy:
     src: go-engines/amqp2engines.conf
     dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
-
-- name: Install a copy initialisation.toml, without Engine_stat bindings
-  copy:
-    src: go-engines/initialisation-without-engine-stat.toml
-    dest: "{{ canopsis_home }}/etc/initialisation-without-engine-stat.toml"
