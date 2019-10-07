@@ -7,14 +7,6 @@
     src: go-engines/all-go-engines.j2
     dest: "/etc/systemd/system/canopsis-engine-go@.service.d/all-go-engines.conf"
 
-- name: Create engine-che .service directory
-  file: path=/etc/systemd/system/canopsis-engine-go@engine-che.service.d state=directory
-
-- name: Install che.conf .service file, to override -publishQueue setting
-  copy:
-    src: go-engines/che.conf
-    dest: "/etc/systemd/system/canopsis-engine-go@engine-che.service.d/che.conf"
-
 - name: Reload systemd
   systemd:
     daemon-reload: yes

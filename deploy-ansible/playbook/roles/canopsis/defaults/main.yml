@@ -34,13 +34,16 @@ canopsis_redis_port: 6379
 canopsis_redis_dbnum: 0
 
 # use 'go' if you want to use Go engines
-canopsis_engines_type: "python"
+canopsis_engines_type: python
 
 # Default Python engines which haven't been replaced by a Go engine, yet
 canopsis_common_engines:
   -
     module: dynamic
     name: pbehavior
+  -
+    module: event_filter
+    name: event_filter
   -
     module: scheduler
     name: scheduler
@@ -51,17 +54,14 @@ canopsis_common_engines:
 # When choosing canopsis_engines_type: "python"
 canopsis_python_engines:
   -
-    module: dynamic
-    name: alerts
-  -
     module: cleaner
     name: cleaner_events
   -
     module: dynamic
-    name: context-graph
+    name: alerts
   -
-    module: event_filter
-    name: event_filter
+    module: dynamic
+    name: context-graph
   -
     module: dynamic
     name: watcher
