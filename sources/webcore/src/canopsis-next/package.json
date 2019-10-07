@@ -74,6 +74,7 @@
     "lint-staged": "^6.0.0",
     "nightwatch-record": "^0.2.0",
     "node-sass": "^4.7.2",
+    "p-queue": "^6.1.1",
     "pug": "^2.0.3",
     "pug-lint-vue": "^0.3.0",
     "pug-loader": "^2.4.0",

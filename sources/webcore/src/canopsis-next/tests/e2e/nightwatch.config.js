@@ -22,9 +22,13 @@ require('babel-plugin-require-context-hook/register')();
 
 const path = require('path');
 const deepmerge = require('deepmerge');
+const { spawn } = require('child_process');
+const PQueue = require('p-queue');
+const axios = require('axios');
 
 /* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
+const ChildProcess = require('nightwatch/lib/runner/cli/child-process');
 /* eslint-enable import/no-extraneous-dependencies */
 
 const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
@@ -36,6 +40,76 @@ loadEnv(localEnvPath);
 loadEnv(baseEnvPath);
 
 const sel = require('./helpers/sel');
+
+const queue = new PQueue({ concurrency: 1 });
+
+ChildProcess.prototype.run = function run(colors, done) {
+  this.availColors = colors;
+
+  const cliArgs = this.getArgs();
+  const env = {};
+
+  Object.keys(process.env).forEach((key) => {
+    env[key] = process.env[key];
+  });
+
+  setTimeout(() => {
+    /* eslint-disable no-underscore-dangle */
+    env.__NIGHTWATCH_PARALLEL_MODE = 1;
+    env.__NIGHTWATCH_ENV = this.environment;
+    env.__NIGHTWATCH_ENV_KEY = this.itemKey;
+    env.__NIGHTWATCH_ENV_LABEL = this.env_itemKey;
+    /* eslint-enable no-underscore-dangle */
+
+    this.child = spawn(process.execPath, cliArgs, {
+      env,
+
+      cwd: process.cwd(),
+      encoding: 'utf8',
+      stdio: [null, null, null, 'ipc'],
+    });
+
+    this.child.on('message', (data) => {
+      const result = JSON.parse(data);
+
+      this.emit('result', result);
+
+      if (result.type === 'request') {
+        queue.push(() => axios(result.data))
+          .then(({ data: responseData }) => this.child.send(JSON.stringify({ type: 'response', data: responseData })))
+          .catch(err => console.error(err));
+      }
+    });
+
+    this.processRunning = true;
+
+    if (this.settings.output) {
+      // eslint-disable-next-line no-console
+      console.log(`Started child process for:${this.env_label}`);
+    }
+
+    this.child.stdout.on('data', (data) => {
+      this.writeToStdout(data);
+    });
+
+    this.child.stderr.on('data', (data) => {
+      this.writeToStdout(data);
+    });
+
+    this.child.on('exit', (code) => {
+      if (this.settings.output) {
+        // eslint-disable-next-line no-console
+        console.log(`\n  >>${this.env_label}finished. \n`);
+      }
+
+      if (code) {
+        this.globalExitCode = 2;
+      }
+      this.processRunning = false;
+      done(this.env_output, code);
+    });
+  }, this.index * this.startDelay);
+};
 
 const userOptions = JSON.parse(process.env.VUE_NIGHTWATCH_USER_OPTIONS || '{}');
 
@@ -53,6 +127,10 @@ const seleniumConfig = {
  * Put sel helper method into global object
  */
 global.sel = sel;
+
+/* process.on('message', (...args) => {
+  console.log(args);
+}); */
 
 module.exports = deepmerge({
   src_folders: [path.resolve('tests', 'e2e', 'specs')],
@@ -101,4 +179,9 @@ module.exports = deepmerge({
       },
     },
   },
+  test_workers: {
+    enabled: true,
+    workers: 2,
+  },
+  live_output: true,
 }, userOptions);
