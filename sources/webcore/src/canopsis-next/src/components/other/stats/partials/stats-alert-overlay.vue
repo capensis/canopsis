@@ -3,12 +3,12 @@
     v-alert(:value="value", :type="type")
       v-layout(align-center)
         v-flex
-          span {{ $t('errors.statsRequestProblem') }}
-        v-flex(v-show="hasMessage")
+          span {{ message }}
+        v-flex(v-show="hasErrorMessage")
           v-tooltip.alert-tooltip(top)
             v-btn.ml-2.mr-0(slot="activator", icon, small)
               v-icon.alert-tooltip-icon help
-            span {{ message }}
+            span {{ errorMessage }}
 </template>
 
 <script>
@@ -27,14 +27,18 @@ export default {
       type: String,
       default: null,
     },
+    errorMessage: {
+      type: String,
+      default: null,
+    },
     type: {
       type: String,
       default: 'error',
     },
   },
   computed: {
-    hasMessage() {
-      return Boolean(this.message);
+    hasErrorMessage() {
+      return Boolean(this.errorMessage);
     },
   },
 };

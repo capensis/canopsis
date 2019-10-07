@@ -1,13 +1,18 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+    stats-alert-overlay(
+      :value="hasError",
+      :message="errorMessage",
+      :errorMessage="serverErrorMessage"
+    )
     stats-pareto-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
 <script>
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
 import { SORT_ORDERS } from '@/constants';
@@ -26,6 +31,7 @@ export default {
   mixins: [
     entitiesStatsMixin,
     widgetQueryMixin,
+    widgetStatsWrapperMixin,
     widgetStatsChartWrapperMixin,
   ],
   props: {
@@ -155,7 +161,6 @@ export default {
     async fetchList() {
       try {
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         const { values, aggregations } = await this.fetchStatsListWithoutStore({
@@ -165,7 +170,6 @@ export default {
         this.total = aggregations[this.statTitle].sum;
         this.stats = values.filter(stat => stat[this.statTitle].value);
       } catch (err) {
-        this.hasError = true;
         this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;

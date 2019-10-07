@@ -1,7 +1,11 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+    stats-alert-overlay(
+      :value="hasError",
+      :message="errorMessage",
+      :errorMessage="serverErrorMessage"
+    )
     stats-histogram-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
@@ -13,6 +17,7 @@ import { STATS_DEFAULT_COLOR } from '@/constants';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
@@ -30,6 +35,7 @@ export default {
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
+    widgetStatsWrapperMixin,
     widgetStatsChartWrapperMixin,
   ],
   computed: {

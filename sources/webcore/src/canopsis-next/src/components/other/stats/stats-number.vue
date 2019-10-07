@@ -2,7 +2,11 @@
   div
     v-card.position-relative
       progress-overlay(:pending="pending")
-      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+      stats-alert-overlay(
+        :value="hasError",
+        :message="errorMessage",
+        :errorMessage="serverErrorMessage"
+      )
       v-data-table(
         :items="stats",
         :headers="tableHeaders",
@@ -36,6 +40,7 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
@@ -56,6 +61,7 @@ export default {
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
+    widgetStatsWrapperMixin,
     widgetStatsTableWrapperMixin,
   ],
   props: {
@@ -67,7 +73,6 @@ export default {
   data() {
     return {
       pending: true,
-      hasError: false,
       serverErrorMessage: null,
       stats: [],
       pagination: {
@@ -165,7 +170,6 @@ export default {
         const { limit, sortOrder } = this.query;
 
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         const { values } = await this.fetchStatsListWithoutStore({
@@ -181,7 +185,6 @@ export default {
           descending: sortOrder === SORT_ORDERS.desc,
         };
       } catch (err) {
-        this.hasError = true;
         this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;
