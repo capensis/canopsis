@@ -56,9 +56,6 @@ canopsis_common_engines:
   -
     module: task_importctx
     name: task_importctx
-  -
-    module: task_mail
-    name: task_mail
 
 # When choosing canopsis_engines_type: "python"
 canopsis_python_engines:
