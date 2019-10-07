@@ -55,9 +55,6 @@ canopsis_python_engines:
     name: alerts
   -
     module: cleaner
-    name: cleaner_alerts
-  -
-    module: cleaner
     name: cleaner_events
   -
     module: dynamic
