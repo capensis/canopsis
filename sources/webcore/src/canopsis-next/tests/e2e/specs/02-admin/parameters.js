@@ -3,20 +3,35 @@ const uid = require('uid');
 
 const { LANGUAGES_POSITIONS } = require('../../constants');
 const { generateTemporaryUser } = require('../../helpers/entities');
+const { createAdminUser, removeUser } = require('../../helpers/api');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.user = {};
 
+    const { data } = await createAdminUser();
+
+    browser.globals.credentials = {
+      password: data.password,
+      username: data._id,
+    };
+
     await browser.maximizeWindow()
-      .completed.loginAsAdmin();
+      .completed.login(browser.globals.credentials.username, browser.globals.credentials.password);
 
     done();
   },
 
-  after(browser, done) {
+  async after(browser, done) {
     browser.completed.logout()
-      .end(done);
+      .end();
+
+    await removeUser(browser.globals.credentials.username);
+
+    delete browser.globals.credentials;
+    delete browser.globals.user;
+
+    done();
   },
 
   'Create temporary user without interface language': (browser) => {

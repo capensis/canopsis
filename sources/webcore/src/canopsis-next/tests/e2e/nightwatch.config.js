@@ -74,6 +74,7 @@ module.exports = deepmerge({
     enabled: process.env.TEST_WORKERS_ENABLED === 'true',
     workers: Number(process.env.TEST_WORKERS_COUNT),
   },
+  live_output: true,
 
   test_settings: {
     default: {
