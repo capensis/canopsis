@@ -69,8 +69,6 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ### Utilisation de engine-axe
 
 ```
-  -autoDeclareTickets
-        Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
@@ -81,7 +79,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue
-        Publie les événements sur cette queue. (par défaut "Engine_watcher")
+        Publie les événements sur cette file. (par défaut "Engine_watcher")
   -version
         version infos
 ```
@@ -90,7 +88,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 ```
   -consumeQueue string
-        Consomme les évènements venant de cette queue. (default "Engine_che").
+        Consomme les évènements venant de cette file. (default "Engine_che").
   -createContext
         Active la création de context graph. Activé par défaut.
         WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
@@ -109,7 +107,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -processEvent
         enable event processing. enabled by default. (default true)
   -publishQueue
-        Publie les événements sur cette queue. (default "Engine_event_filter")
+        Publie les événements sur cette file. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
   -version
@@ -144,7 +142,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue string
-        Publie les événements sur cette queue. (par défaut "Engine_action")
+        Publie les événements sur cette file. (par défaut "Engine_action")
   -version
         version infos
 ```
