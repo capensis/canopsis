@@ -45,6 +45,9 @@ canopsis_common_engines:
     module: event_filter
     name: event_filter
   -
+    module: metric
+    name: metric
+  -
     module: scheduler
     name: scheduler
   -
