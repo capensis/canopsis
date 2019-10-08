@@ -4,7 +4,8 @@
     stats-alert-overlay(
       :value="hasError",
       :message="errorMessage",
-      :errorMessage="serverErrorMessage"
+      :errorMessage="serverErrorMessage",
+      :stackError="stackError"
     )
     stats-curves-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>

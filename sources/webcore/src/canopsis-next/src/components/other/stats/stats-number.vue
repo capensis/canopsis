@@ -5,7 +5,8 @@
       stats-alert-overlay(
         :value="hasError",
         :message="errorMessage",
-        :errorMessage="serverErrorMessage"
+        :errorMessage="serverErrorMessage",
+        :stackError="stackError"
       )
       v-data-table(
         :items="stats",
