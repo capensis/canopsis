@@ -15,6 +15,11 @@
   tags:
     - cps_config
 
+- import_tasks: config-python-engines.yml
+  tags:
+    - cps_config
+  when: canopsis_engines_type == "python"
+
 - import_tasks: config-go-engines.yml
   tags:
     - cps_config

@@ -11,7 +11,12 @@
   systemd:
     daemon-reload: yes
 
-- name: Override amqp2engines.conf to disable most Python engines
+- name: Override initialisation.toml with initialisation.toml.example
   copy:
-    src: go-engines/amqp2engines.conf
+    src: "{{ canopsis_home }}/etc/initialisation.toml.example"
+    dest: "{{ canopsis_home }}/etc/initialisation.toml"
+
+- name: Override amqp2engines.conf with amqp2engines-go.conf.example
+  copy:
+    src: "{{ canopsis_home }}/etc/amqp2engines-go.conf.example"
     dest: "{{ canopsis_home }}/etc/amqp2engines.conf"

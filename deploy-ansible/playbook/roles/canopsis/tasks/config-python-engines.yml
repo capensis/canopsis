@@ -1,0 +1,5 @@
+---
+- name: Override amqp2engines.conf with amqp2engines-python.conf.example
+  copy:
+    src: "{{ canopsis_home }}/etc/amqp2engines-python.conf.example"
+    dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
