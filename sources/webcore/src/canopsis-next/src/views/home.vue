@@ -15,7 +15,7 @@ export default {
       pendingDefaultView: true,
     };
   },
-  async created() {
+  async mounted() {
     await this.redirectToDefaultView();
 
     this.pendingDefaultView = false;

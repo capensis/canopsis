@@ -46,7 +46,7 @@ export default {
 <style lang="scss" scoped>
   .v-tabs.visible {
     & /deep/ .v-tabs__bar {
-      display: block;
+      display: block!important;
     }
   }
 </style>
