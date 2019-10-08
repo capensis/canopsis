@@ -435,6 +435,7 @@ def __format_pbehavior(pbehavior):
     pbehavior["behavior"] = pbehavior.pop("name")
     pbehavior["dtstart"] = pbehavior.pop("tstart")
     pbehavior["dtend"] = pbehavior.pop("tstop")
+    pbehavior["rrule"] = pbehavior.get("rrule", "")
 
     # parse the rrule to get is "text"
     rrule = {}
@@ -446,22 +447,25 @@ def __format_pbehavior(pbehavior):
         if rrule_str[0:6] == "RRULE:":
             rrule_str = rrule_str[6:]
 
-        freq = get_rrule_freq(rrule_str)
+        try:
+            freq = get_rrule_freq(rrule_str)
 
-        if freq == "SECONDLY":
-            rrule["text"] = EVERY.format("second")
-        elif freq == "MINUTELY":
-            rrule["text"] = EVERY.format("minute")
-        elif freq == "HOURLY":
-            rrule["text"] = EVERY.format("hour")
-        elif freq == "DAILY":
-            rrule["text"] = EVERY.format("day")
-        elif freq == "WEEKLY":
-            rrule["text"] = EVERY.format("week")
-        elif freq == "MONTHLY":
-            rrule["text"] = EVERY.format("month")
-        elif freq == "YEARLY":
-            rrule["text"] = EVERY.format("year")
+            if freq == "SECONDLY":
+                rrule["text"] = EVERY.format("second")
+            elif freq == "MINUTELY":
+                rrule["text"] = EVERY.format("minute")
+            elif freq == "HOURLY":
+                rrule["text"] = EVERY.format("hour")
+            elif freq == "DAILY":
+                rrule["text"] = EVERY.format("day")
+            elif freq == "WEEKLY":
+                rrule["text"] = EVERY.format("week")
+            elif freq == "MONTHLY":
+                rrule["text"] = EVERY.format("month")
+            elif freq == "YEARLY":
+                rrule["text"] = EVERY.format("year")
+        except ValueError as e:
+            print("Can't get rrule freq on rrule : {}".format("rrule_str"))
 
     pbehavior["rrule"] = rrule
 
