@@ -7,19 +7,19 @@
     owner: "{{ mongodb_user }}"
     group: "root"
     mode: 0600
-  when: mongodb_replication_replset and  mongodb_replication_replset != ''
+  when: mongodb_replication_replset | length > 0
 
 - name: set mongodb gid
   group: name=mongodb gid={{ mongodb_gid }} state=present
-  when: mongodb_gid
+  when: mongodb_gid is defined
 
 - name: set mongodb uid
   user: name=mongodb uid={{ mongodb_uid }} group=mongodb state=present
-  when: mongodb_uid
+  when: mongodb_uid is defined
 
 - name: reset mongodb folder and subfolders with new uid
   file: path={{ mongodb_storage_dbpath }} owner=mongodb group=mongodb follow=yes recurse=yes state=directory
-  when: mongodb_uid
+  when: mongodb_uid is defined
 
 - name: Create log dir if missing
   file: state=directory recurse=yes dest={{ mongodb_systemlog_path|dirname }} owner={{ mongodb_user }} group={{mongodb_user}} mode=0755
@@ -49,7 +49,7 @@
 
 - name: mongodb restart
   service: name={{ mongodb_daemon_name }} state=restarted
-  when: config_result|changed and mongodb_manage_service
+  when: config_result|changed and mongodb_manage_service|bool
 
 - name: Ensure service is started
   service: name={{ mongodb_daemon_name }} state=started
