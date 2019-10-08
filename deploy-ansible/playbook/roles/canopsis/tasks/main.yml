@@ -48,4 +48,4 @@
 - import_tasks: canopsis-dev.yml
   tags:
     - cps_dev
-  when: canopsis_dev_src_path
+  when: canopsis_dev_src_path | length > 0
