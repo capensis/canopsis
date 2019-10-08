@@ -25,7 +25,9 @@ const deepmerge = require('deepmerge');
 
 /* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
+const ChildProcess = require('nightwatch/lib/runner/cli/child-process');
 /* eslint-enable import/no-extraneous-dependencies */
+const { nightwatchRunWithQueue } = require('./helpers/nightwatch-child-process');
 
 const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
 
@@ -36,6 +38,8 @@ loadEnv(localEnvPath);
 loadEnv(baseEnvPath);
 
 const sel = require('./helpers/sel');
+
+ChildProcess.prototype.run = nightwatchRunWithQueue;
 
 const userOptions = JSON.parse(process.env.VUE_NIGHTWATCH_USER_OPTIONS || '{}');
 
@@ -74,6 +78,7 @@ module.exports = deepmerge({
     enabled: process.env.TEST_WORKERS_ENABLED === 'true',
     workers: Number(process.env.TEST_WORKERS_COUNT),
   },
+  live_output: true,
 
   test_settings: {
     default: {

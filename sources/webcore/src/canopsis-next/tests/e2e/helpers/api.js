@@ -12,6 +12,7 @@ const {
   generateRoleRightByChecksum,
 } = require('@/helpers/entities');
 const { generateTemporaryView } = require('./entities');
+const { queueFunction, onNextQueueFunction } = require('./nightwatch-child-process');
 
 const { CREDENTIALS } = require('../constants');
 const { USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } = require('@/constants');
@@ -132,6 +133,8 @@ async function createUserRole(role, rights, options = {}) {
 }
 
 async function createWidgetView(viewDefault) {
+  await onNextQueueFunction();
+
   const generatedView = generateTemporaryView();
 
   const response = await authAsAdmin();
@@ -152,19 +155,21 @@ async function createWidgetView(viewDefault) {
     group_id: groupId,
   }, options);
 
-  const [right] = await addRightsForView(viewId, options);
+  await queueFunction(async () => {
+    const [right] = await addRightsForView(viewId, options);
 
-  const [role] = await getRoleList('admin', options);
+    const [role] = await getRoleList('admin', options);
 
-  const checksum = USERS_RIGHTS_MASKS.read + USERS_RIGHTS_MASKS.update + USERS_RIGHTS_MASKS.delete;
-  await createUserRole(
-    role,
-    {
-      ...role.rights,
-      [right._id]: generateRoleRightByChecksum(checksum),
-    },
-    options,
-  );
+    const checksum = USERS_RIGHTS_MASKS.read + USERS_RIGHTS_MASKS.update + USERS_RIGHTS_MASKS.delete;
+    await createUserRole(
+      role,
+      {
+        ...role.rights,
+        [right._id]: generateRoleRightByChecksum(checksum),
+      },
+      options,
+    );
+  });
 
   return {
     viewId,
