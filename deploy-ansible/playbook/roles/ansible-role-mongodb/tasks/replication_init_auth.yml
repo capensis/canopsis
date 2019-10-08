@@ -17,7 +17,7 @@
   ignore_errors: true
 
 - include: auth_initialization.yml
-  when: mongodb_replica_init|failed
+  when: mongodb_replica_init is failed
 
 - name: Replication configuration | 2nd Pt
   mongodb_replication:
@@ -31,6 +31,6 @@
     host_type: "{{ item.host_type|default('replica') }}"
     hidden: "{{ item.hidden|default(false) }}"
     priority: "{{ item.priority|default(1.0) }}"
-  when: mongodb_replica_init|failed
+  when: mongodb_replica_init is failed
   with_items:
     - "{{ mongodb_replication_params|default([]) }}"

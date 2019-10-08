@@ -28,10 +28,10 @@
   when: mongodb_package == 'mongodb-org'
 
 - name: Install MongoDB package
-  apt: name={{item}} state=present update_cache=yes
-  with_items:
-    - "{{mongodb_package}}"
-    - numactl
+  apt:
+    name: "{{ mongodb_package }} numactl"
+    state: present
+    update_cache: yes
 
 - name: Add systemd configuration if present
   copy: src=mongodb.service dest=/lib/systemd/system/mongodb.service owner=root group=root mode=0640
