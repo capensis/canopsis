@@ -28,6 +28,7 @@ const seleniumServer = require('selenium-server');
 /* eslint-enable import/no-extraneous-dependencies */
 
 const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
+const nightWatchRecordConfig = require('./nightwatch-record.config.js');
 
 const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
 const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
@@ -74,7 +75,7 @@ module.exports = deepmerge({
     enabled: process.env.TEST_WORKERS_ENABLED === 'true',
     workers: Number(process.env.TEST_WORKERS_COUNT),
   },
-  live_output: true,
+  live_output: process.env.TEST_WORKERS_LIVE_OUTPUT_ENABLED === 'true',
 
   test_settings: {
     default: {
@@ -82,18 +83,7 @@ module.exports = deepmerge({
       selenium_port: seleniumConfig.port,
       silent: true,
 
-      videos: {
-        fileName: 'test-result', // Required field
-        nameAfterTest: true,
-        format: 'mp4',
-        enabled: false,
-        deleteOnSuccess: true,
-        path: path.resolve('tests', 'e2e', 'records'),
-        resolution: '1440x900',
-        fps: 15,
-        input: '',
-        videoCodec: 'libx264',
-      },
+      videos: nightWatchRecordConfig,
     },
 
     chrome: {
