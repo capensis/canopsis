@@ -1,14 +1,5 @@
 ---
 
-- name: Create keyFile
-  copy:
-    dest: "{{ mongodb_security_keyfile }}"
-    content: "{{ mongodb_keyfile_content }}"
-    owner: "{{ mongodb_user }}"
-    group: "root"
-    mode: 0600
-  when: mongodb_replication_replset | length > 0
-
 - name: set mongodb gid
   group: name=mongodb gid={{ mongodb_gid }} state=present
   when: mongodb_gid is defined

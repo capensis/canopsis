@@ -15,18 +15,6 @@
   include: configure.yml
   tags: [mongodb]
 
-- name: Include replication and auth configuration
-  include: replication_init_auth.yml
-  when: ( mongodb_replication_replset | length > 0
-        and mongodb_security_authorization == 'enabled'
-        and mongodb_master is defined and mongodb_master )
-  tags: [mongodb]
-
-- name: Include replication configuration
-  include: replication.yml
-  when: mongodb_replication_replset | length > 0
-  tags: [mongodb]
-
 - name: Check where admin user already exists
   command: >
     mongo --quiet -u {{ mongodb_user_admin_name }} \
@@ -35,35 +23,14 @@
   changed_when: false
   check_mode: no
   ignore_errors: true
-  when: ( mongodb_security_authorization == 'enabled'
-          and not mongodb_replication_replset )
+  when: mongodb_security_authorization == 'enabled'
   no_log: true
   tags: [mongodb]
 
 - name: Include authorization configuration
   include: auth_initialization.yml
   when: ( mongodb_security_authorization == 'enabled'
-          and not mongodb_replication_replset
           and mongodb_user_admin_check.rc != 0 )
-  tags: [mongodb]
-
-- name: create normal users with replicaset
-  mongodb_user_fixed:
-    database: "{{ item.database }}"
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    update_password: "{{ mongodb_user_update_password }}"
-    roles: "{{ item.roles }}"
-    login_user: "{{ mongodb_user_admin_name }}"
-    login_password: "{{ mongodb_user_admin_password }}"
-    login_port: "{{ mongodb_login_port|default(27017) }}"
-    login_host: "{{ mongodb_login_host|default('localhost') }}"
-  with_items:
-    - "{{ mongodb_users | default([]) }}"
-  when: ( mongodb_replication_replset
-        and mongodb_security_authorization == 'enabled'
-        and mongodb_master is defined and mongodb_master )
-  no_log: true
   tags: [mongodb]
 
 - name: create normal users without replicaset
@@ -78,8 +45,7 @@
     login_port: "{{ mongodb_net_port }}"
   with_items:
     - "{{ mongodb_users | default([]) }}"
-  when: ( mongodb_security_authorization == 'enabled'
-          and not mongodb_replication_replset )
+  when: mongodb_security_authorization == 'enabled'
   no_log: true
   tags: [mongodb]
 
