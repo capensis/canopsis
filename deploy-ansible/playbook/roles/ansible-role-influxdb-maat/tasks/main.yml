@@ -3,7 +3,7 @@
 - include_tasks: "{{ ansible_os_family }}.yml"
 
 - name: Start Influxdb
-  service:
+  systemd:
     name: influxdb
     state: started
   when: influxdb_database_name is defined
