@@ -4,8 +4,10 @@ set -e
 help_usage()
 {
 	echo "$0 [start|status|restart|stop|deploy|deploy-python|deploy-go]"
-	echo "  deploy|deploy-python: stop services then play ansible playbook (with Python engines)"
+	echo "  deploy-python: stop services then play ansible playbook (with Python engines)"
 	echo "  deploy-go: stop services then play ansible playbook (with Go engines)"
+	echo
+	echo "  deploy: use the default stack (currently: deploy-python)"
 	exit 1
 }
 
