@@ -13,7 +13,7 @@
         state: disabled
       when: ansible_os_family == "RedHat"
 
-- hosts: canopsis-standalone
+- hosts: canopsis
   remote_user: root
   roles:
     -

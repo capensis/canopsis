@@ -21,6 +21,6 @@ user_home=$(su - canopsis -c 'echo -n ${HOME}')
 
 source ${user_home}/venv-ansible/bin/activate
 
-ansible-playbook playbook/canopsis-standalone.yml \
+ansible-playbook playbook/canopsis.yml \
     -e "canopsis_engines_type=$engines_type" \
     -i inventory.self
