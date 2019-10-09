@@ -27,9 +27,15 @@
   with_items: "{{ mongodb_major_version }}"
   when: mongodb_package == 'mongodb-org'
 
+- name: Install numactl package
+  apt:
+    name: numactl
+    state: present
+    update_cache: yes
+
 - name: Install MongoDB package
   apt:
-    name: "{{ mongodb_package }} numactl"
+    name: "{{ mongodb_package }}"
     state: present
     update_cache: yes
 
