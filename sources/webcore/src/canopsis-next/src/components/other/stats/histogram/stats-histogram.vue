@@ -5,7 +5,7 @@
       :value="hasError",
       :message="errorMessage",
       :errorMessage="serverErrorMessage",
-      :stackError="stackError"
+      :editionError="editionError"
     )
     stats-histogram-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>

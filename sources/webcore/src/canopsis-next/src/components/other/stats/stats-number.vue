@@ -6,7 +6,7 @@
         :value="hasError",
         :message="errorMessage",
         :errorMessage="serverErrorMessage",
-        :stackError="stackError"
+        :editionError="editionError"
       )
       v-data-table(
         :items="stats",

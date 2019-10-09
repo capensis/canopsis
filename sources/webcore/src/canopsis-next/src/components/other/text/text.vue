@@ -1,7 +1,12 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+    stats-alert-overlay(
+      :value="hasError",
+      :message="errorMessage",
+      :errorMessage="serverErrorMessage",
+      :editionError="editionError"
+    )
     v-runtime-template(:template="compiledTemplate")
 </template>
 
@@ -10,11 +15,14 @@ import { isEmpty } from 'lodash';
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
+import { CANOPSIS_EDITION } from '@/constants';
+
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
@@ -32,6 +40,7 @@ export default {
     widgetQueryMixin,
     entitiesStatsMixin,
     widgetStatsQueryMixin,
+    widgetStatsWrapperMixin,
   ],
   props: {
     widget: {
@@ -42,7 +51,6 @@ export default {
   data() {
     return {
       pending: true,
-      hasError: false,
       serverErrorMessage: null,
       stats: {},
     };
@@ -50,6 +58,28 @@ export default {
   computed: {
     compiledTemplate() {
       return `<div>${compile(this.widget.parameters.template)}</div>`;
+    },
+    /**
+     * Check if there are 'stats' associated with the widget. As stats are only available with 'cat' edition
+     * Override editionError computed prop from widgetStatsWrapperMixin
+     */
+    editionError() {
+      return Object.keys(this.stats).length && this.edition === CANOPSIS_EDITION.core;
+    },
+    /**
+     * Get the right error message according to the situation (editionError, or serverError)
+     * Override errorMessage computed prop from widgetStatsWrapperMixin
+     */
+    errorMessage() {
+      if (this.editionError) {
+        return "Les statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis. Merci de supprimer les statistiques associées à ce widget depuis les paramètres du widget.";
+      }
+
+      if (this.serverErrorMessage) {
+        return this.$t('errors.statsRequestProblem');
+      }
+
+      return '';
     },
   },
   beforeCreate() {
@@ -92,7 +122,6 @@ export default {
     async fetchList() {
       try {
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         if (!isEmpty(this.widget.parameters.stats)) {
@@ -103,7 +132,6 @@ export default {
           this.stats = aggregations;
         }
       } catch (err) {
-        this.hasError = true;
         this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;

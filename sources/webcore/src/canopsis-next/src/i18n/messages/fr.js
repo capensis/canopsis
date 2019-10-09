@@ -927,7 +927,7 @@ export default {
     JSONNotValid: 'JSON non valide..',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
     statsRequestProblem: 'Erreur dans la récupération des statistiques',
-    statsWrongStackError: 'Les widgets de statistiques ne sont pas disponibles avec une stack Python',
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
   },
   calendar: {
     today: 'Aujourd\'hui',

@@ -1,10 +1,11 @@
 <template lang="pug">
   alert-overlay(:value="value", :opacity="1")
     v-layout.alert-content(align-center, justify-center)
-      v-tooltip.alert-tooltip(top, v-show="hasErrorMessage && !stackError")
+      v-tooltip.alert-tooltip(top, v-if="hasErrorMessage && !editionError")
         v-btn.ml-2.mr-0(slot="activator", icon, small)
-          v-icon.alert-tooltip-icon.error--text error
+          v-icon.error--text error
         span {{ errorMessage }}
+      v-icon.error--text(v-if="editionError") error
       p.error--text.mb-0.ml-1 {{ message }}
 </template>
 
@@ -28,7 +29,7 @@ export default {
       type: String,
       default: null,
     },
-    stackError: {
+    editionError: {
       type: Boolean,
       default: false,
     },

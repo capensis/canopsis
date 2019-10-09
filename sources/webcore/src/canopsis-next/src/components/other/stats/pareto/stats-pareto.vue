@@ -5,7 +5,7 @@
       :value="hasError",
       :message="errorMessage",
       :errorMessage="serverErrorMessage",
-      :stackError="stackError"
+      :editionError="editionError"
     )
     stats-pareto-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>

@@ -1029,7 +1029,7 @@ export default {
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
-    statsWrongStackError: 'Stats widgets are not available with Python stack',
+    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
   },
   calendar: {
     today: 'Today',

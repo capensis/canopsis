@@ -7,24 +7,24 @@
       v-layout(row, wrap)
         v-flex.my-1(
           xs12,
-          v-for="widgetType in availableWidgets",
-          :key="widgetType.value",
-          @click="selectWidgetType(widgetType.value)"
+          v-for="widget in availableWidgets",
+          :key="widget.value",
+          @click="selectWidgetType(widget.value)"
         )
-          v-card.widgetType(:data-test="`widget-${widgetType.value}`")
+          v-card.widgetType(:data-test="`widget-${widget.value}`")
             v-card-title(primary-title)
               v-layout(wrap, justify-between)
                 v-flex(xs11)
-                  div.subheading {{ widgetType.title }}
+                  div.subheading {{ widget.title }}
                 v-flex
-                  v-icon {{ widgetType.icon }}
+                  v-icon {{ widget.icon }}
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, CANOPSIS_STACK } from '@/constants';
+import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, CANOPSIS_EDITION } from '@/constants';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
@@ -99,14 +99,14 @@ export default {
           title: this.$t('modals.widgetCreation.types.text.title'),
           value: WIDGET_TYPES.text,
           icon: 'view_headline',
-          group: 'stat',
+          group: 'base',
         },
       ],
     };
   },
   computed: {
     availableWidgets() {
-      if (this.stack === CANOPSIS_STACK.python) {
+      if (this.edition === CANOPSIS_EDITION.core) {
         return this.widgetsTypes.filter(widget => widget.group !== 'stat');
       }
 

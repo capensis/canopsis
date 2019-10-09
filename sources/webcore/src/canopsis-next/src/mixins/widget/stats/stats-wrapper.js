@@ -1,4 +1,4 @@
-import { CANOPSIS_STACK } from '@/constants';
+import { CANOPSIS_EDITION } from '@/constants';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -10,17 +10,17 @@ export default {
     };
   },
   computed: {
-    stackError() {
-      return this.stack === CANOPSIS_STACK.python;
+    editionError() {
+      return this.edition === CANOPSIS_EDITION.core;
     },
 
     hasError() {
-      return this.stackError || this.serverErrorMessage;
+      return this.editionError || this.serverErrorMessage;
     },
 
     errorMessage() {
-      if (this.stackError) {
-        return this.$t('errors.statsWrongStackError');
+      if (this.editionError) {
+        return this.$t('errors.statsWrongEditionError');
       }
 
       if (this.serverErrorMessage) {
