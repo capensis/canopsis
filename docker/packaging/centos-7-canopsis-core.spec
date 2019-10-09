@@ -8,7 +8,7 @@ License:	AGPLv3 (Canopsis Core), Capensis, all rights reserved (CAT)
 URL:		https://git.canopsis.net/canopsis/canopsis
 
 BuildRequires: rsync
-Requires: zlib libevent libcurl libtool openssl bzip2 cyrus-sasl openldap libcurl python openldap libxml2 libxslt rsync librsync libacl libxslt libffi xmlsec1 xmlsec1-openssl libtool net-snmp epel-release sudo
+Requires: zlib libevent libcurl openssl bzip2 cyrus-sasl python openldap libxml2 rsync librsync libacl libxslt libffi xmlsec1 xmlsec1-openssl net-snmp epel-release sudo
 
 %description
 Canopsis open-core package.
