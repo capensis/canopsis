@@ -13,7 +13,7 @@
   failed_when: "ansiblecrap is failed and 'Could not find the requested service' not in ansiblecrap.msg"
 
 - name: Initializing RabbitMQ for Go engines
-  shell: ". /opt/canopsis/etc/go-engines-vars.conf && {{ canopsis_home }}/bin/init -conf {{ canopsis_home }}/etc/initialisation.toml"
+  shell: "eval $(grep -v '^#' /opt/canopsis/etc/go-engines-vars.conf | sed 's/^/export /') && {{ canopsis_home }}/bin/init -conf {{ canopsis_home }}/etc/initialisation.toml"
   register: goinitcmd
   failed_when: goinitcmd.rc != 0
 
