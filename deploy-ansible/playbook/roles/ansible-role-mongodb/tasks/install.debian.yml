@@ -41,7 +41,8 @@
   notify: reload systemd
 
 - name: reload systemd
-  shell: systemctl daemon-reload
+  systemd:
+    daemon-reload: yes
   when: mongodb_manage_service|bool
 
 - meta: flush_handlers
