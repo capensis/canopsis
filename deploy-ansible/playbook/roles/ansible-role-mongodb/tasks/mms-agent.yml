@@ -29,5 +29,5 @@
   notify: mongodb-mms-automation-agent restart
 
 - name: Ensure that the MMS agent is started
-  service: name=mongodb-mms-automation-agent state=started enabled=yes
+  systemd: name=mongodb-mms-automation-agent state=started enabled=yes
   when: mongodb_manage_service|bool
