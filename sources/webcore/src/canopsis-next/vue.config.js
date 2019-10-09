@@ -6,6 +6,34 @@ module.exports = {
   chainWebpack: (config) => {
     config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
     config.resolve.alias.store.set('handlebars', 'handlebars/dist/handlebars.js');
+    config.module.rule('vue').use('vue-loader').loader('vue-loader')
+      .tap((options) => {
+        // eslint-disable-next-line no-param-reassign
+        options.compilerOptions = {
+          ...options.compilerOptions,
+
+          directives: {
+            'field-model': function fieldModel(el, dir) {
+              const { value } = dir;
+              const path = value.split('.');
+
+              path.shift();
+
+              const baseValueExpression = '$$v';
+              const assignment = `$updateField([${path.map(v => JSON.stringify(v)).join(', ')}], ${baseValueExpression})`;
+
+              // eslint-disable-next-line no-param-reassign
+              el.model = {
+                value: `(${value})`,
+                expression: JSON.stringify(value),
+                callback: `function (${baseValueExpression}) {${assignment}}`,
+              };
+            },
+          },
+        };
+
+        return options;
+      });
 
     return config;
   },
