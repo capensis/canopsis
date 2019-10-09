@@ -66,21 +66,6 @@ export default {
     editionError() {
       return Object.keys(this.stats).length && this.edition === CANOPSIS_EDITION.core;
     },
-    /**
-     * Get the right error message according to the situation (editionError, or serverError)
-     * Override errorMessage computed prop from widgetStatsWrapperMixin
-     */
-    errorMessage() {
-      if (this.editionError) {
-        return "Les statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis. Merci de supprimer les statistiques associées à ce widget depuis les paramètres du widget.";
-      }
-
-      if (this.serverErrorMessage) {
-        return this.$t('errors.statsRequestProblem');
-      }
-
-      return '';
-    },
   },
   beforeCreate() {
     registerHelper('stat', ({ hash }) => {

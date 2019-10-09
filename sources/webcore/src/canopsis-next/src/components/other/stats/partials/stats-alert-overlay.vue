@@ -1,7 +1,7 @@
 <template lang="pug">
   alert-overlay(:value="value", :opacity="1")
     v-layout.alert-content(align-center, justify-center)
-      v-tooltip.alert-tooltip(top, v-if="hasErrorMessage && !editionError")
+      v-tooltip(top, v-if="hasErrorMessage && !editionError")
         v-btn.ml-2.mr-0(slot="activator", icon, small)
           v-icon.error--text error
         span {{ errorMessage }}
