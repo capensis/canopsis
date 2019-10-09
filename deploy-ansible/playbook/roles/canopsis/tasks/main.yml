@@ -3,10 +3,6 @@
   tags:
     - cps_mongodb
 
-- import_tasks: config-influxdb.yml
-  tags:
-    - cps_influxdb
-
 - import_tasks: config-rabbitmq.yml
   tags:
     - cps_rabbitmq
