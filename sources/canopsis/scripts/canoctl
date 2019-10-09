@@ -14,8 +14,8 @@ help_usage()
 # to be missing in some installations.
 check_go_prerequisites_or_die()
 {
-	if ! [ -f /opt/canopsis/etc/initialisation.toml ]; then
-		echo "deploy-go was called, but no /opt/canopsis/etc/initialisation.toml file was found"
+	if ! [ -f /opt/canopsis/etc/initialisation.toml.example ]; then
+		echo "deploy-go was called, but no /opt/canopsis/etc/initialisation.toml.example file was found"
 		echo "Is the canopsis-engines-go package installed?"
 		exit 1
 	fi
