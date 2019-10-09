@@ -12,7 +12,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: Ensure rabbitmq is started and enabled (if configured).
-  service:
+  systemd:
     name: "{{ rabbitmq_daemon }}"
     state: "{{ rabbitmq_state }}"
     enabled: "{{ rabbitmq_enabled }}"
