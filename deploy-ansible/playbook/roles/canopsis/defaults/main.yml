@@ -13,7 +13,7 @@ canopsis_amqp_userid: cpsrabbit
 canopsis_amqp_password: canopsis
 canopsis_amqp_exchange: canopsis
 canopsis_amqp_vhost: canopsis
-canopsis_amqp_port: 5672
+canopsis_amqp_port: "5672"
 
 canopsis_rabbit_nodename: rabbit@{{ ansible_hostname }}
 
@@ -21,16 +21,16 @@ canopsis_mongo_host: localhost
 canopsis_mongo_db: canopsis
 canopsis_mongo_user: cpsmongo
 canopsis_mongo_password: canopsis
-canopsis_mongo_port: 27017
+canopsis_mongo_port: "27017"
 
 canopsis_influxdb_host: localhost
-canopsis_influxdb_port: 4444
+canopsis_influxdb_port: "4444"
 canopsis_influxdb_user: cpsinflux
 canopsis_influxdb_password: canopsis
 canopsis_influxdb_db: canopsis
 
 canopsis_redis_host: localhost
-canopsis_redis_port: 6379
+canopsis_redis_port: "6379"
 canopsis_redis_dbnum: 0
 
 # use 'go' if you want to use Go engines
