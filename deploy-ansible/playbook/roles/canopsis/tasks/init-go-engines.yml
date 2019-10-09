@@ -13,9 +13,7 @@
   failed_when: "ansiblecrap is failed and 'Could not find the requested service' not in ansiblecrap.msg"
 
 - name: Initializing RabbitMQ for Go engines
-  shell: "{{ canopsis_home }}/bin/init -conf {{ canopsis_home }}/etc/initialisation.toml"
-  environment:
-    CPS_AMQP_URL: "amqp://{{ canopsis_amqp_userid }}:{{ canopsis_amqp_password }}@{{ canopsis_amqp_host }}:{{ canopsis_amqp_port }}/{{ canopsis_amqp_vhost }}"
+  shell: ". /opt/canopsis/etc/go-engines-vars.conf && {{ canopsis_home }}/bin/init -conf {{ canopsis_home }}/etc/initialisation.toml"
   register: goinitcmd
   failed_when: goinitcmd.rc != 0
 

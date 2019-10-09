@@ -1,15 +1,8 @@
 ---
-- name: Create canopsis-engine-go .service directory
-  file: path=/etc/systemd/system/canopsis-engine-go@.service.d state=directory
-
 - name: Deploy common environment variables for Go engines
   template:
-    src: go-engines/all-go-engines.j2
-    dest: "/etc/systemd/system/canopsis-engine-go@.service.d/all-go-engines.conf"
-
-- name: Reload systemd
-  systemd:
-    daemon-reload: yes
+    src: go-engines/go-engines-vars.j2
+    dest: "{{ canopsis_home }}/etc/go-engines-vars.conf"
 
 - name: Override initialisation.toml with initialisation.toml.example
   copy:
