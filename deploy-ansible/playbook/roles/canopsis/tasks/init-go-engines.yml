@@ -16,8 +16,8 @@
   shell: "{{ canopsis_home }}/bin/init -conf {{ canopsis_home }}/etc/initialisation.toml"
   environment:
     CPS_AMQP_URL: "amqp://{{ canopsis_amqp_userid }}:{{ canopsis_amqp_password }}@{{ canopsis_amqp_host }}:{{ canopsis_amqp_port }}/{{ canopsis_amqp_vhost }}"
-  register: go-init-cmd
-  failed_when: go-init-cmd.rc != 0
+  register: goinitcmd
+  failed_when: goinitcmd.rc != 0
 
 - name: Start and enable Canopsis default Go engines
   systemd:
