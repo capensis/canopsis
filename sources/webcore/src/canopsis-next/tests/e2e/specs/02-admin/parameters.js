@@ -2,48 +2,34 @@
 const uid = require('uid');
 
 const { LANGUAGES_POSITIONS } = require('../../constants');
-const { generateTemporaryUser } = require('../../helpers/entities');
-const { createAdminUser, removeUser } = require('../../helpers/api');
+const { createUser, removeUser } = require('../../helpers/api');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.user = {};
 
-    const { data } = await createAdminUser();
-
-    browser.globals.credentials = {
-      password: data.password,
-      username: data._id,
-    };
-
     await browser.maximizeWindow()
-      .completed.login(browser.globals.credentials.username, browser.globals.credentials.password);
+      .completed.loginAsAdmin();
+
+    const { data: user } = await createUser({
+      ui_language: undefined,
+    });
+
+    browser.globals.user = {
+      ...user,
+      username: user._id,
+    };
 
     done();
   },
 
   async after(browser, done) {
-    browser.completed.logout()
-      .end();
+    browser.end();
 
-    await removeUser(browser.globals.credentials.username);
-
-    delete browser.globals.credentials;
+    await removeUser(browser.globals.user.username);
     delete browser.globals.user;
 
     done();
-  },
-
-  'Create temporary user without interface language': (browser) => {
-    const user = generateTemporaryUser();
-
-    browser.completed.user.create(user, (createdUser) => {
-      browser.globals.user = {
-        ...createdUser,
-
-        password: user.password,
-      };
-    });
   },
 
   'Change parameters with some name': (browser) => {
@@ -128,14 +114,5 @@ module.exports = {
 
     browser.page.auth.logout()
       .verifyPageElementsAfter();
-  },
-
-  'Delete temporary user': (browser) => {
-    const { user } = browser.globals;
-
-    browser.completed.loginAsAdmin();
-    browser.completed.user.delete(user._id, () => {
-      delete browser.globals.user;
-    });
   },
 };

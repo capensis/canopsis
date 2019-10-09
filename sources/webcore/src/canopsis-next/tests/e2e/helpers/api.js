@@ -54,7 +54,17 @@ function authAsAdmin() {
 async function createUser(user) {
   const { headers } = await authAsAdmin();
 
-  const userData = prepareUserByData(user);
+  const fakeUser = {
+    ...generateUser(),
+    _id: faker.internet.userName(),
+    password: faker.internet.password(),
+    mail: faker.internet.email(),
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    ui_language: DEFAULT_LOCALE,
+    ...user,
+  };
+  const userData = prepareUserByData(fakeUser);
 
   const result = await request.post(API_ROUTES.user.create, qs.stringify({ user: JSON.stringify(userData) }), {
     headers: {
@@ -63,8 +73,8 @@ async function createUser(user) {
     },
   });
 
-  result.data._id = user._id;
-  result.data.password = user.password;
+  result.data._id = fakeUser._id;
+  result.data.password = fakeUser.password;
 
   return result;
 }
@@ -75,19 +85,10 @@ async function createUser(user) {
  * @returns {Object}
  */
 function createAdminUser(defaultUser) {
-  const user = { ...generateUser(), ...defaultUser };
-
-  if (!defaultUser) {
-    user._id = faker.internet.userName();
-    user.password = faker.internet.password();
-    user.mail = faker.internet.email();
-    user.firstname = faker.name.firstName();
-    user.lastname = faker.name.lastName();
-    user.ui_language = DEFAULT_LOCALE;
-    user.role = 'admin';
-  }
-
-  return createUser(user);
+  return createUser({
+    ...defaultUser,
+    role: 'admin',
+  });
 }
 
 /**
