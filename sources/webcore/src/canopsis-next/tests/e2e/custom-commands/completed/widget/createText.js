@@ -2,7 +2,7 @@
 
 const { API_ROUTES } = require('@/config');
 
-module.exports.command = function createServiceWeather(
+module.exports.command = function createText(
   {
     parameters: {
       template,
