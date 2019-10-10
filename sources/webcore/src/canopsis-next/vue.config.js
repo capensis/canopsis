@@ -13,14 +13,18 @@ module.exports = {
           ...options.compilerOptions,
 
           directives: {
-            'field-model': function fieldModel(el, dir) {
-              const { value } = dir;
+            field(el, dir) {
+              const { value, modifiers } = dir;
               const path = value.split('.');
 
               path.shift();
 
               const baseValueExpression = '$$v';
-              const assignment = `$updateField([${path.map(v => JSON.stringify(v)).join(', ')}], ${baseValueExpression})`;
+              let assignment = `$form.updateField([${path.map(v => JSON.stringify(v)).join(', ')}], ${baseValueExpression})`;
+
+              if (modifiers && modifiers.model) {
+                assignment = `$form.updateModel(${baseValueExpression})`;
+              }
 
               // eslint-disable-next-line no-param-reassign
               el.model = {

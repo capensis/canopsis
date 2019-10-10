@@ -1,15 +1,15 @@
 <template lang="pug">
   div
     pbehavior-general-form(
-      v-field-model="form.general",
+      v-field="form.general",
       :noFilter="noFilter"
     )
     pbehavior-exdates-form.mt-2(
       v-show="form.general.rrule",
-      v-field-model="form.exdate"
+      v-field="form.exdate"
     )
     pbehavior-comments-form.mt-2(
-      v-field-model="form.comments",
+      v-field="form.comments",
       :author="author"
     )
 </template>

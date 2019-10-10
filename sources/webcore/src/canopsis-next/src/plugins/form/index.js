@@ -2,10 +2,22 @@ import { setIn } from '@/helpers/immutable';
 
 export default {
   install(Vue) {
-    Vue.prototype.$updateField = function updateField(path, value) {
-      const { event = 'input', prop = 'value' } = this.$options.model || {};
+    Object.defineProperty(Vue.prototype, '$form', {
+      get() {
+        return {
+          updateField: (path, value) => {
+            const { event = 'input', prop = 'value' } = this.$options.model || {};
 
-      this.$emit(event, setIn(this[prop], path, value));
-    };
+            this.$emit(event, setIn(this[prop], path, value));
+          },
+
+          updateModel: (value) => {
+            const { event = 'input' } = this.$options.model || {};
+
+            this.$emit(event, value);
+          },
+        };
+      },
+    });
   },
 };
