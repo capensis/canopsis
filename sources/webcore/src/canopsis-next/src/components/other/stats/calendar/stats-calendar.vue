@@ -10,7 +10,7 @@
         @edit="editEvent"
       )
         v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
-          v-card-text
+          v-card-text(v-if="calendarEvent.data.meta")
             v-layout(
               v-for="(event, index) in calendarEvent.data.meta.events",
               :key="`popover-event-${index}`",
@@ -27,11 +27,12 @@
 </template>
 
 <script>
-import { get, omit, pick, isEmpty } from 'lodash';
+import { get, omit, isEmpty } from 'lodash';
+import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { MODALS, WIDGET_TYPES } from '@/constants';
+import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
 
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
@@ -144,8 +145,6 @@ export default {
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
       };
 
-      const query = { ...pick(meta, ['tstart', 'tstop']) };
-
       if (!isEmpty(event.data.meta.filter)) {
         widgetParameters.viewFilters = [meta.filter];
         widgetParameters.mainFilter = meta.filter;
@@ -154,7 +153,10 @@ export default {
       this.showModal({
         name: MODALS.alarmsList,
         config: {
-          query,
+          query: {
+            tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
+            tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
+          },
           widget: {
             ...widget,
 

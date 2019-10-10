@@ -1,6 +1,6 @@
 # API healthcheck
 
-L'API healthcheck permet d'obtenir l'état de fonctionnement de Canopsis ; par exemple elle permet de savoir si les services nécessaires sont disponibles.
+L'API healthcheck permet d'obtenir l'état de fonctionnement de Canopsis ; elle permet, par exemple, de savoir si les services nécessaires sont disponibles.
 
 ## Configuration
 
@@ -22,12 +22,12 @@ systemctl_engine_prefix = canopsis-engine@
 
 Les paramètres sont :
 
-- `check_amqp_limit_size` : Le nombre maximum de messages dans une queue RabbitMQ, au delà la queue est considérée comme surchargée.
-- `check_amqp_queues` : La liste, séparée par des virgules et sans espaces, des queues de RabbitMQ qui seront surveillées.
+- `check_amqp_limit_size` : Le nombre maximum de messages dans une file RabbitMQ ; au delà, la file est considérée comme surchargée.
+- `check_amqp_queues` : La liste, séparée par des virgules et sans espaces, des files RabbitMQ qui seront surveillées.
 - `check_collections` : La liste, séparée par des virgules et sans espaces, des collections MongoDB dont l'existence sera surveillée.
 - `check_engines` : La liste, séparée par des virgules et sans espaces, des moteurs, Python comme Go, qui seront surveillés.
-- `check_ts_db` : Le nom de la base de données de stats.
-- `check_webserver` : Le nom utilisé dans le système pour le webserver de Canopsis.
+- `check_ts_db` : Le nom de la base de données de statistiques.
+- `check_webserver` : Le nom utilisé dans le système pour le serveur web de Canopsis.
 - `systemctl_engine_prefix` : Le préfixe utilisé dans `systemctl` pour les différents moteurs de Canopsis.
 
 ### Récupérer l'état global
@@ -111,17 +111,17 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/healthcheck/?criticals=am
 
 La réponse contient les champs suivants :
 
-* amqp, cache, database, engines, timeseries : un message d'erreur associé à chacque service ; rien s'il n'y a pas d'erreur détectée ;
-* timestamp : le moment de création du résultat ;
-* overall : un booléen pour savoir si l'état global est bon ou mauvais.
+* amqp, cache, database, engines, timeseries : un message d'erreur associé à chaque service ; rien s'il n'y a pas d'erreur détectée ;
+* timestamp : le moment de création du résultat ;
+* overall : un booléen pour savoir si l'état global est bon ou mauvais.
 
-Concernant `overall`, par défaut, tous les services sont pris en compte pour calculer l'état global. Il est toutefois possible de sélectionner les services à considérer comme indispensable en utilisant le paramètre `criticals` dans l'url GET.
+Concernant `overall`, par défaut, tous les services sont pris en compte pour calculer l'état global. Il est toutefois possible de sélectionner les services à considérer comme indispensables en utilisant le paramètre `criticals` dans l'URL GET.
 `criticals` est une liste de services séparés par des virgules.
 
 ### Ce qui est vérifié
 
-* amqp : la connexion est ouverte, le channel aussi, et il est possible de publier un message. On vérifie aussi qu'une liste de queues existe bien, qu'il y a au moins un Consumer dessus, et que la queue est active et non saturée (> 100 000 messages en attente) ;
-* cache: la connexion est fonctionnelle et il est possible de faire un ECHO ;
-* database: la connexion fonctionne et il est possible de lire dans une liste de collections ;
-* engines : hors docker, vérifie par systemctl que les engines de bases (python) sont "running" ;
-* time series : vérifie que la database existe et que l'on peut lire des measurements.
+* amqp : la connexion et le canal sont ouverts, et il est possible de publier un message. On vérifie aussi qu'une liste de files existe bien, qu'il y a au moins un Consumer dessus, et que la file est active et non saturée (> 100 000 messages en attente) ;
+* cache : la connexion est fonctionnelle et il est possible de faire un ECHO ;
+* database : la connexion fonctionne et il est possible de lire dans une liste de collections ;
+* engines : hors Docker, vérifie avec `systemctl` que les engines de base (Python) sont en état *running* ;
+* time series : vérifie que la base existe et que l'on peut y lire des *measurements*.

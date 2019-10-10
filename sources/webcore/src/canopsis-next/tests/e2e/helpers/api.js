@@ -24,6 +24,12 @@ const request = axios.create({
   withCredentials: true,
 });
 
+/**
+ * Login through request
+ * @param {string} username
+ * @param {string} password
+ * @returns {Promise}
+ */
 function auth(username, password) {
   return request.post(API_ROUTES.auth, {
     username,
@@ -33,14 +39,33 @@ function auth(username, password) {
   });
 }
 
+/**
+ * Login as root
+ * @returns {Promise}
+ */
 function authAsAdmin() {
   return auth(CREDENTIALS.admin.username, CREDENTIALS.admin.password);
 }
 
+/**
+ * Post a user with random data
+ * @param {Object} [user]
+ * @returns {Object}
+ */
 async function createUser(user) {
   const { headers } = await authAsAdmin();
 
-  const userData = prepareUserByData(user);
+  const fakeUser = {
+    ...generateUser(),
+    _id: faker.internet.userName(),
+    password: faker.internet.password(),
+    mail: faker.internet.email(),
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    ui_language: DEFAULT_LOCALE,
+    ...user,
+  };
+  const userData = prepareUserByData(fakeUser);
 
   const result = await request.post(API_ROUTES.user.create, qs.stringify({ user: JSON.stringify(userData) }), {
     headers: {
@@ -49,28 +74,29 @@ async function createUser(user) {
     },
   });
 
-  result.data._id = user._id;
-  result.data.password = user.password;
+  result.data._id = fakeUser._id;
+  result.data.password = fakeUser.password;
 
   return result;
 }
 
+/**
+ * Post a user with random data and admin role
+ * @param {Object} [defaultUser]
+ * @returns {Object}
+ */
 function createAdminUser(defaultUser) {
-  const user = { ...generateUser(), ...defaultUser };
-
-  if (!defaultUser) {
-    user._id = faker.internet.userName();
-    user.password = faker.internet.password();
-    user.mail = faker.internet.email();
-    user.firstname = faker.name.firstName();
-    user.lastname = faker.name.lastName();
-    user.ui_language = DEFAULT_LOCALE;
-    user.role = 'admin';
-  }
-
-  return createUser(user);
+  return createUser({
+    ...defaultUser,
+    role: 'admin',
+  });
 }
 
+/**
+ * Delete user
+ * @param {String} id
+ * @returns {Promise}
+ */
 async function removeUser(id) {
   const { headers } = await authAsAdmin();
 
@@ -81,6 +107,12 @@ async function removeUser(id) {
   });
 }
 
+/**
+ * Post view for tests
+ * @param {Object} viewDefault
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
 async function createView(viewDefault, options = {}) {
   const response = await request.post(API_ROUTES.view, {
     tabs: [generateViewTab()],
@@ -90,22 +122,46 @@ async function createView(viewDefault, options = {}) {
   return response.data;
 }
 
+/**
+ * Post a group for view
+ * @param {Object} group
+ * @param {Object} [options]
+ * @returns {Object}
+ */
 async function createViewGroup(group, options = {}) {
   const response = await request.post(API_ROUTES.viewGroup, group, options);
 
   return response.data;
 }
 
+/**
+ * Delete view group
+ * @param {Number} groupId
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
 async function removeViewGroup(groupId, options = {}) {
   return request.delete(`${API_ROUTES.viewGroup}/${groupId}`, options);
 }
 
+/**
+ * Get role list for role status
+ * @param {String} role
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
 async function getRoleList(role = 'admin', options = {}) {
   const response = await request.get(`${API_ROUTES.role.list}/${role}`, options);
 
   return response.data.data;
 }
 
+/**
+ * Post view rights
+ * @param {Number} viewId
+ * @param {Object} [options]
+ * @returns {Object}
+ */
 async function addRightsForView(viewId, options = {}) {
   const right = {
     ...generateRight(),
@@ -119,10 +175,23 @@ async function addRightsForView(viewId, options = {}) {
   return response.data.data;
 }
 
+/**
+ * Delete view rights
+ * @param {Number} viewId
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
 function removeRightsForView(viewId, options = {}) {
   return request.delete(`${API_ROUTES.action}/${viewId}`, options);
 }
 
+/**
+ * Post a user role with new rights
+ * @param {String} role
+ * @param {Object} rights
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
 async function createUserRole(role, rights, options = {}) {
   return request.post(API_ROUTES.role.create, {
     role: {
@@ -132,6 +201,11 @@ async function createUserRole(role, rights, options = {}) {
   }, options);
 }
 
+/**
+ * Create a view and add rights
+ * @param {Object} [viewDefault]
+ * @returns {Object}
+ */
 async function createWidgetView(viewDefault) {
   await onNextQueueFunction();
 
@@ -177,6 +251,11 @@ async function createWidgetView(viewDefault) {
   };
 }
 
+/**
+ * Remove a view and delete rights
+ * @param {Number} viewId
+ * @param {Number} groupId
+ */
 async function removeWidgetView(viewId, groupId) {
   const response = await authAsAdmin();
 

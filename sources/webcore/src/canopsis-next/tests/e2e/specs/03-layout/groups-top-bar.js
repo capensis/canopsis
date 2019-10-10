@@ -2,22 +2,35 @@
 const { API_ROUTES } = require('../../../../src/config');
 const { NAVIGATION_TYPES } = require('../../constants');
 const { generateTemporaryView } = require('../../helpers/entities');
+const { createAdminUser, removeUser } = require('../../helpers/api');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.views = {};
 
+    const { data } = await createAdminUser();
+
+    browser.globals.credentials = {
+      password: data.password,
+      username: data._id,
+    };
+
     await browser.maximizeWindow()
-      .completed.loginAsAdmin();
+      .completed.login(browser.globals.credentials.username, browser.globals.credentials.password);
 
     done();
   },
 
-  after(browser, done) {
+  async after(browser, done) {
     browser.completed.logout()
-      .end(done);
+      .end();
 
+    await removeUser(browser.globals.credentials.username);
+
+    delete browser.globals.credentials;
     delete browser.globals.views;
+
+    done();
   },
 
   'Add view with name from constants': (browser) => {

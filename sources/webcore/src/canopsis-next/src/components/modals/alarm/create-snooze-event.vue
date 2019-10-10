@@ -40,7 +40,7 @@ export default {
     return {
       form: {
         duration: 1,
-        durationType: DURATION_UNITS.minute,
+        durationType: DURATION_UNITS.minute.value,
       },
     };
   },
