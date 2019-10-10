@@ -42,7 +42,7 @@ module.exports.command = function createUser(user = { ...USER }, callback = () =
 
   this.waitForFirstXHR(
     API_ROUTES.user.create,
-    1000,
+    5000,
     () => adminCreateUser.clickSubmitButton(),
     ({ responseData, requestData }) => {
       adminCreateUser.verifyModalClosed();

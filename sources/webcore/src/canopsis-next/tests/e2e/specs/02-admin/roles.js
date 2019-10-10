@@ -1,5 +1,6 @@
 const { API_ROUTES } = require('../../../../src/config');
-const { generateTemporaryView, generateTemporaryRole } = require('../../helpers/entities');
+const { generateTemporaryRole } = require('../../helpers/entities');
+const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 
 const createRole = (browser, {
   name,
@@ -25,7 +26,7 @@ const createRole = (browser, {
 
   browser.waitForFirstXHR(
     API_ROUTES.role.create,
-    1000,
+    5000,
     () => createRoleModal.clickSubmitButton(),
     ({ responseData }) => {
       const response = JSON.parse(responseData);
@@ -42,7 +43,7 @@ const createRole = (browser, {
 module.exports = {
   async before(browser, done) {
     browser.globals.roles = [];
-    browser.globals.defaultViewData = {};
+    browser.globals.defaultViewData = await createWidgetView();
 
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
@@ -50,21 +51,18 @@ module.exports = {
     done();
   },
 
-  after(browser, done) {
+  async after(browser, done) {
+    const { viewId, groupId } = browser.globals.defaultViewData;
+
+    browser.completed.logout()
+      .end();
+
+    await removeWidgetView(viewId, groupId);
+
     delete browser.globals.defaultViewData;
     delete browser.globals.roles;
 
-    browser.completed.logout()
-      .end(done);
-  },
-
-  'Create test view': (browser) => {
-    browser.completed.view.create(generateTemporaryView(), (view) => {
-      browser.globals.defaultViewData = {
-        viewId: view._id,
-        groupId: view.group_id,
-      };
-    });
+    done();
   },
 
   'Create new role with data from constants': (browser) => {
@@ -185,12 +183,5 @@ module.exports = {
     const rolesPage = browser.page.admin.roles();
 
     browser.completed.refreshPage(API_ROUTES.role.list, () => rolesPage.clickRefreshButton());
-  },
-
-  'Delete test view': (browser) => {
-    const { groupId, viewId } = browser.globals.defaultViewData;
-
-    browser.completed.view.delete(groupId, viewId);
-    browser.completed.view.deleteGroup(groupId);
   },
 };

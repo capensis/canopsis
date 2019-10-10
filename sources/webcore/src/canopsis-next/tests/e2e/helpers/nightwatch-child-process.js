@@ -91,19 +91,18 @@ function nightwatchRunWithQueue(colors, done) {
  *
  * @returns {Promise}
  */
-const onNextQueueFunction = () => new Promise((resolve, reject) => {
+const onNextQueueFunction = () => new Promise((resolve) => {
+  const eventHandler = (message) => {
+    const data = JSON.parse(message);
+    if (data.type === requestStartType) {
+      resolve(eventHandler);
+    }
+  };
+
   if (!process.send) {
-    reject();
+    resolve(eventHandler);
   } else {
     process.send(JSON.stringify({ type: initQueueType }));
-
-    const eventHandler = (message) => {
-      const data = JSON.parse(message);
-      if (data.type === requestStartType) {
-        resolve(eventHandler);
-      }
-    };
-
     process.on('message', eventHandler);
   }
 }).then(handler => process.off('message', handler));
