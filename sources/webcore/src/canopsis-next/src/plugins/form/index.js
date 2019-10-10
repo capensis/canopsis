@@ -1,20 +1,26 @@
-import { setIn } from '@/helpers/immutable';
+import { setIn, unsetIn } from '@/helpers/immutable';
 
 export default {
   install(Vue) {
     Object.defineProperty(Vue.prototype, '$form', {
       get() {
         return {
-          updateField: (path, value) => {
-            const { event = 'input', prop = 'value' } = this.$options.model || {};
-
-            this.$emit(event, setIn(this[prop], path, value));
-          },
-
           updateModel: (value) => {
             const { event = 'input' } = this.$options.model || {};
 
             this.$emit(event, value);
+          },
+
+          updateField: (path, value) => {
+            const { prop = 'value' } = this.$options.model || {};
+
+            this.$form.updateModel(setIn(this[prop], path, value));
+          },
+
+          removeField: (path) => {
+            const { prop = 'value' } = this.$options.model || {};
+
+            this.$form.updateModel(unsetIn(this[prop], path));
           },
         };
       },

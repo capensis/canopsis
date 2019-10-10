@@ -30,6 +30,10 @@ import ContextGeneralList from '@/components/other/context/context-general-list.
  */
 export default {
   components: { ContextGeneralList },
+  model: {
+    prop: 'entities',
+    event: 'input',
+  },
   props: {
     label: {
       type: String,
@@ -42,25 +46,20 @@ export default {
       },
     },
   },
-  data() {
-    return {
-      updatedEntities: [],
-    };
-  },
   methods: {
     updateEntities(entities) {
       const entitiesIds = entities.map(entity => entity._id);
       const selectedEntities = union(entitiesIds, this.entities);
 
-      this.$emit('updateEntities', selectedEntities);
+      this.$form.updateModel(selectedEntities);
     },
     clear() {
-      this.updatedEntities = [];
-      this.$emit('updateEntities', this.updatedEntities);
+      this.$form.updateModel([]);
     },
     removeEntity(entity) {
       const updatedEntities = filter(this.entities, item => item !== entity);
-      this.$emit('updateEntities', updatedEntities);
+
+      this.$form.updateModel(updatedEntities);
     },
   },
 };

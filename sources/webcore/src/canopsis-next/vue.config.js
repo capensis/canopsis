@@ -1,5 +1,67 @@
 const isProduction = process.env.NODE_ENV === 'production';
 
+function isStringStart(chr) {
+  const SINGLE_QUOTE_CODE = 0x22;
+  const DOUBLE_QUOTE_CODE = 0x27;
+
+  return chr === SINGLE_QUOTE_CODE || chr === DOUBLE_QUOTE_CODE;
+}
+
+function parse(value) {
+  const START_BRACKET_CODE = 0x5B;
+  const END_BRACKET_CODE = 0x5D;
+  const POINT_CODE = 0x2e;
+  const path = [];
+  let hasString = false;
+  let isPoint = true;
+  let startPos = 0;
+  let endPos;
+
+  for (let index = 0; index < value.length; index += 1) {
+    const chr = value.charCodeAt(index);
+
+    if (chr === START_BRACKET_CODE) {
+      if (startPos < index - 1) {
+        path.push(JSON.stringify(value.slice(startPos, index)));
+      }
+
+      hasString = false;
+      isPoint = false;
+      startPos = index + 1;
+
+      if (isStringStart(value.charCodeAt(startPos))) {
+        hasString = true;
+      }
+    } else if (chr === END_BRACKET_CODE) {
+      endPos = index - 1;
+
+      if (hasString) {
+        path.push(JSON.stringify(value.slice(startPos + 1, endPos)));
+        hasString = false;
+      } else {
+        path.push(value.slice(startPos, endPos + 1));
+      }
+
+      startPos = index + 1;
+    } else if (chr === POINT_CODE && !hasString) {
+      if (isPoint) {
+        path.push(JSON.stringify(value.slice(startPos, index)));
+
+        startPos = index + 1;
+      }
+
+      startPos = index + 1;
+      isPoint = true;
+    }
+  }
+
+  if (isPoint) {
+    path.push(JSON.stringify(value.slice(startPos)));
+  }
+
+  return path;
+}
+
 module.exports = {
   baseUrl: isProduction ? '/en/static/canopsis-next/dist/' : '/',
   lintOnSave: false,
@@ -15,12 +77,12 @@ module.exports = {
           directives: {
             field(el, dir) {
               const { value, modifiers } = dir;
-              const path = value.split('.');
+              const path = parse(value.trim());
 
               path.shift();
 
               const baseValueExpression = '$$v';
-              let assignment = `$form.updateField([${path.map(v => JSON.stringify(v)).join(', ')}], ${baseValueExpression})`;
+              let assignment = `$form.updateField([${path}], ${baseValueExpression})`;
 
               if (modifiers && modifiers.model) {
                 assignment = `$form.updateModel(${baseValueExpression})`;
