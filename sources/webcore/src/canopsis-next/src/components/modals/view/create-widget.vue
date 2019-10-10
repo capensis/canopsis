@@ -8,23 +8,23 @@
         v-flex.my-1(
           xs12,
           v-for="widget in availableWidgets",
-          :key="widget.value",
-          @click="selectWidgetType(widget.value)"
+          :key="widget",
+          @click="selectWidgetType(widget)"
         )
-          v-card.widgetType(:data-test="`widget-${widget.value}`")
+          v-card.widgetType(:data-test="`widget-${widget}`")
             v-card-title(primary-title)
               v-layout(wrap, justify-between)
                 v-flex(xs11)
-                  div.subheading {{ widget.title }}
+                  div.subheading {{ $t(`modals.widgetCreation.types.${widget}.title`) }}
                 v-flex
-                  v-icon {{ widget.icon }}
+                  v-icon {{ iconByWidgetType(widget) }}
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, CANOPSIS_EDITION } from '@/constants';
+import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_ICONS } from '@/constants';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
@@ -38,79 +38,27 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 export default {
   name: MODALS.createWidget,
   mixins: [modalInnerMixin, sideBarMixin, entitiesInfoMixin],
-  data() {
-    return {
-      widgetsTypes: [
-        {
-          title: this.$t('modals.widgetCreation.types.alarmList.title'),
-          value: WIDGET_TYPES.alarmList,
-          icon: 'view_list',
-          group: 'base',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.context.title'),
-          value: WIDGET_TYPES.context,
-          icon: 'view_list',
-          group: 'base',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.weather.title'),
-          value: WIDGET_TYPES.weather,
-          icon: 'view_module',
-          group: 'base',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.statsHistogram.title'),
-          value: WIDGET_TYPES.statsHistogram,
-          icon: 'bar_chart',
-          group: 'stat',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.statsTable.title'),
-          value: WIDGET_TYPES.statsTable,
-          icon: 'table_chart',
-          group: 'stat',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.statsCalendar.title'),
-          value: WIDGET_TYPES.statsCalendar,
-          icon: 'calendar_today',
-          group: 'stat',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.statsCurves.title'),
-          value: WIDGET_TYPES.statsCurves,
-          icon: 'show_chart',
-          group: 'stat',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.statsNumber.title'),
-          value: WIDGET_TYPES.statsNumber,
-          icon: 'table_chart',
-          group: 'stat',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.statsPareto.title'),
-          value: WIDGET_TYPES.statsPareto,
-          icon: 'multiline_chart',
-          group: 'stat',
-        },
-        {
-          title: this.$t('modals.widgetCreation.types.text.title'),
-          value: WIDGET_TYPES.text,
-          icon: 'view_headline',
-          group: 'base',
-        },
-      ],
-    };
-  },
   computed: {
+    /**
+     * Some widgets are only available with 'cat' edition.
+     * Filter widgetTypes list to keep only available widgets, thanks to the edition
+     *
+     * @return {Array}
+     */
     availableWidgets() {
-      if (this.edition === CANOPSIS_EDITION.core) {
-        return this.widgetsTypes.filter(widget => widget.group !== 'stat');
-      }
+      return Object.keys(WIDGET_TYPES).filter((widget) => {
+        const rules = WIDGET_TYPES_RULES[WIDGET_TYPES[widget]];
 
-      return this.widgetsTypes;
+        if (!rules) {
+          return true;
+        }
+
+        return rules.edition && rules.edition === this.edition;
+      });
+    },
+
+    iconByWidgetType() {
+      return type => WIDGET_ICONS[WIDGET_TYPES[type]];
     },
   },
   methods: {

@@ -1,15 +1,19 @@
+import { createNamespacedHelpers } from 'vuex';
+
 import { CANOPSIS_EDITION } from '@/constants';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
+const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
+
 
 export default {
-  mixins: [entitiesInfoMixin],
   data() {
     return {
       serverErrorMessage: null,
     };
   },
   computed: {
+    ...mapInfoGetters(['edition']),
+
     editionError() {
       return this.edition === CANOPSIS_EDITION.core;
     },
