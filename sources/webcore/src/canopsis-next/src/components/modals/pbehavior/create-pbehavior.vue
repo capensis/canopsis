@@ -4,7 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createPbehavior.title') }}
     v-card-text
-      pbehavior-form(v-model="form")
+      pbehavior-form(v-field.model="form")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}

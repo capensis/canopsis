@@ -7,7 +7,7 @@ function isStringStart(chr) {
   return chr === SINGLE_QUOTE_CODE || chr === DOUBLE_QUOTE_CODE;
 }
 
-function parse(value) {
+function parseModel(value) {
   const START_BRACKET_CODE = 0x5B;
   const END_BRACKET_CODE = 0x5D;
   const POINT_CODE = 0x2e;
@@ -77,22 +77,27 @@ module.exports = {
           directives: {
             field(el, dir) {
               const { value, modifiers } = dir;
-              const path = parse(value.trim());
-
-              path.shift();
+              const path = parseModel(value.trim());
 
               const baseValueExpression = '$$v';
-              let assignment = `$form.updateField([${path}], ${baseValueExpression})`;
+              const basePathExpression = '$$p';
+              let baseMethod;
 
               if (modifiers && modifiers.model) {
-                assignment = `$form.updateModel(${baseValueExpression})`;
+                baseMethod = 'um';
+              } else {
+                path.shift();
+
+                baseMethod = 'uf';
               }
+
+              const assignment = `$form.${baseMethod}([${path}], ${baseValueExpression}, ${basePathExpression})`;
 
               // eslint-disable-next-line no-param-reassign
               el.model = {
                 value: `(${value})`,
                 expression: JSON.stringify(value),
-                callback: `function (${baseValueExpression}) {${assignment}}`,
+                callback: `function (${baseValueExpression}, ${basePathExpression}) {${assignment}}`,
               };
             },
           },

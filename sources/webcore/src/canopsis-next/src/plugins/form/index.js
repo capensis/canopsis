@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+
 import { setIn, unsetIn } from '@/helpers/immutable';
 
 export default {
@@ -5,10 +7,24 @@ export default {
     Object.defineProperty(Vue.prototype, '$form', {
       get() {
         return {
-          updateModel: (value) => {
+          uf: (path, value, basePath) => {
+            const newPath = basePath ? path.concat(basePath) : path;
+
+            this.$form.updateModel(value, newPath);
+          },
+
+          um: (path, value, basePath) => {
+            const newPath = basePath ? path.concat(basePath) : path;
+            const key = newPath.pop();
+            const source = get(this, newPath);
+
+            this.$set(source, key, value);
+          },
+
+          updateModel: (...args) => {
             const { event = 'input' } = this.$options.model || {};
 
-            this.$emit(event, value);
+            this.$emit(event, ...args);
           },
 
           updateField: (path, value) => {
