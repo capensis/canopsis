@@ -8,7 +8,7 @@ Par défaut, l'interface web de Canopsis est disponible depuis votre navigateur 
 
 La nouvelle interface « UIv3 » est accessible depuis l'adresse <http://localhost:8082/en/static/canopsis-next/dist/index.html#>.
 
-Les identifiants de connexion ar défaut sont `root` / `root`.
+Les identifiants de connexion par défaut sont `root` / `root`.
 
 Parcourez ensuite [le guide d'utilisation](../../guide-utilisation/index.md) pour en apprendre davantage sur l'interface web de Canopsis.
 

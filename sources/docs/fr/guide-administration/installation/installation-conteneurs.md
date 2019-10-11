@@ -34,9 +34,9 @@ Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis) contien
 git clone https://git.canopsis.net/canopsis/canopsis.git && cd canopsis
 ```
 
-Si nécéssaire, ajustez la variable `CANOPSIS_IMAGE_TAG` du fichier `.env` situé à la racine du dépôt Canopsis.
+Si nécessaire, ajustez la variable `CANOPSIS_IMAGE_TAG` du fichier `.env` situé à la racine du dépôt Canopsis.
 
-Lancer ensuite la commande suivante, afin de lever un environnement Canopsis open-core complet avec Docker :
+Lancez ensuite la commande suivante, afin de lever un environnement Canopsis open-core complet avec Docker :
 ```sh
 docker-compose up -d
 ```
