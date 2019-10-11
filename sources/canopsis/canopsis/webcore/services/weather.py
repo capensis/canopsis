@@ -29,6 +29,7 @@ import time
 
 from operator import itemgetter
 from bottle import request
+from pymongo.collation import Collation
 
 from canopsis.common.enumerations import FastEnum
 from canopsis.models.entity import Entity
@@ -805,7 +806,8 @@ def exports(ws):
             return gen_json_error({"name": "Can not parse sort direction.",
                                    "description": str(error)}, 400)
 
-        pipeline_result = mongo_collection.aggregate(pipeline)
+        pipeline_result = mongo_collection.aggregate(
+            pipeline, collation=Collation(locale='fr'))
 
         result = []
         for watcher in pipeline_result:
