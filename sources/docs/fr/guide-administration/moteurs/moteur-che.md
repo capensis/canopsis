@@ -17,13 +17,13 @@ Il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre
         Consomme les évènements venant de cette file. (default "Engine_che").
   -createContext
         Active la création de context graph. Activé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -d    debug
   -dataSourceDirectory
         The path of the directory containing the event filter's data source plugins. (default ".")
   -enrichContext
         Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -enrichExclude string
         Liste de champs séparés par des virgules ne faisant pas partie de l'enrichissement du contexte
   -enrichInclude string
