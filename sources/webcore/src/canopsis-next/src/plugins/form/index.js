@@ -14,7 +14,7 @@ export default {
           updateField: (path, value) => {
             const { prop = 'value' } = this.$options.model || {};
 
-            this.$form.updateModel(setIn(this[prop], path, value));
+            this.$form.updateModel(path.length ? setIn(this[prop], path, value) : value);
           },
 
           removeField: (path) => {

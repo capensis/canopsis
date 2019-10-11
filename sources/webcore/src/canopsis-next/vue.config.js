@@ -76,17 +76,13 @@ module.exports = {
 
           directives: {
             field(el, dir) {
-              const { value, modifiers } = dir;
+              const { value } = dir;
               const path = parse(value.trim());
 
               path.shift();
 
               const baseValueExpression = '$$v';
-              let assignment = `$form.updateField([${path}], ${baseValueExpression})`;
-
-              if (modifiers && modifiers.model) {
-                assignment = `$form.updateModel(${baseValueExpression})`;
-              }
+              const assignment = `$form.updateField([${path}], ${baseValueExpression})`;
 
               // eslint-disable-next-line no-param-reassign
               el.model = {

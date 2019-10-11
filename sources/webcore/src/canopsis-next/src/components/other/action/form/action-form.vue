@@ -24,7 +24,7 @@
       v-tab-item
         action-general-tab(
           ref="generalForm",
-          v-field.model="form"
+          v-field="form"
         )
       v-tab
         .validation-header(
