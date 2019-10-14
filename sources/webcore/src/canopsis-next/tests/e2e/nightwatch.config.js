@@ -34,7 +34,9 @@ const nightWatchRecordConfig = require('./nightwatch-record.config.js');
 
 const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
 const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
-const isEnabledWorkers = process.env.TEST_WORKERS_ENABLED === 'true';
+const testMode = process.env.E2E_TESTS_MODE;
+const isParallelMode = testMode === 'parallel';
+const isConsistentlyMode = testMode === 'consistently';
 
 loadEnv(localEnvPath);
 loadEnv(baseEnvPath);
@@ -77,7 +79,7 @@ module.exports = deepmerge({
   selenium: seleniumConfig,
 
   test_workers: {
-    enabled: isEnabledWorkers,
+    enabled: isParallelMode,
     workers: Number(process.env.TEST_WORKERS_COUNT),
   },
   live_output: process.env.TEST_WORKERS_LIVE_OUTPUT_ENABLED === 'true',
@@ -90,7 +92,8 @@ module.exports = deepmerge({
 
       videos: nightWatchRecordConfig,
 
-      filter: isEnabledWorkers && path.resolve('tests', 'e2e', 'specs', '/*/*-parallel.js'),
+      exclude: isConsistentlyMode && [path.resolve('tests', 'e2e', 'specs', '/*/*-parallel.js')],
+      filter: isParallelMode && path.resolve('tests', 'e2e', 'specs', '/*/*-parallel.js'),
     },
 
     chrome: {
