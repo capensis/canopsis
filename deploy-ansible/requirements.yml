@@ -5,7 +5,7 @@
 #- src: https://github.com/UnderGreen/ansible-role-mongodb
 #  scm: git
 
-# upgraded from 3.6.11 to 3.6.14. Poorly maintained upstream
+# adapted to our deployment needs. Poorly maintained upstream
 #- src: https://github.com/geerlingguy/ansible-role-rabbitmq
 #  scm: git
 
