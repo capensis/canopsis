@@ -18,7 +18,7 @@ Voici le processus complet d'une vérification LibreNMS menant à une alerte :
 ## Installation et configuration
 
 !!! note
-    Le module PHP `bcmath` est nécéssaire pour le bon fonctionnement du connecteur.
+    Le module PHP `bcmath` est nécessaire pour le bon fonctionnement du connecteur.
 
 Le connecteur est installé par défaut lors d'une installation de LibreNMS dans `/opt/librenms/LibreNMS/Alert/Transport/Canopsis.php` :
 

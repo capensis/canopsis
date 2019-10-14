@@ -12,7 +12,7 @@ Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch*�
 
 ### Sur Debian 9
 
-**Attention :** Sur Debian 9, le paquet Canopsis Cat à partir de la version 3.24.0 nécessite d'activer les dépôts `non-free` de Debian.
+**Attention :** Sur Debian 9, le paquet Canopsis CAT à partir de la version 3.24.0 nécessite d'activer les dépôts `non-free` de Debian.
 
 Application des dernières mises à jour de votre système :
 ```sh
@@ -75,3 +75,5 @@ Une fois le paquet installé, vous pouvez déployer une configuration **mono-ins
 ```sh
 canoctl deploy
 ```
+
+Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).

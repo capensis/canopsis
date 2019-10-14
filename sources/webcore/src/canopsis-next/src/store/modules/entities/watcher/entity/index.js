@@ -23,23 +23,13 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { watcherId }) {
-      Vue.set(state.watchers, watcherId, {
-        ...state.watchers[watcherId],
-        pending: true,
-      });
+      Vue.setSeveral(state.watchers, watcherId, { pending: true });
     },
     [types.FETCH_LIST_COMPLETED](state, { watcherId, allIds }) {
-      Vue.set(state.watchers, watcherId, {
-        ...state.watchers[watcherId],
-        pending: false,
-        allIds,
-      });
+      Vue.setSeveral(state.watchers, watcherId, { allIds, pending: false });
     },
-    [types.FETCH_LIST_FAILED](state, { watcherId }) {
-      Vue.set(state.watchers, watcherId, {
-        ...state.watchers[watcherId],
-        pending: false,
-      });
+    [types.FETCH_LIST_FAILED](state, { watcherId, error = {} }) {
+      Vue.setSeveral(state.watchers, watcherId, { error, pending: false });
     },
   },
   actions: {

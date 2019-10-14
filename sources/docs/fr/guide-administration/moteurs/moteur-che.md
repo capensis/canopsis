@@ -14,16 +14,16 @@ Il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre
 
 ```
   -consumeQueue string
-        Consomme les évènements venant de cette queue. (default "Engine_che").
+        Consomme les évènements venant de cette file. (default "Engine_che").
   -createContext
         Active la création de context graph. Activé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -d    debug
   -dataSourceDirectory
         The path of the directory containing the event filter's data source plugins. (default ".")
   -enrichContext
         Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -enrichExclude string
         Liste de champs séparés par des virgules ne faisant pas partie de l'enrichissement du contexte
   -enrichInclude string
@@ -33,7 +33,7 @@ Il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre
   -processEvent
         enable event processing. enabled by default. (default true)
   -publishQueue
-        Publie les événements sur cette queue. (default "Engine_event_filter")
+        Publie les événements sur cette file. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
   -version
@@ -42,7 +42,7 @@ Il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre
 
 ## Collection
 
-Les entités sont stockées dans la collection Mongo `default_entities`.
+Les entités sont stockées dans la collection MongoDB `default_entities`.
 
 Le champ `type` de l'objet définit le type de l'entité. Par exemple, avec une ressource, son champ `type` vaut `resource` :
 
