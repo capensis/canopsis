@@ -1,0 +1,20 @@
+---
+- name: Reload systemd
+  systemd:
+    daemon-reload: yes
+
+- name: Stop and disable Canopsis default Go engines
+  systemd:
+    name: "canopsis-engine-go@{{ item.name }}.service"
+    state: stopped
+    enabled: false
+  with_items: "{{ canopsis_go_engines }}"
+  register: ansiblecrap
+  failed_when: "ansiblecrap is failed and 'Could not find the requested service' not in ansiblecrap.msg"
+
+- name: Start and enable Canopsis default Python engines
+  systemd:
+    name: "canopsis-engine@{{ item.module }}-{{ item.name }}.service"
+    state: started
+    enabled: true
+  with_items: "{{ canopsis_python_engines }}"

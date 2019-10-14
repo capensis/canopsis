@@ -1,8 +1,9 @@
 ---
 rabbitmq_daemon: rabbitmq-server
 rabbitmq_state: started
-rabbitmq_enabled: yes
+rabbitmq_enabled: true
 
+# XXX: newer versions have Erlang problems on CentOS 7
 rabbitmq_version: "3.6.11"
 
 rabbitmq_rpm: "rabbitmq-server-{{ rabbitmq_version }}-1.el{{ ansible_distribution_major_version }}.noarch.rpm"

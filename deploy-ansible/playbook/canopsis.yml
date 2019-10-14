@@ -13,9 +13,19 @@
         state: disabled
       when: ansible_os_family == "RedHat"
 
-- hosts: canopsis-standalone
+- hosts: canopsis
   remote_user: root
   roles:
+    -
+      role: "ansible-role-haproxy"
+    -
+      role: "ansible-role-mongodb"
+    -
+      role: "ansible-role-rabbitmq"
+    -
+      role: "ansible-role-influxdb-maat"
+    -
+      role: "ansible-role-redis"
     -
       role: "canopsis"
       tags:
