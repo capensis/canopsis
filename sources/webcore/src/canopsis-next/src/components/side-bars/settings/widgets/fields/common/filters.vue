@@ -4,7 +4,7 @@
     v-container
       filter-selector(
         :label="$t('filterSelector.defaultFilter')",
-        :entitiesType="this.entitiesType",
+        :entitiesType="entitiesType",
         :value="value",
         :filters="filters",
         :condition="condition",

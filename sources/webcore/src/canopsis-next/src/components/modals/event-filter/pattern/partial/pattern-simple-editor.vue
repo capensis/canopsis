@@ -33,7 +33,6 @@ import { isObject, isString, isNull, dropRight, has } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form';
 import modalMixin from '@/mixins/modal';
 
 export default {
@@ -48,7 +47,7 @@ export default {
       return value;
     },
   },
-  mixins: [formMixin, modalMixin],
+  mixins: [modalMixin],
   model: {
     prop: 'pattern',
     event: 'input',
@@ -207,7 +206,7 @@ export default {
           operators: this.operators,
           isSimple: this.isSimplePattern,
           action: (newRule) => {
-            this.updateField([...parentPath, newRule.field], newRule.value);
+            this.$form.updateField([...parentPath, newRule.field], newRule.value);
 
             this.$nextTick(() => this.openTreeviewItem(treeViewParent));
           },
@@ -233,7 +232,7 @@ export default {
           action: (newRule) => {
             const newPath = [...dropRight(path, 1), newRule.field];
 
-            this.updateAndMoveField(path, newPath, newRule.value);
+            this.$form.updateAndMoveField(path, newPath, newRule.value);
           },
         },
       });
@@ -257,7 +256,7 @@ export default {
             name: 'field',
           },
           action: (field) => {
-            this.updateField([...parentPath, field], {});
+            this.$form.updateField([...parentPath, field], {});
 
             this.$nextTick(() => this.openTreeviewItem(treeViewParent));
           },
@@ -281,7 +280,7 @@ export default {
             validationRules: 'required',
             name: 'field',
           },
-          action: field => this.moveField([...treeViewItem.path], [field]),
+          action: field => this.$form.moveField([...treeViewItem.path], [field]),
         },
       });
     },
@@ -292,7 +291,7 @@ export default {
      * @param {Object} treeViewItem
      */
     deleteRule(treeViewItem) {
-      this.removeField(treeViewItem.path);
+      this.$form.removeField(treeViewItem.path);
     },
   },
 };

@@ -27,14 +27,13 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
 import entitiesSnmpMibMixin from '@/mixins/entities/snmp-mib';
 
 import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
 
 export default {
   components: { SnmpRuleFormFieldTitle },
-  mixins: [formMixin, entitiesSnmpMibMixin],
+  mixins: [entitiesSnmpMibMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -89,7 +88,7 @@ export default {
     async selectModule(module) {
       this.moduleMibsPending = true;
 
-      this.updateField('moduleName', module);
+      this.$form.updateField('moduleName', module);
 
       const { data } = await this.fetchSnmpMibList({
         params: {

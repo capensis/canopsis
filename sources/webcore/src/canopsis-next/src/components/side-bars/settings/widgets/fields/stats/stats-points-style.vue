@@ -7,9 +7,8 @@
           div {{ key }}:
         v-flex(:data-test="`statsPointsStyleSelect-${key}`")
           v-select(
-            :items="pointsStyles",
-            :value="value[key]",
-            @change="updateField(key, $event)"
+            v-field="value[key]",
+            :items="pointsStyles"
           )
 </template>
 

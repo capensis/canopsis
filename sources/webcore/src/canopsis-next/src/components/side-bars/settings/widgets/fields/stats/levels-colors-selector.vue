@@ -22,10 +22,9 @@
 import { MODALS, STATS_CALENDAR_COLORS, STATS_CRITICITY } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
-import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [modalMixin, formMixin],
+  mixins: [modalMixin],
   model: {
     prop: 'levelsColors',
     event: 'input',
@@ -70,7 +69,7 @@ export default {
           color: this.levelsColors[level],
           type: this.colorType,
           action: (color) => {
-            this.updateField(level, color);
+            this.$form.updateField(level, color);
           },
         },
       });

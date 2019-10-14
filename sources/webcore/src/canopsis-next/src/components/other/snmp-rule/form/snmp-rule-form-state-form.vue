@@ -31,16 +31,11 @@
     template(v-else)
       v-layout.mt-3(row, wrap)
         v-flex(xs12)
-          state-criticity-field(
-            :value="form.state",
-            @input="updateField('state', $event)"
-          )
+          state-criticity-field(v-field="form.state")
 </template>
 
 <script>
 import { SNMP_STATE_TYPES } from '@/constants';
-
-import formMixin from '@/mixins/form';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
@@ -53,7 +48,6 @@ export default {
     SnmpRuleFormFieldTitle,
     SnmpRuleFormModuleMibObjectsForm,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -83,7 +77,7 @@ export default {
         state.stateoid = {};
       }
 
-      this.updateModel(state);
+      this.$form.updateModel(state);
     },
   },
 };

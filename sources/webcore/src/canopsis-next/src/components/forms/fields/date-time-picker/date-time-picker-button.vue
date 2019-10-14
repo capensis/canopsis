@@ -23,18 +23,15 @@
       :opened="isMenuOpen",
       :roundHours="roundHours",
       :useSeconds="useSeconds",
-      @input="updateModel($event)"
+      @input="$form.updateModel($event)"
     )
 </template>
 
 <script>
-import formBaseMixin from '@/mixins/form/base';
-
 import DateTimePicker from './date-time-picker.vue';
 
 export default {
   components: { DateTimePicker },
-  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
