@@ -21,7 +21,7 @@ import { MODALS, EVENT_ENTITY_TYPES, DURATION_UNITS } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
-import DurationField from '@/components/forms/fields/duration.vue';
+import DurationField from '@/components/fields/duration.vue';
 
 /**
  * Modal to put a snooze on an alarm

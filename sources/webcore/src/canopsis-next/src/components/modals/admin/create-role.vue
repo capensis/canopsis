@@ -42,7 +42,7 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
-import ViewSelector from './partial/view-selector.vue';
+import ViewSelector from '@/components/common/modals/view-selector.vue';
 
 export default {
   name: MODALS.createRole,

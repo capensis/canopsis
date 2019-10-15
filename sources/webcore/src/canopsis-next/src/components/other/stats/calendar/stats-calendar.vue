@@ -40,10 +40,10 @@ import { generateWidgetByType } from '@/helpers/entities';
 import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress-overlay.vue';
+import StatsAlertOverlay from '@/components/common/stats/stats-alert-overlay.vue';
 
-import DsCalendar from './day-span/calendar.vue';
-import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
+import DsCalendar from './calendar.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 

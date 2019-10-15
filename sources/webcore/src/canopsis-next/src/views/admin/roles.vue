@@ -69,8 +69,8 @@ import viewQuery from '@/mixins/view/query';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
-import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
-import SearchField from '@/components/forms/fields/search-field.vue';
+import RefreshBtn from '@/components/common/buttons/refresh-btn.vue';
+import SearchField from '@/components/fields/search-field.vue';
 
 export default {
   components: {

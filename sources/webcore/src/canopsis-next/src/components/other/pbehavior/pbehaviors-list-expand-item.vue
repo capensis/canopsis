@@ -1,0 +1,52 @@
+<template lang="pug">
+  v-tabs(color="secondary lighten-1", dark, centered)
+    v-tab {{ $t('pbehaviors.tabs.filter') }}
+    v-tab-item
+      v-layout.py-3.secondary.lighten-2(row)
+        v-flex(xs12, sm10, offset-sm1)
+          v-card
+            v-card-text
+              pre {{ pbehavior.filter | json }}
+    v-tab {{ $t('pbehaviors.tabs.eids') }}
+    v-tab-item
+      v-layout.py-3.secondary.lighten-2(row)
+        v-flex(xs12, sm8, offset-sm2)
+          v-card
+            v-card-text
+              v-data-iterator(:items="pbehavior.eids")
+                v-flex(slot="item", slot-scope="props")
+                  v-card
+                    v-card-title {{ props.item }}
+                v-flex(slot="no-data")
+                  v-card
+                    v-card-title {{ $t('tables.noData') }}
+    v-tab {{ $t('pbehaviors.tabs.comments') }}
+    v-tab-item
+      v-layout.py-3.secondary.lighten-2(row)
+        v-flex(xs12, sm6, offset-sm3)
+          pbehavior-comments(:comments="pbehavior.comments")
+    template(v-if="pbehavior.rrule")
+      v-tab {{ $t('pbehaviors.rrule') }}
+      v-tab-item
+        v-layout.py-3.secondary.lighten-2(row)
+          v-flex(xs12, sm6, offset-sm3)
+            pbehavior-rrule(:rrule="pbehavior.rrule")
+</template>
+
+<script>
+import PbehaviorComments from '@/components/common/pbehavior/pbehavior-comments.vue';
+import PbehaviorRrule from '@/components/common/pbehavior/pbehavior-rrule.vue';
+
+export default {
+  components: {
+    PbehaviorComments,
+    PbehaviorRrule,
+  },
+  props: {
+    pbehavior: {
+      type: Object,
+      required: true,
+    },
+  },
+};
+</script>

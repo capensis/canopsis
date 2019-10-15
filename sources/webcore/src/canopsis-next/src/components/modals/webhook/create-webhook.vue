@@ -34,7 +34,7 @@ import { setInSeveral } from '@/helpers/immutable';
 import modalInnerMixin from '@/mixins/modal/inner';
 import webhookFormFiltersMixin from '@/mixins/webhook/form-filters';
 
-import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
+import WebhookForm from '@/components/forms/webhook/webhook-form.vue';
 
 /**
  * Modal to create widget

@@ -65,7 +65,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import MixedField from '@/components/forms/fields/mixed-field.vue';
+import MixedField from '@/components/fields/mixed-field.vue';
 
 export default {
   name: MODALS.addEventFilterRuleToPattern,

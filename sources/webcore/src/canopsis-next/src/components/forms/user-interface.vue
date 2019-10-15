@@ -82,7 +82,7 @@ import { getFileDataUrlContent } from '@/helpers/file-select';
 import popupMixin from '@/mixins/popup';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import FileSelector from '@/components/forms/fields/file-selector.vue';
+import FileSelector from '@/components/fields/file-selector.vue';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
 
 export default {

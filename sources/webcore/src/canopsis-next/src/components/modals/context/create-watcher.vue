@@ -53,10 +53,10 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
-import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+import FilterEditor from '@/components/forms/filter/filter-editor.vue';
+import PatternsList from '@/components/other/patterns-list/patterns-list.vue';
 
-import ManageInfos from './partial/manage-infos.vue';
+import ManageInfos from '@/components/common/modals/manage-infos.vue';
 
 export default {
   name: MODALS.createWatcher,

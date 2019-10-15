@@ -45,7 +45,7 @@ import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
-import WatcherTemplate from './partial/watcher-template.vue';
+import WatcherTemplate from '@/components/common/modals/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,

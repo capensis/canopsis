@@ -64,9 +64,9 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 
-import UpdateTabBtn from './buttons/update-tab-btn.vue';
-import CloneTabBtn from './buttons/clone-tab-btn.vue';
-import DeleteTabBtn from './buttons/delete-tab-btn.vue';
+import UpdateTabBtn from '@/components/common/buttons/update-tab-btn.vue';
+import CloneTabBtn from '@/components/common/buttons/clone-tab-btn.vue';
+import DeleteTabBtn from '@/components/common/buttons/delete-tab-btn.vue';
 
 export default {
   components: {

@@ -18,7 +18,7 @@ import { MODALS, SNMP_STATE_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
+import SnmpRuleForm from '@/components/forms/snmp-rule/snmp-rule-form.vue';
 
 export default {
   name: MODALS.createSnmpRule,

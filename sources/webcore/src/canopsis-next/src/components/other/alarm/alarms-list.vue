@@ -97,7 +97,7 @@ import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.v
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
-import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';

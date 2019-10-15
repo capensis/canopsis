@@ -30,7 +30,7 @@ import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
-import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
+import StateCriticityField from '@/components/fields/state-criticity-field.vue';
 
 /**
  * Modal to create a 'change-state' event

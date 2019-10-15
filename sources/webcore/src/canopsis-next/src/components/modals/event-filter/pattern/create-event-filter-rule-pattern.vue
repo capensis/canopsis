@@ -28,8 +28,8 @@ import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import PatternSimpleEditor from './partial/pattern-simple-editor.vue';
-import PatternAdvancedEditor from './partial/pattern-advanced-editor.vue';
+import PatternSimpleEditor from '@/components/common/pattern/pattern-simple-editor.vue';
+import PatternAdvancedEditor from '@/components/common/pattern/pattern-advanced-editor.vue';
 
 export default {
   name: MODALS.createEventFilterRulePattern,

@@ -37,7 +37,7 @@ import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 
-import MixedField from '@/components/forms/fields/mixed-field.vue';
+import MixedField from '@/components/fields/mixed-field.vue';
 
 export default {
   name: MODALS.createRight,

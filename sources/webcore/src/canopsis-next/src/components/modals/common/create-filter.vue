@@ -43,7 +43,7 @@ import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
+import FilterEditor from '@/components/forms/filter/filter-editor.vue';
 
 export default {
   name: MODALS.createFilter,

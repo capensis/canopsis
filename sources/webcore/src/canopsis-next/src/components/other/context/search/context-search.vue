@@ -7,7 +7,7 @@ import { getContextWidgetSearchByText } from '@/helpers/entities-search';
 
 import searchMixin from '@/mixins/search';
 
-import SearchField from '@/components/forms/fields/search-field.vue';
+import SearchField from '@/components/fields/search-field.vue';
 
 /**
  * Search component for the entities list

@@ -16,7 +16,7 @@ import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import widgetActionsPanelContextMixin from '@/mixins/widget/actions-panel/context';
 
-import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
+import SharedActionsPanel from '@/components/other/actions-panel/actions-panel.vue';
 
 /**
  * Component to regroup actions (actions-panel-item) for each entity on the context entities list

@@ -90,7 +90,7 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
-import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';

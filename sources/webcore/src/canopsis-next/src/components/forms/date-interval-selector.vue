@@ -44,7 +44,7 @@ import { prepareDateToObject, findRange } from '@/helpers/date-intervals';
 
 import formMixin from '@/mixins/form';
 
-import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
+import DateTimePickerTextField from '@/components/fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
   inject: ['$validator'],

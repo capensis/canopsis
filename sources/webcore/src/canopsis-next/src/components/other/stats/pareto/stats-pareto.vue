@@ -12,9 +12,9 @@ import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrap
 
 import { SORT_ORDERS } from '@/constants';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress-overlay.vue';
 
-import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
+import StatsAlertOverlay from '@/components/common/stats/stats-alert-overlay.vue';
 import StatsParetoChart from './stats-pareto-chart.vue';
 
 export default {

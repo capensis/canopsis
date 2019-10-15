@@ -42,10 +42,10 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress-overlay.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
-import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
+import StatsAlertOverlay from '@/components/common/stats/stats-alert-overlay.vue';
 
 export default {
   components: {

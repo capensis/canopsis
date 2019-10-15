@@ -121,9 +121,9 @@ import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewMixin from '@/mixins/entities/view/index';
 import popupMixin from '@/mixins/popup';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress-overlay.vue';
 
-import ViewSelector from './partial/view-selector.vue';
+import ViewSelector from '@/components/common/modals/view-selector.vue';
 
 const { mapActions } = createNamespacedHelpers('role');
 

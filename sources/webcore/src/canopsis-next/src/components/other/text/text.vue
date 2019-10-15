@@ -16,9 +16,9 @@ import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress-overlay.vue';
 
-import StatsAlertOverlay from '../stats/partials/stats-alert-overlay.vue';
+import StatsAlertOverlay from '@/components/common/stats/stats-alert-overlay.vue';
 import TextStatTemplate from './text-stat-template.vue';
 
 export default {

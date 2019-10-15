@@ -30,10 +30,10 @@ import filters from '@/filters';
 
 import SetSeveralPlugin from '@/plugins/set-several';
 
-import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
-import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
+import DsCalendarEvent from '@/components/common/day-span/calendar-event.vue';
+import DsCalendarEventTime from '@/components/common/day-span/calendar-event-time.vue';
 
-import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
+import VCheckboxFunctional from '@/components/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';

@@ -21,7 +21,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import FiltersListComponent from '@/components/other/filter/list/filters-list.vue';
+import FiltersListComponent from '@/components/other/filter/filters-list.vue';
 
 /**
  * Confirmation modal

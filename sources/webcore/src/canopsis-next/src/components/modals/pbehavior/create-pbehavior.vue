@@ -26,7 +26,7 @@ import {
   pbehaviorToExdates,
 } from '@/helpers/forms/pbehavior';
 
-import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
+import PbehaviorForm from '@/components/forms/pbehavior/pbehavior-form.vue';
 
 export default {
   name: MODALS.createPbehavior,

@@ -40,9 +40,9 @@ import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrap
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import ProgressOverlay from '@/components/layout/progress-overlay.vue';
 
-import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
+import StatsAlertOverlay from '@/components/common/stats/stats-alert-overlay.vue';
 
 export default {
   components: {
