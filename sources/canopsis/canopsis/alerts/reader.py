@@ -138,7 +138,7 @@ class AlertsReader(object):
             return self.alarm_fields['properties'][key]['stored_name']
 
         # This translates the keys in filters to look in alarm.entity.infos
-        # rather than in alarm.infos. 
+        # rather than in alarm.infos.
         # Alarm.infos is a redundant json object that doesn't exists in mongo,
         # thus creating problems when searching or filtering on it in the front
         # copied directly from alarm.entity.infos which does exist in mongo
@@ -361,31 +361,6 @@ class AlertsReader(object):
 
         return interpret(search, grammar_file=self.grammar)
 
-    def _lookup(self, alarms, lookups):
-        """
-        Add extra keys to a list of alarms.
-
-        :param list alarms: List of alarms as dict
-        :param list lookups: List of extra keys to add.
-
-        :return: Alarms with extra keys
-        :rtype: list
-        """
-
-        for lookup in lookups:
-            task = get_task(
-                'alerts.lookup.{}'.format(lookup),
-                cacheonly=True
-            )
-
-            if task is None:
-                raise ValueError('Unknown lookup "{}"'.format(lookup))
-
-            for alarm in alarms:
-                alarm = task(self, alarm)
-
-        return alarms
-
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns
     ):
@@ -523,7 +498,7 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
-    
+
     def _build_aggregate_pipeline(self,
                                   final_filter,
                                   sort_key,
@@ -580,7 +555,7 @@ class AlertsReader(object):
                           pipeline):
         """
         :param int skip: Number of alarms to skip (pagination)
-        :param int limit: Maximum number of alarms to return    
+        :param int limit: Maximum number of alarms to return
         :param list pipeline: list of steps in mongo aggregate command
 
         :returns: Dict containing alarms, the list of alarms returned by mongo
@@ -938,30 +913,3 @@ class AlertsReader(object):
             )
 
         return results
-
-
-def remove_resources_alarms(alarms):
-    """
-    take a list of alarms on a component and remove resources' alarms if needed
-    :param list alarms: list of alarms
-    :rtype: list
-    """
-    state_comp = 0
-    states_list = []
-    alarm_comp = {}
-    for i in alarms:
-        val = i.get('v').get('state').get('val')
-        states_list.append(val)
-        if i.get('entity', {}).get('type') == 'component':
-            state_comp = val
-            alarm_comp = i
-
-    if state_comp >= max(states_list):
-        return [alarm_comp]
-
-    ret_val = [alarm_comp]
-    for alarm in alarms:
-        if alarm.get('v', {}).get('state', {}).get('val') > state_comp:
-            ret_val.append(alarm)
-
-    return ret_val

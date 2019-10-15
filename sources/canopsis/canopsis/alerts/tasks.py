@@ -441,17 +441,3 @@ def hard_limit(manager, alarm):
     alarm[AlarmField.steps.value].append(step)
 
     return alarm
-
-
-@register_task('alerts.lookup.pbehaviors')
-def pbehaviors(manager, alarm):
-    """
-    Called to add a pbehaviors field to an alarm.
-    """
-
-    entity_id = alarm['d']
-
-    alarm['pbehaviors'] = manager.pbehavior_manager.get_active_pbehaviors(
-        [entity_id])
-
-    return alarm
