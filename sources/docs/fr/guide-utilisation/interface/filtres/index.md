@@ -90,3 +90,72 @@ Le bouton "Parse" va vous servir à vérifier l'exactitude de votre JSON, si cel
 Une fois votre Filtre réalisé, il apparaîtra dans le menu déroulant "select a filter".
 
 ![select_filter](img/select_filter.png)
+
+## Exemples de filtres
+
+### Watchers
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
+Uniquement les alarmes des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
+
+### PBehaviors
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
+Uniquement les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
+
+### ACK
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec ACK  | `v.ack._t`  | `not equal` | `ack` (valeur string)
+Uniquement les alarmes avec ACK  | `v.ack._t`  | `equal` | `ack` (valeur string)
+Exclure les alarmes avec ACK sans champ `Note` (fast-ack)  | `v.ack.m`  | `is not empty` | RIEN
+Uniquement les alarmes avec ACK sans champ `Note` (fast-ack)  | `v.ack.m`  | `is empty` | RIEN
+Auteur de l'ACK  | `v.ack.a`  |  `equal`  | NOM_DE_L_AUTEUR
+Message de l'ACK | `v.ack.m`  |  `equal`  | CONTENU_DU_MESSAGE
+
+### Snooze
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec Snooze  | `v.snooze._t`  | `not equal` | `ack` (valeur string)
+Uniquement les alarmes avec Snooze  | `v.snooze._t`  | `equal` | `ack` (valeur string)
+Auteur du Snooze  | `v.snooze.a`  |  `equal`  | NOM_DE_L_AUTEUR
+
+### Ticket
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec Ticket de type `assocticket`  | `v.ticket._t`  | `not equal` | `assocticket` (valeur string)
+Exclure les alarmes avec Ticket de type `declareticket`  | `v.ticket._t`  | `not equal` | `declareticket` (valeur string)
+Exlure les alarmes avec Ticket  | `v.ticket._t`  | `is null` | RIEN
+Uniquement les alarmes avec Ticket  | `v.ticket._t`  | `is not null` | RIEN
+Auteur du Ticket  | `v.ticket.a`  |  `equal`  | NOM_DE_L_AUTEUR
+
+### Changement de criticité
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
+Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
+
+### Champs classiques
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Composant  | `component`  | `equal`  | VALEUR_DU_COMPOSANT
+Ressource  | `resource`  | `equal`  | VALEUR_DE_LA_RESSOURCE
+Connecteur	| `connector` | `equal` | VALEUR_DU_CONNECTEUR
+Message	| `v.output` | `equal` | VALEUR_DU_MESSAGE
+
+### Champs enrichis
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
+Uniquement les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
+Champ enrichi	| `entity.infos.NOM_DU_CHAMP_ENRICHI.value` | equal | valeur_du_champ
