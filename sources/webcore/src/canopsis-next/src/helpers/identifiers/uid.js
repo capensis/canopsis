@@ -1,4 +1,4 @@
-import uid from '@/helpers/identifiers/uid';
+import uid from 'uid';
 
 export default (prefix, suffix) => {
   let result = uid();
