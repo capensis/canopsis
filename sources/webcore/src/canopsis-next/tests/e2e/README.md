@@ -29,7 +29,7 @@ e2e
 ├── reports                  # Folder with nightwatch xml reports
 ├── specs                    # Folder with tests
 │   └── 01-auth              # Folder with several tests file. If we want to order files we can put number prefix.
-│       └── auth-parallel.js # File with tests. If we want to order files we can put number prefix here. if we want the test to run in parallel, we must add the -parallel suffix.
+│       └── auth.js          # File with tests. If we want to order files we can put number prefix here. If you want to exclude a test from parallel running, you need to add a suffix .consistently.
 ├── globals.js               # Global nightwatch methods, properties and etc. (http://nightwatchjs.org/guide#external-globals)
 ├── nightwatch.config.js     # File with settings for nightwatch (http://nightwatchjs.org/gettingstarted#settings-file)
 ```

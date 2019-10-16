@@ -92,8 +92,8 @@ module.exports = deepmerge({
 
       videos: nightWatchRecordConfig,
 
-      exclude: isConsistentlyMode && [path.resolve('tests', 'e2e', 'specs', '/*/*-parallel.js')],
-      filter: isParallelMode && path.resolve('tests', 'e2e', 'specs', '/*/*-parallel.js'),
+      exclude: isParallelMode && ['**/*.consistently.js'],
+      filter: isConsistentlyMode && '**/*.consistently.js',
     },
 
     chrome: {

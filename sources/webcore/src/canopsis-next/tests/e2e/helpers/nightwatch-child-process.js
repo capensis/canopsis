@@ -100,12 +100,12 @@ const onNextQueueFunction = () => new Promise((resolve) => {
   };
 
   if (!process.send) {
-    resolve(eventHandler);
+    resolve();
   } else {
     process.send(JSON.stringify({ type: initQueueType }));
     process.on('message', eventHandler);
   }
-}).then(handler => process.off('message', handler));
+}).then(handler => handler && process.removeListener('message', handler));
 
 
 /**
