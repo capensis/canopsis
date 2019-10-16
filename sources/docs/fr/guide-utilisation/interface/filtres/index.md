@@ -143,8 +143,8 @@ Auteur du Ticket  | `v.ticket.a`  |  `equal`  | NOM_DE_L_AUTEUR
 
 Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
 --|---|--|--
-Exclure les alarmes avec Snooze  | `v.snooze._t`  | `not equal` | `ack` (valeur string)
-Uniquement les alarmes avec Snooze  | `v.snooze._t`  | `equal` | `ack` (valeur string)
+Exclure les alarmes avec Snooze  | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
+Uniquement les alarmes avec Snooze  | `v.snooze._t`  | `equal` | `snooze` (valeur string)
 Auteur du Snooze  | `v.snooze.a`  |  `equal`  | NOM_DE_L_AUTEUR
 
 ### PBehaviors
