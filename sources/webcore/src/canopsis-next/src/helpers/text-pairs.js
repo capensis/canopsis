@@ -1,4 +1,4 @@
-import uid from './uid';
+import uid from './identifiers/uid';
 
 /**
  * Convert text pairs array to object.

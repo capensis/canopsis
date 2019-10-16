@@ -88,7 +88,7 @@ import {
   generateRoleRightByChecksum,
   generateCopyOfView,
   getViewsWidgetsIdsMappings,
-} from '@/helpers/entities';
+} from '@/helpers/entities/entities';
 
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';

@@ -14,7 +14,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
-import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
+import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities/entities';
 
 import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';

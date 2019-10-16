@@ -17,7 +17,7 @@ import {
   DURATION_UNITS,
 } from '@/constants';
 
-import uuid from './uuid';
+import uuid from '../identifiers/uuid';
 
 /**
  * Generate widget by type

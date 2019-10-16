@@ -10,7 +10,7 @@
 
 <script>
 import { MODALS } from '@/constants';
-import { compile } from '@/helpers/handlebars';
+import { compile } from '@/helpers/templates/handlebars';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 

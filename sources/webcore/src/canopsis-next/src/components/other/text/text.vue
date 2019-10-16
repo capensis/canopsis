@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
+import { compile, registerHelper, unregisterHelper } from '@/helpers/templates/handlebars';
 
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesStatsMixin from '@/mixins/entities/stats';

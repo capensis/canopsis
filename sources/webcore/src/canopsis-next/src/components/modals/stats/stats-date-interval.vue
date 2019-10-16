@@ -57,7 +57,7 @@ import {
   dateParse,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
-} from '@/helpers/date-intervals';
+} from '@/helpers/dates/date-intervals';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 

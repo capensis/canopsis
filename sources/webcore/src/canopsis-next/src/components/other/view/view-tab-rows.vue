@@ -48,7 +48,7 @@
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateWidgetByType } from '@/helpers/entities/entities';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';

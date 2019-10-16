@@ -4,8 +4,8 @@ import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import { dateParse } from '@/helpers/date-intervals';
-import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
+import { dateParse } from '@/helpers/dates/date-intervals';
+import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/sort/query';
 
 /**
  * @mixin Add query logic

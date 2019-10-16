@@ -82,7 +82,7 @@ import { cloneDeep, pick } from 'lodash';
 
 import { MODALS, STATS_TYPES, ENTITIES_STATES } from '@/constants';
 
-import { setIn } from '@/helpers/immutable';
+import { setIn } from '@/helpers/entities/immutable';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 

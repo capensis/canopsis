@@ -77,7 +77,7 @@
 <script>
 import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
 
-import { getFileDataUrlContent } from '@/helpers/file-select';
+import { getFileDataUrlContent } from '@/helpers/files/file-select';
 
 import popupMixin from '@/mixins/popup';
 import entitiesInfoMixin from '@/mixins/entities/info';

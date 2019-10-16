@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import { USERS_RIGHTS } from '@/constants';
 import store from '@/store';
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/store/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';

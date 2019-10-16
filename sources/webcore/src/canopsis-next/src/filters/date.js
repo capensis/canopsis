@@ -1,4 +1,4 @@
-import convertTimestampToMoment from '@/helpers/date';
+import convertTimestampToMoment from '@/helpers/dates/date';
 
 import { DATETIME_FORMATS } from '@/constants';
 

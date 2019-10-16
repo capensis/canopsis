@@ -2,8 +2,8 @@ import moment from 'moment';
 import { omit, pick } from 'lodash';
 import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
 
-import { unsetInSeveralWithConditions } from '@/helpers/immutable';
-import { generateAction } from '@/helpers/entities';
+import { unsetInSeveralWithConditions } from '@/helpers/entities/immutable';
+import { generateAction } from '@/helpers/entities/entities';
 import {
   pbehaviorToForm,
   pbehaviorToComments,

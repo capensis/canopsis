@@ -4,7 +4,7 @@ import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
 import schemas from '@/store/schemas';
-import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from '@/helpers/store';
+import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from '@/helpers/store/store';
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
 
 import cache from './cache';

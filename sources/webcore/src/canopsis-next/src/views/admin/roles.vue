@@ -61,7 +61,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { getRolesSearchByText } from '@/helpers/entities-search';
+import { getRolesSearchByText } from '@/helpers/entities/entities-search';
 
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';

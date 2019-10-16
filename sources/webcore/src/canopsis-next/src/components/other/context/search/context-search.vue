@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { getContextWidgetSearchByText } from '@/helpers/entities-search';
+import { getContextWidgetSearchByText } from '@/helpers/entities/entities-search';
 
 import searchMixin from '@/mixins/search';
 

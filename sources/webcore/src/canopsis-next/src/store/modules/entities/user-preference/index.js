@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { userPreferenceSchema } from '@/store/schemas';
-import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities';
+import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities/entities';
 import request from '@/services/request';
 
 export const types = {

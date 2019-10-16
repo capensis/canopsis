@@ -55,7 +55,7 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
-import { setInSeveral } from '@/helpers/immutable';
+import { setInSeveral } from '@/helpers/entities/immutable';
 
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';

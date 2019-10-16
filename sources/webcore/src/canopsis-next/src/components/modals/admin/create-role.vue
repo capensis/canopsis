@@ -34,7 +34,7 @@ import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { generateRole } from '@/helpers/entities';
+import { generateRole } from '@/helpers/entities/entities';
 
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';

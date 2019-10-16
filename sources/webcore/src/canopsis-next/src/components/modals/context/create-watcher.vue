@@ -47,7 +47,7 @@ import { omit } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, CANOPSIS_STACK } from '@/constants';
 
-import uuid from '@/helpers/uuid';
+import uuid from '@/helpers/identifiers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';

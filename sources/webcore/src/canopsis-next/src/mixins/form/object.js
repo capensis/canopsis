@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 
-import { setIn, unsetIn } from '@/helpers/immutable';
+import { setIn, unsetIn } from '@/helpers/entities/immutable';
 
 import baseFormMixin, { modelPropKeyComputed } from './base';
 

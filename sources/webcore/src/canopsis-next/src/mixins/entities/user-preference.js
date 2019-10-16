@@ -1,7 +1,7 @@
 import omit from 'lodash/omit';
 import { createNamespacedHelpers } from 'vuex';
 
-import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities';
+import { generateUserPreferenceByWidgetAndUser } from '@/helpers/entities/entities';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('userPreference');
 

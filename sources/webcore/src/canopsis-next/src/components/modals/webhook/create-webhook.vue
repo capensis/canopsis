@@ -29,7 +29,7 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { setInSeveral } from '@/helpers/immutable';
+import { setInSeveral } from '@/helpers/entities/immutable';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import webhookFormFiltersMixin from '@/mixins/webhook/form-filters';

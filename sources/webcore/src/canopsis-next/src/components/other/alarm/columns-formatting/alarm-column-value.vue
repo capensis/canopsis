@@ -27,7 +27,7 @@
 <script>
 import { get } from 'lodash';
 
-import { compile } from '@/helpers/handlebars';
+import { compile } from '@/helpers/templates/handlebars';
 import popupMixin from '@/mixins/popup';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';

@@ -7,7 +7,7 @@
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
+import { compile, registerHelper, unregisterHelper } from '@/helpers/templates/handlebars';
 
 import EntityLinks from './entity-links.vue';
 

@@ -41,7 +41,7 @@ import { isEmpty } from 'lodash';
 
 import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
 
-import { generateViewRow } from '@/helpers/entities';
+import { generateViewRow } from '@/helpers/entities/entities';
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 

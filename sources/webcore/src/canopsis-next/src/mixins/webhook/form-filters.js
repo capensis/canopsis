@@ -1,6 +1,6 @@
 import { get, omit } from 'lodash';
 
-import { setInSeveral, unsetInSeveralWithConditions } from '@/helpers/immutable';
+import { setInSeveral, unsetInSeveralWithConditions } from '@/helpers/entities/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 
 export default {

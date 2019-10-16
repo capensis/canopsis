@@ -10,7 +10,7 @@ const {
   prepareUserByData,
   generateRight,
   generateRoleRightByChecksum,
-} = require('@/helpers/entities');
+} = require('@/helpers/entities/entities');
 const { generateTemporaryView } = require('./entities');
 
 const { CREDENTIALS } = require('../constants');
