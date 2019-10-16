@@ -279,7 +279,7 @@ reporting-disabled = false
 
 [[udp]]
   enabled = {{ influxdb_udp_enabled | bool | lower }}
-  bind-address = "{{ influxdb_udp_bind_address }}"
+  bind-address = "{{ influxdb_udp_bind_address }}"
   database = "{{ influxdb_udp_database_name }}"
 
   # retention-policy = ""

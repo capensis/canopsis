@@ -5,8 +5,6 @@ mongodb_pymongo_from_pip: false
 mongodb_security_authorization: enabled
 mongodb_package: 'mongodb-org'
 mongodb_storage_dbpath: '/var/lib/mongodb'
-# keep this variable empty for no replication and avoid canopsis role crash
-mongodb_replication_replset:
 influxdb_database_name: canopsis
 
 # CHANGE ALLOWED
@@ -20,8 +18,3 @@ mongodb_root_admin_name: root
 mongodb_root_admin_password: root
 mongodb_user_admin_name: admin
 mongodb_user_admin_password: admin
-
-# replication Options
-#mongodb_replication_replset: <replset_name>
-
-#canopsis_pkg_version: '2.5.15'

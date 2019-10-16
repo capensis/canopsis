@@ -54,11 +54,11 @@ export function actionToForm(action) {
       data.pbehaviorParameters.general = omit(pbehaviorToForm(action.parameters), ['filter']);
 
       if (action.parameters.comments) {
-        data.pbehaviorParameters.comments = pbehaviorToComments(action.parameters.comments);
+        data.pbehaviorParameters.comments = pbehaviorToComments(action.parameters);
       }
 
       if (action.parameters.exdate) {
-        data.pbehaviorParameters.exdate = pbehaviorToExdates(action.parameters.exdate);
+        data.pbehaviorParameters.exdate = pbehaviorToExdates(action.parameters);
       }
     }
   }

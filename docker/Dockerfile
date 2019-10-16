@@ -60,6 +60,7 @@ WORKDIR ${CPS_HOME}
 
 
 COPY sources/canopsis/etc ./etc
+COPY sources/canopsis/etc/amqp2engines-python.conf.example ./etc/amqp2engines.conf
 COPY sources/db-conf/opt ./opt
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc

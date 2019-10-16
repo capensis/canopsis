@@ -70,8 +70,8 @@ mongodump --username cpsmongo --password canopsis --db canopsis --out /chemin/ve
     Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.
-```sh
-/opt/canopsis/bin/canopsis-systemd stop
+```shell
+canoctl stop
 ```
 
 Utilisez la commande `mongorestore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/#basic-mongorestore-operations).
@@ -84,8 +84,8 @@ mongorestore --username cpsmongo --password canopsis --db canopsis /chemin/vers/
     Lors de la sauvegarde de la base, la commande crée un sous-dossier dans `/chemin/vers/sauvegarde` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au chemin dans la commande `mongorestore`.
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
-```sh
-/opt/canopsis/bin/canopsis-systemd start
+```shell
+canoctl start
 ```
 
 ## InfluxDB
@@ -104,8 +104,8 @@ influxd backup -portable -database canopsis /chemin/vers/sauvegarde
     Cette manipulation a un impact métier important et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour de corriger l'incident.
 
 Avant de procéder à la restauration, arrêtez l'hyperviseur.
-```sh
-/opt/canopsis/bin/canopsis-systemd stop
+```shell
+canoctl stop
 ```
 
 Utilisez la commande `influxd restore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/#restore).
@@ -126,6 +126,6 @@ influxd restore -portable /chemin/vers/sauvegarde
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
 
-```sh
-/opt/canopsis/bin/canopsis-systemd start
+```shell
+canoctl start
 ```
