@@ -1,5 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 const { API_ROUTES } = require('../../../../../src/config');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
 
 module.exports.command = function deleteUser(id, callback = () => {}) {
   const adminUsersPage = this.page.admin.users();
@@ -14,7 +15,7 @@ module.exports.command = function deleteUser(id, callback = () => {}) {
 
   this.waitForFirstXHR(
     `${API_ROUTES.user.remove}/${id}`,
-    5000,
+    WAIT_FOR_FIRST_XHR_TIME,
     () => confirmation.clickSubmitButton(),
     ({ responseData }) => {
       confirmation.verifyModalClosed();

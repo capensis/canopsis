@@ -25,18 +25,25 @@ const deepmerge = require('deepmerge');
 
 /* eslint-disable import/no-extraneous-dependencies */
 const seleniumServer = require('selenium-server');
+const ChildProcess = require('nightwatch/lib/runner/cli/child-process');
 /* eslint-enable import/no-extraneous-dependencies */
+const { nightwatchRunWithQueue } = require('./helpers/nightwatch-child-process');
 
 const loadEnv = require('../../tools/load-env'); // eslint-disable-line import/no-extraneous-dependencies
 const nightWatchRecordConfig = require('./nightwatch-record.config.js');
 
 const localEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env.local');
 const baseEnvPath = path.resolve(process.cwd(), 'tests', 'e2e', '.env');
+const testMode = process.env.E2E_TESTS_MODE;
+const isParallelMode = testMode === 'parallel';
+const isConsistentlyMode = testMode === 'consistently';
 
 loadEnv(localEnvPath);
 loadEnv(baseEnvPath);
 
 const sel = require('./helpers/sel');
+
+ChildProcess.prototype.run = nightwatchRunWithQueue;
 
 const userOptions = JSON.parse(process.env.VUE_NIGHTWATCH_USER_OPTIONS || '{}');
 
@@ -72,7 +79,7 @@ module.exports = deepmerge({
   selenium: seleniumConfig,
 
   test_workers: {
-    enabled: process.env.TEST_WORKERS_ENABLED === 'true',
+    enabled: isParallelMode,
     workers: Number(process.env.TEST_WORKERS_COUNT),
   },
   live_output: process.env.TEST_WORKERS_LIVE_OUTPUT_ENABLED === 'true',
@@ -84,6 +91,9 @@ module.exports = deepmerge({
       silent: true,
 
       videos: nightWatchRecordConfig,
+
+      exclude: isParallelMode && ['**/*.consistently.js'],
+      filter: isConsistentlyMode && '**/*.consistently.js',
     },
 
     chrome: {
