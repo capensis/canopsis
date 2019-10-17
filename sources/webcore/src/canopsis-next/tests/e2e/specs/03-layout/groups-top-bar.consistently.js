@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 const { API_ROUTES } = require('../../../../src/config');
-const { NAVIGATION_TYPES } = require('../../constants');
+const { NAVIGATION_TYPES, WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
 const { generateTemporaryView } = require('../../helpers/entities');
 const { createAdminUser, removeUser } = require('../../helpers/api');
 
@@ -76,7 +76,7 @@ module.exports = {
 
     browser.waitForFirstXHR(
       new RegExp(`${API_ROUTES.view}$`),
-      5000,
+      WAIT_FOR_FIRST_XHR_TIME,
       () => browser.page.modals.view.create()
         .clickViewSubmitButton(),
       ({ responseData, requestData }) => views.create = {
@@ -120,7 +120,7 @@ module.exports = {
 
     browser.waitForFirstXHR(
       new RegExp(`${API_ROUTES.view}$`),
-      5000,
+      WAIT_FOR_FIRST_XHR_TIME,
       () => browser.page.modals.view.create()
         .clickViewSubmitButton(),
       ({ responseData, requestData }) => views.copy = {
@@ -180,7 +180,7 @@ module.exports = {
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.create._id}`,
-      5000,
+      WAIT_FOR_FIRST_XHR_TIME,
       () => browser.page.modals.view.create()
         .clickViewSubmitButton(),
       ({ responseData, requestData }) => views.edit = {
