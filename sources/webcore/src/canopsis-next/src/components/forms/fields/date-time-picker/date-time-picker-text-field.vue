@@ -27,7 +27,7 @@ import { isEmpty } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import uid from '@/helpers/identifiers/uid';
+import uid from '@/helpers/uid';
 
 import formBaseMixin from '@/mixins/form/base';
 

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import uid from '@/helpers/identifiers/uid';
+import uid from '@/helpers/uid';
 
 export const types = {
   SHOW: 'SHOW',

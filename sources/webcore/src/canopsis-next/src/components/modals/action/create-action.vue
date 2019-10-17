@@ -16,7 +16,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import uuid from '@/helpers/identifiers/uuid';
+import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
 
 import ActionForm from '@/components/other/action/form/action-form.vue';

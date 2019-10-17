@@ -60,7 +60,7 @@
 import { MODALS } from '@/constants';
 
 import { prepareUserByData } from '@/helpers/entities/entities';
-import { getUsersSearchByText } from '@/helpers/entities/entities-search';
+import { getUsersSearchByText } from '@/helpers/serching/entities';
 
 import modalMixin from '@/mixins/modal';
 import viewQuery from '@/mixins/view/query';

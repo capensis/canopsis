@@ -3,7 +3,7 @@ import { omit, isUndefined, isEmpty } from 'lodash';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
-import prepareMainFilterToQueryFilter from '../filter';
+import prepareMainFilterToQueryFilter from './filter';
 
 /**
  * WIDGET CONVERTERS

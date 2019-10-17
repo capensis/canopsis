@@ -5,7 +5,7 @@ import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { dateParse } from '@/helpers/dates/date-intervals';
-import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/sort/query';
+import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
 
 /**
  * @mixin Add query logic

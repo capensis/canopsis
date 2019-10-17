@@ -23,7 +23,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import uuid from '@/helpers/identifiers/uuid';
+import uuid from '@/helpers/uuid';
 
 import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';

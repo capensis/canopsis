@@ -9,7 +9,7 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
 import { viewSchema, viewTabSchema, viewRowSchema, widgetSchema } from '@/store/schemas';
 
-import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/sort/query';
+import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
 
 export default {
   props: {

@@ -1,4 +1,4 @@
-import { setIn } from '@/helpers/entities/immutable';
+import { setIn } from '@/helpers/immutable';
 
 import baseFormMixin, { modelPropKeyComputed } from './base';
 

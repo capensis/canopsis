@@ -66,7 +66,7 @@ import { omit, cloneDeep } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
-import uid from '@/helpers/identifiers/uid';
+import uid from '@/helpers/uid';
 import formMixin from '@/mixins/form';
 
 import FilterRule from './filter-rule.vue';

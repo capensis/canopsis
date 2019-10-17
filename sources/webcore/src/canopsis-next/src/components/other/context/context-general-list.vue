@@ -41,7 +41,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { getContextWidgetSearchByText } from '@/helpers/entities/entities-search';
+import { getContextWidgetSearchByText } from '@/helpers/serching/entities';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('entity');
 

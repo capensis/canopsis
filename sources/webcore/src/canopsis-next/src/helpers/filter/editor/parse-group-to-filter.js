@@ -1,7 +1,7 @@
 import { isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
-import uid from '@/helpers/identifiers/uid';
+import uid from '@/helpers/uid';
 
 /**
  * @description Determine the operator and the input value of a rule
