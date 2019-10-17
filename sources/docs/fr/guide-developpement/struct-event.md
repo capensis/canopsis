@@ -14,18 +14,18 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
 
 ```javascript
 {
-    'event_type':       // Event type (see below)
-    'source_type':      // Source of event ('component', or 'resource')
-    'connector':        // Connector Type (gelf, nagios, snmp, ...)
-    'connector_name':   // Connector Identifier (nagios1, nagios2, ...)
-    'component':        // Component's name
-    'resource':         // Resource's name (only if source_type is 'resource')
+    "event_type":       // Event type (see below)
+    "source_type":      // Source of event ("component", or "resource")
+    "connector":        // Connector Type (gelf, nagios, snmp, ...)
+    "connector_name":   // Connector Identifier (nagios1, nagios2, ...)
+    "component":        // Component's name
+    "resource":         // Resource's name (only if source_type is "resource")
 
     // /!\ The following is optional /!\
 
-    'timestamp':        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
-    'output':           // Message
-    'long_output':      // Description
+    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
+    "output":           // Message
+    "long_output":      // Description
 
 }
 ```
@@ -38,9 +38,9 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'check',
+    "event_type": "check",
 
-    'state':                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
+    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
 }
 ```
 
@@ -48,10 +48,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'ack',    // mandatory
+    "event_type": "ack",    // mandatory
 
-    'author':               // Acknowledgment author, mandatory
-    'output':               // Acknowledgment comment, mandatory
+    "author":               // Acknowledgment author, optional
+    "output":               // Acknowledgment comment, optional
 }
 ```
 
@@ -61,8 +61,8 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 {
   "event_type": "snooze",   // mandatory
 
-  'author':           // snooze author, mandatory
-  'output':           // snooze comment, optional
+  "author":           // snooze author, optional
+  "output":           // snooze comment, optional
 }
 ```
 
@@ -70,10 +70,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'cancel',     // mandatory
+    "event_type": "cancel",     // mandatory
 
-    'author':               // author, mandatory
-    'output':               // comment, mandatory
+    "author":               // author, optional
+    "output":               // comment, optional
 }
 ```
 
@@ -81,10 +81,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'uncancel',   // mandatory
+    "event_type": "uncancel",   // mandatory
 
-    'author':               // author, mandatory
-    'output':               // comment, mandatory
+    "author":               // author, optional
+    "output":               // comment, optional
 }
 ```
 
@@ -93,10 +93,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'ackremove',  // mandatory
+    "event_type": "ackremove",  // mandatory
 
-    'author':               // author, mandatory
-    'output':               // comment, mandatory
+    "author":               // author, optional
+    "output":               // comment, optional
 }
 ```
 
@@ -104,11 +104,11 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'trap',  // mandatory
+    "event_type": "trap",  // mandatory
 
-    'snmp_severity':        // SNMP severity, mandatory
-    'snmp_state':           // SNMP state, mandatory
-    'snmp_oid':             // SNMP oid, mandatory
+    "snmp_severity":        // SNMP severity, mandatory
+    "snmp_state":           // SNMP state, mandatory
+    "snmp_oid":             // SNMP oid, mandatory
 }
 ```
 
@@ -116,11 +116,11 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'statcounterinc',     // mandatory
+    "event_type": "statcounterinc",     // mandatory
 
-    'stat_name':            // The name of the counter to increment, mandatory
-    'alarm':                // The alarm, mandatory
-    'entity':               // The entity which sent the event, mandatory
+    "stat_name":            // The name of the counter to increment, mandatory
+    "alarm":                // The alarm, mandatory
+    "entity":               // The entity which sent the event, mandatory
 }
 ```
 Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
@@ -130,12 +130,12 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ```javascript
 {
-    'event_type': 'statduration',   // mandatory
+    "event_type": "statduration",   // mandatory
 
-    'stat_name':            // The name of the duration, mandatory
-    'duration':             // The value of the duration (in seconds), mandatory
-    'current_alarm':        // The alarm, mandatory
-    'current_entity':       // The entity which sent the event, mandatory
+    "stat_name":            // The name of the duration, mandatory
+    "duration":             // The value of the duration (in seconds), mandatory
+    "current_alarm":        // The alarm, mandatory
+    "current_entity":       // The entity which sent the event, mandatory
 }
 ```
 
@@ -146,13 +146,13 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ```javascript
 {
-    'event_type': 'statstateinterval',      // mandatory
+    "event_type": "statstateinterval",      // mandatory
 
-    'stat_name':            // The name of the state, mandatory
-    'duration':             // The time spent in this state (in seconds), mandatory
-    'state':                // The value of the state, mandatory
-    'alarm':                // The alarm, mandatory
-    'entity':               // The entity which sent the event, mandatory
+    "stat_name":            // The name of the state, mandatory
+    "duration":             // The time spent in this state (in seconds), mandatory
+    "state":                // The value of the state, mandatory
+    "alarm":                // The alarm, mandatory
+    "entity":               // The entity which sent the event, mandatory
 }
 ```
 
