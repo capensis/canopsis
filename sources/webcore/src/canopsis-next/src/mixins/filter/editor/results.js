@@ -1,4 +1,3 @@
-import EventBus from '@/event-bus';
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
 export default {
@@ -30,11 +29,5 @@ export default {
         this.fetchList();
       }
     },
-  },
-  created() {
-    EventBus.$on('filter-editor:results:fetch', this.fetchList);
-  },
-  beforeDestroy() {
-    EventBus.$off('filter-editor:results:fetch', this.fetchList);
   },
 };
