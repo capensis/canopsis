@@ -1,5 +1,7 @@
 const RANDOM = Math.random().toString(36).substring(6);
 
+module.exports.WAIT_FOR_FIRST_XHR_TIME = 5000;
+
 module.exports.CREDENTIALS = {
   admin: {
     username: 'root',
