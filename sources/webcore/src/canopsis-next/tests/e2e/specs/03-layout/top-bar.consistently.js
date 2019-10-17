@@ -1,13 +1,13 @@
 // http://nightwatchjs.org/guide#usage
 
 const { LANGUAGES_POSITIONS } = require('../../constants');
-const { generateTemporaryView } = require('../../helpers/entities');
-const { createAdminUser, removeUser } = require('../../helpers/api');
+const {
+  createAdminUser, removeUser, createWidgetView, removeWidgetView,
+} = require('../../helpers/api');
 
 module.exports = {
   async before(browser, done) {
-    browser.globals.defaultViewData = {};
-
+    browser.globals.defaultViewData = await createWidgetView();
     const { data } = await createAdminUser();
 
     browser.globals.credentials = {
@@ -22,24 +22,18 @@ module.exports = {
   },
 
   async after(browser, done) {
+    const { viewId, groupId } = browser.globals.defaultViewData;
+
     browser.completed.logout()
       .end();
 
     await removeUser(browser.globals.credentials.username);
+    await removeWidgetView(viewId, groupId);
 
     delete browser.globals.credentials;
     delete browser.globals.defaultViewData;
 
     done();
-  },
-
-  'Create test view': (browser) => {
-    browser.completed.view.create(generateTemporaryView(), (view) => {
-      browser.globals.defaultViewData = {
-        viewId: view._id,
-        groupId: view.group_id,
-      };
-    });
   },
 
   'Open current user modal': (browser) => {
@@ -135,12 +129,5 @@ module.exports = {
 
     createUserModal.clickSubmitButton()
       .verifyModalClosed();
-  },
-
-  'Delete test view': (browser) => {
-    const { groupId, viewId } = browser.globals.defaultViewData;
-
-    browser.completed.view.delete(groupId, viewId);
-    browser.completed.view.deleteGroup(groupId);
   },
 };

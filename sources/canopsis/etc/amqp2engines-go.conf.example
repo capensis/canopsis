@@ -1,0 +1,13 @@
+# amqp2engines.conf for an open-core Go stack
+
+[engine:event_filter]
+next = axe,metric,pbehavior
+
+[engine:pbehavior]
+event_processing = canopsis.pbehavior.process.event_processing
+beat_processing = canopsis.pbehavior.process.beat_processing
+
+[engine:metric]
+
+[engine:scheduler]
+[engine:task_importctx]

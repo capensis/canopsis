@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 const { API_ROUTES } = require('../../../../src/config');
 const { generateTemporaryUser } = require('../../helpers/entities');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
 
 module.exports = {
   async before(browser, done) {
@@ -31,19 +32,27 @@ module.exports = {
     const usersPage = browser.page.admin.users();
 
     usersPage.setSearchingText(user._id)
-      .waitForFirstXHR(API_ROUTES.user.list, 5000, () => usersPage.clickSubmitSearchButton(), ({ responseData }) => {
-        const { data } = JSON.parse(responseData);
+      .waitForFirstXHR(
+        API_ROUTES.user.list,
+        WAIT_FOR_FIRST_XHR_TIME,
+        () => usersPage.clickSubmitSearchButton(), ({ responseData }) => {
+          const { data } = JSON.parse(responseData);
 
-        browser.assert.ok(data.every(item => item._id === user._id));
-        browser.assert.elementsCount(usersPage.elements.dataTableUserItem.selector, 1);
+          browser.assert.ok(data.every(item => item._id === user._id));
+          browser.assert.elementsCount(usersPage.elements.dataTableUserItem.selector, 1);
 
-        usersPage.verifyPageUserBefore(user._id);
-      })
-      .waitForFirstXHR(API_ROUTES.user.list, 5000, () => usersPage.clickClearSearchButton(), ({ responseData }) => {
-        const { data } = JSON.parse(responseData);
+          usersPage.verifyPageUserBefore(user._id);
+        }
+      )
+      .waitForFirstXHR(
+        API_ROUTES.user.list,
+        WAIT_FOR_FIRST_XHR_TIME,
+        () => usersPage.clickClearSearchButton(), ({ responseData }) => {
+          const { data } = JSON.parse(responseData);
 
-        browser.assert.ok(data.some(item => item._id !== user._id));
-      });
+          browser.assert.ok(data.some(item => item._id !== user._id));
+        }
+      );
   },
 
   'Login by created user credentials': (browser) => {

@@ -19,9 +19,6 @@ export CANOPSIS_UIV2_BRICKS_TAG=${CANOPSIS_UIV2_BRICKS_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
 export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
 
-# GitLab Access Token
-export CANOPSIS_CATAG_TOKEN=${CANOPSIS_CATAG_TOKEN:=""}
-
 # Do not check GOPATH and Go installation.
 # Can be used by any other script to avoid doing anything with Go.
 export CANOPSIS_SKIP_GO=${CANOPSIS_SKIP_GO:="0"}
@@ -43,7 +40,6 @@ function env_recap() {
     echo "CANOPSIS_PACKAGE_REL: ${CANOPSIS_PACKAGE_REL}"
     echo "CANOPSIS_DOCKER_MODE: ${CANOPSIS_DOCKER_MODE}"
     echo "CANOPSIS_BUILD_NEXT: ${CANOPSIS_BUILD_NEXT}"
-    echo "CANOPSIS_CATAG_TOKEN: set, hidden."
     echo "GOPATH: ${GOPATH}"
 }
 
@@ -57,11 +53,6 @@ function ensure_env() {
         if [ ! -d "${GOPATH}/src" ]; then
             mkdir -p ${GOPATH}/src
         fi
-    fi
-
-    if [ "${CANOPSIS_CATAG_TOKEN}" = "" ]; then
-        echo "\$CANOPSIS_CATAG_TOKEN is not initialised: provide gitlab api access token"
-        exit 2
     fi
 
     if [ "${CANOPSIS_TAG}" = "" ]; then
