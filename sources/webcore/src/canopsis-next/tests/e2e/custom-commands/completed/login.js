@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
 const { API_ROUTES } = require('../../../../src/config');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
 
 module.exports.command = function login(username, password) {
   const loginPage = this.page.auth.login();
@@ -14,7 +15,7 @@ module.exports.command = function login(username, password) {
 
   this.waitForFirstXHR(
     `${API_ROUTES.currentUser}`,
-    5000,
+    WAIT_FOR_FIRST_XHR_TIME,
     () => loginPage.clickSubmitButton(),
     ({ responseData }) => {
       const { data: [user] } = JSON.parse(responseData);

@@ -3,6 +3,7 @@
 const uid = require('uid');
 const { API_ROUTES } = require('../../../../src/config');
 const { generateTemporaryView } = require('../../helpers/entities');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
 
 module.exports = {
   async before(browser, done) {
@@ -45,7 +46,7 @@ module.exports = {
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.view._id}`,
-      5000,
+      WAIT_FOR_FIRST_XHR_TIME,
       () => browser.page.modals.common.textFieldEditor()
         .clickSubmitButton(),
       ({ responseData, requestData }) => views.view = {
@@ -84,7 +85,7 @@ module.exports = {
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.view._id}`,
-      5000,
+      WAIT_FOR_FIRST_XHR_TIME,
       () => browser.page.modals.common.textFieldEditor()
         .clickSubmitButton(),
       ({ responseData, requestData }) => views.view = {
@@ -118,7 +119,7 @@ module.exports = {
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.view._id}`,
-      5000,
+      WAIT_FOR_FIRST_XHR_TIME,
       () => textFieldEditorModal.clickSubmitButton(),
       ({ responseData, requestData }) => views.view = {
         copyTab,
@@ -162,7 +163,7 @@ module.exports = {
 
     browser.waitForFirstXHR(
       `${API_ROUTES.view}/${views.viewForCopying._id}`,
-      5000,
+      WAIT_FOR_FIRST_XHR_TIME,
       () => textFieldEditorModal.clickSubmitButton(),
       ({ responseData, requestData }) => views.viewForCopying = {
         copyTab,
