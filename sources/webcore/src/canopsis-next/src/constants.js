@@ -356,6 +356,7 @@ export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
+  test: 'DD/MM H:mm',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
   dateTimePickerWithSeconds: 'DD/MM/YYYY HH:mm:ss',
   datePicker: 'DD/MM/YYYY',
