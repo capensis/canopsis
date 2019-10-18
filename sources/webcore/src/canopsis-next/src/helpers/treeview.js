@@ -36,7 +36,3 @@ export function convertObjectToTreeview(parent, parentKey, parentPath = '', isPa
 
   return { name: parentKey, children };
 }
-
-export default {
-  convertObjectToTreeview,
-};
