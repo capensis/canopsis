@@ -18,7 +18,7 @@
                   div {{ $t('common.edit') }}
                 v-list-tile(@click="showSelectViewTabModal", :data-test="`copyWidgetButton-${widget._id}`")
                   div {{ $t('common.duplicate') }}
-                v-list-tile(@click="showDeleteWidgetModal(widget._id)", :data-test="`deleteWidgetButton-${widget._id}`")
+                v-list-tile(@click="showDeleteWidgetModal", :data-test="`deleteWidgetButton-${widget._id}`")
                   v-list-tile-title.error--text {{ $t('common.delete') }}
       v-divider
     v-card-text.pa-0
@@ -173,14 +173,14 @@ export default {
       });
     },
 
-    showDeleteWidgetModal(widgetId) {
+    showDeleteWidgetModal() {
       this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => {
-            const newTab = this.deleteWidgetFromTabRow(widgetId);
+            const updatedTab = this.deleteWidgetFromTabRow(this.widget._id);
 
-            return this.updateTabMethod(newTab);
+            return this.updateTabMethod(updatedTab);
           },
         },
       });
