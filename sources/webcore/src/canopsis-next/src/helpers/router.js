@@ -93,9 +93,3 @@ export async function checkUserAccessForRoute(to = {}) {
 
   throw new Error('User don\'t have access to page');
 }
-
-export default {
-  getAppInfoValuePromiseByKey,
-  checkAppInfoAccessForRoute,
-  checkUserAccessForRoute,
-};

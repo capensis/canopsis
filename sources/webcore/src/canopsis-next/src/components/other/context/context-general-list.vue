@@ -15,7 +15,7 @@
       @click="$emit('update:selectedIds',selectedEntities)"
     ) Add selection
     v-data-table(
-      :no-data-text="this.$t('tables.noData')",
+      :no-data-text="$t('tables.noData')",
       :headers="headers",
       :items="contextEntities",
       :loading="pending",

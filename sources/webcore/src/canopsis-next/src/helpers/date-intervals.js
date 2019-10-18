@@ -132,12 +132,3 @@ export function findRange(start, stop, ranges = STATS_QUICK_RANGES, defaultValue
   return Object.values(ranges)
     .find(range => start === range.start && stop === range.stop) || defaultValue;
 }
-
-export default {
-  parseStringToDateInterval,
-  dateParse,
-  prepareDateToObject,
-  prepareStatsStartForMonthPeriod,
-  prepareStatsStopForMonthPeriod,
-  findRange,
-};

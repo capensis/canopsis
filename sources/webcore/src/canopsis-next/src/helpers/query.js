@@ -324,10 +324,3 @@ export function convertWidgetToQuery(widget) {
       return {};
   }
 }
-
-export default {
-  convertContextWidgetToQuery,
-  convertContextUserPreferenceToQuery,
-  convertUserPreferenceToQuery,
-  convertWidgetToQuery,
-};

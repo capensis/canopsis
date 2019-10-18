@@ -30,9 +30,3 @@ export function objectToTextPairs(object = {}) {
 export function defaultTextPairCreator() {
   return { key: uid(), text: '', value: '' };
 }
-
-export default {
-  textPairsToObject,
-  objectToTextPairs,
-  defaultTextPairCreator,
-};
