@@ -34,6 +34,18 @@ export default {
       return merge({
         responsive: true,
         maintainAspectRatio: false,
+        scales: {
+          xAxes: [{
+            ticks: {
+              fontSize: 11,
+            },
+          }],
+          yAxes: [{
+            ticks: {
+              fontSize: 11,
+            },
+          }],
+        },
       }, this.options);
     },
 

@@ -94,9 +94,8 @@ export default {
       return {
         scales: {
           xAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: this.$t('entities.entities'),
+            ticks: {
+              fontSize: 11,
             },
           }],
           yAxes: [
@@ -106,6 +105,7 @@ export default {
               id: 'y-axis-1',
               ticks: {
                 suggestedMin: 0,
+                fontSize: 11,
               },
               scaleLabel: {
                 display: true,
@@ -118,6 +118,7 @@ export default {
               id: 'y-axis-2',
               ticks: {
                 suggestedMin: 0,
+                fontSize: 11,
               },
               scaleLabel: {
                 display: true,

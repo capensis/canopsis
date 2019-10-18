@@ -69,6 +69,7 @@ export default {
     delete: 'Supprimer',
     show: 'Afficher',
     edit: 'Éditer',
+    duplicate: 'Dupliquer',
     parse: 'Compiler',
     home: 'Accueil',
     step: 'Étape',

@@ -1,31 +1,30 @@
 <template lang="pug">
   div
-    v-card.position-relative
-      progress-overlay(:pending="pending")
-      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
-      v-data-table(
-        :items="stats",
-        :headers="tableHeaders",
-        :pagination.sync="pagination"
+    progress-overlay(:pending="pending")
+    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+    v-data-table(
+      :items="stats",
+      :headers="tableHeaders",
+      :pagination.sync="pagination"
+    )
+      template(
+        slot="items",
+        slot-scope="{ item }",
+        xs12
       )
-        template(
-          slot="items",
-          slot-scope="{ item }",
-          xs12
-        )
-          td {{ item.entity.name }}
-          td
-            v-layout(align-center)
-              v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
-                div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
-              div.caption
-                div(v-if="hasTrend(item[query.stat.title])")
-                  sub.ml-2
-                    v-icon.caption(
-                      small,
-                      :color="item[query.stat.title].trend | trendColor"
-                    ) {{ item[query.stat.title].trend | trendIcon }}
-                  sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
+        td {{ item.entity.name }}
+        td
+          v-layout(align-center)
+            v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
+              div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
+            div.caption
+              div(v-if="hasTrend(item[query.stat.title])")
+                sub.ml-2
+                  v-icon.caption(
+                    small,
+                    :color="item[query.stat.title].trend | trendColor"
+                  ) {{ item[query.stat.title].trend | trendIcon }}
+                sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
 </template>
 
 <script>
