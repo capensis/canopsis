@@ -1,11 +1,11 @@
 ---
 - name: Download influxdb package
   get_url:
-    url: https://dl.influxdata.com/influxdb/releases/influxdb_{{influxdb_version}}_amd64.deb
-    dest: "/var/cache/apt/archives/influxdb_{{influxdb_version}}_amd64.deb"
+    url: https://dl.influxdata.com/influxdb/releases/influxdb_{{ influxdb_version }}_amd64.deb
+    dest: "/var/cache/apt/archives/influxdb_{{ influxdb_version }}_amd64.deb"
   become: yes
 
 - name: Install influxdb package
   apt:
-    deb: "/var/cache/apt/archives/influxdb_{{influxdb_version}}_amd64.deb"
+    deb: "/var/cache/apt/archives/influxdb_{{ influxdb_version }}_amd64.deb"
   become: yes

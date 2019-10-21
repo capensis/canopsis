@@ -750,6 +750,26 @@ export default {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
       },
     },
+    createAction: {
+      create: {
+        title: 'Créer une action',
+        success: 'Action créée avec succès !',
+      },
+      edit: {
+        success: 'Action éditée avec succès !',
+      },
+      remove: {
+        success: 'Action supprimée avec succès !',
+      },
+      tabs: {
+        general: 'Général',
+        hook: 'Hook',
+      },
+      fields: {
+        message: 'Message',
+        duration: 'Durée',
+      },
+    },
     statsDateInterval: {
       title: 'Stats - Interval de dates',
       fields: {
@@ -992,6 +1012,33 @@ export default {
     title: 'Règles SNMP',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
+  },
+  actions: {
+    title: 'Actions',
+    addAction: 'Ajouter une action',
+    table: {
+      id: 'Id',
+      type: 'Type',
+      expand: {
+        tabs: {
+          general: 'Général',
+          hook: 'Hook',
+          author: 'Auteur',
+          pbehavior: {
+            name: 'Nom',
+            type: 'Type',
+            reason: 'Raison',
+            start: 'Début',
+            end: 'Fin',
+          },
+          snooze: {
+            message: 'Message',
+            duration: 'Durée',
+            noMessage: 'Aucun message n\'est défini',
+          },
+        },
+      },
+    },
   },
   layout: {
     sideBar: {

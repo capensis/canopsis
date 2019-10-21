@@ -30,6 +30,7 @@ import featuresService from '@/services/features';
 
 import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
+import SetSeveralPlugin from '@/plugins/set-several';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
@@ -137,6 +138,7 @@ Vue.use(ModalsPlugin, {
 });
 
 Vue.use(PopupsPlugin, { store });
+Vue.use(SetSeveralPlugin);
 
 Vue.config.productionTip = false;
 

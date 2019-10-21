@@ -26,6 +26,10 @@ module.exports = {
       },
     },
     disableHostCheck: true,
+    watchOptions: {
+      aggregateTimeout: 300,
+      poll: true,
+    },
   },
   pluginOptions: {
     webpackBundleAnalyzer: {

@@ -29,25 +29,13 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: true,
-        fetchingParams: params,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
-        allIds,
-        meta,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
     },
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { pending: false });
     },
   },
   actions: {

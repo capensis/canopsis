@@ -155,8 +155,11 @@ export default {
 
   created() {
     document.addEventListener('keydown', this.keyDownListener);
-    this.fetchView({ id: this.id });
     this.registerViewOnceWatcher();
+  },
+
+  mounted() {
+    this.fetchView({ id: this.id });
   },
 
   beforeDestroy() {
