@@ -99,7 +99,6 @@
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
-import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
@@ -110,7 +109,6 @@ import entitiesViewMixin from '@/mixins/entities/view';
 
 export default {
   components: {
-    ViewTabRows,
     ViewTabsWrapper,
   },
   mixins: [

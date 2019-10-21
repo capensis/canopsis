@@ -25,14 +25,11 @@
       :hasUpdateAccess="hasUpdateAccess",
       :updateViewMethod="data => updateViewMethod(data)"
     )
-      view-tab-rows(
-        slot-scope="props",
-        v-bind="props"
-      )
 </template>
 
 <script>
 import { isEqual } from 'lodash';
+import { GridLayout, GridItem } from 'vue-grid-layout';
 
 import ViewTabs from './view-tabs.vue';
 import ViewTabRows from './view-tab-rows.vue';
@@ -41,6 +38,8 @@ export default {
   components: {
     ViewTabs,
     ViewTabRows,
+    GridLayout,
+    GridItem,
   },
   props: {
     view: {

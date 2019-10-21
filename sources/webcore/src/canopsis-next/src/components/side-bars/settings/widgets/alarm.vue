@@ -1,13 +1,6 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-row-grid-size(
-        :rowId.sync="settings.rowId",
-        :size.sync="settings.widget.size",
-        :availableRows="availableRows",
-        @createRow="createRow"
-      )
-      v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
@@ -86,7 +79,6 @@ import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
 
-import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
@@ -109,7 +101,6 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
@@ -125,11 +116,10 @@ export default {
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
-    const { widget, rowId } = this.config;
+    const { widget } = this.config;
 
     return {
       settings: {
-        rowId,
         widget: this.prepareAlarmWidgetSettings(cloneDeep(widget), true),
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,

@@ -281,19 +281,6 @@ export function generateWidgetByType(type) {
 }
 
 /**
- * Generate view row
- *
- * @returns {Object}
- */
-export function generateViewRow() {
-  return {
-    _id: uuid('view-row'),
-    title: '',
-    widgets: [],
-  };
-}
-
-/**
  * Generate view tab
  *
  * @returns {Object}
@@ -302,7 +289,7 @@ export function generateViewTab() {
   return {
     _id: uuid('view-tab'),
     title: '',
-    rows: [],
+    widgets: [],
   };
 }
 
@@ -432,14 +419,9 @@ export function generateCopyOfViewTab(tab) {
   return {
     ...generateViewTab(),
 
-    rows: tab.rows.map(row => ({
-      ...generateViewRow(),
-
-      title: row.title,
-      widgets: row.widgets.map(widget => ({
-        ...generateWidgetByType(widget.type),
-        ...omit(widget, ['_id']),
-      })),
+    widgets: tab.widgets.map(widget => ({
+      ...generateWidgetByType(widget.type),
+      ...omit(widget, ['_id']),
     })),
   };
 }
@@ -458,7 +440,7 @@ export function generateCopyOfView(view) {
     tabs: view.tabs.map(tab => ({
       ...generateCopyOfViewTab(tab),
 
-      ...omit(tab, ['_id', 'rows']),
+      ...omit(tab, ['_id', 'widgets']),
     })),
   };
 }
@@ -520,14 +502,10 @@ export function generateAction() {
  * @returns {Array.<{ oldId: number, newId: number }>}
  */
 export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
-  return oldTab.rows.reduce((acc, row, rowIndex) => {
-    const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
-      oldId: widget._id,
-      newId: get(newTab, `rows.${rowIndex}.widgets.${widgetIndex}._id`, null),
-    }));
-
-    return acc.concat(widgetsIds);
-  }, []);
+  return oldTab.widgets.map((widget, widgetIndex) => ({
+    oldId: widget._id,
+    newId: get(newTab, `widgets.${widgetIndex}._id`, null),
+  }));
 }
 
 /**
@@ -555,7 +533,6 @@ export function prepareUserByData(data, user = generateUser()) {
 
 export default {
   generateWidgetByType,
-  generateViewRow,
   generateView,
   generateUserPreferenceByWidgetAndUser,
   generateUser,

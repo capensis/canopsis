@@ -37,12 +37,8 @@ export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
   idAttribute: '_id',
 });
 
-export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
-  widgets: [widgetSchema],
-}, { idAttribute: '_id' });
-
 export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
-  rows: [viewRowSchema],
+  widgets: [widgetSchema],
 }, { idAttribute: '_id' });
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
@@ -78,7 +74,6 @@ export default {
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.group]: groupSchema,
   [ENTITIES_TYPES.view]: viewSchema,
-  [ENTITIES_TYPES.viewRow]: viewRowSchema,
   [ENTITIES_TYPES.viewTab]: viewTabSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,

@@ -32,6 +32,7 @@
 
 <script>
 import { cloneDeep } from 'lodash';
+import { GridItem } from 'vue-grid-layout';
 
 import { WIDGET_TYPES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
@@ -63,6 +64,7 @@ export default {
     StatsNumberWidget,
     StatsParetoWidget,
     TextWidget,
+    GridItem,
   },
   mixins: [modalMixin, sideBarMixin],
   props: {
