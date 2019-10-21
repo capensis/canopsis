@@ -1,11 +1,9 @@
-import { normalize, denormalize } from 'normalizr';
+import { cloneDeep } from 'lodash';
 
 import queryMixin from '@/mixins/query';
 import sideBarMixins from '@/mixins/side-bar/side-bar';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-
-import { viewSchema, viewTabSchema, widgetSchema } from '@/store/schemas';
 
 import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
 
@@ -25,11 +23,6 @@ export default {
   data() {
     return {
       tabId: this.config.tabId,
-      normalizedEntities: {
-        [viewSchema.key]: {},
-        [viewTabSchema.key]: {},
-        [widgetSchema.key]: {},
-      },
     };
   },
   computed: {
@@ -40,26 +33,8 @@ export default {
     widget() {
       return this.config.widget;
     },
-
-    localTab() {
-      return denormalize(this.tabId, viewTabSchema, this.normalizedEntities);
-    },
-
-  },
-  mounted() {
-    const { entities } = normalize(this.activeView, viewSchema);
-
-    this.normalizedEntities = entities;
   },
   methods: {
-    updateNormalizedEntity(key, entity) {
-      this.$set(
-        this.normalizedEntities,
-        key,
-        { ...(this.normalizedEntities[key] || {}), [entity._id]: entity },
-      );
-    },
-
     isFormValid() {
       if (this.$validator) {
         return this.$validator.validateAll();
@@ -93,13 +68,18 @@ export default {
           },
         };
 
-        /**
-         * Put widget into local normalized store
-         */
 
-        this.updateNormalizedEntity(widgetSchema.key, widget);
+        const view = cloneDeep(this.view);
 
-        const view = denormalize(this.activeView._id, viewSchema, this.normalizedEntities);
+        view.tabs[0].widgets.push(widget);
+
+        view.tabs[0].layout.push({
+          i: this.settings.widget._id,
+          x: 0,
+          y: 0,
+          w: 12,
+          h: 4,
+        });
 
         await Promise.all([
           this.createUserPreference({ userPreference }),

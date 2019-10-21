@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
 import { GridItem } from 'vue-grid-layout';
 
 import { WIDGET_TYPES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
@@ -76,17 +75,9 @@ export default {
       type: Object,
       required: true,
     },
-    row: {
-      type: Object,
-      required: true,
-    },
     isEditingMode: {
       type: Boolean,
       default: false,
-    },
-    updateTabMethod: {
-      type: Function,
-      required: true,
     },
   },
   data() {
@@ -106,6 +97,8 @@ export default {
     };
   },
   methods: {
+    // TODO: Refacto without rows
+    /*
     deleteWidgetFromTabRow(widgetId) {
       const newTab = cloneDeep(this.tab);
 
@@ -117,6 +110,7 @@ export default {
 
       return newTab;
     },
+    */
 
     /**
      * Redirect to selected view and tab, if it's different then the view/tab we're actually on
@@ -153,14 +147,12 @@ export default {
       viewId,
       widget,
       tabId,
-      rowId,
     }) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
           viewId,
           tabId,
-          rowId,
           widget,
         },
       });
@@ -175,6 +167,7 @@ export default {
       });
     },
 
+    /*
     showDeleteWidgetModal() {
       this.showModal({
         name: MODALS.confirmation,
@@ -187,6 +180,7 @@ export default {
         },
       });
     },
+    */
   },
 };
 </script>

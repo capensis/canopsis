@@ -25,11 +25,21 @@
       :hasUpdateAccess="hasUpdateAccess",
       :updateViewMethod="data => updateViewMethod(data)"
     )
+      template(slot-scope="props")
+        grid-layout(:layout.sync="props.tab.layout")
+          grid-item(v-for="item in props.tab.layout", :x="item.x", :y="item.y", :w="item.w", :h="item.h", :i="item.i")
+            widget-wrapper(
+              :widget="findWidgetInTabById(props.tab._id, item.i)",
+              :tab="props.tab",
+              :isEditingMode="isEditingMode"
+            )
 </template>
 
 <script>
 import { isEqual } from 'lodash';
 import { GridLayout, GridItem } from 'vue-grid-layout';
+
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 import ViewTabs from './view-tabs.vue';
 
@@ -38,6 +48,7 @@ export default {
     ViewTabs,
     GridLayout,
     GridItem,
+    WidgetWrapper,
   },
   props: {
     view: {
@@ -91,6 +102,12 @@ export default {
 
         tabs: this.tabs,
       });
+    },
+
+    findWidgetInTabById(tabId, widgetId) {
+      const tabIndex = this.view.tabs.findIndex(tab => tab._id === tabId);
+
+      return this.view.tabs[tabIndex].widgets.find(widget => widget._id === widgetId);
     },
   },
 };

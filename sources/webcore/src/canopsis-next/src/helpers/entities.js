@@ -31,11 +31,6 @@ export function generateWidgetByType(type) {
     _id: uuid(`widget_${type}`),
     title: '',
     parameters: {},
-    size: {
-      sm: 3,
-      md: 3,
-      lg: 3,
-    },
   };
 
   const alarmsListDefaultParameters = {
@@ -289,6 +284,7 @@ export function generateViewTab() {
   return {
     _id: uuid('view-tab'),
     title: '',
+    layout: [],
     widgets: [],
   };
 }
@@ -418,7 +414,7 @@ export function generateRoleRightByChecksum(checksum) {
 export function generateCopyOfViewTab(tab) {
   return {
     ...generateViewTab(),
-
+    // TODO: ADD Layout copy
     widgets: tab.widgets.map(widget => ({
       ...generateWidgetByType(widget.type),
       ...omit(widget, ['_id']),
