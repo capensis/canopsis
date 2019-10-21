@@ -29,6 +29,8 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
+import formBaseMixin from '@/mixins/form/base';
+
 import DateTimePickerButton from './date-time-picker-button.vue';
 
 export default {
@@ -43,6 +45,7 @@ export default {
   },
   inject: ['$validator'],
   components: { DateTimePickerButton },
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -107,7 +110,7 @@ export default {
   },
   methods: {
     updateObjectField(value) {
-      this.$form.updateModel(moment(value).format(DATETIME_FORMATS.dateTimePicker));
+      this.updateModel(moment(value).format(DATETIME_FORMATS.dateTimePicker));
     },
 
     focus() {

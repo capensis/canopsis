@@ -96,7 +96,7 @@ module.exports = {
                 valueExpression = `_n(${valueExpression})`;
               }
 
-              const assignment = `$form.updateField([${path}], ${valueExpression})`;
+              const assignment = `$updateField([${path}], ${valueExpression})`;
 
               // eslint-disable-next-line no-param-reassign
               el.model = {

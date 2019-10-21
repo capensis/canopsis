@@ -12,12 +12,13 @@
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
+import formBaseMixin from '@/mixins/form/base';
 
 import SettingsButtonField from '../partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
-  mixins: [modalMixin],
+  mixins: [modalMixin, formBaseMixin],
   props: {
     value: {
       type: Object,
@@ -38,13 +39,13 @@ export default {
         config: {
           ...this.value,
 
-          action: value => this.$form.updateModel(value),
+          action: value => this.updateModel(value),
         },
       });
     },
 
     removeLiveReporting() {
-      this.$form.updateModel({});
+      this.updateModel({});
     },
   },
 };

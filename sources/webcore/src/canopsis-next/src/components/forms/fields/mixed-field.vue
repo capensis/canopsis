@@ -42,7 +42,7 @@
       :disabled="disabled",
       data-test="mixedInputSwitch",
       hide-details,
-      @change="$form.updateModel"
+      @change="updateModel"
     )
     v-text-field.mixed-field__text(
       v-else,
@@ -58,6 +58,8 @@ import { isBoolean, isNumber, isNan, isNull } from 'lodash';
 
 import { FILTER_INPUT_TYPES } from '@/constants';
 
+import formBaseMixin from '@/mixins/form/base';
+
 export default {
   $_veeValidate: {
     name() {
@@ -69,6 +71,7 @@ export default {
     },
   },
   inject: ['$validator'],
+  mixins: [formBaseMixin],
   props: {
     value: {
       type: [String, Number, Boolean],
@@ -149,16 +152,16 @@ export default {
     updateType(value) {
       switch (value) {
         case FILTER_INPUT_TYPES.number:
-          this.$form.updateModel(Number(this.value));
+          this.updateModel(Number(this.value));
           break;
         case FILTER_INPUT_TYPES.boolean:
-          this.$form.updateModel(Boolean(this.value));
+          this.updateModel(Boolean(this.value));
           break;
         case FILTER_INPUT_TYPES.string:
-          this.$form.updateModel((isNan(this.value) || isNull(this.value)) ? '' : String(this.value));
+          this.updateModel((isNan(this.value) || isNull(this.value)) ? '' : String(this.value));
           break;
         case FILTER_INPUT_TYPES.null:
-          this.$form.updateModel(null);
+          this.updateModel(null);
           break;
       }
     },
@@ -166,7 +169,7 @@ export default {
     updateTextFieldValue(value) {
       const isInputTypeNumber = this.inputType === FILTER_INPUT_TYPES.number;
 
-      this.$form.updateModel(isInputTypeNumber ? Number(value) : value);
+      this.updateModel(isInputTypeNumber ? Number(value) : value);
     },
   },
 };

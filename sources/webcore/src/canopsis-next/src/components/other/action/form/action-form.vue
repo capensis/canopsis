@@ -41,7 +41,6 @@
 <script>
 import { ACTION_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
@@ -53,7 +52,7 @@ export default {
     ActionGeneralTab,
     WebhookFormHookTab,
   },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',

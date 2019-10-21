@@ -37,6 +37,7 @@ export default {
         this.updateModel(setIn(result, newFieldName, value));
       }
     },
+
     /**
      * Emit event to parent with new object
      * Rename a field in the object

@@ -44,10 +44,13 @@
 </template>
 
 <script>
+import formMixin from '@/mixins/form';
+
 import SnmpRuleFormField from './snmp-rule-form-field-title.vue';
 
 export default {
   components: { SnmpRuleFormField },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -81,7 +84,7 @@ export default {
     },
 
     updateSelectableInput(item) {
-      this.$form.updateField('value', `${this.form.value || ''}{{ ${item} }}`);
+      this.updateField('value', `${this.form.value || ''}{{ ${item} }}`);
     },
   },
 };

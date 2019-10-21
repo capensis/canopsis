@@ -114,7 +114,7 @@ export default {
           filter: {
             filter: this.form.filter || {},
           },
-          action: ({ filter }) => this.$form.updateField('filter', filter),
+          action: ({ filter }) => this.updateField('filter', filter),
         },
       });
     },

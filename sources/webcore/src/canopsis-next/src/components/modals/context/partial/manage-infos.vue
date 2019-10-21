@@ -91,7 +91,7 @@ export default {
         config: {
           infos: this.infos,
           title: this.$t('modals.addEntityInfo.addTitle'),
-          action: info => this.$form.updateField(info.name, omit(info, ['name'])),
+          action: info => this.updateField(info.name, omit(info, ['name'])),
         },
       });
     },
@@ -103,7 +103,7 @@ export default {
           infos: this.infos,
           editingInfo: info,
           title: this.$t('modals.addEntityInfo.editTitle'),
-          action: editedInfo => this.$form.updateAndMoveField(info.name, editedInfo.name, omit(editedInfo, ['name'])),
+          action: editedInfo => this.updateAndMoveField(info.name, editedInfo.name, omit(editedInfo, ['name'])),
         },
       });
     },

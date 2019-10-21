@@ -15,10 +15,7 @@
 <script>
 import { STATS_CURVES_POINTS_STYLES } from '@/constants';
 
-import formMixin from '@/mixins/form';
-
 export default {
-  mixins: [formMixin],
   model: {
     prop: 'value',
     event: 'input',

@@ -37,6 +37,8 @@
 <script>
 import { SNMP_STATE_TYPES } from '@/constants';
 
+import formBaseMixin from '@/mixins/form/base';
+
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
@@ -48,6 +50,7 @@ export default {
     SnmpRuleFormFieldTitle,
     SnmpRuleFormModuleMibObjectsForm,
   },
+  mixins: [formBaseMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -77,7 +80,7 @@ export default {
         state.stateoid = {};
       }
 
-      this.$form.updateModel(state);
+      this.updateModel(state);
     },
   },
 };

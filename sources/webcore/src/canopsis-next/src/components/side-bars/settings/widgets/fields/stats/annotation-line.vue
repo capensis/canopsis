@@ -46,9 +46,10 @@
 import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [modalMixin],
+  mixins: [modalMixin, formMixin],
   model: {
     prop: 'annotationLine',
     event: 'input',
@@ -71,7 +72,7 @@ export default {
         config: {
           title: this.$t('modals.colorPicker.title'),
           color: this.annotationLine[key],
-          action: color => this.$form.updateField(key, color),
+          action: color => this.updateField(key, color),
         },
       });
     },

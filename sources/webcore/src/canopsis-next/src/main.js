@@ -29,7 +29,7 @@ import i18n from '@/i18n';
 import filters from '@/filters';
 
 import SetSeveralPlugin from '@/plugins/set-several';
-import FormPlugin from '@/plugins/form';
+import UpdateFieldPlugin from '@/plugins/update-field';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
@@ -114,7 +114,7 @@ Vue.use(VeeValidate, {
 });
 
 Vue.use(SetSeveralPlugin);
-Vue.use(FormPlugin);
+Vue.use(UpdateFieldPlugin);
 
 Vue.config.productionTip = false;
 

@@ -6,7 +6,7 @@
       field-filters(
         :filters="value.filters",
         hideSelect,
-        @update:filters="$form.updateField('filters', $event)"
+        @update:filters="updateField('filters', $event)"
       )
       v-divider
       field-opened-resolved-filter(v-field="value.alarmsStateFilter")
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import FieldOpenedResolvedFilter from '../fields/alarm/opened-resolved-filter.vue';
@@ -50,7 +51,7 @@ export default {
     FieldCriticityLevels,
     FieldLevelsColorsSelector,
   },
-  mixins: [formValidationHeaderMixin],
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',

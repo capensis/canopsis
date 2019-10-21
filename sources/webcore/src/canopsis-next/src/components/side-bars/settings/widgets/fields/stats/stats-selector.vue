@@ -58,12 +58,13 @@ import { MODALS } from '@/constants';
 import { setInSeveral } from '@/helpers/immutable';
 
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
   components: { Draggable },
-  mixins: [modalMixin, formValidationHeaderMixin],
+  mixins: [modalMixin, formMixin, formValidationHeaderMixin],
   model: {
     prop: 'stats',
     event: 'input',
@@ -136,7 +137,7 @@ export default {
               }, {}),
             };
 
-            this.$form.updateField(stat.title, newStat);
+            this.updateField(stat.title, newStat);
           },
         },
       });
@@ -150,7 +151,7 @@ export default {
           withTrend: this.withTrend,
           stat: this.stats[statTitle],
           statTitle,
-          action: newStat => this.$form.updateAndMoveField(statTitle, newStat.title, omit(newStat, ['title'])),
+          action: newStat => this.updateAndMoveField(statTitle, newStat.title, omit(newStat, ['title'])),
         },
       });
     },
@@ -159,7 +160,7 @@ export default {
       this.showModal({
         name: MODALS.confirmation,
         config: {
-          action: () => this.$form.removeField(statTitle),
+          action: () => this.removeField(statTitle),
         },
       });
     },
@@ -173,7 +174,7 @@ export default {
 
       const newStats = setInSeveral(this.stats, modifiers);
 
-      this.$form.updateModel(newStats);
+      this.updateModel(newStats);
     },
   },
 };

@@ -42,7 +42,7 @@ export default {
         config: {
           title: this.$t('modals.colorPicker.title'),
           color: this.value[key],
-          action: color => this.$form.updateField(key, color),
+          action: color => this.updateField(key, color),
         },
       });
     },

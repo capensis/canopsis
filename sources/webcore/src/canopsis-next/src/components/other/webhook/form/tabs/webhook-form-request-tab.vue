@@ -94,9 +94,9 @@ export default {
       },
       set(value) {
         if (value) {
-          this.$form.updateField('auth', { username: '', password: '' });
+          this.updateField('auth', { username: '', password: '' });
         } else {
-          this.$form.removeField('auth');
+          this.removeField('auth');
         }
       },
     },

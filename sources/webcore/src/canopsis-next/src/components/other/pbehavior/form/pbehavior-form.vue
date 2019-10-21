@@ -15,8 +15,6 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-
 import PbehaviorGeneralForm from './partials/pbehavior-general-form.vue';
 import PbehaviorExdatesForm from './partials/pbehavior-exdates-form.vue';
 import PbehaviorCommentsForm from './partials/pbehavior-comments-form.vue';
@@ -27,7 +25,6 @@ export default {
     PbehaviorExdatesForm,
     PbehaviorCommentsForm,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',

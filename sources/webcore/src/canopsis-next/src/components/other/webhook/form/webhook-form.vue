@@ -20,6 +20,8 @@ import { intersection } from 'lodash';
 
 import { WEBHOOK_TRIGGERS } from '@/constants';
 
+import formMixin from '@/mixins/form';
+
 import WebhookFormHookTab from './tabs/webhook-form-hook-tab.vue';
 import WebhookFormRequestTab from './tabs/webhook-form-request-tab.vue';
 import WebhookFormDeclareTicketTab from './tabs/webhook-form-declare-ticket-tab.vue';
@@ -30,6 +32,7 @@ export default {
     WebhookFormRequestTab,
     WebhookFormDeclareTicketTab,
   },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -69,7 +72,7 @@ export default {
             disabled: this.disabled,
           },
           on: {
-            input: event => this.$form.updateField('hook', event),
+            input: event => this.updateField('hook', event),
           },
         },
         {
@@ -80,7 +83,7 @@ export default {
             disabled: this.disabled,
           },
           on: {
-            input: event => this.$form.updateField('request', event),
+            input: event => this.updateField('request', event),
           },
         },
         {
@@ -92,8 +95,8 @@ export default {
             emptyResponse: this.form.emptyResponse,
           },
           on: {
-            input: event => this.$form.updateField('declare_ticket', event),
-            'update:emptyResponse': event => this.$form.updateField('emptyResponse', event),
+            input: event => this.updateField('declare_ticket', event),
+            'update:emptyResponse': event => this.updateField('emptyResponse', event),
           },
         },
       ];
