@@ -1,8 +1,9 @@
 <template lang="pug">
-  div
+  div(:data-test="`${column.text}-${component.bind.text}`")
     v-menu(
       v-if="popupData",
       v-model="isInfoPopupOpen",
+      :data-test="column.text",
       :close-on-content-click="false",
       :open-on-click="false",
       offset-x
@@ -20,8 +21,8 @@
             v-btn.ma-0.ml-3(icon, small, @click="hideInfoPopup", color="white")
               v-icon(small, color="error") close
         v-card-text.pa-2(v-html="popupTextContent")
-    div(v-else-if="column.isHtml", v-html="sanitizedValue")
-    div(v-else, v-bind="component.bind", v-on="component.on")
+    div(:data-test="column.text", v-else-if="column.isHtml", v-html="sanitizedValue")
+    div(:data-test="`${column.text}-${component.bind.text}`", v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
 <script>

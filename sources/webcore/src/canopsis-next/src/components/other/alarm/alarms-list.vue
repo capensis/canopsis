@@ -5,6 +5,7 @@
         alarm-list-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
+          data-test="topPagination",
           v-if="hasColumns",
           :page="query.page",
           :limit="query.limit",
@@ -14,6 +15,7 @@
         )
       v-flex
         filter-selector(
+          data-test="alarmsFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :lockedFilters="widgetViewFilters",
@@ -33,13 +35,14 @@
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-btn(@click="showEditLiveReportModal", icon, small)
+        v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
           v-icon(:color="activeRange ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
+        data-test="alarmsListTable",
         :class="vDataTableClass",
         v-model="selected",
         :items="alarms",
@@ -59,7 +62,7 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          tr
+          tr(data-test="alarmListRow")
             td
               v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
@@ -74,6 +77,7 @@
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
+            data-test="bottomPagination",
             :page="query.page",
             :limit="query.limit",
             :total="alarmsMeta.total",

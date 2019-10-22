@@ -46,7 +46,7 @@
                 small
               ) {{ item.locked ? 'lock' : 'person' }}
     v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
-      v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
+      v-btn(data-test="showFiltersListButton", v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
       filters-list(
         v-else,
