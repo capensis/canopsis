@@ -4,7 +4,7 @@ Cette procédure décrit l'installation de l'édition open-source de Canopsis en
 
 L'ensemble des procédures décrites doivent être réalisées avec l'utilisateur `root`.
 
-## Pré-requis
+## Prérequis
 
 Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch* ») et CentOS 7. Les binaires sont compilés pour l'architecture x86-64.
 
