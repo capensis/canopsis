@@ -35,9 +35,6 @@ apt install canopsis-core
 
 ### Sur CentOS 7
 
-!!! note
-    Les versions de CentOS inférieures à CentOS 7 ne sont **pas** prises en charge.
-
 Activation d'EPEL et application des dernières mises à jour de votre système :
 ```sh
 yum install yum-utils epel-release
