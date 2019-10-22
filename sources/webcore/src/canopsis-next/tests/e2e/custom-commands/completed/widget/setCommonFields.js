@@ -276,51 +276,6 @@ module.exports.command = function setCommonFields({
     });
   }
 
-  if (statSelector) {
-    common.clickStatSelectButton();
-
-    addStatModal
-      .verifyModalOpened()
-      .selectStatType(statSelector.type)
-      .clickStatTitle()
-      .clearStatTitle()
-      .setStatTitle(statSelector.title);
-
-    if (typeof statSelector.trend === 'boolean') {
-      addStatModal.setStatTrend(statSelector.trend);
-    }
-
-    if (typeof statSelector.recursive === 'boolean') {
-      addStatModal.setStatRecursive(statSelector.recursive);
-    }
-
-    if (statSelector.states) {
-      addStatModal
-        .clickStatStates()
-        .setStatStates(statSelector.states)
-        .clickParameters();
-    }
-
-    if (statSelector.authors) {
-      addStatModal
-        .clickStatAuthors()
-        .clearStatAuthors()
-        .setStatAuthors(statSelector.authors)
-        .clickParameters();
-    }
-
-    if (statSelector.sla) {
-      addStatModal
-        .clickStatSla()
-        .clearStatSla()
-        .setStatSla(statSelector.sla);
-    }
-
-    addStatModal
-      .clickSubmitButton()
-      .verifyModalClosed();
-  }
-
   if (statsPointsStyles) {
     statsPointsStyles.forEach((statColor) => {
       common

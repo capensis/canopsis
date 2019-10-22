@@ -1,5 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 const { API_ROUTES } = require('../../../../../src/config');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
 
 module.exports.command = function copyView(groupId, viewId, view, callback = () => {}) {
   const {
@@ -73,7 +74,7 @@ module.exports.command = function copyView(groupId, viewId, view, callback = () 
 
   this.waitForFirstXHR(
     new RegExp(`${API_ROUTES.view}$`),
-    5000,
+    WAIT_FOR_FIRST_XHR_TIME,
     () => modalViewCreate.clickViewSubmitButton(),
     ({ responseData, requestData }) => {
       modalViewCreate.verifyModalClosed();

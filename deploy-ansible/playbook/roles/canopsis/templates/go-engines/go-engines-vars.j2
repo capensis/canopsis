@@ -1,0 +1,6 @@
+# systemd-compatible EnvironmentFile for Canopsis Go engines.
+# provisioned by canoctl
+CPS_MONGO_URL="mongodb://{{ canopsis_mongo_user }}:{{ canopsis_mongo_password }}@{{ canopsis_mongo_host }}:{{ canopsis_mongo_port }}/{{ canopsis_mongo_db }}"
+CPS_INFLUX_URL="http://{{ canopsis_influxdb_user }}:{{ canopsis_influxdb_password }}@{{ canopsis_influxdb_host }}:{{ canopsis_influxdb_port }}/{{ canopsis_influxdb_db }}"
+CPS_AMQP_URL="amqp://{{ canopsis_amqp_userid }}:{{ canopsis_amqp_password }}@{{ canopsis_amqp_host }}:{{ canopsis_amqp_port }}/{{ canopsis_amqp_vhost }}"
+CPS_REDIS_URL="redis://{{ canopsis_redis_host }}:{{ canopsis_redis_port }}/{{ canopsis_redis_dbnum }}"

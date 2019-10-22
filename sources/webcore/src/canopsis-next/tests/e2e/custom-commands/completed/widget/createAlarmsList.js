@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
 const { API_ROUTES } = require('../../../../../src/config');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
 
 module.exports.command = function createAlarmsList({
   parameters: {
@@ -15,7 +16,13 @@ module.exports.command = function createAlarmsList({
   const liveReportingModal = this.page.modals.common.liveReporting();
   const dateIntervalField = this.page.fields.dateInterval();
 
-  this.completed.widget.setCommonFields({ ...fields, parameters });
+  this.completed.widget.setCommonFields({
+    ...fields,
+    parameters: {
+      advanced: true,
+      ...parameters,
+    },
+  });
 
   if (enableHtml) {
     alarms.setEnableHtml(enableHtml);
@@ -83,7 +90,7 @@ module.exports.command = function createAlarmsList({
 
   this.waitForFirstXHR(
     API_ROUTES.userPreferences,
-    5000,
+    WAIT_FOR_FIRST_XHR_TIME,
     () => alarms.clickSubmitAlarms(),
     ({ responseData, requestData }) => callback({
       response: JSON.parse(responseData),

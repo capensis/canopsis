@@ -2,6 +2,20 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.30.0 - Due date : 2019-10-11
+
+- [Docker] Fix email2canopsis Docker image
+- [Documentation] Improve Canopsis installation and upgrade guides
+- [API] Fix possible error when a pbehavior has no rrule
+- [API] Fix last\_ko/last\_event date format, when using engine-stat
+- [Go] Significant performance improvements in JSON encoding/decoding
+- [LDAP] Add a `username_attr` attribute
+- [UI] Fix CAT widgets, so that they're not displayed in the Open-Core edition
+- [UI - AlarmList] Fix snooze action regression in Canopsis 3.29.0
+- [UI - Context] Fix Context Explorer info tabs
+- [UI - Action] Fix comments and exdate fields in pbehavior form
+- [UI - SNMP] Display SNMP view both in Python and Go stacks
+
 ## Canopsis 3.29.0 - Due date : 2019-09-27
 
  - [Documentation] Add alarm-filter documentation

@@ -2,7 +2,7 @@
 const uid = require('uid');
 
 const { LANGUAGES_POSITIONS } = require('../../constants');
-const { generateTemporaryUser } = require('../../helpers/entities');
+const { createUser, removeUser } = require('../../helpers/api');
 
 module.exports = {
   async before(browser, done) {
@@ -11,24 +11,25 @@ module.exports = {
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
 
+    const { data: user } = await createUser({
+      ui_language: undefined,
+    });
+
+    browser.globals.user = {
+      ...user,
+      username: user._id,
+    };
+
     done();
   },
 
-  after(browser, done) {
-    browser.completed.logout()
-      .end(done);
-  },
+  async after(browser, done) {
+    browser.end();
 
-  'Create temporary user without interface language': (browser) => {
-    const user = generateTemporaryUser();
+    await removeUser(browser.globals.user.username);
+    delete browser.globals.user;
 
-    browser.completed.user.create(user, (createdUser) => {
-      browser.globals.user = {
-        ...createdUser,
-
-        password: user.password,
-      };
-    });
+    done();
   },
 
   'Change parameters with some name': (browser) => {
@@ -113,14 +114,5 @@ module.exports = {
 
     browser.page.auth.logout()
       .verifyPageElementsAfter();
-  },
-
-  'Delete temporary user': (browser) => {
-    const { user } = browser.globals;
-
-    browser.completed.loginAsAdmin();
-    browser.completed.user.delete(user._id, () => {
-      delete browser.globals.user;
-    });
   },
 };

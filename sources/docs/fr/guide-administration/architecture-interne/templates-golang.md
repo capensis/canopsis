@@ -1,6 +1,6 @@
 # Templates (Go)
 
-Dans les [webhooks](index.md), les champs `payload` et `url` sont personnalisables grâce aux templates Go. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
+Dans les [Webhooks](../moteurs/moteur-axe-webhooks.md), les champs `payload` et `url` sont personnalisables grâce aux templates Go. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
 
 Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même.
 
@@ -275,9 +275,6 @@ Voici un exemple avec la syntaxe Go qui va générer le résultat attendu.
     "moment": "2009-10-11 23:00:00"
 }
 ```
-
-!!! attention
-    Le formatage UNIX ne fonctionne **pas** avec cette fonction. L'appel `formattedDate \"%Y-%m-%d %H:%M:%S\"` ne sera pas reconnu par Go. Par conséquent, la chaîne sera renvoyée à l'identique et produira ce JSON incorrect : `{"moment": "%Y-%m-%d %H:%M:%S"}`
 
 #### Fonctions en série
 
