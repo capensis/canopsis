@@ -43,8 +43,6 @@ import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-reques
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
 import FilterGroup from './partial/filter-group.vue';
-import FilterResultsAlarm from './partial/results/alarm.vue';
-import FilterResultsEntity from './partial/results/entity.vue';
 
 /**
  * Component to create new MongoDB filter
@@ -57,8 +55,6 @@ export default {
   inject: ['$validator'],
   components: {
     FilterGroup,
-    FilterResultsAlarm,
-    FilterResultsEntity,
   },
   props: {
     value: {
