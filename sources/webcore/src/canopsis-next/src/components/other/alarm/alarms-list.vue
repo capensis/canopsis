@@ -1,19 +1,10 @@
 <template lang="pug">
   v-container.pa-0(fluid, fill-height)
     v-layout.white(column)
-      v-flex(xs2)
+      v-flex.header(xs2)
         v-layout(justify-space-between, align-center)
           v-flex
             alarm-list-search(:query.sync="query", :columns="columns")
-          v-flex
-            pagination(
-              v-if="hasColumns",
-              :page="query.page",
-              :limit="query.limit",
-              :total="alarmsMeta.total",
-              type="top",
-              @input="updateQueryPage"
-            )
           v-flex
             filter-selector(
               :label="$t('settings.selectAFilter')",
@@ -39,8 +30,7 @@
               v-icon(:color="activeRange ? 'primary' : 'black'") schedule
           v-flex.px-3(v-show="selected.length", xs12)
             mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
-      v-spacer
-      v-flex(xs8)
+      v-flex.content(xs8)
         no-columns-table(v-if="!hasColumns")
         div(v-else)
           v-data-table.alarms-list-table(
@@ -75,8 +65,7 @@
                   actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
             template(slot="expand", slot-scope="props")
               time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
-      v-spacer
-      v-flex(xs2)
+      v-flex.footer(xs2)
         v-layout(align-center)
           v-flex(xs10)
             pagination(
@@ -249,7 +238,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  .content {
+    overflow-y:auto;
+  }
+
   .alarms-list-table {
     &.columns-lg {
       table.v-table {

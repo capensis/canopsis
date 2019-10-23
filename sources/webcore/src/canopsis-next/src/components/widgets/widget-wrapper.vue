@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.full-height
     v-card-title.lighten-1.pa-0
-      v-layout(justify-space-between, align-center)
+      v-layout.title-bar(justify-space-between, align-center)
         v-flex
           h4.ml-2.font-weight-regular {{ widget.title }}
         v-spacer
@@ -19,14 +19,13 @@
                 div {{ $t('common.duplicate') }}
               v-list-tile(@click="showDeleteWidgetModal", :data-test="`deleteWidgetButton-${widget._id}`")
                 v-list-tile-title.error--text {{ $t('common.delete') }}
-    v-container.pa-0(fill-height, fluid)
-      v-card-text.pa-0
-        component(
-          :is="widgetsComponentsMap[widget.type]",
-          :widget="widget",
-          :tabId="tab._id",
-          :isEditingMode="isEditingMode"
-        )
+    v-card-text.pa-0.content
+      component(
+        :is="widgetsComponentsMap[widget.type]",
+        :widget="widget",
+        :tabId="tab._id",
+        :isEditingMode="isEditingMode"
+      )
 </template>
 
 <script>
@@ -198,5 +197,13 @@ export default {
   .full-height {
     height: 100%;
     position: relative;
+  }
+
+  .title-bar {
+    height: 5%;
+  }
+
+  .content {
+    max-height: 95%;
   }
 </style>
