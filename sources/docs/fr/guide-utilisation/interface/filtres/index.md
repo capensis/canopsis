@@ -125,8 +125,8 @@ Exclure les alarmes avec ACK  | `v.ack._t`  | `not equal` | `ack` (valeur string
 Uniquement les alarmes avec ACK  | `v.ack._t`  | `equal` | `ack` (valeur string)
 Uniquement les alarmes avec ACK sans champ `Note` (fast-ack basique)  | `v.ack.m`  | `is empty` | *PAS_DE_VALEUR*
 Exclure les alarmes avec ACK avec un champ `Note`  | `v.ack.m`  | `is not empty` | *PAS_DE_VALEUR*
-Auteur de l'ACK  | `v.ack.a`  |  `equal`  | *NOM_DE_L_AUTEUR*
-Message de l'ACK | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE*
+Auteur de l'ACK  | `v.ack.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DE_L_ACK*
+Message de l'ACK | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_ACK*
 
 ### Ticket
 
@@ -136,7 +136,7 @@ Exlure les alarmes avec Ticket (quel que soit le type)  | `v.ticket._t`  | `is n
 Exclure les alarmes avec Ticket de type `assocticket`  | `v.ticket._t`  | `not equal` | `assocticket` (valeur string)
 Exclure les alarmes avec Ticket de type `declareticket`  | `v.ticket._t`  | `not equal` | `declareticket` (valeur string)
 Uniquement les alarmes avec Ticket  | `v.ticket._t`  | `is not null` | *PAS_DE_VALEUR*
-Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DE_L_ACK*
+Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_TICKET*
 
 ### Snooze
 
