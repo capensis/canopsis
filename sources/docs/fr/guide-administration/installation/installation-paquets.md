@@ -1,18 +1,23 @@
 # Installation de Canopsis avec un paquet Debian ou CentOS
 
+Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch* ») et CentOS 7. Les binaires sont compilés pour l'architecture x86-64.
+
 Cette procédure décrit l'installation de l'édition open-source de Canopsis en mono-instance.
 
 L'ensemble des procédures décrites doivent être réalisées avec l'utilisateur `root`.
 
-## Pré-requis
+## Prérequis
 
-Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch* ») et CentOS 7. Les binaires sont compilés pour l'architecture x86-64.
+Assurez vous d'avoir suivi les [prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md).
+
+!!! attention
+    Notez que Canopsis installe ses propres versions d'InfluxDB, MongoDB, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser les versions installées avec Canopsis (ex : installation des dépôts officiels InfluxDB pour l'ajout d'un Telegraf).
 
 ## Installation des paquets
 
 ### Sur Debian 9
 
-**Attention :** Sur Debian 9, le paquet Canopsis CAT à partir de la version 3.24.0 nécessite d'activer les dépôts `non-free` de Debian.
+Il peut être nécessaire d'activer les dépôts `non-free` de Debian, dans le cas d'une installation CAT.
 
 Application des dernières mises à jour de votre système :
 ```sh
@@ -34,9 +39,6 @@ apt install canopsis-core
 ```
 
 ### Sur CentOS 7
-
-!!! note
-    Les versions de CentOS inférieures à CentOS 7 ne sont **pas** prises en charge.
 
 Activation d'EPEL et application des dernières mises à jour de votre système :
 ```sh
