@@ -551,20 +551,3 @@ export function prepareUserByData(data, user = generateUser()) {
 
   return result;
 }
-
-
-export default {
-  generateWidgetByType,
-  generateViewRow,
-  generateView,
-  generateUserPreferenceByWidgetAndUser,
-  generateUser,
-  generateRole,
-  generateRight,
-  generateRoleRightByChecksum,
-  generateCopyOfViewTab,
-  generateCopyOfView,
-
-  getViewsTabsWidgetsIdsMappings,
-  getViewsWidgetsIdsMappings,
-};

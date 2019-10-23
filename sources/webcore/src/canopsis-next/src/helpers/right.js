@@ -5,7 +5,3 @@ export function checkUserAccess(user, rightId, rightMask) {
 
   return (checksum & rightMask) === rightMask;
 }
-
-export default {
-  checkUserAccess,
-};

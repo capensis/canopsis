@@ -111,11 +111,3 @@ export function addIn(obj, path, value) {
 export function removeIn(obj, path, index) {
   return setIn(obj, path, get(obj, path, []).filter((v, i) => i !== index));
 }
-
-export default {
-  setIn,
-  setInSeveral,
-  unsetIn,
-  addIn,
-  removeIn,
-};
