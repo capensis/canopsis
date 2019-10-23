@@ -587,7 +587,7 @@ export default {
       title: 'Éditeur de texte',
     },
     widgetCreation: {
-      title: 'Sélectionnez un widget',
+      title: 'Sélectionner un widget',
       types: {
         alarmList: {
           title: 'Bac à alarmes',
