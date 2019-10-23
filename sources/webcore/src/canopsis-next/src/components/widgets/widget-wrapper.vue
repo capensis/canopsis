@@ -1,36 +1,36 @@
 <template lang="pug">
-  v-card
-    template(v-if="widget.title || isEditingMode")
-      v-card-title.lighten-1.pa-1
-        v-layout(justify-space-between, align-center)
-          v-flex
-            h4.ml-2.font-weight-regular {{ widget.title }}
-          v-spacer
-          v-layout(justify-end, v-if="isEditingMode")
-            v-menu(offset-y)
-              v-btn.ma-0(icon, small, slot="activator")
-                v-icon(small) more_horiz
-              v-list(dense)
-                v-list-tile(
-                  @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
-                  :data-test="`editWidgetButton-${widget._id}`"
-                )
-                  div {{ $t('common.edit') }}
-                v-list-tile(@click="showSelectViewTabModal", :data-test="`copyWidgetButton-${widget._id}`")
-                  div {{ $t('common.duplicate') }}
-                v-list-tile(@click="showDeleteWidgetModal", :data-test="`deleteWidgetButton-${widget._id}`")
-                  v-list-tile-title.error--text {{ $t('common.delete') }}
-      v-divider
-    v-card-text.pa-0
-      component(
-        :is="widgetsComponentsMap[widget.type]",
-        :widget="widget",
-        :tabId="tab._id",
-        :isEditingMode="isEditingMode"
-      )
+  v-card.full-height
+    v-card-title.lighten-1.pa-0
+      v-layout(justify-space-between, align-center)
+        v-flex
+          h4.ml-2.font-weight-regular {{ widget.title }}
+        v-spacer
+        v-layout(justify-end)
+          v-menu(offset-y)
+            v-btn.ma-0(icon, small, slot="activator")
+              v-icon(small) more_horiz
+            v-list(dense)
+              v-list-tile(
+                @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
+                :data-test="`editWidgetButton-${widget._id}`"
+              )
+                div {{ $t('common.edit') }}
+              v-list-tile(@click="showSelectViewTabModal", :data-test="`copyWidgetButton-${widget._id}`")
+                div {{ $t('common.duplicate') }}
+              v-list-tile(@click="showDeleteWidgetModal", :data-test="`deleteWidgetButton-${widget._id}`")
+                v-list-tile-title.error--text {{ $t('common.delete') }}
+    v-container.pa-0(fill-height, fluid)
+      v-card-text.pa-0
+        component(
+          :is="widgetsComponentsMap[widget.type]",
+          :widget="widget",
+          :tabId="tab._id",
+          :isEditingMode="isEditingMode"
+        )
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
 import { GridItem } from 'vue-grid-layout';
 
 import { WIDGET_TYPES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
@@ -79,6 +79,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    updateTabMethod: {
+      type: Function,
+      required: true,
+    },
   },
   data() {
     return {
@@ -97,20 +101,27 @@ export default {
     };
   },
   methods: {
-    // TODO: Refacto without rows
-    /*
-    deleteWidgetFromTabRow(widgetId) {
+    deleteWidgetFromTab(widgetId) {
       const newTab = cloneDeep(this.tab);
 
-      const rowIndex = this.tab.rows.findIndex(row => row.widgets.find(widget => widget._id === widgetId));
+      const widgetIndex = newTab.widgets.findIndex(widget => widget._id === widgetId);
 
-      const widgetIndex = this.tab.rows[rowIndex].widgets.findIndex(widget => widget._id === widgetId);
+      newTab.widgets.splice(widgetIndex, 1);
 
-      newTab.rows[rowIndex].widgets.splice(widgetIndex, 1);
+      newTab.layout = this.deleteWidgetFromLayout(widgetId);
 
       return newTab;
     },
-    */
+
+    deleteWidgetFromLayout(widgetId) {
+      const newLayout = cloneDeep(this.tab.layout);
+
+      const widgetIndex = newLayout.findIndex(widget => widget._id === widgetId);
+
+      newLayout.splice(widgetIndex, 1);
+
+      return newLayout;
+    },
 
     /**
      * Redirect to selected view and tab, if it's different then the view/tab we're actually on
@@ -167,20 +178,25 @@ export default {
       });
     },
 
-    /*
     showDeleteWidgetModal() {
       this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => {
-            const updatedTab = this.deleteWidgetFromTabRow(this.widget._id);
+            const updatedTab = this.deleteWidgetFromTab(this.widget._id);
 
             return this.updateTabMethod(updatedTab);
           },
         },
       });
     },
-    */
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .full-height {
+    height: 100%;
+    position: relative;
+  }
+</style>

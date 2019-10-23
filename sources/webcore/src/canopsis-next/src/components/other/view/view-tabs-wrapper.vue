@@ -26,12 +26,25 @@
       :updateViewMethod="data => updateViewMethod(data)"
     )
       template(slot-scope="props")
-        grid-layout(:layout.sync="props.tab.layout")
-          grid-item(v-for="item in props.tab.layout", :x="item.x", :y="item.y", :w="item.w", :h="item.h", :i="item.i")
+        grid-layout(
+          :layout.sync="props.tab.layout",
+          :is-draggable="isEditingMode",
+          :is-resizable="isEditingMode"
+        )
+          grid-item(
+            v-for="item in props.tab.layout",
+            :key="item.i",
+            :x="item.x",
+            :y="item.y",
+            :w="item.w",
+            :h="item.h",
+            :i="item.i"
+          )
             widget-wrapper(
               :widget="findWidgetInTabById(props.tab._id, item.i)",
               :tab="props.tab",
-              :isEditingMode="isEditingMode"
+              :isEditingMode="isEditingMode",
+              :updateTabMethod="props.updateTabMethod"
             )
 </template>
 
