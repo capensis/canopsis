@@ -11,6 +11,7 @@
 3. [Filtres](#filtres)
 4. [Actions](#actions)
 5. [Elements par page](#elements-par-page)
+6. [Suivi personnalisé](#suivi-personnalise)
 
 ### Guide exploitant
 
@@ -67,15 +68,20 @@ Une fois l'options activée, un sélecteur apparaît à droite du bouton d'activ
 
 Une fois l'opérateur sélectionné, il ne vous reste plus qu'à sélectionner les filtres à appliquer dans le menu déroulant de sélection de filtres.
 
-#### Filtres de période
+#### Suivi personnalisé
 
-Le filtre par période permet de filtre les alarmes en ne conservant que les alarmes d'une période donnée.
+Le Suivi personnalisé sert à paramétrer des filtres par période. Ils permet de filtrer les alarmes en ne conservant que les alarmes d'une période donnée.
 
 Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/period-filter.png "Filtre par période") présente à droite du sélecteur de filtre. Une fenêtre apparaît.
 
 ![modale filtre par période](./img/modal-filtre-periode.png "modale filtre par période")
 
-Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
+Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisée en sélectionnant 'Custom', puis en renseignant les dates de début et de fin.
+
+Dans un bac à alarmes en cours, le filtre est appliqué sur la date de création.
+
+Dans un bac à alarmes résolue, le filtre est appliqué sur la date de résolution.
+
 Cliquez ensuite sur 'Appliquer'.
 
 La fenêtre se ferme, le bac à alarmes se rafraîchit. Votre filtre par période est appliqué.
@@ -92,6 +98,12 @@ Pour chaque alarme, des actions sont disponibles.
 Pour le détail de chacune des actions, voir la [liste des actions du Bac à alarmes](./actions.md).
 
 ### Éléments par page
+
+Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à afficher sur chaque page.
+
+Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
+
+### Suivi personnalisé
 
 Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à afficher sur chaque page.
 
@@ -274,7 +286,7 @@ Voici quelques exemples pratiques de filtres :
 
 ###### Champs basiques
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Composant  | `component`  | `equal`  | *VALEUR_DU_COMPOSANT*
 Ressource  | `resource`  | `equal`  | *VALEUR_DE_LA_RESSOURCE*
@@ -284,7 +296,7 @@ Message	| `v.output` | `equal` | *VALEUR_DU_MESSAGE*
 
 ###### Selon la criticité
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Uniquement les alarmes Mineures  | `v.state.val`  | `equal`  | `1` (valeur de type number)
 Uniquement les alarmes Majeures  | `v.state.val`  | `equal`  | `2` (valeur de type number)
@@ -292,13 +304,13 @@ Uniquement les alarmes Critiques  | `v.state.val`  | `equal`  | `3` (valeur de t
 
 ###### Champs enrichis
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Champ enrichi	| `entity.infos.NOM_DU_CHAMP_ENRICHI.value` | equal | *VALEUR_DU_CHAMP_ENRICHI*
 
 ###### ACK
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Exclure les alarmes avec ACK  | `v.ack._t`  | `not equal` | `ack` (valeur string)
 Uniquement les alarmes avec ACK  | `v.ack._t`  | `equal` | `ack` (valeur string)
@@ -309,7 +321,7 @@ Message de l'ACK | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_ACK*
 
 ###### Ticket
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Exlure les alarmes avec Ticket (quel que soit le type)  | `v.ticket._t`  | `is null` | *PAS_DE_VALEUR*
 Exclure les alarmes avec Ticket de type `assocticket`  | `v.ticket._t`  | `not equal` | `assocticket` (valeur string)
@@ -319,7 +331,7 @@ Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_TICKET*
 
 ###### Snooze
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Exclure les alarmes avec Snooze  | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
 Uniquement les alarmes avec Snooze  | `v.snooze._t`  | `equal` | `snooze` (valeur string)
@@ -327,21 +339,21 @@ Auteur du Snooze  | `v.snooze.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_SNOOZE*
 
 ###### PBehaviors
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Exclure les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
 Uniquement les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
 
 ###### Changement de criticité
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
 Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
 
 ###### Watchers
 
-Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Exclure les alarmes liées à des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
 Uniquement les alarmes des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
