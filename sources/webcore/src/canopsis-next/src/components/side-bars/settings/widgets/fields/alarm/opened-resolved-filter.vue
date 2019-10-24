@@ -4,20 +4,18 @@
     v-container
       v-layout
         v-checkbox(
-          v-model="value.opened",
+          v-field="value.opened",
           :label="$t('settings.open')",
           data-test="openFilter",
           color="primary",
-          hide-details,
-          @change="updateField('opened', $event)"
+          hide-details
         )
         v-checkbox(
-          v-model="value.resolved",
+          v-field="value.resolved",
           :label="$t('settings.resolved')",
           data-test="resolvedFilter",
           color="primary",
-          hide-details,
-          @change="updateField('resolved', $event)"
+          hide-details
         )
 </template>
 
@@ -27,11 +25,6 @@ export default {
     value: {
       type: Object,
       default: () => ({}),
-    },
-  },
-  methods: {
-    updateField(key, value) {
-      this.$emit('input', { ...this.value, [key]: value });
     },
   },
 };

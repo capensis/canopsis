@@ -18,10 +18,7 @@ import SettingsButtonField from '../partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
-  mixins: [
-    modalMixin,
-    formBaseMixin,
-  ],
+  mixins: [modalMixin, formBaseMixin],
   props: {
     value: {
       type: Object,
