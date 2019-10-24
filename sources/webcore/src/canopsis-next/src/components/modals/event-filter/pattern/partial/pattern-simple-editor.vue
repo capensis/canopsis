@@ -33,8 +33,8 @@ import { isObject, isString, isNull, dropRight, has } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import formMixin from '@/mixins/form';
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 
 export default {
   filters: {
@@ -48,7 +48,7 @@ export default {
       return value;
     },
   },
-  mixins: [formMixin, modalMixin],
+  mixins: [modalMixin, formMixin],
   model: {
     prop: 'pattern',
     event: 'input',
