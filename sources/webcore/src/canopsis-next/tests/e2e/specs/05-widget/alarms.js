@@ -133,6 +133,9 @@ module.exports = {
   },
 
   'Search widget alarms': (browser) => {
+    browser.page.view()
+      .clickMenuViewButton();
+
     browser.page.tables.alarms()
       .clickAlarmListHeaderCell('Connector')
       .setAllCheckbox(true)
@@ -149,7 +152,11 @@ module.exports = {
       .clickPreviousPageTopPagination()
       .clickNextPageBottomPagination()
       .clickPreviousPageBottomPagination()
-      .clickOnPageBottomPagination(2);
+      .clickOnPageBottomPagination(2)
+      .setItemPerPage(PAGINATION_PER_PAGE_VALUES.FIVE);
+
+    browser.page.view()
+      .clickMenuViewButton();
   },
 
   'Delete widget alarms with some name': (browser) => {

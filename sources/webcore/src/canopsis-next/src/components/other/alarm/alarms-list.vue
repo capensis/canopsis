@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(data-test="alarmsWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query", :columns="columns")
@@ -62,8 +62,8 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          tr(data-test="alarmListRow")
-            td
+          tr(:data-test="`alarmListRow-${props.item._id}`")
+            td(data-test="rowCheckbox")
               v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
               v-for="column in columns",
@@ -84,7 +84,7 @@
             @input="updateQueryPage"
           )
         v-spacer
-        v-flex(xs2)
+        v-flex(xs2, data-test="itemsPerPage")
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 

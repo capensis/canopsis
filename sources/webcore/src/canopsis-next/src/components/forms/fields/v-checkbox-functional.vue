@@ -1,5 +1,8 @@
 <template lang="pug" functional>
-  .v-input.v-input--selection-controls.v-input--checkbox(:class="{ 'v-input--is-disabled': props.disabled }")
+  .v-input.v-input--selection-controls.v-input--checkbox(
+    data-test="vCheckboxFunctional",
+    :class="{ 'v-input--is-disabled': props.disabled }"
+  )
     .v-input__control
       .v-input__slot
         .v-input--selection-controls__input(@click="listeners.change(!props.inputValue)")

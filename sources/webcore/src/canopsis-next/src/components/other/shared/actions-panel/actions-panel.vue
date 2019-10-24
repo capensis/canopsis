@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(data-test="sharedActionsPanel")
     mq-layout(mq="xl")
       v-layout
         actions-panel-item(

@@ -101,6 +101,29 @@ const commands = {
     });
   },
 
+  setRowCheckbox(checked) {
+    // TODO add set for checkbox without input
+    return this.getAttribute('@selectAllCheckboxInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@selectAllCheckbox');
+      }
+    });
+  },
+
+  clickOnAlarmRow(id) {
+    return this.customClick(this.el('@alarmListRow', id));
+  },
+
+  clickOnAlarmRowCell(id, column) {
+    return this.customClick(this.el('@alarmListRow', id, column));
+  },
+
+  setItemPerPage(index) {
+    return this.customClick('@itemsPerPage')
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
+  },
+
   el,
 };
 
@@ -121,6 +144,7 @@ module.exports = {
     bottomPaginationPage: './/*[@data-test=\'vPagination\']//button[@class=\'v-pagination__item\' and contains(text(), \'%s\')]',
     bottomPaginationNext: `${sel('vPagination')} li:last-child`,
 
+    itemsPerPage: `${sel('alarmsWidget')} ${sel('itemsPerPage')} .v-select__slot`,
 
     mixFilters: `${sel('alarmsFilterSelector')} div${sel('mixFilters')} .v-input--selection-controls__ripple`,
     mixFiltersInput: `${sel('alarmsFilterSelector')} input${sel('mixFilters')}`,
@@ -133,11 +157,16 @@ module.exports = {
     liveReportingButton: sel('alarmsDateInterval'),
 
     alarmsListTable: sel('alarmsListTable'),
-    alarmListRow: sel('alarmListRow'),
 
     alarmListHeaderCell: './/*[@data-test=\'alarmsListTable\']//thead//tr//th[@role=\'columnheader\']//span[contains(text(), \'%s\')]',
     selectAllCheckboxInput: `${sel('alarmsListTable')} thead tr th:first-of-type .v-input--selection-controls__input input`,
     selectAllCheckbox: `${sel('alarmsListTable')} thead tr th:first-of-type .v-input--selection-controls__input`,
+
+    alarmListRow: `${sel('alarmListRow-%s')}`,
+    alarmListRowCheckbox: `${sel('alarmListRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')}`,
+    alarmListRowColumn: `${sel('alarmListRow-%s')} ${sel('alarmValue-%s')}`,
+
+    actionsPanelItem: `${sel('alarmsWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
   },
   commands: [commands],
 };
