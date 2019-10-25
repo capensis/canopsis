@@ -109,7 +109,7 @@ Un fichier template devrait ressembler à quelque chose comme suit :
 [tpl]
 component=MAIL_SENDER
 resource=MAIL_BODY.line(16).word(2).untilword()
-# Depuis la 3.11.0 l'option trim permet de supprimer les espaces sur les côtés de la resource
+# Depuis la 3.11.0 l'option trim permet de supprimer les espaces sur un champ, ici par exemple avec le champ ressource
 resource.trim=left
 output=MAIL_BODY.line(6).word(3).untilword()
 long_output=MAIL_BODY.line(7).after(le).untilword()
