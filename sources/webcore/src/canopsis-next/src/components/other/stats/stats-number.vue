@@ -2,11 +2,9 @@
   div
     v-card.position-relative
       progress-overlay(:pending="pending")
-      stats-alert-overlay(
+      alert-overlay(
         :value="hasError",
-        :message="errorMessage",
-        :errorMessage="serverErrorMessage",
-        :editionError="editionError"
+        :message="errorMessage"
       )
       v-data-table(
         :items="stats",
@@ -47,15 +45,14 @@ import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrap
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-
-import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
     ProgressOverlay,
-    StatsAlertOverlay,
+    AlertOverlay,
   },
   mixins: [
     entitiesStatsMixin,

@@ -63,10 +63,10 @@ export default {
   },
   methods: {
     selectWidgetType(type) {
-      const widget = generateWidgetByType(type);
+      const widget = generateWidgetByType(WIDGET_TYPES[type]);
 
       this.showSideBar({
-        name: SIDE_BARS_BY_WIDGET_TYPES[type],
+        name: SIDE_BARS_BY_WIDGET_TYPES[WIDGET_TYPES[type]],
         config: {
           widget,
           tabId: this.config.tabId,

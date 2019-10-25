@@ -1,10 +1,10 @@
-<template lang="pug" functional>
+<template lang="pug">
   v-fade-transition
-    v-layout.alert(v-show="props.value")
-      div.overlay(:class="props.backgroundColor", :style="{ opacity: props.opacity }")
+    v-layout.alert(v-show="value")
+      div.overlay(:class="backgroundColor", :style="{ opacity: opacity }")
       div.content
         slot
-          v-alert(type="error", :value="true") {{ parent.$t('errors.default') }}
+          v-alert(type="error", :value="true") {{ errorMessage }}
 </template>
 
 <script>
@@ -21,6 +21,16 @@ export default {
     backgroundColor: {
       type: String,
       default: 'white',
+    },
+    message: {
+      type: String,
+      default: '',
+    },
+  },
+
+  computed: {
+    errorMessage() {
+      return this.message || this.$t('errors.default');
     },
   },
 };
