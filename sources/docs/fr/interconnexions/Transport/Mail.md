@@ -73,7 +73,7 @@ Il faut donc vérifier que les différents champs sont bien remplis.
 
 #### Configuration de l'événement envoyé
 
-Le bloc [event] contient la configuration de l'événement envoyé à Canopsis.
+Le bloc `[event]` contient la configuration de l'événement envoyé à Canopsis.
 
 On peut y définir les différents champs d'un [événement de type check](../../guide-developpement/struct-event.md#event-check-structure).
 
