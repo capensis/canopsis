@@ -129,10 +129,10 @@ Les actions peuvent être les suivantes :
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
 
-À partir de la `3.11.0`, l'option `trim` retire les espaces sur à gauche, droite ou des 2 côtés des mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut " deux mots " avec un espace avant et après :
+À partir de la `3.11.0`, l'option `trim` retire les espaces sur à gauche, droite ou des 2 côtés des mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :
 
-- `resource.trim=left` donnera "deux mots " avec l'espace à gauche supprimé
-- `resource.trim=right` donnera " deux mots" avec l'espace à droite supprimé
+- `resource.trim=left` donnera "deux mots␣" avec l'espace à gauche supprimé
+- `resource.trim=right` donnera "␣deux mots" avec l'espace à droite supprimé
 - `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
 
 La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
