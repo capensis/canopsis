@@ -2,28 +2,11 @@
   v-card(data-test="createRoleModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
-        h2 {{ title }}
+        span.headline {{ title }}
     v-card-text.py-0
-      v-container
-        v-form
-          v-layout
-            v-text-field(
-              v-model="form._id",
-              :label="$t('common.name')",
-              name="name",
-              v-validate="'required'",
-              :error-messages="errors.collect('name')",
-              data-test="name"
-            )
-          v-layout
-            v-text-field(
-              v-model="form.description",
-              :label="$t('common.description')",
-              data-test="description"
-            )
-          v-layout
-            view-selector(v-model="form.defaultview")
-      v-divider
+      role-form(v-model="form")
+    v-divider
+    v-card-actions
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary.white--text(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
@@ -42,16 +25,14 @@ import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 
-import ViewSelector from './partial/view-selector.vue';
+import RoleForm from '@/components/other/role/role-form.vue';
 
 export default {
   name: MODALS.createRole,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    ViewSelector,
-  },
+  components: { RoleForm },
   mixins: [
     popupMixin,
     modalInnerMixin,
