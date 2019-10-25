@@ -41,6 +41,7 @@ export default {
     z-index: 2;
 
     &, .overlay {
+      min-height: 100px;
       position: absolute;
       top: 0;
       left: 0;

@@ -137,12 +137,12 @@ export default {
           [WIDGET_TYPES.text]: 'text-widget',
         };
 
-        let widgetSpecificProp = {};
+        let widgetSpecificsProp = {};
 
         Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
           if (rule.edition !== this.edition) {
             baseMap[key] = 'alert-overlay';
-            widgetSpecificProp = {
+            widgetSpecificsProp = {
               message: this.$t('errors.statsWrongEditionError'),
               value: true,
             };
@@ -151,8 +151,8 @@ export default {
 
         return {
           bind: {
+            ...widgetSpecificsProp,
             is: baseMap[widgetType],
-            ...widgetSpecificProp,
           },
         };
       };
