@@ -390,7 +390,7 @@ Dans l'onglet Configuration, cliquez sur "Actions" puis "Create action" et rense
 #### Création du script
 
 ```bash
-cat > /usr/lib/zabbix/alertscripts/zabbix2filebeat.sh
+cat > /usr/lib/zabbix/alertscripts/zabbix2filebeat.sh << EOF
 #!/bin/bash
 LOG_PATH=/var/log/zabbix/notifications.log
 ALERT_MESSAGE="${@%Q}"
@@ -473,6 +473,7 @@ MSG+=$'}'
 
 # Print message
 echo "${MSG%Q}" >> ${LOG_PATH}
+EOF
 ```
 
 #### Rendre exécutable le script
@@ -484,7 +485,7 @@ chmod +x /usr/lib/zabbix/alertscripts/zabbix2filebeat.sh
 #### Rotation du log via logrotate
 
 ```shell
-cat > /etc/logrotate.d/zabbix-notifications
+cat > /etc/logrotate.d/zabbix-notifications << EOF
 /var/log/zabbix/notifications.log {
     daily
     rotate 30
@@ -493,6 +494,7 @@ cat > /etc/logrotate.d/zabbix-notifications
     compress
     delaycompress
 }
+EOF
 ```
 
 #### Output du script
@@ -538,13 +540,14 @@ Pour Debian consultez la [page de téléchargement](https://www.elastic.co/fr/do
 #### Configuration
 
 ```shell
-cat > /etc/filebeat/filebeat.yml
+cat > /etc/filebeat/filebeat.yml << EOF
 filebeat.prospectors:
 - type: log
   paths:
     - /var/log/zabbix/notifications.log
 output.logstash:
   hosts: ["X.X.X.X:5044"]
+EOF
 ```
 
 !!! attention
@@ -574,8 +577,8 @@ L'installation et la configuration initiale de Logstash restent à votre charge 
 
 Vous trouverez ci-dessous le contenu du fichier de configuration du pipeline.
 
-```json
-cat > /etc/logstash/conf.d/filebeat-pipeline.conf
+```sh
+cat > /etc/logstash/conf.d/filebeat-pipeline.conf << EOF
 input {
     beats {
         port => "5044"
@@ -634,6 +637,7 @@ output {
       key => "%{[@metadata][canopsis_rk]}"
   }
 }
+EOF
 ```
 
 Les évènements seront envoyés à Canopsis par le biais du bus AMQP de RabbitMQ.
