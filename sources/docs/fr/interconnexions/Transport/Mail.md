@@ -131,8 +131,8 @@ Les actions peuvent être les suivantes :
 
 À partir de la `3.11.0`, l'option `trim` retire les espaces sur à gauche, droite ou des 2 côtés des mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut " deux mots " avec un espace avant et après :
 
-- `resource.trim=left` donnera "deux mots " avec l'espace à gauche supprimés
-- `resource.trim=right` donnera " deux mots" avec l'espace à droite supprimés
+- `resource.trim=left` donnera "deux mots " avec l'espace à gauche supprimé
+- `resource.trim=right` donnera " deux mots" avec l'espace à droite supprimé
 - `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
 
 La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
