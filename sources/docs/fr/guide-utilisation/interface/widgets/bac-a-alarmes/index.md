@@ -159,7 +159,7 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
-À noter : par défaut, le tri sur un bac à alarmes en cours se base sur la date de création et le tri sur un bac à alarmes résolues sur base sur la date de résolution.
+À noter : par défaut, le tri sur un bac à alarmes se base sur la date de création.
 
 ![Paramètre colonne de tri par défaut](../img/settings/default-column-sort.png "Paramètre colonne de tri par défaut")
 
