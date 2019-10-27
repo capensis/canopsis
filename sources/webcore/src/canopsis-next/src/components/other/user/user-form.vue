@@ -3,57 +3,52 @@
     progress-overlay(:pending="pending")
     v-layout(row)
       v-text-field(
-        :value="form._id",
+        v-field="form._id",
         v-validate="'required'",
         :label="$t('modals.createUser.fields.username')",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('username')",
         name="username",
-        data-test="username",
-        @input="updateField('_id', $event)"
+        data-test="username"
       )
     v-layout(row)
       v-text-field(
-        :value="form.firstname",
+        v-field="form.firstname",
         :label="$t('modals.createUser.fields.firstName')",
         :disabled="onlyUserPrefs",
-        data-test="firstName",
-        @input="updateField('firstname', $event)"
+        data-test="firstName"
       )
     v-layout(row)
       v-text-field(
-        :value="form.lastname",
+        v-field="form.lastname",
         :label="$t('modals.createUser.fields.lastName')",
         :disabled="onlyUserPrefs",
-        data-test="lastName",
-        @input="updateField('lastname', $event)"
+        data-test="lastName"
       )
     v-layout(row)
       v-text-field(
-        :value="form.mail",
+        v-field="form.mail",
         v-validate="'required|email'",
         :label="$t('modals.createUser.fields.email')",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('email')",
         name="email",
-        data-test="email",
-        @input="updateField('mail', $event)"
+        data-test="email"
       )
     v-layout(row)
       v-text-field(
-        :value="form.password",
+        v-field="form.password",
         v-validate="passwordRules",
         :label="$t('modals.createUser.fields.password')",
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('password')",
         type="password",
         name="password",
-        data-test="password",
-        @input="updateField('password', $event)"
+        data-test="password"
       )
     v-layout(data-test="roleLayout", row)
       v-select(
-        :value="form.role",
+        v-field="form.role",
         v-validate="'required'",
         :label="$t('modals.createUser.fields.role')",
         :items="roles",
@@ -62,24 +57,21 @@
         item-text="_id",
         item-value="_id",
         name="role",
-        data-test="role",
-        @input="updateField('role', $event)"
+        data-test="role"
       )
     v-layout(data-test="languageLayout", row)
       v-select(
-        :value="form.ui_language",
+        v-field="form.ui_language",
         :label="$t('modals.createUser.fields.language')",
         :items="languages",
-        data-test="language",
-        @input="updateField('ui_language', $event)"
+        data-test="language"
       )
     v-layout(data-test="navigationTypeLayout", row)
       v-select.mt-0(
-        :value="form.groupsNavigationType",
+        v-field="form.groupsNavigationType",
         :label="$t('parameters.groupsNavigationType.title')",
         :items="groupsNavigationItems",
-        data-test="navigationType",
-        @input="updateField('groupsNavigationType', $event)"
+        data-test="navigationType"
       )
     v-layout(row, align-center, v-if="!isNew")
       div {{ $t('common.authKey') }}: {{ user.authkey }}
@@ -98,15 +90,14 @@
         span {{ $t('modals.variablesHelp.copyToClipboard') }}
     v-layout(row)
       v-switch(
-        :input-value="form.enable",
+        v-field="form.enable",
         :label="$t('modals.createUser.fields.enabled')",
         :disabled="onlyUserPrefs",
         color="primary",
-        data-test="enabled",
-        @change="updateField('enable', $event)"
+        data-test="enabled"
       )
     v-layout
-      view-selector(:value="form.defaultview", @input="updateField('defaultview', $event)")
+      view-selector(v-field="form.defaultview")
 </template>
 
 <script>
@@ -114,7 +105,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
 import popupMixin from '@/mixins/popup';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
@@ -128,7 +118,7 @@ export default {
     ProgressOverlay,
     ViewSelector,
   },
-  mixins: [formMixin, popupMixin],
+  mixins: [popupMixin],
   model: {
     prop: 'form',
     event: 'input',

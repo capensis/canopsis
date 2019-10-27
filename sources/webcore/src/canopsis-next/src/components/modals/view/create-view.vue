@@ -6,71 +6,20 @@
     v-container
       v-alert(v-show="config.isDuplicating", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
     v-card-text
-      v-form(v-if="hasUpdateViewAccess")
-        v-layout(wrap, justify-center)
-          v-flex(xs11)
-            v-text-field(
-              data-test="viewFieldName",
-              :label="$t('common.name')",
-              v-model="form.name",
-              data-vv-name="name",
-              v-validate="'required'",
-              :error-messages="errors.collect('name')"
-            )
-            v-text-field(
-              data-test="viewFieldTitle",
-              :label="$t('common.title')",
-              v-model="form.title",
-              data-vv-name="title",
-              v-validate="'required'",
-              :error-messages="errors.collect('title')"
-            )
-            v-text-field(
-              data-test="viewFieldDescription",
-              :label="$t('common.description')",
-              v-model="form.description",
-              data-vv-name="description"
-            )
-            v-switch(
-              data-test="viewFieldEnabled",
-              v-model="form.enabled",
-              :label="$t('common.enabled')"
-            )
-        v-layout(wrap, justify-center)
-          v-flex(xs11)
-            v-combobox(
-              data-test="viewFieldGroupTags",
-              v-model="form.tags",
-              :label="$t('modals.view.fields.groupTags')",
-              tags,
-              clearable,
-              multiple,
-              append-icon,
-              chips,
-              deletable-chips
-            )
-            v-combobox(
-              data-test="viewFieldGroupId",
-              ref="combobox",
-              v-model="groupName",
-              :items="groupNames",
-              :label="$t('modals.view.fields.groupIds')",
-              :search-input.sync="search",
-              data-vv-name="group",
-              v-validate="'required'",
-              :error-messages="errors.collect('group')",
-              @change="closeComboboxMenuOnChange()"
-            )
-              template(slot="no-data")
-                v-list-tile
-                  v-list-tile-content
-                    v-list-tile-title(v-html="$t('modals.view.noData')")
-
-            span {{ form.group_id }}
+      view-form(
+        v-if="hasUpdateViewAccess",
+        v-model="form",
+        :groupName.sync="groupName",
+        :groups="groupNames"
+      )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(data-test="viewSubmitButton", v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
+      v-btn.primary(
+        data-test="viewSubmitButton",
+        v-if="hasUpdateViewAccess",
+        @click="submit"
+      ) {{ $t('common.submit') }}
       v-btn.error(
         data-test="viewDeleteButton",
         v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
@@ -99,7 +48,8 @@ import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
-import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
+
+import ViewForm from '@/components/other/view/view-form.vue';
 
 /**
  * Modal to create widget
@@ -109,6 +59,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  components: { ViewForm },
   mixins: [
     authMixin,
     popupMixin,
@@ -119,11 +70,9 @@ export default {
     entitiesViewGroupMixin,
     entitiesUserPreferenceMixin,
     rightsTechnicalViewMixin,
-    vuetifyComboboxMixin,
   ],
   data() {
     return {
-      search: '',
       groupName: '',
       form: {
         name: '',
@@ -135,10 +84,6 @@ export default {
     };
   },
   computed: {
-    groupNames() {
-      return this.groups.map(group => group.name);
-    },
-
     title() {
       if (this.config.isDuplicating) {
         return `${this.$t('modals.view.duplicate.title')} - ${this.config.view.name}`;

@@ -2,25 +2,22 @@
   v-form
     v-layout(row)
       v-text-field(
-        :value="form._id",
+        v-field="form._id",
         v-validate="'required'",
         :label="$t('modals.createRight.fields.id')",
         :error-messages="errors.collect('id')",
-        name="id",
-        @input="updateField('_id', $event)"
+        name="id"
       )
     v-layout(row)
       v-text-field(
-        :value="form.desc",
-        :label="$t('modals.createRight.fields.description')",
-        @input="updateField('desc', $event)"
+        v-field="form.desc",
+        :label="$t('modals.createRight.fields.description')"
       )
     v-layout(row)
       v-select(
-        :value="form.type",
+        v-field="form.type",
         :label="$t('modals.createRight.fields.type')",
-        :items="types",
-        @input="updateField('type', $event)"
+        :items="types"
       )
 </template>
 
