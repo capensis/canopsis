@@ -652,7 +652,7 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
 - [Go]: fix bagoting alarms never closed if cropped
 - [Go]: send axe statistics to statsng engine
 - [Python]: change some amqp publishers to pika to prevent odd reconnections
-- [Python]: fix has\_active\_pb flag doesn't corectly show all linked pbehaviors
+- [Python]: fix has\_active\_pb flag doesn't correctly show all linked pbehaviors
 - [Python]: fix pbehavior doesn't correctly handle timezone change (one day gap)
 - [Python]: fix performance concern on alert consultation
 
