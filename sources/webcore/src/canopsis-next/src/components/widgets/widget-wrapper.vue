@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card.full-height
-    v-card-title.lighten-1.pa-0
+    v-card-title.lighten-1.pa-0(v-if="isEditingMode || widget.title")
       v-layout.title-bar(justify-space-between, align-center)
         v-flex
           h4.ml-2.font-weight-regular {{ widget.title }}
@@ -19,6 +19,7 @@
                 div {{ $t('common.duplicate') }}
               v-list-tile(@click="showDeleteWidgetModal", :data-test="`deleteWidgetButton-${widget._id}`")
                 v-list-tile-title.error--text {{ $t('common.delete') }}
+    v-divider
     v-card-text.pa-0.content
       component(
         :is="widgetsComponentsMap[widget.type]",
@@ -196,7 +197,6 @@ export default {
 <style lang="scss" scoped>
   .full-height {
     height: 100%;
-    position: relative;
   }
 
   .title-bar {
@@ -204,6 +204,6 @@ export default {
   }
 
   .content {
-    max-height: 95%;
+    height: 95%;
   }
 </style>

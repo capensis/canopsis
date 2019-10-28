@@ -1,82 +1,81 @@
 <template lang="pug">
-  v-container.pa-0(fluid, fill-height)
-    v-layout.white(column)
-      v-flex.header(xs2)
-        v-layout(justify-space-between, align-center)
-          v-flex
-            alarm-list-search(:query.sync="query", :columns="columns")
-          v-flex
-            filter-selector(
-              :label="$t('settings.selectAFilter')",
-              :filters="viewFilters",
-              :lockedFilters="widgetViewFilters",
-              :value="mainFilter",
-              :condition="mainFilterCondition",
-              :hasAccessToEditFilter="hasAccessToEditFilter",
-              :hasAccessToUserFilter="hasAccessToUserFilter",
-              :hasAccessToListFilter="hasAccessToListFilter",
-              @input="updateSelectedFilter",
-              @update:condition="updateSelectedCondition",
-              @update:filters="updateFilters"
-            )
-          v-flex
-            v-chip.primary.white--text(
-              v-if="activeRange",
-              close,
-              label,
-              @input="removeHistoryFilter"
-            ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-            v-btn(@click="showEditLiveReportModal", icon, small)
-              v-icon(:color="activeRange ? 'primary' : 'black'") schedule
-          v-flex.px-3(v-show="selected.length", xs12)
-            mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
-      v-flex.content(xs8)
-        no-columns-table(v-if="!hasColumns")
-        div(v-else)
-          v-data-table.alarms-list-table(
-            :class="vDataTableClass",
-            v-model="selected",
-            :items="alarms",
-            :headers="headers",
-            :total-items="alarmsMeta.total",
-            :pagination.sync="vDataTablePagination",
-            :loading="alarmsPending",
-            ref="dataTable",
-            item-key="_id",
-            hide-actions,
-            select-all,
-            expand
+  v-layout.white(column, fill-height, justify-start)
+    v-flex.title(xs1)
+      v-layout(justify-space-between, align-center)
+        v-flex
+          alarm-list-search(:query.sync="query", :columns="columns")
+        v-flex
+          filter-selector(
+            :label="$t('settings.selectAFilter')",
+            :filters="viewFilters",
+            :lockedFilters="widgetViewFilters",
+            :value="mainFilter",
+            :condition="mainFilterCondition",
+            :hasAccessToEditFilter="hasAccessToEditFilter",
+            :hasAccessToUserFilter="hasAccessToUserFilter",
+            :hasAccessToListFilter="hasAccessToListFilter",
+            @input="updateSelectedFilter",
+            @update:condition="updateSelectedCondition",
+            @update:filters="updateFilters"
           )
-            template(slot="progress")
-              v-fade-transition
-                v-progress-linear(height="2", indeterminate, color="primary")
-            template(slot="headerCell", slot-scope="props")
-              span {{ props.header.text }}
-            template(slot="items", slot-scope="props")
-              tr
-                td
-                  v-checkbox-functional(v-model="props.selected", primary, hide-details)
-                td(
-                  v-for="column in columns",
-                  @click="props.expanded = !props.expanded"
-                )
-                  alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
-                td
-                  actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
-            template(slot="expand", slot-scope="props")
-              time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
-      v-flex.footer(xs2)
-        v-layout(align-center)
-          v-flex(xs10)
-            pagination(
-              :page="query.page",
-              :limit="query.limit",
-              :total="alarmsMeta.total",
-              @input="updateQueryPage"
-            )
-          v-spacer
-          v-flex(xs2)
-            records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+        v-flex
+          v-chip.primary.white--text(
+            v-if="activeRange",
+            close,
+            label,
+            @input="removeHistoryFilter"
+          ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
+          v-btn(@click="showEditLiveReportModal", icon, small)
+            v-icon(:color="activeRange ? 'primary' : 'black'") schedule
+        v-flex.px-3(v-show="selected.length", xs12)
+          mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
+    v-flex.content
+      no-columns-table(v-if="!hasColumns")
+      div(v-else)
+        v-data-table.alarms-list-table(
+          :class="vDataTableClass",
+          v-model="selected",
+          :items="alarms",
+          :headers="headers",
+          :total-items="alarmsMeta.total",
+          :pagination.sync="vDataTablePagination",
+          :loading="alarmsPending",
+          ref="dataTable",
+          item-key="_id",
+          hide-actions,
+          select-all,
+          expand
+        )
+          template(slot="progress")
+            v-fade-transition
+              v-progress-linear(height="2", indeterminate, color="primary")
+          template(slot="headerCell", slot-scope="props")
+            span {{ props.header.text }}
+          template(slot="items", slot-scope="props")
+            tr
+              td
+                v-checkbox-functional(v-model="props.selected", primary, hide-details)
+              td(
+                v-for="column in columns",
+                @click="props.expanded = !props.expanded"
+              )
+                alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+              td
+                actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
+          template(slot="expand", slot-scope="props")
+            time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
+    v-flex.footer(xs1)
+      v-layout(align-center)
+        v-flex(xs10)
+          pagination(
+            :page="query.page",
+            :limit="query.limit",
+            :total="alarmsMeta.total",
+            @input="updateQueryPage"
+          )
+        v-spacer
+        v-flex(xs2)
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
@@ -240,10 +239,17 @@ export default {
 
 <style lang="scss" scoped>
   .content {
-    overflow-y:auto;
+    height: auto;
+    max-height: 100%;
+    overflow-y: auto;
   }
 
   .alarms-list-table {
+
+    & /deep/ .v-table__overflow {
+      overflow-y: auto;
+    }
+
     &.columns-lg {
       table.v-table {
         tbody, thead {
