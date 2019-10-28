@@ -248,3 +248,11 @@ module.exports.PARETO_STATS_TITLES = {
   ACCUMULATION: 'Accumulation',
   ALARMS_CREATED: 'Alarmes créées',
 };
+
+module.exports.ALARMS_MASS_ACTIONS = {
+  PERIODICAL_BEHAVIOR: 1,
+  ACK: 2,
+  FAST_ACK: 3,
+  CANCEL_ACK: 4,
+  CANCEL_ALARM: 5,
+};

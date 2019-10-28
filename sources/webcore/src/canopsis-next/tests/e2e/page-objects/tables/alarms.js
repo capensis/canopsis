@@ -124,6 +124,10 @@ const commands = {
       .customClick(this.el('@optionSelect', index));
   },
 
+  clickOnMassAction(index) {
+    return this.customClick(this.el('@massActionsPanelItem', index));
+  },
+
   el,
 };
 
@@ -166,7 +170,8 @@ module.exports = {
     alarmListRowCheckbox: `${sel('alarmListRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')}`,
     alarmListRowColumn: `${sel('alarmListRow-%s')} ${sel('alarmValue-%s')}`,
 
-    actionsPanelItem: `${sel('alarmsWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    massActionsPanelItem: `${sel('alarmsWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    rowActionsPanelItem: `${sel('alarmListRow-%s')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
   },
   commands: [commands],
 };

@@ -9,6 +9,7 @@ const {
   VALUE_TYPES,
   INTERVAL_RANGES,
   FILTER_OPERATORS,
+  ALARMS_MASS_ACTIONS,
   FILTER_COLUMNS,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
@@ -132,13 +133,43 @@ module.exports = {
     });
   },
 
-  'Search widget alarms': (browser) => {
+  'Table widget alarms': (browser) => {
+    const alarmsTable = browser.page.tables.alarms();
+
     browser.page.view()
       .clickMenuViewButton();
 
-    browser.page.tables.alarms()
+
+    alarmsTable
       .clickAlarmListHeaderCell('Connector')
       .setAllCheckbox(true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
+
+    browser.page.modals.alarm.createAckEvent()
+      .verifyModalOpened()
+      .clickTicketNumber()
+      .clearTicketNumber()
+      .setTicketNumber(1223333)
+      .clickTicketNote()
+      .clearTicketNote()
+      .setTicketNote('note')
+      .setAckTicketResources(true)
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    alarmsTable
+      .setAllCheckbox(true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.CANCEL_ACK);
+
+    browser.page.modals.alarm.createCancelEvent()
+      .verifyModalOpened()
+      .clickTicketNote()
+      .clearTicketNote()
+      .setTicketNote('note')
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    alarmsTable
       .clickSearchInput()
       .clearSearchInput()
       .setSearchInput('search string')
