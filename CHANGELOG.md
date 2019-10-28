@@ -2,6 +2,26 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.31.0 - Due date : 2019-10-28
+
+- [Packages] Introduce new "canoctl deploy-go" command
+- [Packages] Add initialisation.toml.example, amqp2engines-python.conf.example and amqp2engines-go.conf.example reference files
+- [Packages] Introduce new go-engines-vars.conf file for Go engine variables
+- [Packages] Sync default Python/Go engines with current recommendations
+- [Packages] Reduce package dependencies on CentOS 7
+- [Packages] Upgrade from InfluxDB 1.5.4 to 1.5.5 on new installations
+- [Packages] Upgrade internal canoctl Ansible version from 2.4.4 to 2.8.5
+- [Documentation] Add a new documentation for zabbix2canopsis
+- [Documentation] Add more filter examples in Usage Guide
+- [Documentation] Document leavemail/trim options in email2canopsis
+- [Go] Remove long\_output\_history and initial\_long\_output fields from events
+- [Go] Only update alarm’s output when a check event is received
+- [Go] Use zerolog in Go engines
+- [Go] Manage dependencies with go mod instead of glide
+- [Go] Refactored most of watcher engine to have better scalability
+- [Go] Remove engine-stat from new installs; use statsng from CAT instead
+- [UI - Translations] Some typo fixes and improvements in the French translation
+
 ## Canopsis 3.30.0 - Due date : 2019-10-11
 
 - [Docker] Fix email2canopsis Docker image
