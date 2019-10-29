@@ -43,6 +43,7 @@ from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 from canopsis.common.influx import InfluxDBClient
+from canopsis.common.influx_query import SelectQuery
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
@@ -492,41 +493,55 @@ def get_ok_ko(influx_client, entity_id, timestamp):
      - last_ko: the date of the last check event with state 1, 2 or 3 received
        on this entity, as a unix timestamp
     """
-    query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
-                "event_state_history WHERE \"eid\"='{}' AND time >= {}s"
-    query_last_event = "SELECT LAST(\"ko\") FROM event_state_history WHERE " \
-                       "\"eid\"='{}'"
-    query_last_ko = query_last_event + " and \"ko\"=1"
+    ok_count = None
+    ko_count = None
+    last_ok = None
+    last_ko = None
 
-    # Why did I use a double '\' ? It's simple, for some mystical reason,
-    # somewhere between the call of influxdbstg.raw_query and the HTTP
-    # request is sent, the escaped simple quote are deescaped. So like the
-    # song says "you can't touch this".
-    entity_id = entity_id.replace("'", "\\'")
-    entity_id = entity_id.replace('"', '\\"')
+    counts_query = (SelectQuery('event_state_history')
+        .select('ok', function='sum', alias='ok')
+        .select('ko', function='sum', alias='ko')
+        .where_equal('eid', entity_id)
+        .after(timestamp)
+        .build())
+    result_set = influx_client.query(counts_query, epoch='s')
+    row = next(result_set.get_points(), None)
+    if row is not None:
+        ok_count = row['ok']
+        ko_count = row['ko']
 
-    result = influx_client.query(query_sum.format(entity_id, timestamp))
+    last_ok_query = (SelectQuery('event_state_history')
+        .select('ok', function='last', alias='last_ok')
+        .where_equal('eid', entity_id)
+        .build())
+    result_set = influx_client.query(last_ok_query, epoch='s')
+    row = next(result_set.get_points(), None)
+    if row is not None:
+        last_ok = row['time']
 
-    stats = {}
-    stats["ok"] = 0
-    stats["ko"] = 0
-    data = list(result.get_points())
-    if len(data) > 0:
-        data = data[0]
-        stats["ok"] = data["ok"]
-        stats["ko"] = data["ko"]
+    last_ko_query = (SelectQuery('event_state_history')
+        .select('ko', function='last', alias='last_ko')
+        .where_equal('eid', entity_id)
+        .build())
+    result_set = influx_client.query(last_ko_query, epoch='s')
+    row = next(result_set.get_points(), None)
+    if row is not None:
+        last_ko = row['time']
 
-    result = influx_client.query(query_last_event.format(entity_id), epoch='s')
-    data = list(result.get_points())
-    if len(data) > 0:
-        stats["last_event"] = data[0]["time"]
+    last_event = None
+    if last_ko is not None and last_ko is not None:
+        last_event = max(last_ok, last_ko)
+    elif last_ok is not None:
+        last_event = last_ok
+    elif last_ko is not None:
+        last_event = last_ko
 
-    result = influx_client.query(query_last_ko.format(entity_id), epoch='s')
-    data = list(result.get_points())
-    if len(data) > 0:
-        stats["last_ko"] = data[0]["time"]
-
-    return stats
+    return {
+        'ok': ok_count or 0,
+        'ko': ko_count or 0,
+        'last_ko': last_ko,
+        'last_event': last_event
+    }
 
 
 def _pbehavior_types(watcher):
