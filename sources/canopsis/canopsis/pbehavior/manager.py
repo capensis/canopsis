@@ -836,6 +836,27 @@ class PBehaviorManager(object):
 
         return result
 
+    def get_active_pbehaviors_on_entities(self, entity_ids):
+        """
+        Yields the pbehaviors that are currently active on a list of entities,
+        given their ids.
+
+        :param List[str] entity_ids: the ids of the entities
+        :returns Iterator[Dict[str, Any]]: an iterator on the active pbehaviors
+        """
+        now = int(time())
+
+        pbehaviors = self.collection.find({
+            "eids": {"$in": entity_ids}
+        })
+        for pbehavior in pbehaviors:
+            try:
+                if self.check_active_pbehavior(now, pbehavior):
+                    yield pbehavior
+            except ValueError as exept:
+                self.logger.exception(
+                    "Can't check if the pbehavior is active.")
+
     def get_all_active_pbehaviors(self):
         """
         Return all pbehaviors currently active using
@@ -1107,7 +1128,7 @@ class PBehaviorManager(object):
 
         Warning : this method might return a timestamp greater than the now
                   timestamp, which means the pbehavior is currently running
-                  It can also return 0 when the pbh hasn't started running 
+                  It can also return 0 when the pbh hasn't started running
                   yet
 
 
