@@ -28,13 +28,13 @@ function parseField(value) {
     const chr = value.charCodeAt(index);
 
     /**
-     * If there is '[' char symbol. It is saying us that it's start of field value
+     * If there is '[' char symbol. It is saying us that it's start of field
      */
     if (chr === START_BRACKET_CODE) {
       /**
-       * If we already have path. Example: `form.field[key]` this condition will happened on '[' char symbol and
-       * we will save 'field'
-       * But if we have form['field'][key] this condition will not happened
+       * If we already have path. It will happened if we had point field.
+       * Example: `form.field[key]` this condition will happened on '[' char symbol and we will save 'field'.
+       * And it will not happened for `form['field'][key]`
        */
       if (startPos < index - 1) {
         path.push(JSON.stringify(value.slice(startPos, index)));
@@ -52,7 +52,7 @@ function parseField(value) {
         hasString = true;
       }
       /**
-       * If there is ']' char symbol. It is saying us that it's end of field value
+       * If there is ']' char symbol. It is saying us that it's end of brackets field
        */
     } else if (chr === END_BRACKET_CODE) {
       endPos = index - 1;
@@ -69,7 +69,7 @@ function parseField(value) {
 
       startPos = index + 1;
       /**
-       * If there is '.' char symbol. It is saying us that it's start of field value
+       * If there is '.' char symbol. It is saying us that it's start of point field
        */
     } else if (chr === POINT_CODE && !hasString) {
       /**
