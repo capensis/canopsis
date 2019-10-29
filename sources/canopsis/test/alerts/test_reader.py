@@ -65,8 +65,7 @@ class TestReader(BaseTest):
                                                   logger=self.logger,
                                                   pb_collection=pb_coll)
 
-        self.reader = AlertsReader(config=conf,
-                                   logger=self.logger,
+        self.reader = AlertsReader(logger=self.logger,
                                    storage=self.manager.alerts_storage,
                                    pbehavior_manager=self.pbehavior_manager)
 
