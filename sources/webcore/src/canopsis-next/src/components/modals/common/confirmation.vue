@@ -3,7 +3,7 @@
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('common.confirmation') }}
-    v-card-text
+    v-card-actions
       v-layout(wrap, justify-center)
         v-btn.primary(
           @click.prevent="submit",

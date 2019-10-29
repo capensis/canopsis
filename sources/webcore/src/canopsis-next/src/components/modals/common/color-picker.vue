@@ -10,17 +10,18 @@
         v-flex
           compact(data-test="colorPickerCompact", v-model="color")
     v-divider
-    v-layout.py-1(justify-end)
-      v-btn(
-        data-test="colorPickerCancelButton",
-        depressed,
-        flat,
-        @click="hideModal"
-      ) {{ $t('common.cancel') }}
-      v-btn.primary(
-        data-test="colorPickerSubmitButton",
-        @click="submit"
-      ) {{ $t('common.submit') }}
+    v-card-actions
+      v-layout.py-1(justify-end)
+        v-btn(
+          data-test="colorPickerCancelButton",
+          depressed,
+          flat,
+          @click="hideModal"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          data-test="colorPickerSubmitButton",
+          @click="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
