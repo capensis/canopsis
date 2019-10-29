@@ -820,22 +820,6 @@ class PBehaviorManager(object):
             'deletedCount': response['n']
         }
 
-    def get_active_pbehaviors(self, eids):
-        """
-        Return a list of active pbehaviors linked to some entites.
-
-        :param list eids: the desired entities id
-        :returns: list of pbehaviors
-        """
-        result = []
-        for eid in eids:
-            pbhs = self.get_pbehaviors(eid)
-            result = result + [x for x in pbhs if self._check_pbehavior(
-                eid, [x['name']]
-            )]
-
-        return result
-
     def get_all_active_pbehaviors(self):
         """
         Return all pbehaviors currently active using
@@ -854,26 +838,6 @@ class PBehaviorManager(object):
             except ValueError as exept:
                 self.logger.exception(
                     "Can't check if the pbehavior is active.")
-
-        return results
-
-    def get_active_pbehaviors_from_type(self, types=None):
-        """
-        Return pbehaviors currently active, with a specific type,
-        using self.check_active_pbehavior
-        """
-        if types is None:
-            types = []
-        now = int(time())
-        query = {PBehavior.TYPE: {'$in': types}}
-
-        ret_val = list(self.collection.find(query))
-
-        results = []
-
-        for pb in ret_val:
-            if self.check_active_pbehavior(now, pb):
-                results.append(pb)
 
         return results
 
@@ -1107,7 +1071,7 @@ class PBehaviorManager(object):
 
         Warning : this method might return a timestamp greater than the now
                   timestamp, which means the pbehavior is currently running
-                  It can also return 0 when the pbh hasn't started running 
+                  It can also return 0 when the pbh hasn't started running
                   yet
 
 
