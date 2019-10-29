@@ -257,7 +257,7 @@ class SelectQuery(object):
         :param Union[int, float] timestamp:
         """
         if timestamp is not None:
-            return self.where('time >= {:.0f}'.format(timestamp * SECONDS))
+            return self.where('time >= {:.0f}ns'.format(timestamp * SECONDS))
 
         return self
 
@@ -268,7 +268,7 @@ class SelectQuery(object):
         :param Union[int, float] timestamp:
         """
         if timestamp is not None:
-            return self.where('time < {:.0f}'.format(timestamp * SECONDS))
+            return self.where('time < {:.0f}ns'.format(timestamp * SECONDS))
 
         return self
 
