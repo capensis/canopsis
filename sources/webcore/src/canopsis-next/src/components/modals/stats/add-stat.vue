@@ -82,7 +82,7 @@ import { cloneDeep, pick } from 'lodash';
 
 import { MODALS, STATS_TYPES, ENTITIES_STATES } from '@/constants';
 
-import { setIn } from '@/helpers/immutable';
+import { setField } from '@/helpers/immutable';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
@@ -135,7 +135,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const preparedForm = setIn(this.form, 'parameters', parameters => pick(parameters, this.form.stat.options));
+          const preparedForm = setField(this.form, 'parameters', parameters => pick(parameters, this.form.stat.options));
 
           await this.config.action(preparedForm);
         }

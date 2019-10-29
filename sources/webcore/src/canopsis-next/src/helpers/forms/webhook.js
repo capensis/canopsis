@@ -1,67 +1,74 @@
 import { get, omit } from 'lodash';
 
-import { setInSeveral, unsetInSeveralWithConditions } from '@/helpers/immutable';
+import { setSeveralFieldsInObject, unsetSeveralFieldInObjectWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 
 export function webhookToForm(webhook) {
-  const patternsCustomizer = value => value || [];
+  return {
+    emptyResponse: webhook.empty_response || false,
+    ...setSeveralFieldsInObject(webhook, getWebhookFormFields(webhook)),
+  };
+}
 
-  let form = {};
+function getWebhookFormFields(webhook) {
+  const patternsFieldsCustomizer = value => value || [];
 
-  const webhookFields = {
+  const declareTicketField = webhook.declare_ticket ? omit(webhook.declare_ticket, ['empty_response']) : {};
+
+  return {
+    declare_ticket: () => objectToTextPairs(declareTicketField),
     'request.headers': objectToTextPairs,
-    'hook.event_patterns': patternsCustomizer,
-    'hook.alarm_patterns': patternsCustomizer,
-    'hook.entity_patterns': patternsCustomizer,
+    'hook.event_patterns': patternsFieldsCustomizer,
+    'hook.alarm_patterns': patternsFieldsCustomizer,
+    'hook.entity_patterns': patternsFieldsCustomizer,
   };
-
-  if (webhook.declare_ticket) {
-    const declareTicket = omit(webhook.declare_ticket, ['empty_response']);
-    webhookFields.declare_ticket = () => objectToTextPairs(declareTicket);
-  }
-
-  if (webhook.declare_ticket && webhook.declare_ticket.empty_response) {
-    form.empty_response = webhook.declare_ticket.empty_response;
-  }
-
-  form = {
-    ...form,
-    ...setInSeveral(webhook, webhookFields),
-  };
-
-  return form;
 }
 
 export function formToWebhook(form) {
-  const patternsCondition = value => !value || !value.length;
+  const webhook = createWebhookObject(form);
+
+  return removeEmptyPatternsFromWebhook(webhook);
+}
+
+function createWebhookObject(form) {
   const hasAuth = get(form, 'request.auth');
 
   const pathValuesMap = {
     'request.headers': textPairsToObject,
+    empty_response: form.emptyResponse || false,
   };
 
   if (form.declare_ticket) {
-    pathValuesMap.declare_ticket = (value) => {
-      const newValue = textPairsToObject(value);
-
-      newValue.empty_response = form.emptyResponse;
-
-      return newValue;
-    };
+    pathValuesMap.declare_ticket = getWebhookDeclareTicketField(form);
   }
 
   if (hasAuth) {
-    pathValuesMap['request.auth'] = auth => ({
-      username: auth.username ? auth.username : null,
-      password: auth.password ? auth.password : null,
-    });
+    pathValuesMap['request.auth'] = getWebhookAuthField();
   }
 
-  const webhook = setInSeveral(omit(form, ['emptyResponse']), pathValuesMap);
+  return setSeveralFieldsInObject(omit(form, ['emptyResponse']), pathValuesMap);
+}
 
-  return unsetInSeveralWithConditions(webhook, {
+function getWebhookDeclareTicketField() {
+  return value => ({
+    ...textPairsToObject(value),
+  });
+}
+
+function getWebhookAuthField() {
+  return auth => ({
+    username: auth.username || null,
+    password: auth.password || null,
+  });
+}
+
+function removeEmptyPatternsFromWebhook(webhook) {
+  const patternsCondition = value => !value || !value.length;
+
+  return unsetSeveralFieldInObjectWithConditions(webhook, {
     'hook.event_patterns': patternsCondition,
     'hook.alarm_patterns': patternsCondition,
     'hook.entity_patterns': patternsCondition,
   });
 }
+
