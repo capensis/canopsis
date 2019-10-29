@@ -888,17 +888,16 @@ def exports(ws):
             if entities[eid]['cur_alarm'] is None:
                 entities[eid]['cur_alarm'] = alarm['v']
 
-        active_pbs = pbehavior_manager.get_all_active_pbehaviors()
+        active_pbehaviors = pbehavior_manager.get_active_pbehaviors_on_entities(
+            entity_ids)
+        for pbehavior in active_pbehaviors:
+            pbehavior_eids = pbehavior.get('eids', [])
+            pbehavior = __format_pbehavior(pbehavior)
+            pbehavior['isActive'] = True
 
-        for active_pb in active_pbs:
-            active_pb_eids = set(active_pb['eids'])
-            active_pb_dirty = copy.deepcopy(active_pb)
-            active_pb_cleaned = __format_pbehavior(active_pb_dirty)
-
-            for eid in active_pb_eids:
-                active_pb_cleaned['isActive'] = True
+            for eid in pbehavior_eids:
                 if eid in entities:
-                    entities[eid]['pbehaviors'].append(active_pb_cleaned)
+                    entities[eid]['pbehaviors'].append(pbehavior)
 
         for entity_id, entity in entities.iteritems():
             enriched_entity = {}
