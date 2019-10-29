@@ -7,6 +7,13 @@ function isStringStart(chr) {
   return chr === SINGLE_QUOTE_CODE || chr === DOUBLE_QUOTE_CODE;
 }
 
+/**
+ * This function is parsing v-field original value to real path
+ * Example: form.field[key] => ['field', key]
+ *
+ * @param {string} value - original path from v-field (v-field="form.field[key]")
+ * @returns {Array}
+ */
 function parseField(value) {
   const START_BRACKET_CODE = 0x5B;
   const END_BRACKET_CODE = 0x5D;
@@ -20,7 +27,15 @@ function parseField(value) {
   for (let index = 0; index < value.length; index += 1) {
     const chr = value.charCodeAt(index);
 
+    /**
+     * If there is '[' char symbol. It is saying us that it's start of field value
+     */
     if (chr === START_BRACKET_CODE) {
+      /**
+       * If we already have path. Example: `form.field[key]` this condition will happened on '[' char symbol and
+       * we will save 'field'
+       * But if we have form['field'][key] this condition will not happened
+       */
       if (startPos < index - 1) {
         path.push(JSON.stringify(value.slice(startPos, index)));
       }
@@ -29,12 +44,22 @@ function parseField(value) {
       isPoint = false;
       startPos = index + 1;
 
+      /**
+       * We need to check it because if there is string path we will wrap value to JSON.stringify
+       * Example: form['field'] or form["field"]
+       */
       if (isStringStart(value.charCodeAt(startPos))) {
         hasString = true;
       }
+      /**
+       * If there is ']' char symbol. It is saying us that it's end of field value
+       */
     } else if (chr === END_BRACKET_CODE) {
       endPos = index - 1;
 
+      /**
+       * If we have string inside brackets we will wrap it into JSON.stringify
+       */
       if (hasString) {
         path.push(JSON.stringify(value.slice(startPos + 1, endPos)));
         hasString = false;
@@ -43,7 +68,15 @@ function parseField(value) {
       }
 
       startPos = index + 1;
+      /**
+       * If there is '.' char symbol. It is saying us that it's start of field value
+       */
     } else if (chr === POINT_CODE && !hasString) {
+      /**
+       * If we had point in previous field we will save it
+       * Example:
+       * `form.field.anotherField` this condition will happened on second '.' char symbol and we will save 'field'
+       */
       if (isPoint) {
         path.push(JSON.stringify(value.slice(startPos, index)));
 
@@ -55,6 +88,10 @@ function parseField(value) {
     }
   }
 
+  /**
+   * If we had point field at the last position we will save it here
+   * Example: `form.field.anotherField` -> 'anotherField'
+   */
   if (isPoint) {
     path.push(JSON.stringify(value.slice(startPos)));
   }
