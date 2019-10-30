@@ -41,9 +41,8 @@ from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.stat.manager import StatManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
-from canopsis.common.influx import InfluxDBClient
-from canopsis.common.influx_query import SelectQuery
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
@@ -479,71 +478,6 @@ def __format_pbehavior(pbehavior):
     return pbehavior
 
 
-def get_ok_ko(influx_client, entity_id, timestamp):
-    """
-    Return statistics on the check events received on an entity.
-
-    :param InfluxDBClient influx_client:
-    :param str entity_id: the id of the entity
-    :return: a dictionary containing the following keys:
-     - ok: the number of check events with state 0
-     - ko: the number of check events with state 1, 2 or 3
-     - last_event: the date of the last check event received on this entity, as
-       a unix timestamp
-     - last_ko: the date of the last check event with state 1, 2 or 3 received
-       on this entity, as a unix timestamp
-    """
-    ok_count = None
-    ko_count = None
-    last_ok = None
-    last_ko = None
-
-    counts_query = (SelectQuery('event_state_history')
-        .select('ok', function='sum', alias='ok')
-        .select('ko', function='sum', alias='ko')
-        .where_equal('eid', entity_id)
-        .after(timestamp)
-        .build())
-    result_set = influx_client.query(counts_query, epoch='s')
-    row = next(result_set.get_points(), None)
-    if row is not None:
-        ok_count = row['ok']
-        ko_count = row['ko']
-
-    last_ok_query = (SelectQuery('event_state_history')
-        .select('ok', function='last', alias='last_ok')
-        .where_equal('eid', entity_id)
-        .build())
-    result_set = influx_client.query(last_ok_query, epoch='s')
-    row = next(result_set.get_points(), None)
-    if row is not None:
-        last_ok = row['time']
-
-    last_ko_query = (SelectQuery('event_state_history')
-        .select('ko', function='last', alias='last_ko')
-        .where_equal('eid', entity_id)
-        .build())
-    result_set = influx_client.query(last_ko_query, epoch='s')
-    row = next(result_set.get_points(), None)
-    if row is not None:
-        last_ko = row['time']
-
-    last_event = None
-    if last_ko is not None and last_ko is not None:
-        last_event = max(last_ok, last_ko)
-    elif last_ok is not None:
-        last_event = last_ok
-    elif last_ko is not None:
-        last_event = last_ko
-
-    return {
-        'ok': ok_count or 0,
-        'ko': ko_count or 0,
-        'last_ko': last_ko,
-        'last_event': last_event
-    }
-
-
 def _pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
@@ -777,7 +711,7 @@ def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
 
-    influx_client = InfluxDBClient.from_configuration(ws.logger)
+    stat_manager = StatManager(*StatManager.provide_default_basics(ws.logger))
 
     @ws.application.route(
         '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
@@ -924,8 +858,6 @@ def exports(ws):
             for k, val in raw_entity['links'].items():
                 tmp_links.append({'cat_name': k, 'links': val})
 
-            last_pbh_timestamp = pbehavior_manager.get_ok_ko_timestamp(entity_id)
-
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
             enriched_entity['linklist'] = tmp_links
@@ -935,7 +867,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id, last_pbh_timestamp)
+            enriched_entity['stats'] = stat_manager.get_stats(entity_id).as_dict()
             if current_alarm is not None:
                 enriched_entity['alarm_creation_date'] = current_alarm.get("creation_date")
                 enriched_entity['alarm_display_name'] = current_alarm.get("display_name")
