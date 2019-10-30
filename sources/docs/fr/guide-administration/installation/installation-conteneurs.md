@@ -4,7 +4,7 @@ Cette procédure décrit l'installation de l'édition open-source de Canopsis en
 
 L'ensemble des procédures décrites doivent être réalisées avec l'utilisateur `root`.
 
-## Pré-requis
+## Prérequis
 
 ### Version minimum du noyau Linux
 

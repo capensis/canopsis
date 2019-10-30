@@ -65,7 +65,6 @@ export const MODALS = {
   textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
-  createViewTab: 'create-view-tab',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
