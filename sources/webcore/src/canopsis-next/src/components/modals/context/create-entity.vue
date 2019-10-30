@@ -92,12 +92,6 @@ export default {
     }
   },
   methods: {
-    updateImpact(entities) {
-      this.form.impacts = entities.map(entity => entity._id);
-    },
-    updateDependencies(entities) {
-      this.form.dependencies = entities.map(entity => entity._id);
-    },
     async submit() {
       this.submitting = true;
       const formIsValid = await this.$validator.validateAll();

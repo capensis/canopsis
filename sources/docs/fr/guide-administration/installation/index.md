@@ -1,8 +1,8 @@
 # Installation de Canopsis
 
-## Pré-requis
+## Prérequis
 
-*  [Pré-requis réseau et de sécurité](pre-requis-parefeu-et-selinux.md)
+*  [Prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md)
 
 ## Méthodes d'installation de Canopsis
 
