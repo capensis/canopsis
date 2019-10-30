@@ -53,9 +53,6 @@ Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont util
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
 - `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
-!!! note
-    Les [`triggers`](../architecture-interne/triggers.md) `unsnooze` et `resolve` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
-
 ### Activation d'un webhook
 
 Le champ `hook` représente les conditions d'activation d'un webhook. Il contient obligatoirement [`triggers`](../architecture-interne/triggers.md) qui est un tableau de triggers et éventuellement des `patterns` sur les alarmes, les entités et les évènements.

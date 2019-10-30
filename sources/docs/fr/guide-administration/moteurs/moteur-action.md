@@ -24,9 +24,6 @@ Une action est composée d'un JSON contenant les paramètres suivants :
     - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
 - `parameters` (requis) : les informations nécessaires correspondant au type d'action.
 
-!!! note
-    Les [`triggers`](../architecture-interne/triggers.md) `unsnooze` et `resolve` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
-
 ## Collection
 
 Les actions sont stockées dans la collection MongoDB `default_action` (voir [API Action](../../guide-developpement/action/api_v2_action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un pbehavior, le champ `type` vaut `pbehavior` :
