@@ -1,45 +1,52 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
-  :class="getItemClasses",
-  :style="{ height: itemHeight + 'em', backgroundColor: format.color}",
-  tile,
-  @click.native="showAdditionalInfoModal"
+    :class="itemClasses",
+    :style="{ height: itemHeight + 'em', backgroundColor: color}",
+    tile,
+    @click.native="showAdditionalInfoModal"
   )
     v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
       v-icon help
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
-        v-icon.px-3.py-2.white--text(size="2em") {{ format.icon }}
-        div.watcherName.pt-3(v-html="compiledTemplate")
-        v-btn.pauseIcon(v-if="watcher.active_pb_some && !watcher.active_pb_all", icon)
+        v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
+        v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
+        v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
+        v-btn.see-alarms-btn(
+          v-if="isBothModalType && hasAlarmsListAccess",
+          flat,
+          @click.stop="showAlarmListModal"
+        ) {{ $t('serviceWeather.seeAlarms') }}
 </template>
 
 <script>
-import { find } from 'lodash';
+import VRuntimeTemplate from 'v-runtime-template';
 
 import {
   MODALS,
+  USERS_RIGHTS,
   WIDGET_TYPES,
   WATCHER_STATES_COLORS,
-  WATCHER_PBEHAVIOR_COLOR,
-  PBEHAVIOR_TYPES,
   WEATHER_ICONS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
-import { prepareFilterWithFieldsPrefix } from '@/helpers/filter';
 
+import authMixin from '@/mixins/auth';
 import modalMixin from '@/mixins/modal';
 import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
-import convertObjectFieldToTreeBranch from '@/helpers/treeview';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 export default {
-  mixins: [modalMixin, popupMixin, entitiesWatcherEntityMixin],
+  components: {
+    VRuntimeTemplate,
+  },
+  mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -57,80 +64,69 @@ export default {
     },
   },
   computed: {
-    isPaused() {
-      return this.watcher.active_pb_all;
+    hasMoreInfosAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
     },
-    hasWatcherPbehavior() {
-      return this.watcher.active_pb_watcher;
+
+    hasAlarmsListAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
     },
-    isPbehavior() {
-      return this.watcher.pbehavior.some(pbehavior => pbehavior.isActive);
+
+    color() {
+      return WATCHER_STATES_COLORS[this.watcher.tileColor];
     },
-    format() {
-      if (!this.isPaused && !this.hasWatcherPbehavior) {
-        const state = this.watcher.state.val;
 
-        return {
-          icon: WEATHER_ICONS[state],
-          color: WATCHER_STATES_COLORS[state],
-        };
-      }
-
-      const pbehaviors = this.hasWatcherPbehavior ? this.watcher.watcher_pbehavior : this.watcher.pbehavior;
-
-      const maintenancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.maintenance });
-      const outOfSurveillancePbehavior = find(pbehaviors, { type_: PBEHAVIOR_TYPES.outOfSurveillance });
-
-      let icon = WEATHER_ICONS.pause;
-
-      if (maintenancePbehavior) {
-        icon = WEATHER_ICONS.maintenance;
-      } else if (outOfSurveillancePbehavior) {
-        icon = WEATHER_ICONS.outOfSurveillance;
-      }
-
-      return {
-        color: WATCHER_PBEHAVIOR_COLOR,
-        icon,
-      };
+    icon() {
+      return WEATHER_ICONS[this.watcher.tileIcon];
     },
+
     secondaryIcon() {
-      if (this.watcher.pbehavior.some(value => value.type_ === PBEHAVIOR_TYPES.maintenance)) {
-        return WEATHER_ICONS.maintenance;
-      } else if (this.watcher.pbehavior.every(value => value.type_ === PBEHAVIOR_TYPES.outOfSurveillance)) {
-        return WEATHER_ICONS.outOfSurveillance;
-      }
+      return WEATHER_ICONS[this.watcher.tileSecondaryIcon];
+    },
 
-      return WEATHER_ICONS.pause;
-    },
     compiledTemplate() {
-      return compile(this.template, { entity: this.watcher });
+      return `<div>${compile(this.template, { entity: this.watcher })}</div>`;
     },
-    getItemClasses() {
-      return [
+
+    itemClasses() {
+      const classes = [
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
         `ml-${this.widget.parameters.margin.left}`,
       ];
+
+      if (this.isBothModalType && this.hasAlarmsListAccess) {
+        classes.push('v-card__with-see-alarms-btn');
+      }
+
+      return classes;
     },
+
     itemHeight() {
       return 4 + this.widget.parameters.heightFactor;
     },
+
     isBlinking() {
-      return (
-        this.watcher.alerts_not_ack
-        && !this.hasWatcherPbehavior
-        && !this.isPbehavior
-      );
+      return this.watcher.isActionRequired;
+    },
+
+    isBothModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.both;
+    },
+
+    isAlarmListModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
     },
   },
   methods: {
-    showAdditionalInfoModal() {
-      if (this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList) {
-        this.showAlarmListModal();
-      } else {
-        this.showMainInfoModal();
+    showAdditionalInfoModal(e) {
+      if (e.target.tagName !== 'A' || !e.target.href) {
+        if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
+          this.showAlarmListModal();
+        } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
+          this.showMainInfoModal();
+        }
       }
     },
 
@@ -138,7 +134,8 @@ export default {
       this.showModal({
         name: MODALS.watcher,
         config: {
-          watcherId: this.watcher.entity_id,
+          color: this.color,
+          watcher: this.watcher,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
         },
@@ -147,12 +144,13 @@ export default {
 
     async showAlarmListModal() {
       try {
-        const initialFilter = JSON.parse(this.watcher.mfilter);
-        const newFilter = prepareFilterWithFieldsPrefix(initialFilter, 'entity.');
         const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+
+        const filter = { $and: [{ 'entity.impact': this.watcher.entity_id }] };
+
         const watcherFilter = {
           title: this.watcher.display_name,
-          filter: newFilter,
+          filter,
         };
 
         const widgetParameters = {
@@ -183,7 +181,7 @@ export default {
     },
 
     showVariablesHelpModal() {
-      const entityFields = convertObjectFieldToTreeBranch(this.watcher, 'entity');
+      const entityFields = convertObjectToTreeview(this.watcher, 'entity');
       const variables = [entityFields];
 
       this.showModal({
@@ -198,19 +196,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  $seeAlarmBtnHeight: 18px;
+
+  .v-card__with-see-alarms-btn {
+    padding-bottom: $seeAlarmBtnHeight;
+
+    .see-alarms-btn {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: .6em;
+      height: $seeAlarmBtnHeight;
+      color: white;
+      margin: 0;
+      background-color: rgba(0, 0, 0, .2);
+
+      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
+        background-color: rgba(0, 0, 0, .5);
+      }
+    }
+  }
+
   .pauseIcon {
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: 1em;
     cursor: inherit;
   }
 
   .watcherName {
-    color: white;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
+
+    &, & /deep/ a {
+      color: white;
+    }
   }
 
   @keyframes blink {

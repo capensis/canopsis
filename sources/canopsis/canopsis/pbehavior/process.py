@@ -25,6 +25,7 @@ pbehavior process
 from __future__ import unicode_literals
 
 from json import dumps
+import os
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
@@ -46,17 +47,25 @@ CONNECTOR = 'connector'
 CONNECTOR_NAME = 'connector_name'
 DEFAULT_AUTHOR = 'Default Author'
 
+ENV_RECOMPUTE_ON_NEW_ENTITY = 'CPS_RECOMPUTE_PBEHAVIOR_ON_NEW_ENTITY'
+
 watcher_manager = Watcher()
+
+# known_entities is a set containing the ids of the entities corresponding to
+# the events that have passed through the pbehavior engine. It is used when the
+# CPS_RECOMPUTE_PBEHAVIORS_ON_NEW_ENTITY option is enabled, and only works with
+# che.
+known_entities = set()
 
 
 def init_managers():
     """
     Init managers [sic].
     """
-    config, pb_logger, pb_storage = PBehaviorManager.provide_default_basics()
+    config, pb_logger, pb_collection = PBehaviorManager.provide_default_basics()
     pb_kwargs = {'config': config,
                  'logger': pb_logger,
-                 'pb_storage': pb_storage}
+                 'pb_collection': pb_collection}
     pb_manager = singleton_per_scope(PBehaviorManager, kwargs=pb_kwargs)
 
     return pb_manager
@@ -92,6 +101,22 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
     """
     Event processing.
     """
+    # This is a hack to make sure that new entities created by the go engine
+    # che are immediately added to the pbehaviors. It is required to know
+    # immediately if an entity is in maintenance, and to prevent tickets from
+    # being declared in this case.
+    # The pbehavior engine needs to receive events from che and publish them to
+    # axe for this to work.
+    if os.environ.get(ENV_RECOMPUTE_ON_NEW_ENTITY) == '1':
+        entity_id = event.get('current_entity', {}).get('_id')
+        if entity_id and entity_id not in known_entities:
+            try:
+                pbm.compute_pbehaviors_filters()
+            except Exception as ex:
+                engine.logger.exception('Processing error {}'.format(str(ex)))
+
+            known_entities.add(entity_id)
+
     if event.get('event_type') == EVENT_TYPE:
         entity_id = ContextGraph.get_id(event)
         engine.logger.debug("Start processing event {}".format(event))

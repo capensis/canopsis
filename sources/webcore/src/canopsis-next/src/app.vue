@@ -3,7 +3,7 @@
     v-layout(v-if="!pending")
       navigation#main-navigation(v-if="$route.name !== 'login'")
       v-content#main-content
-        router-view(:key="$route.fullPath")
+        router-view(:key="routeViewKey")
     side-bars
     modals
     popups
@@ -17,6 +17,7 @@ import Modals from '@/components/modals/index.vue';
 import Popups from '@/components/popups/index.vue';
 
 import authMixin from '@/mixins/auth';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 import '@/assets/styles/main.scss';
 
@@ -27,14 +28,27 @@ export default {
     Modals,
     Popups,
   },
-  mixins: [authMixin],
+  mixins: [authMixin, entitiesInfoMixin],
   data() {
     return {
       pending: true,
     };
   },
+  computed: {
+    routeViewKey() {
+      if (this.$route.name === 'view') {
+        return this.$route.path;
+      }
+
+      return this.$route.fullPath;
+    },
+  },
   async mounted() {
     await this.fetchCurrentUser();
+
+    if (this.isLoggedIn) {
+      await this.fetchAppInfos();
+    }
 
     this.pending = false;
   },
@@ -51,7 +65,7 @@ export default {
       }
 
       #main-content {
-        padding: 0!important;
+        padding: 0 !important;
       }
     }
   }

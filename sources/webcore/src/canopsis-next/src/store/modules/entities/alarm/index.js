@@ -29,34 +29,26 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: true,
-        fetchingParams: params,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
-        allIds,
-        meta,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
     },
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { pending: false });
     },
   },
   actions: {
-    async fetchListWithoutStore({ dispatch }, { params }) {
+    async fetchListWithoutStore({ dispatch }, { params, withoutCatch = false }) {
       try {
         const { data: [result] } = await request.get(API_ROUTES.alarmList, { params });
 
         return result;
       } catch (err) {
+        if (withoutCatch) {
+          throw err;
+        }
+
         await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         return { alarms: [], total: 0 };
@@ -103,7 +95,7 @@ export default {
 
     async fetchItem({ dispatch }, { id, params }) {
       try {
-        const paramsWithItemId = merge(params, { filter: { d: id } });
+        const paramsWithItemId = merge(params, { filter: { _id: id } });
 
         await dispatch('entities/fetch', {
           route: API_ROUTES.alarmList,

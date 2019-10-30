@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 set -o pipefail
 
@@ -9,5 +9,8 @@ if [ "x$1" == "xshell" ]; then
 else
     sudo /opt/canopsis/bin/env2cfg
     sudo /entrypoint-prov-sync.sh
-    /opt/canopsis/bin/canopsinit
+    options=""
+    [[ "$CPS_STACK" ]] && options="$options --canopsis-stack $CPS_STACK"
+    [[ "$CPS_EDITION" ]] && options="$options --canopsis-edition $CPS_EDITION"
+    /opt/canopsis/bin/canopsinit $options
 fi

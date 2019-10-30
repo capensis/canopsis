@@ -9,25 +9,20 @@ export function formatState(value) {
   if (!ENTITIES_STATES_STYLES[value]) {
     return UNKNOWN_VALUE_STYLE;
   }
+
   return ENTITIES_STATES_STYLES[value];
 }
 
 /**
  * Return object that contains the status style
  * @param value The status value
- * @param isCroppedState If it's a croppedState
  * @returns {*} Object with the color, icon and text associated
  */
-export function formatStatus(value, isCroppedState) {
+export function formatStatus(value) {
   if (!ENTITY_STATUS_STYLES[value]) {
     return UNKNOWN_VALUE_STYLE;
   }
-  if (isCroppedState) {
-    return {
-      ...ENTITY_STATUS_STYLES[value],
-      icon: 'vertical_align_center',
-    };
-  }
+
   return ENTITY_STATUS_STYLES[value];
 }
 

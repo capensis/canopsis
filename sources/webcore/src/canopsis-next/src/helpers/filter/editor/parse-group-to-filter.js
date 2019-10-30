@@ -1,4 +1,4 @@
-import { isEmpty, isObject, cloneDeep } from 'lodash';
+import { isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
 import uid from '@/helpers/uid';
@@ -14,20 +14,25 @@ function ruleOperatorAndInput(rule) {
   };
 
   const ruleValue = Object.values(rule)[0];
-  const operator = Object.keys(ruleValue)[0];
 
   /**
    * Switch to determine if it's a short syntax for '$eq' and '$eq:'''
    */
-  if (typeof ruleValue !== 'object') {
-    if (Object.values(rule)[0] === '') {
+  if (!isObject(ruleValue)) {
+    if (ruleValue === '') {
       parsedRule.operator = FILTER_OPERATORS.isEmpty;
     } else {
       const [input] = Object.values(rule);
-      parsedRule.input = input;
-      parsedRule.operator = FILTER_OPERATORS.equal;
+      if (isNull(input)) {
+        parsedRule.operator = FILTER_OPERATORS.isNull;
+      } else {
+        parsedRule.operator = FILTER_OPERATORS.equal;
+        parsedRule.input = input;
+      }
     }
-  } else if (typeof ruleValue === 'object') {
+  } else {
+    const operator = Object.keys(ruleValue)[0];
+
     /**
      * Switch to determine the right operator, and then assign the right input value
      */
@@ -44,8 +49,7 @@ function ruleOperatorAndInput(rule) {
         } else if (Object.values(ruleValue)[0] === '') {
           parsedRule.operator = FILTER_OPERATORS.isNotEmpty;
         } else {
-          const [inputObject] = Object.values(rule);
-          const [input] = Object.values(inputObject);
+          const [input] = Object.values(ruleValue);
           parsedRule.input = input;
           parsedRule.operator = FILTER_OPERATORS.notEqual;
         }
@@ -65,18 +69,24 @@ function ruleOperatorAndInput(rule) {
         parsedRule.operator = FILTER_OPERATORS.notIn;
         break;
       }
+      case ('$regex'): {
+        const [input] = Object.values(ruleValue);
+        parsedRule.input = input;
+        parsedRule.operator = FILTER_OPERATORS.contains;
+        break;
+      }
       default: {
         /**
          * Throw an error if the operator was not found.
          */
-        const [inputObject] = Object.values(rule);
-        const [input] = Object.values(inputObject);
+        const [input] = Object.values(ruleValue);
 
         parsedRule.input = input;
         parsedRule.operator = operator;
       }
     }
   }
+
   return parsedRule;
 }
 
@@ -118,13 +128,14 @@ export default function parseGroupToFilter(group) {
   * If the item is an array -> It's a group.
   * Else -> It's a rule.
   */
-  groupContent.map((item) => {
+  groupContent.forEach((item) => {
     if (Array.isArray(Object.values(item)[0])) {
       parsedGroup.groups[uid('group')] = parseGroupToFilter(item);
     } else {
-      parsedGroup.rules[uid('rules')] = parseRuleToFilter(item);
+      Object.entries(item).forEach(([key, value]) => {
+        parsedGroup.rules[uid('rules')] = parseRuleToFilter({ [key]: value });
+      }, {});
     }
-    return group;
   });
 
   return parsedGroup;

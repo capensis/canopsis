@@ -1,13 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Cookies from 'js-cookie';
-import { isEmpty, isFunction } from 'lodash';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
-import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
+import { USERS_RIGHTS } from '@/constants';
 import store from '@/store';
-import i18n from '@/i18n';
-import { checkUserAccess } from '@/helpers/right';
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -18,6 +16,10 @@ import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
+import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
+import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
+import ExploitationActions from '@/views/exploitation/actions.vue';
+import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 
 Vue.use(Router);
 
@@ -89,19 +91,78 @@ const routes = [
     path: '/admin/parameters',
     name: 'admin-parameters',
     component: AdminParameters,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.parameters,
+      },
+    },
   },
   {
     path: '/exploitation/pbehaviors',
     name: 'exploitation-pbehaviors',
     component: ExploitationPbehaviors,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.pbehavior,
+      },
+    },
   },
   {
     path: '/exploitation/event-filter',
     name: 'exploitation-event-filter',
     component: ExploitationEventFilter,
-    meta: requiresLoginMeta,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.eventFilter,
+      },
+    },
+  },
+  {
+    path: '/exploitation/webhooks',
+    name: 'exploitation-webhooks',
+    component: ExploitationWebhooks,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.webhook,
+      },
+    },
+  },
+  {
+    path: '/exploitation/snmp-rules',
+    name: 'exploitation-snmp-rules',
+    component: ExploitationSnmpRules,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.snmpRule,
+      },
+    },
+  },
+  {
+    path: '/exploitation/actions',
+    name: 'exploitation-actions',
+    component: ExploitationActions,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.action,
+      },
+    },
+  },
+  {
+    path: '/exploitation/heartbeats',
+    name: 'exploitation-heartbeats',
+    component: ExploitationHeartbeats,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.heartbeat,
+      },
+    },
   },
 ];
 
@@ -134,43 +195,23 @@ router.beforeEach((to, from, next) => {
   return next();
 });
 
-/**
- * if route has requiresRight we will wait currentUser object and check right
- */
-router.beforeResolve((to, from, next) => {
-  if (to.meta.requiresLogin && to.meta.requiresRight) {
-    const { requiresRight } = to.meta;
-    const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
-    const rightMask = requiresRight.mask ? requiresRight.mask : USERS_RIGHTS_MASKS.read;
-    const checkProcess = (user) => {
-      if (checkUserAccess(user, rightId, rightMask)) {
-        next();
-      } else {
-        store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
-        next(false);
-      }
-    };
+router.beforeResolve(async (to, from, next) => {
+  try {
+    await checkAppInfoAccessForRoute(to);
+    await checkUserAccessForRoute(to);
 
-    if (isEmpty(store.getters['auth/currentUser'])) {
-      const unwatch = store.watch(
-        state => state.auth.currentUser,
-        (currentUser) => {
-          if (!isEmpty(currentUser)) {
-            unwatch();
-            checkProcess(currentUser);
-          }
-        },
-      );
-    } else {
-      checkProcess(store.getters['auth/currentUser']);
-    }
-  } else {
     next();
+  } catch (err) {
+    next({
+      name: 'home',
+    });
   }
 });
 
-router.afterEach(() => {
-  store.dispatch('entities/sweep');
+router.afterEach((to, from) => {
+  if (to.path !== from.path) {
+    store.dispatch('entities/sweep');
+  }
 });
 
 export default router;

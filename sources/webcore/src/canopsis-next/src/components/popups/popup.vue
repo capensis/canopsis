@@ -11,13 +11,13 @@ import { POPUP_AUTO_CLOSE_DELAY } from '@/config';
 const { mapActions } = createNamespacedHelpers('popup');
 
 /**
-* Popup component
-*
-* @prop {String} [id] - Id of the popup
-* @prop {String} [type] - Type of the popup (info, error, ...)
-* @prop {String} [text] - Text displayed in the popup
-* @prop {Number,Boolean} [autoClose] - Auto close delay
-*/
+ * Popup component
+ *
+ * @prop {String} [id] - Id of the popup
+ * @prop {String} [type] - Type of the popup (info, error, ...)
+ * @prop {String} [text] - Text displayed in the popup
+ * @prop {Number,Boolean} [autoClose] - Auto close delay
+ */
 export default {
   props: {
     id: {

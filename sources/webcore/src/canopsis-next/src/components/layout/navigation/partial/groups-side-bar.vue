@@ -1,72 +1,89 @@
 <template lang="pug">
   v-navigation-drawer.side-bar.secondary(
-  v-model="isOpen",
-  :width="$config.SIDE_BAR_WIDTH",
-  :class="{ editing: isEditingMode }"
-  disable-resize-watcher,
-  app,
+    v-model="isOpen",
+    :width="$config.SIDE_BAR_WIDTH",
+    :class="{ editing: isEditingMode }",
+    data-test="groupsSideBar",
+    disable-resize-watcher,
+    app
   )
     div.brand.ma-0.secondary.lighten-1
-      v-layout(justify-center, align-center)
-        v-flex.text-xs-center(xs11)
-          img.my-1(src="@/assets/canopsis.png")
-        v-flex.version.white--text.caption
-          div {{ version }}
+      img.logo(:src="appLogo")
+      div.version {{ version }}
     v-expansion-panel.panel(
-    v-if="hasReadAnyViewAccess",
-    expand,
-    focusable,
-    dark
+      v-if="hasReadAnyViewAccess",
+      expand,
+      focusable,
+      dark
     )
-      v-expansion-panel-content.secondary.white--text(v-for="group in groups", :key="group._id")
+      v-expansion-panel-content.secondary.white--text(
+        v-for="group in availableGroups",
+        :key="group._id",
+        :data-test="`panel-group-${group._id}`"
+      )
         div.panel-header(slot="header")
-          span(:title="group.name") {{ group.name }}
+          span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
           v-btn(
-          v-show="isEditingMode",
-          depressed,
-          small,
-          icon,
-          @click.stop="showEditGroupModal(group)"
+            :data-test="`editGroupButton-group-${group._id}`",
+            v-show="isEditingMode",
+            depressed,
+            small,
+            icon,
+            @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
-        v-card.secondary.lighten-1.white--text(v-for="view in getAvailableViewsForGroup(group)", :key="view._id")
-          router-link.panel-item-content-link(:title="view.title", :to="{ name: 'view', params: { id: view._id } }")
+        v-card(
+          v-for="view in group.views",
+          :key="view._id",
+          :color="getColor(view._id)"
+        )
+          router-link.panel-item-content-link(
+            :data-test="`linkView-view-${view._id}`",
+            :title="view.title",
+            :to="getViewLink(view)"
+          )
             v-card-text.panel-item-content
               v-layout(align-center, justify-space-between)
                 v-flex
-                  span.pl-2 {{ view.title }}
+                  v-layout(align-center)
+                    span.pl-2 {{ view.title }}
                 v-flex
                   v-layout(justify-end)
                     v-btn.ma-0(
-                    v-show="checkViewEditButtonAccessById(view._id)",
-                    depressed,
-                    small,
-                    icon,
-                    @click.prevent="showEditViewModal(view)"
+                      :data-test="`editViewButton-view-${view._id}`",
+                      v-show="checkViewEditButtonAccessById(view._id)",
+                      depressed,
+                      small,
+                      icon,
+                      @click.prevent="showEditViewModal(view)"
                     )
                       v-icon(small) edit
                     v-btn.ma-0(
-                    v-show="isEditingMode",
-                    depressed,
-                    small,
-                    icon,
-                    @click.prevent="showDuplicateViewModal(view)"
+                      :data-test="`copyViewButton-view-${view._id}`",
+                      v-show="isEditingMode",
+                      depressed,
+                      small,
+                      icon,
+                      @click.prevent="showDuplicateViewModal(view)"
                     )
                       v-icon(small) file_copy
           v-divider
     v-divider
     groups-settings-button(
-    :isEditingMode="isEditingMode",
-    @toggleEditingMode="toggleEditingMode"
+      tooltipRight,
+      :isEditingMode="isEditingMode",
+      @toggleEditingMode="toggleEditingMode"
     )
 </template>
 
 <script>
 import { groupSchema } from '@/store/schemas';
 
-import versionMixin from '@/mixins/entities/version';
+import entitiesInfoMixin from '@/mixins/entities/info';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 import registrableMixin from '@/mixins/registrable';
+
+import logo from '@/assets/canopsis.png';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
 
@@ -80,7 +97,7 @@ import GroupsSettingsButton from './groups-settings-button.vue';
 export default {
   components: { GroupsSettingsButton },
   mixins: [
-    versionMixin,
+    entitiesInfoMixin,
     layoutNavigationGroupMenuMixin,
 
     registrableMixin([groupSchema], 'groups'),
@@ -102,9 +119,22 @@ export default {
         }
       },
     },
-  },
-  mounted() {
-    this.fetchVersion();
+
+    isViewActive() {
+      return viewId => this.$route.params.id && this.$route.params.id === viewId;
+    },
+
+    getColor() {
+      return id => (this.isViewActive(id) ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1');
+    },
+
+    appLogo() {
+      if (this.logo) {
+        return this.logo;
+      }
+
+      return logo;
+    },
   },
 };
 </script>
@@ -130,8 +160,11 @@ export default {
   }
 
   .brand {
-    height: 48px;
+    max-height: 48px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 0.5em 0;
   }
 
   .version {
@@ -139,6 +172,8 @@ export default {
     bottom: 0;
     right: 0;
     padding-right: 0.5em;
+    color: white;
+    font-size: 0.8em;
   }
 
   .panel-header {
@@ -186,5 +221,11 @@ export default {
       display: inline-block;
       vertical-align: middle;
     }
+  }
+
+  .logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: scale-down;
   }
 </style>

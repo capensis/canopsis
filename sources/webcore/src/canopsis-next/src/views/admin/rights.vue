@@ -5,33 +5,28 @@
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
-      v-expansion-panel
-        v-expansion-panel-content(
-        v-for="(rights, groupKey) in groupedRights",
-        :key="groupKey",
-        lazy,
-        lazyWithUnmount,
-        ripple
-        )
-          div(slot="header") {{ groupKey }}
-          v-card(v-if="hasReadAnyRoleAccess")
-            v-card-text
-              table.table
-                thead
-                  tr
-                    th
-                    th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
-                tbody
-                  tr(v-for="right in rights", :key="`right-title-${right._id}`")
-                    td {{ right.desc }}
-                    td(v-for="role in roles", :key="`role-right-${role._id}`")
-                      v-checkbox-functional(
-                      v-for="(checkbox, index) in getCheckboxes(role, right)",
-                      :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
-                      v-bind="checkbox.bind",
-                      v-on="checkbox.on",
-                      :disabled="!hasUpdateAnyActionAccess"
-                      )
+      v-tabs(fixed-tabs)
+        template(v-for="(rights, groupKey) in groupedRights")
+          v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
+          v-tab-item(:key="`tab-item-${groupKey}`")
+            v-card(v-if="hasReadAnyRoleAccess")
+              v-card-text
+                table.table
+                  thead
+                    tr
+                      th
+                      th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
+                  tbody
+                    tr(v-for="right in rights", :key="`right-title-${right._id}`")
+                      td {{ right.desc }}
+                      td(v-for="role in roles", :key="`role-right-${role._id}`")
+                        v-checkbox-functional(
+                          v-for="(checkbox, index) in getCheckboxes(role, right)",
+                          :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
+                          v-bind="checkbox.bind",
+                          v-on="checkbox.on",
+                          :disabled="!hasUpdateAnyActionAccess"
+                        )
     v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
@@ -39,9 +34,9 @@
       v-layout(column)
         refresh-btn(@click="fetchRightsList")
         v-speed-dial(
-        v-model="fab",
-        direction="left",
-        transition="slide-y-reverse-transition"
+          v-model="fab",
+          direction="left",
+          transition="slide-y-reverse-transition"
         )
           v-btn(slot="activator", color="primary", fab, v-model="fab")
             v-icon add
@@ -62,20 +57,32 @@
 
 <script>
 import { get, isEmpty, isUndefined, transform } from 'lodash';
+import flatten from 'flat';
 
-import { MODALS, USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } from '@/constants';
-import { generateRoleRightByChecksum } from '@/helpers/entities';
+import {
+  MODALS,
+  USERS_RIGHTS,
+  USERS_RIGHTS_MASKS,
+  USERS_RIGHTS_TYPES,
+  NOT_COMPLETED_USER_RIGHTS_KEYS,
+} from '@/constants';
+import {
+  prepareUserByData,
+  generateRoleRightByChecksum,
+} from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import popupMixin from '@/mixins/popup';
 import modalMixin from '@/mixins/modal';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
+import entitiesUserMixin from '@/mixins/entities/user';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
-import RefreshBtn from '@/components/other/view/refresh-btn.vue';
+import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 
 export default {
   components: {
@@ -87,6 +94,8 @@ export default {
     modalMixin,
     entitiesRightMixin,
     entitiesRoleMixin,
+    entitiesUserMixin,
+    entitiesViewGroupMixin,
     rightsTechnicalUserMixin,
     rightsTechnicalRoleMixin,
     rightsTechnicalActionMixin,
@@ -161,7 +170,6 @@ export default {
     this.fetchRightsList();
   },
   methods: {
-
     async fetchRightsList() {
       this.pending = true;
 
@@ -173,6 +181,9 @@ export default {
     showCreateUserModal() {
       this.showModal({
         name: MODALS.createUser,
+        config: {
+          action: data => this.createUser({ data: prepareUserByData(data) }),
+        },
       });
     },
 
@@ -185,6 +196,9 @@ export default {
     showCreateRightModal() {
       this.showModal({
         name: MODALS.createRight,
+        config: {
+          action: this.fetchRightsList,
+        },
       });
     },
 
@@ -306,14 +320,27 @@ export default {
         this.fetchRolesList({ params: { limit: 10000 } }),
       ]);
 
+      const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
+      const allRightsIds = flatten(USERS_RIGHTS);
+      const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
+      const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
+
       this.groupedRights = rights.reduce((acc, right) => {
         const rightId = String(right._id);
+        const view = allViews.find(({ _id }) => _id === rightId);
 
-        if (rightId.startsWith('view') || rightId.startsWith('userview')) {
-          acc.view.push(right);
-        } else if (rightId.startsWith('models')) {
+        if (view) {
+          acc.view.push({
+            ...right,
+
+            desc: right.desc.replace(view._id, view.name),
+          });
+        } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
           acc.technical.push(right);
-        } else {
+        } else if (
+          Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
+          NOT_COMPLETED_USER_RIGHTS_KEYS.some(userRightKey => rightId.startsWith(allRightsIds[userRightKey]))
+        ) {
           acc.business.push(right);
         }
 

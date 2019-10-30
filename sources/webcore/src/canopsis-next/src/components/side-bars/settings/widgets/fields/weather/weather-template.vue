@@ -1,10 +1,11 @@
 <template lang="pug">
-  v-container(fluid).pa-3
+  v-container.pa-3(fluid)
     v-layout(align-center, justify-space-between)
       div.subheading {{ title }}
       v-btn.primary(
-      small,
-      @click="showtextEditorModal"
+        data-test="showEditorModalButton",
+        small,
+        @click="showTextEditorModal"
       ) {{ $t('common.show') }}/{{ $t('common.edit') }}
 </template>
 
@@ -13,12 +14,7 @@ import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 
-import TextEditor from '@/components/other/text-editor/text-editor.vue';
-
 export default {
-  components: {
-    TextEditor,
-  },
   mixins: [modalMixin],
   props: {
     value: {
@@ -31,7 +27,7 @@ export default {
     },
   },
   methods: {
-    showtextEditorModal() {
+    showTextEditorModal() {
       this.showModal({
         name: MODALS.textEditor,
         config: {

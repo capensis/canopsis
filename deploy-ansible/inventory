@@ -1,7 +1,4 @@
 localhost
 
-[canopsis-standalone]
+[canopsis]
 localhost
-
-[go]
-; put any machine that should not start engines replaced by go ones.

@@ -1,32 +1,36 @@
 <template lang="pug">
-  v-list-group
+  v-list-group(data-test="defaultSortColumn")
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
     v-container
-      v-select(
-      :value="value.column",
-      :items="columns",
-      :label="$t('settings.columnName')",
-      item-text="label",
-      item-value="value",
-      @change="updateField('column', $event)"
-      )
-      v-select(
-      :value="value.order",
-      @input="updateField('order', $event)",
-      :items="orders"
-      )
+      v-layout(data-test="defaultSortColumnOrderByLayout", row)
+        v-select(
+          :value="value.column",
+          :items="columns",
+          :label="columnsLabel",
+          item-text="label",
+          item-value="value",
+          @change="updateField('column', $event)"
+        )
+      v-layout(data-test="defaultSortColumnOrdersLayout", row)
+        v-select(
+          :value="value.order",
+          :items="orders",
+          @input="updateField('order', $event)"
+        )
 </template>
 
 <script>
 import formMixin from '@/mixins/form';
 
+import { SORT_ORDERS } from '@/constants';
+
 /**
-* Component to select the default column to sort on settings
-*
-* @prop {Object} [value] - Object containing the default sort column's name and the sort direction
-*
-* @event value#input
-*/
+ * Component to select the default column to sort on settings
+ *
+ * @prop {Object} [value] - Object containing the default sort column's name and the sort direction
+ *
+ * @event value#input
+ */
 export default {
   mixins: [formMixin],
   props: {
@@ -41,11 +45,15 @@ export default {
       type: Array,
       default: () => [],
     },
+    columnsLabel: {
+      type: String,
+      default: null,
+    },
   },
-  data() {
-    return {
-      orders: ['ASC', 'DESC'],
-    };
+  computed: {
+    orders() {
+      return Object.values(SORT_ORDERS);
+    },
   },
 };
 </script>

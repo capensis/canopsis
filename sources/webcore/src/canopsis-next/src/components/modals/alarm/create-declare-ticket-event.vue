@@ -18,10 +18,12 @@
 </template>
 
 <script>
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to declare a ticket
@@ -35,10 +37,10 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   methods: {
     async submit() {
-      await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.declareTicket, this.items, {
+      await this.createEvent(EVENT_ENTITY_TYPES.declareTicket, this.items, {
         output: 'declare ticket',
       });
 

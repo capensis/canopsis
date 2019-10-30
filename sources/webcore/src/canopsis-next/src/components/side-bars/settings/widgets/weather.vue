@@ -2,91 +2,137 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hidden-fields="['title']")
+      field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
       v-divider
-      v-list-group
+      field-filter-editor(
+        data-test="widgetFilterEditor",
+        v-model="settings.widget.parameters.mfilter",
+        :hidden-fields="['title']"
+      )
+      v-divider
+      v-list-group(data-test="widgetAlarmsList")
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns")
+          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns", withHtml)
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider
-          field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
+          field-info-popup(
+            :columns="settings.widget.parameters.alarmsList.widgetColumns",
+            data-test="widgetInfoPopup",
+            v-model="settings.widget.parameters.alarmsList.infoPopups"
+          )
           v-divider
-          field-more-info(v-model="settings.widget.parameters.alarmsList.moreInfoTemplate")
+          field-text-editor(
+            data-test="widgetMoreInfoTemplate",
+            v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
+            :title="$t('settings.moreInfosModal')"
+          )
       v-divider
-      v-list-group
+      field-number(
+        data-test="widgetLimit",
+        v-model="settings.widget.parameters.limit",
+        :title="$t('settings.limit')"
+      )
+      v-divider
+      v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-weather-template(
-          v-model="settings.widget.parameters.blockTemplate",
-          :title="$t('settings.weatherTemplate')"
+          field-default-sort-column(
+            v-model="settings.widget.parameters.sort",
+            :columns="sortColumns",
+            :columnsLabel="$t('settings.orderBy')"
           )
           v-divider
           field-weather-template(
-          v-model="settings.widget.parameters.modalTemplate",
-          :title="$t('settings.modalTemplate')"
+            data-test="widgetTemplateWeatherItem",
+            v-model="settings.widget.parameters.blockTemplate",
+            :title="$t('settings.weatherTemplate')"
           )
           v-divider
           field-weather-template(
-          v-model="settings.widget.parameters.entityTemplate",
-          :title="$t('settings.entityTemplate')"
+            data-test="widgetTemplateModal",
+            v-model="settings.widget.parameters.modalTemplate",
+            :title="$t('settings.modalTemplate')"
           )
           v-divider
-          field-grid-size(v-model="settings.widget.parameters.columnSM", :title="$t('settings.columnSM')")
+          field-weather-template(
+            data-test="widgetTemplateEntities",
+            v-model="settings.widget.parameters.entityTemplate",
+            :title="$t('settings.entityTemplate')"
+          )
           v-divider
-          field-grid-size(v-model="settings.widget.parameters.columnMD", :title="$t('settings.columnMD')")
+          field-grid-size(
+            data-test="columnSM",
+            v-model="settings.widget.parameters.columnSM",
+            :title="$t('settings.columnSM')"
+          )
           v-divider
-          field-grid-size(v-model="settings.widget.parameters.columnLG", :title="$t('settings.columnLG')")
+          field-grid-size(
+            data-test="columnMD",
+            v-model="settings.widget.parameters.columnMD",
+            :title="$t('settings.columnMD')"
+          )
           v-divider
-          v-list-group
+          field-grid-size(
+            data-test="columnLG",
+            v-model="settings.widget.parameters.columnLG",
+            :title="$t('settings.columnLG')"
+          )
+          v-divider
+          v-list-group(data-test="widgetMargin")
             v-list-tile(slot="activator") {{ $t('settings.margin.title') }}
             v-list.grey.lighten-4.px-2.py-0(expand)
               field-slider(
-              v-model="settings.widget.parameters.margin.top",
-              :title="$t('settings.margin.top')",
-              :min="0",
-              :max="5",
+                data-test="widget-margin-top",
+                v-model="settings.widget.parameters.margin.top",
+                :title="$t('settings.margin.top')",
+                :min="0",
+                :max="5"
               )
               v-divider
               field-slider(
-              v-model="settings.widget.parameters.margin.right",
-              :title="$t('settings.margin.right')",
-              :min="0",
-              :max="5",
+                data-test="widget-margin-right",
+                v-model="settings.widget.parameters.margin.right",
+                :title="$t('settings.margin.right')",
+                :min="0",
+                :max="5"
               )
               v-divider
               field-slider(
-              v-model="settings.widget.parameters.margin.bottom",
-              :title="$t('settings.margin.bottom')",
-              :min="0",
-              :max="5",
+                data-test="widget-margin-bottom",
+                v-model="settings.widget.parameters.margin.bottom",
+                :title="$t('settings.margin.bottom')",
+                :min="0",
+                :max="5"
               )
               v-divider
               field-slider(
-              v-model="settings.widget.parameters.margin.left",
-              :title="$t('settings.margin.left')",
-              :min="0",
-              :max="5",
+                data-test="widget-margin-left",
+                v-model="settings.widget.parameters.margin.left",
+                :title="$t('settings.margin.left')",
+                :min="0",
+                :max="5"
               )
           v-divider
           field-slider(
-          v-model="settings.widget.parameters.heightFactor",
-          :title="$t('settings.height')",
-          :min="1",
-          :max="20",
+            data-test="widgetHeightFactory",
+            v-model="settings.widget.parameters.heightFactor",
+            :title="$t('settings.height')",
+            :min="1",
+            :max="20"
           )
           v-divider
           field-modal-type(v-model="settings.widget.parameters.modalType")
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+    v-btn.primary(data-test="submitWeather", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -99,7 +145,9 @@ import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
+import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
+import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldWeatherTemplate from './fields/weather/weather-template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
@@ -107,7 +155,8 @@ import FieldModalType from './fields/weather/modal-type.vue';
 import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldMoreInfo from './fields/alarm/more-info.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
+import FieldNumber from './fields/common/number.vue';
 
 export default {
   name: SIDE_BARS.weatherSettings,
@@ -117,7 +166,9 @@ export default {
   components: {
     FieldRowGridSize,
     FieldTitle,
+    FieldPeriodicRefresh,
     FieldFilterEditor,
+    FieldDefaultSortColumn,
     FieldWeatherTemplate,
     FieldGridSize,
     FieldSlider,
@@ -125,7 +176,8 @@ export default {
     FieldColumns,
     FieldDefaultElementsPerPage,
     FieldInfoPopup,
-    FieldMoreInfo,
+    FieldTextEditor,
+    FieldNumber,
   },
   mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
@@ -136,6 +188,13 @@ export default {
         rowId,
         widget: this.prepareWidgetWithAlarmParametersSettings(cloneDeep(widget), true),
       },
+      sortColumns: [
+        { label: 'name', value: 'name' },
+        { label: 'state', value: 'state' },
+        { label: 'status', value: 'status' },
+        { label: 'criticity', value: 'criticity' },
+        { label: 'org', value: 'org' },
+      ],
     };
   },
   methods: {

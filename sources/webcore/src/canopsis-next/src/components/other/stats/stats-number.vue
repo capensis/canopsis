@@ -1,48 +1,62 @@
 <template lang="pug">
   div
-    v-card
-      v-card-title
-        v-layout(justify-center)
-          h2 {{ widget.parameters.stat.title }}
-      v-data-iterator(
+    v-card.position-relative
+      progress-overlay(:pending="pending")
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+      v-data-table(
         :items="stats",
-        content-tag="v-layout",
-        rows-per-page-text="",
-        row,
-        wrap,
+        :headers="tableHeaders",
+        :pagination.sync="pagination"
       )
-        v-flex(
-          slot="item",
-          slot-scope="props",
-          xs12,
+        template(
+          slot="items",
+          slot-scope="{ item }",
+          xs12
         )
-          v-list(dense)
-            v-list-tile
-              v-list-tile-content
-                ellipsis(:text="props.item.entity.name")
-              v-list-tile-content.align-end
-                v-layout(align-center)
-                  v-chip(:style="{ backgroundColor: getChipColor(props.item.value) }")
-                    div.body-1 {{ getChipText(props.item.value) }}
-                  div.caption
-                    template(v-if="props.item.trend >= 0") + {{ props.item.trend }}
-                    template(v-else) - {{ props.item.trend }}
+          td {{ item.entity.name }}
+          td
+            v-layout(align-center)
+              v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
+                div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
+              div.caption
+                div(v-if="hasTrend(item[query.stat.title])")
+                  sub.ml-2
+                    v-icon.caption(
+                      small,
+                      :color="item[query.stat.title].trend | trendColor"
+                    ) {{ item[query.stat.title].trend | trendIcon }}
+                  sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
 </template>
 
 <script>
-import Ellipsis from '@/components/tables/ellipsis.vue';
+import { PAGINATION_LIMIT } from '@/config';
+import { STATS_DISPLAY_MODE, STATS_CRITICITY, SORT_ORDERS } from '@/constants';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
+
+import Ellipsis from '@/components/tables/ellipsis.vue';
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+
+import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
+    RecordsPerPage,
+    ProgressOverlay,
+    StatsAlertOverlay,
   },
   mixins: [
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
+    widgetStatsQueryMixin,
+    widgetStatsTableWrapperMixin,
   ],
   props: {
     widget: {
@@ -52,35 +66,73 @@ export default {
   },
   data() {
     return {
+      pending: true,
+      hasError: false,
+      serverErrorMessage: null,
       stats: [],
+      pagination: {
+        page: 1,
+        sortBy: 'value',
+        descending: true,
+        totalItems: 0,
+        rowsPerPage: PAGINATION_LIMIT,
+      },
     };
   },
   computed: {
+    statColumn() {
+      const { stat } = this.query;
+
+      if (stat) {
+        return `${stat.title}.value`;
+      }
+
+      return 'value';
+    },
+
+    tableHeaders() {
+      return [
+        {
+          text: this.$t('common.entity'),
+          value: 'entity.name',
+          sortable: false,
+        },
+        {
+          text: this.$t('common.value'),
+          value: this.statColumn,
+        },
+      ];
+    },
+
     getChipColor() {
       return (value) => {
-        const { yesNoMode, criticityLevels, statColors } = this.widget.parameters;
-
-        if (yesNoMode) {
-          return value === 0 ? statColors.ok : statColors.critical;
-        }
+        const { colors, criticityLevels } = this.widget.parameters.displayMode.parameters;
 
         if (value < criticityLevels.minor) {
-          return statColors.ok;
+          return colors.ok;
         } else if (value < criticityLevels.major) {
-          return statColors.minor;
+          return colors.minor;
         } else if (value < criticityLevels.critical) {
-          return statColors.major;
+          return colors.major;
         }
 
-        return statColors.critical;
+        return colors.critical;
       };
     },
     getChipText() {
       return (value) => {
-        const { yesNoMode } = this.widget.parameters;
+        const { mode, parameters } = this.widget.parameters.displayMode;
+        const { criticityLevels } = parameters;
 
-        if (yesNoMode) {
-          return value === 0 ? this.$t('common.no') : this.$t('common.yes');
+        if (mode === STATS_DISPLAY_MODE.criticity) {
+          if (value < criticityLevels.minor) {
+            return STATS_CRITICITY.ok;
+          } else if (value < criticityLevels.major) {
+            return STATS_CRITICITY.minor;
+          } else if (value < criticityLevels.critical) {
+            return STATS_CRITICITY.major;
+          }
+          return STATS_CRITICITY.critical;
         }
 
         return value;
@@ -88,14 +140,60 @@ export default {
     },
   },
   methods: {
-    async fetchList() {
-      const query = { ...this.query };
+    getQuery() {
+      const {
+        stats,
+        mfilter,
+        tstop,
+        periodUnit,
+        tstart,
+      } = this.getStatsQuery();
 
-      this.stats = await this.fetchStatValuesWithoutStore({
-        params: query,
-      });
+      const durationValue = tstop.diff(tstart, periodUnit);
+
+      return {
+        stats,
+        mfilter,
+
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
+        tstop: tstop.startOf('h').unix(),
+      };
+    },
+
+    async fetchList() {
+      try {
+        const { limit, sortOrder } = this.query;
+
+        this.pending = true;
+        this.hasError = false;
+        this.serverErrorMessage = null;
+
+        const { values } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
+
+        this.stats = values;
+        this.pagination = {
+          page: 1,
+          sortBy: this.statColumn,
+          totalItems: values.length,
+          rowsPerPage: limit || PAGINATION_LIMIT,
+          descending: sortOrder === SORT_ORDERS.desc,
+        };
+      } catch (err) {
+        this.hasError = true;
+        this.serverErrorMessage = err.description || null;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };
 </script>
 
+<style lang="scss">
+  .theme--light.v-datatable .v-datatable__actions {
+    display: flex;
+    justify-content: center;
+  }
+</style>

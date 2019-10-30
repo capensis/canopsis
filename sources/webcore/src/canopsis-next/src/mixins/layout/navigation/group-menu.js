@@ -2,13 +2,13 @@ import { MODALS } from '@/constants';
 
 import modalMixin from '@/mixins/modal';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
-import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
+import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
 export default {
   mixins: [
     modalMixin,
     entitiesViewGroupMixin,
-    rightsTechnicalViewMixin,
+    rightsEntitiesGroupMixin,
   ],
   props: {
     value: {
@@ -22,16 +22,27 @@ export default {
     };
   },
   computed: {
+    getViewLink() {
+      return (view = {}) => {
+        const link = {
+          name: 'view',
+          params: { id: view._id },
+        };
+
+        if (view.tabs && view.tabs.length) {
+          link.query = { tabId: view.tabs[0]._id };
+        }
+
+        return link;
+      };
+    },
+
     checkUpdateViewAccessById() {
       return viewId => this.checkUpdateAccess(viewId) && this.hasUpdateAnyViewAccess;
     },
 
     checkDeleteViewAccessById() {
       return viewId => this.checkDeleteAccess(viewId) && this.hasDeleteAnyViewAccess;
-    },
-
-    getAvailableViewsForGroup() {
-      return group => group.views.filter(view => this.checkReadAccess(view._id));
     },
 
     checkViewEditButtonAccessById() {

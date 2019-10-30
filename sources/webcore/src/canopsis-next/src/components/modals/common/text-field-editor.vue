@@ -1,20 +1,21 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="textFieldEditorModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
     v-card-text
       v-text-field(
-      v-model="text",
-      v-validate="field.validationRules",
-      :name="field.name",
-      :label="field.label",
-      :error-messages="errors.collect(field.name)"
+        data-test="textField",
+        v-model="text",
+        v-validate="field.validationRules",
+        :name="field.name",
+        :label="field.label",
+        :error-messages="errors.collect(field.name)"
       )
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+      v-btn.primary(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

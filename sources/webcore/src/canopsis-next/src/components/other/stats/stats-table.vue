@@ -1,38 +1,70 @@
 <template lang="pug">
   div
-    v-data-table(
-      :items="stats",
-      :headers="columns",
-      :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
-    )
-      v-progress-linear(slot="progress", color="primary", indeterminate)
-      template(slot="headers", slot-scope="{ headers }")
-        th {{ $t('common.entity') }}
-        th(v-for="header in headers", :key="header.value") {{ header.value }}
-      template(slot="items", slot-scope="{ item }")
-        td {{ item.entity.name }}
-        td(v-for="(property, key) in widget.parameters.stats")
-          template(
-          v-if="item[key] && item[key].value !== undefined && item[key].value !== null"
-          )
-            td
-              div {{ item[key].value }}
-                sub {{ item[key].trend }}
-          div(v-else) {{ $t('tables.noData') }}
+    v-card.position-relative
+      progress-overlay(:pending="pending")
+      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+      v-data-table(
+        :items="stats",
+        :headers="columns",
+        :pagination.sync="pagination",
+        :custom-sort="customSort"
+      )
+        template(slot="items", slot-scope="{ item }")
+          td {{ item.entity.name }}
+          td(v-for="(property, key) in widget.parameters.stats")
+            template(v-if="isStatNotEmpty(item[key])")
+              td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
+                alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
+              td(v-else)
+                v-layout(align-center)
+                  div {{ item[key].value | formatValue(property.stat.value) }}
+                  div(v-if="hasTrend(item[key])")
+                    sub.ml-2
+                      v-icon.caption(
+                        small,
+                        :color="item[key].trend | trendColor"
+                      ) {{ item[key].trend | trendIcon }}
+                    sub {{ item[key].trend | formatValue(property.stat.value) }}
+            div(v-else) {{ $t('tables.noData') }}
 </template>
 
 <script>
+import { isUndefined, isNull } from 'lodash';
+
+import { PAGINATION_LIMIT } from '@/config';
+import { SORT_ORDERS } from '@/constants';
+
+import { dataTableCustomSortWithNullIgnoring } from '@/helpers/sort';
+
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
+import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
-import StatsNumber from './stats-number.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+
+import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
 
 export default {
   components: {
-    StatsNumber,
+    ProgressOverlay,
+    AlarmChips,
+    StatsAlertOverlay,
   },
-  mixins: [entitiesStatsMixin, widgetQueryMixin, entitiesUserPreferenceMixin],
+  filters: {
+    statValue(name) {
+      return `${name}.value`;
+    },
+  },
+  mixins: [
+    entitiesStatsMixin,
+    widgetQueryMixin,
+    entitiesUserPreferenceMixin,
+    widgetStatsQueryMixin,
+    widgetStatsTableWrapperMixin,
+  ],
   props: {
     widget: {
       type: Object,
@@ -41,23 +73,95 @@ export default {
   },
   data() {
     return {
+      pending: true,
+      hasError: false,
+      serverErrorMessage: null,
       stats: [],
+      page: 1,
+      pagination: {
+        page: 1,
+        sortBy: null,
+        descending: true,
+        totalItems: 0,
+        rowsPerPage: PAGINATION_LIMIT,
+      },
     };
   },
   computed: {
+    isStatNotEmpty() {
+      return stat => stat && !isUndefined(stat.value) && !isNull(stat.value);
+    },
+
     columns() {
-      return Object.keys(this.widget.parameters.stats).map(item => ({ value: item }));
+      const { stats: widgetStats } = this.widget.parameters;
+      const statsOrderedColumns = Object.keys(widgetStats)
+        .sort((a, b) => widgetStats[a].position - widgetStats[b].position)
+        .map(item => ({
+          text: item,
+          value: this.$options.filters.statValue(item),
+        }));
+
+      return [
+        {
+          text: this.$t('common.entity'),
+          value: 'entity.name',
+          sortable: false,
+        },
+
+        ...statsOrderedColumns,
+      ];
     },
   },
   methods: {
+    customSort: dataTableCustomSortWithNullIgnoring,
+
+    getQuery() {
+      const {
+        stats,
+        mfilter,
+        tstop,
+        periodUnit,
+        tstart,
+      } = this.getStatsQuery();
+
+      const durationValue = tstop.diff(tstart, periodUnit);
+
+      return {
+        stats,
+        mfilter,
+
+        duration: `${durationValue}${periodUnit.toLowerCase()}`,
+        tstop: tstop.startOf('h').unix(),
+      };
+    },
+
     async fetchList() {
-      const query = { ...this.query };
+      try {
+        const { sort = {} } = this.widget.parameters;
 
-      const stats = await this.fetchStatsListWithoutStore({
-        params: query,
-      });
+        this.pending = true;
+        this.hasError = false;
+        this.serverErrorMessage = null;
 
-      this.stats = stats.values;
+        const { values } = await this.fetchStatsListWithoutStore({
+          params: this.getQuery(),
+        });
+
+        this.stats = values;
+
+        this.pagination = {
+          page: 1,
+          sortBy: sort.column ? this.$options.filters.statValue(sort.column) : null,
+          totalItems: values.length,
+          rowsPerPage: PAGINATION_LIMIT,
+          descending: sort.order === SORT_ORDERS.desc,
+        };
+      } catch (err) {
+        this.hasError = true;
+        this.serverErrorMessage = err.description || null;
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };

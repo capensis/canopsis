@@ -10,15 +10,16 @@ copyright: Documentation © Canopsis 2018–2019 / CC BY-SA 3.0 FR (https://crea
 theme:
   name: material
   language: fr
-  extra:
-    search:
-        language: 'fr, en'
   logo: 'img/canopsis-mkdocs.png'
   palette:
     primary: 'green'
     accent: 'green'
   feature:
     tabs: true
+
+extra:
+  search:
+    language: 'en'
 
 markdown_extensions:
     - admonition

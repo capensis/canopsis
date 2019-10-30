@@ -39,13 +39,18 @@ systemctl start canopsis-engine-cat@snmp
 
 ### Traduction des traps
 
-Pour créer des règles de transformations il faut se logger sur la page dédiée sur l'UIv2 :
+Pour créer des règles de transformations il faut se logger sur la page dédiée accessible par le menu d'exploitation.  
 
-http://CANOPSIS_ADDR:PORT/en/static/canopsis/index.html#/userview/view.snmprule
+![Menu exploitation](img/menu_exploitation_snmprules.png)
+
+!!! Note
+    L'accès à cette page est régi par le droit `models_exploitation_snmpRule` de type CRUD.
+    Veillez à octroyer les permissions dans la matrice des droits ![Droit SNMPRULE](img/droit_snmprule.png)
+
 
 Une règle de transformation consiste à convertir des `OID` en valeurs compréhensibles et associer les attributs nécessaires à un message Canopsis.
 
-Dans l'exemple du connecteur [`snmp2canopsis`](../../guide-connecteurs/Infrastructure/SNMPtrap.md), nous souhaitons obtenir le message suivant :
+Dans l'exemple du connecteur [`snmp2canopsis`](../../interconnexions/Supervision/SNMPtrap.md), nous souhaitons obtenir le message suivant :
 
 ```json
 {
@@ -64,11 +69,9 @@ Pour cela, nous devons :
 *  Créer une règle de transformation
 *  Constater les résultats
 
-**Envoi des MIB**
+### Envoi des MIB
 
-Le paquet snmp-mibs-downloader peut être nécessaire. Il embarque lui-même une bibliothèque de MIB et permet, au besoin, d'en télécharger automatiquement des complémentaires sur le net.
-
-Ici par exemple, le paquet `snmp-mibs-downloader` a été installé sur la machine.
+Le paquet `snmp-mibs-downloader` peut être nécessaire. Il embarque lui-même une bibliothèque de MIB et permet, au besoin, d'en télécharger automatiquement des complémentaires depuis le web.
 
 Lors de l'upload des MIB, Canopsis concatène les fichiers uploadés par ordre
 alphabétique. On fera donc particulièrement attention à renommer les fichiers
@@ -88,7 +91,7 @@ On vérifie que le traducteur a bien trouvé des objets de type `notification`
 
 ![img5](img/scenario_e4.png)
 
-**Vérification**
+### Vérification
 
 On exécute à nouveau l'émisson du trap SNMP :
 

@@ -5,50 +5,48 @@
         span.headline {{ $t('modals.createAckEvent.title') }}
     v-card-text
       v-container
-        v-layout(row align-center)
+        v-layout(row, align-center)
           v-flex.text-xs-center
             alarm-general-table(:items="items")
         v-layout(row)
           v-divider.my-3
         v-layout(row)
           v-text-field(
-          :label="$t('modals.createAckEvent.fields.ticket')",
-          :error-messages="errors.collect('ticket')",
-          v-model="form.ticket",
-          v-validate="rules",
-          data-vv-name="ticket"
+            :label="$t('modals.createAckEvent.fields.ticket')",
+            v-model="form.ticket"
           )
         v-layout(row)
           v-textarea(
-          :label="$t('modals.createAckEvent.fields.output')",
-          :error-messages="errors.collect('output')",
-          v-model="form.output",
-          v-validate="rules",
-          data-vv-name="output",
+            :label="$t('modals.createAckEvent.fields.output')",
+            :error-messages="errors.collect('output')",
+            v-model="form.output",
+            v-validate="isNoteRequired ? 'required' : ''",
+            data-vv-name="output"
           )
         v-layout(row)
           v-tooltip(top)
             v-checkbox(
-            slot="activator",
-            v-model="ack_resources",
-            :label="$t('modals.createAckEvent.fields.ackResources')"
+              slot="activator",
+              v-model="ack_resources",
+              :label="$t('modals.createAckEvent.fields.ackResources')"
             )
               span(slot-name="label") {{  }}
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
     v-divider
     v-layout.py-1(justify-end)
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit", :disabled="errors.any()") {{ $t('common.actions.acknowledge') }}
-      v-btn.warning(
-      @click.prevent="submitWithDeclare",
-      ) {{ $t('common.actions.acknowledgeAndReport') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
+      v-btn.warning(@click.prevent="submitWithTicket") {{ submitWithTicketBtnLabel }}
 </template>
 
 <script>
+import { omit } from 'lodash';
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 /**
  * Modal to create an ack event
@@ -61,10 +59,9 @@ export default {
   components: {
     AlarmGeneralTable,
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
-      showValidationErrors: false,
       ack_resources: false,
       form: {
         ticket: '',
@@ -73,26 +70,35 @@ export default {
     };
   },
   computed: {
-    rules() {
-      return this.showValidationErrors ? 'required' : '';
+    isNoteRequired() {
+      return this.config && this.config.isNoteRequired;
+    },
+
+    submitWithTicketBtnLabel() {
+      return this.form.ticket ? this.$t('common.actions.acknowledgeAndAssociateTicket') : this.$t('common.actions.acknowledgeAndDeclareTicket');
     },
   },
   methods: {
-    async create(withDeclare) {
-      const ackEventData = this.prepareData(this.$constants.EVENT_ENTITY_TYPES.ack, this.items, this.form);
+    createAckEvent() {
+      const ackEventData = this.prepareData(EVENT_ENTITY_TYPES.ack, this.items, this.form);
 
-      await this.createEventAction({
-        data: ackEventData,
-      });
+      return this.createEventAction({ data: ackEventData });
+    },
 
-      if (withDeclare) {
-        const declareTicketEventData =
-          this.prepareData(this.$constants.EVENT_ENTITY_TYPES.declareTicket, this.items, this.form);
+    createDeclareTicketEvent() {
+      const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, omit(this.form, ['ticket']));
 
-        await this.createEventAction({
-          data: declareTicketEventData,
-        });
-      }
+      return this.createEventAction({ data: declareTicketEventData });
+    },
+
+    createAssocTicketEvent() {
+      const assocTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
+
+      return this.createEventAction({ data: assocTicketEventData });
+    },
+
+    async createAckEventAndCloseModal() {
+      await this.createAckEvent();
 
       if (this.config && this.config.afterSubmit) {
         await this.config.afterSubmit();
@@ -101,19 +107,36 @@ export default {
       this.hideModal();
     },
 
-    async submitWithDeclare() {
+    async submitWithTicket() {
       const formIsValid = await this.$validator.validateAll();
 
       if (formIsValid) {
-        await this.create(true);
+        if (this.form.ticket) {
+          await this.createAssocTicketEvent();
+        } else {
+          await this.createDeclareTicketEvent();
+        }
+
+        this.createAckEventAndCloseModal();
       }
     },
 
     async submit() {
-      this.showValidationErrors = false;
-      this.errors.clear();
+      const formIsValid = await this.$validator.validateAll();
 
-      await this.create();
+      if (formIsValid) {
+        if (this.form.ticket) {
+          this.showModal({
+            name: MODALS.confirmAckWithTicket,
+            config: {
+              continueAction: this.createAckEventAndCloseModal,
+              continueWithTicketAction: this.submitWithTicket,
+            },
+          });
+        } else {
+          this.createAckEventAndCloseModal();
+        }
+      }
     },
   },
 };

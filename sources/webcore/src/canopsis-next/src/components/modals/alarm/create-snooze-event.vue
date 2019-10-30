@@ -6,22 +6,7 @@
           span.headline {{ $t('modals.createSnoozeEvent.title') }}
       v-card-text
         v-container
-          v-layout(row)
-            v-flex(xs8)
-              v-text-field(
-              type="number",
-              :label="$t('modals.createSnoozeEvent.fields.duration')",
-              :error-messages="errors.collect('duration')",
-              v-model="form.duration",
-              v-validate="'required|numeric|min_value:1'",
-              data-vv-name="duration"
-              )
-            v-flex(xs4)
-              v-select(:items="availableTypes", v-model="form.durationType", item-value="key")
-                template(slot="selection" slot-scope="data")
-                  div.input-group__selections__comma {{ $tc(data.item.text, 2) }}
-                template(slot="item" slot-scope="data")
-                  div.list__tile__title {{ $tc(data.item.text, 2) }}
+          duration-field(v-model="form")
       v-divider
       v-layout.py-1(justify-end)
         v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
@@ -31,9 +16,12 @@
 <script>
 import moment from 'moment';
 
+import { MODALS, EVENT_ENTITY_TYPES, DURATION_UNITS } from '@/constants';
+
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
-import eventActionsMixin from '@/mixins/event-actions';
-import { MODALS } from '@/constants';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+
+import DurationField from '@/components/forms/fields/duration.vue';
 
 /**
  * Modal to put a snooze on an alarm
@@ -44,23 +32,16 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerItemsMixin, eventActionsMixin],
+  components: {
+    DurationField,
+  },
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
-    const availableTypes = [
-      { key: 'minutes', text: 'common.times.minute' },
-      { key: 'hours', text: 'common.times.hour' },
-      { key: 'days', text: 'common.times.day' },
-      { key: 'weeks', text: 'common.times.week' },
-      { key: 'months', text: 'common.times.month' },
-      { key: 'years', text: 'common.times.year' },
-    ];
-
     return {
       form: {
         duration: 1,
-        durationType: availableTypes[0].key,
+        durationType: DURATION_UNITS.minute.value,
       },
-      availableTypes,
     };
   },
   methods: {
@@ -73,7 +54,7 @@ export default {
           this.form.durationType,
         ).asSeconds();
 
-        await this.createEvent(this.$constants.EVENT_ENTITY_TYPES.snooze, this.items, { duration });
+        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
 
         this.hideModal();
       }

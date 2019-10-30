@@ -2,48 +2,35 @@
   div
     v-list.pt-0(expand)
       field-row-grid-size(
-      :rowId.sync="settings.rowId",
-      :size.sync="settings.widget.size",
-      :availableRows="availableRows",
-      @createRow="createRow"
+        :rowId.sync="settings.rowId",
+        :size.sync="settings.widget.size",
+        :availableRows="availableRows",
+        @createRow="createRow"
       )
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      v-list-group
+      v-list-group(data-test="widgetAlarmsList")
         v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns")
+          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns", withHtml)
           v-divider
           field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
           v-divider
-          field-info-popup(v-model="settings.widget.parameters.alarmsList.infoPopups")
+          field-info-popup(
+            :columns="settings.widget.parameters.alarmsList.widgetColumns",
+            data-test="widgetInfoPopup",
+            v-model="settings.widget.parameters.alarmsList.infoPopups"
+          )
           v-divider
-          field-more-info(v-model="settings.widget.parameters.alarmsList.moreInfoTemplate")
+          field-text-editor(
+            data-test="widgetMoreInfoTemplate",
+            v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
+            :title="$t('settings.moreInfosModal')"
+          )
       v-divider
-      v-list-group
-        v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-filters(
-          :filters.sync="settings.widget.parameters.filters",
-          hideSelect
-          )
-          v-divider
-          field-opened-resolved-filter(v-model="settings.widget.parameters.alarmsStateFilter")
-          v-divider
-          field-switcher(
-          v-model="settings.widget.parameters.considerPbehaviors",
-          :title="$t('settings.considerPbehaviors.title')"
-          )
-          v-divider
-          field-criticity-levels(v-model="settings.widget.parameters.criticityLevels")
-          v-divider
-          field-levels-colors-selector(
-          v-model="settings.widget.parameters.criticityLevelsColors",
-          colorType="hex",
-          hideSuffix
-          )
-    v-btn.primary(@click="submit") {{ $t('common.save') }}
+      stats-calendar-advanced-form(v-model="settings.widget.parameters")
+    v-btn.primary(data-test="submitStatsCalendarButton", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
@@ -64,7 +51,8 @@ import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue
 import FieldColumns from './fields/common/columns.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldMoreInfo from './fields/alarm/more-info.vue';
+import FieldTextEditor from './fields/common/text-editor.vue';
+import StatsCalendarAdvancedForm from './forms/stats-calendar-advanced.vue';
 
 /**
  * Component to regroup the entities list settings fields
@@ -85,7 +73,8 @@ export default {
     FieldColumns,
     FieldDefaultElementsPerPage,
     FieldInfoPopup,
-    FieldMoreInfo,
+    FieldTextEditor,
+    StatsCalendarAdvancedForm,
   },
   mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {

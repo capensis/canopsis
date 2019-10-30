@@ -1,11 +1,21 @@
 <template lang="pug">
-   v-card
+  v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
     v-card-text
       v-form
+        v-layout(align-center)
+          v-text-field(
+            v-model="form._id",
+            :label="$t('eventFilter.id')",
+            :disabled="isEditing && !isDuplicating"
+          )
+            v-tooltip(v-if="!isEditing || isDuplicating", left, slot="append")
+              v-icon(slot="activator") help
+              span {{ $t('eventFilter.idHelp') }}
         v-select(:items="ruleTypes", v-model="form.type", :label="$t('common.type')")
+        v-textarea(v-model="form.description", :label="$t('common.description')")
         v-text-field(v-model.number="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
         v-switch(v-model="form.enabled", :label="$t('common.enabled')")
       v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
@@ -16,14 +26,14 @@
           v-btn(@click="editActions") {{ $t('modals.eventFilterRule.editActions') }}
           v-btn(@click="editExternalData") {{ $t('modals.eventFilterRule.externalData') }}
           v-select(
-          :label="$t('modals.eventFilterRule.onSuccess')",
-          v-model="enrichmentOptions.onSuccess",
-          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)",
+            :label="$t('modals.eventFilterRule.onSuccess')",
+            v-model="enrichmentOptions.onSuccess",
+            :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)"
           )
           v-select(
-          :label="$t('modals.eventFilterRule.onFailure')",
-          v-model="enrichmentOptions.onFailure",
-          :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)",
+            :label="$t('modals.eventFilterRule.onFailure')",
+            v-model="enrichmentOptions.onFailure",
+            :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)"
           )
     v-divider
     v-alert(:value="errors.has('actions')", type="error") {{ $t('eventFilter.actionsRequired') }}
@@ -48,7 +58,9 @@ export default {
     return {
       ruleTypes: Object.values(EVENT_FILTER_RULE_TYPES),
       form: {
+        _id: '',
         type: EVENT_FILTER_RULE_TYPES.drop,
+        description: '',
         pattern: {},
         priority: 0,
         enabled: true,
@@ -61,13 +73,23 @@ export default {
       },
     };
   },
+  computed: {
+    isEditing() {
+      return !!this.config.rule;
+    },
+    isDuplicating() {
+      return this.config.isDuplicating;
+    },
+  },
   mounted() {
     if (this.config.rule) {
       const {
+        _id,
         type,
+        description,
         pattern,
         priority,
-        enabled,
+        enabled = true,
         actions,
         external_data: externalData,
         on_success: onSuccess,
@@ -76,10 +98,15 @@ export default {
 
       this.form = {
         type,
+        description,
         pattern,
         priority,
         enabled,
       };
+
+      if (!this.isDuplicating) {
+        this.form._id = _id;
+      }
 
       this.enrichmentOptions = {
         actions,
@@ -90,7 +117,9 @@ export default {
     }
   },
   created() {
-    this.$validator.attach('actions', 'required', {
+    this.$validator.attach({
+      name: 'actions',
+      rules: 'required',
       getter: () => this.enrichmentOptions.actions,
       context: () => this,
     });
@@ -128,7 +157,8 @@ export default {
     },
     async submit() {
       if (this.form.type === EVENT_FILTER_RULE_TYPES.enrichment) {
-        const isFormValid = await this.$validator.validate('actions');
+        const isFormValid = await this.$validator.validateAll(['actions']);
+
         if (isFormValid) {
           this.config.action({
             ...this.form,

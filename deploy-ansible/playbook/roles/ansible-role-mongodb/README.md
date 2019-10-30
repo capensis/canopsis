@@ -4,7 +4,6 @@ Ansible role which manages [MongoDB](http://www.mongodb.org/).
 
 * Install and configure the MongoDB;
 * Configure mongodb users
-* Configure replication
 * Provide handlers for restart and reload;
 * Setup MMS authomation agent;
 
@@ -81,11 +80,6 @@ mongodb_systemlog_destination: "file"
 mongodb_systemlog_logappend: true                                        # Append to logpath instead of over-writing
 mongodb_systemlog_path: /var/log/mongodb/{{ mongodb_daemon_name }}.log   # Log file to send write to instead of stdout
 
-## replication Options
-mongodb_replication_replset:                      # Enable replication <setname>[/<optionalseedhostlist>]
-mongodb_replication_replindexprefetch: "all"      # specify index prefetching behavior (if secondary) [none|_id_only|all]
-mongodb_replication_oplogsize: 1024               # specifies a maximum size in megabytes for the replication operation log
-
 ## setParameter options
 # Configure setParameter option.
 # Example :
@@ -159,32 +153,6 @@ mongodb_root_backup_name
 # if you use replication and authorization
 mongodb_security_keyfile
 ```
-Example vars for replication:
-```yaml
-# It's a 'master' node
-mongodb_login_host: 192.168.56.2
-
-# mongodb_replication_params should be configured on each replica set node
-mongodb_replication_params:
-  - { host_name: 192.168.56.2, host_port: "{{ mongodb_net_port }}", host_type: replica }
-  # host_type can be replica(default) and arbiter
-```
-And inventory file for replica set:
-```ini
-[mongo_master]
-192.158.56.2 mongodb_master=True # it is't a really master of MongoDB replica set,
-                                 # use this variable for replica set init only
-								 # or when master is moved from initial master node
-
-[mongo_replicas]
-192.168.56.3
-192.168.56.4
-
-[mongo:children]
-mongo_master
-mongo_replicas
-```
-
 Licensed under the GPLv2 License. See the [LICENSE.md](LICENSE.md) file for details.
 
 #### Feedback, bug-reports, requests, ...

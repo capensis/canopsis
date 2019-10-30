@@ -1,16 +1,11 @@
 ---
-canopsis_pkg_version: '2.5.15'
-
 canopsis_dev_src_path:
 canopsis_dev_with_deps: true
 canopsis_dev_without_deps: false
 
 canopsis_home: /opt/canopsis
-canopsis_bin: "{{ canopsis_home}}/bin"
 canopsis_user: canopsis
 canopsis_group: canopsis
-
-canopsis_init_db: false
 
 canopsis_amqp_host: localhost
 canopsis_amqp_user: canopsis
@@ -18,7 +13,7 @@ canopsis_amqp_userid: cpsrabbit
 canopsis_amqp_password: canopsis
 canopsis_amqp_exchange: canopsis
 canopsis_amqp_vhost: canopsis
-canopsis_amqp_port: 5672
+canopsis_amqp_port: "5672"
 
 canopsis_rabbit_nodename: rabbit@{{ ansible_hostname }}
 
@@ -26,75 +21,63 @@ canopsis_mongo_host: localhost
 canopsis_mongo_db: canopsis
 canopsis_mongo_user: cpsmongo
 canopsis_mongo_password: canopsis
-canopsis_mongo_port: 27017
+canopsis_mongo_port: "27017"
 
 canopsis_influxdb_host: localhost
-canopsis_influxdb_port: 4444
+canopsis_influxdb_port: "4444"
 canopsis_influxdb_user: cpsinflux
 canopsis_influxdb_password: canopsis
 canopsis_influxdb_db: canopsis
 
 canopsis_redis_host: localhost
-canopsis_redis_port: 6379
+canopsis_redis_port: "6379"
 canopsis_redis_dbnum: 0
 
-# use 'cat' if you install canopsis-cat
-canopsis_pkg_edition: 'core'
+# use 'go' if you want to use Go engines
+canopsis_engines_type: python
 
-canopsis_pkg_debian: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}.amd64.{{ ansible_distribution_release }}.deb'
-canopsis_pkg_redhat: 'canopsis-{{ canopsis_pkg_edition }}-{{ canopsis_pkg_version }}-1.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.rpm'
-
-# supported options are:
-#  module:  module to be used
-#  name:    engine name
-#  state:   started|stopped
-#  enabled: yes|no -> enable or not the service. useful to remove some engines
-canopsis_engines:
+# Default Python engines which haven't been replaced by a Go engine, yet
+canopsis_common_engines:
   -
     module: dynamic
-    name: alerts
+    name: pbehavior
   -
-    module: cleaner
-    name: cleaner_alerts
+    module: event_filter
+    name: event_filter
+  -
+    module: metric
+    name: metric
+  -
+    module: scheduler
+    name: scheduler
+  -
+    module: task_importctx
+    name: task_importctx
+
+# When choosing canopsis_engines_type: "python"
+canopsis_python_engines:
   -
     module: cleaner
     name: cleaner_events
   -
     module: dynamic
+    name: alerts
+  -
+    module: dynamic
     name: context-graph
-  -
-    module: event_filter
-    name: event_filter
-  -
-    module: eventstore
-    name: eventstore
-    state: stopped
-  -
-    module: dynamic
-    name: pbehavior
-  -
-    module: dynamic
-    name: perfdata
-    state: stopped
-    enabled: no
-  -
-    module: scheduler
-    name: scheduler
-  -
-    module: selector
-    name: selector
-    state: stopped
-    enabled: no
-  -
-    module: task_dataclean
-    name: task_dataclean
-  -
-    module: task_importctx
-    name: task_importctx
-  -
-    module: task_mail
-    name: task_mail
   -
     module: dynamic
     name: watcher
-    state: stopped
+
+# When choosing canopsis_engines_type: "go"
+canopsis_go_engines:
+  -
+    name: engine-action
+  -
+    name: engine-axe
+  -
+    name: engine-che
+  -
+    name: engine-heartbeat
+  -
+    name: engine-watcher

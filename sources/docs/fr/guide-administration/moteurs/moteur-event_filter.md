@@ -1,5 +1,9 @@
 # Event-filter
 
+!!! note
+    Cette page concerne l'event-filter ancienne génération, disponible uniquement
+    avec le moteur Python `event_filter`.
+
 Le moteur `event_filter` permet d'exécuter, sur des évènements, des actions prédéfinies par l'utilisateur.
 
 Les filtres de moteurs peuvent être placés n'importe où dans la chaîne de traitement. Plusieurs filtres de moteurs fonctionnent en parallèle ou l'un après l'autre pour accélérer le traitement des évènements.
@@ -13,7 +17,7 @@ L'utilisateur peut créer un filtre et déclarer des actions à appliquer à tou
 Les actions suivantes sont disponibles pour l'utilisateur :
 
 *  `pass` (passer)
-*  `drop` (laissez tomber)
+*  `drop` (laisser tomber)
 *  `override` (passer outre)
 *  `route` (router)
 *  `remove` (retirer)

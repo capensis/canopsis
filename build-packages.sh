@@ -4,7 +4,7 @@ set -o pipefail
 set -u
 
 opt_squash=""
-workdir=$(dirname $(readlink -e $0))
+workdir=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)
 cd $workdir
 
 source ${workdir}/build-env.sh
@@ -24,12 +24,11 @@ function build_package_for_distribution() {
     docker_args="${opt_squash} --build-arg FIX_OWNERSHIP=${fix_ownership} --build-arg PROXY=$http_proxy --build-arg CANOPSIS_DISTRIBUTION=${distribution} --build-arg CANOPSIS_TAG=${tag} --build-arg CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG} --build-arg CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL}"
 
     docker build ${docker_args} -f docker/Dockerfile.packaging --rm=false -t canopsis/canopsis-packaging:${full_tag} .
-    docker run -ti -v $(pwd)/packages:/packages canopsis/canopsis-packaging:${full_tag}
+    docker run -v $(pwd)/packages:/packages canopsis/canopsis-packaging:${full_tag}
 }
 
 if [ "${CANOPSIS_DISTRIBUTION}" = "all" ]; then
     build_package_for_distribution "debian-9"
-    build_package_for_distribution "debian-8"
     build_package_for_distribution "centos-7"
 else
     build_package_for_distribution "${CANOPSIS_DISTRIBUTION}"

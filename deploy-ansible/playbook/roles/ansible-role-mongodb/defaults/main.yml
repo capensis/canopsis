@@ -2,7 +2,7 @@
 
 mongodb_package: mongodb-org
 mongodb_version: "3.6"
-mongodb_apt_keyserver: keyserver.ubuntu.com
+mongodb_apt_keyserver: hkp://keyserver.ubuntu.com:80
 mongodb_apt_key_id:
   "3.2": "EA312927"
   "3.4": "0C49F3730359A14518585931BC711F9BA15703C6"
@@ -56,11 +56,6 @@ mongodb_systemlog_destination: "file"
 mongodb_systemlog_logappend: true                                        # Append to logpath instead of over-writing
 mongodb_systemlog_logrotate: "rename"                                    # Logrotation behavior
 mongodb_systemlog_path: /var/log/mongodb/{{ mongodb_daemon_name }}.log   # Log file to send write to instead of stdout
-
-## replication Options
-mongodb_replication_replset:                      # Enable replication <setname>[/<optionalseedhostlist>]
-mongodb_replication_replindexprefetch: "all"      # specify index prefetching behavior (if secondary) [none|_id_only|all]
-mongodb_replication_oplogsize: 1024               # specifies a maximum size in megabytes for the replication operation log
 
 # MMS Agent
 mongodb_mms_agent_pkg: https://mms.mongodb.com/download/agent/automation/mongodb-mms-automation-agent-manager_1.4.2.783-1_amd64.deb

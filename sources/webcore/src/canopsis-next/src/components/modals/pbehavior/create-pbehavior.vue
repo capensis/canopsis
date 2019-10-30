@@ -1,74 +1,72 @@
 <template lang="pug">
-  pbehavior-form(
-  :server-error="serverError",
-  :filter="filter",
-  @submit="submit",
-  @cancel="hideModal",
-  )
+  v-card
+    v-card-title.primary.white--text
+      v-layout(justify-space-between, align-center)
+        span.headline {{ $t('modals.createPbehavior.title') }}
+    v-card-text
+      pbehavior-form(v-model="form")
+    v-divider
+    v-layout.py-1(justify-end)
+      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
 import { MODALS } from '@/constants';
 
-import modalInnerItemsMixin from '@/mixins/modal/inner-items';
+import authMixin from '@/mixins/auth';
+import modalInnerMixin from '@/mixins/modal/inner';
 
-import PbehaviorForm from '@/components/forms/pbehavior.vue';
+import {
+  commentsToPbehaviorComments,
+  formToPbehavior,
+  pbehaviorToForm,
+  pbehaviorToComments,
+  exdatesToPbehaviorExdates,
+  pbehaviorToExdates,
+} from '@/helpers/forms/pbehavior';
 
-const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
+import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 
-/**
- * Modal to create a pbehavior
- */
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PbehaviorForm },
-  mixins: [modalInnerItemsMixin],
+  components: {
+    PbehaviorForm,
+  },
+  mixins: [authMixin, modalInnerMixin],
   data() {
+    const { pbehavior = {} } = this.modal.config;
+
     return {
-      serverError: null,
+      form: {
+        general: pbehaviorToForm(pbehavior),
+        exdate: pbehaviorToExdates(pbehavior),
+        comments: pbehaviorToComments(pbehavior),
+      },
     };
   },
-  computed: {
-    forEntities() {
-      return this.config.itemsIds && this.config.itemsType;
-    },
-
-    filter() {
-      if (this.forEntities) {
-        return {
-          _id: { $in: this.items.map(v => v._id) },
-        };
-      }
-
-      return null;
-    },
-  },
   methods: {
-    ...pbehaviorMapActions({ createPbehavior: 'create' }),
+    async submit() {
+      const isValid = await this.$validator.validateAll();
 
-    async submit(data) {
-      try {
-        this.serverError = null;
+      if (isValid) {
+        const pbehavior = formToPbehavior(this.form.general);
 
-        const payload = { data };
+        pbehavior.comments = commentsToPbehaviorComments(this.form.comments);
+        pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
 
-        if (this.forEntities) {
-          payload.parents = this.items;
-          payload.parentsType = this.config.itemsType;
+        if (!pbehavior.author) {
+          pbehavior.author = this.currentUser._id;
         }
 
-        await this.createPbehavior(payload);
+        if (this.config.action) {
+          await this.config.action(pbehavior);
+        }
 
         this.hideModal();
-      } catch (err) {
-        if (err.description) {
-          this.serverError = err.description;
-        }
       }
     },
   },

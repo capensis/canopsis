@@ -52,7 +52,7 @@ class MigrationTool(object):
     CATEGORY = 'MIGRATION'
     FLAG_COLLECTION = "initialized"
 
-    def __init__(self, modules=None, canopsis_version=None):
+    def __init__(self, modules=None, canopsis_edition=None, canopsis_stack=None, canopsis_version=None):
 
         self.logger = Logger.get('migrationtool', self.LOG_PATH)
         self.config = Configuration.load(MigrationTool.CONF_PATH, Json)
@@ -63,9 +63,11 @@ class MigrationTool(object):
 
         self.loghandler = StreamHandler()
         self.logger.addHandler(self.loghandler)
+        self.__canopsis_edition = canopsis_edition
+        self.__canopsis_stack = canopsis_stack
         self.__canopsis_version = canopsis_version
 
-    def __put_canopsis_version_document(self):
+    def __put_canopsis_document(self):
         """
         Put Canopsis version document if a ``__canopsis_version`` attribute
         is set.
@@ -75,10 +77,10 @@ class MigrationTool(object):
             collection = \
                 store.get_collection(CanopsisVersionManager.COLLECTION)
             CanopsisVersionManager(collection)\
-                .put_canopsis_version_document(self.__canopsis_version)
+                .put_canopsis_document(self.__canopsis_edition, self.__canopsis_stack, self.__canopsis_version)
 
     def fill(self, init=None, yes=False, reinit_auth=False):
-        self.__put_canopsis_version_document()
+        self.__put_canopsis_document()
 
         tools = []
 

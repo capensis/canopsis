@@ -133,7 +133,7 @@ class TestFilter(BaseTest):
         result = alarm_filters.get_filters()
         self.assertEqual(result, [])
 
-    def test_check_alarm(self):
+    def test_get_and_check_alarm(self):
         alarm, value = self.gen_fake_alarm()
         self.manager.update_current_alarm(alarm, value)
 
@@ -145,7 +145,7 @@ class TestFilter(BaseTest):
                              storage=self.filter_storage,
                              alarm_storage=self.alerts_storage,
                              logger=self.logger)
-        self.assertTrue(lifter.check_alarm(alarm))
+        self.assertIsNotNone(lifter.get_and_check_alarm(alarm))
 
         lifter = AlarmFilter(
             element={
@@ -154,7 +154,7 @@ class TestFilter(BaseTest):
             storage=self.filter_storage,
             alarm_storage=self.alerts_storage,
             logger=self.logger)
-        self.assertFalse(lifter.check_alarm(alarm))
+        self.assertIsNone(lifter.get_and_check_alarm(alarm))
 
         lifter = AlarmFilter(
             element={
@@ -163,7 +163,7 @@ class TestFilter(BaseTest):
             storage=self.filter_storage,
             alarm_storage=self.alerts_storage,
             logger=self.logger)
-        self.assertFalse(lifter.check_alarm(alarm))
+        self.assertIsNone(lifter.get_and_check_alarm(alarm))
 
         lifter = AlarmFilter(
             element={
@@ -172,7 +172,7 @@ class TestFilter(BaseTest):
             storage=self.filter_storage,
             alarm_storage=self.alerts_storage,
             logger=self.logger)
-        self.assertTrue(lifter.check_alarm(alarm))
+        self.assertIsNotNone(lifter.get_and_check_alarm(alarm))
 
         lifter = AlarmFilter(
             element={
@@ -181,7 +181,7 @@ class TestFilter(BaseTest):
             storage=self.filter_storage,
             alarm_storage=self.alerts_storage,
             logger=self.logger)
-        self.assertTrue(lifter.check_alarm(alarm))
+        self.assertIsNotNone(lifter.get_and_check_alarm(alarm))
 
     def test_next_run(self):
         delta = 100

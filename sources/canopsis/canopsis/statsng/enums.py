@@ -53,10 +53,12 @@ class StatCounters(FastEnum):
     """
     The StatCounters enumeration defines the names of the counters.
     """
-    alarms_created = 'alarms_created'
+    alarms_acknowledged = 'alarms_acknowledged'
     alarms_canceled = 'alarms_canceled'
+    alarms_created = 'alarms_created'
     alarms_resolved = 'alarms_resolved'
     downtimes = 'downtimes'
+    flapping_periods = 'flapping_periods'
 
 
 class StatDurations(FastEnum):

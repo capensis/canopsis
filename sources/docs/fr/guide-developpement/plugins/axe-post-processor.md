@@ -1,9 +1,15 @@
 # Post-traitement du moteur Axe
 
-Un plugin de post-processing est un module go exportant une variable
+Les plugins de post-processing permettent d'appliquer des traitements aux alarmes après leur modification par le moteur [axe](../../guide-administration/moteurs/moteur-axe.md).
+
+Les plugins de post-processing suivants sont disponibles dans Canopsis :
+
+*  [Webhooks](../../guide-administration/moteurs/moteur-axe-webhooks.md)
+
+Un plugin de post-processing est un module Go exportant une variable
 `AxePostProcessor` qui implémente l'interface `AxePostProcessor` (définie
 dans
-`git.canopsis.net/canopsis/go-revolution/cmd/engine-axe/plugins.go`).
+`git.canopsis.net/canopsis/go-engines/cmd/engine-axe/plugins.go`).
 
 Les plugins sont compilés avec `go build -buildmode=plugin`, qui crée un
 fichier `.so`. Ils doivent être recompilés à chaque version de Canopsis.
@@ -16,8 +22,8 @@ package main
 import (
     "log"
 
-    "git.canopsis.net/canopsis/go-revolution/lib/canopsis/alarm"
-    "git.canopsis.net/canopsis/go-revolution/lib/canopsis/types"
+    "git.canopsis.net/canopsis/go-engines/lib/canopsis/alarm"
+    "git.canopsis.net/canopsis/go-engines/lib/canopsis/types"
 )
 
 type dummyPostProcessor struct{}

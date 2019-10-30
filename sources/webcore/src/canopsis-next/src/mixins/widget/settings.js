@@ -36,6 +36,10 @@ export default {
     };
   },
   computed: {
+    activeView() {
+      return this.config.viewId ? this.getViewById(this.config.viewId) : this.view;
+    },
+
     widget() {
       return this.config.widget;
     },
@@ -73,7 +77,7 @@ export default {
     },
   },
   mounted() {
-    const { entities } = normalize(this.view, viewSchema);
+    const { entities } = normalize(this.activeView, viewSchema);
 
     this.normalizedEntities = entities;
   },
@@ -165,11 +169,11 @@ export default {
           });
         }
 
-        const view = denormalize(this.view._id, viewSchema, this.normalizedEntities);
+        const view = denormalize(this.activeView._id, viewSchema, this.normalizedEntities);
 
         await Promise.all([
           this.createUserPreference({ userPreference }),
-          this.updateView({ id: this.view._id, data: view }),
+          this.updateView({ id: this.activeView._id, data: view }),
         ]);
 
         const oldQuery = this.getQueryById(this.widget._id);

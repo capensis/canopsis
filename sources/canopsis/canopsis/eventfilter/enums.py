@@ -33,6 +33,7 @@ class RuleField(FastEnum):
     The RuleField enumeration defines the names of the fields of a rule.
     """
     id = '_id'
+    description = 'description'
     type = 'type'
     pattern = 'pattern'
     priority = 'priority'

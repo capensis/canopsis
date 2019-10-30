@@ -2,7 +2,9 @@
 
 L'API HeartBeat permet de consulter, créer et supprimer des HeartBeats.
 
-### Creation de Heartbeat
+Pour plus d'informations sur ce qu'est un heartbeat, consulter la [documentation du moteur Heartbeat](../../guide-administration/moteurs/moteur-heartbeat.md).
+
+### Création de Heartbeat
 
 Crée un nouveau HeartBeat à partir du corps de la requête.
 
@@ -25,7 +27,7 @@ Crée un nouveau HeartBeat à partir du corps de la requête.
 }
 ```
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
@@ -34,12 +36,12 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
       "connector_name": "connector1"
   },
   "expected_interval": "10s"
-}' 'http://<Canopsis_URL>/api/v2/heartbeat'
+}' 'http://<Canopsis_URL>/api/v2/heartbeat/'
 ```
 
 #### Réponse en cas de réussite
 
-**Condition** : l'HeartBeat est crée
+**Condition** : l'HeartBeat est créé
 
 **Code** : `200 OK`
 
@@ -113,7 +115,7 @@ Supprime un HeartBeat en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le heartbeat avec l'`id` `cd92421e77f48435d38b3682beb62f07` :
 
 ```sh
-curl -X DEL -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
+curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
 ```
 
 #### Réponse en cas de réussite
@@ -164,7 +166,7 @@ curl -X DEL -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 
 ### Récupération des HeartBeats
 
-Récupère un ou plusieurs HeartBeat crée en base.
+Récupère un ou plusieurs HeartBeats créés en base.
 
 #### Récupération d'un HeartBeat par id
 
@@ -184,7 +186,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 
 ##### Réponse en cas de réussite
 
-**Condition** : Un HeartBeat correspondant à l'`id est trouvé.
+**Condition** : Un HeartBeat correspondant à l'`id` est trouvé.
 
 **Code** : `200 OK`
 
@@ -203,7 +205,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 
 ##### Réponse en cas d'erreur
 
-**Condition** : Aucun HeartBeat correspondant à l'`id n'est trouvé.
+**Condition** : Aucun HeartBeat correspondant à l'`id` n'est trouvé.
 
 **Code** : `404 NOT FOUND`
 
@@ -230,9 +232,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 }
 ```
 
-#### Récupération de tous les HeartBeat en base de données.
+#### Récupération de tous les HeartBeats en base de données
 
-Récupèr tous les HeartBeats stocké en base
+Récupère tous les HeartBeats stockés en base
 
 **URL** : `/api/v2/heartbeat/`
 

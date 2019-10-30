@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    v-card-title.primary.white--text
+    v-card-title.white--text(:style="{ backgroundColor: color }")
       v-layout(justify-space-between, align-center)
         span.headline {{ watcher.display_name }}
         v-btn(icon, dark, @click.native="hideModal")
@@ -10,11 +10,11 @@
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
           watcher-template(
-          :watcher="watcher",
-          :watcherEntities="watcherEntities",
-          :modalTemplate="config.modalTemplate",
-          :entityTemplate="config.entityTemplate",
-          @addEvent="addEventToQueue"
+            :watcher="watcher",
+            :watcherEntities="watcherEntities",
+            :modalTemplate="config.modalTemplate",
+            :entityTemplate="config.entityTemplate",
+            @addEvent="addEventToQueue"
           )
       v-fade-transition
         v-layout(v-show="watcherEntitiesPending", column)
@@ -24,40 +24,36 @@
     v-divider
     v-layout.py-1(justify-end, align-center)
       v-alert.ma-0.pa-1.pr-2(
-      :value="eventsQueue.length",
-      type="info",
+        :value="eventsQueue.length",
+        type="info"
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
       v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-tooltip(top)
+        v-btn(@click="refresh", color="secondary", slot="activator")
+          v-icon refresh
+        span {{ $t('modals.watcher.refreshEntities') }}
       v-btn.primary(@click="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
 <script>
 import { pick, mapValues } from 'lodash';
 
-import VRuntimeTemplate from 'v-runtime-template';
-
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
-import weatherEventMixin from '@/mixins/weather-event-actions';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-
-import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 import modalInnerMixin from '@/mixins/modal/inner';
+import eventActionsMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: {
-    VRuntimeTemplate,
-    WatcherTemplate,
-  },
+  components: { WatcherTemplate },
   mixins: [
-    weatherEventMixin,
-    entitiesPbehaviorMixin,
     modalInnerMixin,
-    entitiesWatcherMixin,
+    eventActionsMixin,
+    entitiesPbehaviorMixin,
     entitiesWatcherEntityMixin,
   ],
   data() {
@@ -69,7 +65,10 @@ export default {
   },
   computed: {
     watcher() {
-      return this.getWatcher(this.config.watcherId);
+      return this.config.watcher;
+    },
+    color() {
+      return this.config.color;
     },
   },
   mounted() {
@@ -87,11 +86,15 @@ export default {
       ...infoAttributes,
     };
 
-    this.fetchWatcherEntitiesList({ watcherId: this.config.watcherId });
+    this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
   },
   methods: {
     addEventToQueue(event) {
       this.eventsQueue.push(event);
+    },
+
+    refresh() {
+      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
     },
 
     async submit() {

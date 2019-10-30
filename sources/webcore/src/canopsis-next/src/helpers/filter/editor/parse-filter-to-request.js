@@ -43,7 +43,7 @@ function parseFilterRuleToRequest(rule) {
     }
     case FILTER_OPERATORS.doesntBeginWith: {
       parsedRule[rule.field] = {
-        $regex: `^(?!'${rule.input}')`,
+        $regex: `^(?!${rule.input})`,
       };
       break;
     }
@@ -55,7 +55,7 @@ function parseFilterRuleToRequest(rule) {
     }
     case FILTER_OPERATORS.doesntContains: {
       parsedRule[rule.field] = {
-        $regex: `^((?!'${rule.input}').)*$`,
+        $regex: `^((?!${rule.input}).)*$`,
         $options: 's',
       };
       break;
@@ -68,7 +68,7 @@ function parseFilterRuleToRequest(rule) {
     }
     case FILTER_OPERATORS.doesntEndWith: {
       parsedRule[rule.field] = {
-        $regex: `(?<!'${rule.input}')$`,
+        $regex: `(?<!${rule.input})$`,
       };
       break;
     }

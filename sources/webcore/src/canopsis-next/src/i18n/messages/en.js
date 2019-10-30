@@ -1,7 +1,17 @@
-import { ENTITIES_STATES, ENTITIES_STATUSES, STATS_TYPES, STATS_CRITICITY } from '@/constants';
+import {
+  ENTITIES_STATES,
+  ENTITIES_STATUSES,
+  EVENT_ENTITY_TYPES,
+  STATS_TYPES,
+  STATS_CRITICITY,
+  STATS_QUICK_RANGES,
+} from '@/constants';
+
+import featureService from '@/services/features';
 
 export default {
   common: {
+    ok: 'Ok',
     undefined: 'Not defined',
     entity: 'Entity',
     watcher: 'Watcher',
@@ -17,6 +27,7 @@ export default {
     author: 'Author',
     submit: 'Submit',
     cancel: 'Cancel',
+    continue: 'Continue',
     options: 'Options',
     type: 'Type',
     quitEditing: 'Quit editing',
@@ -30,10 +41,12 @@ export default {
     parameters: 'Parameters',
     by: 'By',
     date: 'Date',
-    comment: 'Comment',
+    comment: 'Comment | Comments',
     end: 'End',
     recursive: 'Recursive',
+    select: 'Select',
     states: 'States',
+    state: 'State',
     sla: 'Sla',
     authors: 'Authors',
     stat: 'Stat',
@@ -41,16 +54,19 @@ export default {
     users: 'Users',
     roles: 'Roles',
     rights: 'Rights',
+    profile: 'Profile',
     username: 'Username',
     password: 'Password',
+    authKey: 'Auth. key',
     connect: 'Connect',
-    optionnal: 'optionnal',
+    optional: 'optional',
     logout: 'Logout',
     title: 'Title',
     save: 'Save',
     label: 'Label',
     field: 'Field',
     value: 'Value',
+    limit: 'Limit',
     add: 'Add',
     create: 'Create',
     delete: 'Delete',
@@ -70,13 +86,29 @@ export default {
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Forbidden',
+    notFound: 'Not found',
     search: 'Search',
+    filters: 'Filters',
+    webhooks: 'Webhooks',
+    emptyObject: 'Empty object',
+    startDate: 'Start date',
+    endDate: 'End date',
+    links: 'Links',
+    filter: 'Filter',
     actions: {
       close: 'Close',
-      acknowledge: 'Acknowledge',
-      acknowledgeAndReport: 'Acknowledge and report an incident',
+      acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
+      acknowledgeAndAssociateTicket: 'Acknowledge and associate ticket',
       saveChanges: 'Save changes',
       reportIncident: 'Report an incident',
+      [EVENT_ENTITY_TYPES.ack]: 'Acknowledge',
+      [EVENT_ENTITY_TYPES.declareTicket]: 'Declare ticket',
+      [EVENT_ENTITY_TYPES.validate]: 'Validate',
+      [EVENT_ENTITY_TYPES.invalidate]: 'Invalidate',
+      [EVENT_ENTITY_TYPES.pause]: 'Pause',
+      [EVENT_ENTITY_TYPES.play]: 'Play',
+      [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
+      [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
     },
     times: {
       second: 'second | seconds',
@@ -91,6 +123,8 @@ export default {
   user: {
     role: 'Role',
     defaultView: 'Default view',
+    seeProfile: 'See profile',
+    selectDefaultView: 'Select default view',
   },
   context: {
     impacts: 'Impacts',
@@ -135,10 +169,16 @@ export default {
       '</dl>',
   },
   entities: {
-    watcher: 'watcher',
-    entities: 'entities',
+    watcher: 'Watcher',
+    entities: 'Entities',
   },
   login: {
+    standard: 'Standard',
+    LDAP: 'LDAP',
+    loginWithCAS: 'Login with CAS',
+    documentation: 'Documentation',
+    forum: 'Forum',
+    connectionProtocols: 'Connection protocols',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
     },
@@ -170,7 +210,20 @@ export default {
         ticketNumber: 'Ticket number',
       },
     },
+    timeLine: {
+      titlePaths: {
+        by: 'by',
+      },
+      stateCounter: {
+        header: 'Cropped State (since last change of status)',
+        stateIncreased: 'State increased',
+        stateDecreased: 'State decreases',
+      },
+    },
     infoPopup: 'Info popup',
+  },
+  weather: {
+    moreInfos: 'More info',
   },
   pbehaviors: {
     connector: 'Connector',
@@ -181,6 +234,11 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    tabs: {
+      filter: 'Filter',
+      eids: 'Eids',
+      comments: 'Comments',
+    },
   },
   settings: {
     titles: {
@@ -192,12 +250,15 @@ export default {
       statsTableSettings: 'Stats table settings',
       statsCalendarSettings: 'Stats calendar settings',
       statsNumberSettings: 'Stats number settings',
+      statsParetoSettings: 'Stats Pareto diagram settings',
+      textSettings: 'Text settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
     columnNames: 'Column names',
+    orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
     elementsPerPage: 'Elements per page',
@@ -206,13 +267,19 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
+    isAckNoteRequired: 'Note field required when ack ?',
+    isMultiAckEnabled: 'Multiple ack',
+    fastAckOutput: 'Fast-ack output',
+    isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
     statName: 'Stat name',
+    stats: 'Stats',
     statsSelect: {
       title: 'Stats select',
       required: 'Select at least 1 stat',
+      draggable: 'Try dragging an item',
     },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
@@ -226,9 +293,40 @@ export default {
         [STATS_CRITICITY.critical]: 'critical',
       },
     },
+    statsDateInterval: {
+      monthPeriodInfo: "If you select a 'monthly' period, start and end date will be rounded to the first day of the month, at 00:00 UTC",
+      fields: {
+        quickRanges: 'Quick ranges',
+      },
+      quickRanges: {
+        [STATS_QUICK_RANGES.custom.value]: 'Custom',
+        [STATS_QUICK_RANGES.last2Days.value]: 'Last 2 days',
+        [STATS_QUICK_RANGES.last7Days.value]: 'Last 7 days',
+        [STATS_QUICK_RANGES.last30Days.value]: 'Last 30 days',
+        [STATS_QUICK_RANGES.last1Year.value]: 'Last 1 year',
+        [STATS_QUICK_RANGES.yesterday.value]: 'Yesterday',
+        [STATS_QUICK_RANGES.previousWeek.value]: 'Previous week',
+        [STATS_QUICK_RANGES.previousMonth.value]: 'Previous month',
+        [STATS_QUICK_RANGES.today.value]: 'Today',
+        [STATS_QUICK_RANGES.todaySoFar.value]: 'Today so far',
+        [STATS_QUICK_RANGES.thisWeek.value]: 'This week',
+        [STATS_QUICK_RANGES.thisWeekSoFar.value]: 'This week so far',
+        [STATS_QUICK_RANGES.thisMonth.value]: 'This month',
+        [STATS_QUICK_RANGES.thisMonthSoFar.value]: 'This month so far',
+        [STATS_QUICK_RANGES.last1Hour.value]: 'Last 1 hour',
+        [STATS_QUICK_RANGES.last3Hour.value]: 'Last 3 hour',
+        [STATS_QUICK_RANGES.last6Hour.value]: 'Last 6 hour',
+        [STATS_QUICK_RANGES.last12Hour.value]: 'Last 12 hour',
+        [STATS_QUICK_RANGES.last24Hour.value]: 'Last 24 hour',
+      },
+    },
     statsNumbers: {
       title: 'Stats numbers',
       yesNoMode: 'Yes/No mode',
+      defaultStat: 'Default: Alarms created',
+      sortOrder: 'Sort order',
+      displayMode: 'Display Mode',
+      selectAColor: 'Select a color',
     },
     infoPopup: {
       title: 'Info popup',
@@ -251,6 +349,7 @@ export default {
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
+    limit: 'Limit',
     height: 'Height',
     margin: {
       title: 'Block margins',
@@ -282,6 +381,14 @@ export default {
       title: 'Stats color',
       pickColor: 'Pick a color',
     },
+    statsAnnotationLine: {
+      title: 'Annotation line',
+      enabled: 'Is enabled?',
+      value: 'Value',
+      label: 'Label',
+      pickLineColor: 'Pick line color',
+      pickLabelColor: 'Pick label color',
+    },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
     },
@@ -290,7 +397,15 @@ export default {
       fields: {
         moreInfo: 'More info',
         alarmList: 'Alarm list',
+        both: 'Both',
       },
+    },
+    templateEditor: 'Template',
+    columns: {
+      isHtml: 'Is it HTML?',
+    },
+    liveReporting: {
+      title: 'Live reporting',
     },
   },
   modals: {
@@ -384,6 +499,14 @@ export default {
         ackResources: 'Ack resources',
       },
     },
+    confirmAckWithTicket: {
+      continueAndAssociateTicket: 'Continue and associate ticket',
+      infoMessage: `A ticket number has been specified.
+        Maybe you wanted to associate this ticket number to the alarm.
+        If so, click on "Continue and associate ticket" button.
+        To continue the ack action without taking ticket number into account,
+        click on "Continue" button.`,
+    },
     createSnoozeEvent: {
       title: 'Snooze',
       fields: {
@@ -416,8 +539,16 @@ export default {
         stop: 'End',
         reason: 'Reason',
         type: 'Type',
-        comment: 'Comment',
+        message: 'Message',
         rRuleQuestion: 'Put a rrule on this pbehavior ?',
+        exdate: 'Exdates',
+      },
+      buttons: {
+        addComment: 'Add comment',
+        addExdate: 'Add exdate',
+      },
+      success: {
+        create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
     },
     createPause: {
@@ -479,7 +610,7 @@ export default {
       ticketing: 'Ticketing',
       application_crit_label: 'Criticality',
       product_line: 'Product line',
-      service_period: 'Plage surveillanc',
+      service_period: 'Monitoring timespan',
       isInCarat: 'Cartographic repository',
       application_label: 'Description',
       target_platform: 'Environment',
@@ -487,6 +618,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Range of execution',
       actionPending: 'action(s) pending',
+      refreshEntities: 'Refresh entities list',
+      editPbehaviors: 'Edit pbehaviors',
     },
     filter: {
       create: {
@@ -532,6 +665,12 @@ export default {
         statsNumber: {
           title: 'Stats number',
         },
+        statsPareto: {
+          title: 'Pareto diagram',
+        },
+        text: {
+          title: 'Text',
+        },
       },
     },
     manageHistogramGroups: {
@@ -545,6 +684,7 @@ export default {
         add: 'Add a stat',
         edit: 'Edit a stat',
       },
+      slaTooltip: 'The sla parameter should be a string of the form "<op> <value>", where <op> is <, >, <= or >= and <value> is a number',
     },
     group: {
       create: {
@@ -606,6 +746,9 @@ export default {
         title: 'Edit an event filter rule',
         success: 'Rule successfully edited !',
       },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
       priority: 'Priority',
       editPattern: 'Edit pattern',
       advanced: 'Advanced',
@@ -624,6 +767,13 @@ export default {
       externalData: 'External data',
       onSuccess: 'On success',
       onFailure: 'On failure',
+      tooltips: {
+        addValueRuleField: 'Add value rule field',
+        editValueRuleField: 'Edit value rule field',
+        addObjectRuleField: 'Add object rule field',
+        editObjectRuleField: 'Edit object rule field',
+        removeRuleField: 'Remove rule field',
+      },
     },
     viewTab: {
       create: {
@@ -638,6 +788,115 @@ export default {
       fields: {
         title: 'Title',
       },
+    },
+    createWebhook: {
+      create: {
+        title: 'Create webhook',
+        success: 'Webhook successfully created !',
+      },
+      edit: {
+        title: 'Edit webhook',
+        success: 'Webhook successfully edited !',
+      },
+      remove: {
+        success: 'Webhook successfully removed !',
+      },
+      fields: {
+        id: 'ID',
+      },
+      tooltips: {
+        id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
+      },
+    },
+    statsDateInterval: {
+      title: 'Stats - Date interval',
+      fields: {
+        periodValue: 'Period value',
+        periodUnit: 'Period unit',
+      },
+      errors: {
+        endDateLessOrEqualStartDate: 'End date should be after start date',
+      },
+      info: {
+        monthPeriodUnit: 'Stats response will be between {start} - {stop}',
+      },
+    },
+    createSnmpRule: {
+      create: {
+        title: 'Create SNMP rule',
+      },
+      edit: {
+        title: 'Edit SNMP rule',
+      },
+      fields: {
+        oid: {
+          title: 'oid',
+          labels: {
+            module: 'Select a mib module',
+          },
+        },
+        output: {
+          title: 'output',
+        },
+        resource: {
+          title: 'resource',
+        },
+        component: {
+          title: 'component',
+        },
+        connectorName: {
+          title: 'connector_name',
+        },
+        state: {
+          title: 'state',
+          labels: {
+            toCustom: 'To custom',
+            defineVar: 'Define matching snmp var',
+            writeTemplate: 'Write template',
+          },
+        },
+        moduleMibObjects: {
+          vars: 'Snmp vars match field',
+          regex: 'Regex',
+          formatter: 'Format (capture group with \\x)',
+        },
+      },
+    },
+    selectViewTab: {
+      title: 'Select tab',
+    },
+    createAction: {
+      create: {
+        title: 'Create action',
+        success: 'Action successfully created !',
+      },
+      edit: {
+        success: 'Action successfully edited !',
+      },
+      remove: {
+        success: 'Action successfully removed !',
+      },
+      tabs: {
+        general: 'General',
+        hook: 'Hook',
+      },
+      fields: {
+        message: 'Message',
+        duration: 'Duration',
+      },
+    },
+    createHeartbeat: {
+      create: {
+        title: 'Create heartbeat',
+        success: 'Heartbeat successfully created !',
+      },
+      remove: {
+        success: 'Heartbeat successfully removed !',
+      },
+      massRemove: {
+        success: 'Heartbeats successfully removed !',
+      },
+      patternRequired: 'Pattern is required',
     },
   },
   tables: {
@@ -686,7 +945,7 @@ export default {
       [ENTITIES_STATUSES.off]: 'Off',
       [ENTITIES_STATUSES.ongoing]: 'Ongoing',
       [ENTITIES_STATUSES.flapping]: 'Flapping',
-      [ENTITIES_STATUSES.stealthy]: 'Stealthy',
+      [ENTITIES_STATUSES.stealthy]: 'Stealth',
       [ENTITIES_STATUSES.cancelled]: 'Canceled',
     },
     alarmStates: {
@@ -717,14 +976,14 @@ export default {
   },
   rRule: {
     advancedHint: 'Separate numbers with a comma',
-    textLabel: 'Rrule',
-    stringLabel: 'Summary',
+    textLabel: 'Summary',
+    stringLabel: 'Rrule',
     tabs: {
       simple: 'Simple',
       advanced: 'Advanced',
     },
     errors: {
-      main: 'Please note that the Rrule you choose is not valid. We strongly advise you to modify it before saving changes.',
+      main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
     },
     fields: {
       freq: 'Frequency',
@@ -769,6 +1028,7 @@ export default {
     lineNotEmpty: 'This line is not empty',
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
+    statsRequestProblem: 'An error occurred while retrieving stats data',
   },
   calendar: {
     today: 'Today',
@@ -808,11 +1068,13 @@ export default {
       },
     },
     errors: {
+      cantParseToVisualEditor: 'We can\'t parse this filter to Visual Editor',
       invalidJSON: 'Invalid JSON',
       required: 'You need to add at least one valid rule',
     },
   },
   filterSelector: {
+    defaultFilter: 'Default filter',
     fields: {
       mixFilters: 'Mix filters',
     },
@@ -825,6 +1087,7 @@ export default {
       [STATS_TYPES.alarmsCreated.value]: 'Alarms created',
       [STATS_TYPES.alarmsResolved.value]: 'Alarms resolved',
       [STATS_TYPES.alarmsCanceled.value]: 'Alarms canceled',
+      [STATS_TYPES.alarmsAcknowledged.value]: 'Alarms acknowledged',
       [STATS_TYPES.ackTimeSla.value]: 'Ack time Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Resolve time Sla',
       [STATS_TYPES.timeInState.value]: 'Time in state',
@@ -833,6 +1096,8 @@ export default {
       [STATS_TYPES.currentState.value]: 'Current state',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
+      [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Current ongoing alarms with ack',
+      [STATS_TYPES.currentOngoingAlarmsWithoutAck.value]: 'Current ongoing alarms without ack',
     },
   },
   eventFilter: {
@@ -842,7 +1107,42 @@ export default {
     priority: 'Priority',
     enabled: 'Enabled',
     actions: 'Actions',
+    externalDatas: 'External datas',
     actionsRequired: 'Please add at least one action',
+    id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+  },
+  snmpRules: {
+    title: 'SNMP rules',
+    uploadMib: 'Upload MIB',
+    addSnmpRule: 'Add SNMP rule',
+  },
+  actions: {
+    title: 'Actions',
+    addAction: 'Add Action',
+    table: {
+      id: 'Id',
+      type: 'Type',
+      expand: {
+        tabs: {
+          general: 'General',
+          hook: 'Hook',
+          author: 'Author',
+          pbehavior: {
+            name: 'Name',
+            type: 'Type',
+            reason: 'Reason',
+            start: 'Start',
+            end: 'End',
+          },
+          snooze: {
+            message: 'Message',
+            duration: 'Duration',
+            noMessage: 'No message is set',
+          },
+        },
+      },
+    },
   },
   layout: {
     sideBar: {
@@ -862,6 +1162,16 @@ export default {
         topBar: 'Top bar',
       },
     },
+    userInterfaceForm: {
+      title: 'User interface',
+      fields: {
+        appTitle: 'App title',
+        language: 'Default user interface language',
+        footer: 'Login footer',
+        description: 'Login page description',
+        logo: 'Logo',
+      },
+    },
   },
   view: {
     errors: {
@@ -869,5 +1179,90 @@ export default {
     },
     deleteRow: 'Delete row',
     deleteWidget: 'Delete widget',
+    fullScreen: 'Full screen',
+    fullScreenShortcut: 'Alt + Enter / Command + Enter',
   },
+  patternsList: {
+    noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
+    noDataDisabled: 'No pattern set.',
+  },
+  webhook: {
+    title: 'Webhooks',
+    disableIfActivePbehavior: 'Disable if a pbehavior is active',
+    table: {
+      headers: {
+        id: 'ID',
+        requestMethod: 'Request method',
+        requestUrl: 'Request URL',
+      },
+    },
+    tabs: {
+      hook: {
+        title: 'Hook',
+        fields: {
+          triggers: 'Triggers',
+          eventPatterns: 'Event patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
+        },
+      },
+      request: {
+        title: 'Request',
+        fields: {
+          method: 'Method',
+          url: 'URL',
+          authSwitch: 'Do you need auth fields?',
+          auth: 'Auth',
+          username: 'Username',
+          password: 'Password',
+          headers: 'Headers',
+          headerKey: 'Header key',
+          headerValue: 'Header value',
+          payload: 'Payload',
+        },
+      },
+      declareTicket: {
+        title: 'Declare ticket',
+        emptyResponse: 'Empty response',
+        fields: {
+          text: 'Key',
+          value: 'Value',
+        },
+      },
+    },
+  },
+  validation: {
+    custom: {
+      tstop: {
+        after: 'The {0} should be after than {1}',
+      },
+      logo: {
+        size: 'The {0} size must be less than {1} KB.',
+      },
+    },
+  },
+  home: {
+    popups: {
+      info: {
+        noAccessToDefaultView: 'Access to default view forbidden. Redirecting to role default view.',
+        notSelectedRoleDefaultView: 'No role default view selected.',
+        noAccessToRoleDefaultView: 'Access to role default view forbidden.',
+      },
+    },
+  },
+  serviceWeather: {
+    seeAlarms: 'See alarms',
+  },
+
+  heartbeat: {
+    title: 'Heartbeats',
+    table: {
+      fields: {
+        id: 'ID',
+        expectedInterval: 'Expected interval',
+      },
+    },
+  },
+
+  ...featureService.get('i18n.en'),
 };

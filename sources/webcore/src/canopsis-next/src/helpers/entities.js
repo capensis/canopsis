@@ -1,9 +1,21 @@
-import moment from 'moment';
-import { get, omit } from 'lodash';
+import sha1 from 'sha1';
+import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_CALENDAR_COLORS, STATS_DURATION_UNITS, SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
+import {
+  WIDGET_TYPES,
+  STATS_CALENDAR_COLORS,
+  STATS_TYPES,
+  STATS_DURATION_UNITS,
+  STATS_QUICK_RANGES,
+  STATS_DISPLAY_MODE,
+  STATS_DISPLAY_MODE_PARAMETERS,
+  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  SORT_ORDERS,
+  ACTION_TYPES,
+  DURATION_UNITS,
+} from '@/constants';
 
 import uuid from './uuid';
 
@@ -30,6 +42,13 @@ export function generateWidgetByType(type) {
     itemsPerPage: PAGINATION_LIMIT,
     infoPopups: [],
     moreInfoTemplate: '',
+    isAckNoteRequired: false,
+    isMultiAckEnabled: false,
+    isHtmlEnabledOnTimeLine: false,
+    fastAckOutput: {
+      enabled: false,
+      value: 'auto ack',
+    },
     widgetColumns: [
       {
         label: i18n.t('tables.alarmGeneral.connector'),
@@ -74,13 +93,18 @@ export function generateWidgetByType(type) {
         ...alarmsListDefaultParameters,
 
         viewFilters: [],
+        mainFilter: null,
         infoPopups: [],
+        liveReporting: {},
         periodicRefresh: {
           enabled: false,
           interval: 60,
         },
         sort: {
-          order: 'ASC',
+          order: SORT_ORDERS.asc,
+        },
+        alarmsStateFilter: {
+          opened: true,
         },
       };
       break;
@@ -89,6 +113,7 @@ export function generateWidgetByType(type) {
       specialParameters = {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
+        mainFilter: null,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),
@@ -101,7 +126,7 @@ export function generateWidgetByType(type) {
         ],
         selectedTypes: [],
         sort: {
-          order: 'ASC',
+          order: SORT_ORDERS.asc,
         },
       };
       break;
@@ -109,12 +134,16 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.weather:
       specialParameters = {
         mfilter: {},
+        sort: {
+          order: SORT_ORDERS.asc,
+        },
         blockTemplate: '',
         modalTemplate: '',
         entityTemplate: '',
         columnSM: 6,
         columnMD: 4,
         columnLG: 3,
+        limit: DEFAULT_WEATHER_LIMIT,
         margin: {
           top: 1,
           right: 1,
@@ -126,41 +155,49 @@ export function generateWidgetByType(type) {
         alarmsList: alarmsListDefaultParameters,
       };
       break;
+
     case WIDGET_TYPES.statsHistogram:
       specialParameters = {
         mfilter: {},
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        groups: [],
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+        },
         stats: {},
         statsColors: {},
+        annotationLine: {},
       };
       break;
     case WIDGET_TYPES.statsCurves:
       specialParameters = {
         mfilter: {},
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        periods: 2,
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+        },
         stats: {},
+        statsColors: {},
+        statsPointsStyles: {},
+        annotationLine: {},
       };
       break;
     case WIDGET_TYPES.statsTable:
       specialParameters = {
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
-        stats: {},
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+        },
         mfilter: {},
+        stats: {},
+        sort: {},
       };
       break;
-
-
     case WIDGET_TYPES.statsCalendar:
       specialParameters = {
         filters: [],
@@ -178,24 +215,62 @@ export function generateWidgetByType(type) {
 
     case WIDGET_TYPES.statsNumber:
       specialParameters = {
-        duration: `1${STATS_DURATION_UNITS.day}`,
-        tstop: moment()
-          .startOf('hour')
-          .unix(),
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+        },
         mfilter: {},
-        stat: {},
-        yesNoMode: false,
-        criticityLevels: {
-          minor: 20,
-          major: 30,
-          critical: 40,
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
         },
-        statColors: {
-          ok: '#66BB6A',
-          minor: '#FFEE58',
-          major: '#FFA726',
-          critical: '#FF7043',
+        limit: 10,
+        sortOrder: SORT_ORDERS.desc,
+        displayMode: {
+          mode: STATS_DISPLAY_MODE.criticity,
+          parameters: cloneDeep(STATS_DISPLAY_MODE_PARAMETERS),
         },
+      };
+      break;
+
+    case WIDGET_TYPES.statsPareto:
+      specialParameters = {
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: 'now/d',
+          tstop: 'now/d',
+        },
+        mfilter: {},
+        stat: {
+          parameters: {
+            recursive: true,
+          },
+          stat: STATS_TYPES.alarmsCreated,
+          title: 'Alarmes créées',
+          trend: false,
+        },
+        statsColors: {},
+      };
+      break;
+
+    case WIDGET_TYPES.text:
+      specialParameters = {
+        dateInterval: {
+          periodValue: 1,
+          periodUnit: STATS_DURATION_UNITS.day,
+          tstart: STATS_QUICK_RANGES.thisMonthSoFar.start,
+          tstop: STATS_QUICK_RANGES.thisMonthSoFar.stop,
+        },
+        mfilter: {},
+        stats: {},
+        template: '',
       };
       break;
   }
@@ -259,9 +334,9 @@ export function generateView() {
  */
 export function generateUserPreferenceByWidgetAndUser(widget, user) {
   return {
-    _id: `${widget._id}_${user.crecord_name}`,
+    _id: `${widget._id}_${user._id}`,
     widget_preferences: {},
-    crecord_name: user.crecord_name,
+    crecord_name: user._id,
     widget_id: widget._id,
     widgetXtype: widget.type,
     crecord_type: 'userpreferences',
@@ -389,6 +464,55 @@ export function generateCopyOfView(view) {
 }
 
 /**
+ * Generate an 'action' entity
+ * @returns {Object}
+ */
+export function generateAction() {
+  const defaultHook = {
+    event_patterns: [],
+    alarm_patterns: [],
+    entity_patterns: [],
+    triggers: [],
+  };
+
+  // Get basic action parameters
+  const generalParameters = {
+    _id: uuid('action'),
+    type: ACTION_TYPES.snooze,
+    hook: defaultHook,
+  };
+
+  // Default 'snooze' action parameters
+  const snoozeParameters = {
+    message: '',
+    duration: {
+      duration: 1,
+      durationType: DURATION_UNITS.minute.value,
+    },
+  };
+
+  // Default 'pbehavior' action parameters
+  const pbehaviorParameters = {
+    general: {
+      name: '',
+      tstart: new Date(),
+      tstop: new Date(),
+      rrule: null,
+      reason: '',
+      type_: '',
+    },
+    comments: [],
+    exdate: [],
+  };
+
+  return {
+    generalParameters,
+    snoozeParameters,
+    pbehaviorParameters,
+  };
+}
+
+/**
  * Get mappings for widgets ids from old tab to new tab
  *
  * @param {Object} oldTab
@@ -418,19 +542,12 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
     acc.concat(getViewsTabsWidgetsIdsMappings(tab, newView.tabs[index])), []);
 }
 
+export function prepareUserByData(data, user = generateUser()) {
+  const result = { ...user, ...omit(data, ['password']) };
 
-export default {
-  generateWidgetByType,
-  generateViewRow,
-  generateView,
-  generateUserPreferenceByWidgetAndUser,
-  generateUser,
-  generateRole,
-  generateRight,
-  generateRoleRightByChecksum,
-  generateCopyOfViewTab,
-  generateCopyOfView,
+  if (data.password && data.password !== '') {
+    result.shadowpasswd = sha1(data.password);
+  }
 
-  getViewsTabsWidgetsIdsMappings,
-  getViewsWidgetsIdsMappings,
-};
+  return result;
+}

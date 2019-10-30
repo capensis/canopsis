@@ -1,16 +1,17 @@
 <template lang="pug">
-  shared-mass-actions-panel(:actions="filteredActions")
+  div
+    shared-mass-actions-panel(:actions="filteredActions")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '../../../../constants';
+import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import authMixin from '../../../../mixins/auth';
-import widgetActionsPanelAlarmMixin from '../../../../mixins/widget/actions-panel/alarm';
+import authMixin from '@/mixins/auth';
+import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
 
-import SharedMassActionsPanel from '../../shared/actions-panel/mass-actions-panel.vue';
+import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
@@ -29,6 +30,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    widget: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
@@ -39,19 +44,19 @@ export default {
           type: alarmsListActionsTypes.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
           title: this.$t('alarmList.actions.titles.pbehavior'),
-          method: this.showActionModal(MODALS.createPbehavior),
+          method: this.showAddPbehaviorModal,
         },
         {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
           title: this.$t('alarmList.actions.titles.ack'),
-          method: this.showActionModal(MODALS.createAckEvent),
+          method: this.showAckModal,
         },
         {
           type: alarmsListActionsTypes.fastAck,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           title: this.$t('alarmList.actions.titles.fastAck'),
-          method: this.createAckEvent,
+          method: this.createMassFastAckEvent,
         },
         {
           type: alarmsListActionsTypes.ackRemove,
@@ -69,14 +74,16 @@ export default {
     };
   },
   computed: {
-    ...entitiesMapGetters(['getList']),
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
 
     filteredActions() {
       return this.actions.filter(this.actionsAccessFilterHandler);
     },
 
     items() {
-      return this.getList(ENTITIES_TYPES.alarm, this.itemsIds);
+      return this.getEntitiesList(ENTITIES_TYPES.alarm, this.itemsIds);
     },
 
     modalConfig() {
@@ -84,11 +91,6 @@ export default {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
       };
-    },
-  },
-  methods: {
-    createAckEvent() {
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, this.items);
     },
   },
 };

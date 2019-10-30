@@ -1,19 +1,16 @@
 import { omit, isEqual, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import Pagination from '@/components/tables/pagination.vue';
+import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import dateIntervals from '@/helpers/date-intervals';
+import { dateParse } from '@/helpers/date-intervals';
 import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
 
 /**
  * @mixin Add query logic
  */
 export default {
-  components: {
-    Pagination,
-  },
   mixins: [queryMixin, entitiesUserPreferenceMixin],
   props: {
     tabId: {
@@ -33,7 +30,7 @@ export default {
 
     vDataTablePagination: {
       get() {
-        const descending = this.query.sortDir !== null ? this.query.sortDir === 'DESC' : null;
+        const descending = this.query.sortDir !== null ? this.query.sortDir === SORT_ORDERS.desc : null;
 
         return { sortBy: this.query.sortKey, descending };
       },
@@ -45,7 +42,7 @@ export default {
           this.query = {
             ...this.query,
             sortKey: value.sortBy,
-            sortDir: value.descending ? 'DESC' : 'ASC',
+            sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
           };
         }
       },
@@ -85,22 +82,29 @@ export default {
     getQuery() {
       const query = omit(this.query, [
         'page',
-        'interval',
         'sortKey',
         'sortDir',
+        'tstart',
+        'tstop',
       ]);
 
-      const { page, interval, limit = PAGINATION_LIMIT } = this.query;
+      const {
+        page,
+        tstart,
+        tstop,
+        limit = PAGINATION_LIMIT,
+      } = this.query;
 
-      if (interval && interval !== 'custom') {
-        try {
-          const { tstart, tstop } = dateIntervals[interval]();
+      if (tstart) {
+        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
 
-          query.tstart = tstart;
-          query.tstop = tstop;
-        } catch (err) {
-          console.warn(err);
-        }
+        query.tstart = convertedTstart.unix();
+      }
+
+      if (tstop) {
+        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
+
+        query.tstop = convertedTstop.unix();
       }
 
       if (this.query.sortKey) {

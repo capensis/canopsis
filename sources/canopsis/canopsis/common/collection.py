@@ -84,6 +84,15 @@ class MongoCollection(object):
         """
         return self._hr(self.collection.find_one, query, *args, **kwargs)
 
+    def aggregate(self, pipeline, *args, **kwargs):
+        """
+        Execute the given pipeline and return a mongo cursor.
+
+        :param list pipeline: an aggregate pipeline
+        :rtype: pymongo.cursor.Cursor
+        """
+        return self._hr(self.collection.aggregate, pipeline, *args, **kwargs)
+
     def insert(self, document, *args, **kwargs):
         """
         Update an element in the collection.

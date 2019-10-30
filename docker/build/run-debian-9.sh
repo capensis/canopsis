@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -e
 set -o pipefail
 set -u
@@ -16,6 +16,7 @@ apt-get dist-upgrade -y
 apt-get -y --no-install-recommends install locales
 
 export LANG="en_US.UTF-8"
+export LC_ALL="$LANG"
 echo "LANG=${LANG}" > /etc/locale.conf
 echo "${LANG} UTF-8" > /etc/locale.gen
 locale-gen
@@ -50,6 +51,7 @@ apt-get -y --no-install-recommends install \
     libldap-2.4-2 \
     python \
     python2.7 \
+    procps \
     rsync \
     snmp \
     snmp-mibs-downloader \

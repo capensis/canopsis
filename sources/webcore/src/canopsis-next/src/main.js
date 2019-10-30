@@ -1,6 +1,9 @@
+import './bootstrap';
+
+/* eslint-disable import/first */
+import Vue from 'vue';
 import moment from 'moment';
 import deepFreeze from 'deep-freeze';
-import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
 import enValidationMessages from 'vee-validate/dist/locale/en';
@@ -10,9 +13,12 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
+import sanitizeHTML from 'sanitize-html';
 
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
+
+import '@/services/features';
 
 import * as config from '@/config';
 import * as constants from '@/constants';
@@ -22,21 +28,32 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
-import DsCalendarEvent from '@/components/other/stats/day-span/partial/calendar-event.vue';
-import DsCalendarEventTime from '@/components/other/stats/day-span/partial/calendar-event-time.vue';
+import SetSeveralPlugin from '@/plugins/set-several';
+
+import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
+import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
 import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
+
+import WebhookIcon from '@/components/icons/webhook.vue';
+/* eslint-enable import/first */
 
 Vue.use(VueResizeText);
 Vue.use(filters);
 Vue.use(Vuetify, {
   iconfont: 'md',
   theme: {
-    primary: '#2fab63',
-    secondary: '#2b3e4f',
+    primary: config.COLORS.primary,
+    secondary: config.COLORS.secondary,
+  },
+  icons: {
+    webhook: {
+      component: WebhookIcon,
+    },
   },
 });
+
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {
@@ -82,18 +99,29 @@ Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
 
+VueClipboard.config.autoSetContainer = true;
 Vue.use(VueClipboard);
 
 Vue.use(VeeValidate, {
   i18n,
   inject: false,
+  silentTranslationWarn: false,
   dictionary: {
     en: enValidationMessages,
     fr: frValidationMessages,
   },
 });
 
+Vue.use(SetSeveralPlugin);
+
 Vue.config.productionTip = false;
+
+/**
+ * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
+ */
+window.addEventListener('unhandledrejection', () => {
+  store.dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') });
+});
 
 if (process.env.NODE_ENV === 'development') {
   Vue.config.devtools = true;
@@ -102,6 +130,7 @@ if (process.env.NODE_ENV === 'development') {
 
 Vue.prototype.$constants = deepFreeze(constants);
 Vue.prototype.$config = deepFreeze(config);
+Vue.prototype.$sanitize = sanitizeHTML;
 
 new Vue({
   router,

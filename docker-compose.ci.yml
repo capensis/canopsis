@@ -53,8 +53,8 @@ services:
   redis:
     image: redis:${REDIS_TAG}
     restart: unless-stopped
-    ports:
-      - 6379:6379
+    #ports:
+      #- 6379:6379
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     env_file:

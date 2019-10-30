@@ -1,31 +1,33 @@
 <template lang="pug">
   div
     view-tabs.tabs-absolute(
-    v-if="view && isTabsChanged",
-    :view="view",
-    :tabs.sync="tabs",
-    :isTabsChanged="isTabsChanged",
-    :isEditingMode="isEditingMode",
-    :hasUpdateAccess="hasUpdateAccess"
+      v-if="view && isTabsChanged",
+      :view="view",
+      :tabs.sync="tabs",
+      :isTabsChanged="isTabsChanged",
+      :isEditingMode="isEditingMode",
+      :hasUpdateAccess="hasUpdateAccess"
     )
     v-fade-transition
       div
         .v-overlay.v-overlay--active(v-show="view && isTabsChanged")
-          v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+          v-btn(
+            data-test="submitMoveTab",
+            color="primary",
+            @click="submit"
+          ) {{ $t('common.submit') }}
           v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
-    :view="view",
-    :value="value",
-    :tabs.sync="tabs",
-    :isTabsChanged="isTabsChanged",
-    :isEditingMode="isEditingMode",
-    :hasUpdateAccess="hasUpdateAccess",
-    :updateViewMethod="data => updateViewMethod(data)",
-    @input="$emit('input', $event)"
+      :view="view",
+      :tabs.sync="tabs",
+      :isTabsChanged="isTabsChanged",
+      :isEditingMode="isEditingMode",
+      :hasUpdateAccess="hasUpdateAccess",
+      :updateViewMethod="data => updateViewMethod(data)"
     )
       view-tab-rows(
-      slot-scope="props",
-      v-bind="props",
+        slot-scope="props",
+        v-bind="props"
       )
 </template>
 
@@ -41,10 +43,6 @@ export default {
     ViewTabRows,
   },
   props: {
-    value: {
-      type: Number,
-      default: null,
-    },
     view: {
       type: Object,
       required: true,
@@ -89,17 +87,13 @@ export default {
     cancel() {
       this.tabs = [...this.view.tabs];
     },
-    async submit() {
-      const activeTab = this.view.tabs[this.value];
-      const activeTabIndex = this.tabs.findIndex(tab => activeTab._id === tab._id);
 
-      await this.updateViewMethod({
+    async submit() {
+      this.updateViewMethod({
         ...this.view,
 
         tabs: this.tabs,
       });
-
-      this.$emit('input', activeTabIndex);
     },
   },
 };

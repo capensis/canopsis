@@ -1,19 +1,21 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{ $t('settings.rowGridSize.title') }}
+  v-list-group(data-test="rowGridSize")
+    v-list-tile(slot="activator")
+      div(:class="validationHeaderClass") {{ $t('settings.rowGridSize.title') }}
     v-container
       v-combobox(
-      ref="combobox",
-      v-model="row",
-      @blur="blurRow",
-      :items="availableRows",
-      :label="$t('settings.rowGridSize.fields.row')",
-      :search-input.sync="search",
-      data-vv-name="row",
-      v-validate="'required'",
-      :error-messages="errors.collect('row')",
-      item-text="title",
-      item-value="title"
+        data-test="rowGridSizeCombobox",
+        ref="combobox",
+        v-model="row",
+        @blur="blurRow",
+        :items="availableRows",
+        :label="$t('settings.rowGridSize.fields.row')",
+        :search-input.sync="search",
+        data-vv-name="row",
+        v-validate="'required'",
+        :error-messages="errors.collect('row')",
+        item-text="title",
+        item-value="title"
       )
         template(slot="no-data")
           v-list-tile
@@ -21,27 +23,31 @@
               v-list-tile-title(v-html="$t('settings.rowGridSize.noData')")
       div
         v-slider(
-        v-for="slider in sliders",
-        :key="`slider-${slider.key}`",
-        v-bind="slider.bind",
-        v-on="slider.on",
-        ticks="always"
-        always-dirty,
-        thumb-label,
-        :data-vv-name="slider.key"
-        v-validate="'min_value:3'"
+          v-for="slider in sliders",
+          :data-test="`slider-${slider.key}`",
+          :key="`slider-${slider.key}`",
+          v-bind="slider.bind",
+          v-on="slider.on",
+          ticks="always",
+          always-dirty,
+          thumb-label,
+          :data-vv-name="`slider-${slider.key}`",
+          v-validate="'min_value:3'"
         )
 </template>
 
 <script>
 import { isEmpty } from 'lodash';
 
+import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
+
 import { generateViewRow } from '@/helpers/entities';
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
-  mixins: [vuetifyComboboxMixin],
+  mixins: [vuetifyComboboxMixin, formValidationHeaderMixin],
   props: {
     rowId: {
       type: String,
@@ -93,9 +99,9 @@ export default {
           this.$emit(
             'update:size',
             {
-              sm: this.$constants.WIDGET_MIN_SIZE,
-              md: this.$constants.WIDGET_MIN_SIZE,
-              lg: this.$constants.WIDGET_MIN_SIZE,
+              sm: WIDGET_MIN_SIZE,
+              md: WIDGET_MIN_SIZE,
+              lg: WIDGET_MIN_SIZE,
             },
           );
         }
@@ -117,7 +123,7 @@ export default {
           bind: {
             prependIcon: icons[key],
             value: 0,
-            max: this.$constants.WIDGET_MAX_SIZE,
+            max: WIDGET_MAX_SIZE,
             disabled: true,
           },
         }));

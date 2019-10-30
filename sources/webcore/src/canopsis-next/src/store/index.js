@@ -11,7 +11,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import appModule from './modules/app';
+import featuresService from '@/services/features';
+
 import authModule from './modules/auth';
 import i18nModule from './modules/i18n';
 import modalModule from './modules/modal';
@@ -22,6 +23,7 @@ import sideBarModule from './modules/side-bar';
 import entitiesModules from './modules/entities';
 
 import entitiesPlugin from './plugins/entities';
+import watchOncePlugin from './plugins/watch-once';
 
 Vue.use(Vuex);
 
@@ -37,7 +39,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    app: appModule,
     auth: authModule,
     i18n: i18nModule,
     modal: modalModule,
@@ -47,6 +48,7 @@ export default new Vuex.Store({
     sideBar: sideBarModule,
 
     ...entitiesModules,
+    ...featuresService.get('store.modules'),
   },
-  plugins: [entitiesPlugin],
+  plugins: [entitiesPlugin, watchOncePlugin],
 });
