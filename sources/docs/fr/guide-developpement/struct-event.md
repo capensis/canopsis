@@ -184,4 +184,6 @@ cancel | Utilisé pour cancel un évènement et mettre son statut dans un état 
 uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
 ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
 snooze | Utilisé pour placer un Snooze sur une alarme |
+declareticket | Utilisé pour déclarer un ticket |
+assocticket | Utilisé pour associer un ticcket |
 changestate | Utilisé pour changer et verrouiller la criticité d'une alarme |
