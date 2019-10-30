@@ -197,6 +197,8 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
+    alarmsTable.clickOnDropDownActions('534c7a04-4531-4561-9c17-2689286519a2', 1);
+
     alarmsTable
       .clickSearchInput()
       .clearSearchInput()

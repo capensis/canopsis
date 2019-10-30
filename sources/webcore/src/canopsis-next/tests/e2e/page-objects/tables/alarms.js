@@ -132,6 +132,12 @@ const commands = {
     return this.customClick(this.el('@rowActionsSharedPanelItem', id, index));
   },
 
+  clickOnDropDownActions(id, index) {
+    return this
+      .customClick(this.el('@rowMoreActionsButton', id))
+      .customClick(this.el('@rowDropDownActions', index));
+  },
+
   el,
 };
 
@@ -176,6 +182,8 @@ module.exports = {
 
     massActionsPanelItem: `${sel('alarmsWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
     rowActionsSharedPanelItem: `${sel('alarmListRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    rowMoreActionsButton: `${sel('alarmListRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('dropDownActionsButton')}`,
+    rowDropDownActions: `.menuable__content__active ${sel('dropDownActions')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
   },
   commands: [commands],
 };

@@ -8,9 +8,9 @@
           :key="`main-${index}`"
         )
         v-menu(v-show="dropDownActions && dropDownActions.length", bottom, left, @click.native.stop)
-          v-btn(icon, slot="activator")
+          v-btn(data-test="dropDownActionsButton", icon, slot="activator")
             v-icon more_vert
-          v-list
+          v-list(data-test="dropDownActions")
             actions-panel-item(
               v-for="(action, index) in dropDownActions",
               v-bind="action",

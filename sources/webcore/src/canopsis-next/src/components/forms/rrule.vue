@@ -1,22 +1,26 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')")
+      v-switch(
+        data-test="pbehaviorRuleSwitcher",
+        v-model="showRRule",
+        :label="$t('modals.createPbehavior.fields.rRuleQuestion')"
+      )
     template(v-if="showRRule")
       v-layout(row)
         v-tabs.r-rule-tabs(v-model="activeTab", centered, fixed-tabs)
-          v-tab(href="#simple") {{ $t('rRule.tabs.simple') }}
-          v-tab(href="#advanced") {{ $t('rRule.tabs.advanced') }}
+          v-tab(data-test="pbehaviorSimple", href="#simple") {{ $t('rRule.tabs.simple') }}
+          v-tab(data-test="pbehaviorAdvanced", href="#advanced") {{ $t('rRule.tabs.advanced') }}
           v-tab-item(value="simple")
             div
-              div
+              div(data-test="pbehaviorFrequency")
                 v-select(
                   :label="$t('rRule.fields.freq')",
                   v-model="form.rRuleOptions.freq",
                   :items="frequencies",
                   @input="changeRRuleOption"
                 )
-              div
+              div(data-test="pbehaviorByWeekDay")
                 v-select(
                   :label="$t('rRule.fields.byweekday')",
                   v-model="form.rRuleOptions.byweekday",
@@ -27,6 +31,7 @@
                 )
               div
                 v-text-field(
+                  data-test="pbehaviorRepeat",
                   type="number",
                   :label="$t('rRule.fields.count')",
                   v-model="form.rRuleOptions.count",
@@ -34,6 +39,7 @@
                 )
               div
                 v-text-field(
+                  data-test="pbehaviorInterval",
                   type="number",
                   :label="$t('rRule.fields.interval')",
                   v-model="form.rRuleOptions.interval",
@@ -41,14 +47,14 @@
                 )
           v-tab-item(value="advanced")
             div
-              div
+              div(data-test="pbehaviorWeekStart")
                 v-select(
                   :label="$t('rRule.fields.wkst')",
                   v-model="form.rRuleOptions.wkst",
                   :items="weekDays",
                   @input="changeRRuleOption"
                 )
-              div
+              div(data-test="pbehaviorByMonth")
                 v-select(
                   :label="$t('rRule.fields.bymonth')",
                   v-model="form.rRuleOptions.bymonth",
@@ -61,6 +67,7 @@
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
+                      data-test="pbehaviorBySetPos",
                       :label="$t('rRule.fields.bysetpos.label')",
                       v-model="form.advancedRRuleOptions.bysetpos",
                       :error-messages="errors.collect('bysetpos')",
@@ -75,6 +82,7 @@
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
+                      data-test="pbehaviorByMonthDay",
                       :label="$t('rRule.fields.bymonthday.label')",
                       v-model="form.advancedRRuleOptions.bymonthday",
                       :error-messages="errors.collect('bymonthday')",
@@ -89,6 +97,7 @@
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
+                      data-test="pbehaviorByYearDay",
                       :label="$t('rRule.fields.byyearday.label')",
                       v-model="form.advancedRRuleOptions.byyearday",
                       :error-messages="errors.collect('byyearday')",
@@ -103,6 +112,7 @@
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
+                      data-test="pbehaviorByWeekNo",
                       :label="$t('rRule.fields.byweekno.label')",
                       v-model="form.advancedRRuleOptions.byweekno",
                       :error-messages="errors.collect('byweekno')",
@@ -117,6 +127,7 @@
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
+                      data-test="pbehaviorByHour",
                       :label="$t('rRule.fields.byhour.label')",
                       v-model="form.advancedRRuleOptions.byhour",
                       :error-messages="errors.collect('byhour')",
@@ -131,6 +142,7 @@
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
+                      data-test="pbehaviorByMinute",
                       :label="$t('rRule.fields.byminute.label')",
                       v-model="form.advancedRRuleOptions.byminute",
                       :error-messages="errors.collect('byminute')",
@@ -145,6 +157,7 @@
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
+                      data-test="pbehaviorBySecond",
                       :label="$t('rRule.fields.bysecond.label')",
                       v-model="form.advancedRRuleOptions.bysecond",
                       :error-messages="errors.collect('bysecond')",

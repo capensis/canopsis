@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createPbehaviorModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createPbehavior.title') }}
@@ -7,8 +7,17 @@
       pbehavior-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
-      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+      v-btn(
+        data-test="createPbehaviorCancelButton",
+        depressed,
+        flat,
+        @click="hideModal"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        data-test="createPbehaviorSubmitButton",
+        :disabled="errors.any()",
+        @click="submit"
+      ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
