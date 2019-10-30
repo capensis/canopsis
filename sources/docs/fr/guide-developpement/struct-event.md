@@ -55,6 +55,29 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 }
 ```
 
+### Event Declareticket Structure
+
+```javascript
+{
+    "event_type": "declareticket",    // mandatory
+
+    "author":               // Declareticket author, optional
+    "output":               // Declareticket comment, optional
+}
+```
+
+### Event Assocticket Structure
+
+```javascript
+{
+    "event_type": "assocticket",    // mandatory
+
+    "author":               // Assocticket author, optional
+    "ticket":               // Assocticket number, optional
+    "output":               // Assocticket comment, optional
+}
+```
+
 ### Event Snooze Structure
 
 ```javascript
