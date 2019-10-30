@@ -42,7 +42,7 @@ module.exports = {
           browser.assert.elementsCount(usersPage.elements.dataTableUserItem.selector, 1);
 
           usersPage.verifyPageUserBefore(user._id);
-        }
+        },
       )
       .waitForFirstXHR(
         API_ROUTES.user.list,
@@ -51,7 +51,7 @@ module.exports = {
           const { data } = JSON.parse(responseData);
 
           browser.assert.ok(data.some(item => item._id !== user._id));
-        }
+        },
       );
   },
 

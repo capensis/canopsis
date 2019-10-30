@@ -128,6 +128,10 @@ const commands = {
     return this.customClick(this.el('@massActionsPanelItem', index));
   },
 
+  clickOnSharedAction(id, index) {
+    return this.customClick(this.el('@rowActionsSharedPanelItem', id, index));
+  },
+
   el,
 };
 
@@ -171,7 +175,7 @@ module.exports = {
     alarmListRowColumn: `${sel('alarmListRow-%s')} ${sel('alarmValue-%s')}`,
 
     massActionsPanelItem: `${sel('alarmsWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
-    rowActionsPanelItem: `${sel('alarmListRow-%s')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    rowActionsSharedPanelItem: `${sel('alarmListRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('actionsPanelItem')}:nth-of-type(%s)`,
   },
   commands: [commands],
 };

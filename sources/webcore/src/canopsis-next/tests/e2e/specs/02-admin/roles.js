@@ -95,7 +95,7 @@ module.exports = {
           browser.assert.elementsCount(rolesPage.elements.dataTableUserItem.selector, 1);
 
           rolesPage.verifyPageRoleBefore(role._id);
-        }
+        },
       )
       .waitForFirstXHR(
         API_ROUTES.role.list,
@@ -104,7 +104,7 @@ module.exports = {
           const { data } = JSON.parse(responseData);
 
           browser.assert.ok(data.some(item => item._id !== role._id));
-        }
+        },
       );
   },
 

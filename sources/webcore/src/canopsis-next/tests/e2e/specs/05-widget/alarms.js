@@ -139,9 +139,7 @@ module.exports = {
     browser.page.view()
       .clickMenuViewButton();
 
-
     alarmsTable
-      .clickAlarmListHeaderCell('Connector')
       .setAllCheckbox(true)
       .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
 
@@ -166,6 +164,36 @@ module.exports = {
       .clickTicketNote()
       .clearTicketNote()
       .setTicketNote('note')
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    alarmsTable
+      // .clickAlarmListHeaderCell('Connector')
+      .clickOnAlarmRow('534c7a04-4531-4561-9c17-2689286519a2')
+    // 534c7a04-4531-4561-9c17-2689286519a2 first
+    // a2b5e46c-b0cf-4c45-ab50-7a06f28c7a59 last
+      .clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', 1);
+
+    browser.page.modals.alarm.createAckEvent()
+      .verifyModalOpened()
+      .clickTicketNumber()
+      .clearTicketNumber()
+      .setTicketNumber(1223333)
+      .clickTicketNote()
+      .clearTicketNote()
+      .setTicketNote('note')
+      .setAckTicketResources(true)
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    alarmsTable.clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', 3);
+
+    browser.page.modals.alarm.createSnoozeEvent()
+      .verifyModalOpened()
+      .clickDurationValue()
+      .clearDurationValue()
+      .setDurationValue(10)
+      .setDurationType(1)
       .clickCancelButton()
       .verifyModalClosed();
 
