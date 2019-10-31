@@ -21,7 +21,7 @@ export function setField(obj, path, value) {
  * @param {Object} pathsValuesMap - Map for paths and values ex: { 'a.b.c': 'value', 'a.b.y': val => val }
  * @return {Object|Array}
  */
-export function setSeveralFieldsInObject(obj, pathsValuesMap) {
+export function setSeveralFields(obj, pathsValuesMap) {
   const alreadyClonedPaths = {};
   const clonedObject = clone(obj);
 
@@ -68,14 +68,14 @@ export function unsetField(obj, path) {
  * @param {Object} pathsConditionsMap - Map for paths and conditions ex: { 'a.b.c': v => v < 5, 'a.y': v => !v.length }
  * @return {Object|Array}
  */
-export function unsetSeveralFieldInObjectWithConditions(obj, pathsConditionsMap) {
+export function unsetSeveralFieldsWithConditions(obj, pathsConditionsMap) {
   const pathsValuesMap = Object.keys(pathsConditionsMap).reduce((acc, key) => {
     acc[key] = v => v;
 
     return acc;
   }, {});
 
-  const newObj = setSeveralFieldsInObject(obj, pathsValuesMap);
+  const newObj = setSeveralFields(obj, pathsValuesMap);
 
   Object.entries(pathsConditionsMap).forEach(([path, condition]) => {
     const value = get(obj, path);

@@ -2,7 +2,7 @@ import moment from 'moment';
 import { omit, pick } from 'lodash';
 import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
 
-import { unsetSeveralFieldInObjectWithConditions } from '@/helpers/immutable';
+import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
 import {
   pbehaviorToForm,
@@ -71,7 +71,7 @@ export function formToAction({ generalParameters = {}, pbehaviorParameters = {},
 
   const patternsCondition = value => !value || !value.length;
 
-  data = unsetSeveralFieldInObjectWithConditions(data, {
+  data = unsetSeveralFieldsWithConditions(data, {
     'hook.event_patterns': patternsCondition,
     'hook.alarm_patterns': patternsCondition,
     'hook.entity_patterns': patternsCondition,

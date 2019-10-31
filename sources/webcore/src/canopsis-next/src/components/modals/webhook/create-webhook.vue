@@ -29,7 +29,7 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { setSeveralFieldsInObject } from '@/helpers/immutable';
+import { setSeveralFields } from '@/helpers/immutable';
 import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -88,7 +88,7 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
-          const preparedForm = this.hasBlockedTriggers ? setSeveralFieldsInObject(this.form, {
+          const preparedForm = this.hasBlockedTriggers ? setSeveralFields(this.form, {
             'hook.event_patterns': null,
             declare_ticket: {},
           }) : this.form;
