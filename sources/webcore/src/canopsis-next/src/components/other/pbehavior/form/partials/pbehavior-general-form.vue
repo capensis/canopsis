@@ -2,51 +2,46 @@
   div
     v-layout(row)
       v-text-field(
+        v-field="form.name",
         v-validate="'required'",
-        :value="form.name",
         :label="$t('modals.createPbehavior.fields.name')",
         :error-messages="errors.collect('name')",
-        name="name",
-        @input="updateField('name', $event)"
+        name="name"
       )
     v-layout(row)
       date-time-picker-field(
+        v-field="form.tstart",
         v-validate="tstartRules",
-        :value="form.tstart",
         :label="$t('modals.createPbehavior.fields.start')",
-        name="tstart",
-        @input="updateField('tstart', $event)"
+        name="tstart"
       )
     v-layout(row)
       date-time-picker-field(
+        v-field="form.tstop",
         v-validate="tstopRules",
-        :value="form.tstop",
         :label="$t('modals.createPbehavior.fields.stop')",
-        name="tstop",
-        @input="updateField('tstop', $event)"
+        name="tstop"
       )
     v-layout(v-if="!noFilter", row)
       v-btn.primary(type="button", @click="showCreateFilterModal") {{ $t('common.filter') }}
     r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
     v-layout(row)
       v-combobox(
+        v-field="form.reason",
         v-validate="'required'",
-        :value="form.reason",
         :label="$t('modals.createPbehavior.fields.reason')",
         :items="reasons",
         :error-messages="errors.collect('reason')",
-        name="reason",
-        @input="updateField('reason', $event)"
+        name="reason"
       )
     v-layout(row)
       v-select(
+        v-field="form.type_",
         v-validate="'required'",
-        :value="form.type_",
         :label="$t('modals.createPbehavior.fields.type')",
         :items="types",
         :error-messages="errors.collect('type')",
-        name="type",
-        @input="updateField('type_', $event)"
+        name="type"
       )
 </template>
 
