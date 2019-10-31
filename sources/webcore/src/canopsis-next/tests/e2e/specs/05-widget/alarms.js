@@ -135,6 +135,7 @@ module.exports = {
 
   'Table widget alarms': (browser) => {
     const alarmsTable = browser.page.tables.alarms();
+    const dateIntervalField = browser.page.fields.dateInterval();
 
     browser.page.view()
       .clickMenuViewButton();
@@ -198,6 +199,81 @@ module.exports = {
       .verifyModalClosed();
 
     alarmsTable.clickOnDropDownActions('534c7a04-4531-4561-9c17-2689286519a2', 1);
+
+    browser.page.modals.alarm.createPbehavior()
+      .verifyModalOpened();
+
+    browser.page.forms.pbehavior()
+      .clearName()
+      .clickName()
+      .setName('Name')
+      // .clickStartDate()
+      // .clickEndDate()
+      // .clickFilter()
+      .selectType(1)
+      .clearReason()
+      .clickReason()
+      .setReason('P')
+      .selectReason(1)
+      .setRuleCheckbox(true)
+      .selectFrequency(1)
+      .selectByWeekDay(1, false)
+      .selectByWeekDay(1, true)
+      .clearRepeat()
+      .clickRepeat()
+      .setRepeat(5)
+      .clearInterval()
+      .clickInterval()
+      .setInterval(5)
+      .clickAdvanced(5)
+      .selectWeekStart(1)
+      // .selectByMonth(1, false)
+      .selectByMonth(1, true)
+      .clearBySetPosition()
+      .clickBySetPosition()
+      .setBySetPosition(15)
+      .clearByMonthDay()
+      .clickByMonthDay()
+      .setByMonthDay(12)
+      .clearByYearDay()
+      .clickByYearDay()
+      .setByYearDay(23)
+      .clearByWeekNo()
+      .clickByWeekNo()
+      .setByWeekNo(1)
+      .clearByHour()
+      .clearByHour()
+      .clickByHour()
+      .setByHour(2)
+      .clearByMinute()
+      .clickByMinute()
+      .setByMinute(2)
+      .clearBySecond()
+      .clickBySecond()
+      .setBySecond(2)
+      .clickAddExdate()
+      // .clickExdateField()
+      .clickExdateField(1);
+
+    dateIntervalField
+      .clickDatePickerDayTab()
+      .selectCalendarDay(3)
+      .clickDatePickerHoursTab()
+      .selectCalendarHour(16)
+      .clickDatePickerMinutesTab()
+      .selectCalendarMinute(1);
+
+    browser.page.forms.pbehavior()
+      .clickAddComment()
+      .clickCommentField(1)
+      .clearCommentField(1)
+      .clearCommentField(1)
+      .setCommentField(1, 2)
+      .clickCommentDelete(1);
+
+    browser.page.modals.alarm.createPbehavior()
+      .clickCancelButton()
+      .verifyModalClosed();
 
     alarmsTable
       .clickSearchInput()

@@ -10,18 +10,16 @@
         name="name",
         @input="updateField('name', $event)"
       )
-    v-layout(row)
+    v-layout(data-test="startDateTimePicker", row)
       date-time-picker-field(
-        data-test="startDateTimePicker",
         v-validate="tstartRules",
         :value="form.tstart",
         :label="$t('modals.createPbehavior.fields.start')",
         name="tstart",
         @input="updateField('tstart', $event)"
       )
-    v-layout(row)
+    v-layout(data-test="stopDateTimePicker", row)
       date-time-picker-field(
-        data-test="stopDateTimePicker",
         v-validate="tstopRules",
         :value="form.tstop",
         :label="$t('modals.createPbehavior.fields.stop')",
@@ -35,8 +33,9 @@
         @click="showCreateFilterModal"
       ) {{ $t('common.filter') }}
     r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
-    v-layout(data-test="pbehaviorReason", row)
+    v-layout(row)
       v-combobox(
+        data-test="pbehaviorReason",
         v-validate="'required'",
         :value="form.reason",
         :label="$t('modals.createPbehavior.fields.reason')",

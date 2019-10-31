@@ -59,6 +59,14 @@ const commands = {
     return this.customClick('@pbehaviorAdvancedButton');
   },
 
+  setRuleCheckbox(checked = false) {
+    return this.getAttribute('@ruleSwitcherInput', 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
+        this.customClick('@ruleSwitcher');
+      }
+    });
+  },
+
   selectFrequency(index = 1) {
     return this.customClick('@pbehaviorFrequency')
       .waitForElementVisible(this.el('@optionSelect', index))
@@ -70,7 +78,8 @@ const commands = {
       .waitForElementVisible(this.el('@optionSelect', index))
       .getAttribute(this.el('@optionSelectInput', index), 'aria-checked', ({ value }) => {
         if (value !== String(checked)) {
-          this.customClick(this.el('@optionSelect', index));
+          this.customClick(this.el('@optionSelect', index))
+            .clickSimple();
         }
       });
   },
@@ -110,7 +119,8 @@ const commands = {
       .waitForElementVisible(this.el('@optionSelect', index))
       .getAttribute(this.el('@optionSelectInput', index), 'aria-checked', ({ value }) => {
         if (value !== String(checked)) {
-          this.customClick(this.el('@optionSelect', index));
+          this.customClick(this.el('@optionSelect', index))
+            .clickAdvanced();
         }
       });
   },
@@ -199,6 +209,38 @@ const commands = {
     return this.customSetValue('@pbehaviorBySecond', value);
   },
 
+  clickAddExdate() {
+    return this.customClick('@pbehaviorAddExdateButton');
+  },
+
+  clickExdateField(index) {
+    return this.customClick(this.el('@pbehaviorExdateField', index));
+  },
+
+  clickExdateDelete(index) {
+    return this.customClick(this.el('@pbehaviorExdateDeleteButton', index));
+  },
+
+  clickAddComment() {
+    return this.customClick('@pbehaviorAddComment');
+  },
+
+  clickCommentField(index) {
+    return this.customClick(this.el('@pbehaviorCommentField', index));
+  },
+
+  clearCommentField(index) {
+    return this.customClearValue(this.el('@pbehaviorCommentField', index));
+  },
+
+  setCommentField(index, value) {
+    return this.customSetValue(this.el('@pbehaviorCommentField', index), value);
+  },
+
+  clickCommentDelete(index) {
+    return this.customClick(this.el('@pbehaviorCommentDeleteButton', index));
+  },
+
   el,
 };
 
@@ -216,10 +258,10 @@ module.exports = {
 
     pbehaviorType: `${sel('pbehaviorType')} .v-input__slot`,
 
-    pbehaviorReason: `${sel('pbehaviorReason')} .v-input__slot`,
+    pbehaviorReason: sel('pbehaviorReason'),
 
     ruleSwitcherInput: `input${sel('pbehaviorRuleSwitcher')}`,
-    ruleSwitcher: `div${sel('pbehaviorRuleSwitcher')}`,
+    ruleSwitcher: `div${sel('pbehaviorRuleSwitcher')} .v-input__slot`,
 
     pbehaviorSimpleButton: sel('pbehaviorSimple'),
     pbehaviorAdvancedButton: sel('pbehaviorAdvanced'),
@@ -230,7 +272,7 @@ module.exports = {
     pbehaviorInterval: sel('pbehaviorInterval'),
 
     pbehaviorWeekStart: `${sel('pbehaviorWeekStart')} .v-input__slot`,
-    pbehaviorByMonth: `${sel('pbehaviorWeekStart')} .v-input__slot`,
+    pbehaviorByMonth: `${sel('pbehaviorByMonth')} .v-input__slot`,
     pbehaviorBySetPosition: sel('pbehaviorBySetPos'),
     pbehaviorByMonthDay: sel('pbehaviorByMonthDay'),
     pbehaviorByYearDay: sel('pbehaviorByYearDay'),
@@ -239,13 +281,13 @@ module.exports = {
     pbehaviorByMinute: sel('pbehaviorByMinute'),
     pbehaviorBySecond: sel('pbehaviorBySecond'),
 
-    addExdateButton: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    deleteExdateButton: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    exdateField: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    pbehaviorAddExdateButton: sel('pbehaviorAddExdateButton'),
+    pbehaviorExdateField: `${sel('pbehaviorExdate-%s')} ${sel('pbehaviorExdateField')}`,
+    pbehaviorExdateDeleteButton: `${sel('pbehaviorExdate-%s')} ${sel('pbehaviorExdateDeleteButton')}`,
 
-    addComment: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    deleteCommentButton: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
-    commentField: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    pbehaviorAddComment: sel('pbehaviorAddCommentButton'),
+    pbehaviorCommentField: `${sel('pbehaviorComment-%s')} ${sel('pbehaviorCommentField')}`,
+    pbehaviorCommentDeleteButton: `${sel('pbehaviorComment-%s')} ${sel('pbehaviorCommentDeleteButton')}`,
   },
   commands: [commands],
 };

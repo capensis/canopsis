@@ -2,16 +2,30 @@
   div
     v-layout(row)
       strong {{ $t('modals.createPbehavior.fields.exdate') }}
-    v-layout(v-for="(exdate, index) in exdates", :key="exdate.key", row)
+    v-layout(
+      :data-test="`pbehaviorExdate-${index + 1}`",
+      v-for="(exdate, index) in exdates",
+      :key="exdate.key",
+      row
+    )
       v-flex
         date-time-picker-field(
+          data-test="pbehaviorExdateField",
           :value="exdate.value",
           useSeconds,
           @input="updateFieldInArrayItem(index, 'value', $event)"
         )
-        v-btn(color="error", icon, @click="removeItemFromArray(index)")
+        v-btn(
+          data-test="pbehaviorExdateDeleteButton",
+          color="error",
+          icon,
+          @click="removeItemFromArray(index)"
+        )
           v-icon delete
-    v-btn.primary.ml-0(@click="addItem") {{ $t('modals.createPbehavior.buttons.addExdate') }}
+    v-btn.primary.ml-0(
+      data-test="pbehaviorAddExdateButton",
+      @click="addItem"
+    ) {{ $t('modals.createPbehavior.buttons.addExdate') }}
 </template>
 
 <script>

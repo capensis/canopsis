@@ -20,6 +20,7 @@
         @click:append="clear"
       )
     date-time-picker(
+      data-test="dateTimePickerCalendar",
       :value="value",
       :roundHours="roundHours",
       :opened="opened",
