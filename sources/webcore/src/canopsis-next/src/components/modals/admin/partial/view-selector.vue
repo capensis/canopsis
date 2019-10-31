@@ -19,11 +19,10 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 
 export default {
-  mixins: [modalMixin, entitiesViewMixin],
+  mixins: [entitiesViewMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -43,7 +42,7 @@ export default {
   },
   methods: {
     showViewSelectModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.selectView,
         config: {
           action: viewId => this.$emit('input', viewId),

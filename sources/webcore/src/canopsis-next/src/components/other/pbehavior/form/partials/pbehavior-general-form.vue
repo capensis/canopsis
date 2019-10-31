@@ -51,7 +51,6 @@ import { ENTITIES_TYPES, MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMAT
 
 import authMixin from '@/mixins/auth';
 import formMixin from '@/mixins/form';
-import modalMixin from '@/mixins/modal';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
@@ -62,7 +61,7 @@ export default {
     DateTimePickerField,
     RRuleForm,
   },
-  mixins: [authMixin, formMixin, modalMixin],
+  mixins: [authMixin, formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -106,7 +105,7 @@ export default {
   },
   methods: {
     showCreateFilterModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createFilter,
         config: {
           hiddenFields: ['title'],
