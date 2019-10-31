@@ -853,7 +853,7 @@ class PBehaviorManager(object):
             try:
                 if self.check_active_pbehavior(now, pbehavior):
                     yield pbehavior
-            except ValueError as exept:
+            except ValueError:
                 self.logger.exception(
                     "Can't check if the pbehavior is active.")
 
@@ -872,7 +872,7 @@ class PBehaviorManager(object):
             try:
                 if self.check_active_pbehavior(now, pb):
                     results.append(pb)
-            except ValueError as exept:
+            except ValueError:
                 self.logger.exception(
                     "Can't check if the pbehavior is active.")
 
