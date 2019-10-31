@@ -16,8 +16,6 @@ Vagrantfile
 requirements_control
 docker/files/bricks/brick-*
 docker/bricks
-tools/catag/catag
-tools/catag/vendor
 .DS_Store
 .Spotlight-V100
 .Trashes
