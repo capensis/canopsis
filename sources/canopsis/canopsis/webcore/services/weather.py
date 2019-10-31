@@ -420,64 +420,6 @@ class __TileData(object):
         return None
 
 
-def __format_pbehavior(pbehavior):
-    """
-    Rewrite a pbehavior from db format to front format.
-
-    :param dict pbehavior: a pbehavior dict
-    :return: a formatted pbehavior
-    """
-    EVERY = "Every {}"
-    to_delete = [
-        "connector", "filter", "connector_name", "eids"
-    ]
-
-    pbehavior["behavior"] = pbehavior.pop("name")
-    pbehavior["dtstart"] = pbehavior.pop("tstart")
-    pbehavior["dtend"] = pbehavior.pop("tstop")
-    pbehavior["rrule"] = pbehavior.get("rrule", "")
-
-    # parse the rrule to get is "text"
-    rrule = {}
-    rrule["rrule"] = pbehavior["rrule"]
-
-    if pbehavior["rrule"] is not None:
-
-        rrule_str = pbehavior["rrule"]
-        if rrule_str[0:6] == "RRULE:":
-            rrule_str = rrule_str[6:]
-
-        try:
-            freq = get_rrule_freq(rrule_str)
-
-            if freq == "SECONDLY":
-                rrule["text"] = EVERY.format("second")
-            elif freq == "MINUTELY":
-                rrule["text"] = EVERY.format("minute")
-            elif freq == "HOURLY":
-                rrule["text"] = EVERY.format("hour")
-            elif freq == "DAILY":
-                rrule["text"] = EVERY.format("day")
-            elif freq == "WEEKLY":
-                rrule["text"] = EVERY.format("week")
-            elif freq == "MONTHLY":
-                rrule["text"] = EVERY.format("month")
-            elif freq == "YEARLY":
-                rrule["text"] = EVERY.format("year")
-        except ValueError as e:
-            print("Can't get rrule freq on rrule : {}".format("rrule_str"))
-
-    pbehavior["rrule"] = rrule
-
-    for key in to_delete:
-        try:
-            pbehavior.pop(key)
-        except KeyError:
-            pass
-
-    return pbehavior
-
-
 def _pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
@@ -840,11 +782,8 @@ def exports(ws):
         active_pbehaviors = pbehavior_manager.get_active_pbehaviors_on_entities(
             entity_ids)
         for pbehavior in active_pbehaviors:
-            pbehavior_eids = pbehavior.get('eids', [])
-            pbehavior = __format_pbehavior(pbehavior)
             pbehavior['isActive'] = True
-
-            for eid in pbehavior_eids:
+            for eid in pbehavior.get('eids', []):
                 if eid in entities:
                     entities[eid]['pbehaviors'].append(pbehavior)
 
