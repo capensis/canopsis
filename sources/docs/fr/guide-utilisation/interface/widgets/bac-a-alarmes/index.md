@@ -344,6 +344,9 @@ Description  | 1° colonne  | 2° colonne | 3° colonne
 Exclure les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
 Uniquement les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
 
+!!! attention
+    L'attribut fictif `has_active_pb` ne prend pas en compte les [rrule](../../../guide-administration/moteurs/moteur-pbehavior.md#regles-de-recurrence-rrule)(règles de récurrence). Il ne prend en compte que la première occurrence du PBehavior.
+
 ###### Changement de criticité
 
 Description  | 1° colonne  | 2° colonne | 3° colonne
