@@ -2,51 +2,51 @@
   div
     v-layout(row)
       v-text-field(
-      v-validate="'required'",
-      :value="form.name",
-      :label="$t('modals.createPbehavior.fields.name')",
-      :error-messages="errors.collect('name')",
-      name="name",
-      @input="updateField('name', $event)"
+        v-validate="'required'",
+        :value="form.name",
+        :label="$t('modals.createPbehavior.fields.name')",
+        :error-messages="errors.collect('name')",
+        name="name",
+        @input="updateField('name', $event)"
       )
     v-layout(row)
       date-time-picker-field(
-      v-validate="tstartRules",
-      :value="form.tstart",
-      :label="$t('modals.createPbehavior.fields.start')",
-      name="tstart",
-      @input="updateField('tstart', $event)"
+        v-validate="tstartRules",
+        :value="form.tstart",
+        :label="$t('modals.createPbehavior.fields.start')",
+        name="tstart",
+        @input="updateField('tstart', $event)"
       )
     v-layout(row)
       date-time-picker-field(
-      v-validate="tstopRules",
-      :value="form.tstop",
-      :label="$t('modals.createPbehavior.fields.stop')",
-      name="tstop",
-      @input="updateField('tstop', $event)"
+        v-validate="tstopRules",
+        :value="form.tstop",
+        :label="$t('modals.createPbehavior.fields.stop')",
+        name="tstop",
+        @input="updateField('tstop', $event)"
       )
     v-layout(v-if="!noFilter", row)
       v-btn.primary(type="button", @click="showCreateFilterModal") {{ $t('common.filter') }}
     r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
     v-layout(row)
       v-combobox(
-      v-validate="'required'",
-      :value="form.reason",
-      :label="$t('modals.createPbehavior.fields.reason')",
-      :items="reasons",
-      :error-messages="errors.collect('reason')",
-      name="reason",
-      @input="updateField('reason', $event)"
+        v-validate="'required'",
+        :value="form.reason",
+        :label="$t('modals.createPbehavior.fields.reason')",
+        :items="reasons",
+        :error-messages="errors.collect('reason')",
+        name="reason",
+        @input="updateField('reason', $event)"
       )
     v-layout(row)
       v-select(
-      v-validate="'required'",
-      :value="form.type_",
-      :label="$t('modals.createPbehavior.fields.type')",
-      :items="types",
-      :error-messages="errors.collect('type')",
-      name="type",
-      @input="updateField('type_', $event)"
+        v-validate="'required'",
+        :value="form.type_",
+        :label="$t('modals.createPbehavior.fields.type')",
+        :items="types",
+        :error-messages="errors.collect('type')",
+        name="type",
+        @input="updateField('type_', $event)"
       )
 </template>
 
@@ -56,7 +56,6 @@ import { ENTITIES_TYPES, MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMAT
 
 import authMixin from '@/mixins/auth';
 import formMixin from '@/mixins/form';
-import modalMixin from '@/mixins/modal';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
@@ -67,7 +66,7 @@ export default {
     DateTimePickerField,
     RRuleForm,
   },
-  mixins: [authMixin, formMixin, modalMixin],
+  mixins: [authMixin, formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -111,7 +110,7 @@ export default {
   },
   methods: {
     showCreateFilterModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createFilter,
         config: {
           hiddenFields: ['title'],

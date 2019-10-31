@@ -48,11 +48,10 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [modalMixin, formMixin],
+  mixins: [formMixin],
   model: {
     prop: 'annotationLine',
     event: 'input',
@@ -70,7 +69,7 @@ export default {
   },
   methods: {
     showColorPickerModal(key) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),

@@ -18,8 +18,6 @@ import sanitizeHTML from 'sanitize-html';
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
-import '@/services/features';
-
 import * as config from '@/config';
 import * as constants from '@/constants';
 import App from '@/app.vue';
@@ -28,6 +26,10 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
+import featuresService from '@/services/features';
+
+import ModalsPlugin from '@/plugins/modals';
+import PopupsPlugin from '@/plugins/popups';
 import SetSeveralPlugin from '@/plugins/set-several';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
@@ -37,6 +39,8 @@ import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
+
+import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
 
 Vue.use(VueResizeText);
@@ -112,6 +116,30 @@ Vue.use(VeeValidate, {
   },
 });
 
+const { MODALS } = constants;
+
+Vue.use(ModalsPlugin, {
+  store,
+
+  components: {
+    ...modalsComponents,
+    ...featuresService.get('components.modals.components'),
+  },
+
+  dialogPropsMap: {
+    [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
+    [MODALS.createWidget]: { maxWidth: 500, lazy: true },
+    [MODALS.alarmsList]: { fullscreen: true, lazy: true },
+    [MODALS.createFilter]: { maxWidth: 920, lazy: true },
+    [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
+    [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
+    [MODALS.watcher]: { maxWidth: 920, lazy: true },
+
+    ...featuresService.get('components.modals.dialogPropsMap'),
+  },
+});
+
+Vue.use(PopupsPlugin, { store });
 Vue.use(SetSeveralPlugin);
 
 Vue.config.productionTip = false;
@@ -120,7 +148,7 @@ Vue.config.productionTip = false;
  * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
  */
 window.addEventListener('unhandledrejection', () => {
-  store.dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') });
+  store.dispatch('popups/error', { text: i18n.t('errors.default') });
 });
 
 if (process.env.NODE_ENV === 'development') {

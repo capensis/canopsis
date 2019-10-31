@@ -1,22 +1,20 @@
 <template lang="pug">
   div.popups(v-if="popups.length", data-test="popupsWrapper")
-    popup(v-for="popup in popups", v-bind="popup", :key="popup.id")
+    popup-item(v-for="popup in popups", v-bind="popup", :key="popup.id")
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-import Popup from './popup.vue';
-
-const { mapGetters } = createNamespacedHelpers('popup');
+import PopupItem from './popup-item.vue';
 
 /**
  * Wrapper for the popups
  */
 export default {
-  components: { Popup },
+  components: { PopupItem },
   computed: {
-    ...mapGetters(['popups']),
+    popups() {
+      return this.$store.getters[`${this.$popups.moduleName}/popups`];
+    },
   },
 };
 </script>

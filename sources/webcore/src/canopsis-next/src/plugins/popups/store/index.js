@@ -1,3 +1,5 @@
+import { POPUP_TYPES } from '@/constants';
+
 import uid from '@/helpers/uid';
 
 export const types = {
@@ -33,6 +35,19 @@ export default {
     },
     remove({ commit }, { id }) {
       commit(types.REMOVE, { id });
+    },
+
+    success({ dispatch }, popup) {
+      return dispatch('add', { ...popup, type: POPUP_TYPES.success });
+    },
+    info({ dispatch }, popup) {
+      return dispatch('add', { ...popup, type: POPUP_TYPES.info });
+    },
+    warning({ dispatch }, popup) {
+      return dispatch('add', { ...popup, type: POPUP_TYPES.warning });
+    },
+    error({ dispatch }, popup) {
+      return dispatch('add', { ...popup, type: POPUP_TYPES.error });
     },
   },
 };
