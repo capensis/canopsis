@@ -24,7 +24,7 @@
         )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -33,7 +33,6 @@ import { cloneDeep, pick } from 'lodash';
 
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_MAP } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 
@@ -69,7 +68,7 @@ export default {
     },
   },
   components: { MixedField },
-  mixins: [popupMixin, modalInnerMixin, entitiesRightMixin],
+  mixins: [modalInnerMixin, entitiesRightMixin],
   data() {
     const enrichmentActionsTypes = cloneDeep(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES);
 
@@ -107,7 +106,7 @@ export default {
           await this.config.action(data);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

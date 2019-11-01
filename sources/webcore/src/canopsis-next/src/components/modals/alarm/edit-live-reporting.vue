@@ -9,7 +9,7 @@
       v-divider
       v-layout.py-1(justify-end)
         v-btn(
-          @click="hideModal",
+          @click="$modals.hide",
           depressed,
           flat,
           data-test="liveReportingCancelButton"
@@ -80,7 +80,7 @@ export default {
           await this.config.action(this.form);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

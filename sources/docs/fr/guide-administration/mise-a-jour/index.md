@@ -45,8 +45,8 @@ Veuillez tout d'abord obligatoirement lire les [notes de version](../../index.md
 
 Puisque la [procédure d'installation par paquets](../installation/installation-paquets.md) ajoute un dépôt Canopsis dans votre gestionnaire de paquets, celui-ci vous permettra de mettre à jour Canopsis avec le reste de votre système.
 
-!!!! attention
-     **Cette mise à jour causera une interruption de service.**
+!!! attention
+    **Cette mise à jour causera une interruption de service.**
 
 Sur un environnement Debian :
 ```sh

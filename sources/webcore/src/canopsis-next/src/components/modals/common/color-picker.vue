@@ -16,7 +16,7 @@
           data-test="colorPickerCancelButton",
           depressed,
           flat,
-          @click="hideModal"
+          @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
           data-test="colorPickerSubmitButton",
@@ -58,7 +58,7 @@ export default {
         await this.config.action(result);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

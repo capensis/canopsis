@@ -11,7 +11,7 @@
           :loading="submitting",
           :disabled="submitting"
         ) {{ $t('common.yes') }}
-        v-btn.error(@click="hideModal") {{ $t('common.no') }}
+        v-btn.error(@click="$modals.hide") {{ $t('common.no') }}
 </template>
 
 <script>
@@ -35,7 +35,7 @@ export default {
       if (this.config.action) {
         await this.config.action();
       }
-      this.hideModal();
+      this.$modals.hide();
       this.submitting = false;
     },
   },

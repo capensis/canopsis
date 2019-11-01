@@ -2,7 +2,7 @@
 
 Bienvenue sur la nouvelle documentation Canopsis !
 
-Cette plateforme regroupe toutes les informations permettant de mettre en place, d'utiliser et de contribuer à Canopsis, depuis la version 3.5.0.
+Cette plateforme regroupe toutes les informations permettant de mettre en place, d'utiliser et de contribuer à Canopsis.
 
 ## Guides
 
@@ -13,8 +13,9 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 
 ## Notes de version
 
-Liste des changements et procédures particulières à suivre pour la mise à jour vers une nouvelle branche de Canopsis.
+Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
 
+*  [3.31.0](notes-de-version/3.31.0.md)
 *  [3.30.0](notes-de-version/3.30.0.md)
 *  [3.29.0](notes-de-version/3.29.0.md)
 *  [3.28.0](notes-de-version/3.28.0.md)

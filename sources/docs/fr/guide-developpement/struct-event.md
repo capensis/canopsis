@@ -89,6 +89,17 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 }
 ```
 
+### Event Changestate Structure
+
+```javascript
+{
+  "event_type": "changestate",   // mandatory
+
+  "author":           // changestate author, optional
+  "output":           // changestate comment, optional
+}
+```
+
 ### Event Cancel Structure
 
 ```javascript
@@ -197,4 +208,5 @@ uncancel | Utilisé pour annuler un évènement. le statut précédent est resta
 ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
 snooze | Utilisé pour placer un Snooze sur une alarme |
 declareticket | Utilisé pour déclarer un ticket |
-assocticket | Utilisé pour associer un ticcket |
+assocticket | Utilisé pour associer un ticket |
+changestate | Utilisé pour changer et verrouiller la criticité d'une alarme |

@@ -12,9 +12,9 @@ export default {
         await request.post(API_ROUTES.event, qs.stringify({ event: JSON.stringify(data) }), {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         });
-        await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
+        await dispatch('popups/success', { text: i18n.t('success.default') }, { root: true });
       } catch (e) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
         console.warn(e);
       }
     },

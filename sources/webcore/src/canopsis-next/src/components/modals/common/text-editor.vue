@@ -8,7 +8,7 @@
     v-divider
     v-card-actions
       v-layout.py-1(justify-end)
-        v-btn(data-test="textEditorCancelButton", @click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(data-test="textEditorCancelButton", @click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(data-test="textEditorSubmitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -42,7 +42,7 @@ export default {
         await this.config.action(this.text);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

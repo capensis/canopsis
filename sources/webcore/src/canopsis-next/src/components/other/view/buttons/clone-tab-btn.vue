@@ -17,7 +17,6 @@ import { MODALS } from '@/constants';
 import { generateCopyOfViewTab, getViewsTabsWidgetsIdsMappings } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 const { mapGetters: viewMapGetters, mapActions: viewMapActions } = createNamespacedHelpers('view');
@@ -25,7 +24,6 @@ const { mapGetters: viewMapGetters, mapActions: viewMapActions } = createNamespa
 export default {
   mixins: [
     authMixin,
-    modalMixin,
     entitiesUserPreferenceMixin,
   ],
   props: {
@@ -45,7 +43,7 @@ export default {
     }),
 
     showSelectViewModal(tab) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.selectView,
         config: {
           action: viewId => this.showCloneTabModalWithPromise(tab, viewId),
@@ -54,7 +52,7 @@ export default {
     },
 
     showCloneTabModalWithPromise(tab, viewId) {
-      return new Promise(resolve => this.showModal({
+      return new Promise(resolve => this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.viewTab.duplicate.title'),

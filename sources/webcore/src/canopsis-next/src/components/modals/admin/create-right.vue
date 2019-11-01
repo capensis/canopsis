@@ -8,7 +8,7 @@
     v-divider
     v-card-actions
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -17,7 +17,6 @@ import { MODALS } from '@/constants';
 
 import { generateRight } from '@/helpers/entities';
 
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 
@@ -29,7 +28,7 @@ export default {
     validator: 'new',
   },
   components: { RightForm },
-  mixins: [popupMixin, modalInnerMixin, entitiesRightMixin],
+  mixins: [modalInnerMixin, entitiesRightMixin],
   data() {
     return {
       form: {
@@ -49,14 +48,14 @@ export default {
 
           await this.createRight({ data });
 
-          this.addSuccessPopup({ text: this.$t('success.default') });
-          this.hideModal();
+          this.$popups.success({ text: this.$t('success.default') });
+          this.$modals.hide();
         }
         if (this.config.action) {
           await this.config.action();
         }
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
   },

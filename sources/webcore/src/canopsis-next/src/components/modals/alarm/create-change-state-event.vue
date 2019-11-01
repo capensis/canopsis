@@ -18,7 +18,7 @@
             )
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
@@ -66,7 +66,7 @@ export default {
       if (isFormValid) {
         await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

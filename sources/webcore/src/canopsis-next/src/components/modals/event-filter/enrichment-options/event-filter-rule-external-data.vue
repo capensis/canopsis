@@ -7,7 +7,7 @@
       v-textarea(:value="externalDataValue", @input="checkValidity")
     v-divider
     v-layout.pa-2(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
         :disabled="error",
         @click.prevent="submit"
@@ -49,7 +49,7 @@ export default {
     },
     submit() {
       this.config.action(this.newVal);
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

@@ -67,7 +67,7 @@ export default {
 
         return { total, entities: data };
       } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         return { total: 0, entities: [] };
       }
@@ -100,7 +100,7 @@ export default {
         console.error(err);
 
         commit(types.FETCH_LIST_FAILED, { widgetId });
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
       }
     },
 
@@ -116,7 +116,7 @@ export default {
       } catch (err) {
         console.error(err);
         commit(types.FETCH_GENERAL_LIST_FAILED);
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
       }
     },
 

@@ -3,7 +3,7 @@
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createPause.title') }}
-        v-btn(icon, dark, @click="hideModal")
+        v-btn(icon, dark, @click="$modals.hide")
           v-icon close
     v-card-text
       v-textarea(
@@ -23,7 +23,7 @@
       )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(type="submit", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
@@ -56,7 +56,7 @@ export default {
           await this.config.action(this.form);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

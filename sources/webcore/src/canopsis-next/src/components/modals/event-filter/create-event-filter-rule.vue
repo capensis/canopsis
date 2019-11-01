@@ -38,7 +38,7 @@
     v-divider
     v-alert(:value="errors.has('actions')", type="error") {{ $t('eventFilter.actionsRequired') }}
     v-layout.pa-2(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -126,7 +126,7 @@ export default {
   },
   methods: {
     editPattern() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createEventFilterRulePattern,
         config: {
           pattern: this.form.pattern,
@@ -135,7 +135,7 @@ export default {
       });
     },
     editActions() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.eventFilterRuleActions,
         config: {
           actions: this.enrichmentOptions.actions,
@@ -147,7 +147,7 @@ export default {
       });
     },
     editExternalData() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.eventFilterRuleExternalData,
         config: {
           value: this.enrichmentOptions.externalData,
@@ -167,11 +167,11 @@ export default {
             on_success: this.enrichmentOptions.onSuccess,
             on_failure: this.enrichmentOptions.onFailure,
           });
-          this.hideModal();
+          this.$modals.hide();
         }
       } else {
         this.config.action({ ...this.form });
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

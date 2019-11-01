@@ -72,8 +72,6 @@ import {
 } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
-import popupMixin from '@/mixins/popup';
-import modalMixin from '@/mixins/modal';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -90,8 +88,6 @@ export default {
   },
   mixins: [
     authMixin,
-    popupMixin,
-    modalMixin,
     entitiesRightMixin,
     entitiesRoleMixin,
     entitiesUserMixin,
@@ -179,7 +175,7 @@ export default {
     },
 
     showCreateUserModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createUser,
         config: {
           action: data => this.createUser({ data: prepareUserByData(data) }),
@@ -188,13 +184,13 @@ export default {
     },
 
     showCreateRoleModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createRole,
       });
     },
 
     showCreateRightModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createRight,
         config: {
           action: this.fetchRightsList,
@@ -207,7 +203,7 @@ export default {
     },
 
     cancel() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: this.clearChangedRoles,
@@ -216,7 +212,7 @@ export default {
     },
 
     submit() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: this.updateRoles,
@@ -247,12 +243,12 @@ export default {
           await this.fetchCurrentUser();
         }
 
-        this.addSuccessPopup({ text: this.$t('success.default') });
+        this.$popups.success({ text: this.$t('success.default') });
         this.clearChangedRoles();
 
         this.pending = false;
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('errors.default') });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
     },
 

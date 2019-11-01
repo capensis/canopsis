@@ -7,7 +7,7 @@
       action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
@@ -59,7 +59,7 @@ export default {
           await this.config.action(data);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

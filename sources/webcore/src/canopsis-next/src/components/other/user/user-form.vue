@@ -105,8 +105,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
-
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
@@ -118,7 +116,6 @@ export default {
     ProgressOverlay,
     ViewSelector,
   },
-  mixins: [popupMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -185,11 +182,11 @@ export default {
     }),
 
     addAuthKeyCopiedSuccessPopup() {
-      this.addSuccessPopup({ text: this.$t('success.authKeyCopied') });
+      this.$popups.success({ text: this.$t('success.authKeyCopied') });
     },
 
     addAuthKeyCopiedErrorPopup() {
-      this.addErrorPopup({ text: this.$t('errors.default') });
+      this.$popups.error({ text: this.$t('errors.default') });
     },
   },
 };

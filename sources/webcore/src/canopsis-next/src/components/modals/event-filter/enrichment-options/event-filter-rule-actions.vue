@@ -29,7 +29,7 @@
                   div(v-if="action.to") {{ $t('common.to') }}: {{ action.to }}
     v-divider
     v-layout.pa-2(justify-end)
-      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     showCreateActionModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.eventFilterRuleCreateAction,
         config: {
           action: ruleAction => this.actions.push(ruleAction),
@@ -70,7 +70,7 @@ export default {
     },
 
     showEditActionModal(index) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.eventFilterRuleCreateAction,
         config: {
           ruleAction: this.actions[index],
@@ -85,7 +85,7 @@ export default {
 
     submit() {
       this.config.action(this.actions);
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

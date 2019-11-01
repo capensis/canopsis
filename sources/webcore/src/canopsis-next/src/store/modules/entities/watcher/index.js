@@ -81,7 +81,7 @@ export default {
           error: err,
         });
 
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
       }
     },
   },

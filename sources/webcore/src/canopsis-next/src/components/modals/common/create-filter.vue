@@ -26,7 +26,7 @@
       v-layout.py-1(justify-end)
         v-btn(
           data-test="createFilterCancelButton",
-          @click="hideModal",
+          @click="$modals.hide",
           depressed,
           flat
         ) {{ $t('common.cancel') }}
@@ -94,7 +94,7 @@ export default {
           await this.config.action(this.form);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

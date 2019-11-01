@@ -59,7 +59,6 @@ import {
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
@@ -72,7 +71,6 @@ export default {
   },
   mixins: [
     authMixin,
-    modalMixin,
     widgetActionPanelWatcherEntityMixin,
     entitiesPbehaviorCommentMixin,
     entitiesWatcherEntityMixin,
@@ -273,7 +271,7 @@ export default {
   },
   methods: {
     showPbehaviorsListModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
           pbehaviors: this.pausePbehaviors,

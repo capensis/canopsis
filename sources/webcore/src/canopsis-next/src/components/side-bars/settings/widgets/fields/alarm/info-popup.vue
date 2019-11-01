@@ -13,12 +13,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
-
 export default {
-  mixins: [
-    modalMixin,
-  ],
   model: {
     prop: 'popups',
     event: 'input',
@@ -35,7 +30,7 @@ export default {
   },
   methods: {
     edit() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.infoPopupSetting,
         config: {
           infoPopups: this.popups,
