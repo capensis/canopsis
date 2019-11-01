@@ -62,7 +62,6 @@ import { MODALS } from '@/constants';
 import { prepareUserByData } from '@/helpers/entities';
 import { getUsersSearchByText } from '@/helpers/entities-search';
 
-import modalMixin from '@/mixins/modal';
 import viewQuery from '@/mixins/view/query';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
@@ -75,7 +74,7 @@ export default {
     RefreshBtn,
     SearchField,
   },
-  mixins: [modalMixin, viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
+  mixins: [viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {
     return {
       searchingText: '',
@@ -106,7 +105,7 @@ export default {
   },
   methods: {
     showRemoveUserModal(id) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -118,7 +117,7 @@ export default {
     },
 
     showRemoveSelectedUsersModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -132,7 +131,7 @@ export default {
     },
 
     showEditUserModal(user) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createUser,
         config: {
           title: this.$t('modals.editUser.title'),
@@ -151,7 +150,7 @@ export default {
     },
 
     showCreateUserModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createUser,
         config: {
           action: async (data) => {
