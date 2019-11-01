@@ -1001,9 +1001,16 @@ export const EXPLOITATION_PAGES_RULES = {
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
-  [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
+/*  [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
-  [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
+  [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action, */
+};
+
+export const POPUP_TYPES = {
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
 };
