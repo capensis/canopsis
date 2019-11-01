@@ -11,11 +11,9 @@
 </template>
 
 <script>
-import modalMixin from '@/mixins/modal';
 import { MODALS } from '@/constants';
 
 export default {
-  mixins: [modalMixin],
   props: {
     value: {
       type: Object,
@@ -28,7 +26,7 @@ export default {
   },
   methods: {
     showEditModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.statsDateInterval,
         config: {
           interval: this.value,

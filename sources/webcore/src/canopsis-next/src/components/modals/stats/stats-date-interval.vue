@@ -39,7 +39,7 @@
           data-test="statsDateIntervalCancelButton",
           depressed,
           flat,
-          @click="hideModal"
+          @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
           data-test="statsDateIntervalSubmitButton",
@@ -176,7 +176,7 @@ export default {
           this.config.action({ ...this.periodForm, ...this.dateSelectorForm });
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

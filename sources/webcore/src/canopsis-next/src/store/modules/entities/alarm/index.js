@@ -49,7 +49,7 @@ export default {
           throw err;
         }
 
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         return { alarms: [], total: 0 };
       }
@@ -79,7 +79,7 @@ export default {
           },
         });
       } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED, { widgetId });
       }

@@ -1,11 +1,8 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import popupMixin from '@/mixins/popup';
-
 const { mapActions, mapGetters } = createNamespacedHelpers('eventFilterRule');
 
 export default {
-  mixins: [popupMixin],
   computed: {
     ...mapGetters({
       eventFilterRulesPending: 'pending',

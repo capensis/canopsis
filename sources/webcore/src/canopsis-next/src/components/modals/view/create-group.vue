@@ -14,7 +14,7 @@
       )
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
         @click="submit",
         data-test="createGroupSubmitButton"
@@ -31,7 +31,6 @@ import { get } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
@@ -42,7 +41,6 @@ export default {
     validator: 'new',
   },
   mixins: [
-    popupMixin,
     modalInnerMixin,
     entitiesViewGroupMixin,
     rightsTechnicalViewMixin,
@@ -68,7 +66,7 @@ export default {
   },
   methods: {
     remove() {
-      this.showModal({
+      this.$modals.show({
         name: this.$constants.MODALS.confirmation,
         config: {
           action: async () => {
@@ -76,9 +74,9 @@ export default {
               await this.removeGroup({ id: this.config.group._id });
               await this.fetchGroupsList();
 
-              this.hideModal();
+              this.$modals.hide();
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('modals.group.errors.isNotEmpty') });
+              this.$popups.error({ text: this.$t('modals.group.errors.isNotEmpty') });
             }
           },
         },
@@ -99,7 +97,7 @@ export default {
 
         await this.fetchGroupsList();
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

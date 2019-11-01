@@ -55,6 +55,29 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 }
 ```
 
+### Event Declareticket Structure
+
+```javascript
+{
+    "event_type": "declareticket",    // mandatory
+
+    "author":               // Declareticket author, optional
+    "output":               // Declareticket comment, optional
+}
+```
+
+### Event Assocticket Structure
+
+```javascript
+{
+    "event_type": "assocticket",    // mandatory
+
+    "author":               // Assocticket author, optional
+    "ticket":               // Assocticket number, optional
+    "output":               // Assocticket comment, optional
+}
+```
+
 ### Event Snooze Structure
 
 ```javascript
@@ -63,6 +86,17 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
   "author":           // snooze author, optional
   "output":           // snooze comment, optional
+}
+```
+
+### Event Changestate Structure
+
+```javascript
+{
+  "event_type": "changestate",   // mandatory
+
+  "author":           // changestate author, optional
+  "output":           // changestate comment, optional
 }
 ```
 
@@ -173,3 +207,6 @@ cancel | Utilisé pour cancel un évènement et mettre son statut dans un état 
 uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
 ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
 snooze | Utilisé pour placer un Snooze sur une alarme |
+declareticket | Utilisé pour déclarer un ticket |
+assocticket | Utilisé pour associer un ticket |
+changestate | Utilisé pour changer et verrouiller la criticité d'une alarme |

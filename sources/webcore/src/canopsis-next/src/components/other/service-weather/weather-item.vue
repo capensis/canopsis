@@ -36,8 +36,6 @@ import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
-import popupMixin from '@/mixins/popup';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -46,7 +44,7 @@ export default {
   components: {
     VRuntimeTemplate,
   },
-  mixins: [authMixin, modalMixin, popupMixin, entitiesWatcherEntityMixin],
+  mixins: [authMixin, entitiesWatcherEntityMixin],
   props: {
     watcher: {
       type: Object,
@@ -131,7 +129,7 @@ export default {
     },
 
     showMainInfoModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.watcher,
         config: {
           color: this.color,
@@ -160,7 +158,7 @@ export default {
           viewFilters: [watcherFilter],
         };
 
-        this.showModal({
+        this.$modals.show({
           name: MODALS.alarmsList,
           config: {
             widget: {
@@ -174,7 +172,7 @@ export default {
           },
         });
       } catch (err) {
-        this.addErrorPopup({
+        this.$popups.error({
           text: this.$t('errors.default'),
         });
       }
@@ -184,7 +182,7 @@ export default {
       const entityFields = convertObjectToTreeview(this.watcher, 'entity');
       const variables = [entityFields];
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.variablesHelp,
         config: {
           variables,
