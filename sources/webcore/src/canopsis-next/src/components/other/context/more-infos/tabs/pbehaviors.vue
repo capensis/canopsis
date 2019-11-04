@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.secondary.lighten-2(flat)
     v-card-text
-      v-data-table.ma-0.pbehaviorsTable(:items="pbehaviors", :headers="headers")
+      v-data-table.ma-0(:items="pbehaviors", :headers="headers")
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
@@ -67,46 +67,47 @@ export default {
       return [
         {
           text: this.$t('common.name'),
-          sortable: false,
+          value: 'name',
         },
         {
           text: this.$t('common.author'),
-          sortable: false,
+          value: 'author',
         },
         {
           text: this.$t('pbehaviors.connector'),
-          sortable: false,
+          value: 'connector',
         },
         {
           text: this.$t('pbehaviors.connectorName'),
-          sortable: false,
+          value: 'connector_name',
         },
         {
           text: this.$t('pbehaviors.isEnabled'),
-          sortable: false,
+          value: 'isEnabled',
         },
         {
           text: this.$t('pbehaviors.begins'),
-          sortable: false,
+          value: 'tstart',
         },
         {
           text: this.$t('pbehaviors.ends'),
-          sortable: false,
+          value: 'tstop',
         },
         {
           text: this.$t('pbehaviors.type'),
-          sortable: false,
+          value: 'type_',
         },
         {
           text: this.$t('pbehaviors.reason'),
-          sortable: false,
+          value: 'reason',
         },
         {
           text: this.$t('pbehaviors.rrule'),
-          sortable: false,
+          value: 'rrule',
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actionsLabel',
           sortable: false,
         },
       ];
