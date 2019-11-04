@@ -25,7 +25,7 @@
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         date-interval-selector.my-1(
           v-model="dateSelectorForm",
-          tstopRules="after_custom:tstart",
+          :tstopRules="tstopRules",
           @update:startObjectValue="updateStartObjectValue",
           @update:stopObjectValue="updateStopObjectValue"
         )
@@ -140,6 +140,10 @@ export default {
         start: this.$options.filters.date(this.dateObjectValues.start, 'long', false),
         stop: this.$options.filters.date(this.dateObjectValues.stop, 'long', false),
       });
+    },
+
+    tstopRules() {
+      return `after_custom:${this.dateSelectorForm.tstart}`;
     },
   },
   created() {
