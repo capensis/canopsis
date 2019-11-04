@@ -109,8 +109,32 @@ export default {
           }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
-            if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
-              accSecond.push(this.removePbehavior({ id: pbehavior._id }));
+            const {
+              author,
+              exdate,
+              filter,
+              name,
+              reason,
+              rrule,
+              tstart,
+              type_,
+            } = pbehavior;
+
+            if (type_ === PBEHAVIOR_TYPES.pause) {
+              accSecond.push(this.updatePbehavior({
+                data: {
+                  author,
+                  exdate,
+                  filter,
+                  name,
+                  reason,
+                  rrule,
+                  tstart,
+                  tstop: Math.round(Date.now() / 1000),
+                  type_,
+                },
+                id: pbehavior._id,
+              }));
             }
 
             return accSecond;
