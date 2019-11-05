@@ -251,8 +251,8 @@ module.exports = {
 
     pbehaviorName: sel('pbehaviorFormName'),
 
-    pbehaviorStartDate: sel('startDateTimePicker'),
-    pbehaviorEndDate: sel('stopDateTimePicker'),
+    pbehaviorStartDate: `${sel('startDateTimePicker')} ${sel('dateTimePickerField')}`,
+    pbehaviorEndDate: `${sel('stopDateTimePicker')} ${sel('dateTimePickerField')}`,
 
     pbehaviorFilterButton: sel('pbehaviorFilterButton'),
 

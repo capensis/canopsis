@@ -10,6 +10,12 @@ const {
   INTERVAL_RANGES,
   FILTER_OPERATORS,
   ALARMS_MASS_ACTIONS,
+  WEEK_DAYS,
+  DATE_INTERVAL_MINUTES,
+  ALARMS_SHARED_ACTIONS,
+  PERIODICAL_BEHAVIOR_RESONES,
+  PERIODICAL_BEHAVIOR_FREQUENCY,
+  ALARMS_SHARED_DROPDOWN_ACTIONS,
   FILTER_COLUMNS,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
@@ -74,10 +80,10 @@ module.exports = {
         enableHtml: true,
         liveReporting: {
           // calendarStartDate: {
-        //     minute: 0,
-        //     hour: 12,
-        //     day: 12,
-        //   },
+          //   minute: 15,
+          //   hour: 12,
+          //   day: 12,
+          // },
         //   endDate: '13/09/2019 00:00',
           range: INTERVAL_RANGES.LAST_YEAR,
         },
@@ -135,7 +141,9 @@ module.exports = {
 
   'Table widget alarms': (browser) => {
     const alarmsTable = browser.page.tables.alarms();
+    const commonTable = browser.page.tables.common();
     const dateIntervalField = browser.page.fields.dateInterval();
+    const pbehaviorForm = browser.page.forms.pbehavior();
 
     browser.page.view()
       .clickMenuViewButton();
@@ -173,7 +181,7 @@ module.exports = {
       .clickOnAlarmRow('534c7a04-4531-4561-9c17-2689286519a2')
     // 534c7a04-4531-4561-9c17-2689286519a2 first
     // a2b5e46c-b0cf-4c45-ab50-7a06f28c7a59 last
-      .clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', 1);
+      .clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', ALARMS_SHARED_ACTIONS.ACK);
 
     browser.page.modals.alarm.createAckEvent()
       .verifyModalOpened()
@@ -187,7 +195,7 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
-    alarmsTable.clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', 3);
+    alarmsTable.clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', ALARMS_SHARED_ACTIONS.SNOOZE_ALARM);
 
     browser.page.modals.alarm.createSnoozeEvent()
       .verifyModalOpened()
@@ -198,27 +206,48 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
-    alarmsTable.clickOnDropDownActions('534c7a04-4531-4561-9c17-2689286519a2', 1);
+    alarmsTable.clickOnDropDownActions('534c7a04-4531-4561-9c17-2689286519a2', ALARMS_SHARED_DROPDOWN_ACTIONS.PERIODICAL_BEHAVIOR);
 
     browser.page.modals.alarm.createPbehavior()
       .verifyModalOpened();
 
-    browser.page.forms.pbehavior()
+    pbehaviorForm
       .clearName()
       .clickName()
       .setName('Name')
-      // .clickStartDate()
-      // .clickEndDate()
-      // .clickFilter()
+      .clickStartDate();
+
+    dateIntervalField
+      .clickDatePickerDayTab()
+      .selectCalendarDay(3)
+      .clickDatePickerHoursTab()
+      .selectCalendarHour(16)
+      .clickDatePickerMinutesTab()
+      .selectCalendarMinute(DATE_INTERVAL_MINUTES.FIVE);
+
+    pbehaviorForm
+      .clickName()
+      .clickEndDate();
+
+    dateIntervalField
+      .clickDatePickerDayTab()
+      .selectCalendarDay(3)
+      .clickDatePickerHoursTab()
+      .selectCalendarHour(16)
+      .clickDatePickerMinutesTab()
+      .selectCalendarMinute(DATE_INTERVAL_MINUTES.TEN);
+
+    pbehaviorForm
+      .clickName()
       .selectType(1)
       .clearReason()
       .clickReason()
       .setReason('P')
-      .selectReason(1)
+      .selectReason(PERIODICAL_BEHAVIOR_RESONES.REHABILITATION_PROBLEM)
       .setRuleCheckbox(true)
-      .selectFrequency(1)
-      .selectByWeekDay(1, false)
-      .selectByWeekDay(1, true)
+      .selectFrequency(PERIODICAL_BEHAVIOR_FREQUENCY.MINUTELY)
+      .selectByWeekDay(WEEK_DAYS.TUESDAY, false)
+      .selectByWeekDay(WEEK_DAYS.TUESDAY, true)
       .clearRepeat()
       .clickRepeat()
       .setRepeat(5)
@@ -226,8 +255,8 @@ module.exports = {
       .clickInterval()
       .setInterval(5)
       .clickAdvanced(5)
-      .selectWeekStart(1)
-      // .selectByMonth(1, false)
+      .selectWeekStart(WEEK_DAYS.TUESDAY)
+      // .selectByMonth(WEEK_DAYS.TUESDAY, false)
       .selectByMonth(1, true)
       .clearBySetPosition()
       .clickBySetPosition()
@@ -252,7 +281,6 @@ module.exports = {
       .clickBySecond()
       .setBySecond(2)
       .clickAddExdate()
-      // .clickExdateField()
       .clickExdateField(1);
 
     dateIntervalField
@@ -261,9 +289,10 @@ module.exports = {
       .clickDatePickerHoursTab()
       .selectCalendarHour(16)
       .clickDatePickerMinutesTab()
-      .selectCalendarMinute(1);
+      .selectCalendarMinute(DATE_INTERVAL_MINUTES.ZERO);
 
     browser.page.forms.pbehavior()
+      .clickSimple()
       .clickAddComment()
       .clickCommentField(1)
       .clearCommentField(1)
@@ -275,7 +304,7 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
-    alarmsTable
+    commonTable
       .clickSearchInput()
       .clearSearchInput()
       .setSearchInput('search string')
