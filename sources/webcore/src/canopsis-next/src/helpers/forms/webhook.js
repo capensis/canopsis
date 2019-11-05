@@ -3,13 +3,6 @@ import { get, omit } from 'lodash';
 import { setSeveralFields, unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 
-export function webhookToForm(webhook) {
-  return {
-    emptyResponse: webhook.empty_response || false,
-    ...setSeveralFields(webhook, getWebhookFormFields(webhook)),
-  };
-}
-
 /**
  * Get webhook form field's values (or customizer function)
  * @param {Object} webhook
@@ -29,15 +22,33 @@ function getWebhookFormFields(webhook) {
   };
 }
 
+export function webhookToForm(webhook) {
+  return {
+    emptyResponse: webhook.empty_response || false,
+    ...setSeveralFields(webhook, getWebhookFormFields(webhook)),
+  };
+}
+
 /**
- * Transform webhook "form" object to valid webhook to the API
+ * Tranform webhook declare ticket field to object (editable in the UI)
+ * @returns {Function}
+ */
+function getWebhookDeclareTicketField() {
+  return value => ({
+    ...textPairsToObject(value),
+  });
+}
+
+/**
+ * Get webhook's auth fields values
  * @param {Object} form
  * @returns {Object}
  */
-export function formToWebhook(form) {
-  const webhook = createWebhookObject(form);
-
-  return removeEmptyPatternsFromWebhook(webhook);
+function getWebhookAuthField(form) {
+  return {
+    username: form.request.auth.username,
+    password: form.request.auth.password,
+  };
 }
 
 /**
@@ -65,28 +76,6 @@ function createWebhookObject(form) {
 }
 
 /**
- * Tranform webhook declare ticket field to object (editable in the UI)
- * @returns {Function}
- */
-function getWebhookDeclareTicketField() {
-  return value => ({
-    ...textPairsToObject(value),
-  });
-}
-
-/**
- * Get webhook's auth fields values
- * @param {Object} form
- * @returns {Object}
- */
-function getWebhookAuthField(form) {
-  return {
-    username: form.request.auth.username,
-    password: form.request.auth.password,
-  };
-}
-
-/**
  * Remove empty "patterns" (alarmpattern, entitypattern and eventpattern) fields from webhook
  * @param {Object} webhook
  * @returns {Object}
@@ -99,5 +88,16 @@ function removeEmptyPatternsFromWebhook(webhook) {
     'hook.alarm_patterns': patternsCondition,
     'hook.entity_patterns': patternsCondition,
   });
+}
+
+/**
+ * Transform webhook "form" object to valid webhook to the API
+ * @param {Object} form
+ * @returns {Object}
+ */
+export function formToWebhook(form) {
+  const webhook = createWebhookObject(form);
+
+  return removeEmptyPatternsFromWebhook(webhook);
 }
 
