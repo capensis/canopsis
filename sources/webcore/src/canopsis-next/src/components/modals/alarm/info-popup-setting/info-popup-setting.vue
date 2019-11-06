@@ -43,7 +43,7 @@
         data-test="infoPopupCancelButton",
         depressed,
         flat,
-        @click="hideModal"
+        @click="$modals.hide"
       ) {{ $t('common.cancel') }}
       v-btn.primary(
         data-test="infoPopupSubmitButton",
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     addPopup() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.addInfoPopup,
         config: {
           columns: this.config.columns,
@@ -86,7 +86,7 @@ export default {
     },
 
     editPopup(index, popup) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.addInfoPopup,
         config: {
           columns: this.config.columns,
@@ -103,7 +103,7 @@ export default {
         await this.config.action(this.popups);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

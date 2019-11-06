@@ -18,7 +18,7 @@ Le fichier de configuration du connecteur est `/opt/canopsis_connectors/email2ca
 ```ini
 # Chaine de connexion au bus AMQP
 [amqp]
-url=amqp://cpsrabbit:canopsis@vip-dvp-hypervision-rabbitmq.si3si.int/canopsis
+url=amqp://cpsrabbit:canopsis@rabbitmq/canopsis
 
 # URL d'un Redis pour activer le renvoi automatique du dernier état connu des événements
 [redis]

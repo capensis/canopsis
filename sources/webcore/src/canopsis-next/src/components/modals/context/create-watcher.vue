@@ -38,7 +38,7 @@
         manage-infos(v-model="form.infos")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
@@ -132,9 +132,9 @@ export default {
           await this.config.action(data);
           this.refreshContextEntitiesLists();
 
-          this.hideModal();
+          this.$modals.hide();
         } catch (err) {
-          this.addErrorPopup({ text: this.$t('error.default') });
+          this.$popups.error({ text: this.$t('error.default') });
           console.error(err);
         }
 

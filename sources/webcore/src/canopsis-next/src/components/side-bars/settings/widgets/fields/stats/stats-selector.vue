@@ -57,14 +57,13 @@ import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
-import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
   components: { Draggable },
-  mixins: [modalMixin, formMixin, formValidationHeaderMixin],
+  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'stats',
     event: 'input',
@@ -121,7 +120,7 @@ export default {
   },
   methods: {
     showAddStatModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.add'),
@@ -144,7 +143,7 @@ export default {
     },
 
     showEditStatModal(statTitle) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.edit'),
@@ -157,7 +156,7 @@ export default {
     },
 
     showDeleteStatModal(statTitle) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => this.removeField(statTitle),

@@ -1007,3 +1007,10 @@ export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
 };
+
+export const POPUP_TYPES = {
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
+};

@@ -73,7 +73,7 @@
                     span {{ $t('modals.addStat.slaTooltip') }}
         v-divider
         v-layout.py-1(justify-end)
-          v-btn(data-test="addStatCancelButton", @click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+          v-btn(data-test="addStatCancelButton", @click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
           v-btn.primary(data-test="addStatSubmitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -140,7 +140,7 @@ export default {
           await this.config.action(preparedForm);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },
