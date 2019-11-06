@@ -59,11 +59,10 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
 export default {
-  mixins: [modalMixin, rightsTechnicalViewMixin],
+  mixins: [rightsTechnicalViewMixin],
   props: {
     isEditingMode: {
       type: Boolean,
@@ -101,7 +100,7 @@ export default {
   },
   methods: {
     showCreateViewModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createView,
       });
     },

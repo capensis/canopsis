@@ -115,7 +115,7 @@ url=postgresql://user:password@postgresql_host/database
 
 ### Oracle
 
-Pré-requis : récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`). Disponibles sur <http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html> (attention, un compte est nécessaire).
+Prérequis : récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`). Disponibles sur <http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html> (attention, un compte est nécessaire).
 
 Définir le répertoire d'installation d'Oracle Instant Client :
 ```shell

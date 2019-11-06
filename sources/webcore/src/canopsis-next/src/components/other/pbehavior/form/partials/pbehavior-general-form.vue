@@ -3,28 +3,27 @@
     v-layout(row)
       v-text-field(
         data-test="pbehaviorFormName",
+        v-field="form.name",
         v-validate="'required'",
-        :value="form.name",
         :label="$t('modals.createPbehavior.fields.name')",
         :error-messages="errors.collect('name')",
-        name="name",
-        @input="updateField('name', $event)"
+        name="name"
       )
     v-layout(data-test="startDateTimePicker", row)
       date-time-picker-field(
         v-validate="tstartRules",
-        :value="form.tstart",
+        v-field="form.tstart",
+        v-validate="tstartRules",
         :label="$t('modals.createPbehavior.fields.start')",
-        name="tstart",
-        @input="updateField('tstart', $event)"
+        name="tstart"
       )
     v-layout(data-test="stopDateTimePicker", row)
       date-time-picker-field(
         v-validate="tstopRules",
-        :value="form.tstop",
+        v-field="form.tstop",
+        v-validate="tstopRules",
         :label="$t('modals.createPbehavior.fields.stop')",
-        name="tstop",
-        @input="updateField('tstop', $event)"
+        name="tstop"
       )
     v-layout(v-if="!noFilter", row)
       v-btn.primary(
@@ -36,23 +35,21 @@
     v-layout(row)
       v-combobox(
         data-test="pbehaviorReason",
+        v-field="form.reason",
         v-validate="'required'",
-        :value="form.reason",
         :label="$t('modals.createPbehavior.fields.reason')",
         :items="reasons",
         :error-messages="errors.collect('reason')",
-        name="reason",
-        @input="updateField('reason', $event)"
+        name="reason"
       )
     v-layout(data-test="pbehaviorType", row)
       v-select(
+        v-field="form.type_",
         v-validate="'required'",
-        :value="form.type_",
         :label="$t('modals.createPbehavior.fields.type')",
         :items="types",
         :error-messages="errors.collect('type')",
-        name="type",
-        @input="updateField('type_', $event)"
+        name="type"
       )
 </template>
 
@@ -62,7 +59,6 @@ import { ENTITIES_TYPES, MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMAT
 
 import authMixin from '@/mixins/auth';
 import formMixin from '@/mixins/form';
-import modalMixin from '@/mixins/modal';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
@@ -73,7 +69,7 @@ export default {
     DateTimePickerField,
     RRuleForm,
   },
-  mixins: [authMixin, formMixin, modalMixin],
+  mixins: [authMixin, formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -117,7 +113,7 @@ export default {
   },
   methods: {
     showCreateFilterModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createFilter,
         config: {
           hiddenFields: ['title'],

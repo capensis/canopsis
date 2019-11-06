@@ -24,7 +24,7 @@
       v-layout.py-1(justify-end)
         v-btn(
           data-test="createAssociateTicketCancelButton",
-          @click="hideModal",
+          @click="$modals.hide",
           depressed,
           flat
         ) {{ $t('common.cancel') }}
@@ -71,7 +71,7 @@ export default {
       if (isFormValid) {
         await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

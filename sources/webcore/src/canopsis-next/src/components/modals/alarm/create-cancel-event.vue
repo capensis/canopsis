@@ -24,7 +24,7 @@
       v-layout.py-1(justify-end)
         v-btn(
           data-test="createCancelEventCancelButton",
-          @click="hideModal",
+          @click="$modals.hide",
           depressed,
           flat
         ) {{ $t('common.cancel') }}
@@ -85,7 +85,7 @@ export default {
 
         await this.createEvent(this.eventType, this.items, data);
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

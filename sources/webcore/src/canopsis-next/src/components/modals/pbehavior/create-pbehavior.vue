@@ -11,7 +11,7 @@
         data-test="createPbehaviorCancelButton",
         depressed,
         flat,
-        @click="hideModal"
+        @click="$modals.hide"
       ) {{ $t('common.cancel') }}
       v-btn.primary(
         data-test="createPbehaviorSubmitButton",
@@ -75,7 +75,7 @@ export default {
           await this.config.action(pbehavior);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

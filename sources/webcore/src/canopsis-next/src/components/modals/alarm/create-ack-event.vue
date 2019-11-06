@@ -39,7 +39,7 @@
     v-layout.py-1(justify-end)
       v-btn(
         data-test="createAckEventCancelButton",
-        @click="hideModal",
+        @click="$modals.hide",
         depressed,
         flat
       ) {{ $t('common.cancel') }}
@@ -118,7 +118,7 @@ export default {
         await this.config.afterSubmit();
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
 
     async submitWithTicket() {
@@ -140,7 +140,7 @@ export default {
 
       if (formIsValid) {
         if (this.form.ticket) {
-          this.showModal({
+          this.$modals.show({
             name: MODALS.confirmAckWithTicket,
             config: {
               continueAction: this.createAckEventAndCloseModal,

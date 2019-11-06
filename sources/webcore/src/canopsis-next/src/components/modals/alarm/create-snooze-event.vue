@@ -11,7 +11,7 @@
       v-layout.py-1(justify-end)
         v-btn(
           data-test="createSnoozeEventCancelButton",
-          @click="hideModal",
+          @click="$modals.hide",
           depressed,
           flat
         ) {{ $t('common.cancel') }}
@@ -66,7 +66,7 @@ export default {
 
         await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

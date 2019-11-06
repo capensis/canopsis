@@ -36,9 +36,3 @@ registerHelper('internal-link', (options) => {
   const link = `<router-link to="${path}" ${prepareAttributes(attributes)}>${text}</router-link>`;
   return new Handlebars.SafeString(link);
 });
-
-export default {
-  compile,
-  registerHelper,
-  unregisterHelper,
-};

@@ -15,7 +15,7 @@
       v-layout.py-1(justify-end)
         v-btn(
           data-test="declareTicketEventCancelButton",
-          @click="hideModal",
+          @click="$modals.hide",
           depressed,
           flat
         ) {{ $t('common.cancel') }}
@@ -52,7 +52,7 @@ export default {
         output: 'declare ticket',
       });
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };
