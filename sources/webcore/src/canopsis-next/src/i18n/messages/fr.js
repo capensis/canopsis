@@ -361,6 +361,9 @@ export default {
         alarmList: 'Bac à alarmes',
       },
     },
+    liveReporting: {
+      title: 'Suivi personnalisé',
+    },
   },
   modals: {
     contextInfos: {
