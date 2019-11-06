@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
@@ -67,7 +65,7 @@ export default {
     };
 
     return {
-      form: webhook ? webhookToForm(cloneDeep(webhook)) : defaultForm,
+      form: webhook ? webhookToForm(webhook) : defaultForm,
     };
   },
   computed: {
