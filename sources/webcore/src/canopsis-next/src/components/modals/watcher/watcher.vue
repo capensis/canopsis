@@ -109,32 +109,11 @@ export default {
           }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
-            const {
-              author,
-              exdate,
-              filter,
-              name,
-              reason,
-              rrule,
-              tstart,
-              type_,
-            } = pbehavior;
+            if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
+              const preparedPbehavior = pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']);
+              preparedPbehavior.tstop = Math.round(Date.now() / 1000);
 
-            if (type_ === PBEHAVIOR_TYPES.pause) {
-              accSecond.push(this.updatePbehavior({
-                data: {
-                  author,
-                  exdate,
-                  filter,
-                  name,
-                  reason,
-                  rrule,
-                  tstart,
-                  tstop: Math.round(Date.now() / 1000),
-                  type_,
-                },
-                id: pbehavior._id,
-              }));
+              accSecond.push(this.updatePbehavior({ data: preparedPbehavior, id: pbehavior._id }));
             }
 
             return accSecond;
