@@ -2,6 +2,40 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.31.0 - Due date : 2019-10-28
+
+- [Packages] Introduce new "canoctl deploy-go" command
+- [Packages] Add initialisation.toml.example, amqp2engines-python.conf.example and amqp2engines-go.conf.example reference files
+- [Packages] Introduce new go-engines-vars.conf file for Go engine variables
+- [Packages] Sync default Python/Go engines with current recommendations
+- [Packages] Reduce package dependencies on CentOS 7
+- [Packages] Upgrade from InfluxDB 1.5.4 to 1.5.5 on new installations
+- [Packages] Upgrade internal canoctl Ansible version from 2.4.4 to 2.8.5
+- [Documentation] Add a new documentation for zabbix2canopsis
+- [Documentation] Add more filter examples in Usage Guide
+- [Documentation] Document leavemail/trim options in email2canopsis
+- [Go] Remove long\_output\_history and initial\_long\_output fields from events
+- [Go] Only update alarm’s output when a check event is received
+- [Go] Use zerolog in Go engines
+- [Go] Manage dependencies with go mod instead of glide
+- [Go] Refactored most of watcher engine to have better scalability
+- [Go] Remove engine-stat from new installs; use statsng from CAT instead
+- [UI - Translations] Some typo fixes and improvements in the French translation
+
+## Canopsis 3.30.0 - Due date : 2019-10-11
+
+- [Docker] Fix email2canopsis Docker image
+- [Documentation] Improve Canopsis installation and upgrade guides
+- [API] Fix possible error when a pbehavior has no rrule
+- [API] Fix last\_ko/last\_event date format, when using engine-stat
+- [Go] Significant performance improvements in JSON encoding/decoding
+- [LDAP] Add a `username_attr` attribute
+- [UI] Fix CAT widgets, so that they're not displayed in the Open-Core edition
+- [UI - AlarmList] Fix snooze action regression in Canopsis 3.29.0
+- [UI - Context] Fix Context Explorer info tabs
+- [UI - Action] Fix comments and exdate fields in pbehavior form
+- [UI - SNMP] Display SNMP view both in Python and Go stacks
+
 ## Canopsis 3.29.0 - Due date : 2019-09-27
 
  - [Documentation] Add alarm-filter documentation
@@ -618,8 +652,8 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
 - [Go]: fix bagoting alarms never closed if cropped
 - [Go]: send axe statistics to statsng engine
 - [Python]: change some amqp publishers to pika to prevent odd reconnections
-- [Python]: fix has_active_pb flag no corretly show all linked pbehaviors
-- [Python]: fix pbehavior not corretly handle timezone change (one day gap)
+- [Python]: fix has\_active\_pb flag doesn't correctly show all linked pbehaviors
+- [Python]: fix pbehavior doesn't correctly handle timezone change (one day gap)
 - [Python]: fix performance concern on alert consultation
 
 ## Canopsis 3.2.3 - Due date : 2018-09-17

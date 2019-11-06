@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
 const { API_ROUTES } = require('@/config');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
 
 module.exports.command = function createStatsNumber({
   parameters: {
@@ -60,7 +61,7 @@ module.exports.command = function createStatsNumber({
 
   this.waitForFirstXHR(
     API_ROUTES.userPreferences,
-    5000,
+    WAIT_FOR_FIRST_XHR_TIME,
     () => statsNumberWidget.clickSubmitStatsNumber(),
     ({ responseData, requestData }) => callback({
       response: JSON.parse(responseData),

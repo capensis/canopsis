@@ -3,15 +3,15 @@
 - include_tasks: "{{ ansible_os_family }}.yml"
 
 - name: Start Influxdb
-  service:
+  systemd:
     name: influxdb
     state: started
   when: influxdb_database_name is defined
 
 - name: Create database "{{ influxdb_database_name }}" without credentials
   influxdb_database:
-    hostname: "{{influxdb_ip_address}}"
-    database_name: "{{influxdb_database_name}}"
+    hostname: "{{ influxdb_ip_address }}"
+    database_name: "{{ influxdb_database_name }}"
     state: present
   when:
     - influxdb_database_name is defined
@@ -19,11 +19,11 @@
 
 - name: Create database "{{ influxdb_database_name }}" using custom credentials
   influxdb_database:
-    hostname: "{{influxdb_ip_address}}"
-    username: "{{influxdb_username}}"
-    password: "{{influxdb_password}}"
-    database_name: "{{influxdb_database_name}}"
+    hostname: "{{ influxdb_ip_address }}"
+    username: "{{ influxdb_username }}"
+    password: "{{ influxdb_password }}"
+    database_name: "{{ influxdb_database_name }}"
     state: present
-  when: 
+  when:
     - influxdb_database_name is defined
-    - influxdb_username is defined 
+    - influxdb_username is defined

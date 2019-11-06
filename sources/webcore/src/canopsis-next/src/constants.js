@@ -65,7 +65,6 @@ export const MODALS = {
   textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
-  createViewTab: 'create-view-tab',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
@@ -1009,7 +1008,7 @@ export const DURATION_UNITS = {
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  snmpRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { edition: CANOPSIS_EDITION.cat },
   heartbeat: { stack: CANOPSIS_STACK.go },
   action: { stack: CANOPSIS_STACK.go },
 };
@@ -1029,4 +1028,11 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.cat },
   [WIDGET_TYPES.statsNumber]: { edition: CANOPSIS_EDITION.cat },
   [WIDGET_TYPES.statsPareto]: { edition: CANOPSIS_EDITION.cat },
+};
+
+export const POPUP_TYPES = {
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
 };

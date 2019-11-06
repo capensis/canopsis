@@ -69,8 +69,6 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ### Utilisation de engine-axe
 
 ```
-  -autoDeclareTickets
-        Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
@@ -81,7 +79,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue
-        Publie les événements sur cette queue. (par défaut "Engine_watcher")
+        Publie les événements sur cette file. (par défaut "Engine_watcher")
   -version
         version infos
 ```
@@ -90,16 +88,16 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 ```
   -consumeQueue string
-        Consomme les évènements venant de cette queue. (default "Engine_che").
+        Consomme les évènements venant de cette file. (default "Engine_che").
   -createContext
         Active la création de context graph. Activé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -d    debug
   -dataSourceDirectory
         The path of the directory containing the event filter's data source plugins. (default ".")
   -enrichContext
         Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -enrichExclude string
         Liste de champs séparés par des virgules ne faisant pas partie de l'enrichissement du contexte
   -enrichInclude string
@@ -109,7 +107,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -processEvent
         enable event processing. enabled by default. (default true)
   -publishQueue
-        Publie les événements sur cette queue. (default "Engine_event_filter")
+        Publie les événements sur cette file. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
   -version
@@ -144,7 +142,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue string
-        Publie les événements sur cette queue. (par défaut "Engine_action")
+        Publie les événements sur cette file. (par défaut "Engine_action")
   -version
         version infos
 ```
@@ -160,7 +158,7 @@ Cette documentation explique les étapes à suivre pour passer d'un niveau de lo
 ### Moteurs Python avec systemd
 
 Afficher la configuration du moteur avec la commande suivante :
-```shell
+```sh
 systemctl cat canopsis-engine@dynamic-alerts.service
 ```
 Le résultat ressemble à ceci :
@@ -187,7 +185,7 @@ Type=simple
 WantedBy=multi-user.target
 ```
 Puis éditer cette configuration dans un autre terminal :
-```shell
+```sh
 systemctl edit canopsis-engine@dynamic-alerts.service
 ```
 Une fenêtre d'édition vide s'affiche, copiez les éléments suivants pour surcharger la configuration actuelle :
@@ -198,15 +196,15 @@ Environment=LOGLEVEL=debug
 Sauvegarder et quitter l'éditeur.
 
 Recharger systemd pour prendre en compte la modification.
-```shell
+```sh
 systemctl daemon-reload
 ```
 Terminer en redémarrant le moteur.
-```shell
+```sh
 systemctl restart canopsis-engine@dynamic-alerts.service
 ```
 Et vérifier son nouveau statut :
-```shell
+```sh
 systemctl status canopsis-engine@dynamic-alerts.service
 
 ● canopsis-engine@dynamic-alerts.service - Canopsis Engine dynamic-alerts

@@ -2,7 +2,7 @@ import moment from 'moment';
 import { omit, pick } from 'lodash';
 import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
 
-import { unsetInSeveralWithConditions } from '@/helpers/immutable';
+import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
 import {
   pbehaviorToForm,
@@ -54,11 +54,11 @@ export function actionToForm(action) {
       data.pbehaviorParameters.general = omit(pbehaviorToForm(action.parameters), ['filter']);
 
       if (action.parameters.comments) {
-        data.pbehaviorParameters.comments = pbehaviorToComments(action.parameters.comments);
+        data.pbehaviorParameters.comments = pbehaviorToComments(action.parameters);
       }
 
       if (action.parameters.exdate) {
-        data.pbehaviorParameters.exdate = pbehaviorToExdates(action.parameters.exdate);
+        data.pbehaviorParameters.exdate = pbehaviorToExdates(action.parameters);
       }
     }
   }
@@ -71,7 +71,7 @@ export function formToAction({ generalParameters = {}, pbehaviorParameters = {},
 
   const patternsCondition = value => !value || !value.length;
 
-  data = unsetInSeveralWithConditions(data, {
+  data = unsetSeveralFieldsWithConditions(data, {
     'hook.event_patterns': patternsCondition,
     'hook.alarm_patterns': patternsCondition,
     'hook.entity_patterns': patternsCondition,

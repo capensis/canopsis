@@ -40,7 +40,7 @@ import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
-import modalMixin from '@/mixins/modal';
+import modalMixin from '@/mixins/modal/inner';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 
@@ -153,7 +153,7 @@ export default {
         widgetParameters.mainFilter = meta.filter;
       }
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.alarmsList,
         config: {
           query: {

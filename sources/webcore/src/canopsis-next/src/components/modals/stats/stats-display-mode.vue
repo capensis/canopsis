@@ -34,7 +34,7 @@
       v-layout.py-1(justify-end)
         v-btn(
           data-test="statsDisplayModeCancelButton",
-          @click="hideModal",
+          @click="$modals.hide",
           depressed,
           flat
         ) {{ $t('common.cancel') }}
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     openColorPickerModal(level) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
@@ -88,7 +88,7 @@ export default {
         await this.config.action(this.form);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

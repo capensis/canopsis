@@ -20,7 +20,7 @@
                   v-icon {{ iconByWidgetType(widget) }}
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
 </template>
 
 <script>
@@ -73,7 +73,7 @@ export default {
           isNew: true,
         },
       });
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

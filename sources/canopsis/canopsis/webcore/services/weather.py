@@ -435,6 +435,7 @@ def __format_pbehavior(pbehavior):
     pbehavior["behavior"] = pbehavior.pop("name")
     pbehavior["dtstart"] = pbehavior.pop("tstart")
     pbehavior["dtend"] = pbehavior.pop("tstop")
+    pbehavior["rrule"] = pbehavior.get("rrule", "")
 
     # parse the rrule to get is "text"
     rrule = {}
@@ -446,22 +447,25 @@ def __format_pbehavior(pbehavior):
         if rrule_str[0:6] == "RRULE:":
             rrule_str = rrule_str[6:]
 
-        freq = get_rrule_freq(rrule_str)
+        try:
+            freq = get_rrule_freq(rrule_str)
 
-        if freq == "SECONDLY":
-            rrule["text"] = EVERY.format("second")
-        elif freq == "MINUTELY":
-            rrule["text"] = EVERY.format("minute")
-        elif freq == "HOURLY":
-            rrule["text"] = EVERY.format("hour")
-        elif freq == "DAILY":
-            rrule["text"] = EVERY.format("day")
-        elif freq == "WEEKLY":
-            rrule["text"] = EVERY.format("week")
-        elif freq == "MONTHLY":
-            rrule["text"] = EVERY.format("month")
-        elif freq == "YEARLY":
-            rrule["text"] = EVERY.format("year")
+            if freq == "SECONDLY":
+                rrule["text"] = EVERY.format("second")
+            elif freq == "MINUTELY":
+                rrule["text"] = EVERY.format("minute")
+            elif freq == "HOURLY":
+                rrule["text"] = EVERY.format("hour")
+            elif freq == "DAILY":
+                rrule["text"] = EVERY.format("day")
+            elif freq == "WEEKLY":
+                rrule["text"] = EVERY.format("week")
+            elif freq == "MONTHLY":
+                rrule["text"] = EVERY.format("month")
+            elif freq == "YEARLY":
+                rrule["text"] = EVERY.format("year")
+        except ValueError as e:
+            print("Can't get rrule freq on rrule : {}".format("rrule_str"))
 
     pbehavior["rrule"] = rrule
 
@@ -476,13 +480,17 @@ def __format_pbehavior(pbehavior):
 
 def get_ok_ko(influx_client, entity_id, timestamp):
     """
-    For an entity defined by its id, return the number of OK check and KO
-    check.
+    Return statistics on the check events received on an entity.
 
     :param InfluxDBClient influx_client:
     :param str entity_id: the id of the entity
-    :return: a dict with two key ok and ko, and with last_event and last_ko 
-             if found for given event
+    :return: a dictionary containing the following keys:
+     - ok: the number of check events with state 0
+     - ko: the number of check events with state 1, 2 or 3
+     - last_event: the date of the last check event received on this entity, as
+       a unix timestamp
+     - last_ko: the date of the last check event with state 1, 2 or 3 received
+       on this entity, as a unix timestamp
     """
     query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
                 "event_state_history WHERE \"eid\"='{}' AND time >= {}s"
@@ -508,23 +516,15 @@ def get_ok_ko(influx_client, entity_id, timestamp):
         stats["ok"] = data["ok"]
         stats["ko"] = data["ko"]
 
-    result = influx_client.query(query_last_event.format(entity_id))
+    result = influx_client.query(query_last_event.format(entity_id), epoch='s')
     data = list(result.get_points())
     if len(data) > 0:
-        data = data[0]
-        time = data["time"]
-        time = time.replace("T", " ")
-        time = time.replace("Z", "")
-        stats["last_event"] = time
+        stats["last_event"] = data[0]["time"]
 
-    result = influx_client.query(query_last_ko.format(entity_id))
+    result = influx_client.query(query_last_ko.format(entity_id), epoch='s')
     data = list(result.get_points())
     if len(data) > 0:
-        data = data[0]
-        time = data["time"]
-        time = time.replace("T", " ")
-        time = time.replace("Z", "")
-        stats["last_ko"] = time
+        stats["last_ko"] = data[0]["time"]
 
     return stats
 
