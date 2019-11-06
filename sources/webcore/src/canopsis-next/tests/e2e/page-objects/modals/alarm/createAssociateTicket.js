@@ -26,7 +26,6 @@ module.exports = modalCreator(modalSelector, {
     }),
 
     numberOfTicket: sel('createAssociateTicketNumberOfTicket'),
-    submitButton: sel('createAssociateTicketSubmitButton'),
   },
   commands: [commands],
 });

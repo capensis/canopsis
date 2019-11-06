@@ -311,3 +311,29 @@ module.exports.WEEK_DAYS = {
   SATURDAY: 6,
   SUNDAY: 7,
 };
+
+module.exports.MONTH = {
+  JUNUARY: 1,
+  FEBRARY: 2,
+  MARCH: 3,
+  APRIL: 4,
+  MAY: 5,
+  JUNE: 6,
+  JULY: 7,
+  AUGUST: 8,
+  SEPTEMBER: 9,
+  OCTOBER: 10,
+  NOVEMBER: 11,
+  DECEMBER: 12,
+};
+
+module.exports.PBEHAVIOR_TYPES = {
+  MAINTENANCE: 1,
+  UNMONITORED: 2,
+  PAUSE: 3,
+};
+
+module.exports.CHECKBOX_ICONS = {
+  CHECKED: 'check_box',
+  UNCHECKED: 'check_box_outline_blank',
+};

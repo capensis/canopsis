@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(data-test="pbehaviorListModal")
     v-card
       v-card-title.primary.white--text
         v-layout(justify-space-between, align-center)
@@ -10,11 +10,12 @@
             td(v-for="key in fields")
               span(
                 v-if="key === 'tstart' || key === 'tstop'",
-                key="key"
+                :key="key"
               ) {{ props.item[key] | date('long') }}
               span(v-else) {{ props.item[key] }}
             td
               v-btn.mx-0(
+                :data-test="`pbehaviorRow-${props.item._id}-action-${action.name}`",
                 v-for="action in availableActions",
                 :key="action.name",
                 @click="() => action.action(props.item)",
@@ -23,7 +24,10 @@
                 v-icon {{ action.icon }}
       v-divider
       v-layout.py-1(justify-end)
-        v-btn.primary(@click="hideModal") {{ $t('common.ok') }}
+        v-btn.primary(
+          data-test="pbehaviorListConfirmButton",
+          @click="hideModal"
+        ) {{ $t('common.ok') }}
 </template>
 
 <script>

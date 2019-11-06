@@ -10,7 +10,9 @@ const {
   INTERVAL_RANGES,
   FILTER_OPERATORS,
   ALARMS_MASS_ACTIONS,
+  MONTH,
   WEEK_DAYS,
+  PBEHAVIOR_TYPES,
   DATE_INTERVAL_MINUTES,
   ALARMS_SHARED_ACTIONS,
   PERIODICAL_BEHAVIOR_RESONES,
@@ -202,7 +204,7 @@ module.exports = {
       .clickDurationValue()
       .clearDurationValue()
       .setDurationValue(10)
-      .setDurationType(1)
+      .setDurationType(PBEHAVIOR_TYPES.MAINTENANCE)
       .clickCancelButton()
       .verifyModalClosed();
 
@@ -257,7 +259,7 @@ module.exports = {
       .clickAdvanced(5)
       .selectWeekStart(WEEK_DAYS.TUESDAY)
       // .selectByMonth(WEEK_DAYS.TUESDAY, false)
-      .selectByMonth(1, true)
+      .selectByMonth(MONTH.JUNUARY, true)
       .clearBySetPosition()
       .clickBySetPosition()
       .setBySetPosition(15)

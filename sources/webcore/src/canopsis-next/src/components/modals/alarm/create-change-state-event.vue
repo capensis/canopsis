@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createChangeStateEventModal", @submit.prevent="submit")
     v-card
       v-card-title.primary.white--text
         v-layout(justify-space-between, align-center)
@@ -10,6 +10,7 @@
             state-criticity-field(v-model="form.state", :stateValues="availableStateValues")
           v-layout.mt-4(row)
             v-text-field(
+              data-test="createChangeStateEventNote",
               :label="$t('modals.createChangeStateEvent.fields.output')",
               :error-messages="errors.collect('output')",
               v-model="form.output",
@@ -18,8 +19,17 @@
             )
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
+        v-btn(
+          data-test="createChangeStateEventCancelButton",
+          @click="hideModal",
+          depressed,
+          flat
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          data-test="createChangeStateEventSubmitButton",
+          type="submit",
+          :disabled="errors.any()"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
