@@ -4,7 +4,7 @@
       progress-overlay(:pending="pending")
       alert-overlay(
         :value="hasError",
-        :message="errorMessage"
+        :message="serverErrorMessage"
       )
       v-data-table(
         :items="stats",
@@ -183,7 +183,7 @@ export default {
           descending: sortOrder === SORT_ORDERS.desc,
         };
       } catch (err) {
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }

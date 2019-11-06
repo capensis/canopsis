@@ -70,7 +70,7 @@ export default {
       const statName = hash.name;
 
       return new Handlebars.SafeString(`
-        <text-stat-template name="${statName}" :stats="stats"></text-stat-template>
+        <text-stat-template v-if="editionError" name="${statName}" :stats="stats"></text-stat-template>
       `);
     });
   },

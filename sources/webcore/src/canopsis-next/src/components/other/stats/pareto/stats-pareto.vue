@@ -3,7 +3,7 @@
     progress-overlay(:pending="pending")
     alert-overlay(
       :value="hasError",
-      :message="errorMessage"
+      :message="serverErrorMessage"
     )
     stats-pareto-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
@@ -169,7 +169,7 @@ export default {
         this.total = aggregations[this.statTitle].sum;
         this.stats = values.filter(stat => stat[this.statTitle].value);
       } catch (err) {
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }

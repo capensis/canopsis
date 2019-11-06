@@ -8,9 +8,5 @@ export default {
     hasError() {
       return !!this.serverErrorMessage;
     },
-
-    errorMessage() {
-      return this.serverErrorMessage ? this.$t('errors.statsRequestProblem') : null;
-    },
   },
 };

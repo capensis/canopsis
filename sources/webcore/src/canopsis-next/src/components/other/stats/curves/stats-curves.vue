@@ -3,7 +3,7 @@
     progress-overlay(:pending="pending")
     alert-overlay(
       :value="hasError",
-      :message="errorMessage"
+      :message="serverErrorMessage"
     )
     stats-curves-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
