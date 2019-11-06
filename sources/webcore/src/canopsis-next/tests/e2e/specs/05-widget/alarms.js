@@ -150,7 +150,10 @@ module.exports = {
     browser.page.view()
       .clickMenuViewButton();
 
+    commonTable.clickResetLiveReporting();
+
     alarmsTable
+      .setRowCheckbox('534c7a04-4531-4561-9c17-2689286519a2', true)
       .setAllCheckbox(true)
       .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
 

@@ -85,6 +85,10 @@ const commands = {
     return this.customClick('@liveReportingButton');
   },
 
+  clickResetLiveReporting() {
+    return this.customClick('@resetAlarmsDateIntervalButton');
+  },
+
   setItemPerPage(index) {
     return this.customClick('@itemsPerPage')
       .waitForElementVisible(this.el('@optionSelect', index))
@@ -122,6 +126,7 @@ module.exports = {
     showFiltersListButton: sel('showFiltersListButton'),
 
     liveReportingButton: sel('alarmsDateInterval'),
+    resetAlarmsDateIntervalButton: `${sel('resetAlarmsDateInterval')} .v-chip__close`,
   },
   commands: [commands],
 };

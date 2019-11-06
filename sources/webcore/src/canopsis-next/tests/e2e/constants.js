@@ -332,8 +332,3 @@ module.exports.PBEHAVIOR_TYPES = {
   UNMONITORED: 2,
   PAUSE: 3,
 };
-
-module.exports.CHECKBOX_ICONS = {
-  CHECKED: 'check_box',
-  UNCHECKED: 'check_box_outline_blank',
-};

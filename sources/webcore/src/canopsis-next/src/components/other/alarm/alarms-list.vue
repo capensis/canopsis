@@ -30,6 +30,7 @@
         )
       v-flex
         v-chip.primary.white--text(
+          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,

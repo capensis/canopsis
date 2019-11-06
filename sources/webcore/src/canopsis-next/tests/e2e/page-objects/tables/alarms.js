@@ -1,7 +1,6 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
-const { CHECKBOX_ICONS } = require('../../constants');
 
 const commands = {
   clickAlarmListHeaderCell(header) {
@@ -21,8 +20,8 @@ const commands = {
   },
 
   setRowCheckbox(id, checked) {
-    return this.getText('@alarmListRowCheckboxIcon', ({ value }) => {
-      if (value !== CHECKBOX_ICONS.CHECKED && checked) {
+    return this.getAttribute(this.el('@alarmListRowCheckboxInput', id), 'aria-checked', ({ value }) => {
+      if (value !== String(checked)) {
         this.customClick(this.el('@alarmListRowCheckbox', id));
       }
     });
@@ -71,7 +70,7 @@ module.exports = {
 
     alarmListRow: `${sel('alarmListRow-%s')}`,
     alarmListRowCheckbox: `${sel('alarmListRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')}`,
-    alarmListRowCheckboxIcon: `${sel('alarmListRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')} .v-icon`,
+    alarmListRowCheckboxInput: `${sel('alarmListRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')} input`,
     alarmListRowColumn: `${sel('alarmListRow-%s')} ${sel('alarmValue-%s')}`,
 
     massActionsPanelItem: `${sel('alarmsWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
