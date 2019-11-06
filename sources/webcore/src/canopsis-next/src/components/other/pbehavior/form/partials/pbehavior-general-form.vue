@@ -13,7 +13,6 @@
       date-time-picker-field(
         v-validate="tstartRules",
         v-field="form.tstart",
-        v-validate="tstartRules",
         :label="$t('modals.createPbehavior.fields.start')",
         name="tstart"
       )
@@ -21,7 +20,6 @@
       date-time-picker-field(
         v-validate="tstopRules",
         v-field="form.tstop",
-        v-validate="tstopRules",
         :label="$t('modals.createPbehavior.fields.stop')",
         name="tstop"
       )
