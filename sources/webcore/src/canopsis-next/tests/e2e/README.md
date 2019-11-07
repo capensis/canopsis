@@ -153,8 +153,8 @@ Planned tests
             - [x] Declare ticket
             - [x] Associate ticket
             - [x] Cancel alarm
-            - [ ] Periodical behavior
-            - [ ] List periodic behaviors
+            - [x] Periodical behavior
+            - [x] List periodic behaviors
             - [ ] List of available variables
         * Footer
             - [x] Pagination
