@@ -41,8 +41,8 @@ from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.stat.manager import StatManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
-from canopsis.common.influx import InfluxDBClient
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
@@ -478,57 +478,6 @@ def __format_pbehavior(pbehavior):
     return pbehavior
 
 
-def get_ok_ko(influx_client, entity_id, timestamp):
-    """
-    Return statistics on the check events received on an entity.
-
-    :param InfluxDBClient influx_client:
-    :param str entity_id: the id of the entity
-    :return: a dictionary containing the following keys:
-     - ok: the number of check events with state 0
-     - ko: the number of check events with state 1, 2 or 3
-     - last_event: the date of the last check event received on this entity, as
-       a unix timestamp
-     - last_ko: the date of the last check event with state 1, 2 or 3 received
-       on this entity, as a unix timestamp
-    """
-    query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
-                "event_state_history WHERE \"eid\"='{}' AND time >= {}s"
-    query_last_event = "SELECT LAST(\"ko\") FROM event_state_history WHERE " \
-                       "\"eid\"='{}'"
-    query_last_ko = query_last_event + " and \"ko\"=1"
-
-    # Why did I use a double '\' ? It's simple, for some mystical reason,
-    # somewhere between the call of influxdbstg.raw_query and the HTTP
-    # request is sent, the escaped simple quote are deescaped. So like the
-    # song says "you can't touch this".
-    entity_id = entity_id.replace("'", "\\'")
-    entity_id = entity_id.replace('"', '\\"')
-
-    result = influx_client.query(query_sum.format(entity_id, timestamp))
-
-    stats = {}
-    stats["ok"] = 0
-    stats["ko"] = 0
-    data = list(result.get_points())
-    if len(data) > 0:
-        data = data[0]
-        stats["ok"] = data["ok"]
-        stats["ko"] = data["ko"]
-
-    result = influx_client.query(query_last_event.format(entity_id), epoch='s')
-    data = list(result.get_points())
-    if len(data) > 0:
-        stats["last_event"] = data[0]["time"]
-
-    result = influx_client.query(query_last_ko.format(entity_id), epoch='s')
-    data = list(result.get_points())
-    if len(data) > 0:
-        stats["last_ko"] = data[0]["time"]
-
-    return stats
-
-
 def _pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
@@ -762,7 +711,7 @@ def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
 
-    influx_client = InfluxDBClient.from_configuration(ws.logger)
+    stat_manager = StatManager(*StatManager.provide_default_basics(ws.logger))
 
     @ws.application.route(
         '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
@@ -888,17 +837,16 @@ def exports(ws):
             if entities[eid]['cur_alarm'] is None:
                 entities[eid]['cur_alarm'] = alarm['v']
 
-        active_pbs = pbehavior_manager.get_all_active_pbehaviors()
+        active_pbehaviors = pbehavior_manager.get_active_pbehaviors_on_entities(
+            entity_ids)
+        for pbehavior in active_pbehaviors:
+            pbehavior_eids = pbehavior.get('eids', [])
+            pbehavior = __format_pbehavior(pbehavior)
+            pbehavior['isActive'] = True
 
-        for active_pb in active_pbs:
-            active_pb_eids = set(active_pb['eids'])
-            active_pb_dirty = copy.deepcopy(active_pb)
-            active_pb_cleaned = __format_pbehavior(active_pb_dirty)
-
-            for eid in active_pb_eids:
-                active_pb_cleaned['isActive'] = True
+            for eid in pbehavior_eids:
                 if eid in entities:
-                    entities[eid]['pbehaviors'].append(active_pb_cleaned)
+                    entities[eid]['pbehaviors'].append(pbehavior)
 
         for entity_id, entity in entities.iteritems():
             enriched_entity = {}
@@ -910,8 +858,6 @@ def exports(ws):
             for k, val in raw_entity['links'].items():
                 tmp_links.append({'cat_name': k, 'links': val})
 
-            last_pbh_timestamp = pbehavior_manager.get_ok_ko_timestamp(entity_id)
-
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
             enriched_entity['linklist'] = tmp_links
@@ -921,7 +867,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id, last_pbh_timestamp)
+            enriched_entity['stats'] = stat_manager.get_stats(entity_id).as_dict()
             if current_alarm is not None:
                 enriched_entity['alarm_creation_date'] = current_alarm.get("creation_date")
                 enriched_entity['alarm_display_name'] = current_alarm.get("display_name")
