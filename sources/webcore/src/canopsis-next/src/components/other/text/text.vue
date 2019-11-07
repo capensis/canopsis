@@ -3,7 +3,7 @@
     progress-overlay(:pending="pending")
     alert-overlay(
       :value="hasError",
-      :message="errorMessage"
+      :message="serverErrorMessage"
     )
     v-runtime-template(:template="compiledTemplate")
 </template>
@@ -49,7 +49,6 @@ export default {
   data() {
     return {
       pending: true,
-      serverErrorMessage: null,
       stats: {},
     };
   },
