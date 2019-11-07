@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(data-test="alarmsWidget")
+  div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query", :columns="columns")
@@ -15,7 +15,7 @@
         )
       v-flex
         filter-selector(
-          data-test="alarmsFilterSelector",
+          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :lockedFilters="widgetViewFilters",
@@ -43,7 +43,7 @@
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
-        data-test="alarmsListTable",
+        data-test="tableWidget",
         :class="vDataTableClass",
         v-model="selected",
         :items="alarms",
@@ -63,7 +63,7 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          tr(:data-test="`alarmListRow-${props.item._id}`")
+          tr(:data-test="`tableRow-${props.item._id}`")
             td(data-test="rowCheckbox")
               v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(

@@ -142,18 +142,23 @@ module.exports = {
   },
 
   'Table widget alarms': (browser) => {
-    const alarmsTable = browser.page.tables.alarms();
+    // const alarmsTable = browser.page.tables.alarms();
     const commonTable = browser.page.tables.common();
     const dateIntervalField = browser.page.fields.dateInterval();
     const pbehaviorForm = browser.page.forms.pbehavior();
 
+    const firstId = '6e7fb977-7eab-4e03-9c31-4593a1bf892b';
+    // const secondId = 'b7f65652-e53e-4cda-8c3b-be9bbf600ca0';
+
     browser.page.view()
       .clickMenuViewButton();
 
-    commonTable.clickResetLiveReporting();
+    // alarmsTable
+    //   .openLiveReporting()
+    //   .clickResetLiveReporting();
 
-    alarmsTable
-      .setRowCheckbox('534c7a04-4531-4561-9c17-2689286519a2', true)
+    commonTable
+      .setRowCheckbox(firstId, true)
       .setAllCheckbox(true)
       .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
 
@@ -169,7 +174,7 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
-    alarmsTable
+    commonTable
       .setAllCheckbox(true)
       .clickOnMassAction(ALARMS_MASS_ACTIONS.CANCEL_ACK);
 
@@ -181,12 +186,10 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
-    alarmsTable
+    commonTable
       // .clickAlarmListHeaderCell('Connector')
-      .clickOnAlarmRow('534c7a04-4531-4561-9c17-2689286519a2')
-    // 534c7a04-4531-4561-9c17-2689286519a2 first
-    // a2b5e46c-b0cf-4c45-ab50-7a06f28c7a59 last
-      .clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', ALARMS_SHARED_ACTIONS.ACK);
+      .clickOnRow(firstId)
+      .clickOnSharedAction(firstId, ALARMS_SHARED_ACTIONS.ACK);
 
     browser.page.modals.alarm.createAckEvent()
       .verifyModalOpened()
@@ -200,7 +203,7 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
-    alarmsTable.clickOnSharedAction('534c7a04-4531-4561-9c17-2689286519a2', ALARMS_SHARED_ACTIONS.SNOOZE_ALARM);
+    commonTable.clickOnSharedAction(firstId, ALARMS_SHARED_ACTIONS.SNOOZE_ALARM);
 
     browser.page.modals.alarm.createSnoozeEvent()
       .verifyModalOpened()
@@ -211,7 +214,8 @@ module.exports = {
       .clickCancelButton()
       .verifyModalClosed();
 
-    alarmsTable.clickOnDropDownActions('534c7a04-4531-4561-9c17-2689286519a2', ALARMS_SHARED_DROPDOWN_ACTIONS.PERIODICAL_BEHAVIOR);
+    commonTable
+      .clickOnDropDownActions(firstId, ALARMS_SHARED_DROPDOWN_ACTIONS.PERIODICAL_BEHAVIOR);
 
     browser.page.modals.alarm.createPbehavior()
       .verifyModalOpened();

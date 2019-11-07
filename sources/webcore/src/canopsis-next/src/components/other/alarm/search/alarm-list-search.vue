@@ -1,18 +1,18 @@
 <template lang="pug">
   search-field(
-    data-test="alarmListSearch",
+    data-test="tableSearch",
     v-model="searchingText",
     @submit="submit",
     @clear="clear"
   )
     v-tooltip(bottom)
       v-btn(
-        data-test="alarmListSearchHelp",
+        data-test="tableSearchHelp",
         icon,
         slot="activator"
       )
         v-icon help_outline
-      div(data-test="alarmListSearchHelp", v-html="$t('search.advancedSearch')")
+      div(data-test="tableSearchHelpInfo", v-html="$t('search.advancedSearch')")
 </template>
 
 <script>
