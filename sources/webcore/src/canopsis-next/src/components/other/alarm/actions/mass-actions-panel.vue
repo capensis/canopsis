@@ -65,12 +65,6 @@ export default {
           method: this.showAckRemoveModal,
         },
         {
-          type: 'assoc',
-          icon: 'local_play',
-          title: 'Associer un ticket',
-          method: this.showAckRemoveModal,
-        },
-        {
           type: alarmsListActionsTypes.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),

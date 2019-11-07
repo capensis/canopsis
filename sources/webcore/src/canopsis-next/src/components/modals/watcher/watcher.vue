@@ -110,10 +110,12 @@ export default {
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
             if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
-              const preparedPbehavior = pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']);
-              preparedPbehavior.tstop = Math.round(Date.now() / 1000);
+              const data = {
+                ...pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']),
+                tstop: Math.round(Date.now() / 1000),
+              };
 
-              accSecond.push(this.updatePbehavior({ data: preparedPbehavior, id: pbehavior._id }));
+              accSecond.push(this.updatePbehavior({ data, id: pbehavior._id }));
             }
 
             return accSecond;
