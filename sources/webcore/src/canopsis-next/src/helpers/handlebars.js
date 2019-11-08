@@ -7,6 +7,12 @@ const prepareAttributes = attributes => Object.entries(attributes)
     `${Handlebars.escapeExpression(key)}="${Handlebars.escapeExpression(value)}"`)
   .join(' ');
 
+/**
+ *
+ * @param template
+ * @param context
+ * @returns {*}
+ */
 export function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template);
 

@@ -63,6 +63,10 @@ export function compare(a, operator, b, options) {
     case 'typeof':
       result = typeof a === b; // eslint-disable-line valid-typeof
       break;
+    case 'regex':
+    case 'regexp':
+      result = new RegExp(b, options.flags).test(b);
+      break;
     default: {
       throw new Error(`helper {{compare}}: invalid operator: '${operator}'`);
     }
