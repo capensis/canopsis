@@ -3,6 +3,13 @@ import Handlebars from 'handlebars';
 
 import dateFilter from '@/filters/date';
 
+/**
+ * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
+ * to `'escape(key)=escape(value) escape(keySecond)=escape(valueSecond)'` format.
+ *
+ * @param {Object} attributes
+ * @returns {string}
+ */
 function prepareAttributes(attributes) {
   return Object.entries(attributes)
     .map(([key, value]) =>

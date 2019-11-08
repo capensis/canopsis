@@ -22,7 +22,6 @@
     "escape-string-regexp": "^2.0.0",
     "flat": "^4.1.0",
     "handlebars": "^4.0.11",
-    "handlebars-helpers": "^0.10.0",
     "jodit": "^3.2.38",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.5",
