@@ -161,8 +161,9 @@ Afficher la configuration du moteur avec la commande suivante :
 ```sh
 systemctl cat canopsis-engine@dynamic-alerts.service
 ```
+
 Le résultat ressemble à ceci :
-```
+```ini
 [Unit]
 Description=Canopsis Engine %i
 After=network.target
@@ -184,15 +185,18 @@ Type=simple
 [Install]
 WantedBy=multi-user.target
 ```
+
 Puis éditer cette configuration dans un autre terminal :
 ```sh
 systemctl edit canopsis-engine@dynamic-alerts.service
 ```
+
 Une fenêtre d'édition vide s'affiche, copiez les éléments suivants pour surcharger la configuration actuelle :
-```
+```ini
 [Service]
 Environment=LOGLEVEL=debug
 ```
+
 Sauvegarder et quitter l'éditeur.
 
 Recharger systemd pour prendre en compte la modification.
@@ -216,14 +220,23 @@ systemctl status canopsis-engine@dynamic-alerts.service
            ├─4479 /bin/bash /opt/canopsis/bin/engine-launcher-systemd dynamic-alerts
            └─4489 /opt/canopsis/bin/python /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l debug
 ```
+
 Le paramètre `-l debug` visible à la fin de la dernière ligne indique bien que le service est maintenant en niveau de log "debug".
 
-# Moteurs obsolètes
+## Moteurs obsolètes
+
+Les moteurs Python suivants ne sont plus pris en charge lors d'une nouvelle installation ou d'une mise à jour de Canopsis :
 
 *  acknowledgement
 *  cancel
 *  context
-*  eventstore
-*  task\_linklist : n'existe plus depuis Canopsis 3.0
-*  linklist : n'existe plus depuis Canopsis 3.0, remplacé par les linkbuilders
+*  ticket
+*  task\_dataclean : non fonctionnel depuis Canopsis 3.0
+*  task\_linklist : n'existe plus depuis Canopsis 3.0, remplacé par [linkbuilder](../linkbuilder/index.md)
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric
+*  eventstore : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md)
+*  task\_mail : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), remplacé par [les Webhooks](moteur-axe-webhooks.md)
+
+Moteurs Go :
+
+*  engine-stat : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md)
