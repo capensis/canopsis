@@ -10,9 +10,11 @@ La file du moteur est placée juste après le moteur [che](moteur-che.md).
 
 À l'arrivée dans sa file, le moteur axe va transformer les événements en alarmes qu'il va créer et enrichir.
 
+Si l'événement ne correspond à aucune alarme en cours, l'alarme va alors être créée.
+
 Si l'événement correspond à une alarme en cours, l'alarme va alors être mise à jour.
 
-Si l'événement en correspond à aucune alarme en cours, l'alarme va alors être créée.
+Si l'événement correspond à la résolution d'une alarme en cours, l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement, elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajoutée avec le timestamp courant.
 
 Si l'événement correspond à une action (comme la mise d'un ACK), l'alarme va être mise à jour en prenant en compte l'action.
 
