@@ -28,8 +28,7 @@ Une *entité* est une abstraction utilisée, entre autre, pour conserver des don
 
 ## Évènement
 
-Un *évènement* est un message arrivant dans Canopsis. Il est formatté en JSON et provient généralement d'une source externe ou d'un connecteur (email, SNMP, etc.).
-Lorsqu'un évènement arrive il est envoyé vers le bac à évènements puis traité, il devient donc un alarme.
+Un *évènement* est un message arrivant dans Canopsis. Il est formatté en JSON et peut être de plusieurs [types](../../guide-developpement/struct-event.md). Les événements de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) peuvent provenir d'une source externe, d'un [connecteur](../../interconnexions/index.md#connecteurs) ([email](../../interconnexions/Transport/Mail.md), [SNMP](../../interconnexions/Supervision/SNMPtrap.md), etc.) ou de Canopsis lui-même. Ils aboutissent à la création d'une alarme dans le bac à alarmes.
 
 ## Météo
 
