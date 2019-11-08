@@ -14,7 +14,7 @@ Si l'événement ne correspond à aucune alarme en cours, l'alarme va alors êtr
 
 Si l'événement correspond à une alarme en cours, l'alarme va alors être mise à jour.
 
-Si l'événement correspond à la résolution d'une alarme en cours, l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement, elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajoutée avec le timestamp courant.
+Si l'événement correspond à la résolution d'une alarme en cours, l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement, elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
 
 Si l'événement correspond à une action (comme la mise d'un ACK), l'alarme va être mise à jour en prenant en compte l'action.
 
