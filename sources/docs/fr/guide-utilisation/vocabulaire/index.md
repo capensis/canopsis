@@ -2,7 +2,7 @@
 
 ## Alarme
 
-Une *alarme* est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
+Une *alarme* est le résultat de l'analyse des évènements par les différents moteurs. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
 
 ## Bagot
 
@@ -28,7 +28,7 @@ Une *entité* est une abstraction utilisée, entre autre, pour conserver des don
 
 ## Évènement
 
-Un *évènement* est un message arrivant dans Canopsis. Il est formatté en JSON et peut être de plusieurs [types](../../guide-developpement/struct-event.md). Les événements de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) peuvent provenir d'une source externe, d'un [connecteur](../../interconnexions/index.md#connecteurs) ([email](../../interconnexions/Transport/Mail.md), [SNMP](../../interconnexions/Supervision/SNMPtrap.md), etc.) ou de Canopsis lui-même. Ils aboutissent à la création d'une alarme dans le bac à alarmes.
+Un *évènement* est un message arrivant dans Canopsis. Il est formatté en JSON et peut être de plusieurs [types](../../guide-developpement/struct-event.md). Les événements de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) peuvent provenir d'une source externe, d'un [connecteur](../../interconnexions/index.md#connecteurs) ([email](../../interconnexions/Transport/Mail.md), [SNMP](../../interconnexions/Supervision/SNMPtrap.md), etc.) ou de Canopsis lui-même. Ils aboutissent à la création d'une [alarme](#alarme) dans le bac à alarmes.
 
 ## Météo
 
