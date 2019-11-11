@@ -1,11 +1,12 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createEntityModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
     v-tabs(slider-color="primary")
       v-tab(
         v-for="tab in tabs",
+        data-test="createEntityTab",
         :key="tab.name",
         @click.prevent="currentComponent = tab.component"
       ) {{ tab.name }}
@@ -16,8 +17,19 @@
         manage-infos(v-model="form.infos")
     v-divider
     v-layout.pa-2(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat, v-if="!submitting") {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
+      v-btn(
+        data-test="createEntityCancelButton",
+        @click="$modals.hide",
+        depressed,
+        flat,
+        v-if="!submitting"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        data-test="createEntitySubmitButton",
+        @click.prevent="submit",
+        :loading="submitting",
+        :disabled="submitting"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>

@@ -1,11 +1,12 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="addEntityInfoModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
     v-card-text
       v-form
         v-text-field(
+          data-test="addEntityInfoName",
           :label="$t('common.name')",
           v-model="form.name",
           v-validate="'required|unique-name'",
@@ -13,6 +14,7 @@
           :error-messages="errors.collect('name')"
         )
         v-text-field(
+          data-test="addEntityInfoDescription",
           :label="$t('common.description')",
           v-model="form.description",
           v-validate="'required'",
@@ -20,6 +22,7 @@
           :error-messages="errors.collect('description')"
         )
         v-textarea(
+          data-test="addEntityInfoValue",
           :label="$t('common.value')",
           v-model="form.value",
           v-validate,
@@ -29,8 +32,17 @@
         )
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn(@click="submit", color="primary") {{ $t('common.add') }}
+        v-btn(
+          data-test="addEntityInfoCancelButton",
+          @click="$modals.hide",
+          depressed,
+          flat
+        ) {{ $t('common.cancel') }}
+        v-btn(
+          data-test="addEntityInfoSubmitButton",
+          @click="submit",
+          color="primary"
+        ) {{ $t('common.add') }}
 </template>
 
 <script>

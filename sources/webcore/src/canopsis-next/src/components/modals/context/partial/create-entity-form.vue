@@ -1,8 +1,9 @@
 <template lang="pug">
-  div
+  div(data-test="createEntityForm")
     v-container(fluid)
       v-layout(row)
         v-text-field(
+          data-test="entityFormName",
           :label="$t('common.name')",
           :value="form.name",
           @input="updateField('name', $event)",
@@ -12,14 +13,16 @@
         )
       v-layout(row)
         v-textarea(
+          data-test="entityFormDescription",
           :label="$t('common.description')",
           :value="form.description",
           @input="updateField('description', $event)",
           data-vv-name="description",
           :error-messages="errors.collect('description')"
         )
-      v-layout(row)
+      v-layout(data-test="entityFormFieldLayout", row)
         v-switch(
+          data-test="entityFormEnabled",
           color="primary",
           :label="$t('common.enabled')",
           :input-value="form.enabled",
@@ -36,13 +39,13 @@
           single-line
         )
       v-layout(wrap)
-        v-flex(xs12)
+        v-flex(data-test="entityFormImpact", xs12)
           entities-select(
             :label="$t('modals.createEntity.fields.impact')",
             :entities="form.impact",
             @updateEntities="updateImpact"
           )
-        v-flex(xs12)
+        v-flex(data-test="entityFormDepends", xs12)
           entities-select(
             :label="$t('modals.createEntity.fields.depends')",
             :entities="form.depends",

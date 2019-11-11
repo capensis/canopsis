@@ -1,16 +1,22 @@
 <template lang="pug">
-  v-expansion-panel.my-1
+  v-expansion-panel.my-1(data-test="entitiesSelect")
     v-expansion-panel-content.grey.darken-2.white--text
       div.white--text(slot="header") {{ label }}
       v-card
         v-layout(wrap)
           v-chip(
             v-for="entity in entities",
+            :data-test="`removeEntity-${entity._id}`",
             :key="entity._id",
             close,
             @input="removeEntity(entity)"
           ) {{ entity }}
-        v-btn.red.white--text(v-show="entities.length", @click="clear", small) Clear
+        v-btn.red.white--text(
+          data-test="clearEntities",
+          v-show="entities.length",
+          @click="clear",
+          small
+        ) Clear
         context-general-list(@update:selectedIds="updateEntities($event)")
 </template>
 

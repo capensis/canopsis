@@ -1,12 +1,19 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="manageInfos")
     v-card-text
       v-layout(justify-end)
         v-tooltip(left)
-          v-btn(@click="showAddInfoModal", slot="activator", color="secondary", icon)
+          v-btn(
+            data-test="addManageInfos",
+            @click="showAddInfoModal",
+            slot="activator",
+            color="secondary",
+            icon
+          )
             v-icon add
           span {{ $t('modals.createEntity.manageInfos.addInfo') }}
       v-data-table(
+        data-test="manageInfosTable",
         :items="items",
         item-key="name",
         :headers="tableHeaders",
@@ -18,9 +25,19 @@
           td {{ props.item.value }}
           td
             v-layout
-              v-btn.mx-0(@click="showEditInfoModal(props.item)", icon, small)
+              v-btn.mx-0(
+                :data-test="`infoEditButton-${props.item.value}`",
+                @click="showEditInfoModal(props.item)",
+                icon,
+                small
+              )
                 v-icon(color="primary") edit
-              v-btn.mx-0(@click="removeField(props.item.name)", icon, small)
+              v-btn.mx-0(
+                :data-test="`infoDeleteButton-${props.item.value}`",
+                @click="removeField(props.item.name)",
+                icon,
+                small
+              )
                 v-icon(color="error") delete
 </template>
 
