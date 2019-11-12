@@ -11,7 +11,7 @@
         @input="updateField('snoozeParameters.duration', $event)"
       )
     template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
-      pbehavior-form(
+      pbehavior-form.mt-1(
         :form="form.pbehaviorParameters",
         @input="updateField('pbehaviorParameters', $event)",
         :author="$constants.ACTION_AUTHOR",
