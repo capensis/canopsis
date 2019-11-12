@@ -2,7 +2,7 @@
 
 ![Bac à alarmes](./img/listalarm.png  "Bac à alarmes")
 
-## Sommaire 
+## Sommaire
 
 ### Guide utilisateur
 
@@ -44,7 +44,7 @@ Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la reche
 Dans le bac à alarmes, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cette aspect [ici](../../recherche/index.md) !
 
 Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche")
- 
+
 ### Filtres
 
 Le sélecteur de filtre permet d'appliquer un filtre sur le Bac à alarmes. Seules les alarmes correspondant aux critères du filtres seront affichées.
@@ -185,8 +185,8 @@ Exemple: Vous souhaitez afficher la valeur du champ ```output``` des alarmes. Vo
 Il est à noter que seuls certaines balises et attributs sont autorisés dans les colonnes du Bac à alarmes.
 
 - Balises autorisées: ```h3, h4, h5, h6, blockquote, p, a, ul, ol, nl, li, b, i, strong, em, strike, code, hr, br, div, table, thead, caption, tbody, tr, th, td, pre, iframe, span, font, u```
-  
-- Attributs autorisées : 
+
+- Attributs autorisées :
     - Pour toutes les balises: ```style```
     - Pour les balises ```a```: ```href, name, target```
     - Pour les balises ```img```: ```src, alt```
@@ -208,7 +208,12 @@ Ce paramètre permet de filtrer les alarmes en fonction de leur état.
 *  Resolved : Alarmes "Résolues"
 
 Pour modifier ce paramètre, sélectionnez les types d'alarmes que vous souhaitez afficher en cochant la case correspondante.
+
 Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée), une des deux cases, ou les deux cases (les alarmes ouvertes ET résolues seront alors affichées).
+
+Lorsqu'une alarme est résolue, elle reste entre 1 et 2 minutes dans le bac à Alarmes "Ouvertes" avant de basculer dans le bac à Alarmes "Résolues". Pour plus d'informations sur le sujet, consulter la [documentation du moteur `axe`](../../../../guide-administration/moteurs/moteur-axe.md)).
+
+Lorsqu'une alarme est annulée, elle reste pendant 1 heure dans le bac à Alarmes "Ouvertes" avant de passer dans le bac à Alarmes "Résolues".
 
 ##### Filtres
 
