@@ -1,11 +1,13 @@
 import Vue from 'vue';
-import { get, omit, pick, uniq, mergeWith } from 'lodash';
+import { get, pick, uniq, mergeWith } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
 import schemas from '@/store/schemas';
 import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from '@/helpers/store';
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
+
+import cache from './cache';
 
 const entitiesModuleName = 'entities';
 
@@ -37,7 +39,21 @@ export const entitiesModule = {
           return null;
         }
 
-        return denormalize(id, schema, state);
+        const entity = state[type][id];
+
+        if (!entity) {
+          return undefined;
+        }
+
+        if (cache.has(entity)) {
+          return cache.get(entity);
+        }
+
+        const result = denormalize(id, schema, state);
+
+        cache.set(entity, result);
+
+        return result;
       };
     },
     getList(state) {
@@ -49,10 +65,20 @@ export const entitiesModule = {
         if (!state[type] || ids.length === 0) {
           return [];
         }
+        const schema = schemas[type];
+        const { idAttribute } = schema;
 
-        const result = denormalize(ids, [schemas[type]], state);
+        return denormalize(ids, [schema], state)
+          .filter(item => !!item)
+          .map((item) => {
+            if (cache.has(state[type][item[idAttribute]])) {
+              return cache.get(state[type][item[idAttribute]]);
+            }
 
-        return result.filter(v => !!v);
+            cache.set(state[type][item[idAttribute]], item);
+
+            return item;
+          });
       };
     },
   },
@@ -62,6 +88,8 @@ export const entitiesModule = {
      * @param {Object.<string, Object>} entities - Object of entities
      */
     [internalTypes.ENTITIES_REPLACE](state, entities) {
+      cache.clear();
+
       Object.keys(state).forEach((type) => {
         Vue.set(state, type, entities[type] || {});
       });
@@ -73,10 +101,15 @@ export const entitiesModule = {
      */
     [internalTypes.ENTITIES_UPDATE](state, entities) {
       Object.keys(entities).forEach((type) => {
-        Vue.set(state, type, {
-          ...(state[type] || {}),
-          ...entities[type],
-        });
+        if (!state[type]) {
+          Vue.set(state, type, entities[type]);
+        } else {
+          Object.entries(entities[type]).forEach(([key, entity]) => {
+            cache.clearForEntity(state, entity);
+
+            Vue.set(state[type], key, entity);
+          });
+        }
       });
     },
 
@@ -86,16 +119,23 @@ export const entitiesModule = {
      */
     [internalTypes.ENTITIES_MERGE](state, entities) {
       Object.keys(entities).forEach((type) => {
-        Vue.set(
-          state, type, mergeWith({}, state[type] || {}, entities[type]),
-          (objValue, srcValue) => {
-            if (Array.isArray(objValue)) {
-              return uniq(objValue.concat(srcValue));
-            }
+        if (!state[type]) {
+          Vue.set(state, type, entities[type]);
+        } else {
+          Object.entries(entities[type]).forEach(([key, entity]) => {
+            const newEntity = mergeWith({}, state[type][key] || {}, entity, (objValue, srcValue) => {
+              if (Array.isArray(objValue)) {
+                return uniq(objValue.concat(srcValue));
+              }
 
-            return undefined;
-          },
-        );
+              return undefined;
+            });
+
+            cache.clearForEntity(state, newEntity);
+
+            Vue.set(state[type], key, newEntity);
+          });
+        }
       });
     },
 
@@ -104,8 +144,14 @@ export const entitiesModule = {
      * @param {Object.<string, Object>} entities - Object of entities
      */
     [internalTypes.ENTITIES_DELETE](state, entities) {
-      Object.keys(entities).forEach((key) => {
-        Vue.set(state, key, omit(state[key], Object.keys(entities[key])));
+      Object.keys(entities).forEach((type) => {
+        if (state[type]) {
+          Object.entries(entities[type]).forEach(([key, entity]) => {
+            cache.delete(entity);
+
+            Vue.delete(state[type], key);
+          });
+        }
       });
     },
   },

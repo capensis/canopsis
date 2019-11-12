@@ -136,8 +136,8 @@ export default {
         [STATS_TYPES.stateRate.value]: value => this.$options.filters.percentage(value),
         [STATS_TYPES.ackTimeSla.value]: value => this.$options.filters.percentage(value),
         [STATS_TYPES.resolveTimeSla.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.timeInState.value]: value => this.$options.filters.duration({ value }),
-        [STATS_TYPES.mtbf.value]: value => this.$options.filters.duration({ value }),
+        [STATS_TYPES.timeInState.value]: value => this.$options.filters.duration(value),
+        [STATS_TYPES.mtbf.value]: value => this.$options.filters.duration(value),
       };
 
       const { stats } = this.query;

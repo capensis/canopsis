@@ -1,5 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 const { API_ROUTES } = require('../../../../../src/config');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
 
 module.exports.command = function deleteView(groupId, viewId, callback = () => {}) {
   const topBar = this.page.layout.topBar();
@@ -41,7 +42,7 @@ module.exports.command = function deleteView(groupId, viewId, callback = () => {
 
   this.waitForFirstXHR(
     `${API_ROUTES.view}/${viewId}`,
-    5000,
+    WAIT_FOR_FIRST_XHR_TIME,
     () => confirmation.clickSubmitButton(),
     ({ responseData }) => {
       confirmation.verifyModalClosed();

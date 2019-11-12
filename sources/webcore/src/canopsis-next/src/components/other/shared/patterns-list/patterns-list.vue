@@ -33,11 +33,10 @@
 <script>
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import formArrayMixin from '@/mixins/form/array';
 
 export default {
-  mixins: [modalMixin, formArrayMixin],
+  mixins: [formArrayMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -63,7 +62,7 @@ export default {
   },
   methods: {
     showCreatePatternModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createEventFilterRulePattern,
         config: {
           operators: this.operators,
@@ -73,7 +72,7 @@ export default {
     },
 
     showEditPatternModal(index) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createEventFilterRulePattern,
         config: {
           pattern: this.patterns[index],
@@ -84,7 +83,7 @@ export default {
     },
 
     showRemovePatternModal(index) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => this.removeItemFromArray(index),

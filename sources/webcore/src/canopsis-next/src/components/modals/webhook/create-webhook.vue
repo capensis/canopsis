@@ -20,19 +20,17 @@
       webhook-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
 
-import { setInSeveral } from '@/helpers/immutable';
+import { setSeveralFields } from '@/helpers/immutable';
+import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import webhookFormFiltersMixin from '@/mixins/webhook/form-filters';
 
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
 
@@ -45,7 +43,7 @@ export default {
     validator: 'new',
   },
   components: { WebhookForm },
-  mixins: [modalInnerMixin, webhookFormFiltersMixin],
+  mixins: [modalInnerMixin],
   data() {
     const { webhook } = this.modal.config;
     const defaultForm = {
@@ -67,7 +65,7 @@ export default {
     };
 
     return {
-      form: webhook ? this.$options.filters.webhookToForm(cloneDeep(webhook)) : defaultForm,
+      form: webhook ? webhookToForm(webhook) : defaultForm,
     };
   },
   computed: {
@@ -88,15 +86,15 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
-          const preparedForm = this.hasBlockedTriggers ? setInSeveral(this.form, {
+          const preparedForm = this.hasBlockedTriggers ? setSeveralFields(this.form, {
             'hook.event_patterns': null,
             declare_ticket: {},
           }) : this.form;
 
-          await this.config.action(this.$options.filters.formToWebhook(preparedForm));
+          await this.config.action(formToWebhook(preparedForm));
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

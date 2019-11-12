@@ -4,7 +4,6 @@ import duration from './duration';
 import json from './json';
 import percentage from './percentage';
 
-
 export default {
   install(Vue) {
     Vue.filter('get', get);
