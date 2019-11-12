@@ -23,7 +23,7 @@ Dans la première colonne, choisir de quel type sera l'objet filtré. Quatre cho
 *  component\_name
 *  connector\_name
 *  connector
-*  ressource
+*  resource
 
 Dans la seconde, le filtre qui lui sera alloué :
 
@@ -90,3 +90,79 @@ Le bouton "Parse" va vous servir à vérifier l'exactitude de votre JSON, si cel
 Une fois votre Filtre réalisé, il apparaîtra dans le menu déroulant "select a filter".
 
 ![select_filter](img/select_filter.png)
+
+## Exemples de filtres
+
+### Champs basiques
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Composant  | `component`  | `equal`  | *VALEUR_DU_COMPOSANT*
+Ressource  | `resource`  | `equal`  | *VALEUR_DE_LA_RESSOURCE*
+Connecteur	| `connector` | `equal` | *VALEUR_DU_CONNECTEUR*
+Connecteur	| `connector_name` | `equal` | *VALEUR_DU_NOM_DU_CONNECTEUR*
+Message	| `v.output` | `equal` | *VALEUR_DU_MESSAGE*
+
+### Selon la criticité
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Uniquement les alarmes Mineures  | `v.state.val`  | `equal`  | `1` (valeur de type number)
+Uniquement les alarmes Majeures  | `v.state.val`  | `equal`  | `2` (valeur de type number)
+Uniquement les alarmes Critiques  | `v.state.val`  | `equal`  | `3` (valeur de type number)
+
+### Champs enrichis
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Champ enrichi	| `entity.infos.NOM_DU_CHAMP_ENRICHI.value` | equal | *VALEUR_DU_CHAMP_ENRICHI*
+
+### ACK
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec ACK  | `v.ack._t`  | `not equal` | `ack` (valeur string)
+Uniquement les alarmes avec ACK  | `v.ack._t`  | `equal` | `ack` (valeur string)
+Uniquement les alarmes avec ACK sans champ `Note` (fast-ack basique)  | `v.ack.m`  | `is empty` | *PAS_DE_VALEUR*
+Exclure les alarmes avec ACK avec un champ `Note`  | `v.ack.m`  | `is not empty` | *PAS_DE_VALEUR*
+Auteur de l'ACK  | `v.ack.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DE_L_ACK*
+Message de l'ACK | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_ACK*
+
+### Ticket
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exlure les alarmes avec Ticket (quel que soit le type)  | `v.ticket._t`  | `is null` | *PAS_DE_VALEUR*
+Exclure les alarmes avec Ticket de type `assocticket`  | `v.ticket._t`  | `not equal` | `assocticket` (valeur string)
+Exclure les alarmes avec Ticket de type `declareticket`  | `v.ticket._t`  | `not equal` | `declareticket` (valeur string)
+Uniquement les alarmes avec Ticket  | `v.ticket._t`  | `is not null` | *PAS_DE_VALEUR*
+Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_TICKET*
+
+### Snooze
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec Snooze  | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
+Uniquement les alarmes avec Snooze  | `v.snooze._t`  | `equal` | `snooze` (valeur string)
+Auteur du Snooze  | `v.snooze.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_SNOOZE*
+
+### PBehaviors
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
+Uniquement les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
+
+### Changement de criticité
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
+Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
+
+### Watchers
+
+Description  | Valeur pour 1° colonne de `Filtres`  | Valeur pour 2° colonne de `Filtres` | Valeur pour 3° colonne de `Filtres`
+--|---|--|--
+Exclure les alarmes liéesdes watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
+Uniquement les alarmes des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)

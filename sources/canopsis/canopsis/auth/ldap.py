@@ -99,7 +99,10 @@ class LDAPBackend(BaseBackend):
 
         self.logger.info("Authenticate user {0} to LDAP Server".format(user))
 
+        username_attr = config.get('username_attr')
         attrs = [a.encode('utf-8') for a in config["attrs"].values()]
+        if username_attr:
+            attrs.append(username_attr.encode('utf-8'))
         ufilter = config["ufilter"] % user
 
         result = conn.search_s(
@@ -129,9 +132,15 @@ class LDAPBackend(BaseBackend):
 
         info = mgr.get_user(user)
 
+        username = user
+        if username_attr:
+            username = data.get(username_attr) or user
+            if isinstance(username, list):
+                username = username[0]
+
         if not info:
             info = {
-                "_id": user,
+                "_id": username,
                 "external": True,
                 "enable": True,
                 "contact": {},
@@ -148,12 +157,12 @@ class LDAPBackend(BaseBackend):
             info[field] = val
 
         account = self.rights.save_user(self.ws, info)
-        account['_id'] = user
+        account['_id'] = username
 
         session['auth_ldap'] = True
         session.save()
 
-        return self.install_account(user, account)
+        return self.install_account(username, account)
 
 
 def get_backend(ws):

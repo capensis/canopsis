@@ -18,7 +18,7 @@ Pour pallier cette limite, 2 mécanismes sont mis à disposition :
 * Info popup
 * Plus d'infos
 
-### Info popup
+### Info popup
 
 Les infos popup permettent d'afficher un popup contenant des données lors du clic sur un élément de colonne.  
 Toutes les colonnes affichées sont éligibles au système.  
@@ -36,7 +36,7 @@ Le rendu s'effectue au clic sur la colonne *Nom du connecteur* comme précisé d
 ![Info popup visualisation](./img/templates_infopopup_visualisation.png "Info popup visualisation")  
 
 
-### Plus d'infos
+### Plus d'infos
 
 Il existe un second mécanisme, *Plus d'infos*, dont le fonctionnement est identique à *Info popup*.  
 Seul l'affichage se fait par l'intermédiaire d'un bouton d'action
@@ -85,7 +85,7 @@ Le template associé est dans ce cas le suivant :
 </div>
 ````
 
-### Variables
+### Variables
 
 Au dela de ces fonctionnalités, vous pouvez connaitre l'ensemble des variables qui sont mises à disposition de chaque alarme en utilisant le mode *édition*.  
 Un point d'interrogation fait alors son apparition à coté des actions et vous permettra de lister et copier ces variables.  
@@ -106,7 +106,7 @@ Voici un descriptif des zones correspondantes :
 
 ![Visualisation météo](./img/templates_mds_visualisation.png "Visualisation météo")  
 
-## Avancé
+## Avancé
 
 Le templating *handlebars* embarque un langage complet qui vous permet d'aller beaucoup plus loin que le simple affichage de variables.  
 Pour afficher des structures de données complexes, Canopsis met généralement à disposition des helpers.  

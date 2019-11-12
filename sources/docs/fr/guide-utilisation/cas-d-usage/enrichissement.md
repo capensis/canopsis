@@ -20,7 +20,7 @@ Plusieurs possibilités sont offertes dans Canopsis :
 
 
 !!! Warning
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs GO.
+    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go.
 
 ## Enrichissement depuis les événements
 
@@ -77,7 +77,7 @@ Dans Canopsis, il existe la possibilité de définir des règles **event-filter*
 * d'enrichir les entités
 * d'enrichir les entités à partir d'une collection de données externe (CAT)
 
-La documentation complète se trouve [sur cette page](../../../guide-administration/event-filter/)
+La documentation complète se trouve [sur cette page](../../guide-administration/moteurs/moteur-che-event_filter.md)
 
 Prenons le cas d'usage suivant :
 
@@ -100,16 +100,16 @@ Considérons l'événement suivant :
 }
 ````
 
-Chose importante, les attributs pris en charge sont inscrits [ici](../../../guide-administration/event-filter/#champs-des-evenements).  
+Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des événements de la documentation de l'event-filter du moteur che](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).  
 Dans notre cas, l'attribut **groupe** est personalisé et sera donc positionné *automatiquement* dans un dictionnaire *extrainfos*.  
 
-On commence à ajouter une règle via le menu adéquat
+On commence en ajoutant une règle via le menu adéquat
 
 ![Menu Event-filter ](./img/event_filter_menu.png "Menu Event-filter")  
 
 ![Ajout d'une règle ](./img/event_filter_ajout_regle.png "Ajout d'une règle")  
 
-Ensuite on définit sur quels événements sera exécutée cette règle. 
+Ensuite on définit sur quels événements sera exécutée cette règle.
 Dans notre cas, nous utilisons un critère tel que **connector_name**.  
 
 ![Définition du pattern ](./img/event_filter_edit_pattern.png "Définition du pattern")
@@ -119,7 +119,7 @@ Dernière étape, nous allons récupérer le contenu de l'attribut **groupe** et
 
 !!! Warning
     Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire.  
-    Une règle de [copie d'entité](../../../guide-administration/event-filter/#ajout-dinformations-a-lentite) doit être présente
+    Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente
 
 Le résultat pourra être observé sur un bac à alarmes par exemple :  
 
