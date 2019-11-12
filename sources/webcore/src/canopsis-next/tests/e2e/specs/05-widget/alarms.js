@@ -1,7 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
 const {
-  ALARMS_WIDGET_INFO_POPUP_COLUMNS,
+  INFO_POPUP_DEFAULT_COLUMNS,
   ALARMS_WIDGET_SORT_FIELD,
   SORT_ORDERS,
   PAGINATION_PER_PAGE_VALUES,
@@ -12,44 +12,42 @@ const {
   FILTER_COLUMNS,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { generateTemporaryView, generateTemporaryAlarmsWidget } = require('../../helpers/entities');
+const { createWidgetView, removeWidgetView } = require('../../helpers/api');
+const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
+    browser.globals.defaultViewData = await createWidgetView();
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
+
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
 
     done();
   },
 
-  after(browser, done) {
+  async after(browser, done) {
+    const { viewId, groupId } = browser.globals.defaultViewData;
+
     browser.completed.logout()
       .end(done);
 
-    delete browser.globals.temporary;
-  },
+    await removeWidgetView(viewId, groupId);
 
-  'Create test view': (browser) => {
-    browser.completed.view.create(generateTemporaryView(), (view) => {
-      browser.globals.defaultViewData = {
-        viewId: view._id,
-        groupId: view.group_id,
-      };
-    });
+    delete browser.globals.defaultViewData;
+    delete browser.globals.temporary;
+
+    done();
   },
 
   'Create widget alarms with some name': (browser) => {
     const alarmsWidget = {
       ...generateTemporaryAlarmsWidget(),
-      size: {
-        sm: 12,
-        md: 12,
-        lg: 12,
-      },
       periodicRefresh: 140,
       parameters: {
-        advanced: true,
         sort: {
           order: SORT_ORDERS.desc,
           orderBy: ALARMS_WIDGET_SORT_FIELD.component,
@@ -60,7 +58,7 @@ module.exports = {
           resolve: true,
         },
         infoPopups: [{
-          column: ALARMS_WIDGET_INFO_POPUP_COLUMNS.connectorName,
+          column: INFO_POPUP_DEFAULT_COLUMNS.connectorName,
           template: 'Info popup template',
         }],
         ack: {
@@ -139,13 +137,14 @@ module.exports = {
       },
     };
     const { groupId, viewId } = browser.globals.defaultViewData;
-    const view = browser.page.view();
-    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    groupsSideBar.clickPanelHeader(groupId)
+    browser.page.layout.groupsSideBar()
+      .clickGroupsSideBarButton()
+      .clickPanelHeader(groupId)
       .clickLinkView(viewId);
 
-    view.clickMenuViewButton()
+    browser.page.view()
+      .clickMenuViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
@@ -203,12 +202,5 @@ module.exports = {
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
-  },
-
-  'Delete test view': (browser) => {
-    const { groupId, viewId } = browser.globals.defaultViewData;
-
-    browser.completed.view.delete(groupId, viewId);
-    browser.completed.view.deleteGroup(groupId);
   },
 };

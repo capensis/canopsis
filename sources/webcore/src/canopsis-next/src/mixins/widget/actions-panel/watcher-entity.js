@@ -7,7 +7,6 @@ import {
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import eventActionsWatcherEntityMixin from '@/mixins/event-actions/watcher-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
@@ -15,7 +14,6 @@ import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 export default {
   mixins: [
     authMixin,
-    modalMixin,
     eventActionsWatcherEntityMixin,
     entitiesPbehaviorMixin,
     entitiesPbehaviorCommentMixin,
@@ -43,7 +41,7 @@ export default {
     },
 
     prepareAssocTicketAction() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createWatcherAssocTicketEvent,
         config: {
           action: (ticket) => {
@@ -68,7 +66,7 @@ export default {
     },
 
     preparePauseAction() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createWatcherPauseEvent,
         config: {
           action: (pause) => {
@@ -94,7 +92,7 @@ export default {
     },
 
     prepareCancelAction() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.createCancelEvent.fields.output'),

@@ -57,11 +57,6 @@ mongodb_systemlog_logappend: true                                        # Appen
 mongodb_systemlog_logrotate: "rename"                                    # Logrotation behavior
 mongodb_systemlog_path: /var/log/mongodb/{{ mongodb_daemon_name }}.log   # Log file to send write to instead of stdout
 
-## replication Options
-mongodb_replication_replset:                      # Enable replication <setname>[/<optionalseedhostlist>]
-mongodb_replication_replindexprefetch: "all"      # specify index prefetching behavior (if secondary) [none|_id_only|all]
-mongodb_replication_oplogsize: 1024               # specifies a maximum size in megabytes for the replication operation log
-
 # MMS Agent
 mongodb_mms_agent_pkg: https://mms.mongodb.com/download/agent/automation/mongodb-mms-automation-agent-manager_1.4.2.783-1_amd64.deb
 mongodb_mms_group_id: ""

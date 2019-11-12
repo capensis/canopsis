@@ -13,7 +13,6 @@ export default {
   data() {
     return {
       pending: true,
-      hasError: false,
       serverErrorMessage: null,
       stats: null,
     };
@@ -115,7 +114,6 @@ export default {
     async fetchList() {
       try {
         this.pending = true;
-        this.hasError = false;
 
         const { aggregations } = await this.fetchStatsEvolutionWithoutStore({
           params: this.getQuery(),
@@ -124,8 +122,7 @@ export default {
         this.stats = aggregations;
         this.pending = false;
       } catch (err) {
-        this.hasError = true;
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }
@@ -136,8 +133,8 @@ export default {
         [STATS_TYPES.stateRate.value]: value => this.$options.filters.percentage(value),
         [STATS_TYPES.ackTimeSla.value]: value => this.$options.filters.percentage(value),
         [STATS_TYPES.resolveTimeSla.value]: value => this.$options.filters.percentage(value),
-        [STATS_TYPES.timeInState.value]: value => this.$options.filters.duration({ value }),
-        [STATS_TYPES.mtbf.value]: value => this.$options.filters.duration({ value }),
+        [STATS_TYPES.timeInState.value]: value => this.$options.filters.duration(value),
+        [STATS_TYPES.mtbf.value]: value => this.$options.filters.duration(value),
       };
 
       const { stats } = this.query;

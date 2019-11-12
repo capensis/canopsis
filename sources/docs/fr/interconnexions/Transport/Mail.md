@@ -18,9 +18,9 @@ Le fichier de configuration du connecteur est `/opt/canopsis_connectors/email2ca
 ```ini
 # Chaine de connexion au bus AMQP
 [amqp]
-url=amqp://cpsrabbit:canopsis@vip-dvp-hypervision-rabbitmq.si3si.int/canopsis
+url=amqp://cpsrabbit:canopsis@rabbitmq/canopsis
 
-# Url d'un redis pour activer le renvoi automatique du dernier état connu des événements
+# URL d'un Redis pour activer le renvoi automatique du dernier état connu des événements
 [redis]
 url=redis://redis:6379/0
 
@@ -31,12 +31,14 @@ popserver=webmail.test.net
 port=995
 # Doit-on négocier en SSL ou en PLAIN ?
 overssl=True
-# Login de la bal
+# Identifiant de la BAL
 user=email2canopsis
 # Mot de passe associé
 password=
-# Dossier d'archivage des mails (active si présent)
+# Dossier d'archivage des emails (active si présent)
 archive_folder=
+# Depuis la 3.21.0 : option leavemails pour conserver sur le serveur les emails lus
+leavemails=False
 
 [event]
 connector.constant=mail2canopsis
@@ -63,15 +65,25 @@ Il faut donc vérifier que les URL qui y figurent sont les bonnes.
 
 #### Configuration de la Boîte aux Lettres
 
-Le bloc `[mail]` contient la configuration pour la connexion à la boîte aux lettres POP3 dont les mails seront convertis en événements Canopsis.
+Le bloc `[mail]` contient la configuration pour la connexion à la boîte aux lettres POP3 dont les emails seront convertis en événements Canopsis.
+
+À partir de la `3.21.0`, l'option `leavemails` permet de conserver sur le serveur les emails lus. Sa valeur est booléenne (`False` ou `True`). Par défaut, l'option vaut `False` et les emails sont supprimés après leur lecture.
 
 Il faut donc vérifier que les différents champs sont bien remplis.
+
+#### Configuration de l'événement envoyé
+
+Le bloc `[event]` contient la configuration de l'événement envoyé à Canopsis.
+
+On peut y définir les différents champs d'un [événement de type check](../../guide-developpement/struct-event.md#event-check-structure).
+
+On peut définir les champs `component`, `resource` et `output` de manière dynamique en faisant appel aux templates. Pour cela, on utilise `param1`, `param2` ou `paramn`.
 
 #### Configuration des templates
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc et que le contenu du mail corresponde bien au template appliqué à cette même adresse email.
+Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc et que le contenu de l'email corresponde bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
@@ -85,17 +97,20 @@ template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 
 Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit correspondre au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
 
-### Configuration du template de mail
+### Configuration du template d'email
 
 #### Principe du template
 
-Les templates permettent d'analyser un mail en suivant quelques régles de transformations simples.
+Les templates permettent d'analyser un email en suivant quelques régles de transformations simples.
 
 Un fichier template devrait ressembler à quelque chose comme suit :
 
 ```ini
 [tpl]
 component=MAIL_SENDER
+resource=MAIL_BODY.line(16).word(2).untilword()
+# Depuis la 3.11.0 l'option trim permet de supprimer les espaces sur un champ, ici par exemple avec le champ ressource
+resource.trim=left
 output=MAIL_BODY.line(6).word(3).untilword()
 long_output=MAIL_BODY.line(7).after(le).untilword()
 state=MAIL_SUBJECT.line(0).word(1)
@@ -112,9 +127,15 @@ Les clefs sont divisées en deux parties, séparées par un point :
 Les actions peuvent être les suivantes :
 
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
-* *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont appliquables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2, ...
+* *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
 
-La partie droite décrit les régles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
+À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :
+
+- `resource.trim=left` donnera "deux mots␣" avec l'espace à gauche supprimé
+- `resource.trim=right` donnera "␣deux mots" avec l'espace à droite supprimé
+- `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
+
+La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
 
 - `MAIL_BODY`, `MAIL_DATE`, `MAIL_ID`, `MAIL_SENDER`, et `MAIL_SUBJECT` sont les différentes parties de l'email
 - `line(a)` sélectionne une ligne entière numéro a
@@ -127,7 +148,7 @@ La partie droite décrit les régles de transformations (où a, b et c sont des 
 - `line(a).before(e)` sélectionne tous les mots avant e
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
 
-MAIL_DATE est automatiquement convertie en objet date, inutile d'applique d'action 'dateformat' dessus.
+MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une action 'dateformat' dessus.
 
 !!! attention
     Les numéros de lignes et de mots commencent à partir de 0, non de 1.

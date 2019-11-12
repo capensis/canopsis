@@ -33,25 +33,13 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: true,
-        error: null,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { pending: true, error: null });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
-        allIds,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { allIds, pending: false });
     },
     [types.FETCH_LIST_FAILED](state, { widgetId, error = {} }) {
-      Vue.set(state.widgets, widgetId, {
-        ...state.widgets[widgetId],
-        pending: false,
-        error,
-      });
+      Vue.setSeveral(state.widgets, widgetId, { error, pending: false });
     },
   },
   actions: {
@@ -93,7 +81,7 @@ export default {
           error: err,
         });
 
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
       }
     },
   },

@@ -3,7 +3,7 @@
     v-card-title.white--text(:style="{ backgroundColor: color }")
       v-layout(justify-space-between, align-center)
         span.headline {{ watcher.display_name }}
-        v-btn(icon, dark, @click.native="hideModal")
+        v-btn(icon, dark, @click.native="$modals.hide")
           v-icon close
     v-divider
     v-card-text
@@ -27,7 +27,7 @@
         :value="eventsQueue.length",
         type="info"
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-tooltip(top)
         v-btn(@click="refresh", color="secondary", slot="activator")
           v-icon refresh
@@ -110,7 +110,12 @@ export default {
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
             if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
-              accSecond.push(this.removePbehavior({ id: pbehavior._id }));
+              const data = {
+                ...pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']),
+                tstop: Math.round(Date.now() / 1000),
+              };
+
+              accSecond.push(this.updatePbehavior({ data, id: pbehavior._id }));
             }
 
             return accSecond;
@@ -127,7 +132,7 @@ export default {
       await Promise.all(requests);
 
       this.submitting = false;
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

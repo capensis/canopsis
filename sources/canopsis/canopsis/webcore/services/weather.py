@@ -41,8 +41,8 @@ from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
+from canopsis.stat.manager import StatManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
-from canopsis.common.influx import InfluxDBClient
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
@@ -420,115 +420,6 @@ class __TileData(object):
         return None
 
 
-def __format_pbehavior(pbehavior):
-    """
-    Rewrite a pbehavior from db format to front format.
-
-    :param dict pbehavior: a pbehavior dict
-    :return: a formatted pbehavior
-    """
-    EVERY = "Every {}"
-    to_delete = [
-        "connector", "filter", "connector_name", "eids"
-    ]
-
-    pbehavior["behavior"] = pbehavior.pop("name")
-    pbehavior["dtstart"] = pbehavior.pop("tstart")
-    pbehavior["dtend"] = pbehavior.pop("tstop")
-
-    # parse the rrule to get is "text"
-    rrule = {}
-    rrule["rrule"] = pbehavior["rrule"]
-
-    if pbehavior["rrule"] is not None:
-
-        rrule_str = pbehavior["rrule"]
-        if rrule_str[0:6] == "RRULE:":
-            rrule_str = rrule_str[6:]
-
-        freq = get_rrule_freq(rrule_str)
-
-        if freq == "SECONDLY":
-            rrule["text"] = EVERY.format("second")
-        elif freq == "MINUTELY":
-            rrule["text"] = EVERY.format("minute")
-        elif freq == "HOURLY":
-            rrule["text"] = EVERY.format("hour")
-        elif freq == "DAILY":
-            rrule["text"] = EVERY.format("day")
-        elif freq == "WEEKLY":
-            rrule["text"] = EVERY.format("week")
-        elif freq == "MONTHLY":
-            rrule["text"] = EVERY.format("month")
-        elif freq == "YEARLY":
-            rrule["text"] = EVERY.format("year")
-
-    pbehavior["rrule"] = rrule
-
-    for key in to_delete:
-        try:
-            pbehavior.pop(key)
-        except KeyError:
-            pass
-
-    return pbehavior
-
-
-def get_ok_ko(influx_client, entity_id, timestamp):
-    """
-    For an entity defined by its id, return the number of OK check and KO
-    check.
-
-    :param InfluxDBClient influx_client:
-    :param str entity_id: the id of the entity
-    :return: a dict with two key ok and ko, and with last_event and last_ko 
-             if found for given event
-    """
-    query_sum = "SELECT SUM(ok) as ok, SUM(ko) as ko FROM " \
-                "event_state_history WHERE \"eid\"='{}' AND time >= {}s"
-    query_last_event = "SELECT LAST(\"ko\") FROM event_state_history WHERE " \
-                       "\"eid\"='{}'"
-    query_last_ko = query_last_event + " and \"ko\"=1"
-
-    # Why did I use a double '\' ? It's simple, for some mystical reason,
-    # somewhere between the call of influxdbstg.raw_query and the HTTP
-    # request is sent, the escaped simple quote are deescaped. So like the
-    # song says "you can't touch this".
-    entity_id = entity_id.replace("'", "\\'")
-    entity_id = entity_id.replace('"', '\\"')
-
-    result = influx_client.query(query_sum.format(entity_id, timestamp))
-
-    stats = {}
-    stats["ok"] = 0
-    stats["ko"] = 0
-    data = list(result.get_points())
-    if len(data) > 0:
-        data = data[0]
-        stats["ok"] = data["ok"]
-        stats["ko"] = data["ko"]
-
-    result = influx_client.query(query_last_event.format(entity_id))
-    data = list(result.get_points())
-    if len(data) > 0:
-        data = data[0]
-        time = data["time"]
-        time = time.replace("T", " ")
-        time = time.replace("Z", "")
-        stats["last_event"] = time
-
-    result = influx_client.query(query_last_ko.format(entity_id))
-    data = list(result.get_points())
-    if len(data) > 0:
-        data = data[0]
-        time = data["time"]
-        time = time.replace("T", " ")
-        time = time.replace("Z", "")
-        stats["last_ko"] = time
-
-    return stats
-
-
 def _pbehavior_types(watcher):
     """
     Return a set containing all type_ found in pbehaviors.
@@ -762,7 +653,7 @@ def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
 
-    influx_client = InfluxDBClient.from_configuration(ws.logger)
+    stat_manager = StatManager(*StatManager.provide_default_basics(ws.logger))
 
     @ws.application.route(
         '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
@@ -888,17 +779,13 @@ def exports(ws):
             if entities[eid]['cur_alarm'] is None:
                 entities[eid]['cur_alarm'] = alarm['v']
 
-        active_pbs = pbehavior_manager.get_all_active_pbehaviors()
-
-        for active_pb in active_pbs:
-            active_pb_eids = set(active_pb['eids'])
-            active_pb_dirty = copy.deepcopy(active_pb)
-            active_pb_cleaned = __format_pbehavior(active_pb_dirty)
-
-            for eid in active_pb_eids:
-                active_pb_cleaned['isActive'] = True
+        active_pbehaviors = pbehavior_manager.get_active_pbehaviors_on_entities(
+            entity_ids)
+        for pbehavior in active_pbehaviors:
+            pbehavior['isActive'] = True
+            for eid in pbehavior.get('eids', []):
                 if eid in entities:
-                    entities[eid]['pbehaviors'].append(active_pb_cleaned)
+                    entities[eid]['pbehaviors'].append(pbehavior)
 
         for entity_id, entity in entities.iteritems():
             enriched_entity = {}
@@ -910,8 +797,6 @@ def exports(ws):
             for k, val in raw_entity['links'].items():
                 tmp_links.append({'cat_name': k, 'links': val})
 
-            last_pbh_timestamp = pbehavior_manager.get_ok_ko_timestamp(entity_id)
-
             enriched_entity['pbehavior'] = entity['pbehaviors']
             enriched_entity['entity_id'] = entity_id
             enriched_entity['linklist'] = tmp_links
@@ -921,7 +806,7 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = get_ok_ko(influx_client, entity_id, last_pbh_timestamp)
+            enriched_entity['stats'] = stat_manager.get_stats(entity_id).as_dict()
             if current_alarm is not None:
                 enriched_entity['alarm_creation_date'] = current_alarm.get("creation_date")
                 enriched_entity['alarm_display_name'] = current_alarm.get("display_name")

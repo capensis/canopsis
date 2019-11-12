@@ -100,7 +100,6 @@ import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
@@ -131,7 +130,6 @@ export default {
   },
   mixins: [
     authMixin,
-    modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
@@ -216,7 +214,7 @@ export default {
     },
 
     showEditLiveReportModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['tstart', 'tstop']),

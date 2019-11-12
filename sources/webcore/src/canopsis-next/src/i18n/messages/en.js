@@ -892,6 +892,26 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
+    createAction: {
+      create: {
+        title: 'Create action',
+        success: 'Action successfully created !',
+      },
+      edit: {
+        success: 'Action successfully edited !',
+      },
+      remove: {
+        success: 'Action successfully removed !',
+      },
+      tabs: {
+        general: 'General',
+        hook: 'Hook',
+      },
+      fields: {
+        message: 'Message',
+        duration: 'Duration',
+      },
+    },
     createHeartbeat: {
       create: {
         title: 'Create heartbeat',
@@ -1036,6 +1056,7 @@ export default {
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
+    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
   },
   calendar: {
     today: 'Today',
@@ -1123,6 +1144,33 @@ export default {
     title: 'SNMP rules',
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
+  },
+  actions: {
+    title: 'Actions',
+    addAction: 'Add Action',
+    table: {
+      id: 'Id',
+      type: 'Type',
+      expand: {
+        tabs: {
+          general: 'General',
+          hook: 'Hook',
+          author: 'Author',
+          pbehavior: {
+            name: 'Name',
+            type: 'Type',
+            reason: 'Reason',
+            start: 'Start',
+            end: 'End',
+          },
+          snooze: {
+            message: 'Message',
+            duration: 'Duration',
+            noMessage: 'No message is set',
+          },
+        },
+      },
+    },
   },
   layout: {
     sideBar: {

@@ -34,9 +34,9 @@ systemctl status redis
 
 ### Gestion de l'hyperviseur
 
-```bash
+```sh
 #connaître l'état du service
-/opt/canopsis/bin/canopsis-systemd status
+canoctl status
 ```
 
 ## Gestion avancées des services

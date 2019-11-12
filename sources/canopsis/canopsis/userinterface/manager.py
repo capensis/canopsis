@@ -89,7 +89,7 @@ class UserInterfaceManager(object):
 
     def delete(self):
         """
-        Update a ticketapi config.
+        Update a user interface config.
 
         :param str id_: an user interface config _id
         :param dict user_interface: an user interface config as a dict

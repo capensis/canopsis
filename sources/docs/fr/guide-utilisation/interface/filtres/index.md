@@ -23,7 +23,7 @@ Dans la première colonne, choisir de quel type sera l'objet filtré. Quatre cho
 *  component\_name
 *  connector\_name
 *  connector
-*  ressource
+*  resource
 
 Dans la seconde, le filtre qui lui sera alloué :
 

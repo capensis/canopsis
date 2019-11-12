@@ -25,24 +25,99 @@ module.exports.generateTemporaryRole = (prefix = '', suffix = uid()) => ({
 module.exports.generateTemporaryWeatherWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Weather-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
 });
 
 module.exports.generateTemporaryAlarmsWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Alarms-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
 });
 
 module.exports.generateTemporaryContextWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Context-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
 });
 
 module.exports.generateTemporaryStatsTableWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}StatsTable-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
 });
 
 module.exports.generateTemporaryTextWidget = (prefix = '', suffix = uid()) => ({
   title: `${prefix}Text-widget-${suffix}`,
   row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
+});
+
+module.exports.generateTemporaryStatsCalendarWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Calendar-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
+});
+
+module.exports.generateTemporaryStatsHistogramWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Histogram-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
+});
+
+module.exports.generateTemporaryStatsCurvesWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Curves-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
+});
+
+module.exports.generateTemporaryStatsNumberWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Stats-Number-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
+});
+
+module.exports.generateTemporaryParetoDiagramWidget = (prefix = '', suffix = uid()) => ({
+  title: `${prefix}Pareto-Diagram-widget-${suffix}`,
+  row: `${prefix}row-${suffix}`,
+  size: {
+    sm: 12,
+    md: 12,
+    lg: 12,
+  },
 });

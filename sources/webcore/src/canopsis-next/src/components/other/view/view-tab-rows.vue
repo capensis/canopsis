@@ -37,8 +37,8 @@
                 @click="showSettings({ tabId: tab._id, rowId: row._id, widget })"
               )
                 v-icon settings
-        component(
-          :is="widgetsComponentsMap[widget.type]",
+        div(
+          v-bind="widgetsComponentsMap(widget.type).bind",
           :widget="widget",
           :tabId="tab._id",
           :isEditingMode="isEditingMode"
@@ -46,7 +46,9 @@
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES_RULES } from '@/constants';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
@@ -60,10 +62,11 @@ import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calenda
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
-import popupMixin from '@/mixins/popup';
-import modalMixin from '@/mixins/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
+
+const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
 
 export default {
   components: {
@@ -77,10 +80,9 @@ export default {
     StatsNumberWidget,
     StatsParetoWidget,
     TextWidget,
+    AlertOverlay,
   },
   mixins: [
-    popupMixin,
-    modalMixin,
     sideBarMixin,
   ],
   props: {
@@ -101,23 +103,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      widgetsComponentsMap: {
-        [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
-        [WIDGET_TYPES.context]: 'entities-list-widget',
-        [WIDGET_TYPES.weather]: 'weather-widget',
-        [WIDGET_TYPES.statsHistogram]: 'stats-histogram-widget',
-        [WIDGET_TYPES.statsCurves]: 'stats-curves-widget',
-        [WIDGET_TYPES.statsTable]: 'stats-table-widget',
-        [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
-        [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
-        [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
-        [WIDGET_TYPES.text]: 'text-widget',
-      },
-    };
-  },
   computed: {
+    ...mapInfoGetters(['edition']),
+
     rows() {
       return this.tab.rows || [];
     },
@@ -128,6 +116,42 @@ export default {
         `md${widget.size.md}`,
         `lg${widget.size.lg}`,
       ];
+    },
+
+    widgetsComponentsMap() {
+      return (widgetType) => {
+        const baseMap = {
+          [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
+          [WIDGET_TYPES.context]: 'entities-list-widget',
+          [WIDGET_TYPES.weather]: 'weather-widget',
+          [WIDGET_TYPES.statsHistogram]: 'stats-histogram-widget',
+          [WIDGET_TYPES.statsCurves]: 'stats-curves-widget',
+          [WIDGET_TYPES.statsTable]: 'stats-table-widget',
+          [WIDGET_TYPES.statsCalendar]: 'stats-calendar-widget',
+          [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
+          [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
+          [WIDGET_TYPES.text]: 'text-widget',
+        };
+
+        let widgetSpecificsProp = {};
+
+        Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
+          if (rule.edition !== this.edition) {
+            baseMap[key] = 'alert-overlay';
+            widgetSpecificsProp = {
+              message: this.$t('errors.statsWrongEditionError'),
+              value: true,
+            };
+          }
+        });
+
+        return {
+          bind: {
+            ...widgetSpecificsProp,
+            is: baseMap[widgetType],
+          },
+        };
+      };
     },
   },
   methods: {
@@ -149,7 +173,7 @@ export default {
     },
 
     showSelectViewTabModal(widget) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.selectViewTab,
         config: {
           action: ({ tabId, viewId }) => this.cloneWidget({ widget, tabId, viewId }),
@@ -161,9 +185,9 @@ export default {
       const widgets = row.widgets || [];
 
       if (widgets.length > 0) {
-        this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
+        this.$popups.error({ text: this.$t('errors.lineNotEmpty') });
       } else {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.confirmation,
           config: {
             action: () => {
@@ -181,7 +205,7 @@ export default {
     },
 
     showDeleteWidgetModal(rowId, widget = {}) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => {
