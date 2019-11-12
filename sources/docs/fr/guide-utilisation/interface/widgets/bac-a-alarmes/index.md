@@ -80,7 +80,7 @@ Il suffit alors de sélectionner la période souhaitée parmi les périodes pré
 
 Dans un bac à alarmes en cours, le filtre est appliqué sur la date de création.
 
-Dans un bac à alarmes résolue, le filtre est appliqué sur la date de résolution.
+Dans un bac à alarmes résolues, le filtre est appliqué sur la date de résolution.
 
 Cliquez ensuite sur 'Appliquer'.
 
@@ -246,7 +246,7 @@ Il est à noter que seuls certaines balises et attributs sont autorisés dans le
 
 - Balises autorisées: ```h3, h4, h5, h6, blockquote, p, a, ul, ol, nl, li, b, i, strong, em, strike, code, hr, br, div, table, thead, caption, tbody, tr, th, td, pre, iframe, span, font, u```
 
-- Attributs autorisées :
+- Attributs autorisés :
     - Pour toutes les balises: ```style```
     - Pour les balises ```a```: ```href, name, target```
     - Pour les balises ```img```: ```src, alt```
