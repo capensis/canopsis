@@ -29,6 +29,7 @@ import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 
 /**
@@ -38,6 +39,7 @@ import formMixin from '@/mixins/form';
  */
 export default {
   mixins: [
+    modalMixin,
     formMixin,
   ],
   model: {
@@ -84,7 +86,7 @@ export default {
   },
   methods: {
     showAddInfoModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.addEntityInfo,
         config: {
           infos: this.infos,
@@ -95,7 +97,7 @@ export default {
     },
 
     showEditInfoModal(info) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.addEntityInfo,
         config: {
           infos: this.infos,

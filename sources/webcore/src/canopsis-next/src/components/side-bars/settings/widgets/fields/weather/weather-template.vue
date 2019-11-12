@@ -12,7 +12,10 @@
 <script>
 import { MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
+
 export default {
+  mixins: [modalMixin],
   props: {
     value: {
       type: String,
@@ -25,7 +28,7 @@ export default {
   },
   methods: {
     showTextEditorModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.textEditor,
         config: {
           text: this.value,

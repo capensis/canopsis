@@ -63,6 +63,8 @@ import { MODALS } from '@/constants';
 
 import { getRolesSearchByText } from '@/helpers/entities-search';
 
+import popupMixin from '@/mixins/popup';
+import modalMixin from '@/mixins/modal';
 import viewQuery from '@/mixins/view/query';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
@@ -76,6 +78,8 @@ export default {
     SearchField,
   },
   mixins: [
+    popupMixin,
+    modalMixin,
     viewQuery,
     entitiesRoleMixins,
     rightsTechnicalRoleMixin,
@@ -102,7 +106,7 @@ export default {
   },
   methods: {
     showRemoveRoleModal(id) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -110,9 +114,9 @@ export default {
               await this.removeRole({ id });
               await this.fetchRolesListWithPreviousParams();
 
-              this.$popups.success({ text: this.$t('success.default') });
+              this.addSuccessPopup({ text: this.$t('success.default') });
             } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
+              this.addErrorPopup({ text: this.$t('errors.default') });
             }
           },
         },
@@ -120,7 +124,7 @@ export default {
     },
 
     showRemoveSelectedRolesModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -129,9 +133,9 @@ export default {
               await this.fetchRolesListWithPreviousParams();
               this.selected = [];
 
-              this.$popups.success({ text: this.$t('success.default') });
+              this.addSuccessPopup({ text: this.$t('success.default') });
             } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
+              this.addErrorPopup({ text: this.$t('errors.default') });
             }
           },
         },
@@ -139,7 +143,7 @@ export default {
     },
 
     showEditRoleModal(roleId) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createRole,
         config: {
           title: this.$t('modals.editRole.title'),
@@ -149,7 +153,7 @@ export default {
     },
 
     showCreateRoleModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createRole,
       });
     },

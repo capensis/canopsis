@@ -8,7 +8,8 @@ const commands = {
   },
 
   clickContextTypeOfEntities() {
-    return this.customClick('@contextTypeOfEntities');
+    return this.customClick('@contextTypeOfEntities')
+      .defaultPause();
   },
 
   selectEntitiesTypeCheckbox(index, checked) {

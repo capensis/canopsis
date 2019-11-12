@@ -1,9 +1,8 @@
 // http://nightwatchjs.org/guide#usage
 
 const { API_ROUTES } = require('@/config');
-const { WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
 
-module.exports.command = function createText(
+module.exports.command = function createServiceWeather(
   {
     parameters: {
       template,
@@ -35,7 +34,7 @@ module.exports.command = function createText(
 
   this.waitForFirstXHR(
     API_ROUTES.userPreferences,
-    WAIT_FOR_FIRST_XHR_TIME,
+    5000,
     () => text.clickSubmitText(),
     ({ responseData, requestData }) => callback({
       response: JSON.parse(responseData),

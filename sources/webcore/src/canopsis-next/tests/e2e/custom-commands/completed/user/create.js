@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 const qs = require('qs');
-const { USER, WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
+const { USER } = require('../../../constants');
 const { API_ROUTES } = require('../../../../../src/config');
 
 module.exports.command = function createUser(user = { ...USER }, callback = () => {}) {
@@ -42,7 +42,7 @@ module.exports.command = function createUser(user = { ...USER }, callback = () =
 
   this.waitForFirstXHR(
     API_ROUTES.user.create,
-    WAIT_FOR_FIRST_XHR_TIME,
+    1000,
     () => adminCreateUser.clickSubmitButton(),
     ({ responseData, requestData }) => {
       adminCreateUser.verifyModalClosed();

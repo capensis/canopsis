@@ -25,7 +25,7 @@
         flat,
         depressed,
         data-test="addInfoCancelButton",
-        @click="$modals.hide"
+        @click="hideModal"
       ) {{ $t('common.cancel') }}
       v-btn.primary(
         type="submit",
@@ -80,7 +80,7 @@ export default {
         if (this.config.action) {
           await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
         }
-        this.$modals.hide();
+        this.hideModal();
       }
     },
   },

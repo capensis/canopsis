@@ -37,6 +37,8 @@
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
+import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
@@ -44,6 +46,8 @@ import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 export default {
   mixins: [
     authMixin,
+    modalMixin,
+    popupMixin,
     queryMixin,
     entitiesPbehaviorMixin,
     entitiesPbehaviorCommentMixin,
@@ -128,7 +132,7 @@ export default {
   },
   methods: {
     showEditPbehaviorModal(pbehavior) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createPbehavior,
         config: {
           pbehavior,
@@ -140,14 +144,14 @@ export default {
             await this.updateSeveralPbehaviorComments({ pbehavior, comments });
 
             this.fetchList();
-            this.$popups.success({ text: this.$t('success.default') });
+            this.addSuccessPopup({ text: this.$t('success.default') });
           },
         },
       });
     },
 
     showDeletePbehaviorModal(pbehaviorId) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: async () => {

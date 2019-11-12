@@ -11,10 +11,13 @@
 <script>
 import { MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
+
 import SettingsButtonField from '../partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
+  mixins: [modalMixin],
   props: {
     value: {
       type: String,
@@ -32,7 +35,7 @@ export default {
   },
   methods: {
     openTextEditorModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.textEditor,
         config: {
           text: this.value,
@@ -42,7 +45,7 @@ export default {
     },
 
     deleteMoreInfoTemplate() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => this.$emit('input', ''),

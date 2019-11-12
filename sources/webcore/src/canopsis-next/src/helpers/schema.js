@@ -65,6 +65,12 @@ export const childMergeStrategy = (entityA, entityB) => {
   return result;
 };
 
+export default {
+  parentProcessStrategy,
+  childProcessStrategy,
+  childMergeStrategy,
+};
+
 /* eslint-disable */
 /**
  * We reinitialized denormalize method for removing our SCHEMA_EMBEDDED_KEY property if we need

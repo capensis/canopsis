@@ -13,7 +13,6 @@ import webhookModule from './webhook';
 import infoModule from './info';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
-import actionModule from './action';
 import heartbeatModule from './heartbeat';
 
 export default {
@@ -32,6 +31,5 @@ export default {
   info: infoModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
-  action: actionModule,
   heartbeat: heartbeatModule,
 };

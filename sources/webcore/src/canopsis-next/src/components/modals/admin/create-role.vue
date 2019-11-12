@@ -25,7 +25,7 @@
             view-selector(v-model="form.defaultview")
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary.white--text(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
@@ -36,6 +36,7 @@ import { MODALS } from '@/constants';
 
 import { generateRole } from '@/helpers/entities';
 
+import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
@@ -52,6 +53,7 @@ export default {
     ViewSelector,
   },
   mixins: [
+    popupMixin,
     modalInnerMixin,
     entitiesViewMixin,
     entitiesRoleMixin,
@@ -99,11 +101,11 @@ export default {
           await this.createRole({ data: { ...formData, ...this.form } });
           await this.fetchRolesListWithPreviousParams();
 
-          this.$popups.success({ text: this.$t('success.default') });
-          this.$modals.hide();
+          this.addSuccessPopup({ text: this.$t('success.default') });
+          this.hideModal();
         }
       } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
+        this.addErrorPopup({ text: this.$t('errors.default') });
       }
     },
   },

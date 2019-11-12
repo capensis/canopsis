@@ -83,8 +83,8 @@
           v-tooltip(left)
             v-btn(
               v-clipboard:copy="config.user.authkey",
-              v-clipboard:success="() => $popups.success({ text: $t('success.pathCopied') })",
-              v-clipboard:error="() => $popups.error({ text: $t('errors.default') })",
+              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
+              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
               slot="activator",
               small,
               fab,
@@ -105,7 +105,7 @@
           view-selector(v-model="form.defaultview")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(data-test="submitButton", @click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -119,6 +119,7 @@ import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewMixin from '@/mixins/entities/view/index';
+import popupMixin from '@/mixins/popup';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
@@ -143,6 +144,7 @@ export default {
     modalInnerMixin,
     entitiesUserMixin,
     entitiesViewMixin,
+    popupMixin,
   ],
   data() {
     return {
@@ -236,7 +238,7 @@ export default {
           await this.config.action(this.form);
         }
 
-        this.$modals.hide();
+        this.hideModal();
       }
     },
   },

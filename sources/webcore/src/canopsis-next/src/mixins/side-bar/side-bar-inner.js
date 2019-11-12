@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 import sideBarMixin from './side-bar';
 
 const { mapGetters: sideBarMapGetters } = createNamespacedHelpers('sideBar');
-const { mapGetters: modalMapGetters } = createNamespacedHelpers('modals');
+const { mapGetters: modalMapGetters } = createNamespacedHelpers('modal');
 
 export default {
   mixins: [sideBarMixin],

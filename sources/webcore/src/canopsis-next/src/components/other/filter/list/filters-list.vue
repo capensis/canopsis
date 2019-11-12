@@ -30,7 +30,10 @@
 <script>
 import { MODALS, ENTITIES_TYPES } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
+
 export default {
+  mixins: [modalMixin],
   props: {
     filters: {
       type: Array,
@@ -57,7 +60,7 @@ export default {
   },
   methods: {
     showCreateFilterModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.create.title'),
@@ -74,7 +77,7 @@ export default {
     showEditFilterModal(index) {
       const filter = this.filters[index];
 
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.edit.title'),
@@ -90,7 +93,7 @@ export default {
     },
 
     showDeleteFilterModal(index) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => {

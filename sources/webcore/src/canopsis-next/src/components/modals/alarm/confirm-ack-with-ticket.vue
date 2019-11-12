@@ -7,7 +7,7 @@
       v-alert(:value="true", type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
       v-divider
       v-layout.mt-2.mb-1(wrap, justify-end)
-        v-btn(@click="$modals.hide", flat) {{ $t('common.cancel') }}
+        v-btn(@click="hideModal", flat) {{ $t('common.cancel') }}
         v-btn(
           @click.prevent="submit",
           :loading="submitting",
@@ -43,7 +43,7 @@ export default {
       if (this.config.continueAction) {
         await this.config.continueAction();
       }
-      this.$modals.hide();
+      this.hideModal();
       this.submitting = false;
     },
 
@@ -52,7 +52,7 @@ export default {
       if (this.config.continueWithTicketAction) {
         await this.config.continueWithTicketAction();
       }
-      this.$modals.hide();
+      this.hideModal();
       this.submitting = false;
     },
   },

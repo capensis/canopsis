@@ -1,7 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 
 const { API_ROUTES } = require('../../../../../src/config');
-const { WAIT_FOR_FIRST_XHR_TIME } = require('../../../constants');
 
 module.exports.command = function createContext({
   parameters: {
@@ -14,10 +13,7 @@ module.exports.command = function createContext({
 
   this.completed.widget.setCommonFields({
     ...fields,
-    parameters: {
-      advanced: true,
-      ...parameters,
-    },
+    parameters,
   });
 
   if (typeOfEntities) {
@@ -30,7 +26,7 @@ module.exports.command = function createContext({
 
   this.waitForFirstXHR(
     API_ROUTES.userPreferences,
-    WAIT_FOR_FIRST_XHR_TIME,
+    5000,
     () => contextWidget.clickSubmitContext(),
     ({ responseData, requestData }) => callback({
       response: JSON.parse(responseData),

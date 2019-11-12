@@ -22,9 +22,9 @@ export default {
   namespaced: true,
   state: {
     widgets: {},
+    fetchingParams: {},
     allIdsGeneralList: [],
     pendingGeneralList: false,
-    fetchingParamsGeneralList: false,
   },
   getters: {
     getListByWidgetId: (state, getters, rootState, rootGetters) => widgetId =>
@@ -40,13 +40,25 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: true,
+        fetchingParams: params,
+      });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        allIds,
+        meta,
+        pending: false,
+      });
     },
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: false });
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+      });
     },
     [types.FETCH_GENERAL_LIST](state, { params }) {
       state.pendingGeneralList = true;
@@ -67,7 +79,7 @@ export default {
 
         return { total, entities: data };
       } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         return { total: 0, entities: [] };
       }
@@ -100,7 +112,7 @@ export default {
         console.error(err);
 
         commit(types.FETCH_LIST_FAILED, { widgetId });
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
 
@@ -116,7 +128,7 @@ export default {
       } catch (err) {
         console.error(err);
         commit(types.FETCH_GENERAL_LIST_FAILED);
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
 

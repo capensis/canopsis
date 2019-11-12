@@ -34,6 +34,7 @@ import { isObject, isString, isNull, dropRight, has } from 'lodash';
 import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
+import modalMixin from '@/mixins/modal';
 
 export default {
   filters: {
@@ -47,7 +48,7 @@ export default {
       return value;
     },
   },
-  mixins: [formMixin],
+  mixins: [formMixin, modalMixin],
   model: {
     prop: 'pattern',
     event: 'input',
@@ -200,7 +201,7 @@ export default {
     showAddValueRuleFieldModal(treeViewParent) {
       const parentPath = treeViewParent ? treeViewParent.path : [];
 
-      this.$modals.show({
+      this.showModal({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
           operators: this.operators,
@@ -222,7 +223,7 @@ export default {
     showEditValueRuleFieldModal(treeViewItem) {
       const { name, value, path } = treeViewItem;
 
-      this.$modals.show({
+      this.showModal({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
           ruleKey: name,
@@ -246,7 +247,7 @@ export default {
     showAddObjectRuleFieldModal(treeViewParent) {
       const parentPath = treeViewParent ? treeViewParent.path : [];
 
-      this.$modals.show({
+      this.showModal({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
@@ -270,7 +271,7 @@ export default {
      * @param {Object} treeViewItem
      */
     showEditObjectRuleFieldModal(treeViewItem) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.eventFilterRule.tooltips.editObjectRuleField'),

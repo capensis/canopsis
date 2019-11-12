@@ -36,7 +36,7 @@ export default {
         await this.config.action(viewId);
       }
 
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

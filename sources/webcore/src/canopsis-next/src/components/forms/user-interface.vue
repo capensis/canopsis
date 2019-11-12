@@ -79,6 +79,7 @@ import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
 
 import { getFileDataUrlContent } from '@/helpers/file-select';
 
+import popupMixin from '@/mixins/popup';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
@@ -89,7 +90,7 @@ export default {
     validator: 'new',
   },
   components: { FileSelector, TextEditor },
-  mixins: [entitiesInfoMixin],
+  mixins: [popupMixin, entitiesInfoMixin],
   props: {
     disabled: {
       type: Boolean,
@@ -159,7 +160,7 @@ export default {
           await this.updateUserInterface({ data });
           await this.fetchAllInfos();
 
-          this.$popups.success({ text: this.$t('success.default') });
+          this.addSuccessPopup({ text: this.$t('success.default') });
           this.reset();
         }
       } catch (err) {

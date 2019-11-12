@@ -10,7 +10,7 @@
         @edit="editEvent"
       )
         v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
-          v-card-text(v-if="calendarEvent.data.meta")
+          v-card-text
             v-layout(
               v-for="(event, index) in calendarEvent.data.meta.events",
               :key="`popover-event-${index}`",
@@ -27,16 +27,16 @@
 </template>
 
 <script>
-import { get, omit, isEmpty } from 'lodash';
-import moment from 'moment';
+import { get, omit, pick, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
+import { MODALS, WIDGET_TYPES } from '@/constants';
 
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
+import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
@@ -48,7 +48,7 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: { ProgressOverlay, DsCalendar, StatsAlertOverlay },
-  mixins: [widgetQueryMixin],
+  mixins: [modalMixin, widgetQueryMixin],
   props: {
     widget: {
       type: Object,
@@ -144,18 +144,17 @@ export default {
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
       };
 
+      const query = { ...pick(meta, ['tstart', 'tstop']) };
+
       if (!isEmpty(event.data.meta.filter)) {
         widgetParameters.viewFilters = [meta.filter];
         widgetParameters.mainFilter = meta.filter;
       }
 
-      this.$modals.show({
+      this.showModal({
         name: MODALS.alarmsList,
         config: {
-          query: {
-            tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
-            tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
-          },
+          query,
           widget: {
             ...widget,
 

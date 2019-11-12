@@ -5,16 +5,17 @@
 
 <script>
 import authMixin from '@/mixins/auth';
+import popupMixin from '@/mixins/popup';
 import entitiesRoleMixin from '@/mixins/entities/role';
 
 export default {
-  mixins: [authMixin, entitiesRoleMixin],
+  mixins: [authMixin, popupMixin, entitiesRoleMixin],
   data() {
     return {
       pendingDefaultView: true,
     };
   },
-  async mounted() {
+  async created() {
     await this.redirectToDefaultView();
 
     this.pendingDefaultView = false;
@@ -47,7 +48,7 @@ export default {
     },
 
     addRedirectInfoPopup(text) {
-      return this.$popups.info({ text, autoClose: 10000 });
+      return this.addInfoPopup({ text, autoClose: 10000 });
     },
   },
 };

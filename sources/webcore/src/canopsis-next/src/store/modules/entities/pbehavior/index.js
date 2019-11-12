@@ -72,7 +72,7 @@ export default {
           },
         });
       } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
         commit(types.FETCH_LIST_FAILED);
       }
     },
@@ -96,10 +96,10 @@ export default {
       try {
         await request.post(API_ROUTES.pbehavior.pbehavior, data);
 
-        await dispatch('popups/success', { text: i18n.t('modals.createPbehavior.success.create') }, { root: true });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('modals.createPbehavior.success.create') }, { root: true });
       } catch (err) {
         console.error(err);
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         throw err;
       }

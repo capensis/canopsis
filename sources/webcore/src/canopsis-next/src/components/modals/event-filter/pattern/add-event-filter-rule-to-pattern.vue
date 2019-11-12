@@ -54,7 +54,7 @@
                 v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
                   v-icon(color="error") delete
     v-layout.pa-2(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -148,7 +148,7 @@ export default {
           await this.config.action(newRule);
         }
 
-        this.$modals.hide();
+        this.hideModal();
       }
     },
   },

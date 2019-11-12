@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group(data-test="criticityLevels")
+  v-list-group
     v-list-tile(slot="activator")
       div(:class="validationHeaderClass") {{ $t('settings.criticityLevels') }}
     v-container
@@ -9,7 +9,6 @@
             div {{ $t('settings.colorsSelector.statsCriticity.minor') }} :
             v-flex(xs3)
               v-text-field(
-                data-test="criticityLevelsMinor",
                 type="number",
                 :value="levels.minor",
                 data-vv-name="minor",
@@ -22,7 +21,6 @@
             div {{ $t('settings.colorsSelector.statsCriticity.major') }} :
             v-flex(xs3)
               v-text-field(
-                data-test="criticityLevelsMajor",
                 type="number",
                 :value="levels.major",
                 data-vv-name="major",
@@ -35,7 +33,6 @@
             div {{ $t('settings.colorsSelector.statsCriticity.critical') }} :
             v-flex(xs3)
               v-text-field(
-                data-test="criticityLevelsCritical",
                 type="number",
                 :value="levels.critical",
                 data-vv-name="critical",

@@ -35,3 +35,9 @@ export function getRolesSearchByText(text) {
     ],
   };
 }
+
+export default {
+  getContextWidgetSearchByText,
+  getUsersSearchByText,
+  getRolesSearchByText,
+};

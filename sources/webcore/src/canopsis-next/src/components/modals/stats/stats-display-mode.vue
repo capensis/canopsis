@@ -1,17 +1,16 @@
 <template lang="pug">
-  v-card(data-test="statsDisplayModeModal")
+  v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('settings.statsNumbers.displayMode') }}
     v-card-text
-      v-container(data-test="statsDisplayModeParameters")
+      v-container
         v-select(:items="displayModes", v-model="form.mode")
         v-card(dark, color="secondary")
           v-card-title {{ $t('common.parameters') }}
           v-card-text
             v-card.my-1(
               v-for="criticity in $constants.STATS_CRITICITY",
-              :data-test="`statsDisplayMode-${criticity}`",
               :key="criticity",
               color="secondary darken-1"
             )
@@ -20,28 +19,18 @@
                 v-layout(align-center)
                   v-text-field(
                     type="number",
-                    data-test="displayModeValue",
                     :label="$t('common.value')",
                     v-model="form.parameters.criticityLevels[criticity]"
                   )
                   v-layout
                     v-btn(
-                      data-test="displayModeColorPicker",
                       :style="{ backgroundColor: form.parameters.colors[criticity] }",
                       @click="openColorPickerModal(criticity)"
                     ) {{ $t('settings.statsNumbers.selectAColor') }}
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(
-          data-test="statsDisplayModeCancelButton",
-          @click="$modals.hide",
-          depressed,
-          flat
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          data-test="statsDisplayModeSubmitButton",
-          @click="submit"
-        ) {{ $t('common.submit') }}
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -72,7 +61,7 @@ export default {
   },
   methods: {
     openColorPickerModal(level) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),
@@ -88,7 +77,7 @@ export default {
         await this.config.action(this.form);
       }
 
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

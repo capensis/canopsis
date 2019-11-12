@@ -17,7 +17,7 @@
           pattern-advanced-editor(v-model="pattern")
     v-divider
     v-layout.pa-2(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -58,7 +58,7 @@ export default {
         await this.config.action(this.pattern);
       }
 
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

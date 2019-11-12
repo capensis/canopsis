@@ -1,26 +1,18 @@
 <template lang="pug">
-  v-card(data-test="colorPickerModal")
+  v-card
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ config.title }}
     v-card-text
       v-layout
         v-flex
-          chrome(data-test="colorPickerChrome", v-model="color")
+          chrome(v-model="color")
         v-flex
-          compact(data-test="colorPickerCompact", v-model="color")
+          compact(v-model="color")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(
-        data-test="colorPickerCancelButton",
-        depressed,
-        flat,
-        @click="$modals.hide"
-      ) {{ $t('common.cancel') }}
-      v-btn.primary(
-        data-test="colorPickerSubmitButton",
-        @click="submit"
-      ) {{ $t('common.submit') }}
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -57,7 +49,7 @@ export default {
         await this.config.action(result);
       }
 
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

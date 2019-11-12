@@ -40,7 +40,6 @@
         ["template", "render"],
         "renderError"
       ]
-    }],
-    "import/prefer-default-export": "off"
+    }]
   }
 }

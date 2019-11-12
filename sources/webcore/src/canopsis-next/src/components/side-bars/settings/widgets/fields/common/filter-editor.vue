@@ -15,10 +15,13 @@ import { isEmpty } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
+
 import SettingsButtonField from '../partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
+  mixins: [modalMixin],
   props: {
     value: {
       type: Object,
@@ -44,7 +47,7 @@ export default {
   },
   methods: {
     openFilterModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.create.title'),
@@ -56,7 +59,7 @@ export default {
       });
     },
     deleteFilter() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => this.$emit('input', {}),

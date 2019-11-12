@@ -87,3 +87,8 @@ export function cloneSchemaWithEmbedded(schema) {
 
   return newSchema;
 }
+
+export default {
+  prepareEntitiesToDelete,
+  cloneSchemaWithEmbedded,
+};

@@ -103,6 +103,8 @@ import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
+import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -113,6 +115,8 @@ export default {
   },
   mixins: [
     authMixin,
+    modalMixin,
+    popupMixin,
     queryMixin,
     entitiesViewMixin,
   ],
@@ -155,11 +159,8 @@ export default {
 
   created() {
     document.addEventListener('keydown', this.keyDownListener);
-    this.registerViewOnceWatcher();
-  },
-
-  mounted() {
     this.fetchView({ id: this.id });
+    this.registerViewOnceWatcher();
   },
 
   beforeDestroy() {
@@ -204,7 +205,7 @@ export default {
           });
         }
       } else {
-        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
+        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
@@ -218,19 +219,19 @@ export default {
 
     showCreateWidgetModal() {
       if (this.activeTab) {
-        this.$modals.show({
+        this.showModal({
           name: MODALS.createWidget,
           config: {
             tabId: this.activeTab._id,
           },
         });
       } else {
-        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
+        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
     showCreateTabModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.viewTab.create.title'),

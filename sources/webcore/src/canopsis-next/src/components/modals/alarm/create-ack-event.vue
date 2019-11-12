@@ -34,7 +34,7 @@
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
       v-btn.warning(@click.prevent="submitWithTicket") {{ submitWithTicketBtnLabel }}
 </template>
@@ -104,7 +104,7 @@ export default {
         await this.config.afterSubmit();
       }
 
-      this.$modals.hide();
+      this.hideModal();
     },
 
     async submitWithTicket() {
@@ -126,7 +126,7 @@ export default {
 
       if (formIsValid) {
         if (this.form.ticket) {
-          this.$modals.show({
+          this.showModal({
             name: MODALS.confirmAckWithTicket,
             config: {
               continueAction: this.createAckEventAndCloseModal,

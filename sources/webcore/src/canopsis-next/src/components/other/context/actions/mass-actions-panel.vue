@@ -8,6 +8,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
+import modalMixin from '@/mixins/modal';
+import popupMixin from '@/mixins/popup';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
@@ -27,6 +29,8 @@ export default {
   components: { SharedMassActionsPanel },
   mixins: [
     authMixin,
+    modalMixin,
+    popupMixin,
     entitiesWatcherMixin,
     entitiesContextEntityMixin,
     entitiesPbehaviorMixin,
@@ -65,7 +69,7 @@ export default {
   },
   methods: {
     showDeleteEntitiesModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => Promise.all(this.itemsIds.map(id => this.removeContextEntity({ id }))),
@@ -74,7 +78,7 @@ export default {
     },
 
     showAddPbehaviorsModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createPbehavior,
         config: {
           pbehavior: {
@@ -85,7 +89,7 @@ export default {
           action: async (data) => {
             await this.createPbehavior({ data });
 
-            this.$popups.success({ text: this.$t('success.default') });
+            this.addSuccessPopup({ text: this.$t('success.default') });
           },
         },
       });

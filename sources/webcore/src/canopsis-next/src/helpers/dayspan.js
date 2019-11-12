@@ -81,3 +81,8 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
     return groupedEvent[0];
   });
 }
+
+export default {
+  convertAlarmsToEvents,
+  convertEventsToGroupedEvents,
+};

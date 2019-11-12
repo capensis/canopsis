@@ -12,11 +12,7 @@
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
       v-divider
-      field-filter-editor(
-        data-test="widgetFilterEditor",
-        v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']"
-      )
+      field-filter-editor(v-model="settings.widget.parameters.mfilter", :hiddenFields="['title']")
       v-divider
       field-stat-selector(v-model="settings.widget.parameters.stat")
       v-divider
@@ -25,10 +21,7 @@
         v-model="settings.widget.parameters.statsColors"
       )
       v-divider
-    v-btn.primary(
-      data-test="paretoDiagramSubmitButton",
-      @click="submit"
-    ) {{ $t('common.save') }}
+    v-btn.primary(@click="submit") {{ $t('common.save') }}
 </template>
 
 <script>

@@ -30,7 +30,7 @@
             td {{ props.item.id }}
             td {{ props.item.role }}
             td
-              enabled-column(:value="props.item.enable")
+              v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
             td
               div
                 v-btn(
@@ -62,21 +62,20 @@ import { MODALS } from '@/constants';
 import { prepareUserByData } from '@/helpers/entities';
 import { getUsersSearchByText } from '@/helpers/entities-search';
 
+import modalMixin from '@/mixins/modal';
 import viewQuery from '@/mixins/view/query';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
-import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 export default {
   components: {
     RefreshBtn,
     SearchField,
-    EnabledColumn,
   },
-  mixins: [viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
+  mixins: [modalMixin, viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {
     return {
       searchingText: '',
@@ -107,7 +106,7 @@ export default {
   },
   methods: {
     showRemoveUserModal(id) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -119,7 +118,7 @@ export default {
     },
 
     showRemoveSelectedUsersModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -133,7 +132,7 @@ export default {
     },
 
     showEditUserModal(user) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createUser,
         config: {
           title: this.$t('modals.editUser.title'),
@@ -152,7 +151,7 @@ export default {
     },
 
     showCreateUserModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createUser,
         config: {
           action: async (data) => {

@@ -3,7 +3,7 @@
     v-card-title.white--text(:style="{ backgroundColor: color }")
       v-layout(justify-space-between, align-center)
         span.headline {{ watcher.display_name }}
-        v-btn(icon, dark, @click.native="$modals.hide")
+        v-btn(icon, dark, @click.native="hideModal")
           v-icon close
     v-divider
     v-card-text
@@ -27,7 +27,7 @@
         :value="eventsQueue.length",
         type="info"
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
       v-tooltip(top)
         v-btn(@click="refresh", color="secondary", slot="activator")
           v-icon refresh
@@ -127,7 +127,7 @@ export default {
       await Promise.all(requests);
 
       this.submitting = false;
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

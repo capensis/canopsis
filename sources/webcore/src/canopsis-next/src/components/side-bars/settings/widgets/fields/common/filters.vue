@@ -4,7 +4,7 @@
     v-container
       filter-selector(
         :label="$t('filterSelector.defaultFilter')",
-        :entitiesType="entitiesType",
+        :entitiesType="this.entitiesType",
         :value="value",
         :filters="filters",
         :condition="condition",
@@ -25,12 +25,13 @@ import { isUndefined } from 'lodash';
 import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
+import modalMixin from '@/mixins/modal';
 
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 export default {
   components: { FilterSelector },
-  mixins: [authMixin],
+  mixins: [authMixin, modalMixin],
   props: {
     filters: {
       type: Array,

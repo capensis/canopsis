@@ -28,6 +28,7 @@
 import { get } from 'lodash';
 
 import { compile } from '@/helpers/handlebars';
+import popupMixin from '@/mixins/popup';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
@@ -53,6 +54,9 @@ export default {
     AlarmColumnValueLink,
     AlarmColumnValueExtraDetails,
   },
+  mixins: [
+    popupMixin,
+  ],
   props: {
     alarm: {
       type: Object,
@@ -120,8 +124,8 @@ export default {
         'v.state.t': value => this.$options.filters.date(value, 'long'),
         'v.status.t': value => this.$options.filters.date(value, 'long'),
         'v.resolved': value => this.$options.filters.date(value, 'long'),
-        'v.duration': value => this.$options.filters.duration(value),
-        'v.current_state_duration': value => this.$options.filters.duration(value),
+        'v.duration': value => this.$options.filters.duration({ value }),
+        'v.current_state_duration': value => this.$options.filters.duration({ value }),
         t: value => this.$options.filters.date(value, 'long'),
       };
 

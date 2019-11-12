@@ -29,13 +29,25 @@ export default {
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: true, fetchingParams: params });
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: true,
+        fetchingParams: params,
+      });
     },
     [types.FETCH_LIST_COMPLETED](state, { widgetId, allIds, meta }) {
-      Vue.setSeveral(state.widgets, widgetId, { allIds, meta, pending: false });
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+        allIds,
+        meta,
+      });
     },
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
-      Vue.setSeveral(state.widgets, widgetId, { pending: false });
+      Vue.set(state.widgets, widgetId, {
+        ...state.widgets[widgetId],
+        pending: false,
+      });
     },
   },
   actions: {
@@ -49,7 +61,7 @@ export default {
           throw err;
         }
 
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         return { alarms: [], total: 0 };
       }
@@ -79,7 +91,7 @@ export default {
           },
         });
       } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED, { widgetId });
       }

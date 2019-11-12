@@ -23,7 +23,7 @@
                 v-icon {{ action.icon }}
       v-divider
       v-layout.py-1(justify-end)
-        v-btn.primary(@click="$modals.hide") {{ $t('common.ok') }}
+        v-btn.primary(@click="hideModal") {{ $t('common.ok') }}
 </template>
 
 <script>
@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     showRemovePbehaviorModal(pbehaviorId) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => this.removePbehavior({ id: pbehaviorId }),
@@ -107,7 +107,7 @@ export default {
     },
 
     showEditPbehaviorModal(pbehavior) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createPbehavior,
         config: {
           pbehavior,

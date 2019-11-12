@@ -165,7 +165,7 @@ export default {
 
 <style lang="scss" scoped>
   .view-tabs.hidden {
-    & /deep/ > .v-tabs__bar {
+    & /deep/ .v-tabs__bar {
       display: none;
     }
   }

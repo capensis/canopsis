@@ -45,6 +45,8 @@ import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import FilterGroup from './partial/filter-group.vue';
+import FilterResultsAlarm from './partial/results/alarm.vue';
+import FilterResultsEntity from './partial/results/entity.vue';
 
 /**
  * Component to create new MongoDB filter
@@ -57,6 +59,8 @@ export default {
   inject: ['$validator'],
   components: {
     FilterGroup,
+    FilterResultsAlarm,
+    FilterResultsEntity,
   },
   mixins: [formValidationHeaderMixin],
   props: {

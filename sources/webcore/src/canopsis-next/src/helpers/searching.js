@@ -6,3 +6,7 @@ export function replaceTextNotInQuotes(str, text, value) {
 
   return str.replace(regexp, value);
 }
+
+export default {
+  replaceTextNotInQuotes,
+};

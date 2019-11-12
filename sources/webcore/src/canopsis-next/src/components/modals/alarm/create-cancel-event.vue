@@ -21,7 +21,7 @@
             )
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
@@ -75,7 +75,7 @@ export default {
 
         await this.createEvent(this.eventType, this.items, data);
 
-        this.$modals.hide();
+        this.hideModal();
       }
     },
   },

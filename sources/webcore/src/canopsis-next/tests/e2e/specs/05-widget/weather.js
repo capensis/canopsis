@@ -3,7 +3,6 @@
 const {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SERVICE_WEATHER_WIDGET_SORT_FIELD,
-  INFO_POPUP_DEFAULT_COLUMNS,
   PAGINATION_PER_PAGE_VALUES,
   FILTERS_TYPE,
   FILTER_OPERATORS,
@@ -12,40 +11,41 @@ const {
   SORT_ORDERS,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { createWidgetView, removeWidgetView } = require('../../helpers/api');
-const { generateTemporaryWeatherWidget } = require('../../helpers/entities');
+const { generateTemporaryView, generateTemporaryWeatherWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
-    browser.globals.defaultViewData = await createWidgetView();
-
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
-
-    browser.page.layout.popup()
-      .clickOnEveryPopupsCloseIcons();
 
     done();
   },
 
-  async after(browser, done) {
-    const { viewId, groupId } = browser.globals.defaultViewData;
-
+  after(browser, done) {
     browser.completed.logout()
       .end(done);
 
-    await removeWidgetView(viewId, groupId);
-
-    delete browser.globals.credentials;
     delete browser.globals.temporary;
+  },
 
-    done();
+  'Create test view': (browser) => {
+    browser.completed.view.create(generateTemporaryView(), (view) => {
+      browser.globals.defaultViewData = {
+        viewId: view._id,
+        groupId: view.group_id,
+      };
+    });
   },
 
   'Create widget weather with some name': (browser) => {
     const weatherWidget = {
       ...generateTemporaryWeatherWidget(),
+      size: {
+        sm: 12,
+        md: 12,
+        lg: 12,
+      },
       periodicRefresh: 140,
       parameters: {
         advanced: true,
@@ -61,10 +61,6 @@ module.exports = {
           bottom: 3,
           left: 3,
         },
-        infoPopups: [{
-          column: INFO_POPUP_DEFAULT_COLUMNS.connectorName,
-          template: 'Info popup template',
-        }],
         elementPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
         columnSM: 12,
         columnMD: 12,
@@ -127,14 +123,13 @@ module.exports = {
       },
     };
     const { groupId, viewId } = browser.globals.defaultViewData;
+    const view = browser.page.view();
+    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    browser.page.layout.groupsSideBar()
-      .clickGroupsSideBarButton()
-      .clickPanelHeader(groupId)
+    groupsSideBar.clickPanelHeader(groupId)
       .clickLinkView(viewId);
 
-    browser.page.view()
-      .clickMenuViewButton()
+    view.clickMenuViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
@@ -148,29 +143,68 @@ module.exports = {
   },
 
   'Edit widget weather with some name': (browser) => {
-    browser.page.view()
-      .clickEditViewButton()
-      .clickEditWidgetButton(browser.globals.temporary.widgetId);
-
-    browser.completed.widget.setCommonFields({
+    const weatherWidget = {
+      parameters: {
+        limit: 180,
+        sort: {
+          order: SORT_ORDERS.asc,
+          orderBy: SERVICE_WEATHER_WIDGET_SORT_FIELD.criticity,
+        },
+        margin: {
+          top: 2,
+          right: 2,
+          bottom: 2,
+          left: 2,
+        },
+        advanced: true,
+        alarmsList: true,
+        columnSM: 6,
+        columnMD: 6,
+        columnLG: 6,
+        heightFactor: 10,
+        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
+      },
       size: {
         sm: 10,
         md: 10,
         lg: 10,
       },
       title: 'Weather widget(edited)',
-      parameters: {
-        advanced: true,
-        limit: 180,
-        sort: {
-          order: SORT_ORDERS.asc,
-          orderBy: SERVICE_WEATHER_WIDGET_SORT_FIELD.criticity,
+      periodicRefresh: 180,
+      filter: {},
+      moreInfos: 'More infos popup(edited)',
+      blockTemplate: 'Template weather item text(edited)',
+      modalTemplate: 'Template modal text(edited)',
+      newColumnNames: [{
+        index: 8,
+        data: {
+          value: 'alarm.v.connector',
+          label: 'New column',
+          isHtml: true,
         },
-      },
-    });
+      }],
+      editColumnNames: [{
+        index: 1,
+        data: {
+          value: 'alarm.v.connector',
+          label: 'Connector(edited)',
+          isHtml: true,
+        },
+      }, {
+        index: 8,
+        data: {
+          value: 'alarm.v.connector_name',
+          label: 'New column(edited)',
+          isHtml: false,
+        },
+      }],
+    };
 
-    browser.page.widget.weather()
-      .clickSubmitWeather();
+    browser.page.view()
+      .clickEditViewButton()
+      .clickEditWidgetButton(browser.globals.temporary.widgetId);
+
+    browser.completed.widget.createServiceWeather(weatherWidget);
   },
 
   'Delete widget weather with some name': (browser) => {
@@ -191,5 +225,12 @@ module.exports = {
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
+  },
+
+  'Delete test view': (browser) => {
+    const { groupId, viewId } = browser.globals.defaultViewData;
+
+    browser.completed.view.delete(groupId, viewId);
+    browser.completed.view.deleteGroup(groupId);
   },
 };

@@ -55,15 +55,16 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
-import { setSeveralFields } from '@/helpers/immutable';
+import { setInSeveral } from '@/helpers/immutable';
 
+import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
   components: { Draggable },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [modalMixin, formMixin, formValidationHeaderMixin],
   model: {
     prop: 'stats',
     event: 'input',
@@ -120,7 +121,7 @@ export default {
   },
   methods: {
     showAddStatModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.add'),
@@ -143,7 +144,7 @@ export default {
     },
 
     showEditStatModal(statTitle) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.edit'),
@@ -156,7 +157,7 @@ export default {
     },
 
     showDeleteStatModal(statTitle) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => this.removeField(statTitle),
@@ -171,7 +172,7 @@ export default {
         return acc;
       }, {});
 
-      const newStats = setSeveralFields(this.stats, modifiers);
+      const newStats = setInSeveral(this.stats, modifiers);
 
       this.updateModel(newStats);
     },

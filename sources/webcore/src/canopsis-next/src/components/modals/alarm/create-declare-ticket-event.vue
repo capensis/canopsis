@@ -13,7 +13,7 @@
             v-divider.my-3
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.actions.reportIncident') }}
 </template>
 
@@ -44,7 +44,7 @@ export default {
         output: 'declare ticket',
       });
 
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

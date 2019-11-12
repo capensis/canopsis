@@ -20,3 +20,9 @@ export function getFileDataUrlContent(file) {
 
   return getFileReaderResult(reader);
 }
+
+export default {
+  getFileReaderResult,
+  getFileTextContent,
+  getFileDataUrlContent,
+};

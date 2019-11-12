@@ -12,7 +12,12 @@
 <script>
 import { MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
+
 export default {
+  mixins: [
+    modalMixin,
+  ],
   props: {
     tab: {
       type: Object,
@@ -29,7 +34,7 @@ export default {
   },
   methods: {
     showDeleteTabModal(tab) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => this.deleteTab(tab._id),

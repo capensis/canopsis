@@ -25,6 +25,7 @@
 <script>
 import { MODALS } from '@/constants';
 
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
@@ -32,17 +33,25 @@ import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 export default {
   name: MODALS.selectViewTab,
   mixins: [
+    sideBarMixin,
     modalInnerMixin,
     entitiesViewsGroupsMixin,
     rightsEntitiesGroupMixin,
   ],
+  data() {
+    return {
+      selected: null,
+      first: [],
+      second: [],
+    };
+  },
   methods: {
     async selectTab(tabId, viewId) {
       if (this.config.action) {
         await this.config.action({ tabId, viewId });
       }
 
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

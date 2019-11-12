@@ -1,30 +1,22 @@
 <template lang="pug">
-  v-list-group(data-test="levelsColorsSelector")
+  v-list-group
     v-list-tile(slot="activator") {{$t('settings.colorsSelector.title')}}
     v-container
       v-layout(wrap)
-        v-flex(
-          v-for="level in $constants.STATS_CRITICITY",
-          xs12,
-          :data-test="`levelsColor-${level}`",
-          :key="level"
-        )
+        v-flex(xs12, v-for="level in $constants.STATS_CRITICITY", :key="level")
           v-layout(align-center)
-            v-btn(
-              data-test="showColorPickerButton",
-              small,
-              @click="showColorPickerModal(level)"
-            ) {{ getButtonText(level) }}
+            v-btn(@click="showColorPickerModal(level)", small) {{ getButtonText(level) }}
             div.pa-1.text-xs-center(:style="{ backgroundColor: levelsColors[level] }") {{ levelsColors[level] }}
 </template>
 
 <script>
 import { MODALS, STATS_CALENDAR_COLORS, STATS_CRITICITY } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [formMixin],
+  mixins: [modalMixin, formMixin],
   model: {
     prop: 'levelsColors',
     event: 'input',
@@ -62,7 +54,7 @@ export default {
   },
   methods: {
     showColorPickerModal(level) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),

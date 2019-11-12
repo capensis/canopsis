@@ -61,6 +61,8 @@ import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
 
+import popupMixin from '@/mixins/popup';
+import modalMixin from '@/mixins/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
@@ -77,6 +79,8 @@ export default {
     TextWidget,
   },
   mixins: [
+    popupMixin,
+    modalMixin,
     sideBarMixin,
   ],
   props: {
@@ -145,7 +149,7 @@ export default {
     },
 
     showSelectViewTabModal(widget) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.selectViewTab,
         config: {
           action: ({ tabId, viewId }) => this.cloneWidget({ widget, tabId, viewId }),
@@ -157,9 +161,9 @@ export default {
       const widgets = row.widgets || [];
 
       if (widgets.length > 0) {
-        this.$popups.error({ text: this.$t('errors.lineNotEmpty') });
+        this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
       } else {
-        this.$modals.show({
+        this.showModal({
           name: MODALS.confirmation,
           config: {
             action: () => {
@@ -177,7 +181,7 @@ export default {
     },
 
     showDeleteWidgetModal(rowId, widget = {}) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.confirmation,
         config: {
           action: () => {

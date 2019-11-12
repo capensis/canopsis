@@ -2,6 +2,7 @@ import { omit } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP, CRUD_ACTIONS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
@@ -11,7 +12,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [eventActionsAlarmMixin, entitiesPbehaviorMixin],
+  mixins: [modalMixin, eventActionsAlarmMixin, entitiesPbehaviorMixin],
   methods: {
     createFastAckEvent() {
       let eventData = {};
@@ -37,14 +38,14 @@ export default {
     },
 
     showActionModal(name) {
-      return () => this.$modals.show({
+      return () => this.showModal({
         name,
         config: this.modalConfig,
       });
     },
 
     showAckModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createAckEvent,
         config: {
           ...this.modalConfig,
@@ -54,7 +55,7 @@ export default {
     },
 
     showPbehaviorsListModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.pbehaviorList,
         config: {
           ...this.modalConfig,
@@ -66,7 +67,7 @@ export default {
     },
 
     showMoreInfosModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.moreInfos,
         config: {
           ...this.modalConfig,
@@ -76,7 +77,7 @@ export default {
     },
 
     showAckRemoveModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createCancelEvent,
         config: {
           ...this.modalConfig,
@@ -98,7 +99,7 @@ export default {
         variables.push(entityFields);
       }
 
-      this.$modals.show({
+      this.showModal({
         name: MODALS.variablesHelp,
         config: {
           ...this.modalConfig,
@@ -109,7 +110,7 @@ export default {
     },
 
     showAddPbehaviorModal() {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createPbehavior,
         config: {
           pbehavior: {

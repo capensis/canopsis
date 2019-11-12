@@ -28,7 +28,6 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
   snmpRule: 'snmpRule',
-  action: 'action',
   heartbeat: 'heartbeat',
 };
 
@@ -65,6 +64,7 @@ export const MODALS = {
   textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
+  createViewTab: 'create-view-tab',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
@@ -79,7 +79,6 @@ export const MODALS = {
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
-  createAction: 'create-action',
   createHeartbeat: 'create-heartbeat',
 };
 
@@ -611,7 +610,6 @@ export const USERS_RIGHTS = {
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
       snmpRule: 'models_exploitation_snmpRule',
-      action: 'models_exploitation_action',
       heartbeat: 'models_exploitation_heartbeat',
     },
   },
@@ -935,13 +933,6 @@ export const SNMP_STATE_TYPES = {
   template: 'template',
 };
 
-export const ACTION_TYPES = {
-  snooze: 'snooze',
-  pbehavior: 'pbehavior',
-};
-
-export const ACTION_AUTHOR = 'engine-action';
-
 export const CANOPSIS_STACK = {
   go: 'go',
   python: 'python',
@@ -965,52 +956,14 @@ export const HEARTBEAT_DURATION_UNITS = {
   hour: 'h',
 };
 
-export const DURATION_UNITS = {
-  minute: {
-    text: 'common.times.minute',
-    value: 'm',
-  },
-  hour: {
-    text: 'common.times.hour',
-    value: 'h',
-  },
-  day: {
-    text: 'common.times.day',
-    value: 'd',
-  },
-  week: {
-    text: 'common.times.week',
-    value: 'w',
-  },
-  month: {
-    text: 'common.times.month',
-    value: 'M',
-  },
-  year: {
-    text: 'common.times.year',
-    value: 'y',
-  },
-};
-
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  snmpRule: { edition: CANOPSIS_EDITION.cat },
-  heartbeat: { stack: CANOPSIS_STACK.go },
-  action: { stack: CANOPSIS_STACK.go },
+  snmpRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
-  [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
-  [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
-};
-
-export const POPUP_TYPES = {
-  success: 'success',
-  info: 'info',
-  warning: 'warning',
-  error: 'error',
 };

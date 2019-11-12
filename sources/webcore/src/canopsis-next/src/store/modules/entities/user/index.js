@@ -58,9 +58,9 @@ export default {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         });
 
-        await dispatch('popups/success', { text: i18n.t('success.default') }, { root: true });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
       } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
 
@@ -74,9 +74,9 @@ export default {
     async remove({ dispatch }, { id }) {
       try {
         await request.delete(`${API_ROUTES.user.remove}/${id}`);
-        await dispatch('popups/success', { text: i18n.t('success.default') }, { root: true });
+        await dispatch('popup/add', { type: 'success', text: i18n.t('success.default') }, { root: true });
       } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
 
@@ -108,7 +108,7 @@ export default {
       } catch (err) {
         commit(types.FETCH_LIST_FAILED);
 
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
       }
     },
 

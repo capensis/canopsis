@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-list-group(data-test="sortOrder")
+  v-list-group
     v-list-tile(slot="activator") {{ $t('settings.statsNumbers.sortOrder') }}
-    v-container(data-test="sortOrderSelectLayout")
+    v-container
       v-select(
         :value="value",
         @input="$emit('input', $event)",

@@ -18,3 +18,7 @@ export function isParent(child, parent) {
 
   return false;
 }
+
+export default {
+  isParent,
+};

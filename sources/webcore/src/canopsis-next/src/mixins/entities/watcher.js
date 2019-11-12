@@ -2,6 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { CANOPSIS_STACK } from '@/constants';
 
+import popupMixin from '@/mixins/popup';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('watcher');
@@ -10,7 +11,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('watcher');
  * @mixin
  */
 export default {
-  mixins: [entitiesInfoMixin],
+  mixins: [popupMixin, entitiesInfoMixin],
   computed: {
     ...mapGetters({
       getWatchersListByWidgetId: 'getListByWidgetId',
@@ -45,7 +46,7 @@ export default {
         await this.createWatcher({ data });
       }
 
-      this.$popups.success({ text: this.$t('modals.createWatcher.success.create') });
+      this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.create') });
     },
 
     async duplicateWatcherWithPopup(data) {
@@ -55,7 +56,7 @@ export default {
         await this.createWatcher({ data });
       }
 
-      this.$popups.success({ text: this.$t('modals.createWatcher.success.duplicate') });
+      this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.duplicate') });
     },
 
     async editWatcherWithPopup(data) {
@@ -65,7 +66,7 @@ export default {
         await this.editWatcher({ data });
       }
 
-      this.$popups.success({ text: this.$t('modals.createWatcher.success.edit') });
+      this.addSuccessPopup({ text: this.$t('modals.createWatcher.success.edit') });
     },
   },
 };

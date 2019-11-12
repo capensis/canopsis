@@ -25,7 +25,7 @@
         ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
         date-interval-selector.my-1(
           v-model="dateSelectorForm",
-          :tstopRules="tstopRules",
+          tstopRules="after_custom:tstart",
           @update:startObjectValue="updateStartObjectValue",
           @update:stopObjectValue="updateStopObjectValue"
         )
@@ -39,7 +39,7 @@
           data-test="statsDateIntervalCancelButton",
           depressed,
           flat,
-          @click="$modals.hide"
+          @click="hideModal"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
           data-test="statsDateIntervalSubmitButton",
@@ -141,10 +141,6 @@ export default {
         stop: this.$options.filters.date(this.dateObjectValues.stop, 'long', false),
       });
     },
-
-    tstopRules() {
-      return `after_custom:${this.dateSelectorForm.tstart}`;
-    },
   },
   created() {
     this.$validator.extend('after_custom', {
@@ -180,7 +176,7 @@ export default {
           this.config.action({ ...this.periodForm, ...this.dateSelectorForm });
         }
 
-        this.$modals.hide();
+        this.hideModal();
       }
     },
   },

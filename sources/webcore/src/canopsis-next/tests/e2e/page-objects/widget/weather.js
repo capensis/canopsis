@@ -6,15 +6,18 @@ const commands = {
   },
 
   clickTemplateWeatherItem() {
-    return this.customClick('@templateWeatherItem');
+    return this.customClick('@templateWeatherItem')
+      .defaultPause();
   },
 
   clickTemplateModal() {
-    return this.customClick('@templateModal');
+    return this.customClick('@templateModal')
+      .defaultPause();
   },
 
   clickTemplateEntities() {
-    return this.customClick('@templateEntities');
+    return this.customClick('@templateEntities')
+      .defaultPause();
   },
 };
 

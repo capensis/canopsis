@@ -7,7 +7,7 @@
       snmp-rule-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
       v-btn.primary(@click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
@@ -73,7 +73,7 @@ export default {
         });
       }
 
-      this.$modals.hide();
+      this.hideModal();
     },
   },
 };

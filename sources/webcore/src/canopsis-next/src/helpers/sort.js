@@ -51,3 +51,7 @@ export function dataTableCustomSortWithNullIgnoring(items, index, isDescending) 
     return 0;
   });
 }
+
+export default {
+  dataTableCustomSortWithNullIgnoring,
+};

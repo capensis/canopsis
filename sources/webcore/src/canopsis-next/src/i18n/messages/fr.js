@@ -181,7 +181,7 @@ export default {
         ackRemove: 'Annuler ack',
         pbehavior: 'Comportement périodique',
         snooze: 'Snooze',
-        pbehaviorList: 'Lister les comportements périodiques',
+        pbehaviorList: 'Lister les comportements pédioriques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
@@ -224,7 +224,7 @@ export default {
       statsCurvesSettings: 'Paramètres de courbes de stats',
       statsTableSettings: 'Paramètres du tableau de stats',
       statsCalendarSettings: 'Paramètres du calendrier',
-      statsNumberSettings: 'Paramètres du compteur de stats',
+      statsNumberSettings: 'Paramètres du compteur de stat',
       statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
     },
@@ -355,7 +355,7 @@ export default {
       title: 'Prendre en compte les comportements périodiques ?',
     },
     serviceWeatherModalTypes: {
-      title: 'Type de modale',
+      title: 'Type de modal',
       fields: {
         moreInfo: 'Plus d\'infos',
         alarmList: 'Bac à alarmes',
@@ -529,7 +529,7 @@ export default {
         invalid: 'Invalide',
       },
       success: {
-        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
+        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
       },
     },
     createPause: {
@@ -599,8 +599,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervalles d\'éxécution',
       actionPending: 'action(s) en attente',
-      refreshEntities: 'Rafraîchir la liste des entités',
-      editPbehaviors: 'Éditer les pbehaviors',
+      refreshEntities: 'Refraichir la liste des entités',
+      editPbehaviors: 'Editer les pbehaviors',
     },
     filter: {
       create: {
@@ -770,8 +770,8 @@ export default {
         success: 'Webhook créé avec succès !',
       },
       edit: {
-        title: 'Éditer un webhook',
-        success: 'Webhook édité avec succès !',
+        title: 'Edit webhook',
+        success: 'Webhook edité avec succès !',
       },
       remove: {
         success: 'Webhook supprimé avec succès !',
@@ -781,26 +781,6 @@ export default {
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
-      },
-    },
-    createAction: {
-      create: {
-        title: 'Créer une action',
-        success: 'Action créée avec succès !',
-      },
-      edit: {
-        success: 'Action éditée avec succès !',
-      },
-      remove: {
-        success: 'Action supprimée avec succès !',
-      },
-      tabs: {
-        general: 'Général',
-        hook: 'Hook',
-      },
-      fields: {
-        message: 'Message',
-        duration: 'Durée',
       },
     },
     statsDateInterval: {
@@ -926,7 +906,7 @@ export default {
       bymonth: 'Par mois',
       bysetpos: {
         label: 'Par position',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (lundi, mardi, mercredi, jeudi, vendredi), va nous donner le dernier jour travaillé de chaque mois',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (Lundi, Mardi, Mercredi, Jeudi, Vendredi), va nous donner le dernier jour travaillé de chaque mois',
       },
       bymonthday: {
         label: 'Par jour du mois',
@@ -1022,7 +1002,7 @@ export default {
       [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
       [STATS_TYPES.stateRate.value]: 'Taux à cet état',
       [STATS_TYPES.mtbf.value]: 'Temps moyen entre pannes',
-      [STATS_TYPES.currentState.value]: 'État courant',
+      [STATS_TYPES.currentState.value]: 'Etat courant',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
       [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',
@@ -1045,33 +1025,6 @@ export default {
     title: 'Règles SNMP',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
-  },
-  actions: {
-    title: 'Actions',
-    addAction: 'Ajouter une action',
-    table: {
-      id: 'Id',
-      type: 'Type',
-      expand: {
-        tabs: {
-          general: 'Général',
-          hook: 'Hook',
-          author: 'Auteur',
-          pbehavior: {
-            name: 'Nom',
-            type: 'Type',
-            reason: 'Raison',
-            start: 'Début',
-            end: 'Fin',
-          },
-          snooze: {
-            message: 'Message',
-            duration: 'Durée',
-            noMessage: 'Aucun message n\'est défini',
-          },
-        },
-      },
-    },
   },
   layout: {
     sideBar: {

@@ -1,10 +1,12 @@
 import { MODALS } from '@/constants';
 
+import modalMixin from '@/mixins/modal';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
 export default {
   mixins: [
+    modalMixin,
     entitiesViewGroupMixin,
     rightsEntitiesGroupMixin,
   ],
@@ -57,21 +59,21 @@ export default {
     },
 
     showEditGroupModal(group) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createGroup,
         config: { group },
       });
     },
 
     showEditViewModal(view) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createView,
         config: { view },
       });
     },
 
     showDuplicateViewModal(view) {
-      this.$modals.show({
+      this.showModal({
         name: MODALS.createView,
         config: {
           view,
