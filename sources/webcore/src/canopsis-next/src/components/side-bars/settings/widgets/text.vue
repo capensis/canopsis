@@ -22,7 +22,7 @@
         :title="$t('settings.templateEditor')"
       )
       v-divider
-      v-list-group(data-test="textWidgetStats")
+      v-list-group(v-if="edition === $constants.CANOPSIS_EDITION.cat", data-test="textWidgetStats")
         v-list-tile(slot="activator") {{ $t('settings.stats') }}
           .font-italic.caption.ml-1 ({{ $t('common.optional') }})
         v-list.grey.lighten-4.px-2.py-0(expand)
@@ -39,6 +39,7 @@ import { cloneDeep } from 'lodash';
 import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -60,7 +61,7 @@ export default {
     FieldFilterEditor,
     FieldTextEditor,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [widgetSettingsMixin, entitiesInfoMixin],
   data() {
     const { widget, rowId } = this.config;
 

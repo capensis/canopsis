@@ -567,7 +567,7 @@ class ContextGraph(object):
         entities = self.get_entities_by_id(status["deletions"])
 
         if len(entities) != len(status["deletions"]):
-            raise ValueError("Could not find some entity in database.")
+            self.logger.warning("Could not find some entity in database.")
 
         # update the related entities
         for entity in entities:
@@ -585,7 +585,7 @@ class ContextGraph(object):
         entities = self.get_entities_by_id(status["insertions"])
 
         if len(entities) != len(status["insertions"]):
-            raise ValueError("Could not find some entity in database.")
+            self.logger.warning("Could not find some entity in database.")
 
         # update the related entities
         for entity in entities:

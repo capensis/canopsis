@@ -3,13 +3,17 @@
     snmp-rule-form-field(:label="label")
     v-layout(row, wrap)
       v-flex(xs12)
-        v-menu(:items="items", full-width, offset-y, max-height="200")
+        v-menu(
+          :items="items",
+          max-height="200",
+          full-width,
+          offset-y
+        )
           v-text-field.vars-input.pt-0(
             slot="activator",
-            :value="form.value",
+            v-field="form.value",
             :label="$t('modals.createSnmpRule.fields.moduleMibObjects.vars')",
-            hide-details,
-            @input="updateField('value', $event)"
+            hide-details
           )
             template(slot="append", v-if="large")
               v-btn(
@@ -28,16 +32,14 @@
       v-expand-transition(v-if="large")
         v-flex(v-show="isVisible", xs12)
           v-text-field(
-            :value="form.regex",
+            v-field="form.regex",
             :label="$t('modals.createSnmpRule.fields.moduleMibObjects.regex')",
-            hide-details,
-            @input="updateField('regex', $event)"
+            hide-details
           )
           v-text-field(
-            :value="form.formatter",
+            v-field="form.formatter",
             :label="$t('modals.createSnmpRule.fields.moduleMibObjects.formatter')",
-            hide-details,
-            @input="updateField('formatter', $event)"
+            hide-details
           )
 </template>
 

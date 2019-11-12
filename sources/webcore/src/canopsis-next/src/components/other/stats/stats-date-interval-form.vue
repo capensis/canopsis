@@ -21,7 +21,7 @@
       ) {{ $t('settings.statsDateInterval.monthPeriodInfo') }}
       date-interval-selector.my-1(
         v-field="form",
-        :tstopRules="`after_custom:${form.tstart}`",
+        :tstopRules="tstopRules",
         @update:startObjectValue="updateStartObjectValue",
         @update:stopObjectValue="updateStopObjectValue"
       )
@@ -68,6 +68,10 @@ export default {
     };
   },
   computed: {
+    tstopRules() {
+      return `after_custom:${this.form.tstart}`;
+    },
+
     periodUnits() {
       return [
         {

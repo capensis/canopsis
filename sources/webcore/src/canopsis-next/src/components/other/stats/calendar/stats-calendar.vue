@@ -2,7 +2,10 @@
   div
     v-layout.white.calender-wrapper
       progress-overlay(:pending="pending")
-      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+      alert-overlay(
+        :value="hasError",
+        :message="serverErrorMessage"
+      )
       ds-calendar(
         :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
         :events="events",
@@ -37,18 +40,21 @@ import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
+import modalMixin from '@/mixins/modal/inner';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
+
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 import DsCalendar from './day-span/calendar.vue';
-import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { ProgressOverlay, DsCalendar, StatsAlertOverlay },
-  mixins: [widgetQueryMixin],
+  components: { ProgressOverlay, DsCalendar, AlertOverlay },
+  mixins: [modalMixin, widgetQueryMixin, widgetStatsWrapperMixin],
   props: {
     widget: {
       type: Object,
@@ -58,8 +64,6 @@ export default {
   data() {
     return {
       pending: true,
-      hasError: false,
-      serverErrorMessage: null,
       alarms: [],
       alarmsCollections: [],
       calendar: Calendar.months(),
@@ -182,7 +186,6 @@ export default {
         const query = omit(this.query, ['filters', 'considerPbehaviors']);
 
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         if (isEmpty(this.query.filters)) {
@@ -218,8 +221,7 @@ export default {
           this.alarms = [];
         }
       } catch (err) {
-        this.hasError = true;
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }

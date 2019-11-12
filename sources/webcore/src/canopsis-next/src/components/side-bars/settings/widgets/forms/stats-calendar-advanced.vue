@@ -9,29 +9,23 @@
         @update:filters="updateField('filters', $event)"
       )
       v-divider
-      field-opened-resolved-filter(
-        :value="value.alarmsStateFilter",
-        @input="updateField('alarmsStateFilter', $event)"
-      )
+      field-opened-resolved-filter(v-field="value.alarmsStateFilter")
       v-divider
       field-switcher(
-        data-test="widgetConsiderPbehaviors",
-        :value="value.considerPbehaviors",
+        v-field="value.considerPbehaviors",
         :title="$t('settings.considerPbehaviors.title')",
-        @input="updateField('considerPbehaviors', $event)"
+        data-test="widgetConsiderPbehaviors"
       )
       v-divider
       field-criticity-levels(
-        data-test="widgetCriticityLevels",
-        :levels="value.criticityLevels",
-        @input="updateField('criticityLevels', $event)"
+        v-field="value.criticityLevels",
+        data-test="widgetCriticityLevels"
       )
       v-divider
       field-levels-colors-selector(
-        :levelsColors="value.criticityLevelsColors",
+        v-field="value.criticityLevelsColors",
         colorType="hex",
-        hideSuffix,
-        @input="updateField('criticityLevelsColors', $event)"
+        hideSuffix
       )
 </template>
 

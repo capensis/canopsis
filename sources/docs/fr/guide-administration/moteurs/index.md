@@ -87,6 +87,8 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ### Utilisation de engine-che
 
 ```
+  -alwaysFlushEntities
+        Always flush the entity cache. This makes sure the entities are always written in the database. This option is deprecated, and is likely to cause severe performance drops in high-traffic environment.
   -consumeQueue string
         Consomme les évènements venant de cette file. (default "Engine_che").
   -createContext

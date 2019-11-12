@@ -16,8 +16,8 @@
         ) {{ $t('common.cancel') }}
         v-btn.primary(
           data-test="statsDateIntervalSubmitButton",
-          @click="submit",
-          :disabled="errors.any()"
+          :disabled="errors.any()",
+          @click="submit"
         ) {{ $t('common.submit') }}
 </template>
 

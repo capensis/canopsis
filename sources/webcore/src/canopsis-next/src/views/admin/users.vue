@@ -30,7 +30,7 @@
             td {{ props.item.id }}
             td {{ props.item.role }}
             td
-              v-checkbox(:input-value="props.item.enable", primary, hide-details, disabled)
+              enabled-column(:value="props.item.enable")
             td
               div
                 v-btn(
@@ -68,11 +68,13 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
+import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 export default {
   components: {
     RefreshBtn,
     SearchField,
+    EnabledColumn,
   },
   mixins: [viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {

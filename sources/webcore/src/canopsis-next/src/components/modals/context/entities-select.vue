@@ -17,6 +17,8 @@
 <script>
 import { union, filter } from 'lodash';
 
+import formBaseMixin from '@/mixins/form/base';
+
 import ContextGeneralList from '@/components/other/context/context-general-list.vue';
 
 /**
@@ -30,6 +32,11 @@ import ContextGeneralList from '@/components/other/context/context-general-list.
  */
 export default {
   components: { ContextGeneralList },
+  mixins: [formBaseMixin],
+  model: {
+    prop: 'entities',
+    event: 'input',
+  },
   props: {
     label: {
       type: String,
@@ -42,25 +49,20 @@ export default {
       },
     },
   },
-  data() {
-    return {
-      updatedEntities: [],
-    };
-  },
   methods: {
     updateEntities(entities) {
       const entitiesIds = entities.map(entity => entity._id);
       const selectedEntities = union(entitiesIds, this.entities);
 
-      this.$emit('updateEntities', selectedEntities);
+      this.updateModel(selectedEntities);
     },
     clear() {
-      this.updatedEntities = [];
-      this.$emit('updateEntities', this.updatedEntities);
+      this.updateModel([]);
     },
     removeEntity(entity) {
       const updatedEntities = filter(this.entities, item => item !== entity);
-      this.$emit('updateEntities', updatedEntities);
+
+      this.updateModel(updatedEntities);
     },
   },
 };
