@@ -9,7 +9,7 @@
           duration-field(v-model="form")
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
 </template>
 
@@ -56,7 +56,7 @@ export default {
 
         await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

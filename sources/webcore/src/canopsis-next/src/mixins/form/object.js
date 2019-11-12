@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 
-import { setIn, unsetIn } from '@/helpers/immutable';
+import { setField, unsetField } from '@/helpers/immutable';
 
 import baseFormMixin, { modelPropKeyComputed } from './base';
 
@@ -17,7 +17,7 @@ export default {
      * @param {*} value
      */
     updateField(fieldName, value) {
-      this.updateModel(setIn(this[this[modelPropKeyComputed]], fieldName, value));
+      this.updateModel(setField(this[this[modelPropKeyComputed]], fieldName, value));
     },
 
     /**
@@ -32,9 +32,9 @@ export default {
       if (isEqual(fieldName, newFieldName)) {
         this.updateField(fieldName, value);
       } else {
-        const result = unsetIn(this[this[modelPropKeyComputed]], fieldName);
+        const result = unsetField(this[this[modelPropKeyComputed]], fieldName);
 
-        this.updateModel(setIn(result, newFieldName, value));
+        this.updateModel(setField(result, newFieldName, value));
       }
     },
     /**
@@ -46,9 +46,9 @@ export default {
      */
     moveField(fieldName, newFieldName) {
       if (!isEqual(fieldName, newFieldName)) {
-        const result = unsetIn(this[this[modelPropKeyComputed]], fieldName);
+        const result = unsetField(this[this[modelPropKeyComputed]], fieldName);
 
-        this.updateModel(setIn(result, newFieldName, value => value));
+        this.updateModel(setField(result, newFieldName, value => value));
       }
     },
 
@@ -58,7 +58,7 @@ export default {
      * @param {string|Array} fieldName
      */
     removeField(fieldName) {
-      this.updateModel(unsetIn(this[this[modelPropKeyComputed]], fieldName));
+      this.updateModel(unsetField(this[this[modelPropKeyComputed]], fieldName));
     },
   },
 };

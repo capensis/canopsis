@@ -227,6 +227,19 @@ export const WIDGET_TYPES = {
   text: 'Text',
 };
 
+export const WIDGET_ICONS = {
+  [WIDGET_TYPES.alarmList]: 'view_list',
+  [WIDGET_TYPES.context]: 'view_list',
+  [WIDGET_TYPES.weather]: 'view_module',
+  [WIDGET_TYPES.statsHistogram]: 'bar_chart',
+  [WIDGET_TYPES.statsCurves]: 'show_chart',
+  [WIDGET_TYPES.statsTable]: 'table_chart',
+  [WIDGET_TYPES.statsCalendar]: 'calendar_today',
+  [WIDGET_TYPES.statsNumber]: 'table_chart',
+  [WIDGET_TYPES.statsPareto]: 'multiline_chart',
+  [WIDGET_TYPES.text]: 'view_headline',
+};
+
 export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
@@ -1006,4 +1019,20 @@ export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
+};
+
+export const WIDGET_TYPES_RULES = {
+  [WIDGET_TYPES.statsHistogram]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsCurves]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsTable]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsNumber]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsPareto]: { edition: CANOPSIS_EDITION.cat },
+};
+
+export const POPUP_TYPES = {
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
 };

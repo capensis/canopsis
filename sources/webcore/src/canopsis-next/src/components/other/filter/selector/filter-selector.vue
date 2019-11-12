@@ -61,13 +61,10 @@
 <script>
 import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
-
 import FiltersList from '@/components/other/filter/list/filters-list.vue';
 
 export default {
   components: { FiltersList },
-  mixins: [modalMixin],
   props: {
     long: {
       type: Boolean,
@@ -226,7 +223,7 @@ export default {
     },
 
     showFiltersListModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.filtersList,
         config: {
           filters: this.filters,
