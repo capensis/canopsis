@@ -4,13 +4,13 @@
 
 ## About
 
-[Canopsis](https://www.capensis.fr/canopsis/) is a modular open-source technology whose goal is to **centralize**, **process** and **report** multiple sources of information, metrics and events into a single platform for monitoring and managing resources.
+[Canopsis](http://www.canopsis.com) is a modular open-source technology whose goal is to **centralize**, **process** and **report** multiple sources of information, metrics and events into a single platform for monitoring and managing resources.
 
-[Multiple connectors](https://doc.canopsis.net/interconnexions/) can be plugged in Canopsis, such as Icinga, Nagios®, Centreon, Zabbix, Logstash, SNMP, and more.
+[Multiple connectors](https://doc.canopsis.net/guide-connecteurs/) can be plugged in Canopsis, such as Icinga, Nagios®, Centreon, Zabbix, Logstash, SNMP, and more.
 
-A demo is available at: [demo.canopsis.net](https://demo.canopsis.net).
+A demo is available at: [demo.canopsis.net](http://demo.canopsis.net).
 
-[![Canopsis UI](screenshot.png)](https://www.capensis.fr/canopsis/)
+[![Canopsis UI](screenshot.png)](http://www.canopsis.com)
 
 ## Installation
 
