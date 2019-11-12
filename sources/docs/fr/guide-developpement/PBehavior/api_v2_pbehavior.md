@@ -37,7 +37,7 @@ Crée un nouveau PBehavior à partir du corps de la requête.
 		}]
 	},
 	"type_": "Hors plage horaire de surveillance",
-	"reason": "Autre",
+	"reason": "Problème d\'habilitation",
 	"rrule": null,
 	"comments": [],
 	"exdate": []
@@ -66,7 +66,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 		}]
 	},
 	"type_": "Hors plage horaire de surveillance",
-	"reason": "Autre",
+	"reason": "Problème d\'habilitation",
 	"rrule": null,
 	"comments": [],
 	"exdate": []
@@ -83,7 +83,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ```json
 {
-	"e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2"
+    "e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2"
 }
 ```
 
@@ -92,8 +92,6 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 ### Modification de PBehavior
 
 Modifie un pbehavior à partir du corps de la requête.
-
-Les champs `eids` et `comments` des pBehaviors ne sont pas modifiables avec cette route. Ils ne sont pas pris en compte s'ils sont présents dans le corps de la requête.
 
 **URL** : `/api/v2/pbehavior/<pbehavior_id>`
 
@@ -124,8 +122,8 @@ Les champs `eids` et `comments` des pBehaviors ne sont pas modifiables avec cett
 		}]
 	},
 	"type_": "Hors plage horaire de surveillance",
-	"reason": "Autre",
-	"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+	"reason": "Problème d'habilitation",
+  "rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
 	"comments": [],
 	"exdate": []
 }
@@ -153,8 +151,8 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 		}]
 	},
 	"type_": "Hors plage horaire de surveillance",
-	"reason": "Autre",
-	"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
+	"reason": "Problème d\'habilitation",
+  "rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
 	"comments": [],
 	"exdate": []
 }' 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
@@ -172,7 +170,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 {
 	"name": "PBehavior de test",
 	"author": "root",
-	"reason": "Autre",
+	"reason": "Probl\u00e8me d'habilitation",
 	"filter": "{\"$or\": [{\"impact\": {\"$in\": [\"pbehavior_test_1\"]}}, {\"$and\": [{\"type\": \"pbehavior_test_1\"}, {\"name\": \"pbehavior_test_1\"}]}]}",
 	"type_": "Hors plage horaire de surveillance",
 	"exdate": [],
@@ -251,7 +249,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior_byeid/disk2/pbe
 	"name": "Pbehavior test 1",
 	"author": "root",
 	"eids": ["pbehavior_test_1", "disk2/pbehavior_test_1"],
-	"reason": "Autre",
+	"reason": "Probl\u00e8me d'habilitation",
 	"filter": "{\"$or\": [{\"impact\": {\"$in\": [\"pbehavior_test_1\"]}}, {\"$and\": [{\"type\": \"component\"}, {\"name\": \"pbehavior_test_1\"}]}]}",
 	"type_": "Hors plage horaire de surveillance",
 	"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
@@ -304,7 +302,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/pbehavior/read'
 			"name": "Pbehavior test 1",
 			"author": "root",
 			"enabled": true,
-			"reason": "Autre",
+			"reason": "Probl\u00e8me d'habilitation",
 			"comments": [],
 			"filter": "{\"$or\": [{\"impact\": {\"$in\": [\"pbehavior_test_1\"]}}, {\"$and\": [{\"type\": \"component\"}, {\"name\": \"pbehavior_test_1\"}]}]}",
 			"type_": "Hors plage horaire de surveillance",

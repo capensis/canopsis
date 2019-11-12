@@ -332,7 +332,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_extern
 
 ### Récupération des Webhooks
 
-Récupère un ou plusieurs Webhooks créés en base.
+Récupère un ou plusieurs Webhook crée en base.
 
 #### Récupération d'un Webhook par id
 

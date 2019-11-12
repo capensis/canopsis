@@ -1,22 +1,24 @@
-# Connexion à Canopsis et à ses composants
+# Accès et identifiants Canopsis par défaut
 
 Après une installation de Canopsis, ses différents composants utiliseront les adresses et identifiants par défaut suivants.
 
-## Accès à l'interface web de Canopsis
+## Accès à Canopsis
 
-Par défaut, l'interface web de Canopsis est disponible depuis votre navigateur à l'adresse suivante : <http://localhost:8082/>.
+### Interface web Canopsis
 
-La nouvelle interface « UIv3 » est accessible depuis l'adresse <http://localhost:8082/en/static/canopsis-next/dist/index.html#>.
+Par défaut, l'interface web de Canopsis est disponible sur : [http://localhost:8082/](http://localhost:8082/).
 
-Les identifiants de connexion par défaut sont `root` / `root`.
+Si elle n'est pas activée par défaut, la nouvelle interface « UIv3 » peut être chargée explicitement à l'adresse [http://localhost:8082/en/static/canopsis-next/dist/index.html#](http://localhost:8082/en/static/canopsis-next/dist/index.html#).
 
-Parcourez ensuite [le guide d'utilisation](../../guide-utilisation/index.md) pour en apprendre davantage sur l'interface web de Canopsis.
+Identifiants par défaut : `root` / `root`. Veuillez noter que cette interface n'est pas compatible avec Internet Explorer, qui n'est plus maintenu depuis 2013.
+
+Parcourez ensuite [le guide d'utilisation](../../../guide-utilisation/) pour en apprendre davantage sur l'interface web de Canopsis.
 
 ## Accès aux composants internes de Canopsis
 
 ### Interface web RabbitMQ
 
-Par défaut, l'interface web d'administration de RabbitMQ est disponible depuis votre navigateur à l'adresse suivante : <http://localhost:15672/>.
+Par défaut, l'interface web d'administration de RabbitMQ est disponible sur : [http://localhost:15672/](http://localhost:15672/).
 
 Identifiants par défaut : `cpsrabbit` / `canopsis`.
 
@@ -26,7 +28,7 @@ Le bus AMQP RabbitMQ par défaut est : `amqp://cpsrabbit@canopsis:localhost:567
 
 ### MongoDB
 
-En ligne de commande, la base de données MongoDB est accessible avec la commande `mongo -u cpsmongo -p canopsis canopsis`.
+En ligne de commande, la base de données MongoDB est accessible avec la commande `mongo localhost`.
 
 Identifiants par défaut : `cpsmongo` / `canopsis`.
 

@@ -56,13 +56,13 @@ systemctl restart redis
 
 ### Gestion de l'hyperviseur
 
-```sh
+```bash
 #démarrer le service
-canoctl start
+/opt/canopsis/bin/canopsis-systemd start
 #stopper le service
-canoctl stop
+/opt/canopsis/bin/canopsis-systemd stop
 #redémarrer le service
-canoctl restart
+/opt/canopsis/bin/canopsis-systemd restart
 ```
 
 ## Aller plus loin 

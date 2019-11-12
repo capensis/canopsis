@@ -17,12 +17,10 @@
   with_items: "{{ mongodb_version[0:3] }}"
   when: mongodb_package == 'mongodb-org'
 
-- name: Install numactl package
-  yum:
-    name: numactl
-    state: present
-
 - name: Install MongoDB package
   yum:
-    name: "{{ mongodb_package }}"
+    name: "{{ item }}"
     state: present
+  with_items:
+    - "{{ mongodb_package }}"
+    - numactl

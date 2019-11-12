@@ -221,7 +221,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules/6dac
 
 ### Récupération des règles
 
-Récupère une ou plusieurs règles créées en base.
+Récupère une ou plusieurs règles crée en base.
 
 #### Récupération d'une règle par id
 

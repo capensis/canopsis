@@ -6,7 +6,7 @@
 influxdb_packages:
   - python-pip
 
-influxdb_version: 1.5.5
+influxdb_version: 1.5.4
 influxdb_admin_interface: "{{ ansible_default_ipv4.interface }}"
 influxdb_admin_port: 8083
 influxdb_admin_use_ipv6: false

@@ -8,7 +8,7 @@ License:	AGPLv3 (Canopsis Core), Capensis, all rights reserved (CAT)
 URL:		https://git.canopsis.net/canopsis/canopsis
 
 BuildRequires: rsync
-Requires: bzip2 cyrus-sasl epel-release libacl libcurl libevent libffi librsync libxml2 libxslt net-snmp openldap openssl python rsync sudo xmlsec1 xmlsec1-openssl zlib
+Requires: zlib libevent libcurl libtool openssl bzip2 cyrus-sasl openldap libcurl python openldap libxml2 libxslt rsync librsync libacl libxslt libffi xmlsec1 xmlsec1-openssl libtool net-snmp epel-release sudo
 
 %description
 Canopsis open-core package.
@@ -67,6 +67,7 @@ fi
 /opt/canopsis/opt/mongodb/filldb.py
 
 %attr(755, canopsis, canopsis) /opt/canopsis/deploy-ansible/install-self.sh
+%attr(755, canopsis, canopsis) /opt/canopsis/deploy-ansible/upgrade-self.sh
 %attr(755, canopsis, canopsis) /opt/canopsis/.bashrc
 %attr(755, canopsis, canopsis) /opt/canopsis/.bash_profile
 

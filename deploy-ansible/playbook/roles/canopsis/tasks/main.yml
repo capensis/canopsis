@@ -1,45 +1,34 @@
 ---
+- include_tasks: "{{ ansible_os_family }}.yml"
+  tags:
+    - cps_system
+    - cps_install
+
 - import_tasks: config-mongodb.yml
   tags:
     - cps_mongodb
+
+- import_tasks: config-influxdb.yml
+  tags:
+    - cps_influxdb
 
 - import_tasks: config-rabbitmq.yml
   tags:
     - cps_rabbitmq
 
-- import_tasks: config-common-engines.yml
+- import_tasks: config-canopsis.yml
   tags:
     - cps_config
-
-- import_tasks: config-python-engines.yml
-  tags:
-    - cps_config
-  when: canopsis_engines_type == "python"
-
-- import_tasks: config-go-engines.yml
-  tags:
-    - cps_config
-  when: canopsis_engines_type == "go"
-
-- import_tasks: init-python-engines.yml
-  tags:
-    - cps_python_engines
-  when: canopsis_engines_type == "python"
-
-- import_tasks: init-go-engines.yml
-  tags:
-    - cps_go_engines
-  when: canopsis_engines_type == "go"
-
-- import_tasks: init-common-engines.yml
-  tags:
-    - cps_common_engines
 
 - import_tasks: init-db.yml
   become: true
   become_user: "{{ canopsis_user }}"
   tags:
     - cps_initdb
+
+- import_tasks: canopsis.yml
+  tags:
+    - cps_start
 
 - import_tasks: canopsis-dev.yml
   tags:

@@ -1,16 +1,12 @@
 # Installation de Canopsis avec Docker
 
-Cette procédure décrit l'installation de l'édition open-source de Canopsis en mono-instance Docker.
-
-L'ensemble des procédures décrites doivent être réalisées avec l'utilisateur `root`.
-
-## Prérequis
+## Pré-requis
 
 ### Version minimum du noyau Linux
 
 Votre système hôte pour Docker doit disposer d'un noyau Linux suffisamment récent. Canopsis nécessite l'utilisation **d'un noyau Linux 4.4 minimum**.
 
-Le noyau installé par défaut sur CentOS 7 n'est donc **pas suffisant** pour héberger un environnement Docker Canopsis.
+Les noyaux installés par défaut sur Debian 8 ou CentOS 7 ne sont donc **pas suffisants** pour héberger un environnement Docker Canopsis.
 
 Vérifier votre version du noyau à l'aide de la commande suivante :
 ```sh
@@ -19,34 +15,52 @@ uname -r
 
 Si vous obtenez une version inférieure à 4.4, veuillez utiliser un noyau plus récent : soit avec une distribution plus à jour, ou bien à l'aide d'[ELRepo](https://elrepo.org/tiki/kernel-lt) pour CentOS, par exemple.
 
-### Installation de Docker CE et Docker Compose
+### Version de Docker
 
 Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 18.06 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux proposés par votre distribution.
 
-Une fois Docker CE installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
+Une fois Docker CE installé, vous devez ensuite [installer Docker compose](https://docs.docker.com/compose/install/#install-compose).
 
-## Lancement de Canopsis avec Docker Compose
+### Ports
 
-Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/>.
+Il faut vérifier les ports utilisés par `docker-compose.yml`.  
 
-Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis) contient des fichiers Docker Compose d'exemple :
+Veuillez effectuer les adaptations nécessaires si certains ports sont déjà en utilisation sur le nœud d'installation.
+
+### Logrotate
+
+La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
+
+## Installation
+
+- Cloner le dépôt Canopsis : https://git.canopsis.net/canopsis/canopsis
+- Actuellement, les conteneurs sont gérés dans le Docker Hub officiel : `https://hub.docker.com/u/canopsis/`
+- Dans ce dépôt, un fichier `docker-compose.yml` est présent. Il va servir à la création de votre Canopsis en version Dockerisée.
+
+
+    - Troubleshooting : Si vous rencontrez une erreur de ce type lors d'un `docker-compose up -d` ou un `docker-compose --version`  
+    ```bash
+    bash: /usr/bin/docker-compose: Aucun fichier ou dossier de ce type
+    ```
+
+    - Résolution : Utiliser la commande suivante `hash docker-compose`  
+
+- Exécuter la commande suivante : `docker-compose up -d`
+
+    - Troubleshooting :
+    ```sh
+    docker-compose up -d
+    ERROR: Couldn't connect to Docker daemon at http+docker://localhost - is it running?
+    If it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.
+    ```
+    - Résolution : Utiliser la commande suivante : `sudo docker-compose up -d`
+
+## Vérification
+
+La vérification va passer par la commande `sudo docker-compose ps` :
+
 ```sh
-git clone https://git.canopsis.net/canopsis/canopsis.git && cd canopsis
-```
-
-Si nécessaire, ajustez la variable `CANOPSIS_IMAGE_TAG` du fichier `.env` situé à la racine du dépôt Canopsis.
-
-Lancez ensuite la commande suivante, afin de lever un environnement Canopsis open-core complet avec Docker :
-```sh
-docker-compose up -d
-```
-
-## Vérification du bon fonctionnement
-
-La vérification va passer par la commande `docker-compose ps` :
-
-```sh
-docker-compose ps
+sudo docker-compose ps
 
           Name                         Command               State                          Ports                      
 -----------------------------------------------------------------------------------------------------------------------
@@ -71,14 +85,10 @@ canopsis_ticket_1           /bin/sh -c /entrypoint.sh        Up       8082/tcp
 canopsis_webserver_1        /bin/sh -c /entrypoint.sh        Up       0.0.0.0:28082->8082/tcp   
 ```
 
-Les services doivent être en état `Up` ou `Exit 0`.
-
-Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
-
-## Arrêt de l'environnement Docker Compose 
+## Arrêt et suppression du docker-compose
 
 ```sh
-docker-compose down
+sudo docker-compose down
 
 Stopping canopsis_webserver_1      ... done
 Stopping canopsis_metric_1         ... done
@@ -118,11 +128,17 @@ Removing network canopsis_default
 
 ## Rétention des logs
 
-La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
+Vous pouvez mettre en place une politique de rétention de logs à l'aide de `logrotate`.
 
-Une fois que `logrotate` est installé sur votre machine, créer le fichier `/etc/logrotate.d/docker-container` suivant :
+Fichier à créer :
 
+```bash
+vim /etc/logrotate.d/docker-container`
 ```
+
+Contenu du fichier :
+
+```ini
 /var/lib/docker/containers/*/*.log {
   rotate 7
   daily
@@ -135,8 +151,8 @@ Une fois que `logrotate` est installé sur votre machine, créer le fichier `/et
 }
 ```
 
-Pour vérifier la bonne exécution de la configuration de logrotate pour Docker, vous pouvez lancer la commande :
+Pour vérifier la bonne exécution de la configuration de logrotate pour Docker, vous pouvez lancer la commande :
 
-```sh
+```bash
 logrotate -fv /etc/logrotate.d/docker-container
 ```

@@ -4,7 +4,7 @@
 
 Des valeurs par défaut sont mises en place pour l'édition et la stack de Canopsis. L'édition vaut soit `"cat"`, soit `"core"`. La stack est soit `"go"`, soit `"python"`.
 
-Pour modifier ces valeurs, il faut passer par l'API.
+Pour modifier ces valeurs, il faut passer l'API.
 
 **URL** : `/api/internal/properties`
 
@@ -22,7 +22,7 @@ Pour modifier ces valeurs, il faut passer par l'API.
 }
 ```
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
@@ -60,7 +60,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ---
 
-**Condition** : Si `edition` ou `stack` sont définis dans le JSON mais ne correspondent pas à des valeurs valides.
+**Condition** : Si `edition` ou `stack` sont définis dans le JSON mais ne correspondant pas à des valeurs valies.
 
 **Code** : `400 BAD REQUEST`
 

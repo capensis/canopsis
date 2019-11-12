@@ -55,7 +55,6 @@ from canopsis.event import get_routingkey
 from canopsis.lock.manager import AlertLockRedis
 from canopsis.logger import Logger
 from canopsis.common.middleware import Middleware
-from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.models.entity import Entity
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import get_offset_timewindow
@@ -120,8 +119,7 @@ class Alerts(object):
             filter_storage,
             context_graph,
             watcher,
-            event_publisher,
-            pbehavior
+            event_publisher
     ):
         self.config = config
         self.logger = logger
@@ -130,7 +128,6 @@ class Alerts(object):
         self.filter_storage = filter_storage
         self.context_manager = context_graph
         self.watcher_manager = watcher
-        self.pbehavior_manager = pbehavior
 
         self.event_publisher = event_publisher
 
@@ -180,14 +177,13 @@ class Alerts(object):
         )
         context_manager = ContextGraph(logger)
         watcher_manager = Watcher()
-        pbehavior_manager = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
         amqp_pub = AmqpPublisher(get_default_amqp_conn(), logger)
         event_publisher = StatEventPublisher(logger, amqp_pub)
 
         return (config, logger, alerts_storage, config_data,
                 filter_storage, context_manager, watcher_manager,
-                event_publisher, pbehavior_manager)
+                event_publisher)
 
     @property
     def cancel_autosolve_delay(self):
@@ -1218,16 +1214,7 @@ class Alerts(object):
                 value[AlarmField.alarmfilter.value][NEXT] = next_run
                 self.update_current_alarm(docalarm, value)
 
-            try:
-                if lifter[AlarmFilterField.postpone.value]:
-                    last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-                    date_stamp = max(docalarm[storage.TIMESTAMP], last_tstop)
-                else:
-                    date_stamp = docalarm[storage.TIMESTAMP]
-            except KeyError:
-                # if alarmfilter[AlarmFilterField.postpone.value] doesn't exists then do as false
-                date_stamp = docalarm[storage.TIMESTAMP]
-            date = datetime.fromtimestamp(date_stamp)
+            date = datetime.fromtimestamp(docalarm[storage.TIMESTAMP])
             # Continue only if the limit condition is valid
             if date + lifter.limit > now:
                 self.logger.debug('AlarmFilter {}: Limit condition is invalid'
@@ -1263,16 +1250,7 @@ class Alerts(object):
                         # Already repeated enough times
                         continue
 
-                    try:
-                        if alarmfilter[AlarmFilterField.postpone.value]:
-                            last_tstop = self.pbehavior_manager.get_last_tstop_from_eid(docalarm[storage.DATA_ID])
-                            last = datetime.fromtimestamp(max(max(executions), last_tstop))
-                        else:
-                            last = datetime.fromtimestamp(max(executions))
-                    except KeyError:
-                        # if alarmfilter[AlarmFilterField.postpone.value] doesn't exists then do as false
-                        last = datetime.fromtimestamp(max(executions))
-
+                    last = datetime.fromtimestamp(max(executions))
                     if last + lifter.limit > now:
                         # Too soon to execute one more time all tasks
                         continue

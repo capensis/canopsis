@@ -1,16 +1,16 @@
 # Configuration de pare-feu et de SELinux
-
+  
 Ce document décrit les ports utilisés par Canopsis qui doivent être autorisés.
 
-Voir aussi la [matrice des flux entre les services](../installation/pre-requis-parefeu-et-selinux.md).
-
+Une matrice des flux entre les services est [disponible ici](../installation/pre-requis-parefeu-et-selinux.md).  
+  
 ## Liste des ports
 
 Service       | Description                                 | Port                  |
 --------------|---------------------------------------------|-----------------------|
 MongoDB       | Base de données                             | 27017/TCP             |
 RabbitMQ      | Passage de messages                         | 5672/TCP              |
-RabbitMQ UI   | Interface web de RabbitMQ (recommandée)     | 15672/TCP             |
+RabbitMQ UI   | Configuration web de RabbitMQ (recommandée) | 15672/TCP             |
 Gunicorn      | Interface web et API REST de Canopsis       | 8082/TCP              |
 Redis         | Serveur de cache                            | 6739/TCP              |
 InfluxDB      | Métriques                                   | 8086/TCP              |

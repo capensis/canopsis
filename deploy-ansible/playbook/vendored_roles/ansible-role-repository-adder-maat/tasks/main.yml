@@ -51,8 +51,7 @@
   with_items: "{{ repo_presence|json_query('results')}}"
   when:
     - ( item.item.name|lower ) != 'centos-sclo-scl'
-  args:
-    warn: no
+  warn: False
 
 - name: Deploy Dependancies needed for Software Collection
   yum:

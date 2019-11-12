@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 if [ "${1}" = "" ]; then
     echo "Usage: $0 start|status|restart|stop [pattern]"

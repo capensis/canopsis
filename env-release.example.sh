@@ -1,4 +1,5 @@
 export CANOPSIS_TAG="${tag}"
+export CANOPSIS_CATAG_TOKEN="ACCESS TOKEN GITLAB"
 
 # all pour tout construire
 #export CANOPSIS_DISTRIBUTION="all"

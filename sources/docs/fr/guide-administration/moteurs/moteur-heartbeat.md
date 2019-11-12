@@ -54,7 +54,7 @@ Ici : `"connector" : "heartbeat_test_1"` et `"connector_name" : "heartbeat_test_
 
 ## Collection
 
-Les heartbeats sont stockés dans la collection MongoDB `heartbeat` (voir [API Heartbeat](../../guide-developpement/heartbeat/api_v2_heartbeat.md) pour la création des heartbeats).
+Les heartbeats sont stockés dans la collection Mongo `heartbeat` (voir [API Heartbeat](../../guide-developpement/heartbeat/api_v2_heartbeat.md) pour la création des heartbeats).
 
 Un exemple de heartbeat pour générer une alarme si aucun événement avec le connecteur `heartbeat_test_1` et le nom de connecteur `heartbeat_test_1_name` n'ont été traités depuis plus d'une minute.
 

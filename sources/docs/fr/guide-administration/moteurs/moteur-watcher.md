@@ -1,7 +1,8 @@
 # Watcher
 
 !!! note
-    Cette page concerne les watchers nouvelle génération, disponibles uniquement avec le moteur Go `engine-watcher`.
+    Cette page concerne les watchers nouvelle génération, disponibles uniquement
+    avec le moteur go `engine-watcher`.
 
 Les watchers sont une fonctionnalité permettant de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
 

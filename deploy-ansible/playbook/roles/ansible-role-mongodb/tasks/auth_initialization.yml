@@ -3,8 +3,8 @@
   template: src=mongod_init.conf.j2 dest=/etc/mongod.conf owner=root group=root mode=0644
 
 - name: Restart mongodb service
-  systemd: name={{ mongodb_daemon_name }} state=restarted
-  when: mongodb_manage_service|bool
+  service: name={{ mongodb_daemon_name }} state=restarted
+  when: mongodb_manage_service
 
 - name: wait MongoDB port is listening
   wait_for: host=127.0.0.1 port="{{ mongodb_net_port }}" delay=5 state=started
@@ -12,12 +12,12 @@
 - name: get pid of mongodb for non daemon mode
   shell: "pidof mongod"
   register: pidof_mongod
-  when: not mongodb_manage_service
+  when: mongodb_manage_service == false
   ignore_errors: yes
 
 - name: start mongodb daemon
   shell: "LC_ALL=C /usr/bin/mongod --config /etc/mongod.conf --fork"
-  when: not mongodb_manage_service and pidof_mongod.rc == 1
+  when: mongodb_manage_service == false and pidof_mongod.rc == 1
 
 - name: create administrative user siteUserAdmin
   mongodb_user:
@@ -71,8 +71,8 @@
   template: src=mongod.conf.j2 dest=/etc/mongod.conf owner=root group=root mode=0644
 
 - name: Restart mongodb service
-  systemd: name={{ mongodb_daemon_name }} state=restarted
-  when: mongodb_manage_service|bool
+  service: name={{ mongodb_daemon_name }} state=restarted
+  when: mongodb_manage_service
 
 - name: Wait MongoDB port is listening
   wait_for: host="{{ item }}" port="{{ mongodb_net_port }}" delay=5 state=started

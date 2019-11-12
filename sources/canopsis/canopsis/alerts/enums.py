@@ -55,7 +55,6 @@ class AlarmField(DefaultEnum):
     long_output = "long_output"
     output = "output"
     long_output_history = "long_out_history"
-    resource = "resource"
 
 
 class States(DefaultEnum):
@@ -71,4 +70,3 @@ class AlarmFilterField(DefaultEnum):
 
     runs = 'runs'  # trace runs
     next_run = 'next_run'  # stamp of the next run
-    postpone = 'postpone_if_active_pbehavior'

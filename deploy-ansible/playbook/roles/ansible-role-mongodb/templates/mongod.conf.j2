@@ -2,7 +2,7 @@
 
 net:
   bindIp: {{ mongodb_net_bindip }}
-  {% if mongodb_major_version is version_compare("3.6", "<") -%}
+  {% if mongodb_major_version | version_compare("3.6", "<") -%}
   http:
     enabled: {{ mongodb_net_http_enabled | to_nice_json }}
   {% endif -%}
@@ -16,12 +16,24 @@ processManagement:
   pidFilePath: {{ mongodb_pidfile_path }}
   {% endif %}
 
+{% if mongodb_replication_replset -%}
+replication:
+  oplogSizeMB: {{ mongodb_replication_oplogsize | int }}
+  replSetName: {{ mongodb_replication_replset }}
+  {% if mongodb_storage_engine == 'mmapv1' -%}
+  secondaryIndexPrefetch: {{ mongodb_replication_replindexprefetch }}
+  {% endif %}
+{% endif %}
+
 security:
   authorization: {{ mongodb_security_authorization }}
+  {% if mongodb_replication_replset and mongodb_security_authorization == 'enabled' -%}
+  keyFile: {{ mongodb_security_keyfile }}
+  {% endif %}
 
 storage:
   dbPath: {{ mongodb_storage_dbpath }}
-  {% if mongodb_major_version is version_compare("3.0", ">=") -%}
+  {% if mongodb_major_version | version_compare("3.0", ">=") -%}
   engine: {{ mongodb_storage_engine }}
   {% endif -%}
   journal:

@@ -6,8 +6,8 @@ Deploy Canopsis by ansible or mount it in a vagrantbox
 Requirements
 ------------
 
-- Ansible 2.8.5 - Use a virtualenv and `pip install "ansible==2.8.5"`
-- Host using ansible as to get right on git.canopsis.com to fetch canopsis sources (ex: ssh\_key)
+- Ansible 2.4.3 - Use a virtualenv and `pip install "ansible<2.4.4"`
+- Host using ansible as to get right on git.canopsis.com to fetch canopsis sources (ex: ssk_key)
 
 ### Optional
 
@@ -43,6 +43,9 @@ Manual:
 ```bash
 # THIS RESETS ALL DATABASES
 ./install-standalone.sh -i inventory_custom
+
+# this updates databases
+./update-standalone.sh -i inventory_custom
 ```
 
 * WebUI: http://localhost:8082

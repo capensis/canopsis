@@ -1,0 +1,32 @@
+---
+- hosts: all
+  remote_user: root
+  pre_tasks:
+    - name: ensure libselinux-python is installed
+      yum:
+        name: libselinux-python,selinux-policy
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Disable SELinux on RedHat familly
+      selinux:
+        state: disabled
+      when: ansible_os_family == "RedHat"
+
+- hosts: canopsis-standalone
+  remote_user: root
+  roles:
+    -
+      role: "ansible-role-haproxy"
+    -
+      role: "ansible-role-mongodb"
+    -
+      role: "ansible-role-rabbitmq"
+    -
+      role: "ansible-role-influxdb-maat"
+    -
+      role: "ansible-role-redis"
+    -
+      role: "canopsis"
+      tags:
+        - canopsis

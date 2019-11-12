@@ -98,7 +98,7 @@ filter {
    # S'assurer que l'on traite bien les event comportant le tag *syslog* défini dans l'input
         if "syslog" in [tags] {
 
-            # Parse de la log et récupération des informations nécessaires pour l'event et/ou la routing_key. Exemple 'component',
+            # Parse de la log et récupération des informations nécéssaires pour l'event et/ou la routing_key. Exemple 'component',
             # 'resource', 'output', 'timestamp'...etc.
             grok {
                 match => {"message" => "%{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:component} %{NOTSPACE:resource}\[%{NUMBER:pid}\]\: %{GREEDYDATA:output}"}

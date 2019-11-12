@@ -26,54 +26,50 @@ Un redémarrage du serveur web est nécessaire.
 
 ### Configuration de LDAP
 
-La configuration de l'authentification se fait au moyen d'une requête sur l’API. Vous devez préparer un fichier de configuration et l'envoyer sur l'API.
+La configuration de l'authentification se fait au moyen d'un requête sur l’API. Vous devez préparer un fichier de configuration et l'envoyer sur l'API.
 
-Voici la liste de paramètres nécessaires à la configuration LDAP :
+Voici un listing de paramètres nécessaires à la configuration LDAP :
 
-| Attribut      | Description                                                                                                                                | Exemple                                                        |
-|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
-| ldap_uri      | Chaîne de connexion LDAP                                                                                                                   | ldaps://ldap.example.com                                       |
-| host          | Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                                    | ldap.example.com                                               |
-| port          | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*                              | 389                                                            |
-| admin_dn      | Bind DN : DN du compte utilisé pour lire l'annuaire                                                                                        | uid=svccanopsis,ou=Special,dc=example,dc=com                   |
-| admin_passwd  | Bind password : mot de passe pour authentifier le Bind DN sur l'annuaire                                                                   |                                                                |
-| user_dn       | DN de base où rechercher les utilisateurs                                                                                                  | ou=People,dc=example,dc=com                                    |
-| ufilter       | Filtre de recherche pour les utilisateurs <br> La valeur de l'utilisateur est présentée dans une variable notée `%s`                       | uid=%s                                                         |
-| username_attr | Attribut portant le nom d'utilisateur dans l'objet de l'annuaire                                                                           | uid                                                            |
-| attrs         | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
-| default_role  | Rôle Canopsis par défaut au moment de la première connexion                                                                                | Visualisation                                                  |
+|   Attribut   |                                                  Description                                                   |                           Exemple                           |
+| ------------ | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+|   ldap_uri   |                                            Chaine de connexion LDAP                                            |                     ldaps://ldap.local                      |
+|     host     |    Adresse du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations*    |                          srv-ldap                           |
+|     port     | Port d'écoute du serveur LDAP <br> *Attribut obsolète conservé pour la rétrocompatibilité des configurations* |                             389                             |
+|   admin_dn   |                        DN de l'utilisateur permettant l'authentification sur l'annuaire                        |            uid=mon_user,ou=mon_org,dc=dom,dc=com            |
+| admin_passwd |                                        Mot de passe de l'utilisateur DN                                        |                                                             |
+|   ufilter    |          Filtre utilisateur. La valeur de l'utilisateur est présentée dans une variable notée **%s**           |                           uid=%s                            |
+| default_role |                               Rôle par défaut au moment de la première connexion                               |                        Visualisation                        |
+|    attrs     |        Translation d'attributs. Un utilisateur Canopsis dispose des attributs firstname, lastname, mail        | "mail": "mail", "firstname": "givenName", "lastname" : "sn" |
 
 La configuration se fait dans un fichier JSON : **ldapconfig.json**
 
 ```json
 {
-    "id": "cservice.ldapconfig",
     "crecord_type": "ldapconfig",
     "crecord_name": "ldapconfig",
-    "ldap_uri": "ldap://ldap.example.com",
-    "admin_dn": "uid=svccanopsis,ou=Special,dc=example,dc=com",
-    "admin_passwd": "********",
-    "user_dn": "ou=People,dc=example,dc=com",
+    "admin_dn": "uid=mon_user,ou=mon_org,dc=dom,dc=com",
     "ufilter": "uid=%s",
-    "username_attr": "uid",
+    "default_role": "Visualisation",
+    "user_dn": "ou=mon_org,dc=dom,dc=com",
+    "admin_passwd": "***",
+    "host": "x.x.x.x",
     "attrs": {
         "mail": "mail",
         "firstname": "givenName",
         "lastname": "sn"
     },
-    "default_role": "Visualisation"
+    "port": 389,
+    "id": "cservice.ldapconfig"
 }
 ```
 
 !!! Note
     Vous pouvez remplacer les attributs `host` et `port` par `ldap_uri`.
 
-La requête suivante permet d'envoyer cette configuration :
+La requête suivante permet d'envoyer cette configuration.
 
 ```sh
-curl -u root:root -X POST \
-  -H "Content-type: application/json" -d @ldapconfig.json \
-  'http://CANOPSIS_HOST:CANOPSIS_PORT/rest/object/ldapconfig/cservice.ldapconfig'
+curl -X POST -H "Content-type: application/json" -d @ldapconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/ldapconfig/cservice.ldapconfig'
 ```
 
 Le résultat renvoyé doit être de type :

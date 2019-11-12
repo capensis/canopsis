@@ -1,21 +1,20 @@
 ---
 
 - name: mongodb reload
-  systemd: name={{ mongodb_daemon_name }} state=reloaded
-  when: mongodb_manage_service|bool
+  service: name={{ mongodb_daemon_name }} state=reloaded
+  when: mongodb_manage_service
 
 - name: mongodb restart
-  systemd: name={{ mongodb_daemon_name }} state=restarted
-  when: mongodb_manage_service|bool
+  service: name={{ mongodb_daemon_name }} state=restarted
+  when: mongodb_manage_service
 
 - name: mongodb-mms-automation-agent restart
-  systemd: name=mongodb-mms-automation-agent state=restarted
-  when: mongodb_manage_service|bool
+  service: name=mongodb-mms-automation-agent state=restarted
+  when: mongodb_manage_service
 
 - name: reload systemd
-  systemd:
-    daemon-reload: yes
-  when: mongodb_manage_service|bool
+  shell: systemctl daemon-reload
+  when: mongodb_is_systemd and mongodb_manage_service
 
 - name: restart sysfsutils
-  systemd: name=sysfsutils state=restarted
+  service: name=sysfsutils state=restarted

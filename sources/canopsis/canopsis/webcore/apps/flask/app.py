@@ -19,11 +19,7 @@ app = Flask(__name__)
 def _auto_import(app, api, configuration, exports_funcname='exports_v3'):
     for webservice, enabled in configuration.items():
         if int(enabled) == 1:
-            try:
-                wsmod = importlib.import_module('{}'.format(webservice))
-            except ImportError:
-                app.logger.error('webservice v3 {}: unable to import module'
-                                 .format(webservice))
+            wsmod = importlib.import_module('{}'.format(webservice))
 
             if hasattr(wsmod, exports_funcname):
                 app.logger.info('webservice v3 {}: loading'.format(webservice))

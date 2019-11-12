@@ -38,7 +38,7 @@ Crée un nouveau watcher à partir du corps de la requête.
 }
 ```
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
@@ -152,7 +152,7 @@ Modifie un nouveau watcher à partir du corps de la requête.
 }
 ```
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le Json ci-dessus :
 
 ```sh
 curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
@@ -316,9 +316,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64r
 }
 ```
 
-#### Récupération de tous les watchers en base de données
+#### Récupération de tous les watchers en base de données.
 
-Récupère tous les watchers stockés en base
+Récupère tous les watchers stocké en base
 
 **URL** : `/api/v2/watcherng`
 

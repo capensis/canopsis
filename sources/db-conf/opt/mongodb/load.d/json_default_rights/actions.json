@@ -386,14 +386,6 @@
         "type": "CRUD"
     },
     {
-        "_id": "models_exploitation_action",
-        "loader_id": "models_exploitation_action",
-        "crecord_name": "models_exploitation_action",
-        "crecord_type": "action",
-        "desc": "Exploitation: Actions",
-        "type": "CRUD"
-    },
-    {
         "_id": "models_exploitation_heartbeat",
         "loader_id": "models_exploitation_heartbeat",
         "crecord_name": "models_exploitation_heartbeat",

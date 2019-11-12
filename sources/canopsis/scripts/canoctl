@@ -1,54 +1,32 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -e
+set -o pipefail
 
-help_usage()
-{
-	echo "$0 [start|status|restart|stop|deploy|deploy-python|deploy-go]"
-	echo "  deploy-python: stop services then play ansible playbook (with Python engines)"
-	echo "  deploy-go: stop services then play ansible playbook (with Go engines)"
-	echo
-	echo "  deploy: use the default stack (currently: deploy-python)"
-	exit 1
+function help_usage() {
+    echo "$0 [start|status|restart|stop|deploy]"
+    echo "  deploy: stop services then play ansible playbook"
+    exit 1
 }
 
-# Here, we're checking for a specific Go file instead of looking for
-# a package, because it's simpler and because this required file used
-# to be missing in some installations.
-check_go_prerequisites_or_die()
-{
-	if ! [ -f /opt/canopsis/etc/initialisation.toml.example ]; then
-		echo "deploy-go was called, but no /opt/canopsis/etc/initialisation.toml.example file was found"
-		echo "Is the canopsis-engines-go package installed?"
-		exit 1
-	fi
-}
-
-if [ "$(id -u)" -ne 0 ]; then
-	echo "$0: must be run as root"
-	exit 1
-fi
-
-while true ; do
-	case $1 in
-	start|status|restart|stop)
-		/opt/canopsis/bin/canopsis-systemd "$1"
-		exit $?
-		;;
-	deploy|deploy-python)
-		/opt/canopsis/bin/canopsis-systemd stop
-		/opt/canopsis/deploy-ansible/install-self.sh deploy-python
-		exit $?
-		;;
-	deploy-go)
-		check_go_prerequisites_or_die
-		/opt/canopsis/bin/canopsis-systemd stop
-		/opt/canopsis/deploy-ansible/install-self.sh deploy-go
-		exit $?
-		;;
-	*)
-		help_usage
-		;;
-	esac
-
-	shift
+while [ 1 ]; do
+    case $1 in
+        start|status|restart|stop)
+            /opt/canopsis/bin/canopsis-systemd $1
+            exit $?
+            ;;
+        deploy)
+            $0 stop
+            /opt/canopsis/deploy-ansible/install-self.sh
+            exit $?
+            ;;
+        upgrade)
+            $0 stop
+            /opt/canopsis/deploy-ansible/upgrade-self.sh
+            exit $?
+            ;;
+        *)
+            help_usage
+            ;;
+    esac
+    shift
 done

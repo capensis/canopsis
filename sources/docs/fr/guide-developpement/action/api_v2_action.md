@@ -224,7 +224,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 
 ---
 
-### Suppression d'Actions
+### Suppression de l'ation
 
 Supprime une Action en fonction de son `id`.
 

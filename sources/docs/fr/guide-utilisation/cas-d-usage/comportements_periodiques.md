@@ -1,16 +1,16 @@
 # Comportements périodiques
 
-Vous avez la possibilité dans Canopsis de définir des périodes de temps pendant lesquelles des changements de comportements sont nécessaires :
+Vous avez la possibilité dans Canopsis de définir des périodes de temps pendant lesquelles des changements de comportements sont nécessaires : 
 
 * Plage de service d'une application : vous souhaitez repérer visuellement les applications qui doivent rendre un service à un moment donné
 * Maintenance : vous souhaitez déclarer en maintenance des entités pour que leurs alarmes ne remontent pas visuellement
-* Pause : vous souhaitez mettre en *pause* une application pour un temps indéterminé
+* Pause : vous souhaitez mettre en *pause* une application pour un temps indeterminé
 
 Cette fonctionnalité porte le nom de `periodic behavior`.
 
 
 !!! note
-    Voici une méthode vous permettant de
+    Voici une méthode vous permettant de 
 
     * définir la plage de service d'une application
     * mettre en maintenance une entité
@@ -22,7 +22,7 @@ Nous considérons l'application `ERP` (sous forme d'observateur) composée des e
 
 ![Situation initiale](./img/pbh_situation_initiale.png "Situation Initiale")  
 
-## Plages de services
+## Plages de services
 
 ### Définition de la plage de service
 
@@ -41,7 +41,7 @@ Pour fabriquer une plage 5 jours/7 de 8h à 19h15, vous devez créer :
 
 ### Rendus visuels
 
-En dehors des plages de services, la tuile de météo se comporte ainsi :
+En dehors des plages de services, la tuile de météo se comporte ainsi : 
 
 
 ![En dehors des plages](./img/pbh_en_dehots_des_plages.png "En dehors des plages")  
@@ -86,7 +86,7 @@ Le but de ce paragraphe est de montrer les impacts des comportements périodique
 
 Il est possible d'appliquer des filtres sur les comportements périodiques, actifs ou non.  
 
-Sur un bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) :
+Sur un bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) : 
 
 ![Ajout filtre](./img/pbh_ajout_filtre.png "Ajout filtre")  
 
@@ -94,7 +94,7 @@ Le point important concerne l'attribut *fictif* `has_active_pb` qui est un bool�
 
 ![Filtre comportement actif](./img/pbh_filtre_actif.png "Filtre comportement actif")  
 
-Puis au niveau exploitation, sélectionnez le filtre nouvellement créé :
+Puis au niveau exploitation, sélectionnez le filtre nouvellement créé : 
 
 ![Filtre comportement actif](./img/pbh_filtre_actif_baa.png "Filtre comportement actif")  
 
@@ -140,7 +140,7 @@ Voici une liste de filtres utiles dans des situations de pilotage au quotidien c
             ]
         }
     ]
-}
+} 
 
 ```
 

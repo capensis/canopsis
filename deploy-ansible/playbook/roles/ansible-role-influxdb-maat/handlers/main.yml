@@ -1,7 +1,7 @@
 ---
 # handlers file for influxdb 
 - name: Start Influxdb
-  systemd:
+  service:
     name: influxdb
     state: started
     enabled: yes

@@ -1,0 +1,54 @@
+---
+canopsis_engines:
+  -
+    module: dynamic
+    name: alerts
+    state: stopped
+    enabled: no
+  -
+    module: cleaner
+    name: cleaner_alerts
+    state: stopped
+    enabled: no
+  -
+    module: cleaner
+    name: cleaner_events
+    state: stopped
+    enabled: no
+  -
+    module: dynamic
+    name: context-graph
+    state: stopped
+    enabled: no
+  -
+    module: event_filter
+    name: event_filter
+  -
+    module: eventstore
+    name: eventstore
+    state: stopped
+    enabled: no
+  -
+    module: dynamic
+    name: pbehavior
+  -
+    module: dynamic
+    name: perfdata
+  -
+    module: scheduler
+    name: scheduler
+  -
+    module: selector
+    name: selector
+  -
+    module: task_dataclean
+    name: task_dataclean
+  -
+    module: task_importctx
+    name: task_importctx
+  -
+    module: task_mail
+    name: task_mail
+  -
+    module: dynamic
+    name: watcher
