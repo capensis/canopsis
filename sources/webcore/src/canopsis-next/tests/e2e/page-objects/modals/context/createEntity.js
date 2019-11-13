@@ -1,6 +1,7 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
+const el = require('../../../helpers/el');
 
 const modalSelector = sel('createEntityModal');
 
@@ -42,6 +43,8 @@ const commands = {
   clickTab(index) {
     return this.customClick(this.el('@createEntityTab', index));
   },
+
+  el,
 };
 
 module.exports = modalCreator(modalSelector, {
@@ -59,8 +62,8 @@ module.exports = modalCreator(modalSelector, {
     entityEnabledInput: `${sel('createEntityForm')} input${sel('entityFormEnabled')}`,
     entityEnabled: `${sel('createEntityForm')} div${sel('entityFormEnabled')}`,
     entitySelectType: `${sel('createEntityForm')} div${sel('entityFormFieldLayout')} .v-select`,
-    entityImpact: `${sel('createEntityForm')} ${sel('entityFormImpact')} ${sel('entitiesSelect')}`,
-    entityDepends: `${sel('createEntityForm')} ${sel('entityFormDepends')} ${sel('entitiesSelect')}`,
+    entityImpact: `${sel('createEntityForm')} ${sel('entityFormImpact')} ${sel('entitiesSelect')} .v-expansion-panel__header`,
+    entityDepends: `${sel('createEntityForm')} ${sel('entityFormDepends')} ${sel('entitiesSelect')} .v-expansion-panel__header`,
   },
   commands: [commands],
 });

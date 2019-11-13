@@ -5,6 +5,7 @@
         context-search(:query.sync="query")
       v-flex
         pagination(
+          data-test="topPagination",
           v-if="hasColumns",
           :page="query.page",
           :limit="query.limit",
@@ -14,6 +15,7 @@
         )
       v-flex
         filter-selector(
+          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :lockedFilters="widgetViewFilters",
@@ -33,6 +35,7 @@
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
+        data-test="tableWidget",
         v-model="selected",
         :items="contextEntities",
         :headers="headers",
@@ -49,23 +52,24 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          td
-            v-checkbox(primary, hide-details, v-model="props.selected")
-          td(
-            v-for="column in columns",
-            @click="props.expanded = !props.expanded"
-          )
-            div(v-if="column.value === 'enabled'")
-              v-icon(
-                :color="props.item.enabled ? 'primary' : 'error'"
-              ) {{ props.item.enabled ? 'check' : 'clear' }}
-            ellipsis(
-              v-else,
-              :text="props.item | get(column.value, null, '')",
-              :maxLetters="column.maxLetters"
+          tr(:data-test="`tableRow-${props.item._id}`")
+            td
+              v-checkbox(primary, hide-details, v-model="props.selected")
+            td(
+              v-for="column in columns",
+              @click="props.expanded = !props.expanded"
             )
-          td
-            actions-panel(:item="props.item", :isEditingMode="isEditingMode")
+              div(v-if="column.value === 'enabled'")
+                v-icon(
+                  :color="props.item.enabled ? 'primary' : 'error'"
+                ) {{ props.item.enabled ? 'check' : 'clear' }}
+              ellipsis(
+                v-else,
+                :text="props.item | get(column.value, null, '')",
+                :maxLetters="column.maxLetters"
+              )
+            td
+              actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item", :tabId="tabId")
       v-layout.white(align-center)
@@ -76,7 +80,7 @@
             :total="contextEntitiesMeta.total",
             @input="updateQueryPage"
           )
-        v-flex(xs2)
+        v-flex(xs2, data-test="itemsPerPage")
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 

@@ -3,6 +3,10 @@
 const el = require('../../helpers/el');
 
 const commands = {
+  clickAddInfo() {
+    return this.customClick('@addManageInfos');
+  },
+
   setItemPerPage(index) {
     return this.customClick('@itemsPerPage')
       .waitForElementVisible(this.el('@optionSelect', index))

@@ -257,11 +257,28 @@ module.exports.ALARMS_MASS_ACTIONS = {
   CANCEL_ALARM: 5,
 };
 
+module.exports.CONTEXT_MASS_ACTIONS = {
+  DELETE_ENTITY: 1,
+  PERIODICAL_BEHAVIOR: 2,
+};
+
 module.exports.ALARMS_SHARED_ACTIONS = {
   ACK: 1,
   FAST_ACK: 2,
   SNOOZE_ALARM: 3,
   CANCEL_ALARM: 4,
+};
+
+module.exports.CONTEXT_SHARED_ACTIONS = {
+  EDIT: 1,
+  DUPLICATE: 2,
+  DELETE: 3,
+  PERIODICAL_BEHAVIOR: 4,
+};
+
+module.exports.CONTEXT_CREATE_ENTITY_TAB = {
+  FORM: 2,
+  MANAGE_INFOS: 3,
 };
 
 module.exports.ALARMS_SHARED_DROPDOWN_ACTIONS = {

@@ -162,7 +162,7 @@ module.exports = {
     bottomPaginationPage: './/*[@data-test=\'vPagination\']//button[@class=\'v-pagination__item\' and contains(text(), \'%s\')]',
     bottomPaginationNext: `${sel('vPagination')} li:last-child`,
 
-    itemsPerPage: `${sel('tableWidget')} ${sel('itemsPerPage')} .v-select__slot`,
+    itemsPerPage: `${sel('itemsPerPage')} .v-select__slot`,
 
     mixFilters: `${sel('tableFilterSelector')} div${sel('mixFilters')} .v-input--selection-controls__ripple`,
     mixFiltersInput: `${sel('tableFilterSelector')} input${sel('mixFilters')}`,
@@ -172,7 +172,7 @@ module.exports = {
     orFilters: `${sel('tableFilterSelector')} ${sel('orFilters')} + .v-input--selection-controls__ripple`,
     showFiltersListButton: sel('showFiltersListButton'),
 
-    massActionsPanelItem: `${sel('tableWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    massActionsPanelItem: `${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
     rowActionsSharedPanelItem: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('actionsPanelItem')}:nth-of-type(%s)`,
     rowMoreActionsButton: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('dropDownActionsButton')}`,
     rowDropDownActions: `.menuable__content__active ${sel('dropDownActions')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,

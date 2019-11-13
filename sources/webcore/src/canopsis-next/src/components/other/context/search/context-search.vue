@@ -1,5 +1,5 @@
 <template lang="pug">
-  search-field(v-model="searchingText", @submit="submit", @clear="clear")
+  search-field(data-test="tableSearch", v-model="searchingText", @submit="submit", @clear="clear")
 </template>
 
 <script>

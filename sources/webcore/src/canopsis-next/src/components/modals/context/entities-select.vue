@@ -6,8 +6,8 @@
         v-layout(wrap)
           v-chip(
             v-for="entity in entities",
-            :data-test="`removeEntity-${entity._id}`",
-            :key="entity._id",
+            :data-test="`removeEntity-${entity}`",
+            :key="entity",
             close,
             @input="removeEntity(entity)"
           ) {{ entity }}

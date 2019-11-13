@@ -8,6 +8,10 @@ const {
   FILTER_OPERATORS,
   CONTEXT_FILTER_COLUMNS,
   CONTEXT_TYPE_OF_ENTITIES,
+  CONTEXT_MASS_ACTIONS,
+  CONTEXT_SHARED_ACTIONS,
+  PAGINATION_PER_PAGE_VALUES,
+  CONTEXT_CREATE_ENTITY_TAB,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../helpers/api');
@@ -49,28 +53,6 @@ module.exports = {
           order: SORT_ORDERS.desc,
           orderBy: CONTEXT_WIDGET_SORT_FIELD.type,
         },
-        newColumnNames: [{
-          index: 3,
-          data: {
-            value: 'connector',
-            label: 'New column',
-          },
-        }],
-        editColumnNames: [{
-          index: 1,
-          data: {
-            value: 'connector',
-            label: 'Connector(changed)',
-          },
-        }],
-        moveColumnNames: [{
-          index: 1,
-          down: true,
-        }, {
-          index: 2,
-          up: true,
-        }],
-        deleteColumnNames: [2],
         filters: {
           isMix: true,
           type: FILTERS_TYPE.OR,
@@ -137,11 +119,6 @@ module.exports = {
       .clickEditWidgetButton(browser.globals.temporary.widgetId);
 
     browser.completed.widget.setCommonFields({
-      size: {
-        sm: 6,
-        md: 6,
-        lg: 6,
-      },
       title: 'Context widget(edited)',
       parameters: {
         advanced: true,
@@ -158,6 +135,130 @@ module.exports = {
 
     browser.page.widget.context()
       .clickSubmitContext();
+  },
+
+  'Table widget context': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const entitiesSelectForm = browser.page.forms.entitiesSelect();
+    const manageInfosForm = browser.page.forms.manageInfos();
+    const confirmation = browser.page.modals.common.confirmation();
+    const createEntityModal = browser.page.modals.context.createEntity();
+    const addEntityInfoModal = browser.page.modals.context.addEntityInfo();
+
+    const firstId = '8cd9c153f596';
+
+    browser.page.view()
+      .clickMenuViewButton();
+
+    commonTable
+      .setAllCheckbox(true)
+      .clickOnMassAction(CONTEXT_MASS_ACTIONS.DELETE_ENTITY);
+
+    confirmation
+      .verifyModalOpened()
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    commonTable
+      // .clickTableHeaderCell('Name')
+      .clickOnRow(firstId)
+      .clickOnSharedAction(firstId, CONTEXT_SHARED_ACTIONS.EDIT);
+
+    createEntityModal
+      .verifyModalOpened()
+      .clickName()
+      .clearName()
+      .setName('Create entity name')
+      .setEnabled(true)
+      .setType(1)
+      .clickImpact();
+
+    entitiesSelectForm
+      .setItemPerPage(PAGINATION_PER_PAGE_VALUES.TEN)
+      .clickSearch()
+      .clearSearch()
+      .setSearch('a')
+      .clickSubmitSearch()
+      .setRowCheckbox('Engine_watcher/c1a24f0183a8')
+      .clickAddEntity('Engine_watcher/c1a24f0183a8')
+      .clickRemoveEntity('Engine_watcher/c1a24f0183a8')
+      .setAllCheckbox()
+      .clickAddCollection()
+      .clickAddCollection()
+      .clickClearEntities();
+
+    createEntityModal
+      .clickImpact()
+      .clickDepends();
+
+    entitiesSelectForm
+      .setItemPerPage(PAGINATION_PER_PAGE_VALUES.TEN)
+      .clickSearch()
+      .clearSearch()
+      .setSearch('a')
+      .clickSubmitSearch()
+      .setRowCheckbox('Engine_watcher/c1a24f0183a8')
+      .clickAddEntity('Engine_watcher/c1a24f0183a8')
+      .clickRemoveEntity('Engine_watcher/c1a24f0183a8')
+      .setAllCheckbox()
+      .clickAddCollection()
+      .clickAddCollection()
+      .clickClearEntities();
+
+    createEntityModal
+      .clickTab(CONTEXT_CREATE_ENTITY_TAB.MANAGE_INFOS);
+
+    manageInfosForm
+      .clickAddInfo();
+
+    addEntityInfoModal
+      .verifyModalOpened()
+      .clickEntityInfoName()
+      .clearEntityInfoName()
+      .setEntityInfoName('Information name')
+      .clickEntityInfoDescription()
+      .clearEntityInfoDescription()
+      .setEntityInfoDescription('Information description')
+      .clickEntityInfoValue()
+      .clearEntityInfoValue()
+      .setEntityInfoValue('Information value')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    manageInfosForm
+      .setItemPerPage(PAGINATION_PER_PAGE_VALUES.TEN)
+      .clickRowEditInfo('Information value');
+
+    addEntityInfoModal
+      .verifyModalOpened()
+      .clickEntityInfoValue()
+      .clearEntityInfoValue()
+      .setEntityInfoValue('New information value')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    manageInfosForm.clickRowDeleteInfo('New information value');
+
+    createEntityModal
+      .clickTab(CONTEXT_CREATE_ENTITY_TAB.FORM)
+      .clickCancelButton()
+      .verifyModalClosed();
+
+    commonTable
+      .clickSearchInput()
+      .clearSearchInput()
+      .setSearchInput('search string')
+      .clickSearchButton()
+      .clickSearchResetButton()
+      .setMixFilters(false)
+      .selectFilter(1)
+      .setFiltersType(FILTERS_TYPE.AND)
+      .clickNextPageTopPagination()
+      .clickPreviousPageTopPagination()
+      .clickNextPageBottomPagination()
+      .clickPreviousPageBottomPagination()
+      .clickOnPageBottomPagination(2)
+      .setItemPerPage(PAGINATION_PER_PAGE_VALUES.FIVE);
   },
 
   'Delete widget context with some name': (browser) => {

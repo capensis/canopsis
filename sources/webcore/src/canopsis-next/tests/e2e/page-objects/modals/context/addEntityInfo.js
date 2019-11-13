@@ -5,39 +5,39 @@ const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-
 const modalSelector = sel('addEntityInfoModal');
 
 const commands = {
-  clickName() {
+  clickEntityInfoName() {
     return this.customClick('@addEntityInfoName');
   },
 
-  clearName() {
+  clearEntityInfoName() {
     return this.customClearValue('@addEntityInfoName');
   },
 
-  setName(value) {
+  setEntityInfoName(value) {
     return this.customSetValue('@addEntityInfoName', value);
   },
 
-  clickDescription() {
+  clickEntityInfoDescription() {
     return this.customClick('@addEntityInfoDescription');
   },
 
-  clearDescription() {
+  clearEntityInfoDescription() {
     return this.customClearValue('@addEntityInfoDescription');
   },
 
-  setDescription(value) {
+  setEntityInfoDescription(value) {
     return this.customSetValue('@addEntityInfoDescription', value);
   },
 
-  clickValue() {
+  clickEntityInfoValue() {
     return this.customClick('@addEntityInfoValue');
   },
 
-  clearValue() {
+  clearEntityInfoValue() {
     return this.customClearValue('@addEntityInfoValue');
   },
 
-  setValue(value) {
+  setEntityInfoValue(value) {
     return this.customSetValue('@addEntityInfoValue', value);
   },
 };
