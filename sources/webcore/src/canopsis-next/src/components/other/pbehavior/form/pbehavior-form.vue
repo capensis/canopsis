@@ -1,7 +1,7 @@
 <template lang="pug">
   v-stepper(v-model="stepper", non-linear)
     v-stepper-header
-      v-stepper-step(
+      v-stepper-step.py-0(
         :complete="stepper > 1",
         step="1",
         editable,
@@ -10,7 +10,7 @@
         small(v-if="hasGeneralFormAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
       template(v-if="!noFilter")
         v-divider
-        v-stepper-step(
+        v-stepper-step.py-0(
           :complete="stepper > 2",
           step="2",
           editable,
@@ -19,14 +19,14 @@
           small(v-if="hasFilterEditorAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
           small.font-italic.font-weight-light(v-else) {{ $t('common.optional') }}
       v-divider
-      v-stepper-step(
+      v-stepper-step.py-0(
         :complete="stepper > 3",
         step="3",
         editable
       ) {{ $t('modals.createPbehavior.steps.rrule.title') }}
         small.font-italic.font-weight-light {{ $t('common.optional') }}
       v-divider
-      v-stepper-step(
+      v-stepper-step.py-0(
         :complete="stepper > 4",
         step="4",
         editable
