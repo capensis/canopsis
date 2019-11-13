@@ -16,7 +16,7 @@
         manage-infos(v-model="form.infos")
     v-divider
     v-layout.pa-2(justify-end)
-      v-btn(@click="hideModal", depressed, flat, v-if="!submitting") {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat, v-if="!submitting") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
 </template>
 
@@ -25,7 +25,6 @@ import { MODALS } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
@@ -45,7 +44,6 @@ export default {
     ManageInfos,
   },
   mixins: [
-    popupMixin,
     modalInnerMixin,
     entitiesContextEntityMixin,
   ],
@@ -92,12 +90,6 @@ export default {
     }
   },
   methods: {
-    updateImpact(entities) {
-      this.form.impacts = entities.map(entity => entity._id);
-    },
-    updateDependencies(entities) {
-      this.form.dependencies = entities.map(entity => entity._id);
-    },
     async submit() {
       this.submitting = true;
       const formIsValid = await this.$validator.validateAll();
@@ -112,10 +104,10 @@ export default {
 
           this.refreshContextEntitiesLists();
 
-          this.hideModal();
+          this.$modals.hide();
         } catch (err) {
           console.error(err);
-          this.addErrorPopup({ text: this.$t('error.default') });
+          this.$popups.error({ text: this.$t('error.default') });
         }
       }
 

@@ -29,8 +29,6 @@ import { MODALS } from '@/constants';
 
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
-import popupMixin from '@/mixins/popup';
-import modalMixin from '@/mixins/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
@@ -38,8 +36,6 @@ export default {
     WidgetWrapper,
   },
   mixins: [
-    popupMixin,
-    modalMixin,
     sideBarMixin,
   ],
   props: {
@@ -78,9 +74,9 @@ export default {
       const widgets = row.widgets || [];
 
       if (widgets.length > 0) {
-        this.addErrorPopup({ text: this.$t('errors.lineNotEmpty') });
+        this.$popups.error({ text: this.$t('errors.lineNotEmpty') });
       } else {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.confirmation,
           config: {
             action: () => {

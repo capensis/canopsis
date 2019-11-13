@@ -1,30 +1,34 @@
 <template lang="pug">
   div
-    progress-overlay(:pending="pending")
-    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
-    v-data-table(
-      :items="stats",
-      :headers="tableHeaders",
-      :pagination.sync="pagination"
-    )
-      template(
-        slot="items",
-        slot-scope="{ item }",
-        xs12
+    v-card.position-relative
+      progress-overlay(:pending="pending")
+      alert-overlay(
+        :value="hasError",
+        :message="serverErrorMessage"
       )
-        td {{ item.entity.name }}
-        td
-          v-layout(align-center)
-            v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
-              div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
-            div.caption
-              div(v-if="hasTrend(item[query.stat.title])")
-                sub.ml-2
-                  v-icon.caption(
-                    small,
-                    :color="item[query.stat.title].trend | trendColor"
-                  ) {{ item[query.stat.title].trend | trendIcon }}
-                sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
+      v-data-table(
+        :items="stats",
+        :headers="tableHeaders",
+        :pagination.sync="pagination"
+      )
+        template(
+          slot="items",
+          slot-scope="{ item }",
+          xs12
+        )
+          td {{ item.entity.name }}
+          td
+            v-layout(align-center)
+              v-chip.px-1(:style="{ backgroundColor: getChipColor(item[query.stat.title].value) }", color="white--text")
+                div.body-1.font-weight-bold {{ getChipText(item[query.stat.title].value) }}
+              div.caption
+                div(v-if="hasTrend(item[query.stat.title])")
+                  sub.ml-2
+                    v-icon.caption(
+                      small,
+                      :color="item[query.stat.title].trend | trendColor"
+                    ) {{ item[query.stat.title].trend | trendIcon }}
+                  sub {{ item[query.stat.title].trend | formatValue(widget.parameters.stat.stat.value) }}
 </template>
 
 <script>
@@ -35,26 +39,27 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-
-import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {
   components: {
     Ellipsis,
     RecordsPerPage,
     ProgressOverlay,
-    StatsAlertOverlay,
+    AlertOverlay,
   },
   mixins: [
     entitiesStatsMixin,
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
+    widgetStatsWrapperMixin,
     widgetStatsTableWrapperMixin,
   ],
   props: {
@@ -66,7 +71,6 @@ export default {
   data() {
     return {
       pending: true,
-      hasError: false,
       serverErrorMessage: null,
       stats: [],
       pagination: {
@@ -164,7 +168,6 @@ export default {
         const { limit, sortOrder } = this.query;
 
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         const { values } = await this.fetchStatsListWithoutStore({
@@ -180,8 +183,7 @@ export default {
           descending: sortOrder === SORT_ORDERS.desc,
         };
       } catch (err) {
-        this.hasError = true;
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }

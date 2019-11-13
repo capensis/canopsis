@@ -182,7 +182,7 @@ export default {
         ackRemove: 'Annuler ack',
         pbehavior: 'Comportement périodique',
         snooze: 'Snooze',
-        pbehaviorList: 'Lister les comportements pédioriques',
+        pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
@@ -225,7 +225,7 @@ export default {
       statsCurvesSettings: 'Paramètres de courbes de stats',
       statsTableSettings: 'Paramètres du tableau de stats',
       statsCalendarSettings: 'Paramètres du calendrier',
-      statsNumberSettings: 'Paramètres du compteur de stat',
+      statsNumberSettings: 'Paramètres du compteur de stats',
       statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
     },
@@ -356,11 +356,14 @@ export default {
       title: 'Prendre en compte les comportements périodiques ?',
     },
     serviceWeatherModalTypes: {
-      title: 'Type de modal',
+      title: 'Type de modale',
       fields: {
         moreInfo: 'Plus d\'infos',
         alarmList: 'Bac à alarmes',
       },
+    },
+    liveReporting: {
+      title: 'Suivi personnalisé',
     },
   },
   modals: {
@@ -497,7 +500,7 @@ export default {
         rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
       },
       success: {
-        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
+        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
       },
     },
     createPause: {
@@ -567,8 +570,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervalles d\'éxécution',
       actionPending: 'action(s) en attente',
-      refreshEntities: 'Refraichir la liste des entités',
-      editPbehaviors: 'Editer les pbehaviors',
+      refreshEntities: 'Rafraîchir la liste des entités',
+      editPbehaviors: 'Éditer les pbehaviors',
     },
     filter: {
       create: {
@@ -738,8 +741,8 @@ export default {
         success: 'Webhook créé avec succès !',
       },
       edit: {
-        title: 'Edit webhook',
-        success: 'Webhook edité avec succès !',
+        title: 'Éditer un webhook',
+        success: 'Webhook édité avec succès !',
       },
       remove: {
         success: 'Webhook supprimé avec succès !',
@@ -894,7 +897,7 @@ export default {
       bymonth: 'Par mois',
       bysetpos: {
         label: 'Par position',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (Lundi, Mardi, Mercredi, Jeudi, Vendredi), va nous donner le dernier jour travaillé de chaque mois',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (lundi, mardi, mercredi, jeudi, vendredi), va nous donner le dernier jour travaillé de chaque mois',
       },
       bymonthday: {
         label: 'Par jour du mois',
@@ -927,6 +930,8 @@ export default {
     lineNotEmpty: 'Cette ligne n\'est pas vide',
     JSONNotValid: 'JSON non valide..',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
+    statsRequestProblem: 'Erreur dans la récupération des statistiques',
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -990,7 +995,7 @@ export default {
       [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
       [STATS_TYPES.stateRate.value]: 'Taux à cet état',
       [STATS_TYPES.mtbf.value]: 'Temps moyen entre pannes',
-      [STATS_TYPES.currentState.value]: 'Etat courant',
+      [STATS_TYPES.currentState.value]: 'État courant',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
       [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',

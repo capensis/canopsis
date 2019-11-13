@@ -14,22 +14,18 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
 
 ```javascript
 {
-    'connector':        // Connector Type (gelf, nagios, snmp, ...)
-    'connector_name':   // Connector Identifier (nagios1, nagios2, ...)
-    'event_type':       // Event type (see below)
-    'source_type':      // Source of event ('component', or 'resource')
-    'component':        // Component's name
-    'resource':         // Resource's name (only if source_type is 'resource')
+    "event_type":       // Event type (see below)
+    "source_type":      // Source of event ("component", or "resource")
+    "connector":        // Connector Type (gelf, nagios, snmp, ...)
+    "connector_name":   // Connector Identifier (nagios1, nagios2, ...)
+    "component":        // Component's name
+    "resource":         // Resource's name (only if source_type is "resource")
 
     // /!\ The following is optional /!\
 
-    'hostgroups':       // Nagios hostgroups for component, default []
-    'servicegroups':    // Nagios servicegroups for resource, default []
-    'timestamp':        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
-
-    'output':           // Message
-    'long_output':      // Description
-    'tags':             // Tags for the event (optional, the server adds connector, connector_name, event_type, source_type, component and resource if present)
+    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
+    "output":           // Message
+    "long_output":      // Description
 
 }
 ```
@@ -42,24 +38,9 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'check',
+    "event_type": "check",
 
-    'state':                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
-
-    // /!\ The following is optional /!\
-
-    'scheduled':            // True if the check was scheduled, False otherwise
-
-    'check_type':           // Nagios Check Type (host or service)
-    'current_attempt':      // Attempt ID for the check
-    'max_attempts':         // Max attempts before sending HARD state
-    'execution_time':       // Check duration
-    'latency':              // Check latency (time between schedule and execution)
-    'command_name':         // Check command
-
-    'state_type':           // ONLY FOR INFO, USED ONLY INTERNALLY BY CANOPSIS, DO NOT TRY TO FEED AN EVENT WITH THIS : Check state type (0 - SOFT, 1 - HARD), default is 1
-    'status':               // ONLY FOR INFO, USED ONLY INTERNALLY BY CANOPSIS, DO NOT TRY TO FEED AN EVENT WITH THIS : 0 == Ok | 1 == En cours | 2 == Furtif | 3 == Bagot | 4 == Annule
-
+    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
 }
 ```
 
@@ -67,23 +48,66 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'ack',    // mandatory
+    "event_type": "ack",    // mandatory
 
-    'ref_rk':               // Routing Key of acknowledged event, mandatory
-    'author':               // Acknowledgment author, mandatory
-    'output':               // Acknowledgment comment, mandatory
+    "author":               // Acknowledgment author, optional
+    "output":               // Acknowledgment comment, optional
+}
+```
 
+### Event Declareticket Structure
+
+```javascript
+{
+    "event_type": "declareticket",    // mandatory
+
+    "author":               // Declareticket author, optional
+    "output":               // Declareticket comment, optional
+}
+```
+
+### Event Assocticket Structure
+
+```javascript
+{
+    "event_type": "assocticket",    // mandatory
+
+    "author":               // Assocticket author, optional
+    "ticket":               // Assocticket number, optional
+    "output":               // Assocticket comment, optional
+}
+```
+
+### Event Snooze Structure
+
+```javascript
+{
+  "event_type": "snooze",   // mandatory
+
+  "author":           // snooze author, optional
+  "output":           // snooze comment, optional
+}
+```
+
+### Event Changestate Structure
+
+```javascript
+{
+  "event_type": "changestate",   // mandatory
+
+  "author":           // changestate author, optional
+  "output":           // changestate comment, optional
+}
 ```
 
 ### Event Cancel Structure
 
 ```javascript
 {
-    'event_type': 'cancel',     // mandatory
+    "event_type": "cancel",     // mandatory
 
-    'ref_rk':               // Routing Key of event, mandatory
-    'author':               // author, mandatory
-    'output':               // comment, mandatory
+    "author":               // author, optional
+    "output":               // comment, optional
 }
 ```
 
@@ -91,23 +115,22 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'uncancel',   // mandatory
+    "event_type": "uncancel",   // mandatory
 
-    'ref_rk':               // Routing Key of event, mandatory
-    'author':               // author, mandatory
-    'output':               // comment, mandatory
+    "author":               // author, optional
+    "output":               // comment, optional
 }
 ```
+
 
 ### Event Ackremove Structure
 
 ```javascript
 {
-    'event_type': 'ackremove',  // mandatory
+    "event_type": "ackremove",  // mandatory
 
-    'ref_rk':               // Routing Key of event, mandatory
-    'author':               // author, mandatory
-    'output':               // comment, mandatory
+    "author":               // author, optional
+    "output":               // comment, optional
 }
 ```
 
@@ -115,10 +138,11 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'trap',
-    'snmp_severity':        // SNMP severity, mandatory
-    'snmp_state':           // SNMP state, mandatory
-    'snmp_oid':             // SNMP oid, mandatory
+    "event_type": "trap",  // mandatory
+
+    "snmp_severity":        // SNMP severity, mandatory
+    "snmp_state":           // SNMP state, mandatory
+    "snmp_oid":             // SNMP oid, mandatory
 }
 ```
 
@@ -126,11 +150,11 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    'event_type': 'statcounterinc',     // mandatory
+    "event_type": "statcounterinc",     // mandatory
 
-    'stat_name':            // The name of the counter to increment, mandatory
-    'alarm':                // The alarm, mandatory
-    'entity':               // The entity which sent the event, mandatory
+    "stat_name":            // The name of the counter to increment, mandatory
+    "alarm":                // The alarm, mandatory
+    "entity":               // The entity which sent the event, mandatory
 }
 ```
 Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
@@ -140,12 +164,12 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ```javascript
 {
-    'event_type': 'statduration',   // mandatory
+    "event_type": "statduration",   // mandatory
 
-    'stat_name':            // The name of the duration, mandatory
-    'duration':             // The value of the duration (in seconds), mandatory
-    'current_alarm':        // The alarm, mandatory
-    'current_entity':       // The entity which sent the event, mandatory
+    "stat_name":            // The name of the duration, mandatory
+    "duration":             // The value of the duration (in seconds), mandatory
+    "current_alarm":        // The alarm, mandatory
+    "current_entity":       // The entity which sent the event, mandatory
 }
 ```
 
@@ -156,30 +180,18 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 ```javascript
 {
-    'event_type': 'statstateinterval',      // mandatory
+    "event_type": "statstateinterval",      // mandatory
 
-    'stat_name':            // The name of the state, mandatory
-    'duration':             // The time spent in this state (in seconds), mandatory
-    'state':                // The value of the state, mandatory
-    'alarm':                // The alarm, mandatory
-    'entity':               // The entity which sent the event, mandatory
+    "stat_name":            // The name of the state, mandatory
+    "duration":             // The time spent in this state (in seconds), mandatory
+    "state":                // The value of the state, mandatory
+    "alarm":                // The alarm, mandatory
+    "entity":               // The entity which sent the event, mandatory
 }
 ```
 
 Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
 Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
-
-### Basic Alert Structure
-
-Un alarme est le résultat de l'analyse des évènements. Elle historise et résume les changements d'état, les actions utilisateurs (acquittement, mise en pause, etc.).
-Dans MongoDB, il contient les champs suivants.
-
-```javascript
-{
-    '_id':          // MongoDB document ID
-    'event_id':     // Event identifier (the routing key)
-}
-```
 
 
 ## List of event types
@@ -194,3 +206,7 @@ ack | Utilisé pour acquitter une alerte |
 cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
 uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
 ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
+snooze | Utilisé pour placer un Snooze sur une alarme |
+declareticket | Utilisé pour déclarer un ticket |
+assocticket | Utilisé pour associer un ticket |
+changestate | Utilisé pour changer et verrouiller la criticité d'une alarme |
