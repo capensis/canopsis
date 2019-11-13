@@ -36,20 +36,20 @@
       v-stepper-content(step="1")
         v-card(flat)
           v-card-text
-            pbehavior-general-form(v-model="form.general", ref="pbehaviorGeneralForm")
+            pbehavior-general-form(v-field="form.general", ref="pbehaviorGeneralForm")
       v-stepper-content.pa-0(step="2")
         v-card
           v-card-text
-            filter-editor(v-model="form.filter", ref="filterEditor")
+            filter-editor(v-field="form.filter", ref="filterEditor")
       v-stepper-content(step="3")
         v-card
           v-card-text
-            r-rule-form(v-model="form.general.rrule")
-            pbehavior-exdates-form(v-if="form.general.rrule", v-model="form.exdate")
+            r-rule-form(v-field="form.general.rrule")
+            pbehavior-exdates-form(v-if="form.general.rrule", v-field="form.exdate")
       v-stepper-content(step="4")
         v-card
           v-card-text
-            pbehavior-comments-form(v-model="form.comments")
+            pbehavior-comments-form(v-field="form.comments")
 </template>
 
 <script>
