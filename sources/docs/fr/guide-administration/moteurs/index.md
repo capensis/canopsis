@@ -234,7 +234,7 @@ Les moteurs Python suivants ne sont plus pris en charge lors d'une nouvelle inst
 *  task\_dataclean : non fonctionnel depuis Canopsis 3.0
 *  task\_linklist : n'existe plus depuis Canopsis 3.0, remplacé par [linkbuilder](../linkbuilder/index.md)
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric
-*  eventstore : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md)
+*  eventstore : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), utile uniquement pour l'exploitation de l'ancienne vue SNMP de l'UIv2
 *  task\_mail : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), remplacé par [les Webhooks](moteur-axe-webhooks.md)
 
 Moteurs Go :
