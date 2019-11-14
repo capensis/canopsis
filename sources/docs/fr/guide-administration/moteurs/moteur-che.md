@@ -8,11 +8,13 @@ La file du moteur est placée juste après l'exchange `canopsis.events`.
 
 À l'arrivée dans sa file, le moteur che va leur appliquer les règles d'enrichissement de son [`event-filter`](moteur-che-event_filter.md).
 
-Si l'événement est de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) ou [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
+Si l'événement est de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) ou [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : au prochain battement (beat) du moteur, il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
 
 ### Options de l'engine-che
 
 ```
+  -alwaysFlushEntities
+        Always flush the entity cache. This makes sure the entities are always written in the database. This option is deprecated, and is likely to cause severe performance drops in high-traffic environment.
   -consumeQueue string
         Consomme les évènements venant de cette file. (default "Engine_che").
   -createContext

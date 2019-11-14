@@ -361,6 +361,9 @@ export default {
         alarmList: 'Bac à alarmes',
       },
     },
+    liveReporting: {
+      title: 'Suivi personnalisé',
+    },
   },
   modals: {
     contextInfos: {
@@ -926,6 +929,8 @@ export default {
     lineNotEmpty: 'Cette ligne n\'est pas vide',
     JSONNotValid: 'JSON non valide..',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
+    statsRequestProblem: 'Erreur dans la récupération des statistiques',
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
   },
   calendar: {
     today: 'Aujourd\'hui',

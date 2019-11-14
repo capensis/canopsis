@@ -88,6 +88,8 @@ canoctl restart
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md) qui vous concernent.
 
+**Si vous bénéficiez d'un développement spécifique** (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
+
 Vous pouvez alors vous connecter à nouveau sur l'interface Canopsis pour valider que tout fonctionne correctement.
 
 ### Mise à jour en environnement Docker

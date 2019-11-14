@@ -2,25 +2,19 @@
   div
     template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.snooze")
       v-textarea(
-        :value="form.snoozeParameters.message",
-        @input="updateField('snoozeParameters.message', $event)",
+        v-field="form.snoozeParameters.message",
         :label="$t('modals.createAction.fields.message')"
       )
-      duration-field(
-        :value="form.snoozeParameters.duration",
-        @input="updateField('snoozeParameters.duration', $event)"
-      )
+      duration-field(v-field="form.snoozeParameters.duration")
     template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
       pbehavior-form(
-        :form="form.pbehaviorParameters",
-        @input="updateField('pbehaviorParameters', $event)",
+        v-field="form.pbehaviorParameters",
         :author="$constants.ACTION_AUTHOR",
-        :noFilter="true"
+        noFilter
       )
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import DurationField from '@/components/forms/fields/duration.vue';
@@ -32,7 +26,7 @@ export default {
     DurationField,
     PbehaviorForm,
   },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',

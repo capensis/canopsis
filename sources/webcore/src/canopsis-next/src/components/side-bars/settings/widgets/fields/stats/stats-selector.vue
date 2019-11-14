@@ -55,7 +55,7 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS } from '@/constants';
 
-import { setInSeveral } from '@/helpers/immutable';
+import { setSeveralFields } from '@/helpers/immutable';
 
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
@@ -171,7 +171,7 @@ export default {
         return acc;
       }, {});
 
-      const newStats = setInSeveral(this.stats, modifiers);
+      const newStats = setSeveralFields(this.stats, modifiers);
 
       this.updateModel(newStats);
     },

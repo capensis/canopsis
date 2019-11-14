@@ -4,58 +4,49 @@
       v-layout(row)
         v-text-field(
           data-test="entityFormName",
+          v-field="form.name",
+          v-validate="'required'",
           :label="$t('common.name')",
           :value="form.name",
-          @input="updateField('name', $event)",
           :error-messages="errors.collect('name')",
-          v-validate="'required'",
-          data-vv-name="name"
+          name="name"
         )
       v-layout(row)
         v-textarea(
           data-test="entityFormDescription",
-          :label="$t('common.description')",
-          :value="form.description",
-          @input="updateField('description', $event)",
-          data-vv-name="description",
-          :error-messages="errors.collect('description')"
+          v-field="form.description",
+          :label="$t('common.description')"
         )
       v-layout(data-test="entityFormFieldLayout", row)
         v-switch(
           data-test="entityFormEnabled",
-          color="primary",
+          v-field="form.enabled",
           :label="$t('common.enabled')",
-          :input-value="form.enabled",
-          @change="updateField('enabled', $event)"
+          color="primary"
         )
         v-select(
-          :items="types",
-          :value="entityType",
-          data-vv-name="type",
+          v-field="form.type",
           v-validate="'required'",
+          :items="types",
           :error-messages="errors.collect('type')",
-          @input="updateField('type', $event)",
           :label="$t('modals.createEntity.fields.type')",
+          name="type",
           single-line
         )
       v-layout(wrap)
         v-flex(data-test="entityFormImpact", xs12)
           entities-select(
-            :label="$t('modals.createEntity.fields.impact')",
-            :entities="form.impact",
-            @updateEntities="updateImpact"
+            v-field="form.impact",
+            :label="$t('modals.createEntity.fields.impact')"
           )
         v-flex(data-test="entityFormDepends", xs12)
           entities-select(
-            :label="$t('modals.createEntity.fields.depends')",
-            :entities="form.depends",
-            @updateEntities="updateDepends"
+            v-field="form.depends",
+            :label="$t('modals.createEntity.fields.depends')"
           )
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-
 import EntitiesSelect from '../entities-select.vue';
 
 /**
@@ -80,7 +71,6 @@ export default {
   components: {
     EntitiesSelect,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -91,10 +81,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      showValidationErrors: true,
-      types: [
+  computed: {
+    types() {
+      return [
         {
           text: this.$t('modals.createEntity.fields.types.connector'),
           value: 'connector',
@@ -107,27 +96,7 @@ export default {
           text: this.$t('modals.createEntity.fields.types.resource'),
           value: 'resource',
         },
-      ],
-    };
-  },
-  computed: {
-    entityType() {
-      let entityType;
-      this.types.map((item, index) => {
-        if (this.form.type === item.value) {
-          return entityType = this.types[index].value;
-        }
-        return null;
-      });
-      return entityType;
-    },
-  },
-  methods: {
-    updateImpact(entities) {
-      this.updateField('impact', entities);
-    },
-    updateDepends(entities) {
-      this.updateField('depends', entities);
+      ];
     },
   },
 };

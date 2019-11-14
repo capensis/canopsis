@@ -3,22 +3,20 @@
     v-flex(xs8)
       v-text-field(
         data-test="durationValue",
-        type="number",
+        v-field="value.duration",
+        v-validate="'required|numeric|min_value:1'",
         :label="$t('modals.createSnoozeEvent.fields.duration')",
         :error-messages="errors.collect('duration')",
-        :value="value.duration",
-        @input="updateField('duration', $event)",
-        v-validate="'required|numeric|min_value:1'",
-        data-vv-name="duration"
+        data-vv-name="duration",
+        type="number"
       )
     v-flex(data-test="durationType", xs4)
       v-select(
-        :items="availableTypes",
-        :value="value.durationType",
-        @input="updateField('durationType', $event)",
+        v-field="value.durationType",
         v-validate="'required'",
-        data-vv-name="durationType",
-        :error-messages="errors.collect('durationType')"
+        :items="availableTypes",
+        :error-messages="errors.collect('durationType')",
+        data-vv-name="durationType"
       )
         template(slot="selection", slot-scope="data")
           div.input-group__selections__comma {{ $tc(data.item.text, 2) }}
@@ -29,11 +27,8 @@
 <script>
 import { DURATION_UNITS } from '@/constants';
 
-import formMixin from '@/mixins/form';
-
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
   props: {
     value: {
       type: Object,
