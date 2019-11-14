@@ -1265,5 +1265,9 @@ export default {
     },
   },
 
+  contextGeneralTable: {
+    addSelection: 'Add selection',
+  },
+
   ...featureService.get('i18n.en'),
 };
