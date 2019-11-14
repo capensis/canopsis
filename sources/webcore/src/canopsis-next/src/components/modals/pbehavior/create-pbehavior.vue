@@ -1,15 +1,12 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createPbehavior.title') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.createPbehavior.title') }}
+    template(slot="text")
       pbehavior-form(v-model="form")
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -29,6 +26,8 @@ import {
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
@@ -36,6 +35,7 @@ export default {
   },
   components: {
     PbehaviorForm,
+    ModalWrapper,
   },
   mixins: [authMixin, modalInnerMixin],
   data() {

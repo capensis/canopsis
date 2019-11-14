@@ -1,23 +1,20 @@
 <template lang="pug">
-  v-card(data-test="statsDisplayModeModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('settings.statsNumbers.displayMode') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('settings.statsNumbers.displayMode') }}
+    template(slot="text")
       stats-display-mode-form(v-model="form")
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(
-          data-test="statsDisplayModeCancelButton",
-          depressed,
-          flat,
-          @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          data-test="statsDisplayModeSubmitButton",
-          @click="submit"
-        ) {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(
+        data-test="statsDisplayModeCancelButton",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        data-test="statsDisplayModeSubmitButton",
+        @click="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -29,9 +26,11 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import StatsDisplayModeForm from '@/components/other/stats/stats-display-mode-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.statsDisplayMode,
-  components: { StatsDisplayModeForm },
+  components: { StatsDisplayModeForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const { displayMode } = this.modal.config;

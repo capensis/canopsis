@@ -1,15 +1,12 @@
 <template lang="pug">
-  v-card(data-test="addStatModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ config.title }}
+    template(slot="text")
       add-stat-form(v-model="form", :withTrend="config.withTrend")
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(data-test="addStatCancelButton", @click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(data-test="addStatSubmitButton", @click="submit") {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(data-test="addStatCancelButton", @click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(data-test="addStatSubmitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -23,12 +20,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import AddStatForm from '@/components/other/stats/add-stat-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.addStat,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AddStatForm },
+  components: { AddStatForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

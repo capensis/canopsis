@@ -1,10 +1,8 @@
 <template lang="pug">
-  v-card(data-test="createFilterModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-divider
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ title }}
+    template(slot="text")
       v-text-field(
         data-test="filterTitle",
         v-if="!hiddenFields.includes('title')",
@@ -21,20 +19,18 @@
         :entitiesType="entitiesType",
         required
       )
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(
-          data-test="createFilterCancelButton",
-          @click="$modals.hide",
-          depressed,
-          flat
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          data-test="createFilterSubmitButton",
-          :disabled="errors.any()",
-          @click="submit"
-        ) {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(
+        data-test="createFilterCancelButton",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        :disabled="errors.any()",
+        data-test="createFilterSubmitButton",
+        @click="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -46,6 +42,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createFilter,
   $_veeValidate: {
@@ -53,10 +51,9 @@ export default {
   },
   components: {
     FilterEditor,
+    ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-  ],
+  mixins: [modalInnerMixin],
   data() {
     const { hiddenFields = [], filter = {}, entitiesType = ENTITIES_TYPES.alarm } = this.modal.config;
 

@@ -1,10 +1,9 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.eventFilterRule.editPattern') }}
-    v-card-text
-      v-tabs(fixed-tabs, v-model="activeTab")
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.eventFilterRule.editPattern') }}
+    template(slot="text")
+      v-tabs(v-model="activeTab", fixed-tabs)
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
       v-tabs-items(v-model="activeTab")
         v-tab-item
@@ -15,9 +14,8 @@
           )
         v-tab-item
           pattern-advanced-editor(v-model="pattern")
-    v-divider
-    v-layout.pa-2(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -28,14 +26,17 @@ import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import PatternSimpleEditor from './partial/pattern-simple-editor.vue';
-import PatternAdvancedEditor from './partial/pattern-advanced-editor.vue';
+import PatternSimpleEditor from '@/components/other/event-filter/pattern/pattern-simple-editor.vue';
+import PatternAdvancedEditor from '@/components/other/event-filter/pattern/pattern-advanced-editor.vue';
+
+import ModalWrapper from '../../modal-wrapper.vue';
 
 export default {
   name: MODALS.createEventFilterRulePattern,
   components: {
     PatternSimpleEditor,
     PatternAdvancedEditor,
+    ModalWrapper,
   },
   mixins: [modalInnerMixin],
   data() {
@@ -46,11 +47,15 @@ export default {
 
       pattern: cloneDeep(pattern),
       activeTab: 0,
-      tabs: [
+    };
+  },
+  computed: {
+    tabs() {
+      return [
         this.$t('modals.eventFilterRule.simpleEditor'),
         this.$t('modals.eventFilterRule.advancedEditor'),
-      ],
-    };
+      ];
+    },
   },
   methods: {
     async submit() {

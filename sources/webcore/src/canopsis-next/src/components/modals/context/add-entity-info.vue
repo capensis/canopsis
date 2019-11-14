@@ -1,19 +1,16 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ config.title }}
+    template(slot="text")
       entity-info-form(
         v-model="form",
         :entityInfo="config.editingInfo",
         :infos="config.infos"
       )
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn(@click="submit", color="primary") {{ $t('common.add') }}
+    template(slot="actions")
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="submit", color="primary") {{ $t('common.add') }}
 </template>
 
 <script>
@@ -23,12 +20,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import EntityInfoForm from '@/components/other/context/entity-info-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.addEntityInfo,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EntityInfoForm },
+  components: { EntityInfoForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

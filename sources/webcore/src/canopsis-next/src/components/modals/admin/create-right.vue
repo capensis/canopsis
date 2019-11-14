@@ -1,15 +1,12 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createRight.title') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.createRight.title') }}
+    template(slot="text")
       right-form(v-model="form")
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -22,12 +19,14 @@ import entitiesRightMixin from '@/mixins/entities/right';
 
 import RightForm from '@/components/other/right/right-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createRight,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { RightForm },
+  components: { RightForm, ModalWrapper },
   mixins: [modalInnerMixin, entitiesRightMixin],
   data() {
     return {

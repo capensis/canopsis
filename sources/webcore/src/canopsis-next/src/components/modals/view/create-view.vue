@@ -1,20 +1,18 @@
 <template lang="pug">
-  v-card(data-test="createViewModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-container
-      v-alert(v-show="config.isDuplicating", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-    v-card-text
+  modal-wrapper(data-test="createViewModal")
+    template(slot="title")
+      span {{ title }}
+    template(slot="text")
+      v-container
+        v-alert(v-show="config.isDuplicating", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
       view-form(
         v-if="hasUpdateViewAccess",
         v-model="form",
         :groupName.sync="groupName",
         :groups="groupNames"
       )
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(
         data-test="viewSubmitButton",
         v-if="hasUpdateViewAccess",
@@ -50,6 +48,8 @@ import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
 import ViewForm from '@/components/other/view/view-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to create widget
  */
@@ -58,7 +58,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ViewForm },
+  components: { ViewForm, ModalWrapper },
   mixins: [
     authMixin,
     modalInnerMixin,

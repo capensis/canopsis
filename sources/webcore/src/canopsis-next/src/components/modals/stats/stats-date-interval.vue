@@ -1,24 +1,21 @@
 <template lang="pug">
-  v-card(data-test="statsDateIntervalModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.statsDateInterval.title') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.statsDateInterval.title') }}
+    template(slot="text")
       stats-date-interval-form(v-model="form", :hiddenFields="config.hiddenFields")
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(
-          data-test="statsDateIntervalCancelButton",
-          depressed,
-          flat,
-          @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          data-test="statsDateIntervalSubmitButton",
-          :disabled="errors.any()",
-          @click="submit"
-        ) {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(
+        data-test="statsDateIntervalCancelButton",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        data-test="statsDateIntervalSubmitButton",
+        :disabled="errors.any()",
+        @click="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -30,12 +27,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import StatsDateIntervalForm from '@/components/other/stats/stats-date-interval-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.statsDateInterval,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { StatsDateIntervalForm },
+  components: { StatsDateIntervalForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const { interval } = this.modal.config;

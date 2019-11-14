@@ -53,7 +53,7 @@
 <script>
 import formMixin from '@/mixins/form';
 
-import EntitiesSelect from '@/components/modals/context/entities-select.vue';
+import EntitiesSelect from '@/components/other/context/entities-select.vue';
 
 /**
  * Form to create a new entity

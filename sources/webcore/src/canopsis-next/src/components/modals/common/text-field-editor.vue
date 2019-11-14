@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card(data-test="textFieldEditorModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
+  modal-wrapper(data-test="textFieldEditorModal")
+    template(slot="title")
+      span {{ config.title }}
+    template(slot="text")
       v-text-field(
         data-test="textField",
         v-model="text",
@@ -12,11 +11,9 @@
         :label="field.label",
         :error-messages="errors.collect(field.name)"
       )
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -24,11 +21,14 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.textFieldEditor,
   $_veeValidate: {
     validator: 'new',
   },
+  components: { ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const field = this.modal.config.field || {};

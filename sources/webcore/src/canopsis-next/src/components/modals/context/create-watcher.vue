@@ -1,45 +1,48 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-tabs(slider-color="primary")
-      v-tab(
-        v-for="tab in tabs",
-        :key="tab.name"
-      ) {{ tab.name }}
-      v-tab-item
-        v-form
-          v-layout(wrap, justify-center)
-            v-flex(xs11)
-              v-text-field(
-                :label="$t('modals.createWatcher.displayName')",
-                v-model="form.name",
-                :error-messages="errors.collect('name')",
-                data-vv-name="name",
-                v-validate="'required'"
-              )
-          v-layout(wrap, justify-center)
-            v-flex(xs11)
-              template(v-if="stack === $constants.CANOPSIS_STACK.go")
-                v-textarea(
-                  label="Output template",
-                  v-model="form.output_template",
-                  :error-messages="errors.collect('output_template')",
-                  data-vv-name="output_template",
+  modal-wrapper
+    template(slot="title")
+      span {{ config.title }}
+    template(slot="text")
+      v-tabs(slider-color="primary")
+        v-tab(
+          v-for="tab in tabs",
+          :key="tab.name"
+        ) {{ tab.name }}
+        v-tab-item
+          v-form
+            v-layout(wrap, justify-center)
+              v-flex(xs11)
+                v-text-field(
+                  :label="$t('modals.createWatcher.displayName')",
+                  v-model="form.name",
+                  :error-messages="errors.collect('name')",
+                  data-vv-name="name",
                   v-validate="'required'"
                 )
-      v-tab-item
-        v-card
-          v-card-text
-            patterns-list(v-if="stack === $constants.CANOPSIS_STACK.go", v-model="form.entities")
-            filter-editor(v-else, v-model="form.mfilter", required)
-      v-tab-item
-        manage-infos(v-model="form.infos")
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
+            v-layout(wrap, justify-center)
+              v-flex(xs11)
+                template(v-if="stack === $constants.CANOPSIS_STACK.go")
+                  v-textarea(
+                    label="Output template",
+                    v-model="form.output_template",
+                    :error-messages="errors.collect('output_template')",
+                    data-vv-name="output_template",
+                    v-validate="'required'"
+                  )
+        v-tab-item
+          v-card
+            v-card-text
+              patterns-list(v-if="stack === $constants.CANOPSIS_STACK.go", v-model="form.entities")
+              filter-editor(v-else, v-model="form.mfilter", required)
+        v-tab-item
+          manage-infos(v-model="form.infos")
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn.primary(
+        :loading="submitting",
+        :disabled="submitting",
+        @click.prevent="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -55,8 +58,7 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
-
-import ManageInfos from './partial/manage-infos.vue';
+import ManageInfos from '@/components/other/context/manage-infos.vue';
 
 export default {
   name: MODALS.createWatcher,

@@ -1,15 +1,12 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createHeartbeat.create.title') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.createHeartbeat.create.title') }}
+    template(slot="text")
       heartbeat-form(v-model="form")
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -19,6 +16,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import HeartbeatForm from '@/components/other/heartbeat/form/heartbeat-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to create widget
  */
@@ -27,7 +26,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { HeartbeatForm },
+  components: { HeartbeatForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

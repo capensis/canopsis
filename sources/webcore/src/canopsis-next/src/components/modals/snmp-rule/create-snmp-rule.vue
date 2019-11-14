@@ -1,12 +1,10 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ title }}
+    template(slot="text")
       snmp-rule-form(v-model="form")
-    v-divider
-    v-layout.py-1(justify-end)
+    template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
@@ -20,9 +18,11 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createSnmpRule,
-  components: { SnmpRuleForm },
+  components: { SnmpRuleForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const defaultModuleMibObjectForm = {

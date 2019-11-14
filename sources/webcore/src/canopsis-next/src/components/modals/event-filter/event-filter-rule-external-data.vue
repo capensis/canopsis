@@ -1,12 +1,10 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.eventFilterRule.externalData') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.eventFilterRule.externalData') }}
+    template(slot="text")
       v-textarea(:value="externalDataValue", @input="checkValidity")
-    v-divider
-    v-layout.pa-2(justify-end)
+    template(slot="actions")
       v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
         :disabled="error",
@@ -19,8 +17,11 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.eventFilterRuleExternalData,
+  components: { ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

@@ -1,43 +1,43 @@
 <template lang="pug">
-  v-card(data-test="colorPickerModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ config.title }}
+    template(slot="text")
       v-layout
         v-flex
           chrome(data-test="colorPickerChrome", v-model="color")
         v-flex
           compact(data-test="colorPickerCompact", v-model="color")
-    v-divider
-    v-card-actions
-      v-layout.py-1(justify-end)
-        v-btn(
-          data-test="colorPickerCancelButton",
-          depressed,
-          flat,
-          @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          data-test="colorPickerSubmitButton",
-          @click="submit"
-        ) {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(
+        data-test="colorPickerCancelButton",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        data-test="colorPickerSubmitButton",
+        @click="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
 import { Chrome, Compact } from 'vue-color';
+
 import { MODALS } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/inner';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.colorPicker,
   components: {
     Chrome,
     Compact,
+    ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-  ],
+  mixins: [modalInnerMixin],
   data() {
     const { config } = this.modal;
     const data = { color: {} };

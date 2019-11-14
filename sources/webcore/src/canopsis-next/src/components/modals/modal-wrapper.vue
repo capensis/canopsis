@@ -1,10 +1,10 @@
 <template lang="pug" functional>
-  v-card
+  v-card(:data-test="data.attrs['data-test']")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline
           slot(name="title")
-    v-card-text
+    v-card-text(v-if="$slots.text")
       slot(name="text")
     template(v-if="$slots.actions")
       v-divider

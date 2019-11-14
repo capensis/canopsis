@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ config.title }}
+    template(slot="text")
       v-tabs(slider-color="primary")
         v-tab(
           v-for="tab in tabs",
@@ -13,20 +12,18 @@
           entity-form(v-model="form")
         v-tab-item
           manage-infos(v-model="form.infos")
-    v-divider
-    v-card-actions
-      v-layout.pa-2(justify-end)
-        v-btn(
-          :disabled="submitting",
-          depressed,
-          flat,
-          @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="submitting",
-          @click.prevent="submit"
-        ) {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(
+        :disabled="submitting",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        :loading="submitting",
+        :disabled="submitting",
+        @click.prevent="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -38,8 +35,9 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import EntityForm from '@/components/other/context/entity-form.vue';
+import ManageInfos from '@/components/other/context/manage-infos.vue';
 
-import ManageInfos from './partial/manage-infos.vue';
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create an entity (watcher, resource, component, connector)
@@ -52,6 +50,7 @@ export default {
   components: {
     EntityForm,
     ManageInfos,
+    ModalWrapper,
   },
   mixins: [
     modalInnerMixin,

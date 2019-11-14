@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ config.title }}
+    template(slot="text")
       event-filter-form(
         v-model="form",
         :isEditing="isEditing",
@@ -13,11 +12,9 @@
         v-if="form.type === $constants.EVENT_FILTER_RULE_TYPES.enrichment",
         v-model="enrichmentOptions"
       )
-    v-divider
-    v-card-actions
-      v-layout.pa-2(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -29,12 +26,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createEventFilterRule,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { EventFilterForm, EventFilterEnrichmentForm },
+  components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

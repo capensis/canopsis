@@ -1,19 +1,16 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.eventFilterRule.addAField') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.eventFilterRule.addAField') }}
+    template(slot="text")
       add-event-filter-rule-to-pattern-form(
         v-model="form",
         :operators="config.operators",
         :isSimple="config.isSimple"
       )
-    v-divider
-    v-card-actions
-      v-layout.pa-2(justify-end)
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -26,12 +23,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import AddEventFilterRuleToPatternForm
   from '@/components/other/event-filter/form/add-event-filter-rule-to-pattern-form.vue';
 
+import ModalWrapper from '../../modal-wrapper.vue';
+
 export default {
   name: MODALS.addEventFilterRuleToPattern,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AddEventFilterRuleToPatternForm },
+  components: { AddEventFilterRuleToPatternForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

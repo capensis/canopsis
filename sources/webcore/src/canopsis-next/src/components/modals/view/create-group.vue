@@ -1,28 +1,26 @@
 <template lang="pug">
-  v-card(data-test="createGroupViewModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ title }}
+    template(slot="text")
       v-text-field(
-        data-test="modalGroupNameField",
-        :label="$t('modals.group.fields.name')",
-        :error-messages="errors.collect('name')",
         v-model="form.name",
         v-validate="'required'",
-        name="name"
+        :label="$t('modals.group.fields.name')",
+        :error-messages="errors.collect('name')",
+        name="name",
+        data-test="modalGroupNameField"
       )
-    v-divider
-    v-layout.py-1(justify-end)
+    template(slot="actions")
       v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
-        @click="submit",
-        data-test="createGroupSubmitButton"
+        data-test="createGroupSubmitButton",
+        @click="submit"
       ) {{ $t('common.submit') }}
       v-btn.error(
         v-if="config.group && hasDeleteAnyViewAccess",
-        @click="remove",
-        data-test="createGroupDeleteButton"
+        data-test="createGroupDeleteButton",
+        @click="remove"
       ) {{ $t('common.delete') }}
 </template>
 
@@ -35,11 +33,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createGroup,
   $_veeValidate: {
     validator: 'new',
   },
+  components: { ModalWrapper },
   mixins: [
     modalInnerMixin,
     entitiesViewGroupMixin,
