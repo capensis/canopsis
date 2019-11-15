@@ -19,8 +19,8 @@ const {
   PERIODICAL_BEHAVIOR_FREQUENCY,
   ALARMS_SHARED_DROPDOWN_ACTIONS,
   FILTER_COLUMNS,
-  WIDGET_TYPES,
 } = require('../../constants');
+const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
 

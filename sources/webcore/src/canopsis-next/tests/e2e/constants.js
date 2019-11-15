@@ -62,19 +62,6 @@ module.exports.VIEW = {
   group: `test-group-${RANDOM}`,
 };
 
-export const WIDGET_TYPES = {
-  alarmList: 'alarmList',
-  context: 'context',
-  weather: 'weather',
-  statsHistogram: 'statsHistogram',
-  statsCurves: 'statsCurves',
-  statsTable: 'statsTable',
-  statsCalendar: 'statsCalendar',
-  statsNumber: 'statsNumber',
-  statsPareto: 'statsPareto',
-  text: 'text',
-};
-
 module.exports.SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   moreInfo: 1,
   alarmList: 2,
