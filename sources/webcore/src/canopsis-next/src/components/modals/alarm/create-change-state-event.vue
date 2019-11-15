@@ -1,10 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    v-card
-      v-card-title.primary.white--text
-        v-layout(justify-space-between, align-center)
-          span.headline {{ $t('modals.createChangeStateEvent.title') }}
-      v-card-text
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createChangeStateEvent.title') }}
+      template(slot="text")
         v-container
           v-layout(row)
             state-criticity-field(v-model="form.state", :stateValues="availableStateValues")
@@ -16,10 +15,9 @@
               v-validate="'required'",
               data-vv-name="output"
             )
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(:disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -32,6 +30,8 @@ import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to create a 'change-state' event
  */
@@ -41,7 +41,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { StateCriticityField },
+  components: { StateCriticityField, ModalWrapper },
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {

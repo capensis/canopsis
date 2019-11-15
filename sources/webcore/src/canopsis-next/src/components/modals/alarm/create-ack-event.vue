@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createAckEvent.title') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.createAckEvent.title') }}
+    template(slot="text")
       v-container
         v-layout(row, align-center)
           v-flex.text-xs-center
@@ -32,9 +31,8 @@
             )
               span(slot-name="label") {{  }}
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
       v-btn.warning(@click.prevent="submitWithTicket") {{ submitWithTicketBtnLabel }}
 </template>
@@ -48,6 +46,8 @@ import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to create an ack event
  */
@@ -56,9 +56,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    AlarmGeneralTable,
-  },
+  components: { AlarmGeneralTable, ModalWrapper },
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {

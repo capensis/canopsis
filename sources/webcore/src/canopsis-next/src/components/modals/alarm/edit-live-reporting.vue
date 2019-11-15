@@ -1,24 +1,22 @@
 <template lang="pug">
-  v-card(data-test="liveReportingModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.liveReporting.editLiveReporting') }}
-    v-card-text
+  modal-wrapper(data-test="liveReportingModal")
+    template(slot="title")
+      span {{ $t('modals.liveReporting.editLiveReporting') }}
+    template(slot="text")
       h3 {{ $t('modals.liveReporting.dateInterval') }}
       date-interval-selector(v-model="form")
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn(
-          @click="$modals.hide",
-          depressed,
-          flat,
-          data-test="liveReportingCancelButton"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          @click="submit",
-          :disabled="errors.any()",
-          data-test="liveReportingApplyButton"
-        ) {{ $t('common.apply') }}
+    template(slot="actions")
+      v-btn(
+        data-test="liveReportingCancelButton",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        :disabled="errors.any()",
+        data-test="liveReportingApplyButton",
+        @click="submit"
+      ) {{ $t('common.apply') }}
 </template>
 
 <script>
@@ -30,6 +28,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to add a time filter on alarm-list
  */
@@ -38,9 +38,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    DateIntervalSelector,
-  },
+  components: { DateIntervalSelector, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const { config } = this.modal;

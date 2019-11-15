@@ -1,36 +1,36 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('common.confirmation') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('common.confirmation') }}
+    template(slot="text")
       v-alert(:value="true", type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
-      v-divider
-      v-layout.mt-2.mb-1(wrap, justify-end)
-        v-btn(@click="$modals.hide", flat) {{ $t('common.cancel') }}
-        v-btn(
-          @click.prevent="submit",
-          :loading="submitting",
-          :disabled="submitting",
-          color="primary"
-        ) {{ $t('common.continue') }}
-        v-btn(
-          @click.prevent="submitWithTicket",
-          :loading="submitting",
-          :disabled="submitting",
-          color="warning"
-        ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn.primary(
+        :loading="submitting",
+        :disabled="submitting",
+        @click="submit"
+      ) {{ $t('common.continue') }}
+      v-btn.warning(
+        :loading="submitting",
+        :disabled="submitting",
+        @click="submitWithTicket"
+      ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
 </template>
 
 <script>
-import modalInnerMixin from '@/mixins/modal/inner';
 import { MODALS } from '@/constants';
+
+import modalInnerMixin from '@/mixins/modal/inner';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Ack with ticket confirmation modal
  */
 export default {
   name: MODALS.confirmAckWithTicket,
+  components: { ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {
