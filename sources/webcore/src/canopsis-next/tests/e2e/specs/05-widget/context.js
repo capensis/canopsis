@@ -12,8 +12,8 @@ const {
   CONTEXT_SHARED_ACTIONS,
   PAGINATION_PER_PAGE_VALUES,
   CONTEXT_CREATE_ENTITY_TAB,
-  WIDGET_TYPES,
 } = require('../../constants');
+const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 const { generateTemporaryContextWidget } = require('../../helpers/entities');
 
