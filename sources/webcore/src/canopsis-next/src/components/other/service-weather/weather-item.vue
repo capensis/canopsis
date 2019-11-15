@@ -1,8 +1,8 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
-    data-test="weatherItem",
+    :data-test="`weatherItem-${weather._id}`",
     :class="itemClasses",
-    :style="{ height: itemHeight + 'em', backgroundColor: color}",
+    :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile,
     @click.native="showAdditionalInfoModal"
   )
