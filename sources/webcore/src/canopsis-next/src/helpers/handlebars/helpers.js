@@ -91,10 +91,12 @@ export function compare(a, operator, b, options = {}) {
       break;
     case '<=':
     case '&lte;':
+    case '&lt;=':
       result = a <= b;
       break;
     case '>=':
     case '&gte;':
+    case '&gt;=':
       result = a >= b;
       break;
     case 'typeof':
