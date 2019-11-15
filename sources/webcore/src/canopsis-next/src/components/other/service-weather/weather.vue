@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(data-test="weather")
     v-layout
     v-fade-transition
       v-layout.fill-height(v-if="!watchersPending", wrap)

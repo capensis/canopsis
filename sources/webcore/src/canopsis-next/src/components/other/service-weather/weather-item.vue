@@ -1,19 +1,27 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
+    data-test="weatherItem",
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color}",
     tile,
     @click.native="showAdditionalInfoModal"
   )
-    v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
+    v-btn.helpBtn.ma-0(
+      data-test="weatherHelpButton",
+      @click.stop="showVariablesHelpModal(watcher)",
+      v-if="isEditingMode",
+      icon,
+      small
+    )
       v-icon help
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
         v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
-        v-btn.pauseIcon(v-if="secondaryIcon", icon)
+        v-btn.pauseIcon(data-test="weatherPauseButton", v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
+          data-test="weatherSeeAlarmsButton",
           v-if="isBothModalType && hasAlarmsListAccess",
           flat,
           @click.stop="showAlarmListModal"
