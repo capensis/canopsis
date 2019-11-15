@@ -172,8 +172,8 @@ module.exports = {
     orFilters: `${sel('tableFilterSelector')} ${sel('orFilters')} + .v-input--selection-controls__ripple`,
     showFiltersListButton: sel('showFiltersListButton'),
 
-    massActionsPanelItem: `${sel('tableWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
-    rowActionsSharedPanelItem: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    massActionsPanelItem: `${sel('tableWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s) button`,
+    rowActionsSharedPanelItem: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('actionsPanelItem')}:nth-of-type(%s) button`,
     rowMoreActionsButton: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('dropDownActionsButton')}`,
     rowDropDownActions: `.menuable__content__active ${sel('dropDownActions')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
 

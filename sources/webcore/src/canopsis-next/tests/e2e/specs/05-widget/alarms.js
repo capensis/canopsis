@@ -19,8 +19,8 @@ const {
   PERIODICAL_BEHAVIOR_FREQUENCY,
   ALARMS_SHARED_DROPDOWN_ACTIONS,
   FILTER_COLUMNS,
+  WIDGET_TYPES,
 } = require('../../constants');
-const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
 
@@ -147,7 +147,7 @@ module.exports = {
     const dateIntervalField = browser.page.fields.dateInterval();
     const pbehaviorForm = browser.page.forms.pbehavior();
 
-    const firstId = '6e7fb977-7eab-4e03-9c31-4593a1bf892b';
+    const firstId = '6770ba94-51d9-4b8c-ae85-7c62fab18a54';
     // const secondId = 'b7f65652-e53e-4cda-8c3b-be9bbf600ca0';
 
     browser.page.view()
