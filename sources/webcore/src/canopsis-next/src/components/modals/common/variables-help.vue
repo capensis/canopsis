@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="variablesHelpModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.variablesHelp.variables') }}
@@ -19,6 +19,7 @@
         template(slot="append", slot-scope="props", v-if="props.leaf")
           v-tooltip(left)
             v-btn(
+              :data-test="`variablesHelpCopyFile-${props.item.path}`",
               v-clipboard:copy="props.item.path",
               v-clipboard:success="() => $popups.success({ text: $t('success.pathCopied') })",
               v-clipboard:error="() => $popups.error({ text: $t('errors.default') })",
