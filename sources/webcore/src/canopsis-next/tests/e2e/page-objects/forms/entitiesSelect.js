@@ -27,7 +27,7 @@ const commands = {
   },
 
   clickSubmitSearch() {
-    return this.customClick(this.el('@entitiesSelect', this.el('@submitSearchButton')));
+    return this.customClick(this.el('@entitiesSelect', this.el('@searchEntityButton')));
   },
 
   clickAddCollection() {
@@ -87,7 +87,7 @@ module.exports = {
 
     removeEntity: `${sel('removeEntity-%s')} .v-chip__close`,
     clearEntities: sel('clearEntities'),
-    searchEntity: sel('searchEntity'),
+    searchEntity: `${sel('searchEntity')} ${sel('searchingTextField')}`,
     searchEntityButton: sel('submitSearchButton'),
     addCollectionEntities: sel('addCollectionEntities'),
     allCheckboxInput: `${sel('contextEntitiesTable')} thead tr th:first-of-type .v-input--selection-controls__input input`,
