@@ -10,8 +10,8 @@ const {
   FILTER_COLUMNS,
   VALUE_TYPES,
   SORT_ORDERS,
-  WIDGET_TYPES,
 } = require('../../constants');
+const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 const { generateTemporaryWeatherWidget } = require('../../helpers/entities');
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   .weather-watcher-entity-expansion-panel
-    v-expansion-panel(dark)
+    v-expansion-panel(:data-test="`entity-${watcherId}`", dark)
       v-expansion-panel-content(:style="{ backgroundColor: color }")
         v-layout(slot="header", justify-space-between, align-center)
           v-flex.pa-2(v-for="(icon, index) in mainIcons", :key="index")
@@ -12,7 +12,14 @@
               div.mr-1.entityName(
                 v-resize-text="{maxFontSize: '16px'}",
               ) {{ { entity } | get(entityNameField, false, entityNameField) }}
-              v-btn.mx-1.white(v-for="icon in extraIcons", :key="icon.icon", :color="icon.color", small, dark, icon)
+              v-btn.mx-1.white(
+                v-for="icon in extraIcons",
+                :key="icon.icon",
+                :color="icon.color",
+                small,
+                dark,
+                icon
+              )
                 v-icon(small) {{ icon.icon }}
         v-card(color="white black--text")
           v-card-text
@@ -24,6 +31,7 @@
                     div(v-for="action in availableActions", :key="action.eventType")
                       v-tooltip(top)
                         v-btn(
+                          :data-test="`entityAction-${action.eventType}`",
                           slot="activator",
                           @click.stop="action.action",
                           :disabled="!isActionBtnEnable(action.eventType)",
@@ -34,7 +42,12 @@
                           v-icon {{ action.icon }}
                         span {{ $t(`common.actions.${action.eventType}`) }}
               v-tooltip(v-if="hasActivePbehavior && hasAccessToManagePbehaviors", top)
-                v-btn(small, @click="showPbehaviorsListModal", slot="activator")
+                v-btn(
+                  data-test="entityActionEditPbehaviors",
+                  small,
+                  @click="showPbehaviorsListModal",
+                  slot="activator"
+                )
                   v-icon(small) edit
                 span {{ $t('modals.watcher.editPbehaviors') }}
             entity-template(:entity="entity", :template="template")

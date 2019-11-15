@@ -1,9 +1,14 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="alarmsListModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.alarmsList.title') }}
-        v-btn(icon, dark, @click.native="$modals.hide")
+        v-btn(
+          data-test="alarmsListCloseButton",
+          icon,
+          dark,
+          @click.native="$modals.hide"
+        )
           v-icon close
     v-card-text
       alarms-list-widget(:widget="config.widget")

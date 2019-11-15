@@ -11,7 +11,7 @@
           :key="widget",
           @click="selectWidgetType(widget)"
         )
-          v-card.widgetType(:data-test="`widget-${widget}`")
+          v-card.widgetType(:data-test="`widget-${$constants.WIDGET_TYPES[widget]}`")
             v-card-title(primary-title)
               v-layout(wrap, justify-between)
                 v-flex(xs11)
@@ -81,7 +81,7 @@ export default {
 
 <style lang="scss" scoped>
   .widgetType {
-    cursor: pointer,
+    cursor: pointer;
   }
 </style>
 

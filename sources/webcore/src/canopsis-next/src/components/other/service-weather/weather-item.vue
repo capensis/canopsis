@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
-    :data-test="`weatherItem-${weather._id}`",
+    :data-test="`weatherItem-${watcher.entity_id}`",
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile,

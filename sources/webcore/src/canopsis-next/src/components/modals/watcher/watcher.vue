@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="watcherModal")
     v-card-title.white--text(:style="{ backgroundColor: color }")
       v-layout(justify-space-between, align-center)
         span.headline {{ watcher.display_name }}
-        v-btn(icon, dark, @click.native="$modals.hide")
+        v-btn(data-test="watcherHideButton", icon, dark, @click.native="$modals.hide")
           v-icon close
     v-divider
     v-card-text
@@ -27,12 +27,27 @@
         :value="eventsQueue.length",
         type="info"
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(
+        data-test="watcherCancelButton",
+        @click="$modals.hide",
+        depressed,
+        flat
+        ) {{ $t('common.cancel') }}
       v-tooltip(top)
-        v-btn(@click="refresh", color="secondary", slot="activator")
+        v-btn(
+          data-test="watcherRefreshButton",
+          @click="refresh",
+          color="secondary",
+          slot="activator"
+        )
           v-icon refresh
         span {{ $t('modals.watcher.refreshEntities') }}
-      v-btn.primary(@click="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
+      v-btn.primary(
+        data-test="watcherSubmitButton",
+        @click="submit",
+        :loading="submitting",
+        :disabled="submitting"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
