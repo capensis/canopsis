@@ -42,8 +42,14 @@ export default {
 
     prepareAssocTicketAction() {
       this.$modals.show({
-        name: MODALS.createWatcherAssocTicketEvent,
+        name: MODALS.textFieldEditor,
         config: {
+          title: this.$t('modals.createDeclareTicket.title'),
+          field: {
+            name: 'ticket',
+            label: this.$t('modals.createAssociateTicket.fields.ticket'),
+            validationRules: 'required',
+          },
           action: (ticket) => {
             this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.ack });
             this.addAssocTicketActionToQueue({ entity: this.entity, ticket });

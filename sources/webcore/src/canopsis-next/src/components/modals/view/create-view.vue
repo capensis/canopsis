@@ -9,18 +9,18 @@
         v-if="hasUpdateViewAccess",
         v-model="form",
         :groupName.sync="groupName",
-        :groups="groupNames"
+        :groups="groups"
       )
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(
-        data-test="viewSubmitButton",
         v-if="hasUpdateViewAccess",
+        data-test="viewSubmitButton",
         @click="submit"
       ) {{ $t('common.submit') }}
       v-btn.error(
-        data-test="viewDeleteButton",
         v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
+        data-test="viewDeleteButton",
         @click="remove"
       ) {{ $t('common.delete') }}
 </template>

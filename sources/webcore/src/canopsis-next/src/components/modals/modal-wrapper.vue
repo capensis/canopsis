@@ -1,5 +1,5 @@
 <template lang="pug" functional>
-  v-card(:data-test="data.attrs['data-test']")
+  v-card(:data-test="data.attrs && data.attrs['data-test']")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline

@@ -1,12 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.white--text(:style="{ backgroundColor: color }")
-      v-layout(justify-space-between, align-center)
-        span.headline {{ watcher.display_name }}
-        v-btn(icon, dark, @click.native="$modals.hide")
-          v-icon close
-    v-divider
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ watcher.display_name }}
+    template(slot="text")
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
           watcher-template(
@@ -21,18 +17,17 @@
           v-flex(xs12)
             v-layout(justify-center)
               v-progress-circular(indeterminate, color="primary")
-    v-divider
-    v-layout.py-1(justify-end, align-center)
+    template(slot="actions")
       v-alert.ma-0.pa-1.pr-2(
         :value="eventsQueue.length",
         type="info"
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-tooltip(top)
-        v-btn(@click="refresh", color="secondary", slot="activator")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-tooltip.mx-2(top)
+        v-btn.secondary(slot="activator", @click="refresh")
           v-icon refresh
         span {{ $t('modals.watcher.refreshEntities') }}
-      v-btn.primary(@click="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
+      v-btn.primary(:loading="submitting", :disabled="submitting", @click="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -45,11 +40,13 @@ import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: { WatcherTemplate },
+  components: { WatcherTemplate, ModalWrapper },
   mixins: [
     modalInnerMixin,
     eventActionsMixin,
