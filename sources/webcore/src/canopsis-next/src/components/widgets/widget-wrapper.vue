@@ -35,7 +35,6 @@ import { cloneDeep } from 'lodash';
 
 import { WIDGET_TYPES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 import { generateWidgetByType } from '@/helpers/entities';
@@ -64,7 +63,7 @@ export default {
     StatsParetoWidget,
     TextWidget,
   },
-  mixins: [modalMixin, sideBarMixin],
+  mixins: [sideBarMixin],
   props: {
     widget: {
       type: Object,
@@ -165,7 +164,7 @@ export default {
     },
 
     showSelectViewTabModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.selectViewTab,
         config: {
           action: ({ tabId, viewId }) => this.cloneWidget({ tabId, viewId }),
@@ -174,7 +173,7 @@ export default {
     },
 
     showDeleteWidgetModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => {
