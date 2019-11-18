@@ -5,7 +5,7 @@
 
 Les webhooks sont une fonctionnalité du moteur `axe` permettant d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
-Les webhooks sont définis dans la collection MongoDB `webhooks`, et peuvent être ajoutés et modifiés avec l'[API webhooks](../../guide-developpement/webhooks/api_v2_webhooks.md).
+Les webhooks sont définis dans la collection MongoDB `webhooks`, et peuvent être ajoutés et modifiés avec l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
 Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
 

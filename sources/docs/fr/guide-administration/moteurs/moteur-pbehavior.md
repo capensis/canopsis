@@ -4,7 +4,7 @@ Les *pbehaviors* (pour *periodical behaviors*) sont des évènements de calendri
 
 Ils permettent de créer des « downtimes », à savoir indiquer qu'une entité est en pause.
 
-Les pbehaviors sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md).
+Les pbehaviors sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md).
 
 ## Fonctionnement
 
@@ -125,7 +125,7 @@ Si le fuseau horaire choisi comporte des heures d'hiver et d'été, celles-ci se
 
 ## Représentation dans MongoDB
 
-Les pbehaviors sont stockés dans la collection MongoDB `default_pbehavior` (voir [API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md) pour la création des pbehaviors).
+Les pbehaviors sont stockés dans la collection MongoDB `default_pbehavior` (voir [API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md) pour la création des pbehaviors).
 
 Un exemple de pbehavior appliqué pour une plage de maintenance sans `rrule` avec la raison `Problème d'habilitation` et le type `Maintenance` aux alarmes dont le composant est `pbehavior_test_1`.
 
