@@ -1,12 +1,10 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createAction.create.title') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.createAction.create.title') }}
+    template(slot="text")
       action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
-    v-divider
-    v-layout.py-1(justify-end)
+    template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
 </template>
@@ -21,14 +19,14 @@ import { formToAction, actionToForm } from '@/helpers/forms/action';
 
 import ActionForm from '@/components/other/action/form/action-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createAction,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    ActionForm,
-  },
+  components: { ActionForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const { item, isDuplicating } = this.modal.config;
