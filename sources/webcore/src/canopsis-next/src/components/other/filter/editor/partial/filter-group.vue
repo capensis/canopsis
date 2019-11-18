@@ -1,8 +1,7 @@
 <template lang="pug">
   v-card.my-1.pa-2(data-test="filterGroup")
     v-radio-group(
-      :value="group.condition",
-      @change="updateField('condition', $event)",
+      v-field="group.condition",
       hide-details,
       mandatory,
       row
@@ -67,6 +66,7 @@ import { omit, cloneDeep } from 'lodash';
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import uid from '@/helpers/uid';
+
 import formMixin from '@/mixins/form';
 
 import FilterRule from './filter-rule.vue';
