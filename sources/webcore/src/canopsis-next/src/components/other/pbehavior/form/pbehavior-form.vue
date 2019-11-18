@@ -34,10 +34,10 @@
         small.font-italic.font-weight-light {{ $t('common.optional') }}
     v-stepper-items
       v-stepper-content(step="1")
-        v-card(flat)
+        v-card
           v-card-text
             pbehavior-general-form(v-field="form.general", ref="pbehaviorGeneralForm")
-      v-stepper-content.pa-0(step="2")
+      v-stepper-content(step="2")
         v-card
           v-card-text
             filter-editor(v-field="form.filter", ref="filterEditor")
