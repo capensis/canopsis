@@ -7,7 +7,8 @@
           v-switch(
             v-field="annotationLine.enabled",
             data-test="annotationEnabled",
-            :label="$t('settings.statsAnnotationLine.enabled')"
+            :label="$t('settings.statsAnnotationLine.enabled')",
+            color="primary"
           )
         v-flex(xs12)
           v-text-field(

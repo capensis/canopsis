@@ -383,11 +383,14 @@ export default {
     },
     statsAnnotationLine: {
       title: 'Annotation line',
-      enabled: 'Is enabled?',
+      enabled: 'Is enabled ?',
       value: 'Value',
       label: 'Label',
       pickLineColor: 'Pick line color',
       pickLabelColor: 'Pick label color',
+    },
+    statsPointsStyles: {
+      title: 'Points style',
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',

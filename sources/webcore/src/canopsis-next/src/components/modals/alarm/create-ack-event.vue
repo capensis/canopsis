@@ -28,7 +28,8 @@
             v-checkbox(
               slot="activator",
               v-model="ack_resources",
-              :label="$t('modals.createAckEvent.fields.ackResources')"
+              :label="$t('modals.createAckEvent.fields.ackResources')",
+              color="primary"
             )
               span(slot-name="label") {{  }}
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}

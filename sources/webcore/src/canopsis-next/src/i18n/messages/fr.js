@@ -351,6 +351,17 @@ export default {
       title: 'Couleurs des statistiques',
       pickColor: 'Sélectionner une couleur',
     },
+    statsAnnotationLine: {
+      title: 'Ligne repère',
+      enabled: 'Activée',
+      value: 'Valeur',
+      label: 'Label',
+      pickLineColor: 'Couleur de la ligne',
+      pickLabelColor: 'Couleur du label',
+    },
+    statsPointsStyles: {
+      title: 'Forme des points',
+    },
     considerPbehaviors: {
       title: 'Prendre en compte les comportements périodiques ?',
     },
