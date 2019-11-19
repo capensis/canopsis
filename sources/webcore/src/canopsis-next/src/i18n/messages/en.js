@@ -72,6 +72,7 @@ export default {
     delete: 'Delete',
     show: 'Show',
     edit: 'Edit',
+    duplicate: 'Duplicate',
     parse: 'Parse',
     home: 'Home',
     step: 'Step',

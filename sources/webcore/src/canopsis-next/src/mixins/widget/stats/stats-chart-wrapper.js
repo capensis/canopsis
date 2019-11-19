@@ -28,10 +28,8 @@ export default {
          We then give it to the date filter, to display it with a date format
          */
         return this.stats[stats[0]].sum.map((value) => {
-          const start = this.$options.filters.date(value.start, 'long', true);
-          const end = this.$options.filters.date(value.end, 'long', true);
-
-          return [`${start} -`, end];
+          const start = this.$options.filters.date(value.start, 'medium', true);
+          return [start];
         });
       }
 
