@@ -1,25 +1,26 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    v-card
-      v-card-title.primary.white--text
-        v-layout(justify-space-between, align-center)
-          span.headline {{ $t('modals.createChangeStateEvent.title') }}
-      v-card-text
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createChangeStateEvent.title') }}
+      template(slot="text")
         v-container
           v-layout(row)
             state-criticity-field(v-model="form.state", :stateValues="availableStateValues")
           v-layout.mt-4(row)
             v-text-field(
-              :label="$t('modals.createChangeStateEvent.fields.output')",
-              :error-messages="errors.collect('output')",
               v-model="form.output",
               v-validate="'required'",
-              data-vv-name="output"
+              :label="$t('modals.createChangeStateEvent.fields.output')",
+              :error-messages="errors.collect('output')",
+              name="output"
             )
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="errors.any() || submitting",
+          type="submit"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -32,19 +33,21 @@ import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to create a 'change-state' event
  */
 export default {
   name: MODALS.createChangeStateEvent,
-
   $_veeValidate: {
     validator: 'new',
   },
-  components: { StateCriticityField },
+  components: { StateCriticityField, ModalWrapper },
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
+      submitting: false,
       form: {
         output: '',
         state: ENTITIES_STATES.major,
@@ -61,12 +64,20 @@ export default {
   },
   methods: {
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        this.submitting = true;
 
-      if (isFormValid) {
-        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
+        const isFormValid = await this.$validator.validateAll();
 
-        this.$modals.hide();
+        if (isFormValid) {
+          await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
+
+          this.$modals.hide();
+        }
+      } catch (err) {
+        this.$popups.error({ text: err.description || this.$t('error.default') });
+      } finally {
+        this.submitting = false;
       }
     },
   },

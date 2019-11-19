@@ -1,37 +1,37 @@
 <template lang="pug">
-  v-card(data-test="addInfoPopupModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
-    v-card-text(data-test="addInfoPopupLayout")
-      v-select(
-        v-model="form.selectedColumn",
-        :items="config.columns",
-        item-text="label",
-        return-object,
-        name="column",
-        v-validate="'required'",
-        :error-messages="errors.collect('column')"
-      )
-      text-editor(
-        v-model="form.template",
-        name="template",
-        v-validate="'required'",
-        :error-messages="errors.collect('template')"
-      )
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(
-        flat,
-        depressed,
-        data-test="addInfoCancelButton",
-        @click="$modals.hide"
-      ) {{ $t('common.cancel') }}
-      v-btn.primary(
-        type="submit",
-        data-test="addInfoSubmitButton",
-        @click="submit"
-      ) {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper(data-test="addInfoPopupModal")
+      template(slot="title")
+        span {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
+      template(slot="text")
+        div(data-test="addInfoPopupLayout")
+          v-select(
+            v-model="form.selectedColumn",
+            :items="config.columns",
+            item-text="label",
+            return-object,
+            name="column",
+            v-validate="'required'",
+            :error-messages="errors.collect('column')"
+          )
+          text-editor(
+            v-model="form.template",
+            v-validate="'required'",
+            :error-messages="errors.collect('template')",
+            name="template"
+          )
+      template(slot="actions")
+        v-btn(
+          flat,
+          depressed,
+          data-test="addInfoCancelButton",
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="errors.any() || submitting",
+          type="submit",
+          data-test="addInfoSubmitButton"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -43,17 +43,18 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
 
+import ModalWrapper from '../../modal-wrapper.vue';
+
 export default {
   name: MODALS.addInfoPopup,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    TextEditor,
-  },
+  components: { TextEditor, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {
+      submitting: false,
       form: {
         selectedColumn: {},
         template: '',
@@ -74,13 +75,22 @@ export default {
   },
   methods: {
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        this.submitting = true;
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
+        const isFormValid = await this.$validator.validateAll();
+
+        if (isFormValid) {
+          if (this.config.action) {
+            await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
+          }
+
+          this.$modals.hide();
         }
-        this.$modals.hide();
+      } catch (err) {
+        this.$popups.error({ text: err.description || this.$t('error.default') });
+      } finally {
+        this.submitting = false;
       }
     },
   },

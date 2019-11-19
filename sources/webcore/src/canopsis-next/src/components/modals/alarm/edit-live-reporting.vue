@@ -1,22 +1,21 @@
 <template lang="pug">
-  v-card(data-test="liveReportingModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.liveReporting.editLiveReporting') }}
-    v-card-text
-      h3 {{ $t('modals.liveReporting.dateInterval') }}
-      date-interval-selector(v-model="form")
-      v-divider
-      v-layout.py-1(justify-end)
+  v-form(@submit.prevent="submit")
+    modal-wrapper(data-test="liveReportingModal")
+      template(slot="title")
+        span {{ $t('modals.liveReporting.editLiveReporting') }}
+      template(slot="text")
+        h3 {{ $t('modals.liveReporting.dateInterval') }}
+        date-interval-selector(v-model="form")
+      template(slot="actions")
         v-btn(
-          @click="$modals.hide",
+          data-test="liveReportingCancelButton",
           depressed,
           flat,
-          data-test="liveReportingCancelButton"
+          @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          @click="submit",
-          :disabled="errors.any()",
+          :disabled="errors.any() || submitting",
+          type="submit",
           data-test="liveReportingApplyButton"
         ) {{ $t('common.apply') }}
 </template>
@@ -30,6 +29,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to add a time filter on alarm-list
  */
@@ -38,14 +39,13 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    DateIntervalSelector,
-  },
+  components: { DateIntervalSelector, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const { config } = this.modal;
 
     return {
+      submitting: false,
       form: {
         tstart: config.tstart || '',
         tstop: config.tstop || '',
@@ -73,14 +73,22 @@ export default {
   },
   methods: {
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        this.submitting = true;
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form);
+        const isFormValid = await this.$validator.validateAll();
+
+        if (isFormValid) {
+          if (this.config.action) {
+            await this.config.action(this.form);
+          }
+
+          this.$modals.hide();
         }
-
-        this.$modals.hide();
+      } catch (err) {
+        this.$popups.error({ text: err.description || this.$t('error.default') });
+      } finally {
+        this.submitting = false;
       }
     },
   },
