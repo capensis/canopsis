@@ -1,10 +1,10 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')")
+      v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')", color="primary")
     template(v-if="showRRule")
       v-layout(row)
-        v-tabs.r-rule-tabs(v-model="activeTab", centered, fixed-tabs)
+        v-tabs.r-rule-tabs(v-model="activeTab", centered, fixed-tabs, slider-color="primary")
           v-tab(href="#simple") {{ $t('rRule.tabs.simple') }}
           v-tab(href="#advanced") {{ $t('rRule.tabs.advanced') }}
           v-tab-item(value="simple")
