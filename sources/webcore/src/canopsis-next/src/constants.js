@@ -1024,7 +1024,6 @@ export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
 export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsHistogram]: { edition: CANOPSIS_EDITION.cat },
   [WIDGET_TYPES.statsCurves]: { edition: CANOPSIS_EDITION.cat },
-  [WIDGET_TYPES.statsTable]: { edition: CANOPSIS_EDITION.cat },
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.cat },
   [WIDGET_TYPES.statsNumber]: { edition: CANOPSIS_EDITION.cat },
   [WIDGET_TYPES.statsPareto]: { edition: CANOPSIS_EDITION.cat },

@@ -48,7 +48,8 @@ const commands = {
   clickOnPageBottomPagination(page) {
     this.api
       .useXpath()
-      .customClick(this.el('@bottomPaginationPage', page));
+      .customClick(this.el('@bottomPaginationPage', page))
+      .useCss();
 
     return this;
   },
@@ -90,7 +91,8 @@ const commands = {
   clickTableHeaderCell(header) {
     this.api
       .useXpath()
-      .customClick(this.el('@tableHeaderCell', header));
+      .customClick(this.el('@tableHeaderCell', header))
+      .useCss();
 
     return this;
   },
@@ -140,7 +142,7 @@ module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
 
-    tableHeaderCell: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\']//span[contains(text(), \'%s\')]',
+    tableHeaderCell: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\' and contains(text(), \'%s\')]',
     selectAllCheckboxInput: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input input`,
     selectAllCheckbox: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input`,
 

@@ -1,6 +1,9 @@
 <template lang="pug">
   div
-    span.badge(:style="{ backgroundColor: style.color }") {{ style.text }}
+    span.badge(
+      data-test="alarmsChipsValue",
+      :style="{ backgroundColor: style.color }"
+    ) {{ style.text }}
 </template>
 
 <script>

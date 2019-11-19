@@ -4,8 +4,8 @@ const {
   SORT_ORDERS,
   FILTERS_TYPE,
   VALUE_TYPES,
-  INTERVAL_RANGES,
-  INTERVAL_PERIODS,
+  // INTERVAL_RANGES,
+  // INTERVAL_PERIODS,
   FILTER_OPERATORS,
   FILTER_COLUMNS,
   STAT_TYPES,
@@ -47,19 +47,19 @@ module.exports = {
     const statsTableWidget = {
       ...generateTemporaryStatsTableWidget(),
       parameters: {
-        dateInterval: {
-          calendarStartDate: {
-            minute: 0,
-            hour: 12,
-            day: 12,
-          },
-          endDate: '13/09/2019 00:00',
-          range: INTERVAL_RANGES.CUSTOM,
-          period: INTERVAL_PERIODS.HOUR,
-        },
+        // dateInterval: {
+        //   calendarStartDate: {
+        //     minute: 0,
+        //     hour: 12,
+        //     day: 12,
+        //   },
+        //   endDate: '13/09/2019 00:00',
+        //   range: INTERVAL_RANGES.CUSTOM,
+        //   period: INTERVAL_PERIODS.HOUR,
+        // },
         statsSelector: {
           newStats: [{
-            type: STAT_TYPES.RESOLVED_TIME_SLA,
+            type: STAT_TYPES.ALARMS_CREATED,
             title: 'title',
             trend: false,
             recursive: false,
@@ -67,8 +67,8 @@ module.exports = {
               { index: STAT_STATES.OK, checked: true },
               { index: STAT_STATES.MINOR, checked: true },
             ],
-            authors: ['first', 'second'],
-            sla: '<=2',
+            // authors: ['first', 'second'],
+            // sla: '<=2',
           }],
         },
         sort: {
@@ -140,6 +140,21 @@ module.exports = {
 
     browser.page.widget.statsTable()
       .clickSubmitStatsTable();
+  },
+
+  'Stats table widget': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const statsTableWidget = browser.page.widget.statsTable();
+
+    const firstId = 'feeder2_6/feeder2_2';
+
+    commonTable.clickTableHeaderCell('title');
+
+    statsTableWidget
+      .getCellName(firstId, ({ value }) => value)
+      .getCellValue(firstId, ({ value }) => value);
+    // .getAlarmsChipsValue(firstId, ({ value }) => console.log('ALARMS_CHIPS', value))
+    // .getCellSubValue(firstId, ({ value }) => console.log('SUB_VALUE', value));
   },
 
   'Delete widget stats table with some name': (browser) => {

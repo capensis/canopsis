@@ -7,27 +7,32 @@
         :message="serverErrorMessage"
       )
       v-data-table(
+        data-test="tableWidget",
         :items="stats",
         :headers="columns",
         :pagination.sync="pagination",
         :custom-sort="customSort"
       )
         template(slot="items", slot-scope="{ item }")
-          td {{ item.entity.name }}
-          td(v-for="(property, key) in widget.parameters.stats")
+          td(:data-test="`statsTableNameCell-${item.entity._id}`") {{ item.entity.name }}
+          td(:data-test="`statsTableCell-${item.entity._id}`", v-for="(property, key) in widget.parameters.stats")
             template(v-if="isStatNotEmpty(item[key])")
               td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
                 alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
               td(v-else)
                 v-layout(align-center)
-                  div {{ item[key].value | formatValue(property.stat.value) }}
+                  div(
+                    data-test="statsTableValue"
+                  ) {{ item[key].value | formatValue(property.stat.value) }}
                   div(v-if="hasTrend(item[key])")
                     sub.ml-2
                       v-icon.caption(
                         small,
                         :color="item[key].trend | trendColor"
                       ) {{ item[key].trend | trendIcon }}
-                    sub {{ item[key].trend | formatValue(property.stat.value) }}
+                    sub(
+                      data-test="statsTableSubValue"
+                    ) {{ item[key].trend | formatValue(property.stat.value) }}
             div(v-else) {{ $t('tables.noData') }}
 </template>
 
