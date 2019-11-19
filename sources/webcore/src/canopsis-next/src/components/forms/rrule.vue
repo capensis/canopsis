@@ -1,7 +1,11 @@
 <template lang="pug">
   div
     v-layout(row)
-      v-switch(v-model="showRRule", :label="$t('modals.createPbehavior.fields.rRuleQuestion')", color="primary")
+      v-switch(
+        v-model="showRRule",
+        :label="$t('modals.createPbehavior.steps.rrule.fields.rRuleQuestion')",
+        color="primary"
+      )
     template(v-if="showRRule")
       v-layout(row)
         v-tabs.r-rule-tabs(v-model="activeTab", centered, fixed-tabs, slider-color="primary")
@@ -181,7 +185,6 @@ import { mapValues, pickBy, isArray } from 'lodash';
  * @type {Object|null} - RRule object
  */
 export default {
-  inject: ['$validator'],
   filters: {
     rRuleToFormOptions(rRule) {
       const { origOptions } = rRule;
@@ -225,18 +228,22 @@ export default {
       return mapValues(options, o => o.split(',').filter(v => v));
     },
   },
+  model: {
+    prop: 'rrule',
+    event: 'input',
+  },
   props: {
-    value: {
+    rrule: {
       type: String,
-      default: '',
     },
   },
+  inject: ['$validator'],
   data() {
     let rRule;
 
-    if (this.value) {
+    if (this.rrule) {
       try {
-        rRule = rrulestr(this.value);
+        rRule = rrulestr(this.rrule);
       } catch (err) {
         console.warn(err);
       }
@@ -250,7 +257,7 @@ export default {
 
     return {
       activeTab: 'simple',
-      showRRule: !!this.value,
+      showRRule: !!this.rrule,
       rRuleObject: rRule,
       form: {
         rRuleOptions: this.$options.filters.rRuleToFormOptions(rRule),

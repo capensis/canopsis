@@ -1,40 +1,103 @@
 <template lang="pug">
-  div
-    pbehavior-general-form(v-field="form.general", :noFilter="noFilter")
-    pbehavior-exdates-form.mt-2(v-show="form.general.rrule", v-field="form.exdate")
-    pbehavior-comments-form.mt-2(v-field="form.comments", :author="author")
+  v-stepper(v-model="stepper", non-linear)
+    v-stepper-header
+      v-stepper-step.py-0(
+        :complete="stepper > 1",
+        step="1",
+        editable,
+        :rules="[() => !hasGeneralFormAnyError]"
+      ) {{ $t('modals.createPbehavior.steps.general.title') }}
+        small(v-if="hasGeneralFormAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
+      template(v-if="!noFilter")
+        v-divider
+        v-stepper-step.py-0(
+          :complete="stepper > 2",
+          step="2",
+          editable,
+          :rules="[() => !hasFilterEditorAnyError]"
+        ) {{ $t('modals.createPbehavior.steps.filter.title') }}
+          small(v-if="hasFilterEditorAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
+          small.font-italic.font-weight-light(v-else) {{ $t('common.optional') }}
+      v-divider
+      v-stepper-step.py-0(
+        :complete="stepper > 3",
+        step="3",
+        editable
+      ) {{ $t('modals.createPbehavior.steps.rrule.title') }}
+        small.font-italic.font-weight-light {{ $t('common.optional') }}
+      v-divider
+      v-stepper-step.py-0(
+        :complete="stepper > 4",
+        step="4",
+        editable
+      ) {{ $t('modals.createPbehavior.steps.comments.title') }}
+        small.font-italic.font-weight-light {{ $t('common.optional') }}
+    v-stepper-items
+      v-stepper-content(step="1")
+        v-card
+          v-card-text
+            pbehavior-general-form(v-field="form.general", ref="pbehaviorGeneralForm")
+      v-stepper-content(step="2")
+        v-card
+          v-card-text
+            filter-editor(v-field="form.filter", ref="filterEditor")
+      v-stepper-content(step="3")
+        v-card
+          v-card-text
+            r-rule-form(v-field="form.general.rrule")
+            pbehavior-exdates-form(v-if="form.general.rrule", v-field="form.exdate")
+      v-stepper-content(step="4")
+        v-card
+          v-card-text
+            pbehavior-comments-form(v-field="form.comments")
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
+import RRuleForm from '@/components/forms/rrule.vue';
+import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 
 import PbehaviorGeneralForm from './partials/pbehavior-general-form.vue';
-import PbehaviorExdatesForm from './partials/pbehavior-exdates-form.vue';
 import PbehaviorCommentsForm from './partials/pbehavior-comments-form.vue';
+import PbehaviorExdatesForm from './partials/pbehavior-exdates-form.vue';
 
 export default {
   components: {
+    RRuleForm,
+    FilterEditor,
     PbehaviorGeneralForm,
-    PbehaviorExdatesForm,
     PbehaviorCommentsForm,
+    PbehaviorExdatesForm,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
+  inject: ['$validator'],
   props: {
     form: {
       type: Object,
       required: true,
     },
-    author: {
-      type: String,
-    },
     noFilter: {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      stepper: 1,
+      hasGeneralFormAnyError: false,
+      hasFilterEditorAnyError: false,
+    };
+  },
+  mounted() {
+    this.$watch(() => this.$refs.pbehaviorGeneralForm.hasAnyError, (value) => {
+      this.hasGeneralFormAnyError = value;
+    });
+
+    this.$watch(() => this.$refs.filterEditor.hasAnyError, (value) => {
+      this.hasFilterEditorAnyError = value;
+    });
   },
 };
 </script>
