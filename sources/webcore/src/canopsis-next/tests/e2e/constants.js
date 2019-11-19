@@ -109,6 +109,13 @@ module.exports.PAGINATION_PER_PAGE_VALUES = {
   HUNDRED: 5,
 };
 
+module.exports.TABLE_PAGINATION_PER_PAGE = {
+  FIVE: 1,
+  TEN: 2,
+  TWENTY_FIVE: 3,
+  ALL: 4,
+};
+
 module.exports.INFO_POPUP_DEFAULT_COLUMNS = {
   connector: 1,
   connectorName: 2,

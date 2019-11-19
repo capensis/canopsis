@@ -38,11 +38,19 @@ const commands = {
   },
 
   clickNextPageBottomPagination() {
-    return this.customClick('@bottomPaginationPrevious');
+    return this.customClick('@bottomPaginationNext');
   },
 
   clickPreviousPageBottomPagination() {
     return this.customClick('@bottomPaginationPrevious');
+  },
+
+  clickTablePrevButton() {
+    return this.customClick('@tablePrevButton');
+  },
+
+  clickTableNextButton() {
+    return this.customClick('@tableNextButton');
   },
 
   clickOnPageBottomPagination(page) {
@@ -84,6 +92,12 @@ const commands = {
 
   setItemPerPage(index) {
     return this.customClick('@itemsPerPage')
+      .waitForElementVisible(this.el('@optionSelect', index))
+      .customClick(this.el('@optionSelect', index));
+  },
+
+  setTableItemsPerPage(index) {
+    return this.customClick('@tableItemsPerPage')
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
   },
@@ -163,6 +177,11 @@ module.exports = {
     bottomPaginationPrevious: `${sel('vPagination')} li:first-child`,
     bottomPaginationPage: './/*[@data-test=\'vPagination\']//button[@class=\'v-pagination__item\' and contains(text(), \'%s\')]',
     bottomPaginationNext: `${sel('vPagination')} li:last-child`,
+
+    tablePrevButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Previous page"]',
+    tableNextButton: '.v-datatable .v-datatable__actions__range-controls .v-btn[aria-label="Next page"]',
+
+    tableItemsPerPage: '.v-datatable .v-datatable__actions__select .v-input__control',
 
     itemsPerPage: `${sel('itemsPerPage')} .v-select__slot`,
 

@@ -10,6 +10,7 @@ const {
   FILTER_COLUMNS,
   STAT_TYPES,
   STAT_STATES,
+  TABLE_PAGINATION_PER_PAGE,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../helpers/api');
@@ -148,7 +149,12 @@ module.exports = {
 
     const firstId = 'feeder2_6/feeder2_2';
 
-    commonTable.clickTableHeaderCell('title');
+    commonTable
+      .clickTableNextButton()
+      .clickTablePrevButton()
+      .setTableItemsPerPage(TABLE_PAGINATION_PER_PAGE.ALL)
+      .clickTableHeaderCell('title')
+      .clickTableHeaderCell('title');
 
     statsTableWidget
       .getCellName(firstId, ({ value }) => value)
