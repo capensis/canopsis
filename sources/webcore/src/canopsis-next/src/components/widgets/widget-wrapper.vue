@@ -49,6 +49,7 @@ import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calenda
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {
   components: {
@@ -62,6 +63,7 @@ export default {
     StatsNumberWidget,
     StatsParetoWidget,
     TextWidget,
+    AlertOverlay,
   },
   mixins: [sideBarMixin],
   props: {
