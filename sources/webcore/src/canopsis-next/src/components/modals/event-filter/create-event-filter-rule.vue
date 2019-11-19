@@ -17,7 +17,7 @@
         v-select(:items="ruleTypes", v-model="form.type", :label="$t('common.type')")
         v-textarea(v-model="form.description", :label="$t('common.description')")
         v-text-field(v-model.number="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
-        v-switch(v-model="form.enabled", :label="$t('common.enabled')")
+        v-switch(v-model="form.enabled", :label="$t('common.enabled')", color="primary")
       v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
       template(v-if="form.type === $constants.EVENT_FILTER_RULE_TYPES.enrichment")
         v-container

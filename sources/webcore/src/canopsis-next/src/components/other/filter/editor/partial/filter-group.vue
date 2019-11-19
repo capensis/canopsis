@@ -4,7 +4,8 @@
       v-field="group.condition",
       hide-details,
       mandatory,
-      row
+      row,
+      color="primary"
     )
       v-radio(data-test="radioAnd", label="AND", value="$and", color="primary")
       v-radio(data-test="radioOr", label="OR", value="$or", color="primary")

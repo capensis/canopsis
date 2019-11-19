@@ -8,7 +8,8 @@
           :false-value="$constants.SNMP_STATE_TYPES.simple",
           :true-value="$constants.SNMP_STATE_TYPES.template",
           :label="$t('modals.createSnmpRule.fields.state.labels.toCustom')",
-          @change="updateTypeField"
+          @change="updateTypeField",
+          color="primary"
         )
     v-divider(light)
     template(v-if="isTemplate")
