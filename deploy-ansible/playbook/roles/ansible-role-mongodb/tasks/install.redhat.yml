@@ -22,7 +22,8 @@
     name: numactl
     state: present
 
+# Use the last AGPLv3 version from the 3.6 branch
 - name: Install MongoDB package
   yum:
-    name: "{{ mongodb_package }}"
+    name: "{{ mongodb_package }}-3.6.8-1"
     state: present

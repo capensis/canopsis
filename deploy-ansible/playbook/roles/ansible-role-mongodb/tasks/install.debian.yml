@@ -33,9 +33,10 @@
     state: present
     update_cache: yes
 
+# Use the last AGPLv3 version from the 3.6 branch
 - name: Install MongoDB package
   apt:
-    name: "{{ mongodb_package }}"
+    name: "{{ mongodb_package }}=3.6.8"
     state: present
     update_cache: yes
 
