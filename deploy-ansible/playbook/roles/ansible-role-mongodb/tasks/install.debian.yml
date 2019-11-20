@@ -41,10 +41,10 @@
     update_cache: yes
 
 - name: Add systemd configuration if present
-  copy: src=mongodb.service dest=/lib/systemd/system/mongodb.service owner=root group=root mode=0640
+  copy: src=mongodb.service dest=/lib/systemd/system/{{mongodb_daemon_name}}.service owner=root group=root mode=0644
 
 - name: Add symlink for systemd
-  file: src=/lib/systemd/system/mongodb.service dest=/etc/systemd/system/multi-user.target.wants/mongodb.service state=link
+  file: src=/lib/systemd/system/{{mongodb_daemon_name}}.service dest=/etc/systemd/system/multi-user.target.wants/{{mongodb_daemon_name}}.service state=link
   notify: reload systemd
 
 - name: reload systemd
