@@ -40,7 +40,7 @@
       v-stepper-content(step="2")
         v-card
           v-card-text
-            filter-editor(v-field="form.filter", ref="filterEditor")
+            filter-editor(v-field="form.filter", required)
       v-stepper-content(step="3")
         v-card
           v-card-text
@@ -87,16 +87,16 @@ export default {
     return {
       stepper: 1,
       hasGeneralFormAnyError: false,
-      hasFilterEditorAnyError: false,
     };
+  },
+  computed: {
+    hasFilterEditorAnyError() {
+      return this.errors.has('filter');
+    },
   },
   mounted() {
     this.$watch(() => this.$refs.pbehaviorGeneralForm.hasAnyError, (value) => {
       this.hasGeneralFormAnyError = value;
-    });
-
-    this.$watch(() => this.$refs.filterEditor.hasAnyError, (value) => {
-      this.hasFilterEditorAnyError = value;
     });
   },
 };
