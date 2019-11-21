@@ -1,4 +1,4 @@
-# API PBehavior
+# PBehavior
 
 L'API PBehavior permet de consulter, créer et supprimer des plages de maintenance.
 

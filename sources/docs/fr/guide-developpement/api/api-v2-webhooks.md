@@ -1,4 +1,4 @@
-# API Webhooks
+# Webhooks
 
 !!! note
     Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
@@ -277,7 +277,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 **Exemple du corps de la réponse** :
 
 ```json
-{  
+{
 }
 ```
 

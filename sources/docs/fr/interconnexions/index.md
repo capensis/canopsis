@@ -88,6 +88,6 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:---------:|:----------:|:-----------:|:------------:|
-| [Publication d’évènement](../guide-developpement/API.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
+| [Publication d’évènement](../guide-developpement/index.md#api) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
 | [Manipulation de Plage de Maintenance](../guide-utilisation/interface/pbehaviors/index.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
-| [Récupération de l’état de Santé de Canopsis](../guide-developpement/healthcheck/api_v2_healthcheck.md) | OpenCore | Oui |  Outil de marché | Version ≥ 3.4 |
+| [Récupération de l’état de Santé de Canopsis](../guide-developpement/api/api-v2-healthcheck.md) | OpenCore | Oui |  Outil de marché | Version ≥ 3.4 |
