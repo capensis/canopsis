@@ -2,13 +2,21 @@
 
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
-const modalSelector = sel('confirmationModal');
+const modalSelector = sel('filtersListModal');
+
+const commands = {
+  clickOutside() {
+    return this.customClickOutside('@filtersList');
+  },
+};
 
 module.exports = modalCreator(modalSelector, {
   elements: {
     ...elementsWrapperCreator(modalSelector, {
       submitButton: sel('submitButton'),
-      cancelButton: sel('cancelButton'),
     }),
+
+    filtersList: sel('filtersListModal'),
   },
+  commands: [commands],
 });

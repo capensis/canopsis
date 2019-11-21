@@ -23,11 +23,13 @@ const {
 const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
+const getPaginationFirstIndex = require('../../helpers/getPaginationFirstIndex');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
     browser.globals.defaultViewData = await createWidgetView();
+    browser.globals.tablePageNumber = 1;
 
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
@@ -92,7 +94,7 @@ module.exports = {
         filters: {
           isMix: true,
           type: FILTERS_TYPE.OR,
-          title: 'Filter title',
+          title: 'Filter 1',
           groups: [{
             type: FILTERS_TYPE.OR,
             items: [{
@@ -100,15 +102,6 @@ module.exports = {
               operator: FILTER_OPERATORS.EQUAL,
               valueType: VALUE_TYPES.STRING,
               value: 'value',
-              groups: [{
-                type: FILTERS_TYPE.OR,
-                items: [{
-                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
-                  operator: FILTER_OPERATORS.IN,
-                  valueType: VALUE_TYPES.BOOLEAN,
-                  value: true,
-                }],
-              }],
             }, {
               type: FILTERS_TYPE.AND,
               rule: FILTER_COLUMNS.CONNECTOR_NAME,
@@ -140,6 +133,250 @@ module.exports = {
       browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
   },
+
+  'The empty search shows no results': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    alarmsWidget.waitAllAlarmsListXHR(
+      () => commonTable.keyupSearchEnter(),
+      (xhrs) => {
+        browser.assert.equal(xhrs.length, 0); // TODO test break
+      },
+    );
+  },
+
+  'The search with magnifier button displays relevant results': (browser) => {
+    const alarmsWidget = browser.page.widget.alarms();
+
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => browser.page.tables.common()
+        .setSearchInput('feeder')
+        .clickSearchButton(),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(data, 0);
+      },
+    );
+  },
+
+  'The search with button "Enter" displays relevant results': (browser) => {
+    browser.page.tables.common()
+      .clickSearchInput()
+      .clearSearchInput()
+      .setSearchInput('feeder')
+      .keyupSearchEnter();
+  },
+
+  'The button with cross cancels current search': (browser) => {
+    browser.page.tables.common()
+      .clickSearchInput()
+      .clearSearchInput()
+      .setSearchInput('search string')
+      .clickSearchResetButton()
+      .clickSearchButton();
+  },
+
+  'The click on the button with question mark shows pop-up with additional information': (browser) => {
+    browser.page.tables.common()
+      .moveToSearchInformation()
+      .verifySearchInformationVisible();
+  },
+
+  'Removing a cursor from pop-up with additional information makes it disappear': (browser) => {
+    browser.page.tables.common()
+      .moveOutsideSearchInformation();
+    // .verifySearchInformationHidden();
+  },
+
+  'Right arrow opens the next page': (browser) => {
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    browser.globals.tablePageNumber += 1;
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => commonTable.clickNextPageTopPagination(),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(
+          data[0].first,
+          getPaginationFirstIndex(browser.globals.tablePageNumber, 20),
+        );
+
+        commonTable.getTopPaginationPage((page) => {
+          browser.assert.equal(page, browser.globals.tablePageNumber);
+        });
+      },
+    );
+  },
+
+  'Left arrow opens the previous page': (browser) => {
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    browser.globals.tablePageNumber -= 1;
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => commonTable.clickPreviousPageTopPagination(),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(
+          data[0].first,
+          getPaginationFirstIndex(browser.globals.tablePageNumber, 20),
+        );
+
+        commonTable.getTopPaginationPage((page) => {
+          browser.assert.equal(page, browser.globals.tablePageNumber);
+        });
+      },
+    );
+  },
+
+  'Add new filters': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const commonTable = browser.page.tables.common();
+    const filtersListModal = browser.page.modals.common.filtersList();
+    const createFilterModal = browser.page.modals.common.createFilter();
+
+    commonTable.showFiltersList();
+    filtersListModal.verifyModalOpened();
+    commonWidget.clickAddFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .setFilterTitle('New filter')
+      .fillFilterGroups([{
+        type: FILTERS_TYPE.OR,
+        items: [{
+          rule: FILTER_COLUMNS.CONNECTOR,
+          operator: FILTER_OPERATORS.EQUAL,
+          valueType: VALUE_TYPES.STRING,
+          value: 'feeder2',
+        }, {
+          type: FILTERS_TYPE.AND,
+          rule: FILTER_COLUMNS.CONNECTOR_NAME,
+          operator: FILTER_OPERATORS.NOT_EQUAL,
+          valueType: VALUE_TYPES.STRING,
+          value: 'feeder2_inst2',
+        }],
+      }])
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.clickAddFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .setFilterTitle('New filter 2')
+      .fillFilterGroups([{
+        type: FILTERS_TYPE.OR,
+        items: [{
+          rule: FILTER_COLUMNS.CONNECTOR,
+          operator: FILTER_OPERATORS.EQUAL,
+          valueType: VALUE_TYPES.STRING,
+          value: 'feeder3',
+        }],
+      }])
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    filtersListModal
+      .clickOutside()
+      .verifyModalClosed();
+  },
+
+  'A filter can be selected': (browser) => {
+    browser.page.tables.common()
+      .selectFilter(1);
+  },
+
+  'A selection of filter can be changed': (browser) => {
+    browser.page.tables.common()
+      .selectFilter(2);
+  },
+
+  'The "conjunction" (AND) option of "Mix filters" works correctly': (browser) => {
+    browser.page.tables.common()
+      .setMixFilters(true)
+      .setFiltersType(FILTERS_TYPE.AND);
+  },
+
+  'The "disjunction" (OR) option of "Mix filters" works correctly': (browser) => {
+    browser.page.tables.common()
+      .setMixFilters(true)
+      .setFiltersType(FILTERS_TYPE.OR);
+  },
+
+  'The deletion of filter can be canceled': (browser) => {
+    browser.page.tables.common()
+      .showFiltersList();
+
+    browser.page.modals.common.filtersList()
+      .verifyModalOpened();
+
+    browser.page.widget.common()
+      .clickDeleteFilter('New filter');
+
+    browser.page.modals.common.confirmation()
+      .verifyModalOpened()
+      .clickCancelButton()
+      .verifyModalClosed();
+  },
+
+  'Filter can be deleted': (browser) => {
+    browser.page.widget.common()
+      .clickDeleteFilter('New filter');
+
+    browser.page.modals.common.confirmation()
+      .verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+  },
+
+  'The filter can be changed': (browser) => {
+    const createFilterModal = browser.page.modals.common.createFilter();
+
+    browser.page.widget.common()
+      .clickEditFilter('New filter 2');
+
+    createFilterModal
+      .verifyModalOpened()
+      .clickDeleteRule(createFilterModal.selectGroup([1]), 1)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    browser.page.modals.common.filtersList()
+      .clickOutside()
+      .verifyModalClosed();
+  },
+
+  'The changed filter works in a new way': () => {},
+
+  'A new filter can be created': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const createFilterModal = browser.page.modals.common.createFilter();
+
+    browser.page.tables.common()
+      .showFiltersList();
+
+    commonWidget.clickAddFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .setFilterTitle('New filter 3')
+      .fillFilterGroups([{
+        type: FILTERS_TYPE.OR,
+        items: [{
+          rule: FILTER_COLUMNS.CONNECTOR,
+          operator: FILTER_OPERATORS.EQUAL,
+          valueType: VALUE_TYPES.STRING,
+          value: 'feeder2',
+        }],
+      }])
+      .clickSubmitButton()
+      .verifyModalClosed();
+  },
+
+  'A new filter works correctly': () => {},
 
   'Table widget alarms': (browser) => {
     // const alarmsTable = browser.page.tables.alarms();
@@ -312,30 +549,11 @@ module.exports = {
     browser.page.modals.alarm.createPbehavior()
       .clickCancelButton()
       .verifyModalClosed();
-
-    commonTable
-      .clickSearchInput()
-      .clearSearchInput()
-      .setSearchInput('search string')
-      .clickSearchButton()
-      .clickSearchResetButton()
-      .moveToSearchInformation()
-      .setMixFilters(true)
-      .selectFilter(1)
-      .setFiltersType(FILTERS_TYPE.AND)
-      .clickNextPageTopPagination()
-      .clickPreviousPageTopPagination()
-      .clickNextPageBottomPagination()
-      .clickPreviousPageBottomPagination()
-      .clickOnPageBottomPagination(2)
-      .setItemPerPage(PAGINATION_PER_PAGE_VALUES.FIVE);
-
-    browser.page.view()
-      .clickMenuViewButton();
   },
 
   'Delete widget alarms with some name': (browser) => {
     browser.page.view()
+      .clickMenuViewButton()
       .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
 
     browser.page.modals.common.confirmation()

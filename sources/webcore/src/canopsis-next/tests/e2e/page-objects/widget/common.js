@@ -144,12 +144,12 @@ const commands = {
     return this.customClick('@openWidgetFilterCreateModal');
   },
 
-  clickEditFilter() {
-    return this.customClick('@openWidgetFilterEditModal');
+  clickEditFilter(name) {
+    return this.customClick(this.el('@editFilter', name));
   },
 
-  clickDeleteFilter() {
-    return this.customClick('@openWidgetFilterDeleteModal');
+  clickDeleteFilter(name) {
+    return this.customClick(this.el('@deleteFilter', name));
   },
 
   clickCreateMoreInfos() {

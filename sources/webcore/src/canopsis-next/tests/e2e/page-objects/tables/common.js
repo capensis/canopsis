@@ -21,6 +21,10 @@ const commands = {
     return this.customClick('@searchButton');
   },
 
+  keyupSearchEnter() {
+    return this.customKeyup('@searchInput', this.api.Keys.ENTER);
+  },
+
   clickSearchResetButton() {
     return this.customClick('@resetSearchButton');
   },
@@ -29,12 +33,32 @@ const commands = {
     return this.moveToElement('@helpInformationButton', 5, 5);
   },
 
+  moveOutsideSearchInformation() {
+    this.api
+      .moveTo('@helpInformationButton', -50, -50)
+      .pause(1000);
+
+    return this;
+  },
+
+  verifySearchInformationVisible() {
+    return this.waitForElementVisible('@helpInformation');
+  },
+
+  verifySearchInformationHidden() {
+    return this.waitForElementNotPresent('@helpInformation');
+  },
+
+  getTopPaginationPage(callback) {
+    return this.getText('@topPaginationPage', ({ value }) => callback(value));
+  },
+
   clickNextPageTopPagination() {
-    return this.customClick('@topPaginationPrevious');
+    return this.customClick('@topPaginationNext');
   },
 
   clickPreviousPageTopPagination() {
-    return this.customClick('@topPaginationNext');
+    return this.customClick('@topPaginationPrevious');
   },
 
   clickNextPageBottomPagination() {
@@ -153,10 +177,11 @@ module.exports = {
     searchButton: `${sel('tableSearch')} ${sel('submitSearchButton')}`,
     resetSearchButton: `${sel('tableSearch')} ${sel('clearSearchButton')}`,
     helpInformationButton: `${sel('tableSearch')} ${sel('tableSearchHelp')}`,
-    helpInformation: `${sel('tableSearch')} ${sel('tableSearchHelpInfo')}`,
+    helpInformation: sel('tableSearchHelpInfo'),
 
     topPaginationPrevious: `${sel('topPagination')} ${sel('paginationPreviewButton')}`,
     topPaginationNext: `${sel('topPagination')} ${sel('paginationNextButton')}`,
+    topPaginationPage: `${sel('topPagination')} .v-pagination span:nth-of-type(1)`,
 
     bottomPaginationPrevious: `${sel('vPagination')} li:first-child`,
     bottomPaginationPage: './/*[@data-test=\'vPagination\']//button[@class=\'v-pagination__item\' and contains(text(), \'%s\')]',
