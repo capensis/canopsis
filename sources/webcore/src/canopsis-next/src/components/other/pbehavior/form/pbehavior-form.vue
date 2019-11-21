@@ -91,11 +91,7 @@ export default {
   },
   computed: {
     hasFilterEditorAnyError() {
-      if (this.fields && this.fields.filter) {
-        return this.fields.filter.validated && !this.fields.filter.valid;
-      }
-
-      return false;
+      return this.errors.has('filter');
     },
   },
   mounted() {
