@@ -148,6 +148,14 @@ const commands = {
     return this.customClick(this.el('@editFilter', name));
   },
 
+  verifyFilterVisible(name) {
+    return this.assert.visible(this.el('@filterItem', name));
+  },
+
+  verifyFilterDeleted(name) {
+    return this.waitForElementNotPresent(this.el('@filterItem', name));
+  },
+
   clickDeleteFilter(name) {
     return this.customClick(this.el('@deleteFilter', name));
   },
@@ -474,6 +482,7 @@ module.exports = {
     andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
     andFiltersInput: `input${sel('andFilters')}`,
     orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
+    filterItem: sel('filterItem-%s'),
     editFilter: sel('editFilter-%s'),
     deleteFilter: sel('deleteFilter-%s'),
     selectFilters: `${sel('selectFilters')} .v-input__slot`,

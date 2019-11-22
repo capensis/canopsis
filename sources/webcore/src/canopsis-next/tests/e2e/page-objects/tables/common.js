@@ -34,19 +34,20 @@ const commands = {
   },
 
   moveOutsideSearchInformation() {
-    this.api
-      .moveTo('@helpInformationButton', -50, -50)
-      .pause(1000);
+    this
+      .moveToElement('@helpInformationButton', 0, 0)
+      .api.moveTo(null, -50, -50)
+      .pause(500);
 
     return this;
   },
 
   verifySearchInformationVisible() {
-    return this.waitForElementVisible('@helpInformation');
+    return this.assert.visible('@helpInformation');
   },
 
   verifySearchInformationHidden() {
-    return this.waitForElementNotPresent('@helpInformation');
+    return this.assert.hidden('@helpInformation');
   },
 
   getTopPaginationPage(callback) {
@@ -85,10 +86,27 @@ const commands = {
     });
   },
 
-  selectFilter(index = 1) {
-    return this.customClick('@selectFilters')
-      .waitForElementVisible(this.el('@optionSelect', index))
-      .customClick(this.el('@optionSelect', index));
+  selectFilter(index, checked = false) {
+    return this
+      .customClick('@selectFilters')
+      .getAttribute(
+        this.el('@optionSelectInput', index),
+        'aria-checked',
+        ({ value }) => {
+          if (value !== String(checked)) {
+            this.customClick(this.el('@optionSelect', index));
+          }
+        },
+      );
+  },
+
+  checkSelectedFilter(index, checked) {
+    return this
+      .getAttribute(
+        this.el('@optionSelectInput', index),
+        'aria-checked',
+        ({ value }) => this.assert.equal(value, String(checked)),
+      );
   },
 
   setFiltersType(type) {
@@ -163,6 +181,8 @@ const commands = {
 module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+
+    optionSelectInput: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s) input',
 
     tableHeaderCell: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\']//span[contains(text(), \'%s\')]',
     selectAllCheckboxInput: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input input`,

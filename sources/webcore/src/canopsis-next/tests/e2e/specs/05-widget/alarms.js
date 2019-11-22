@@ -25,6 +25,10 @@ const { createWidgetView, removeWidgetView } = require('../../helpers/api');
 const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
 const getPaginationFirstIndex = require('../../helpers/getPaginationFirstIndex');
 
+const SEARCH_STRING = 'feeder2_inst3';
+const SEARCH_RESULT_COUNT = 64;
+const ALARMS_COUNT = 496;
+
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
@@ -148,33 +152,49 @@ module.exports = {
 
   'The search with magnifier button displays relevant results': (browser) => {
     const alarmsWidget = browser.page.widget.alarms();
-
+    const commonTable = browser.page.tables.common();
 
     alarmsWidget.waitFirstAlarmsListXHR(
-      () => browser.page.tables.common()
-        .setSearchInput('feeder')
+      () => commonTable
+        .setSearchInput(SEARCH_STRING)
         .clickSearchButton(),
       ({ responseData: { data } }) => {
-        browser.assert.equal(data, 0);
+        browser.assert.equal(SEARCH_RESULT_COUNT, data[0].total);
+
+        commonTable
+          .clearSearchInput()
+          .clickSearchButton();
       },
     );
   },
 
   'The search with button "Enter" displays relevant results': (browser) => {
-    browser.page.tables.common()
-      .clickSearchInput()
-      .clearSearchInput()
-      .setSearchInput('feeder')
-      .keyupSearchEnter();
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => commonTable
+        .clickSearchInput()
+        .clearSearchInput()
+        .setSearchInput(SEARCH_STRING)
+        .keyupSearchEnter(),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(SEARCH_RESULT_COUNT, data[0].total);
+      },
+    );
   },
 
   'The button with cross cancels current search': (browser) => {
-    browser.page.tables.common()
-      .clickSearchInput()
-      .clearSearchInput()
-      .setSearchInput('search string')
-      .clickSearchResetButton()
-      .clickSearchButton();
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => commonTable.clickSearchResetButton(),
+      ({ responseData: { data } }) => {
+        browser.assert.notEqual(SEARCH_RESULT_COUNT, data[0].total);
+        browser.assert.equal(ALARMS_COUNT, data[0].total);
+      },
+    );
   },
 
   'The click on the button with question mark shows pop-up with additional information': (browser) => {
@@ -185,8 +205,8 @@ module.exports = {
 
   'Removing a cursor from pop-up with additional information makes it disappear': (browser) => {
     browser.page.tables.common()
-      .moveOutsideSearchInformation();
-    // .verifySearchInformationHidden();
+      .moveOutsideSearchInformation()
+      .verifySearchInformationHidden();
   },
 
   'Right arrow opens the next page': (browser) => {
@@ -199,12 +219,12 @@ module.exports = {
       () => commonTable.clickNextPageTopPagination(),
       ({ responseData: { data } }) => {
         browser.assert.equal(
-          data[0].first,
           getPaginationFirstIndex(browser.globals.tablePageNumber, 20),
+          data[0].first,
         );
 
         commonTable.getTopPaginationPage((page) => {
-          browser.assert.equal(page, browser.globals.tablePageNumber);
+          browser.assert.equal(browser.globals.tablePageNumber, page);
         });
       },
     );
@@ -220,12 +240,12 @@ module.exports = {
       () => commonTable.clickPreviousPageTopPagination(),
       ({ responseData: { data } }) => {
         browser.assert.equal(
-          data[0].first,
           getPaginationFirstIndex(browser.globals.tablePageNumber, 20),
+          data[0].first,
         );
 
         commonTable.getTopPaginationPage((page) => {
-          browser.assert.equal(page, browser.globals.tablePageNumber);
+          browser.assert.equal(browser.globals.tablePageNumber, page);
         });
       },
     );
@@ -243,18 +263,13 @@ module.exports = {
 
     createFilterModal
       .verifyModalOpened()
-      .setFilterTitle('New filter')
+      .setFilterTitle('Connector name not equal value')
       .fillFilterGroups([{
         type: FILTERS_TYPE.OR,
         items: [{
-          rule: FILTER_COLUMNS.CONNECTOR,
-          operator: FILTER_OPERATORS.EQUAL,
-          valueType: VALUE_TYPES.STRING,
-          value: 'feeder2',
-        }, {
           type: FILTERS_TYPE.AND,
           rule: FILTER_COLUMNS.CONNECTOR_NAME,
-          operator: FILTER_OPERATORS.NOT_EQUAL,
+          operator: FILTER_OPERATORS.EQUAL,
           valueType: VALUE_TYPES.STRING,
           value: 'feeder2_inst2',
         }],
@@ -266,14 +281,14 @@ module.exports = {
 
     createFilterModal
       .verifyModalOpened()
-      .setFilterTitle('New filter 2')
+      .setFilterTitle('Connector name equal value')
       .fillFilterGroups([{
         type: FILTERS_TYPE.OR,
         items: [{
-          rule: FILTER_COLUMNS.CONNECTOR,
-          operator: FILTER_OPERATORS.EQUAL,
+          rule: FILTER_COLUMNS.CONNECTOR_NAME,
+          operator: FILTER_OPERATORS.NOT_EQUAL,
           valueType: VALUE_TYPES.STRING,
-          value: 'feeder3',
+          value: 'feeder2_inst2',
         }],
       }])
       .clickSubmitButton()
@@ -286,61 +301,97 @@ module.exports = {
 
   'A filter can be selected': (browser) => {
     browser.page.tables.common()
-      .selectFilter(1);
+      .selectFilter(1, true)
+      .checkSelectedFilter(1, true);
   },
 
   'A selection of filter can be changed': (browser) => {
     browser.page.tables.common()
-      .selectFilter(2);
+      .selectFilter(1, false)
+      .selectFilter(2, true)
+      .checkSelectedFilter(1, false)
+      .checkSelectedFilter(2, true)
+      .selectFilter(1, true);
   },
 
   'The "conjunction" (AND) option of "Mix filters" works correctly': (browser) => {
-    browser.page.tables.common()
-      .setMixFilters(true)
-      .setFiltersType(FILTERS_TYPE.AND);
+    const alarmsWidget = browser.page.widget.alarms();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => browser.page.tables.common()
+        .setMixFilters(true)
+        .setFiltersType(FILTERS_TYPE.AND),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(0, data[0].total);
+      },
+    );
   },
 
   'The "disjunction" (OR) option of "Mix filters" works correctly': (browser) => {
-    browser.page.tables.common()
-      .setMixFilters(true)
-      .setFiltersType(FILTERS_TYPE.OR);
+    const alarmsWidget = browser.page.widget.alarms();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => browser.page.tables.common()
+        .setMixFilters(true)
+        .setFiltersType(FILTERS_TYPE.OR),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(ALARMS_COUNT, data[0].total);
+      },
+    );
   },
 
   'The deletion of filter can be canceled': (browser) => {
+    const commonWidget = browser.page.widget.common();
+
     browser.page.tables.common()
       .showFiltersList();
 
     browser.page.modals.common.filtersList()
       .verifyModalOpened();
 
-    browser.page.widget.common()
-      .clickDeleteFilter('New filter');
+    commonWidget.clickDeleteFilter('Connector name equal value');
 
     browser.page.modals.common.confirmation()
       .verifyModalOpened()
       .clickCancelButton()
       .verifyModalClosed();
+
+    commonWidget.verifyFilterVisible('Connector name equal value');
   },
 
   'Filter can be deleted': (browser) => {
     browser.page.widget.common()
-      .clickDeleteFilter('New filter');
+      .clickDeleteFilter('Connector name equal value');
 
     browser.page.modals.common.confirmation()
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
+
+    browser.page.widget.common()
+      .verifyFilterDeleted('Connector name equal value');
   },
 
   'The filter can be changed': (browser) => {
     const createFilterModal = browser.page.modals.common.createFilter();
 
     browser.page.widget.common()
-      .clickEditFilter('New filter 2');
+      .clickEditFilter('Connector name not equal value');
 
     createFilterModal
       .verifyModalOpened()
       .clickDeleteRule(createFilterModal.selectGroup([1]), 1)
+      .clearFilterTitle()
+      .setFilterTitle('Connector equal value')
+      .fillFilterGroup([1], {
+        type: FILTERS_TYPE.AND,
+        items: [{
+          rule: FILTER_COLUMNS.CONNECTOR,
+          operator: FILTER_OPERATORS.EQUAL,
+          valueType: VALUE_TYPES.STRING,
+          value: 'feeder2_inst2',
+        }],
+      })
       .clickSubmitButton()
       .verifyModalClosed();
 
@@ -373,6 +424,10 @@ module.exports = {
         }],
       }])
       .clickSubmitButton()
+      .verifyModalClosed();
+
+    browser.page.modals.common.filtersList()
+      .clickOutside()
       .verifyModalClosed();
   },
 
