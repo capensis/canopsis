@@ -9,7 +9,8 @@
           v-if="!config.isSimple",
           v-model="form.advancedMode",
           :label="$t('modals.eventFilterRule.advanced')",
-          hide-details
+          hide-details,
+          color="primary"
         )
         v-text-field(
           v-model="form.field",

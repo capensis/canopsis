@@ -1,7 +1,8 @@
 <template lang="pug">
   div
-    v-layout(row)
-      strong {{ $t('modals.createPbehavior.fields.exdate') }}
+    v-divider
+    h3.my-3.grey--text {{ $t('modals.createPbehavior.steps.rrule.exdate') }}
+    v-divider
     v-layout(
       :data-test="`pbehaviorExdate-${index + 1}`",
       v-for="(exdate, index) in exdates",
@@ -25,7 +26,7 @@
     v-btn.primary.ml-0(
       data-test="pbehaviorAddExdateButton",
       @click="addItem"
-    ) {{ $t('modals.createPbehavior.buttons.addExdate') }}
+    ) {{ $t('modals.createPbehavior.steps.rrule.buttons.addExdate') }}
 </template>
 
 <script>

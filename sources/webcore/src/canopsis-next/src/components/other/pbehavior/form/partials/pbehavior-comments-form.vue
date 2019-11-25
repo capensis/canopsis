@@ -1,7 +1,5 @@
 <template lang="pug">
   div
-    v-layout(row)
-      strong {{ $tc('common.comment', comments.length) }}
     v-layout(
       :data-test="`pbehaviorComment-${index + 1}`",
       v-for="(comment, index) in comments",
@@ -14,7 +12,7 @@
         v-textarea(
           data-test="pbehaviorCommentField",
           :disabled="!!comment._id",
-          :label="$t('modals.createPbehavior.fields.message')",
+          :label="$t('modals.createPbehavior.steps.comments.fields.message')",
           :value="comment.message",
           @input="updateFieldInArrayItem(index, 'message', $event)"
         )
@@ -31,7 +29,7 @@
         data-test="pbehaviorAddCommentButton",
         type="button",
         @click="addComment"
-      ) {{ $t('modals.createPbehavior.buttons.addComment') }}
+      ) {{ $t('modals.createPbehavior.steps.comments.buttons.addComment') }}
 </template>
 
 <script>

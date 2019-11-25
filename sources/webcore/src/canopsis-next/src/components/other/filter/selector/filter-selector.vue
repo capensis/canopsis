@@ -15,8 +15,8 @@
         :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
         @change="updateCondition"
       )
-        v-radio(data-test="andFilters", label="AND", value="$and")
-        v-radio(data-test="orFilters", label="OR", value="$or")
+        v-radio(data-test="andFilters", label="AND", value="$and", color="primary")
+        v-radio(data-test="orFilters", label="OR", value="$or", color="primary")
     v-flex(
       data-test="selectFilters",
       v-show="!hideSelect",

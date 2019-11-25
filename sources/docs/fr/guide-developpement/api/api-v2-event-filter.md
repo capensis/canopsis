@@ -1,4 +1,4 @@
-# API Event-Filter
+# Event-Filter
 
 L'API Event-Filter permet de consulter, créer et supprimer des règles d'enrichissement.
 
@@ -165,7 +165,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 **Exemple du corps de la réponse** :
 
 ```json
-{  
+{
 }
 ```
 

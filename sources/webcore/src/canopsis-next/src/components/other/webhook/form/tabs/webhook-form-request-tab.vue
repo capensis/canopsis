@@ -22,7 +22,12 @@
         )
     v-layout(row, wrap)
       v-flex(xs12)
-        v-switch(v-model="withAuth", :label="$t('webhook.tabs.request.fields.authSwitch')", :disabled="disabled")
+        v-switch(
+          v-model="withAuth",
+          :label="$t('webhook.tabs.request.fields.authSwitch')",
+          :disabled="disabled",
+          color="primary"
+        )
       template(v-if="withAuth")
         v-flex(xs12)
           h4.ml-1 {{ $t('webhook.tabs.request.fields.auth') }}

@@ -30,8 +30,9 @@
             v-checkbox(
               data-test="createAckEventResource",
               slot="activator",
-              v-model="ack_resources",
-              :label="$t('modals.createAckEvent.fields.ackResources')"
+              v-model="form.ack_resources",
+              :label="$t('modals.createAckEvent.fields.ackResources')",
+              color="primary"
             )
               span(slot-name="label") {{  }}
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
@@ -54,7 +55,6 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
@@ -76,10 +76,10 @@ export default {
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
   data() {
     return {
-      ack_resources: false,
       form: {
         ticket: '',
         output: '',
+        ack_resources: false,
       },
     };
   },
@@ -100,13 +100,17 @@ export default {
     },
 
     createDeclareTicketEvent() {
-      const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, omit(this.form, ['ticket']));
+      const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form.output);
 
       return this.createEventAction({ data: declareTicketEventData });
     },
 
     createAssocTicketEvent() {
-      const assocTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
+      const assocTicketEventData = this.prepareData(
+        EVENT_ENTITY_TYPES.assocTicket,
+        this.items,
+        { ticket: this.form.ticket, output: this.form.output },
+      );
 
       return this.createEventAction({ data: assocTicketEventData });
     },

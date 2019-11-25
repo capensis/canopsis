@@ -1,4 +1,4 @@
-# API d'import de contexte graphe
+# Import de contexte graphe
 
 Cette API permet d'importer un référentiel externe (autrement appelé *contexte graphe* ou *context graph*) au format JSON dans Canopsis.
 
