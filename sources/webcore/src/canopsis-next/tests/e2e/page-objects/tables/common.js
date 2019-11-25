@@ -86,27 +86,30 @@ const commands = {
     });
   },
 
-  selectFilter(index, checked = false) {
+  selectFilter(name, checked = false) {
     return this
       .customClick('@selectFilters')
       .getAttribute(
-        this.el('@optionSelectInput', index),
+        this.el('@filterOptionInput', name),
         'aria-checked',
         ({ value }) => {
           if (value !== String(checked)) {
-            this.customClick(this.el('@optionSelect', index));
+            this.customClick(this.el('@filterOption', name));
           }
         },
       );
   },
 
-  checkSelectedFilter(index, checked) {
-    return this
-      .getAttribute(
-        this.el('@optionSelectInput', index),
-        'aria-checked',
-        ({ value }) => this.assert.equal(value, String(checked)),
-      );
+  clickOutsideFilter() {
+    return this.customClickOutside('@selectFilters');
+  },
+
+  checkSelectedFilter(name, checked) {
+    return this.getAttribute(
+      this.el('@filterOptionInput', name),
+      'aria-checked',
+      ({ value }) => this.assert.equal(value, String(checked)),
+    );
   },
 
   setFiltersType(type) {
@@ -181,6 +184,9 @@ const commands = {
 module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+
+    filterOption: sel('filterOption-%s'),
+    filterOptionInput: `${sel('filterOption-%s')} input`,
 
     optionSelectInput: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s) input',
 

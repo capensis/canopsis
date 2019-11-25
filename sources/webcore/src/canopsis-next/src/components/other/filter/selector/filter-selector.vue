@@ -35,7 +35,11 @@
         @input="updateSelectedFilter"
       )
         template(slot="item", slot-scope="{ parent, item, tile }")
-          v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
+          v-list-tile-action(
+            :data-test="`filterOption-${item[itemText]}`",
+            v-if="isMultiple",
+            @click.stop="parent.$emit('select', item)"
+          )
             v-checkbox(:inputValue="tile.props.value", :color="parent.color")
           v-list-tile-content
             v-list-tile-title

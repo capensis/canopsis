@@ -27,6 +27,9 @@ const getPaginationFirstIndex = require('../../helpers/getPaginationFirstIndex')
 
 const SEARCH_STRING = 'feeder2_inst3';
 const SEARCH_RESULT_COUNT = 64;
+const COMPONENT_EQUAL_RESULT_COUNT = 46;
+const COMPONENT_AND_RESOURCE_RESULT_COUNT = 5;
+const COMPONENT_OR_RESOURCE_RESULT_COUNT = 91;
 const ALARMS_COUNT = 496;
 
 module.exports = {
@@ -301,17 +304,19 @@ module.exports = {
 
   'A filter can be selected': (browser) => {
     browser.page.tables.common()
-      .selectFilter(1, true)
-      .checkSelectedFilter(1, true);
+      .selectFilter('Connector name equal value', true)
+      .checkSelectedFilter('Connector name equal value', true);
   },
 
   'A selection of filter can be changed': (browser) => {
     browser.page.tables.common()
-      .selectFilter(1, false)
-      .selectFilter(2, true)
-      .checkSelectedFilter(1, false)
-      .checkSelectedFilter(2, true)
-      .selectFilter(1, true);
+      .selectFilter('Connector name equal value', false)
+      .selectFilter('Connector name not equal value', true)
+      .checkSelectedFilter('Connector name equal value', false)
+      .checkSelectedFilter('Connector name not equal value', true)
+      .selectFilter('Connector name equal value', true)
+      .checkSelectedFilter('Connector name equal value', true)
+      .clickOutsideFilter();
   },
 
   'The "conjunction" (AND) option of "Mix filters" works correctly': (browser) => {
@@ -382,25 +387,38 @@ module.exports = {
       .verifyModalOpened()
       .clickDeleteRule(createFilterModal.selectGroup([1]), 1)
       .clearFilterTitle()
-      .setFilterTitle('Connector equal value')
+      .setFilterTitle('Component equal value')
       .fillFilterGroup([1], {
         type: FILTERS_TYPE.AND,
         items: [{
-          rule: FILTER_COLUMNS.CONNECTOR,
+          rule: FILTER_COLUMNS.COMPONENT,
           operator: FILTER_OPERATORS.EQUAL,
           valueType: VALUE_TYPES.STRING,
-          value: 'feeder2_inst2',
+          value: 'feeder2_9',
         }],
       })
       .clickSubmitButton()
       .verifyModalClosed();
+
+    browser.page.widget.common()
+      .verifyFilterVisible('Component equal value');
 
     browser.page.modals.common.filtersList()
       .clickOutside()
       .verifyModalClosed();
   },
 
-  'The changed filter works in a new way': () => {},
+  'The changed filter works in a new way': (browser) => {
+    const alarmsWidget = browser.page.widget.alarms();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => browser.page.tables.common()
+        .selectFilter('Component equal value', true),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(COMPONENT_EQUAL_RESULT_COUNT, data[0].total);
+      },
+    );
+  },
 
   'A new filter can be created': (browser) => {
     const commonWidget = browser.page.widget.common();
@@ -413,14 +431,14 @@ module.exports = {
 
     createFilterModal
       .verifyModalOpened()
-      .setFilterTitle('New filter 3')
+      .setFilterTitle('Resource equal value')
       .fillFilterGroups([{
         type: FILTERS_TYPE.OR,
         items: [{
-          rule: FILTER_COLUMNS.CONNECTOR,
+          rule: FILTER_COLUMNS.RESOURCE,
           operator: FILTER_OPERATORS.EQUAL,
           valueType: VALUE_TYPES.STRING,
-          value: 'feeder2',
+          value: 'feeder2_1',
         }],
       }])
       .clickSubmitButton()
@@ -431,7 +449,26 @@ module.exports = {
       .verifyModalClosed();
   },
 
-  'A new filter works correctly': () => {},
+  'A new filter works correctly': (browser) => {
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    commonTable.setFiltersType(FILTERS_TYPE.AND);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => commonTable.selectFilter('Resource equal value', true),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(COMPONENT_AND_RESOURCE_RESULT_COUNT, data[0].total);
+      },
+    );
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => commonTable.setFiltersType(FILTERS_TYPE.OR),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(COMPONENT_OR_RESOURCE_RESULT_COUNT, data[0].total);
+      },
+    );
+  },
 
   'Table widget alarms': (browser) => {
     // const alarmsTable = browser.page.tables.alarms();
