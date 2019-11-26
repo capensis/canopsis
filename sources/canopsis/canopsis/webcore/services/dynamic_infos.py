@@ -25,6 +25,7 @@ API.
 
 from __future__ import unicode_literals
 
+import time
 from bottle import request
 
 from canopsis.common.collection import CollectionError
@@ -35,6 +36,15 @@ from canopsis.models.dynamic_infos import DynamicInfosRule
 from canopsis.webcore.utils import (
     gen_json, gen_json_error, HTTP_ERROR, HTTP_NOT_FOUND
 )
+
+
+def get_username():
+    """Returns the username of the logged-in user, or ''."""
+    try:
+        session = request.environ.get('beaker.session', {})
+        return session.get('user', '')
+    except AttributeError:
+        return ''
 
 
 def exports(ws):
@@ -112,7 +122,8 @@ def exports(ws):
             )
 
         try:
-            rule = DynamicInfosRule.new_from_dict(body)
+            rule = DynamicInfosRule.new_from_dict(
+                body, get_username(), int(time.time()))
         except (TypeError, ValueError, KeyError) as exception:
             return gen_json_error(
                 {'description': 'invalid dynamic infos: {}'.format(
@@ -142,7 +153,8 @@ def exports(ws):
             )
 
         try:
-            rule = DynamicInfosRule.new_from_dict(body)
+            rule = DynamicInfosRule.new_from_dict(
+                body, get_username(), int(time.time()))
         except (TypeError, ValueError, KeyError) as exception:
             return gen_json_error(
                 {'description': 'invalid dynamic infos: {}'.format(
