@@ -8,10 +8,7 @@
           td {{ props.item.connector }}
           td {{ props.item.connector_name }}
           td
-            v-icon(
-              small,
-              :color="props.item.enabled ? 'primary' : 'error'"
-            ) {{ props.item.enabled ? 'check' : 'clear'}}
+            enabled-column(:value="props.item.enabled")
           td {{ props.item.tstart | date('long') }}
           td {{ props.item.tstop | date('long') }}
           td {{ props.item.type_ }}
@@ -36,12 +33,17 @@
 <script>
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
+import EnabledColumn from '@/components/tables/enabled-column.vue';
+
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
+  components: {
+    EnabledColumn,
+  },
   mixins: [
     authMixin,
     queryMixin,
