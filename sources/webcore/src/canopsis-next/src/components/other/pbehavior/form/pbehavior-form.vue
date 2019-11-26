@@ -40,7 +40,7 @@
       v-stepper-content(step="2")
         v-card
           v-card-text
-            filter-editor(v-field="form.filter", required)
+            filter-editor(v-field="form.general.filter", required)
       v-stepper-content(step="3")
         v-card
           v-card-text

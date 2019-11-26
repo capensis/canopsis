@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { omit, isObject, cloneDeep } from 'lodash';
+import { omit, isObject, isString, cloneDeep } from 'lodash';
 
 import uid from '@/helpers/uid';
 import convertTimestampToMoment from '@/helpers/date';
@@ -12,16 +12,17 @@ export function pbehaviorToForm(pbehavior = {}) {
   }
 
   return {
+    rrule,
+
     enabled: typeof pbehavior.enabled === 'undefined' ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
     tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
     tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
-    filter: cloneDeep(pbehavior.filter || {}),
     type_: pbehavior.type_ || '',
     reason: pbehavior.reason || '',
-    rrule,
     timezone: pbehavior.timezone || 'Europe/Paris',
+    filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
   };
 }
 
