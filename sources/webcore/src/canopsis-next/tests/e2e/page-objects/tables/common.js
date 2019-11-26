@@ -86,6 +86,28 @@ const commands = {
     });
   },
 
+  clickFilter(name) {
+    this
+      .customClick('@selectFilters')
+      .api.useXpath()
+      .customClick(this.el('@filterOptionXPath', name))
+      .useCss();
+
+    return this;
+  },
+
+  clearFilters() {
+    return this.customClick('@clearFilters');
+  },
+
+  assertActiveFilters(count) {
+    return this.assert.elementsCount('@activeOptionSelect', count);
+  },
+
+  clickOutsideFiltersOptions() {
+    return this.customClickOutside('@activeMenu');
+  },
+
   selectFilter(name, checked = false) {
     return this
       .customClick('@selectFilters')
@@ -184,8 +206,12 @@ const commands = {
 module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    activeOptionSelect: '.menuable__content__active .v-select-list [role="listitem"] .v-list__tile--active',
+
+    activeMenu: '.menuable__content__active',
 
     filterOption: sel('filterOption-%s'),
+    filterOptionXPath: './/*[contains(@class, "menuable__content__active")]//*[contains(@class, "v-select-list")]//span[contains(text(), "%s")]',
     filterOptionInput: `${sel('filterOption-%s')} input`,
 
     optionSelectInput: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s) input',
@@ -218,6 +244,7 @@ module.exports = {
     mixFilters: `${sel('tableFilterSelector')} div${sel('mixFilters')} .v-input--selection-controls__ripple`,
     mixFiltersInput: `${sel('tableFilterSelector')} input${sel('mixFilters')}`,
     selectFilters: `${sel('tableFilterSelector')} ${sel('selectFilters')} .v-input__slot`,
+    clearFilters: `${sel('tableFilterSelector')} ${sel('selectFilters')} .v-input__icon--clear`,
     andFilters: `${sel('tableFilterSelector')} ${sel('andFilters')} + .v-input--selection-controls__ripple`,
     andFiltersInput: `${sel('tableFilterSelector')} input${sel('andFilters')}`,
     orFilters: `${sel('tableFilterSelector')} ${sel('orFilters')} + .v-input--selection-controls__ripple`,
