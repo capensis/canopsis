@@ -170,6 +170,15 @@ const commands = {
     });
   },
 
+  moveOutsideMassActionsPanel() {
+    this
+      .moveToElement('@massActionsPanel', 0, 0)
+      .api.moveTo(null, -5, -5)
+      .pause(500);
+
+    return this;
+  },
+
   checkRowCheckboxValue(id, callback) {
     return this.getAttribute(this.el('@tableRowCheckboxInput', id), 'aria-checked', ({ value }) => {
       callback(value);
@@ -185,7 +194,7 @@ const commands = {
   },
 
   assertActiveCheckboxCount(count) {
-    return this.assert.elementsCount('@tableCheckboxInput', count);
+    return this.assert.elementsCount('@tableCheckboxActiveInput', count);
   },
 
   clickOnRow(id) {
@@ -228,10 +237,10 @@ module.exports = {
 
     tableHeaderCell: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\']//span[contains(text(), \'%s\')]',
     selectAllCheckboxInput: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input input`,
-    selectAllCheckbox: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input`,
+    selectAllCheckbox: `${sel('tableWidget')} thead tr th:first-of-type .v-input__slot`,
 
     tableRow: `${sel('tableRow-%s')}`,
-    tableCheckbox: `${sel('rowCheckbox')} ${sel('vCheckboxFunctional')} input`,
+    tableCheckboxActiveInput: `${sel('rowCheckbox')} ${sel('vCheckboxFunctional')} input[aria-checked="true"]`,
     tableRowCheckbox: `${sel('tableRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')}`,
     tableRowCheckboxInput: `${sel('tableRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')} input`,
     tableRowColumn: `${sel('tableRow-%s')} ${sel('alarmValue-%s')}`,
@@ -261,6 +270,7 @@ module.exports = {
     orFilters: `${sel('tableFilterSelector')} ${sel('orFilters')} + .v-input--selection-controls__ripple`,
     showFiltersListButton: sel('showFiltersListButton'),
 
+    massActionsPanel: sel('massActionsPanel'),
     massActionsPanelItem: `${sel('tableWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s) button`,
     rowActionsSharedPanelItem: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('actionsPanelItem')}:nth-of-type(%s) button`,
     rowMoreActionsButton: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('dropDownActionsButton')}`,

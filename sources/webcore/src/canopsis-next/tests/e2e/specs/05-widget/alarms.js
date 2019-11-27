@@ -575,6 +575,7 @@ module.exports = {
     browser.page.tables.common()
       .setAllCheckbox(true)
       .assertActiveCheckboxCount(20)
+      .moveOutsideMassActionsPanel()
       .setAllCheckbox(false)
       .assertActiveCheckboxCount(0);
   },
@@ -586,15 +587,108 @@ module.exports = {
     commonTable
       .setRowCheckbox(firstAlarm._id, true)
       .checkRowCheckboxValue(firstAlarm._id, (value) => {
-        browser.assert.equal(value, true);
+        browser.assert.equal(value, 'true');
       })
       .setRowCheckbox(secondAlarm._id, true)
       .checkRowCheckboxValue(secondAlarm._id, (value) => {
-        browser.assert.equal(value, true);
-      });
+        browser.assert.equal(value, 'true');
+      })
+      .assertActiveCheckboxCount(2)
+      .setRowCheckbox(firstAlarm._id, false)
+      .checkRowCheckboxValue(firstAlarm._id, (value) => {
+        browser.assert.equal(value, 'false');
+      })
+      .setRowCheckbox(secondAlarm._id, false)
+      .checkRowCheckboxValue(secondAlarm._id, (value) => {
+        browser.assert.equal(value, 'false');
+      })
+      .assertActiveCheckboxCount(0);
   },
 
   'Pressing on button "Periodical behavior" creates periodical behavior': () => {},
+
+  'An acknowledge without a ticket can be created': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const createAckEventModal = browser.page.modals.alarm.createAckEvent();
+    const confirmAckWithTcketModal = browser.page.modals.alarm.confirmAckWithTcket();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .setRowCheckbox(firstAlarm._id, true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
+
+    createAckEventModal
+      .verifyModalOpened()
+      .clearTicketNumber()
+      .setTicketNumber(165558555)
+      .clearTicketNote()
+      .setTicketNote('Note text')
+      .setAckTicketResources(true)
+      .clickSubmitButton();
+
+    confirmAckWithTcketModal
+      .verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    createAckEventModal.verifyModalClosed();
+  },
+
+  'An acknowledge with ticket can be created': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const createAckEventModal = browser.page.modals.alarm.createAckEvent();
+    const [secondAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .setRowCheckbox(secondAlarm._id, true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
+
+    createAckEventModal
+      .verifyModalOpened()
+      .clearTicketNumber()
+      .setTicketNumber(165558556)
+      .clearTicketNote()
+      .setTicketNote('Note text')
+      .setAckTicketResources(true)
+      .clickSubmitButtonWithTicket()
+      .verifyModalClosed();
+  },
+
+  '"Fast ack" can be created': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .setRowCheckbox(firstAlarm._id, true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.FAST_ACK);
+  },
+
+  'An "ack" can be canceled': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const [firstAlarm, secondAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .setRowCheckbox(firstAlarm._id, true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.CANCEL_ACK);
+
+    browser.page.modals.alarm.createCancelEvent()
+      .verifyModalOpened()
+      .clearTicketNote()
+      .setTicketNote('Cancel first alarm ack')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonTable
+      .setRowCheckbox(secondAlarm._id, true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.CANCEL_ACK);
+
+    browser.page.modals.alarm.createCancelEvent()
+      .verifyModalOpened()
+      .clearTicketNote()
+      .setTicketNote('Cancel second alarm ack')
+      .clickSubmitButton()
+      .verifyModalClosed();
+  },
 
   'Table widget alarms': (browser) => {
     const commonTable = browser.page.tables.common();
@@ -602,7 +696,6 @@ module.exports = {
     const pbehaviorForm = browser.page.forms.pbehavior();
 
     const firstId = '6770ba94-51d9-4b8c-ae85-7c62fab18a54';
-    // const secondId = 'b7f65652-e53e-4cda-8c3b-be9bbf600ca0';
 
     browser.page.view()
       .clickMenuViewButton();
@@ -611,35 +704,6 @@ module.exports = {
       .setRowCheckbox(firstId, true)
       .setAllCheckbox(true)
       .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
-
-    browser.page.modals.alarm.createAckEvent()
-      .verifyModalOpened()
-      .clickTicketNumber()
-      .clearTicketNumber()
-      .setTicketNumber(1223333)
-      .clickTicketNote()
-      .clearTicketNote()
-      .setTicketNote('note')
-      .setAckTicketResources(true)
-      .clickCancelButton()
-      .verifyModalClosed();
-
-    commonTable
-      .setAllCheckbox(true)
-      .clickOnMassAction(ALARMS_MASS_ACTIONS.CANCEL_ACK);
-
-    browser.page.modals.alarm.createCancelEvent()
-      .verifyModalOpened()
-      .clickTicketNote()
-      .clearTicketNote()
-      .setTicketNote('note')
-      .clickCancelButton()
-      .verifyModalClosed();
-
-    commonTable
-      // .clickAlarmListHeaderCell('Connector')
-      .clickOnRow(firstId)
-      .clickOnSharedAction(firstId, ALARMS_SHARED_ACTIONS.ACK);
 
     browser.page.modals.alarm.createAckEvent()
       .verifyModalOpened()
