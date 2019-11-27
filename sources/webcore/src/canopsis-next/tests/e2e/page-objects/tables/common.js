@@ -170,12 +170,22 @@ const commands = {
     });
   },
 
-  setRowCheckbox(id, checked) {
+  checkRowCheckboxValue(id, callback) {
     return this.getAttribute(this.el('@tableRowCheckboxInput', id), 'aria-checked', ({ value }) => {
+      callback(value);
+    });
+  },
+
+  setRowCheckbox(id, checked) {
+    return this.checkRowCheckboxValue(id, (value) => {
       if (value !== String(checked)) {
         this.customClick(this.el('@tableRowCheckbox', id));
       }
     });
+  },
+
+  assertActiveCheckboxCount(count) {
+    return this.assert.elementsCount('@tableCheckboxInput', count);
   },
 
   clickOnRow(id) {
@@ -221,6 +231,7 @@ module.exports = {
     selectAllCheckbox: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input`,
 
     tableRow: `${sel('tableRow-%s')}`,
+    tableCheckbox: `${sel('rowCheckbox')} ${sel('vCheckboxFunctional')} input`,
     tableRowCheckbox: `${sel('tableRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')}`,
     tableRowCheckboxInput: `${sel('tableRow-%s')} ${sel('rowCheckbox')} ${sel('vCheckboxFunctional')} input`,
     tableRowColumn: `${sel('tableRow-%s')} ${sel('alarmValue-%s')}`,

@@ -33,6 +33,10 @@ const COMPONENT_OR_RESOURCE_RESULT_COUNT = 57;
 const CONNECTOR_NAME_EQUAL_VALUE_RESULT_COUNT = 30;
 const CONNECTOR_NAME_NOT_EQUAL_VALUE_RESULT_COUNT = 106;
 const ALARMS_COUNT = 136;
+const INTERVAL_START_DATE = '25/11/2019 00:00';
+const INTERVAL_END_DATE = '26/11/2019 00:00';
+const INTERVAL_ITEMS_COUNT = 136;
+const LAST_SEVEN_DAY_ITEMS_COUNT = 136;
 
 module.exports = {
   async before(browser, done) {
@@ -92,12 +96,6 @@ module.exports = {
         moreInfos: 'More infos popup',
         enableHtml: true,
         liveReporting: {
-          // calendarStartDate: {
-          //   minute: 15,
-          //   hour: 12,
-          //   day: 12,
-          // },
-        //   endDate: '13/09/2019 00:00',
           range: INTERVAL_RANGES.LAST_YEAR,
         },
         filters: {
@@ -196,8 +194,12 @@ module.exports = {
     alarmsWidget.waitFirstAlarmsListXHR(
       () => commonTable.clickSearchResetButton(),
       ({ responseData: { data } }) => {
-        browser.assert.notEqual(data[0].total, SEARCH_RESULT_COUNT);
-        browser.assert.equal(data[0].total, ALARMS_COUNT);
+        const response = data[0];
+
+        browser.assert.notEqual(response.total, SEARCH_RESULT_COUNT);
+        browser.assert.equal(response.total, ALARMS_COUNT);
+
+        browser.globals.temporary.alarmsList = response.alarms;
       },
     );
   },
@@ -502,22 +504,97 @@ module.exports = {
         browser.assert.equal(data[0].total, COMPONENT_OR_RESOURCE_RESULT_COUNT);
       },
     );
+
+    commonTable
+      .clearFilters()
+      .assertActiveFilters(0);
   },
 
   '"Live reporting" can be created for period of time selected by user': (browser) => {
     const dateIntervalField = browser.page.fields.dateInterval();
+    const alarmsWidget = browser.page.widget.alarms();
+    const liveReportingModal = browser.page.modals.common.liveReporting();
     const alarmsTable = browser.page.tables.alarms();
 
     alarmsTable.openLiveReporting();
 
+    liveReportingModal.verifyModalOpened();
+
     dateIntervalField
-      .clickDatePickerDayTab()
-      .selectCalendarDay(3)
-      .clickDatePickerHoursTab()
-      .selectCalendarHour(16)
-      .clickDatePickerMinutesTab()
-      .selectCalendarMinute(DATE_INTERVAL_MINUTES.ZERO);
+      .selectRange(INTERVAL_RANGES.CUSTOM)
+      .clearStartDate()
+      .setStartDate(INTERVAL_START_DATE)
+      .clearEndDate()
+      .setEndDate(INTERVAL_END_DATE);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => liveReportingModal.clickSubmitButton(),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(data[0].total, INTERVAL_ITEMS_COUNT);
+      },
+    );
+
+    liveReportingModal.verifyModalClosed();
   },
+
+  '"Live reporting" can be created for determined period of time': (browser) => {
+    const dateIntervalField = browser.page.fields.dateInterval();
+    const alarmsWidget = browser.page.widget.alarms();
+    const liveReportingModal = browser.page.modals.common.liveReporting();
+    const alarmsTable = browser.page.tables.alarms();
+
+    alarmsTable.openLiveReporting();
+
+    liveReportingModal.verifyModalOpened();
+
+    dateIntervalField.selectRange(INTERVAL_RANGES.LAST_SEVEN_DAY);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => liveReportingModal.clickSubmitButton(),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(data[0].total, LAST_SEVEN_DAY_ITEMS_COUNT);
+      },
+    );
+
+    liveReportingModal.verifyModalClosed();
+  },
+
+  '"Live reporting" can be deleted': (browser) => {
+    const alarmsWidget = browser.page.widget.alarms();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => browser.page.tables.alarms()
+        .clickResetLiveReporting(),
+      ({ responseData: { data } }) => {
+        browser.assert.equal(data[0].total, ALARMS_COUNT);
+      },
+    );
+  },
+
+  'All elements in the table can be selected': (browser) => {
+    browser.page.tables.common()
+      .setAllCheckbox(true)
+      .assertActiveCheckboxCount(20)
+      .setAllCheckbox(false)
+      .assertActiveCheckboxCount(0);
+  },
+
+  'The only one element in the table can be selected': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const [firstAlarm, secondAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .setRowCheckbox(firstAlarm._id, true)
+      .checkRowCheckboxValue(firstAlarm._id, (value) => {
+        browser.assert.equal(value, true);
+      })
+      .setRowCheckbox(secondAlarm._id, true)
+      .checkRowCheckboxValue(secondAlarm._id, (value) => {
+        browser.assert.equal(value, true);
+      });
+  },
+
+  'Pressing on button "Periodical behavior" creates periodical behavior': () => {},
 
   'Table widget alarms': (browser) => {
     const commonTable = browser.page.tables.common();
