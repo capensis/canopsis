@@ -31,11 +31,15 @@ class DynamicInfosRule(object):
     """A DynamicInfosRule is an object representing a rule that adds dynamic
     informations to the alarms.
 
-    These rules can be managed withthe /api/v2/dynamic_infos API, and are used
+    These rules can be managed with the /api/v2/dynamic_infos API, and are used
     by the dynamic-infos go engine.
 
     :param str id_: A unique id
     :param str name: The name of the rule
+    :param str author: The author of the rule
+    :param int creation_date: The date the rule was created as a timestamp.
+    :param int last_modified_date: The date the rule was last modified as a
+        timestamp.
     :param Optional[str] description: An optional description
     :param List[DynamicInfo] infos: The informations that will be added by the
         rule
@@ -45,6 +49,9 @@ class DynamicInfosRule(object):
 
     ID = '_id'
     NAME = 'name'
+    AUTHOR = 'author'
+    CREATION_DATE = 'creation_date'
+    LAST_MODIFIED_DATE = 'last_modified_date'
     DESCRIPTION = 'description'
     INFOS = 'infos'
     ALARM_PATTERNS = 'alarm_patterns'
@@ -54,13 +61,18 @@ class DynamicInfosRule(object):
         NAME, INFOS
     ]
     VALID_FIELDS = frozenset([
-        ID, NAME, DESCRIPTION, INFOS, ALARM_PATTERNS, ENTITY_PATTERNS
+        ID, NAME, AUTHOR, CREATION_DATE, LAST_MODIFIED_DATE, DESCRIPTION,
+        INFOS, ALARM_PATTERNS, ENTITY_PATTERNS
     ])
 
-    def __init__(self, id_, name, description=None, infos=None,
-                 alarm_patterns=None, entity_patterns=None):
+    def __init__(self, id_, name, author, creation_date, last_modified_date,
+                 description=None, infos=None, alarm_patterns=None,
+                 entity_patterns=None):
         self.id = id_
         self.name = name
+        self.author = author
+        self.creation_date = creation_date
+        self.last_modified_date = last_modified_date
         self.description = ""
         self.infos = []
         self.alarm_patterns = alarm_patterns
@@ -80,9 +92,14 @@ class DynamicInfosRule(object):
         return '<DynamicInfosRule {}>'.format(self.__str__())
 
     @classmethod
-    def new_from_dict(cls, dynamic_infos_rule):
+    def new_from_dict(cls, dynamic_infos_rule, author, date):
         """Create a new DynamicInfosRule from a dictionary.
 
+
+        :param Dict[str, Any] dynamic_infos_rule: The dynamic info rule as a
+            dictionary
+        :param str author: The author of the rule
+        :param int date: The date the rule was last modified as a timestamp
         :rtype: DynamicInfosRule
         :raises: TypeError, ValueError or KeyError if the DynamicInfosRules is
         not valid.
@@ -116,6 +133,9 @@ class DynamicInfosRule(object):
         return cls(
             id_=id_,
             name=dynamic_infos_rule[cls.NAME],
+            author=author,
+            creation_date=date,
+            last_modified_date=date,
             description=dynamic_infos_rule.get(cls.DESCRIPTION),
             infos=infos,
             alarm_patterns=dynamic_infos_rule.get(cls.ALARM_PATTERNS),
@@ -137,6 +157,18 @@ class DynamicInfosRule(object):
         if not isinstance(self.name, basestring):
             raise ValueError(
                 "{} should be a string".format(DynamicInfosRule.NAME))
+
+        if not isinstance(self.author, basestring):
+            raise ValueError(
+                "{} should be a string".format(DynamicInfosRule.AUTHOR))
+
+        if not isinstance(self.creation_date, int):
+            raise ValueError(
+                "{} should be a timestamp".format(DynamicInfosRule.CREATION_DATE))
+
+        if not isinstance(self.last_modified_date, int):
+            raise ValueError(
+                "{} should be a timestamp".format(DynamicInfosRule.LAST_MODIFIED_DATE))
 
         if not isinstance(self.description, basestring):
             raise ValueError(
@@ -182,6 +214,9 @@ class DynamicInfosRule(object):
         return {
             DynamicInfosRule.ID: self.id,
             DynamicInfosRule.NAME: self.name,
+            DynamicInfosRule.AUTHOR: self.author,
+            DynamicInfosRule.CREATION_DATE: self.creation_date,
+            DynamicInfosRule.LAST_MODIFIED_DATE: self.last_modified_date,
             DynamicInfosRule.DESCRIPTION: self.description,
             DynamicInfosRule.INFOS: [info.as_dict() for info in self.infos],
             DynamicInfosRule.ALARM_PATTERNS: self.alarm_patterns,
