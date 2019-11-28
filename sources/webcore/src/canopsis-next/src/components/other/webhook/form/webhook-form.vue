@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs(:color="vTabsColor", :dark="dark", fixed-tabs)
+  v-tabs(:color="vTabsColor", :dark="dark", fixed-tabs, slider-color="primary")
     template(v-for="(tab, index) in tabs")
       v-tab(:key="`tab-${index}`")
         .validation-header(:class="{ 'error--text': validationErrorsFlagsForTabs[index] }") {{ tab.title }}

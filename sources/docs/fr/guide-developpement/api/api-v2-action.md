@@ -1,4 +1,4 @@
-# API Action
+# Action
 
 L'API Action permet de consulter, créer, modifier et supprimer des Actions sur les alarmes.
 
@@ -218,7 +218,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 **Exemple du corps de la réponse** :
 
 ```json
-{  
+{
 }
 ```
 

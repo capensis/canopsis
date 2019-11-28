@@ -1,4 +1,4 @@
-# API Heartbeat
+# Heartbeat
 
 L'API HeartBeat permet de consulter, créer et supprimer des HeartBeats.
 

@@ -14,7 +14,7 @@
           chips
         )
       v-flex(xs12)
-        v-tabs(v-model="activeHookTab", fixed-tabs)
+        v-tabs(v-model="activeHookTab", fixed-tabs, slider-color="primary")
           v-tab(:disabled="hasBlockedTriggers") {{ $t('webhook.tabs.hook.fields.eventPatterns') }}
           v-tab {{ $t('webhook.tabs.hook.fields.alarmPatterns') }}
           v-tab {{ $t('webhook.tabs.hook.fields.entityPatterns') }}

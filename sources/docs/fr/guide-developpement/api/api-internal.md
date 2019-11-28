@@ -1,4 +1,4 @@
-# API Internal
+# Internal
 
 ### Modification de l'edition et de la stack de Canopsis
 

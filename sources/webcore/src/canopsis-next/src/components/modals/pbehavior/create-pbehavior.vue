@@ -56,7 +56,9 @@ export default {
         const pbehavior = formToPbehavior(this.form.general);
 
         pbehavior.comments = commentsToPbehaviorComments(this.form.comments);
-        pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
+        if (pbehavior.rrule) {
+          pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
+        }
 
         if (!pbehavior.author) {
           pbehavior.author = this.currentUser._id;
@@ -72,3 +74,4 @@ export default {
   },
 };
 </script>
+

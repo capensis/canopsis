@@ -4,7 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.eventFilterRule.editPattern') }}
     v-card-text
-      v-tabs(fixed-tabs, v-model="activeTab")
+      v-tabs(fixed-tabs, v-model="activeTab", slider-color="primary")
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
       v-tabs-items(v-model="activeTab")
         v-tab-item

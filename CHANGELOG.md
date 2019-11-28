@@ -2,6 +2,24 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.33.0 - Due date : 2019-11-22
+
+- [Documentation] Mention that resolve and unsnooze are incompatible with event\_patterns
+- [API] Add a new /api/v2/dynamic-infos API, not completely usuable yet
+- [Go] Handle RabbitMQ connection loss
+- [Go] Fix cache usage in alarm service
+- [Go] Fix corrupted traces with large events
+- [Go] Remove dead code
+- [Go] Allow to use null value for pattern lists
+- [UI] Add helpers to deal with integers and string comparisons
+- [UI - AlarmList] Fix ack\_resources usage when acknowleding an alarm
+- [UI - Context] Fix impact/depends search in entity creation modal
+- [UI - pbehavior] Refactor pbehavior form
+- [UI - pbehavior] Fix "required" rule on pbehavior filter
+- [UX] Various UX improvements in widget containers
+
+## Canopsis 3.32.0 - Due date : 2019-11-08
+
 ## Canopsis 3.31.0 - Due date : 2019-10-28
 
 - [Packages] Introduce new "canoctl deploy-go" command

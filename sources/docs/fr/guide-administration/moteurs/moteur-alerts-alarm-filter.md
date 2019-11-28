@@ -5,7 +5,7 @@
 
 L'alarm-filter est une fonctionnalité du moteur alerts permettant de déclencher conditionnellement des actions lors de la création d'alarmes.
 
-Les actions sont définies dans la collection MongoDB `default_alarmfilter`, et peuvent être ajoutées et modifiées avec l'[API alarm-filter](../../guide-developpement/alarm-filter/api_v2_alarm_filter.md).
+Les actions sont définies dans la collection MongoDB `default_alarmfilter`, et peuvent être ajoutées et modifiées avec l'[API alarm-filter](../../guide-developpement/api/api-v2-alarm-filter.md).
 
 ## Fonctionnement
 

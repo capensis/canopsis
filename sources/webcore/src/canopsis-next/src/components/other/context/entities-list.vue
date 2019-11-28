@@ -56,9 +56,7 @@
             @click="props.expanded = !props.expanded"
           )
             div(v-if="column.value === 'enabled'")
-              v-icon(
-                :color="props.item.enabled ? 'primary' : 'error'"
-              ) {{ props.item.enabled ? 'check' : 'clear' }}
+              enabled-column(:value="props.item.enabled")
             ellipsis(
               v-else,
               :text="props.item | get(column.value, null, '')",
@@ -91,6 +89,7 @@ import ContextSearch from '@/components/other/context/search/context-search.vue'
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -126,6 +125,7 @@ export default {
     ContextFab,
     ActionsPanel,
     MassActionsPanel,
+    EnabledColumn,
   },
   mixins: [
     authMixin,
