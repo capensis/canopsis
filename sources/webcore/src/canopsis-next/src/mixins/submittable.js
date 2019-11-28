@@ -1,4 +1,4 @@
-export default (method = 'submit', property = 'submitting', computedProperty = 'isDisabled') => ({
+export default ({ method = 'submit', property = 'submitting', computedProperty = 'isDisabled' } = {}) => ({
   data() {
     return {
       [property]: false,

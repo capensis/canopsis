@@ -18,7 +18,8 @@
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="errors.any() || submitting",
+          :loading="submitting",
+          :disabled="isDisabled",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
@@ -30,6 +31,7 @@ import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import submittableMixin from '@/mixins/submittable';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
@@ -44,10 +46,9 @@ export default {
     validator: 'new',
   },
   components: { StateCriticityField, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
-      submitting: false,
       form: {
         output: '',
         state: ENTITIES_STATES.major,
@@ -64,20 +65,12 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        this.submitting = true;
+      const isFormValid = await this.$validator.validateAll();
 
-        const isFormValid = await this.$validator.validateAll();
+      if (isFormValid) {
+        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
 
-        if (isFormValid) {
-          await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
-
-          this.$modals.hide();
-        }
-      } catch (err) {
-        this.$popups.error({ text: err.description || this.$t('error.default') });
-      } finally {
-        this.submitting = false;
+        this.$modals.hide();
       }
     },
   },

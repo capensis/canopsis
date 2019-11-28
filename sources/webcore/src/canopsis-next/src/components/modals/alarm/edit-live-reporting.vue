@@ -14,7 +14,8 @@
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="errors.any() || submitting",
+          :loading="submitting",
+          :disabled="isDisabled",
           type="submit",
           data-test="liveReportingApplyButton"
         ) {{ $t('common.apply') }}
@@ -26,6 +27,7 @@ import moment from 'moment';
 import { MODALS, DATETIME_FORMATS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
@@ -40,12 +42,11 @@ export default {
     validator: 'new',
   },
   components: { DateIntervalSelector, ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { config } = this.modal;
 
     return {
-      submitting: false,
       form: {
         tstart: config.tstart || '',
         tstop: config.tstop || '',
@@ -73,22 +74,14 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        this.submitting = true;
+      const isFormValid = await this.$validator.validateAll();
 
-        const isFormValid = await this.$validator.validateAll();
-
-        if (isFormValid) {
-          if (this.config.action) {
-            await this.config.action(this.form);
-          }
-
-          this.$modals.hide();
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.form);
         }
-      } catch (err) {
-        this.$popups.error({ text: err.description || this.$t('error.default') });
-      } finally {
-        this.submitting = false;
+
+        this.$modals.hide();
       }
     },
   },

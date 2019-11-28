@@ -9,7 +9,8 @@
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="errors.any() || submitting",
+          :loading="submitting",
+          :disabled="isDisabled",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
@@ -21,6 +22,7 @@ import { MODALS, EVENT_ENTITY_TYPES, DURATION_UNITS } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import submittableMixin from '@/mixins/submittable';
 
 import DurationField from '@/components/forms/fields/duration.vue';
 
@@ -35,10 +37,9 @@ export default {
     validator: 'new',
   },
   components: { DurationField, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
-      submitting: false,
       form: {
         duration: 1,
         durationType: DURATION_UNITS.minute.value,
@@ -47,25 +48,17 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        this.submitting = true;
+      const isFormValid = await this.$validator.validateAll();
 
-        const isFormValid = await this.$validator.validateAll();
+      if (isFormValid) {
+        const duration = moment.duration(
+          parseInt(this.form.duration, 10),
+          this.form.durationType,
+        ).asSeconds();
 
-        if (isFormValid) {
-          const duration = moment.duration(
-            parseInt(this.form.duration, 10),
-            this.form.durationType,
-          ).asSeconds();
+        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
 
-          await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
-
-          this.$modals.hide();
-        }
-      } catch (err) {
-        this.$popups.error({ text: err.description || this.$t('error.default') });
-      } finally {
-        this.submitting = false;
+        this.$modals.hide();
       }
     },
   },

@@ -50,7 +50,11 @@ export default {
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixin(),
-    submittableMixin('submitWithTicket', 'submittingWithTicket', 'isDisabledWithTicket'),
+    submittableMixin({
+      method: 'submitWithTicket',
+      property: 'submittingWithTicket',
+      computedProperty: 'isDisabledWithTicket',
+    }),
   ],
   data() {
     return {

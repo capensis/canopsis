@@ -21,7 +21,8 @@
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="errors.any() || submitting",
+          :loading="submitting",
+          :disabled="isDisabled",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
@@ -31,6 +32,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import submittableMixin from '@/mixins/submittable';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
 
@@ -45,10 +47,9 @@ export default {
     validator: 'new',
   },
   components: { AlarmGeneralTable, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
-      submitting: false,
       form: {
         output: '',
       },
@@ -65,26 +66,18 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        this.submitting = true;
+      const isFormValid = await this.$validator.validateAll();
 
-        const isFormValid = await this.$validator.validateAll();
+      if (isFormValid) {
+        const data = { ...this.form };
 
-        if (isFormValid) {
-          const data = { ...this.form };
-
-          if (this.eventType === EVENT_ENTITY_TYPES.cancel) {
-            data.cancel = 1;
-          }
-
-          await this.createEvent(this.eventType, this.items, data);
-
-          this.$modals.hide();
+        if (this.eventType === EVENT_ENTITY_TYPES.cancel) {
+          data.cancel = 1;
         }
-      } catch (err) {
-        this.$popups.error({ text: err.description || this.$t('error.default') });
-      } finally {
-        this.submitting = false;
+
+        await this.createEvent(this.eventType, this.items, data);
+
+        this.$modals.hide();
       }
     },
   },

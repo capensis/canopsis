@@ -35,7 +35,11 @@ export default {
   mixins: [
     modalInnerMixin,
     submittableMixin(),
-    submittableMixin('submitWithTicket', 'submittingWithTicket', 'isDisabledWithTicket'),
+    submittableMixin({
+      method: 'submitWithTicket',
+      property: 'submittingWithTicket',
+      computedProperty: 'isDisabledWithTicket',
+    }),
   ],
   data() {
     return {
