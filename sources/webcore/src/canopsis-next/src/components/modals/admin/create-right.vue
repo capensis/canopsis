@@ -7,7 +7,7 @@
         right-form(v-model="form")
       template(slot="actions")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="errors.any()", type="submit") {{ $t('common.submit') }}
+        v-btn.primary(:disabled="errors.any() || submitting", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -17,6 +17,7 @@ import { generateRight } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
+import submittingMixin from '@/mixins/submitting';
 
 import RightForm from '@/components/other/right/right-form.vue';
 
@@ -28,7 +29,7 @@ export default {
     validator: 'new',
   },
   components: { RightForm, ModalWrapper },
-  mixins: [modalInnerMixin, entitiesRightMixin],
+  mixins: [modalInnerMixin, entitiesRightMixin, submittingMixin],
   data() {
     return {
       form: {
@@ -40,22 +41,19 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        const isFormValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-        if (isFormValid) {
-          const data = { ...generateRight(), ...this.form };
+      if (isFormValid) {
+        const data = { ...generateRight(), ...this.form };
 
-          await this.createRight({ data });
+        await this.createRight({ data });
 
-          this.$popups.success({ text: this.$t('success.default') });
-          this.$modals.hide();
-        }
-        if (this.config.action) {
-          await this.config.action();
-        }
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
+        this.$popups.success({ text: this.$t('success.default') });
+        this.$modals.hide();
+      }
+
+      if (this.config.action) {
+        await this.config.action();
       }
     },
   },

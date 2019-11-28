@@ -13,7 +13,7 @@
       template(slot="actions")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="errors.any()",
+          :disabled="errors.any() || submitting",
           type="submit",
           data-test="submitButton"
         ) {{ $t('common.submit') }}
@@ -25,6 +25,7 @@ import { pick } from 'lodash';
 import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittingMixin from '@/mixins/submitting';
 
 import UserForm from '@/components/other/user/user-form.vue';
 
@@ -39,7 +40,7 @@ export default {
     validator: 'new',
   },
   components: { UserForm, ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [modalInnerMixin, submittingMixin],
   data() {
     return {
       form: {

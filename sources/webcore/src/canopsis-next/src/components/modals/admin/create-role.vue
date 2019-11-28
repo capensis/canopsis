@@ -8,7 +8,7 @@
       template(slot="actions")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary.white--text(
-          :disabled="errors.any()",
+          :disabled="errors.any() || submitting",
           type="submit",
           data-test="submitButton"
         ) {{ $t('common.submit') }}
@@ -25,6 +25,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import submittingMixin from '@/mixins/submitting';
 
 import RoleForm from '@/components/other/role/role-form.vue';
 
@@ -41,6 +42,7 @@ export default {
     entitiesViewMixin,
     entitiesRoleMixin,
     entitiesViewGroupMixin,
+    submittingMixin,
   ],
   data() {
     const group = this.modal.config.group || { name: '', description: '', defaultView: '' };
@@ -74,21 +76,17 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        const isFormValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-        if (isFormValid) {
-          const formData = this.isNew ? { ...generateRole() } : { ...this.role };
-          formData._id = this.form._id;
+      if (isFormValid) {
+        const formData = this.isNew ? { ...generateRole() } : { ...this.role };
+        formData._id = this.form._id;
 
-          await this.createRole({ data: { ...formData, ...this.form } });
-          await this.fetchRolesListWithPreviousParams();
+        await this.createRole({ data: { ...formData, ...this.form } });
+        await this.fetchRolesListWithPreviousParams();
 
-          this.$popups.success({ text: this.$t('success.default') });
-          this.$modals.hide();
-        }
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
+        this.$popups.success({ text: this.$t('success.default') });
+        this.$modals.hide();
       }
     },
   },
