@@ -1,12 +1,13 @@
 <template lang="pug">
-  modal-wrapper
-    template(slot="title")
-      span {{ $t('modals.createRight.title') }}
-    template(slot="text")
-      right-form(v-model="form")
-    template(slot="actions")
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createRight.title') }}
+      template(slot="text")
+        right-form(v-model="form")
+      template(slot="actions")
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(:disabled="errors.any()", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>

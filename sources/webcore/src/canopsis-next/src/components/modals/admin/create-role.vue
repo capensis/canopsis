@@ -1,12 +1,17 @@
 <template lang="pug">
-  modal-wrapper(data-test="createRoleModal")
-    template(slot="title")
-      span {{ title }}
-    template(slot="text")
-      role-form(v-model="form")
-    template(slot="actions")
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary.white--text(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
+  v-form(data-test="createRoleModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        role-form(v-model="form")
+      template(slot="actions")
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary.white--text(
+          :disabled="errors.any()",
+          type="submit",
+          data-test="submitButton"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>

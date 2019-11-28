@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form
+  div
     progress-overlay(:pending="pending")
     v-layout(row)
       v-text-field(

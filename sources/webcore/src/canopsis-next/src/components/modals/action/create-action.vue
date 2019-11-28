@@ -1,12 +1,13 @@
 <template lang="pug">
-  modal-wrapper
-    template(slot="title")
-      span {{ $t('modals.createAction.create.title') }}
-    template(slot="text")
-      action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
-    template(slot="actions")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createAction.create.title') }}
+      template(slot="text")
+        action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(:disabled="errors.any()", type="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>

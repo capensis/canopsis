@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form
+  div
     v-layout(row)
       v-text-field(
         v-field="form._id",

@@ -1,17 +1,22 @@
 <template lang="pug">
-  modal-wrapper
-    template(slot="title")
-      span {{ title }}
-    template(slot="text")
-      user-form(
-        v-model="form",
-        :isNew="isNew",
-        :user="config.user",
-        :onlyUserPrefs="config.onlyUserPrefs"
-      )
-    template(slot="actions")
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(data-test="submitButton", @click.prevent="submit") {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        user-form(
+          v-model="form",
+          :isNew="isNew",
+          :user="config.user",
+          :onlyUserPrefs="config.onlyUserPrefs"
+        )
+      template(slot="actions")
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="errors.any()",
+          type="submit",
+          data-test="submitButton"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
