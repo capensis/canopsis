@@ -6,8 +6,8 @@
       template(slot="text")
         right-form(v-model="form")
       template(slot="actions")
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="errors.any() || submitting", type="submit") {{ $t('common.submit') }}
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -17,7 +17,7 @@ import { generateRight } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
-import submittingMixin from '@/mixins/submitting';
+import submittableMixin from '@/mixins/submittable';
 
 import RightForm from '@/components/other/right/right-form.vue';
 
@@ -29,7 +29,7 @@ export default {
     validator: 'new',
   },
   components: { RightForm, ModalWrapper },
-  mixins: [modalInnerMixin, entitiesRightMixin, submittingMixin],
+  mixins: [modalInnerMixin, entitiesRightMixin, submittableMixin()],
   data() {
     return {
       form: {

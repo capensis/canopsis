@@ -7,7 +7,7 @@
         action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="errors.any() || submitting", type="submit") {{ $t('common.actions.saveChanges') }}
+        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -18,7 +18,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
 
-import submittingMixin from '@/mixins/submitting';
+import submittableMixin from '@/mixins/submittable';
 
 import ActionForm from '@/components/other/action/form/action-form.vue';
 
@@ -30,7 +30,7 @@ export default {
     validator: 'new',
   },
   components: { ActionForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittingMixin],
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { item, isDuplicating } = this.modal.config;
 

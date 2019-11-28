@@ -1,14 +1,14 @@
-export default {
+export default (method = 'submit') => ({
   data() {
     return {
       submitting: false,
     };
   },
   created() {
-    const sourceSubmit = this.submit;
+    const sourceSubmit = this[method];
 
     if (sourceSubmit) {
-      this.submit = async function submit(...args) {
+      this[method] = async function submit(...args) {
         try {
           this.submitting = true;
 
@@ -21,4 +21,13 @@ export default {
       };
     }
   },
-};
+  computed: {
+    isDisabled() {
+      if (this.errors) {
+        return this.errors.any() || this.submitting;
+      }
+
+      return this.submitting;
+    },
+  },
+});
