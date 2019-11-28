@@ -44,6 +44,8 @@
         @click="$modals.hide"
       ) {{ $t('common.cancel') }}
       v-btn.primary(
+        :loading="submitting",
+        :disabled="isDisabled",
         data-test="infoPopupSubmitButton",
         @click="submit"
       ) {{ $t('common.submit') }}
@@ -53,16 +55,16 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import ModalWrapper from '../../modal-wrapper.vue';
 
 export default {
   name: MODALS.infoPopupSetting,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
-      submitting: false,
       popups: [],
     };
   },
@@ -100,15 +102,11 @@ export default {
     },
 
     async submit() {
-      this.submitting = true;
-
       if (this.config.action) {
         await this.config.action(this.popups);
       }
 
       this.$modals.hide();
-
-      this.submitting = false;
     },
   },
 };

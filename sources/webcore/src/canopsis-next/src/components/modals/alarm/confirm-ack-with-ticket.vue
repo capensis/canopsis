@@ -8,12 +8,12 @@
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(
         :loading="submitting",
-        :disabled="submitting",
+        :disabled="isDisabled || submittingWithTicket",
         @click="submit"
       ) {{ $t('common.continue') }}
       v-btn.warning(
-        :loading="submitting",
-        :disabled="submitting",
+        :loading="submittingWithTicket",
+        :disabled="isDisabledWithTicket || submitting",
         @click="submitWithTicket"
       ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
 </template>
@@ -22,6 +22,7 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -31,7 +32,11 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.confirmAckWithTicket,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    submittableMixin('submitWithTicket', 'submittingWithTicket', 'isDisabledWithTicket'),
+  ],
   data() {
     return {
       submitting: false,
@@ -39,35 +44,19 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        this.submitting = true;
-
-        if (this.config.continueAction) {
-          await this.config.continueAction();
-        }
-
-        this.$modals.hide();
-      } catch (err) {
-        this.$popups.error({ text: err.description || this.$t('error.default') });
-      } finally {
-        this.submitting = false;
+      if (this.config.continueAction) {
+        await this.config.continueAction();
       }
+
+      this.$modals.hide();
     },
 
     async submitWithTicket() {
-      try {
-        this.submitting = true;
-
-        if (this.config.continueWithTicketAction) {
-          await this.config.continueWithTicketAction();
-        }
-
-        this.$modals.hide();
-      } catch (err) {
-        this.$popups.error({ text: err.description || this.$t('error.default') });
-      } finally {
-        this.submitting = false;
+      if (this.config.continueWithTicketAction) {
+        await this.config.continueWithTicketAction();
       }
+
+      this.$modals.hide();
     },
   },
 };

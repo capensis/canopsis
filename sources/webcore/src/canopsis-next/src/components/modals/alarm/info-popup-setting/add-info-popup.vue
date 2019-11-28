@@ -1,25 +1,10 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="addInfoPopupModal")
+  v-form(data-test="addInfoPopupModal", @submit.prevent="submit")
+    modal-wrapper
       template(slot="title")
         span {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
       template(slot="text")
-        div(data-test="addInfoPopupLayout")
-          v-select(
-            v-model="form.selectedColumn",
-            :items="config.columns",
-            item-text="label",
-            return-object,
-            name="column",
-            v-validate="'required'",
-            :error-messages="errors.collect('column')"
-          )
-          text-editor(
-            v-model="form.template",
-            v-validate="'required'",
-            :error-messages="errors.collect('template')",
-            name="template"
-          )
+        info-popup-form(v-model="form", :columns="config.columns")
       template(slot="actions")
         v-btn(
           flat,
@@ -28,7 +13,8 @@
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="errors.any() || submitting",
+          :loading="submitting",
+          :disabled="isDisabled",
           type="submit",
           data-test="addInfoSubmitButton"
         ) {{ $t('common.submit') }}
@@ -40,8 +26,9 @@ import { find } from 'lodash';
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
-import TextEditor from '@/components/other/text-editor/text-editor.vue';
+import InfoPopupForm from '@/components/other/alarm/forms/info-popup-form.vue';
 
 import ModalWrapper from '../../modal-wrapper.vue';
 
@@ -50,11 +37,10 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { TextEditor, ModalWrapper },
-  mixins: [modalInnerMixin],
+  components: { InfoPopupForm, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
-      submitting: false,
       form: {
         selectedColumn: {},
         template: '',
@@ -75,22 +61,14 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        this.submitting = true;
+      const isFormValid = await this.$validator.validateAll();
 
-        const isFormValid = await this.$validator.validateAll();
-
-        if (isFormValid) {
-          if (this.config.action) {
-            await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
-          }
-
-          this.$modals.hide();
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
         }
-      } catch (err) {
-        this.$popups.error({ text: err.description || this.$t('error.default') });
-      } finally {
-        this.submitting = false;
+
+        this.$modals.hide();
       }
     },
   },

@@ -14,11 +14,13 @@
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="errors.any() || submitting",
+          :loading="submitting",
+          :disabled="isDisabled || submittingWithTicket",
           type="submit"
         ) {{ $t('common.actions.ack') }}
         v-btn.warning(
-          :disabled="errors.any() || submitting",
+          :loading="submittingWithTicket",
+          :disabled="isDisabledWithTicket || submitting",
           @click="submitWithTicket"
         ) {{ submitWithTicketBtnLabel }}
 </template>
@@ -48,7 +50,7 @@ export default {
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixin(),
-    submittableMixin('submitWithTicket'),
+    submittableMixin('submitWithTicket', 'submittingWithTicket', 'isDisabledWithTicket'),
   ],
   data() {
     return {
