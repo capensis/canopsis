@@ -72,6 +72,7 @@ export default {
     delete: 'Delete',
     show: 'Show',
     edit: 'Edit',
+    duplicate: 'Duplicate',
     parse: 'Parse',
     home: 'Home',
     step: 'Step',
@@ -383,11 +384,14 @@ export default {
     },
     statsAnnotationLine: {
       title: 'Annotation line',
-      enabled: 'Is enabled?',
+      enabled: 'Is enabled ?',
       value: 'Value',
       label: 'Label',
       pickLineColor: 'Pick line color',
       pickLabelColor: 'Pick label color',
+    },
+    statsPointsStyles: {
+      title: 'Points style',
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
@@ -533,19 +537,46 @@ export default {
     },
     createPbehavior: {
       title: 'Create periodical behavior',
-      fields: {
-        name: 'Name',
-        start: 'Start',
-        stop: 'End',
-        reason: 'Reason',
-        type: 'Type',
-        message: 'Message',
-        rRuleQuestion: 'Put a rrule on this pbehavior ?',
-        exdate: 'Exdates',
+      steps: {
+        general: {
+          title: 'General parameters',
+          general: 'General',
+          dates: 'Dates',
+          fields: {
+            enabled: 'Enabled',
+            name: 'Name',
+            reason: 'Reason',
+            type: 'Type',
+            start: 'Start',
+            stop: 'End',
+            timezone: 'Timezone',
+          },
+        },
+        filter: {
+          title: 'Filter',
+        },
+        rrule: {
+          title: 'Rrule',
+          exdate: 'Exclusion dates',
+          buttons: {
+            addExdate: 'Add an exclusion date',
+          },
+          fields: {
+            rRuleQuestion: 'Add a recurrence rule to the pbehavior ?',
+          },
+        },
+        comments: {
+          title: 'Comments',
+          buttons: {
+            addComment: 'Add a new comment',
+          },
+          fields: {
+            message: 'Message',
+          },
+        },
       },
-      buttons: {
-        addComment: 'Add comment',
-        addExdate: 'Add exdate',
+      errors: {
+        invalid: 'Invalid',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',

@@ -5,7 +5,7 @@
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
-      v-tabs(fixed-tabs)
+      v-tabs(fixed-tabs, slider-color="primary")
         template(v-for="(rights, groupKey) in groupedRights")
           v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
           v-tab-item(:key="`tab-item-${groupKey}`")

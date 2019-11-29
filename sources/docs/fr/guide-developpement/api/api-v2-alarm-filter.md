@@ -1,4 +1,4 @@
-# API Alarm-Filter
+# Alarm-Filter
 
 L'API alarm-filter permet de consulter, créer, modifier et supprimer des actions d'alarm-filter.
 

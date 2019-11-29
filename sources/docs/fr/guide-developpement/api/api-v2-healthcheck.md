@@ -1,4 +1,4 @@
-# API healthcheck
+# Healthcheck
 
 L'API healthcheck permet d'obtenir l'état de fonctionnement de Canopsis ; elle permet, par exemple, de savoir si les services nécessaires sont disponibles.
 
@@ -101,7 +101,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/healthcheck/?criticals=am
     "amqp": "",
     "cache": "",
     "database": "",
-    "engines": "",    
+    "engines": "",
     "timestamp": 1541774674,
     "overall": true
 }

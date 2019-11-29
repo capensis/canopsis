@@ -2,7 +2,7 @@
 
 Le moteur heartbeat permet de créer des alarmes en l'absence d'événements correspondant à un pattern donné durant un intervalle donné.
 
-Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent être ajoutés et modifiés avec l'[API Heartbeat](../../guide-developpement/heartbeat/api_v2_heartbeat.md).
+Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent être ajoutés et modifiés avec l'[API Heartbeat](../../guide-developpement/api/api-v2-heartbeat.md).
 
 ## Fonctionnement
 
@@ -54,7 +54,7 @@ Ici : `"connector" : "heartbeat_test_1"` et `"connector_name" : "heartbeat_test_
 
 ## Collection
 
-Les heartbeats sont stockés dans la collection MongoDB `heartbeat` (voir [API Heartbeat](../../guide-developpement/heartbeat/api_v2_heartbeat.md) pour la création des heartbeats).
+Les heartbeats sont stockés dans la collection MongoDB `heartbeat` (voir [API Heartbeat](../../guide-developpement/api/api-v2-heartbeat.md) pour la création des heartbeats).
 
 Un exemple de heartbeat pour générer une alarme si aucun événement avec le connecteur `heartbeat_test_1` et le nom de connecteur `heartbeat_test_1_name` n'ont été traités depuis plus d'une minute.
 

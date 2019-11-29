@@ -2,7 +2,7 @@
 
 Le moteur action permet de déclencher conditionnellement des actions sur des alarmes.
 
-Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/action/api_v2_action.md).
+Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
 
 ## Fonctionnement
 
@@ -24,9 +24,12 @@ Une action est composée d'un JSON contenant les paramètres suivants :
     - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de triggers. Au moins un de ces triggers doit avoir eu lieu pour que le webhook soit appelé.
 - `parameters` (requis) : les informations nécessaires correspondant au type d'action.
 
+!!! attention
+    Les [`triggers`](../architecture-interne/triggers.md) `unsnooze` et `resolve` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
+
 ## Collection
 
-Les actions sont stockées dans la collection MongoDB `default_action` (voir [API Action](../../guide-developpement/action/api_v2_action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un pbehavior, le champ `type` vaut `pbehavior` :
+Les actions sont stockées dans la collection MongoDB `default_action` (voir [API Action](../../guide-developpement/api/api-v2-action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un pbehavior, le champ `type` vaut `pbehavior` :
 
 ```json
 {

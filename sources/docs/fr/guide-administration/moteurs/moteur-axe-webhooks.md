@@ -5,7 +5,7 @@
 
 Les webhooks sont une fonctionnalité du moteur `axe` permettant d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
-Les webhooks sont définis dans la collection MongoDB `webhooks`, et peuvent être ajoutés et modifiés avec l'[API webhooks](../../guide-developpement/webhooks/api_v2_webhooks.md).
+Les webhooks sont définis dans la collection MongoDB `webhooks`, et peuvent être ajoutés et modifiés avec l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
 Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
 
@@ -52,6 +52,9 @@ Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont util
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
 - `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
+
+!!! attention
+    Les [`triggers`](../architecture-interne/triggers.md) `unsnooze` et `resolve` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
 
 ### Activation d'un webhook
 

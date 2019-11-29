@@ -366,6 +366,7 @@ export const FILTER_DEFAULT_VALUES = {
 
 export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
+  medium: 'DD/MM H:mm',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',

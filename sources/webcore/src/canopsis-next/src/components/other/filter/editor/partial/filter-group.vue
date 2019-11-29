@@ -4,10 +4,11 @@
       v-field="group.condition",
       hide-details,
       mandatory,
-      row
+      row,
+      color="primary"
     )
-      v-radio(data-test="radioAnd", label="AND", value="$and", color="blue darken-4")
-      v-radio(data-test="radioOr", label="OR", value="$or", color="blue darken-4")
+      v-radio(data-test="radioAnd", label="AND", value="$and", color="primary")
+      v-radio(data-test="radioOr", label="OR", value="$or", color="primary")
     v-layout.text-xs-center(wrap, justify-space-around)
       v-flex(xs5, md3)
         v-btn(
