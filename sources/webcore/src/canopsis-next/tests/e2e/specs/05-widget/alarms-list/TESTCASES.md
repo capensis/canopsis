@@ -51,6 +51,32 @@
         
     **Expected result**: the previous page opens.
 
+* [ ] **Right arrow at the bottom of the widget opens the next page.**
+    1. To click on the right arrow at the bottom of the widget.
+        
+    **Expected result**: the next page opens.
+
+* [ ] **Left arrow at the bottom of the widget opens the previous page.**
+    1. To click on the right arrow at the bottom of the widget.
+    2. To click on the left arrow at the top of the page.
+        
+    **Expected result**: the previous page opens.
+
+* [ ] **The button with page number at the bottom of the widget leads to the selected page.**
+    1. To click on any button with page number at the bottom of the widget.
+        
+    **Expected result**: the selected page is shown.
+
+* [ ] **5 alarms can be shown on the page.**
+    1. To select “5” in the dropdown at the bottom of the widget.
+        
+    **Expected result**: 5 alarms are shown.
+
+* [ ] **10 alarms can be shown on the page.**
+    1. To select “10” in the dropdown at the bottom of the widget.
+        
+    **Expected result**: 10 alarms are shown.
+
 ## WIP: Filters
 
 * [ ] **A filter can be selected.**
@@ -286,7 +312,7 @@
         
     **Expected result**: the pop-up with all periodic behaviors is shown.
 
-* [ ] WIP: **Item actions when the "Ack" feature is off.**
+## WIP: Item actions when the "Ack" feature is off.
 
 * [ ] **The button "Declare ticket" reports an incident.**
     1. To find any element in the table where "Ack" feature is on.
@@ -408,5 +434,29 @@
     1. To find any element in the table where "Ack" feature is on.
     2. To open a menu.
     3. To click on the icon "List periodic behaviors".
+        
+    **Expected result**: the modal window with all periodic behaviors is shown.
+
+## The item “Actions” when an alarm is canceled.
+
+* [ ] **The “Snooze alarm” feature creates a “Snooze” event.**
+    1. To find any canceled alarm in the table or to create a new one.
+    2. To press on the button “Snooze alarm”.
+    3. To choose a duration.
+    4. To press “Save changes” button.
+        
+    **Expected result**: the sign “Snooze alarm” appeared in the column “Extra details”.
+
+* [ ] **The “Periodical behavior” feature creates periodical behavior.**
+    1. To find any canceled alarm in the table or to create a new one.
+    2. To click on the icon “Periodical behavior”.
+    3. To input all needed information on "Create periodical behavior" modal window.
+    4. To press “Save changes” button.
+        
+    **Expected result**: periodical behavior is created.
+
+* [ ] **The “List periodic behaviors” feature allows to look through all periodic behaviors.**
+    1. To find any canceled alarm in the table or to create a new one.
+    2. To click on the icon “List periodic behaviors”.
         
     **Expected result**: the modal window with all periodic behaviors is shown.
