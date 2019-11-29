@@ -66,7 +66,11 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ### Réponse en cas de réussite
 
-**Condition** : La règle a été créée avec succès.
+**Condition** : La règle a été créée avec succès. Dans ce cas, les champs suivants sont ajoutés à la règle :
+
+ - `author` : l'utilisateur ayant créé la règle
+ - `creation_date` : la date de création de la règle
+ - `last_modified_date` : la date de la dernière modification de la règle
 
 **Code** : `200 OK`
 
@@ -76,6 +80,9 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 {
     "_id": "7b17aae1-8c75-440c-a39c-5b304b850171",
     "name": "Lien critique",
+    "author": "billy",
+    "creation_date": 1576260000,
+    "last_modified_date": 1576260000
     // ...
 }
 ```
@@ -144,6 +151,10 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 Modifie une règle à partir du corps de la requête.
 
+Les champs `author`, `creation_date` et `last_modified_date` du corps de la
+requête sont ignorés par cette route. `author` et `creation_date` ne sont pas
+modifiés, `last_modified_date` est automatiquement mis à jour.
+
 **URL** : `/api/v2/dynamic-infos/<rule_id>`
 
 **Méthode** : `PUT`
@@ -156,6 +167,7 @@ Modifie une règle à partir du corps de la requête.
 
 ```json
 {
+    "_id": "7b17aae1-8c75-440c-a39c-5b304b850171",
     "name": "Lien critique",
     "description": "Ajoute un lien externe aux alarmes critiques",
     "alarm_patterns": [
@@ -180,6 +192,7 @@ Modifie une règle à partir du corps de la requête.
 
 ```sh
 curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
+    "_id": "7b17aae1-8c75-440c-a39c-5b304b850171",
     "name": "Lien critique",
     "description": "Ajoute un lien externe aux alarmes critiques",
     "alarm_patterns": [
