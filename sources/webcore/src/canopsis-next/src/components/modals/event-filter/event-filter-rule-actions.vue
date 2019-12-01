@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.eventFilterRule.editActions') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.eventFilterRule.editActions') }}
+    template(slot="text")
       v-layout(justify-end)
         v-tooltip(top)
           v-btn(slot="activator", icon, @click="showCreateActionModal")
@@ -27,8 +26,7 @@
                   div(v-if="action.description") {{ $t('common.description') }}: {{ action.description }}
                   div(v-if="action.from") {{ $t('common.from') }}: {{ action.from }}
                   div(v-if="action.to") {{ $t('common.to') }}: {{ action.to }}
-    v-divider
-    v-layout.pa-2(justify-end)
+    template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
@@ -39,16 +37,17 @@ import Draggable from 'vuedraggable';
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.eventFilterRuleActions,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    Draggable,
-  },
-  mixins: [modalInnerMixin],
+  components: { Draggable, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
       actions: [],
@@ -83,8 +82,8 @@ export default {
       this.$delete(this.actions, index);
     },
 
-    submit() {
-      this.config.action(this.actions);
+    async submit() {
+      await this.config.action(this.actions);
       this.$modals.hide();
     },
   },
