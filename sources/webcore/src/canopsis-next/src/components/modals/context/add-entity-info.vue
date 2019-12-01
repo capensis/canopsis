@@ -1,34 +1,15 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
-      v-form
-        v-text-field(
-          :label="$t('common.name')",
-          v-model="form.name",
-          v-validate="'required|unique-name'",
-          data-vv-name="name",
-          :error-messages="errors.collect('name')"
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ config.title }}
+      template(slot="text")
+        entity-info-form(
+          v-model="form",
+          :entityInfo="config.editingInfo",
+          :infos="config.infos"
         )
-        v-text-field(
-          :label="$t('common.description')",
-          v-model="form.description",
-          v-validate="'required'",
-          data-vv-name="description",
-          :error-messages="errors.collect('description')"
-        )
-        v-textarea(
-          :label="$t('common.value')",
-          v-model="form.value",
-          v-validate,
-          data-vv-rule="'required'",
-          data-vv-name="value",
-          :error-messages="errors.collect('value')"
-        )
-      v-divider
-      v-layout.py-1(justify-end)
+      template(slot="actions")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn(@click="submit", color="primary") {{ $t('common.add') }}
 </template>
@@ -37,13 +18,19 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import EntityInfoForm from '@/components/other/context/entity-info-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.addEntityInfo,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin],
+  components: { EntityInfoForm, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
       form: {
@@ -52,9 +39,6 @@ export default {
         value: '',
       },
     };
-  },
-  created() {
-    this.createUniqueValidationRule();
   },
   mounted() {
     if (this.config.editingInfo) {
@@ -69,19 +53,6 @@ export default {
         await this.config.action(this.form);
         this.$modals.hide();
       }
-    },
-
-    createUniqueValidationRule() {
-      this.$validator.extend('unique-name', {
-        getMessage: () => this.$t('validator.unique'),
-        validate: (value) => {
-          if (this.config.editingInfo && this.config.editingInfo.name === value) {
-            return true;
-          }
-
-          return !this.config.infos[value];
-        },
-      });
     },
   },
 };
