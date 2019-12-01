@@ -86,7 +86,11 @@ export default {
     },
 
     createDeclareTicketEvent() {
-      const declareTicketEventData = this.prepareData(EVENT_ENTITY_TYPES.declareTicket, this.items, this.form.output);
+      const declareTicketEventData = this.prepareData(
+        EVENT_ENTITY_TYPES.declareTicket,
+        this.items,
+        { output: this.form.output },
+      );
 
       return this.createEventAction({ data: declareTicketEventData });
     },
