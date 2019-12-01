@@ -1,25 +1,22 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.selectViewTab.title') }}
-    v-card-text.view-select
-      v-expansion-panel(dark)
-        v-expansion-panel-content.secondary(v-for="group in availableGroups", :key="group._id", ripple)
-          template(slot="header")
-            div {{ group.name }}
-          v-expansion-panel.px-2(dark)
-            v-expansion-panel-content.secondary.lighten-1(v-for="view in group.views", :key="view._id", ripple)
-              template(slot="header")
-                div {{ view.title }}
-              v-list.pa-0
-                v-list-tile.secondary.lighten-2(
-                  v-for="tab in view.tabs",
-                  :key="tab._id",
-                  ripple,
-                  @click="selectTab(tab._id, view._id)"
-                )
-                  v-list-tile-title.body-1.pl-4 {{ tab.title }}
+  modal-wrapper(data-test="selectViewModal")
+    template(slot="title")
+      span {{ $t('modals.view.select.title') }}
+    template(slot="text")
+      v-list.py-0(dark)
+        v-list-group(v-for="group in availableGroups", :key="group._id")
+          v-list-tile(
+            slot="activator",
+            :data-test="`selectView-group-${group._id}`"
+          )
+            v-list-tile-title {{ group.name }}
+          v-list-tile(
+            v-for="view in group.views",
+            :key="view._id",
+            :data-test="`selectView-view-${view._id}`",
+            @click="selectView(view._id)"
+          )
+            v-list-tile-title.pl-2 {{ view.title }}
 </template>
 
 <script>
@@ -29,17 +26,16 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
-  name: MODALS.selectViewTab,
-  mixins: [
-    modalInnerMixin,
-    entitiesViewsGroupsMixin,
-    rightsEntitiesGroupMixin,
-  ],
+  name: MODALS.selectView,
+  components: { ModalWrapper },
+  mixins: [modalInnerMixin, entitiesViewsGroupsMixin, rightsEntitiesGroupMixin],
   methods: {
-    async selectTab(tabId, viewId) {
+    async selectView(viewId) {
       if (this.config.action) {
-        await this.config.action({ tabId, viewId });
+        await this.config.action(viewId);
       }
 
       this.$modals.hide();
@@ -47,3 +43,4 @@ export default {
   },
 };
 </script>
+

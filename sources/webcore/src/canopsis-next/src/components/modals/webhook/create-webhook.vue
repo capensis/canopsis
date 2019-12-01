@@ -1,28 +1,30 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-card-text
-      v-text-field(
-        v-model="form._id",
-        :label="$t('modals.createWebhook.fields.id')",
-        :readonly="isDisabledIdField",
-        :disabled="isDisabledIdField"
-      )
-        v-tooltip(slot="append", left)
-          v-icon(slot="activator") help_outline
-          span {{ $t('modals.createWebhook.tooltips.id') }}
-      v-switch(
-        v-model="form.disable_if_active_pbehavior",
-        :label="$t('webhook.disableIfActivePbehavior')",
-        color="primary"
-      )
-      webhook-form(v-model="form")
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        v-text-field(
+          v-model="form._id",
+          :label="$t('modals.createWebhook.fields.id')",
+          :readonly="isDisabledIdField",
+          :disabled="isDisabledIdField"
+        )
+          v-tooltip(slot="append", left)
+            v-icon(slot="activator") help_outline
+            span {{ $t('modals.createWebhook.tooltips.id') }}
+        v-switch(
+          v-model="form.disable_if_active_pbehavior",
+          :label="$t('webhook.disableIfActivePbehavior')"
+        )
+        webhook-form(v-model="form")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -35,6 +37,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to create widget
  */
@@ -43,7 +47,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { WebhookForm },
+  components: { WebhookForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     const { webhook } = this.modal.config;

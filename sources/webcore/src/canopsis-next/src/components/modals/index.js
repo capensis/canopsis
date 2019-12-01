@@ -25,7 +25,6 @@ export { default as CreateView } from './view/create-view.vue';
 export { default as CreateGroup } from './view/create-group.vue';
 export { default as CreateFilter } from './common/create-filter.vue';
 export { default as Watcher } from './watcher/watcher.vue';
-export { default as CreateWatcherAssocTicketEvent } from './watcher/create-watcher-assoc-ticket-event.vue';
 export { default as CreateWatcherPauseEvent } from './watcher/create-watcher-pause-event.vue';
 export { default as AddStat } from './stats/add-stat.vue';
 export { default as StatsDateInterval } from './stats/stats-date-interval.vue';
