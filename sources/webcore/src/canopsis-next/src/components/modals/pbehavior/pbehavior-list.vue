@@ -1,29 +1,26 @@
 <template lang="pug">
-  div
-    v-card
-      v-card-title.primary.white--text
-        v-layout(justify-space-between, align-center)
-          span.headline {{ $t('alarmList.actions.titles.pbehaviorList') }}
-      v-card-text
-        v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
-          template(slot="items", slot-scope="props")
-            td(v-for="key in fields")
-              span(
-                v-if="key === 'tstart' || key === 'tstop'",
-                key="key"
-              ) {{ props.item[key] | date('long') }}
-              span(v-else) {{ props.item[key] }}
-            td
-              v-btn.mx-0(
-                v-for="action in availableActions",
-                :key="action.name",
-                @click="() => action.action(props.item)",
-                icon
-              )
-                v-icon {{ action.icon }}
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn.primary(@click="$modals.hide") {{ $t('common.ok') }}
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('alarmList.actions.titles.pbehaviorList') }}
+    template(slot="text")
+      v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
+        template(slot="items", slot-scope="props")
+          td(v-for="key in fields")
+            span(
+              v-if="key === 'tstart' || key === 'tstop'",
+              key="key"
+            ) {{ props.item[key] | date('long') }}
+            span(v-else) {{ props.item[key] }}
+          td
+            v-btn.mx-0(
+              v-for="action in availableActions",
+              :key="action.name",
+              @click="() => action.action(props.item)",
+              icon
+            )
+              v-icon {{ action.icon }}
+    template(slot="actions")
+      v-btn.primary(@click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>
@@ -34,12 +31,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
   name: MODALS.pbehaviorList,
-
+  components: { ModalWrapper },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin, entitiesPbehaviorCommentMixin],
   data() {
     const fields = [

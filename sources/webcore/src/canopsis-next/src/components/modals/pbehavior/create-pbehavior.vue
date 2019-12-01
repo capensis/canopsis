@@ -1,14 +1,17 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createPbehavior.title') }}
-    v-card-text
-      pbehavior-form(v-model="form")
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createPbehavior.title') }}
+      template(slot="text")
+        pbehavior-form(v-model="form")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -16,6 +19,7 @@ import { MODALS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import {
   commentsToPbehaviorComments,
@@ -28,15 +32,15 @@ import {
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    PbehaviorForm,
-  },
-  mixins: [authMixin, modalInnerMixin],
+  components: { PbehaviorForm, ModalWrapper },
+  mixins: [authMixin, modalInnerMixin, submittableMixin()],
   data() {
     const { pbehavior = {} } = this.modal.config;
 
@@ -56,9 +60,7 @@ export default {
         const pbehavior = formToPbehavior(this.form.general);
 
         pbehavior.comments = commentsToPbehaviorComments(this.form.comments);
-        if (pbehavior.rrule) {
-          pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
-        }
+        pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
 
         if (!pbehavior.author) {
           pbehavior.author = this.currentUser._id;
@@ -74,4 +76,3 @@ export default {
   },
 };
 </script>
-
