@@ -1073,6 +1073,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
+    authKeyCopied: 'Auth key copied to clipboard',
   },
   filterEditor: {
     title: 'Filter editor',
