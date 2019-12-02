@@ -96,6 +96,11 @@ module.exports.SORT_ORDERS = {
   desc: 2,
 };
 
+module.exports.SORT_ORDERS_STRING = {
+  asc: 'ascending',
+  desc: 'descending',
+};
+
 module.exports.LANGUAGES_POSITIONS = {
   en: 1,
   fr: 2,

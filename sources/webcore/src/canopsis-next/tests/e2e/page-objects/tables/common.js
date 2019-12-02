@@ -73,7 +73,8 @@ const commands = {
   clickOnPageBottomPagination(page) {
     this.api
       .useXpath()
-      .customClick(this.el('@bottomPaginationPage', page));
+      .customClick(this.el('@bottomPaginationPage', page))
+      .useCss();
 
     return this;
   },
@@ -157,7 +158,19 @@ const commands = {
   clickTableHeaderCell(header) {
     this.api
       .useXpath()
-      .customClick(this.el('@tableHeaderCell', header));
+      .customClick(this.el('@tableHeaderCellContent', header))
+      .useCss();
+
+    return this;
+  },
+
+  checkTableHeaderSort(header, sortDirection) {
+    this.api
+      .useXpath()
+      .getAttribute(this.el('@tableHeaderCell', header), 'aria-sort', ({ value }) => {
+        this.assert.equal(value, sortDirection);
+      })
+      .useCss();
 
     return this;
   },
@@ -235,7 +248,8 @@ module.exports = {
 
     optionSelectInput: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s) input',
 
-    tableHeaderCell: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\']//span[contains(text(), \'%s\')]',
+    tableHeaderCell: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\'][span[contains(text(), \'%s\')]]',
+    tableHeaderCellContent: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\']//span[contains(text(), \'%s\')]',
     selectAllCheckboxInput: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input input`,
     selectAllCheckbox: `${sel('tableWidget')} thead tr th:first-of-type .v-input__slot`,
 

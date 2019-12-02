@@ -4,6 +4,7 @@ const {
   INFO_POPUP_DEFAULT_COLUMNS,
   ALARMS_WIDGET_SORT_FIELD,
   SORT_ORDERS,
+  SORT_ORDERS_STRING,
   PAGINATION_PER_PAGE_VALUES,
   FILTERS_TYPE,
   VALUE_TYPES,
@@ -37,6 +38,23 @@ const INTERVAL_START_DATE = '25/11/2019 00:00';
 const INTERVAL_END_DATE = '26/11/2019 00:00';
 const INTERVAL_ITEMS_COUNT = 136;
 const LAST_SEVEN_DAY_ITEMS_COUNT = 136;
+
+function tableColumnSortAssertHelper(browser, columnName) {
+  const alarmsWidget = browser.page.widget.alarms();
+  const commonTable = browser.page.tables.common();
+
+  const sortFunction = () => commonTable.clickTableHeaderCell(columnName);
+
+  alarmsWidget.waitFirstAlarmsListXHR(sortFunction, ({ responseData }) => {
+    browser.assert.equal(responseData.success, true);
+    commonTable.checkTableHeaderSort(columnName, SORT_ORDERS_STRING.asc);
+  });
+
+  alarmsWidget.waitFirstAlarmsListXHR(sortFunction, ({ responseData }) => {
+    browser.assert.equal(responseData.success, true);
+    commonTable.checkTableHeaderSort(columnName, SORT_ORDERS_STRING.desc);
+  });
+}
 
 module.exports = {
   async before(browser, done) {
@@ -148,7 +166,7 @@ module.exports = {
     alarmsWidget.waitAllAlarmsListXHR(
       () => commonTable.keyupSearchEnter(),
       (xhrs) => {
-        browser.assert.equal(xhrs.length, 0); // TODO test break
+        browser.assert.equal(xhrs.length, 0);
       },
     );
   },
@@ -162,7 +180,7 @@ module.exports = {
         .setSearchInput(SEARCH_STRING)
         .clickSearchButton(),
       ({ responseData: { data } }) => {
-        browser.assert.equal(SEARCH_RESULT_COUNT, data[0].total);
+        browser.assert.equal(data[0].total, SEARCH_RESULT_COUNT);
 
         commonTable
           .clearSearchInput()
@@ -690,6 +708,94 @@ module.exports = {
       .verifyModalClosed();
   },
 
+  'An alarm can be canceled': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .setRowCheckbox(firstAlarm._id, true)
+      .clickOnMassAction(ALARMS_MASS_ACTIONS.CANCEL_ALARM);
+
+    browser.page.modals.alarm.createCancelEvent()
+      .verifyModalOpened()
+      .clearTicketNote()
+      .setTicketNote('Cancel first alarm')
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonTable.setRowCheckbox(firstAlarm._id, false);
+  },
+
+  'Elements can be sorted by connector name': (browser) => {
+    tableColumnSortAssertHelper(browser, 'Connector name');
+  },
+
+  'Elements can be sorted by connector': (browser) => {
+    tableColumnSortAssertHelper(browser, 'Connector');
+  },
+
+  'Elements can be sorted by component': (browser) => {
+    tableColumnSortAssertHelper(browser, 'Component');
+  },
+
+  'Elements can be sorted by resource': (browser) => {
+    tableColumnSortAssertHelper(browser, 'Resource');
+  },
+
+  'Elements can be sorted by output': (browser) => {
+    tableColumnSortAssertHelper(browser, 'Output');
+  },
+
+  'Elements can be sorted by extra details': (browser) => {
+    tableColumnSortAssertHelper(browser, 'Extra details');
+  },
+
+  'Elements can be sorted by state': (browser) => {
+    tableColumnSortAssertHelper(browser, 'State');
+  },
+
+  'Elements can be sorted by status': (browser) => {
+    tableColumnSortAssertHelper(browser, 'Status');
+  },
+
+  'Information pop-up can be shown': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .clickOnRowInfoPopupOpen(firstAlarm._id)
+      .verifyRowInfoPopupVisible(firstAlarm._id);
+  },
+
+  'Information pop-up can be closed': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable
+      .clickOnRowInfoPopupClose(firstAlarm._id)
+      .verifyRowInfoPopupDeleted(firstAlarm._id);
+  },
+
+  'Pressing on element shows details about this element': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const alarmsTable = browser.page.tables.alarms();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable.clickOnRow(firstAlarm._id);
+    alarmsTable.verifyAlarmTimeLineVisible(firstAlarm._id);
+  },
+
+  'Pressing on element hidden details about this element': (browser) => {
+    const commonTable = browser.page.tables.common();
+    const alarmsTable = browser.page.tables.alarms();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable.clickOnRow(firstAlarm._id);
+    alarmsTable.verifyAlarmTimeLineDeleted(firstAlarm._id);
+  },
+
+  'Placing a cursor on signs in the column "Extra details" makes information pop-up show': () => {},
+
   'Table widget alarms': (browser) => {
     const commonTable = browser.page.tables.common();
     const dateIntervalField = browser.page.fields.dateInterval();
@@ -699,23 +805,6 @@ module.exports = {
 
     browser.page.view()
       .clickMenuViewButton();
-
-    commonTable
-      .setRowCheckbox(firstId, true)
-      .setAllCheckbox(true)
-      .clickOnMassAction(ALARMS_MASS_ACTIONS.ACK);
-
-    browser.page.modals.alarm.createAckEvent()
-      .verifyModalOpened()
-      .clickTicketNumber()
-      .clearTicketNumber()
-      .setTicketNumber(1223333)
-      .clickTicketNote()
-      .clearTicketNote()
-      .setTicketNote('note')
-      .setAckTicketResources(true)
-      .clickCancelButton()
-      .verifyModalClosed();
 
     commonTable.clickOnSharedAction(firstId, ALARMS_SHARED_ACTIONS.SNOOZE_ALARM);
 
