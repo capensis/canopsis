@@ -42,6 +42,8 @@ import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
+
 import FilterGroup from './partial/filter-group.vue';
 
 /**
@@ -53,9 +55,8 @@ import FilterGroup from './partial/filter-group.vue';
  */
 export default {
   inject: ['$validator'],
-  components: {
-    FilterGroup,
-  },
+  components: { FilterGroup },
+  mixins: [formValidationHeaderMixin],
   props: {
     value: {
       type: [String, Object],
@@ -125,7 +126,7 @@ export default {
     },
   },
   created() {
-    if (this.required) {
+    if (this.required && this.$validator) {
       this.$validator.extend('json', {
         getMessage: () => this.$t('filterEditor.errors.invalidJSON'),
         validate: (value) => {
@@ -147,6 +148,7 @@ export default {
           return isFilterNotEmpty || isRequestStringNotEmpty;
         },
         context: () => this,
+        vm: this,
       });
     }
   },

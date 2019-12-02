@@ -3,36 +3,32 @@
     v-container(fluid)
       v-layout(row)
         v-text-field(
-          :label="$t('common.name')",
-          :value="form.name",
-          @input="updateField('name', $event)",
-          :error-messages="errors.collect('name')",
+          v-field="form.name",
           v-validate="'required'",
-          data-vv-name="name"
+          :label="$t('common.name')",
+          :error-messages="errors.collect('name')",
+          name="name"
         )
       v-layout(row)
         v-textarea(
+          v-field="form.description",
           :label="$t('common.description')",
-          :value="form.description",
-          @input="updateField('description', $event)",
-          data-vv-name="description",
-          :error-messages="errors.collect('description')"
+          :error-messages="errors.collect('description')",
+          name="description"
         )
       v-layout(row)
         v-switch(
-          color="primary",
+          v-field="form.enabled",
           :label="$t('common.enabled')",
-          :input-value="form.enabled",
-          @change="updateField('enabled', $event)"
+          color="primary"
         )
         v-select(
-          :items="types",
-          :value="entityType",
-          data-vv-name="type",
+          v-model="form.type",
           v-validate="'required'",
+          :items="types",
           :error-messages="errors.collect('type')",
-          @input="updateField('type', $event)",
           :label="$t('modals.createEntity.fields.type')",
+          name="type",
           single-line
         )
       v-layout(wrap)
@@ -88,10 +84,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      showValidationErrors: true,
-      types: [
+  computed: {
+    types() {
+      return [
         {
           text: this.$t('modals.createEntity.fields.types.connector'),
           value: 'connector',
@@ -104,19 +99,7 @@ export default {
           text: this.$t('modals.createEntity.fields.types.resource'),
           value: 'resource',
         },
-      ],
-    };
-  },
-  computed: {
-    entityType() {
-      let entityType;
-      this.types.map((item, index) => {
-        if (this.form.type === item.value) {
-          return entityType = this.types[index].value;
-        }
-        return null;
-      });
-      return entityType;
+      ];
     },
   },
   methods: {

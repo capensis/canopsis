@@ -36,7 +36,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
-import EntityForm from '@/components/other/context/entity-form.vue';
+import EntityForm from '@/components/other/context/form/entity-form.vue';
 import ManageInfos from '@/components/other/context/manage-infos.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -61,7 +61,6 @@ export default {
   ],
   data() {
     return {
-      submitting: false,
       form: {
         name: '',
         description: '',
@@ -74,22 +73,6 @@ export default {
     };
   },
   computed: {
-    types() {
-      return [
-        {
-          text: this.$t('modals.createEntity.fields.types.connector'),
-          value: 'connector',
-        },
-        {
-          text: this.$t('modals.createEntity.fields.types.component'),
-          value: 'component',
-        },
-        {
-          text: this.$t('modals.createEntity.fields.types.resource'),
-          value: 'resource',
-        },
-      ];
-    },
     tabs() {
       return [
         { component: 'CreateForm', name: this.$t('modals.createEntity.fields.form') },
@@ -108,28 +91,20 @@ export default {
   },
   methods: {
     async submit() {
-      this.submitting = true;
-      const formIsValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-      if (formIsValid) {
+      if (isFormValid) {
         const formData = { ...this.form };
 
         if (!this.config.item || this.config.isDuplicating) {
           formData._id = uuid('entity');
         }
-        try {
-          await this.config.action(formData);
 
-          this.refreshContextEntitiesLists();
+        await this.config.action(formData);
+        await this.refreshContextEntitiesLists();
 
-          this.$modals.hide();
-        } catch (err) {
-          console.error(err);
-          this.$popups.error({ text: this.$t('error.default') });
-        }
+        this.$modals.hide();
       }
-
-      this.submitting = false;
     },
 
   },

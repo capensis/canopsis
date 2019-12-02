@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(@submit.stop.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ config.title }}
@@ -11,7 +11,11 @@
         )
       template(slot="actions")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn(@click="submit", color="primary") {{ $t('common.add') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.add') }}
 </template>
 
 <script>
@@ -20,7 +24,7 @@ import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
-import EntityInfoForm from '@/components/other/context/entity-info-form.vue';
+import EntityInfoForm from '@/components/other/context/form/entity-info-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
