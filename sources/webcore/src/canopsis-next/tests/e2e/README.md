@@ -136,29 +136,29 @@ Planned tests
             - [x] Create widget
             - [ ] Edit widget
         * Header
-            - [x] Search
-            - [x] Pagination
-            - [x] Filters
+            - [ ] Search
+            - [ ] Pagination
+            - [ ] Filters
             - [ ] Reporting
         * Hide menu
-            - [x] Periodical behavior
-            - [x] Ack
-            - [x] Fast ack
-            - [x] Cancel ack
-            - [x] Cancel alarm
+            - [ ] Periodical behavior
+            - [ ] Ack
+            - [ ] Fast ack
+            - [ ] Cancel ack
+            - [ ] Cancel alarm
         * Body
-            - [x] Ack
-            - [x] Fast ack
-            - [x] Snooze alarm
-            - [x] Declare ticket
-            - [x] Associate ticket
-            - [x] Cancel alarm
-            - [x] Periodical behavior
-            - [x] List periodic behaviors
+            - [ ] Ack
+            - [ ] Fast ack
+            - [ ] Snooze alarm
+            - [ ] Declare ticket
+            - [ ] Associate ticket
+            - [ ] Cancel alarm
+            - [ ] Periodical behavior
+            - [ ] List periodic behaviors
             - [ ] List of available variables
         * Footer
-            - [x] Pagination
-            - [x] Pages
+            - [ ] Pagination
+            - [ ] Pages
     * Context explorer
         * Base functions
             - [x] Create widget

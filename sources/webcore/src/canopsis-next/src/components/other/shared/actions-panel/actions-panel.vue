@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(data-test="sharedActionsPanel")
+  div
     mq-layout(mq="xl")
       v-layout
         actions-panel-item(
@@ -8,9 +8,9 @@
           :key="`main-${index}`"
         )
         v-menu(v-show="dropDownActions && dropDownActions.length", bottom, left, @click.native.stop)
-          v-btn(data-test="dropDownActionsButton", icon, slot="activator")
+          v-btn(icon, slot="activator")
             v-icon more_vert
-          v-list(data-test="dropDownActions")
+          v-list
             actions-panel-item(
               v-for="(action, index) in dropDownActions",
               v-bind="action",

@@ -78,11 +78,6 @@ const commands = {
   clickEditWidgetButton(id) {
     return this.customClick(this.el('@editWidgetButton', id));
   },
-
-  clickEditingMenu(id) {
-    return this.customClick(this.el('@editingMenu', id));
-  },
-
   el,
 };
 
@@ -104,7 +99,6 @@ module.exports = {
     copyTab: `${sel('tab-%s')} ${sel('copyTab')}`,
     deleteTab: `${sel('tab-%s')} ${sel('deleteTab')}`,
     draggableWrap: sel('draggable-wrap'),
-    editingMenu: sel('widgetEditingMenu-%s'),
   },
   commands: [commands],
 };

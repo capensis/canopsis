@@ -11,7 +11,6 @@
   )
     div(slot="activator")
       v-text-field(
-        data-test="dateTimePickerField",
         readonly,
         :label="label",
         :error-messages="errorMessages",
@@ -20,7 +19,6 @@
         @click:append="clear"
       )
     date-time-picker(
-      data-test="dateTimePickerCalendar",
       :value="value",
       :roundHours="roundHours",
       :opened="opened",

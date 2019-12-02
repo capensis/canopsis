@@ -1,8 +1,6 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
-const { WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
-const { API_ROUTES } = require('@/config');
 
 const commands = {
   clickSubmitAlarms() {
@@ -71,29 +69,6 @@ const commands = {
 
   clickDeleteLiveReporting() {
     return this.customClick('@liveReportingDeleteButton');
-  },
-
-
-  waitFirstAlarmsListXHR(triggerFunc, callback) {
-    return this.waitForFirstXHR(
-      API_ROUTES.alarmList,
-      WAIT_FOR_FIRST_XHR_TIME,
-      triggerFunc,
-      ({ responseData, requestData }) => callback({
-        responseData: JSON.parse(responseData),
-        requestData: JSON.parse(requestData),
-      }),
-    );
-  },
-
-
-  waitAllAlarmsListXHR(triggerFunc, callback, delay = WAIT_FOR_FIRST_XHR_TIME) {
-    return this.waitForXHR(
-      API_ROUTES.alarmList,
-      delay,
-      triggerFunc,
-      callback,
-    );
   },
 
   el,

@@ -1,5 +1,5 @@
 <template lang="pug" functional>
-  span(data-test="actionsPanelItem")
+  span
     template(v-if="props.isDropDown")
       v-list-tile(@click.stop="props.method")
         v-list-tile-title

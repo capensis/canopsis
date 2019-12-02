@@ -7,7 +7,7 @@
             h4.ml-2.font-weight-regular {{ widget.title }}
           v-spacer
           v-layout(justify-end, v-if="isEditingMode")
-            v-menu(:data-test="`widgetEditingMenu-${widget._id}`", offset-y)
+            v-menu(offset-y)
               v-btn.ma-0(icon, small, slot="activator")
                 v-icon(small) more_horiz
               v-list(dense)

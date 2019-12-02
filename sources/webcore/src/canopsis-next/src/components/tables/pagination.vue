@@ -3,7 +3,6 @@
     ul.v-pagination(v-if="type === 'top'")
       li
         button.v-pagination__navigation(
-          data-test="paginationPreviewButton",
           :disabled="isPreviousPageDisabled",
           :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }",
           @click="previous"
@@ -14,7 +13,6 @@
       span {{ totalPages }}
       li
         button.v-pagination__navigation(
-          data-test="paginationNextButton",
           :disabled="page >= totalPages",
           :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
           @click="next"
@@ -24,7 +22,6 @@
       span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
       |  {{ last }} {{ $t('common.of') }} {{ total }} {{ $t('common.entries') }}
       v-pagination(
-        data-test="vPagination",
         :value="page",
         :total-visible="$config.PAGINATION_TOTAL_VISIBLE",
         :length="totalPages",

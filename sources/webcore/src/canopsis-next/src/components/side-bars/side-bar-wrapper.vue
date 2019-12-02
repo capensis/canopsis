@@ -1,6 +1,5 @@
 <template lang="pug">
   v-navigation-drawer(
-    data-test="sideBarWrapper",
     v-model="isOpen",
     :stateless="hasModals",
     v-bind="navigationDrawerProps"

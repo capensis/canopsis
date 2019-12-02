@@ -96,11 +96,6 @@ module.exports.SORT_ORDERS = {
   desc: 2,
 };
 
-module.exports.SORT_ORDERS_STRING = {
-  asc: 'ascending',
-  desc: 'descending',
-};
-
 module.exports.LANGUAGES_POSITIONS = {
   en: 1,
   fr: 2,
@@ -252,88 +247,4 @@ module.exports.STATS_DISPLAY_MODE = {
 module.exports.PARETO_STATS_TITLES = {
   ACCUMULATION: 'Accumulation',
   ALARMS_CREATED: 'Alarmes créées',
-};
-
-module.exports.ALARMS_MASS_ACTIONS = {
-  PERIODICAL_BEHAVIOR: 1,
-  ACK: 2,
-  FAST_ACK: 3,
-  CANCEL_ACK: 4,
-  CANCEL_ALARM: 5,
-};
-
-module.exports.ALARMS_SHARED_ACTIONS = {
-  ACK: 1,
-  FAST_ACK: 2,
-  SNOOZE_ALARM: 3,
-  CANCEL_ALARM: 4,
-};
-
-module.exports.ALARMS_SHARED_DROPDOWN_ACTIONS = {
-  PERIODICAL_BEHAVIOR: 1,
-  LIST_PERIODICAL_BEHAVIOR: 2,
-  MORE_INFOS: 3,
-};
-
-module.exports.DATE_INTERVAL_MINUTES = {
-  ZERO: 1,
-  FIVE: 2,
-  TEN: 3,
-  twenty: 4,
-  TWENTY_FIVE: 5,
-  THIRTY: 6,
-  THIRTY_FIVE: 7,
-  FORTY: 8,
-  FORTY_FIVE: 9,
-  FIFTY: 10,
-  FIFTY_FIVE: 11,
-};
-
-module.exports.PERIODICAL_BEHAVIOR_RESONES = {
-  REHABILITATION_PROBLEM: 1,
-  ROBOT_PROBLEM: 2,
-  SCENARIO_PROBLEM: 3,
-  FUNCTIONAL_FLASH_ISSUE: 4,
-  OTHER: 5,
-};
-
-module.exports.PERIODICAL_BEHAVIOR_FREQUENCY = {
-  SECONDLY: 1,
-  MINUTELY: 2,
-  HOURLY: 3,
-  DAILY: 4,
-  WEEKLY: 5,
-  MONTHLY: 6,
-  YEARLY: 7,
-};
-
-module.exports.WEEK_DAYS = {
-  MONDAY: 1,
-  TUESDAY: 2,
-  WEDNEDDAY: 3,
-  THURSDAY: 4,
-  FRIDAY: 5,
-  SATURDAY: 6,
-  SUNDAY: 7,
-};
-
-module.exports.MONTH = {
-  JUNUARY: 1,
-  FEBRARY: 2,
-  MARCH: 3,
-  APRIL: 4,
-  MAY: 5,
-  JUNE: 6,
-  JULY: 7,
-  AUGUST: 8,
-  SEPTEMBER: 9,
-  OCTOBER: 10,
-  NOVEMBER: 11,
-  DECEMBER: 12,
-};
-
-module.exports.PBEHAVIOR_TYPES = {
-  MAINTENANCE: 1,
-  UNMONITORED: 2,
-  PAUSE: 3,
 };
