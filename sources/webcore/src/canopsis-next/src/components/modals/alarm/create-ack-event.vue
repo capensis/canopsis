@@ -117,7 +117,7 @@ export default {
           await this.createDeclareTicketEvent();
         }
 
-        this.createAckEventAndCloseModal();
+        await this.createAckEventAndCloseModal();
       }
     },
 
