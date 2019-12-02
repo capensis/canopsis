@@ -149,8 +149,8 @@ Vue.config.productionTip = false;
 /**
  * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
  */
-window.addEventListener('unhandledrejection', () => {
-  store.dispatch('popups/error', { text: i18n.t('errors.default') });
+window.addEventListener('unhandledrejection', (err) => {
+  store.dispatch('popups/error', { text: err.description || i18n.t('errors.default') });
 });
 
 if (process.env.NODE_ENV === 'development') {
