@@ -3,13 +3,14 @@
     template(slot="title")
       span {{ $t('common.confirmation') }}
     template(slot="actions")
-      v-btn.primary(
-        :loading="submitting",
-        :disabled="isDisabled",
-        data-test="submitButton",
-        @click.prevent="submit"
-      ) {{ $t('common.yes') }}
-      v-btn.error(@click="$modals.hide") {{ $t('common.no') }}
+      v-layout(wrap, justify-center)
+        v-btn.primary(
+          :loading="submitting",
+          :disabled="isDisabled",
+          data-test="submitButton",
+          @click.prevent="submit"
+        ) {{ $t('common.yes') }}
+        v-btn.error(@click="$modals.hide") {{ $t('common.no') }}
 </template>
 
 <script>
