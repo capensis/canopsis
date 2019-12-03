@@ -46,3 +46,4 @@ export { default as CreateSnmpRule } from './snmp-rule/create-snmp-rule.vue';
 export { default as SelectViewTab } from './view/select-view-tab.vue';
 export { default as CreateAction } from './action/create-action.vue';
 export { default as CreateHeartbeat } from './heartbeat/create-heartbeat.vue';
+export { default as CreateDynamicInfo } from './dynamic-info/create-dynamic-info.vue';

@@ -15,6 +15,7 @@ import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import actionModule from './action';
 import heartbeatModule from './heartbeat';
+import dynamicInfoModule from './dynamic-info';
 
 export default {
   alarm: alarmModule,
@@ -34,4 +35,5 @@ export default {
   snmpMib: snmpMibModule,
   action: actionModule,
   heartbeat: heartbeatModule,
+  dynamicInfo: dynamicInfoModule,
 };

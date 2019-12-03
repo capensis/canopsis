@@ -1196,6 +1196,18 @@ export default {
     },
   },
 
+  dynamicInfo: {
+    title: 'Informations dynamiques',
+    table: {
+      id: 'Id',
+      name: 'Nom',
+      description: 'Description',
+      user: 'Auteur',
+      creationDate: 'Date de création',
+      lastUpdateDate: 'Date de dernière mise à jour',
+    },
+  },
+
 
   ...featureService.get('i18n.fr'),
 };

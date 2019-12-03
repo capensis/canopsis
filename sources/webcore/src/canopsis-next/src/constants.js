@@ -30,6 +30,7 @@ export const ENTITIES_TYPES = {
   snmpRule: 'snmpRule',
   action: 'action',
   heartbeat: 'heartbeat',
+  dynamicInfo: 'dynamicInfo',
 };
 
 export const MODALS = {
@@ -81,6 +82,7 @@ export const MODALS = {
   selectViewTab: 'select-view-tab',
   createAction: 'create-action',
   createHeartbeat: 'create-heartbeat',
+  createDynamicInfo: 'create-dynamic-info',
 };
 
 export const EVENT_ENTITY_TYPES = {

@@ -1297,6 +1297,18 @@ export default {
     },
   },
 
+  dynamicInfo: {
+    title: 'Dynamic informations',
+    table: {
+      id: 'Id',
+      name: 'Name',
+      description: 'Description',
+      user: 'Author',
+      creationDate: 'Creation date',
+      lastUpdateDate: 'Last update date',
+    },
+  },
+
   contextGeneralTable: {
     addSelection: 'Add selection',
   },
