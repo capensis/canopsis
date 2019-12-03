@@ -17,7 +17,7 @@ L'API météo des services permet de consulter l'état des
  - `start` : le nombre de watchers à passer.
  - `orderby` : le nom du champ à utiliser pour le tri. Les champs utilisables
    sont les mêmes que pour le filtre.
- - `direction` : l'ordre dans lequel les watchers doivent être trié (`ASC` ou
+ - `direction` : l'ordre dans lequel les watchers doivent être triés (`ASC` ou
    `DESC`)
 
 **Authentification requise** : Oui
