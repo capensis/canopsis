@@ -10,19 +10,19 @@ const commands = {
     return this.customClickOutside('@filtersList');
   },
 
-  clickEditFilterByName(name) {
+  clickEditFilter(name) {
     return this.customClick(this.el('@editFilter', name));
   },
 
-  verifyFilterVisibleByName(name) {
+  verifyFilterVisible(name) {
     return this.assert.visible(this.el('@filterItem', name));
   },
 
-  verifyFilterDeletedByName(name) {
+  verifyFilterDeleted(name) {
     return this.waitForElementNotPresent(this.el('@filterItem', name));
   },
 
-  clickDeleteFilterByName(name) {
+  clickDeleteFilter(name) {
     return this.customClick(this.el('@deleteFilter', name));
   },
 
