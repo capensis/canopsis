@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createCancelEventModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ title }}
@@ -16,13 +16,20 @@
               v-validate="'required'",
               :label="$t('modals.createCancelEvent.fields.output')",
               :error-messages="errors.collect('output')",
-              name="output"
+              name="output",
+              data-test="createCancelEventNote"
             )
       template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(
+          data-test="createCancelEventCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
+          data-test="createCancelEventSubmitButton",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>

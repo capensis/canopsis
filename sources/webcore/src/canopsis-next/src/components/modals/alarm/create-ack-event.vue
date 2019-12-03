@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createAckEventModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ $t('modals.createAckEvent.title') }}
@@ -12,15 +12,22 @@
             v-divider.my-3
           ack-event-form(v-model="form", :isNoteRequired="isNoteRequired")
       template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(
+          data-test="createAckEventCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled || submittingWithTicket",
+          data-test="createAckEventSubmitButton",
           type="submit"
         ) {{ $t('common.actions.ack') }}
         v-btn.warning(
           :loading="submittingWithTicket",
           :disabled="isDisabledWithTicket || submitting",
+          data-test="createAckEventSubmitWithTicketButton",
           @click="submitWithTicket"
         ) {{ submitWithTicketBtnLabel }}
 </template>

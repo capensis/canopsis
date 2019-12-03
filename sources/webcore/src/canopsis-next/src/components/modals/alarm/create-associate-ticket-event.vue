@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createAssociateTicketModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ $t('modals.createAssociateTicket.title') }}
@@ -16,13 +16,20 @@
               v-validate="'required'",
               :label="$t('modals.createAssociateTicket.fields.ticket')",
               :error-messages="errors.collect('ticket')",
-              name="ticket"
+              name="ticket",
+              data-test="createAssociateTicketNumberOfTicket"
             )
       template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(
+          data-test="createAssociateTicketCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
+          data-test="createAssociateTicketSubmitButton",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>

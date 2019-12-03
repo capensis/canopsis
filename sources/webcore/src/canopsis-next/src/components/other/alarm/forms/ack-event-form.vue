@@ -3,7 +3,8 @@
     v-layout(row)
       v-text-field(
         v-field="form.ticket",
-        :label="$t('modals.createAckEvent.fields.ticket')"
+        :label="$t('modals.createAckEvent.fields.ticket')",
+        data-test="createAckEventTicket"
       )
     v-layout(row)
       v-textarea(
@@ -11,7 +12,8 @@
         v-validate="isNoteRequired ? 'required' : ''",
         :label="$t('modals.createAckEvent.fields.output')",
         :error-messages="errors.collect('output')",
-        name="output"
+        name="output",
+        data-test="createAckEventNote"
       )
     v-layout(row)
       v-tooltip(top)
@@ -19,7 +21,8 @@
           slot="activator",
           v-field="form.ack_resources",
           :label="$t('modals.createAckEvent.fields.ackResources')",
-          color="primary"
+          color="primary",
+          data-test="createAckEventResource"
         )
         span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
 </template>

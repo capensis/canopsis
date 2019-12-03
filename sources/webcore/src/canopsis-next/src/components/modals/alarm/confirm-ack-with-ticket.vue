@@ -1,19 +1,26 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(data-test="confirmAckModal")
     template(slot="title")
       span {{ $t('common.confirmation') }}
     template(slot="text")
       v-alert(:value="true", type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
     template(slot="actions")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(
+        data-test="confirmAckCancelButton",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
       v-btn.primary(
         :loading="submitting",
         :disabled="isDisabled || submittingWithTicket",
+        data-test="confirmAckContinueButton",
         @click="submit"
       ) {{ $t('common.continue') }}
       v-btn.warning(
         :loading="submittingWithTicket",
         :disabled="isDisabledWithTicket || submitting",
+        data-test="confirmAckContinueWithTicketButton",
         @click="submitWithTicket"
       ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
 </template>

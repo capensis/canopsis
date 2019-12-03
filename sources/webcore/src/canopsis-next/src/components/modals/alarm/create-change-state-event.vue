@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createChangeStateEventModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ $t('modals.createChangeStateEvent.title') }}
@@ -13,13 +13,20 @@
               v-validate="'required'",
               :label="$t('modals.createChangeStateEvent.fields.output')",
               :error-messages="errors.collect('output')",
-              name="output"
+              name="output",
+              data-test="createChangeStateEventNote"
             )
       template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(
+          data-test="createChangeStateEventCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
+          data-test="createChangeStateEventSubmitButton",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
