@@ -116,6 +116,12 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.heartbeat,
         },
+        {
+          route: { name: 'exploitation-dynamic-infos' },
+          text: this.$t('dynamicInfo.title'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.exploitation.dynamicInfo,
+        },
       ];
 
       return links.filter(({ right }) =>
