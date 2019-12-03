@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(:data-test="`alarmValue-${column.text}`")
     v-menu(
       v-if="popupData",
       v-model="isInfoPopupOpen",
@@ -11,13 +11,19 @@
         v-layout(align-center)
           div(v-if="column.isHtml", v-html="sanitizedValue")
           div(v-else, v-bind="component.bind", v-on="component.on")
-          v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
+          v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
             v-icon(small) info
       v-card(dark)
-        v-card-title.primary.pa-2.white--text
+        v-card-title.primary.pa-2.white--text(:data-test="`alarmInfoPopup-${alarm._id}`")
           v-layout(justify-space-between, align-center)
-            h4 {{ $t('alarmList.infoPopup') }}
-            v-btn.ma-0.ml-3(icon, small, @click="hideInfoPopup", color="white")
+            h4(data-test="alarmInfoPopupContent") {{ $t('alarmList.infoPopup') }}
+            v-btn.ma-0.ml-3(
+              data-test="alarmInfoPopupCloseButton",
+              icon,
+              small,
+              @click="hideInfoPopup",
+              color="white"
+            )
               v-icon(small, color="error") close
         v-card-text.pa-2(v-html="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
