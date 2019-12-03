@@ -52,6 +52,10 @@ export default {
     DateTimePickerTextField,
   },
   mixins: [formMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
