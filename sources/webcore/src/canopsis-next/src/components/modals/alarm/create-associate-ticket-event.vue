@@ -19,6 +19,8 @@
               name="ticket",
               data-test="createAssociateTicketNumberOfTicket"
             )
+          v-alert(:value="itemsWithoutAck.length", type="info")
+            span {{ alertMessage }}
       template(slot="actions")
         v-btn(
           data-test="createAssociateTicketCancelButton",
@@ -65,11 +67,32 @@ export default {
       },
     };
   },
+  computed: {
+    itemsWithoutAck() {
+      return this.items.filter(item => item.v.ack);
+    },
+
+    alertMessage() {
+      const { length: count } = this.itemsWithoutAck;
+
+      return this.$tc('modals.createAssociateTicket.alerts.noAckItems', count, { count });
+    },
+  },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
+        if (this.itemsWithoutAck.length) {
+          const eventData = {};
+
+          /*          if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
+            eventData = { output: this.widget.parameters.fastAckOutput.value };
+          } */
+
+          await this.createEvent(EVENT_ENTITY_TYPES.fastAck, this.itemsWithoutAck, eventData);
+        }
+
         await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
 
         this.$modals.hide();

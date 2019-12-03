@@ -70,6 +70,12 @@ export default {
           title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showActionModal(MODALS.createCancelEvent),
         },
+        {
+          type: alarmsListActionsTypes.associateTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          title: this.$t('alarmList.actions.titles.associateTicket'),
+          method: this.showActionModal(MODALS.createAssociateTicketEvent),
+        },
       ],
     };
   },

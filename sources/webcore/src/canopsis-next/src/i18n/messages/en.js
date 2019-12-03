@@ -598,6 +598,9 @@ export default {
       fields: {
         ticket: 'Number of the ticket',
       },
+      alerts: {
+        noAckItems: 'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
+      },
     },
     liveReporting: {
       editLiveReporting: 'Live reporting',
