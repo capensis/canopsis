@@ -2,7 +2,17 @@
   .v-input.v-input--selection-controls.v-input--checkbox(:class="{ 'v-input--is-disabled': props.disabled }")
     .v-input__control
       .v-input__slot
-        .v-input--selection-controls__input(@click="listeners.change(!props.inputValue)")
+        .v-input--selection-controls__input(
+          data-test="vCheckboxFunctional",
+          @click="listeners.change(!props.inputValue)"
+        )
+          input(
+            class="hidden",
+            :aria-checked="String(props.inputValue)",
+            :checked="props.inputValue",
+            role="checkbox",
+            type="checkbox"
+          )
           .v-input--selection-controls__ripple.primary--text(v-ripple="{ center: true }")
           i.v-icon.material-icons(
             :class="{ 'primary--text': props.inputValue }"

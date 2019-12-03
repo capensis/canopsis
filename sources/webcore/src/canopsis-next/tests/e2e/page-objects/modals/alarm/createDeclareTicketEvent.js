@@ -2,13 +2,13 @@
 
 const { elementsWrapperCreator, modalCreator } = require('../../../helpers/page-object-creators');
 
-const modalSelector = sel('confirmationModal');
+const modalSelector = sel('createDeclareTicketEventModal');
 
 module.exports = modalCreator(modalSelector, {
   elements: {
     ...elementsWrapperCreator(modalSelector, {
-      submitButton: sel('submitButton'),
-      cancelButton: sel('cancelButton'),
+      cancelButton: sel('declareTicketEventCancelButton'),
+      submitButton: sel('declareTicketEventSubmitButton'),
     }),
   },
 });
