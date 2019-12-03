@@ -3,19 +3,19 @@
 const el = require('../../helpers/el');
 
 const commands = {
-  openLiveReporting() {
+  clickLiveReportingOpenButton() {
     return this.customClick('@liveReportingButton');
   },
 
-  clickResetLiveReporting() {
+  clickResetLiveReportingButton() {
     return this.customClick('@resetAlarmsDateIntervalButton');
   },
 
-  clickOnRowInfoPopupOpen(id) {
+  clickOnRowInfoPopupOpenButton(id) {
     return this.customClick(this.el('@tableRowInfoPopupOpen', id));
   },
 
-  clickOnRowInfoPopupClose(id) {
+  clickOnRowInfoPopupCloseButton(id) {
     return this.customClick(this.el('@tableRowInfoPopupClose', id));
   },
 
