@@ -2,7 +2,7 @@
   div
     v-list
       v-list-tile.pa-0(v-for="(filter, index) in filters", :key="filter.title")
-        v-layout
+        v-layout(:data-test="`filterItem-${filter.title}`")
           v-flex(xs12)
             v-list-tile-content {{ filter.title }}
           v-list-tile-action(v-if="hasAccessToEditFilter")

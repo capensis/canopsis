@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(data-test="filtersListModal")
     template(slot="title")
       span {{ $t('common.filters') }}
     template(slot="text")

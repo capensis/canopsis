@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(date-test="createDeclareTicketEventModal", @submit.prevent="submit")
     v-card
       v-card-title.primary.white--text
         v-layout(justify-space-between, align-center)
@@ -13,8 +13,16 @@
             v-divider.my-3
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(type="submit") {{ $t('common.actions.reportIncident') }}
+        v-btn(
+          data-test="declareTicketEventCancelButton",
+          @click="$modals.hide",
+          depressed,
+          flat
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          data-test="declareTicketEventSubmitButton",
+          type="submit"
+        ) {{ $t('common.actions.reportIncident') }}
 </template>
 
 <script>

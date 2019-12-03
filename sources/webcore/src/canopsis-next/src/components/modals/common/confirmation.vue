@@ -10,7 +10,10 @@
           data-test="submitButton",
           @click.prevent="submit"
         ) {{ $t('common.yes') }}
-        v-btn.error(@click="$modals.hide") {{ $t('common.no') }}
+        v-btn.error(
+          data-test="cancelButton",
+          @click="$modals.hide"
+        ) {{ $t('common.no') }}
 </template>
 
 <script>

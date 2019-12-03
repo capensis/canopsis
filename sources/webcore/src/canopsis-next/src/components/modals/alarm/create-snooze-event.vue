@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createSnoozeEventModal", @submit.prevent="submit")
     v-card
       v-card-title.primary.white--text
         v-layout(justify-space-between, align-center)
@@ -9,8 +9,18 @@
           duration-field(v-model="form")
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
+        v-btn(
+          data-test="createSnoozeEventCancelButton",
+          @click="$modals.hide",
+          depressed,
+          flat
+        ) {{ $t('common.cancel') }}
+        v-btn(
+          data-test="createSnoozeEventSubmitButton",
+          type="submit",
+          :disabled="errors.any()",
+          color="primary"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>

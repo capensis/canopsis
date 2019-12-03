@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card
+  v-card(data-test="createAckEventModal")
     v-card-title.primary.white--text
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.createAckEvent.title') }}
@@ -12,11 +12,13 @@
           v-divider.my-3
         v-layout(row)
           v-text-field(
+            data-test="createAckEventTicket",
             :label="$t('modals.createAckEvent.fields.ticket')",
             v-model="form.ticket"
           )
         v-layout(row)
           v-textarea(
+            data-test="createAckEventNote",
             :label="$t('modals.createAckEvent.fields.output')",
             :error-messages="errors.collect('output')",
             v-model="form.output",
@@ -26,6 +28,7 @@
         v-layout(row)
           v-tooltip(top)
             v-checkbox(
+              data-test="createAckEventResource",
               slot="activator",
               v-model="form.ack_resources",
               :label="$t('modals.createAckEvent.fields.ackResources')",
@@ -35,9 +38,20 @@
             span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
     v-divider
     v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
-      v-btn.warning(@click.prevent="submitWithTicket") {{ submitWithTicketBtnLabel }}
+      v-btn(
+        data-test="createAckEventCancelButton",
+        @click="$modals.hide",
+        depressed,
+        flat
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        data-test="createAckEventSubmitButton",
+        @click.prevent="submit"
+      ) {{ $t('common.actions.ack') }}
+      v-btn.warning(
+        data-test="createAckEventSubmitWithTicketButton",
+        @click.prevent="submitWithTicket"
+      ) {{ submitWithTicketBtnLabel }}
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form
+  div
     v-text-field(
       v-field="form.generalParameters._id",
       v-validate="'required'",

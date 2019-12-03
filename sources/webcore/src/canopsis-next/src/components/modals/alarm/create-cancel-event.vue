@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createCancelEventModal", @submit.prevent="submit")
     v-card
       v-card-title.primary.white--text
         v-layout(justify-space-between, align-center)
@@ -13,6 +13,7 @@
             v-divider.my-3
           v-layout(row)
             v-text-field(
+              data-test="createCancelEventNote",
               :label="$t('modals.createCancelEvent.fields.output')",
               :error-messages="errors.collect('output')",
               v-model="form.output",
@@ -21,8 +22,17 @@
             )
       v-divider
       v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
+        v-btn(
+          data-test="createCancelEventCancelButton",
+          @click="$modals.hide",
+          depressed,
+          flat
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          data-test="createCancelEventSubmitButton",
+          type="submit",
+          :disabled="errors.any()"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
