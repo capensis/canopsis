@@ -16,16 +16,12 @@
 </template>
 
 <script>
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
-import formMixin from '@/mixins/form';
-
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
   components: {
     PatternsList,
   },
-  mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',

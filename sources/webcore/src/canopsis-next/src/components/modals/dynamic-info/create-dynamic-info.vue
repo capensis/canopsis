@@ -22,7 +22,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 
 /**
- * Modal to create widget
+ * Modal to create dynamic information
  */
 export default {
   name: MODALS.createDynamicInfo,

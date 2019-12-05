@@ -26,7 +26,7 @@
       v-stepper-content(step="2")
         v-card
           v-card-text
-            div Info form
+            dynamic-info-infos-form(v-field="form.infos")
       v-stepper-content(step="3")
         v-card
           v-card-text
@@ -35,10 +35,15 @@
 
 <script>
 import DynamicInfoGeneralForm from './partials/dynamic-info-general-form.vue';
+import DynamicInfoInfosForm from './partials/dynamic-info-infos-form.vue';
 import DynamicInfoPatternsForm from './partials/dynamic-info-patterns-form.vue';
 
 export default {
-  components: { DynamicInfoGeneralForm, DynamicInfoPatternsForm },
+  components: {
+    DynamicInfoGeneralForm,
+    DynamicInfoInfosForm,
+    DynamicInfoPatternsForm,
+  },
   model: {
     prop: 'form',
     event: 'input',
