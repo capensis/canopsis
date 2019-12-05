@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     itemsWithoutAck() {
-      return this.items.filter(item => item.v.ack);
+      return this.items.filter(item => !item.v.ack);
     },
 
     alertMessage() {
@@ -84,11 +84,8 @@ export default {
 
       if (isFormValid) {
         if (this.itemsWithoutAck.length) {
-          const eventData = {};
-
-          /*          if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-            eventData = { output: this.widget.parameters.fastAckOutput.value };
-          } */
+          const { fastAckOutput } = this.config;
+          const eventData = fastAckOutput && fastAckOutput.enabled ? { output: fastAckOutput.value } : {};
 
           await this.createEvent(EVENT_ENTITY_TYPES.fastAck, this.itemsWithoutAck, eventData);
         }

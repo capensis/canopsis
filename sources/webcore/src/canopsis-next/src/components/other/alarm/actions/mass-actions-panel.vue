@@ -74,7 +74,7 @@ export default {
           type: alarmsListActionsTypes.associateTicket,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           title: this.$t('alarmList.actions.titles.associateTicket'),
-          method: this.showActionModal(MODALS.createAssociateTicketEvent),
+          method: this.showCreateAssociateTicketEventModal,
         },
       ],
     };
@@ -115,6 +115,17 @@ export default {
             parents: [this.items],
             parentsType: ENTITIES_TYPES.alarm,
           }),
+        },
+      });
+    },
+
+    showCreateAssociateTicketEventModal() {
+      this.$modals.show({
+        name: MODALS.createAssociateTicketEvent,
+        config: {
+          ...this.modalConfig,
+
+          fastAckOutput: this.widget.fastAckOutput,
         },
       });
     },
