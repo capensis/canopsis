@@ -5,7 +5,7 @@
         span.headline {{ $t('modals.createDynamicInfo.create.title') }}
     v-card-text
       v-form
-        v-layout(row, wrap)
+        dynamic-info-form(:form="form")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
@@ -19,6 +19,8 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
+
 /**
  * Modal to create widget
  */
@@ -27,10 +29,16 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  components: { DynamicInfoForm },
   mixins: [modalInnerMixin],
   data() {
     return {
-      form: {},
+      stepper: 0,
+      form: {
+        id: '',
+        name: '',
+        description: '',
+      },
     };
   },
   created() {

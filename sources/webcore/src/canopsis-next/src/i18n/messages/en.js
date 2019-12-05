@@ -929,6 +929,19 @@ export default {
       },
       patternRequired: 'Pattern is required',
     },
+    createDynamicInfo: {
+      steps: {
+        general: {
+          title: 'General',
+        },
+        infos: {
+          title: 'Informations',
+        },
+        patterns: {
+          title: 'Patterns',
+        },
+      },
+    },
   },
   tables: {
     noData: 'No data',
