@@ -1,6 +1,9 @@
 const { isString } = require('lodash');
 
-module.exports.elementsWrapperCreator = function elementsWrapperCreator(selector, elements) {
+// eslint-disable-next-line import/no-extraneous-dependencies
+const PageUtils = require('nightwatch/lib/page-object/page-utils');
+
+function elementsWrapperCreator(selector, elements) {
   return Object.entries(elements).reduce((acc, [key, value]) => {
     if (isString(value) && !value.startsWith(selector)) {
       acc[key] = `${selector} ${value}`;
@@ -10,9 +13,9 @@ module.exports.elementsWrapperCreator = function elementsWrapperCreator(selector
 
     return acc;
   }, {});
-};
+}
 
-module.exports.modalCreator = function modalCreator(selector, pageObject) {
+function modalCreator(selector, pageObject) {
   const { submitButton, cancelButton, deleteButton } = pageObject.elements;
   const preparedPageObjectCommands = pageObject.commands && pageObject.commands.length ? pageObject.commands : [{}];
 
@@ -55,4 +58,32 @@ module.exports.modalCreator = function modalCreator(selector, pageObject) {
       }),
     ],
   };
-};
+}
+
+function scopedPageObject(pageObject) {
+  const preparedPageObjectCommands = pageObject.commands && pageObject.commands.length ? pageObject.commands : [{}];
+
+  return {
+    ...pageObject,
+    commands: [
+      ...preparedPageObjectCommands.map(commandsItem => ({
+        setSelectorScope(sectionSelector) {
+          const elements = sectionSelector
+            ? elementsWrapperCreator(sectionSelector, pageObject.elements)
+            : pageObject.elements;
+
+          PageUtils.createElements(this, elements || {});
+
+          return this;
+        },
+
+        ...commandsItem,
+      })),
+    ],
+  };
+}
+
+module.exports.elementsWrapperCreator = elementsWrapperCreator;
+module.exports.modalCreator = modalCreator;
+module.exports.modalCreator = modalCreator;
+module.exports.scopedPageObject = scopedPageObject;
