@@ -1,6 +1,8 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
+const { scopedPageObject } = require('../../helpers/page-object-creators');
+
 
 const commands = {
   clickLiveReportingOpenButton() {
@@ -38,7 +40,7 @@ const commands = {
   el,
 };
 
-module.exports = {
+module.exports = scopedPageObject({
   elements: {
     liveReportingButton: sel('alarmsDateInterval'),
     resetAlarmsDateIntervalButton: `${sel('resetAlarmsDateInterval')} .v-chip__close`,
@@ -50,4 +52,4 @@ module.exports = {
     tableRowInfoPopupClose: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupCloseButton')}`,
   },
   commands: [commands],
-};
+});
