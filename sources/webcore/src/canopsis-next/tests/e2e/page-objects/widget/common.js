@@ -1,7 +1,10 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
+const { elementsWrapperCreator } = require('../../helpers/page-object-creators');
 const { FILTERS_TYPE } = require('../../constants');
+
+const sideBarSelector = sel('sideBarWrapper');
 
 const commands = {
   el,
@@ -144,12 +147,20 @@ const commands = {
     return this.customClick('@openWidgetFilterCreateModal');
   },
 
-  clickEditFilter() {
-    return this.customClick('@openWidgetFilterEditModal');
+  clickEditFilter(name) {
+    return this.customClick(this.el('@editFilter', name));
   },
 
-  clickDeleteFilter() {
-    return this.customClick('@openWidgetFilterDeleteModal');
+  verifyFilterVisible(name) {
+    return this.assert.visible(this.el('@filterItem', name));
+  },
+
+  verifyFilterDeleted(name) {
+    return this.waitForElementNotPresent(this.el('@filterItem', name));
+  },
+
+  clickDeleteFilter(name) {
+    return this.customClick(this.el('@deleteFilter', name));
   },
 
   clickCreateMoreInfos() {
@@ -468,14 +479,19 @@ module.exports = {
     widgetInfoPopup: sel('infoPopupButton'),
 
     filters: sel('filters'),
-    mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
-    mixFiltersInput: `input${sel('mixFilters')}`,
-    addFilter: sel('addFilter'),
-    andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
-    andFiltersInput: `input${sel('andFilters')}`,
-    orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
-    editFilter: sel('editFilter-%s'),
-    deleteFilter: sel('deleteFilter-%s'),
+
+    ...elementsWrapperCreator(sideBarSelector, {
+      mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
+      mixFiltersInput: `input${sel('mixFilters')}`,
+      addFilter: sel('addFilter'),
+      andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
+      andFiltersInput: `input${sel('andFilters')}`,
+      orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
+      editFilter: sel('editFilter-%s'),
+      deleteFilter: sel('deleteFilter-%s'),
+      filterItem: sel('filterItem-%s'),
+    }),
+
     selectFilters: `${sel('selectFilters')} .v-input__slot`,
 
     statsSelector: sel('statsSelector'),

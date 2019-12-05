@@ -12,14 +12,16 @@
       )
     v-layout
       v-text-field(
+        data-test="pbehaviorFormName",
         v-validate="'required'",
         v-field="form.name",
         :label="$t('modals.createPbehavior.steps.general.fields.name')",
         :error-messages="errors.collect('name')",
         name="name"
       )
-    v-layout
+    v-layout(data-test="pbehaviorType", row)
       v-combobox(
+        data-test="pbehaviorReason",
         v-validate="'required'",
         v-field="form.reason",
         :label="$t('modals.createPbehavior.steps.general.fields.reason')",
@@ -41,14 +43,14 @@
     v-layout.mt-3(wrap)
       v-flex(xs12)
         v-layout(wrap, justify-space-between)
-          v-flex(xs4)
+          v-flex(data-test="startDateTimePicker", xs4)
             date-time-picker-field(
               v-validate="tstartRules",
               v-field="form.tstart",
               :label="$t('modals.createPbehavior.steps.general.fields.start')",
               name="tstart"
             )
-          v-flex(xs4)
+          v-flex(data-test="stopDateTimePicker", xs4)
             date-time-picker-field(
               v-validate="tstopRules",
               v-field="form.tstop",

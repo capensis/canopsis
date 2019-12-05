@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.timeline
+  div.timeline(:data-test="`alarmTimeLine-${alarm._id}`")
     ul(v-for="(steps, day) in groupedSteps", :key="day")
       li(v-for="(step, index) in steps", :key="`step-${index}`")
         .timeline-item(v-show="index === 0")

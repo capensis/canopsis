@@ -1,10 +1,11 @@
 <template lang="pug">
-  div
+  div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
+          data-test="topPagination",
           v-if="hasColumns",
           :page="query.page",
           :limit="query.limit",
@@ -14,6 +15,7 @@
         )
       v-flex
         filter-selector(
+          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :lockedFilters="widgetViewFilters",
@@ -28,18 +30,20 @@
         )
       v-flex
         v-chip.primary.white--text(
+          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-btn(@click="showEditLiveReportModal", icon, small)
+        v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
           v-icon(:color="activeRange ? 'primary' : 'black'") schedule
       v-flex.px-3(v-show="selected.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
+        data-test="tableWidget",
         :class="vDataTableClass",
         v-model="selected",
         :items="alarms",
@@ -59,8 +63,8 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          tr
-            td
+          tr(:data-test="`tableRow-${props.item._id}`")
+            td(data-test="rowCheckbox")
               v-checkbox-functional(v-model="props.selected", primary, hide-details)
             td(
               v-for="column in columns",
@@ -74,13 +78,14 @@
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
+            data-test="bottomPagination",
             :page="query.page",
             :limit="query.limit",
             :total="alarmsMeta.total",
             @input="updateQueryPage"
           )
         v-spacer
-        v-flex(xs2)
+        v-flex(xs2, data-test="itemsPerPage")
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
