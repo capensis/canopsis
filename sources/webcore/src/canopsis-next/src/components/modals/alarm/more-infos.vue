@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-card
-    v-card-text
+  modal-wrapper
+    template(slot="text")
       div(v-if="!config.template")
         v-layout(justify-center)
           v-icon(color="info") infos
@@ -14,6 +14,8 @@ import { compile } from '@/helpers/handlebars';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal showing more infos on an alarm
  *
@@ -21,6 +23,7 @@ import modalInnerItemsMixin from '@/mixins/modal/inner-items';
  */
 export default {
   name: MODALS.moreInfos,
+  components: { ModalWrapper },
   mixins: [modalInnerItemsMixin],
   computed: {
     output() {
