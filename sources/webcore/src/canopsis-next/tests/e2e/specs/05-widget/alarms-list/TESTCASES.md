@@ -77,7 +77,7 @@
         
     **Expected result**: 10 alarms are shown.
 
-## WIP: Filters
+## WIP: Filtering
 
 * [ ] **A filter can be selected.**
     1. To click on the field "Select a filter".
@@ -460,3 +460,50 @@
     2. To click on the icon “List periodic behaviors”.
         
     **Expected result**: the modal window with all periodic behaviors is shown.
+
+## Edit mode: alarm list settings.
+**Pre-condition:** 
+* *Open a menu at the bottom right corner of the page*
+* *Press the button with pencil*
+* *Enter the edit mode*
+* *Then click on the icon with three dots*
+* *Choose "Edit" in the dropdown*
+
+* [ ] **Widget’s size can be changed in mobile version.**
+    1. To click on the element “Widget’s size”.
+    2. To choose a row.
+    3. To select the widget’s size near the icon of mobile phone.
+    4. To press the button “Save”.
+        
+    **Expected result**: the widget’s size is changed in mobile version.
+
+* [ ] **Widget’s size can be changed in tablet version.**
+    1. To click on the element “Widget’s size”.
+    2. To choose a row.
+    3. To select the widget’s size near the icon of tablet.
+    4. To press the button “Save”.
+        
+    **Expected result**: the widget’s size is changed in tablet version.
+
+* [ ] **Widget’s size can be changed in tablet version.**
+    1. To click on the element “Widget’s size”.
+    2. To choose a row.
+    3. To select the widget’s size near the icon of monitor.
+    4. To press the button “Save”.
+        
+    **Expected result**: the widget’s size is changed in desktop version.
+
+* [ ] **Widget’s title can be changed.**
+    1. To click on the element “Title (optional)”.
+    2. To input a title.
+    3. To press the button “Save”.
+        
+    **Expected result**: the widget’s title is changed.
+
+* [ ] **The periodic refresh can be set manually.**
+    1. To click on the element “Periodic refresh (optional)”.
+    2. To turn on periodic refresh mode.
+    3. To set some time for periodic refresh manually.
+    4. To press the button “Save”.
+        
+    **Expected result**: the periodic refresh is set.
