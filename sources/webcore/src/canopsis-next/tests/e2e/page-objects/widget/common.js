@@ -144,12 +144,20 @@ const commands = {
     return this.customClick('@openWidgetFilterCreateModal');
   },
 
-  clickEditFilter() {
-    return this.customClick('@openWidgetFilterEditModal');
+  clickEditFilter(name) {
+    return this.customClick(this.el('@editFilter', name));
   },
 
-  clickDeleteFilter() {
-    return this.customClick('@openWidgetFilterDeleteModal');
+  verifyFilterVisible(name) {
+    return this.assert.visible(this.el('@filterItem', name));
+  },
+
+  verifyFilterDeleted(name) {
+    return this.waitForElementNotPresent(this.el('@filterItem', name));
+  },
+
+  clickDeleteFilter(name) {
+    return this.customClick(this.el('@deleteFilter', name));
   },
 
   clickCreateMoreInfos() {
@@ -468,14 +476,15 @@ module.exports = {
     widgetInfoPopup: sel('infoPopupButton'),
 
     filters: sel('filters'),
-    mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
-    mixFiltersInput: `input${sel('mixFilters')}`,
-    addFilter: sel('addFilter'),
-    andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
-    andFiltersInput: `input${sel('andFilters')}`,
-    orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
-    editFilter: sel('editFilter-%s'),
-    deleteFilter: sel('deleteFilter-%s'),
+    mixFilters: `${sel('sideBarWrapper')} div${sel('mixFilters')} .v-input--selection-controls__ripple`,
+    mixFiltersInput: `${sel('sideBarWrapper')} input${sel('mixFilters')}`,
+    addFilter: `${sel('sideBarWrapper')} ${sel('addFilter')}`,
+    andFilters: `${sel('sideBarWrapper')} ${sel('andFilters')} + .v-input--selection-controls__ripple`,
+    andFiltersInput: `${sel('sideBarWrapper')} input${sel('andFilters')}`,
+    orFilters: `${sel('sideBarWrapper')} ${sel('orFilters')} + .v-input--selection-controls__ripple`,
+    filterItem: `${sel('sideBarWrapper')} ${sel('filterItem-%s')}`,
+    editFilter: `${sel('sideBarWrapper')} ${sel('editFilter-%s')}`,
+    deleteFilter: `${sel('sideBarWrapper')} ${sel('deleteFilter-%s')}`,
     selectFilters: `${sel('selectFilters')} .v-input__slot`,
 
     statsSelector: sel('statsSelector'),
