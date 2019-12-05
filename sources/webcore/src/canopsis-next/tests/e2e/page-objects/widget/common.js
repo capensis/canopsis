@@ -1,7 +1,10 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
 const el = require('../../helpers/el');
+const { elementsWrapperCreator } = require('../../helpers/page-object-creators');
 const { FILTERS_TYPE } = require('../../constants');
+
+const sideBarSelector = sel('sideBarWrapper');
 
 const commands = {
   el,
@@ -476,15 +479,19 @@ module.exports = {
     widgetInfoPopup: sel('infoPopupButton'),
 
     filters: sel('filters'),
-    mixFilters: `${sel('sideBarWrapper')} div${sel('mixFilters')} .v-input--selection-controls__ripple`,
-    mixFiltersInput: `${sel('sideBarWrapper')} input${sel('mixFilters')}`,
-    addFilter: `${sel('sideBarWrapper')} ${sel('addFilter')}`,
-    andFilters: `${sel('sideBarWrapper')} ${sel('andFilters')} + .v-input--selection-controls__ripple`,
-    andFiltersInput: `${sel('sideBarWrapper')} input${sel('andFilters')}`,
-    orFilters: `${sel('sideBarWrapper')} ${sel('orFilters')} + .v-input--selection-controls__ripple`,
-    filterItem: `${sel('sideBarWrapper')} ${sel('filterItem-%s')}`,
-    editFilter: `${sel('sideBarWrapper')} ${sel('editFilter-%s')}`,
-    deleteFilter: `${sel('sideBarWrapper')} ${sel('deleteFilter-%s')}`,
+
+    ...elementsWrapperCreator(sideBarSelector, {
+      mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
+      mixFiltersInput: `input${sel('mixFilters')}`,
+      addFilter: sel('addFilter'),
+      andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
+      andFiltersInput: `input${sel('andFilters')}`,
+      orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
+      editFilter: sel('editFilter-%s'),
+      deleteFilter: sel('deleteFilter-%s'),
+      filterItem: sel('filterItem-%s'),
+    }),
+
     selectFilters: `${sel('selectFilters')} .v-input__slot`,
 
     statsSelector: sel('statsSelector'),
