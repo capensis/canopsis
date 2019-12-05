@@ -930,9 +930,17 @@ export default {
       patternRequired: 'Pattern is required',
     },
     createDynamicInfo: {
+      create: {
+        title: 'Create dynamic information',
+      },
       steps: {
         general: {
           title: 'General',
+          fields: {
+            id: 'Id',
+            name: 'Name',
+            description: 'Description',
+          },
         },
         infos: {
           title: 'Informations',

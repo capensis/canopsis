@@ -5,7 +5,7 @@
         span.headline {{ $t('modals.createDynamicInfo.create.title') }}
     v-card-text
       v-form
-        dynamic-info-form(:form="form")
+        dynamic-info-form(v-model="form")
     v-divider
     v-layout.py-1(justify-end)
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
@@ -25,7 +25,7 @@ import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-f
  * Modal to create widget
  */
 export default {
-  name: MODALS.createHeartbeat,
+  name: MODALS.createDynamicInfo,
   $_veeValidate: {
     validator: 'new',
   },
@@ -35,9 +35,16 @@ export default {
     return {
       stepper: 0,
       form: {
-        id: '',
-        name: '',
-        description: '',
+        general: {
+          _id: '',
+          name: '',
+          description: '',
+        },
+        infos: [],
+        patterns: {
+          alarm_patterns: [],
+          entity_patterns: [],
+        },
       },
     };
   },
