@@ -1,16 +1,22 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createPbehaviorModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ $t('modals.createPbehavior.title') }}
       template(slot="text")
         pbehavior-form(v-model="form")
       template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(
+          data-test="createPbehaviorCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",
-          type="submit"
+          type="submit",
+          data-test="createPbehaviorSubmitButton"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
 

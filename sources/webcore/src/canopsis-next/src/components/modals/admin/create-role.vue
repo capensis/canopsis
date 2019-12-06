@@ -1,32 +1,17 @@
 <template lang="pug">
-  v-card(data-test="createRoleModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        h2 {{ title }}
-    v-card-text.py-0
-      v-container
-        v-form
-          v-layout
-            v-text-field(
-              v-model="form._id",
-              :label="$t('common.name')",
-              name="name",
-              v-validate="'required'",
-              :error-messages="errors.collect('name')",
-              data-test="name"
-            )
-          v-layout
-            v-text-field(
-              v-model="form.description",
-              :label="$t('common.description')",
-              data-test="description"
-            )
-          v-layout
-            view-selector(v-model="form.defaultview")
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary.white--text(data-test="submitButton", @click="submit") {{ $t('common.submit') }}
+  v-form(data-test="createRoleModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        role-form(v-model="form")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary.white--text(
+          :disabled="isDisabled",
+          type="submit",
+          data-test="submitButton"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -40,22 +25,24 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import submittableMixin from '@/mixins/submittable';
 
-import ViewSelector from './partial/view-selector.vue';
+import RoleForm from '@/components/other/role/role-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createRole,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    ViewSelector,
-  },
+  components: { RoleForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
     entitiesViewMixin,
     entitiesRoleMixin,
     entitiesViewGroupMixin,
+    submittableMixin(),
   ],
   data() {
     const group = this.modal.config.group || { name: '', description: '', defaultView: '' };
@@ -89,21 +76,17 @@ export default {
   },
   methods: {
     async submit() {
-      try {
-        const isFormValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-        if (isFormValid) {
-          const formData = this.isNew ? { ...generateRole() } : { ...this.role };
-          formData._id = this.form._id;
+      if (isFormValid) {
+        const formData = this.isNew ? { ...generateRole() } : { ...this.role };
+        formData._id = this.form._id;
 
-          await this.createRole({ data: { ...formData, ...this.form } });
-          await this.fetchRolesListWithPreviousParams();
+        await this.createRole({ data: { ...formData, ...this.form } });
+        await this.fetchRolesListWithPreviousParams();
 
-          this.$popups.success({ text: this.$t('success.default') });
-          this.$modals.hide();
-        }
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
+        this.$popups.success({ text: this.$t('success.default') });
+        this.$modals.hide();
       }
     },
   },

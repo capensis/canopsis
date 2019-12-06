@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(data-test="pbehaviorListModal")
     template(slot="title")
       span {{ $t('alarmList.actions.titles.pbehaviorList') }}
     template(slot="text")
@@ -15,12 +15,13 @@
             v-btn.mx-0(
               v-for="action in availableActions",
               :key="action.name",
+              :data-test="`pbehaviorRow-${props.item._id}-action-${action.name}`",
               @click="() => action.action(props.item)",
               icon
             )
               v-icon {{ action.icon }}
     template(slot="actions")
-      v-btn.primary(@click="$modals.hide") {{ $t('common.ok') }}
+      v-btn.primary(data-test="pbehaviorListConfirmButton", @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>

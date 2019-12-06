@@ -1,14 +1,13 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createAction.create.title') }}
-    v-card-text
-      action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createAction.create.title') }}
+      template(slot="text")
+        action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -19,17 +18,19 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
 
+import submittableMixin from '@/mixins/submittable';
+
 import ActionForm from '@/components/other/action/form/action-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createAction,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    ActionForm,
-  },
-  mixins: [modalInnerMixin],
+  components: { ActionForm, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { item, isDuplicating } = this.modal.config;
 

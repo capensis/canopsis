@@ -1,52 +1,48 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createAckEvent.title') }}
-    v-card-text
-      v-container
-        v-layout(row, align-center)
-          v-flex.text-xs-center
-            alarm-general-table(:items="items")
-        v-layout(row)
-          v-divider.my-3
-        v-layout(row)
-          v-text-field(
-            :label="$t('modals.createAckEvent.fields.ticket')",
-            v-model="form.ticket"
-          )
-        v-layout(row)
-          v-textarea(
-            :label="$t('modals.createAckEvent.fields.output')",
-            :error-messages="errors.collect('output')",
-            v-model="form.output",
-            v-validate="isNoteRequired ? 'required' : ''",
-            data-vv-name="output"
-          )
-        v-layout(row)
-          v-tooltip(top)
-            v-checkbox(
-              slot="activator",
-              v-model="form.ack_resources",
-              :label="$t('modals.createAckEvent.fields.ackResources')",
-              color="primary"
-            )
-              span(slot-name="label") {{  }}
-            span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.actions.ack') }}
-      v-btn.warning(@click.prevent="submitWithTicket") {{ submitWithTicketBtnLabel }}
+  v-form(data-test="createAckEventModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createAckEvent.title') }}
+      template(slot="text")
+        v-container
+          v-layout(row, align-center)
+            v-flex.text-xs-center
+              alarm-general-table(:items="items")
+          v-layout(row)
+            v-divider.my-3
+          ack-event-form(v-model="form", :isNoteRequired="isNoteRequired")
+      template(slot="actions")
+        v-btn(
+          data-test="createAckEventCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :loading="submitting",
+          :disabled="isDisabled || submittingWithTicket",
+          data-test="createAckEventSubmitButton",
+          type="submit"
+        ) {{ $t('common.actions.ack') }}
+        v-btn.warning(
+          :loading="submittingWithTicket",
+          :disabled="isDisabledWithTicket || submitting",
+          data-test="createAckEventSubmitWithTicketButton",
+          @click="submitWithTicket"
+        ) {{ submitWithTicketBtnLabel }}
 </template>
 
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
-import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
-
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import submittableMixin from '@/mixins/submittable';
+
+import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+import AckEventForm from '@/components/other/alarm/forms/ack-event-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create an ack event
@@ -56,10 +52,17 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    AlarmGeneralTable,
-  },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
+  components: { AlarmGeneralTable, AckEventForm, ModalWrapper },
+  mixins: [
+    modalInnerItemsMixin,
+    eventActionsAlarmMixin,
+    submittableMixin(),
+    submittableMixin({
+      method: 'submitWithTicket',
+      property: 'submittingWithTicket',
+      computedProperty: 'isDisabledWithTicket',
+    }),
+  ],
   data() {
     return {
       form: {
@@ -112,23 +115,23 @@ export default {
     },
 
     async submitWithTicket() {
-      const formIsValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-      if (formIsValid) {
+      if (isFormValid) {
         if (this.form.ticket) {
           await this.createAssocTicketEvent();
         } else {
           await this.createDeclareTicketEvent();
         }
 
-        this.createAckEventAndCloseModal();
+        await this.createAckEventAndCloseModal();
       }
     },
 
     async submit() {
-      const formIsValid = await this.$validator.validateAll();
+      const isFormValid = await this.$validator.validateAll();
 
-      if (formIsValid) {
+      if (isFormValid) {
         if (this.form.ticket) {
           this.$modals.show({
             name: MODALS.confirmAckWithTicket,
@@ -138,7 +141,7 @@ export default {
             },
           });
         } else {
-          this.createAckEventAndCloseModal();
+          await this.createAckEventAndCloseModal();
         }
       }
     },
@@ -146,8 +149,3 @@ export default {
 };
 </script>
 
-<style scoped>
-  .tooltip {
-    flex: 1 1 auto;
-  }
-</style>

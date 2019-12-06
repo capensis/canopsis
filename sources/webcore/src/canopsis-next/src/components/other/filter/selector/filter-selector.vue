@@ -35,7 +35,11 @@
         @input="updateSelectedFilter"
       )
         template(slot="item", slot-scope="{ parent, item, tile }")
-          v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
+          v-list-tile-action(
+            v-if="isMultiple",
+            :data-test="`filterOption-${item[itemText]}`",
+            @click.stop="parent.$emit('select', item)"
+          )
             v-checkbox(:inputValue="tile.props.value", :color="parent.color")
           v-list-tile-content
             v-list-tile-title
@@ -46,7 +50,7 @@
                 small
               ) {{ item.locked ? 'lock' : 'person' }}
     v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
-      v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
+      v-btn(data-test="showFiltersListButton", v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
       filters-list(
         v-else,

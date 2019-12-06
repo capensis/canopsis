@@ -1,16 +1,24 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
-    v-card
-      v-card-title.primary.white--text
-        v-layout(justify-space-between, align-center)
-          span.headline {{ $t('modals.createSnoozeEvent.title') }}
-      v-card-text
+  v-form(data-test="createSnoozeEventModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createSnoozeEvent.title') }}
+      template(slot="text")
         v-container
           duration-field(v-model="form")
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn(type="submit", :disabled="errors.any()", color="primary") {{ $t('common.actions.saveChanges') }}
+      template(slot="actions")
+        v-btn(
+          data-test="createSnoozeEventCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :loading="submitting",
+          :disabled="isDisabled",
+          data-test="createSnoozeEventSubmitButton",
+          type="submit"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -20,22 +28,22 @@ import { MODALS, EVENT_ENTITY_TYPES, DURATION_UNITS } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import submittableMixin from '@/mixins/submittable';
 
 import DurationField from '@/components/forms/fields/duration.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to put a snooze on an alarm
  */
 export default {
   name: MODALS.createSnoozeEvent,
-
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    DurationField,
-  },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
+  components: { DurationField, ModalWrapper },
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
       form: {

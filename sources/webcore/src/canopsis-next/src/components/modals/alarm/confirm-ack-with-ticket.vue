@@ -1,37 +1,53 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('common.confirmation') }}
-    v-card-text
+  modal-wrapper(data-test="confirmAckModal")
+    template(slot="title")
+      span {{ $t('common.confirmation') }}
+    template(slot="text")
       v-alert(:value="true", type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
-      v-divider
-      v-layout.mt-2.mb-1(wrap, justify-end)
-        v-btn(@click="$modals.hide", flat) {{ $t('common.cancel') }}
-        v-btn(
-          @click.prevent="submit",
-          :loading="submitting",
-          :disabled="submitting",
-          color="primary"
-        ) {{ $t('common.continue') }}
-        v-btn(
-          @click.prevent="submitWithTicket",
-          :loading="submitting",
-          :disabled="submitting",
-          color="warning"
-        ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
+    template(slot="actions")
+      v-btn(
+        data-test="confirmAckCancelButton",
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.cancel') }}
+      v-btn.primary(
+        :loading="submitting",
+        :disabled="isDisabled || submittingWithTicket",
+        data-test="confirmAckContinueButton",
+        @click="submit"
+      ) {{ $t('common.continue') }}
+      v-btn.warning(
+        :loading="submittingWithTicket",
+        :disabled="isDisabledWithTicket || submitting",
+        data-test="confirmAckContinueWithTicketButton",
+        @click="submitWithTicket"
+      ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
 </template>
 
 <script>
-import modalInnerMixin from '@/mixins/modal/inner';
 import { MODALS } from '@/constants';
+
+import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Ack with ticket confirmation modal
  */
 export default {
   name: MODALS.confirmAckWithTicket,
-  mixins: [modalInnerMixin],
+  components: { ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    submittableMixin({
+      method: 'submitWithTicket',
+      property: 'submittingWithTicket',
+      computedProperty: 'isDisabledWithTicket',
+    }),
+  ],
   data() {
     return {
       submitting: false,
@@ -39,21 +55,19 @@ export default {
   },
   methods: {
     async submit() {
-      this.submitting = true;
       if (this.config.continueAction) {
         await this.config.continueAction();
       }
+
       this.$modals.hide();
-      this.submitting = false;
     },
 
     async submitWithTicket() {
-      this.submitting = true;
       if (this.config.continueWithTicketAction) {
         await this.config.continueWithTicketAction();
       }
+
       this.$modals.hide();
-      this.submitting = false;
     },
   },
 };
