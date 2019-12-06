@@ -15,21 +15,38 @@ export default createEntityModule({
   types,
   route: API_ROUTES.dynamicInfo,
   entityType: ENTITIES_TYPES.dynamicInfo,
+  withFetchingParams: true,
 }, {
+  state: {
+    meta: {},
+  },
+  getters: {
+    meta: state => state.meta,
+  },
+  mutations: {
+    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
+      state.allIds = allIds;
+      state.meta = meta;
+      state.pending = false;
+    },
+  },
   actions: {
-    async fetchList({ commit, dispatch }) {
+    async fetchList({ commit, dispatch }, { params } = {}) {
       try {
-        commit(types.FETCH_LIST);
+        commit(types.FETCH_LIST, { params });
 
         const { normalizedData, data } = await dispatch('entities/fetch', {
           route: API_ROUTES.dynamicInfo,
+          params,
           schema: [dynamicInfoSchema],
           dataPreparer: d => d.rules,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
-          total: data.count,
+          meta: {
+            total: data.count,
+          },
         });
       } catch (err) {
         commit(types.FETCH_LIST_FAILED);

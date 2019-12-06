@@ -947,7 +947,18 @@ export default {
         },
         patterns: {
           title: 'Patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
         },
+      },
+    },
+    createDynamicInfoInformation: {
+      create: {
+        title: 'Create dynamic info\'s information',
+      },
+      fields: {
+        name: 'Name',
+        value: 'Value',
       },
     },
   },

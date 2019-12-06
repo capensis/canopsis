@@ -13,11 +13,11 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+
+import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/forms/dynamic-info';
 
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 
@@ -32,29 +32,23 @@ export default {
   components: { DynamicInfoForm },
   mixins: [modalInnerMixin],
   data() {
+    const { dynamicInfo = {} } = this.modal.config;
+
     return {
       stepper: 0,
-      form: {
-        general: {
-          _id: '',
-          name: '',
-          description: '',
-        },
-        infos: [],
-        patterns: {
-          alarm_patterns: [],
-          entity_patterns: [],
-        },
-      },
+      form: dynamicInfoToForm(dynamicInfo),
     };
   },
   created() {
+    // TODO: Add a rule to required only 1/2 patterns
+    /*
     this.$validator.attach({
-      name: 'pattern',
+      name: 'alarm_patterns',
       rules: 'required:true',
-      getter: () => !isEmpty(this.form.pattern),
+      getter: () => !isEmpty(this.form.patterns.alarm_patterns),
       context: () => this,
     });
+    */
   },
   methods: {
     async submit() {
@@ -62,11 +56,10 @@ export default {
         const isValid = await this.$validator.validateAll();
 
         if (isValid) {
-          // TODO: Prepare data object
-          const data = {};
+          const preparedData = formToDynamicInfo(this.form);
 
           if (this.config.action) {
-            await this.config.action(data);
+            await this.config.action(preparedData);
           }
 
           this.$modals.hide();

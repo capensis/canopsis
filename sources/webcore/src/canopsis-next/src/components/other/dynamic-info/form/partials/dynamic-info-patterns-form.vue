@@ -1,8 +1,8 @@
 <template lang="pug">
   div
     v-tabs(centered, slider-color="primary")
-      v-tab Alarm patterns
-      v-tab Entity patterns
+      v-tab {{ $t('modals.createDynamicInfo.steps.patterns.alarmPatterns') }}
+      v-tab {{ $t('modals.createDynamicInfo.steps.patterns.entityPatterns') }}
       v-tab-item
         patterns-list(
           v-field="form.alarm_patterns",

@@ -2,10 +2,8 @@
   div
     v-layout
       v-text-field(
-        v-validate="'required'",
         v-field="form._id",
         :label="$t('modals.createDynamicInfo.steps.general.fields.id')",
-        :error-messages="errors.collect('id')",
         name="id"
       )
     v-layout
