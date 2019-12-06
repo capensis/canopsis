@@ -507,3 +507,318 @@
     4. To press the button “Save”.
         
     **Expected result**: the periodic refresh is set.
+
+## Edit mode: alarm list settings (advanced settings).
+**Pre-condition:** 
+* *Open a menu at the bottom right corner of the page*
+* *Press the button with pencil*
+* *Enter the edit mode*
+* *Then click on the icon with three dots*
+* *Choose "Edit" in the dropdown*
+* *Unfold the advanced settings menu*
+
+* [ ] **Default sort column can be set for table.**
+    1. To click on “Default sort column” element in the “Advanced settings”.
+    2. To select “Column name”.
+    3. To select an order (asc or desc).
+    4. To press the button “Save”.
+        
+    **Expected result**: the default sort column is set for table.
+
+* [ ] **A column can be added to table.**
+    1. To click on “Column names” element in the “Advanced settings”.
+    2. To press the button “Add”.
+    3. To input label, value and to choose column’s place in the table.
+    4. To press the button “Save”.
+        
+    **Expected result**: the new column added to the table.
+
+* [ ] **A column’s name can be changed.**
+    1. To click on “Column names” element in the “Advanced settings”.
+    2. To change any column’s name.
+    3. To press the button “Save”.
+        
+    **Expected result**: a column’s name is changed.
+
+* [ ] **A column’s value can be changed.**
+    1. To click on “Column names” element in the “Advanced settings”.
+    2. To change any column’s value.
+    3. To press the button “Save”.
+        
+    **Expected result**: a column’s value is changed.
+
+* [ ] **A column can be deleted from the table.**
+    1. To click on “Column names” element in the “Advanced settings”.
+    2. To press the cross button on any column’s card.
+    3. To press the button “Save”.
+        
+    **Expected result**: a column is deleted from the table.
+
+* [ ] **A column’s card can be moved below.**
+    1. To click on “Column names” element in the “Advanced settings”.
+    2. To press on button with up arrow at any column’s card.
+    3. To press the button “Save”.
+        
+    **Expected result**: a column’s card is moved below.
+
+* [ ] **A column’s card can be moved above.**
+    1. To click on “Column names” element in the “Advanced settings”.
+    2. To press on button with down arrow at any column’s card (but not at the first card).
+    3. To press the button “Save”.
+        
+    **Expected result**: a column’s card is moved above.
+
+* [ ] **HTML mode can be set for column.**
+    1. To click on “Column names” element in the “Advanced settings”.
+    2. To set an HTML mode for any column.
+    3. To press the button “Save”.
+        
+    **Expected result**: HTML mode is selected for any column.
+
+* [ ] **5 can be set as default number of elements per page.**
+    1. To click on “Default number of elements/page” element in the “Advanced settings”.
+    2. To choose the number 5.
+    3. To press the button “Save”.
+        
+    **Expected result**: 5 is set as default number of elements per page.
+
+* [ ] **10 can be set as default number of elements per page.**
+    1. To click on “Default number of elements/page” element in the “Advanced settings”.
+    2. To choose the number 10.
+    3. To press the button “Save”.
+        
+    **Expected result**: 10 is set as default number of elements per page.
+
+* [ ] **Filter on Open/Resolved can be turn off.**
+    1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
+    2. To leave the check-box “Open” empty.
+    3. To leave the check-box “Resolved” empty.
+    4. To press the button “Save”.
+        
+    **Expected result**: filter on Open/Resolved is turn off.
+
+* [ ] **Filter on Open can be set.**
+    1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
+    2. To mark the check-box “Open”.
+    3. To leave the check-box “Resolved” empty.
+    4. To press the button “Save”.
+        
+    **Expected result**: filter on Open is set.
+
+* [ ] **Filter on Resolved can be set.**
+    1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
+    2. To mark the check-box “Resolved”.
+    3. To leave the check-box “Open” empty.
+    4. To press the button “Save”.
+        
+    **Expected result**: filter on Resolved is set.
+
+* [ ] **Live reporting on resolved filter enabled should be 30 days**
+    1. To press the button “Delete” on “Live reporting” section in the “Advanced settings” if it exists.
+    2. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
+    3. To mark the check-box “Resolved”.
+    4. To press the button “Save”.
+        
+    **Expected result**: the live reporting on the table is 30 days selected.
+
+* [ ] **Filter on Open and Resolved can be set.**
+    1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
+    2. To mark the check-box “Resolved”.
+    3. To mark the check-box “Open”.
+    4. To press the button “Save”.
+        
+    **Expected result**: filter on Open and Resolved is set.
+
+* [ ] **Default filter can be created in advanced settings.**
+    1. To click on “Filters” element in the “Advanced settings”.
+    2. To press the button “Add”.
+    3. To input all required information in modal window.
+    4. To press the button “Submit”.
+        
+    **Expected result**: a new default filter is created.
+
+* [ ] **Default filter can be edited in advanced settings.**
+    1. To click on “Filters” element in the “Advanced settings”.
+    2. To create a new default filter.
+    3. To press the button “Edit” near the new filter.
+    4. To edit some information on appeared modal window.
+    5. To press the button “Submit”.
+        
+    **Expected result**: the filter is modified.
+
+* [ ] **Default filter can be deleted in advanced settings.**
+    1. To click on “Filters” element in the “Advanced settings”.
+    2. To create a new default filter.
+    3. To press the button with trash bin.
+    4. To press the button “Yes” on appeared modal window “Are you sure?”.
+        
+    **Expected result**: the filter is deleted.
+
+* [ ] **Default filter can be set in advanced settings.**
+    1. To click on “Filters” element in the “Advanced settings”.
+    2. To create a new default filter.
+    3. To choose this filter in the dropdown “Default filter”.
+    4. To press the button “Save”.
+        
+    **Expected result**: the default filter is set in advanced settings.
+
+* [ ] **Two default filters can be set with AND-rule.**
+    1. To click on “Filters” element in the “Advanced settings”.
+    2. To create two new default filters.
+    3. To turn on “Mix filters”.
+    4. To set the AND-rule for filters.
+    5. To select both filters in the dropdown “Default filters”.
+    6. To press the button “Save”.
+        
+    **Expected result**: two default filters are set with AND-rule.
+
+* [ ] **Two default filters can be set with AND-rule.**
+    1. To click on “Filters” element in the “Advanced settings”.
+    2. To create two new default filters.
+    3. To turn on “Mix filters”.
+    4. To set the OR-rule for filters.
+    5. To select both filters in the dropdown “Default filters”.
+    6. To press the button “Save”.
+        
+    **Expected result**: two default filters are set with OR-rule.
+
+* [ ] **Live reporting with custom dates can be created.**
+    1. To press the button “Create” on “Live reporting” section in the “Advanced settings”.
+    2. To choose the “Custom” option in dropdown “Quick ranges”.
+    3. To set a date interval.
+    4. To press the button “Apply”.
+        
+    **Expected result**: a live reporting with custom dates is created.
+
+* [ ] **Live reporting with determined dates can be created.**
+    1. To press the button “Create” on “Live reporting” section in the “Advanced settings”.
+    2. To choose any option except “Custom” in dropdown “Quick ranges”.
+    3. To press the button “Apply”.
+        
+    **Expected result**: a live reporting with determined dates is created.
+
+* [ ] **Live reporting can be edited.**
+    1. To create any live reporting in the “Advanced settings”.
+    2. To press the button “Edit”.
+    3. To change some settings of the live reporting.
+    4. To press the button “Apply”.
+        
+    **Expected result**: the live reporting is edited.
+
+* [ ] **Live reporting can be deleted.**
+    1. To create any live reporting in the “Advanced settings”.
+    2. To press the button with trash bin.
+        
+    **Expected result**: the live reporting is deleted.
+
+* [ ] **Info popup can be created.**
+    1. To press the button “Create/Edit” in the section “Info popup”.
+    2. To press the button with plus on the appeared modal window.
+    3. To select the column’s name.
+    4. To input some text to the text area.
+    5. To press the button “Submit”.
+    6. To press the button “Submit” on the next modal window.
+        
+    **Expected result**: info popup is created.
+
+* [ ] **Info popup should displayed on table column.**
+    1. To press the button “Create/Edit” in the section “Info popup”.
+    2. To press the button with plus on the appeared modal window.
+    3. To select the column’s name.
+    4. To input some text to the text area.
+    5. To press the button “Submit”.
+    6. To press the button “Submit” on the next modal window.
+    7. To press the button “Save”.
+        
+    **Expected result**: button with "i" is shown on the column.
+
+* [ ] **Info popup can be edited.**
+    1. To create any info popup in the section “Info popup”.
+    2. To press the button “Create/Edit” in the section “Info popup”.
+    3. To press the button with pencil.
+    4. To change any settings.
+    5. To press the button “Submit”.
+    6. To press the button “Submit” on the next modal window.
+        
+    **Expected result**: info popup is edited.
+
+* [ ] **Info popup can be deleted.**
+    1. To create any info popup in the section “Info popup”.
+    2. To press the button “Create/Edit” in the section “Info popup”.
+    3. To press the button with trash bin.
+    4. To press the button “Submit”.
+        
+    **Expected result**: info popup is deleted.
+
+* [ ] **More than one info popup can be added.**
+    1. To create any info popup in the section “Info popup”.
+    2. To press the button “Create/Edit” in the section “Info popup”.
+    3. To press the button with plus on the appeared modal window.
+    4. To select the column’s name.
+    5. To input some text to the text area.
+    6. To press the button “Submit”.
+    7. To press the button “Submit” on the next modal window.
+        
+    **Expected result**: the second info popup is created.
+
+* [ ] **“More infos” popup can be created.**
+    1. To press the button “Create” in the section “More infos popup”.
+    2. To input any text to the field.
+    3. To press the button “Submit”.
+    4. To press the button “Save”.
+        
+    **Expected result**: “More infos” popup is created.
+
+* [ ] **“More infos” modal window is showing.**
+    1. Create "More infos popup"
+    2. To press the button “Save”.
+    3. To press the button "..." on table item actions column
+    4. To press "More infos"
+        
+    **Expected result**: “More infos” popup is shown.
+
+* [ ] **“More infos” popup can be edited.**
+    1. To create any “More infos” popup in the section “More infos popup”.
+    2. To press the button “Edit”.
+    3. To change the text in the appeared window.
+    4. To press the button “Submit”.
+        
+    **Expected result**: “More infos” popup is edited.
+
+* [ ] **“More infos” popup can be deleted.**
+    1. To create any “More infos” popup in the section “More infos popup”.
+    2. To press the button with trash bin.
+    3. To press the button “Yes” on “Are you sure?” modal window.
+        
+    **Expected result**: “More infos” pop-up is deleted.
+
+* [ ] **“HTML enabled on timeline?” checkbox can be turn on.**
+    1. To turn on checkbox “HTML enabled on timeline?” in the advanced settings.
+        
+    **Expected result**: “HTML enabled on timeline?” checkbox is turn on.
+
+* [ ] **“Note field required when ack?” checkbox can be turn on.**
+    1. To select section “Ack” in the additional settings.
+    2. To turn on checkbox “Note field required when ack?”.
+        
+    **Expected result**: “Note field required when ack?” checkbox is turn on.
+
+* [ ] **“Multiple ack” checkbox can be turn on.**
+    1. To select section “Ack” in the additional settings.
+    2. To turn on checkbox “Multiple ack”.
+        
+    **Expected result**: “Multiple ack” checkbox is turn on.
+
+* [ ] **Fast-ack output (optional) can be enabled.**
+    1. To select section “Ack” in the additional settings.
+    2. To select section “Fast-ack output (optional)” in the additional settings.
+    3. To turn on checkbox “Enabled”.
+        
+    **Expected result**: Fast-ack output (optional) is enabled.
+
+* [ ] **Text of fast-ack output (optional) can be edited.**
+    1. To select section “Ack” in the additional settings.
+    2. To select section “Fast-ack output (optional)” in the additional settings.
+    3. To change the text of fast-ack output (optional).
+        
+    **Expected result**: Text of fast-ack output (optional) is edited.
