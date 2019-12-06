@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createViewModal", @submit.prevent="submit")
     modal-wrapper(data-test="createViewModal")
       template(slot="title")
         span {{ title }}

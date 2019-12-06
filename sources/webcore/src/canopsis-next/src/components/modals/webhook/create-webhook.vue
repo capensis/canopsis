@@ -34,6 +34,7 @@ import { setSeveralFields } from '@/helpers/immutable';
 import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
 
@@ -48,7 +49,7 @@ export default {
     validator: 'new',
   },
   components: { WebhookForm, ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { webhook } = this.modal.config;
     const defaultForm = {
