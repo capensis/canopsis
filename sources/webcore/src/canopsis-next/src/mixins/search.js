@@ -18,12 +18,14 @@ export default {
       this.$emit('update:query', omit(this.query, [this.requestParam]));
     },
     submit() {
-      this.$emit('update:query', {
-        ...this.query,
+      if (this.requestData || this.query[this.requestParam]) {
+        this.$emit('update:query', {
+          ...this.query,
 
-        page: 1,
-        [this.requestParam]: this.requestData,
-      });
+          page: 1,
+          [this.requestParam]: this.requestData,
+        });
+      }
     },
   },
 };
