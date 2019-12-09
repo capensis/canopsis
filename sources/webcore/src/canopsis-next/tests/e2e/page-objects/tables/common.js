@@ -63,7 +63,7 @@ const commands = {
   },
 
   clickNextPageBottomPagination() {
-    return this.customClick('@bottomPaginationPrevious');
+    return this.customClick('@bottomPaginationNext');
   },
 
   clickPreviousPageBottomPagination() {
@@ -269,9 +269,9 @@ module.exports = {
     topPaginationNext: `${sel('topPagination')} ${sel('paginationNextButton')}`,
     topPaginationPage: `${sel('topPagination')} .v-pagination span:nth-of-type(1)`,
 
-    bottomPaginationPrevious: `${sel('vPagination')} li:first-child`,
+    bottomPaginationPrevious: `${sel('vPagination')} li:first-child button`,
     bottomPaginationPage: './/*[@data-test=\'vPagination\']//button[@class=\'v-pagination__item\' and contains(text(), \'%s\')]',
-    bottomPaginationNext: `${sel('vPagination')} li:last-child`,
+    bottomPaginationNext: `${sel('vPagination')} li:last-child button`,
 
     itemsPerPage: `${sel('tableWidget')} ${sel('itemsPerPage')} .v-select__slot`,
 
