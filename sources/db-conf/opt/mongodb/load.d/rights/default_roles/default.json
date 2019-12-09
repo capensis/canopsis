@@ -40,6 +40,9 @@
         "models_exploitation_heartbeat": {
             "checksum": 15
         },
+        "models_exploitation_dynamicInfo": {
+            "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
