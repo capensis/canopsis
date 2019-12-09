@@ -940,6 +940,9 @@ export default {
       remove: {
         success: 'Dynamic information successfully removed !',
       },
+      errors: {
+        invalid: 'Invalid',
+      },
       steps: {
         general: {
           title: 'General',

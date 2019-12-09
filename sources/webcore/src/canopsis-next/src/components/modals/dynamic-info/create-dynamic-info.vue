@@ -35,20 +35,18 @@ export default {
     const { dynamicInfo = {} } = this.modal.config;
 
     return {
-      stepper: 0,
       form: dynamicInfoToForm(dynamicInfo),
     };
   },
-  created() {
-    // TODO: Add a rule to required only 1/2 patterns
-    /*
-    this.$validator.attach({
-      name: 'alarm_patterns',
-      rules: 'required:true',
-      getter: () => !isEmpty(this.form.patterns.alarm_patterns),
-      context: () => this,
-    });
-    */
+  computed: {
+    patterns() {
+      return this.form.patterns;
+    },
+  },
+  watch: {
+    patterns() {
+      this.$validator.validate('patterns');
+    },
   },
   methods: {
     async submit() {

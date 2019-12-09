@@ -24,7 +24,10 @@
 </template>
 
 <script>
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
+
 export default {
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',

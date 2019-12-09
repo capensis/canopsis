@@ -4,8 +4,10 @@
       v-stepper-step.py-0(
         :complete="stepper > 1",
         step="1",
-        editable
+        editable,
+        :rules="[() => !hasGeneralFormAnyError]"
       ) {{ $t('modals.createDynamicInfo.steps.general.title') }}
+        small(v-if="hasGeneralFormAnyError") {{ $t('modals.createDynamicInfo.errors.invalid') }}
       v-divider
       v-stepper-step.py-0(
         :complete="stepper > 2",
@@ -16,13 +18,15 @@
       v-stepper-step.py-0(
         :complete="stepper > 3",
         step="3",
-        editable
+        editable,
+        :rules="[() => !hasPatternsFormAnyError]"
       ) {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
+        small(v-if="hasPatternsFormAnyError") {{ $t('modals.createDynamicInfo.errors.invalid') }}
     v-stepper-items
       v-stepper-content(step="1")
         v-card
           v-card-text
-            dynamic-info-general-form(v-field="form.general")
+            dynamic-info-general-form(v-field="form.general", ref="generalForm")
       v-stepper-content(step="2")
         v-card
           v-card-text
@@ -30,7 +34,7 @@
       v-stepper-content(step="3")
         v-card
           v-card-text
-            dynamic-info-patterns-form(v-field="form.patterns")
+            dynamic-info-patterns-form(v-field="form.patterns", ref="patternsForm")
 </template>
 
 <script>
@@ -58,7 +62,18 @@ export default {
   data() {
     return {
       stepper: 1,
+      hasPatternsFormAnyError: false,
+      hasGeneralFormAnyError: false,
     };
+  },
+  mounted() {
+    this.$watch(() => this.$refs.patternsForm.hasAnyError, (value) => {
+      this.hasPatternsFormAnyError = value;
+    });
+
+    this.$watch(() => this.$refs.generalForm.hasAnyError, (value) => {
+      this.hasGeneralFormAnyError = value;
+    });
   },
 };
 </script>

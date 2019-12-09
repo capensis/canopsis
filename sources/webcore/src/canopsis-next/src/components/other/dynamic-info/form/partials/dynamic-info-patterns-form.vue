@@ -16,12 +16,17 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
+
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
   components: {
     PatternsList,
   },
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -32,6 +37,20 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  created() {
+    this.$validator.attach({
+      name: 'patterns',
+      rules: 'required:true',
+      getter: () => {
+        const isAlarmPatternsEmpty = isEmpty(this.form.alarm_patterns);
+        const isEntityPatternsEmpty = isEmpty(this.form.entity_patterns);
+
+        return !isAlarmPatternsEmpty || !isEntityPatternsEmpty;
+      },
+      context: () => this,
+      vm: this,
+    });
   },
 };
 </script>
