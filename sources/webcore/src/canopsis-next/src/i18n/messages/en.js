@@ -964,7 +964,7 @@ export default {
     },
     createDynamicInfoInformation: {
       create: {
-        title: 'Create dynamic info\'s information',
+        title: 'Add an information to the dynamic information rule',
       },
       fields: {
         name: 'Name',
@@ -1348,6 +1348,8 @@ export default {
       user: 'Author',
       creationDate: 'Creation date',
       lastUpdateDate: 'Last update date',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
     },
   },
 

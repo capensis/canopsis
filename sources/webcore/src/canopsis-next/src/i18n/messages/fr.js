@@ -844,6 +844,48 @@ export default {
       },
       patternRequired: 'Un pattern est requis',
     },
+    createDynamicInfo: {
+      create: {
+        title: 'Créer une information dynamique',
+        success: 'Information dynamique créé avec succès !',
+      },
+      edit: {
+        success: 'Information dynamique éditée avec succès !',
+      },
+      remove: {
+        success: 'Information dynamique supprimée avec succès !',
+      },
+      errors: {
+        invalid: 'Invalide',
+      },
+      steps: {
+        general: {
+          title: 'Général',
+          fields: {
+            id: 'Id',
+            name: 'Nom',
+            description: 'Description',
+          },
+        },
+        infos: {
+          title: 'Informations',
+        },
+        patterns: {
+          title: 'Patterns',
+          alarmPatterns: 'Patterns des alarmes',
+          entityPatterns: 'Patterns des entités',
+        },
+      },
+    },
+    createDynamicInfoInformation: {
+      create: {
+        title: 'Ajouter une information à la règle d\'information dynamique',
+      },
+      fields: {
+        name: 'Nom',
+        value: 'Valeur',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1205,6 +1247,8 @@ export default {
       user: 'Auteur',
       creationDate: 'Date de création',
       lastUpdateDate: 'Date de dernière mise à jour',
+      alarmPatterns: 'Patterns des alarmes',
+      entityPatterns: 'Patterns des entités',
     },
   },
 

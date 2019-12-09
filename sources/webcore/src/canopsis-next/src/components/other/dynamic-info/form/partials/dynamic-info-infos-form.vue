@@ -5,7 +5,8 @@
         v-icon add
     v-data-table(
       :headers="headers",
-      :items="form"
+      :items="form",
+      :no-data-text="$t('tables.noData')"
     )
       template(slot="items", slot-scope="{ item, index }")
         tr
@@ -40,9 +41,9 @@ export default {
   computed: {
     headers() {
       return [
-        { text: 'Name', value: 'name' },
-        { text: 'Value', value: 'value' },
-        { text: 'Actions', value: 'actions' },
+        { text: this.$t('modals.createDynamicInfoInformation.fields.name'), value: 'name' },
+        { text: this.$t('modals.createDynamicInfoInformation.fields.value'), value: 'value' },
+        { text: this.$t('common.actionsLabel'), value: 'actions' },
       ];
     },
   },
