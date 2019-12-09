@@ -6,7 +6,7 @@ const { createWidgetView, createWidgetForView, removeWidgetView } = require('../
 const ALARMS_COUNT = 134;
 const SEARCH_STRING = 'feeder2_inst3';
 const SEARCH_RESULT_COUNT = 16;
-const REQUEST_COUNT_WITH_EMPTY_SEARCH = 1; // TODO After the task(#2053) would be finished, replace 1 at 0
+const REQUEST_COUNT_WITH_EMPTY_SEARCH = 0;
 
 module.exports = {
   async before(browser, done) {
@@ -114,5 +114,17 @@ module.exports = {
         browser.assert.equal(response.total, ALARMS_COUNT);
       },
     );
+  },
+
+  'The click on the button with question mark shows pop-up with additional information': (browser) => {
+    browser.page.tables.common()
+      .moveToSearchInformation()
+      .verifySearchInformationVisible();
+  },
+
+  'Removing a cursor from pop-up with additional information makes it disappear': (browser) => {
+    browser.page.tables.common()
+      .moveOutsideSearchInformation()
+      .verifySearchInformationHidden();
   },
 };
