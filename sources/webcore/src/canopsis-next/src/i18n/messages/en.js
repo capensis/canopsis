@@ -932,6 +932,13 @@ export default {
     createDynamicInfo: {
       create: {
         title: 'Create dynamic information',
+        success: 'Dynamic information successfully created !',
+      },
+      edit: {
+        success: 'Dynamic information successfully edited !',
+      },
+      remove: {
+        success: 'Dynamic information successfully removed !',
       },
       steps: {
         general: {
