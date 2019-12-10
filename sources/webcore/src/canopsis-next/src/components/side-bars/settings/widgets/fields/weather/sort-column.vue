@@ -24,6 +24,8 @@ import { SORT_ORDERS } from '@/constants';
  * Component to select the default column to sort on settings
  *
  * @prop {Object} [value] - Object containing the default sort column's name and the sort direction
+ * @prop {Array} [columns] - List of columns suggestions to sort on
+ * @prop {String} [columnsLabel] - Setting's title to display on settings panel
  *
  * @event value#input
  */
