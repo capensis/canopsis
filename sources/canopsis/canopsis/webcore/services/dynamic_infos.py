@@ -42,7 +42,14 @@ def get_username():
     """Returns the username of the logged-in user, or ''."""
     try:
         session = request.environ.get('beaker.session', {})
-        return session.get('user', '')
+        user = session.get('user', '')
+
+        # The content of user depends on the authentication method. If the user
+        # logged in with HTTP authentication, it contains the username. If they
+        # logged in with the loggin form, it contains a dictionnary.
+        if isinstance(user, basestring):
+            return user
+        return user.get('_id', '')
     except AttributeError:
         return ''
 
