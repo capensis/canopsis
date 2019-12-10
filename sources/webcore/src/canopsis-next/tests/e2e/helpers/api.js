@@ -124,18 +124,37 @@ async function createView(viewDefault, options = {}) {
   return response.data;
 }
 
+/**
+ * Query for get view
+ * @param {String} viewId
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
 async function getView(viewId, options = {}) {
   const response = await request.get(`${API_ROUTES.view}/${viewId}`, options);
 
   return response.data;
 }
 
+/**
+ * Query for update view
+ * @param {String} viewId
+ * @param {Object} viewDefault
+ * @param {Object} [options]
+ * @returns {Promise<any>}
+ */
 async function updateView(viewId, viewDefault, options = {}) {
   const response = await request.put(`${API_ROUTES.view}/${viewId}`, viewDefault, options);
 
   return response.data;
 }
 
+/**
+ * Api query for create widget
+ * @param {String} viewId
+ * @param {Object} widget
+ * @returns {Promise}
+ */
 async function createWidgetForView(viewId, widget = {}) {
   const { headers } = await authAsAdmin();
 
