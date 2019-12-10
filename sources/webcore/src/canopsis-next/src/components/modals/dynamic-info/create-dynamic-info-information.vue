@@ -1,34 +1,36 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createDynamicInfoInformation.create.title') }}
-    v-card-text
-      v-form
-        v-text-field(
-          v-validate="'required'",
-          v-model="form.name",
-          :label="$t('modals.createDynamicInfoInformation.fields.name')",
-          :error-messages="errors.collect('name')",
-          name="name"
-        )
-        v-text-field(
-          v-validate="'required'",
-          v-model="form.value",
-          :label="$t('modals.createDynamicInfoInformation.fields.value')",
-          :error-messages="errors.collect('value')",
-          name="value"
-        )
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createDynamicInfoInformation.create.title') }}
+      template(slot="text")
+        v-form
+          v-text-field(
+            v-validate="'required'",
+            v-model="form.name",
+            :label="$t('modals.createDynamicInfoInformation.fields.name')",
+            :error-messages="errors.collect('name')",
+            name="name"
+          )
+          v-text-field(
+            v-validate="'required'",
+            v-model="form.value",
+            :label="$t('modals.createDynamicInfoInformation.fields.value')",
+            :error-messages="errors.collect('value')",
+            name="value"
+          )
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create dynamic info's information
@@ -38,7 +40,8 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin],
+  components: { ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
       form: {
