@@ -9,7 +9,7 @@ const commands = {
     return this.customClick('@liveReportingButton');
   },
 
-  clickResetLiveReportingButton() {
+  clickLiveReportingResetButton() {
     return this.customClick('@resetAlarmsDateIntervalButton');
   },
 
