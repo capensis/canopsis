@@ -59,4 +59,4 @@ Les informations définies dans `infos` sont ajoutées aux alarmes correspondant
 
 Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux patterns `entity_patterns` et `alarm_patterns`. Dans l'exemple précédent, si une alarme passe d'un état critique à un état majeur, l'information `v.infos.dynamic_infos_1` est supprimée.
 
-Un exemple concret d'utilisation du moteur `dynamic-info` pour l'affichage de consignes techniques dans le bac à alarmes et la météo des services est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
+Un exemple concret d'utilisation du moteur `dynamic-info` pour l'affichage de consignes techniques dans le bac à alarmes est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
