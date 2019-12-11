@@ -38,7 +38,7 @@
         
     **Expected result**: pop-up with additional information disappears.
         
-## WIP: Pagination
+## Pagination
 
 * [ ] **Right arrow opens the next page.**
     1. To click on the right arrow at the top of the page.
@@ -77,7 +77,7 @@
         
     **Expected result**: 10 alarms are shown.
 
-## WIP: Filtering
+## Filtering
 
 * [ ] **A filter can be selected.**
     1. To click on the field "Select a filter".
@@ -211,14 +211,14 @@
         
     **Expected result**: the alarm is canceled.
 
-## WIP: Columns
+## Columns
 
 * [ ] **Elements can be sorted by column.**
     1. To click on a column at the very first row of the table.
         
     **Expected result**: all elements are sorted by connector name.
 
-## WIP: Table row
+## Table row
 
 * [ ] **Information pop-up can be shown.**
     1. To click on the icon "i" in the column "Connector".
@@ -247,7 +247,7 @@
         
     **Expected result**: information pop-up is shown.
 
-## WIP: Item actions when the "Ack" feature is off.
+## Item actions when the "Ack" feature is off.
 
 * [ ] **The "Ack" feature can be added without declaring the ticket.**
     1. To find any element in the table where "Ack" feature is off.
@@ -312,7 +312,7 @@
         
     **Expected result**: the pop-up with all periodic behaviors is shown.
 
-## WIP: Item actions when the "Ack" feature is off.
+## Item actions when the "Ack" feature is off.
 
 * [ ] **The button "Declare ticket" reports an incident.**
     1. To find any element in the table where "Ack" feature is on.
