@@ -73,7 +73,6 @@ const commands = {
     return this.customClick('@liveReportingDeleteButton');
   },
 
-
   waitFirstAlarmsListXHR(triggerFunc, callback) {
     return this.waitForFirstXHR(
       API_ROUTES.alarmList,
@@ -86,13 +85,23 @@ const commands = {
     );
   },
 
-
   waitAllAlarmsListXHR(triggerFunc, callback, delay = WAIT_FOR_FIRST_XHR_TIME) {
     return this.waitForXHR(
       API_ROUTES.alarmList,
       delay,
       triggerFunc,
       callback,
+    );
+  },
+
+  waitFirstEventXHR(triggerFunc, callback) {
+    return this.waitForFirstXHR(
+      API_ROUTES.event,
+      WAIT_FOR_FIRST_XHR_TIME,
+      triggerFunc,
+      ({ responseData }) => callback({
+        responseData: JSON.parse(responseData),
+      }),
     );
   },
 
