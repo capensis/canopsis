@@ -36,14 +36,11 @@ export default {
       form: dynamicInfoToForm(dynamicInfo),
     };
   },
-  computed: {
-    patterns() {
-      return this.form.patterns;
-    },
-  },
   watch: {
-    patterns() {
-      this.$validator.validate('patterns');
+    'form.patterns': {
+      handler() {
+        this.$validator.validate('patterns');
+      },
     },
   },
   methods: {

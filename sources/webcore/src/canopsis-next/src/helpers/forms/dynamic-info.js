@@ -1,5 +1,10 @@
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 
+/**
+ * Convert a dynamic information's object to a dynamic information's form object
+ * @param {Object} dynamicInfo
+ * @returns {Object}
+ */
 export function dynamicInfoToForm(dynamicInfo = {}) {
   return {
     general: {
@@ -31,14 +36,17 @@ function removeEmptyPatternsAndIdFromDynamicInfo(dynamicInfo) {
   });
 }
 
+/**
+ * Convert a dynamic information's form object to a API compatible dynamic info object
+ * @param {Object} form
+ * @returns {Object}
+ */
 export function formToDynamicInfo(form) {
-  let dynamicInfo = {
+  const dynamicInfo = {
     ...form.general,
     ...form.patterns,
     infos: form.infos,
   };
 
-  dynamicInfo = removeEmptyPatternsAndIdFromDynamicInfo(dynamicInfo);
-
-  return dynamicInfo;
+  return removeEmptyPatternsAndIdFromDynamicInfo(dynamicInfo);
 }

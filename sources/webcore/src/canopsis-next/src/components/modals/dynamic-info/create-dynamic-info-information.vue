@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ $t('modals.createDynamicInfoInformation.create.title') }}
       template(slot="text")
-        v-form
+        div
           v-text-field(
             v-validate="'required'",
             v-model="form.name",
@@ -43,17 +43,14 @@ export default {
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
+    const { info = {} } = this.modal.config;
+
     return {
       form: {
-        name: '',
-        value: '',
+        name: info.name || '',
+        value: info.value || '',
       },
     };
-  },
-  mounted() {
-    if (this.config.info) {
-      this.form = { ...this.config.info };
-    }
   },
   methods: {
     async submit() {
@@ -61,7 +58,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          this.config.action(this.form);
+          await this.config.action(this.form);
         }
 
         this.$modals.hide();
