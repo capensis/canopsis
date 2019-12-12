@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.variablesHelp.variables') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.variablesHelp.variables') }}
+    template(slot="text")
       v-treeview(
         :items="config.variables",
         item-key="name"
@@ -34,11 +33,14 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+
 import Ellipsis from '@/components/tables/ellipsis.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.variablesHelp,
-  components: { Ellipsis },
+  components: { Ellipsis, ModalWrapper },
   mixins: [modalInnerMixin],
 };
 </script>
