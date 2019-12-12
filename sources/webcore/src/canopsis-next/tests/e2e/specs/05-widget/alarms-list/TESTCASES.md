@@ -3,36 +3,36 @@
 
 ## Searching
 
-* [ ] **The search with magnifier button displays relevant results.**
+* [x] **The search with magnifier button displays relevant results.**
     1. To input some expected data to the search line.  
     2. To click on button with magnifier.
         
     **Expected result**: the search displays relevant results.
 
-* [ ] **The search with button "Enter" displays relevant results.**
+* [x] **The search with button "Enter" displays relevant results.**
     1. To input some expected data to the search line.
     2. To click on button "Enter".
         
     **Expected result**: the search displays relevant results.
 
-* [ ] **The empty search shows no results.**
+* [x] **The empty search shows no results.**
     1. To click on button "Enter" with empty search field.
         
     **Expected result**: nothing changed.
 
-* [ ] **The button with cross cancels current search.**
+* [x] **The button with cross cancels current search.**
     1. To input some expected data to the search line.
     2. To click on button "Enter".
     3. To click on button with cross.
         
     **Expected result**: the current search is canceled.
 
-* [ ] **The click on the button with question mark shows pop-up with additional information.**
+* [x] **The click on the button with question mark shows pop-up with additional information.**
     1. To place a cursor to the button with question mark.
         
     **Expected result**: pop-up with additional information appears.
 
-* [ ] **Removing a cursor from pop-up with additional information makes it disappear.**
+* [x] **Removing a cursor from pop-up with additional information makes it disappear.**
     1. To place a cursor to the button with question mark.
     2. To remove a cursor from pop-up with additional information.
         
@@ -40,39 +40,39 @@
         
 ## Pagination
 
-* [ ] **Right arrow opens the next page.**
+* [x] **Right arrow opens the next page.**
     1. To click on the right arrow at the top of the page.
         
     **Expected result**: the next page opens.
 
-* [ ] **Left arrow opens the previous page.**
+* [x] **Left arrow opens the previous page.**
     1. To click on the right arrow at the top of the page.
     2. To click on the left arrow at the top of the page.
         
     **Expected result**: the previous page opens.
 
-* [ ] **Right arrow at the bottom of the widget opens the next page.**
+* [x] **Right arrow at the bottom of the widget opens the next page.**
     1. To click on the right arrow at the bottom of the widget.
         
     **Expected result**: the next page opens.
 
-* [ ] **Left arrow at the bottom of the widget opens the previous page.**
+* [x] **Left arrow at the bottom of the widget opens the previous page.**
     1. To click on the right arrow at the bottom of the widget.
     2. To click on the left arrow at the top of the page.
         
     **Expected result**: the previous page opens.
 
-* [ ] **The button with page number at the bottom of the widget leads to the selected page.**
+* [x] **The button with page number at the bottom of the widget leads to the selected page.**
     1. To click on any button with page number at the bottom of the widget.
         
     **Expected result**: the selected page is shown.
 
-* [ ] **5 alarms can be shown on the page.**
+* [x] **5 alarms can be shown on the page.**
     1. To select “5” in the dropdown at the bottom of the widget.
         
     **Expected result**: 5 alarms are shown.
 
-* [ ] **10 alarms can be shown on the page.**
+* [x] **10 alarms can be shown on the page.**
     1. To select “10” in the dropdown at the bottom of the widget.
         
     **Expected result**: 10 alarms are shown.
