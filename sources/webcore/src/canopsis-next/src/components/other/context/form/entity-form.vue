@@ -6,14 +6,15 @@
           v-field="form.name",
           v-validate="'required'",
           :label="$t('common.name')",
-          :value="form.name",
           :error-messages="errors.collect('name')",
           name="name"
         )
       v-layout(row)
         v-textarea(
           v-field="form.description",
-          :label="$t('common.description')"
+          :label="$t('common.description')",
+          :error-messages="errors.collect('description')",
+          name="description"
         )
       v-layout(row)
         v-switch(
@@ -22,7 +23,7 @@
           color="primary"
         )
         v-select(
-          v-field="form.type",
+          v-model="form.type",
           v-validate="'required'",
           :items="types",
           :error-messages="errors.collect('type')",
@@ -33,18 +34,22 @@
       v-layout(wrap)
         v-flex(xs12)
           entities-select(
-            v-field="form.impact",
-            :label="$t('modals.createEntity.fields.impact')"
+            :label="$t('modals.createEntity.fields.impact')",
+            :entities="form.impact",
+            @updateEntities="updateImpact"
           )
         v-flex(xs12)
           entities-select(
-            v-field="form.depends",
-            :label="$t('modals.createEntity.fields.depends')"
+            :label="$t('modals.createEntity.fields.depends')",
+            :entities="form.depends",
+            @updateEntities="updateDepends"
           )
 </template>
 
 <script>
-import EntitiesSelect from '../entities-select.vue';
+import formMixin from '@/mixins/form';
+
+import EntitiesSelect from '@/components/other/context/entities-select.vue';
 
 /**
  * Form to create a new entity
@@ -68,6 +73,7 @@ export default {
   components: {
     EntitiesSelect,
   },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -94,6 +100,14 @@ export default {
           value: 'resource',
         },
       ];
+    },
+  },
+  methods: {
+    updateImpact(entities) {
+      this.updateField('impact', entities);
+    },
+    updateDepends(entities) {
+      this.updateField('depends', entities);
     },
   },
 };
