@@ -184,7 +184,7 @@
         
     **Expected result**: the needed element is selected.
 
-* [ ] **Pressing on button "Periodical behavior" creates periodical behavior.**
+* [x] **Pressing on button "Periodical behavior" creates periodical behavior.**
     1. To select any element in the table.
     2. To press the button "Periodical behavior".
     3. To input all needed information on modal window "Create periodical behavior".
