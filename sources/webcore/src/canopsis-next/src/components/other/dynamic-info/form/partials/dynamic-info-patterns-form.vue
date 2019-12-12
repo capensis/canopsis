@@ -18,6 +18,7 @@
 <script>
 import { isEmpty } from 'lodash';
 
+import vuetifyTabsMixin from '@/mixins/vuetify/tabs';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
@@ -26,7 +27,7 @@ export default {
   components: {
     PatternsList,
   },
-  mixins: [formValidationHeaderMixin],
+  mixins: [vuetifyTabsMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
