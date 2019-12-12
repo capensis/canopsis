@@ -8,9 +8,11 @@ Le moteur `dynamic-infos` permet d'ajouter des informations aux alarmes. Ces inf
 
 ## Utilisation
 
-Le moteur doit être placé entre [Watcher](moteur-watcher.md) et [Action](moteur-action.md).
+Le moteur doit être placé en sortie du moteur [`watcher`](moteur-watcher.md).
 
 Pour cela, il est nécessaire de lancer le moteur `watcher` avec l'option `-publishQueue Engine_dynamic_infos` pour qu'il publie dans la file du moteur `dynamic-infos`.
+
+Si le moteur `webhook` est activé, le moteur `dynamic-infos` doit être lancé avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file de ce moteur. Sinon, il publie dans la file du moteur [`action`](moteur-action.md).
 
 ## Fonctionnement
 
