@@ -228,10 +228,10 @@
 
 ## Columns
 
-* [ ] **Elements can be sorted by column.**
+* [x] **Elements can be sorted by column.**
     1. To click on a column at the very first row of the table.
         
-    **Expected result**: all elements are sorted by connector name.
+    **Expected result**: all elements are sorted by column.
 
 ## Table row
 

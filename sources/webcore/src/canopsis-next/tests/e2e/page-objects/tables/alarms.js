@@ -26,7 +26,7 @@ const commands = {
   },
 
   verifyRowInfoPopupDeleted(id) {
-    return this.waitForElementNotPresent(this.el('@alarmInfoPopup', id));
+    return this.assert.hidden(this.el('@tableRowInfoPopupContent', id));
   },
 
   verifyAlarmTimeLineVisible(id) {
@@ -48,8 +48,9 @@ module.exports = scopedPageObject({
 
     alarmInfoPopup: sel('alarmInfoPopup-%s'),
 
-    tableRowInfoPopupOpen: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupOpenButton')}`,
+    tableRowInfoPopupOpen: `${sel('tableRow-%s')} ${sel('alarmInfoPopupOpenButton')}`,
     tableRowInfoPopupClose: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupCloseButton')}`,
+    tableRowInfoPopupContent: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupContent')}`,
   },
   commands: [commands],
 });
