@@ -19,8 +19,13 @@
           solo-inverted,
           hide-details,
           dense,
-          flat
+          flat,
+          :return-object="false",
+          item-text="name",
+          item-value="value"
         )
+          template(slot="item", slot-scope="props")
+            v-list-tile-content {{ props.item.name }} ({{ props.item.value }})
       v-flex.pa-1(data-test="operatorRule", xs12, md4)
         v-combobox.my-2(
           v-field="rule.operator",

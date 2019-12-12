@@ -33,7 +33,7 @@
         v-card
           v-card-text
             patterns-list(v-if="stack === $constants.CANOPSIS_STACK.go", v-model="form.entities")
-            filter-editor(v-else, v-model="form.mfilter", required)
+            filter-editor(v-else, v-model="form.mfilter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
       v-tab-item
         manage-infos(v-model="form.infos")
     v-divider

@@ -42,6 +42,8 @@ import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
+import FilterHintsMixin from '@/mixins/entities/filter-hint';
+
 import FilterGroup from './partial/filter-group.vue';
 
 /**
@@ -56,6 +58,7 @@ export default {
   components: {
     FilterGroup,
   },
+  mixins: [FilterHintsMixin],
   props: {
     value: {
       type: [String, Object],
@@ -108,23 +111,57 @@ export default {
       }
     },
 
+    defaultAlarmHints() {
+      return [
+        {
+          name: 'Connector',
+          value: 'connector',
+        },
+        {
+          name: 'Connector name',
+          value: 'connector_name',
+        },
+        {
+          name: 'Component',
+          value: 'component',
+        },
+        {
+          name: 'Resource',
+          value: 'resource',
+        },
+      ];
+    },
+
+    defaultEntityHints() {
+      return [
+        {
+          name: 'Name',
+          value: 'name',
+        },
+        {
+          name: 'Type',
+          value: 'type',
+        },
+        {
+          name: 'Impact',
+          value: 'impact',
+        },
+        {
+          name: 'Depends',
+          value: 'depends',
+        },
+      ];
+    },
+
     possibleFields() {
-      switch (this.entitiesType) {
-        case ENTITIES_TYPES.alarm:
-          return ['connector', 'connector_name', 'component', 'resource'];
-
-        case ENTITIES_TYPES.entity:
-          return ['name', 'type'];
-
-        case ENTITIES_TYPES.pbehavior:
-          return ['name', 'type', 'impact', 'depends'];
-
-        default:
-          return [];
+      if (this.entitiesType === ENTITIES_TYPES.entity) {
+        return this.getEntityFilterHintsOrDefault();
       }
+
+      return this.getAlarmFilterHintsOrDefault();
     },
   },
-  created() {
+  async created() {
     if (this.required) {
       this.$validator.extend('json', {
         getMessage: () => this.$t('filterEditor.errors.invalidJSON'),
@@ -149,6 +186,8 @@ export default {
         context: () => this,
       });
     }
+
+    await this.fetchFilterHints();
   },
   methods: {
     updateFilter(value) {
@@ -215,6 +254,14 @@ export default {
 
         throw err;
       }
+    },
+
+    getAlarmFilterHintsOrDefault() {
+      return this.alarmFilterHints || this.defaultAlarmHints;
+    },
+
+    getEntityFilterHintsOrDefault() {
+      return this.entityFilterHints || this.defaultEntityHints;
     },
   },
 };

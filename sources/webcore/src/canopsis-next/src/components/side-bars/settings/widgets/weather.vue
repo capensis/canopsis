@@ -15,7 +15,8 @@
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hidden-fields="['title']"
+        :hidden-fields="['title']",
+        :entitiesType="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       v-list-group(data-test="widgetAlarmsList")
