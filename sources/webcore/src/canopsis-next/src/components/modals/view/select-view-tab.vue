@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.selectViewTab.title') }}
-    v-card-text.view-select
+  modal-wrapper(data-test="selectViewTabModal")
+    template(slot="title")
+      span {{ $t('modals.selectViewTab.title') }}
+    template(slot="text")
       v-expansion-panel(dark)
         v-expansion-panel-content.secondary(v-for="group in availableGroups", :key="group._id", ripple)
           template(slot="header")
@@ -29,8 +28,11 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.selectViewTab,
+  components: { ModalWrapper },
   mixins: [
     modalInnerMixin,
     entitiesViewsGroupsMixin,

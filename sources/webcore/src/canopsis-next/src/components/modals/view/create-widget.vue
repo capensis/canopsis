@@ -1,9 +1,8 @@
-<template lang='pug'>
-  v-card(data-test="createWidgetModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.widgetCreation.title') }}
-    v-card-text
+<template lang="pug">
+  modal-wrapper(data-test="createWidgetModal")
+    template(slot="title")
+      span {{ $t('modals.widgetCreation.title') }}
+    template(slot="text")
       v-layout(row, wrap)
         v-flex.my-1(
           xs12,
@@ -18,8 +17,7 @@
                   div.subheading {{ $t(`modals.widgetCreation.types.${widget}.title`) }}
                 v-flex
                   v-icon {{ iconByWidgetType(widget) }}
-    v-divider
-    v-layout.py-1(justify-end)
+    template(slot="actions")
       v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
 </template>
 
@@ -32,11 +30,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal to create widget
  */
 export default {
   name: MODALS.createWidget,
+  components: { ModalWrapper },
   mixins: [modalInnerMixin, sideBarMixin, entitiesInfoMixin],
   computed: {
     /**
