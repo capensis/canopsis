@@ -220,7 +220,7 @@
         
     **Expected result**: the ask is canceled.
 
-* [ ] **An alarm can be canceled.**
+* [x] **An alarm can be canceled.**
     1. To select any element in the table.
     2. To press the button "Cancel alarm".
         

@@ -5,6 +5,7 @@
         :complete="stepper > 1",
         step="1",
         editable,
+        data-test="pbehaviorFormStep-general",
         :rules="[() => !hasGeneralFormAnyError]"
       ) {{ $t('modals.createPbehavior.steps.general.title') }}
         small(v-if="hasGeneralFormAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
@@ -14,6 +15,7 @@
           :complete="stepper > 2",
           step="2",
           editable,
+          data-test="pbehaviorFormStep-filter",
           :rules="[() => !hasFilterEditorAnyError]"
         ) {{ $t('modals.createPbehavior.steps.filter.title') }}
           small(v-if="hasFilterEditorAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
@@ -22,14 +24,16 @@
       v-stepper-step.py-0(
         :complete="stepper > 3",
         step="3",
-        editable
+        editable,
+        data-test="pbehaviorFormStep-rrule"
       ) {{ $t('modals.createPbehavior.steps.rrule.title') }}
         small.font-italic.font-weight-light {{ $t('common.optional') }}
       v-divider
       v-stepper-step.py-0(
         :complete="stepper > 4",
         step="4",
-        editable
+        editable,
+        data-test="pbehaviorFormStep-comments"
       ) {{ $t('modals.createPbehavior.steps.comments.title') }}
         small.font-italic.font-weight-light {{ $t('common.optional') }}
     v-stepper-items

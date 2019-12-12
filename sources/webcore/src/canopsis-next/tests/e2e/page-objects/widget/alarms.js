@@ -105,6 +105,15 @@ const commands = {
     );
   },
 
+  waitFirstPbehaviorXHR(triggerFunc, callback) {
+    return this.waitForFirstXHR(
+      API_ROUTES.pbehavior.pbehavior,
+      WAIT_FOR_FIRST_XHR_TIME,
+      triggerFunc,
+      ({ responseData }) => callback(responseData),
+    );
+  },
+
   el,
 };
 
