@@ -42,7 +42,7 @@ import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
-import FilterHintsMixin from '@/mixins/entities/filter-hint';
+import filterHintsMixin from '@/mixins/entities/filter-hint';
 
 import FilterGroup from './partial/filter-group.vue';
 
@@ -58,7 +58,7 @@ export default {
   components: {
     FilterGroup,
   },
-  mixins: [FilterHintsMixin],
+  mixins: [filterHintsMixin],
   props: {
     value: {
       type: [String, Object],
@@ -153,12 +153,20 @@ export default {
       ];
     },
 
+    alarmFilterHintsOrDefault() {
+      return this.alarmFilterHints || this.defaultAlarmHints;
+    },
+
+    entityFilterHintsOrDefault() {
+      return this.entityFilterHints || this.defaultEntityHints;
+    },
+
     possibleFields() {
       if (this.entitiesType === ENTITIES_TYPES.entity) {
-        return this.getEntityFilterHintsOrDefault();
+        return this.entityFilterHintsOrDefault;
       }
 
-      return this.getAlarmFilterHintsOrDefault();
+      return this.alarmFilterHintsOrDefault;
     },
   },
   async created() {
@@ -254,14 +262,6 @@ export default {
 
         throw err;
       }
-    },
-
-    getAlarmFilterHintsOrDefault() {
-      return this.alarmFilterHints || this.defaultAlarmHints;
-    },
-
-    getEntityFilterHintsOrDefault() {
-      return this.entityFilterHints || this.defaultEntityHints;
     },
   },
 };

@@ -7,7 +7,11 @@ const { mapGetters, mapActions } = createNamespacedHelpers('filterHint');
  */
 export default {
   computed: {
-    ...mapGetters(['alarmFilterHints', 'entityFilterHints']),
+    ...mapGetters({
+      filterHintsPending: 'pending',
+      alarmFilterHints: 'alarmFilterHints',
+      entityFilterHints: 'entityFilterHints',
+    }),
   },
   methods: {
     ...mapActions(['fetchFilterHints']),
