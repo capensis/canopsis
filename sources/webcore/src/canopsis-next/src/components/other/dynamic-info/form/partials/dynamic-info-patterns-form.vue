@@ -1,6 +1,7 @@
 <template lang="pug">
   div
-    v-tabs(centered, slider-color="primary")
+    v-alert(:value="hasAnyError", type="error") {{ $t('modals.createDynamicInfo.steps.patterns.validationError') }}
+    v-tabs(ref="tabs", centered, slider-color="primary")
       v-tab {{ $t('modals.createDynamicInfo.steps.patterns.alarmPatterns') }}
       v-tab {{ $t('modals.createDynamicInfo.steps.patterns.entityPatterns') }}
       v-tab-item

@@ -874,6 +874,7 @@ export default {
           title: 'Patterns',
           alarmPatterns: 'Patterns des alarmes',
           entityPatterns: 'Patterns des entités',
+          validationError: 'Au moins un pattern est requis. Merci d\'ajouter un pattern sur les alarmes et/ou un pattern sur les événements',
         },
       },
     },

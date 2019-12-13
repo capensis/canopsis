@@ -959,6 +959,7 @@ export default {
           title: 'Patterns',
           alarmPatterns: 'Alarm patterns',
           entityPatterns: 'Entity patterns',
+          validationError: 'At least one pattern must be set. Please add an alarm patterns and/or an entity pattern',
         },
       },
     },

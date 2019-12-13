@@ -76,8 +76,10 @@ export default {
     },
   },
   watch: {
-    stepper() {
-      this.$refs.patternsForm.callTabsUpdateTabsMethod();
+    stepper(value) {
+      if (value === this.steps.PATTERNS) {
+        this.$refs.patternsForm.callTabsUpdateTabsMethod();
+      }
     },
   },
   mounted() {
