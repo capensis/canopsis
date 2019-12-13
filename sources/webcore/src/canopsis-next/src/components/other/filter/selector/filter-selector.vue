@@ -129,7 +129,7 @@ export default {
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
   computed: {
@@ -233,6 +233,7 @@ export default {
           filters: this.filters,
           hasAccessToAddFilter: this.hasAccessToUserFilter,
           hasAccessToEditFilter: this.hasAccessToUserFilter,
+          entitiesType: this.entitiesType,
           actions: {
             create: this.createFilter,
             update: this.updateFilter,

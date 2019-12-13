@@ -9,7 +9,8 @@
         :hasAccessToEditFilter="config.hasAccessToEditFilter",
         @create:filter="createFilter",
         @update:filter="updateFilter",
-        @delete:filter="deleteFilter"
+        @delete:filter="deleteFilter",
+        :entitiesType="config.entitiesType"
       )
 </template>
 
