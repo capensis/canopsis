@@ -79,13 +79,13 @@
 
 ## Filtering
 
-* [ ] **A filter can be selected.**
+* [x] **A filter can be selected.**
     1. To click on the field "Select a filter".
     2. To click on any filter.
         
     **Expected result**: the selected filter appears in the field "Select a filter", the search shows relevant results.
 
-* [ ] **A selection of filter can be changed.**
+* [x] **A selection of filter can be changed.**
     1. To click on the field "Select a filter".
     2. To click on any filter.
     3. To click on the field "Select a filter" again.
@@ -93,13 +93,13 @@
         
     **Expected result**: the last selected filter appears in the field "Select a filter", the search shows relevant results.
 
-* [ ] **The button with cross cancels the selection of filters.**
+* [x] **The button with cross cancels the selection of filters.**
     1. To select any filter.
     2. To click on the button with cross.
         
     **Expected result**: the selection of filter is canceled (the field "Select a filter" became empty, the table returns to default view).
 
-* [ ] **The "AND" option of "Mix filters" works correctly.**
+* [x] **The "AND" option of "Mix filters" works correctly.**
     1. To select any filter.
     2. To turn on "Mix filters".
     3. To select "AND" option in check-box.
@@ -107,7 +107,7 @@
         
     **Expected result**: the results in table satisfy the conditions of both filters at the same time.
 
-* [ ] **The "OR" option of "Mix filters" works correctly.**
+* [x] **The "OR" option of "Mix filters" works correctly.**
     1. To select any filter.
     2. To turn on "Mix filters".
     3. To select OR option in check-box.
@@ -115,14 +115,14 @@
         
     **Expected result**: the results in table satisfy the condition of at least one filter.
 
-* [ ] **Filter can be deleted.**
+* [x] **Filter can be deleted.**
     1. To click on the triangular button to the right of "Select a filter" field.
     2. To click on the trash bin icon on appeared modal window.
     3. To click "Yes" on the modal window "Are you sure?".
         
     **Expected result**: the filter is deleted.
 
-* [ ] **The filter can be changed.**
+* [x] **The filter can be changed.**
     1. To click on the triangular button to the right of "Select a filter" field.
     2. To click on the pencil icon on appeared modal window.
     3. To change any parameter of the filter.
@@ -130,7 +130,13 @@
         
     **Expected result**: the filter was changed.
 
-* [ ] **A new filter can be created.**
+* [x] **The changed filter works in a new way.**
+    1. To change any filter.
+    2. To select this filter in the field “Select a filter”.
+        
+    **Expected result**: the search displays relevant results.
+
+* [x] **A new filter can be created.**
     1. To click on the triangular button to the right of "Select a filter" field.
     2. To press the button "Add" on the appeared modal window.
     3. To select any parameters for filter.
@@ -138,20 +144,29 @@
         
     **Expected result**: the new filter appears.
 
-* [ ] **A new filter works correctly.**
+* [x] **A new filter works correctly.**
     1. To create a new filter.
     2. To select this filter in the field "Select a filter".
         
     **Expected result**: the search displays relevant results.
 
-* [ ] **"Live reporting" can be created for determined period of time.**
+* [x] **"Live reporting" can be created for period of time selected by user.**
+    1. To click on the clock icon in the upper right corner of the page.
+    2. To choose “Custom” option in the field "Quick ranges".
+    3. To choose start date interval on the pop-up "Live reporting"
+    4. To choose end date interval on the pop-up "Live reporting"
+    5. To press the button "Apply"
+        
+    **Expected result**: a custom "Live reporting" is created and relevant results are shown in table.
+
+* [x] **"Live reporting" can be created for determined period of time.**
     1. To click on the clock icon in the upper right corner of the page.
     2. To select any option in the field "Quick ranges" except "Custom".
     3. To press the button "Apply".
         
     **Expected result**: a "live reporting" for determined period of time is created and relevant results are shown in table.
 
-* [ ] **"Live reporting" can be deleted.**
+* [x] **"Live reporting" can be deleted.**
     1. To create a "live reporting".
     2. To press the button with cross to delete it.
         
