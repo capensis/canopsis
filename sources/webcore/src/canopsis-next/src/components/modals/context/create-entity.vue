@@ -1,23 +1,30 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-tabs(slider-color="primary")
-      v-tab(
-        v-for="tab in tabs",
-        :key="tab.name",
-        @click.prevent="currentComponent = tab.component"
-      ) {{ tab.name }}
-      v-tab-item
-        keep-alive
-        create-form(v-model="form")
-      v-tab-item
-        manage-infos(v-model="form.infos")
-    v-divider
-    v-layout.pa-2(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat, v-if="!submitting") {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ config.title }}
+      template(slot="text")
+        v-tabs(slider-color="primary")
+          v-tab(
+            v-for="tab in tabs",
+            :key="tab.name"
+          ) {{ tab.name }}
+          v-tab-item
+            entity-form(v-model="form")
+          v-tab-item
+            manage-infos(v-model="form.infos")
+      template(slot="actions")
+        v-btn(
+          :disabled="submitting",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -26,10 +33,13 @@ import { MODALS } from '@/constants';
 import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
-import CreateForm from './partial/create-entity-form.vue';
-import ManageInfos from './partial/manage-infos.vue';
+import EntityForm from '@/components/other/context/form/entity-form.vue';
+import ManageInfos from '@/components/other/context/manage-infos.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create an entity (watcher, resource, component, connector)
@@ -40,34 +50,17 @@ export default {
     validator: 'new',
   },
   components: {
-    CreateForm,
+    EntityForm,
     ManageInfos,
+    ModalWrapper,
   },
   mixins: [
     modalInnerMixin,
+    submittableMixin(),
     entitiesContextEntityMixin,
   ],
   data() {
     return {
-      types: [
-        {
-          text: this.$t('modals.createEntity.fields.types.connector'),
-          value: 'connector',
-        },
-        {
-          text: this.$t('modals.createEntity.fields.types.component'),
-          value: 'component',
-        },
-        {
-          text: this.$t('modals.createEntity.fields.types.resource'),
-          value: 'resource',
-        },
-      ],
-      tabs: [
-        { component: 'CreateForm', name: this.$t('modals.createEntity.fields.form') },
-        { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
-      ],
-      showValidationErrors: true,
       form: {
         name: '',
         description: '',
@@ -77,8 +70,15 @@ export default {
         impact: [],
         infos: {},
       },
-      submitting: false,
     };
+  },
+  computed: {
+    tabs() {
+      return [
+        { component: 'CreateForm', name: this.$t('modals.createEntity.fields.form') },
+        { component: 'ManageInfos', name: this.$t('modals.createEntity.fields.manageInfos') },
+      ];
+    },
   },
   mounted() {
     if (this.config.item) {
@@ -91,27 +91,20 @@ export default {
   },
   methods: {
     async submit() {
-      this.submitting = true;
-      const formIsValid = await this.$validator.validateAll();
-      if (formIsValid) {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
         const formData = { ...this.form };
 
         if (!this.config.item || this.config.isDuplicating) {
           formData._id = uuid('entity');
         }
-        try {
-          await this.config.action(formData);
 
-          this.refreshContextEntitiesLists();
+        await this.config.action(formData);
+        await this.refreshContextEntitiesLists();
 
-          this.$modals.hide();
-        } catch (err) {
-          console.error(err);
-          this.$popups.error({ text: this.$t('error.default') });
-        }
+        this.$modals.hide();
       }
-
-      this.submitting = false;
     },
 
   },

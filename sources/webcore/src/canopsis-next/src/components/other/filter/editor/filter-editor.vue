@@ -43,6 +43,7 @@ import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-reques
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
 import filterHintsMixin from '@/mixins/entities/filter-hint';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import FilterGroup from './partial/filter-group.vue';
 
@@ -58,7 +59,7 @@ export default {
   components: {
     FilterGroup,
   },
-  mixins: [filterHintsMixin],
+  mixins: [filterHintsMixin, formValidationHeaderMixin],
   props: {
     value: {
       type: [String, Object],
@@ -170,7 +171,7 @@ export default {
     },
   },
   async created() {
-    if (this.required) {
+    if (this.required && this.$validator) {
       this.$validator.extend('json', {
         getMessage: () => this.$t('filterEditor.errors.invalidJSON'),
         validate: (value) => {
@@ -192,6 +193,7 @@ export default {
           return isFilterNotEmpty || isRequestStringNotEmpty;
         },
         context: () => this,
+        vm: this,
       });
     }
 

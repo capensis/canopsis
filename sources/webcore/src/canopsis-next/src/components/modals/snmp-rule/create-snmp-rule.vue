@@ -1,14 +1,17 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-card-text
-      snmp-rule-form(v-model="form")
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-btn.primary(@click="submit") {{ $t('common.actions.saveChanges') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        snmp-rule-form(v-model="form")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -17,13 +20,16 @@ import { cloneDeep } from 'lodash';
 import { MODALS, SNMP_STATE_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createSnmpRule,
-  components: { SnmpRuleForm },
-  mixins: [modalInnerMixin],
+  components: { SnmpRuleForm, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const defaultModuleMibObjectForm = {
       value: '',

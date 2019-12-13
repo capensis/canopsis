@@ -1,15 +1,14 @@
 <template lang="pug">
-  v-card(data-test="confirmationModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('common.confirmation') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('common.confirmation') }}
+    template(slot="actions")
       v-layout(wrap, justify-center)
         v-btn.primary(
-          @click.prevent="submit",
-          data-test="submitButton",
           :loading="submitting",
-          :disabled="submitting"
+          :disabled="isDisabled",
+          data-test="submitButton",
+          @click.prevent="submit"
         ) {{ $t('common.yes') }}
         v-btn.error(
           data-test="cancelButton",
@@ -18,28 +17,27 @@
 </template>
 
 <script>
-import modalInnerMixin from '@/mixins/modal/inner';
 import { MODALS } from '@/constants';
+
+import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Confirmation modal
  */
 export default {
   name: MODALS.confirmation,
-  mixins: [modalInnerMixin],
-  data() {
-    return {
-      submitting: false,
-    };
-  },
+  components: { ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   methods: {
     async submit() {
-      this.submitting = true;
       if (this.config.action) {
         await this.config.action();
       }
+
       this.$modals.hide();
-      this.submitting = false;
     },
   },
 };

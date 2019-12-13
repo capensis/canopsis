@@ -10,15 +10,16 @@ const {
   INTERVAL_RANGES,
   FILTER_OPERATORS,
   FILTER_COLUMNS,
-} = require('../../constants');
+} = require('../../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { createWidgetView, removeWidgetView } = require('../../helpers/api');
-const { generateTemporaryAlarmsWidget } = require('../../helpers/entities');
+const { createWidgetView, removeWidgetView } = require('../../../helpers/api');
+const { generateTemporaryAlarmsWidget } = require('../../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
     browser.globals.defaultViewData = await createWidgetView();
+    browser.globals.tablePageNumber = 1;
 
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
@@ -52,7 +53,7 @@ module.exports = {
           order: SORT_ORDERS.desc,
           orderBy: ALARMS_WIDGET_SORT_FIELD.component,
         },
-        elementsPerPage: PAGINATION_PER_PAGE_VALUES.HUNDRED,
+        elementsPerPage: PAGINATION_PER_PAGE_VALUES.TWENTY,
         openedResolvedFilter: {
           open: true,
           resolve: true,
@@ -71,44 +72,13 @@ module.exports = {
         },
         moreInfos: 'More infos popup',
         enableHtml: true,
-        newColumnNames: [{
-          index: 9,
-          data: {
-            value: 'alarm.v.connector',
-            label: 'New column',
-            isHtml: true,
-          },
-        }],
-        editColumnNames: [{
-          index: 1,
-          data: {
-            value: 'alarm.v.changeConnector',
-            label: 'Connector(changed)',
-            isHtml: true,
-          },
-        }],
-        moveColumnNames: [{
-          index: 1,
-          down: true,
-        }, {
-          index: 2,
-          up: true,
-        }],
-        deleteColumnNames: [2],
         liveReporting: {
-          calendarStartDate: {
-            minute: 0,
-            hour: 12,
-            day: 12,
-          },
-          endDate: '13/09/2019 00:00',
-          range: INTERVAL_RANGES.CUSTOM,
+          range: INTERVAL_RANGES.LAST_YEAR,
         },
         filters: {
           isMix: true,
           type: FILTERS_TYPE.OR,
-          title: 'Filter title',
-          selected: [1],
+          title: 'Filter 1',
           groups: [{
             type: FILTERS_TYPE.OR,
             items: [{
@@ -116,15 +86,6 @@ module.exports = {
               operator: FILTER_OPERATORS.EQUAL,
               valueType: VALUE_TYPES.STRING,
               value: 'value',
-              groups: [{
-                type: FILTERS_TYPE.OR,
-                items: [{
-                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
-                  operator: FILTER_OPERATORS.IN,
-                  valueType: VALUE_TYPES.BOOLEAN,
-                  value: true,
-                }],
-              }],
             }, {
               type: FILTERS_TYPE.AND,
               rule: FILTER_COLUMNS.CONNECTOR_NAME,
@@ -155,52 +116,5 @@ module.exports = {
     browser.completed.widget.createAlarmsList(alarmsWidget, ({ response }) => {
       browser.globals.temporary.widgetId = response.data[0].widget_id;
     });
-  },
-
-  'Edit widget alarms with some name': (browser) => {
-    browser.page.view()
-      .clickEditViewButton()
-      .clickEditWidgetButton(browser.globals.temporary.widgetId);
-
-    browser.completed.widget.setCommonFields({
-      size: {
-        sm: 10,
-        md: 10,
-        lg: 10,
-      },
-      title: 'Alarms widget(edited)',
-      periodicRefresh: 180,
-      parameters: {
-        advanced: true,
-        sort: {
-          order: SORT_ORDERS.desc,
-          orderBy: ALARMS_WIDGET_SORT_FIELD.connector,
-        },
-        elementsPerPage: PAGINATION_PER_PAGE_VALUES.TWENTY,
-      },
-    });
-
-    browser.page.widget.alarms()
-      .clickSubmitAlarms();
-  },
-
-  'Delete widget alarms with some name': (browser) => {
-    browser.page.view()
-      .clickDeleteWidgetButton(browser.globals.temporary.widgetId);
-
-    browser.page.modals.common.confirmation()
-      .verifyModalOpened()
-      .clickSubmitButton()
-      .verifyModalClosed();
-  },
-
-  'Delete row with some name': (browser) => {
-    browser.page.view()
-      .clickDeleteRowButton(1);
-
-    browser.page.modals.common.confirmation()
-      .verifyModalOpened()
-      .clickSubmitButton()
-      .verifyModalClosed();
   },
 };

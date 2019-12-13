@@ -1,46 +1,22 @@
 <template lang="pug">
-  v-card(data-test="statsDisplayModeModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('settings.statsNumbers.displayMode') }}
-    v-card-text
-      v-container(data-test="statsDisplayModeParameters")
-        v-select(:items="displayModes", v-model="form.mode")
-        v-card(dark, color="secondary")
-          v-card-title {{ $t('common.parameters') }}
-          v-card-text
-            v-card.my-1(
-              v-for="criticity in $constants.STATS_CRITICITY",
-              :data-test="`statsDisplayMode-${criticity}`",
-              :key="criticity",
-              color="secondary darken-1"
-            )
-              v-card-title {{ criticity }}
-              v-card-text
-                v-layout(align-center)
-                  v-text-field(
-                    type="number",
-                    data-test="displayModeValue",
-                    :label="$t('common.value')",
-                    v-model="form.parameters.criticityLevels[criticity]"
-                  )
-                  v-layout
-                    v-btn(
-                      data-test="displayModeColorPicker",
-                      :style="{ backgroundColor: form.parameters.colors[criticity] }",
-                      @click="openColorPickerModal(criticity)"
-                    ) {{ $t('settings.statsNumbers.selectAColor') }}
-      v-divider
-      v-layout.py-1(justify-end)
+  v-form(data-test="statsDisplayModeModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('settings.statsNumbers.displayMode') }}
+      template(slot="text")
+        stats-display-mode-form(v-model="form")
+      template(slot="actions")
         v-btn(
           data-test="statsDisplayModeCancelButton",
-          @click="$modals.hide",
           depressed,
-          flat
+          flat,
+          @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          data-test="statsDisplayModeSubmitButton",
-          @click="submit"
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit",
+          data-test="statsDisplayModeSubmitButton"
         ) {{ $t('common.submit') }}
 </template>
 
@@ -50,10 +26,16 @@ import { cloneDeep } from 'lodash';
 import { MODALS, STATS_DISPLAY_MODE, STATS_DISPLAY_MODE_PARAMETERS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import StatsDisplayModeForm from '@/components/other/stats/stats-display-mode-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.statsDisplayMode,
-  mixins: [modalInnerMixin],
+  components: { StatsDisplayModeForm, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { displayMode } = this.modal.config;
     const defaultDisplayMode = {
@@ -65,24 +47,7 @@ export default {
       form: cloneDeep(displayMode || defaultDisplayMode),
     };
   },
-  computed: {
-    displayModes() {
-      return Object.values(STATS_DISPLAY_MODE);
-    },
-  },
   methods: {
-    openColorPickerModal(level) {
-      this.$modals.show({
-        name: MODALS.colorPicker,
-        config: {
-          title: this.$t('modals.colorPicker.title'),
-          color: this.form.parameters.colors[level],
-          type: 'hex',
-          action: color => this.$set(this.form.parameters.colors, level, color),
-        },
-      });
-    },
-
     async submit() {
       if (this.config.action) {
         await this.config.action(this.form);
