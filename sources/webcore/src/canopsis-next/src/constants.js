@@ -47,7 +47,6 @@ export const MODALS = {
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',
   watcher: 'watcher',
-  createWatcherAssocTicketEvent: 'create-watcher-assoc-ticket-event',
   createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',

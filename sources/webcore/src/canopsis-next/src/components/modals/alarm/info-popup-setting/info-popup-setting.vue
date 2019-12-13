@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card(data-test="infoPopupSettingModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.infoPopupSetting.title') }}
-    v-card-text
+  modal-wrapper(data-test="infoPopupSettingModal")
+    template(slot="title")
+      span {{ $t('modals.infoPopupSetting.title') }}
+    template(slot="text")
       v-layout(justify-end)
         v-btn(
           data-test="infoPopupAddPopup",
@@ -37,8 +36,7 @@
           v-card-text
             p {{ $t('modals.infoPopupSetting.template') }}:
             v-textarea(:value="popup.template", disabled, dark)
-    v-divider
-    v-layout.py-1(justify-end)
+    template(slot="actions")
       v-btn(
         data-test="infoPopupCancelButton",
         depressed,
@@ -46,8 +44,9 @@
         @click="$modals.hide"
       ) {{ $t('common.cancel') }}
       v-btn.primary(
+        :loading="submitting",
+        :disabled="isDisabled",
         data-test="infoPopupSubmitButton",
-        type="submit",
         @click="submit"
       ) {{ $t('common.submit') }}
 </template>
@@ -56,10 +55,14 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import ModalWrapper from '../../modal-wrapper.vue';
 
 export default {
   name: MODALS.infoPopupSetting,
-  mixins: [modalInnerMixin],
+  components: { ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
       popups: [],

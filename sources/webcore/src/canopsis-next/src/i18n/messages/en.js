@@ -448,6 +448,7 @@ export default {
       editTitle: 'Edit a watcher',
       duplicateTitle: 'Duplicate a watcher',
       displayName: 'Name',
+      outputTemplate: 'Output template',
       success: {
         create: 'Watcher successfully created !',
         edit: 'Watcher successfully edited !',

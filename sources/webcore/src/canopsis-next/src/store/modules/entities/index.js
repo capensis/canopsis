@@ -11,6 +11,7 @@ import rightModule from './right';
 import eventFilterRuleModule from './event-filter-rule';
 import webhookModule from './webhook';
 import infoModule from './info';
+import filterHintModule from './filter-hint';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import actionModule from './action';
@@ -31,6 +32,7 @@ export default {
   eventFilterRule: eventFilterRuleModule,
   webhook: webhookModule,
   info: infoModule,
+  filterHint: filterHintModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
   action: actionModule,

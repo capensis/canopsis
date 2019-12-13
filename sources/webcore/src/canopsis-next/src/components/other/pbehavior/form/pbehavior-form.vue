@@ -39,7 +39,7 @@
       v-stepper-content(step="2")
         v-card
           v-card-text
-            filter-editor(v-field="form.general.filter", required)
+            filter-editor(v-field="form.general.filter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
       v-stepper-content(step="3")
         v-card
           v-card-text

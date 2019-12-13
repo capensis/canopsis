@@ -6,6 +6,7 @@
       @change="$emit('input', $event)"
     )
       v-btn(
+        :data-test="`stateCriticity-${state}`",
         v-for="(state, key) in stateValues",
         :key="key",
         :value="state",

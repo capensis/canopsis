@@ -19,8 +19,14 @@
           solo-inverted,
           hide-details,
           dense,
-          flat
+          flat,
+          :return-object="false",
+          item-text="name",
+          item-value="value",
+          :loading="filterHintsPending"
         )
+          template(slot="item", slot-scope="props")
+            v-list-tile-content {{ props.item.name }} ({{ props.item.value }})
       v-flex.pa-1(data-test="operatorRule", xs12, md4)
         v-combobox.my-2(
           v-field="rule.operator",
@@ -45,6 +51,8 @@ import { isBoolean, isNumber } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
 
+import filterHintsMixin from '@/mixins/entities/filter-hint';
+
 import MixedField from '@/components/forms/fields/mixed-field.vue';
 
 /**
@@ -61,6 +69,7 @@ import MixedField from '@/components/forms/fields/mixed-field.vue';
  */
 export default {
   components: { MixedField },
+  mixins: [filterHintsMixin],
   model: {
     prop: 'rule',
     event: 'update:rule',

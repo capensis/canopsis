@@ -6,7 +6,7 @@
       data-test="searchingTextField",
       hide-details,
       single-line,
-      @keyup.enter="submit",
+      @keydown.enter.prevent="submit",
       @input="$emit('input', $event)"
     )
     v-btn(data-test="submitSearchButton", icon, @click="submit")
