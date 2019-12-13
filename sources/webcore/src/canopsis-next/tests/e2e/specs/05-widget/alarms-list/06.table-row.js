@@ -108,5 +108,21 @@ module.exports = {
     alarmsTable.verifyAlarmTimeLineDeleted(firstAlarm._id);
   },
 
-  'Placing a cursor on signs in the column "Extra details" makes information pop-up show': () => { },
+  'Placing a cursor on signs in the column "Extra details" makes information pop-up show': (browser) => {
+    const alarmsTable = browser.page.tables.alarms();
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    const status = {
+      [firstAlarm.pbehaviors.some(pbehavior => pbehavior.isActive)]: 'pbehaviors',
+      [!!firstAlarm.v.canceled]: 'canceled',
+      [!!firstAlarm.v.ticket]: 'ticket',
+      [!!firstAlarm.v.ack]: 'ack',
+    }.true;
+
+    alarmsTable
+      .moveToExtraDetailsOpenButton(firstAlarm._id, status)
+      .verifyRowExtraDetailsVisible(firstAlarm._id)
+      .moveOutsideToExtraDetailsOpenButton(firstAlarm._id, status)
+      .verifyRowExtraDetailsDeleted(firstAlarm._id);
+  },
 };
