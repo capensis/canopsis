@@ -42,6 +42,7 @@ import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
 
+import filterHintsMixin from '@/mixins/entities/filter-hint';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import FilterGroup from './partial/filter-group.vue';
@@ -55,8 +56,10 @@ import FilterGroup from './partial/filter-group.vue';
  */
 export default {
   inject: ['$validator'],
-  components: { FilterGroup },
-  mixins: [formValidationHeaderMixin],
+  components: {
+    FilterGroup,
+  },
+  mixins: [filterHintsMixin, formValidationHeaderMixin],
   props: {
     value: {
       type: [String, Object],
@@ -109,23 +112,65 @@ export default {
       }
     },
 
+    defaultAlarmHints() {
+      return [
+        {
+          name: 'Connector',
+          value: 'connector',
+        },
+        {
+          name: 'Connector name',
+          value: 'connector_name',
+        },
+        {
+          name: 'Component',
+          value: 'component',
+        },
+        {
+          name: 'Resource',
+          value: 'resource',
+        },
+      ];
+    },
+
+    defaultEntityHints() {
+      return [
+        {
+          name: 'Name',
+          value: 'name',
+        },
+        {
+          name: 'Type',
+          value: 'type',
+        },
+        {
+          name: 'Impact',
+          value: 'impact',
+        },
+        {
+          name: 'Depends',
+          value: 'depends',
+        },
+      ];
+    },
+
+    alarmFilterHintsOrDefault() {
+      return this.alarmFilterHints || this.defaultAlarmHints;
+    },
+
+    entityFilterHintsOrDefault() {
+      return this.entityFilterHints || this.defaultEntityHints;
+    },
+
     possibleFields() {
-      switch (this.entitiesType) {
-        case ENTITIES_TYPES.alarm:
-          return ['connector', 'connector_name', 'component', 'resource'];
-
-        case ENTITIES_TYPES.entity:
-          return ['name', 'type'];
-
-        case ENTITIES_TYPES.pbehavior:
-          return ['name', 'type', 'impact', 'depends'];
-
-        default:
-          return [];
+      if (this.entitiesType === ENTITIES_TYPES.entity) {
+        return this.entityFilterHintsOrDefault;
       }
+
+      return this.alarmFilterHintsOrDefault;
     },
   },
-  created() {
+  async created() {
     if (this.required && this.$validator) {
       this.$validator.extend('json', {
         getMessage: () => this.$t('filterEditor.errors.invalidJSON'),
@@ -151,6 +196,8 @@ export default {
         vm: this,
       });
     }
+
+    await this.fetchFilterHints();
   },
   methods: {
     updateFilter(value) {

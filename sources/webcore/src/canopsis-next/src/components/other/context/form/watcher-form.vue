@@ -30,7 +30,13 @@
       v-card
         v-card-text
           patterns-list(v-if="stack === $constants.CANOPSIS_STACK.go", v-field="form.entities")
-          filter-editor(v-else, ref="filterEditor", v-field="form.mfilter", required)
+          filter-editor(
+            v-else,
+            ref="filterEditor",
+            v-field="form.mfilter",
+            required,
+            :entitiesType="$constants.ENTITIES_TYPES.entity"
+          )
     v-tab-item
       manage-infos(v-field="form.infos")
 </template>
