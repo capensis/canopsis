@@ -24,7 +24,8 @@
           :hasAccessToListFilter="hasAccessToListFilter",
           @input="updateSelectedFilter",
           @update:condition="updateSelectedCondition",
-          @update:filters="updateFilters"
+          @update:filters="updateFilters",
+          :entitiesType="$constants.ENTITIES_TYPES.entity"
         )
       v-flex.ml-4
         mass-actions-panel(:itemsIds="selectedIds")
