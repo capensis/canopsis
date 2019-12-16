@@ -1,5 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
+const { WIDGET_TYPES } = require('@/constants');
+
 const {
   FILTERS_TYPE,
   VALUE_TYPES,
@@ -7,7 +9,6 @@ const {
   FILTER_OPERATORS,
   FILTER_COLUMNS,
 } = require('../../../constants');
-const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
 
 const COMPONENT_EQUAL_RESULT_COUNT = 50;

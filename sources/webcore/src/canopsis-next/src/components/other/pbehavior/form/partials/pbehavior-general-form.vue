@@ -19,7 +19,7 @@
         :error-messages="errors.collect('name')",
         name="name"
       )
-    v-layout(data-test="pbehaviorType", row)
+    v-layout(data-test="pbehaviorTypeLayout", row)
       v-combobox(
         data-test="pbehaviorReason",
         v-validate="'required'",

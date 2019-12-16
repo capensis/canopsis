@@ -3,6 +3,10 @@
 const el = require('../../helpers/el');
 
 const commands = {
+  clickPbehaviorFormStep(step) {
+    return this.customClick(this.el('@pbehaviorFormStep', step));
+  },
+
   clearName() {
     return this.customClearValue('@pbehaviorName');
   },
@@ -73,15 +77,21 @@ const commands = {
       .customClick(this.el('@optionSelect', index));
   },
 
+  clickByWeekDay() {
+    return this.customClick('@pbehaviorByWeekDay');
+  },
+
   selectByWeekDay(index = 1, checked = false) {
-    return this.customClick('@pbehaviorByWeekDay')
-      .waitForElementVisible(this.el('@optionSelect', index))
+    return this.waitForElementVisible(this.el('@optionSelect', index))
       .getAttribute(this.el('@optionSelectInput', index), 'aria-checked', ({ value }) => {
         if (value !== String(checked)) {
-          this.customClick(this.el('@optionSelect', index))
-            .clickSimple();
+          this.customClick(this.el('@optionSelect', index));
         }
       });
+  },
+
+  clickOutsideByWeekDay() {
+    return this.customClickOutside('@pbehaviorByWeekDay');
   },
 
   clearRepeat() {
@@ -114,15 +124,21 @@ const commands = {
       .customClick(this.el('@optionSelect', index));
   },
 
+  clickByMonth() {
+    return this.customClick('@pbehaviorByMonth');
+  },
+
   selectByMonth(index = 1, checked = false) {
-    return this.customClick('@pbehaviorByMonth')
-      .waitForElementVisible(this.el('@optionSelect', index))
+    return this.waitForElementVisible(this.el('@optionSelect', index))
       .getAttribute(this.el('@optionSelectInput', index), 'aria-checked', ({ value }) => {
         if (value !== String(checked)) {
-          this.customClick(this.el('@optionSelect', index))
-            .clickAdvanced();
+          this.customClick(this.el('@optionSelect', index));
         }
       });
+  },
+
+  clickOutsideByMonth() {
+    return this.customClickOutside('@pbehaviorByMonth');
   },
 
   clearBySetPosition() {
@@ -249,6 +265,8 @@ module.exports = {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
     optionSelectInput: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s) input',
 
+    pbehaviorFormStep: `${sel('pbehaviorFormStep-%s')}`,
+
     pbehaviorName: sel('pbehaviorFormName'),
 
     pbehaviorStartDate: `${sel('startDateTimePicker')} ${sel('dateTimePickerField')}`,
@@ -256,7 +274,7 @@ module.exports = {
 
     pbehaviorFilterButton: sel('pbehaviorFilterButton'),
 
-    pbehaviorType: `${sel('pbehaviorType')} .v-input__slot`,
+    pbehaviorType: `${sel('pbehaviorTypeLayout')} [role='combobox'] .v-input__slot`,
 
     pbehaviorReason: sel('pbehaviorReason'),
 

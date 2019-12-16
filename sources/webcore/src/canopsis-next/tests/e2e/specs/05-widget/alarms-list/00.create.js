@@ -1,5 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
+const { WIDGET_TYPES } = require('@/constants');
+
 const {
   INFO_POPUP_DEFAULT_COLUMNS,
   ALARMS_WIDGET_SORT_FIELD,
@@ -11,7 +13,6 @@ const {
   FILTER_OPERATORS,
   FILTER_COLUMNS,
 } = require('../../../constants');
-const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, removeWidgetView } = require('../../../helpers/api');
 const { generateTemporaryAlarmsWidget } = require('../../../helpers/entities');
 

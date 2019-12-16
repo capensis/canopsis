@@ -337,3 +337,10 @@ module.exports.PBEHAVIOR_TYPES = {
   UNMONITORED: 2,
   PAUSE: 3,
 };
+
+module.exports.PBEHAVIOR_STEPS = {
+  GENERAL: 'general',
+  FILTER: 'filter',
+  RRULE: 'rrule',
+  COMMENTS: 'comments',
+};

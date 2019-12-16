@@ -174,17 +174,17 @@
 
 ## Mass actions
 
-* [ ] **All elements in the table can be selected.**
+* [x] **All elements in the table can be selected.**
     1. To click on check-box at the very first row of the table.
         
     **Expected result**: all elements in table are selected.
 
-* [ ] **The only one element in the table can be selected.**
+* [x] **The only one element in the table can be selected.**
     1. To click on check-box in the row of needed element.
         
     **Expected result**: the needed element is selected.
 
-* [ ] **Pressing on button "Periodical behavior" creates periodical behavior.**
+* [x] **Pressing on button "Periodical behavior" creates periodical behavior.**
     1. To select any element in the table.
     2. To press the button "Periodical behavior".
     3. To input all needed information on modal window "Create periodical behavior".
@@ -192,7 +192,7 @@
         
     **Expected result**: periodical behavior is created.
 
-* [ ] **An acknowledge without a ticket can be created.**
+* [x] **An acknowledge without a ticket can be created.**
     1. To select any element in the table.
     2. To press the button "Ack".
     3. To fill in the form.
@@ -200,7 +200,7 @@
         
     **Expected result**: periodical behavior is created.
 
-* [ ] **An acknowledge with ticket can be created.**
+* [x] **An acknowledge with ticket can be created.**
     1. To select any element in the table.
     2. To press the button "Ack".
     3. To fill in the form.
@@ -208,19 +208,19 @@
         
     **Expected result**: an acknowledge with ticket is created.
 
-* [ ] **"Fast ask" can be created.**
+* [x] **"Fast ask" can be created.**
     1. To select any element in the table.
     2. To press the button "Fask ack".
         
     **Expected result**: the "fast ask" is created.
 
-* [ ] **An "ask" can be canceled.**
+* [x] **An "ask" can be canceled.**
     1. To select any element in the table.
     2. To press the button "Cancel ack".
         
     **Expected result**: the ask is canceled.
 
-* [ ] **An alarm can be canceled.**
+* [x] **An alarm can be canceled.**
     1. To select any element in the table.
     2. To press the button "Cancel alarm".
         
