@@ -1,6 +1,9 @@
 // http://nightwatchjs.org/guide#usage
 // http://nightwatchjs.org/guide#usage
 
+const { PAGINATION_LIMIT } = require('@/config');
+const { WIDGET_TYPES } = require('@/constants');
+
 const {
   ALARMS_MASS_ACTIONS,
   WEEK_DAYS,
@@ -9,8 +12,6 @@ const {
   PERIODICAL_BEHAVIOR_FREQUENCY,
   PBEHAVIOR_STEPS,
 } = require('../../../constants');
-const { PAGINATION_LIMIT } = require('@/config');
-const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
 
 module.exports = {

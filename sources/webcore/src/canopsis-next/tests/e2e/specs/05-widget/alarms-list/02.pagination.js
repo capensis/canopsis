@@ -1,8 +1,9 @@
 // http://nightwatchjs.org/guide#usage
 
-const { PAGINATION_PER_PAGE_VALUES } = require('../../../constants');
 const { WIDGET_TYPES } = require('@/constants');
 const { PAGINATION_LIMIT } = require('@/config');
+
+const { PAGINATION_PER_PAGE_VALUES } = require('../../../constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
 
 const BOTTOM_PAGINATION_PAGE_NUMBER = 12;
