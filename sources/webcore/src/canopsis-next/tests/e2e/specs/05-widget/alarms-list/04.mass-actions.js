@@ -1,5 +1,4 @@
 // http://nightwatchjs.org/guide#usage
-// http://nightwatchjs.org/guide#usage
 
 const {
   ALARMS_MASS_ACTIONS,

@@ -1,8 +1,8 @@
 // http://nightwatchjs.org/guide#usage
-// http://nightwatchjs.org/guide#usage
+
+const { WIDGET_TYPES } = require('@/constants');
 
 const { SORT_ORDERS_STRING } = require('../../../constants');
-const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
 
 module.exports = {
