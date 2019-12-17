@@ -23,7 +23,7 @@
           color="primary"
         )
         v-select(
-          v-model="form.type",
+          v-field="form.type",
           v-validate="'required'",
           :items="types",
           :error-messages="errors.collect('type')",
@@ -34,15 +34,13 @@
       v-layout(wrap)
         v-flex(xs12)
           entities-select(
-            :label="$t('modals.createEntity.fields.impact')",
-            :entities="form.impact",
-            @updateEntities="updateImpact"
+            v-field="form.impact",
+            :label="$t('modals.createEntity.fields.impact')"
           )
         v-flex(xs12)
           entities-select(
-            :label="$t('modals.createEntity.fields.depends')",
-            :entities="form.depends",
-            @updateEntities="updateDepends"
+            v-field="form.depends",
+            :label="$t('modals.createEntity.fields.depends')"
           )
 </template>
 
@@ -100,14 +98,6 @@ export default {
           value: 'resource',
         },
       ];
-    },
-  },
-  methods: {
-    updateImpact(entities) {
-      this.updateField('impact', entities);
-    },
-    updateDepends(entities) {
-      this.updateField('depends', entities);
     },
   },
 };
