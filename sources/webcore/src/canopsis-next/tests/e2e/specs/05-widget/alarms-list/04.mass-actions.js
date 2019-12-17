@@ -1,5 +1,4 @@
 // http://nightwatchjs.org/guide#usage
-// http://nightwatchjs.org/guide#usage
 
 const { PAGINATION_LIMIT } = require('@/config');
 const { WIDGET_TYPES } = require('@/constants');

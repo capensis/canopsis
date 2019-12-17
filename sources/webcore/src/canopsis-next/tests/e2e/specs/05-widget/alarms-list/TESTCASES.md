@@ -228,36 +228,36 @@
 
 ## Columns
 
-* [ ] **Elements can be sorted by column.**
+* [x] **Elements can be sorted by column.**
     1. To click on a column at the very first row of the table.
         
-    **Expected result**: all elements are sorted by connector name.
+    **Expected result**: all elements are sorted by column.
 
 ## Table row
 
-* [ ] **Information pop-up can be shown.**
+* [x] **Information pop-up can be shown.**
     1. To click on the icon "i" in the column "Connector".
         
     **Expected result**: information pop-up is shown.
 
-* [ ] **Information pop-up can be closed.**
+* [x] **Information pop-up can be closed.**
     1. To click on the icon "i" in the column "Connector".
     2. To click on the cross button on the pop-up.
         
     **Expected result**: information pop-up is shown.
 
-* [ ] **Pressing on item shows details about this item.**
+* [x] **Pressing on item shows details about this item.**
     1. To click on any item in the table.
         
     **Expected result**: the details about this item are shown.
 
-* [ ] **Details about item can be closed.**
+* [x] **Pressing on element hidden details about this element.**
     1. To click on any item in the table.
     2. To click on this item again.
         
     **Expected result**: the details about this item are hidden.
 
-* [ ] **Placing a cursor on signs in the column "Extra details" makes information pop-up show.**
+* [x] **Placing a cursor on signs in the column "Extra details" makes information pop-up show.**
     1. To place a cursor on any sign in the column "Extra details" (ack, ticket, canceled, snooze, pbehavior).
         
     **Expected result**: information pop-up is shown.

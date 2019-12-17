@@ -1,7 +1,7 @@
 const qs = require('qs');
 const axios = require('axios');
 const faker = require('faker');
-const { omit } = require('lodash');
+const { omit, merge } = require('lodash');
 
 const { API_ROUTES, DEFAULT_LOCALE } = require('@/config');
 const {
@@ -155,7 +155,7 @@ async function updateView(viewId, viewDefault, options = {}) {
  * @param {Object} widget
  * @returns {Promise}
  */
-async function createWidgetForView(viewId, widget = {}) {
+async function createWidgetForView(viewId, { row, type, ...widget }) {
   const { headers } = await authAsAdmin();
 
   const options = {
@@ -166,16 +166,13 @@ async function createWidgetForView(viewId, widget = {}) {
 
   const viewData = await getView(viewId, options);
 
-  const generatedWidget = {
-    ...generateWidgetByType(widget.type),
-    ...widget,
-  };
+  const generatedWidget = merge(generateWidgetByType(type), widget);
 
   const tab = {
     ...generateViewTab(),
     rows: [{
       ...generateViewRow(),
-      ...widget.row,
+      ...row,
       widgets: [generatedWidget],
     }],
   };

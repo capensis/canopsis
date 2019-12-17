@@ -26,7 +26,7 @@ const commands = {
   },
 
   verifyRowInfoPopupDeleted(id) {
-    return this.waitForElementNotPresent(this.el('@alarmInfoPopup', id));
+    return this.assert.hidden(this.el('@alarmInfoPopup', id));
   },
 
   verifyAlarmTimeLineVisible(id) {
@@ -35,6 +35,31 @@ const commands = {
 
   verifyAlarmTimeLineDeleted(id) {
     return this.waitForElementNotPresent(this.el('@alarmTimeLine', id));
+  },
+
+  moveToExtraDetailsOpenButton(id, type) {
+    this
+      .moveToElement(this.el('@tableRowExtraDetailsOpen', id, type), 0, 0)
+      .api.pause(1000);
+
+    return this;
+  },
+
+  moveOutsideToExtraDetailsOpenButton(id, type) {
+    this
+      .moveToElement(this.el('@tableRowExtraDetailsOpen', id, type), 0, 0)
+      .api.moveTo(null, -50, -50)
+      .pause(500);
+
+    return this;
+  },
+
+  verifyRowExtraDetailsVisible(id) {
+    return this.assert.visible(this.el('@tableRowExtraDetailsContent', id));
+  },
+
+  verifyRowExtraDetailsDeleted(id) {
+    return this.assert.hidden(this.el('@tableRowExtraDetailsContent', id));
   },
 
   el,
@@ -48,8 +73,14 @@ module.exports = scopedPageObject({
 
     alarmInfoPopup: sel('alarmInfoPopup-%s'),
 
-    tableRowInfoPopupOpen: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupOpenButton')}`,
+    tableRowInfoPopupOpen: `${sel('tableRow-%s')} ${sel('alarmInfoPopupOpenButton')}`,
     tableRowInfoPopupClose: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupCloseButton')}`,
+    tableRowInfoPopupContent: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupContent')}`,
+
+    extraDetailsPopup: sel('extraDetails-%s'),
+
+    tableRowExtraDetailsOpen: `${sel('tableRow-%s')} ${sel('extraDetailsOpenButton-%s')}`,
+    tableRowExtraDetailsContent: sel('extraDetailsContent-%s'),
   },
   commands: [commands],
 });
