@@ -1352,6 +1352,7 @@ export default {
       lastUpdateDate: 'Last update date',
       alarmPatterns: 'Alarm patterns',
       entityPatterns: 'Entity patterns',
+      informations: 'Informations',
     },
   },
 
