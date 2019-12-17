@@ -930,6 +930,49 @@ export default {
       },
       patternRequired: 'Pattern is required',
     },
+    createDynamicInfo: {
+      create: {
+        title: 'Create dynamic information',
+        success: 'Dynamic information successfully created !',
+      },
+      edit: {
+        success: 'Dynamic information successfully edited !',
+      },
+      remove: {
+        success: 'Dynamic information successfully removed !',
+      },
+      errors: {
+        invalid: 'Invalid',
+      },
+      steps: {
+        general: {
+          title: 'General',
+          fields: {
+            id: 'Id',
+            name: 'Name',
+            description: 'Description',
+          },
+        },
+        infos: {
+          title: 'Informations',
+        },
+        patterns: {
+          title: 'Patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
+          validationError: 'At least one pattern must be set. Please add an alarm patterns and/or an entity pattern',
+        },
+      },
+    },
+    createDynamicInfoInformation: {
+      create: {
+        title: 'Add an information to the dynamic information rule',
+      },
+      fields: {
+        name: 'Name',
+        value: 'Value',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1295,6 +1338,21 @@ export default {
         id: 'ID',
         expectedInterval: 'Expected interval',
       },
+    },
+  },
+
+  dynamicInfo: {
+    title: 'Dynamic informations',
+    table: {
+      id: 'Id',
+      name: 'Name',
+      description: 'Description',
+      user: 'Author',
+      creationDate: 'Creation date',
+      lastUpdateDate: 'Last update date',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
+      informations: 'Informations',
     },
   },
 

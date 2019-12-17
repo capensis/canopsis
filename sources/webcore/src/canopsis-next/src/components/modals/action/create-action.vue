@@ -14,11 +14,10 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
-
-import submittableMixin from '@/mixins/submittable';
 
 import ActionForm from '@/components/other/action/form/action-form.vue';
 

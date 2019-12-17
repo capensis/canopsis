@@ -19,7 +19,6 @@
           :rules="[() => !hasFilterEditorAnyError]"
         ) {{ $t('modals.createPbehavior.steps.filter.title') }}
           small(v-if="hasFilterEditorAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
-          small.font-italic.font-weight-light(v-else) {{ $t('common.optional') }}
       v-divider
       v-stepper-step.py-0(
         :complete="stepper > 3",
