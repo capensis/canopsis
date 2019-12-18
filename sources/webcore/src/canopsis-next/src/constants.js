@@ -344,6 +344,16 @@ export const FILTER_OPERATORS = {
   isNotNull: 'is not null',
 };
 
+export const FILTER_MONGO_OPERATORS = {
+  and: '$and',
+  or: '$or',
+  equal: '$eq',
+  notEqual: '$ne',
+  in: '$in',
+  notIn: '$nin',
+  regex: '$regex',
+};
+
 export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
@@ -352,7 +362,7 @@ export const FILTER_INPUT_TYPES = {
 };
 
 export const FILTER_DEFAULT_VALUES = {
-  condition: '$and',
+  condition: FILTER_MONGO_OPERATORS.and,
   rule: {
     field: '',
     operator: '',
@@ -360,7 +370,7 @@ export const FILTER_DEFAULT_VALUES = {
     inputType: FILTER_INPUT_TYPES.string,
   },
   group: {
-    condition: '$and',
+    condition: FILTER_MONGO_OPERATORS.and,
     groups: {},
     rules: {},
   },

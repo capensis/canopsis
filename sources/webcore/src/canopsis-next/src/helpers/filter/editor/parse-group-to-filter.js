@@ -1,6 +1,6 @@
 import { isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 import uid from '@/helpers/uid';
 
 /**
@@ -37,13 +37,13 @@ function ruleOperatorAndInput(rule) {
      * Switch to determine the right operator, and then assign the right input value
      */
     switch (operator) {
-      case ('$eq'): {
+      case FILTER_MONGO_OPERATORS.equal: {
         const [input] = Object.values(rule);
         parsedRule.input = input;
         parsedRule.operator = FILTER_OPERATORS.equal;
         break;
       }
-      case ('$ne'): {
+      case FILTER_MONGO_OPERATORS.notEqual: {
         if (Object.values(ruleValue)[0] === null) {
           parsedRule.operator = FILTER_OPERATORS.isNotNull;
         } else if (Object.values(ruleValue)[0] === '') {
@@ -55,21 +55,19 @@ function ruleOperatorAndInput(rule) {
         }
         break;
       }
-      case ('$in'): {
+      case FILTER_MONGO_OPERATORS.in: {
         const [inputArray] = Object.values(ruleValue);
-        const [input] = inputArray;
-        parsedRule.input = input;
+        parsedRule.input = inputArray;
         parsedRule.operator = FILTER_OPERATORS.in;
         break;
       }
-      case ('$nin'): {
+      case FILTER_MONGO_OPERATORS.notIn: {
         const [inputArray] = Object.values(ruleValue);
-        const [input] = inputArray;
-        parsedRule.input = input;
+        parsedRule.input = inputArray;
         parsedRule.operator = FILTER_OPERATORS.notIn;
         break;
       }
-      case ('$regex'): {
+      case FILTER_MONGO_OPERATORS.regex: {
         const [input] = Object.values(ruleValue);
         parsedRule.input = input;
         parsedRule.operator = FILTER_OPERATORS.contains;
@@ -116,7 +114,16 @@ export default function parseGroupToFilter(group) {
     groupContent = [{ ...group }];
   } else {
     const [condition] = Object.keys(group);
-    parsedGroup.condition = condition;
+
+    /**
+     * It there is group without condition wrapper. Ex.: { _id: '123' } instead of { $and: [{ _id: '123' }] }
+     */
+    if (![FILTER_MONGO_OPERATORS.and, FILTER_MONGO_OPERATORS.or].includes(condition)) {
+      parsedGroup.condition = FILTER_DEFAULT_VALUES.condition;
+      groupContent = [{ ...group }];
+    } else {
+      parsedGroup.condition = condition;
+    }
   }
 
   if (isEmpty(groupContent)) {

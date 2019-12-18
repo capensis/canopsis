@@ -27,7 +27,7 @@
         )
           template(slot="item", slot-scope="props")
             v-list-tile-content {{ props.item.name }} ({{ props.item.value }})
-      v-flex.pa-1(data-test="operatorRule", xs12, md4)
+      v-flex.pa-1(data-test="operatorRule", xs12, md3)
         v-combobox.my-2(
           v-field="rule.operator",
           :items="operators",
@@ -36,14 +36,29 @@
           dense,
           flat
         )
-      v-flex.pa-1(data-test="inputRule", xs12, md4)
-        mixed-field.my-2(
-          v-field="rule.input",
-          v-show="isShownInputField",
-          solo-inverted,
-          hide-details,
-          flat
-        )
+      v-flex.pa-1(data-test="inputRule", xs12, md5)
+        template(v-if="isOperatorForArray")
+          v-layout(v-for="(input, index) in rule.input", row, align-center)
+            mixed-field.my-2(
+              v-field="rule.input[index]",
+              v-show="isShownInputField",
+              solo-inverted,
+              hide-details,
+              flat
+            )
+            v-btn(icon, small, @click="removeInput(index)")
+              v-icon(color="error", small) close
+          v-layout.mt-2(row, justify-center)
+            v-btn(icon, @click="addInput")
+              v-icon(color="primary") add
+        template(v-else)
+          mixed-field.my-2(
+            v-field="rule.input",
+            v-show="isShownInputField",
+            solo-inverted,
+            hide-details,
+            flat
+          )
 </template>
 
 <script>
@@ -51,9 +66,12 @@ import { isBoolean, isNumber } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
 
+import formMixin from '@/mixins/form';
 import filterHintsMixin from '@/mixins/entities/filter-hint';
 
 import MixedField from '@/components/forms/fields/mixed-field.vue';
+
+const FILTER_OPERATORS_FOR_ARRAY = [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn];
 
 /**
  * Component representing a rule in MongoDB filter
@@ -69,7 +87,7 @@ import MixedField from '@/components/forms/fields/mixed-field.vue';
  */
 export default {
   components: { MixedField },
-  mixins: [filterHintsMixin],
+  mixins: [formMixin, filterHintsMixin],
   model: {
     prop: 'rule',
     event: 'update:rule',
@@ -100,6 +118,10 @@ export default {
     };
   },
   computed: {
+    isOperatorForArray() {
+      return [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn].includes(this.rule.operator);
+    },
+
     switchLabel() {
       return String(this.rule.input);
     },
@@ -135,6 +157,28 @@ export default {
         FILTER_OPERATORS.isNull,
         FILTER_OPERATORS.isNotNull,
       ].includes(this.rule.operator);
+    },
+  },
+  watch: {
+    'rule.operator': {
+      handler(value, oldValue) {
+        const valueIsArray = FILTER_OPERATORS_FOR_ARRAY.includes(value);
+        const oldValueIsArray = FILTER_OPERATORS_FOR_ARRAY.includes(oldValue);
+
+        if (valueIsArray && !oldValueIsArray) {
+          this.updateField('input', [this.rule.input]);
+        } else if (!valueIsArray && oldValueIsArray) {
+          this.updateField('input', this.rule.input.length ? this.rule.input[0] : '');
+        }
+      },
+    },
+  },
+  methods: {
+    addInput() {
+      this.updateField('input', [...this.rule.input, '']);
+    },
+    removeInput(index) {
+      this.updateField('input', this.rule.input.filter((item, i) => i !== index));
     },
   },
 };
