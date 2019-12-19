@@ -344,6 +344,8 @@ export const FILTER_OPERATORS = {
   isNotNull: 'is not null',
 };
 
+export const FILTER_OPERATORS_FOR_ARRAY = [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn];
+
 export const FILTER_MONGO_OPERATORS = {
   and: '$and',
   or: '$or',

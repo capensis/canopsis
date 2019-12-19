@@ -64,7 +64,7 @@
 <script>
 import { isBoolean, isNumber, get } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
+import { FILTER_OPERATORS, FILTER_OPERATORS_FOR_ARRAY, FILTER_INPUT_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
 
@@ -72,8 +72,6 @@ import formMixin from '@/mixins/form';
 import filterHintsMixin from '@/mixins/entities/filter-hint';
 
 import MixedField from '@/components/forms/fields/mixed-field.vue';
-
-const FILTER_OPERATORS_FOR_ARRAY = [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn];
 
 /**
  * Component representing a rule in MongoDB filter
@@ -164,12 +162,12 @@ export default {
   watch: {
     'rule.operator': {
       handler(value, oldValue) {
-        const valueIsArray = FILTER_OPERATORS_FOR_ARRAY.includes(value);
-        const oldValueIsArray = FILTER_OPERATORS_FOR_ARRAY.includes(oldValue);
+        const valueForArray = FILTER_OPERATORS_FOR_ARRAY.includes(value);
+        const oldValueForArray = FILTER_OPERATORS_FOR_ARRAY.includes(oldValue);
 
-        if (valueIsArray && !oldValueIsArray) {
+        if (valueForArray && !oldValueForArray) {
           this.updateField('input', [this.getKeyedInput(this.rule.input)]);
-        } else if (!valueIsArray && oldValueIsArray) {
+        } else if (!valueForArray && oldValueForArray) {
           this.updateField('input', get(this.rule.input, '0.value', ''));
         }
       },
