@@ -8,6 +8,13 @@ This document references all changes made to Canopsis since 2017/08/21. Some old
 - [Documentation] Add documentation for the new engine-dynamic-infos CAT engine
 - [Go] CAT: Add a new engine-dynamic-infos engine
 - [Go] CAT: Add a new engine-webhook engine; drop the old webhook.so plugin
+- [UI] Alarms list ack and declare ticket action
+- [UI] Add a 'Dynamic info' CRUD
+- [UI] Create entity form (impact and depends)
+- [UI] bad filter on pbehavior form
+- [UI - Alarmlist] Assocticket mass action
+- [UI - Context Explorer] 'Enabled' columns
+- [UI - Filter editor] Add field suggestions
 
 ## Canopsis 3.33.0 - Due date : 2019-11-22
 
