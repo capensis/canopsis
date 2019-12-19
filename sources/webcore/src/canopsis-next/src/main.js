@@ -128,6 +128,7 @@ Vue.use(ModalsPlugin, {
   },
 
   dialogPropsMap: {
+    [MODALS.createPbehavior]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
     [MODALS.alarmsList]: { fullscreen: true, lazy: true },
