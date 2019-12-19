@@ -2,6 +2,13 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.34.0 - Due date : 2019-12-18
+
+- [Documentation] Add Service Weather API documentation
+- [Documentation] Add documentation for the new engine-dynamic-infos CAT engine
+- [Go] CAT: Add a new engine-dynamic-infos engine
+- [Go] CAT: Add a new engine-webhook engine; drop the old webhook.so plugin
+
 ## Canopsis 3.33.0 - Due date : 2019-11-22
 
 - [Documentation] Mention that resolve and unsnooze are incompatible with event\_patterns
