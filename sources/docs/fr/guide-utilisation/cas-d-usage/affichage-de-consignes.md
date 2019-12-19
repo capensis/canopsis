@@ -6,13 +6,13 @@
 
 Le moteur [`dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) de Canopsis permet d'ajouter dynamiquement des informations aux alarmes.
 
-Il est possible d'utiliser cette fonctionnalité pour ajouter des liens vers des consignes techniques aux alarmes, et afficher ces liens dans le bac à alarmes et la météo des services.
+Il est possible d'utiliser cette fonctionnalité pour ajouter des liens vers des consignes techniques aux alarmes, et pour afficher ces liens dans le Bac à alarmes et dans la Météo des services.
 
 ## Affichage d'une consigne
 
 Les consignes sont définies grâce à des règles indiquant dans quelle conditions elles doivent être ajoutées à une alarme.
 
-Cette partie présente la création d'une règle qui ajoute une consigne "Consigne technique 1" aux alarmes majeures et critiques du composant `server1`, et la configuration d'un bac à alarmes affichant cette consigne.
+Cette partie présente la création d'une règle qui ajoute une consigne "Consigne technique 1" aux alarmes majeures et critiques du composant `server1`, et la configuration d'un Bac à alarmes affichant cette consigne.
 
 ### Création de la consigne
 
@@ -22,7 +22,7 @@ Le premier onglet de la modale *Créer une information dynamique* permet de donn
 
 ![Première règle - Paramètres généraux](img/dynamicinfos_rule1_general.png)
 
-Le deuxième onglet permet de définir les informations à ajouter aux alarmes. Pour pouvoir afficher une consigne, cette règle défini son titre (`label`) et la destination du lien (`url`) :
+Le deuxième onglet permet de définir les informations à ajouter aux alarmes. Pour pouvoir afficher une consigne, cette règle définit son titre (`label`) et la destination du lien (`url`) :
 
 ![Première règle - Informations](img/dynamicinfos_simple_rule1_infos.png)
 
@@ -30,7 +30,7 @@ Le troisième onglet permet de définir des patterns, indiquant dans quelles con
 
 ![Première règle - Patterns](img/dynamicinfos_rule1_patterns.png)
 
-### Affichage dans le bac à alarmes
+### Affichage dans le Bac à alarmes
 
 Dans les *Paramètres avancés* d'un widget de type *Bac à alarmes*, ajouter une *Info popup* dans la colonne *Extra details* avec le template suivant :
 
@@ -47,17 +47,17 @@ Ce template itère sur les informations d'une alarme avec la commande `#each`, e
 
 ### Exemple
 
-Lorsqu'une alarme majeure est créée sur une ressource du composant `server1`, cliquer sur l'icône ![info popup](img/dynamicinfos_infopopup_icon.png "info popup") de la colonne *Extra details* du bac à alarmes. Une *info popup* contenant le lien "Consigne technique 1" est ouverte :
+Lorsqu'une alarme majeure est créée sur une ressource du composant `server1`, cliquer sur l'icône ![info popup](img/dynamicinfos_infopopup_icon.png "info popup") de la colonne *Extra details* du Bac à alarmes. Une *info popup* contenant le lien "Consigne technique 1" est ouverte :
 
 ![Info popup](img/dynamicinfos_simple_infopopup.png)
 
-Lorsque cette alarme passe en état mineur, cliquer sur l'icône ![info popup](img/dynamicinfos_infopopup_icon.png "info popup") de la colonne *Extra details* du bac à alarmes. L'alarme ne correspond plus au pattern de la règle définie précédemment, l'*info popup* ne contient donc plus le lien "Consigne technique 1" :
+Lorsque cette alarme passe en état mineur, cliquer sur l'icône ![info popup](img/dynamicinfos_infopopup_icon.png "info popup") de la colonne *Extra details* du Bac à alarmes. L'alarme ne correspond plus au pattern de la règle définie précédemment, l'*info popup* ne contient donc plus le lien "Consigne technique 1" :
 
 ![Info popup](img/dynamicinfos_simple_infopopup_empty.png)
 
 ## Affichage de plusieurs consignes avec catégories
 
-Cette partie présente la gestion de différents types d'informations, et la configuration d'un bac à alarmes pour afficher des informations triées par type.
+Cette partie présente la gestion de différents types d'informations, et la configuration d'un Bac à alarmes pour afficher des informations triées par type.
 
 ### Création des consignes
 
@@ -87,7 +87,7 @@ Cette règle ajoute une page d'aide "Acquittement" aux alarmes non acquittées d
 
 ![Première règle - Patterns](img/dynamicinfos_complex_rule3_patterns.png)
 
-### Affichage dans le bac à alarmes
+### Affichage dans le Bac à alarmes
 
 Dans les *Paramètres avancés* d'un widget de type *Bac à alarmes*, modifier le template de l'*Info popup* de la colonne *Extra details* :
 
@@ -119,10 +119,10 @@ Lorsqu'une alarme majeure est créée sur l'entité `cpu/server1`, les trois lie
 
 ![Info popup](img/dynamicinfos_complex_infopopup1.png)
 
-Lorsque l'alarme est acquitté, elle ne correspond plus à la deuxième règle. Le lien d'aide n'est donc plus présent.
+Lorsque l'alarme est acquittée, elle ne correspond plus à la deuxième règle. Le lien d'aide n'est donc plus présent.
 
 ![Info popup](img/dynamicinfos_complex_infopopup2.png)
 
-Si l'alarme passe en état mineur, et si son output ne contient plus "WARNING", elle ne correspond à aucune des règles, et ne contient donc aucun liens.
+Si l'alarme passe en état mineur, et si son output ne contient plus "WARNING", elle ne correspond à aucune des règles, et ne contient donc aucun lien.
 
 ![Info popup](img/dynamicinfos_complex_infopopup3.png)
