@@ -38,9 +38,9 @@
         )
       v-flex.pa-1(data-test="inputRule", xs12, md5)
         template(v-if="isOperatorForArray")
-          v-layout(v-for="(input, index) in rule.input", row, align-center)
+          v-layout(v-for="(input, index) in rule.input", :key="input.key", row, align-center)
             mixed-field.my-2(
-              v-field="rule.input[index]",
+              v-field="rule.input[index].value",
               v-show="isShownInputField",
               solo-inverted,
               hide-details,
@@ -62,9 +62,11 @@
 </template>
 
 <script>
-import { isBoolean, isNumber } from 'lodash';
+import { isBoolean, isNumber, get } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_INPUT_TYPES } from '@/constants';
+
+import uid from '@/helpers/uid';
 
 import formMixin from '@/mixins/form';
 import filterHintsMixin from '@/mixins/entities/filter-hint';
@@ -166,17 +168,22 @@ export default {
         const oldValueIsArray = FILTER_OPERATORS_FOR_ARRAY.includes(oldValue);
 
         if (valueIsArray && !oldValueIsArray) {
-          this.updateField('input', [this.rule.input]);
+          this.updateField('input', [this.getKeyedInput(this.rule.input)]);
         } else if (!valueIsArray && oldValueIsArray) {
-          this.updateField('input', this.rule.input.length ? this.rule.input[0] : '');
+          this.updateField('input', get(this.rule.input, '0.value', ''));
         }
       },
     },
   },
   methods: {
-    addInput() {
-      this.updateField('input', [...this.rule.input, '']);
+    getKeyedInput(value = '') {
+      return { value, key: uid() };
     },
+
+    addInput() {
+      this.updateField('input', [...this.rule.input, this.getKeyedInput()]);
+    },
+
     removeInput(index) {
       this.updateField('input', this.rule.input.filter((item, i) => i !== index));
     },

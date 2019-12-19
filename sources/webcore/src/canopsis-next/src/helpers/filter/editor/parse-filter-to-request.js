@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 
-import { FILTER_OPERATORS } from '@/constants';
+import { FILTER_OPERATORS, FILTER_MONGO_OPERATORS } from '@/constants';
 
 function parseFilterRuleToRequest(rule) {
   const parsedRule = {};
@@ -19,56 +19,56 @@ function parseFilterRuleToRequest(rule) {
     }
     case FILTER_OPERATORS.notEqual: {
       parsedRule[rule.field] = {
-        $ne: rule.input,
+        [FILTER_MONGO_OPERATORS.notEqual]: rule.input,
       };
       break;
     }
     case FILTER_OPERATORS.in: {
       parsedRule[rule.field] = {
-        $in: [rule.input],
+        [FILTER_MONGO_OPERATORS.in]: rule.input.map(({ value }) => value),
       };
       break;
     }
     case FILTER_OPERATORS.notIn: {
       parsedRule[rule.field] = {
-        $nin: [rule.input],
+        [FILTER_MONGO_OPERATORS.notIn]: rule.input.map(({ value }) => value),
       };
       break;
     }
     case FILTER_OPERATORS.beginsWith: {
       parsedRule[rule.field] = {
-        $regex: `^${rule.input}`,
+        [FILTER_MONGO_OPERATORS.regex]: `^${rule.input}`,
       };
       break;
     }
     case FILTER_OPERATORS.doesntBeginWith: {
       parsedRule[rule.field] = {
-        $regex: `^(?!${rule.input})`,
+        [FILTER_MONGO_OPERATORS.regex]: `^(?!${rule.input})`,
       };
       break;
     }
     case FILTER_OPERATORS.contains: {
       parsedRule[rule.field] = {
-        $regex: rule.input,
+        [FILTER_MONGO_OPERATORS.regex]: rule.input,
       };
       break;
     }
     case FILTER_OPERATORS.doesntContains: {
       parsedRule[rule.field] = {
-        $regex: `^((?!${rule.input}).)*$`,
+        [FILTER_MONGO_OPERATORS.regex]: `^((?!${rule.input}).)*$`,
         $options: 's',
       };
       break;
     }
     case FILTER_OPERATORS.endsWith: {
       parsedRule[rule.field] = {
-        $regex: `${rule.input}$`,
+        [FILTER_MONGO_OPERATORS.regex]: `${rule.input}$`,
       };
       break;
     }
     case FILTER_OPERATORS.doesntEndWith: {
       parsedRule[rule.field] = {
-        $regex: `(?<!${rule.input})$`,
+        [FILTER_MONGO_OPERATORS.regex]: `(?<!${rule.input})$`,
       };
       break;
     }
@@ -78,7 +78,7 @@ function parseFilterRuleToRequest(rule) {
     }
     case FILTER_OPERATORS.isNotEmpty: {
       parsedRule[rule.field] = {
-        $ne: '',
+        [FILTER_MONGO_OPERATORS.notEqual]: '',
       };
       break;
     }
@@ -88,7 +88,7 @@ function parseFilterRuleToRequest(rule) {
     }
     case FILTER_OPERATORS.isNotNull: {
       parsedRule[rule.field] = {
-        $ne: null,
+        [FILTER_MONGO_OPERATORS.notEqual]: null,
       };
       break;
     }
