@@ -12,26 +12,27 @@
       )
     v-layout
       v-text-field(
-        data-test="pbehaviorFormName",
-        v-validate="'required'",
         v-field="form.name",
+        v-validate="'required'",
         :label="$t('modals.createPbehavior.steps.general.fields.name')",
         :error-messages="errors.collect('name')",
-        name="name"
+        name="name",
+        data-test="pbehaviorFormName"
       )
     v-layout(data-test="pbehaviorTypeLayout", row)
       v-combobox(
-        data-test="pbehaviorReason",
-        v-validate="'required'",
         v-field="form.reason",
+        v-validate="'required'",
         :label="$t('modals.createPbehavior.steps.general.fields.reason')",
         :items="reasons",
         :error-messages="errors.collect('reason')",
-        name="reason"
+        name="reason",
+        data-test="pbehaviorReason",
+        dense
       )
       v-select.ml-3(
-        v-validate="'required'",
         v-field="form.type_",
+        v-validate="'required'",
         :label="$t('modals.createPbehavior.steps.general.fields.type')",
         :items="types",
         :error-messages="errors.collect('type')",
@@ -45,25 +46,25 @@
         v-layout(wrap, justify-space-between)
           v-flex(data-test="startDateTimePicker", xs4)
             date-time-picker-field(
-              v-validate="tstartRules",
               v-field="form.tstart",
+              v-validate="tstartRules",
               :label="$t('modals.createPbehavior.steps.general.fields.start')",
               name="tstart"
             )
           v-flex(data-test="stopDateTimePicker", xs4)
             date-time-picker-field(
-              v-validate="tstopRules",
               v-field="form.tstop",
+              v-validate="tstopRules",
               :label="$t('modals.createPbehavior.steps.general.fields.stop')",
               name="tstop"
             )
           v-flex(xs3)
             v-autocomplete(
-              name="timezone",
+              v-field="form.timezone",
               v-validate="'required'",
               :items="timezones",
-              v-field="form.timezone",
-              :label="$t('modals.createPbehavior.steps.general.fields.timezone')"
+              :label="$t('modals.createPbehavior.steps.general.fields.timezone')",
+              name="timezone"
             )
 </template>
 
