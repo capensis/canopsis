@@ -33,7 +33,7 @@ module.exports = modalCreator(modalSelector, {
     }),
 
     createChangeStateEventNote: sel('createChangeStateEventNote'),
-    createChangeStateCriticity: sel('stateCriticity-%s`'),
+    createChangeStateCriticity: sel('stateCriticity-%s'),
   },
   commands: [commands],
 });
