@@ -289,7 +289,7 @@ module.exports.DATE_INTERVAL_MINUTES = {
   FIFTY_FIVE: 11,
 };
 
-module.exports.PERIODICAL_BEHAVIOR_RESONES = {
+module.exports.PERIODICAL_BEHAVIOR_REASONS = {
   REHABILITATION_PROBLEM: 1,
   ROBOT_PROBLEM: 2,
   SCENARIO_PROBLEM: 3,
@@ -338,9 +338,24 @@ module.exports.PBEHAVIOR_TYPES = {
   PAUSE: 3,
 };
 
+module.exports.SNOOZE_TYPES = {
+  MINUTES: 1,
+  HOURS: 2,
+  DAYS: 3,
+  WEEKS: 4,
+  MONTHS: 5,
+  YEARS: 6,
+};
+
 module.exports.PBEHAVIOR_STEPS = {
   GENERAL: 'general',
   FILTER: 'filter',
   RRULE: 'rrule',
   COMMENTS: 'comments',
+};
+
+module.exports.CRUD_ACTIONS = {
+  DELETE: 'delete',
+  UPDATE: 'update',
+  CREATE: 'create',
 };

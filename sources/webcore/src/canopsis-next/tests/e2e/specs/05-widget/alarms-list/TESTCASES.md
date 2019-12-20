@@ -327,7 +327,7 @@
         
     **Expected result**: the pop-up with all periodic behaviors is shown.
 
-## Item actions when the "Ack" feature is off.
+## Item actions when the "Ack" feature is on.
 
 * [ ] **The button "Declare ticket" reports an incident.**
     1. To find any element in the table where "Ack" feature is on.
