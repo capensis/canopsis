@@ -24,11 +24,11 @@
         v-field="form.reason",
         v-validate="'required'",
         :label="$t('modals.createPbehavior.steps.general.fields.reason')",
-        :items="reasons",
+        :loading="pbehaviorReasonsPending",
+        :items="pbehaviorReasons",
         :error-messages="errors.collect('reason')",
         name="reason",
-        data-test="pbehaviorReason",
-        dense
+        data-test="pbehaviorReason"
       )
       v-select.ml-3(
         v-field="form.type_",
@@ -75,6 +75,7 @@ import { PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import formMixin from '@/mixins/form';
+import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 
@@ -82,7 +83,7 @@ export default {
   components: {
     DateTimePickerField,
   },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [formMixin, formValidationHeaderMixin, pbehaviorReasonsMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -124,6 +125,9 @@ export default {
     timezones() {
       return moment.tz.names();
     },
+  },
+  mounted() {
+    this.fetchPbehaviorReasons();
   },
 };
 </script>
