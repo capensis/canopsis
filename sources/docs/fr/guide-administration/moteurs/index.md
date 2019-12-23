@@ -30,6 +30,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | [axe](moteur-axe.md)                       | Gère le cycle de vie des alarmes.                                                                                                                   |       |
 | [axe@**webhooks**](moteur-axe-webhooks.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
 | [che](moteur-che.md)                       | Supprime les évènements invalides, gère le contexte, et enrichit les évènements via sa fonctionnalité d'[event-filter](moteur-che-event_filter.md). |       |
+| [dynamic-infos](moteur-dynamic-infos.md)   | Enrichit les alarmes.                                                                                                                               |  ✅   |
 | [heartbeat](moteur-heartbeat.md)           | Surveille des entités, et lève des alarmes en cas d'absence d'information.                                                                          |       |
 | stat                                       | Calcule des statistiques sur les états des alarmes.                                                                                                 |       |
 | [watcher](moteur-watcher.md)               | Calcule les états des [watchers](moteur-watcher.md).                                                                                                |       |
@@ -112,6 +113,18 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         Publie les événements sur cette file. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
+  -version
+        version infos
+```
+
+### Utilisation de engine-dynamic-infos
+
+```
+  -d    debug
+  -printEventOnError
+        Afficher les évènements sur les erreurs de traitement.
+  -publishQueue string
+        Publie les événements sur cette file. (default "Engine_action")
   -version
         version infos
 ```
