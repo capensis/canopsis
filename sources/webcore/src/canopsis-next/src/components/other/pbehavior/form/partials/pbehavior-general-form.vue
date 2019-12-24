@@ -71,7 +71,7 @@
 <script>
 import moment from 'moment-timezone';
 
-import { PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
+import { PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import formMixin from '@/mixins/form';
@@ -96,10 +96,6 @@ export default {
     },
   },
   computed: {
-    reasons() {
-      return Object.values(PAUSE_REASONS);
-    },
-
     types() {
       return Object.values(PBEHAVIOR_TYPES);
     },
