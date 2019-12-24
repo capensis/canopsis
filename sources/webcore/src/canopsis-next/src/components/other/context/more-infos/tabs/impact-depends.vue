@@ -10,7 +10,7 @@
                 v-data-iterator(:items="impact")
                   v-flex(slot="item", slot-scope="props")
                     v-card
-                      v-card-title {{ props.item }}
+                      v-card-title {{ $t('context.impactItem', props.item) }}
                   v-flex(slot="no-data")
                     v-card
                       v-card-title {{ $t('tables.noData') }}
@@ -22,7 +22,7 @@
                 v-data-iterator(:items="depends")
                   v-flex(slot="item", slot-scope="props")
                     v-card
-                      v-card-title {{ props.item }}
+                      v-card-title {{ $t('context.dependenceItem', props.item) }}
                   v-flex(slot="no-data")
                     v-card
                       v-card-title {{ $t('tables.noData') }}

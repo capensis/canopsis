@@ -121,6 +121,8 @@ export default {
   context: {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
+    impactItem: '{_id}({name})',
+    dependenceItem: '{_id}({name})',
     moreInfos: {
       type: 'Type',
       enabled: 'Activé',

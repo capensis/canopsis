@@ -130,6 +130,8 @@ export default {
   context: {
     impacts: 'Impacts',
     dependencies: 'Dependencies',
+    impactItem: '{_id}({name})',
+    dependenceItem: '{_id}({name})',
     moreInfos: {
       infos: 'Informations',
       type: 'Type',
@@ -235,6 +237,7 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    eidsItem: '{_id}({name})',
     tabs: {
       filter: 'Filter',
       eids: 'Eids',
