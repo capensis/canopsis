@@ -143,13 +143,13 @@ export default {
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
     },
-    isResolvedItem() {
+    isResolvedAlarm() {
       return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(this.item.v.status.val);
     },
     resolvedActions() {
       return [this.filteredActionsMap.moreInfos];
     },
-    unResolvedActions() {
+    unresolvedActions() {
       const { filteredActionsMap } = this;
       const actions = [];
 
@@ -191,7 +191,7 @@ export default {
       return actions;
     },
     actions() {
-      let actions = this.isResolvedItem ? this.resolvedActions : this.unResolvedActions;
+      let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
 
       actions = compact(actions);
 
