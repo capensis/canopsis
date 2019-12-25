@@ -147,7 +147,13 @@ export default {
       return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(this.item.v.status.val);
     },
     resolvedActions() {
-      return [this.filteredActionsMap.moreInfos];
+      const actions = [];
+
+      if (this.widget.parameters.moreInfoTemplate !== '') {
+        actions.push(this.filteredActionsMap.moreInfos);
+      }
+
+      return actions;
     },
     unresolvedActions() {
       const { filteredActionsMap } = this;
