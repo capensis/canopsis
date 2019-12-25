@@ -70,7 +70,12 @@
               v-for="column in columns",
               @click="props.expanded = !props.expanded"
             )
-              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+              alarm-column-value(
+                :alarm="props.item",
+                :column="column",
+                :columnFiltersMap="columnFiltersMap",
+                :widget="widget"
+              )
             td
               actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
@@ -112,6 +117,7 @@ import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
 /**
  * Alarm-list component
@@ -142,6 +148,7 @@ export default {
     widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
+    alarmColumnFilters,
   ],
   props: {
     widget: {

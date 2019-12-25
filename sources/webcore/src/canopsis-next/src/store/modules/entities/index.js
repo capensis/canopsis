@@ -17,6 +17,7 @@ import snmpMibModule from './snmp/mib';
 import actionModule from './action';
 import heartbeatModule from './heartbeat';
 import dynamicInfoModule from './dynamic-info';
+import alarmColumnFiltersModule from './alarm-column-filters';
 
 export default {
   alarm: alarmModule,
@@ -38,4 +39,5 @@ export default {
   action: actionModule,
   heartbeat: heartbeatModule,
   dynamicInfo: dynamicInfoModule,
+  alarmColumnFilters: alarmColumnFiltersModule,
 };
