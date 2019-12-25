@@ -151,13 +151,12 @@ export default {
     },
     unresolvedActions() {
       const { filteredActionsMap } = this;
-      const actions = [];
 
-      actions.push(
+      const actions = [
         filteredActionsMap.snooze,
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
-      );
+      ];
 
       if (this.isEditingMode) {
         actions.push(filteredActionsMap.variablesHelp);
