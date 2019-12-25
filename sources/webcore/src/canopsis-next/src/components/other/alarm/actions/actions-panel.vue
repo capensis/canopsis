@@ -54,11 +54,11 @@ export default {
       default: false,
     },
   },
-  data() {
-    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  computed: {
+    actionsMap() {
+      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-    return {
-      actionsMap: {
+      return {
         ack: {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
@@ -131,10 +131,8 @@ export default {
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
@@ -145,14 +143,21 @@ export default {
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
     },
-    actions() {
+    isResolvedItem() {
+      return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(this.item.v.status.val);
+    },
+    resolvedActions() {
+      return [this.filteredActionsMap.moreInfos];
+    },
+    unResolvedActions() {
       const { filteredActionsMap } = this;
+      const actions = [];
 
-      let actions = [
+      actions.push(
         filteredActionsMap.snooze,
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
-      ];
+      );
 
       if (this.isEditingMode) {
         actions.push(filteredActionsMap.variablesHelp);
@@ -182,6 +187,11 @@ export default {
           );
         }
       }
+
+      return actions;
+    },
+    actions() {
+      let actions = this.isResolvedItem ? this.resolvedActions : this.unResolvedActions;
 
       actions = compact(actions);
 
