@@ -500,7 +500,7 @@
         
     **Expected result**: the widget’s size is changed in tablet version.
 
-* [ ] **Widget’s size can be changed in tablet version.**
+* [ ] **Widget’s size can be changed in desktop version.**
     1. To click on the element “Widget’s size”.
     2. To choose a row.
     3. To select the widget’s size near the icon of monitor.

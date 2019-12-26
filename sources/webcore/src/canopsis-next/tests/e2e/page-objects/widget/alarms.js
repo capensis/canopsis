@@ -1,8 +1,9 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
+const { API_ROUTES } = require('@/config');
+
 const el = require('../../helpers/el');
 const { WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
-const { API_ROUTES } = require('@/config');
 
 const commands = {
   clickSubmitAlarms() {

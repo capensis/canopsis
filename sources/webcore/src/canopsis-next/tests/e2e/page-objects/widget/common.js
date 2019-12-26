@@ -1,8 +1,10 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
+const { API_ROUTES } = require('@/config');
+
 const el = require('../../helpers/el');
 const { elementsWrapperCreator } = require('../../helpers/page-object-creators');
-const { FILTERS_TYPE } = require('../../constants');
+const { FILTERS_TYPE, WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
 
 const sideBarSelector = sel('sideBarWrapper');
 
@@ -32,6 +34,10 @@ const commands = {
     return this.customClick('@periodicRefreshSwitch');
   },
 
+  clickPeriodicRefreshField() {
+    return this.customClick('@periodicRefreshField');
+  },
+
   clearPeriodicRefreshField() {
     return this.customClearValue('@periodicRefreshField');
   },
@@ -41,15 +47,19 @@ const commands = {
   },
 
   clickWidgetTitle() {
-    return this.customClick('@widgetTitle');
+    return this.customClick('@settingWidgetTitle');
   },
 
-  setWidgetTitleField(value) {
+  setWidgetTitle(value) {
     return this.customSetValue('@widgetTitleField', value);
   },
 
-  clearWidgetTitleField() {
+  clearWidgetTitle() {
     return this.customClearValue('@widgetTitleField');
+  },
+
+  getWidgetTitle(id, callback) {
+    return this.getText(this.el('@widgetTitle', id), callback);
   },
 
   clickCloseWidget() {
@@ -401,6 +411,22 @@ const commands = {
   clickStatSelectButton() {
     return this.customClick('@statSelectButton');
   },
+
+  assertWidgetRowClasses(id, classes) {
+    return this.assert.cssClassPresent(this.el('@widgetRow', id), classes);
+  },
+
+  waitFirstUserPreferencesXHR(triggerFunc, callback) {
+    return this.waitForFirstXHR(
+      API_ROUTES.userPreferences,
+      WAIT_FOR_FIRST_XHR_TIME,
+      triggerFunc,
+      ({ responseData, requestData }) => callback({
+        responseData: JSON.parse(responseData),
+        requestData: JSON.parse(requestData),
+      }),
+    );
+  },
 };
 
 
@@ -413,10 +439,12 @@ module.exports = {
     periodicRefreshSwitch: `.v-input${sel('periodicRefreshSwitch')} .v-input--selection-controls__ripple`,
     periodicRefreshField: sel('periodicRefreshField'),
 
-    widgetTitle: sel('widgetTitle'),
+    widgetTitle: sel('widgetTitle-%s'),
+    settingWidgetTitle: sel('settingWidgetTitle'),
     widgetTitleField: sel('widgetTitleField'),
     closeWidget: sel('closeWidget'),
 
+    widgetRow: sel('widgetRow-%s'),
     rowGridSize: sel('rowGridSize'),
     rowGridSizeCombobox: sel('rowGridSizeCombobox'),
 
