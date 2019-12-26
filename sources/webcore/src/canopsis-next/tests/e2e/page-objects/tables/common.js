@@ -164,12 +164,35 @@ const commands = {
     return this;
   },
 
+  getTableHeaderTextByIndex(index, callback) {
+    // Increment because we have a checkbox in first column
+    return this.getText(this.el('@tableHeaderCellContentByIndex', index + 1), callback);
+  },
+
   checkTableHeaderSort(header, sortDirection) {
     this.api
       .useXpath()
       .getAttribute(this.el('@tableHeaderCell', header), 'aria-sort', ({ value }) => {
         this.assert.equal(value, sortDirection);
       })
+      .useCss();
+
+    return this;
+  },
+
+  verifyTableColumnVisible(header) {
+    this.api
+      .useXpath()
+      .assert.visible(this.el('@tableHeaderCell', header))
+      .useCss();
+
+    return this;
+  },
+
+  verifyTableColumnDeleted(header) {
+    this.api
+      .useXpath()
+      .waitForElementNotPresent(this.el('@tableHeaderCell', header))
       .useCss();
 
     return this;
@@ -215,7 +238,11 @@ const commands = {
   },
 
   clickOnRowCell(id, column) {
-    return this.customClick(this.el('@tableRow', id, column));
+    return this.customClick(this.el('@tableRowColumn', id, column));
+  },
+
+  getCellTextByColumnName(id, column, callback) {
+    return this.getText(this.el('@tableRowColumn', id, column), callback);
   },
 
   clickOnMassAction(index) {
@@ -256,6 +283,7 @@ module.exports = {
 
     tableHeaderCell: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\'][span[contains(text(), \'%s\')]]',
     tableHeaderCellContent: './/*[@data-test=\'tableWidget\']//thead//tr//th[@role=\'columnheader\']//span[contains(text(), \'%s\')]',
+    tableHeaderCellContentByIndex: `${sel('tableWidget')} thead tr th[role="columnheader"]:nth-of-type(%s) span`,
     selectAllCheckboxInput: `${sel('tableWidget')} thead tr th:first-of-type .v-input--selection-controls__input input`,
     selectAllCheckbox: `${sel('tableWidget')} thead tr th:first-of-type .v-input__slot`,
 

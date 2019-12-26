@@ -532,7 +532,7 @@
 * *Choose "Edit" in the dropdown*
 * *Unfold the advanced settings menu*
 
-* [ ] **Default sort column can be set for table.**
+* [x] **Default sort column can be set for table.**
     1. To click on “Default sort column” element in the “Advanced settings”.
     2. To select “Column name”.
     3. To select an order (asc or desc).
@@ -540,7 +540,7 @@
         
     **Expected result**: the default sort column is set for table.
 
-* [ ] **A column can be added to table.**
+* [x] **A column can be added to table.**
     1. To click on “Column names” element in the “Advanced settings”.
     2. To press the button “Add”.
     3. To input label, value and to choose column’s place in the table.
@@ -548,35 +548,35 @@
         
     **Expected result**: the new column added to the table.
 
-* [ ] **A column’s name can be changed.**
+* [x] **A column’s name can be changed.**
     1. To click on “Column names” element in the “Advanced settings”.
     2. To change any column’s name.
     3. To press the button “Save”.
         
     **Expected result**: a column’s name is changed.
 
-* [ ] **A column’s value can be changed.**
+* [x] **A column’s value can be changed.**
     1. To click on “Column names” element in the “Advanced settings”.
     2. To change any column’s value.
     3. To press the button “Save”.
         
     **Expected result**: a column’s value is changed.
 
-* [ ] **A column can be deleted from the table.**
+* [x] **A column can be deleted from the table.**
     1. To click on “Column names” element in the “Advanced settings”.
     2. To press the cross button on any column’s card.
     3. To press the button “Save”.
         
     **Expected result**: a column is deleted from the table.
 
-* [ ] **A column’s card can be moved below.**
+* [x] **A column’s card can be moved below.**
     1. To click on “Column names” element in the “Advanced settings”.
     2. To press on button with up arrow at any column’s card.
     3. To press the button “Save”.
         
     **Expected result**: a column’s card is moved below.
 
-* [ ] **A column’s card can be moved above.**
+* [x] **A column’s card can be moved above.**
     1. To click on “Column names” element in the “Advanced settings”.
     2. To press on button with down arrow at any column’s card (but not at the first card).
     3. To press the button “Save”.

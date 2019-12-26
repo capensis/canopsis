@@ -83,6 +83,8 @@ module.exports.ALARMS_WIDGET_SORT_FIELD = {
   resource: 4,
   output: 5,
   extraDetails: 6,
+  state: 7,
+  status: 8,
 };
 
 module.exports.CONTEXT_WIDGET_SORT_FIELD = {
