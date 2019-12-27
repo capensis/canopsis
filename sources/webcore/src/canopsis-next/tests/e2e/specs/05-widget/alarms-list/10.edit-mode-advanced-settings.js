@@ -1,6 +1,15 @@
 // http://nightwatchjs.org/guide#usage
 
-import { SORT_ORDERS, SORT_ORDERS_STRING, ALARMS_WIDGET_SORT_FIELD } from '../../../constants';
+import {
+  SORT_ORDERS,
+  SORT_ORDERS_STRING,
+  ALARMS_WIDGET_SORT_FIELD,
+  PAGINATION_PER_PAGE_VALUES,
+  FILTERS_TYPE,
+  FILTER_COLUMNS,
+  VALUE_TYPES,
+  FILTER_OPERATORS,
+} from '../../../constants';
 
 const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
@@ -8,6 +17,18 @@ const { createWidgetView, createWidgetForView, removeWidgetView } = require('../
 const DEFAULT_COLUMN_COUNT = 8;
 const NEW_COLUMN_NAME = 'New column';
 const NEW_COLUMN_CHANGED_NAME = 'New renamed column';
+const DEFAULT_FILTER = {
+  title: 'Default filter',
+  groups: [{
+    type: FILTERS_TYPE.OR,
+    items: [{
+      rule: FILTER_COLUMNS.CONNECTOR_NAME,
+      operator: FILTER_OPERATORS.EQUAL,
+      valueType: VALUE_TYPES.STRING,
+      value: 'feeder2_inst0',
+    }],
+  }],
+};
 
 module.exports = {
   async before(browser, done) {
@@ -75,14 +96,12 @@ module.exports = {
   },
 
   'Default sort column can be set for table': (browser) => {
-    const { widgetId } = browser.globals.defaultViewData;
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const commonTable = browser.page.tables.common();
 
     browser.page.view()
-      .clickEditingMenu(widgetId)
-      .clickEditWidgetButton(widgetId);
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
     commonWidget
       .clickAdvancedSettings()
@@ -99,7 +118,6 @@ module.exports = {
   },
 
   'A column can be added to table': (browser) => {
-    const { widgetId } = browser.globals.defaultViewData;
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const commonTable = browser.page.tables.common();
@@ -110,8 +128,7 @@ module.exports = {
     };
 
     browser.page.view()
-      .clickEditingMenu(widgetId)
-      .clickEditWidgetButton(widgetId);
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
     commonWidget
       .clickAdvancedSettings()
@@ -128,7 +145,6 @@ module.exports = {
   },
 
   'A column is name can be changed': (browser) => {
-    const { widgetId } = browser.globals.defaultViewData;
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const commonTable = browser.page.tables.common();
@@ -136,8 +152,7 @@ module.exports = {
     const lastColumnIndex = DEFAULT_COLUMN_COUNT + 1;
 
     browser.page.view()
-      .clickEditingMenu(widgetId)
-      .clickEditWidgetButton(widgetId);
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
     commonWidget
       .clickAdvancedSettings()
@@ -155,7 +170,6 @@ module.exports = {
   },
 
   'A column is value can be changed': (browser) => {
-    const { widgetId } = browser.globals.defaultViewData;
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const commonTable = browser.page.tables.common();
@@ -165,8 +179,7 @@ module.exports = {
     const lastColumnIndex = DEFAULT_COLUMN_COUNT + 1;
 
     browser.page.view()
-      .clickEditingMenu(widgetId)
-      .clickEditWidgetButton(widgetId);
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
     commonWidget
       .clickAdvancedSettings()
@@ -189,7 +202,6 @@ module.exports = {
   },
 
   'A column is card can be moved above': (browser) => {
-    const { widgetId } = browser.globals.defaultViewData;
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const commonTable = browser.page.tables.common();
@@ -197,8 +209,7 @@ module.exports = {
     const lastColumnIndex = DEFAULT_COLUMN_COUNT + 1;
 
     browser.page.view()
-      .clickEditingMenu(widgetId)
-      .clickEditWidgetButton(widgetId);
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
     commonWidget
       .clickAdvancedSettings()
@@ -216,7 +227,6 @@ module.exports = {
   },
 
   'A column is card can be moved below': (browser) => {
-    const { widgetId } = browser.globals.defaultViewData;
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const commonTable = browser.page.tables.common();
@@ -224,8 +234,7 @@ module.exports = {
     const lastColumnIndex = DEFAULT_COLUMN_COUNT + 1;
 
     browser.page.view()
-      .clickEditingMenu(widgetId)
-      .clickEditWidgetButton(widgetId);
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
     commonWidget
       .clickAdvancedSettings()
@@ -242,8 +251,28 @@ module.exports = {
       );
   },
 
+  'HTML mode can be set for column': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    const lastColumnIndex = DEFAULT_COLUMN_COUNT + 1;
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickColumnNames()
+      .setColumnNameIsHtml(lastColumnIndex, true)
+      .waitFirstUserPreferencesXHR(
+        () => alarmsWidget.clickSubmitAlarms(),
+        ({ responseData }) => {
+          browser.assert.equal(responseData.success, true);
+        },
+      );
+  },
+
   'A column can be deleted from the table': (browser) => {
-    const { widgetId } = browser.globals.defaultViewData;
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const commonTable = browser.page.tables.common();
@@ -251,8 +280,7 @@ module.exports = {
     const lastColumnIndex = DEFAULT_COLUMN_COUNT + 1;
 
     browser.page.view()
-      .clickEditingMenu(widgetId)
-      .clickEditWidgetButton(widgetId);
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
     commonWidget
       .clickAdvancedSettings()
@@ -265,5 +293,176 @@ module.exports = {
           commonTable.verifyTableColumnDeleted(NEW_COLUMN_CHANGED_NAME);
         },
       );
+  },
+
+  '5 can be set as default number of elements per page': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickElementsPerPage()
+      .selectElementsPerPage(PAGINATION_PER_PAGE_VALUES.FIVE);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { data: [response], success } }) => {
+        browser.assert.equal(success, true);
+        browser.assert.equal(response.last, 5);
+      },
+    );
+  },
+
+  '10 can be set as default number of elements per page': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickElementsPerPage()
+      .selectElementsPerPage(PAGINATION_PER_PAGE_VALUES.TEN);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { data: [response], success } }) => {
+        browser.assert.equal(success, true);
+        browser.assert.equal(response.last, 10);
+      },
+    );
+  },
+
+  'Filter on Open/Resolved can be turn off': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(false)
+      .setResolvedFilter(false);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { data: [response], success } }) => {
+        browser.assert.equal(success, true);
+        browser.assert.equal(response.total, 0);
+      },
+    );
+  },
+
+  'Filter on Open can be set': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(true)
+      .setResolvedFilter(false);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { data: [response], success } }) => {
+        browser.globals.temporary.openedAlarmsCount = response.total;
+        browser.assert.equal(success, true);
+      },
+    );
+  },
+
+  'Filter on Resolved can be set': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(false)
+      .setResolvedFilter(true);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { data: [response], success } }) => {
+        browser.globals.temporary.resolvedAlarmsCount = response.total;
+        browser.assert.equal(success, true);
+      },
+    );
+  },
+
+  'Filter on Open and Resolved can be set': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(true)
+      .setResolvedFilter(true);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { data: [response], success } }) => {
+        const { resolvedAlarmsCount, openedAlarmsCount } = browser.globals.temporary;
+
+        browser.assert.equal(success, true);
+        browser.assert.equal(response.total, resolvedAlarmsCount + openedAlarmsCount);
+      },
+    );
+  },
+
+  'Default filter can be created in advanced settings': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const createFilterModal = browser.page.modals.common.createFilter();
+    const filtersListModal = browser.page.modals.common.filtersList();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilters()
+      .clickAddFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .clearFilterTitle()
+      .setFilterTitle(DEFAULT_FILTER.title)
+      .fillFilterGroups(DEFAULT_FILTER.groups)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
+
+        browser.page.tables.common()
+          .clickOutsideFiltersOptions()
+          .showFiltersList();
+
+        filtersListModal
+          .verifyModalOpened()
+          .verifyFilterVisibleByName(DEFAULT_FILTER.title)
+          .verifyModalClosed();
+      },
+    );
   },
 };

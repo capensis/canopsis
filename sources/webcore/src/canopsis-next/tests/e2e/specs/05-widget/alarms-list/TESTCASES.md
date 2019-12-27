@@ -583,28 +583,28 @@
         
     **Expected result**: a column’s card is moved above.
 
-* [ ] **HTML mode can be set for column.**
+* [x] **HTML mode can be set for column.**
     1. To click on “Column names” element in the “Advanced settings”.
     2. To set an HTML mode for any column.
     3. To press the button “Save”.
         
     **Expected result**: HTML mode is selected for any column.
 
-* [ ] **5 can be set as default number of elements per page.**
+* [x] **5 can be set as default number of elements per page.**
     1. To click on “Default number of elements/page” element in the “Advanced settings”.
     2. To choose the number 5.
     3. To press the button “Save”.
         
     **Expected result**: 5 is set as default number of elements per page.
 
-* [ ] **10 can be set as default number of elements per page.**
+* [x] **10 can be set as default number of elements per page.**
     1. To click on “Default number of elements/page” element in the “Advanced settings”.
     2. To choose the number 10.
     3. To press the button “Save”.
         
     **Expected result**: 10 is set as default number of elements per page.
 
-* [ ] **Filter on Open/Resolved can be turn off.**
+* [x] **Filter on Open/Resolved can be turn off.**
     1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
     2. To leave the check-box “Open” empty.
     3. To leave the check-box “Resolved” empty.
@@ -612,7 +612,7 @@
         
     **Expected result**: filter on Open/Resolved is turn off.
 
-* [ ] **Filter on Open can be set.**
+* [x] **Filter on Open can be set.**
     1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
     2. To mark the check-box “Open”.
     3. To leave the check-box “Resolved” empty.
@@ -620,7 +620,7 @@
         
     **Expected result**: filter on Open is set.
 
-* [ ] **Filter on Resolved can be set.**
+* [x] **Filter on Resolved can be set.**
     1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
     2. To mark the check-box “Resolved”.
     3. To leave the check-box “Open” empty.
@@ -628,7 +628,7 @@
         
     **Expected result**: filter on Resolved is set.
 
-* [ ] **Live reporting on resolved filter enabled should be 30 days**
+* [x] **Live reporting on resolved filter enabled should be 30 days**
     1. To press the button “Delete” on “Live reporting” section in the “Advanced settings” if it exists.
     2. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
     3. To mark the check-box “Resolved”.
@@ -636,7 +636,7 @@
         
     **Expected result**: the live reporting on the table is 30 days selected.
 
-* [ ] **Filter on Open and Resolved can be set.**
+* [x] **Filter on Open and Resolved can be set.**
     1. To click on “Filter on Open/Resolved” element in the “Advanced settings”.
     2. To mark the check-box “Resolved”.
     3. To mark the check-box “Open”.

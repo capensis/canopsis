@@ -83,6 +83,12 @@ const commands = {
     return this.customClick(this.el('@editingMenu', id));
   },
 
+  openWidgetSettings(widgetId) {
+    return this
+      .clickEditingMenu(widgetId)
+      .clickEditWidgetButton(widgetId);
+  },
+
   el,
 };
 

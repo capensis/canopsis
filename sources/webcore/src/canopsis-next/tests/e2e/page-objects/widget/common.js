@@ -243,7 +243,7 @@ const commands = {
     return this.customClick(this.el('@columnNameSwitchField', index));
   },
 
-  setColumnNameSwitch(index, checked = false) {
+  setColumnNameIsHtml(index, checked = false) {
     return this.getAttribute(this.el('@columnNameSwitchFieldInput', index), 'aria-checked', ({ value }) => {
       if (value !== String(checked)) {
         this.clickColumnNameSwitch(index);
@@ -260,7 +260,7 @@ const commands = {
       .setColumnNameValue(index, value);
 
     if (typeof isHtml === 'boolean') {
-      this.setColumnNameSwitch(index, isHtml);
+      this.setColumnNameIsHtml(index, isHtml);
     }
 
     return this;
