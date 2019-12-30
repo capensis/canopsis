@@ -322,6 +322,16 @@ const commands = {
       .customClick(this.el('@optionSelect', index));
   },
 
+  selectFilterByName(name) {
+    this.customClick('@selectFilters')
+      .api.useXpath()
+      .waitForElementVisible(this.el('@optionSelectXPath', name))
+      .customClick(this.el('@optionSelectXPath', name))
+      .useCss();
+
+    return this;
+  },
+
   clickStatsSelect() {
     return this.customClick('@statsSelector');
   },
@@ -433,6 +443,7 @@ const commands = {
 module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    optionSelectXPath: './/*[contains(@class, "menuable__content__active")]//*[contains(@class, "v-select-list")]//span[contains(text(), "%s")]',
 
     periodicRefresh: sel('periodicRefresh'),
     periodicRefreshSwitchInput: `input${sel('periodicRefreshSwitch')}`,

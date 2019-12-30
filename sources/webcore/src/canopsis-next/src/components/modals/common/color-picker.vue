@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(data-test="colorPickerModal")
     template(slot="title")
       span {{ config.title }}
     template(slot="text")

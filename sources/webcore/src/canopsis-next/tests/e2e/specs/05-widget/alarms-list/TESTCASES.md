@@ -644,7 +644,7 @@
         
     **Expected result**: filter on Open and Resolved is set.
 
-* [ ] **Default filter can be created in advanced settings.**
+* [x] **Default filter can be created in advanced settings.**
     1. To click on “Filters” element in the “Advanced settings”.
     2. To press the button “Add”.
     3. To input all required information in modal window.
@@ -652,7 +652,7 @@
         
     **Expected result**: a new default filter is created.
 
-* [ ] **Default filter can be edited in advanced settings.**
+* [x] **Default filter can be edited in advanced settings.**
     1. To click on “Filters” element in the “Advanced settings”.
     2. To create a new default filter.
     3. To press the button “Edit” near the new filter.
@@ -687,7 +687,7 @@
         
     **Expected result**: two default filters are set with AND-rule.
 
-* [ ] **Two default filters can be set with AND-rule.**
+* [ ] **Two default filters can be set with OR-rule.**
     1. To click on “Filters” element in the “Advanced settings”.
     2. To create two new default filters.
     3. To turn on “Mix filters”.

@@ -87,14 +87,38 @@ const commands = {
     });
   },
 
+  clickFilterSelect() {
+    return this.customClick('@selectFilters');
+  },
+
   clickFilter(name) {
     this
-      .customClick('@selectFilters')
+      .clickFilterSelect()
       .api.useXpath()
       .customClick(this.el('@filterOptionXPath', name))
       .useCss();
 
     return this;
+  },
+
+  verifyFilterVisible(name) {
+    this
+      .clickFilterSelect()
+      .api.useXpath()
+      .assert.visible(this.el('@filterOptionXPath', name))
+      .useCss();
+
+    return this.clickOutsideFiltersOptions();
+  },
+
+  verifyFilterDeleted(name) {
+    this
+      .clickFilterSelect()
+      .api.useXpath()
+      .waitForElementNotPresent(this.el('@filterOptionXPath', name))
+      .useCss();
+
+    return this.clickOutsideFiltersOptions();
   },
 
   clearFilters() {

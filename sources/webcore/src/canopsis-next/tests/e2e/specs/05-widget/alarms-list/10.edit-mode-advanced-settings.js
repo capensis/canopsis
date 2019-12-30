@@ -17,7 +17,7 @@ const { createWidgetView, createWidgetForView, removeWidgetView } = require('../
 const DEFAULT_COLUMN_COUNT = 8;
 const NEW_COLUMN_NAME = 'New column';
 const NEW_COLUMN_CHANGED_NAME = 'New renamed column';
-const DEFAULT_FILTER = {
+const CONNECTOR_NAME_EQUAL_FILTER = {
   title: 'Default filter',
   groups: [{
     type: FILTERS_TYPE.OR,
@@ -26,6 +26,31 @@ const DEFAULT_FILTER = {
       operator: FILTER_OPERATORS.EQUAL,
       valueType: VALUE_TYPES.STRING,
       value: 'feeder2_inst0',
+    }],
+  }],
+};
+const RESOURCE_EQUAL_FILTER = {
+  title: 'Connector name not equal value',
+  groups: [{
+    type: FILTERS_TYPE.OR,
+    items: [{
+      rule: FILTER_COLUMNS.RESOURCE,
+      operator: FILTER_OPERATORS.EQUAL,
+      valueType: VALUE_TYPES.STRING,
+      value: 'feeder2_0',
+    }],
+  }],
+};
+const ALARMS_COUNT_WITH_RESOURCE_EQUAL_FILTER = 40;
+const RESOURCE_NOT_EQUAL_FILTER = {
+  title: 'Connector name not equal value',
+  groups: [{
+    type: FILTERS_TYPE.OR,
+    items: [{
+      rule: FILTER_COLUMNS.RESOURCE,
+      operator: FILTER_OPERATORS.EQUAL,
+      valueType: VALUE_TYPES.STRING,
+      value: 'feeder2_0',
     }],
   }],
 };
@@ -431,7 +456,7 @@ module.exports = {
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const createFilterModal = browser.page.modals.common.createFilter();
-    const filtersListModal = browser.page.modals.common.filtersList();
+    const commonTable = browser.page.tables.common();
 
     browser.page.view()
       .openWidgetSettings(browser.globals.defaultViewData.widgetId);
@@ -444,24 +469,166 @@ module.exports = {
     createFilterModal
       .verifyModalOpened()
       .clearFilterTitle()
-      .setFilterTitle(DEFAULT_FILTER.title)
-      .fillFilterGroups(DEFAULT_FILTER.groups)
+      .setFilterTitle(CONNECTOR_NAME_EQUAL_FILTER.title)
+      .fillFilterGroups(CONNECTOR_NAME_EQUAL_FILTER.groups)
       .clickSubmitButton()
       .verifyModalClosed();
 
-    alarmsWidget.waitFirstAlarmsListXHR(
+    commonWidget.waitFirstUserPreferencesXHR(
       () => alarmsWidget.clickSubmitAlarms(),
       ({ responseData: { success } }) => {
         browser.assert.equal(success, true);
+        commonTable.verifyFilterVisible(CONNECTOR_NAME_EQUAL_FILTER.title);
+      },
+    );
+  },
 
-        browser.page.tables.common()
-          .clickOutsideFiltersOptions()
-          .showFiltersList();
+  'Default filter can be edited in advanced settings': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const createFilterModal = browser.page.modals.common.createFilter();
+    const commonTable = browser.page.tables.common();
 
-        filtersListModal
-          .verifyModalOpened()
-          .verifyFilterVisibleByName(DEFAULT_FILTER.title)
-          .verifyModalClosed();
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilters()
+      .clickEditFilter(CONNECTOR_NAME_EQUAL_FILTER.title);
+
+    createFilterModal
+      .verifyModalOpened()
+      .clearFilterTitle()
+      .setFilterTitle(RESOURCE_EQUAL_FILTER.title)
+      .clickDeleteRule(createFilterModal.selectGroup([1]), 1)
+      .fillFilterGroups(RESOURCE_EQUAL_FILTER.groups)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.waitFirstUserPreferencesXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
+        commonTable.verifyFilterVisible(RESOURCE_EQUAL_FILTER.title);
+      },
+    );
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => commonTable.clickFilter(RESOURCE_EQUAL_FILTER.title),
+      ({ responseData: { success, data: [response] } }) => {
+        browser.assert.equal(success, true);
+        browser.assert.equal(response.total, ALARMS_COUNT_WITH_RESOURCE_EQUAL_FILTER);
+      },
+    );
+  },
+
+  'Default filter can be deleted in advanced settings': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilters()
+      .clickDeleteFilter(RESOURCE_EQUAL_FILTER.title);
+
+    browser.page.modals.common.confirmation()
+      .verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.waitFirstUserPreferencesXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
+        commonTable.verifyFilterDeleted(RESOURCE_EQUAL_FILTER.title);
+      },
+    );
+  },
+
+  'Default filter can be set in advanced settings': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+    const createFilterModal = browser.page.modals.common.createFilter();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilters()
+      .clickAddFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .clearFilterTitle()
+      .setFilterTitle(RESOURCE_EQUAL_FILTER.title)
+      .fillFilterGroups(RESOURCE_EQUAL_FILTER.groups)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.selectFilterByName(RESOURCE_EQUAL_FILTER.title);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success, data: [response] } }) => {
+        browser.assert.equal(success, true);
+        browser.assert.equal(response.total, ALARMS_COUNT_WITH_RESOURCE_EQUAL_FILTER);
+        commonTable.verifyFilterVisible(RESOURCE_EQUAL_FILTER.title);
+      },
+    );
+  },
+
+  'Two default filters can be set with AND-rule': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+    const createFilterModal = browser.page.modals.common.createFilter();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilters()
+      .clickAddFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .clearFilterTitle()
+      .setFilterTitle(RESOURCE_EQUAL_FILTER.title)
+      .fillFilterGroups(RESOURCE_EQUAL_FILTER.groups)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.clickAddFilter();
+
+    createFilterModal
+      .verifyModalOpened()
+      .clearFilterTitle()
+      .setFilterTitle(RESOURCE_NOT_EQUAL_FILTER.title)
+      .fillFilterGroups(RESOURCE_NOT_EQUAL_FILTER.groups)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget
+      .selectFilterByName(RESOURCE_EQUAL_FILTER.title)
+      .setMixFilters(true)
+      .selectFilterByName(RESOURCE_NOT_EQUAL_FILTER.title);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success, data: [response] } }) => {
+        browser.assert.equal(success, true);
+        commonTable
+          .verifyFilterVisible(RESOURCE_EQUAL_FILTER.title)
+          .verifyFilterVisible(RESOURCE_NOT_EQUAL_FILTER.title);
+        browser.assert.equal(response.total, 0);
       },
     );
   },
