@@ -54,7 +54,7 @@ update-rc.d apache2 defaults or chkconfig httpd on
 
 ```sh
 apt install nginx
-``` 
+```
 
 ### CentOS / REHL 
 
@@ -105,3 +105,81 @@ server {
 service nginx restart or service nginx restart
 update-rc.d nginx defaults or chkconfig nginx on 
 ```
+
+## Reverse Proxy avec HA Proxy
+
+### Ubuntu / Debian
+
+```
+apt install haproxy
+```
+
+### Centos / RHEL
+
+```
+yum install haproxy
+```
+
+### Configurer un accès au Webserver de Canopsis sur Port `80`
+
+Éditer le fichier `/etc/haproxy/haproxy.cfg` et créer :
+
+* Un bloc `frontend` qui va écouter sur un port d'écoute ( ici `TCP/80` ) et rediriger vers un backend `canopsis-webserver`
+
+```
+frontend canopsis-webui
+  bind *:80
+  option forwardfor
+  mode http
+  compression algo gzip
+  compression type text/html text/plain text/css text/js text/xml text/javascript application/javascript application/x-javascript application/json application/xml application/xml+rss
+  default_backend canopsis-webserver
+```
+
+* Un bloc `backend` qui va définir la redirection vers le webserver
+
+```
+backend canopsis-webserver
+  server canopsis 127.0.0.1:8082
+```
+
+### Gestion des CORS Policy pour le serveur Web Gunicorn
+
+Pour accéder à des ressources fournies par le Webserver Gunicorn de Canopsis depuis des origines/domaines multiples, il faut mettre en place une configuration particulière avec HA Proxy
+
+Il se trouve que lorsque les cors policy sont contrôlées, un appel à l'URL avec la méthode HTTP `OPTIONS` est effectué vers le serveur web par le navigateur ou client HTTP.
+
+Le serveur web gunicorn de Canopsis ne supportant pas cette méthode, voici une configuration `haproxy` capable de répondre à la place du serveur web
+
+````
+frontend canopsis-webserver
+  ...  
+  http-response set-header Access-Control-Allow-Origin "http://domaine.tld"
+  http-response set-header Access-Control-Allow-Credentials true
+  ...
+  acl is_options method OPTIONS
+  use_backend cors_backend if is_options
+  ...
+
+backend cors_backend
+  errorfile 503 /etc/haproxy/errors/cors_canopsis_200.http
+````
+
+Avec comme contenu du fichier `/etc/haproxy/errors/cors_canopsis_200.http` 
+
+```
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: http://votredomaininterne
+Access-Control-Max-Age: 31536000
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Authorization
+Content-Length: 0
+Cache-Control: private
+
+
+
+```
+
+Un backend `cors_backend` pourra ainsi répondre avec les bons entêtes attendus pour les CORS Policy lorsque la méthode demandée est `OPTIONS`.
+
+Une fois l'appel à la méthode `OPTIONS` passée, les en-têtes HTTP seront ajoutés à la volée pour la réponse aux appels `GET` suivants.
