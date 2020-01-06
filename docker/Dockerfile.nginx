@@ -1,0 +1,9 @@
+FROM nginx:1.17.6-alpine
+
+COPY files/etc/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY files/entrypoint-nginx.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT /entrypoint.sh
