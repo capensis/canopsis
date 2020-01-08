@@ -170,19 +170,16 @@ class DynamicInfosManager(object):
         """
         previous_value = self.get_by_id(rule_id)
         if previous_value is None:
-
             raise NotFoundError("no dynamic infos rule with id {}".format(
                 rule_id))
 
         if rule_id != rule.id:
             raise ValueError("the _id field should not be modified")
 
-
         if DynamicInfosRule.AUTHOR in previous_value:
             rule.author = previous_value[DynamicInfosRule.AUTHOR]
         if DynamicInfosRule.CREATION_DATE in previous_value:
             rule.creation_date = previous_value[DynamicInfosRule.CREATION_DATE]
-
 
         resp = self.collection.update(
             {DynamicInfosRule.ID: rule_id},
