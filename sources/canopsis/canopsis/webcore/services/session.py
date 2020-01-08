@@ -180,7 +180,7 @@ def exports(ws):
         return user
 
     @ws.application.post(
-         '/keepalive'
+         '/api/v2/keepalive'
         )
     def keepalive():
         """
@@ -199,7 +199,7 @@ def exports(ws):
             return  gen_json_error({'description':e.value },HTTP_ERROR)
 
     @ws.application.get(
-        '/sessionstart'
+        '/api/v2/sessionstart'
     )
     def sessionstart():
         """
@@ -214,7 +214,7 @@ def exports(ws):
 
 
     @ws.application.post(
-        '/session_hide'
+        '/api/v2/session_hide'
     )
     def  sessionhide():
         try :
@@ -228,7 +228,7 @@ def exports(ws):
 
 
     @ws.application.get(
-            '/sessions'
+            '/api/v2/sessions'
         )
     def session():
         try :
