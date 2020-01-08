@@ -26,12 +26,15 @@ from __future__ import unicode_literals
 import base64
 from bottle import request, abort
 from canopsis.auth.check import check
+import json
+
 
 from canopsis.common.middleware import Middleware
 from canopsis.common.utils import singleton_per_scope
 from canopsis.common.ws import route
-from canopsis.session.manager import Session
+from canopsis.session.manager import Session, SessionError
 from .rights import get_manager as get_rights
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
 def get_user(_id=None):
@@ -114,12 +117,43 @@ def create(user):
     return session
 
 
-def delete():
+def get_username():
+    """Returns the username of the logged-in user, or ''."""
+    try:
+        session = request.environ.get('beaker.session', {})
+        user = session.get('user', '')
+
+        # The content of user depends on the authentication method. If the user
+        # logged in with HTTP authentication, it contains the username. If they
+        # logged in with the loggin form, it contains a dictionnary.
+        if isinstance(user, basestring):
+            return user
+        return user.get('_id', '')
+    except AttributeError:
+        return ''
+
+
+def get_creation_time():
+    """Returns the _creation_time of the logged-in _creation_time, or ''."""
+    try:
+        session = request.environ.get('beaker.session', {})
+        return session.get('_creation_time', '')
+    except AttributeError:
+        return 
+
+def get_id_beaker_session():
     """
-    Delete user user session.
+    Return the id_beaker_session for slecte user's session in Default_session mongoDB 
     """
-    session = request.environ.get('beaker.session')
-    session.delete()
+    creation_time = str(int(get_creation_time()))
+    username = str(get_username())
+    id_beaker_session_string = username + '_' + creation_time
+    id_beaker_session = base64.b64encode(id_beaker_session_string)
+    return id_beaker_session
+
+
+def get_info():
+    return get_id_beaker_session(), get_username()
 
 
 def exports(ws):
@@ -145,17 +179,69 @@ def exports(ws):
 
         return user
 
-    @route(ws.application.get, payload=['username'])
-    def keepalive(username):
+    @ws.application.post(
+         '/keepalive'
+        )
+    def keepalive():
         """
         Maintain the current session.
         """
-        session_manager.keep_alive(username)
+        try :
+            data = json.loads(request.body.read())
+            visible = data["visible"]
+            paths = data["path"]
+            id_beaker_session, username = get_info()
+            time = session_manager.keep_alive(id_beaker_session,username,visible,paths)
+            return gen_json({'description':"Session keepalive","time":time,"visible":visible,"paths":paths})
 
-    @route(ws.application.get, payload=['username'])
-    def sessionstart(username):
+
+        except SessionError as e :
+            return  gen_json_error({'description':e.value },HTTP_ERROR)
+
+    @ws.application.get(
+        '/sessionstart'
+    )
+    def sessionstart():
         """
         Start a new session.
         """
-        session_manager.session_start(username)
-        return {}
+        try :
+            id_beaker_session, username = get_info()
+            session_manager.session_start(id_beaker_session,username)
+            return gen_json({'description':"Session Start"})
+        except SessionError as e :
+            return  gen_json_error({'description':e.value},HTTP_ERROR)
+
+
+    @ws.application.post(
+        '/session_hide'
+    )
+    def  sessionhide():
+        try :
+            data = json.loads(request.body.read())
+            paths = data["path"]
+            id_beaker_session, username = get_info()
+            session_manager.session_hide(id_beaker_session,username,paths)
+        except SessionError as e :
+            return  gen_json_error({'description':e.value},HTTP_ERROR)
+
+
+
+    @ws.application.get(
+            '/sessions'
+        )
+    def session():
+        try :
+            params = {}
+            params_key = request.query.keys()
+            for key in params_key :
+                if key == "usernames[]" :
+                    params[key] = request.query.getall(key)
+                else :
+                    params[key] = request.query.get(key)
+            id_beaker_session, username = get_info()
+            sessions = session_manager.sessions_req(id_beaker_session,params)
+            return gen_json({'description':"Sessions", 'sessions':sessions})
+
+        except SessionError as e :
+            return  gen_json_error({'description':e.value},HTTP_ERROR)
