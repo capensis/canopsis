@@ -12,8 +12,7 @@ export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
-export const DEFAULT_KEEP_ALIVE_INTERVAL = 10000;
-
+export const DEFAULT_KEEP_ALIVE_INTERVAL = 200000;
 
 export const LOCALE_PRIORITIES = {
   default: 1,
@@ -96,9 +95,11 @@ export const API_ROUTES = {
     userInterface: '/api/internal/user_interface',
   },
   heartbeat: '/api/v2/heartbeat/',
-  startsession: '/sessionstart',
-  keepalive: '/keepalive',
-  sessionhide: '/session_hide',
+  dynamicInfo: '/api/v2/dynamic-infos',
+  filterHints: '/api/v2/associativetable/filterhints',
+  startsession: '/api/v2/sessionstart',
+  keepalive: '/api/v2/keepalive',
+  sessionhide: '/api/v2/session_hide',
 };
 
 export const COLORS = {
