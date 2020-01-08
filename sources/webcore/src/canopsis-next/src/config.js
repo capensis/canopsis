@@ -98,9 +98,9 @@ export const API_ROUTES = {
   heartbeat: '/api/v2/heartbeat/',
   dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
-  startsession: '/sessionstart',
-  keepalive: '/keepalive',
-  sessionhide: '/session_hide',
+  startsession: '/api/v2/sessionstart',
+  keepalive: '/api/v2/keepalive',
+  sessionhide: '/api/v2/session_hide',
 };
 
 export const COLORS = {
