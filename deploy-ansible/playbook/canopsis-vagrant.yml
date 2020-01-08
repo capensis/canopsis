@@ -19,7 +19,7 @@
   become_user: root
   roles:
     -
-      role: "ansible-role-haproxy"
+      role: "ansible-role-nginx"
     -
       role: "ansible-role-mongodb"
     -
