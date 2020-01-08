@@ -12,7 +12,7 @@ export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
-export const DEFAULT_KEEP_ALIVE_INTERVAL = 10000;
+export const DEFAULT_KEEP_ALIVE_INTERVAL = 200000;
 
 
 export const LOCALE_PRIORITIES = {
