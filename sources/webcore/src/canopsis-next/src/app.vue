@@ -16,6 +16,8 @@ import SideBars from '@/components/side-bars/index.vue';
 
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
+import keepaliveMixin from '@/mixins/entities/keepalive';
+
 
 import '@/assets/styles/main.scss';
 
@@ -24,10 +26,11 @@ export default {
     Navigation,
     SideBars,
   },
-  mixins: [authMixin, entitiesInfoMixin],
+  mixins: [authMixin, entitiesInfoMixin,keepaliveMixin],
   data() {
     return {
       pending: true,
+      
     };
   },
   computed: {
@@ -45,9 +48,24 @@ export default {
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
     }
-
     this.pending = false;
   },
+  beforeUpdate(){
+    if (this.isLoggedIn) {
+      this.startKeepAlive();
+    }
+  },
+  updated(){
+    if (this.isLoggedIn) {
+      this.startSessionHide();
+    }
+  },
+  beforeDestroy(){
+    this.stopKeepAlive();
+  },
+  
+
+
 };
 </script>
 
