@@ -165,8 +165,8 @@ export default {
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
-    
   },
+  
   methods: {
     registerViewOnceWatcher() {
       const unwatch = this.$watch('view', (view) => {
