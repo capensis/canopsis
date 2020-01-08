@@ -106,6 +106,7 @@ import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
 
+
 export default {
   components: {
     ViewTabRows,
@@ -160,11 +161,13 @@ export default {
 
   mounted() {
     this.fetchView({ id: this.id });
+    
   },
 
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
+    
   },
 
   methods: {

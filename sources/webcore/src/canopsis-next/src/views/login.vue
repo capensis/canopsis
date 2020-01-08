@@ -130,6 +130,7 @@ export default {
           } else {
             this.$router.push({ name: 'home' });
           }
+
         }
       } catch (err) {
         this.hasServerError = true;
