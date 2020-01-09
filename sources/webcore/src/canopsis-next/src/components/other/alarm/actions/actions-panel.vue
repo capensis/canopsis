@@ -200,12 +200,9 @@ export default {
 
       actions = compact(actions);
 
-      const inlineActions = actions.slice(0, 3);
-      const dropDownActions = actions.slice(3);
-
       const result = {
-        inline: inlineActions.filter(action => !!action),
-        dropDown: dropDownActions.filter(action => !!action),
+        inline: actions.slice(0, 3),
+        dropDown: actions.slice(3),
       };
 
       if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
