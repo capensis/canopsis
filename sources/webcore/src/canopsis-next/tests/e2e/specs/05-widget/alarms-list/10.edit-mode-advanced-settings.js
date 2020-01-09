@@ -30,7 +30,7 @@ const CONNECTOR_NAME_EQUAL_FILTER = {
   }],
 };
 const RESOURCE_EQUAL_FILTER = {
-  title: 'Connector name not equal value',
+  title: 'Resource equal value',
   groups: [{
     type: FILTERS_TYPE.OR,
     items: [{
@@ -43,12 +43,12 @@ const RESOURCE_EQUAL_FILTER = {
 };
 const ALARMS_COUNT_WITH_RESOURCE_EQUAL_FILTER = 40;
 const RESOURCE_NOT_EQUAL_FILTER = {
-  title: 'Connector name not equal value',
+  title: 'Resource not equal value',
   groups: [{
     type: FILTERS_TYPE.OR,
     items: [{
       rule: FILTER_COLUMNS.RESOURCE,
-      operator: FILTER_OPERATORS.EQUAL,
+      operator: FILTER_OPERATORS.NOT_EQUAL,
       valueType: VALUE_TYPES.STRING,
       value: 'feeder2_0',
     }],
@@ -519,6 +519,7 @@ module.exports = {
       ({ responseData: { success, data: [response] } }) => {
         browser.assert.equal(success, true);
         browser.assert.equal(response.total, ALARMS_COUNT_WITH_RESOURCE_EQUAL_FILTER);
+        commonTable.clickFilter(RESOURCE_EQUAL_FILTER.title);
       },
     );
   },
@@ -590,6 +591,8 @@ module.exports = {
     const commonTable = browser.page.tables.common();
     const createFilterModal = browser.page.modals.common.createFilter();
 
+    commonTable.clearFilters();
+
     browser.page.view()
       .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
@@ -597,16 +600,6 @@ module.exports = {
       .clickAdvancedSettings()
       .clickFilters()
       .clickAddFilter();
-
-    createFilterModal
-      .verifyModalOpened()
-      .clearFilterTitle()
-      .setFilterTitle(RESOURCE_EQUAL_FILTER.title)
-      .fillFilterGroups(RESOURCE_EQUAL_FILTER.groups)
-      .clickSubmitButton()
-      .verifyModalClosed();
-
-    commonWidget.clickAddFilter();
 
     createFilterModal
       .verifyModalOpened()

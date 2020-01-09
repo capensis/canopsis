@@ -325,7 +325,6 @@ const commands = {
   selectFilterByName(name) {
     this.customClick('@selectFilters')
       .api.useXpath()
-      .waitForElementVisible(this.el('@optionSelectXPath', name))
       .customClick(this.el('@optionSelectXPath', name))
       .useCss();
 
@@ -529,9 +528,9 @@ module.exports = {
       editFilter: sel('editFilter-%s'),
       deleteFilter: sel('deleteFilter-%s'),
       filterItem: sel('filterItem-%s'),
-    }),
 
-    selectFilters: `${sel('selectFilters')} .v-input__slot`,
+      selectFilters: `${sel('selectFilters')} .v-select__slot`,
+    }),
 
     statsSelector: sel('statsSelector'),
     addStatButton: sel('addStatButton'),
