@@ -15,6 +15,7 @@ const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
 
 const DEFAULT_COLUMN_COUNT = 8;
+const ALARMS_COUNT = 401;
 const NEW_COLUMN_NAME = 'New column';
 const NEW_COLUMN_CHANGED_NAME = 'New renamed column';
 const CONNECTOR_NAME_EQUAL_FILTER = {
@@ -444,10 +445,8 @@ module.exports = {
     alarmsWidget.waitFirstAlarmsListXHR(
       () => alarmsWidget.clickSubmitAlarms(),
       ({ responseData: { data: [response], success } }) => {
-        const { resolvedAlarmsCount, openedAlarmsCount } = browser.globals.temporary;
-
         browser.assert.equal(success, true);
-        browser.assert.equal(response.total, resolvedAlarmsCount + openedAlarmsCount);
+        browser.assert.equal(response.total, ALARMS_COUNT);
       },
     );
   },
@@ -519,7 +518,9 @@ module.exports = {
       ({ responseData: { success, data: [response] } }) => {
         browser.assert.equal(success, true);
         browser.assert.equal(response.total, ALARMS_COUNT_WITH_RESOURCE_EQUAL_FILTER);
-        commonTable.clickFilter(RESOURCE_EQUAL_FILTER.title);
+        commonTable
+          .clickFilter(RESOURCE_EQUAL_FILTER.title)
+          .clearFilters();
       },
     );
   },
@@ -591,8 +592,6 @@ module.exports = {
     const commonTable = browser.page.tables.common();
     const createFilterModal = browser.page.modals.common.createFilter();
 
-    commonTable.clearFilters();
-
     browser.page.view()
       .openWidgetSettings(browser.globals.defaultViewData.widgetId);
 
@@ -612,6 +611,7 @@ module.exports = {
     commonWidget
       .selectFilterByName(RESOURCE_EQUAL_FILTER.title)
       .setMixFilters(true)
+      .setFiltersType(FILTERS_TYPE.AND)
       .selectFilterByName(RESOURCE_NOT_EQUAL_FILTER.title);
 
     alarmsWidget.waitFirstAlarmsListXHR(
@@ -622,6 +622,32 @@ module.exports = {
           .verifyFilterVisible(RESOURCE_EQUAL_FILTER.title)
           .verifyFilterVisible(RESOURCE_NOT_EQUAL_FILTER.title);
         browser.assert.equal(response.total, 0);
+      },
+    );
+  },
+
+  'Two default filters can be set with OR-rule': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilters()
+      .setMixFilters(true)
+      .setFiltersType(FILTERS_TYPE.OR);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success, data: [response] } }) => {
+        browser.assert.equal(success, true);
+        commonTable
+          .verifyFilterVisible(RESOURCE_EQUAL_FILTER.title)
+          .verifyFilterVisible(RESOURCE_NOT_EQUAL_FILTER.title);
+        browser.assert.equal(response.total, ALARMS_COUNT);
       },
     );
   },

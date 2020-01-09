@@ -661,7 +661,7 @@
         
     **Expected result**: the filter is modified.
 
-* [ ] **Default filter can be deleted in advanced settings.**
+* [x] **Default filter can be deleted in advanced settings.**
     1. To click on “Filters” element in the “Advanced settings”.
     2. To create a new default filter.
     3. To press the button with trash bin.
@@ -669,7 +669,7 @@
         
     **Expected result**: the filter is deleted.
 
-* [ ] **Default filter can be set in advanced settings.**
+* [x] **Default filter can be set in advanced settings.**
     1. To click on “Filters” element in the “Advanced settings”.
     2. To create a new default filter.
     3. To choose this filter in the dropdown “Default filter”.
@@ -677,7 +677,7 @@
         
     **Expected result**: the default filter is set in advanced settings.
 
-* [ ] **Two default filters can be set with AND-rule.**
+* [x] **Two default filters can be set with AND-rule.**
     1. To click on “Filters” element in the “Advanced settings”.
     2. To create two new default filters.
     3. To turn on “Mix filters”.
@@ -687,7 +687,7 @@
         
     **Expected result**: two default filters are set with AND-rule.
 
-* [ ] **Two default filters can be set with OR-rule.**
+* [x] **Two default filters can be set with OR-rule.**
     1. To click on “Filters” element in the “Advanced settings”.
     2. To create two new default filters.
     3. To turn on “Mix filters”.
