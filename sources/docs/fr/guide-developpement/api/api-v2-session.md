@@ -152,4 +152,5 @@ Le travail sur les sessions s'effectu dans une collection dédier `Default_sessi
     }
 }
 ```
+cette collection permet de garder un historique des sessions des utilisateur ainsi qu'un comptage des temps passer sur les pages.
 
