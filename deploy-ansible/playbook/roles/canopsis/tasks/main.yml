@@ -40,8 +40,3 @@
   become_user: "{{ canopsis_user }}"
   tags:
     - cps_initdb
-
-- import_tasks: canopsis-dev.yml
-  tags:
-    - cps_dev
-  when: canopsis_dev_src_path

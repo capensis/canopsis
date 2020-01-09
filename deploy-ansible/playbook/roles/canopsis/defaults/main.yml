@@ -1,8 +1,4 @@
 ---
-canopsis_dev_src_path:
-canopsis_dev_with_deps: true
-canopsis_dev_without_deps: false
-
 canopsis_home: /opt/canopsis
 canopsis_user: canopsis
 canopsis_group: canopsis
