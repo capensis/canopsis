@@ -54,11 +54,11 @@ export default {
       default: false,
     },
   },
-  data() {
-    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  computed: {
+    actionsMap() {
+      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-    return {
-      actionsMap: {
+      return {
         ack: {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
@@ -131,10 +131,8 @@ export default {
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
@@ -145,10 +143,22 @@ export default {
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
     },
-    actions() {
+    isResolvedAlarm() {
+      return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(this.item.v.status.val);
+    },
+    resolvedActions() {
+      const actions = [];
+
+      if (this.widget.parameters.moreInfoTemplate !== '') {
+        actions.push(this.filteredActionsMap.moreInfos);
+      }
+
+      return actions;
+    },
+    unresolvedActions() {
       const { filteredActionsMap } = this;
 
-      let actions = [
+      const actions = [
         filteredActionsMap.snooze,
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
@@ -183,14 +193,16 @@ export default {
         }
       }
 
+      return actions;
+    },
+    actions() {
+      let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
+
       actions = compact(actions);
 
-      const inlineActions = actions.slice(0, 3);
-      const dropDownActions = actions.slice(3);
-
       const result = {
-        inline: inlineActions.filter(action => !!action),
-        dropDown: dropDownActions.filter(action => !!action),
+        inline: actions.slice(0, 3),
+        dropDown: actions.slice(3),
       };
 
       if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
