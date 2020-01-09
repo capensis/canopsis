@@ -73,5 +73,6 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
   * [Watchers](api/api-v2-watcherng.md)
   * [Météo des services](api/api-v2-weather.md)
   * [Webhooks](api/api-v2-webhooks.md)
+  * [session](api/api-v2-session.md)
 
 # Gestion de la documentation
