@@ -4,8 +4,8 @@ L'API session stocke des données sur les sessions utilisateurs de Canopsis.
 
 Les données disponibles sont :
 
-- Nombre de sessions crées par utilisateur
-- Temps de navigation passée sur chaque page par utilisateur
+- Nombre de sessions créées par utilisateur
+- Temps de navigation passé sur chaque page par utilisateur
 - Liste des sessions créées par utilisateur
 
 Pour cela, elle se base notamment sur le signal keepalive envoyé par l'UIv3.
@@ -13,7 +13,7 @@ Pour cela, elle se base notamment sur le signal keepalive envoyé par l'UIv3.
 
 ### Configuration 
 
-Les paramètres de configuration (notamment la durée d'une session) se trouvent dans le fichier `canopsis/sources/canopsis/etc/session/session.conf`
+Les paramètres de configuration (notamment la durée d'une session) se trouvent dans le fichier `etc/session/session.conf`
 
 ### Création d'une session
 
