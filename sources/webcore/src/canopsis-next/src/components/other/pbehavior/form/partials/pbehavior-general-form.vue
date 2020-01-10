@@ -25,7 +25,7 @@
         v-validate="'required'",
         :label="$t('modals.createPbehavior.steps.general.fields.reason')",
         :loading="pbehaviorReasonsPending",
-        :items="pbehaviorReasons",
+        :items="reasons",
         :error-messages="errors.collect('reason')",
         name="reason",
         data-test="pbehaviorReason"
@@ -71,7 +71,7 @@
 <script>
 import moment from 'moment-timezone';
 
-import { PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
+import { PBEHAVIOR_TYPES, DATETIME_FORMATS, PAUSE_REASONS } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import formMixin from '@/mixins/form';
@@ -96,6 +96,10 @@ export default {
     },
   },
   computed: {
+    reasons() {
+      return this.pbehaviorReasons.length ? this.pbehaviorReasons : Object.values(PAUSE_REASONS);
+    },
+
     types() {
       return Object.values(PBEHAVIOR_TYPES);
     },
