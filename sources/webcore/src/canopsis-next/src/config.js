@@ -95,6 +95,7 @@ export const API_ROUTES = {
   heartbeat: '/api/v2/heartbeat/',
   dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
+  alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
 };
 
 export const COLORS = {

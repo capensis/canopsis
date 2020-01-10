@@ -50,7 +50,7 @@
         :headers="headers",
         :total-items="alarmsMeta.total",
         :pagination.sync="vDataTablePagination",
-        :loading="alarmsPending",
+        :loading="alarmsPending || alarmColumnFiltersPending",
         ref="dataTable",
         item-key="_id",
         hide-actions,
@@ -70,7 +70,12 @@
               v-for="column in columns",
               @click="props.expanded = !props.expanded"
             )
-              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+              alarm-column-value(
+                :alarm="props.item",
+                :column="column",
+                :columnFiltersMap="columnFiltersMap",
+                :widget="widget"
+              )
             td
               actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
@@ -112,6 +117,7 @@ import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
 /**
  * Alarm-list component
@@ -142,6 +148,7 @@ export default {
     widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
+    alarmColumnFilters,
   ],
   props: {
     widget: {
@@ -162,6 +169,7 @@ export default {
       selected: [],
     };
   },
+
   computed: {
     activeRange() {
       const { tstart, tstop } = this.query;
@@ -212,6 +220,10 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+  },
+
+  mounted() {
+    this.fetchAlarmColumnFilters();
   },
   methods: {
     removeHistoryFilter() {
