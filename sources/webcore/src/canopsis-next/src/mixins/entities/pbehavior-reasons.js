@@ -8,10 +8,10 @@ export default {
   computed: {
     ...mapGetters({
       pbehaviorReasonsPending: 'pending',
-      pbehaviorReasons: 'pbehaviorReasons',
+      pbehaviorReasonsData: 'pbehaviorReasons',
     }),
-    pbehaviorReasonsOrDefault() {
-      return this.pbehaviorReasons.length ? this.pbehaviorReasons : Object.values(PAUSE_REASONS);
+    pbehaviorReasons() {
+      return this.pbehaviorReasonsData.length ? this.pbehaviorReasonsData : Object.values(PAUSE_REASONS);
     },
   },
   methods: {
