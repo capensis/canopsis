@@ -50,7 +50,7 @@
         :headers="headers",
         :total-items="alarmsMeta.total",
         :pagination.sync="vDataTablePagination",
-        :loading="alarmsPending",
+        :loading="alarmsPending || alarmColumnFiltersPending",
         ref="dataTable",
         item-key="_id",
         hide-actions,
@@ -169,6 +169,7 @@ export default {
       selected: [],
     };
   },
+
   computed: {
     activeRange() {
       const { tstart, tstop } = this.query;
@@ -219,6 +220,10 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+  },
+
+  mounted() {
+    this.fetchAlarmColumnFilters();
   },
   methods: {
     removeHistoryFilter() {

@@ -20,16 +20,13 @@ export default {
       }, {});
     },
   },
-  mounted() {
-    this.fetchAlarmColumnFilters();
-  },
   methods: {
     ...mapActions(['fetchAlarmColumnFilters']),
 
     getFilter(filter, attributes = []) {
-      return value => (this.$options.filters[filter]
-        ? this.$options.filters[filter](value, ...attributes)
-        : value);
+      const filterFunc = this.$options.filters[filter];
+
+      return value => (filterFunc ? filterFunc(value, ...attributes) : value);
     },
   },
 };
