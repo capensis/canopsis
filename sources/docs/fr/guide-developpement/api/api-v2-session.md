@@ -90,10 +90,7 @@ Permet de lister les sessions.
 
 #### Réponse en cas de réussite
 
-**Condition** : sessions trouver 
-
-**Code** : `200 OK`
-
+**Condition** : sessions trouver Logs et/ou captures d'écran pertinent
 ```json
 [
     {
