@@ -21,7 +21,7 @@ export default {
     [types.FETCH_PBEHAVIOR_REASONS](state) {
       state.pending = true;
     },
-    [types.FETCH_PBEHAVIOR_REASONS_COMPLETED](state, { reasons }) {
+    [types.FETCH_PBEHAVIOR_REASONS_COMPLETED](state, { reasons = [] }) {
       state.pending = false;
       state.pbehaviorReasons = reasons;
     },

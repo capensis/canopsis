@@ -25,7 +25,7 @@
         v-validate="'required'",
         :label="$t('modals.createPbehavior.steps.general.fields.reason')",
         :loading="pbehaviorReasonsPending",
-        :items="pbehaviorReasons",
+        :items="pbehaviorReasonsOrDefault",
         :error-messages="errors.collect('reason')",
         name="reason",
         data-test="pbehaviorReason"
