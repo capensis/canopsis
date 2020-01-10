@@ -730,6 +730,26 @@
         "desc" : "Rights on view: history alarms"
     },
     {
+        "_id" : "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+        "loader_id" : "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+        "crecord_write_time" : 1543852261,
+        "crecord_type" : "action",
+        "enable" : true,
+        "type" : "RW",
+        "checksum" : 15,
+        "crecord_creation_time" : 1543852261,
+        "crecord_name" : null,
+        "desc" : "Rights on view: Explorateur de Contexte"
+    },
+    {
+        "_id" : "view_context_explorer",
+        "loader_id" : "view_context_explorer",
+        "crecord_type" : "action",
+        "type" : "RW",
+        "crecord_name" : "view_context_explorer",
+        "desc" : "Rights on view: context explorer"
+    },
+    {
         "_id" : "serviceweather_ack",
         "loader_id" : "serviceweather_ack",
         "crecord_name" : "serviceweather_ack",

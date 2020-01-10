@@ -1,0 +1,73 @@
+{
+  "_id": "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+  "loader_id": "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+  "description": "Explorateur de Contexte",
+  "tags" : [
+		"contexte"
+	],
+  "title": "Explorateur de Contexte",
+  "enabled": true,
+  "name": "Explorateur de Contexte",
+  "group_id": "6ffcc336-b61d-4937-ad04-2ec4944fd2d8",
+  "loader_no_update" : true,
+  "tabs": [
+    {
+      "rows": [
+        {
+          "widgets": [
+            {
+              "title": "Explorateur de Contexte",
+              "_id": "widget_Context_505742f9-faf5-445e-a537-2288a84fc58e",
+              "type": "Context",
+              "parameters": {
+                "widgetColumns": [
+                  {
+                    "value": "name",
+                    "label": "Name"
+                  },
+                  {
+                    "value": "type",
+                    "label": "Type"
+                  }
+                ],
+                "sort": {
+                  "order": "ASC"
+                },
+                "viewFilters": [
+                  {
+                    "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"component\"\n        }\n    ]\n}",
+                    "title": "Composant"
+                  },
+                  {
+                    "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"connector\"\n        }\n    ]\n}",
+                    "title": "Connecteur"
+                  },
+                  {
+                    "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"resource\"\n        }\n    ]\n}",
+                    "title": "Ressource"
+                  },
+                  {
+                    "filter": "{\n    \"$and\": [\n        {\n            \"type\": \"watcher\"\n        }\n    ]\n}",
+                    "title": "Observateur"
+                  }
+                ],
+                "itemsPerPage": 10,
+                "mainFilter": null,
+                "selectedTypes": []
+              },
+              "size": {
+                "md": 3,
+                "sm": 3,
+                "lg": 12
+              }
+            }
+          ],
+          "_id": "view-row_3a135e52-51c8-419a-8b8b-e00835c1a23b",
+          "title": "Ligne 1"
+        }
+      ],
+      "_id": "view-tab_e5a736cf-6f3c-4edf-82d3-814ba59cb6cb",
+      "title": "Default"
+    }
+  ]
+}
