@@ -77,7 +77,7 @@ module.exports = {
     const [firstAlarm] = browser.globals.temporary.alarmsList;
 
     alarmsTable
-      .clickOnRowInfoPopupOpenButton(firstAlarm._id)
+      .clickOnRowInfoPopupOpenButton(firstAlarm._id, 'Connector')
       .verifyRowInfoPopupVisible(firstAlarm._id);
   },
 

@@ -697,7 +697,7 @@
         
     **Expected result**: two default filters are set with OR-rule.
 
-* [ ] **Live reporting with custom dates can be created.**
+* [x] **Live reporting with custom dates can be created.**
     1. To press the button “Create” on “Live reporting” section in the “Advanced settings”.
     2. To choose the “Custom” option in dropdown “Quick ranges”.
     3. To set a date interval.
@@ -705,14 +705,14 @@
         
     **Expected result**: a live reporting with custom dates is created.
 
-* [ ] **Live reporting with determined dates can be created.**
+* [x] **Live reporting with determined dates can be created.**
     1. To press the button “Create” on “Live reporting” section in the “Advanced settings”.
     2. To choose any option except “Custom” in dropdown “Quick ranges”.
     3. To press the button “Apply”.
         
     **Expected result**: a live reporting with determined dates is created.
 
-* [ ] **Live reporting can be edited.**
+* [x] **Live reporting can be edited.**
     1. To create any live reporting in the “Advanced settings”.
     2. To press the button “Edit”.
     3. To change some settings of the live reporting.
@@ -720,13 +720,13 @@
         
     **Expected result**: the live reporting is edited.
 
-* [ ] **Live reporting can be deleted.**
+* [x] **Live reporting can be deleted.**
     1. To create any live reporting in the “Advanced settings”.
     2. To press the button with trash bin.
         
     **Expected result**: the live reporting is deleted.
 
-* [ ] **Info popup can be created.**
+* [x] **Info popup can be created.**
     1. To press the button “Create/Edit” in the section “Info popup”.
     2. To press the button with plus on the appeared modal window.
     3. To select the column’s name.
@@ -736,7 +736,7 @@
         
     **Expected result**: info popup is created.
 
-* [ ] **Info popup should displayed on table column.**
+* [x] **Info popup should displayed on table column.**
     1. To press the button “Create/Edit” in the section “Info popup”.
     2. To press the button with plus on the appeared modal window.
     3. To select the column’s name.
@@ -747,7 +747,7 @@
         
     **Expected result**: button with "i" is shown on the column.
 
-* [ ] **Info popup can be edited.**
+* [x] **Info popup can be edited.**
     1. To create any info popup in the section “Info popup”.
     2. To press the button “Create/Edit” in the section “Info popup”.
     3. To press the button with pencil.
@@ -757,7 +757,7 @@
         
     **Expected result**: info popup is edited.
 
-* [ ] **Info popup can be deleted.**
+* [x] **Info popup can be deleted.**
     1. To create any info popup in the section “Info popup”.
     2. To press the button “Create/Edit” in the section “Info popup”.
     3. To press the button with trash bin.

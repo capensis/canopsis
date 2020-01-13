@@ -14,7 +14,13 @@
         )
           v-icon add
       v-layout(column)
-        v-card.my-1(v-for="(popup, index) in popups", :key="index", flat, color="secondary white--text")
+        v-card.my-1(
+          v-for="(popup, index) in popups",
+          :key="index",
+          flat,
+          data-test="infoPopupSetting",
+          color="secondary white--text"
+        )
           v-card-title
             v-layout(justify-space-between)
               div {{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}

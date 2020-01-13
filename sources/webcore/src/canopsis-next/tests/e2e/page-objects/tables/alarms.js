@@ -13,8 +13,12 @@ const commands = {
     return this.customClick('@resetAlarmsDateIntervalButton');
   },
 
-  clickOnRowInfoPopupOpenButton(id) {
-    return this.customClick(this.el('@tableRowInfoPopupOpen', id));
+  clickOnRowInfoPopupOpenButton(id, column) {
+    return this.customClick(this.el('@tableRowInfoPopupOpen', id, column));
+  },
+
+  getRowInfoPopupText(id, callback) {
+    return this.getText(this.el('@tableRowInfoPopupContent', id), ({ value }) => callback(value));
   },
 
   clickOnRowInfoPopupCloseButton(id) {
@@ -27,6 +31,10 @@ const commands = {
 
   verifyRowInfoPopupDeleted(id) {
     return this.assert.hidden(this.el('@alarmInfoPopup', id));
+  },
+
+  verifyRowInfoPopupOpenButtonDeleted(id, column) {
+    return this.waitForElementNotPresent(this.el('@tableRowInfoPopupOpen', id, column));
   },
 
   verifyAlarmTimeLineVisible(id) {
@@ -73,7 +81,7 @@ module.exports = scopedPageObject({
 
     alarmInfoPopup: sel('alarmInfoPopup-%s'),
 
-    tableRowInfoPopupOpen: `${sel('tableRow-%s')} ${sel('alarmInfoPopupOpenButton')}`,
+    tableRowInfoPopupOpen: `${sel('tableRow-%s')} ${sel('alarmValue-%s')} ${sel('alarmInfoPopupOpenButton')}`,
     tableRowInfoPopupClose: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupCloseButton')}`,
     tableRowInfoPopupContent: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupContent')}`,
 
