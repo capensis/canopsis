@@ -10,7 +10,7 @@ Cliquez sur "add" pour créer votre premier filtre, une fenêtre apparaît :
 
 ![create_filter](img/create_filter.png)
 
-Donnez un titre à votre filtre, deux méthodes de création, une pour les néophytes et une pour les utilisateurs expérimentés. Nous allons nous concentrer sur la première méthode, vous verrez dans un second temps que la méthode avancée évolue en même temps que vos actions sur l'autre méthode.
+Donnez un titre à votre filtre. Il existe deux méthodes de création, une pour les néophytes et une pour les utilisateurs expérimentés. Nous allons nous concentrer sur la première méthode, vous verrez dans un second temps que la méthode avancée évolue en même temps que vos actions sur l'autre méthode.
 
 ## AND / OR
 
@@ -36,7 +36,7 @@ Dans la seconde, le filtre qui lui sera alloué :
 
 Puis, dans la dernière, il vous est possible de remplir un champ qui sera "matché" avec le filtre.
 
-Il vous est possible d'ajouter autant de filtre que vous souhaitez en cliquant sur "Add a rule".
+Il vous est possible d'ajouter autant de filtres que vous souhaitez en cliquant sur "Add a rule".
 
 Vous pouvez aussi séparer vos filtres en groupes. Simplement en cliquant sur "Add a group", et le supprimer en cliquant simplement sur "Delete groupe".
 
@@ -44,7 +44,7 @@ Vous pouvez aussi séparer vos filtres en groupes. Simplement en cliquant sur "A
 
 On souhaite créer un filtre appelé "Mon premier filtre !" qui récupère les composants dont le nom est égal à "composants" :
 
-Cela va ce fait trés simplement comme suit
+Cela se fait très simplement comme suit
 
 ![example](img/exmpl1.png)
 

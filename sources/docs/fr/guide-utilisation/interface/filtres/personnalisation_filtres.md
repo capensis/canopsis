@@ -1,5 +1,7 @@
 # Personnalisation des filtres
 
+!!! info "Disponible à partir de Canopsis 3.35.0"
+
 La liste des attributs présentés par l'éditeur de filtres peut être personnalisée.  
 L'éditeur de filtres est utilisé pour filtrer 2 types d'objets : 
 
