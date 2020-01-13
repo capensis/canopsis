@@ -85,9 +85,11 @@ export default {
       if (isFormValid) {
         if (this.itemsWithoutAck.length) {
           const { fastAckOutput } = this.config;
-          const eventData = fastAckOutput && fastAckOutput.enabled ? { output: fastAckOutput.value } : {};
 
-          await this.createEvent(EVENT_ENTITY_TYPES.ack, this.itemsWithoutAck, eventData);
+          await this.createEvent(EVENT_ENTITY_TYPES.ack, this.itemsWithoutAck, {
+            output: fastAckOutput && fastAckOutput.enabled ? fastAckOutput.value : '',
+            ticket: this.form.ticket,
+          });
         }
 
         await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
