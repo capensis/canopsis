@@ -207,6 +207,10 @@ export default {
         dropDown: actions.slice(3),
       };
 
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
       if (!this.isResolvedAlarm && featuresService.has('components.alarmListActionPanel.computed.actions')) {
         return featuresService.call('components.alarmListActionPanel.computed.actions', this, result);
       }
