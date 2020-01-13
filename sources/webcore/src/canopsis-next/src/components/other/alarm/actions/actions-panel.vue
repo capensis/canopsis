@@ -54,11 +54,11 @@ export default {
       default: false,
     },
   },
-  computed: {
-    actionsMap() {
-      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  data() {
+    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-      return {
+    return {
+      actionsMap: {
         ack: {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
@@ -131,8 +131,10 @@ export default {
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
         },
-      };
-    },
+      },
+    };
+  },
+  computed: {
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
@@ -205,7 +207,11 @@ export default {
         dropDown: actions.slice(3),
       };
 
-      if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
+      if (!this.isResolvedAlarm && featuresService.has('components.alarmListActionPanel.computed.actions')) {
         return featuresService.call('components.alarmListActionPanel.computed.actions', this, result);
       }
 
