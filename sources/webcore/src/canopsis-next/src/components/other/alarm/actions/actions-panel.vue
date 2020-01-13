@@ -207,7 +207,7 @@ export default {
         dropDown: actions.slice(3),
       };
 
-      if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
+      if (!this.isResolvedAlarm && featuresService.has('components.alarmListActionPanel.computed.actions')) {
         return featuresService.call('components.alarmListActionPanel.computed.actions', this, result);
       }
 
