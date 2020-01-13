@@ -771,6 +771,7 @@ module.exports = {
       ({ responseData: { success, data: [response] } }) => {
         browser.assert.equal(success, true);
         browser.assert.equal(response.total, ALARMS_COUNT);
+        browser.globals.temporary.alarmsList = response.alarms;
       },
     );
   },
