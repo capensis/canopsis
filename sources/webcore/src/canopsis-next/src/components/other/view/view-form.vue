@@ -29,6 +29,21 @@
           :label="$t('common.enabled')",
           data-test="viewFieldEnabled"
         )
+        v-layout.mb-3
+          v-flex(xs5)
+            v-switch(
+              v-model="periodicRefresh.enabled",
+              label="Periodic refresh",
+              color="primary",
+              hide-details
+            )
+          v-flex(xs7)
+            v-text-field.pt-0(
+              v-model="periodicRefresh.value",
+              :disabled="!periodicRefresh.enabled",
+              type="number",
+              hide-details
+            )
     v-layout(wrap, justify-center)
       v-flex(xs11)
         v-combobox(
@@ -83,6 +98,15 @@ export default {
       type: Array,
       default: () => [],
     },
+  },
+  // TODO: demo
+  data() {
+    return {
+      periodicRefresh: {
+        enabled: false,
+        value: 0,
+      },
+    };
   },
   computed: {
     groupNames() {

@@ -11,8 +11,24 @@
     .fab
       v-layout(data-test="controlViewLayout", column)
         v-tooltip(left)
-          v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
+          v-btn(
+            slot="activator",
+            :input-value="isPeriodicRefreshEnabled",
+            color="secondary",
+            fab,
+            dark,
+            @click.stop="refreshView"
+          )
             v-icon refresh
+            v-progress-circular.periodic-refresh-progress(
+              :rotate="270",
+              :size="30",
+              :width="2",
+              :value="periodicBehaviorProgressValue",
+              color="white",
+              button
+            )
+              span {{ value }}
           span {{ $t('common.refresh') }}
         v-speed-dial(
           v-if="hasUpdateAccess",
@@ -106,6 +122,9 @@ import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
 
+// TODO: demo
+const PERIODIC_REFRESH_DEFAULT_VALUE = 10;
+
 export default {
   components: {
     ViewTabRows,
@@ -127,9 +146,19 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
+
+      // TODO: demo
+      interval: {},
+      value: PERIODIC_REFRESH_DEFAULT_VALUE,
+      isPeriodicRefreshEnabled: true,
     };
   },
   computed: {
+    // TODO: demo
+    periodicBehaviorProgressValue() {
+      return this.value * 10;
+    },
+
     hasUpdateAccess() {
       return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
     },
@@ -160,11 +189,23 @@ export default {
 
   mounted() {
     this.fetchView({ id: this.id });
+
+    // TODO: demo
+    this.interval = setInterval(() => {
+      if (this.value === 0) {
+        this.value = PERIODIC_REFRESH_DEFAULT_VALUE;
+      } else {
+        this.value -= 1;
+      }
+    }, 1000);
   },
 
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
+
+    // TODO: demo
+    clearInterval(this.interval);
   },
 
   methods: {
@@ -259,3 +300,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .periodic-refresh-progress {
+    top: -19px !important;
+    left: 9px !important;
+  }
+</style>
