@@ -701,7 +701,7 @@
         
     **Expected result**: the second info popup is created.
 
-* [ ] **“More infos” popup can be created.**
+* [x] **“More infos” popup can be created.**
     1. To press the button “Create” in the section “More infos popup”.
     2. To input any text to the field.
     3. To press the button “Submit”.
@@ -709,7 +709,7 @@
         
     **Expected result**: “More infos” popup is created.
 
-* [ ] **“More infos” modal window is showing.**
+* [x] **“More infos” modal window is showing.**
     1. Create "More infos popup"
     2. To press the button “Save”.
     3. To press the button "..." on table item actions column
@@ -717,13 +717,21 @@
         
     **Expected result**: “More infos” popup is shown.
 
-* [ ] **“More infos” popup can be edited.**
+* [x] **“More infos” popup can be edited.**
     1. To create any “More infos” popup in the section “More infos popup”.
     2. To press the button “Edit”.
     3. To change the text in the appeared window.
     4. To press the button “Submit”.
         
     **Expected result**: “More infos” popup is edited.
+
+* [x] **“More infos” modal window is showing with edited data.**
+    1. Create "More infos popup"
+    2. To press the button “Save”.
+    3. To press the button "..." on table item actions column
+    4. To press "More infos"
+        
+    **Expected result**: “More infos” popup is shown with new data.
 
 * [ ] **“More infos” popup can be deleted.**
     1. To create any “More infos” popup in the section “More infos popup”.

@@ -5,6 +5,7 @@ import {
   SORT_ORDERS_STRING,
   ALARMS_WIDGET_SORT_FIELD,
   PAGINATION_PER_PAGE_VALUES,
+  ALARMS_RESOLVED_SHARED_ACTIONS,
   FILTERS_TYPE,
   FILTER_COLUMNS,
   VALUE_TYPES,
@@ -66,6 +67,8 @@ const LAST_YEAR_ALARMS_COUNT = 402;
 
 const ALARM_INFO_POPUP_TEXT = 'Info popup template';
 const ALARM_INFO_POPUP_UPDATED_TEXT = 'Info popup template';
+const MORE_INFOS_TEXT = 'More infos text';
+const MORE_INFOS_CHANGED_TEXT = 'More infos changed text';
 
 module.exports = {
   async before(browser, done) {
@@ -950,6 +953,127 @@ module.exports = {
 
         alarmsTable.verifyRowInfoPopupOpenButtonDeleted(firstAlarm._id, 'Connector name');
         alarmsTable.verifyRowInfoPopupOpenButtonDeleted(firstAlarm._id, 'Connector');
+      },
+    );
+  },
+
+  '"More infos" popup can be created': (browser) => {
+    const textEditorModal = browser.page.modals.common.textEditor();
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(false)
+      .setResolvedFilter(true)
+      .clickCreateMoreInfos();
+
+    textEditorModal
+      .verifyModalOpened()
+      .clickField()
+      .setField(MORE_INFOS_TEXT)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success, data: [response] } }) => {
+        browser.assert.equal(success, true);
+        browser.globals.temporary.alarmsList = response.alarms;
+      },
+    );
+  },
+
+  '"More infos" modal window is showing': (browser) => {
+    const moreInfosModal = browser.page.modals.alarm.moreInfos();
+    const commonTable = browser.page.tables.common();
+
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable.clickOnSharedAction(firstAlarm._id, ALARMS_RESOLVED_SHARED_ACTIONS.MORE_INFOS);
+    moreInfosModal
+      .verifyModalOpened()
+      .getContentText((text) => {
+        browser.assert.equal(text, MORE_INFOS_TEXT);
+      })
+      .clickOutside()
+      .verifyModalClosed();
+  },
+
+  '"More infos" popup can be edited': (browser) => {
+    const textEditorModal = browser.page.modals.common.textEditor();
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(false)
+      .setResolvedFilter(true)
+      .clickEditMoreInfos();
+
+    textEditorModal
+      .verifyModalOpened()
+      .clickField()
+      .clearField()
+      .setField(MORE_INFOS_CHANGED_TEXT)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.waitFirstUserPreferencesXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
+      },
+    );
+  },
+
+  '"More infos" modal window is showing with edited data': (browser) => {
+    const moreInfosModal = browser.page.modals.alarm.moreInfos();
+    const commonTable = browser.page.tables.common();
+
+    const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+    commonTable.clickOnSharedAction(firstAlarm._id, ALARMS_RESOLVED_SHARED_ACTIONS.MORE_INFOS);
+    moreInfosModal
+      .verifyModalOpened()
+      .getContentText((text) => {
+        browser.assert.equal(text, MORE_INFOS_CHANGED_TEXT);
+      })
+      .clickOutside()
+      .verifyModalClosed();
+  },
+
+  '"More infos" popup can be deleted': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickFilterOnOpenResolved()
+      .setOpenFilter(false)
+      .setResolvedFilter(true)
+      .clickDeleteMoreInfos();
+
+    browser.page.modals.common.confirmation()
+      .verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.waitFirstUserPreferencesXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
       },
     );
   },
