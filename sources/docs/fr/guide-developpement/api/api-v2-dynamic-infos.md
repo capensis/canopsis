@@ -1,9 +1,10 @@
 # Informations dynamiques
 
-L'API dynamic-infos permet de consulter, créer, modifier et supprimer des règles de gestion des informations dynamiques.
+!!! info "Disponible uniquement dans Canopsis CAT"
 
-!!! note
-    Les règles de gestion des informations dynamiques seront utilisées par le moteur Go `dynamic-infos`, qui n'est pas encore implémenté, pour ajouter des informations aux alarmes.
+!!! info "Disponible à partir de Canopsis 3.34.0"
+
+L'API dynamic-infos permet de consulter, créer, modifier et supprimer des règles de gestion des informations dynamiques. Ces règles sont utilisées par le moteur Go [`dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) pour ajouter des informations aux alarmes.
 
 ## Création d'une règle
 

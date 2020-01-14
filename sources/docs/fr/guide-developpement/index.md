@@ -71,6 +71,7 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
   * [Import](api/api-v2-import.md)
   * [PBehavior](api/api-v2-pbehavior.md)
   * [Watchers](api/api-v2-watcherng.md)
+  * [Météo des services](api/api-v2-weather.md)
   * [Webhooks](api/api-v2-webhooks.md)
 
 # Gestion de la documentation

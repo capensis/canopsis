@@ -1,0 +1,7 @@
+---
+- name: Deploy Canopsis default configuration file for Nginx
+  template:
+    src: nginx/default.j2
+    dest: /etc/nginx/conf.d/default.conf
+  vars:
+    TARGET: "http://{{ canopsis_gunicorn_host }}:{{ canopsis_gunicorn_port }}/"

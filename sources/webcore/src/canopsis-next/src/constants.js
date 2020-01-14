@@ -30,6 +30,7 @@ export const ENTITIES_TYPES = {
   snmpRule: 'snmpRule',
   action: 'action',
   heartbeat: 'heartbeat',
+  dynamicInfo: 'dynamicInfo',
 };
 
 export const MODALS = {
@@ -80,6 +81,8 @@ export const MODALS = {
   selectViewTab: 'select-view-tab',
   createAction: 'create-action',
   createHeartbeat: 'create-heartbeat',
+  createDynamicInfo: 'create-dynamic-info',
+  createDynamicInfoInformation: 'create-dynamic-info-information',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -341,6 +344,18 @@ export const FILTER_OPERATORS = {
   isNotNull: 'is not null',
 };
 
+export const FILTER_OPERATORS_FOR_ARRAY = [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn];
+
+export const FILTER_MONGO_OPERATORS = {
+  and: '$and',
+  or: '$or',
+  equal: '$eq',
+  notEqual: '$ne',
+  in: '$in',
+  notIn: '$nin',
+  regex: '$regex',
+};
+
 export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
@@ -349,7 +364,7 @@ export const FILTER_INPUT_TYPES = {
 };
 
 export const FILTER_DEFAULT_VALUES = {
-  condition: '$and',
+  condition: FILTER_MONGO_OPERATORS.and,
   rule: {
     field: '',
     operator: '',
@@ -357,7 +372,7 @@ export const FILTER_DEFAULT_VALUES = {
     inputType: FILTER_INPUT_TYPES.string,
   },
   group: {
-    condition: '$and',
+    condition: FILTER_MONGO_OPERATORS.and,
     groups: {},
     rules: {},
   },
@@ -626,6 +641,7 @@ export const USERS_RIGHTS = {
       snmpRule: 'models_exploitation_snmpRule',
       action: 'models_exploitation_action',
       heartbeat: 'models_exploitation_heartbeat',
+      dynamicInfo: 'models_exploitation_dynamicInfo',
     },
   },
   business: {
@@ -1011,6 +1027,7 @@ export const EXPLOITATION_PAGES_RULES = {
   snmpRule: { edition: CANOPSIS_EDITION.cat },
   heartbeat: { stack: CANOPSIS_STACK.go },
   action: { stack: CANOPSIS_STACK.go },
+  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
@@ -1019,6 +1036,7 @@ export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
+  [USERS_RIGHTS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
 };
 
 export const WIDGET_TYPES_RULES = {
