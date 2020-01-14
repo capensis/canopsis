@@ -3,13 +3,17 @@
     v-list-tile(slot="activator") {{ $t('settings.defaultSortColumn') }}
     v-container
       v-layout(data-test="defaultSortColumnOrderByLayout", row)
-        v-combobox(
-          v-field="value.column",
-          :items="columns",
-          :label="columnsLabel",
-          item-text="label",
-          item-value="value"
-        )
+        v-tooltip(top)
+          v-combobox(
+            v-field="value.column",
+            :items="columns",
+            :label="columnsLabel",
+            :return-object="false",
+            item-text="label",
+            item-value="value",
+            slot="activator"
+          )
+          span {{ $t('settings.sortColumnNoData') }}
       v-layout(data-test="defaultSortColumnOrdersLayout", row)
         v-select(
           v-field="value.order",
