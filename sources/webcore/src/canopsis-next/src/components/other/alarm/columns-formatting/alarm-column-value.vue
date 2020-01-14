@@ -13,7 +13,7 @@
           div(v-else, v-bind="component.bind", v-on="component.on")
           v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
             v-icon(small) info
-      v-card(:data-test="`alarmInfoPopup-${alarm._id}`", dark)
+      v-card(:data-test="`alarmInfoPopup-${alarm._id}-column-${column.text}`", dark)
         v-card-title.primary.pa-2.white--text
           v-layout(justify-space-between, align-center)
             h4 {{ $t('alarmList.infoPopup') }}

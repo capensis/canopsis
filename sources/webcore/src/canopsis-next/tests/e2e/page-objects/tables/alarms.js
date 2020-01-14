@@ -17,20 +17,20 @@ const commands = {
     return this.customClick(this.el('@tableRowInfoPopupOpen', id, column));
   },
 
-  getRowInfoPopupText(id, callback) {
-    return this.getText(this.el('@tableRowInfoPopupContent', id), ({ value }) => callback(value));
+  getRowInfoPopupText(id, column, callback) {
+    return this.getText(this.el('@tableRowInfoPopupContent', id, column), ({ value }) => callback(value));
   },
 
-  clickOnRowInfoPopupCloseButton(id) {
-    return this.customClick(this.el('@tableRowInfoPopupClose', id));
+  clickOnRowInfoPopupCloseButton(id, column) {
+    return this.customClick(this.el('@tableRowInfoPopupClose', id, column));
   },
 
-  verifyRowInfoPopupVisible(id) {
-    return this.assert.visible(this.el('@alarmInfoPopup', id));
+  verifyRowInfoPopupVisible(id, column) {
+    return this.assert.visible(this.el('@alarmInfoPopup', id, column));
   },
 
-  verifyRowInfoPopupDeleted(id) {
-    return this.assert.hidden(this.el('@alarmInfoPopup', id));
+  verifyRowInfoPopupDeleted(id, column) {
+    return this.assert.hidden(this.el('@alarmInfoPopup', id, column));
   },
 
   verifyRowInfoPopupOpenButtonDeleted(id, column) {
@@ -79,11 +79,11 @@ module.exports = scopedPageObject({
     resetAlarmsDateIntervalButton: `${sel('resetAlarmsDateInterval')} .v-chip__close`,
     alarmTimeLine: sel('alarmTimeLine-%s'),
 
-    alarmInfoPopup: sel('alarmInfoPopup-%s'),
+    alarmInfoPopup: sel('alarmInfoPopup-%s-column-%s'),
 
     tableRowInfoPopupOpen: `${sel('tableRow-%s')} ${sel('alarmValue-%s')} ${sel('alarmInfoPopupOpenButton')}`,
-    tableRowInfoPopupClose: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupCloseButton')}`,
-    tableRowInfoPopupContent: `${sel('alarmInfoPopup-%s')} ${sel('alarmInfoPopupContent')}`,
+    tableRowInfoPopupClose: `${sel('alarmInfoPopup-%s-column-%s')} ${sel('alarmInfoPopupCloseButton')}`,
+    tableRowInfoPopupContent: `${sel('alarmInfoPopup-%s-column-%s')} ${sel('alarmInfoPopupContent')}`,
 
     extraDetailsPopup: sel('extraDetails-%s'),
 

@@ -17,7 +17,7 @@ const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
 
 const DEFAULT_COLUMN_COUNT = 8;
-const ALARMS_COUNT = 401;
+const ALARMS_COUNT = 402;
 const NEW_COLUMN_NAME = 'New column';
 const NEW_COLUMN_CHANGED_NAME = 'New renamed column';
 const CONNECTOR_NAME_EQUAL_FILTER = {
@@ -62,7 +62,7 @@ const INTERVAL_START_DATE = '25/11/2019 00:00';
 const INTERVAL_END_DATE = '26/11/2019 00:00';
 const INTERVAL_ALARMS_COUNT = 0;
 const LAST_SEVEN_DAY_ALARMS_COUNT = 0;
-const LAST_YEAR_ALARMS_COUNT = 401;
+const LAST_YEAR_ALARMS_COUNT = 402;
 
 const ALARM_INFO_POPUP_TEXT = 'Info popup template';
 const ALARM_INFO_POPUP_UPDATED_TEXT = 'Info popup template';
@@ -816,10 +816,12 @@ module.exports = {
     const alarmsTable = browser.page.tables.alarms();
     const [firstAlarm] = browser.globals.temporary.alarmsList;
 
+    const column = 'Connector name';
+
     alarmsTable
-      .clickOnRowInfoPopupOpenButton(firstAlarm._id, 'Connector name')
-      .verifyRowInfoPopupVisible(firstAlarm._id)
-      .getRowInfoPopupText(firstAlarm._id, (text) => {
+      .clickOnRowInfoPopupOpenButton(firstAlarm._id, column)
+      .verifyRowInfoPopupVisible(firstAlarm._id, column)
+      .getRowInfoPopupText(firstAlarm._id, column, (text) => {
         browser.assert.equal(text, ALARM_INFO_POPUP_TEXT);
       });
   },
@@ -830,6 +832,8 @@ module.exports = {
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
     const alarmsTable = browser.page.tables.alarms();
+
+    const column = 'Connector name';
 
     browser.page.view()
       .openWidgetSettings(browser.globals.defaultViewData.widgetId);
@@ -862,9 +866,56 @@ module.exports = {
         const [firstAlarm] = browser.globals.temporary.alarmsList;
 
         alarmsTable
-          .clickOnRowInfoPopupOpenButton(firstAlarm._id, 'Connector name')
-          .verifyRowInfoPopupVisible(firstAlarm._id)
-          .getRowInfoPopupText(firstAlarm._id, (text) => {
+          .clickOnRowInfoPopupOpenButton(firstAlarm._id, column)
+          .verifyRowInfoPopupVisible(firstAlarm._id, column)
+          .getRowInfoPopupText(firstAlarm._id, column, (text) => {
+            browser.assert.equal(text, ALARM_INFO_POPUP_UPDATED_TEXT);
+          });
+      },
+    );
+  },
+
+  'More than one info popup can be added': (browser) => {
+    const infoPopupModal = browser.page.modals.common.infoPopupSetting();
+    const addInfoPopupModal = browser.page.modals.common.addInfoPopup();
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const alarmsTable = browser.page.tables.alarms();
+
+    const column = 'Connector';
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickCreateOrEditInfoPopup();
+
+    infoPopupModal
+      .verifyModalOpened()
+      .clickAddPopup();
+
+    addInfoPopupModal
+      .verifyModalOpened()
+      .selectSelectedColumn(INFO_POPUP_DEFAULT_COLUMNS.connector)
+      .setTemplate(ALARM_INFO_POPUP_TEXT)
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    infoPopupModal
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.waitFirstUserPreferencesXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
+        const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+        alarmsTable
+          .clickOnRowInfoPopupOpenButton(firstAlarm._id, column)
+          .verifyRowInfoPopupVisible(firstAlarm._id, column)
+          .getRowInfoPopupText(firstAlarm._id, column, (text) => {
             browser.assert.equal(text, ALARM_INFO_POPUP_UPDATED_TEXT);
           });
       },
@@ -886,6 +937,7 @@ module.exports = {
 
     infoPopupModal
       .verifyModalOpened()
+      .clickDeletePopup(2)
       .clickDeletePopup(1)
       .clickSubmitButton()
       .verifyModalClosed();
@@ -897,6 +949,7 @@ module.exports = {
         const [firstAlarm] = browser.globals.temporary.alarmsList;
 
         alarmsTable.verifyRowInfoPopupOpenButtonDeleted(firstAlarm._id, 'Connector name');
+        alarmsTable.verifyRowInfoPopupOpenButtonDeleted(firstAlarm._id, 'Connector');
       },
     );
   },

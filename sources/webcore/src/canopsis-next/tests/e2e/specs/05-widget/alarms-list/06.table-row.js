@@ -76,18 +76,22 @@ module.exports = {
     const alarmsTable = browser.page.tables.alarms();
     const [firstAlarm] = browser.globals.temporary.alarmsList;
 
+    const column = 'Connector';
+
     alarmsTable
-      .clickOnRowInfoPopupOpenButton(firstAlarm._id, 'Connector')
-      .verifyRowInfoPopupVisible(firstAlarm._id);
+      .clickOnRowInfoPopupOpenButton(firstAlarm._id, column)
+      .verifyRowInfoPopupVisible(firstAlarm._id, column);
   },
 
   'Information pop-up can be closed': (browser) => {
     const alarmsTable = browser.page.tables.alarms();
     const [firstAlarm] = browser.globals.temporary.alarmsList;
 
+    const column = 'Connector';
+
     alarmsTable
-      .clickOnRowInfoPopupCloseButton(firstAlarm._id)
-      .verifyRowInfoPopupDeleted(firstAlarm._id);
+      .clickOnRowInfoPopupCloseButton(firstAlarm._id, column)
+      .verifyRowInfoPopupDeleted(firstAlarm._id, column);
   },
 
   'Pressing on element shows details about this element': (browser) => {
