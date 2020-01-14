@@ -19,6 +19,7 @@
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
+          type="submit",
           :disabled="isDisabled",
           :loading="submitting",
           data-test="submitButton"

@@ -1,11 +1,10 @@
 ---
-canopsis_dev_src_path:
-canopsis_dev_with_deps: true
-canopsis_dev_without_deps: false
-
 canopsis_home: /opt/canopsis
 canopsis_user: canopsis
 canopsis_group: canopsis
+
+canopsis_gunicorn_host: localhost
+canopsis_gunicorn_port: "8082"
 
 canopsis_amqp_host: localhost
 canopsis_amqp_user: canopsis
