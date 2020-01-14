@@ -93,7 +93,10 @@ export const API_ROUTES = {
     userInterface: '/api/internal/user_interface',
   },
   heartbeat: '/api/v2/heartbeat/',
+  dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
+  alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
+  pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
 };
 
 export const COLORS = {

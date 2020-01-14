@@ -142,6 +142,9 @@ Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouto
 
 Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression se trouvant à droite du bouton 'Créer/Editer'. Une fenêtre vous demande alors de confirmer la suppression.
 
+!!! warning "Champs utilisables dans le filtre"
+    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un watcher, il faut utiliser `name`, et non `display_name`.
+
 #### Paramètres avancés
 ##### Template - Tuile
 

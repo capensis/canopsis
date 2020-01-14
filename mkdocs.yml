@@ -5,7 +5,7 @@ repo_url: https://git.canopsis.net/canopsis/canopsis
 
 docs_dir: 
    sources/docs/fr
-copyright: Documentation © Canopsis 2018–2019 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
+copyright: Documentation © Capensis 2018–2020 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
 theme:
   name: material

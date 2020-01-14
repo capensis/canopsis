@@ -70,6 +70,12 @@ export default {
           title: this.$t('alarmList.actions.titles.cancel'),
           method: this.showActionModal(MODALS.createCancelEvent),
         },
+        {
+          type: alarmsListActionsTypes.associateTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          title: this.$t('alarmList.actions.titles.associateTicket'),
+          method: this.showCreateAssociateTicketEventModal,
+        },
       ],
     };
   },
@@ -101,7 +107,7 @@ export default {
         config: {
           pbehavior: {
             filter: {
-              _id: { $in: [this.items.map(item => item.d)] },
+              _id: { $in: this.items.map(item => item.d) },
             },
           },
           action: data => this.createPbehavior({
@@ -109,6 +115,17 @@ export default {
             parents: [this.items],
             parentsType: ENTITIES_TYPES.alarm,
           }),
+        },
+      });
+    },
+
+    showCreateAssociateTicketEventModal() {
+      this.$modals.show({
+        name: MODALS.createAssociateTicketEvent,
+        config: {
+          ...this.modalConfig,
+
+          fastAckOutput: this.widget.parameters.fastAckOutput,
         },
       });
     },

@@ -1,5 +1,5 @@
 <template lang="pug">
-  model-wrapper
+  modal-wrapper
     template(slot="fullTitle")
       span.headline {{ $t('modals.alarmsList.title') }}
       v-btn(icon, dark, @click.native="$modals.hide")

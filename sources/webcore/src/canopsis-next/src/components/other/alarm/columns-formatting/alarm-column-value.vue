@@ -72,6 +72,10 @@ export default {
       type: Object,
       required: true,
     },
+    columnFiltersMap: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -129,6 +133,7 @@ export default {
         'v.duration': value => this.$options.filters.duration(value),
         'v.current_state_duration': value => this.$options.filters.duration(value),
         t: value => this.$options.filters.date(value, 'long'),
+        ...this.columnFiltersMap,
       };
 
       return PROPERTIES_FILTERS_MAP[this.column.value];

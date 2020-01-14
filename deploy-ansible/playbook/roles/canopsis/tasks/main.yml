@@ -41,7 +41,10 @@
   tags:
     - cps_initdb
 
-- import_tasks: canopsis-dev.yml
+- import_tasks: config-nginx.yml
   tags:
-    - cps_dev
-  when: canopsis_dev_src_path
+    - cps_nginx
+
+- import_tasks: init-nginx.yml
+  tags:
+    - cps_nginx

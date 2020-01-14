@@ -8,7 +8,6 @@ const { createWidgetView, createWidgetForView, removeWidgetView } = require('../
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
-    browser.globals.temporary.alarmsList = [];
     browser.globals.defaultViewData = await createWidgetView();
 
     const { viewId } = browser.globals.defaultViewData;
@@ -55,19 +54,14 @@ module.exports = {
     browser.page.layout.popup()
       .clickOnEveryPopupsCloseIcons();
 
-    browser.page.widget.alarms()
-      .waitFirstAlarmsListXHR(
-        () => browser.page.layout.groupsSideBar()
-          .clickGroupsSideBarButton()
-          .clickPanelHeader(groupId)
-          .clickLinkView(viewId),
-        ({ responseData: { data: [response] } }) => {
-          browser.globals.temporary.alarmsList = response.alarms;
-          browser.page.view()
-            .clickMenuViewButton()
-            .clickEditViewButton();
-        },
-      );
+    browser.page.layout.groupsSideBar()
+      .clickGroupsSideBarButton()
+      .clickPanelHeader(groupId)
+      .clickLinkView(viewId);
+
+    browser.page.view()
+      .clickMenuViewButton()
+      .clickEditViewButton();
   },
 
   'Widget is size can be changed in mobile version': (browser) => {
