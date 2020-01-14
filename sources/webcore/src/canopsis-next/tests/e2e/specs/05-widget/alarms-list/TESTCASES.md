@@ -690,7 +690,7 @@
         
     **Expected result**: info popup is deleted.
 
-* [ ] **More than one info popup can be added.**
+* [x] **More than one info popup can be added.**
     1. To create any info popup in the section “Info popup”.
     2. To press the button “Create/Edit” in the section “Info popup”.
     3. To press the button with plus on the appeared modal window.
