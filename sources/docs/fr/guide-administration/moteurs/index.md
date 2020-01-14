@@ -28,7 +28,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 |:------------------------------------------ |:--------------------------------------------------------------------------------------------------------------------------------------------------- |:-----:|
 | [action](moteur-action.md)                 | Applique des actions définies par l'utilisateur.                                                                                                    |       |
 | [axe](moteur-axe.md)                       | Gère le cycle de vie des alarmes.                                                                                                                   |       |
-| [axe@**webhooks**](moteur-axe-webhooks.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
+| [webhook](moteur-webhook.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
 | [che](moteur-che.md)                       | Supprime les évènements invalides, gère le contexte, et enrichit les évènements via sa fonctionnalité d'[event-filter](moteur-che-event_filter.md). |       |
 | [dynamic-infos](moteur-dynamic-infos.md)   | Enrichit les alarmes.                                                                                                                               |  ✅   |
 | [heartbeat](moteur-heartbeat.md)           | Surveille des entités, et lève des alarmes en cas d'absence d'information.                                                                          |       |
@@ -250,7 +250,7 @@ Les moteurs Python suivants ne sont plus pris en charge lors d'une nouvelle inst
 *  task\_linklist : n'existe plus depuis Canopsis 3.0, remplacé par [linkbuilder](../linkbuilder/index.md)
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric
 *  eventstore : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), utile uniquement pour l'exploitation de l'ancienne vue SNMP de l'UIv2
-*  task\_mail : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), remplacé par [les Webhooks](moteur-axe-webhooks.md)
+*  task\_mail : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), remplacé par [les Webhooks](moteur-webhook.md)
 
 Moteurs Go :
 
