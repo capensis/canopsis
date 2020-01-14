@@ -1,30 +1,46 @@
-# Axe - Webhooks
+# Webhook
 
-!!! note
+!!! info
     Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
 
-Les webhooks sont une fonctionnalité du moteur `axe` permettant d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
+!!! info
+    Disponible à partir de Canopsis 3.34.0
 
-Les webhooks sont définis dans la collection MongoDB `webhooks`, et peuvent être ajoutés et modifiés avec l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
+Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `axe` en version CAT.
+
+Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
+
+Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
+
+Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
 Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
 
-## Activation du plugin webhooks
+## Utilisation
 
-Les webhooks sont implémentés sous la forme d'un [plugin](../../guide-developpement/plugins/axe-post-processor.md) à ajouter dans le moteur `axe`. Ce plugin n'est disponible qu'avec une installation CAT de Canopsis.
+Le moteur doit être placé en sortie du moteur [`dynamic-infos`](moteur-dynamic-infos).
 
-### Activation avec Docker
+Pour cela, il est nécessaire de lancer le moteur `dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `webhook`.
 
-Dans une installation Docker, l'image `canopsis/engine-axe-cat` remplace l'image par défaut `canopsis/engine-axe`. Le moteur `axe` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin des webhooks soit chargé : `engine-axe -postProcessorsDirectory /plugins/axepostprocessor`
+### Options de l'engine-webhook
 
-### Activation par paquets
+```
+-d	debug
+-publishQueue string
+Publish event to this queue. (default "Engine_action")
+-version
+version infos
+```
 
-Pour pouvoir utiliser les webhooks avec une installation par paquets, il faut :
+## Fonctionnement
 
-*  compiler le plugin webhooks dans le répertoire contenant le plugin webhooks `CGO_ENABLED=1 go build -buildmode=plugin -o webhookPlugin.so main.go`
-*  lancer le moteur `axe` avec l'option `-postProcessorsDirectory <dossier contenant webhookPlugin.so>`. Sauf configuration spécifique, `webhookPlugin.so` se trouve dans `/plugins/axepostprocessor`.
+À l'arrivée dans sa file, le moteur va vérifier si l'événement correspond à un ou plusieurs de ces Webhooks.
 
-## Définition d'un webhook
+Si oui, il va alors appliquer le ou les Webhooks correspondant.
+
+Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dans le guide d'utilisation](../../guide-utilisation/cas-d-usage/notifications.md).
+
+### Définition d'un webhook
 
 Une règle est un document JSON contenant les paramètres suivants :
 
@@ -157,6 +173,55 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
         "priority" : "priority"
+    }
+}
+```
+
+## Collection
+
+Les webhooks sont stockées dans la collection MongoDB `periodical_alarm`.
+
+```json
+{
+    "_id" : "declare_external_ticket",
+    "disable_if_active_pbehavior" : false,
+    "request" : {
+        "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
+        "headers" : {
+            "Content-type" : "application/json"
+        },
+        "method" : "PUT",
+        "auth" : {
+            "username" : "ABC",
+            "password" : "a!(b)-c_"
+        },
+        "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "declare_ticket" : {
+        "priority" : "priority",
+        "ticket_id" : "id",
+        "ticket_creation_date" : "timestamp"
+    },
+    "hook" : {
+        "entity_patterns" : [
+            {
+                "infos" : {
+                    "output" : {
+                        "value" : {
+                            "regex_match" : "MemoryDisk.*"
+                        }
+                    }
+                }
+            }
+        ],
+        "event_patterns" : [
+            {
+                "connector" : "zabbix"
+            }
+        ],
+        "triggers" : [
+            "create"
+        ]
     }
 }
 ```

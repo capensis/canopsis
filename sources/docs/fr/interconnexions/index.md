@@ -66,7 +66,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
-| [Webhooks](../guide-administration/moteurs/moteur-axe-webhooks.md) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
+| [Webhooks](../guide-administration/moteurs/moteur-webhook.md) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 
 ### Transport
 

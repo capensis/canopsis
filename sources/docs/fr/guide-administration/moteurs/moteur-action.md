@@ -4,9 +4,19 @@ Le moteur action permet de déclencher conditionnellement des actions sur des al
 
 Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
 
-## Fonctionnement
+## Utilisation
 
 La file du moteur est placée juste après le moteur [Axe](moteur-axe.md).
+
+### Options de l'engine-action
+
+```
+  -d	debug
+  -version
+      version infos
+```
+
+## Fonctionnement
 
 Les types d'actions disponibles sont :
 
