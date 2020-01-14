@@ -226,10 +226,16 @@ const commands = {
     return this.customClick(this.el('@rowActionsSharedPanelItem', id, index));
   },
 
-  clickOnDropDownActions(id, index) {
-    return this
-      .customClick(this.el('@rowMoreActionsButton', id))
-      .customClick(this.el('@rowDropDownActions', index));
+  clickOnDropDownDots(id) {
+    return this.customClick(this.el('@rowMoreActionsButton', id));
+  },
+
+  clickOnDropDownAction(index) {
+    return this.customClick(this.el('@rowDropDownAction', index));
+  },
+
+  assertDropDownAction(count) {
+    return this.assert.elementsCount('@rowDropDownActions', count);
   },
 
   el,
@@ -288,7 +294,8 @@ module.exports = {
     massActionsPanelItem: `${sel('tableWidget')} ${sel('massActionsPanel')} ${sel('actionsPanelItem')}:nth-of-type(%s) button`,
     rowActionsSharedPanelItem: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('actionsPanelItem')}:nth-of-type(%s) button`,
     rowMoreActionsButton: `${sel('tableRow-%s')} ${sel('sharedActionsPanel')} .layout ${sel('dropDownActionsButton')}`,
-    rowDropDownActions: `.menuable__content__active ${sel('dropDownActions')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    rowDropDownAction: `.menuable__content__active ${sel('dropDownActions')} ${sel('actionsPanelItem')}:nth-of-type(%s)`,
+    rowDropDownActions: `.menuable__content__active ${sel('dropDownActions')} ${sel('actionsPanelItem')}`,
 
   },
   commands: [commands],

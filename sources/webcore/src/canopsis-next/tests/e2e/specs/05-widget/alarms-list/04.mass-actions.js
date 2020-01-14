@@ -7,7 +7,7 @@ const {
   ALARMS_MASS_ACTIONS,
   WEEK_DAYS,
   DATE_INTERVAL_MINUTES,
-  PERIODICAL_BEHAVIOR_RESONES,
+  PERIODICAL_BEHAVIOR_REASONS,
   PERIODICAL_BEHAVIOR_FREQUENCY,
   PBEHAVIOR_STEPS,
 } = require('../../../constants');
@@ -125,7 +125,7 @@ module.exports = {
       .clearReason()
       .clickReason()
       .setReason('P')
-      .selectReason(PERIODICAL_BEHAVIOR_RESONES.REHABILITATION_PROBLEM)
+      .selectReason(PERIODICAL_BEHAVIOR_REASONS.REHABILITATION_PROBLEM)
       .selectType(1)
       .clickStartDate();
 
