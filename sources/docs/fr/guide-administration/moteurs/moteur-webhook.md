@@ -179,7 +179,7 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 
 ## Collection
 
-Les webhooks sont stockées dans la collection MongoDB `periodical_alarm`.
+Les webhooks sont stockés dans la collection MongoDB `periodical_alarm`.
 
 ```json
 {
