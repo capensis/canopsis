@@ -329,14 +329,14 @@
 
 ## Item actions when the "Ack" feature is on.
 
-* [ ] **The button "Declare ticket" reports an incident.**
+* [x] **The button "Declare ticket" reports an incident.**
     1. To find any element in the table where "Ack" feature is on.
     2. To press the button "Declare ticket" in the column "Actions".
     3. To press the button "Report an incident" on the appeared modal window.
         
     **Expected result**: an incident reported, a notification is shown.
 
-* [ ] **The "Associate ticket" feature associates a ticket.**
+* [x] **The "Associate ticket" feature associates a ticket.**
     1. To find any element in the table where "Ack" feature is on.
     2. To press the button "Associate ticket" in the column "Actions".
     3. To fill in the field "Number of the ticket".
@@ -344,7 +344,7 @@
         
     **Expected result**: a ticket is associated.
 
-* [ ] **The button "Cancel alarm" changes element status to "Canceled".**
+* [x] **The button "Cancel alarm" changes element status to "Canceled".**
     1. To find any element in the table where "Ack" feature is on.
     2. To press the button "Cancel alarm" in the column "Actions".
     3. To fill in the field "Note".
@@ -352,13 +352,13 @@
         
     **Expected result**: the icon of trash bin appeared in the column "Extra details", the status changed to "Canceled", the list of actions in the column "Actions" is changed.
 
-* [ ] **The three dots icon opens a menu with six options (when the "Ack" feature is on).**
+* [x] **The three dots icon opens a menu with six options (when the "Ack" feature is on).**
     1. To find any element in the table where "Ack" feature is on.
     2. To click on the icon with three dots in the column "Actions".
         
-    **Expected result**: the menu with six options is opened.
+    **Expected result**: the menu with five options is opened.
 
-* [ ] **The "Cancel ack" feature cancels the "Acknowledge" mode.**
+* [x] **The "Cancel ack" feature cancels the "Acknowledge" mode.**
     1. To find any element in the table where "Ack" feature is on.
     2. To open a menu.
     3. To click on the icon "Cancel ack".
@@ -367,7 +367,7 @@
         
     **Expected result**: a notification is shown, the quantity of options in menu is reduced, the "Ack" mode is off.
 
-* [ ] **The criticity of alarm can be changed.**
+* [x] **The criticity of alarm can be changed.**
     1. To find any element in the table where "Ack" feature is on.
     2. To open a menu.
     3. To click on the icon "Change criticity".
@@ -376,82 +376,7 @@
     6. To press the button "Save changes".
         
     **Expected result**: the criticity is changed to selected value.
-
-* [ ] **The "Ack" feature can be added without declaring the ticket.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To press on the button "Ack".
-    4. To write a note.
-    5. To press the button "Acknowledge".
-        
-    **Expected result**: the ack event was sent.
-
-* [ ] **The "Acknowledge and Associate Ticket" feature adds acknowledge and associates ticket.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To press on the button "Ack".
-    4. To write a ticket.
-    5. To write a note.
-    6. To press the button "Acknowledge".
-        
-    **Expected result**: the ack and assocticket events were sent.
-
-* [ ] **The "Acknowledge and Declare Ticket" feature adds acknowledge and declares ticket.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To press on the button "Ack".
-    4. To write a note.
-    5. To press the button "Acknowledge and Declare Ticket"
-        
-    **Expected result**: the ack and declareticket events were sent.
-
-* [ ] **The "Acknowledge" feature adds acknowledge by additional modal window.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To press on the button "Ack".
-    4. To write a ticket.
-    5. To write a note.
-    6. To press the button "Acknowledge"
-    7. To press the button "Continue" on the appeared modal window.
-        
-    **Expected result**: the ack event was sent.
-
-* [ ] **The "Acknowledge and Associate ticket" feature adds acknowledge and associates ticket by additional modal window.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To press on the button "Ack".
-    4. To write a ticket.
-    5. To write a note.
-    6. To press the button "Acknowledge"
-    7. To press the button "Continue and associate ticket" on the appeared modal window.
-        
-    **Expected result**: the ack and assocticket events were sent.
-
-* [ ] **The "Snooze alarm" feature creates a "Snooze" event.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To press on the button "Snooze alarm".
-    4. To choose a duration.
-    5. To press "Save changes" button.
-        
-    **Expected result**: the sign "Snooze alarm" appeared in the column "Extra details".
-
-* [ ] **The "Periodical behavior" feature creates periodical behavior.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To click on the icon "Periodical behavior".
-    4. To input all needed information on modal window "Create periodical behavior".
-    5. To press "Save changes" button.
-        
-    **Expected result**: periodical behavior is created.
-
-* [ ] **The "List periodic behaviors" feature allows to look through all periodic behaviors.**
-    1. To find any element in the table where "Ack" feature is on.
-    2. To open a menu.
-    3. To click on the icon "List periodic behaviors".
-        
-    **Expected result**: the modal window with all periodic behaviors is shown.
-
+    
 ## The item “Actions” when an alarm is canceled.
 
 * [ ] **The “Snooze alarm” feature creates a “Snooze” event.**
