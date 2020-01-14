@@ -258,7 +258,7 @@ export default {
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
-    sortColumnNoData: 'Press Enter to create a new one',
+    sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
