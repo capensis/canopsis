@@ -324,6 +324,7 @@ export default {
     stopPeriodicRefreshInterval() {
       if (this.periodicRefreshInterval) {
         clearInterval(this.periodicRefreshInterval);
+        this.periodicRefreshProgress = this.periodicRefreshValue;
       }
     },
   },
