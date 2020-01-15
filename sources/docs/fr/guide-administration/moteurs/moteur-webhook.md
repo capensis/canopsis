@@ -63,7 +63,7 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
      - `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
 
-Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
+Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
 
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
@@ -71,6 +71,9 @@ Lors du lancement de moteur `axe`, plusieurs variables d'environnement sont util
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `unsnooze` et `resolve` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
+
+!!! attention
+    L'`event_pattern` sait uniquement parser les champs customs (autres que ceux définis dans les [`structures d'événements`](../../guide-developpement/struct-event.md#structure-basique-dun-evenement)) qui sont de type `string`. Il ne sait pas parser les champs customs de type `number` ou `boolean`.
 
 ### Activation d'un webhook
 
