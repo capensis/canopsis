@@ -29,7 +29,7 @@ Création d'une Session.
 
 #### Réponse en cas de réussite
 
-**Condition** : la session est créée
+**Condition** : la session est crée
 
 **Code** : `200 OK`
 

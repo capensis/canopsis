@@ -3,17 +3,17 @@
 !!! note
     Page en cours d'ecriture
 !!! info 
-        Le fonctionement des route l'API est decrit dans le guide developpemnt [api/Session](../../../guide-developpement/api/api-v2-session/)
+        Le fonctionnement des routes l'API est décrit dans le guide développement [api/Session](../../../guide-developpement/api/api-v2-session/)
 
 ## Information
 
-Le Webserver recolte des information sur les sessions utilisateurs dans l'objectif de permetre la realisation de statistique.
+Le Webserver récolte des informations sur les sessions utilisateurs dans l'objectif de permettre la réalisation de statistiques.
 
-C'est information sont stocker dans la collection ```default_session``` de la BDD MongoDB.
+Ces informations sont stockées dans la collection ```default_session``` de la BDD MongoDB.
 
 ## Document dans la BDD
 
-Les données renvoyées par l'API sont stockées dans la collection `Default_session`.
+Les données renvoyées par l'API sont stockées dans la collection `default_session`.
 
 ```javascript
 {
