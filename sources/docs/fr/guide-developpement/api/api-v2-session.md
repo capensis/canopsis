@@ -4,7 +4,7 @@ L'API session stocke des données sur les sessions utilisateurs de Canopsis.
 
 Les données disponibles sont :
 
-- Nombre de sessions crées par utilisateur
+- Nombre de sessions créées par utilisateur
 - Temps de navigation passé sur chaque page par utilisateur
 - Liste des sessions créées par utilisateur
 
