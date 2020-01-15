@@ -372,3 +372,115 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng'
   "description": "Can not retrieve the watchers list from database, contact your administrator."
 }
 ```
+
+### Recalcul du context-graph d'un watcher
+
+Force un watcher à recalculer ses `impact/depends`.
+
+**URL** : `/api/v2/watcherng/<watcher_id>`
+
+**Méthode** : `PUT`
+
+**Authentification requise** : Oui
+
+**Permissions requise** : Aucune
+
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le watcher avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
+
+```sh
+curl -X PUT -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
+```
+
+#### Réponse en cas de réussite
+
+**Condition** : le context-graph du watcher a été recalculé
+
+**Code** : `200 OK`
+
+**Exemple du corps de la réponse** :
+
+```json
+{
+	"impact": ["watcher/watcher"],
+	"name": "Ticketing",
+	"enable_history": [],
+	"measurements": null,
+	"enabled": true,
+	"state": {
+		"method": "worst"
+	},
+	"entities": [{
+		"infos": {
+			"scenario_parent_app_name": {
+				"value": "tick01"
+			}
+		}
+	}],
+	"depends": ["creation_ticket/serveur_tickets", "maj_ticket/serveur_tickets", "suppression_ticket/serveur_tickets"],
+	"output_template": "Alarmes critiques : {{.State.Critical}}",
+	"infos": {
+		"sicode": {
+			"name": "",
+			"value": "DEM",
+			"description": "Code SI"
+		},
+		"statutlabel": {
+			"name": "",
+			"value": "Production",
+			"description": "Statut"
+		},
+		"description": {
+			"name": "",
+			"value": "Gestion des tickets",
+			"description": "Libell\u00e9 application"
+		},
+		"typecode": {
+			"name": "",
+			"value": "T",
+			"description": "Code Type Application"
+		},
+		"type": {
+			"name": "",
+			"value": "Technique",
+			"description": "Type Application"
+		},
+		"statut": {
+			"name": "",
+			"value": "PR",
+			"description": "Code Statut"
+		},
+		"criticity": {
+			"name": "",
+			"value": "1",
+			"description": "Code Criticit\u00e9"
+		},
+		"si": {
+			"name": "",
+			"value": "Demo",
+			"description": "SI"
+		},
+		"criticitylabel": {
+			"name": "",
+			"value": "Standard",
+			"description": "Criticit\u00e9"
+		}
+	},
+	"_id": "tick01",
+	"type": "watcher"
+}
+```
+
+#### Réponse en cas d'erreur
+
+**Condition** : Si l'`_id` du watcher n'existe pas.
+
+**Code** : `400 BAD REQUEST`
+
+**Exemple du corps de la réponse** :
+
+```json
+{
+  "name": "",
+  "description": "No watcher found with ID h4z25rzg6rt-64rge354-5re4g"
+}
+```
