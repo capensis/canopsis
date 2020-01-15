@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-group(data-test="settingWidgetTitle")
+  v-list-group(data-test="settingsWidgetTitle")
     v-list-tile(slot="activator") {{ title }}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
