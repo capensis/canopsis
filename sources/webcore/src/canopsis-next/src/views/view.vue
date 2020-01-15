@@ -17,7 +17,7 @@
             color="secondary",
             fab,
             dark,
-            @click.stop="refreshView"
+            @click.stop="refreshViewWithProgress"
           )
             v-icon refresh
             v-progress-circular.periodic-refresh-progress(
@@ -28,7 +28,7 @@
               color="white",
               button
             )
-              span {{ value }}
+              span {{ periodicRefreshProgress }}
           span {{ $t('common.refresh') }}
         v-speed-dial(
           v-if="hasUpdateAccess",
@@ -112,6 +112,7 @@
 </template>
 
 <script>
+import get from 'lodash/get';
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
@@ -121,9 +122,6 @@ import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
-
-// TODO: demo
-const PERIODIC_REFRESH_DEFAULT_VALUE = 10;
 
 export default {
   components: {
@@ -141,22 +139,26 @@ export default {
       required: true,
     },
   },
-  data() {
+  data(self) {
     return {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
-
-      // TODO: demo
-      interval: {},
-      value: PERIODIC_REFRESH_DEFAULT_VALUE,
-      isPeriodicRefreshEnabled: true,
+      periodicRefreshInterval: null,
+      periodicRefreshProgress: get(self.view, 'periodicRefresh.value', 0),
     };
   },
   computed: {
-    // TODO: demo
     periodicBehaviorProgressValue() {
-      return this.value * 10;
+      return this.periodicRefreshProgress / (this.periodicRefreshValue / 100);
+    },
+
+    isPeriodicRefreshEnabled() {
+      return get(this.view, 'periodicRefresh.enabled', false);
+    },
+
+    periodicRefreshValue() {
+      return get(this.view, 'periodicRefresh.value', 0);
     },
 
     hasUpdateAccess() {
@@ -182,6 +184,16 @@ export default {
     },
   },
 
+  watch: {
+    isPeriodicRefreshEnabled(value, oldValue) {
+      if (value && (!oldValue || !this.periodicRefreshInterval)) {
+        this.startPeriodicRefreshInterval();
+      } else if (oldValue && !value) {
+        this.stopPeriodicRefreshInterval();
+      }
+    },
+  },
+
   created() {
     document.addEventListener('keydown', this.keyDownListener);
     this.registerViewOnceWatcher();
@@ -190,22 +202,16 @@ export default {
   mounted() {
     this.fetchView({ id: this.id });
 
-    // TODO: demo
-    this.interval = setInterval(() => {
-      if (this.value === 0) {
-        this.value = PERIODIC_REFRESH_DEFAULT_VALUE;
-      } else {
-        this.value -= 1;
-      }
-    }, 1000);
+    if (this.isPeriodicRefreshEnabled) {
+      this.startPeriodicRefreshInterval();
+    }
   },
 
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
 
-    // TODO: demo
-    clearInterval(this.interval);
+    this.stopPeriodicRefreshInterval();
   },
 
   methods: {
@@ -257,6 +263,12 @@ export default {
       }
     },
 
+    async refreshViewWithProgress() {
+      await this.refreshView();
+
+      this.periodicRefreshProgress = this.periodicRefreshValue;
+    },
+
     showCreateWidgetModal() {
       if (this.activeTab) {
         this.$modals.show({
@@ -296,6 +308,22 @@ export default {
 
     toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
+    },
+
+    startPeriodicRefreshInterval() {
+      this.periodicRefreshInterval = setInterval(() => {
+        if (this.periodicRefreshProgress === 0) {
+          this.refreshViewWithProgress();
+        } else {
+          this.periodicRefreshProgress -= 1;
+        }
+      }, 1000);
+    },
+
+    stopPeriodicRefreshInterval() {
+      if (this.periodicRefreshInterval) {
+        clearInterval(this.periodicRefreshInterval);
+      }
     },
   },
 };

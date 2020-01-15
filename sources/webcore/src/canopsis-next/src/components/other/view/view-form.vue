@@ -32,15 +32,14 @@
         v-layout.mb-3
           v-flex(xs5)
             v-switch(
-              v-model="periodicRefresh.enabled",
+              v-field="form.periodicRefresh.enabled",
               label="Periodic refresh",
               color="primary",
               hide-details
             )
           v-flex(xs7)
             v-text-field.pt-0(
-              v-model="periodicRefresh.value",
-              :disabled="!periodicRefresh.enabled",
+              v-field="form.periodicRefresh.value",
               type="number",
               hide-details
             )
@@ -98,15 +97,6 @@ export default {
       type: Array,
       default: () => [],
     },
-  },
-  // TODO: demo
-  data() {
-    return {
-      periodicRefresh: {
-        enabled: false,
-        value: 0,
-      },
-    };
   },
   computed: {
     groupNames() {
