@@ -7,9 +7,14 @@
           v-field="value.column",
           :items="columns",
           :label="columnsLabel",
+          :return-object="false",
           item-text="label",
           item-value="value"
         )
+          template(slot="no-data")
+            v-list-tile
+              v-list-tile-content
+                v-list-tile-title(v-html="$t('settings.sortColumnNoData')")
       v-layout(data-test="defaultSortColumnOrdersLayout", row)
         v-select(
           v-field="value.order",

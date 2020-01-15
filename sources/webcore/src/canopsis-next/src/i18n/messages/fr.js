@@ -233,6 +233,7 @@ export default {
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
+    sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
     orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
