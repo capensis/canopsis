@@ -130,6 +130,18 @@ module.exports.FILTERS_TYPE = {
   OR: 'or',
 };
 
+module.exports.ROW_SIZE_KEYS = {
+  SMARTPHONE: 'sm',
+  TABLET: 'md',
+  DESKTOP: 'lg',
+};
+
+module.exports.ROW_SIZE_CLASSES = {
+  SMARTPHONE: 'xs',
+  TABLET: 'md',
+  DESKTOP: 'lg',
+};
+
 module.exports.VALUE_TYPES = {
   STRING: 1,
   NUMBER: 2,
@@ -269,10 +281,24 @@ module.exports.ALARMS_SHARED_ACTIONS = {
   CANCEL_ALARM: 4,
 };
 
+module.exports.ALARMS_SHARED_ACTIONS_WITH_ACK = {
+  DECLARE_TICKET: 1,
+  ASSOCIATE_TICKET: 2,
+  CANCEL_ALARM: 3,
+};
+
 module.exports.ALARMS_SHARED_DROPDOWN_ACTIONS = {
   PERIODICAL_BEHAVIOR: 1,
   LIST_PERIODICAL_BEHAVIOR: 2,
   MORE_INFOS: 3,
+};
+
+module.exports.ALARMS_SHARED_DROPDOWN_ACTIONS_WITH_ACK = {
+  CANCEL_ACK: 1,
+  CHANGE_CRITICITY: 2,
+  SNOOZE_ALARM: 3,
+  PERIODICAL_BEHAVIOR: 4,
+  LIST_PERIODICAL_BEHAVIOR: 5,
 };
 
 module.exports.DATE_INTERVAL_MINUTES = {
@@ -289,7 +315,7 @@ module.exports.DATE_INTERVAL_MINUTES = {
   FIFTY_FIVE: 11,
 };
 
-module.exports.PERIODICAL_BEHAVIOR_RESONES = {
+module.exports.PERIODICAL_BEHAVIOR_REASONS = {
   REHABILITATION_PROBLEM: 1,
   ROBOT_PROBLEM: 2,
   SCENARIO_PROBLEM: 3,
@@ -338,9 +364,24 @@ module.exports.PBEHAVIOR_TYPES = {
   PAUSE: 3,
 };
 
+module.exports.SNOOZE_TYPES = {
+  MINUTES: 1,
+  HOURS: 2,
+  DAYS: 3,
+  WEEKS: 4,
+  MONTHS: 5,
+  YEARS: 6,
+};
+
 module.exports.PBEHAVIOR_STEPS = {
   GENERAL: 'general',
   FILTER: 'filter',
   RRULE: 'rrule',
   COMMENTS: 'comments',
+};
+
+module.exports.CRUD_ACTIONS = {
+  DELETE: 'delete',
+  UPDATE: 'update',
+  CREATE: 'create',
 };

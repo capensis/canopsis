@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(date-test="createDeclareTicketEventModal", @submit.prevent="submit")
+  v-form(data-test="createDeclareTicketEventModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ $t('modals.createDeclareTicket.title') }}

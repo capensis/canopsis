@@ -100,6 +100,9 @@ export const API_ROUTES = {
   startsession: '/api/v2/sessionstart',
   keepalive: '/api/v2/keepalive',
   sessionhide: '/api/v2/session_hide',
+  alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
+  pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
+
 };
 
 export const COLORS = {

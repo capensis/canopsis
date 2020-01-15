@@ -1,6 +1,6 @@
 # Templates (Go)
 
-Dans les [Webhooks](../moteurs/moteur-axe-webhooks.md), les champs `payload` et `url` sont personnalisables grâce aux templates Go. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
+Dans les [Webhooks](../moteurs/moteur-webhook.md), les champs `payload` et `url` sont personnalisables grâce aux templates Go. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
 
 Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même.
 
@@ -90,7 +90,7 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
 Certaines fonctionnalités ne sont pas présentes de base dans les templates Go. Elles ont été implémentées par l'équipe de Canopsis.
 
 !!! note
-    Les fonctions suivantes sont disponibles dans les templates des [webhooks](index.md), pas ceux de l'event-filter.
+    Les fonctions suivantes sont disponibles dans les templates des [webhooks](../moteurs/moteur-webhook.md), pas ceux de l'event-filter.
 
 ##### `json` et `json_unquote`
 

@@ -2,13 +2,9 @@
 
 Le moteur che permet d'enrichir les [événements](../../guide-developpement/struct-event.md) (via son [`event-filter`](moteur-che-event_filter.md)), de créer et d'enrichir les entités et de créer le context-graph.
 
-## Fonctionnement
+## Utilisation
 
 La file du moteur est placée juste après l'exchange `canopsis.events`.
-
-À l'arrivée dans sa file, le moteur che va leur appliquer les règles d'enrichissement de son [`event-filter`](moteur-che-event_filter.md).
-
-Si l'événement est de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) ou [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : au prochain battement (beat) du moteur, il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
 
 ### Options de l'engine-che
 
@@ -41,6 +37,12 @@ Si l'événement est de type [`check`](../../guide-developpement/struct-event.md
   -version
         version infos
 ```
+
+## Fonctionnement
+
+À l'arrivée dans sa file, le moteur che va leur appliquer les règles d'enrichissement de son [`event-filter`](moteur-che-event_filter.md).
+
+Si l'événement est de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) ou [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : au prochain battement (beat) du moteur, il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
 
 ## Collection
 

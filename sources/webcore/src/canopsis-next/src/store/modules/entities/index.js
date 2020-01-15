@@ -18,6 +18,8 @@ import actionModule from './action';
 import heartbeatModule from './heartbeat';
 import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
+import alarmColumnFiltersModule from './alarm-column-filters';
+import pbehaviorReasonsModule from './pbehavior-reasons';
 
 
 export default {
@@ -41,4 +43,6 @@ export default {
   keepalive: keepaliveModule,
   dynamicInfo: dynamicInfoModule,
   filterHint: filterHintModule,
+  pbehaviorReasons: pbehaviorReasonsModule,
+  alarmColumnFilters: alarmColumnFiltersModule,
 };

@@ -125,7 +125,7 @@ export default {
         config: {
           ...this.modalConfig,
 
-          fastAckOutput: this.widget.fastAckOutput,
+          fastAckOutput: this.widget.parameters.fastAckOutput,
         },
       });
     },

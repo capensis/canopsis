@@ -45,14 +45,18 @@ function build_for_distribution() {
     docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
 
     echo "Building uiv3 image"
-    docker build ${docker_args} -f docker/Dockerfile.canopsis-next-develop  -t canopsis/uiv3:${full_tag} .
+    docker build ${docker_args} -f docker/Dockerfile.canopsis-next-develop -t canopsis/uiv3:${full_tag} .
+
+    echo "Building nginx image"
+    docker build ${docker_args} -f docker/Dockerfile.nginx -t canopsis/nginx:${full_tag} .
 
     if [ "${distribution}" = "debian-9" ]; then
         echo "TAGGING OFFICIAL CANOPSIS-CORE IMAGE"
 
         docker tag canopsis/canopsis-core:${full_tag} canopsis/canopsis-core:${tag}
         docker tag canopsis/canopsis-prov:${full_tag} canopsis/canopsis-prov:${tag}
-	    docker tag canopsis/uiv3:${full_tag} canopsis/uiv3:${tag}
+        docker tag canopsis/uiv3:${full_tag} canopsis/uiv3:${tag}
+        docker tag canopsis/nginx:${full_tag} canopsis/nginx:${tag}
     fi
 
     if [ "${CANOPSIS_DOCKER_MODE}" == "test" ]||[ "${CANOPSIS_DOCKER_MODE}" == "test-ci" ]; then

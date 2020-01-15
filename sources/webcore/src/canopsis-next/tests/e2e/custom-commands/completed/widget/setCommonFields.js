@@ -1,5 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
+const { ROW_SIZE_KEYS } = require('../../../constants');
+
 module.exports.command = function setCommonFields({
   size,
   row,
@@ -54,16 +56,16 @@ module.exports.command = function setCommonFields({
 
   if (size) {
     common
-      .setRowSize('sm', size.sm)
-      .setRowSize('md', size.md)
-      .setRowSize('lg', size.lg);
+      .setRowSize(ROW_SIZE_KEYS.SMARTPHONE, size.sm)
+      .setRowSize(ROW_SIZE_KEYS.TABLET, size.md)
+      .setRowSize(ROW_SIZE_KEYS.DESKTOP, size.lg);
   }
 
   if (title) {
     common
       .clickWidgetTitle()
-      .clearWidgetTitleField()
-      .setWidgetTitleField(title);
+      .clearWidgetTitle()
+      .setWidgetTitle(title);
   }
 
   if (advanced) {

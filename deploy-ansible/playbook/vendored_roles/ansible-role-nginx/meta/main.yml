@@ -1,0 +1,52 @@
+---
+galaxy_info:
+  role_name: nginx
+  author: Alessandro Fael Garcia
+  description: Official Ansible role for NGINX
+  company: NGINX, Inc.
+
+  license: Apache License, Version 2.0
+
+  min_ansible_version: 2.7
+
+  platforms:
+    - name: Alpine
+      versions:
+        - all
+    - name: Amazon
+      versions:
+        - Candidate
+    - name: Debian
+      versions:
+        - jessie
+        - stretch
+        - buster
+    - name: EL
+      versions:
+        - 6
+        - 7
+    - name: FreeBSD
+      versions:
+        - 11.2
+        - 12.0
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+    - name: SLES
+      versions:
+        - 12
+        - 15
+
+  galaxy_tags:
+    - nginx
+    - oss
+    - plus
+    - amplify
+    - controller
+    - unit
+    - web
+    - server
+    - development
+
+dependencies: []

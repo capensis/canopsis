@@ -16,8 +16,7 @@ pip install -U setuptools pip
 # pymongo 3.5.0 is required by ansible 2.4.x module mongodb
 # influxdb is required for the modified ansible role influxdb
 # pyopenssl is required to fix compatibility between systems
-# finally ansible 2.4 is required to avoid role compat problems
-pip install -U setuptools pip wheel jmespath "pymongo==3.5.0" "influxdb==5.1.0" "pyOpenSSL" "ansible==2.8.5"
+pip install -U setuptools pip wheel jmespath "pymongo==3.5.0" "influxdb==5.1.0" "pyOpenSSL" "ansible==2.8.7"
 
 rm -rf /tmp/pipbuild
 rm -rf ~/.cache
