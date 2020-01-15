@@ -90,7 +90,7 @@ Permet de lister les sessions.
 
 #### Réponse en cas de réussite
 
-**Condition** : Session trouver selon les critaire envoyé en paramettre. 
+**Condition** : Session trouvée selon les critères envoyés en paramètres. 
 
 
 ```json
