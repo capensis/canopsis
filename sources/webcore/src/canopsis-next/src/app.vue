@@ -26,11 +26,11 @@ export default {
     Navigation,
     SideBars,
   },
-  mixins: [authMixin, entitiesInfoMixin,keepaliveMixin],
+  mixins: [authMixin, entitiesInfoMixin, keepaliveMixin],
   data() {
     return {
       pending: true,
-      
+
     };
   },
   computed: {
@@ -50,20 +50,19 @@ export default {
     }
     this.pending = false;
   },
-  beforeUpdate(){
+  beforeUpdate() {
     if (this.isLoggedIn) {
       this.startKeepAlive();
     }
   },
-  updated(){
+  updated() {
     if (this.isLoggedIn) {
       this.startSessionHide();
     }
   },
-  beforeDestroy(){
+  beforeDestroy() {
     this.stopKeepAlive();
   },
-  
 
 
 };
