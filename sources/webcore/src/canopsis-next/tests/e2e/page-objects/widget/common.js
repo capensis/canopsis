@@ -440,7 +440,7 @@ module.exports = {
     periodicRefreshField: sel('periodicRefreshField'),
 
     widgetTitle: sel('widgetTitle-%s'),
-    settingWidgetTitle: sel('settingsWidgetTitle'),
+    settingsWidgetTitle: sel('settingsWidgetTitle'),
     widgetTitleField: sel('widgetTitleField'),
     closeWidget: sel('closeWidget'),
 
