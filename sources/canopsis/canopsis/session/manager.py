@@ -34,12 +34,15 @@ DEFAULT_ALIVE_SESSION_DURATION = 300
 
 class SessionError(Exception):
     """
-    Exception for Session object 
+    Exception for Session object
     """
+
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
+
 
 class Session(object):
     """
@@ -65,10 +68,12 @@ class Session(object):
         self.config = Configuration.load(self.CONF_PATH, Ini)
         session = self.config.get('SESSION', {})
 
-        self.alive_session_duration = int(session.get('alive_session_duration',
-                                                      DEFAULT_ALIVE_SESSION_DURATION))
+        self.alive_session_duration = int(
+            session.get(
+                'alive_session_duration',
+                DEFAULT_ALIVE_SESSION_DURATION))
 
-    def keep_alive(self,id_beaker_session,username, visible,path):
+    def keep_alive(self, id_beaker_session, username, visible, path):
         """
         Keep session alive by setting the ``last_check`` field
         to current timestamp.
@@ -78,46 +83,55 @@ class Session(object):
         :returns: last check timestamp
         :rtype: timestamp
         """
-        
 
-        if not self.is_session_active(id_beaker_session)  :
+        if not self.is_session_active(id_beaker_session):
             raise SessionError("Session Not Valid")
 
         now = int(time())
-        session_courante = self.session_collection.find_one({'id_beaker_session': id_beaker_session,'last_ping': {"$gt": now-self.alive_session_duration }})
-        if not visible :
-            self.session_collection.update({'_id': session_courante['_id']},{'$set': {'last_ping': now}})
+        session_courante = self.session_collection.find_one(
+            {'id_beaker_session': id_beaker_session, 'last_ping': {"$gt": now - self.alive_session_duration}})
+        if not visible:
+            self.session_collection.update({'_id': session_courante['_id']}, {
+                                           '$set': {'last_ping': now}})
             return now
 
-        else :
+        else:
             view_id = path[0]
-            if len(path) == 2 :
+            if len(path) == 2:
                 tab_id = path[1]
-            else :
+            else:
                 tab_id = None
             tab_duration = session_courante['tab_duration']
-            if path is session_courante['last_visible_path'] :                
-                tab_duration[view_id][tab_id] += now -  session_courante['last_visible_ping']
-            else :
-                if type(tab_duration) is dict and  view_id in tab_duration :
-                    if type(tab_duration[view_id]) is dict and tab_id in tab_duration[view_id]:
-                        tab_duration[view_id][tab_id] += now -  session_courante['last_ping']
-                    elif view_id and type(tab_duration[view_id]) is int  :
-                        tab_duration[view_id] += now -  session_courante['last_ping']
-                    else :
-                        tab_duration[view_id][tab_id] = now -  session_courante['last_ping']
+            if path is session_courante['last_visible_path']:
+                tab_duration[view_id][tab_id] += now - \
+                    session_courante['last_visible_ping']
+            else:
+                if isinstance(tab_duration, dict) and view_id in tab_duration:
+                    if isinstance(
+                            tab_duration[view_id],
+                            dict) and tab_id in tab_duration[view_id]:
+                        tab_duration[view_id][tab_id] += now - \
+                            session_courante['last_ping']
+                    elif view_id and isinstance(tab_duration[view_id], int):
+                        tab_duration[view_id] += now - \
+                            session_courante['last_ping']
+                    else:
+                        tab_duration[view_id][tab_id] = now - \
+                            session_courante['last_ping']
 
-                elif len(path) != 2 :
-                        tab_duration[view_id] = now -  session_courante['last_ping']
-                else :
-                    tab_duration[view_id] = {tab_id:now -  session_courante['last_ping']}
-            session_courante['visible_duration'] += now -  session_courante['last_ping']
+                elif len(path) != 2:
+                    tab_duration[view_id] = now - session_courante['last_ping']
+                else:
+                    tab_duration[view_id] = {
+                        tab_id: now - session_courante['last_ping']}
+            session_courante['visible_duration'] += now - \
+                session_courante['last_ping']
             session_courante['last_visible_ping'] = now
             session_courante['last_visible_path'] = path
             session_courante['last_ping'] = now
 
-
-        self.session_collection.update({'_id': session_courante['_id']},{'$set': session_courante})
+        self.session_collection.update({'_id': session_courante['_id']}, {
+                                       '$set': session_courante})
 
         return now
 
@@ -132,15 +146,15 @@ class Session(object):
         :rtype: bool
         """
         now = int(time())
-        session = self.session_collection.find_one({'id_beaker_session': id_beaker_session, 'last_ping': {"$gt": now-self.alive_session_duration }})
-        
+        session = self.session_collection.find_one({'id_beaker_session': id_beaker_session, 'last_ping': {
+                                                   "$gt": now - self.alive_session_duration}})
 
         if session is None:
             return False
 
         return True
 
-    def session_start(self, id_beaker_session,username):
+    def session_start(self, id_beaker_session, username):
         """
         Make session active for a user.
 
@@ -150,7 +164,7 @@ class Session(object):
         :rtype: timestamp or None
         """
 
-        if  self.is_session_active(id_beaker_session) is False :
+        if self.is_session_active(id_beaker_session) is False:
             now = int(time())
             element = {
                 'id_beaker_session': id_beaker_session,
@@ -158,89 +172,92 @@ class Session(object):
                 'start': now,
                 'last_ping': now,
                 'last_visible_ping': now,
-                'last_visible_path': 'None' ,
+                'last_visible_path': 'None',
                 'visible_duration': 0,
                 'tab_duration': {}
 
             }
-            
+
             self.session_collection.update({'_id': str(uuid4())},
                                            element,
                                            upsert=True)
 
             return now
 
-        else :
-        	return None
+        else:
+            return None
 
+    def session_hide(self, id_beaker_session, username, path):
 
-    def session_hide(self,id_beaker_session,username,path):
-
-        if not self.is_session_active(id_beaker_session)  :
+        if not self.is_session_active(id_beaker_session):
             raise SessionError("Session Not Valid")
 
-
         now = int(time())
-        session_courante = self.session_collection.find_one({'id_beaker_session': id_beaker_session,'last_ping': {"$gt": now-self.alive_session_duration }})
+        session_courante = self.session_collection.find_one(
+            {'id_beaker_session': id_beaker_session, 'last_ping': {"$gt": now - self.alive_session_duration}})
 
         view_id = path[0]
-        if len(path) == 2 :
+        if len(path) == 2:
             tab_id = path[1]
-        else :
+        else:
             tab_id = None
         tab_duration = session_courante['tab_duration']
-        if path is session_courante['last_visible_path'] :                
-            tab_duration[view_id][tab_id] += now -  session_courante['last_visible_ping']
-        else :
-            if type(tab_duration) is dict and  view_id in tab_duration :
-                if type(    tab_duration[view_id]) is dict and tab_id in tab_duration[view_id]:
-                    tab_duration[view_id][tab_id] += now -  session_courante['last_ping']
-                elif view_id and type(tab_duration[view_id]) is int  :
-                    tab_duration[view_id] += now -  session_courante['last_ping']
-                else :
-                    tab_duration[view_id][tab_id] = now -  session_courante['last_ping']
+        if path is session_courante['last_visible_path']:
+            tab_duration[view_id][tab_id] += now - \
+                session_courante['last_visible_ping']
+        else:
+            if isinstance(tab_duration, dict) and view_id in tab_duration:
+                if isinstance(
+                        tab_duration[view_id],
+                        dict) and tab_id in tab_duration[view_id]:
+                    tab_duration[view_id][tab_id] += now - \
+                        session_courante['last_ping']
+                elif view_id and isinstance(tab_duration[view_id], int):
+                    tab_duration[view_id] += now - \
+                        session_courante['last_ping']
+                else:
+                    tab_duration[view_id][tab_id] = now - \
+                        session_courante['last_ping']
 
-            elif len(path) != 2 :
-                tab_duration[view_id] = now -  session_courante['last_ping']
-            else :
-                tab_duration[view_id] = {tab_id:now -  session_courante['last_ping']}
-        session_courante['visible_duration'] += now -  session_courante['last_ping']
+            elif len(path) != 2:
+                tab_duration[view_id] = now - session_courante['last_ping']
+            else:
+                tab_duration[view_id] = {
+                    tab_id: now - session_courante['last_ping']}
+        session_courante['visible_duration'] += now - \
+            session_courante['last_ping']
         session_courante['last_visible_ping'] = now
         session_courante['last_visible_path'] = path
         session_courante['last_ping'] = now
 
-
-        self.session_collection.update({'_id': session_courante['_id']},{'$set': session_courante})
+        self.session_collection.update({'_id': session_courante['_id']}, {
+                                       '$set': session_courante})
         return now
 
-
-
-    def sessions_req(self,id_beaker_session,params):
-    	if not self.is_session_active(id_beaker_session)  :
+    def sessions_req(self, id_beaker_session, params):
+        if not self.is_session_active(id_beaker_session):
             raise SessionError("Session Not Valid")
 
         now = int(time())
         req = {}
-        if "active" in params :
-        	if params["active"] == "true"  :
+        if "active" in params:
+            if params["active"] == "true":
 
-        		req['last_ping'] = {"$gt": now-self.alive_session_duration }
-        	else  :
-        		req['last_ping'] = {"$lt": now-self.alive_session_duration }
+                req['last_ping'] = {"$gt": now - self.alive_session_duration}
+            else:
+                req['last_ping'] = {"$lt": now - self.alive_session_duration}
 
+        if "usernames[]" in params:
+            names = []
+            for name in params["usernames[]"]:
+                names.append(name)
+            req["username"] = {"$in": names}
 
-        if "usernames[]" in params :
-        	names  = []
-        	for name in params["usernames[]"] :
-        		names.append(name)
-        	req["username"] = { "$in" : names }
+        if "started_after" in params:
+            req["start"] = {"$gt": params["started_after"]}
 
-        if "started_after" in params :
-        	req["start"] = {"$gt":params["started_after"]}
-
-        if "stopped_before" in params :
-        	req["last_ping"] = {"$lt":params["stopped_before"]}
+        if "stopped_before" in params:
+            req["last_ping"] = {"$lt": params["stopped_before"]}
 
         sessions = list(self.session_collection.find(req))
         return sessions
-

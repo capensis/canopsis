@@ -139,11 +139,12 @@ def get_creation_time():
         session = request.environ.get('beaker.session', {})
         return session.get('_creation_time', '')
     except AttributeError:
-        return 
+        return
+
 
 def get_id_beaker_session():
     """
-    Return the id_beaker_session for slecte user's session in Default_session mongoDB 
+    Return the id_beaker_session for slecte user's session in Default_session mongoDB
     """
     creation_time = str(int(get_creation_time()))
     username = str(get_username())
@@ -180,23 +181,24 @@ def exports(ws):
         return user
 
     @ws.application.post(
-         '/api/v2/keepalive'
-        )
+        '/api/v2/keepalive'
+    )
     def keepalive():
         """
         Maintain the current session.
         """
-        try :
+        try:
             data = json.loads(request.body.read())
             visible = data["visible"]
             paths = data["path"]
             id_beaker_session, username = get_info()
-            time = session_manager.keep_alive(id_beaker_session,username,visible,paths)
-            return gen_json({'description':"Session keepalive","time":time,"visible":visible,"paths":paths})
+            time = session_manager.keep_alive(
+                id_beaker_session, username, visible, paths)
+            return gen_json({'description': "Session keepalive",
+                             "time": time, "visible": visible, "paths": paths})
 
-
-        except SessionError as e :
-            return  gen_json_error({'description':e.value },HTTP_ERROR)
+        except SessionError as e:
+            return gen_json_error({'description': e.value}, HTTP_ERROR)
 
     @ws.application.get(
         '/api/v2/sessionstart'
@@ -205,43 +207,40 @@ def exports(ws):
         """
         Start a new session.
         """
-        try :
+        try:
             id_beaker_session, username = get_info()
-            session_manager.session_start(id_beaker_session,username)
-            return gen_json({'description':"Session Start"})
-        except SessionError as e :
-            return  gen_json_error({'description':e.value},HTTP_ERROR)
-
+            session_manager.session_start(id_beaker_session, username)
+            return gen_json({'description': "Session Start"})
+        except SessionError as e:
+            return gen_json_error({'description': e.value}, HTTP_ERROR)
 
     @ws.application.post(
         '/api/v2/session_hide'
     )
-    def  sessionhide():
-        try :
+    def sessionhide():
+        try:
             data = json.loads(request.body.read())
             paths = data["path"]
             id_beaker_session, username = get_info()
-            session_manager.session_hide(id_beaker_session,username,paths)
-        except SessionError as e :
-            return  gen_json_error({'description':e.value},HTTP_ERROR)
-
-
+            session_manager.session_hide(id_beaker_session, username, paths)
+        except SessionError as e:
+            return gen_json_error({'description': e.value}, HTTP_ERROR)
 
     @ws.application.get(
-            '/api/v2/sessions'
-        )
+        '/api/v2/sessions'
+    )
     def session():
-        try :
+        try:
             params = {}
             params_key = request.query.keys()
-            for key in params_key :
-                if key == "usernames[]" :
+            for key in params_key:
+                if key == "usernames[]":
                     params[key] = request.query.getall(key)
-                else :
+                else:
                     params[key] = request.query.get(key)
             id_beaker_session, username = get_info()
-            sessions = session_manager.sessions_req(id_beaker_session,params)
-            return gen_json({'description':"Sessions", 'sessions':sessions})
+            sessions = session_manager.sessions_req(id_beaker_session, params)
+            return gen_json({'description': "Sessions", 'sessions': sessions})
 
-        except SessionError as e :
-            return  gen_json_error({'description':e.value},HTTP_ERROR)
+        except SessionError as e:
+            return gen_json_error({'description': e.value}, HTTP_ERROR)
