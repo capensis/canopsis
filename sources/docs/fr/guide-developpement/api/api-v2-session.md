@@ -4,7 +4,7 @@ L'API session stocke des données sur les sessions utilisateurs de Canopsis.
 
 Les données disponibles sont :
 
-- Nombre de sessions créées par utilisateur
+- Nombre de sessions crées par utilisateur
 - Temps de navigation passé sur chaque page par utilisateur
 - Liste des sessions créées par utilisateur
 
@@ -29,7 +29,7 @@ Création d'une Session.
 
 #### Réponse en cas de réussite
 
-**Condition** : la session est crée
+**Condition** : la session est créée
 
 **Code** : `200 OK`
 
@@ -90,7 +90,9 @@ Permet de lister les sessions.
 
 #### Réponse en cas de réussite
 
-**Condition** : sessions trouver Logs et/ou captures d'écran pertinent
+**Condition** : Session trouver selon les critaire envoyé en paramettre. 
+
+
 ```json
 [
     {
@@ -136,7 +138,7 @@ Envoi d'un keepalive.
 **Exemple de corps de requête** :
 ```json
 {
-    "visible":true
+    "visible":true,
     "path":"[/view/da7ac9b9-db1c-4435-a1f2-edb4d6be4db8,view-tab_edd5855b-54f1-4c51-9550-d88c2da60768]"
 }
 ```
