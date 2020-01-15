@@ -733,38 +733,38 @@
         
     **Expected result**: “More infos” popup is shown with new data.
 
-* [ ] **“More infos” popup can be deleted.**
+* [x] **“More infos” popup can be deleted.**
     1. To create any “More infos” popup in the section “More infos popup”.
     2. To press the button with trash bin.
     3. To press the button “Yes” on “Are you sure?” modal window.
         
     **Expected result**: “More infos” pop-up is deleted.
 
-* [ ] **“HTML enabled on timeline?” checkbox can be turn on.**
+* [x] **“HTML enabled on timeline?” checkbox can be turn on.**
     1. To turn on checkbox “HTML enabled on timeline?” in the advanced settings.
         
     **Expected result**: “HTML enabled on timeline?” checkbox is turn on.
 
-* [ ] **“Note field required when ack?” checkbox can be turn on.**
+* [x] **“Note field required when ack?” checkbox can be turn on.**
     1. To select section “Ack” in the additional settings.
     2. To turn on checkbox “Note field required when ack?”.
         
     **Expected result**: “Note field required when ack?” checkbox is turn on.
 
-* [ ] **“Multiple ack” checkbox can be turn on.**
+* [x] **“Multiple ack” checkbox can be turn on.**
     1. To select section “Ack” in the additional settings.
     2. To turn on checkbox “Multiple ack”.
         
     **Expected result**: “Multiple ack” checkbox is turn on.
 
-* [ ] **Fast-ack output (optional) can be enabled.**
+* [x] **Fast-ack output (optional) can be enabled.**
     1. To select section “Ack” in the additional settings.
     2. To select section “Fast-ack output (optional)” in the additional settings.
     3. To turn on checkbox “Enabled”.
         
     **Expected result**: Fast-ack output (optional) is enabled.
 
-* [ ] **Text of fast-ack output (optional) can be edited.**
+* [x] **Text of fast-ack output (optional) can be edited.**
     1. To select section “Ack” in the additional settings.
     2. To select section “Fast-ack output (optional)” in the additional settings.
     3. To change the text of fast-ack output (optional).

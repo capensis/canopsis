@@ -1,6 +1,7 @@
 // http://nightwatchjs.org/guide#usage
 
 import {
+  ALARMS_SHARED_ACTIONS,
   SORT_ORDERS,
   SORT_ORDERS_STRING,
   ALARMS_WIDGET_SORT_FIELD,
@@ -69,6 +70,7 @@ const ALARM_INFO_POPUP_TEXT = 'Info popup template';
 const ALARM_INFO_POPUP_UPDATED_TEXT = 'Info popup template';
 const MORE_INFOS_TEXT = 'More infos text';
 const MORE_INFOS_CHANGED_TEXT = 'More infos changed text';
+const FAST_ACK_OUTPUT_TEXT = 'Fast ack output text';
 
 module.exports = {
   async before(browser, done) {
@@ -1014,9 +1016,6 @@ module.exports = {
 
     commonWidget
       .clickAdvancedSettings()
-      .clickFilterOnOpenResolved()
-      .setOpenFilter(false)
-      .setResolvedFilter(true)
       .clickEditMoreInfos();
 
     textEditorModal
@@ -1041,7 +1040,10 @@ module.exports = {
 
     const [firstAlarm] = browser.globals.temporary.alarmsList;
 
-    commonTable.clickOnSharedAction(firstAlarm._id, ALARMS_RESOLVED_SHARED_ACTIONS.MORE_INFOS);
+    commonTable
+      .verifySharedActionVisible(firstAlarm._id, ALARMS_RESOLVED_SHARED_ACTIONS.MORE_INFOS)
+      .clickOnSharedAction(firstAlarm._id, ALARMS_RESOLVED_SHARED_ACTIONS.MORE_INFOS);
+
     moreInfosModal
       .verifyModalOpened()
       .getContentText((text) => {
@@ -1054,6 +1056,56 @@ module.exports = {
   '"More infos" popup can be deleted': (browser) => {
     const commonWidget = browser.page.widget.common();
     const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget
+      .clickAdvancedSettings()
+      .clickDeleteMoreInfos();
+
+    browser.page.modals.common.confirmation()
+      .verifyModalOpened()
+      .clickSubmitButton()
+      .verifyModalClosed();
+
+    commonWidget.waitFirstUserPreferencesXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
+
+        const [firstAlarm] = browser.globals.temporary.alarmsList;
+        commonTable.verifySharedActionDeleted(firstAlarm._id, ALARMS_RESOLVED_SHARED_ACTIONS.MORE_INFOS);
+      },
+    );
+  },
+
+  '"HTML enabled on timeline?" checkbox can be turn on': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget.clickAdvancedSettings();
+    alarmsWidget
+      .setEnableHtml(true)
+      .checkEnableHtmlValue(true);
+
+    commonWidget.waitFirstUserPreferencesXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success } }) => {
+        browser.assert.equal(success, true);
+      },
+    );
+  },
+
+  '"Note field required when ack?" checkbox can be turn on': (browser) => {
+    const createAckEventModal = browser.page.modals.alarm.createAckEvent();
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+    const commonTable = browser.page.tables.common();
 
     browser.page.view()
       .openWidgetSettings(browser.globals.defaultViewData.widgetId);
@@ -1061,14 +1113,57 @@ module.exports = {
     commonWidget
       .clickAdvancedSettings()
       .clickFilterOnOpenResolved()
-      .setOpenFilter(false)
-      .setResolvedFilter(true)
-      .clickDeleteMoreInfos();
+      .setOpenFilter(true)
+      .setResolvedFilter(false);
 
-    browser.page.modals.common.confirmation()
-      .verifyModalOpened()
-      .clickSubmitButton()
-      .verifyModalClosed();
+    alarmsWidget
+      .clickAckGroup()
+      .setIsAckNoteRequired(true);
+
+    alarmsWidget.waitFirstAlarmsListXHR(
+      () => alarmsWidget.clickSubmitAlarms(),
+      ({ responseData: { success, data: [response] } }) => {
+        browser.globals.temporary.alarmsList = response.alarms;
+
+        browser.assert.equal(success, true);
+
+        const [firstAlarm] = browser.globals.temporary.alarmsList;
+
+        commonTable.clickOnSharedAction(firstAlarm._id, ALARMS_SHARED_ACTIONS.ACK);
+
+        createAckEventModal
+          .verifyModalOpened()
+          .clickSubmitButton()
+          .verifyModalOpened()
+          .clickCancelButton()
+          .verifyModalClosed();
+      },
+    );
+  },
+
+  '"Multiple ack" checkbox can be turn on': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget.clickAdvancedSettings();
+    alarmsWidget
+      .clickAckGroup()
+      .clickFastAckOutput()
+      .setFastAckOutputSwitch(true)
+      .checkFastAckOutputSwitch(true);
+  },
+
+  'Text of fast-ack output (optional) can be edited': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    alarmsWidget
+      .clickFastAckOutputText()
+      .clearFastAckOutputText()
+      .setFastAckOutputText(FAST_ACK_OUTPUT_TEXT);
 
     commonWidget.waitFirstUserPreferencesXHR(
       () => alarmsWidget.clickSubmitAlarms(),

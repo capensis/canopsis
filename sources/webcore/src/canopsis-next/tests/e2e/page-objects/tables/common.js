@@ -277,6 +277,14 @@ const commands = {
     return this.customClick(this.el('@rowActionsSharedPanelItem', id, index));
   },
 
+  verifySharedActionVisible(id, index) {
+    return this.assert.visible(this.el('@rowActionsSharedPanelItem', id, index));
+  },
+
+  verifySharedActionDeleted(id, index) {
+    return this.waitForElementNotPresent(this.el('@rowActionsSharedPanelItem', id, index));
+  },
+
   clickOnDropDownDots(id) {
     return this.customClick(this.el('@rowMoreActionsButton', id));
   },
