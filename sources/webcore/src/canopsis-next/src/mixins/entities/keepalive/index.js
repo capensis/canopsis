@@ -12,7 +12,7 @@ export default {
       if (this.keepAliveInterval === undefined) {
         this.keepAliveInterval = setInterval(() => {
           this.keepAlive({
-            visible: this.getvisible(),
+            visible: !(document.visibilityState === 'hidden'),
             path: this.getPath(),
           });
         }, DEFAULT_KEEP_ALIVE_INTERVAL);
@@ -26,12 +26,6 @@ export default {
       this.sessionHide({
         path: this.getPath(),
       });
-    },
-    getvisible() {
-      if (document.visibilityState === 'hidden') {
-        return false;
-      }
-      return true;
     },
     getPath() {
       const { tabId } = this.$route.query;
