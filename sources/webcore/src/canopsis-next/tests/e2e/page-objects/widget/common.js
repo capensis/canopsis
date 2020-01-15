@@ -47,7 +47,7 @@ const commands = {
   },
 
   clickWidgetTitle() {
-    return this.customClick('@settingWidgetTitle');
+    return this.customClick('@settingsWidgetTitle');
   },
 
   setWidgetTitle(value) {
@@ -450,7 +450,7 @@ module.exports = {
     periodicRefreshField: sel('periodicRefreshField'),
 
     widgetTitle: sel('widgetTitle-%s'),
-    settingWidgetTitle: sel('settingWidgetTitle'),
+    settingsWidgetTitle: sel('settingsWidgetTitle'),
     widgetTitleField: sel('widgetTitleField'),
     closeWidget: sel('closeWidget'),
 
