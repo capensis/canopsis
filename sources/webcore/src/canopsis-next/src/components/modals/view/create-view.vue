@@ -86,7 +86,7 @@ export default {
         tags: [],
         periodicRefresh: {
           enabled: false,
-          value: 10,
+          value: 0,
         },
       },
     };

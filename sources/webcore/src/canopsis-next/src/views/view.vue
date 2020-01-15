@@ -19,8 +19,9 @@
             dark,
             @click.stop="refreshViewWithProgress"
           )
-            v-icon refresh
+            v-icon(v-if="!isPeriodicRefreshEnabled") refresh
             v-progress-circular.periodic-refresh-progress(
+              v-else,
               :rotate="270",
               :size="30",
               :width="2",
@@ -328,10 +329,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .periodic-refresh-progress {
-    top: -19px !important;
-    left: 9px !important;
-  }
-</style>
