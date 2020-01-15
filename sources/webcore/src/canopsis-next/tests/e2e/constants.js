@@ -130,6 +130,18 @@ module.exports.FILTERS_TYPE = {
   OR: 'or',
 };
 
+module.exports.ROW_SIZE_KEYS = {
+  SMARTPHONE: 'sm',
+  TABLET: 'md',
+  DESKTOP: 'lg',
+};
+
+module.exports.ROW_SIZE_CLASSES = {
+  SMARTPHONE: 'xs',
+  TABLET: 'md',
+  DESKTOP: 'lg',
+};
+
 module.exports.VALUE_TYPES = {
   STRING: 1,
   NUMBER: 2,

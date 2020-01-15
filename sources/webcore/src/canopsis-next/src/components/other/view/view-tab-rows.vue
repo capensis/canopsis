@@ -11,6 +11,7 @@
             color="error"
           ) {{ $t('view.deleteRow') }} - {{ row.title }}
       v-flex(
+        :data-test="`widgetRow-${widget._id}`",
         v-for="widget in row.widgets",
         :key="widget._id",
         :class="getWidgetFlexClass(widget)"

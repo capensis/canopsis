@@ -4,7 +4,7 @@
       v-card-title.lighten-1.pa-1
         v-layout(justify-space-between, align-center)
           v-flex
-            h4.ml-2.font-weight-regular {{ widget.title }}
+            h4.ml-2.font-weight-regular(:data-test="`widgetTitle-${widget._id}`") {{ widget.title }}
           v-spacer
           v-layout(justify-end, v-if="isEditingMode")
             v-menu(:data-test="`widgetEditingMenu-${widget._id}`", offset-y)
