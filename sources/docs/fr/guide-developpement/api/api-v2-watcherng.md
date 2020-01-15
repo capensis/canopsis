@@ -388,7 +388,7 @@ Force un watcher à recalculer ses `impact/depends`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le watcher avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
+curl -X PUT -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
 ```
 
 #### Réponse en cas de réussite
