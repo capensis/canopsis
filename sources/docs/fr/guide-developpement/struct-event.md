@@ -23,7 +23,7 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
 
     // /!\ The following is optional /!\
 
-    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is `number` type
+    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is an integer `number` type
     "output":           // Message - value field is `string` type
     "long_output":      // Description - value field is `string` type
 }
@@ -39,7 +39,7 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 {
     "event_type": "check",  // mandatory - value field is `string` type
 
-    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0 - value field is `number` type
+    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0 - value field is an integer `number` type
 }
 ```
 
@@ -83,7 +83,7 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 {
   "event_type": "snooze",   // mandatory - value field is `string` type
 
-  "duration":         // snooze duration, in seconds - value field is `number` type
+  "duration":         // snooze duration, in seconds - value field is an integer `number` type
   "author":           // snooze author, optional - value field is `string` type
   "output":           // snooze comment, optional - value field is `string` type
 }
