@@ -10,8 +10,8 @@ Pour cela, il faut au préalable ajouter des règles de conversion via l'API `as
 
 Voici un exemple de configuration avec ajout de `2 règles`
 
-```json
-$ curl -H "Content-Type: application/json" -X POST -u <user>:<password> -d '{
+```shell
+curl -H "Content-Type: application/json" -X POST -u root:root -d '{
     "filters" : 
     [
       {
@@ -31,7 +31,7 @@ Dans cet exemple, nous allons configurer `2 valeurs de colonne` avec un rendu pa
 
 Toute colonne qui afficherait :
 
-* l'attribut `v.extra.activation_date` initialement de type `timestamp Unix` qui sera affiché en format `date` de type `long` ( voir [matrice de correspondance](#Les attributs liés aux dates peuvent contenir plusieurs type de formats) des types d'attributs liés au filtre date )
+* l'attribut `v.extra.activation_date` initialement de type `timestamp Unix` qui sera affiché en format `date` de type `long` ( voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date )
 * l'attribut `v.duration` initialement en secondes qui sera affiché en format `duration` de type durée par défaut
 
 ### Les filtres utilisés ( attribut `filter` ) peuvent contenir plusieurs valeurs
@@ -39,43 +39,37 @@ Toute colonne qui afficherait :
 * `date` 
   
     * `attributes` possibles ( tableau de valeurs )
-        
-        * 1) Format ( voir [matrice de correspondance](#Les attributs liés aux dates peuvent contenir plusieurs type de formats) des types d'attributs liés au filtre date )
-    * 2) `true` ou `false` ( valeur par défaut si non précisée ) : Ignore la vérification du jour courant
+      
+        * 1) Format ( voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date )
+    	* 2) `true` ou `false` ( valeur par défaut si non précisée ) : Ignore la vérification du jour courant
         * 3) Valeur par défaut à mettre dans l'attribut si aucune valeur n'est présente dans l'explorateur de contexte
         
     * Exemple
     
-        ```json
-        {
-          column: "v.last_update_date",
-          filter: "date",
-          attributes: [
-           "timePicker",
-           false,
-           "Default value"
-          ]
-        }
-        ```
+```
+{
+  column: "v.last_update_date",
+  filter: "date",
+  attributes: [
+    "timePicker",
+    false,
+    "Default value"
+  ]
+}
+```
     
         
     
 * `duration`
   
     * `attributes` possibles ( tableau de valeurs )
-      
-      * 1) Locale (par défaut locale du navigateur)
-        
-        Exemples
-        
-        * Rendu avec la locale `fr` : 27 jours 5 heures 6 minutes
-        
-        * Rendu avec la locale `en` : 27 days 5 hours 6 minutes
-        
-      * 2) Format de la Durée (par défaut - `'D __ H _ m _ s _'`)
-      
-      
-    
+        * 1) Locale (par défaut locale du navigateur)
+            * Exemples
+                * Rendu avec la locale `fr` : 27 jours 5 heures 6 minutes
+                * Rendu avec la locale `en` : 27 days 5 hours 6 minutes
+
+        * 2) Format de la Durée (par défaut - `'D __ H _ m _ s _'`)
+
 
 #### Les attributs liés aux dates peuvent contenir plusieurs type de formats
 
@@ -101,14 +95,14 @@ Par défaut, la date du jour ne sera pas affichée ( uniquement l'heure : format
 Attention à bien utiliser la méthode `POST` pour la première création de règle et `PUT` par la suite
 
 ```shell
-curl -H "Content-Type: application/json" -X POST -u <user>:<passwor> -d @configuration.json http://<ip_canopsis>:8082/api/v2/associativetable/alarm-column-filters
+curl -H "Content-Type: application/json" -X POST -u root:root -d @configuration.json http://<ip_canopsis>:8082/api/v2/associativetable/alarm-column-filters
 ```
 
 
 
 ### Accès à la configuration via l'UI
 
-Nous allons configurer la personnalisation du champ `alarm.v.extra.activation_date` présent dans l'explorateur de contexte et correspondant au champ `v.extra.activation_date` envoyé à l'API [ci-dessus](#Envoi via l'API)
+Nous allons configurer la personnalisation du champ `alarm.v.extra.activation_date` présent dans l'explorateur de contexte et correspondant au champ `v.extra.activation_date` envoyé à l'API [ci-dessus](#envoi-via-lapi)
 
 ![](img/alarm-list-setting-3.png)
 
