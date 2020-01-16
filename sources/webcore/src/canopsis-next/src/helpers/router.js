@@ -93,3 +93,20 @@ export async function checkUserAccessForRoute(to = {}) {
 
   throw new Error('User don\'t have access to page');
 }
+
+/**
+ * Get path array for keep alive requests by route
+ *
+ * @param {string} path
+ * @param {Object} query
+ * @returns {Array}
+ */
+export function getKeepalivePathByRoute({ path, query } = {}) {
+  const { tabId } = query;
+
+  if (tabId) {
+    return [path, tabId];
+  }
+
+  return [path];
+}

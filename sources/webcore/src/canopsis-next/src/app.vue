@@ -46,23 +46,27 @@ export default {
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
     }
+
+    this.registerLoggedInOnceWatcher();
+
     this.pending = false;
   },
-  beforeUpdate() {
-    if (this.isLoggedIn) {
-      this.startKeepAlive();
-    }
-  },
-  updated() {
-    if (this.isLoggedIn) {
-      this.startSessionHide();
-    }
-  },
+
   beforeDestroy() {
-    this.stopKeepAlive();
+    this.stopKeepalive();
   },
 
+  methods: {
+    registerLoggedInOnceWatcher() {
+      const unwatch = this.$watch('loggedIn', (loggedIn) => {
+        if (loggedIn) {
+          this.startKeepalive();
 
+          unwatch();
+        }
+      });
+    },
+  },
 };
 </script>
 
