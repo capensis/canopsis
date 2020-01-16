@@ -1,6 +1,6 @@
 # Événement
 
-L'API event permet d'envoyer un [événement](../struct-event.md#structure-basique-dun-evenement) sur l'exchange de Canopsis afin de le faire traiter par Canopsis.
+L'API event permet d'envoyer un [événement](../struct-event.md#structure-basique-dun-evenement) sur l'exchange de Canopsis.
 
 ## Envoi d'un événement
 
