@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import get from 'lodash/get';
+import { get } from 'lodash';
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
@@ -140,13 +140,13 @@ export default {
       required: true,
     },
   },
-  data(self) {
+  data() {
     return {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
       periodicRefreshInterval: null,
-      periodicRefreshProgress: get(self.view, 'periodicRefresh.value', 0),
+      periodicRefreshProgress: null,
     };
   },
   computed: {
@@ -188,6 +188,9 @@ export default {
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
       if (value && (!oldValue || !this.periodicRefreshInterval)) {
+        if (this.periodicRefreshInterval) {
+          this.stopPeriodicRefreshInterval();
+        }
         this.startPeriodicRefreshInterval();
       } else if (oldValue && !value) {
         this.stopPeriodicRefreshInterval();
@@ -204,6 +207,7 @@ export default {
     this.fetchView({ id: this.id });
 
     if (this.isPeriodicRefreshEnabled) {
+      this.resetRefreshInterval();
       this.startPeriodicRefreshInterval();
     }
   },
@@ -267,7 +271,7 @@ export default {
     async refreshViewWithProgress() {
       await this.refreshView();
 
-      this.periodicRefreshProgress = this.periodicRefreshValue;
+      this.resetRefreshInterval();
     },
 
     showCreateWidgetModal() {
@@ -309,6 +313,10 @@ export default {
 
     toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
+    },
+
+    resetRefreshInterval() {
+      this.periodicRefreshProgress = this.periodicRefreshValue;
     },
 
     startPeriodicRefreshInterval() {
