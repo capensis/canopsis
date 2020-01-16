@@ -12,6 +12,7 @@
             class="hidden",
             :aria-checked="String(props.inputValue)",
             :checked="props.inputValue",
+            :disabled="props.disabled",
             role="checkbox",
             type="checkbox"
           )
