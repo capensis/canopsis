@@ -215,7 +215,7 @@ def exports(ws):
             return gen_json_error({'description': e.value}, HTTP_ERROR)
 
     @ws.application.post(
-        '/api/v2/session_tracepath '
+        '/api/v2/session_tracepath'
     )
     def sessiontracepath ():
         try:

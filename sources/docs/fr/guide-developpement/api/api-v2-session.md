@@ -47,7 +47,7 @@ Création d'une Session.
 
 Permet de stocker les temps de session en fonction des différentes pages consultées dans l'application.
 
-**URL** : `/api/v2/session-hide`
+**URL** : `/api/v2/session_tracepath`
 
 **Méthode**: `POST`
 
@@ -65,7 +65,7 @@ Permet de stocker les temps de session en fonction des différentes pages consul
 ```
 #### Réponse en cas de réussite
 
-**Condition** : session-hide bien enregistrer
+**Condition** : session_tracepath bien enregistrer
 
 **Code** : `200 OK`
 
