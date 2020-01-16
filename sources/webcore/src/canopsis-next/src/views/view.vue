@@ -207,7 +207,6 @@ export default {
     this.fetchView({ id: this.id });
 
     if (this.isPeriodicRefreshEnabled) {
-      this.resetRefreshInterval();
       this.startPeriodicRefreshInterval();
     }
   },
@@ -319,20 +318,24 @@ export default {
       this.periodicRefreshProgress = this.periodicRefreshValue;
     },
 
+    refreshTick() {
+      if (this.periodicRefreshProgress === 0) {
+        this.refreshViewWithProgress();
+      } else {
+        this.periodicRefreshProgress -= 1;
+      }
+    },
+
     startPeriodicRefreshInterval() {
-      this.periodicRefreshInterval = setInterval(() => {
-        if (this.periodicRefreshProgress === 0) {
-          this.refreshViewWithProgress();
-        } else {
-          this.periodicRefreshProgress -= 1;
-        }
-      }, 1000);
+      this.resetRefreshInterval();
+
+      this.periodicRefreshInterval = setInterval(this.refreshTick, 1000);
     },
 
     stopPeriodicRefreshInterval() {
       if (this.periodicRefreshInterval) {
         clearInterval(this.periodicRefreshInterval);
-        this.periodicRefreshProgress = this.periodicRefreshValue;
+        this.resetRefreshInterval();
       }
     },
   },
