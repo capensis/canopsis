@@ -18,7 +18,6 @@ import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
-
 import '@/assets/styles/main.scss';
 
 export default {
@@ -30,7 +29,6 @@ export default {
   data() {
     return {
       pending: true,
-
     };
   },
   computed: {
