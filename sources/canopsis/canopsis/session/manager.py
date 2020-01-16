@@ -187,7 +187,7 @@ class Session(object):
         else:
             return None
 
-    def session_hide(self, id_beaker_session, username, path):
+    def session_tracepath(self, id_beaker_session, username, path):
 
         if not self.is_session_active(id_beaker_session):
             raise SessionError("Session Not Valid")

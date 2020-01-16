@@ -215,14 +215,14 @@ def exports(ws):
             return gen_json_error({'description': e.value}, HTTP_ERROR)
 
     @ws.application.post(
-        '/api/v2/session_hide'
+        '/api/v2/session_tracepath '
     )
-    def sessionhide():
+    def sessiontracepath ():
         try:
             data = json.loads(request.body.read())
             paths = data["path"]
             id_beaker_session, username = get_info()
-            session_manager.session_hide(id_beaker_session, username, paths)
+            session_manager.session_tracepath(id_beaker_session, username, paths)
         except SessionError as e:
             return gen_json_error({'description': e.value}, HTTP_ERROR)
 
