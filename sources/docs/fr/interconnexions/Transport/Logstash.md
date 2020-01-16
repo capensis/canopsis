@@ -84,7 +84,7 @@ filter {
             }
         }
 
-        Ex: exemple de traitement d'une valeur pour un besoin précis (Facultatif)
+    #   Ex: exemple de traitement d'une valeur pour un besoin précis (Facultatif)
         mutate {
             update => { "resource" => "%{resource}-%{pid}" }
         }
