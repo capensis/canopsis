@@ -85,7 +85,7 @@
               actions-panel(
                 :item="props.item",
                 :widget="widget",
-                :is-resolved-alarm="isResolvedAlarm(props.item)",
+                :isResolvedAlarm="isResolvedAlarm(props.item)",
                 :isEditingMode="isEditingMode"
               )
         template(slot="expand", slot-scope="props")
