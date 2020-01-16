@@ -47,7 +47,7 @@ export default {
       await this.fetchAppInfos();
     }
 
-    this.registerLoggedInOnceWatcher();
+    this.registerIsLoggedInOnceWatcher();
 
     this.pending = false;
   },
@@ -57,14 +57,14 @@ export default {
   },
 
   methods: {
-    registerLoggedInOnceWatcher() {
-      const unwatch = this.$watch('loggedIn', (loggedIn) => {
-        if (loggedIn) {
+    registerIsLoggedInOnceWatcher() {
+      const unwatch = this.$watch('isLoggedIn', (isLoggedIn) => {
+        if (isLoggedIn) {
           this.startKeepalive();
 
           unwatch();
         }
-      });
+      }, { immediate: true });
     },
   },
 };
