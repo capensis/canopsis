@@ -12,9 +12,9 @@ export default {
         console.warn(err);
       }
     },
-    async sessionHide(context, payload) {
+    async sessionTracePath(context, payload) {
       try {
-        await request.post(API_ROUTES.sessionhide, payload);
+        await request.post(API_ROUTES.sessionTracePath, payload);
       } catch (err) {
         console.warn(err);
       }

@@ -55,7 +55,7 @@ export default {
   },
   updated() {
     if (this.isLoggedIn) {
-      this.startSessionHide();
+      this.startSessionTracePath();
     }
   },
   beforeDestroy() {

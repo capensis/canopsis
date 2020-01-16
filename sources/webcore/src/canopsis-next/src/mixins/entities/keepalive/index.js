@@ -6,7 +6,7 @@ const { mapActions } = createNamespacedHelpers('keepalive');
 
 export default {
   methods: {
-    ...mapActions(['keepAlive', 'sessionHide']),
+    ...mapActions(['keepAlive', 'sessionTracePath']),
 
     startKeepAlive() {
       if (this.keepAliveInterval === undefined) {
@@ -22,8 +22,8 @@ export default {
       clearInterval(this.keepAliveInterval);
       this.keepAliveInterval = undefined;
     },
-    startSessionHide() {
-      this.sessionHide({
+    startSessionTracePath() {
+      this.sessionTracePath({
         path: this.getPath(),
       });
     },
