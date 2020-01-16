@@ -4,15 +4,14 @@
 
 Depuis la version `3.35.0`, il est maintenant possible de choisir un formatage de donnée particulier pour les champs présents et affichés dans une colonne du bac à alarme de Canopsis.
 
-Pour cela, il faut au préalable ajouter des règles de conversion dans une collection MongoDB particulière appelée `default_associativetable`
+Pour cela, il faut au préalable ajouter des règles de conversion via l'API `associativetable` qui sauvegardera dans une table MongoDB particulière appelée `alarm-column-filters`
 
-L'ajout de ses règles se fait actuellement via l'API. 
+### Envoi via l'API
 
-Le fichier suivant contient un exemple d'ajout de `2 règles`
+Voici un exemple de configuration avec ajout de `2 règles`
 
 ```json
-$ cat configuration.json
-{
+$ curl -H "Content-Type: application/json" -X POST -u <user>:<passwor> -d '{
     "filters" : 
     [
       {
@@ -25,23 +24,17 @@ $ cat configuration.json
         "filter": "duration"
       }
     ]
-}
+}' http://<ip_canopsis>:8082/api/v2/associativetable/alarm-column-filters
 ```
 
 Dans cet exemple, nous allons configurer `2 valeurs de colonne` avec un rendu particulier.
 
 Toute colonne qui afficherait :
 
-* l'attribut `v.extra.activation_date` initialement de type `timestamp Unix` qui serait affiché en format `date` de type `long` ( voir matrice des filtres ci-dessous )
-* l'attribut `v.duration` initialement en secondes
+* l'attribut `v.extra.activation_date` initialement de type `timestamp Unix` qui sera affiché en format `date` de type `long` ( voir [matrice de correspondance](#Les attributs liés aux dates peuvent contenir plusieurs type de formats) des types d'attributs liés au filtre date )
+* l'attribut `v.duration` initialement en secondes qui sera affiché en format `duration` de type durée par défaut
 
 ### Les filtres utilisés ( attribut `filter` ) peuvent contenir plusieurs valeurs
-
-* `get` - retourne la propriété d'un objet à partir de son chemin
-    1) Objet
-    2) Nom de la propriété
-    3) Filtre - Fonction de type Callback. Filtre à appliquer sur la propriété
-    4) Valeur par défaut
 
 * `date`
     1) Date
@@ -63,7 +56,7 @@ Toute colonne qui afficherait :
     1) Valeur
     2) Nombre de chiffres à virgule à garder (par défaut - `3`)
 
-#### Les attributs liés aux dates peuvent contenir plusieurs type de formats : 
+#### Les attributs liés aux dates peuvent contenir plusieurs type de formats
 
 * `long` - DD/MM/YYYY H:mm:ss
 * `medium` - DD/MM H:mm
@@ -80,7 +73,7 @@ Toute colonne qui afficherait :
 
 Il est à noter que ces champs utilisés ne peuvent être que des sous éléments d'une `alarme` et pas d'une `entité`
 
-
+Pas défaut, la date du jour ne sera pas affichées ( uniquement l'heure )
 
 ### Le fichier peut ensuite être envoyé via l'API pour charger la configuration
 
@@ -94,7 +87,7 @@ curl -H "Content-Type: application/json" -X POST -u <user>:<passwor> -d @configu
 
 ### Accès à la configuration via l'UI
 
-Nous allons configurer la personnalisation du champs `v.extra.activation_date` présent dans l'explorateur de context
+Nous allons configurer la personnalisation du champs `alarm.v.extra.activation_date` présent dans l'explorateur de context et correspondant au champs `v.extra.activation_date` envoyé à l'API [ci-dessus](#Envoi via l'API)
 
 ![](img/alarm-list-setting-3.png)
 
@@ -108,10 +101,20 @@ Pour accéder au paramétrage de cette fonctionnalité de rendu côté interface
 
 ![](img/alarm-list-setting-1.png)
 
-* Ajouter une colonne correspondant à un des types personnalisé dont l'affichage doit être rendu grâce aux filtres. Puis sauvegarder tout en bas du menu.
+* Ajouter une colonne correspondant à un des types personnalisés dont l'affichage doit être rendu grâce aux filtres. Puis sauvegarder tout en bas du menu.
 
 ![](img/alarm-list-setting-2.png)
 
-* L'affichage du rendu se fait dans la colonne paramétrée
+* L'affichage du rendu se fait dans la colonne paramétrée ( par défaut la date du jour n'est pas affichée avec ce type de données )
 
 ![](img/alarm-list-setting-5.png)
+
+* Elle s'affiche uniquement avec une date différente de la date du jour
+
+
+
+![](img/alarm-list-setting-6.png)
+
+* Voici le rendu de l'autre champs personnalisé envoyé à l'API ( `alarm.v.duration` utilisé au niveau de la configuration du widget )
+
+![](img/alarm-list-setting-7.png)
