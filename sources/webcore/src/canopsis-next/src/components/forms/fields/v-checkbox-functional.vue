@@ -1,6 +1,6 @@
 <template lang="pug" functional>
-  .v-input.v-input--selection-controls.v-input--checkbox(
-    :class="{ 'v-input--is-disabled': props.disabled, 'theme--light': props.disabled }"
+  .v-input.v-input--selection-controls.v-input--checkbox.theme--light(
+    :class="{ 'v-input--is-disabled': props.disabled }"
   )
     .v-input__control
       .v-input__slot
