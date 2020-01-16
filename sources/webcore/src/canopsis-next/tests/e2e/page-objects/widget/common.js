@@ -243,7 +243,7 @@ const commands = {
     return this.customClick(this.el('@columnNameSwitchField', index));
   },
 
-  setColumnNameSwitch(index, checked = false) {
+  setColumnNameIsHtml(index, checked = false) {
     return this.getAttribute(this.el('@columnNameSwitchFieldInput', index), 'aria-checked', ({ value }) => {
       if (value !== String(checked)) {
         this.clickColumnNameSwitch(index);
@@ -260,7 +260,7 @@ const commands = {
       .setColumnNameValue(index, value);
 
     if (typeof isHtml === 'boolean') {
-      this.setColumnNameSwitch(index, isHtml);
+      this.setColumnNameIsHtml(index, isHtml);
     }
 
     return this;
@@ -320,6 +320,15 @@ const commands = {
     return this.customClick('@selectFilters')
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
+  },
+
+  selectFilterByName(name) {
+    this.customClick('@selectFilters')
+      .api.useXpath()
+      .customClick(this.el('@optionSelectXPath', name))
+      .useCss();
+
+    return this;
   },
 
   clickStatsSelect() {
@@ -433,6 +442,7 @@ const commands = {
 module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    optionSelectXPath: './/*[contains(@class, "menuable__content__active")]//*[contains(@class, "v-select-list")]//span[contains(text(), "%s")]',
 
     periodicRefresh: sel('periodicRefresh'),
     periodicRefreshSwitchInput: `input${sel('periodicRefreshSwitch')}`,
@@ -518,9 +528,9 @@ module.exports = {
       editFilter: sel('editFilter-%s'),
       deleteFilter: sel('deleteFilter-%s'),
       filterItem: sel('filterItem-%s'),
-    }),
 
-    selectFilters: `${sel('selectFilters')} .v-input__slot`,
+      selectFilters: `${sel('selectFilters')} .v-select__slot`,
+    }),
 
     statsSelector: sel('statsSelector'),
     addStatButton: sel('addStatButton'),

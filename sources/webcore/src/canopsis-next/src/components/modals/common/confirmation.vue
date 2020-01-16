@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(data-test="confirmationModal")
     template(slot="title")
       span {{ $t('common.confirmation') }}
     template(slot="actions")
