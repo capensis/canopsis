@@ -101,20 +101,21 @@ Un bouton d'aide apparaît alors sur chacune des tuiles de la Météo de service
 Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles dans vos différents templates. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
 
 ### Paramètres du widget
-1. Taille du widget
-2. Titre
-3. Editeur de filtre
-4. Paramètres avancés
-    1. Colonne de tri par défaut
-    2. Template - Tuiles
-    3. Template - modale
-    4. Template - Entités
-    5. Colonnes - Petit
-    6. Colonnes - Moyen
-    7. Colonnes - Large
-    8. Marges
-    9. Hauteur
-    10. Type de modale
+
+1. [Taille du widget](#taille-du-widget-requis)
+2. [Titre](#titre-optionnel)
+3. [Éditeur de filtre](#editeur-de-filtre-optionnel)
+4. [Paramètres avancés](#parametres-avances)
+    1. [Colonne de tri par défaut](#colonne-de-tri-par-defaut)
+    2. [Template - Tuiles](#template-tuile)
+    3. [Template - modale](#template-modale)
+    4. [Template - Entités](#template-entites)
+    5. [Colonnes - Petit](#colonnes-petit)
+    6. [Colonnes - Moyen](#colonnes-moyen)
+    7. [Colonnes - Large](#colonnes-large)
+    8. [Marges](#marges)
+    9. [Hauteur](#hauteur)
+    10. [Type de modale](#type-de-modale)
 
 #### Taille du widget (*requis*)
 
@@ -147,6 +148,7 @@ Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression 
     Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un watcher, il faut utiliser `name`, et non `display_name`.
 
 #### Paramètres avancés
+
 ##### Colonne de tri par défaut
 
 Ce paramètre permet de trier les tuiles selon un attribut pré-défini par ordre alphabétique.  
@@ -161,7 +163,7 @@ Par défaut, les attributs disponibles pour le tri sont :
 
 Vous avez la possibilité d'utiliser le critère de votre choix en écrivant directement dans la configuration l'attribut de tri souhaité.  
 
-Exemple : `infos.mon_attribut.value`
+Exemple : pour faire un tri selon la valeur du champ enrichi `mon_attribut` ajouté depuis l'[explorateur de contexte](../contexte/index.md), remplissez le formulaire comme suit : 
 
 ![Tri par défaut](./img/tri.png)
 
