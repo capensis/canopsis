@@ -2,9 +2,9 @@
 
 ## Affichage de type de données formatées dans une colonne
 
-Depuis la version `3.35.0`, il est maintenant possible de choisir un formatage de donnée particulier pour les champs présents et affichés dans une colonne du bac à alarme de Canopsis.
+Depuis la version `3.35.0`, il est maintenant possible de choisir un formatage de donnée particulier pour les champs présents et affichés dans une colonne du bac à alarmes de Canopsis.
 
-Pour cela, il faut au préalable ajouter des règles de conversion via l'API `associativetable` qui sauvegardera dans une table MongoDB particulière appelée `alarm-column-filters`
+Pour cela, il faut au préalable ajouter des règles de conversion via l'API `associativetable` qui sauvegardera dans un champ `alarm-column-filters`  de la collection MongoDB `default_associativetable`
 
 ### Envoi via l'API
 
@@ -73,7 +73,7 @@ Toute colonne qui afficherait :
 
 Il est à noter que ces champs utilisés ne peuvent être que des sous éléments d'une `alarme` et pas d'une `entité`
 
-Pas défaut, la date du jour ne sera pas affichées ( uniquement l'heure )
+Par défaut, la date du jour ne sera pas affichée ( uniquement l'heure )
 
 ### Le fichier peut ensuite être envoyé via l'API pour charger la configuration
 
@@ -87,7 +87,7 @@ curl -H "Content-Type: application/json" -X POST -u <user>:<passwor> -d @configu
 
 ### Accès à la configuration via l'UI
 
-Nous allons configurer la personnalisation du champs `alarm.v.extra.activation_date` présent dans l'explorateur de context et correspondant au champs `v.extra.activation_date` envoyé à l'API [ci-dessus](#Envoi via l'API)
+Nous allons configurer la personnalisation du champ `alarm.v.extra.activation_date` présent dans l'explorateur de contexte et correspondant au champ `v.extra.activation_date` envoyé à l'API [ci-dessus](#Envoi via l'API)
 
 ![](img/alarm-list-setting-3.png)
 
@@ -115,6 +115,6 @@ Pour accéder au paramétrage de cette fonctionnalité de rendu côté interface
 
 ![](img/alarm-list-setting-6.png)
 
-* Voici le rendu de l'autre champs personnalisé envoyé à l'API ( `alarm.v.duration` utilisé au niveau de la configuration du widget )
+* Voici le rendu de l'autre champ personnalisé envoyé à l'API ( `alarm.v.duration` utilisé au niveau de la configuration du widget )
 
 ![](img/alarm-list-setting-7.png)
