@@ -105,15 +105,16 @@ Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables
 2. Titre
 3. Editeur de filtre
 4. Paramètres avancés
-    1. Template - Tuiles
-    2. Template - modale
-    3. Template - Entités
-    4. Colonnes - Petit
-    5. Colonnes - Moyen
-    6. Colonnes - Large
-    7. Marges
-    8. Hauteur
-    9. Type de modale
+    1. Colonne de tri par défaut
+    2. Template - Tuiles
+    3. Template - modale
+    4. Template - Entités
+    5. Colonnes - Petit
+    6. Colonnes - Moyen
+    7. Colonnes - Large
+    8. Marges
+    9. Hauteur
+    10. Type de modale
 
 #### Taille du widget (*requis*)
 
@@ -146,6 +147,24 @@ Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression 
     Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un watcher, il faut utiliser `name`, et non `display_name`.
 
 #### Paramètres avancés
+##### Colonne de tri par défaut
+
+Ce paramètre permet de trier les tuiles selon un attribut pré-défini par ordre alphabétique.  
+
+!!! Warning
+    Le tri implémenté est sensible à la casse et fait que les majuscules sont traitées avant les minuscules
+
+Par défaut, les attributs disponibles pour le tri sont :
+
+* `name` 
+* `state`
+
+Vous avez la possibilité d'utiliser le critère de votre choix en écrivant directement dans la configuration l'attribut de tri souhaité.  
+
+Exemple : `infos.mon_attribut.value`
+
+![Tri par défaut](./img/tri.png)
+
 ##### Template - Tuile
 
 Ce paramètre permet de personaliser les informations affichées à l'intérieur des tuiles de la météo de service.
