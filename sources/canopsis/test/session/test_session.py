@@ -95,11 +95,11 @@ class SessionManagerTest(TestCase):
         self.manager.session_start(self.id_beaker_session,self.user)
         self.assertTrue(self.manager.is_session_active(self.id_beaker_session))
 
-    def test_session_hide(self):
+    def test_session_tracepath(self):
         self.manager.session_start(self.id_beaker_session,self.user)
         sleep(1)
 
-        got = self.manager.session_hide(self.id_beaker_session,self.user,self.path)
+        got = self.manager.session_tracepath(self.id_beaker_session,self.user,self.path)
 
         session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
 
@@ -107,14 +107,14 @@ class SessionManagerTest(TestCase):
         self.assertEqual(got, session['last_ping'])
         self.assertEqual(self.path,session['last_visible_path'])
 
-        got = self.manager.session_hide(self.id_beaker_session,self.user,self.path_bis)
+        got = self.manager.session_tracepath(self.id_beaker_session,self.user,self.path_bis)
         session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
 
         self.assertTrue(isinstance(session, dict))
         self.assertEqual(got, session['last_ping'])
         self.assertEqual(self.path_bis,session['last_visible_path'])
 
-        got = self.manager.session_hide(self.id_beaker_session,self.user,self.path_bis)
+        got = self.manager.session_tracepath(self.id_beaker_session,self.user,self.path_bis)
         session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
         self.assertTrue(isinstance(session, dict))
         self.assertEqual(got, session['last_ping'])
