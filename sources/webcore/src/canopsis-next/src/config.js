@@ -99,7 +99,7 @@ export const API_ROUTES = {
   filterHints: '/api/v2/associativetable/filterhints',
   startsession: '/api/v2/sessionstart',
   keepalive: '/api/v2/keepalive',
-  sessionTracePath: '/api/v2/session_tracepath ',
+  sessionTracePath: '/api/v2/session_tracepath',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
 
