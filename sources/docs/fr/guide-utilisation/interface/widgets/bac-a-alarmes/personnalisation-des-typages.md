@@ -11,7 +11,7 @@ Pour cela, il faut au préalable ajouter des règles de conversion via l'API `as
 Voici un exemple de configuration avec ajout de `2 règles`
 
 ```json
-$ curl -H "Content-Type: application/json" -X POST -u <user>:<passwor> -d '{
+$ curl -H "Content-Type: application/json" -X POST -u <user>:<password> -d '{
     "filters" : 
     [
       {
@@ -36,25 +36,46 @@ Toute colonne qui afficherait :
 
 ### Les filtres utilisés ( attribut `filter` ) peuvent contenir plusieurs valeurs
 
-* `date`
-    1) Date
-    2) Format
-    3) Ignore la vérification du jour
-    4) Valeur par défaut
-
+* `date` 
+  
+    * `attributes` possibles ( tableau de valeurs )
+        
+        * 1) Format ( voir [matrice de correspondance](#Les attributs liés aux dates peuvent contenir plusieurs type de formats) des types d'attributs liés au filtre date )
+    * 2) `true` ou `false` ( valeur par défaut si non précisée ) : Ignore la vérification du jour courant
+        * 3) Valeur par défaut à mettre dans l'attribut si aucune valeur n'est présente dans l'explorateur de contexte
+        
+    * Exemple
+    
+        ```json
+        {
+          column: "v.last_update_date",
+          filter: "date",
+          attributes: [
+           "timePicker",
+           false,
+           "Default value"
+          ]
+        }
+        ```
+    
+        
+    
 * `duration`
-    1) Valeur
-    2) Locale (default - moment locale or constant)
-    3) Durée (par défaut - `'D __ H _ m _ s _'`)
-
-* `json` - Convertit des champs JSON en champs JSON avec indentation
-    1) Chaîne Json
-    2) Indentations (par défaut - `4`)
-    3) Valeur par défaut (par défaut - `'{}'`)
-
-* `percentage`
-    1) Valeur
-    2) Nombre de chiffres à virgule à garder (par défaut - `3`)
+  
+    * `attributes` possibles ( tableau de valeurs )
+      
+      * 1) Locale (par défaut locale du navigateur)
+        
+        Exemples
+        
+        * Rendu avec la locale `fr` : 27 jours 5 heures 6 minutes
+        
+        * Rendu avec la locale `en` : 27 days 5 hours 6 minutes
+        
+      * 2) Format de la Durée (par défaut - `'D __ H _ m _ s _'`)
+      
+      
+    
 
 #### Les attributs liés aux dates peuvent contenir plusieurs type de formats
 
@@ -71,9 +92,9 @@ Toute colonne qui afficherait :
 
 
 
-Il est à noter que ces champs utilisés ne peuvent être que des sous éléments d'une `alarme` et pas d'une `entité`
+Il est à noter que les champs utilisés ne peuvent être que des sous-éléments d'une `alarme` et pas d'une `entité`
 
-Par défaut, la date du jour ne sera pas affichée ( uniquement l'heure )
+Par défaut, la date du jour ne sera pas affichée ( uniquement l'heure : format `timePicker` )
 
 ### Le fichier peut ensuite être envoyé via l'API pour charger la configuration
 
@@ -97,7 +118,7 @@ Pour accéder au paramétrage de cette fonctionnalité de rendu côté interface
 
 * Passer en mode édition sur le widget de bac à alarmes
 * Se rendre dans le menu de configuration du widget du bac à alarmes
-* Aller dans le sous menu `Column names`
+* Aller dans le sous menu `Column names` du menu `Advanced Settings`
 
 ![](img/alarm-list-setting-1.png)
 
