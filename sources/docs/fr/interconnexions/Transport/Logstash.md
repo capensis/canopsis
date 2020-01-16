@@ -27,36 +27,12 @@ Les logs devront donc être formatés d'une certaine manière afin que Canopsis 
 
 ### Structure d'un évènement
 
-Actuellement, un évènement de type `log` doit être remonté dans Canopsis comme un évènement de type `check`.
-
-Voici les champs attendus dans Canopsis afin que l'évènement puisse être reconnu :
-
-```js
-{
-    // Les champs obligatoires
-
-    'connector': 'logstash',
-    'connector_name': 'logstash',
-    'event_type': 'check',
-    'source_type': 'resource',
-    'component':   // Ex: Server5
-    'resource':    // Ex: kernel
-    'output':      // Message
-    'state':       // Check state (0 - OK, 1 - WARNING, 2 - CRITICAL, 3 - UNKNOWN), default is 0
-    'state_type':  // Check state type (0 - SOFT, 1 - HARD), default is 1
-    'status':      // 0 == Ok | 1 == En cours | 2 == Furtif | 3 == Bagot | 4 == Annule
-
-    // Les champs facultatifs
-
-    'timestamp':   // UNIX timestamp for when the event was emitted (optional: set by the server to now)
-}
-```
+Actuellement, un évènement de type `log` doit être remonté dans Canopsis comme un évènement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure).
 
 !!! attention
-    Les champs `state`, `state_type` et `status` doivent être de type `entier`.
+    Un événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) entraîne la création ou mise-à-jour d'une alarme par le [`moteur axe`](../../guide-administration/moteurs/moteur-axe.md#evenements-de-type-check). Il est important de s'assurer qu'elle puisse être également résolue par Logstash. À défaut, il est nécessaire que vous l'annuliez vous-même une fois l'alarme traitée.
 
-!!! attention
-    Le champ `timestamp`, s'il est utilisé, doit être au format timestamp Unix, sinon l'évènement risque de ne pas être interprété. S'il n'est pas renseigné, Canopsis utilisera la date et l'heure à laquelle il traite l'évènement.
+Pour plus d'information sur la structure d'un événement, consulter la [page dédiée](../../guide-developpement/struct-event.md) ainsi que sa partie sur un [événement de type `check`](../../guide-developpement/struct-event.md#event-check-structure)
 
 ## Exemple de configuration Logstash
 
@@ -83,16 +59,12 @@ filter {
             "connector_name" => "logstash"
             "event_type" => "check"
             "state" => 1
-            "state_type" => 1
-            "status" => 1
           }
          }
 
     # Conversion des champs en integer
         mutate {
           convert => ["[state]", "integer"]
-          convert => ["[state_type]", "integer"]
-          convert => ["[status]", "integer"]
         }
 
    # S'assurer que l'on traite bien les event comportant le tag *syslog* défini dans l'input
@@ -112,7 +84,7 @@ filter {
             }
         }
 
-        Ex: exemple de traitement d'une valeur pour un besoin précis (Facultatif)
+    #   Ex: exemple de traitement d'une valeur pour un besoin précis (Facultatif)
         mutate {
             update => { "resource" => "%{resource}-%{pid}" }
         }
@@ -186,8 +158,6 @@ Un exemple d'évènement :
   'resource': 'cft-logging',
   'output': 'Server is going down',
   'state': 1,
-  'state_type': 1,
-  'status': 1
  }
 ```
 
