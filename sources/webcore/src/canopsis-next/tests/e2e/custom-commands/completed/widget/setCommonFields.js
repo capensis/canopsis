@@ -369,14 +369,15 @@ module.exports.command = function setCommonFields({
   }
 
   if (infoPopups) {
-    common.clickInfoPopup();
+    common.clickCreateOrEditInfoPopup();
 
     infoPopupModal.verifyModalOpened();
 
     infoPopups.forEach(({ field, template }) => {
       infoPopupModal.clickAddPopup();
 
-      addInfoPopupModal.verifyModalOpened()
+      addInfoPopupModal
+        .verifyModalOpened()
         .selectSelectedColumn(field)
         .setTemplate(template)
         .clickSubmitButton()

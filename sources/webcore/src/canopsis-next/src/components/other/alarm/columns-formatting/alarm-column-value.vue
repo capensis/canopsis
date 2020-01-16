@@ -13,10 +13,10 @@
           div(v-else, v-bind="component.bind", v-on="component.on")
           v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
             v-icon(small) info
-      v-card(dark)
-        v-card-title.primary.pa-2.white--text(:data-test="`alarmInfoPopup-${alarm._id}`")
+      v-card(:data-test="`alarmInfoPopup-${alarm._id}-column-${column.text}`", dark)
+        v-card-title.primary.pa-2.white--text
           v-layout(justify-space-between, align-center)
-            h4(data-test="alarmInfoPopupContent") {{ $t('alarmList.infoPopup') }}
+            h4 {{ $t('alarmList.infoPopup') }}
             v-btn.ma-0.ml-3(
               data-test="alarmInfoPopupCloseButton",
               icon,
@@ -25,7 +25,7 @@
               color="white"
             )
               v-icon(small, color="error") close
-        v-card-text.pa-2(v-html="popupTextContent")
+        v-card-text.pa-2(data-test="alarmInfoPopupContent", v-html="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
