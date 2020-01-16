@@ -17,7 +17,7 @@
             type="checkbox"
           )
           .v-input--selection-controls__ripple.primary--text(v-ripple="{ center: true }")
-          i.v-icon.material-icons(
+          i.v-icon.material-icons.theme--light(
             :class="{ 'primary--text': props.inputValue }"
           ) {{ props.inputValue ? 'check_box' : 'check_box_outline_blank' }}
         label(
