@@ -1,5 +1,7 @@
 <template lang="pug" functional>
-  .v-input.v-input--selection-controls.v-input--checkbox(:class="{ 'v-input--is-disabled': props.disabled }")
+  .v-input.v-input--selection-controls.v-input--checkbox(
+    :class="{ 'v-input--is-disabled': props.disabled, 'theme--light': props.disabled }"
+  )
     .v-input__control
       .v-input__slot
         .v-input--selection-controls__input(
@@ -8,15 +10,15 @@
         )
           input(
             class="hidden",
-            :aria-checked="String(props.inputValue)",
-            :checked="props.inputValue",
+            :aria-checked="String(!props.disabled && props.inputValue)",
+            :checked="!props.disabled && props.inputValue",
             role="checkbox",
             type="checkbox"
           )
           .v-input--selection-controls__ripple.primary--text(v-ripple="{ center: true }")
           i.v-icon.material-icons(
-            :class="{ 'primary--text': props.inputValue }"
-          ) {{ props.inputValue ? 'check_box' : 'check_box_outline_blank' }}
+            :class="{ 'primary--text': !props.disabled && props.inputValue }"
+          ) {{ !props.disabled && props.inputValue ? 'check_box' : 'check_box_outline_blank' }}
         label(
           v-show="props.label !== ''",
           @click="listeners.change(!props.inputValue)"
