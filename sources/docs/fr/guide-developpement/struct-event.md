@@ -14,19 +14,18 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
 
 ```javascript
 {
-    "event_type":       // Event type (see below)
-    "source_type":      // Source of event ("component", or "resource")
-    "connector":        // Connector Type (gelf, nagios, snmp, ...)
-    "connector_name":   // Connector Identifier (nagios1, nagios2, ...)
-    "component":        // Component's name
-    "resource":         // Resource's name (only if source_type is "resource")
+    "event_type":       // Event type (see below) - value field is `string` type
+    "source_type":      // Source of event ("component", or "resource") - value field is `string` type
+    "connector":        // Connector Type (gelf, nagios, snmp, ...) - value field is `string` type
+    "connector_name":   // Connector Identifier (nagios1, nagios2, ...) - value field is `string` type
+    "component":        // Component's name - value field is `string` type
+    "resource":         // Resource's name (only if source_type is "resource") - value field is `string` type
 
     // /!\ The following is optional /!\
 
-    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
-    "output":           // Message
-    "long_output":      // Description
-
+    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is `number` type
+    "output":           // Message - value field is `string` type
+    "long_output":      // Description - value field is `string` type
 }
 ```
 
@@ -38,9 +37,9 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "check",
+    "event_type": "check",  // mandatory - value field is `string` type
 
-    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
+    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0 - value field is `number` type
 }
 ```
 
@@ -48,10 +47,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "ack",    // mandatory
+    "event_type": "ack",    // mandatory - value field is `string` type
 
-    "author":               // Acknowledgment author, optional
-    "output":               // Acknowledgment comment, optional
+    "author":               // Acknowledgment author, optional - value field is `string` type
+    "output":               // Acknowledgment comment, optional - value field is `string` type
 }
 ```
 
@@ -59,10 +58,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "declareticket",    // mandatory
+    "event_type": "declareticket",    // mandatory - value field is `string` type
 
-    "author":               // Declareticket author, optional
-    "output":               // Declareticket comment, optional
+    "author":               // Declareticket author, optional - value field is `string` type
+    "output":               // Declareticket comment, optional - value field is `string` type
 }
 ```
 
@@ -70,11 +69,11 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "assocticket",    // mandatory
+    "event_type": "assocticket",    // mandatory - value field is `string` type
 
-    "author":               // Assocticket author, optional
-    "ticket":               // Assocticket number, optional
-    "output":               // Assocticket comment, optional
+    "author":               // Assocticket author, optional - value field is `string` type
+    "ticket":               // Assocticket number, optional - value field is `string` type
+    "output":               // Assocticket comment, optional - value field is `string` type
 }
 ```
 
@@ -82,10 +81,11 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-  "event_type": "snooze",   // mandatory
+  "event_type": "snooze",   // mandatory - value field is `string` type
 
-  "author":           // snooze author, optional
-  "output":           // snooze comment, optional
+  "duration":         // snooze duration, in seconds - value field is `number` type
+  "author":           // snooze author, optional - value field is `string` type
+  "output":           // snooze comment, optional - value field is `string` type
 }
 ```
 
@@ -104,10 +104,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "cancel",     // mandatory
+    "event_type": "cancel",     // mandatory - value field is `string` type
 
-    "author":               // author, optional
-    "output":               // comment, optional
+    "author":               // author, optional - value field is `string` type
+    "output":               // comment, optional - value field is `string` type
 }
 ```
 
@@ -115,10 +115,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "uncancel",   // mandatory
+    "event_type": "uncancel",   // mandatory - value field is `string` type
 
-    "author":               // author, optional
-    "output":               // comment, optional
+    "author":               // author, optional - value field is `string` type
+    "output":               // comment, optional - value field is `string` type
 }
 ```
 
@@ -127,10 +127,10 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "ackremove",  // mandatory
+    "event_type": "ackremove",  // mandatory - value field is `string` type
 
-    "author":               // author, optional
-    "output":               // comment, optional
+    "author":               // author, optional - value field is `string` type
+    "output":               // comment, optional - value field is `string` type
 }
 ```
 
@@ -138,11 +138,11 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "trap",  // mandatory
+    "event_type": "trap",  // mandatory - value field is `string` type
 
-    "snmp_severity":        // SNMP severity, mandatory
-    "snmp_state":           // SNMP state, mandatory
-    "snmp_oid":             // SNMP oid, mandatory
+    "snmp_severity":        // SNMP severity, mandatory - value field is `string` type
+    "snmp_state":           // SNMP state, mandatory - value field is `string` type
+    "snmp_oid":             // SNMP oid, mandatory - value field is `string` type
 }
 ```
 
