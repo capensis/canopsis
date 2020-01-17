@@ -21,7 +21,7 @@ export default {
         path: getKeepalivePathByRoute(this.$route),
       });
 
-      clearTimeout(this.keepaliveTimer);
+      this.stopKeepalive();
 
       this.keepaliveTimer = setTimeout(this.startKeepalive, DEFAULT_KEEP_ALIVE_INTERVAL);
     },

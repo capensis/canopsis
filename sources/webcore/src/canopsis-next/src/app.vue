@@ -50,16 +50,6 @@ export default {
 
     this.pending = false;
   },
-  beforeUpdate() {
-    if (this.isLoggedIn) {
-      this.startKeepAlive();
-    }
-  },
-  updated() {
-    if (this.isLoggedIn) {
-      this.startSessionTracePath();
-    }
-  },
   beforeDestroy() {
     this.stopKeepalive();
   },

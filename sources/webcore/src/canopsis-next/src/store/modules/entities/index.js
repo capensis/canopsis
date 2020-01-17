@@ -21,7 +21,6 @@ import dynamicInfoModule from './dynamic-info';
 import alarmColumnFiltersModule from './alarm-column-filters';
 import pbehaviorReasonsModule from './pbehavior-reasons';
 
-
 export default {
   alarm: alarmModule,
   entity: entityModule,
