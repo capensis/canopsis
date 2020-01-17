@@ -10,7 +10,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { ACTIVE_SESSION_FETCHING_INTERVAL } from '@/config';
+import { ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL } from '@/config';
 
 const { mapActions } = createNamespacedHelpers('session');
 
@@ -22,27 +22,27 @@ export default {
     };
   },
   mounted() {
-    this.fetchActiveSessionsCount();
+    this.startFetchActiveSessionsCount();
   },
   beforeDestroy() {
-    if (this.requestTimer) {
-      clearTimeout(this.requestTimer);
-      this.requestTimer = undefined;
-    }
+    this.stopFetchActiveSessionsCount();
   },
   methods: {
     ...mapActions({
       fetchSessionsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    async fetchActiveSessionsCount() {
+    async startFetchActiveSessionsCount() {
       const { data: sessions } = await this.fetchSessionsListWithoutStore({ active: true });
 
       this.count = sessions.length;
 
-      if (!this.requestTimer) {
-        this.requestTimer = setTimeout(this.fetchActiveSessionsCount, ACTIVE_SESSION_FETCHING_INTERVAL);
-      }
+      this.stopFetchActiveSessionsCount();
+      this.requestTimer = setTimeout(this.startFetchActiveSessionsCount, ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL);
+    },
+
+    stopFetchActiveSessionsCount() {
+      clearTimeout(this.requestTimer);
     },
   },
 };
