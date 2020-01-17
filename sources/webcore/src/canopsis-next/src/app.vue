@@ -9,7 +9,6 @@
     the-popups
 </template>
 
-
 <script>
 import Navigation from '@/components/layout/navigation/index.vue';
 import SideBars from '@/components/side-bars/index.vue';
@@ -46,6 +45,9 @@ export default {
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
     }
+
+    this.registerIsLoggedInOnceWatcher();
+
     this.pending = false;
   },
   beforeUpdate() {
@@ -59,10 +61,19 @@ export default {
     }
   },
   beforeDestroy() {
-    this.stopKeepAlive();
+    this.stopKeepalive();
   },
+  methods: {
+    registerIsLoggedInOnceWatcher() {
+      const unwatch = this.$watch('isLoggedIn', (isLoggedIn) => {
+        if (isLoggedIn) {
+          this.startKeepalive();
 
-
+          unwatch();
+        }
+      }, { immediate: true });
+    },
+  },
 };
 </script>
 

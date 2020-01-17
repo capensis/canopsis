@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import { USERS_RIGHTS } from '@/constants';
 import store from '@/store';
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -221,8 +221,14 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
+  const isLoggedIn = !!Cookies.get(COOKIE_SESSION_KEY);
+
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
+  }
+
+  if (isLoggedIn) {
+    store.dispatch('keepalive/sessionTracePath', { path: getKeepalivePathByRoute(to) });
   }
 });
 

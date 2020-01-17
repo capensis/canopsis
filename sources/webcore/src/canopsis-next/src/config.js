@@ -97,12 +97,11 @@ export const API_ROUTES = {
   heartbeat: '/api/v2/heartbeat/',
   dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
-  startsession: '/api/v2/sessionstart',
-  keepalive: '/api/v2/keepalive',
+  sessionStart: '/api/v2/sessionstart',
   sessionTracePath: '/api/v2/session_tracepath',
+  keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
-
 };
 
 export const COLORS = {

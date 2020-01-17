@@ -5,7 +5,7 @@ import { API_ROUTES } from '@/config';
 export default {
   namespaced: true,
   actions: {
-    async keepAlive(context, payload) {
+    async keepalive(context, payload) {
       try {
         await request.post(API_ROUTES.keepalive, payload);
       } catch (err) {
