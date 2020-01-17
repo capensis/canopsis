@@ -337,6 +337,8 @@ export default {
 
     stopPeriodicRefreshInterval() {
       clearInterval(this.periodicRefreshInterval);
+
+      this.periodicRefreshInterval = undefined;
     },
   },
 };
