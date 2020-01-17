@@ -21,14 +21,13 @@ export default {
         path: getKeepalivePathByRoute(this.$route),
       });
 
-      if (!this.keepaliveTimer) {
-        this.keepaliveTimer = setTimeout(this.startKeepalive, DEFAULT_KEEP_ALIVE_INTERVAL);
-      }
+      clearTimeout(this.keepaliveTimer);
+
+      this.keepaliveTimer = setTimeout(this.startKeepalive, DEFAULT_KEEP_ALIVE_INTERVAL);
     },
 
     stopKeepalive() {
       clearTimeout(this.keepaliveTimer);
-      this.keepaliveTimer = undefined;
     },
   },
 };
