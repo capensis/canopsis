@@ -188,7 +188,6 @@ export default {
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
       if (value && (!oldValue || !this.periodicRefreshInterval)) {
-        this.stopPeriodicRefreshInterval();
         this.startPeriodicRefreshInterval();
       } else if (oldValue && !value) {
         this.stopPeriodicRefreshInterval();
@@ -319,7 +318,7 @@ export default {
     },
 
     refreshTick() {
-      if (this.periodicRefreshProgress === 0) {
+      if (this.periodicRefreshProgress <= 0) {
         this.refreshViewWithProgress();
       } else {
         this.periodicRefreshProgress -= 1;
@@ -328,6 +327,10 @@ export default {
 
     startPeriodicRefreshInterval() {
       this.resetRefreshInterval();
+
+      if (this.periodicRefreshInterval) {
+        this.stopPeriodicRefreshInterval();
+      }
 
       this.periodicRefreshInterval = setInterval(this.refreshTick, 1000);
     },
