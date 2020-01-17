@@ -53,6 +53,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isResolvedAlarm: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
@@ -144,9 +148,6 @@ export default {
         itemsIds: [this.item._id],
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
-    },
-    isResolvedAlarm() {
-      return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(this.item.v.status.val);
     },
     resolvedActions() {
       const actions = [];

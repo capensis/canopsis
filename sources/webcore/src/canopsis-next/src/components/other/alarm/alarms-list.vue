@@ -38,7 +38,7 @@
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
         v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
           v-icon(:color="activeRange ? 'primary' : 'black'") schedule
-      v-flex.px-3(v-show="selected.length", xs12)
+      v-flex.px-3(v-show="selectedIds.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
@@ -65,7 +65,19 @@
         template(slot="items", slot-scope="props")
           tr(:data-test="`tableRow-${props.item._id}`")
             td(data-test="rowCheckbox")
-              v-checkbox-functional(v-model="props.selected", primary, hide-details)
+              v-checkbox-functional(
+                v-if="!isResolvedAlarm(props.item)",
+                v-model="props.selected",
+                primary,
+                hide-details
+              )
+              v-checkbox-functional(
+                v-else,
+                :value="false",
+                disabled,
+                primary,
+                hide-details
+              )
             td(
               v-for="column in columns",
               @click="props.expanded = !props.expanded"
@@ -77,7 +89,12 @@
                 :widget="widget"
               )
             td
-              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
+              actions-panel(
+                :item="props.item",
+                :widget="widget",
+                :isResolvedAlarm="isResolvedAlarm(props.item)",
+                :isEditingMode="isEditingMode"
+              )
         template(slot="expand", slot-scope="props")
           time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
@@ -97,7 +114,7 @@
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { ENTITIES_STATUSES, MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
@@ -182,7 +199,9 @@ export default {
     },
 
     selectedIds() {
-      return this.selected.map(item => item._id);
+      return this.selected
+        .filter(item => !this.isResolvedAlarm(item))
+        .map(item => item._id);
     },
 
     headers() {
@@ -226,6 +245,10 @@ export default {
     this.fetchAlarmColumnFilters();
   },
   methods: {
+    isResolvedAlarm(item) {
+      return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(item.v.status.val);
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },
