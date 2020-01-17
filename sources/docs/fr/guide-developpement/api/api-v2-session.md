@@ -65,7 +65,7 @@ Permet de stocker les temps de session en fonction des différentes pages consul
 ```
 #### Réponse en cas de réussite
 
-**Condition** : session_tracepath bien enregistrer
+**Condition** : session_tracepath bien enregistrée
 
 **Code** : `200 OK`
 
