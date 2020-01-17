@@ -66,8 +66,15 @@
           tr(:data-test="`tableRow-${props.item._id}`")
             td(data-test="rowCheckbox")
               v-checkbox-functional(
+                v-if="!isResolvedAlarm(props.item)",
                 v-model="props.selected",
-                :disabled="isResolvedAlarm(props.item)",
+                primary,
+                hide-details
+              )
+              v-checkbox-functional(
+                v-else,
+                :value="false",
+                disabled,
                 primary,
                 hide-details
               )
