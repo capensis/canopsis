@@ -98,7 +98,7 @@ export const API_ROUTES = {
   dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
   sessionStart: '/api/v2/sessionstart',
-  sessionHide: '/api/v2/session_hide',
+  sessionTracePath: '/api/v2/session_tracepath',
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',

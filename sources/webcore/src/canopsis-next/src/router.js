@@ -228,7 +228,7 @@ router.afterEach((to, from) => {
   }
 
   if (isLoggedIn) {
-    store.dispatch('keepalive/sessionHide', { path: getKeepalivePathByRoute(to) });
+    store.dispatch('keepalive/sessionTracePath', { path: getKeepalivePathByRoute(to) });
   }
 });
 
