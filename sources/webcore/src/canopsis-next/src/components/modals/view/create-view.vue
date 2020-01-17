@@ -84,6 +84,10 @@ export default {
         description: '',
         enabled: false,
         tags: [],
+        periodicRefresh: {
+          enabled: false,
+          value: 0,
+        },
       },
     };
   },
@@ -132,6 +136,10 @@ export default {
         description: view.description,
         enabled: view.enabled,
         tags: [...view.tags || []],
+        periodicRefresh: view.periodicRefresh || {
+          enabled: false,
+          value: 0,
+        },
       };
     }
   },
