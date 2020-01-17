@@ -4,7 +4,7 @@
       span(slot="badge") {{ count }}
       v-btn(flat, icon, small)
         v-icon(color="white", small) people
-    span Active sessions
+    span {{ $t('layout.sideBar.activeSessions') }}
 </template>
 
 <script>
@@ -37,12 +37,17 @@ export default {
 
       this.count = sessions.length;
 
-      this.stopFetchActiveSessionsCount();
+      if (this.requestTimer) {
+        this.stopFetchActiveSessionsCount();
+      }
+
       this.requestTimer = setTimeout(this.startFetchActiveSessionsCount, ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL);
     },
 
     stopFetchActiveSessionsCount() {
       clearTimeout(this.requestTimer);
+
+      this.requestTimer = undefined;
     },
   },
 };
