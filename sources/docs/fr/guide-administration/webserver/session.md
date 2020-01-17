@@ -18,7 +18,7 @@ Les données renvoyées par l'API sont stockées dans la collection `default_ses
 ```javascript
 {
     "_id": "...",                     // id unique de la session
-    "id_beaker_session" : "cm9vdF8xNTc0OTU3MjMz", //Permet d'itentifier la session
+    "id_beaker_session" : "cm9vdF8xNTc0OTU3MjMz", //Permet d'identifier la session
     "username": "jacques",            // nom de l'utilisateur
     "start": 1574150400,              // date du début de la session
     "last_ping": 1574182800,          // date du dernier ping
