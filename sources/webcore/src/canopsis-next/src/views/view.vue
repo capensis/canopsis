@@ -188,9 +188,7 @@ export default {
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
       if (value && (!oldValue || !this.periodicRefreshInterval)) {
-        if (this.periodicRefreshInterval) {
-          this.stopPeriodicRefreshInterval();
-        }
+        this.stopPeriodicRefreshInterval();
         this.startPeriodicRefreshInterval();
       } else if (oldValue && !value) {
         this.stopPeriodicRefreshInterval();
@@ -268,9 +266,11 @@ export default {
     },
 
     async refreshViewWithProgress() {
+      this.stopPeriodicRefreshInterval();
+
       await this.refreshView();
 
-      this.resetRefreshInterval();
+      this.startPeriodicRefreshInterval();
     },
 
     showCreateWidgetModal() {
@@ -333,10 +333,7 @@ export default {
     },
 
     stopPeriodicRefreshInterval() {
-      if (this.periodicRefreshInterval) {
-        clearInterval(this.periodicRefreshInterval);
-        this.resetRefreshInterval();
-      }
+      clearInterval(this.periodicRefreshInterval);
     },
   },
 };
