@@ -265,11 +265,15 @@ export default {
     },
 
     async refreshViewWithProgress() {
-      this.stopPeriodicRefreshInterval();
+      if (this.periodicRefreshInterval) {
+        this.stopPeriodicRefreshInterval();
+      }
 
       await this.refreshView();
 
-      this.startPeriodicRefreshInterval();
+      if (this.isPeriodicRefreshEnabled) {
+        this.startPeriodicRefreshInterval();
+      }
     },
 
     showCreateWidgetModal() {
