@@ -606,6 +606,8 @@ export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
 
+export const RETRY_DEFAULT_DELAY = 180;
+
 export const STATS_CALENDAR_COLORS = {
   alarm: {
     ok: COLORS.state.ok,

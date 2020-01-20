@@ -795,6 +795,8 @@ export default {
       },
       fields: {
         id: 'ID',
+        retryDelay: 'Retard',
+        retryCount: 'Répéter',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
