@@ -6,7 +6,7 @@
         v-validate="'required|numeric|min_value:0'",
         :label="$t('modals.createWebhook.fields.retryCount')",
         :min="0",
-        data-vv-name="retryCount",
+        name="retryCount",
         type="number"
       )
     v-flex
@@ -15,7 +15,7 @@
         v-validate="'required|numeric|min_value:0'",
         :label="$t('modals.createWebhook.fields.retryDelay')",
         :min="0",
-        data-vv-name="retryDelay",
+        name="retryDelay",
         type="number"
       )
 </template>
