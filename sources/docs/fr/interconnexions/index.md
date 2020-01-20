@@ -45,7 +45,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ## Drivers
 
-Le driver permet de peupler le référentiel interne Canopsis en vue de l’enrichissement des évènements.
+Le driver permet de peupler le référentiel interne Canopsis en vue de l’enrichissement des alarmes.
 
 **NB :** Chaque driver dans ce tableau est à considérer comme un framework de synchronisation qui doit être adapté à chaque contexte client (modèle de données, champs à synchroniser, liens applicatifs…).
 
