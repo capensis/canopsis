@@ -33,7 +33,7 @@ export default {
     }),
 
     async startFetchActiveSessionsCount() {
-      const { data: sessions } = await this.fetchSessionsListWithoutStore({ active: true });
+      const { sessions } = await this.fetchSessionsListWithoutStore({ active: true });
 
       this.count = sessions.length;
 
