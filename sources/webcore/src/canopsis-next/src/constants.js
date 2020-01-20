@@ -949,6 +949,7 @@ export const WEBHOOK_TRIGGERS = {
   comment: 'comment',
   done: 'done',
   declareticket: 'declareticket',
+  declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
   snooze: 'snooze',
   unsnooze: 'unsnooze',
@@ -967,6 +968,7 @@ export const SNMP_STATE_TYPES = {
 export const ACTION_TYPES = {
   snooze: 'snooze',
   pbehavior: 'pbehavior',
+  changestate: 'changestate',
 };
 
 export const ACTION_AUTHOR = 'engine-action';
