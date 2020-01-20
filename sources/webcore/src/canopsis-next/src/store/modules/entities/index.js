@@ -16,6 +16,7 @@ import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import actionModule from './action';
 import heartbeatModule from './heartbeat';
+import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
 import pbehaviorReasonsModule from './pbehavior-reasons';
 import alarmColumnFiltersModule from './alarm-column-filters';
@@ -35,12 +36,13 @@ export default {
   eventFilterRule: eventFilterRuleModule,
   webhook: webhookModule,
   info: infoModule,
-  filterHint: filterHintModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
   action: actionModule,
   heartbeat: heartbeatModule,
+  keepalive: keepaliveModule,
   dynamicInfo: dynamicInfoModule,
+  filterHint: filterHintModule,
   pbehaviorReasons: pbehaviorReasonsModule,
   alarmColumnFilters: alarmColumnFiltersModule,
   session: sessionModule,

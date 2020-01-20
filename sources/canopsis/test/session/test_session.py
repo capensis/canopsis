@@ -43,50 +43,100 @@ class SessionManagerTest(TestCase):
         self.manager = Session(collection=self.collection)
 
         self.user = 'test_user'
+        self.id_beaker_session = 'cm9vdF8xNTc2MDY1MzY2'
+        self.path = ["view/da7ac9b9-db1c-4435-a1f2-edb4d6be4db8","view-tab_edd5855b-54f1-4c51-9550-d88c2da60768"]
+        self.path_bis = ["view/da7ac9b9-db1c-4435-a1f2-edb4d6be4db8","view-tab_edd5855b-54f1-4c51-azerty"]
 
     def tearDown(self):
         self.collection.remove()
 
     def test_keep_alive(self):
-        self.manager.session_start(self.user)
+        self.manager.session_start(self.id_beaker_session,self.user)
         sleep(1)
-        got = self.manager.keep_alive(self.user)
+        got = self.manager.keep_alive(self.id_beaker_session,self.user,True,self.path)
 
-        session = self.collection.find_one({'_id': self.user})
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
 
         self.assertTrue(isinstance(session, dict))
-        self.assertEqual(got, session['last_check'])
+        self.assertEqual(got, session['last_ping'])
+        self.assertEqual(self.path,session['last_visible_path'])
+
+        got = self.manager.keep_alive(self.id_beaker_session,self.user,False,self.path_bis)
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
+
+        self.assertTrue(isinstance(session, dict))
+        self.assertEqual(got, session['last_ping'])
+        self.assertEqual(self.path,session['last_visible_path'])
+
+        got = self.manager.keep_alive(self.id_beaker_session,self.user,True,self.path_bis)
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
+        self.assertTrue(isinstance(session, dict))
+        self.assertEqual(got, session['last_ping'])
+        self.assertEqual(self.path_bis,session['last_visible_path'])
 
     def test_session_start(self):
-        got = self.manager.session_start(self.user)
+        got = self.manager.session_start(self.id_beaker_session,self.user)
 
-        session = self.collection.find_one({'_id': self.user})
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
 
         self.assertTrue(isinstance(session, dict))
-        self.assertTrue(session['active'])
-        self.assertEqual(got, session['session_start'])
+        self.assertTrue(self.manager.is_session_active(self.id_beaker_session))
+        self.assertEqual(got, session['start'])
 
     def test_session_start_already_started(self):
         self.test_session_start()
 
-        got = self.manager.session_start(self.user)
+        got = self.manager.session_start(self.id_beaker_session,self.user)
 
         self.assertTrue(got is None)
 
     def test_is_session_active(self):
-        self.assertFalse(self.manager.is_session_active(self.user))
-        self.manager.session_start(self.user)
-        self.assertTrue(self.manager.is_session_active(self.user))
+        self.assertFalse(self.manager.is_session_active(self.id_beaker_session))
+        self.manager.session_start(self.id_beaker_session,self.user)
+        self.assertTrue(self.manager.is_session_active(self.id_beaker_session))
 
-    def test_sessions_close(self):
-        got = self.manager.session_start(self.user)
+    def test_session_tracepath(self):
+        self.manager.session_start(self.id_beaker_session,self.user)
+        sleep(1)
 
-        self.manager.alive_session_duration = 0
-        self.assertTrue(got is not None)
+        got = self.manager.session_tracepath(self.id_beaker_session,self.user,self.path)
 
-        sessions = self.manager.sessions_close()
-        self.assertTrue(len(sessions) > 0)
-        self.assertEqual(got, sessions[0]['last_check'])
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
+
+        self.assertTrue(isinstance(session, dict))
+        self.assertEqual(got, session['last_ping'])
+        self.assertEqual(self.path,session['last_visible_path'])
+
+        got = self.manager.session_tracepath(self.id_beaker_session,self.user,self.path_bis)
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
+
+        self.assertTrue(isinstance(session, dict))
+        self.assertEqual(got, session['last_ping'])
+        self.assertEqual(self.path_bis,session['last_visible_path'])
+
+        got = self.manager.session_tracepath(self.id_beaker_session,self.user,self.path_bis)
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
+        self.assertTrue(isinstance(session, dict))
+        self.assertEqual(got, session['last_ping'])
+        self.assertEqual(self.path_bis,session['last_visible_path'])
+
+    def test_sessions_req(self):
+        self.manager.session_start(self.id_beaker_session,self.user)
+        sleep(1)
+        session = self.collection.find_one({"id_beaker_session": self.id_beaker_session,'username': self.user})
+        session_req = self.manager.sessions_req(self.id_beaker_session,{"active":"true"})
+        self.assertEqual([session],session_req)
+
+        session_req = self.manager.sessions_req(self.id_beaker_session,{"active":"false"})
+        self.assertEqual([],session_req)
+
+        self.manager.session_start("azerty","userTest")
+
+        session2 = self.collection.find_one({"id_beaker_session": "azerty",'username': "userTest"})
+        session_req = self.manager.sessions_req(self.id_beaker_session,{"usernames[]":[self.user,"userTest"]})
+        self.assertEqual([session,session2],session_req)
+
+
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

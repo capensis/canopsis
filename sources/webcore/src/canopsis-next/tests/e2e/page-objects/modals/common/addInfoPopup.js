@@ -11,6 +11,14 @@ const commands = {
       .customClick(this.el('@optionSelect', index));
   },
 
+  clickTemplate() {
+    return this.customClick('@template');
+  },
+
+  clearTemplate() {
+    return this.customClearRTE('@template');
+  },
+
   setTemplate(value) {
     return this.customClick('@template')
       .sendKeys('@template', value);

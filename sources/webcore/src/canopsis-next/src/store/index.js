@@ -20,6 +20,7 @@ import queryModule from './modules/query';
 import sideBarModule from './modules/side-bar';
 import entitiesModules from './modules/entities';
 
+
 import entitiesPlugin from './plugins/entities';
 import watchOncePlugin from './plugins/watch-once';
 

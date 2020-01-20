@@ -286,7 +286,7 @@ const commands = {
     });
   },
 
-  clickInfoPopup() {
+  clickCreateOrEditInfoPopup() {
     return this.customClick('@widgetInfoPopup');
   },
 

@@ -51,6 +51,8 @@ export default {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         });
 
+        await request.get(API_ROUTES.sessionStart);
+
         commit(types.LOGIN_COMPLETED);
 
         return dispatch('fetchCurrentUser');

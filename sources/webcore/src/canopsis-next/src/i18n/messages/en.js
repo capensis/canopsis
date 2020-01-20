@@ -476,6 +476,7 @@ export default {
       },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
+        periodicRefresh: 'Periodic refresh',
         groupIds: 'Choose a group, or create a new one',
         groupTags: 'Group tags',
       },

@@ -4,7 +4,9 @@ Cette section vous accompagne dans l'administration avancée de Canopsis. Elle v
 
 **Sommaire**
 
-- [Authentification avancée](authentification.md)
 - [Actions sur la BDD (nettoyage, sauvegarde et restauration)](actions-base-donnees.md)
+- [Authentification avancée](authentification.md)
 - [Sécurité avancée](configuration-parefeu-et-selinux.md)
+- [Connexion à la base de données](connexion-a-la-base-de-donnees.md)
 - [Configuration avancée du reverse-proxy HTTP](reverse-proxy.md)
+- [Paramétrage en BDD de Canopsis](parametrage-base-donnees-canopsis.md)

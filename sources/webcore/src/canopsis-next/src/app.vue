@@ -9,13 +9,13 @@
     the-popups
 </template>
 
-
 <script>
 import Navigation from '@/components/layout/navigation/index.vue';
 import SideBars from '@/components/side-bars/index.vue';
 
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
+import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
 
@@ -24,7 +24,7 @@ export default {
     Navigation,
     SideBars,
   },
-  mixins: [authMixin, entitiesInfoMixin],
+  mixins: [authMixin, entitiesInfoMixin, keepaliveMixin],
   data() {
     return {
       pending: true,
@@ -46,7 +46,23 @@ export default {
       await this.fetchAppInfos();
     }
 
+    this.registerIsLoggedInOnceWatcher();
+
     this.pending = false;
+  },
+  beforeDestroy() {
+    this.stopKeepalive();
+  },
+  methods: {
+    registerIsLoggedInOnceWatcher() {
+      const unwatch = this.$watch('isLoggedIn', (isLoggedIn) => {
+        if (isLoggedIn) {
+          this.startKeepalive();
+
+          unwatch();
+        }
+      }, { immediate: true });
+    },
   },
 };
 </script>
