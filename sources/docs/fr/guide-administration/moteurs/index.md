@@ -2,8 +2,10 @@
 
 - [Activation et désactivation des moteurs](activation-desactivation-moteurs.md)
 - [Enchainement des moteurs](schema-enchainement-moteurs.md)
+- [Liste des moteurs](#liste-des-moteurs)
+- [Flags et usage](#flags-usage)
 
-Les évènements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.
+Les [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) envoyés par des [connecteurs](../../guide-utilisation/vocabulaire/index.md#connecteur) à Canopsis sont traités à l'aide de [moteurs](../../guide-utilisation/vocabulaire/index.md#moteur).
 
 Un moteur a **plusieurs rôles** :
 

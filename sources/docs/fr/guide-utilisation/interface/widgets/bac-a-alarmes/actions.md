@@ -132,7 +132,7 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 ### Changer la criticité
 
-L'action 'Changer la criticité' permet de modifier l'état d'une alarme (Info, Mineur, Majeur, Critique) *Cf: [Description d'une alarme](./description-alarme.md#les-différents-états)*.
+L'action 'Changer la criticité' permet de modifier l'[état](../../../vocabulaire/index.md#etat) d'une [alarme](../../../vocabulaire/index.md#alarme) (Info, Mineur, Majeur, Critique).
 
 Au clic sur l'action 'Changer la criticité', une fenêtre s'affiche :
 
