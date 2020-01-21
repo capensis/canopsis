@@ -557,6 +557,13 @@
         "desc": "Service weather: Access to 'Ack' action"
     },
     {
+        "_id": "serviceweather_entityAssocTicket",
+        "loader_id": "serviceweather_entityAssocTicket",
+        "crecord_name": "serviceweather_entityAssocTicket",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Assoc Ticket' action"
+    },
+    {
         "_id": "serviceweather_entityDeclareTicket",
         "loader_id": "serviceweather_entityDeclareTicket",
         "crecord_name": "serviceweather_entityDeclareTicket",

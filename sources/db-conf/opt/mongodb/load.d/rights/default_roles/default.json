@@ -242,6 +242,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "serviceweather_entityAssocTicket": {
+            "checksum": 1,
+            "desc": ""
+        },
         "serviceweather_entityDeclareTicket": {
             "checksum": 1,
             "desc": ""
