@@ -139,7 +139,7 @@ export default {
       try {
         const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
 
-        const filter = { $and: [{ 'entity.impact': this.item.entity._id }] };
+        const filter = { $and: [{ 'entity._id': this.item.entity._id }] };
 
         const watcherFilter = {
           title: this.item.entity.name,
