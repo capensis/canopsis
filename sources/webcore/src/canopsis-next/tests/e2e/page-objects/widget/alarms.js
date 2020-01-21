@@ -44,6 +44,12 @@ const commands = {
     });
   },
 
+  checkIsMultiAckEnabled(expected) {
+    return this.getAttribute('@isMultiAckEnabledInput', 'aria-checked', ({ value }) => {
+      this.assert.equal(value, String(expected));
+    });
+  },
+
   clickFastAckOutput() {
     return this.customClick('@fastAckOutput');
   },

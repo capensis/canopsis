@@ -1152,6 +1152,21 @@ module.exports = {
     alarmsWidget
       .clickAckGroup()
       .clickFastAckOutput()
+      .setIsMultiAckEnabled(true)
+      .checkIsMultiAckEnabled(true);
+  },
+
+  'Fast-ack output (optional) can be enabled': (browser) => {
+    const commonWidget = browser.page.widget.common();
+    const alarmsWidget = browser.page.widget.alarms();
+
+    browser.page.view()
+      .openWidgetSettings(browser.globals.defaultViewData.widgetId);
+
+    commonWidget.clickAdvancedSettings();
+    alarmsWidget
+      .clickAckGroup()
+      .clickFastAckOutput()
       .setFastAckOutputSwitch(true)
       .checkFastAckOutputSwitch(true);
   },
