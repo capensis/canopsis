@@ -17,7 +17,7 @@
             color="secondary",
             fab,
             dark,
-            @click.stop="refreshViewWithProgress"
+            @click.stop="refreshHandler"
           )
             v-icon(v-if="!isPeriodicRefreshEnabled") refresh
             v-progress-circular.periodic-refresh-progress(
@@ -182,6 +182,10 @@ export default {
 
     isViewTabsReady() {
       return this.view && this.$route.query.tabId;
+    },
+
+    refreshHandler() {
+      return this.isPeriodicRefreshEnabled ? this.refreshViewWithProgress : this.refreshView;
     },
   },
 
