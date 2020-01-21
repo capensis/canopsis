@@ -141,14 +141,14 @@ export default {
 
         const filter = { $and: [{ 'entity._id': this.item.entity._id }] };
 
-        const watcherFilter = {
+        const entityFilter = {
           title: this.item.entity.name,
           filter,
         };
 
         const widgetParameters = {
-          mainFilter: watcherFilter,
-          viewFilters: [watcherFilter],
+          mainFilter: entityFilter,
+          viewFilters: [entityFilter],
         };
 
         this.$modals.show({
