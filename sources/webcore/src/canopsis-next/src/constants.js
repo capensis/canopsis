@@ -722,7 +722,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     cancel: 'cancel',
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
-
+    history: 'history',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 

@@ -1,11 +1,20 @@
 import { omit } from 'lodash';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP, CRUD_ACTIONS } from '@/constants';
+import {
+  MODALS,
+  ENTITIES_TYPES,
+  EVENT_ENTITY_TYPES,
+  BUSINESS_USER_RIGHTS_ACTIONS_MAP,
+  CRUD_ACTIONS,
+  WIDGET_TYPES,
+} from '@/constants';
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
+
+import { generateWidgetByType } from '@/helpers/entities';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -124,6 +133,42 @@ export default {
           }),
         },
       });
+    },
+
+    showHistoryModal() {
+      try {
+        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+
+        const filter = { $and: [{ 'entity.impact': this.item.entity._id }] };
+
+        const watcherFilter = {
+          title: this.item.entity.name,
+          filter,
+        };
+
+        const widgetParameters = {
+          mainFilter: watcherFilter,
+          viewFilters: [watcherFilter],
+        };
+
+        this.$modals.show({
+          name: MODALS.alarmsList,
+          config: {
+            widget: {
+              ...widget,
+
+              parameters: {
+                ...widget.parameters,
+                ...widgetParameters,
+              },
+            },
+          },
+        });
+      } catch (err) {
+        this.$popups.error({
+          text: this.$t('errors.default'),
+        });
+      }
     },
 
     actionsAccessFilterHandler({ type }) {
