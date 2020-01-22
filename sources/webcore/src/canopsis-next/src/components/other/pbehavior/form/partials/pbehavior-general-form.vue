@@ -46,17 +46,19 @@
         v-layout(wrap, justify-space-between)
           v-flex(data-test="startDateTimePicker", xs4)
             date-time-picker-field(
-              v-field="form.tstart",
               v-validate="tstartRules",
+              :value="form.tstart",
               :label="$t('modals.createPbehavior.steps.general.fields.start')",
-              name="tstart"
+              name="tstart",
+              @input="updateField('tstart', $event)"
             )
           v-flex(data-test="stopDateTimePicker", xs4)
             date-time-picker-field(
-              v-field="form.tstop",
               v-validate="tstopRules",
+              :value="form.tstop",
               :label="$t('modals.createPbehavior.steps.general.fields.stop')",
-              name="tstop"
+              name="tstop",
+              @input="updateField('tstop', $event)"
             )
           v-flex(xs3)
             v-autocomplete(
