@@ -657,6 +657,7 @@ export const USERS_RIGHTS = {
         associateTicket: 'listalarm_assignTicketNumber',
         cancel: 'listalarm_removeAlarm',
         changeState: 'listalarm_changeState',
+        history: 'listalarm_history',
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
@@ -774,6 +775,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.associateTicket]: USERS_RIGHTS.business.alarmsList.actions.associateTicket,
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
