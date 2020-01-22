@@ -115,7 +115,7 @@ export default {
       const rules = { required: true };
 
       if (this.form.tstart) {
-        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
+        rules.after_custom = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
         rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
       }
 
@@ -125,6 +125,25 @@ export default {
     timezones() {
       return moment.tz.names();
     },
+  },
+  created() {
+    this.$validator.extend('after_custom', {
+      validate: (value, [otherValue]) => {
+        try {
+          const tstopMoment = moment(value).startOf('minute');
+          const tstartMoment = moment(otherValue, DATETIME_FORMATS.dateTimePicker);
+
+          if (!tstopMoment.isValid() && !tstopMoment.isValid()) {
+            return false;
+          }
+          return !tstopMoment.isSameOrBefore(tstartMoment);
+        } catch (err) {
+          return true; // TODO: problem with i18n: https://github.com/baianat/vee-validate/issues/2025
+        }
+      },
+    }, {
+      hasTarget: true,
+    });
   },
   mounted() {
     this.fetchPbehaviorReasons();

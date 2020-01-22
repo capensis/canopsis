@@ -1314,6 +1314,9 @@ export default {
     },
   },
   validation: {
+    messages: {
+      after_custom: 'The {0} should be after than {1}',
+    },
     custom: {
       tstop: {
         after: 'The {0} should be after than {1}',

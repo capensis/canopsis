@@ -1213,6 +1213,9 @@ export default {
     },
   },
   validation: {
+    messages: {
+      after_custom: '{0} Devrait être après le {1}',
+    },
     custom: {
       tstop: {
         after: '{0} Devrait être après le {1}',
