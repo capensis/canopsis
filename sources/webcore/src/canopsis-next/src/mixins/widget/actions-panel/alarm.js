@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { get, omit } from 'lodash';
 
 import {
   MODALS,
@@ -136,39 +136,22 @@ export default {
     },
 
     showHistoryModal() {
-      try {
-        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] };
+      const entityFilter = {
+        title: this.item.entity.name,
+        filter,
+      };
 
-        const filter = { $and: [{ 'entity._id': this.item.entity._id }] };
+      widget.parameters.mainFilter = entityFilter;
+      widget.parameters.viewFilters = [entityFilter];
 
-        const entityFilter = {
-          title: this.item.entity.name,
-          filter,
-        };
-
-        const widgetParameters = {
-          mainFilter: entityFilter,
-          viewFilters: [entityFilter],
-        };
-
-        this.$modals.show({
-          name: MODALS.alarmsList,
-          config: {
-            widget: {
-              ...widget,
-
-              parameters: {
-                ...widget.parameters,
-                ...widgetParameters,
-              },
-            },
-          },
-        });
-      } catch (err) {
-        this.$popups.error({
-          text: this.$t('errors.default'),
-        });
-      }
+      this.$modals.show({
+        name: MODALS.alarmsList,
+        config: {
+          widget,
+        },
+      });
     },
 
     actionsAccessFilterHandler({ type }) {
