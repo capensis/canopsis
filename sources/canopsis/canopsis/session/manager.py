@@ -235,8 +235,6 @@ class Session(object):
         return now
 
     def sessions_req(self, id_beaker_session, params):
-        if not self.is_session_active(id_beaker_session):
-            raise SessionError("Session Not Valid")
 
         now = int(time())
         req = {}
