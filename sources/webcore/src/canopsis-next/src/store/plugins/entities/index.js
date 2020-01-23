@@ -45,13 +45,15 @@ export const entitiesModule = {
           return undefined;
         }
 
-        if (cache.has(entity)) {
+        if (!schema.disabledCache && cache.has(entity)) {
           return cache.get(entity);
         }
 
         const result = denormalize(id, schema, state);
 
-        cache.set(entity, result);
+        if (!schema.disabledCache) {
+          cache.set(entity, result);
+        }
 
         return result;
       };
@@ -66,19 +68,26 @@ export const entitiesModule = {
           return [];
         }
         const schema = schemas[type];
-        const { idAttribute } = schema;
+        const { idAttribute, disabledCache } = schema;
 
-        return denormalize(ids, [schema], state)
-          .filter(item => !!item)
-          .map((item) => {
-            if (cache.has(state[type][item[idAttribute]])) {
-              return cache.get(state[type][item[idAttribute]]);
-            }
+        const entities = denormalize(ids, [schema], state)
+          .filter(item => !!item);
 
-            cache.set(state[type][item[idAttribute]], item);
+        if (disabledCache) {
+          return entities;
+        }
 
-            return item;
-          });
+        return entities.map((item) => {
+          const entity = state[type][item[idAttribute]];
+
+          if (cache.has(entity)) {
+            return cache.get(entity);
+          }
+
+          cache.set(entity, item);
+
+          return item;
+        });
       };
     },
   },
@@ -107,6 +116,10 @@ export const entitiesModule = {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             cache.clearForEntity(state, entity);
 
+            if (state[type][key]) {
+              cache.clearForEntity(state, state[type][key]);
+            }
+
             Vue.set(state[type], key, entity);
           });
         }
@@ -133,6 +146,10 @@ export const entitiesModule = {
 
             cache.clearForEntity(state, newEntity);
 
+            if (state[type][key]) {
+              cache.clearForEntity(state, state[type][key]);
+            }
+
             Vue.set(state[type], key, newEntity);
           });
         }
@@ -148,6 +165,10 @@ export const entitiesModule = {
         if (state[type]) {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             cache.delete(entity);
+
+            if (state[type][key]) {
+              cache.delete(state[type][key]);
+            }
 
             Vue.delete(state[type], key);
           });
