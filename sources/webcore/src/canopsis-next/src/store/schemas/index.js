@@ -57,7 +57,7 @@ export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   views: [viewSchema],
 }, {
   idAttribute: '_id',
-  mergeStrategy: childMergeStrategy,
+  processStrategy: parentProcessStrategy,
 });
 
 groupSchema.disabledCache = true;
