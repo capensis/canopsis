@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import deepEqual from 'deep-equal';
 import { get, pick, uniq, mergeWith } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
@@ -46,13 +45,15 @@ export const entitiesModule = {
           return undefined;
         }
 
-        if (cache.has(entity)) {
+        if (!schema.disabledCache && cache.has(entity)) {
           return cache.get(entity);
         }
 
         const result = denormalize(id, schema, state);
 
-        cache.set(entity, result);
+        if (!schema.disabledCache) {
+          cache.set(entity, result);
+        }
 
         return result;
       };
@@ -67,25 +68,26 @@ export const entitiesModule = {
           return [];
         }
         const schema = schemas[type];
-        const { idAttribute } = schema;
+        const { idAttribute, disabledCache } = schema;
 
-        return denormalize(ids, [schema], state)
-          .filter(item => !!item)
-          .map((item) => {
-            const entity = state[type][item[idAttribute]];
+        const entities = denormalize(ids, [schema], state)
+          .filter(item => !!item);
 
-            if (cache.has(entity)) {
-              const cacheEntity = cache.get(entity);
+        if (disabledCache) {
+          return entities;
+        }
 
-              if (deepEqual(cacheEntity, item)) {
-                return cacheEntity;
-              }
-            }
+        return entities.map((item) => {
+          const entity = state[type][item[idAttribute]];
 
-            cache.set(entity, item);
+          if (cache.has(entity)) {
+            return cache.get(entity);
+          }
 
-            return item;
-          });
+          cache.set(entity, item);
+
+          return item;
+        });
       };
     },
   },
@@ -112,7 +114,11 @@ export const entitiesModule = {
           Vue.set(state, type, entities[type]);
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
-            cache.clearForEntity(state, entity);
+            const cacheKey = state[type][key];
+
+            if (cacheKey) {
+              cache.clearForEntity(state, cacheKey);
+            }
 
             Vue.set(state[type], key, entity);
           });
