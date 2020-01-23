@@ -110,16 +110,12 @@ export const entitiesModule = {
      */
     [internalTypes.ENTITIES_UPDATE](state, entities) {
       Object.keys(entities).forEach((type) => {
-        const schema = schemas[type];
-
         if (!state[type]) {
           Vue.set(state, type, entities[type]);
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
-            const cacheKey = state[type][key];
-
-            if (!schema.disabledCache && cacheKey) {
-              cache.clearForEntity(state, cacheKey);
+            if (state[type][key]) {
+              cache.clearForEntity(state, state[type][key]);
             }
 
             Vue.set(state[type], key, entity);
@@ -146,7 +142,9 @@ export const entitiesModule = {
               return undefined;
             });
 
-            cache.clearForEntity(state, newEntity);
+            if (state[type][key]) {
+              cache.clearForEntity(state, state[type][key]);
+            }
 
             Vue.set(state[type], key, newEntity);
           });
@@ -161,8 +159,10 @@ export const entitiesModule = {
     [internalTypes.ENTITIES_DELETE](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (state[type]) {
-          Object.entries(entities[type]).forEach(([key, entity]) => {
-            cache.delete(entity);
+          Object.keys(entities[type]).forEach((key) => {
+            if (state[type][key]) {
+              cache.delete(state[type][key]);
+            }
 
             Vue.delete(state[type], key);
           });
