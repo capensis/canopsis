@@ -1316,7 +1316,7 @@ export default {
   validation: {
     custom: {
       tstop: {
-        after: 'The {0} should be after than {1}',
+        after: 'End time should be later than {1}',
       },
       logo: {
         size: 'The {0} size must be less than {1} KB.',
