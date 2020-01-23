@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import deepEqual from 'deep-equal';
 import { get, pick, uniq, mergeWith } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
@@ -71,11 +72,17 @@ export const entitiesModule = {
         return denormalize(ids, [schema], state)
           .filter(item => !!item)
           .map((item) => {
-            if (cache.has(state[type][item[idAttribute]])) {
-              return cache.get(state[type][item[idAttribute]]);
+            const entity = state[type][item[idAttribute]];
+
+            if (cache.has(entity)) {
+              const cacheEntity = cache.get(entity);
+
+              if (deepEqual(cacheEntity, item)) {
+                return cacheEntity;
+              }
             }
 
-            cache.set(state[type][item[idAttribute]], item);
+            cache.set(entity, item);
 
             return item;
           });
