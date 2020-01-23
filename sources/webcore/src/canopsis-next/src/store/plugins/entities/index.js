@@ -110,13 +110,15 @@ export const entitiesModule = {
      */
     [internalTypes.ENTITIES_UPDATE](state, entities) {
       Object.keys(entities).forEach((type) => {
+        const schema = schemas[type];
+
         if (!state[type]) {
           Vue.set(state, type, entities[type]);
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             const cacheKey = state[type][key];
 
-            if (cacheKey) {
+            if (!schema.disabledCache && cacheKey) {
               cache.clearForEntity(state, cacheKey);
             }
 
