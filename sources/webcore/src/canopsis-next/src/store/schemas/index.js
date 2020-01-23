@@ -57,7 +57,6 @@ export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   views: [viewSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: childProcessStrategy,
   mergeStrategy: childMergeStrategy,
 });
 

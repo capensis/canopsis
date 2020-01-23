@@ -114,6 +114,8 @@ export const entitiesModule = {
           Vue.set(state, type, entities[type]);
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
+            cache.clearForEntity(state, entity);
+
             if (state[type][key]) {
               cache.clearForEntity(state, state[type][key]);
             }
@@ -142,6 +144,8 @@ export const entitiesModule = {
               return undefined;
             });
 
+            cache.clearForEntity(state, newEntity);
+
             if (state[type][key]) {
               cache.clearForEntity(state, state[type][key]);
             }
@@ -159,7 +163,9 @@ export const entitiesModule = {
     [internalTypes.ENTITIES_DELETE](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (state[type]) {
-          Object.keys(entities[type]).forEach((key) => {
+          Object.entries(entities[type]).forEach(([key, entity]) => {
+            cache.delete(entity);
+
             if (state[type][key]) {
               cache.delete(state[type][key]);
             }
