@@ -11,17 +11,13 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import formBaseMixin from '@/mixins/form/base';
 
 import SettingsButtonField from '../partials/button-field.vue';
 
 export default {
   components: { SettingsButtonField },
-  mixins: [
-    modalMixin,
-    formBaseMixin,
-  ],
+  mixins: [formBaseMixin],
   props: {
     value: {
       type: Object,
@@ -37,7 +33,7 @@ export default {
   },
   methods: {
     showEditLiveReportingModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
           ...this.value,

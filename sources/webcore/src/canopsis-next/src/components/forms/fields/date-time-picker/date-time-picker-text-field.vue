@@ -80,7 +80,6 @@ export default {
     return {
       objectValue: null,
       isFocusedTextField: false,
-      commonErrorId: uid(),
     };
   },
   computed: {
@@ -108,6 +107,38 @@ export default {
       }
     },
   },
+  created() {
+    if (this.$validator) {
+      const pickerFormatRuleName = `picker_format_${uid()}`;
+
+      this.$validator.extend(pickerFormatRuleName, {
+        getMessage: () => this.$t('modals.statsDateInterval.errors.endDateLessOrEqualStartDate'),
+        validate: (value) => {
+          try {
+            if (!isEmpty(value)) {
+              return Boolean(this.dateObjectPreparer(value));
+            }
+
+            return true;
+          } catch (err) {
+            return false;
+          }
+        },
+      });
+
+      this.$validator.attach({
+        name: this.name,
+        rules: pickerFormatRuleName,
+        getter: () => this.value,
+        context: () => this,
+      });
+    }
+  },
+  beforeDestroy() {
+    if (this.$validator) {
+      this.$validator.detach(this.name);
+    }
+  },
   methods: {
     updateObjectField(value) {
       this.updateModel(moment(value).format(DATETIME_FORMATS.dateTimePicker));
@@ -125,21 +156,9 @@ export default {
       try {
         if (!isEmpty(value)) {
           this.objectValue = this.dateObjectPreparer(value);
-
-          if (this.$validator && this.errors && this.name) {
-            this.errors.removeById(this.commonErrorId);
-          }
         }
       } catch (err) {
         this.objectValue = null;
-
-        if (this.$validator && this.errors && this.name) {
-          this.errors.add({
-            field: this.name,
-            msg: err.message,
-            id: this.commonErrorId,
-          });
-        }
       }
 
       this.$emit('update:objectValue', this.objectValue);

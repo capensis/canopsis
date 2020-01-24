@@ -65,7 +65,7 @@ usage: connector-sql2canopsis.py [-h] -c CONFIG [-l LOGLEVEL]
 
 ## Installation d'un « dialect »
 
-On a aussi besoin d'installer un `dialect` sqlachemy (<http://docs.sqlalchemy.org/en/latest/dialects/index.html>) en fonction de la base de données ciblée.
+On a aussi besoin d'installer un `dialect` sqlachemy (<https://docs.sqlalchemy.org/en/latest/dialects/index.html>) en fonction de la base de données ciblée.
 
 ### MySQL / MariaDB
 
@@ -115,7 +115,7 @@ url=postgresql://user:password@postgresql_host/database
 
 ### Oracle
 
-Pré-requis : récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`). Disponibles sur <http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html> (attention, un compte est nécessaire).
+Prérequis : récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`). Disponibles sur <https://www.oracle.com/technetwork/database/database-technologies/instant-client/overview/index.html> (attention, un compte est nécessaire).
 
 Définir le répertoire d'installation d'Oracle Instant Client :
 ```shell
@@ -143,7 +143,7 @@ url=oracle://user:password@oracle_host:1521/sid
 
 ### Plus de détails sur les URL de connexion
 
-Voir le lien suivant afin d'en savoir plus sur le paramètre `url`, si nécessaire : <http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls>
+Voir le lien suivant afin d'en savoir plus sur le paramètre `url`, si nécessaire : <https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls>
 
 ## Utilisation
 

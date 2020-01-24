@@ -11,8 +11,25 @@
     .fab
       v-layout(data-test="controlViewLayout", column)
         v-tooltip(left)
-          v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
-            v-icon refresh
+          v-btn(
+            slot="activator",
+            :input-value="isPeriodicRefreshEnabled",
+            color="secondary",
+            fab,
+            dark,
+            @click.stop="refreshHandler"
+          )
+            v-icon(v-if="!isPeriodicRefreshEnabled") refresh
+            v-progress-circular.periodic-refresh-progress(
+              v-else,
+              :rotate="270",
+              :size="30",
+              :width="2",
+              :value="periodicBehaviorProgressValue",
+              color="white",
+              button
+            )
+              span {{ periodicRefreshProgress }}
           span {{ $t('common.refresh') }}
         v-speed-dial(
           v-if="hasUpdateAccess",
@@ -96,6 +113,7 @@
 </template>
 
 <script>
+import { get } from 'lodash';
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
@@ -103,8 +121,6 @@ import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
-import popupMixin from '@/mixins/popup';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
 
@@ -115,8 +131,6 @@ export default {
   },
   mixins: [
     authMixin,
-    modalMixin,
-    popupMixin,
     queryMixin,
     entitiesViewMixin,
   ],
@@ -131,9 +145,23 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
+      periodicRefreshInterval: null,
+      periodicRefreshProgress: null,
     };
   },
   computed: {
+    periodicBehaviorProgressValue() {
+      return this.periodicRefreshProgress / (this.periodicRefreshValue / 100);
+    },
+
+    isPeriodicRefreshEnabled() {
+      return get(this.view, 'periodicRefresh.enabled', false);
+    },
+
+    periodicRefreshValue() {
+      return get(this.view, 'periodicRefresh.value', 0);
+    },
+
     hasUpdateAccess() {
       return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
     },
@@ -155,17 +183,40 @@ export default {
     isViewTabsReady() {
       return this.view && this.$route.query.tabId;
     },
+
+    refreshHandler() {
+      return this.isPeriodicRefreshEnabled ? this.refreshViewWithProgress : this.refreshView;
+    },
+  },
+
+  watch: {
+    isPeriodicRefreshEnabled(value, oldValue) {
+      if (value && (!oldValue || !this.periodicRefreshInterval)) {
+        this.startPeriodicRefreshInterval();
+      } else if (oldValue && !value) {
+        this.stopPeriodicRefreshInterval();
+      }
+    },
   },
 
   created() {
     document.addEventListener('keydown', this.keyDownListener);
-    this.fetchView({ id: this.id });
     this.registerViewOnceWatcher();
+  },
+
+  mounted() {
+    this.fetchView({ id: this.id });
+
+    if (this.isPeriodicRefreshEnabled) {
+      this.startPeriodicRefreshInterval();
+    }
   },
 
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
+
+    this.stopPeriodicRefreshInterval();
   },
 
   methods: {
@@ -205,7 +256,7 @@ export default {
           });
         }
       } else {
-        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
@@ -217,21 +268,29 @@ export default {
       }
     },
 
+    async refreshViewWithProgress() {
+      this.stopPeriodicRefreshInterval();
+
+      await this.refreshView();
+
+      this.startPeriodicRefreshInterval();
+    },
+
     showCreateWidgetModal() {
       if (this.activeTab) {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.createWidget,
           config: {
             tabId: this.activeTab._id,
           },
         });
       } else {
-        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
     showCreateTabModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.viewTab.create.title'),
@@ -256,6 +315,34 @@ export default {
 
     toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
+    },
+
+    resetRefreshInterval() {
+      this.periodicRefreshProgress = this.periodicRefreshValue;
+    },
+
+    refreshTick() {
+      if (this.periodicRefreshProgress <= 0) {
+        this.refreshViewWithProgress();
+      } else {
+        this.periodicRefreshProgress -= 1;
+      }
+    },
+
+    startPeriodicRefreshInterval() {
+      this.resetRefreshInterval();
+
+      if (this.periodicRefreshInterval) {
+        this.stopPeriodicRefreshInterval();
+      }
+
+      this.periodicRefreshInterval = setInterval(this.refreshTick, 1000);
+    },
+
+    stopPeriodicRefreshInterval() {
+      clearInterval(this.periodicRefreshInterval);
+
+      this.periodicRefreshInterval = undefined;
     },
   },
 };

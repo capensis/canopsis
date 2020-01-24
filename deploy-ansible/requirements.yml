@@ -1,12 +1,13 @@
-- src: https://github.com/geerlingguy/ansible-role-haproxy
+- src: https://github.com/nginxinc/ansible-role-nginx
   scm: git
 
 # adapted to our deployment needs
 #- src: https://github.com/UnderGreen/ansible-role-mongodb
 #  scm: git
 
-- src: https://github.com/geerlingguy/ansible-role-rabbitmq
-  scm: git
+# adapted to our deployment needs. Poorly maintained upstream
+#- src: https://github.com/geerlingguy/ansible-role-rabbitmq
+#  scm: git
 
 - src: https://github.com/geerlingguy/ansible-role-redis
   scm: git

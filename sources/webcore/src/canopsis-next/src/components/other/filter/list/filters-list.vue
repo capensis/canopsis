@@ -2,7 +2,7 @@
   div
     v-list
       v-list-tile.pa-0(v-for="(filter, index) in filters", :key="filter.title")
-        v-layout
+        v-layout(:data-test="`filterItem-${filter.title}`")
           v-flex(xs12)
             v-list-tile-content {{ filter.title }}
           v-list-tile-action(v-if="hasAccessToEditFilter")
@@ -30,10 +30,7 @@
 <script>
 import { MODALS, ENTITIES_TYPES } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
-
 export default {
-  mixins: [modalMixin],
   props: {
     filters: {
       type: Array,
@@ -50,7 +47,7 @@ export default {
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
   computed: {
@@ -60,7 +57,7 @@ export default {
   },
   methods: {
     showCreateFilterModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.create.title'),
@@ -77,7 +74,7 @@ export default {
     showEditFilterModal(index) {
       const filter = this.filters[index];
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.edit.title'),
@@ -93,7 +90,7 @@ export default {
     },
 
     showDeleteFilterModal(index) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => {

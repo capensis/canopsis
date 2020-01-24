@@ -45,7 +45,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ## Drivers
 
-Le driver permet de peupler le référentiel interne Canopsis en vue de l’enrichissement des évènements.
+Le driver permet de peupler le référentiel interne Canopsis en vue de l’enrichissement des alarmes.
 
 **NB :** Chaque driver dans ce tableau est à considérer comme un framework de synchronisation qui doit être adapté à chaque contexte client (modèle de données, champs à synchroniser, liens applicatifs…).
 
@@ -66,7 +66,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
-| [Webhooks](../guide-administration/moteurs/moteur-axe-webhooks.md) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
+| [Webhooks](../guide-administration/moteurs/moteur-webhook.md) | Tout outil qui peut réceptionner des webhooks | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
 
 ### Transport
 
@@ -88,6 +88,6 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:---------:|:----------:|:-----------:|:------------:|
-| [Publication d’évènement](../guide-developpement/API.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
+| [Publication d’évènement](../guide-developpement/index.md#api) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
 | [Manipulation de Plage de Maintenance](../guide-utilisation/interface/pbehaviors/index.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
-| [Récupération de l’état de Santé de Canopsis](../guide-developpement/healthcheck/api_v2_healthcheck.md) | OpenCore | Oui |  Outil de marché | Version ≥ 3.4 |
+| [Récupération de l’état de Santé de Canopsis](../guide-developpement/api/api-v2-healthcheck.md) | OpenCore | Oui |  Outil de marché | Version ≥ 3.4 |

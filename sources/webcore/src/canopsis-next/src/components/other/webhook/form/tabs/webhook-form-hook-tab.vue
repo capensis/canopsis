@@ -3,49 +3,44 @@
     v-layout(row, wrap)
       v-flex(xs12)
         v-select(
-          :value="hook.triggers",
+          v-field="hook.triggers",
+          v-validate="'required'",
           :items="availableTriggers",
           :disabled="disabled",
           :label="$t('webhook.tabs.hook.fields.triggers')",
           :error-messages="errors.collect('triggers')",
-          v-validate="'required'",
           name="triggers",
           multiple,
-          chips,
-          @input="updateField('triggers', $event)"
+          chips
         )
       v-flex(xs12)
-        v-tabs(v-model="activeHookTab", fixed-tabs)
+        v-tabs(v-model="activeHookTab", fixed-tabs, slider-color="primary")
           v-tab(:disabled="hasBlockedTriggers") {{ $t('webhook.tabs.hook.fields.eventPatterns') }}
           v-tab {{ $t('webhook.tabs.hook.fields.alarmPatterns') }}
           v-tab {{ $t('webhook.tabs.hook.fields.entityPatterns') }}
           v-tab-item(:disabled="hasBlockedTriggers")
             patterns-list(
-              :patterns="hook.event_patterns",
+              v-field="hook.event_patterns",
               :disabled="disabled",
-              :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
-              @input="updateField('event_patterns', $event)"
+              :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
             )
           v-tab-item
             patterns-list(
-              :patterns="hook.alarm_patterns",
+              v-field="hook.alarm_patterns",
               :disabled="disabled",
-              :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
-              @input="updateField('alarm_patterns', $event)"
+              :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
             )
           v-tab-item
             patterns-list(
-              :patterns="hook.entity_patterns",
+              v-field="hook.entity_patterns",
               :disabled="disabled",
-              :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
-              @input="updateField('entity_patterns', $event)"
+              :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
             )
 </template>
 
 <script>
 import { WEBHOOK_TRIGGERS } from '@/constants';
 
-import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
@@ -53,7 +48,7 @@ import PatternsList from '@/components/other/shared/patterns-list/patterns-list.
 export default {
   inject: ['$validator'],
   components: { PatternsList },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'hook',
     event: 'input',

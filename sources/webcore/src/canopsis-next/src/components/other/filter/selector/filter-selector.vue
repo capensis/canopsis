@@ -15,8 +15,8 @@
         :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
         @change="updateCondition"
       )
-        v-radio(data-test="andFilters", label="AND", value="$and")
-        v-radio(data-test="orFilters", label="OR", value="$or")
+        v-radio(data-test="andFilters", label="AND", value="$and", color="primary")
+        v-radio(data-test="orFilters", label="OR", value="$or", color="primary")
     v-flex(
       data-test="selectFilters",
       v-show="!hideSelect",
@@ -35,7 +35,11 @@
         @input="updateSelectedFilter"
       )
         template(slot="item", slot-scope="{ parent, item, tile }")
-          v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
+          v-list-tile-action(
+            v-if="isMultiple",
+            :data-test="`filterOption-${item[itemText]}`",
+            @click.stop="parent.$emit('select', item)"
+          )
             v-checkbox(:inputValue="tile.props.value", :color="parent.color")
           v-list-tile-content
             v-list-tile-title
@@ -46,7 +50,7 @@
                 small
               ) {{ item.locked ? 'lock' : 'person' }}
     v-flex(v-if="hasAccessToUserFilter", v-bind="flexProps.list")
-      v-btn(v-if="!long", @click="showFiltersListModal", icon, small)
+      v-btn(data-test="showFiltersListButton", v-if="!long", @click="showFiltersListModal", icon, small)
         v-icon filter_list
       filters-list(
         v-else,
@@ -61,13 +65,10 @@
 <script>
 import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
-
 import FiltersList from '@/components/other/filter/list/filters-list.vue';
 
 export default {
   components: { FiltersList },
-  mixins: [modalMixin],
   props: {
     long: {
       type: Boolean,
@@ -128,7 +129,7 @@ export default {
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
   computed: {
@@ -226,12 +227,13 @@ export default {
     },
 
     showFiltersListModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.filtersList,
         config: {
           filters: this.filters,
           hasAccessToAddFilter: this.hasAccessToUserFilter,
           hasAccessToEditFilter: this.hasAccessToUserFilter,
+          entitiesType: this.entitiesType,
           actions: {
             create: this.createFilter,
             update: this.updateFilter,

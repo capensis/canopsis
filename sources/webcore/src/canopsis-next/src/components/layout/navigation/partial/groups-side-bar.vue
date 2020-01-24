@@ -9,6 +9,7 @@
   )
     div.brand.ma-0.secondary.lighten-1
       img.logo(:src="appLogo")
+      active-sessions-count
       div.version {{ version }}
     v-expansion-panel.panel(
       v-if="hasReadAnyViewAccess",
@@ -86,6 +87,7 @@ import registrableMixin from '@/mixins/registrable';
 import logo from '@/assets/canopsis.png';
 
 import GroupsSettingsButton from './groups-settings-button.vue';
+import ActiveSessionsCount from './active-sessions-count.vue';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -95,7 +97,7 @@ import GroupsSettingsButton from './groups-settings-button.vue';
  * @event input#update
  */
 export default {
-  components: { GroupsSettingsButton },
+  components: { GroupsSettingsButton, ActiveSessionsCount },
   mixins: [
     entitiesInfoMixin,
     layoutNavigationGroupMenuMixin,
@@ -165,6 +167,12 @@ export default {
     display: flex;
     justify-content: center;
     padding: 0.5em 0;
+
+    & /deep/ .active-sessions-count {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
   }
 
   .version {
@@ -174,6 +182,7 @@ export default {
     padding-right: 0.5em;
     color: white;
     font-size: 0.8em;
+    line-height: 1.3em;
   }
 
   .panel-header {

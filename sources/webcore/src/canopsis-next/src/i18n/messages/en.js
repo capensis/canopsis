@@ -72,6 +72,7 @@ export default {
     delete: 'Delete',
     show: 'Show',
     edit: 'Edit',
+    duplicate: 'Duplicate',
     parse: 'Parse',
     home: 'Home',
     step: 'Step',
@@ -257,6 +258,7 @@ export default {
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
+    sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
@@ -383,11 +385,14 @@ export default {
     },
     statsAnnotationLine: {
       title: 'Annotation line',
-      enabled: 'Is enabled?',
+      enabled: 'Is enabled ?',
       value: 'Value',
       label: 'Label',
       pickLineColor: 'Pick line color',
       pickLabelColor: 'Pick label color',
+    },
+    statsPointsStyles: {
+      title: 'Points style',
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
@@ -444,6 +449,7 @@ export default {
       editTitle: 'Edit a watcher',
       duplicateTitle: 'Duplicate a watcher',
       displayName: 'Name',
+      outputTemplate: 'Output template',
       success: {
         create: 'Watcher successfully created !',
         edit: 'Watcher successfully edited !',
@@ -470,6 +476,7 @@ export default {
       },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
+        periodicRefresh: 'Periodic refresh',
         groupIds: 'Choose a group, or create a new one',
         groupTags: 'Group tags',
       },
@@ -533,19 +540,46 @@ export default {
     },
     createPbehavior: {
       title: 'Create periodical behavior',
-      fields: {
-        name: 'Name',
-        start: 'Start',
-        stop: 'End',
-        reason: 'Reason',
-        type: 'Type',
-        message: 'Message',
-        rRuleQuestion: 'Put a rrule on this pbehavior ?',
-        exdate: 'Exdates',
+      steps: {
+        general: {
+          title: 'General parameters',
+          general: 'General',
+          dates: 'Dates',
+          fields: {
+            enabled: 'Enabled',
+            name: 'Name',
+            reason: 'Reason',
+            type: 'Type',
+            start: 'Start',
+            stop: 'End',
+            timezone: 'Timezone',
+          },
+        },
+        filter: {
+          title: 'Filter',
+        },
+        rrule: {
+          title: 'Rrule',
+          exdate: 'Exclusion dates',
+          buttons: {
+            addExdate: 'Add an exclusion date',
+          },
+          fields: {
+            rRuleQuestion: 'Add a recurrence rule to the pbehavior ?',
+          },
+        },
+        comments: {
+          title: 'Comments',
+          buttons: {
+            addComment: 'Add a new comment',
+          },
+          fields: {
+            message: 'Message',
+          },
+        },
       },
-      buttons: {
-        addComment: 'Add comment',
-        addExdate: 'Add exdate',
+      errors: {
+        invalid: 'Invalid',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
@@ -566,6 +600,9 @@ export default {
       title: 'Associate ticket number',
       fields: {
         ticket: 'Number of the ticket',
+      },
+      alerts: {
+        noAckItems: 'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
       },
     },
     liveReporting: {
@@ -865,6 +902,26 @@ export default {
     selectViewTab: {
       title: 'Select tab',
     },
+    createAction: {
+      create: {
+        title: 'Create action',
+        success: 'Action successfully created !',
+      },
+      edit: {
+        success: 'Action successfully edited !',
+      },
+      remove: {
+        success: 'Action successfully removed !',
+      },
+      tabs: {
+        general: 'General',
+        hook: 'Hook',
+      },
+      fields: {
+        message: 'Message',
+        duration: 'Duration',
+      },
+    },
     createHeartbeat: {
       create: {
         title: 'Create heartbeat',
@@ -877,6 +934,49 @@ export default {
         success: 'Heartbeats successfully removed !',
       },
       patternRequired: 'Pattern is required',
+    },
+    createDynamicInfo: {
+      create: {
+        title: 'Create dynamic information',
+        success: 'Dynamic information successfully created !',
+      },
+      edit: {
+        success: 'Dynamic information successfully edited !',
+      },
+      remove: {
+        success: 'Dynamic information successfully removed !',
+      },
+      errors: {
+        invalid: 'Invalid',
+      },
+      steps: {
+        general: {
+          title: 'General',
+          fields: {
+            id: 'Id',
+            name: 'Name',
+            description: 'Description',
+          },
+        },
+        infos: {
+          title: 'Informations',
+        },
+        patterns: {
+          title: 'Patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
+          validationError: 'At least one pattern must be set. Please add an alarm patterns and/or an entity pattern',
+        },
+      },
+    },
+    createDynamicInfoInformation: {
+      create: {
+        title: 'Add an information to the dynamic information rule',
+      },
+      fields: {
+        name: 'Name',
+        value: 'Value',
+      },
     },
   },
   tables: {
@@ -1009,6 +1109,7 @@ export default {
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
+    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
   },
   calendar: {
     today: 'Today',
@@ -1021,6 +1122,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
+    authKeyCopied: 'Auth key copied to clipboard',
   },
   filterEditor: {
     title: 'Filter editor',
@@ -1097,6 +1199,33 @@ export default {
     uploadMib: 'Upload MIB',
     addSnmpRule: 'Add SNMP rule',
   },
+  actions: {
+    title: 'Actions',
+    addAction: 'Add Action',
+    table: {
+      id: 'Id',
+      type: 'Type',
+      expand: {
+        tabs: {
+          general: 'General',
+          hook: 'Hook',
+          author: 'Author',
+          pbehavior: {
+            name: 'Name',
+            type: 'Type',
+            reason: 'Reason',
+            start: 'Start',
+            end: 'End',
+          },
+          snooze: {
+            message: 'Message',
+            duration: 'Duration',
+            noMessage: 'No message is set',
+          },
+        },
+      },
+    },
+  },
   layout: {
     sideBar: {
       buttons: {
@@ -1104,6 +1233,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
+      activeSessions: 'Active sessions',
     },
   },
   parameters: {
@@ -1187,7 +1317,7 @@ export default {
   validation: {
     custom: {
       tstop: {
-        after: 'The {0} should be after than {1}',
+        after: 'End time should be later than {1}',
       },
       logo: {
         size: 'The {0} size must be less than {1} KB.',
@@ -1215,6 +1345,25 @@ export default {
         expectedInterval: 'Expected interval',
       },
     },
+  },
+
+  dynamicInfo: {
+    title: 'Dynamic informations',
+    table: {
+      id: 'Id',
+      name: 'Name',
+      description: 'Description',
+      user: 'Author',
+      creationDate: 'Creation date',
+      lastUpdateDate: 'Last update date',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
+      informations: 'Informations',
+    },
+  },
+
+  contextGeneralTable: {
+    addSelection: 'Add selection',
   },
 
   ...featureService.get('i18n.en'),

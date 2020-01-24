@@ -1,45 +1,25 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ config.title }}
-    v-card-text
-      v-form
-        v-layout(align-center)
-          v-text-field(
-            v-model="form._id",
-            :label="$t('eventFilter.id')",
-            :disabled="isEditing && !isDuplicating"
-          )
-            v-tooltip(v-if="!isEditing || isDuplicating", left, slot="append")
-              v-icon(slot="activator") help
-              span {{ $t('eventFilter.idHelp') }}
-        v-select(:items="ruleTypes", v-model="form.type", :label="$t('common.type')")
-        v-textarea(v-model="form.description", :label="$t('common.description')")
-        v-text-field(v-model.number="form.priority", type="number", :label="$t('modals.eventFilterRule.priority')")
-        v-switch(v-model="form.enabled", :label="$t('common.enabled')")
-      v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
-      template(v-if="form.type === $constants.EVENT_FILTER_RULE_TYPES.enrichment")
-        v-container
-          v-divider
-          h3.my-2 {{ $t('modals.eventFilterRule.enrichmentOptions') }}
-          v-btn(@click="editActions") {{ $t('modals.eventFilterRule.editActions') }}
-          v-btn(@click="editExternalData") {{ $t('modals.eventFilterRule.externalData') }}
-          v-select(
-            :label="$t('modals.eventFilterRule.onSuccess')",
-            v-model="enrichmentOptions.onSuccess",
-            :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)"
-          )
-          v-select(
-            :label="$t('modals.eventFilterRule.onFailure')",
-            v-model="enrichmentOptions.onFailure",
-            :items="Object.values($constants.EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES)"
-          )
-    v-divider
-    v-alert(:value="errors.has('actions')", type="error") {{ $t('eventFilter.actionsRequired') }}
-    v-layout.pa-2(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ config.title }}
+      template(slot="text")
+        event-filter-form(
+          v-model="form",
+          :isEditing="isEditing",
+          :isDuplicating="isDuplicating"
+        )
+        event-filter-enrichment-form(
+          v-if="form.type === $constants.EVENT_FILTER_RULE_TYPES.enrichment",
+          v-model="enrichmentOptions"
+        )
+      template(slot="actions")
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -47,13 +27,20 @@ import { cloneDeep } from 'lodash';
 import { MODALS, EVENT_FILTER_RULE_TYPES, EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+
+import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
+import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createEventFilterRule,
   $_veeValidate: {
     validator: 'new',
   },
-  mixins: [modalInnerMixin],
+  components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
       ruleTypes: Object.values(EVENT_FILTER_RULE_TYPES),
@@ -116,62 +103,26 @@ export default {
       };
     }
   },
-  created() {
-    this.$validator.attach({
-      name: 'actions',
-      rules: 'required',
-      getter: () => this.enrichmentOptions.actions,
-      context: () => this,
-    });
-  },
   methods: {
-    editPattern() {
-      this.showModal({
-        name: MODALS.createEventFilterRulePattern,
-        config: {
-          pattern: this.form.pattern,
-          action: pattern => this.form.pattern = pattern,
-        },
-      });
-    },
-    editActions() {
-      this.showModal({
-        name: MODALS.eventFilterRuleActions,
-        config: {
-          actions: this.enrichmentOptions.actions,
-          action: async (updatedActions) => {
-            this.enrichmentOptions.actions = updatedActions;
-            await this.$validator.validate('actions');
-          },
-        },
-      });
-    },
-    editExternalData() {
-      this.showModal({
-        name: MODALS.eventFilterRuleExternalData,
-        config: {
-          value: this.enrichmentOptions.externalData,
-          action: value => this.enrichmentOptions.externalData = value,
-        },
-      });
-    },
     async submit() {
       if (this.form.type === EVENT_FILTER_RULE_TYPES.enrichment) {
         const isFormValid = await this.$validator.validateAll(['actions']);
 
         if (isFormValid) {
-          this.config.action({
+          await this.config.action({
             ...this.form,
             actions: this.enrichmentOptions.actions,
             external_data: this.enrichmentOptions.externalData,
             on_success: this.enrichmentOptions.onSuccess,
             on_failure: this.enrichmentOptions.onFailure,
           });
-          this.hideModal();
+
+          this.$modals.hide();
         }
       } else {
-        this.config.action({ ...this.form });
-        this.hideModal();
+        await this.config.action({ ...this.form });
+
+        this.$modals.hide();
       }
     },
   },

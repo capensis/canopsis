@@ -1,4 +1,4 @@
-import { setIn } from '@/helpers/immutable';
+import { setField } from '@/helpers/immutable';
 
 import baseFormMixin, { modelPropKeyComputed } from './base';
 
@@ -39,7 +39,7 @@ export default {
      * @param {*} value
      */
     updateFieldInArrayItem(index, fieldName, value) {
-      this.updateItemInArray(index, setIn(this[this[modelPropKeyComputed]][index], fieldName, value));
+      this.updateItemInArray(index, setField(this[this[modelPropKeyComputed]][index], fieldName, value));
     },
 
     /**

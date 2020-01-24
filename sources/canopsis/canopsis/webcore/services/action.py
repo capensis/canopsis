@@ -27,7 +27,7 @@ from canopsis.action.manager import ActionManager
 from canopsis.common.collection import CollectionError
 from canopsis.common.converters import id_filter
 from canopsis.models.action import Action
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, HTTP_UNAUTHORIZED
 
 
 def exports(ws):

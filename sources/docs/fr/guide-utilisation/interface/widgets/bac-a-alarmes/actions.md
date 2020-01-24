@@ -66,7 +66,7 @@ Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vo
 
 L'action 'Associer un ticket' permet d'associser un numéro de ticket à une alarme.
 
-Au clic sur l'action 'Associer un ticket', une fenêtre s'affiche : 
+Au clic sur l'action 'Associer un ticket', une fenêtre s'affiche :
 
 ![Modal action Associer ticket](./img/modal-assoc-ticket.png  "Modal action Associer ticket")
 
@@ -83,7 +83,7 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 L'action 'Annuler l'alarme' permet d'annuler une alarme.
 
-Au clic sur l'action 'Annuler l'alarme', une fenêtre s'affiche : 
+Au clic sur l'action 'Annuler l'alarme', une fenêtre s'affiche :
 
 ![Modal action Annuler alarme](./img/modal-cancel.png  "Modal action Annuler alarme")
 
@@ -96,11 +96,13 @@ Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vo
 
 Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Cancel Extra details](./img/cancel-extra-details-icon.png  "Icone Cancel Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
+L'alarme prend alors le statut `cancel` et reste pendant 1h dans le bac des alarmes en cours. Ce délai de 1h passé, elle change de statut pour passer en `resolved` et bascule dans le bac des alarmes résolues.
+
 ### Annuler l'Ack
 
 L'action 'Annuler l'Ack' permet d'annuler la confirmation de réception de l'alarme.
 
-Au clic sur l'action 'Annuler l'Ack', une fenêtre s'affiche : 
+Au clic sur l'action 'Annuler l'Ack', une fenêtre s'affiche :
 
 ![Modal action Annuler Ack](./img/modal-cancel-ack.png  "Modal action Annuler Ack")
 
@@ -130,7 +132,7 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 ### Changer la criticité
 
-L'action 'Changer la criticité' permet de modifier l'état d'une alarme (Info, Mineur, Majeur, Critique) *Cf: [Description d'une alarme](./description-alarme.md#les-différents-états)*.
+L'action 'Changer la criticité' permet de modifier l'[état](../../../vocabulaire/index.md#etat) d'une [alarme](../../../vocabulaire/index.md#alarme) (Info, Mineur, Majeur, Critique).
 
 Au clic sur l'action 'Changer la criticité', une fenêtre s'affiche :
 
@@ -163,6 +165,6 @@ Il est possible depuis cette fenêtre de supprimer les comportements périodique
 
 Pour fermer la fenêtre, cliquez en dehors de celle-ci, ou sur le bouton 'Annuler'
 
-### Obtenir plus d'infos 
+### Obtenir plus d'infos
 
 L'action 'Obtenir plus d'infos' permet d'ouvrir la fenêtre 'Plus d'infos'. Cette fenêtre personnalisable permet d'afficher toutes les informations souhaitées concernant l'alarme ou l'entité associée à cette alarme.

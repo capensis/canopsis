@@ -1,27 +1,23 @@
 <template lang="pug">
   div
     v-toolbar.toolbar.white(dense, flat)
-      v-text-field(
-        label="Search",
+      search-field(
         v-model="searchingText",
-        hide-details,
-        single-line,
-        @keyup.enter="submit"
+        :label="$t('common.search')",
+        @submit="search"
       )
-      v-btn(icon, @click="submit")
-        v-icon search
     v-btn.green.white--text(
       v-show="selectedEntities.length",
-      @click="$emit('update:selectedIds',selectedEntities)"
-    ) Add selection
+      @click="$emit('update:selectedIds', selectedEntities)"
+    ) {{ $t('contextGeneralTable.addSelection') }}
     v-data-table(
-      :no-data-text="this.$t('tables.noData')",
-      :headers="headers",
-      :items="contextEntities",
-      :loading="pending",
       v-model="selectedEntities",
-      select-all,
-      item-key="_id"
+      :no-data-text="$t('tables.noData')",
+      :headers="headers",
+      :items="entities",
+      :loading="pending",
+      item-key="_id",
+      select-all
     )
       template(slot="items", slot-scope="props")
         td
@@ -43,14 +39,23 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { getContextWidgetSearchByText } from '@/helpers/entities-search';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('entity');
+import SearchField from '@/components/forms/fields/search-field.vue';
+
+const { mapActions } = createNamespacedHelpers('entity');
 
 export default {
+  components: { SearchField },
   data() {
     return {
+      pending: false,
       searchingText: '',
+      entities: [],
       selectedEntities: [],
-      headers: [
+    };
+  },
+  computed: {
+    headers() {
+      return [
         {
           text: this.$t('tables.contextList.name'),
           sortable: false,
@@ -59,25 +64,29 @@ export default {
           text: this.$t('tables.contextList.id'),
           sortable: false,
         },
-      ],
-    };
-  },
-  computed: {
-    ...mapGetters({
-      contextEntities: 'itemsGeneralList',
-      pending: 'pendingGeneralList',
-    }),
+        {
+          text: this.$t('common.actionsLabel'),
+          sortable: false,
+        },
+      ];
+    },
   },
   methods: {
     ...mapActions({
-      fetchContextEntities: 'fetchGeneralList',
+      fetchContextEntitiesWithoutStore: 'fetchListWithoutStore',
     }),
-    submit() {
-      this.fetchContextEntities({
+
+    async search() {
+      this.pending = true;
+
+      const { entities = [] } = await this.fetchContextEntitiesWithoutStore({
         params: {
           _filter: getContextWidgetSearchByText(this.searchingText),
         },
       });
+
+      this.entities = entities;
+      this.pending = false;
     },
   },
 };

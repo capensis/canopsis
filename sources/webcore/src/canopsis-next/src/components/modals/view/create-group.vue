@@ -1,29 +1,31 @@
 <template lang="pug">
-  v-card(data-test="createGroupViewModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-card-text
-      v-text-field(
-        data-test="modalGroupNameField",
-        :label="$t('modals.group.fields.name')",
-        :error-messages="errors.collect('name')",
-        v-model="form.name",
-        v-validate="'required'",
-        name="name"
-      )
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(
-        @click="submit",
-        data-test="createGroupSubmitButton"
-      ) {{ $t('common.submit') }}
-      v-btn.error(
-        v-if="config.group && hasDeleteAnyViewAccess",
-        @click="remove",
-        data-test="createGroupDeleteButton"
-      ) {{ $t('common.delete') }}
+  v-form(data-test="createGroupViewModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        v-text-field(
+          v-model="form.name",
+          v-validate="'required'",
+          :label="$t('modals.group.fields.name')",
+          :error-messages="errors.collect('name')",
+          name="name",
+          data-test="modalGroupNameField"
+        )
+      template(slot="actions")
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit",
+          data-test="createGroupSubmitButton"
+        ) {{ $t('common.submit') }}
+        v-btn.error(
+          v-if="config.group && hasDeleteAnyViewAccess",
+          :disabled="submitting",
+          data-test="createGroupDeleteButton",
+          @click="remove"
+        ) {{ $t('common.delete') }}
 </template>
 
 <script>
@@ -31,19 +33,22 @@ import { get } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createGroup,
   $_veeValidate: {
     validator: 'new',
   },
+  components: { ModalWrapper },
   mixins: [
-    popupMixin,
     modalInnerMixin,
+    submittableMixin(),
     entitiesViewGroupMixin,
     rightsTechnicalViewMixin,
   ],
@@ -68,7 +73,7 @@ export default {
   },
   methods: {
     remove() {
-      this.showModal({
+      this.$modals.show({
         name: this.$constants.MODALS.confirmation,
         config: {
           action: async () => {
@@ -76,9 +81,9 @@ export default {
               await this.removeGroup({ id: this.config.group._id });
               await this.fetchGroupsList();
 
-              this.hideModal();
+              this.$modals.hide();
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('modals.group.errors.isNotEmpty') });
+              this.$popups.error({ text: this.$t('modals.group.errors.isNotEmpty') });
             }
           },
         },
@@ -99,7 +104,7 @@ export default {
 
         await this.fetchGroupsList();
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

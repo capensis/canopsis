@@ -30,6 +30,7 @@
           )
       v-divider
       stats-calendar-advanced-form(v-model="settings.widget.parameters")
+      v-divider
     v-btn.primary(data-test="submitStatsCalendarButton", @click="submit") {{ $t('common.save') }}
 </template>
 

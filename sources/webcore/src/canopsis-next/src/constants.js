@@ -28,7 +28,9 @@ export const ENTITIES_TYPES = {
   eventFilterRule: 'eventFilterRule',
   webhook: 'webhook',
   snmpRule: 'snmpRule',
+  action: 'action',
   heartbeat: 'heartbeat',
+  dynamicInfo: 'dynamicInfo',
 };
 
 export const MODALS = {
@@ -45,7 +47,6 @@ export const MODALS = {
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',
   watcher: 'watcher',
-  createWatcherAssocTicketEvent: 'create-watcher-assoc-ticket-event',
   createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
@@ -64,7 +65,6 @@ export const MODALS = {
   textFieldEditor: 'text-field-editor',
   selectView: 'select-view',
   createView: 'create-view',
-  createViewTab: 'create-view-tab',
   createGroup: 'create-group',
   createUser: 'create-user',
   createRole: 'create-role',
@@ -79,7 +79,10 @@ export const MODALS = {
   createWebhook: 'create-webhook',
   createSnmpRule: 'create-snmp-rule',
   selectViewTab: 'select-view-tab',
+  createAction: 'create-action',
   createHeartbeat: 'create-heartbeat',
+  createDynamicInfo: 'create-dynamic-info',
+  createDynamicInfoInformation: 'create-dynamic-info-information',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -226,6 +229,19 @@ export const WIDGET_TYPES = {
   text: 'Text',
 };
 
+export const WIDGET_ICONS = {
+  [WIDGET_TYPES.alarmList]: 'view_list',
+  [WIDGET_TYPES.context]: 'view_list',
+  [WIDGET_TYPES.weather]: 'view_module',
+  [WIDGET_TYPES.statsHistogram]: 'bar_chart',
+  [WIDGET_TYPES.statsCurves]: 'show_chart',
+  [WIDGET_TYPES.statsTable]: 'table_chart',
+  [WIDGET_TYPES.statsCalendar]: 'calendar_today',
+  [WIDGET_TYPES.statsNumber]: 'table_chart',
+  [WIDGET_TYPES.statsPareto]: 'multiline_chart',
+  [WIDGET_TYPES.text]: 'view_headline',
+};
+
 export const SIDE_BARS = {
   alarmSettings: 'alarm-settings',
   contextSettings: 'context-settings',
@@ -328,6 +344,18 @@ export const FILTER_OPERATORS = {
   isNotNull: 'is not null',
 };
 
+export const FILTER_OPERATORS_FOR_ARRAY = [FILTER_OPERATORS.in, FILTER_OPERATORS.notIn];
+
+export const FILTER_MONGO_OPERATORS = {
+  and: '$and',
+  or: '$or',
+  equal: '$eq',
+  notEqual: '$ne',
+  in: '$in',
+  notIn: '$nin',
+  regex: '$regex',
+};
+
 export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',
@@ -336,7 +364,7 @@ export const FILTER_INPUT_TYPES = {
 };
 
 export const FILTER_DEFAULT_VALUES = {
-  condition: '$and',
+  condition: FILTER_MONGO_OPERATORS.and,
   rule: {
     field: '',
     operator: '',
@@ -344,7 +372,7 @@ export const FILTER_DEFAULT_VALUES = {
     inputType: FILTER_INPUT_TYPES.string,
   },
   group: {
-    condition: '$and',
+    condition: FILTER_MONGO_OPERATORS.and,
     groups: {},
     rules: {},
   },
@@ -352,6 +380,7 @@ export const FILTER_DEFAULT_VALUES = {
 
 export const DATETIME_FORMATS = {
   long: 'DD/MM/YYYY H:mm:ss',
+  medium: 'DD/MM H:mm',
   short: 'DD/MM/YYYY',
   time: 'H:mm:ss',
   dateTimePicker: 'DD/MM/YYYY HH:mm',
@@ -610,7 +639,9 @@ export const USERS_RIGHTS = {
       pbehavior: 'models_exploitation_pbehavior',
       webhook: 'models_exploitation_webhook',
       snmpRule: 'models_exploitation_snmpRule',
+      action: 'models_exploitation_action',
       heartbeat: 'models_exploitation_heartbeat',
+      dynamicInfo: 'models_exploitation_dynamicInfo',
     },
   },
   business: {
@@ -933,6 +964,13 @@ export const SNMP_STATE_TYPES = {
   template: 'template',
 };
 
+export const ACTION_TYPES = {
+  snooze: 'snooze',
+  pbehavior: 'pbehavior',
+};
+
+export const ACTION_AUTHOR = 'engine-action';
+
 export const CANOPSIS_STACK = {
   go: 'go',
   python: 'python',
@@ -956,14 +994,63 @@ export const HEARTBEAT_DURATION_UNITS = {
   hour: 'h',
 };
 
+export const DURATION_UNITS = {
+  minute: {
+    text: 'common.times.minute',
+    value: 'm',
+  },
+  hour: {
+    text: 'common.times.hour',
+    value: 'h',
+  },
+  day: {
+    text: 'common.times.day',
+    value: 'd',
+  },
+  week: {
+    text: 'common.times.week',
+    value: 'w',
+  },
+  month: {
+    text: 'common.times.month',
+    value: 'M',
+  },
+  year: {
+    text: 'common.times.year',
+    value: 'y',
+  },
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  snmpRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { edition: CANOPSIS_EDITION.cat },
+  heartbeat: { stack: CANOPSIS_STACK.go },
+  action: { stack: CANOPSIS_STACK.go },
+  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
+  [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
+  [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
+  [USERS_RIGHTS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
+};
+
+export const WIDGET_TYPES_RULES = {
+  [WIDGET_TYPES.statsHistogram]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsCurves]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsTable]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsNumber]: { edition: CANOPSIS_EDITION.cat },
+  [WIDGET_TYPES.statsPareto]: { edition: CANOPSIS_EDITION.cat },
+};
+
+export const POPUP_TYPES = {
+  success: 'success',
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
 };

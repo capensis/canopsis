@@ -31,11 +31,15 @@ Au clic sur une entité (en dehors du texte des colonnes), des détails supplém
 
 ### Recherche
 
-Le champ de recherche permet d'effectuer une recherche parmi les alarmes.
+Le champ de recherche permet d'effectuer une recherche parmi les entités.
 
-![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
+![Champ de recherche](img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icône ![Icône recherche](../../recherche/img/search-icon.png "Icône recherche").
+Pour effectuer une recherche, il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icône ![Icône recherche](../../recherche/img/search-icon.png "Icône recherche").
+
+La recherche passe automatiquement par une expression régulière Mongo insensible à la casse qui est appliquée uniquement aux champs `name` et `type` des entités.
+
+Il est impossible d'effectuer une recherche sur un autre champ des entités.
 
 Pour supprimer la recherche, cliquez sur l'icône ![Icône suppression recherche](../../recherche/img/delete-search-icon.png "Icône suppression recherche").
 
@@ -105,7 +109,7 @@ Au clic sur l'icône de création d'observateurs, une fenêtre s'ouvre.
 
 ![Formulaire création Observateurs](./img/watcher-creation-form.png "Formulaire création Observateurs")
 
-Pour créer un observateur, il vous suffit d'entrer deux informations : 
+Pour créer un observateur, il vous suffit d'entrer deux informations :
 
 *  Nom (*requis*)
 *  Filtre : Pour plus de détails sur les filtres et leur création, voir : [Les filtres](../../filtres/index.md)
@@ -118,7 +122,7 @@ Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles
 
 - **Editer** : Au clic sur l'icône d'édition ![Icône Editer entité](./img/edit-entity-icon.png "Icône Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
 - **Dupliquer**: Au clic sur l'icône ![Icône Dupliquer entité](./img/duplicate-entity-icon.png "Icône Dupliquer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur que vous souhaitez dupliquer (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir entré les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe qu'une nouvelle entité a été créée avec succès !
-- **Supprimer** : Permet de supprimer une entité/un observateur. Au clic sur l'icône de suppression ![icône Supprimer entité](./img/delete-entity-icon.png "icône Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur. 
+- **Supprimer** : Permet de supprimer une entité/un observateur. Au clic sur l'icône de suppression ![icône Supprimer entité](./img/delete-entity-icon.png "icône Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur.
 - **Ajouter un comportement périodique** : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clic sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
 ### Comportements périodiques

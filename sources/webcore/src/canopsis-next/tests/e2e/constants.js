@@ -1,5 +1,7 @@
 const RANDOM = Math.random().toString(36).substring(6);
 
+module.exports.WAIT_FOR_FIRST_XHR_TIME = 5000;
+
 module.exports.CREDENTIALS = {
   admin: {
     username: 'root',
@@ -81,6 +83,8 @@ module.exports.ALARMS_WIDGET_SORT_FIELD = {
   resource: 4,
   output: 5,
   extraDetails: 6,
+  state: 7,
+  status: 8,
 };
 
 module.exports.CONTEXT_WIDGET_SORT_FIELD = {
@@ -92,6 +96,11 @@ module.exports.CONTEXT_WIDGET_SORT_FIELD = {
 module.exports.SORT_ORDERS = {
   asc: 1,
   desc: 2,
+};
+
+module.exports.SORT_ORDERS_STRING = {
+  asc: 'ascending',
+  desc: 'descending',
 };
 
 module.exports.LANGUAGES_POSITIONS = {
@@ -121,6 +130,18 @@ module.exports.INFO_POPUP_DEFAULT_COLUMNS = {
 module.exports.FILTERS_TYPE = {
   AND: 'and',
   OR: 'or',
+};
+
+module.exports.ROW_SIZE_KEYS = {
+  SMARTPHONE: 'sm',
+  TABLET: 'md',
+  DESKTOP: 'lg',
+};
+
+module.exports.ROW_SIZE_CLASSES = {
+  SMARTPHONE: 'xs',
+  TABLET: 'md',
+  DESKTOP: 'lg',
 };
 
 module.exports.VALUE_TYPES = {
@@ -222,4 +243,151 @@ module.exports.INTERVAL_PERIODS = {
   DAY: 2,
   WEEK: 3,
   MONTH: 4,
+};
+
+module.exports.STATS_CURVES_POINTS_STYLES = {
+  CIRCLE: 1,
+  CROSS: 2,
+  CROSS_ROT: 3,
+  DASH: 4,
+  LINE: 5,
+  RECT: 6,
+  RECT_ROUNDED: 7,
+  RECT_ROT: 8,
+  STAR: 9,
+  TRIANGLE: 10,
+};
+
+module.exports.STATS_DISPLAY_MODE = {
+  VALUE: 1,
+  CRITICITY: 2,
+};
+
+module.exports.PARETO_STATS_TITLES = {
+  ACCUMULATION: 'Accumulation',
+  ALARMS_CREATED: 'Alarmes créées',
+};
+
+module.exports.ALARMS_MASS_ACTIONS = {
+  PERIODICAL_BEHAVIOR: 1,
+  ACK: 2,
+  FAST_ACK: 3,
+  CANCEL_ACK: 4,
+  CANCEL_ALARM: 5,
+};
+
+module.exports.ALARMS_SHARED_ACTIONS = {
+  ACK: 1,
+  FAST_ACK: 2,
+  SNOOZE_ALARM: 3,
+  CANCEL_ALARM: 4,
+};
+
+module.exports.ALARMS_RESOLVED_SHARED_ACTIONS = {
+  MORE_INFOS: 1,
+};
+
+module.exports.ALARMS_SHARED_ACTIONS_WITH_ACK = {
+  DECLARE_TICKET: 1,
+  ASSOCIATE_TICKET: 2,
+  CANCEL_ALARM: 3,
+};
+
+module.exports.ALARMS_SHARED_DROPDOWN_ACTIONS = {
+  PERIODICAL_BEHAVIOR: 1,
+  LIST_PERIODICAL_BEHAVIOR: 2,
+  MORE_INFOS: 3,
+};
+
+module.exports.ALARMS_SHARED_DROPDOWN_ACTIONS_WITH_ACK = {
+  CANCEL_ACK: 1,
+  CHANGE_CRITICITY: 2,
+  SNOOZE_ALARM: 3,
+  PERIODICAL_BEHAVIOR: 4,
+  LIST_PERIODICAL_BEHAVIOR: 5,
+};
+
+module.exports.DATE_INTERVAL_MINUTES = {
+  ZERO: 1,
+  FIVE: 2,
+  TEN: 3,
+  twenty: 4,
+  TWENTY_FIVE: 5,
+  THIRTY: 6,
+  THIRTY_FIVE: 7,
+  FORTY: 8,
+  FORTY_FIVE: 9,
+  FIFTY: 10,
+  FIFTY_FIVE: 11,
+};
+
+module.exports.PERIODICAL_BEHAVIOR_REASONS = {
+  REHABILITATION_PROBLEM: 1,
+  ROBOT_PROBLEM: 2,
+  SCENARIO_PROBLEM: 3,
+  FUNCTIONAL_FLASH_ISSUE: 4,
+  OTHER: 5,
+};
+
+module.exports.PERIODICAL_BEHAVIOR_FREQUENCY = {
+  SECONDLY: 1,
+  MINUTELY: 2,
+  HOURLY: 3,
+  DAILY: 4,
+  WEEKLY: 5,
+  MONTHLY: 6,
+  YEARLY: 7,
+};
+
+module.exports.WEEK_DAYS = {
+  MONDAY: 1,
+  TUESDAY: 2,
+  WEDNEDDAY: 3,
+  THURSDAY: 4,
+  FRIDAY: 5,
+  SATURDAY: 6,
+  SUNDAY: 7,
+};
+
+module.exports.MONTH = {
+  JUNUARY: 1,
+  FEBRARY: 2,
+  MARCH: 3,
+  APRIL: 4,
+  MAY: 5,
+  JUNE: 6,
+  JULY: 7,
+  AUGUST: 8,
+  SEPTEMBER: 9,
+  OCTOBER: 10,
+  NOVEMBER: 11,
+  DECEMBER: 12,
+};
+
+module.exports.PBEHAVIOR_TYPES = {
+  MAINTENANCE: 1,
+  UNMONITORED: 2,
+  PAUSE: 3,
+};
+
+module.exports.SNOOZE_TYPES = {
+  MINUTES: 1,
+  HOURS: 2,
+  DAYS: 3,
+  WEEKS: 4,
+  MONTHS: 5,
+  YEARS: 6,
+};
+
+module.exports.PBEHAVIOR_STEPS = {
+  GENERAL: 'general',
+  FILTER: 'filter',
+  RRULE: 'rrule',
+  COMMENTS: 'comments',
+};
+
+module.exports.CRUD_ACTIONS = {
+  DELETE: 'delete',
+  UPDATE: 'update',
+  CREATE: 'create',
 };

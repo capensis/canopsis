@@ -1,10 +1,9 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
-    v-card
-      v-card-title.primary.white--text
-        v-layout(justify-space-between, align-center)
-          span.headline {{ $t('modals.createAssociateTicket.title') }}
-      v-card-text
+  v-form(data-test="createAssociateTicketModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ $t('modals.createAssociateTicket.title') }}
+      template(slot="text")
         v-container
           v-layout(row)
             v-flex.text-xs-center
@@ -13,25 +12,41 @@
             v-divider.my-3
           v-layout(row)
             v-text-field(
-              :label="$t('modals.createAssociateTicket.fields.ticket')",
-              :error-messages="errors.collect('ticket')",
               v-model="form.ticket",
               v-validate="'required'",
-              data-vv-name="ticket"
+              :label="$t('modals.createAssociateTicket.fields.ticket')",
+              :error-messages="errors.collect('ticket')",
+              name="ticket",
+              data-test="createAssociateTicketNumberOfTicket"
             )
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(type="submit", :disabled="errors.any()") {{ $t('common.actions.saveChanges') }}
+          v-alert(:value="itemsWithoutAck.length", type="info")
+            span {{ alertMessage }}
+      template(slot="actions")
+        v-btn(
+          data-test="createAssociateTicketCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :loading="submitting",
+          :disabled="isDisabled",
+          data-test="createAssociateTicketSubmitButton",
+          type="submit"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
-import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
-
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import submittableMixin from '@/mixins/submittable';
+
+
+import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to associate a ticket to an alarm
@@ -42,10 +57,8 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    AlarmGeneralTable,
-  },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin],
+  components: { AlarmGeneralTable, ModalWrapper },
+  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
       form: {
@@ -54,14 +67,34 @@ export default {
       },
     };
   },
+  computed: {
+    itemsWithoutAck() {
+      return this.items.filter(item => !item.v.ack);
+    },
+
+    alertMessage() {
+      const { length: count } = this.itemsWithoutAck;
+
+      return this.$tc('modals.createAssociateTicket.alerts.noAckItems', count, { count });
+    },
+  },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
+        if (this.itemsWithoutAck.length) {
+          const { fastAckOutput } = this.config;
+
+          await this.createEvent(EVENT_ENTITY_TYPES.ack, this.itemsWithoutAck, {
+            output: fastAckOutput && fastAckOutput.enabled ? fastAckOutput.value : '',
+            ticket: this.form.ticket,
+          });
+        }
+
         await this.createEvent(EVENT_ENTITY_TYPES.assocTicket, this.items, this.form);
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

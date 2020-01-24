@@ -2,43 +2,51 @@
 
 Le moteur axe permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le bac à alarmes.
 
-Dans la version CAT, il permet aussi d'appliquer des [`webhooks`](moteur-axe-webhooks.md).
+Jusqu'en `3.33.0`, dans la version CAT, il permettait aussi d'appliquer des [`webhooks`](moteur-webhook.md).
 
-## Fonctionnement
+Depuis la `3.34.0`, les [`webhooks`](moteur-webhook.md) sont devenus leur propre moteur (disponible uniquement en version CAT).
+
+## Utilisation
 
 La file du moteur est placée juste après le moteur [che](moteur-che.md).
-
-À l'arrivée dans sa file, le moteur axe va transformer les événements en alarmes qu'il va créer et enrichir.
-
-Si l'événement correspond à une alarme en cours, l'alarme va alors être mise à jour.
-
-Si l'événement en correspond à aucune alarme en cours, l'alarme va alors être créée.
-
-Si l'événement correspond à une action (comme la mise d'un ACK), l'alarme va être mise à jour en prenant en compte l'action.
 
 ### Options de l'engine-axe
 
 ```
-  -autoDeclareTickets
-        Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
-  -d    debug
+  -d	debug
   -featureHideResources
-        Active les features de gestion de ressources cachées.
+      Enable Hide Resources Management
   -featureStatEvents
-        Envoie les évènements de statistiques
-  -postProcessorsDirectory
-        Le répertoire contenant les plugins de post-traitement (par défaut ".")
+      Send statistic events
+  -postProcessorsDirectory string
+      The path of the directory containing the post-processing plugins. (default ".")
   -printEventOnError
-        Afficher les évènements sur les erreurs de traitement.
-  -publishQueue
-        Publie les événements sur cette queue. (par défaut "Engine_watcher")
+      Print event on processing error
+  -publishQueue string
+      Publish event to this queue. (default "Engine_watcher")
   -version
-        version infos
+      version infos
 ```
+
+## Fonctionnement
+
+À l'arrivée dans sa file, le moteur axe va transformer les événements en alarmes qu'il va créer et mettre à jour.
+
+### Événements de type check
+
+3 possibilités pour un événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) :
+
+* Il ne correspond à aucune alarme en cours : l'alarme va alors être créée
+* Il correspond à une alarme en cours et son champ `state` ne vaut pas `0` : l'alarme va alors être mise à jour
+* Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
+
+### Autres types d'événements
+
+Si l'événement correspond à une action (comme la mise d'un [`ACK`](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
 
 ## Collection
 
-Les alarmes sont stockées dans la collection Mongo `periodical_alarm`.
+Les alarmes sont stockées dans la collection MongoDB `periodical_alarm`.
 
 L'`_id` est générée automatiquement.
 

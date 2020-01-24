@@ -4,9 +4,10 @@
       v-tooltip(top)
         v-icon.badge.purple.white--text(
           small,
+          data-test="extraDetailsOpenButton-ack",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.ack].icon }}
-        div.text-md-center
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.ack') }}
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
@@ -15,9 +16,10 @@
       v-tooltip(top)
         v-icon.badge.blue.white--text(
           small,
+          data-test="extraDetailsOpenButton-ticket",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.declareTicket].icon }}
-        div.text-md-center
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.declareTicket') }}
           div {{ $t('common.by') }} : {{ alarm.v.ticket.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ticket.t | date('long') }}
@@ -28,9 +30,10 @@
       v-tooltip(top)
         v-icon.badge.blue-grey.white--text(
           small,
+          data-test="extraDetailsOpenButton-canceled",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.delete].icon }}
-        div.text-md-center
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
           div {{ $t('common.by') }} : {{ alarm.v.canceled.a }}
           div {{ $t('common.date') }} : {{ alarm.v.canceled.t | date('long') }}
@@ -39,9 +42,10 @@
       v-tooltip(top)
         v-icon.badge.pink.white--text(
           small,
+          data-test="extraDetailsOpenButton-snooze",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.snooze].icon }}
-        div.text-md-center
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.snooze') }}
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
           div {{ $t('common.date') }} : {{ alarm.v.snooze.t | date('long') }}
@@ -50,9 +54,10 @@
       v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(
           small,
+          data-test="extraDetailsOpenButton-pbehaviors",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.pbehaviorAdd].icon }}
-        div
+        div(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div(v-for="pbehavior in pbehaviors")
             div.mt-2.font-weight-bold {{ pbehavior.name }}
@@ -86,11 +91,7 @@ export default {
   },
   computed: {
     pbehaviors() {
-      return this.alarm.pbehaviors.filter((value) => {
-        const now = Date.now() / 1000;
-
-        return value.tstart <= now && now < value.tstop;
-      });
+      return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
     },
   },
 };

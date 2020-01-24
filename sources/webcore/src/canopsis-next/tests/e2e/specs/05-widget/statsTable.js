@@ -12,43 +12,41 @@ const {
   STAT_STATES,
 } = require('../../constants');
 const { WIDGET_TYPES } = require('@/constants');
-const { generateTemporaryView, generateTemporaryStatsTableWidget } = require('../../helpers/entities');
+const { createWidgetView, removeWidgetView } = require('../../helpers/api');
+const { generateTemporaryStatsTableWidget } = require('../../helpers/entities');
 
 module.exports = {
   async before(browser, done) {
     browser.globals.temporary = {};
+    browser.globals.defaultViewData = await createWidgetView();
+
     await browser.maximizeWindow()
       .completed.loginAsAdmin();
+
+    browser.page.layout.popup()
+      .clickOnEveryPopupsCloseIcons();
 
     done();
   },
 
-  after(browser, done) {
+  async after(browser, done) {
+    const { viewId, groupId } = browser.globals.defaultViewData;
+
     browser.completed.logout()
       .end(done);
 
-    delete browser.globals.temporary;
-  },
+    await removeWidgetView(viewId, groupId);
 
-  'Create test view': (browser) => {
-    browser.completed.view.create(generateTemporaryView(), (view) => {
-      browser.globals.defaultViewData = {
-        viewId: view._id,
-        groupId: view.group_id,
-      };
-    });
+    delete browser.globals.credentials;
+    delete browser.globals.temporary;
+
+    done();
   },
 
   'Create widget stats table with some name': (browser) => {
     const statsTableWidget = {
       ...generateTemporaryStatsTableWidget(),
-      size: {
-        sm: 12,
-        md: 12,
-        lg: 12,
-      },
       parameters: {
-        advanced: true,
         dateInterval: {
           calendarStartDate: {
             minute: 0,
@@ -106,13 +104,14 @@ module.exports = {
       },
     };
     const { groupId, viewId } = browser.globals.defaultViewData;
-    const view = browser.page.view();
-    const groupsSideBar = browser.page.layout.groupsSideBar();
 
-    groupsSideBar.clickPanelHeader(groupId)
+    browser.page.layout.groupsSideBar()
+      .clickGroupsSideBarButton()
+      .clickPanelHeader(groupId)
       .clickLinkView(viewId);
 
-    view.clickMenuViewButton()
+    browser.page.view()
+      .clickMenuViewButton()
       .clickAddWidgetButton();
 
     browser.page.modals.view.createWidget()
@@ -137,28 +136,6 @@ module.exports = {
         lg: 10,
       },
       title: 'Stats table widget(edited)',
-      parameters: {
-        filter: {
-          groups: [{
-            type: FILTERS_TYPE.OR,
-            items: [{
-              rule: FILTER_COLUMNS.CONNECTOR,
-              operator: FILTER_OPERATORS.EQUAL,
-              valueType: VALUE_TYPES.STRING,
-              value: 'value',
-              groups: [{
-                type: FILTERS_TYPE.OR,
-                items: [{
-                  rule: FILTER_COLUMNS.CONNECTOR_NAME,
-                  operator: FILTER_OPERATORS.IN,
-                  valueType: VALUE_TYPES.BOOLEAN,
-                  value: true,
-                }],
-              }],
-            }],
-          }],
-        },
-      },
     });
 
     browser.page.widget.statsTable()
@@ -183,12 +160,5 @@ module.exports = {
       .verifyModalOpened()
       .clickSubmitButton()
       .verifyModalClosed();
-  },
-
-  'Delete test view': (browser) => {
-    const { groupId, viewId } = browser.globals.defaultViewData;
-
-    browser.completed.view.delete(groupId, viewId);
-    browser.completed.view.deleteGroup(groupId);
   },
 };

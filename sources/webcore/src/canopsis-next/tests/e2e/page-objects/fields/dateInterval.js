@@ -77,12 +77,18 @@ const commands = {
     return this.customSetValue('@startDateField', value);
   },
 
+  clickOutsideDateInterval() {
+    return this.customClickOutside('@dateTimePickerCalendar');
+  },
+
   el,
 };
 
 module.exports = {
   elements: {
     dateDayField: './/*[@data-test=\'dateTimePickerCalendar\']//div[@class=\'date-time-picker__body\']//div[@class=\'v-btn__content\' and contains(text(), \'%s\')]',
+
+    dateTimePickerCalendar: sel('dateTimePickerCalendar'),
 
     datePickerDateTab: sel('datePickerDateTab'),
     datePickerHoursTab: sel('datePickerHoursTab'),

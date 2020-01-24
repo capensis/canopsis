@@ -5,15 +5,18 @@
       v-radio-group(data-test="modalTypeGroup", :value="value", @change="$emit('input', $event)")
         v-radio(
           :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo",
-          :label="$t('settings.serviceWeatherModalTypes.fields.moreInfo')"
+          :label="$t('settings.serviceWeatherModalTypes.fields.moreInfo')",
+          color="primary"
         )
         v-radio(
           :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList",
-          :label="$t('settings.serviceWeatherModalTypes.fields.alarmList')"
+          :label="$t('settings.serviceWeatherModalTypes.fields.alarmList')",
+          color="primary"
         )
         v-radio(
           :value="$constants.SERVICE_WEATHER_WIDGET_MODAL_TYPES.both",
-          :label="$t('settings.serviceWeatherModalTypes.fields.both')"
+          :label="$t('settings.serviceWeatherModalTypes.fields.both')",
+          color="primary"
         )
 </template>
 

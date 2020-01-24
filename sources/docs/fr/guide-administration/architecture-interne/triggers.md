@@ -1,10 +1,13 @@
 # Triggers (Go)
 
-Dans Canopsis, le traitement des événements par le moteur [axe](../moteurs/moteur-axe.md) peut déclencher des actions qui correspondent à des `triggers`.
+Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) par le moteur [axe](../moteurs/moteur-axe.md) peut déclencher des actions qui correspondent à des `triggers`.
 
-Ces `triggers` peuvent servir comme point de déclenchement pour les [actions](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-axe-webhooks.md).
+Ces `triggers` peuvent servir comme point de déclenchement pour les [actions](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-webhook.md).
 
 Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"uncancel"`, et `"unsnooze"`.
+
+!!! note
+    les triggers `resolve` et `unsnooze` ne correspondent à aucun évènement mais à un traitement interne par Canopsis
 
 | Nom               | Description                                              |
 |:----------------- |:-------------------------------------------------------- |

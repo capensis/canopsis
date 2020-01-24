@@ -1,47 +1,15 @@
-<template lang="pug">
-  v-dialog(v-model="isOpen", v-bind="dialogProps")
-    // @slot use this slot default
-    slot
+<template lang="pug" functional>
+  v-card(:data-test="data.attrs && data.attrs['data-test']")
+    v-card-title.primary.white--text(v-if="$slots.title || $slots.fullTitle")
+      v-layout(justify-space-between, align-center)
+        span.headline(v-if="$slots.title")
+          slot(name="title")
+        slot(name="fullTitle")
+    v-card-text(v-if="$slots.text")
+      slot(name="text")
+    template(v-if="$slots.actions")
+      v-divider
+      v-card-actions
+        v-layout.py-1(justify-end)
+          slot(name="actions")
 </template>
-
-<script>
-import modalMixin from '@/mixins/modal';
-
-/**
- * Wrapper for each modal window
- *
- * @prop {Object} modal - The current modal object
- * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
- */
-export default {
-  mixins: [modalMixin],
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-    dialogProps: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
-  data() {
-    return {
-      ready: false,
-    };
-  },
-  computed: {
-    isOpen: {
-      get() {
-        return !this.modal.hidden && this.ready;
-      },
-      set() {
-        this.hideModal({ id: this.modal.id });
-      },
-    },
-  },
-  mounted() {
-    this.ready = true;
-  },
-};
-</script>

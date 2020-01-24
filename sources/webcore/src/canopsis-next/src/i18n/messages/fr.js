@@ -69,6 +69,7 @@ export default {
     delete: 'Supprimer',
     show: 'Afficher',
     edit: 'Éditer',
+    duplicate: 'Dupliquer',
     parse: 'Compiler',
     home: 'Accueil',
     step: 'Étape',
@@ -181,7 +182,7 @@ export default {
         ackRemove: 'Annuler ack',
         pbehavior: 'Comportement périodique',
         snooze: 'Snooze',
-        pbehaviorList: 'Lister les comportements pédioriques',
+        pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
@@ -224,7 +225,7 @@ export default {
       statsCurvesSettings: 'Paramètres de courbes de stats',
       statsTableSettings: 'Paramètres du tableau de stats',
       statsCalendarSettings: 'Paramètres du calendrier',
-      statsNumberSettings: 'Paramètres du compteur de stat',
+      statsNumberSettings: 'Paramètres du compteur de stats',
       statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
     },
@@ -232,6 +233,7 @@ export default {
     widgetTitle: 'Titre du widget',
     columnName: 'Nom de la colonne',
     defaultSortColumn: 'Colonne de tri par défaut',
+    sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
     orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
@@ -351,15 +353,29 @@ export default {
       title: 'Couleurs des statistiques',
       pickColor: 'Sélectionner une couleur',
     },
+    statsAnnotationLine: {
+      title: 'Ligne repère',
+      enabled: 'Activée',
+      value: 'Valeur',
+      label: 'Label',
+      pickLineColor: 'Couleur de la ligne',
+      pickLabelColor: 'Couleur du label',
+    },
+    statsPointsStyles: {
+      title: 'Forme des points',
+    },
     considerPbehaviors: {
       title: 'Prendre en compte les comportements périodiques ?',
     },
     serviceWeatherModalTypes: {
-      title: 'Type de modal',
+      title: 'Type de modale',
       fields: {
         moreInfo: 'Plus d\'infos',
         alarmList: 'Bac à alarmes',
       },
+    },
+    liveReporting: {
+      title: 'Suivi personnalisé',
     },
   },
   modals: {
@@ -424,6 +440,7 @@ export default {
       },
       noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
       fields: {
+        periodicRefresh: 'Rafraichissement périodique',
         groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
         groupTags: 'Labels de groupes',
       },
@@ -487,16 +504,49 @@ export default {
     },
     createPbehavior: {
       title: 'Ajouter un comportement périodique',
-      fields: {
-        name: 'Nom',
-        start: 'Début',
-        stop: 'Fin',
-        reason: 'Raison',
-        type: 'Type',
-        rRuleQuestion: 'Ajouter une rrule à ce comportement périodique',
+      steps: {
+        general: {
+          title: 'Paramètres généraux',
+          general: 'Général',
+          dates: 'Dates',
+          fields: {
+            enabled: 'Activé',
+            name: 'Nom',
+            reason: 'Raison',
+            type: 'Type',
+            start: 'Début',
+            stop: 'Fin',
+            timezone: 'Fuseau horaire',
+          },
+        },
+        filter: {
+          title: 'Filtre',
+        },
+        rrule: {
+          title: 'Règle de récurrence',
+          exdate: 'Dates d\'exclusion',
+          buttons: {
+            addExdate: 'Ajouter une date d\'exclusion',
+          },
+          fields: {
+            rRuleQuestion: 'Ajouter une règle de récurrence au comportement périodique ?',
+          },
+        },
+        comments: {
+          title: 'Commentaires',
+          buttons: {
+            addComment: 'Ajouter un commentaire',
+          },
+          fields: {
+            message: 'Message',
+          },
+        },
+      },
+      errors: {
+        invalid: 'Invalide',
       },
       success: {
-        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60sec pour apparaître dans l\'interface',
+        create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
       },
     },
     createPause: {
@@ -566,8 +616,8 @@ export default {
       scenario_probe_name: 'Sonde',
       scenario_calendar: 'Intervalles d\'éxécution',
       actionPending: 'action(s) en attente',
-      refreshEntities: 'Refraichir la liste des entités',
-      editPbehaviors: 'Editer les pbehaviors',
+      refreshEntities: 'Rafraîchir la liste des entités',
+      editPbehaviors: 'Éditer les pbehaviors',
     },
     filter: {
       create: {
@@ -737,8 +787,8 @@ export default {
         success: 'Webhook créé avec succès !',
       },
       edit: {
-        title: 'Edit webhook',
-        success: 'Webhook edité avec succès !',
+        title: 'Éditer un webhook',
+        success: 'Webhook édité avec succès !',
       },
       remove: {
         success: 'Webhook supprimé avec succès !',
@@ -748,6 +798,26 @@ export default {
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
+      },
+    },
+    createAction: {
+      create: {
+        title: 'Créer une action',
+        success: 'Action créée avec succès !',
+      },
+      edit: {
+        success: 'Action éditée avec succès !',
+      },
+      remove: {
+        success: 'Action supprimée avec succès !',
+      },
+      tabs: {
+        general: 'Général',
+        hook: 'Hook',
+      },
+      fields: {
+        message: 'Message',
+        duration: 'Durée',
       },
     },
     statsDateInterval: {
@@ -775,6 +845,49 @@ export default {
         success: 'Heartbeats supprimés avec succès !',
       },
       patternRequired: 'Un pattern est requis',
+    },
+    createDynamicInfo: {
+      create: {
+        title: 'Créer une information dynamique',
+        success: 'Information dynamique créé avec succès !',
+      },
+      edit: {
+        success: 'Information dynamique éditée avec succès !',
+      },
+      remove: {
+        success: 'Information dynamique supprimée avec succès !',
+      },
+      errors: {
+        invalid: 'Invalide',
+      },
+      steps: {
+        general: {
+          title: 'Général',
+          fields: {
+            id: 'Id',
+            name: 'Nom',
+            description: 'Description',
+          },
+        },
+        infos: {
+          title: 'Informations',
+        },
+        patterns: {
+          title: 'Patterns',
+          alarmPatterns: 'Patterns des alarmes',
+          entityPatterns: 'Patterns des entités',
+          validationError: 'Au moins un pattern est requis. Merci d\'ajouter un pattern sur les alarmes et/ou un pattern sur les événements',
+        },
+      },
+    },
+    createDynamicInfoInformation: {
+      create: {
+        title: 'Ajouter une information à la règle d\'information dynamique',
+      },
+      fields: {
+        name: 'Nom',
+        value: 'Valeur',
+      },
     },
   },
   tables: {
@@ -873,7 +986,7 @@ export default {
       bymonth: 'Par mois',
       bysetpos: {
         label: 'Par position',
-        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (Lundi, Mardi, Mercredi, Jeudi, Vendredi), va nous donner le dernier jour travaillé de chaque mois',
+        tooltip: 'Si renseigné, doit être un ou plusieurs nombres entiers, positifs ou négatifs. Chaque entier correspondra à la ènième occurence de la règle dans l\'intervalle de fréquence. Par exemple, une \'bysetpos\' de -1 combinée à une fréquence mensuelle, et une \'byweekday\' de (lundi, mardi, mercredi, jeudi, vendredi), va nous donner le dernier jour travaillé de chaque mois',
       },
       bymonthday: {
         label: 'Par jour du mois',
@@ -906,6 +1019,8 @@ export default {
     lineNotEmpty: 'Cette ligne n\'est pas vide',
     JSONNotValid: 'JSON non valide..',
     versionNotFound: 'Erreur dans la récupération du numéro de version...',
+    statsRequestProblem: 'Erreur dans la récupération des statistiques',
+    statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'core' de Canopsis",
   },
   calendar: {
     today: 'Aujourd\'hui',
@@ -943,10 +1058,10 @@ export default {
         name: 'Nom',
         type: 'Type',
       },
-      errors: {
-        invalidJSON: 'JSON non valide',
-        required: 'Merci d\'ajouter au moins une règle valide',
-      },
+    },
+    errors: {
+      invalidJSON: 'JSON non valide',
+      required: 'Merci d\'ajouter au moins une règle valide',
     },
   },
   filterSelector: {
@@ -969,7 +1084,7 @@ export default {
       [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
       [STATS_TYPES.stateRate.value]: 'Taux à cet état',
       [STATS_TYPES.mtbf.value]: 'Temps moyen entre pannes',
-      [STATS_TYPES.currentState.value]: 'Etat courant',
+      [STATS_TYPES.currentState.value]: 'État courant',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
       [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',
@@ -992,6 +1107,33 @@ export default {
     title: 'Règles SNMP',
     uploadMib: 'Envoyer un fichier MIB',
     addSnmpRule: 'Ajouter une règle SNMP',
+  },
+  actions: {
+    title: 'Actions',
+    addAction: 'Ajouter une action',
+    table: {
+      id: 'Id',
+      type: 'Type',
+      expand: {
+        tabs: {
+          general: 'Général',
+          hook: 'Hook',
+          author: 'Auteur',
+          pbehavior: {
+            name: 'Nom',
+            type: 'Type',
+            reason: 'Raison',
+            start: 'Début',
+            end: 'Fin',
+          },
+          snooze: {
+            message: 'Message',
+            duration: 'Durée',
+            noMessage: 'Aucun message n\'est défini',
+          },
+        },
+      },
+    },
   },
   layout: {
     sideBar: {
@@ -1073,7 +1215,7 @@ export default {
   validation: {
     custom: {
       tstop: {
-        after: '{0} Devrait être après le {1}',
+        after: 'La date de fin doit être postérieure à {1}',
       },
     },
   },
@@ -1096,6 +1238,21 @@ export default {
         id: 'ID',
         expectedInterval: 'Interval',
       },
+    },
+  },
+
+  dynamicInfo: {
+    title: 'Informations dynamiques',
+    table: {
+      id: 'Id',
+      name: 'Nom',
+      description: 'Description',
+      user: 'Auteur',
+      creationDate: 'Date de création',
+      lastUpdateDate: 'Date de dernière mise à jour',
+      alarmPatterns: 'Patterns des alarmes',
+      entityPatterns: 'Patterns des entités',
+      informations: 'Informations',
     },
   },
 

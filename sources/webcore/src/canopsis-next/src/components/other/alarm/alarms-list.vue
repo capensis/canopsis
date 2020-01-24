@@ -1,10 +1,11 @@
 <template lang="pug">
-  div
+  div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
         alarm-list-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
+          data-test="topPagination",
           v-if="hasColumns",
           :page="query.page",
           :limit="query.limit",
@@ -14,6 +15,7 @@
         )
       v-flex
         filter-selector(
+          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :lockedFilters="widgetViewFilters",
@@ -28,25 +30,27 @@
         )
       v-flex
         v-chip.primary.white--text(
+          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-btn(@click="showEditLiveReportModal", icon, small)
+        v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
           v-icon(:color="activeRange ? 'primary' : 'black'") schedule
-      v-flex.px-3(v-show="selected.length", xs12)
+      v-flex.px-3(v-show="selectedIds.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
+        data-test="tableWidget",
         :class="vDataTableClass",
         v-model="selected",
         :items="alarms",
         :headers="headers",
         :total-items="alarmsMeta.total",
         :pagination.sync="vDataTablePagination",
-        :loading="alarmsPending",
+        :loading="alarmsPending || alarmColumnFiltersPending",
         ref="dataTable",
         item-key="_id",
         hide-actions,
@@ -59,35 +63,58 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          tr
-            td
-              v-checkbox-functional(v-model="props.selected", primary, hide-details)
+          tr(:data-test="`tableRow-${props.item._id}`")
+            td(data-test="rowCheckbox")
+              v-checkbox-functional(
+                v-if="!isResolvedAlarm(props.item)",
+                v-model="props.selected",
+                primary,
+                hide-details
+              )
+              v-checkbox-functional(
+                v-else,
+                :value="false",
+                disabled,
+                primary,
+                hide-details
+              )
             td(
               v-for="column in columns",
               @click="props.expanded = !props.expanded"
             )
-              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
+              alarm-column-value(
+                :alarm="props.item",
+                :column="column",
+                :columnFiltersMap="columnFiltersMap",
+                :widget="widget"
+              )
             td
-              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
+              actions-panel(
+                :item="props.item",
+                :widget="widget",
+                :isResolvedAlarm="isResolvedAlarm(props.item)",
+                :isEditingMode="isEditingMode"
+              )
         template(slot="expand", slot-scope="props")
           time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
+            data-test="bottomPagination",
             :page="query.page",
             :limit="query.limit",
             :total="alarmsMeta.total",
             @input="updateQueryPage"
           )
         v-spacer
-        v-flex(xs2)
+        v-flex(xs2, data-test="itemsPerPage")
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { ENTITIES_STATUSES, MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
@@ -100,7 +127,6 @@ import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
@@ -108,6 +134,7 @@ import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
 /**
  * Alarm-list component
@@ -131,7 +158,6 @@ export default {
   },
   mixins: [
     authMixin,
-    modalMixin,
     widgetQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
@@ -139,6 +165,7 @@ export default {
     widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
+    alarmColumnFilters,
   ],
   props: {
     widget: {
@@ -159,6 +186,7 @@ export default {
       selected: [],
     };
   },
+
   computed: {
     activeRange() {
       const { tstart, tstop } = this.query;
@@ -171,7 +199,9 @@ export default {
     },
 
     selectedIds() {
-      return this.selected.map(item => item._id);
+      return this.selected
+        .filter(item => !this.isResolvedAlarm(item))
+        .map(item => item._id);
     },
 
     headers() {
@@ -210,13 +240,21 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
+
+  mounted() {
+    this.fetchAlarmColumnFilters();
+  },
   methods: {
+    isResolvedAlarm(item) {
+      return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(item.v.status.val);
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },
 
     showEditLiveReportModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['tstart', 'tstop']),

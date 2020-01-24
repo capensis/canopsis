@@ -1,16 +1,16 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('common.filters') }}
-    v-card-text
+  modal-wrapper(data-test="filtersListModal")
+    template(slot="title")
+      span {{ $t('common.filters') }}
+    template(slot="text")
       filters-list-component(
         :filters.sync="filters",
         :hasAccessToAddFilter="config.hasAccessToAddFilter",
         :hasAccessToEditFilter="config.hasAccessToEditFilter",
         @create:filter="createFilter",
         @update:filter="updateFilter",
-        @delete:filter="deleteFilter"
+        @delete:filter="deleteFilter",
+        :entitiesType="config.entitiesType"
       )
 </template>
 
@@ -23,12 +23,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import FiltersListComponent from '@/components/other/filter/list/filters-list.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Confirmation modal
  */
 export default {
   name: MODALS.filtersList,
-  components: { FiltersListComponent },
+  components: { FiltersListComponent, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

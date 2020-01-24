@@ -4,16 +4,11 @@ Canopsis est capable de *réagir* en fonction de critères objectifs afin de not
 Ce guide vous propose d'interagir avec Mattermost et avec Logstash.  
 
 !!! Warning
-    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs GO dans l'édition CAT de Canopsis.  
+    Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go dans l'édition CAT de Canopsis.
 
-Une option du moteur **axe** va vous permettre de prendre en charge cette fonctionnalité.
+Le moteur [`webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permettre de prendre en charge cette fonctionnalité.
 
-````
--postProcessorsDirectory /plugins/axepostprocessor/
-````
-
-La documentation complète est disponible [sur la page des Webhooks du moteur Axe](../../guide-administration/moteurs/moteur-axe-webhooks.md).
-
+Vous trouverez sa documentation complète sur [la page du moteur](../../guide-administration/moteurs/moteur-webhook.md)
 
 ## Mattermost
 
@@ -142,3 +137,194 @@ Une fois publié, vous pourrez consulter le résultat sur la console de debug de
   }
 }
 ````
+
+## Notification Mail
+
+Pour la notification par mail, nous nous appuyons sur une instance de Logstash à l'écoute.
+
+
+### Configuration de logstash pour l'envoi de mail
+
+#### Configuration générique
+
+Ajoutez le fichier `/etc/logstash/conf.d/http.conf` pour pouvoir écouter sur son port HTTP :
+
+```bash
+input {
+  http {}
+}
+```
+
+Ajoutez le fichier `/etc/logstash/conf.d/email.conf` pour pouvoir configurer la notification :
+
+```bash
+output {
+  email {
+    to => "%{recipient}"
+    from => 'monitor@example.org'
+    subject => "%{subject}"
+    template_file => "/etc/logstash/conf.d/email.tpl"
+    address => "localhost"
+    port => 25
+  }
+}
+```
+
+Les champs `address` et `port` correspondent aux informations du serveur SMTP (ici
+`localhost`).
+
+Si votre serveur requiert une authentification ou l'utilisation de STARTTLS,
+vous pouvez utiliser les clefs de configuration :
+
+- `username`
+- `password`
+- `use_tls` (true/false)
+
+Ajoutez enfin le fichier `/etc/logstash/conf.d/email.tpl` qui servira de modèle pour l'envoi d'email :
+
+```bash
+<pre>
+Bonjour,
+
+Une alarme a été créée sur le composant {{component}} :
+
+Statut : {{status}}
+
+Connecteur : {{connector}}
+Ressource : {{resource}}
+
+--
+Canopsis webhook
+</pre>
+```
+
+Note : Le modèle est en HTML.
+
+#### Variante : emails `text/plain`
+
+Si on veut plutôt envoyer des emails au format `text/plain`, utiliser la configuration suivante pour le fichier `/etc/logstash/conf.d/email.conf`
+
+```bash
+output {
+  email {
+    to => "%{recipient}"
+    from => 'monitor@example.org'
+    subject => "%{subject}"
+    address => "localhost"
+    port => 25
+    body => "Ceci est un email au format texte, avec une %{variable}"
+  }
+}
+```
+
+#### Variante : Destinataires différenciés
+
+Ici nous voulons avoir 2 envois d'emails différenciés, suivant que le `webhook` déclenché contienne le champ `reportalarm` ou le champ `declareticket`.
+
+Le fichier /etc/logstash/conf.d/email.conf` :
+
+```json
+output {
+  if [is_webhook_reportalarm] {
+    email {
+      address => "smtp.serveur.fr"
+      port => 25
+      from => "%{from}"
+      to => "%{to}"
+      subject => "%{subject}"
+      body => "Report d'alarme \n\nComposant        : %{component}\nResource         : %{resource}\nConnecteur       : %{connector}\nNom du connecteur: %{connector_name}\nSource type      : %{source_type}\nStatus           : %{status}\nState            : %{state}\n\nCommentaire      : %{comment}"
+      }
+  }
+  if [is_webhook_declareticket] {
+    email {
+      address => "smtp.serveur.fr"
+      port => 25
+      from => "%{from}"
+      to => "%{to}"
+      subject => "%{subject}"
+      body => "Canopsis %{timestamp}||%{formattedDate} | %{ackAuthor}| |%{component}||||COMPOSANT: %{component} RESSOURCE: %{resource} |||||||%{outputStripped}||||||"
+    }
+  }
+}
+```
+
+### Configuration du webhook
+
+#### Envoi d'email générique
+
+Créez un webhook en spécifiant les conditions de déclenchement que vous
+souhaitez.
+
+Dans la section request, ajoutez les paramètres suivants :
+
+- Method: `POST`
+- URL : L'url configurée pour l'input HTTP de logstash (le port par défaut est
+  8080)
+- Un header : `Content-Type`/`application/json`
+- Payload :
+```json
+{
+    "connector": "{{ .Alarm.Value.Connector }}",
+    "status": "{{ .Alarm.Value.Status }}",
+    "resource": "{{ .Alarm.Value.Resource }}",
+    "component": "{{ .Alarm.Value.Component }}",
+    "subject": "Notification Canopsis",
+    "recipient": "local@example.org"
+}
+```
+
+Ajustez à votre convenance le sujet ainsi que les destinataires du mail.
+
+#### Envoi d'emails différenciés
+
+Ici nous avons 2 webhooks, un qui inclut le champ `reportalarm` et un qui inclut le champ `declareticket`.
+
+##### Reportalarm
+
+- Method: `POST`
+- URL : L'url configurée pour l'input HTTP de logstash (le port par défaut est
+  8080)
+- Un header : `Content-Type`/`application/json`
+- Payload :
+
+```json
+{
+   "is_webhook_reportalarm": "webhook_reportalarm",
+   "subject": "Canopsis [Test Preprod]",
+   "from": "User test <user_test@test.fr>",
+   "to": "user_test@test.fr",
+   "timestamp": "{{ .Event.Timestamp.Unix }}",
+   "formattedDate": "{{ .Event.Timestamp | formattedDate "2006-02-01 15:04:05" }}",
+   "ackAuthor": "{{ .Alarm.Value.ACK.Author }}",
+   "component": "{{ .Alarm.Value.Component }}",
+   "resource": "{{ .Alarm.Value.Resource }}",
+   "connector": "{{ .Alarm.Value.Connector }}",
+   "connector_name": "{{ .Alarm.Value.ConnectorName }}",
+   "status": "{{ .Alarm.Value.Status.Value }}",
+   "state": "{{ .Alarm.Value.State.Value }}",
+   "comment": "{{ .Event.Output | split "~~" 2 }}"
+}
+```
+
+##### Declareticket
+
+- Method: `POST`
+- URL : L'url configurée pour l'input HTTP de logstash (le port par défaut est
+  8080)
+- Un header : `Content-Type`/`application/json`
+- Payload :
+
+```json
+{
+   "is_webhook_declareticket": "webhook_declareticket",
+   "subject": "Canopsis [Test Preprod]",
+   "from": "User test <user_test@test.fr>",
+   "to": "user_test@test.fr",
+   "timestamp": "{{ .Event.Timestamp.Unix }}",
+   "formattedDate": "{{ .Event.Timestamp | formattedDate "2006-02-01 15:04:05" }}",
+   "ackAuthor": "{{ .Alarm.Value.ACK.Author }}",
+   "component": "{{ .Alarm.Value.Component }}",
+   "resource": "{{ .Alarm.Value.Resource }}",
+   "outputStripped": {{.Alarm.Value.State.Message | replace "\\\\n" "" | replace "\\n" "" | json }}
+}
+```

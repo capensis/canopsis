@@ -138,7 +138,7 @@ class AlertsReader(object):
             return self.alarm_fields['properties'][key]['stored_name']
 
         # This translates the keys in filters to look in alarm.entity.infos
-        # rather than in alarm.infos. 
+        # rather than in alarm.infos.
         # Alarm.infos is a redundant json object that doesn't exists in mongo,
         # thus creating problems when searching or filtering on it in the front
         # copied directly from alarm.entity.infos which does exist in mongo
@@ -523,7 +523,7 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
-    
+
     def _build_aggregate_pipeline(self,
                                   final_filter,
                                   sort_key,
@@ -580,7 +580,7 @@ class AlertsReader(object):
                           pipeline):
         """
         :param int skip: Number of alarms to skip (pagination)
-        :param int limit: Maximum number of alarms to return    
+        :param int limit: Maximum number of alarms to return
         :param list pipeline: list of steps in mongo aggregate command
 
         :returns: Dict containing alarms, the list of alarms returned by mongo
@@ -716,7 +716,32 @@ class AlertsReader(object):
 
         results['last'] = results['first']-1+len(results['alarms'])
 
+        self._add_is_active_field(results['alarms'])
+
         return results
+
+    def _add_is_active_field(self, alarms):
+        """
+        Add an isActive field to the alarm's pbehaviors, indicating whether the
+        pbehavior is active or not.
+
+        :param List[Dict] alarms: A list of alarms (as dictionaries). Each
+            alarm should have a pbehaviors field, containing the list of the
+            pbehaviors that impact it.
+            The isActive field will be added in place to the list.
+        """
+        now = time()
+
+        for alarm in alarms:
+            for pbehavior in alarm.get('pbehaviors'):
+                active = False
+                try:
+                    active = self.pbehavior_manager.check_active_pbehavior(
+                        now, pbehavior)
+                except ValueError:
+                    self.logger.exception("Unable to check if pbehavior {} is active".format(pbehavior.get('_id')))
+
+                pbehavior['isActive'] = active
 
     def get(
             self,

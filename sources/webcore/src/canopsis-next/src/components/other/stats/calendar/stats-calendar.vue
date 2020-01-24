@@ -2,7 +2,10 @@
   div
     v-layout.white.calender-wrapper
       progress-overlay(:pending="pending")
-      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+      alert-overlay(
+        :value="hasError",
+        :message="serverErrorMessage"
+      )
       ds-calendar(
         :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
         :events="events",
@@ -10,7 +13,7 @@
         @edit="editEvent"
       )
         v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
-          v-card-text
+          v-card-text(v-if="calendarEvent.data.meta")
             v-layout(
               v-for="(event, index) in calendarEvent.data.meta.events",
               :key="`popover-event-${index}`",
@@ -27,28 +30,30 @@
 </template>
 
 <script>
-import { get, omit, pick, isEmpty } from 'lodash';
+import { get, omit, isEmpty } from 'lodash';
+import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { MODALS, WIDGET_TYPES } from '@/constants';
+import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
 
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
-import modalMixin from '@/mixins/modal';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
+
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 import DsCalendar from './day-span/calendar.vue';
-import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { ProgressOverlay, DsCalendar, StatsAlertOverlay },
-  mixins: [modalMixin, widgetQueryMixin],
+  components: { ProgressOverlay, DsCalendar, AlertOverlay },
+  mixins: [widgetQueryMixin, widgetStatsWrapperMixin],
   props: {
     widget: {
       type: Object,
@@ -58,8 +63,6 @@ export default {
   data() {
     return {
       pending: true,
-      hasError: false,
-      serverErrorMessage: null,
       alarms: [],
       alarmsCollections: [],
       calendar: Calendar.months(),
@@ -144,17 +147,18 @@ export default {
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
       };
 
-      const query = { ...pick(meta, ['tstart', 'tstop']) };
-
       if (!isEmpty(event.data.meta.filter)) {
         widgetParameters.viewFilters = [meta.filter];
         widgetParameters.mainFilter = meta.filter;
       }
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.alarmsList,
         config: {
-          query,
+          query: {
+            tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
+            tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
+          },
           widget: {
             ...widget,
 
@@ -181,7 +185,6 @@ export default {
         const query = omit(this.query, ['filters', 'considerPbehaviors']);
 
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         if (isEmpty(this.query.filters)) {
@@ -217,8 +220,7 @@ export default {
           this.alarms = [];
         }
       } catch (err) {
-        this.hasError = true;
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }

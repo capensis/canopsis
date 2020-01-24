@@ -5,6 +5,33 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 !!! tip "Note"
     Cette page contient le plan de la documentation de développement, qui est en cours d'écriture.
 
+# API
+
+* [Internal](api/api-internal.md)
+* [Action](api/api-v2-action.md)
+* [Alarm-filter](api/api-v2-alarm-filter.md)
+* [Information dynamiques](api/api-v2-dynamic-infos.md)
+* [Event-filter](api/api-v2-event-filter.md)
+* [Event-filter](api/api-v2-event.md)
+* [Healthcheck](api/api-v2-healthcheck.md)
+* [Heartbeat](api/api-v2-heartbeat.md)
+* [Import](api/api-v2-import.md)
+* [PBehavior](api/api-v2-pbehavior.md)
+* [Watchers](api/api-v2-watcherng.md)
+* [Météo des services](api/api-v2-weather.md)
+* [Webhooks](api/api-v2-webhooks.md)
+
+# [Base de données](base-de-donnees/index.md)
+
+* [default_entities pour les entités](base-de-donnees/default-entities.md)
+* [periodical_alarm pour les alarmes](base-de-donnees/periodical-alarm.md)
+
+# [Structure d'un évènement](struct-event.md)
+
+# Plugins pour les moteurs
+
+* [Moteur Che : plugin pour les sources de données externes](plugins/event-filter-data-source.md)
+
 # Process de développement
 ## Organisation des dépôts
 ## Process de release
@@ -37,16 +64,6 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 ## Création de moteurs
 ## Implémentation de source de données externes (pour l'event-filter)
 
-# Base de données
-<!--
-## default_entities
-### Présentation générale
-### Présentation de la structure d'un document.
-## periodical_alarms
-### Présentation générale
-### Présentation de la structure d'un document.
--->
-
 # Front-end
 ## Mise en place de l'environnement de développement
 ## Technologies utilisées
@@ -59,18 +76,5 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 ### Vue
 ### Widget (+ Paramètres du widget)
 
-# API
-
-[Présentation de toutes les routes disponibles](API.md)
-
-  * [Action](action/api_v2_action.md)
-  * [Event-filter](event-filter/api_v2_event-filter.md)
-  * [Healthcheck](healthcheck/api_v2_healthcheck.md)
-  * [Heartbeat](heartbeat/api_v2_heartbeat.md)
-  * [Import](import/api_v2_import.md)
-  * [Internal](internal/api_internal.md)
-  * [Pbehavior](PBehavior/api_v2_pbehavior.md)
-  * [Webhooks](webhooks/api_v2_webhooks.md)
-  * [Watcher NG](watcherng/api_v2_watcherng.md)
 
 # Gestion de la documentation

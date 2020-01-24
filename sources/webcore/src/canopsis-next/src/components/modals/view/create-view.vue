@@ -1,81 +1,32 @@
 <template lang="pug">
-  v-card(data-test="createViewModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-container
-      v-alert(v-show="config.isDuplicating", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-    v-card-text
-      v-form(v-if="hasUpdateViewAccess")
-        v-layout(wrap, justify-center)
-          v-flex(xs11)
-            v-text-field(
-              data-test="viewFieldName",
-              :label="$t('common.name')",
-              v-model="form.name",
-              data-vv-name="name",
-              v-validate="'required'",
-              :error-messages="errors.collect('name')"
-            )
-            v-text-field(
-              data-test="viewFieldTitle",
-              :label="$t('common.title')",
-              v-model="form.title",
-              data-vv-name="title",
-              v-validate="'required'",
-              :error-messages="errors.collect('title')"
-            )
-            v-text-field(
-              data-test="viewFieldDescription",
-              :label="$t('common.description')",
-              v-model="form.description",
-              data-vv-name="description"
-            )
-            v-switch(
-              data-test="viewFieldEnabled",
-              v-model="form.enabled",
-              :label="$t('common.enabled')"
-            )
-        v-layout(wrap, justify-center)
-          v-flex(xs11)
-            v-combobox(
-              data-test="viewFieldGroupTags",
-              v-model="form.tags",
-              :label="$t('modals.view.fields.groupTags')",
-              tags,
-              clearable,
-              multiple,
-              append-icon,
-              chips,
-              deletable-chips
-            )
-            v-combobox(
-              data-test="viewFieldGroupId",
-              ref="combobox",
-              v-model="groupName",
-              :items="groupNames",
-              :label="$t('modals.view.fields.groupIds')",
-              :search-input.sync="search",
-              data-vv-name="group",
-              v-validate="'required'",
-              :error-messages="errors.collect('group')",
-              @change="closeComboboxMenuOnChange()"
-            )
-              template(slot="no-data")
-                v-list-tile
-                  v-list-tile-content
-                    v-list-tile-title(v-html="$t('modals.view.noData')")
-
-            span {{ form.group_id }}
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(data-test="viewSubmitButton", v-if="hasUpdateViewAccess", @click="submit") {{ $t('common.submit') }}
-      v-btn.error(
-        data-test="viewDeleteButton",
-        v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
-        @click="remove"
-      ) {{ $t('common.delete') }}
+  v-form(data-test="createViewModal", @submit.prevent="submit")
+    modal-wrapper(data-test="createViewModal")
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        v-container
+          v-alert(v-show="config.isDuplicating", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
+        view-form(
+          v-if="hasUpdateViewAccess",
+          v-model="form",
+          :groupName.sync="groupName",
+          :groups="groups"
+        )
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          v-if="hasUpdateViewAccess",
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit",
+          data-test="viewSubmitButton"
+        ) {{ $t('common.submit') }}
+        v-btn.error(
+          v-if="config.view && hasDeleteViewAccess && !config.isDuplicating",
+          :disabled="submitting",
+          data-test="viewDeleteButton",
+          @click="remove"
+        ) {{ $t('common.delete') }}
 </template>
 
 <script>
@@ -91,15 +42,18 @@ import {
 } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
-import popupMixin from '@/mixins/popup';
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
-import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
+
+import ViewForm from '@/components/other/view/view-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create widget
@@ -109,21 +63,20 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  components: { ViewForm, ModalWrapper },
   mixins: [
     authMixin,
-    popupMixin,
     modalInnerMixin,
+    submittableMixin(),
     entitiesViewMixin,
     entitiesRoleMixin,
     entitiesRightMixin,
     entitiesViewGroupMixin,
     entitiesUserPreferenceMixin,
     rightsTechnicalViewMixin,
-    vuetifyComboboxMixin,
   ],
   data() {
     return {
-      search: '',
       groupName: '',
       form: {
         name: '',
@@ -131,14 +84,14 @@ export default {
         description: '',
         enabled: false,
         tags: [],
+        periodicRefresh: {
+          enabled: false,
+          value: 0,
+        },
       },
     };
   },
   computed: {
-    groupNames() {
-      return this.groups.map(group => group.name);
-    },
-
     title() {
       if (this.config.isDuplicating) {
         return `${this.$t('modals.view.duplicate.title')} - ${this.config.view.name}`;
@@ -183,6 +136,10 @@ export default {
         description: view.description,
         enabled: view.enabled,
         tags: [...view.tags || []],
+        periodicRefresh: view.periodicRefresh || {
+          enabled: false,
+          value: 0,
+        },
       };
     }
   },
@@ -214,7 +171,7 @@ export default {
 
         return this.fetchCurrentUser();
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('modals.view.errors.rightCreating') });
+        this.$popups.error({ text: this.$t('modals.view.errors.rightCreating') });
 
         return Promise.resolve();
       }
@@ -235,14 +192,14 @@ export default {
           })),
         ]);
       } catch (err) {
-        this.addErrorPopup({ text: this.$t('modals.view.errors.rightRemoving') });
+        this.$popups.error({ text: this.$t('modals.view.errors.rightRemoving') });
 
         return Promise.resolve();
       }
     },
 
     remove() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
@@ -253,10 +210,10 @@ export default {
                 this.fetchGroupsList(),
               ]);
 
-              this.addSuccessPopup({ text: this.$t('modals.view.success.delete') });
-              this.hideModal();
+              this.$popups.success({ text: this.$t('modals.view.success.delete') });
+              this.$modals.hide();
             } catch (err) {
-              this.addErrorPopup({ text: this.$t('modals.view.fail.delete') });
+              this.$popups.error({ text: this.$t('modals.view.fail.delete') });
             }
           },
         },
@@ -297,7 +254,7 @@ export default {
 
             const response = await this.createView({ data });
             await this.createRightByViewId(response._id);
-            this.addSuccessPopup({ text: this.$t('modals.view.success.create') });
+            this.$popups.success({ text: this.$t('modals.view.success.create') });
           } else {
             const data = {
               ...this.config.view,
@@ -306,11 +263,11 @@ export default {
             };
 
             await this.updateView({ id: this.config.view._id, data });
-            this.addSuccessPopup({ text: this.$t('modals.view.success.edit') });
+            this.$popups.success({ text: this.$t('modals.view.success.edit') });
           }
 
           await this.fetchGroupsList();
-          this.hideModal();
+          this.$modals.hide();
         }
       } catch (err) {
         /**
@@ -318,9 +275,9 @@ export default {
          * means we're editing a view
          */
         if (!this.config.isDuplicating && this.config.view) {
-          this.addErrorPopup({ text: this.$t('modals.view.fail.edit') });
+          this.$popups.error({ text: this.$t('modals.view.fail.edit') });
         }
-        this.addErrorPopup({ text: this.$t('modals.view.fail.create') });
+        this.$popups.error({ text: this.$t('modals.view.fail.create') });
         console.error(err.description);
       }
     },

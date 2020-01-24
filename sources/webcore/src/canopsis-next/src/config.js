@@ -12,6 +12,8 @@ export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
+export const DEFAULT_KEEP_ALIVE_INTERVAL = 120000;
+
 export const LOCALE_PRIORITIES = {
   default: 1,
   global: 2,
@@ -19,6 +21,8 @@ export const LOCALE_PRIORITIES = {
 };
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
+
+export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
 
 export const VUETIFY_ANIMATION_DELAY = 300;
 
@@ -59,6 +63,7 @@ export const API_ROUTES = {
     },
   },
   pbehaviorById: '/api/v2/pbehavior_byeid',
+  actions: '/api/v2/actions',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
   view: '/api/v2/views',
@@ -92,6 +97,14 @@ export const API_ROUTES = {
     userInterface: '/api/internal/user_interface',
   },
   heartbeat: '/api/v2/heartbeat/',
+  dynamicInfo: '/api/v2/dynamic-infos',
+  filterHints: '/api/v2/associativetable/filterhints',
+  sessionStart: '/api/v2/sessionstart',
+  sessionTracePath: '/api/v2/session_tracepath',
+  keepalive: '/api/v2/keepalive',
+  alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
+  pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
+  session: '/api/v2/sessions',
 };
 
 export const COLORS = {

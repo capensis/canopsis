@@ -34,7 +34,13 @@
         "models_exploitation_snmpRule": {
             "checksum": 15
         },
+        "models_exploitation_action": {
+            "checksum": 15
+        },
         "models_exploitation_heartbeat": {
+            "checksum": 15
+        },
+        "models_exploitation_dynamicInfo": {
             "checksum": 15
         },
         "tabs_showeditionmenu" : {
@@ -236,6 +242,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "serviceweather_entityAssocTicket": {
+            "checksum": 1,
+            "desc": ""
+        },
         "serviceweather_entityDeclareTicket": {
             "checksum": 1,
             "desc": ""
@@ -347,9 +357,13 @@
 	"875df4c2-027b-4549-8add-e20ed7ff7d4f" : {
         	"checksum" : 15,
 		"crecord_type" : "right"
+	},
+  "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa" : {
+        	"checksum" : 15,
+		"crecord_type" : "right"
 	}
     },
-	"defaultview": "view.current_alarms"
+	"defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
 },{
     "_id": "Supervision",
     "rights": {

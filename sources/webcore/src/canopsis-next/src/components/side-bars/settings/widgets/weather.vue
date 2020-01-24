@@ -15,7 +15,8 @@
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hidden-fields="['title']"
+        :hidden-fields="['title']",
+        :entitiesType="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       v-list-group(data-test="widgetAlarmsList")
@@ -46,7 +47,7 @@
       v-list-group(data-test="advancedSettings")
         v-list-tile(slot="activator") {{ $t('settings.advancedSettings') }}
         v-list.grey.lighten-4.px-2.py-0(expand)
-          field-default-sort-column(
+          field-sort-column(
             v-model="settings.widget.parameters.sort",
             :columns="sortColumns",
             :columnsLabel="$t('settings.orderBy')"
@@ -143,6 +144,7 @@ import { SIDE_BARS } from '@/constants';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
 
+import FieldSortColumn from './fields/weather/sort-column.vue';
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
@@ -164,6 +166,7 @@ export default {
     validator: 'new',
   },
   components: {
+    FieldSortColumn,
     FieldRowGridSize,
     FieldTitle,
     FieldPeriodicRefresh,
@@ -191,9 +194,6 @@ export default {
       sortColumns: [
         { label: 'name', value: 'name' },
         { label: 'state', value: 'state' },
-        { label: 'status', value: 'status' },
-        { label: 'criticity', value: 'criticity' },
-        { label: 'org', value: 'org' },
       ],
     };
   },

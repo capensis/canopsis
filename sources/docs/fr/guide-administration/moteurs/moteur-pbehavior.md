@@ -1,10 +1,10 @@
 # Pbehavior
 
-Les *pbehaviors* (pour *periodical behaviors*) sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes par exemple).
+Les *pbehaviors* (pour *periodical behaviors*) sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes, par exemple).
 
 Ils permettent de créer des « downtimes », à savoir indiquer qu'une entité est en pause.
 
-Les pbehaviors sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md).
+Les pbehaviors sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md).
 
 ## Fonctionnement
 
@@ -31,7 +31,7 @@ Un pbehavior se caractérise par les informations suivantes.
 |  `tstop`   |  int   |  Timestamp fournissant la date de fin du pbehavior, recalculée à partir de la `rrule` si présente.   |     |
 |  `type_`   | string |                         Optionnel. Type de pbehavior (pause, maintenance…).                          |     |
 |  `reason`  | string |                       Optionnel. Raison pour laquelle ce pbehavior a été posé.                       |     |
-| `timezone` | string |                         Timezone dans laquelle le pbehavior doit s'exécuter.                         |     |
+| `timezone` | string |                       Fuseau horaire dans lequel le pbehavior doit s'exécuter.                       |     |
 |  `exdate`  | array  |                     La liste des occurrences à ignorer sous forme de timestamps                      |     |
 
 
@@ -62,7 +62,7 @@ Un exemple d'évènement pbehavior brut :
 }
 ```
 
-### Filter
+### Filtrage d'entités (`filter`)
 
 Le champ `filter` permet de filtrer les entités sur lesquelles le PBehavior est appliqué.
 
@@ -70,7 +70,7 @@ Il peut prendre en charge les conditions `or` et `and` mais nécessite de les é
 
 Exemple :
 
-```JSON
+```json
 {
 	"author": "root",
 	"name": "Pbehavior test 2",
@@ -99,7 +99,7 @@ Exemple :
 
 C'est un filtre appliqué directement sur les champs des entités contenues dans la collection `default_entities` de MongoDB.
 
-#### rrules
+### Règles de récurrence (`rrule`)
 
 C'est une règle de récurrence du PBehavior.
 
@@ -107,25 +107,25 @@ Dans le cas où la `rrule` est absente, `tstart` et `tstop` font office de plage
 
 Dans le cas où la `rrule` est présente, `tstart` et `tstop` seront recalculés afin de refléter la récurrence.
 
-#### Exdate
+### Dates d'exclusion (`exdate`)
 
-Il est possible d'empêcher l'exécution d'une occurrence d'un pbehavior, à l'aide
-du champ `exdate`. `Exdate` est une liste de timestamps correspondant au début
-d'une occurence à empêcher.
+Il est possible d'empêcher l'exécution d'une occurrence d'un pbehavior, à l'aide du champ `exdate`.
 
-## Timezone
+`exdate` est une liste de timestamps correspondant au début d'une occurence à empêcher.
 
-L'exécution de chaque pbehavior se fait dans une timezone particulière.
-Lorsqu'un pbehavior ne contient pas de champ timezone, la timezone utilisée
-sera celle définie dans le fichier de configuration `/opt/canopsis/etc/pbehavior/manager.conf`
-sous le champ `default_timezone`.
+### Fuseau horaire (`timezone`)
 
-Si le fichier de configuration n'existe pas ou si le champ `default_timezone`
-n'existe pas, la timezone `Europe/Paris` sera utilisée.
+L'exécution de chaque pbehavior se fait dans un fuseau horaire particulier.
 
-## Collection
+Lorsqu'un pbehavior ne contient pas de champ `timezone`, le fuseau utilisé sera celui défini dans le fichier `/opt/canopsis/etc/pbehavior/manager.conf` sous le champ `default_timezone`.
 
-Les pbehaviors sont stockés dans la collection Mongo `default_pbehavior` (voir [API PBehavior](../../guide-developpement/PBehavior/api_v2_pbehavior.md) pour la création des pbehaviors).
+Si le fichier de configuration n'existe pas ou si le champ `default_timezone` n'existe pas, le fuseau `Europe/Paris` sera utilisé.
+
+Si le fuseau horaire choisi comporte des heures d'hiver et d'été, celles-ci seront respectées tout au long de l'année. Ainsi, un pbehavior devant se déclencher à 16 heures s'exécutera à 16 heures en heure d'été et à 16 heures en heure d'hiver.
+
+## Représentation dans MongoDB
+
+Les pbehaviors sont stockés dans la collection MongoDB `default_pbehavior` (voir [API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md) pour la création des pbehaviors).
 
 Un exemple de pbehavior appliqué pour une plage de maintenance sans `rrule` avec la raison `Problème d'habilitation` et le type `Maintenance` aux alarmes dont le composant est `pbehavior_test_1`.
 

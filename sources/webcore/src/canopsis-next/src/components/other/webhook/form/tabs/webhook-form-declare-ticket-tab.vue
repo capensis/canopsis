@@ -4,7 +4,8 @@
       v-if="!disabled",
       :input-value="emptyResponse",
       :label="$t('webhook.tabs.declareTicket.emptyResponse')",
-      @change="$emit('update:emptyResponse', $event)"
+      @change="$emit('update:emptyResponse', $event)",
+      color="primary"
     )
     text-pairs(
       :textLabel="$t('webhook.tabs.declareTicket.fields.text')",

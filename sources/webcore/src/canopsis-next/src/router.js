@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import { USERS_RIGHTS } from '@/constants';
 import store from '@/store';
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
@@ -18,7 +18,9 @@ import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
 import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
+import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
+import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 
 Vue.use(Router);
 
@@ -142,6 +144,17 @@ const routes = [
     },
   },
   {
+    path: '/exploitation/actions',
+    name: 'exploitation-actions',
+    component: ExploitationActions,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.action,
+      },
+    },
+  },
+  {
     path: '/exploitation/heartbeats',
     name: 'exploitation-heartbeats',
     component: ExploitationHeartbeats,
@@ -149,6 +162,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.heartbeat,
+      },
+    },
+  },
+  {
+    path: '/exploitation/dynamic-infos',
+    name: 'exploitation-dynamic-infos',
+    component: ExploitationDynamicInfos,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
       },
     },
   },
@@ -197,8 +221,14 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
+  const isLoggedIn = !!Cookies.get(COOKIE_SESSION_KEY);
+
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
+  }
+
+  if (isLoggedIn) {
+    store.dispatch('keepalive/sessionTracePath', { path: getKeepalivePathByRoute(to) });
   }
 });
 

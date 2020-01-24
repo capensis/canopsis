@@ -73,7 +73,6 @@ class EnsureAuthenticated(object):
     def apply(self, callback, context):
         def decorated(*args, **kwargs):
             s = self.session.get()
-
             if not s.get('auth_on', False):
                 return HTTPError(401, 'Not authorized')
 

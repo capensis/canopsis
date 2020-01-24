@@ -1,124 +1,106 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-text-field(
-        v-validate="'required'",
-        :value="form.name",
-        :label="$t('modals.createPbehavior.fields.name')",
-        :error-messages="errors.collect('name')",
-        name="name",
-        @input="updateField('name', $event)"
-      )
-    v-layout(row)
-      date-time-picker-field(
-        v-validate="tstartRules",
-        :value="form.tstart",
-        :label="$t('modals.createPbehavior.fields.start')",
-        name="tstart",
-        @input="updateField('tstart', $event)"
-      )
-    v-layout(row)
-      date-time-picker-field(
-        v-validate="tstopRules",
-        :value="form.tstop",
-        :label="$t('modals.createPbehavior.fields.stop')",
-        name="tstop",
-        @input="updateField('tstop', $event)"
-      )
-    v-layout(row)
-      v-btn.primary(type="button", @click="showCreateFilterModal") {{ $t('common.filter') }}
-    r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
-    v-layout(row)
-      v-combobox(
-        v-validate="'required'",
-        :value="form.reason",
-        :label="$t('modals.createPbehavior.fields.reason')",
-        :items="reasons",
-        :error-messages="errors.collect('reason')",
-        name="reason",
-        @input="updateField('reason', $event)"
-      )
-    v-layout(row)
-      v-select(
-        v-validate="'required'",
-        :value="form.type_",
-        :label="$t('modals.createPbehavior.fields.type')",
-        :items="types",
-        :error-messages="errors.collect('type')",
-        name="type",
-        @input="updateField('type_', $event)"
-      )
+  v-stepper(v-model="stepper", non-linear)
+    v-stepper-header
+      v-stepper-step.py-0(
+        :complete="stepper > 1",
+        step="1",
+        editable,
+        data-test="pbehaviorFormStep-general",
+        :rules="[() => !hasGeneralFormAnyError]"
+      ) {{ $t('modals.createPbehavior.steps.general.title') }}
+        small(v-if="hasGeneralFormAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
+      template(v-if="!noFilter")
+        v-divider
+        v-stepper-step.py-0(
+          :complete="stepper > 2",
+          step="2",
+          editable,
+          data-test="pbehaviorFormStep-filter",
+          :rules="[() => !hasFilterEditorAnyError]"
+        ) {{ $t('modals.createPbehavior.steps.filter.title') }}
+          small(v-if="hasFilterEditorAnyError") {{ $t('modals.createPbehavior.errors.invalid') }}
+      v-divider
+      v-stepper-step.py-0(
+        :complete="stepper > 3",
+        step="3",
+        editable,
+        data-test="pbehaviorFormStep-rrule"
+      ) {{ $t('modals.createPbehavior.steps.rrule.title') }}
+        small.font-italic.font-weight-light {{ $t('common.optional') }}
+      v-divider
+      v-stepper-step.py-0(
+        :complete="stepper > 4",
+        step="4",
+        editable,
+        data-test="pbehaviorFormStep-comments"
+      ) {{ $t('modals.createPbehavior.steps.comments.title') }}
+        small.font-italic.font-weight-light {{ $t('common.optional') }}
+    v-stepper-items
+      v-stepper-content(step="1")
+        v-card
+          v-card-text
+            pbehavior-general-form(v-field="form.general", ref="pbehaviorGeneralForm")
+      v-stepper-content(step="2")
+        v-card
+          v-card-text
+            filter-editor(v-field="form.general.filter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
+      v-stepper-content(step="3")
+        v-card
+          v-card-text
+            r-rule-form(v-field="form.general.rrule")
+            pbehavior-exdates-form(v-if="form.general.rrule", v-field="form.exdate")
+      v-stepper-content(step="4")
+        v-card
+          v-card-text
+            pbehavior-comments-form(v-field="form.comments")
 </template>
 
 <script>
-import moment from 'moment';
-import { ENTITIES_TYPES, MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
-
-import authMixin from '@/mixins/auth';
-import formMixin from '@/mixins/form';
-import modalMixin from '@/mixins/modal';
-
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
+import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
+
+import PbehaviorGeneralForm from './partials/pbehavior-general-form.vue';
+import PbehaviorCommentsForm from './partials/pbehavior-comments-form.vue';
+import PbehaviorExdatesForm from './partials/pbehavior-exdates-form.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
-    DateTimePickerField,
     RRuleForm,
+    FilterEditor,
+    PbehaviorGeneralForm,
+    PbehaviorCommentsForm,
+    PbehaviorExdatesForm,
   },
-  mixins: [authMixin, formMixin, modalMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
+  inject: ['$validator'],
   props: {
     form: {
       type: Object,
       required: true,
     },
+    noFilter: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      stepper: 1,
+      hasGeneralFormAnyError: false,
+    };
   },
   computed: {
-    reasons() {
-      return Object.values(PAUSE_REASONS);
-    },
-
-    types() {
-      return Object.values(PBEHAVIOR_TYPES);
-    },
-
-    tstartRules() {
-      return {
-        required: true,
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
-
-    tstopRules() {
-      const rules = { required: true };
-
-      if (this.form.tstart) {
-        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
-      }
-
-      return rules;
+    hasFilterEditorAnyError() {
+      return this.errors.has('filter');
     },
   },
-  methods: {
-    showCreateFilterModal() {
-      this.showModal({
-        name: MODALS.createFilter,
-        config: {
-          hiddenFields: ['title'],
-          entitiesType: ENTITIES_TYPES.pbehavior,
-          filter: {
-            filter: this.form.filter || {},
-          },
-          action: ({ filter }) => this.updateField('filter', filter),
-        },
-      });
-    },
+  mounted() {
+    this.$watch(() => this.$refs.pbehaviorGeneralForm.hasAnyError, (value) => {
+      this.hasGeneralFormAnyError = value;
+    });
   },
 };
 </script>

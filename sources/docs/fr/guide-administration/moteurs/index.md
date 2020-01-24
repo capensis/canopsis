@@ -2,8 +2,10 @@
 
 - [Activation et désactivation des moteurs](activation-desactivation-moteurs.md)
 - [Enchainement des moteurs](schema-enchainement-moteurs.md)
+- [Liste des moteurs](#liste-des-moteurs)
+- [Flags et usage](#flags-usage)
 
-Les évènements envoyés par des connecteurs à Canopsis sont traités à l'aide de moteurs.
+Les [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) envoyés par des [connecteurs](../../guide-utilisation/vocabulaire/index.md#connecteur) à Canopsis sont traités à l'aide de [moteurs](../../guide-utilisation/vocabulaire/index.md#moteur).
 
 Un moteur a **plusieurs rôles** :
 
@@ -28,8 +30,9 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 |:------------------------------------------ |:--------------------------------------------------------------------------------------------------------------------------------------------------- |:-----:|
 | [action](moteur-action.md)                 | Applique des actions définies par l'utilisateur.                                                                                                    |       |
 | [axe](moteur-axe.md)                       | Gère le cycle de vie des alarmes.                                                                                                                   |       |
-| [axe@**webhooks**](moteur-axe-webhooks.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
+| [webhook](moteur-webhook.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
 | [che](moteur-che.md)                       | Supprime les évènements invalides, gère le contexte, et enrichit les évènements via sa fonctionnalité d'[event-filter](moteur-che-event_filter.md). |       |
+| [dynamic-infos](moteur-dynamic-infos.md)   | Enrichit les alarmes.                                                                                                                               |  ✅   |
 | [heartbeat](moteur-heartbeat.md)           | Surveille des entités, et lève des alarmes en cas d'absence d'information.                                                                          |       |
 | stat                                       | Calcule des statistiques sur les états des alarmes.                                                                                                 |       |
 | [watcher](moteur-watcher.md)               | Calcule les états des [watchers](moteur-watcher.md).                                                                                                |       |
@@ -69,8 +72,6 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ### Utilisation de engine-axe
 
 ```
-  -autoDeclareTickets
-        Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
   -d    debug
   -featureHideResources
         Active les features de gestion de ressources cachées.
@@ -81,7 +82,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue
-        Publie les événements sur cette queue. (par défaut "Engine_watcher")
+        Publie les événements sur cette file. (par défaut "Engine_watcher")
   -version
         version infos
 ```
@@ -89,17 +90,19 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ### Utilisation de engine-che
 
 ```
+  -alwaysFlushEntities
+        Always flush the entity cache. This makes sure the entities are always written in the database. This option is deprecated, and is likely to cause severe performance drops in high-traffic environment.
   -consumeQueue string
-        Consomme les évènements venant de cette queue. (default "Engine_che").
+        Consomme les évènements venant de cette file. (default "Engine_che").
   -createContext
         Active la création de context graph. Activé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -d    debug
   -dataSourceDirectory
         The path of the directory containing the event filter's data source plugins. (default ".")
   -enrichContext
         Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorse que vous l'utilisez. (default true)
+        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
   -enrichExclude string
         Liste de champs séparés par des virgules ne faisant pas partie de l'enrichissement du contexte
   -enrichInclude string
@@ -109,9 +112,21 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -processEvent
         enable event processing. enabled by default. (default true)
   -publishQueue
-        Publie les événements sur cette queue. (default "Engine_event_filter")
+        Publie les événements sur cette file. (default "Engine_event_filter")
   -purge
         purge consumer queue(s) before work
+  -version
+        version infos
+```
+
+### Utilisation de engine-dynamic-infos
+
+```
+  -d    debug
+  -printEventOnError
+        Afficher les évènements sur les erreurs de traitement.
+  -publishQueue string
+        Publie les événements sur cette file. (default "Engine_action")
   -version
         version infos
 ```
@@ -144,7 +159,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue string
-        Publie les événements sur cette queue. (par défaut "Engine_action")
+        Publie les événements sur cette file. (par défaut "Engine_action")
   -version
         version infos
 ```
@@ -160,11 +175,12 @@ Cette documentation explique les étapes à suivre pour passer d'un niveau de lo
 ### Moteurs Python avec systemd
 
 Afficher la configuration du moteur avec la commande suivante :
-```shell
+```sh
 systemctl cat canopsis-engine@dynamic-alerts.service
 ```
+
 Le résultat ressemble à ceci :
-```
+```ini
 [Unit]
 Description=Canopsis Engine %i
 After=network.target
@@ -186,27 +202,30 @@ Type=simple
 [Install]
 WantedBy=multi-user.target
 ```
+
 Puis éditer cette configuration dans un autre terminal :
-```shell
+```sh
 systemctl edit canopsis-engine@dynamic-alerts.service
 ```
+
 Une fenêtre d'édition vide s'affiche, copiez les éléments suivants pour surcharger la configuration actuelle :
-```
+```ini
 [Service]
 Environment=LOGLEVEL=debug
 ```
+
 Sauvegarder et quitter l'éditeur.
 
 Recharger systemd pour prendre en compte la modification.
-```shell
+```sh
 systemctl daemon-reload
 ```
 Terminer en redémarrant le moteur.
-```shell
+```sh
 systemctl restart canopsis-engine@dynamic-alerts.service
 ```
 Et vérifier son nouveau statut :
-```shell
+```sh
 systemctl status canopsis-engine@dynamic-alerts.service
 
 ● canopsis-engine@dynamic-alerts.service - Canopsis Engine dynamic-alerts
@@ -218,14 +237,23 @@ systemctl status canopsis-engine@dynamic-alerts.service
            ├─4479 /bin/bash /opt/canopsis/bin/engine-launcher-systemd dynamic-alerts
            └─4489 /opt/canopsis/bin/python /opt/canopsis/bin/engine-launcher -e canopsis.engines.dynamic -n alerts -w dynamic-alerts -l debug
 ```
+
 Le paramètre `-l debug` visible à la fin de la dernière ligne indique bien que le service est maintenant en niveau de log "debug".
 
-# Moteurs obsolètes
+## Moteurs obsolètes
+
+Les moteurs Python suivants ne sont plus pris en charge lors d'une nouvelle installation ou d'une mise à jour de Canopsis :
 
 *  acknowledgement
 *  cancel
 *  context
-*  eventstore
-*  task\_linklist : n'existe plus depuis Canopsis 3.0
-*  linklist : n'existe plus depuis Canopsis 3.0, remplacé par les linkbuilders
+*  ticket
+*  task\_dataclean : non fonctionnel depuis Canopsis 3.0
+*  task\_linklist : n'existe plus depuis Canopsis 3.0, remplacé par [linkbuilder](../linkbuilder/index.md)
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric
+*  eventstore : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), utile uniquement pour l'exploitation de l'ancienne vue SNMP de l'UIv2
+*  task\_mail : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), remplacé par [les Webhooks](moteur-webhook.md)
+
+Moteurs Go :
+
+*  engine-stat : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md)

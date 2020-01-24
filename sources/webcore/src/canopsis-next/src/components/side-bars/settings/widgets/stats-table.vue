@@ -15,7 +15,8 @@
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']"
+        :hiddenFields="['title']",
+        :entitiesType="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-stats-selector(v-model="settings.widget.parameters.stats", required, withTrend, withSorting)

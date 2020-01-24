@@ -1,31 +1,36 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+    alert-overlay(
+      :value="hasError",
+      :message="serverErrorMessage"
+    )
     stats-pareto-chart(:labels="labels", :datasets="datasets", :options="options")
 </template>
 
 <script>
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
 import { SORT_ORDERS } from '@/constants';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
-import StatsAlertOverlay from '../partials/stats-alert-overlay.vue';
 import StatsParetoChart from './stats-pareto-chart.vue';
 
 export default {
   components: {
     ProgressOverlay,
-    StatsAlertOverlay,
+    AlertOverlay,
     StatsParetoChart,
   },
   mixins: [
     entitiesStatsMixin,
     widgetQueryMixin,
+    widgetStatsWrapperMixin,
     widgetStatsChartWrapperMixin,
   ],
   props: {
@@ -94,9 +99,8 @@ export default {
       return {
         scales: {
           xAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: this.$t('entities.entities'),
+            ticks: {
+              fontSize: 11,
             },
           }],
           yAxes: [
@@ -106,6 +110,7 @@ export default {
               id: 'y-axis-1',
               ticks: {
                 suggestedMin: 0,
+                fontSize: 11,
               },
               scaleLabel: {
                 display: true,
@@ -118,6 +123,7 @@ export default {
               id: 'y-axis-2',
               ticks: {
                 suggestedMin: 0,
+                fontSize: 11,
               },
               scaleLabel: {
                 display: true,
@@ -155,7 +161,6 @@ export default {
     async fetchList() {
       try {
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         const { values, aggregations } = await this.fetchStatsListWithoutStore({
@@ -165,8 +170,7 @@ export default {
         this.total = aggregations[this.statTitle].sum;
         this.stats = values.filter(stat => stat[this.statTitle].value);
       } catch (err) {
-        this.hasError = true;
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }

@@ -59,7 +59,8 @@
               data-test="columnNameSwitch",
               :label="$t('settings.columns.isHtml')",
               :input-value="column.isHtml",
-              @change="updateFieldInArrayItem(index, 'isHtml', $event)"
+              @change="updateFieldInArrayItem(index, 'isHtml', $event)",
+              color="primary"
             )
       v-btn(
         data-test="columnNameAddButton",

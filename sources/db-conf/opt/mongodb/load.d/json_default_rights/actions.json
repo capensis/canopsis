@@ -386,11 +386,27 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_exploitation_action",
+        "loader_id": "models_exploitation_action",
+        "crecord_name": "models_exploitation_action",
+        "crecord_type": "action",
+        "desc": "Exploitation: Actions",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_exploitation_heartbeat",
         "loader_id": "models_exploitation_heartbeat",
         "crecord_name": "models_exploitation_heartbeat",
         "crecord_type": "action",
         "desc": "Exploitation: Heartbeat",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_exploitation_dynamicInfo",
+        "loader_id": "models_exploitation_dynamicInfo",
+        "crecord_name": "models_exploitation_dynamicInfo",
+        "crecord_type": "action",
+        "desc": "Exploitation: Dynamic informations",
         "type": "CRUD"
     },
     {
@@ -539,6 +555,13 @@
         "crecord_name": "serviceweather_entityAck",
         "crecord_type": "action",
         "desc": "Service weather: Access to 'Ack' action"
+    },
+    {
+        "_id": "serviceweather_entityAssocTicket",
+        "loader_id": "serviceweather_entityAssocTicket",
+        "crecord_name": "serviceweather_entityAssocTicket",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Assoc Ticket' action"
     },
     {
         "_id": "serviceweather_entityDeclareTicket",
@@ -712,6 +735,26 @@
         "type" : "RW",
         "crecord_name" : "view_history_alarms",
         "desc" : "Rights on view: history alarms"
+    },
+    {
+        "_id" : "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+        "loader_id" : "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+        "crecord_write_time" : 1543852261,
+        "crecord_type" : "action",
+        "enable" : true,
+        "type" : "RW",
+        "checksum" : 15,
+        "crecord_creation_time" : 1543852261,
+        "crecord_name" : null,
+        "desc" : "Rights on view: Explorateur de Contexte"
+    },
+    {
+        "_id" : "view_context_explorer",
+        "loader_id" : "view_context_explorer",
+        "crecord_type" : "action",
+        "type" : "RW",
+        "crecord_name" : "view_context_explorer",
+        "desc" : "Rights on view: context explorer"
     },
     {
         "_id" : "serviceweather_ack",

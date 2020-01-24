@@ -47,13 +47,20 @@ export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   tabs: [viewTabSchema],
-}, { idAttribute: '_id' });
+}, {
+  idAttribute: '_id',
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
 
 export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   views: [viewSchema],
 }, {
   idAttribute: '_id',
+  processStrategy: parentProcessStrategy,
 });
+
+groupSchema.disabledCache = true;
 
 export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribute: '_id' });
 
@@ -65,7 +72,11 @@ export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idA
 
 export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { idAttribute: '_id' });
 
+export const actionSchema = new schema.Entity(ENTITIES_TYPES.action, {}, { idAttribute: '_id' });
+
 export const heartbeatSchema = new schema.Entity(ENTITIES_TYPES.heartbeat, {}, { idAttribute: '_id' });
+
+export const dynamicInfoSchema = new schema.Entity(ENTITIES_TYPES.dynamicInfo, {}, { idAttribute: '_id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -84,5 +95,7 @@ export default {
   [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
   [ENTITIES_TYPES.webhook]: webhookSchema,
   [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
+  [ENTITIES_TYPES.action]: actionSchema,
   [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
+  [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
 };

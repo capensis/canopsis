@@ -1,31 +1,33 @@
 <template lang="pug">
   div
-    v-card.position-relative
-      progress-overlay(:pending="pending")
-      stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
-      v-data-table(
-        :items="stats",
-        :headers="columns",
-        :pagination.sync="pagination",
-        :custom-sort="customSort"
-      )
-        template(slot="items", slot-scope="{ item }")
-          td {{ item.entity.name }}
-          td(v-for="(property, key) in widget.parameters.stats")
-            template(v-if="isStatNotEmpty(item[key])")
-              td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
-                alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
-              td(v-else)
-                v-layout(align-center)
-                  div {{ item[key].value | formatValue(property.stat.value) }}
-                  div(v-if="hasTrend(item[key])")
-                    sub.ml-2
-                      v-icon.caption(
-                        small,
-                        :color="item[key].trend | trendColor"
-                      ) {{ item[key].trend | trendIcon }}
-                    sub {{ item[key].trend | formatValue(property.stat.value) }}
-            div(v-else) {{ $t('tables.noData') }}
+    progress-overlay(:pending="pending")
+    alert-overlay(
+      :value="hasError",
+      :message="serverErrorMessage"
+    )
+    v-data-table(
+      :items="stats",
+      :headers="columns",
+      :pagination.sync="pagination",
+      :custom-sort="customSort"
+    )
+      template(slot="items", slot-scope="{ item }")
+        td {{ item.entity.name }}
+        td(v-for="(property, key) in widget.parameters.stats")
+          template(v-if="isStatNotEmpty(item[key])")
+            td(v-if="property.stat.value === $constants.STATS_TYPES.currentState.value")
+              alarm-chips(:type="$constants.ENTITY_INFOS_TYPE.state", :value="item[key].value")
+            td(v-else)
+              v-layout(align-center)
+                div {{ item[key].value | formatValue(property.stat.value) }}
+                div(v-if="hasTrend(item[key])")
+                  sub.ml-2
+                    v-icon.caption(
+                      small,
+                      :color="item[key].trend | trendColor"
+                    ) {{ item[key].trend | trendIcon }}
+                  sub {{ item[key].trend | formatValue(property.stat.value) }}
+          div(v-else) {{ $t('tables.noData') }}
 </template>
 
 <script>
@@ -40,18 +42,18 @@ import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
-
-import StatsAlertOverlay from './partials/stats-alert-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {
   components: {
     ProgressOverlay,
     AlarmChips,
-    StatsAlertOverlay,
+    AlertOverlay,
   },
   filters: {
     statValue(name) {
@@ -63,6 +65,7 @@ export default {
     widgetQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
+    widgetStatsWrapperMixin,
     widgetStatsTableWrapperMixin,
   ],
   props: {
@@ -74,8 +77,6 @@ export default {
   data() {
     return {
       pending: true,
-      hasError: false,
-      serverErrorMessage: null,
       stats: [],
       page: 1,
       pagination: {
@@ -140,8 +141,6 @@ export default {
         const { sort = {} } = this.widget.parameters;
 
         this.pending = true;
-        this.hasError = false;
-        this.serverErrorMessage = null;
 
         const { values } = await this.fetchStatsListWithoutStore({
           params: this.getQuery(),
@@ -157,8 +156,7 @@ export default {
           descending: sort.order === SORT_ORDERS.desc,
         };
       } catch (err) {
-        this.hasError = true;
-        this.serverErrorMessage = err.description || null;
+        this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
       } finally {
         this.pending = false;
       }
