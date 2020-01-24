@@ -1,11 +1,11 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(data-test="moreInfosModal")
     template(slot="text")
-      div(v-if="!config.template")
+      div(data-test="moreInfosTemplateContent", v-if="!config.template")
         v-layout(justify-center)
           v-icon(color="info") infos
           p(class="ma-0") {{ $t('modals.moreInfos.defineATemplate') }}
-      div(v-else, v-html="output")
+      div(data-test="moreInfosContent", v-else, v-html="output")
 </template>
 
 <script>

@@ -44,9 +44,11 @@ export default {
 
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
-    }
 
-    this.registerIsLoggedInOnceWatcher();
+      this.startKeepalive();
+    } else {
+      this.registerIsLoggedInOnceWatcher();
+    }
 
     this.pending = false;
   },
@@ -61,7 +63,7 @@ export default {
 
           unwatch();
         }
-      }, { immediate: true });
+      });
     },
   },
 };

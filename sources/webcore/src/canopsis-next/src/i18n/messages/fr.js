@@ -1215,7 +1215,7 @@ export default {
   validation: {
     custom: {
       tstop: {
-        after: '{0} Devrait être après le {1}',
+        after: 'La date de fin doit être postérieure à {1}',
       },
     },
   },

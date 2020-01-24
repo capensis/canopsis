@@ -47,13 +47,20 @@ export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   tabs: [viewTabSchema],
-}, { idAttribute: '_id' });
+}, {
+  idAttribute: '_id',
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
 
 export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   views: [viewSchema],
 }, {
   idAttribute: '_id',
+  processStrategy: parentProcessStrategy,
 });
+
+groupSchema.disabledCache = true;
 
 export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribute: '_id' });
 

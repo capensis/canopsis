@@ -130,13 +130,13 @@ class LDAPBackend(BaseBackend):
             self.logger.error("Invalid credentials: {0}".format(err))
             return False
 
-        info = mgr.get_user(user)
-
         username = user
         if username_attr:
             username = data.get(username_attr) or user
             if isinstance(username, list):
                 username = username[0]
+
+        info = mgr.get_user(username)
 
         if not info:
             info = {
