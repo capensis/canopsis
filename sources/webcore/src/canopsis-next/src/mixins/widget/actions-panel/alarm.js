@@ -7,6 +7,7 @@ import {
   BUSINESS_USER_RIGHTS_ACTIONS_MAP,
   CRUD_ACTIONS,
   WIDGET_TYPES,
+  STATS_QUICK_RANGES,
 } from '@/constants';
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
@@ -143,6 +144,17 @@ export default {
         filter,
       };
 
+      /**
+       * Default value for liveReporting is last 30 days
+       */
+      widget.parameters.liveReporting = {
+        tstart: STATS_QUICK_RANGES.last30Days.start,
+        tstop: STATS_QUICK_RANGES.last30Days.stop,
+      };
+
+      /**
+       * Special entity filter for alarms list modal
+       */
       widget.parameters.mainFilter = entityFilter;
       widget.parameters.viewFilters = [entityFilter];
 
