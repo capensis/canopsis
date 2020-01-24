@@ -1233,6 +1233,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
+      activeSessions: 'Active sessions',
     },
   },
   parameters: {
