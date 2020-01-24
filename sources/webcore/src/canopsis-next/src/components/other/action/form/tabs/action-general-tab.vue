@@ -6,13 +6,13 @@
         :label="$t('modals.createAction.fields.message')"
       )
       duration-field(v-field="form.snoozeParameters.duration")
-    template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
+    template(v-else-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
       pbehavior-form(
         v-field="form.pbehaviorParameters",
         :author="$constants.ACTION_AUTHOR",
         noFilter
       )
-    template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.changeState")
+    template(v-else-if="form.generalParameters.type === $constants.ACTION_TYPES.changeState")
       div.mt-3
         v-layout(row)
           state-criticity-field(
