@@ -32,7 +32,7 @@ Voici la structure d'une [entité](../../guide-utilisation/vocabulaire/index.md#
 
 Les champs `impact` et `depends` contiennent chacun un tableau constitué des `_id` d'entités auxquelles l'entité courante est liée.
 
-### Évènement
+### Entité
 
 Voici comment sont graphées les entités d'un [évènement](../../guide-utilisation/vocabulaire/index.md#evenement) :
 
