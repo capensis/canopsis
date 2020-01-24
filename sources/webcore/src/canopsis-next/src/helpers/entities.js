@@ -504,7 +504,7 @@ export function generateAction() {
   const changeStateParameters = {
     author: '',
     state: ENTITIES_STATES.minor,
-    message: '',
+    output: '',
   };
 
   return {

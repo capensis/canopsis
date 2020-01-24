@@ -29,8 +29,8 @@
           )
         v-layout(row)
           v-textarea(
-            v-field="form.changeStateParameters.message",
-            :label="$t('modals.createAction.fields.message')"
+            v-field="form.changeStateParameters.output",
+            :label="$t('modals.createAction.fields.output')"
           )
 </template>
 

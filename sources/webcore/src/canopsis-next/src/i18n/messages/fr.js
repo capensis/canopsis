@@ -818,6 +818,7 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Durée',
+        output: 'Output',
       },
     },
     statsDateInterval: {
@@ -1130,6 +1131,10 @@ export default {
             message: 'Message',
             duration: 'Durée',
             noMessage: 'Aucun message n\'est défini',
+          },
+          changeState: {
+            output: 'Output',
+            noOutput: 'Aucun output n\'est défini',
           },
         },
       },

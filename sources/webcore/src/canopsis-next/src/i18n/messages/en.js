@@ -920,6 +920,7 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Duration',
+        output: 'Output',
       },
     },
     createHeartbeat: {
@@ -1221,6 +1222,10 @@ export default {
             message: 'Message',
             duration: 'Duration',
             noMessage: 'No message is set',
+          },
+          changeState: {
+            output: 'Output',
+            noOutput: 'No output is set',
           },
         },
       },
