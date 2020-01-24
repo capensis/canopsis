@@ -14,7 +14,8 @@
       :items="actionTypes",
       :error-messages="errors.collect('actionType')",
       label="Type",
-      name="actionType"
+      name="actionType",
+      @change="errors.clear()"
     )
     v-tabs(fixed-tabs, slider-color="primary")
       v-tab

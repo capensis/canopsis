@@ -50,11 +50,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const data = formToAction({
-            generalParameters: this.form.generalParameters,
-            pbehaviorParameters: this.form.pbehaviorParameters,
-            snoozeParameters: this.form.snoozeParameters,
-          });
+          const data = formToAction(this.form);
 
           await this.config.action(data);
         }

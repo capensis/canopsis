@@ -968,7 +968,7 @@ export const SNMP_STATE_TYPES = {
 export const ACTION_TYPES = {
   snooze: 'snooze',
   pbehavior: 'pbehavior',
-  changestate: 'changestate',
+  changeState: 'changestate',
 };
 
 export const ACTION_AUTHOR = 'engine-action';

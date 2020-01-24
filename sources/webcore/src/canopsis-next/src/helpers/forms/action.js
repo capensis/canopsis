@@ -46,10 +46,9 @@ export function actionToForm(action) {
     if (action.parameters && action.parameters.message) {
       data.snoozeParameters.message = action.parameters.message;
     }
-  }
+  } else if (action.type === ACTION_TYPES.pbehavior) {
+    // If action's type is "pbehavior", get pbehavior parameters
 
-  // If action's type is "pbehavior", get pbehavior parameters
-  if (action.type === ACTION_TYPES.pbehavior) {
     if (action.parameters) {
       data.pbehaviorParameters.general = omit(pbehaviorToForm(action.parameters), ['filter']);
 
@@ -61,12 +60,25 @@ export function actionToForm(action) {
         data.pbehaviorParameters.exdate = pbehaviorToExdates(action.parameters);
       }
     }
+  } else if (action.type === ACTION_TYPES.changeState) {
+    // If action's type is "changestate", get changestate parameters
+    if (action.parameters) {
+      data.changeStateParameters = { ...data.changeStateParameters, ...action.parameters };
+    }
   }
 
   return data;
 }
 
-export function formToAction({ generalParameters = {}, pbehaviorParameters = {}, snoozeParameters = {} }) {
+export function formToAction(
+  {
+    generalParameters = {},
+    pbehaviorParameters = {},
+    snoozeParameters = {},
+    changeStateParameters = {},
+  },
+  author = ACTION_AUTHOR,
+) {
   let data = { ...generalParameters };
 
   const patternsCondition = value => !value || !value.length;
@@ -95,9 +107,13 @@ export function formToAction({ generalParameters = {}, pbehaviorParameters = {},
     pbehavior.exdate = exdatesToPbehaviorExdates(pbehaviorParameters.exdate);
 
     data.parameters = { ...pbehavior };
+  } else if (generalParameters.type === ACTION_TYPES.changeState) {
+    data.parameters = { ...changeStateParameters };
   }
 
-  data.parameters.author = ACTION_AUTHOR;
+  if (generalParameters.type !== ACTION_TYPES.changeState) {
+    data.parameters.author = author;
+  }
 
   return data;
 }
