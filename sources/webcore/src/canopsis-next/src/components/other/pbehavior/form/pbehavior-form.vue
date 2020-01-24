@@ -40,7 +40,7 @@
         v-card
           v-card-text
             pbehavior-general-form(v-field="form.general", ref="pbehaviorGeneralForm")
-      v-stepper-content(step="2")
+      v-stepper-content(v-if="!noFilter", step="2")
         v-card
           v-card-text
             filter-editor(v-field="form.general.filter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
