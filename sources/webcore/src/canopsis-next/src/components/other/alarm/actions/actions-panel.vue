@@ -135,6 +135,12 @@ export default {
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
         },
+        history: {
+          type: alarmsListActionsTypes.history,
+          icon: 'history',
+          title: this.$t('alarmList.actions.titles.history'),
+          method: this.showHistoryModal,
+        },
       },
     };
   },
@@ -166,6 +172,10 @@ export default {
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
       ];
+
+      if (this.item.entity) {
+        actions.push(filteredActionsMap.history);
+      }
 
       if (this.isEditingMode) {
         actions.push(filteredActionsMap.variablesHelp);

@@ -1,11 +1,21 @@
-import { omit } from 'lodash';
+import { get, omit } from 'lodash';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP, CRUD_ACTIONS } from '@/constants';
+import {
+  MODALS,
+  ENTITIES_TYPES,
+  EVENT_ENTITY_TYPES,
+  BUSINESS_USER_RIGHTS_ACTIONS_MAP,
+  CRUD_ACTIONS,
+  WIDGET_TYPES,
+  STATS_QUICK_RANGES,
+} from '@/constants';
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
+
+import { generateWidgetByType } from '@/helpers/entities';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -122,6 +132,44 @@ export default {
             parents: [this.item],
             parentsType: ENTITIES_TYPES.alarm,
           }),
+        },
+      });
+    },
+
+    showHistoryModal() {
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] };
+      const entityFilter = {
+        title: this.item.entity.name,
+        filter,
+      };
+
+      /**
+       * Default value for liveReporting is last 30 days
+       */
+      widget.parameters.liveReporting = {
+        tstart: STATS_QUICK_RANGES.last30Days.start,
+        tstop: STATS_QUICK_RANGES.last30Days.stop,
+      };
+
+      /**
+       * Default value for alarmsStateFilter
+       */
+      widget.parameters.alarmsStateFilter = {
+        opened: false,
+        resolved: true,
+      };
+
+      /**
+       * Special entity filter for alarms list modal
+       */
+      widget.parameters.mainFilter = entityFilter;
+      widget.parameters.viewFilters = [entityFilter];
+
+      this.$modals.show({
+        name: MODALS.alarmsList,
+        config: {
+          widget,
         },
       });
     },
