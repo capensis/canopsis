@@ -7,6 +7,8 @@
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
+import { CRUD_ACTIONS, MODALS } from '@/constants';
+
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import WatcherEntity from './entity.vue';
@@ -36,7 +38,18 @@ export default {
   },
   computed: {
     compiledTemplate() {
-      return `<div>${compile(this.modalTemplate, { entity: this.watcher })}</div>`;
+      return `
+        <div>
+          <v-tooltip left>
+            <v-btn small dark slot="activator" class="pbehavior-modal-btn" @click="showPbehaviorsListModal">
+              <v-icon small>edit</v-icon>
+            </v-btn>
+            <span>${this.$t('modals.watcher.editPbehaviors')}</span>
+          </v-tooltip>
+          ${compile(this.modalTemplate, { entity: this.watcher })}
+          <div class="float-clear"></div>
+        </div>
+      `;
     },
   },
   beforeCreate() {
@@ -63,6 +76,27 @@ export default {
     addEventToQueue(event) {
       this.$emit('addEvent', event);
     },
+    showPbehaviorsListModal() {
+      this.$modals.show({
+        name: MODALS.pbehaviorList,
+        config: {
+          pbehaviors: this.watcher.watcher_pbehavior,
+          entityId: this.watcher.entity_id,
+          onlyActive: true,
+          showAddButton: true,
+          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+        },
+      });
+    },
   },
 };
 </script>
+
+<style lang="scss">
+  .pbehavior-modal-btn {
+    float: right;
+  }
+  .float-clear {
+    clear: both;
+  }
+</style>

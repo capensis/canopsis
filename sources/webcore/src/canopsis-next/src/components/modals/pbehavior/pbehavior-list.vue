@@ -5,10 +5,9 @@
     template(slot="text")
       v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
         template(slot="items", slot-scope="props")
-          td(v-for="key in fields")
+          td(v-for="key in fields", :key="key")
             span(
               v-if="key === 'tstart' || key === 'tstop'",
-              key="key"
             ) {{ props.item[key] | date('long') }}
             span(v-else) {{ props.item[key] }}
           td
@@ -20,6 +19,15 @@
               icon
             )
               v-icon {{ action.icon }}
+      v-layout(v-if="showAddButton", justify-end)
+        v-btn(
+          icon,
+          fab,
+          small,
+          color="primary",
+          @click="showCreatePbehaviorModal"
+        )
+          v-icon add
     template(slot="actions")
       v-btn.primary(data-test="pbehaviorListConfirmButton", @click="$modals.hide") {{ $t('common.ok') }}
 </template>
@@ -92,6 +100,9 @@ export default {
 
       return this.pbehaviors;
     },
+    showAddButton() {
+      return this.modal.config.showAddButton;
+    },
   },
   mounted() {
     this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId });
@@ -102,6 +113,20 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => this.removePbehavior({ id: pbehaviorId }),
+        },
+      });
+    },
+
+    showCreatePbehaviorModal() {
+      this.$modals.show({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior: {
+            filter: {
+              _id: { $in: [this.modal.config.entityId] },
+            },
+          },
+          action: data => this.createPbehavior({ data }),
         },
       });
     },
