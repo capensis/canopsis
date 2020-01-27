@@ -153,6 +153,14 @@ export default {
       };
 
       /**
+       * Default value for alarmsStateFilter
+       */
+      widget.parameters.alarmsStateFilter = {
+        opened: false,
+        resolved: true,
+      };
+
+      /**
        * Special entity filter for alarms list modal
        */
       widget.parameters.mainFilter = entityFilter;

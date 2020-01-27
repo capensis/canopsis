@@ -658,6 +658,7 @@ export const USERS_RIGHTS = {
         cancel: 'listalarm_removeAlarm',
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
+
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
