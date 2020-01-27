@@ -1,6 +1,11 @@
 <template lang="pug">
   div
+    v-tooltip(left)
+      v-btn.pbehavior-modal-btn(small, dark, slot="activator", @click="showPbehaviorsListModal")
+        v-icon(small) edit
+      span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
+    .float-clear
 </template>
 
 <script>
@@ -38,18 +43,7 @@ export default {
   },
   computed: {
     compiledTemplate() {
-      return `
-        <div>
-          <v-tooltip left>
-            <v-btn small dark slot="activator" class="pbehavior-modal-btn" @click="showPbehaviorsListModal">
-              <v-icon small>edit</v-icon>
-            </v-btn>
-            <span>${this.$t('modals.watcher.editPbehaviors')}</span>
-          </v-tooltip>
-          ${compile(this.modalTemplate, { entity: this.watcher })}
-          <div class="float-clear"></div>
-        </div>
-      `;
+      return `<div>${compile(this.modalTemplate, { entity: this.watcher })}</div>`;
     },
   },
   beforeCreate() {
