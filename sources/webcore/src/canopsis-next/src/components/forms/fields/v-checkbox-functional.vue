@@ -1,6 +1,6 @@
 <template lang="pug" functional>
   .v-input.v-input--selection-controls.v-input--checkbox.theme--light(
-    :class="{ 'v-input--is-disabled': props.disabled }"
+    :class="{ 'v-input--is-disabled': props.disabled, 'v-input--hide-details': props.hideDetails }"
   )
     .v-input__control
       .v-input__slot
@@ -34,6 +34,10 @@ export default {
   },
   props: {
     inputValue: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
       type: Boolean,
       default: false,
     },
