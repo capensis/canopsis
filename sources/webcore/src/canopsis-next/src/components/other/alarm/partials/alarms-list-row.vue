@@ -14,7 +14,7 @@
           hide-details
         )
         v-btn.ma-0(icon, small, @click="props.row.expanded = !props.row.expanded")
-          v-icon {{ props.row.expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
+          v-icon {{ props.row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     td(v-for="column in props.columns")
       alarm-column-value(
         :alarm="props.row.item",
