@@ -20,14 +20,6 @@
             :stateValues="availableStateValues"
           )
         v-layout.mt-4(row)
-          v-text-field(
-            v-field="form.changeStateParameters.author",
-            v-validate="'required'",
-            :error-messages="errors.collect('author')",
-            :label="$t('common.author')",
-            name="author"
-          )
-        v-layout(row)
           v-textarea(
             v-field="form.changeStateParameters.output",
             :label="$t('modals.createAction.fields.output')"

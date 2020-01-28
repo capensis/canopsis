@@ -920,7 +920,7 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Duration',
-        output: 'Output',
+        output: 'Note',
       },
     },
     createHeartbeat: {

@@ -152,9 +152,7 @@ export function formToAction({
     data.parameters = { ...changeStateParameters };
   }
 
-  if (generalParameters.type !== ACTION_TYPES.changeState) {
-    data.parameters.author = ACTION_AUTHOR;
-  }
+  data.parameters.author = ACTION_AUTHOR;
 
   return data;
 }

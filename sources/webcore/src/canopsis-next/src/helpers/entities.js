@@ -502,7 +502,6 @@ export function generateAction() {
 
   // Default 'changestate' action parameters
   const changeStateParameters = {
-    author: '',
     state: ENTITIES_STATES.minor,
     output: '',
   };

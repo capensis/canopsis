@@ -818,7 +818,7 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Durée',
-        output: 'Output',
+        output: 'Note',
       },
     },
     statsDateInterval: {
