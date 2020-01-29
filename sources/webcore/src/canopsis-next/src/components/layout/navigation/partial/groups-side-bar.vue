@@ -8,9 +8,9 @@
     app
   )
     div.brand.ma-0.secondary.lighten-1
-      img.logo(:src="appLogo")
+      app-logo.logo
       active-sessions-count
-      div.version {{ version }}
+      app-version.version
     v-expansion-panel.panel(
       v-if="hasReadAnyViewAccess",
       expand,
@@ -80,13 +80,12 @@
 <script>
 import { groupSchema } from '@/store/schemas';
 
-import entitiesInfoMixin from '@/mixins/entities/info';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 import registrableMixin from '@/mixins/registrable';
 
-import logo from '@/assets/canopsis.png';
-
 import GroupsSettingsButton from './groups-settings-button.vue';
+import AppLogo from './app-logo.vue';
+import AppVersion from './app-version.vue';
 import ActiveSessionsCount from './active-sessions-count.vue';
 
 /**
@@ -97,9 +96,13 @@ import ActiveSessionsCount from './active-sessions-count.vue';
  * @event input#update
  */
 export default {
-  components: { GroupsSettingsButton, ActiveSessionsCount },
+  components: {
+    GroupsSettingsButton,
+    AppLogo,
+    AppVersion,
+    ActiveSessionsCount,
+  },
   mixins: [
-    entitiesInfoMixin,
     layoutNavigationGroupMenuMixin,
 
     registrableMixin([groupSchema], 'groups'),
@@ -128,14 +131,6 @@ export default {
 
     getColor() {
       return id => (this.isViewActive(id) ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1');
-    },
-
-    appLogo() {
-      if (this.logo) {
-        return this.logo;
-      }
-
-      return logo;
     },
   },
 };

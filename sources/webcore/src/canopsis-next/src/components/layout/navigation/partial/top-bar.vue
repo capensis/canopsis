@@ -9,10 +9,11 @@
       data-test="groupsSideBarButton",
       @click="$emit('toggleSideBar')"
     )
-    v-layout.topBarBrand(v-else, fill-height, align-center)
-      img.canopsisLogo(src="@/assets/canopsis.png")
+    v-layout(v-else, fill-height, align-center)
+      app-logo.canopsisLogo.mr-2
       v-layout.version.ml-1(fill-height, align-end)
-        div {{ version }}
+        active-sessions-count(badgeColor="secondary")
+        app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
     v-toolbar-items
@@ -64,6 +65,9 @@ import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 import GroupsTopBar from './groups-top-bar.vue';
+import AppLogo from './app-logo.vue';
+import AppVersion from './app-version.vue';
+import ActiveSessionsCount from './active-sessions-count.vue';
 
 /**
  * Component for the top bar of the application
@@ -71,7 +75,12 @@ import GroupsTopBar from './groups-top-bar.vue';
  * @event toggleSideBar#click
  */
 export default {
-  components: { GroupsTopBar },
+  components: {
+    GroupsTopBar,
+    AppLogo,
+    AppVersion,
+    ActiveSessionsCount,
+  },
   mixins: [
     authMixin,
     entitiesUserMixin,
@@ -195,6 +204,13 @@ export default {
   .version {
     color: white;
     font-size: 0.7em;
+    position: relative;
+
+    & /deep/ .active-sessions-count {
+      position: absolute;
+      top: 0;
+      left: -8px;
+    }
   }
 
   a {

@@ -96,6 +96,8 @@ export default {
     endDate: 'End date',
     links: 'Links',
     filter: 'Filter',
+    stack: 'Stack',
+    edition: 'Edition',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

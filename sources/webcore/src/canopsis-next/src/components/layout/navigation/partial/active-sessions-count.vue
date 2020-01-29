@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tooltip.active-sessions-count(left)
-    v-badge(slot="activator", right, overlap)
-      span(slot="badge") {{ count }}
+    v-badge(slot="activator", :color="badgeColor", right, overlap)
+      span(slot="badge") 5
       v-btn(flat, icon, small)
         v-icon(color="white", small) people
     span {{ $t('layout.sideBar.activeSessions') }}
@@ -15,6 +15,12 @@ import { ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL } from '@/config';
 const { mapActions } = createNamespacedHelpers('session');
 
 export default {
+  props: {
+    badgeColor: {
+      type: String,
+      default: 'primary',
+    },
+  },
   data() {
     return {
       count: '',
