@@ -30,16 +30,21 @@
           data-test="viewFieldEnabled"
         )
         v-layout.mb-3
-          v-flex(xs5)
+          v-flex(xs6)
             v-switch(
               v-field="form.periodicRefresh.enabled",
               :label="$t('modals.view.fields.periodicRefresh')",
               hide-details
             )
-          v-flex(xs7)
+          v-flex(xs6)
             v-text-field(
               v-field="form.periodicRefresh.value",
+              v-validate="'required|numeric|min_value:0'",
+              :label="$t('modals.view.fields.periodicRefreshInterval')",
+              :error-messages="errors.collect('periodicRefreshInterval')",
               :disabled="!form.periodicRefresh.enabled",
+              :min="0",
+              name="periodicRefreshInterval",
               type="number",
               hide-details
             )
@@ -49,10 +54,10 @@
           v-field="form.tags",
           :label="$t('modals.view.fields.groupTags')",
           data-test="viewFieldGroupTags",
+          append-icon="",
           tags,
           clearable,
           multiple,
-          append-icon,
           chips,
           deletable-chips
         )
