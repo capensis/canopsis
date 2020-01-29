@@ -274,6 +274,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "serviceweather_addPbehavior": {
+            "checksum": 1,
+            "desc": ""
+        },
         "crudcontext_createEntity": {
             "checksum": 1,
             "desc": ""
