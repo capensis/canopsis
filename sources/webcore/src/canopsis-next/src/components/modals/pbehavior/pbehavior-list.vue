@@ -101,7 +101,7 @@ export default {
       return this.pbehaviors;
     },
     showAddButton() {
-      return this.modal.config.showAddButton;
+      return this.modal.config.availableActions.includes(CRUD_ACTIONS.create);
     },
   },
   mounted() {

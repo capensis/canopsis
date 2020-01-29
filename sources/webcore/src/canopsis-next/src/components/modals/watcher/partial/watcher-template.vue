@@ -77,8 +77,7 @@ export default {
           pbehaviors: this.watcher.watcher_pbehavior,
           entityId: this.watcher.entity_id,
           onlyActive: true,
-          showAddButton: true,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+          availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
     },
