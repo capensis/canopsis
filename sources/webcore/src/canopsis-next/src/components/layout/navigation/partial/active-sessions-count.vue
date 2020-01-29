@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tooltip.active-sessions-count(left)
     v-badge(slot="activator", :color="badgeColor", right, overlap)
-      span(slot="badge") 5
+      span(slot="badge") {{ count }}
       v-btn(flat, icon, small)
         v-icon(color="white", small) people
     span {{ $t('layout.sideBar.activeSessions') }}
