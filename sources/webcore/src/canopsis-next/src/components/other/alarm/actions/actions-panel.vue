@@ -156,7 +156,7 @@ export default {
       };
     },
     resolvedActions() {
-      const actions = [];
+      const actions = [this.filteredActionsMap.pbehaviorList];
 
       if (this.widget.parameters.moreInfoTemplate !== '') {
         actions.push(this.filteredActionsMap.moreInfos);

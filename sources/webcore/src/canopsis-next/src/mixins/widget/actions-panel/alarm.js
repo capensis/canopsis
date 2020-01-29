@@ -64,13 +64,15 @@ export default {
     },
 
     showPbehaviorsListModal() {
+      const availableActions = !this.isResolvedAlarm ? [CRUD_ACTIONS.delete, CRUD_ACTIONS.update] : [];
+
       this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
           ...this.modalConfig,
           pbehaviors: this.item.pbehaviors,
           entityId: this.item.entity._id,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+          availableActions,
         },
       });
     },
