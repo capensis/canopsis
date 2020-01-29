@@ -64,6 +64,7 @@
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
           alarms-list-row(
+            v-model="props.selected",
             :row="props",
             :isResolvedAlarm="isResolvedAlarm(props.item)",
             :isEditingMode="isEditingMode",

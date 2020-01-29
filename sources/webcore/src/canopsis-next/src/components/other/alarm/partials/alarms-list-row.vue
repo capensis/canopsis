@@ -1,10 +1,10 @@
-<template lang="pug" functional>
-  tr(:data-test="`tableRow-${props.row.item._id}`")
+<template lang="pug">
+  tr(:data-test="`tableRow-${row.item._id}`")
     td(data-test="rowCheckbox")
       v-layout(row, align-center)
         v-checkbox-functional(
-          v-if="!props.isResolvedAlarm",
-          v-model="props.row.selected",
+          v-if="!isResolvedAlarm",
+          v-field="selected",
           hide-details
         )
         v-checkbox-functional(
@@ -13,21 +13,21 @@
           disabled,
           hide-details
         )
-        v-btn.ma-0(icon, small, @click="props.row.expanded = !props.row.expanded")
-          v-icon {{ props.row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
-    td(v-for="column in props.columns")
+        v-btn.ma-0(icon, small, @click="row.expanded = !row.expanded")
+          v-icon {{ row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+    td(v-for="column in columns")
       alarm-column-value(
-        :alarm="props.row.item",
+        :alarm="row.item",
         :column="column",
-        :columnFiltersMap="props.columnFiltersMap",
-        :widget="props.widget"
+        :columnFiltersMap="columnFiltersMap",
+        :widget="widget"
       )
     td
       actions-panel(
-        :item="props.row.item",
-        :widget="props.widget",
-        :isResolvedAlarm="props.isResolvedAlarm",
-        :isEditingMode="props.isEditingMode"
+        :item="row.item",
+        :widget="widget",
+        :isResolvedAlarm="isResolvedAlarm",
+        :isEditingMode="isEditingMode"
       )
 </template>
 
@@ -52,7 +52,16 @@ export default {
     NoColumnsTable,
     FilterSelector,
   },
+  model: {
+    prop: 'selected',
+    event: 'input',
+  },
   props: {
+    selected: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     row: {
       type: Object,
       required: true,
