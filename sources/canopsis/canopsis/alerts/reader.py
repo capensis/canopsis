@@ -487,7 +487,6 @@ class AlertsReader(object):
             "as": "pbehaviors"}})
 
         if self.has_active_pbh is not None:
-            tnow = int(time())
             stage = {
                 "$project": {
                     "pbehaviors": {
@@ -496,11 +495,7 @@ class AlertsReader(object):
                             "input": "$pbehaviors",
                             "cond":
                             {
-                                "$and":
-                                [
-                                    {"$lte": ["$$pbh.tstart", tnow]},
-                                    {"$gte": ["$$pbh.tstop", tnow]}
-                                ]
+                                "$gte": ["$$pbh.bp_is_active", True]
                             }
                         }
                     },
@@ -512,14 +507,14 @@ class AlertsReader(object):
                 }
             }
             pipeline.append(stage)
-
+        
             pbh_filter = {"$match": {"pbehaviors": None}}
 
             if self.has_active_pbh is True:
                 pbh_filter["$match"]["pbehaviors"] = {"$ne": []}
             if self.has_active_pbh is False:
                 pbh_filter["$match"]["pbehaviors"] = {"$eq": []}
-
+            
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
