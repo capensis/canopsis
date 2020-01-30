@@ -875,7 +875,8 @@ class PBehaviorManager(object):
             except ValueError:
                 self.logger.exception(
                     "Can't check if the pbehavior is active.")
-
+        time_end = time() - now
+        self.logger.info("get_all_active_pbehaviors time : %s secondes ---" % time_end)
         return results
 
     def get_active_pbehaviors_from_type(self, types=None):
@@ -1213,6 +1214,7 @@ class PBehaviorManager(object):
 
         :rtype: dict
         """
+        time_start = time()
         pbehaviors_in_db = list(self.collection.find({},{
                                                 "_id": 1,
                                                 "bp_is_active": 1
@@ -1230,13 +1232,15 @@ class PBehaviorManager(object):
                 dispatcher["true"].append(pb)
             else :
                 dispatcher["false"].append(pb)
-        return  dispatcher
+        time_end = time() - time_start
+        return  dispatcher, time_end
 
     def maj_active_pb(self):
         """
 
         """
-        dispatcher = self.dispatcheur_pbehaviors_active_or_not()
+        time_start = time()
+        dispatcher, time_end_dispatcheur = self.dispatcheur_pbehaviors_active_or_not()
         for status in dispatcher :
             for PBehavior in dispatcher[status] :
                 
@@ -1249,7 +1253,8 @@ class PBehaviorManager(object):
                     PBehavior["bp_is_active"] = status
                     self.collection.update({'_id':PBehavior['_id'] },{
                                             '$set': PBehavior})
-                
-        return dispatcher
+
+        time_end = time() - time_start
+        return time_end, time_end_dispatcheur 
             
 
