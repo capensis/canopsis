@@ -11,6 +11,17 @@
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
     .float-clear
+    v-layout.white(v-if="watchersMeta.total", align-center)
+      v-flex(xs10)
+        pagination(
+          :page="watchersMeta.page",
+          :limit="watchersMeta.limit",
+          :total="watchersMeta.total",
+          @input="updateQueryPage"
+        )
+      v-spacer
+      v-flex(xs2)
+        records-per-page(:value="watchersMeta.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
@@ -21,6 +32,9 @@ import { CRUD_ACTIONS, MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 
+import Pagination from '@/components/tables/pagination.vue';
+import RecordsPerPage from '@/components/tables/records-per-page.vue';
+
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import WatcherEntity from './entity.vue';
@@ -29,6 +43,8 @@ export default {
   components: {
     VRuntimeTemplate,
     WatcherEntity,
+    RecordsPerPage,
+    Pagination,
   },
   mixins: [authMixin],
   props: {
@@ -39,6 +55,10 @@ export default {
     watcherEntities: {
       type: Array,
       default: () => [],
+    },
+    watchersMeta: {
+      type: Object,
+      required: true,
     },
     modalTemplate: {
       type: String,
@@ -65,12 +85,13 @@ export default {
       return new Handlebars.SafeString(`
         <div class="mt-2" v-for="watcherEntity in watcherEntities" :key="watcherEntity._id">
           <watcher-entity
-          :watcherId="watcher.entity_id"
-          :isWatcherOnPbehavior="watcher.active_pb_watcher"
-          :entity="watcherEntity"
-          :template="entityTemplate"
-          entityNameField="${entityNameField}"
-          @addEvent="addEventToQueue"></watcher-entity>
+            :watcherId="watcher.entity_id"
+            :isWatcherOnPbehavior="watcher.active_pb_watcher"
+            :entity="watcherEntity"
+            :template="entityTemplate"
+            entityNameField="${entityNameField}"
+            @addEvent="addEventToQueue"
+          ></watcher-entity>
         </div>
       `);
     });
@@ -92,6 +113,12 @@ export default {
           availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
+    },
+    updateQueryPage(page) {
+      this.$emit('change:page', page);
+    },
+    updateRecordsPerPage(limit) {
+      this.$emit('change:limit', limit);
     },
   },
 };
