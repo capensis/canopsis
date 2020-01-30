@@ -29,25 +29,7 @@
           :label="$t('common.enabled')",
           data-test="viewFieldEnabled"
         )
-        v-layout.mb-3
-          v-flex(xs6)
-            v-switch(
-              v-field="form.periodicRefresh.enabled",
-              :label="$t('modals.view.fields.periodicRefresh')",
-              hide-details
-            )
-          v-flex(xs6)
-            v-text-field(
-              v-field="form.periodicRefresh.value",
-              v-validate="'required|numeric|min_value:0'",
-              :label="$t('modals.view.fields.periodicRefreshInterval')",
-              :error-messages="errors.collect('periodicRefreshInterval')",
-              :disabled="!form.periodicRefresh.enabled",
-              :min="0",
-              name="periodicRefreshInterval",
-              type="number",
-              hide-details
-            )
+        periodic-refresh-field(v-model="form.periodicRefresh", :label="$t('modals.view.fields.periodicRefresh')")
     v-layout(wrap, justify-center)
       v-flex(xs11)
         v-combobox(
@@ -79,10 +61,12 @@
 </template>
 
 <script>
-
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
+import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
+
 export default {
+  components: { PeriodicRefreshField },
   inject: ['$validator'],
   mixins: [vuetifyComboboxMixin],
   model: {

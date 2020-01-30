@@ -86,7 +86,8 @@ export default {
         tags: [],
         periodicRefresh: {
           enabled: false,
-          value: 0,
+          interval: 0,
+          unit: 's',
         },
       },
     };
@@ -136,10 +137,13 @@ export default {
         description: view.description,
         enabled: view.enabled,
         tags: [...view.tags || []],
-        periodicRefresh: view.periodicRefresh || {
-          enabled: false,
-          value: 0,
-        },
+        periodicRefresh: view.periodicRefresh
+          ? {
+            interval: view.periodicRefresh.interval || view.periodicRefresh.value,
+            unit: view.periodicRefresh.unit || 's',
+            enabled: view.periodicRefresh.enabled,
+          }
+          : this.form.periodicRefresh,
       };
     }
   },

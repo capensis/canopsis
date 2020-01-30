@@ -3,36 +3,19 @@
     v-list-tile(slot="activator") {{$t('settings.periodicRefresh')}}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
-      v-layout
-        v-flex
-          v-switch(
-            v-field="value.enabled",
-            data-test="periodicRefreshSwitch",
-            color="primary",
-            hide-details
-          )
-        v-flex
-          v-text-field.pt-0(
-            v-field="value.interval",
-            :disabled="!value.enabled",
-            data-test="periodicRefreshField",
-            type="number",
-            hide-details
-          )
+      periodic-refresh-field(v-model="value")
 </template>
 
 <script>
+import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
+
 export default {
+  components: { PeriodicRefreshField },
   props: {
     value: {
       type: Object,
-      default: () => ({ enabled: false, interval: '60' }),
+      default: () => ({ enabled: false, interval: '60', unit: 's' }),
     },
-  },
-  data() {
-    return {
-      isEnabled: false,
-    };
   },
 };
 </script>

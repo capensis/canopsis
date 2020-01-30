@@ -60,6 +60,14 @@ export default {
           order: parameters.sort.order,
           column: this.prefixFormatter(parameters.sort.column, isInitialization),
         } : parameters.sort,
+
+        /**
+         * Add unit, if he is empty
+         */
+        periodicRefresh: {
+          unit: 's',
+          ...parameters.periodicRefresh,
+        },
       };
     },
 

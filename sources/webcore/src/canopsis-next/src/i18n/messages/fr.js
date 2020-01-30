@@ -442,7 +442,6 @@ export default {
       noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
       fields: {
         periodicRefresh: 'Rafraichissement périodique',
-        periodicRefreshInterval: 'Interval (secondes)',
         groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
         groupTags: 'Labels de groupes',
       },

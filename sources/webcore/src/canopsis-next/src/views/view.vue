@@ -116,6 +116,7 @@
 import { get } from 'lodash';
 import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
+import { getSecondByUnit } from '@/helpers/getSecondByUnit';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
@@ -159,11 +160,13 @@ export default {
     },
 
     periodicRefreshValue() {
-      return get(this.view, 'periodicRefresh.value', 0);
+      const value = get(this.view, 'periodicRefresh.interval') || get(this.view, 'periodicRefresh.value', 0);
+
+      return getSecondByUnit(value, get(this.view, 'periodicRefresh.unit'));
     },
 
     hasUpdateAccess() {
-      return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
+      return this.checkAccess(this.id, USERS_RIGHTS_MASKS.update);
     },
 
     activeTab() {

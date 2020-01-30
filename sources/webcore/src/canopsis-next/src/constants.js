@@ -1026,6 +1026,21 @@ export const DURATION_UNITS = {
   },
 };
 
+export const PERIODIC_REFRESH_UNITS = {
+  second: {
+    text: 'common.times.second',
+    value: 's',
+  },
+  minute: {
+    text: 'common.times.minute',
+    value: 'm',
+  },
+  hour: {
+    text: 'common.times.hour',
+    value: 'h',
+  },
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
