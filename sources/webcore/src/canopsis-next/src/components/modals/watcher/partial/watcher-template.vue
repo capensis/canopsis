@@ -1,11 +1,25 @@
 <template lang="pug">
   div
+    v-tooltip(v-if="hasPbehaviorListAccess", left)
+      v-btn.pbehavior-modal-btn(
+        slot="activator",
+        small,
+        dark,
+        @click="showPbehaviorsListModal"
+      )
+        v-icon(small) edit
+      span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
+    .float-clear
 </template>
 
 <script>
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
+
+import { CRUD_ACTIONS, MODALS, USERS_RIGHTS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
@@ -16,6 +30,7 @@ export default {
     VRuntimeTemplate,
     WatcherEntity,
   },
+  mixins: [authMixin],
   props: {
     watcher: {
       type: Object,
@@ -37,6 +52,10 @@ export default {
   computed: {
     compiledTemplate() {
       return `<div>${compile(this.modalTemplate, { entity: this.watcher })}</div>`;
+    },
+
+    hasPbehaviorListAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.pbehaviorList);
     },
   },
   beforeCreate() {
@@ -63,6 +82,26 @@ export default {
     addEventToQueue(event) {
       this.$emit('addEvent', event);
     },
+    showPbehaviorsListModal() {
+      this.$modals.show({
+        name: MODALS.pbehaviorList,
+        config: {
+          pbehaviors: this.watcher.watcher_pbehavior,
+          entityId: this.watcher.entity_id,
+          onlyActive: true,
+          availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+        },
+      });
+    },
   },
 };
 </script>
+
+<style lang="scss">
+  .pbehavior-modal-btn {
+    float: right;
+  }
+  .float-clear {
+    clear: both;
+  }
+</style>
