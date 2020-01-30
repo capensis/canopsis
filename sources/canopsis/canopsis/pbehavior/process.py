@@ -198,7 +198,7 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
     Beat processing.
     """
     engine.logger.debug("Start beat processing")
-    
+
     try:
         pbm.compute_pbehaviors_filters()
         pbm.launch_update_watcher(watcher_manager)
