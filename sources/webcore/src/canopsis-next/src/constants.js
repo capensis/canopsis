@@ -698,7 +698,7 @@ export const USERS_RIGHTS = {
 
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
-        addPbehavior: 'serviceweather_addPbehavior',
+        pbehaviorList: 'serviceweather_pbehaviorList',
       },
     },
   },
@@ -760,7 +760,7 @@ export const WIDGETS_ACTIONS_TYPES = {
 
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
-    addPbehavior: 'addPbehavior',
+    pbehaviorList: 'pbehaviorList',
   },
 };
 
@@ -815,7 +815,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
-    [WIDGETS_ACTIONS_TYPES.weather.addPbehavior]: USERS_RIGHTS.business.weather.actions.addPbehavior,
+    [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
   },
 };
 

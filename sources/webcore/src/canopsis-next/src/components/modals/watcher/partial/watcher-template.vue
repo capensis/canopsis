@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-tooltip(left)
+    v-tooltip(v-if="hasPbehaviorListAccess", left)
       v-btn.pbehavior-modal-btn(
         slot="activator",
         small,
@@ -54,18 +54,8 @@ export default {
       return `<div>${compile(this.modalTemplate, { entity: this.watcher })}</div>`;
     },
 
-    hasAddPbehaviorAccess() {
-      return this.checkAccess(USERS_RIGHTS.business.weather.actions.addPbehavior);
-    },
-
-    pbehaviorListAvailableActions() {
-      const availableActions = [CRUD_ACTIONS.delete, CRUD_ACTIONS.update];
-
-      if (this.hasAddPbehaviorAccess) {
-        availableActions.push(CRUD_ACTIONS.create);
-      }
-
-      return availableActions;
+    hasPbehaviorListAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.pbehaviorList);
     },
   },
   beforeCreate() {
@@ -99,7 +89,7 @@ export default {
           pbehaviors: this.watcher.watcher_pbehavior,
           entityId: this.watcher.entity_id,
           onlyActive: true,
-          availableActions: this.pbehaviorListAvailableActions,
+          availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
     },
