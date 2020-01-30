@@ -1206,3 +1206,34 @@ class PBehaviorManager(object):
                 # keeping the most recent timestamp that still is in the past
                 ret_timestamp = pbh_last_tstop
         return ret_timestamp
+
+    def dispatcheur_pbehaviors_active_or_not(self):
+        """
+        Dispatches pbehavior if they are active or not.
+
+        :rtype: dict
+        """
+        pbehaviors_in_bdd = list(self.collection.find({}))
+        pbehaviors_is_actifs = self.get_all_active_pbehaviors()
+        dispatcher = {"true":[],"false":[]}
+        for pb in pbehaviors_in_bdd :
+            if pb in pbehaviors_is_actifs :
+                dispatcher["true"].append(pb)
+            else :
+                dispatcher["false"].append(pb)
+        return  dispatcher
+
+    def maj_active_pb(self):
+        """
+
+        """
+        dispatcher = self.dispatcheur_pbehaviors_active_or_not()
+        for status in dispatcher :
+            for PBehavior in dispatcher[status] :
+                PBehavior["bp_is_active"] = status
+
+                self.collection.update({'_id':PBehavior['_id'] },{
+                                        '$set': PBehavior})
+        return dispatcher
+            
+

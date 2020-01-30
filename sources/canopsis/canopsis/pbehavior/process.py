@@ -26,6 +26,7 @@ from __future__ import unicode_literals
 
 from json import dumps
 import os
+from time import time
 
 from canopsis.common.utils import singleton_per_scope
 from canopsis.context_graph.manager import ContextGraph
@@ -197,9 +198,12 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
     Beat processing.
     """
     engine.logger.debug("Start beat processing")
-
     try:
         pbm.compute_pbehaviors_filters()
         pbm.launch_update_watcher(watcher_manager)
+        time_start = int(time())
+        pbm.maj_active_pb()
+        time_finsh = int(time())
+        engine.logger.debug("maj_active_pb time : "+str(time_finsh-time_start))
     except Exception as ex:
         engine.logger.exception('Processing error {}'.format(str(ex)))
