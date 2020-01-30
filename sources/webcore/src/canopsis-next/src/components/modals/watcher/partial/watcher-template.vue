@@ -1,7 +1,12 @@
 <template lang="pug">
   div
     v-tooltip(left)
-      v-btn.pbehavior-modal-btn(small, dark, slot="activator", @click="showPbehaviorsListModal")
+      v-btn.pbehavior-modal-btn(
+        slot="activator",
+        small,
+        dark,
+        @click="showPbehaviorsListModal"
+      )
         v-icon(small) edit
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
