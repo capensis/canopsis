@@ -10,6 +10,10 @@ export default {
     ...mapGetters({
       groups: 'items',
     }),
+
+    groupsOrdered() {
+      return this.groups.sort((a = {}, b = {}) => (a.position || Infinity) - (b.position || Infinity));
+    },
   },
   methods: {
     ...mapActions({
