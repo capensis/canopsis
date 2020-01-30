@@ -1213,11 +1213,20 @@ class PBehaviorManager(object):
 
         :rtype: dict
         """
-        pbehaviors_in_bdd = list(self.collection.find({}))
-        pbehaviors_is_actifs = self.get_all_active_pbehaviors()
+        pbehaviors_in_db = list(self.collection.find({},{
+                                                "_id": 1,
+                                                "bp_is_active": 1
+                                            }))
+        active_pbehaviors = self.get_all_active_pbehaviors()
+        lite_active_pbs = []
+        for active_pb in active_pbehaviors :
+            lite_active_pb = {"_id":active_pb["_id"]}
+            if "bp_is_active" in active_pb :
+                lite_active_pb["bp_is_active"] = active_pb["bp_is_active"]
+            lite_active_pbs.append(lite_active_pb)
         dispatcher = {"true":[],"false":[]}
-        for pb in pbehaviors_in_bdd :
-            if pb in pbehaviors_is_actifs :
+        for pb in pbehaviors_in_db :
+            if pb in lite_active_pbs :
                 dispatcher["true"].append(pb)
             else :
                 dispatcher["false"].append(pb)
