@@ -5,7 +5,8 @@
         v-icon(small) edit
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
-    v-layout.float-clear.white(v-if="watchersMeta.total", align-center)
+    .float-clear
+    v-layout.white(v-if="watchersMeta.total", align-center)
       v-flex(xs10)
         pagination(
           :page="watchersMeta.page",
