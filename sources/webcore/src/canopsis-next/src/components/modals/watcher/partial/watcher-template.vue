@@ -1,12 +1,7 @@
 <template lang="pug">
   div
     v-tooltip(left)
-      v-btn.pbehavior-modal-btn(
-        slot="activator",
-        small,
-        dark,
-        @click="showPbehaviorsListModal"
-      )
+      v-btn.pbehavior-modal-btn(small, dark, slot="activator", @click="showPbehaviorsListModal")
         v-icon(small) edit
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
@@ -17,7 +12,9 @@
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
-import { CRUD_ACTIONS, MODALS } from '@/constants';
+import { CRUD_ACTIONS, MODALS, USERS_RIGHTS } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
@@ -28,6 +25,7 @@ export default {
     VRuntimeTemplate,
     WatcherEntity,
   },
+  mixins: [authMixin],
   props: {
     watcher: {
       type: Object,
@@ -49,6 +47,20 @@ export default {
   computed: {
     compiledTemplate() {
       return `<div>${compile(this.modalTemplate, { entity: this.watcher })}</div>`;
+    },
+
+    hasAddPbehaviorAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.addPbehavior);
+    },
+
+    pbehaviorListAvailableActions() {
+      const availableActions = [CRUD_ACTIONS.delete, CRUD_ACTIONS.update];
+
+      if (this.hasAddPbehaviorAccess) {
+        availableActions.push(CRUD_ACTIONS.create);
+      }
+
+      return availableActions;
     },
   },
   beforeCreate() {
@@ -82,7 +94,7 @@ export default {
           pbehaviors: this.watcher.watcher_pbehavior,
           entityId: this.watcher.entity_id,
           onlyActive: true,
-          availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+          availableActions: this.pbehaviorListAvailableActions,
         },
       });
     },
