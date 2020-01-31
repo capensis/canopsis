@@ -1031,14 +1031,8 @@ export const PERIODIC_REFRESH_UNITS = {
     text: 'common.times.second',
     value: 's',
   },
-  minute: {
-    text: 'common.times.minute',
-    value: 'm',
-  },
-  hour: {
-    text: 'common.times.hour',
-    value: 'h',
-  },
+  minute: DURATION_UNITS.minute,
+  hour: DURATION_UNITS.hour,
 };
 
 export const DEFAULT_PERIODIC_REFRESH = {
