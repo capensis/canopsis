@@ -1,6 +1,6 @@
 <template lang="pug">
   tr(:data-test="`tableRow-${row.item._id}`")
-    td(data-test="rowCheckbox")
+    td.pr-0(data-test="rowCheckbox")
       v-layout(row, align-center)
         v-checkbox-functional(
           v-if="!isResolvedAlarm",
@@ -13,8 +13,9 @@
           disabled,
           hide-details
         )
-        v-btn.ma-0(icon, small, @click="row.expanded = !row.expanded")
-          v-icon {{ row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+        v-layout.ml-2(align-center)
+          v-btn.ma-0(icon, small, @click="row.expanded = !row.expanded")
+            v-icon {{ row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     td(v-for="column in columns")
       alarm-column-value(
         :alarm="row.item",
