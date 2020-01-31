@@ -2,13 +2,13 @@
   v-layout.mb-3(align-center)
     v-flex(xs5)
       v-switch(
-        v-model="periodicRefresh.enabled",
+        v-field="periodicRefresh.enabled",
         :label="label",
         hide-details
       )
     v-flex(xs3)
       v-text-field(
-        v-model="periodicRefresh.interval",
+        v-field="periodicRefresh.interval",
         v-validate="'required|numeric|min_value:0'",
         :error-messages="errors.collect('periodicRefreshInterval')",
         :disabled="!periodicRefresh.enabled",
@@ -19,7 +19,7 @@
       )
     v-flex(xs4)
       v-select(
-        v-model="periodicRefresh.unit",
+        v-field="periodicRefresh.unit",
         v-validate="'required'",
         :items="availableTypes",
         :error-messages="errors.collect('periodicRefreshUnit')",
@@ -34,13 +34,10 @@
 </template>
 
 <script>
-import formBaseMixin from '@/mixins/form/base';
-
 import { PERIODIC_REFRESH_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
-  mixins: [formBaseMixin],
   model: {
     prop: 'periodicRefresh',
     event: 'input',
