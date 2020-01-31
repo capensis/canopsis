@@ -907,8 +907,7 @@ class PBehaviorManager(object):
         :returns: list of PBehavior id activated since last check
         :rtype: list
         """
-        if not hasattr(self,'active_pbehaviors') :
-            self.active_pbehaviors = self.get_all_active_pbehaviors()
+        self.active_pbehaviors = self.get_all_active_pbehaviors()
         active_pbehaviors_ids = set()
         for active_pb in self.active_pbehaviors:
             active_pbehaviors_ids.add(active_pb['_id'])
