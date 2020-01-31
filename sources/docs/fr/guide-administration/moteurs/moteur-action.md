@@ -34,7 +34,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 ```javascript
 {
-"_id"        // identifiant du webhook , optionnel, s'il n'est pas fourni par l'utilisateur il sera généré automatiquement - le champ est de type `string`
+"_id"        // identifiant de l'action , optionnel, s'il n'est pas fourni par l'utilisateur il sera généré automatiquement - le champ est de type `string`
 "type"       // type du pbehavior (`changestate`, `pbehavior` ou `snooze`), obligatoire - le champ est de type `string`
 "hook"       // conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée, optionnel
 "triggers"   // conditions de déclenchement sur la vie de l'alarme, si plusieurs triggers sont indiqués, au moins un de ces triggers doit avoir eu lieu pour que l'action soit appelée
