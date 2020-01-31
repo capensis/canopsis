@@ -200,6 +200,11 @@ export default {
         this.stopPeriodicRefreshInterval();
       }
     },
+    periodicRefreshValue(value, oldValue) {
+      if (value !== oldValue) {
+        this.resetRefreshInterval();
+      }
+    },
   },
 
   created() {
