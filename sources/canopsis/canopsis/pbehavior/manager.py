@@ -374,7 +374,8 @@ class PBehaviorManager(object):
             result = self.collection.insert(data.to_dict())
         except CollectionError:
             # when inserting already existing id
-            raise ValueError("Trying to insert PBehavior with already existing _id")
+            raise ValueError(
+                "Trying to insert PBehavior with already existing _id")
 
         return result
 
@@ -405,7 +406,8 @@ class PBehaviorManager(object):
         now = int(time())
 
         for pb in cursor:
-            if pb['tstart'] <= now and (pb['tstop'] is None or pb['tstop'] >= now):
+            if pb['tstart'] <= now and (
+                    pb['tstop'] is None or pb['tstop'] >= now):
                 pb['isActive'] = True
             else:
                 pb['isActive'] = False
@@ -875,8 +877,7 @@ class PBehaviorManager(object):
             except ValueError:
                 self.logger.exception(
                     "Can't check if the pbehavior is active.")
-        time_end = time() - now
-        self.logger.info("get_all_active_pbehaviors time : %s secondes ---" % time_end)
+
         return results
 
     def get_active_pbehaviors_from_type(self, types=None):
@@ -1060,7 +1061,8 @@ class PBehaviorManager(object):
 
         # Get all the intervals where a pbehavior is active
         for pbehavior in pbehaviors:
-            for interval in self.get_active_intervals(after, before, pbehavior):
+            for interval in self.get_active_intervals(
+                    after, before, pbehavior):
                 intervals.append(interval)
 
         if not intervals:
@@ -1215,25 +1217,25 @@ class PBehaviorManager(object):
         :rtype: dict
         """
         time_start = time()
-        pbehaviors_in_db = list(self.collection.find({},{
-                                                "_id": 1,
-                                                "bp_is_active": 1
-                                            }))
+        pbehaviors_in_db = list(self.collection.find({}, {
+            "_id": 1,
+            "bp_is_active": 1
+        }))
         active_pbehaviors = self.get_all_active_pbehaviors()
         lite_active_pbs = []
-        for active_pb in active_pbehaviors :
-            lite_active_pb = {"_id":active_pb["_id"]}
-            if "bp_is_active" in active_pb :
+        for active_pb in active_pbehaviors:
+            lite_active_pb = {"_id": active_pb["_id"]}
+            if "bp_is_active" in active_pb:
                 lite_active_pb["bp_is_active"] = active_pb["bp_is_active"]
             lite_active_pbs.append(lite_active_pb)
-        dispatcher = {"true":[],"false":[]}
-        for pb in pbehaviors_in_db :
-            if pb in lite_active_pbs :
+        dispatcher = {"true": [], "false": []}
+        for pb in pbehaviors_in_db:
+            if pb in lite_active_pbs:
                 dispatcher["true"].append(pb)
-            else :
+            else:
                 dispatcher["false"].append(pb)
         time_end = time() - time_start
-        return  dispatcher, time_end
+        return dispatcher, time_end
 
     def maj_active_pb(self):
         """
@@ -1241,20 +1243,18 @@ class PBehaviorManager(object):
         """
         time_start = time()
         dispatcher, time_end_dispatcheur = self.dispatcheur_pbehaviors_active_or_not()
-        for status in dispatcher :
-            for PBehavior in dispatcher[status] :
-                
+        for status in dispatcher:
+            for PBehavior in dispatcher[status]:
+
                 if not "bp_is_active" in PBehavior:
                     PBehavior["bp_is_active"] = (status == "true")
-                    self.collection.update({'_id':PBehavior['_id'] },{
-                                            '$set': PBehavior})
-                
-                elif PBehavior["bp_is_active"] != status :
+                    self.collection.update({'_id': PBehavior['_id']}, {
+                        '$set': PBehavior})
+
+                elif PBehavior["bp_is_active"] != status:
                     PBehavior["bp_is_active"] = (status == "true")
-                    self.collection.update({'_id':PBehavior['_id'] },{
-                                            '$set': PBehavior})
+                    self.collection.update({'_id': PBehavior['_id']}, {
+                        '$set': PBehavior})
 
         time_end = time() - time_start
-        return time_end, time_end_dispatcheur 
-            
-
+        return time_end, time_end_dispatcheur

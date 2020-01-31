@@ -71,6 +71,7 @@ def init_managers():
 
     return pb_manager
 
+
 _pb_manager = init_managers()
 
 
@@ -92,7 +93,8 @@ def pb_id(event):
     connector_name = event.get(CONNECTOR_NAME)
 
     if did is not None and connector is not None and connector_name is not None:
-        return 'pb_downtime_{}-{}_{}'.format(connector, connector_name, did), 'nagioslike'
+        return 'pb_downtime_{}-{}_{}'.format(connector,
+                                             connector_name, did), 'nagioslike'
 
     return None, None
 
@@ -142,7 +144,8 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
         try:
             filter_ = {'_id': entity_id}
             pbehavior_id, pb_source = pb_id(event)
-            if event.get('action') == PBEHAVIOR_CREATE and pbehavior_id is None and pb_source is None:
+            if event.get(
+                    'action') == PBEHAVIOR_CREATE and pbehavior_id is None and pb_source is None:
                 result = pbm.create(
                     pb_name, filter_, pb_author,
                     pb_start, pb_end,
@@ -184,7 +187,12 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
                     watcher_manager.compute_watchers()
 
             else:
-                logger.error(ERROR_MSG.format(event.get('action', 'no_action'), event))
+                logger.error(
+                    ERROR_MSG.format(
+                        event.get(
+                            'action',
+                            'no_action'),
+                        event))
 
         except ValueError as err:
             logger.error('cannot handle event: {}'.format(err))
@@ -197,15 +205,21 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
     """
     Beat processing.
     """
-    engine.logger.info("Start beat processing")
+    engine.logger.debug("Start beat processing")
 
     try:
         pbm.compute_pbehaviors_filters()
         pbm.launch_update_watcher(watcher_manager)
         time_start = time()
-        time_maj_total , time_dispatcheur = pbm.maj_active_pb()
-        engine.logger.info("maj_active_pb time : %s secondes ---" % (time() - time_start))
-        engine.logger.info("time_maj_total time : %s secondes ---" % time_maj_total)
-        engine.logger.info("dispatcheur time : %s secondes ---" % time_dispatcheur)
+        time_maj_total, time_dispatcheur = pbm.maj_active_pb()
+        engine.logger.debug(
+            "maj_active_pb time : %s secondes ---" %
+            (time() - time_start))
+        engine.logger.debug(
+            "time_maj_total time : %s secondes ---" %
+            time_maj_total)
+        engine.logger.debug(
+            "dispatcher time : %s secondes ---" %
+            time_dispatcheur)
     except Exception as ex:
         engine.logger.exception('Processing error {}'.format(str(ex)))

@@ -506,15 +506,12 @@ class AlertsReader(object):
                     "entity": 1
                 }
             }
-            pipeline.append(stage)
-        
+            pipeline.append(stage) 
             pbh_filter = {"$match": {"pbehaviors": None}}
-
             if self.has_active_pbh is True:
                 pbh_filter["$match"]["pbehaviors"] = {"$ne": []}
             if self.has_active_pbh is False:
                 pbh_filter["$match"]["pbehaviors"] = {"$eq": []}
-            
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
