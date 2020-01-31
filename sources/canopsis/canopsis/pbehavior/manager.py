@@ -1221,7 +1221,7 @@ class PBehaviorManager(object):
             "_id": 1,
             "bp_is_active": 1
         }))
-        if not hasattr(self,'active_pbehaviors') :
+        if not hasattr(self, 'active_pbehaviors'):
             self.active_pbehaviors = self.get_all_active_pbehaviors()
         lite_active_pbs = []
         for active_pb in self.active_pbehaviors:
