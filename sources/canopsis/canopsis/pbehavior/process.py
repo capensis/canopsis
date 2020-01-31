@@ -211,12 +211,12 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
         pbm.compute_pbehaviors_filters()
         pbm.launch_update_watcher(watcher_manager)
         time_start = time()
-        time_maj_total, time_dispatcheur = pbm.maj_active_pb()
+        time_maj_total, time_dispatcher = pbm.maj_active_pb()
         engine.logger.debug(
             "Active PBehaviors Update time : %s secondes ---" %
             (time() - time_start))
         engine.logger.debug(
             "Dispatcher time : %s secondes ---" %
-            time_dispatcheur)
+            time_dispatcher)
     except Exception as ex:
         engine.logger.exception('Processing error {}'.format(str(ex)))

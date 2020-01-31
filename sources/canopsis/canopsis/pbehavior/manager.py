@@ -907,9 +907,10 @@ class PBehaviorManager(object):
         :returns: list of PBehavior id activated since last check
         :rtype: list
         """
-        active_pbehaviors = self.get_all_active_pbehaviors()
+        if not hasattr(self,'active_pbehaviors') :
+            self.active_pbehaviors = self.get_all_active_pbehaviors()
         active_pbehaviors_ids = set()
-        for active_pb in active_pbehaviors:
+        for active_pb in self.active_pbehaviors:
             active_pbehaviors_ids.add(active_pb['_id'])
 
         varying_pbs = active_pbehaviors_ids.symmetric_difference(
@@ -1221,9 +1222,10 @@ class PBehaviorManager(object):
             "_id": 1,
             "bp_is_active": 1
         }))
-        active_pbehaviors = self.get_all_active_pbehaviors()
+        if not hasattr(self,'active_pbehaviors') :
+            self.active_pbehaviors = self.get_all_active_pbehaviors()
         lite_active_pbs = []
-        for active_pb in active_pbehaviors:
+        for active_pb in self.active_pbehaviors:
             lite_active_pb = {"_id": active_pb["_id"]}
             if "bp_is_active" in active_pb:
                 lite_active_pb["bp_is_active"] = active_pb["bp_is_active"]
