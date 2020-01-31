@@ -25,5 +25,5 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 | `"snooze"`               | Report de l'alarme                                       | ✅                           |
 | `"statedec"`             | Diminution de la criticité de l'alarme                   | ✅                           |
 | `"stateinc"`             | Augmentation de la criticité de l'alarme                 | ✅                           |
-| `"uncancel"`             | Retablissement de l'alarme                               | ✅                           |
+| `"uncancel"`             | Rétablissement de l'alarme                               | ✅                           |
 | `"unsnooze"`             | Fin du report de l'alarme                                | ❌                           |
