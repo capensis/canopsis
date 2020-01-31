@@ -7,7 +7,7 @@ Ces `triggers` peuvent servir comme point de déclenchement pour les [actions au
 Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"declareticketwebhook"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"uncancel"`, et `"unsnooze"`.
 
 !!! note
-    les triggers `declareticketwebhook`, `resolve` et `unsnooze` ne correspondent à aucun évènement mais à un traitement interne par Canopsis
+    Les triggers `declareticketwebhook`, `resolve` et `unsnooze` ne correspondent pas à un évènement mais à un traitement interne par Canopsis
 
 | Nom                      | Description                                              | Déclenché par des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) |
 |:------------------------ |:-------------------------------------------------------- | ---------------------------- |
