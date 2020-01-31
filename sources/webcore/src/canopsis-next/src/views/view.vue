@@ -114,9 +114,9 @@
 
 <script>
 import { get } from 'lodash';
-import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
+import { MODALS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
-import { getSecondByUnit } from '@/helpers/getSecondByUnit';
+import { getSecondByUnit } from '@/helpers/time';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
@@ -166,7 +166,7 @@ export default {
     },
 
     hasUpdateAccess() {
-      return this.checkAccess(this.id, USERS_RIGHTS_MASKS.update);
+      return this.checkUpdateAccess(this.id);
     },
 
     activeTab() {

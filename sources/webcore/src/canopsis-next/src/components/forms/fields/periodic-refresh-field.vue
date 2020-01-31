@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { PERIODIC_REFRESH_UNITS } from '@/constants';
+import { PERIODIC_REFRESH_UNITS, DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -45,11 +45,7 @@ export default {
   props: {
     periodicRefresh: {
       type: Object,
-      default: () => ({
-        enabled: false,
-        interval: 0,
-        unit: 's',
-      }),
+      default: DEFAULT_PERIODIC_REFRESH,
     },
     label: {
       type: String,

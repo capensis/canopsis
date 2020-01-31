@@ -1,4 +1,4 @@
-import { getSecondByUnit } from '@/helpers/getSecondByUnit';
+import { getSecondByUnit } from '@/helpers/time';
 
 export default {
   data() {

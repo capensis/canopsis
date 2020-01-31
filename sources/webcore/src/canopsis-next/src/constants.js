@@ -1041,6 +1041,12 @@ export const PERIODIC_REFRESH_UNITS = {
   },
 };
 
+export const DEFAULT_PERIODIC_REFRESH = {
+  interval: 60,
+  enabled: false,
+  unit: 's',
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },

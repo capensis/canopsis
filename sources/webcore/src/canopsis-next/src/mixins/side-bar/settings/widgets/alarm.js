@@ -1,4 +1,5 @@
 import { isString } from 'lodash';
+import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 export default {
   methods: {
@@ -62,10 +63,10 @@ export default {
         } : parameters.sort,
 
         /**
-         * Add unit, if he is empty
+         * If there isn't periodic refresh then we are adding it
          */
         periodicRefresh: {
-          unit: 's',
+          unit: DEFAULT_PERIODIC_REFRESH.unit,
           ...parameters.periodicRefresh,
         },
       };

@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
+
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 
 export default {
@@ -14,7 +16,7 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => ({ enabled: false, interval: '60', unit: 's' }),
+      default: DEFAULT_PERIODIC_REFRESH,
     },
   },
 };
