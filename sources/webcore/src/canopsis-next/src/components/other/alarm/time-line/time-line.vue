@@ -47,13 +47,6 @@ export default {
       return {};
     },
   },
-  watch: {
-    'alarm.v.steps': function alarmIdWatcher(steps) {
-      if (!steps) {
-        this.fetchItem();
-      }
-    },
-  },
   mounted() {
     this.fetchItem();
   },
