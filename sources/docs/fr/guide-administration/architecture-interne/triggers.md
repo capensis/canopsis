@@ -9,8 +9,8 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 !!! note
     les triggers `declareticketwebhook`, `resolve` et `unsnooze` ne correspondent à aucun évènement mais à un traitement interne par Canopsis
 
-| Nom                      | Description                                              | Compatible `event-patterns` |
-|:------------------------ |:-------------------------------------------------------- | --------------------------- |
+| Nom                      | Description                                              | Déclenché par des événements |
+|:------------------------ |:-------------------------------------------------------- | ---------------------------- |
 | `"ack"`                  | Acquittement d'une alerte                                | ✅                           |
 | `"ackremove"`            | Suppression de l'acquittement                            | ✅                           |
 | `"assocticket"`          | Association d'un ticket à l'alarme                       | ✅                           |
