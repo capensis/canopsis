@@ -495,7 +495,7 @@ class AlertsReader(object):
                             "input": "$pbehaviors",
                             "cond":
                             {
-                                "$gte": ["$$pbh.bp_is_active", True]
+                                "$eq": ["$$pbh.bp_is_active", True]
                             }
                         }
                     },

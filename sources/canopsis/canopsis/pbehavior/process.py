@@ -213,13 +213,10 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
         time_start = time()
         time_maj_total, time_dispatcheur = pbm.maj_active_pb()
         engine.logger.debug(
-            "maj_active_pb time : %s secondes ---" %
+            "Active PBehaviors Update time : %s secondes ---" %
             (time() - time_start))
         engine.logger.debug(
-            "time_maj_total time : %s secondes ---" %
-            time_maj_total)
-        engine.logger.debug(
-            "dispatcher time : %s secondes ---" %
+            "Dispatcher time : %s secondes ---" %
             time_dispatcheur)
     except Exception as ex:
         engine.logger.exception('Processing error {}'.format(str(ex)))
