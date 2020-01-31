@@ -1,3 +1,5 @@
+import { sortBy } from 'lodash';
+
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
 export default {
@@ -5,12 +7,11 @@ export default {
   computed: {
     availableGroups() {
       return this.groupsOrdered.reduce((acc, group) => {
-        const views = group.views
-          .filter(view => this.checkReadAccess(view._id))
-          .sort((a, b) => (a.position || Infinity) - (b.position || Infinity));
+        const views = group.views.filter(view => this.checkReadAccess(view._id));
+        const sortedViews = sortBy(views, ['positions']);
 
         if (views.length || this.isEditingMode) {
-          acc.push({ ...group, views });
+          acc.push({ ...group, views: sortedViews });
         }
 
         return acc;

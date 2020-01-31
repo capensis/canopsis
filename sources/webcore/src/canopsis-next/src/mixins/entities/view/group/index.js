@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+import { sortBy } from 'lodash';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('view/group');
 
@@ -12,7 +13,7 @@ export default {
     }),
 
     groupsOrdered() {
-      return this.groups.sort((a = {}, b = {}) => (a.position || Infinity) - (b.position || Infinity));
+      return sortBy(this.groups, ['position']);
     },
   },
   methods: {

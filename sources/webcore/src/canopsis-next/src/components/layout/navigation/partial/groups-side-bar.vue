@@ -11,11 +11,11 @@
       app-logo.logo
       active-sessions-count
       app-version.version
-    v-expansion-panel.panel(
+    draggable.panel(
       v-if="hasReadAnyViewAccess",
-      expand,
-      focusable,
-      dark
+      element="v-expansion-panel",
+      :component-data="{ props: { expand: true, dark: true, focusable: true } }",
+      :options="draggableOptions"
     )
       v-expansion-panel-content.secondary.white--text(
         v-for="group in availableGroups",
@@ -78,6 +78,10 @@
 </template>
 
 <script>
+import Draggable from 'vuedraggable';
+
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
 import { groupSchema } from '@/store/schemas';
 
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
@@ -97,6 +101,7 @@ import ActiveSessionsCount from './active-sessions-count.vue';
  */
 export default {
   components: {
+    Draggable,
     GroupsSettingsButton,
     AppLogo,
     AppVersion,
@@ -131,6 +136,10 @@ export default {
 
     getColor() {
       return id => (this.isViewActive(id) ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1');
+    },
+
+    draggableOptions() {
+      return { animation: VUETIFY_ANIMATION_DELAY, disabled: !this.isEditingMode };
     },
   },
 };
