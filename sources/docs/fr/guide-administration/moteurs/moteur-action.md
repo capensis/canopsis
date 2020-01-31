@@ -43,7 +43,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 ```
 
 !!! attention
-    les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
+    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
 
 ### Paramètres spécifiques
 
