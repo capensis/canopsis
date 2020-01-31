@@ -14,7 +14,8 @@
       :items="actionTypes",
       :error-messages="errors.collect('actionType')",
       label="Type",
-      name="actionType"
+      name="actionType",
+      @change="errors.clear()"
     )
     v-tabs(fixed-tabs, slider-color="primary")
       v-tab
@@ -75,7 +76,15 @@ export default {
   },
   computed: {
     actionTypes() {
-      return Object.values(ACTION_TYPES);
+      return Object.values(ACTION_TYPES).map((type) => {
+        let text = type;
+
+        if (type === ACTION_TYPES.changeState) {
+          text = `${type} (${this.$t('alarmList.actions.titles.changeState')})`;
+        }
+
+        return { text, value: type };
+      });
     },
   },
   mounted() {

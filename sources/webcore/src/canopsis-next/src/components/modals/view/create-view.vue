@@ -32,7 +32,7 @@
 <script>
 import { find, omit } from 'lodash';
 
-import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS } from '@/constants';
+import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS, DEFAULT_PERIODIC_REFRESH } from '@/constants';
 import {
   generateView,
   generateRight,
@@ -84,10 +84,7 @@ export default {
         description: '',
         enabled: false,
         tags: [],
-        periodicRefresh: {
-          enabled: false,
-          value: 0,
-        },
+        periodicRefresh: DEFAULT_PERIODIC_REFRESH,
       },
     };
   },
@@ -136,10 +133,13 @@ export default {
         description: view.description,
         enabled: view.enabled,
         tags: [...view.tags || []],
-        periodicRefresh: view.periodicRefresh || {
-          enabled: false,
-          value: 0,
-        },
+        periodicRefresh: view.periodicRefresh
+          ? {
+            interval: view.periodicRefresh.interval || view.periodicRefresh.value,
+            unit: view.periodicRefresh.unit || DEFAULT_PERIODIC_REFRESH.unit,
+            enabled: view.periodicRefresh.enabled,
+          }
+          : DEFAULT_PERIODIC_REFRESH,
       };
     }
   },

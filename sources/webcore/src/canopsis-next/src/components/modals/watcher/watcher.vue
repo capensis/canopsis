@@ -7,10 +7,13 @@
         div(v-show="!watcherEntitiesPending")
           watcher-template(
             :watcher="watcher",
-            :watcherEntities="watcherEntities",
+            :watcherEntities="watchers",
+            :watchersMeta="metaData",
             :modalTemplate="config.modalTemplate",
             :entityTemplate="config.entityTemplate",
-            @addEvent="addEventToQueue"
+            @addEvent="addEventToQueue",
+            @change:page="changePage",
+            @change:limit="changeLimit"
           )
       v-fade-transition
         v-layout(v-show="watcherEntitiesPending", column)
@@ -39,11 +42,11 @@ import { pick, mapValues } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
+import watcherQueryMixin from '@/mixins/watcher/query';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -54,10 +57,10 @@ export default {
   components: { WatcherTemplate, ModalWrapper },
   mixins: [
     modalInnerMixin,
+    watcherQueryMixin,
     submittableMixin(),
     eventActionsMixin,
     entitiesPbehaviorMixin,
-    entitiesWatcherEntityMixin,
   ],
   data() {
     return {
@@ -87,8 +90,6 @@ export default {
       org: this.watcher.org,
       ...infoAttributes,
     };
-
-    this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
   },
   methods: {
     addEventToQueue(event) {

@@ -1,4 +1,5 @@
 import { isString } from 'lodash';
+import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 export default {
   methods: {
@@ -60,6 +61,14 @@ export default {
           order: parameters.sort.order,
           column: this.prefixFormatter(parameters.sort.column, isInitialization),
         } : parameters.sort,
+
+        /**
+         * If there isn't periodic refresh then we are adding it
+         */
+        periodicRefresh: {
+          unit: DEFAULT_PERIODIC_REFRESH.unit,
+          ...parameters.periodicRefresh,
+        },
       };
     },
 

@@ -96,6 +96,8 @@ export default {
     endDate: 'End date',
     links: 'Links',
     filter: 'Filter',
+    stack: 'Stack',
+    edition: 'Edition',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -921,6 +923,7 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Duration',
+        output: 'Note',
       },
     },
     createHeartbeat: {
@@ -1222,6 +1225,10 @@ export default {
             message: 'Message',
             duration: 'Duration',
             noMessage: 'No message is set',
+          },
+          changeState: {
+            output: 'Output',
+            noOutput: 'No output is set',
           },
         },
       },
