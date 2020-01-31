@@ -6,7 +6,9 @@ Les actions sont définies dans la collection MongoDB `default_action`, et peuve
 
 ## Utilisation
 
-La file du moteur est placée juste après le moteur [Axe](moteur-axe.md).
+En édition `core`, la file du moteur est placée juste après le moteur [Axe](moteur-axe.md).
+
+En édition `CAT`, la file du moteur est placée juste après le moteur [Webhook](moteur-webhook.md).
 
 ### Options de l'engine-action
 
@@ -18,15 +20,20 @@ La file du moteur est placée juste après le moteur [Axe](moteur-axe.md).
 
 ## Fonctionnement
 
+### Types d'action
+
 Les types d'actions disponibles sont :
 
-* `pbehavior`, qui va poser un [PBehavior](moteur-pbehavior.md)
-* `snooze`, qui va poser des snooze automatiques sur les alarmes lors de leur création.
+* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille l'état de l'alarme dans une criticité donnée jusqu'à sa résolution
+* `pbehavior` : pose un [PBehavior](moteur-pbehavior.md)
+* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose un snooze automatique sur l'alarme
+
+### Paramètres généraux
 
 Une action est composée d'un JSON contenant les paramètres suivants :
 
 - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
-- `type` : [`pbehavior`](moteur-pbehavior.md) ou `snooze`.
+- `type` : `changestate`, [`pbehavior`](moteur-pbehavior.md) ou `snooze`.
 - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
     - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
     - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
@@ -35,7 +42,51 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 - `parameters` (requis) : les informations nécessaires correspondant au type d'action.
 
 !!! attention
-    Les [`triggers`](../architecture-interne/triggers.md) `unsnooze` et `resolve` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
+Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
+
+### Paramètres spécifiques
+
+#### Changestate
+
+```javascript
+{
+		"state":   // état dans lequel sera verrouillée l'alarme (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), le champ est de type `integer`
+		"output":  // commentaire du changestate, optionnel - le champ est de type `string`
+		"author":  // auteur du changestate, optionnel - le champ est de type `string`
+}
+```
+
+#### PBehavior
+
+```javascript
+{
+	"rrule":     // règle de récurrence pour le pbehavior, optionnel - le champ est de type `string`
+	"enabled":   // détermine si le pbehavior est actif ou non, obligatoire - le champ est de type `boolean`
+	"author":    // auteur du pbehavior, obligatoire - le champ est de type `string`
+	"name":      // nom du pbehavior, obligatoire - le champ est de type `string`
+	"tstart":    // date de début du pbehavior, obligatoire - le champ est de type `integer`
+	"tstop":     // date de fin du pbehavior, obligatoire - le champ est de type `integer`
+	"type_":     // type du pbehavior, obligatoire - le champ est de type `string`
+	"reason":    // raison du pbehavior, obligatoire - le champ est de type `string`
+	"timezone":  // timezone du pbehavior, optionnel - le champ est de type `string`
+	"comments":  // commentaire du pbehavior, optionnel - le champ est de type `array`
+  [{           // début de l'array du commentaire
+		"author":  // auteur du commentaire, optionnel - le champ est de type `string`
+		"message": // commentaire du pbehavior, optionnel - le champ est de type `string`
+	}],
+	"exdate": []   // dates d'expiration, peut être composé de plusieurs valeurs, optionnel - le champ est de type integer`
+}
+```
+
+#### Snooze
+
+```javascript
+{
+		"message":   // commentaire du snooze, optionnel - le champ est de type `string`
+		"duration":  // durée du snooze en secondes, optionnel - le champ est de type `number`
+		"author":    // auteur du snooze, optionnel - le champ est de type `string`
+}
+```
 
 ## Collection
 

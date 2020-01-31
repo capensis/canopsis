@@ -1,15 +1,15 @@
 # Triggers (Go)
 
-Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) par le moteur [axe](../moteurs/moteur-axe.md) peut déclencher des actions qui correspondent à des `triggers`.
+Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) par le moteur [axe](../moteurs/moteur-axe.md), des actions automatisées par le moteur [action](../moteurs/moteur-action.md) et des webhooks par le moteur [webhook](../moteurs/moteur-webhook.md) peuvent déclencher des `triggers`.
 
-Ces `triggers` peuvent servir comme point de déclenchement pour les [actions](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-webhook.md).
+Ces `triggers` peuvent servir comme point de déclenchement pour les [actions automatisées](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-webhook.md).
 
 Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"`, `"changestate"`, `"comment"`, `"create"`, `"declareticket"`, `"declareticketwebhook"`, `"done"`, `"resolve"`, `"snooze"`, `"statedec"`, `"stateinc"`, `"uncancel"`, et `"unsnooze"`.
 
 !!! note
     les triggers `declareticketwebhook`, `resolve` et `unsnooze` ne correspondent à aucun évènement mais à un traitement interne par Canopsis
 
-| Nom                      | Description                                              | Déclenché par des événements |
+| Nom                      | Description                                              | Déclenché par des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) |
 |:------------------------ |:-------------------------------------------------------- | ---------------------------- |
 | `"ack"`                  | Acquittement d'une alerte                                | ✅                           |
 | `"ackremove"`            | Suppression de l'acquittement                            | ✅                           |
