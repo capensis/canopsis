@@ -199,17 +199,17 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 Certains de ces événements déclenchent également un [trigger](../guide-administration/architecture-interne/triggers.md).
 
-Type | Description |
------|-------------|
-ack | Utilisé pour acquitter une alerte |
-ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
-assocticket | Utilisé pour associer un ticket |
-declareticket | Utilisé pour envoyer un trigger declareticket |
-cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
-changestate | Utilisé pour changer et verrouiller la criticité d'une alarme |
-check | Utilisé pour envoyer le résultat d'un check (depuis Nagios, Icinga,...)  |
-snooze | Utilisé pour placer un Snooze sur une alarme |
-statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |
-statduration | Utilisé pour ajouter une durée dans l'engine statistics |
-statstateinterval | Utilisé pour ajouter un état d'intervalle dans l'engine statistics |
-uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
+Type              | Description                                                                                                                                              |
+------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+ack               | Utilisé pour acquitter une alarme                                                                                                                        |
+ackremove         | Utilisé pour supprimer un acquittement d'une alarme. (champ ack supprimé et collection ack mise à jour)                                                  |
+assocticket       | Utilisé pour associer un ticket                                                                                                                          |
+declareticket     | Utilisé pour envoyer un trigger declareticket                                                                                                            |
+cancel            | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
+changestate       | Utilisé pour changer et verrouiller la criticité d'une alarme                                                                                            |
+check             | Utilisé pour envoyer le résultat d'un check (depuis Nagios, Icinga,...)                                                                                  |
+snooze            | Utilisé pour placer un Snooze sur une alarme                                                                                                             |
+statcounterinc    | Utilisé pour incrémenter un compteur dans l'engine statistics                                                                                            |
+statduration      | Utilisé pour ajouter une durée dans l'engine statistics                                                                                                  |
+statstateinterval | Utilisé pour ajouter un état d'intervalle dans l'engine statistics                                                                                       |
+uncancel          | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.                                        |
