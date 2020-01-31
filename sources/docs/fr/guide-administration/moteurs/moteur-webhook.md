@@ -70,7 +70,7 @@ Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont 
 - `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
 !!! attention
-    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
+    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
 
 !!! attention
     L'`event_pattern` sait uniquement parser les champs customs (autres que ceux définis dans les [`structures d'événements`](../../guide-developpement/struct-event.md#structure-basique-dun-evenement)) qui sont de type `string`. Il ne sait pas parser les champs customs de type `number` ou `boolean`.
