@@ -9,21 +9,21 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 !!! note
     les triggers `declareticketwebhook`, `resolve` et `unsnooze` ne correspondent à aucun évènement mais à un traitement interne par Canopsis
 
-| Nom                      | Description                                              |
-|:------------------------ |:-------------------------------------------------------- |
-| `"ack"`                  | Acquittement d'une alerte                                |
-| `"ackremove"`            | Suppression de l'acquittement                            |
-| `"assocticket"`          | Association d'un ticket à l'alarme                       |
-| `"cancel"`               | Annulation de l'évènement                                |
-| `"changestate"`          | Modification et verrouillage de la criticité de l'alarme |
-| `"comment"`              | Envoi d'un commentaire                                   |
-| `"create"`               | Création de l'évènement                                  |
-| `"declareticket"`        | Action du bac à alarmes de déclaration d'un ticket       |
-| `"declareticketwebhook"` | Déclaration d'un ticket à l'alarme par un webhook        |
-| `"done"`                 | Fin de l'alarme                                          |
-| `"resolve"`              | Résolution de l'alarme                                   |
-| `"snooze"`               | Report de l'alarme                                       |
-| `"statedec"`             | Diminution de la criticité de l'alarme                   |
-| `"stateinc"`             | Augmentation de la criticité de l'alarme                 |
-| `"uncancel"`             | Retablissement de l'alarme                               |
-| `"unsnooze"`             | Fin du report de l'alarme                                |
+| Nom                      | Description                                              | Compatible `event-patterns` |
+|:------------------------ |:-------------------------------------------------------- | --------------------------- |
+| `"ack"`                  | Acquittement d'une alerte                                | ✅                           |
+| `"ackremove"`            | Suppression de l'acquittement                            | ✅                           |
+| `"assocticket"`          | Association d'un ticket à l'alarme                       | ✅                           |
+| `"cancel"`               | Annulation de l'évènement                                | ✅                           |
+| `"changestate"`          | Modification et verrouillage de la criticité de l'alarme | ✅                           |
+| `"comment"`              | Envoi d'un commentaire                                   | ✅                           |
+| `"create"`               | Création de l'évènement                                  | ✅                           |
+| `"declareticket"`        | Action du bac à alarmes de déclaration d'un ticket       | ✅                           |
+| `"declareticketwebhook"` | Déclaration d'un ticket à l'alarme par un webhook        | ❌                           |
+| `"done"`                 | Fin de l'alarme                                          | ✅                           |
+| `"resolve"`              | Résolution de l'alarme                                   | ❌                           |
+| `"snooze"`               | Report de l'alarme                                       | ✅                           |
+| `"statedec"`             | Diminution de la criticité de l'alarme                   | ✅                           |
+| `"stateinc"`             | Augmentation de la criticité de l'alarme                 | ✅                           |
+| `"uncancel"`             | Retablissement de l'alarme                               | ✅                           |
+| `"unsnooze"`             | Fin du report de l'alarme                                | ❌                           |
