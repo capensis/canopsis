@@ -81,7 +81,6 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | Service Now | Version [Madrid](https://www.servicenow.fr/) | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
-| Zelos | Zelos | CAT | Non | Outil client | Version ≥ 2 (moteurs Python) |
 | Observer | Observer | CAT | Non |  Outil client| Version ≥ 3 (moteurs Go) |
 
 ## Exploitation par les API
