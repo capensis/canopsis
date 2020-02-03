@@ -156,10 +156,16 @@ export default {
       };
     },
     resolvedActions() {
-      const actions = [this.filteredActionsMap.pbehaviorList];
+      const { pbehaviorList, variablesHelp, moreInfos } = this.filteredActionsMap;
+
+      const actions = [pbehaviorList];
+
+      if (this.isEditingMode) {
+        actions.push(variablesHelp);
+      }
 
       if (this.widget.parameters.moreInfoTemplate !== '') {
-        actions.push(this.filteredActionsMap.moreInfos);
+        actions.push(moreInfos);
       }
 
       return actions;
