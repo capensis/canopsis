@@ -7,12 +7,14 @@
       v-tab-item
         patterns-list(
           v-field="form.alarm_patterns",
-          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
+          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+          @input="validatePatterns"
         )
       v-tab-item
         patterns-list(
           v-field="form.entity_patterns",
-          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
+          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS",
+          @input="validatePatterns"
         )
 </template>
 
@@ -40,9 +42,14 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      ruleName: 'patterns',
+    };
+  },
   created() {
     this.$validator.attach({
-      name: 'patterns',
+      name: this.ruleName,
       rules: 'required:true',
       getter: () => {
         const isAlarmPatternsEmpty = isEmpty(this.form.alarm_patterns);
@@ -53,6 +60,14 @@ export default {
       context: () => this,
       vm: this,
     });
+  },
+  beforeDestroy() {
+    this.$validator.detach(this.ruleName);
+  },
+  methods: {
+    validatePatterns() {
+      this.$nextTick(() => this.$validator.validate(this.ruleName));
+    },
   },
 };
 </script>
