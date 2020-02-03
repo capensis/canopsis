@@ -45,11 +45,11 @@ export default {
         this.steps = [];
       }
 
-      if (!alarm && alarm.v.steps) {
-        this.fetchItem();
-      } else {
+      if (alarm && alarm.v.steps) {
         this.groupedSteps = this.groupSteps(alarm.v.steps);
         this.steps = alarm.v.steps;
+      } else {
+        this.fetchItem();
       }
     },
   },
