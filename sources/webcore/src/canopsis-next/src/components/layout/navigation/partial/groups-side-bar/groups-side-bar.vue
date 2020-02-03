@@ -13,38 +13,22 @@
       app-version.version
     draggable.panel(
       v-if="hasReadAnyViewAccess",
-      element="v-expansion-panel",
+      v-model="groupss",
       :component-data="{ props: { expand: true, dark: true, focusable: true } }",
       :options="draggableOptions",
-      @end="endMoveGroups"
+      element="v-expansion-panel"
     )
-      v-expansion-panel-content.secondary.white--text(
-        v-for="group in availableGroups",
+      groups-side-bar-group(
+        v-for="group in groupss",
         :key="group._id",
-        :data-test="`panel-group-${group._id}`"
+        :group.sync="group",
+        :isEditingMode="isEditingMode",
+        :draggableOptions="draggableOptions",
       )
-        div.panel-header(slot="header")
-          span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
-          v-btn(
-            :data-test="`editGroupButton-group-${group._id}`",
-            v-show="isEditingMode",
-            depressed,
-            small,
-            icon,
-            @click.stop="showEditGroupModal(group)"
-          )
-            v-icon(small) edit
-        draggable.panel(
-          :options="draggableOptions",
-          @end=""
-        )
-          groups-side-bar-item-view-item(
-            v-for="view in group.views",
-            :key="view._id",
-            :view="view",
-            :isEditingMode="isEditingMode"
-          )
     v-divider
+    template(v-if="isGroupsOrderChanged")
+      v-btn.primary(@click="resetGroups") {{ $t('common.submit') }}
+      v-btn(@click="resetGroups") {{ $t('common.cancel') }}
     groups-settings-button(
       tooltipRight,
       :isEditingMode="isEditingMode",
@@ -53,7 +37,6 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
@@ -63,11 +46,11 @@ import { groupSchema } from '@/store/schemas';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 import registrableMixin from '@/mixins/registrable';
 
-import GroupsSettingsButton from './groups-settings-button.vue';
-import AppLogo from './app-logo.vue';
-import AppVersion from './app-version.vue';
-import ActiveSessionsCount from './active-sessions-count.vue';
-import GroupsSideBarItemViewItem from './groups-side-bar-item-view-item.vue';
+import GroupsSettingsButton from '../groups-settings-button.vue';
+import AppLogo from '../app-logo.vue';
+import AppVersion from '../app-version.vue';
+import ActiveSessionsCount from '../active-sessions-count.vue';
+import GroupsSideBarGroup from './groups-side-bar-group.vue';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -83,7 +66,7 @@ export default {
     AppLogo,
     AppVersion,
     ActiveSessionsCount,
-    GroupsSideBarItemViewItem,
+    GroupsSideBarGroup,
   },
   mixins: [
     layoutNavigationGroupMenuMixin,
@@ -98,6 +81,7 @@ export default {
   },
   data() {
     return {
+      groupss: [],
       indexesMap: {},
       viewIndexesMap: {},
     };
@@ -118,31 +102,50 @@ export default {
       return { animation: VUETIFY_ANIMATION_DELAY, disabled: !this.isEditingMode };
     },
     isGroupsOrderChanged() {
-      return isEmpty(this.indexesMap);
+      return this.availableGroups.some((group, index) => this.groupss[index]._id !== group._id ||
+        group.views.some((view, viewIndex) => this.groupss[index].views[viewIndex]._id !== view._id));
+    },
+  },
+  watch: {
+    availableGroups: {
+      deep: true,
+      immediate: true,
+      handler(groups) {
+        this.setGroups(groups);
+      },
     },
   },
   methods: {
-    endMoveGroups({ newIndex, oldIndex }) {
-      const move = this.indexesMap[oldIndex];
+    setGroups(groups = []) {
+      this.groupss = groups.map(group => ({
+        ...group,
 
-      if (move) {
-        if (move.originalIndex === newIndex) {
-          delete this.indexesMap[oldIndex];
-        } else {
-          this.indexesMap[newIndex] = {
-            ...move,
+        views: [...group.views],
+      }));
+    },
 
-            oldIndex,
-          };
+    resetGroups() {
+      this.setGroups(this.availableGroups);
+    },
+
+    submit() {
+      // const original
+      const { groups, views } = this.groupss.reduce((acc, group, index) => {
+        const originalGroup = this.groups.find(({ _id: id }) => id === group._id);
+        const isGroupsOrderChanged = this.availableGroups[index]._id === group._id;
+
+        if (isGroupsOrderChanged) {
+          acc.groups.push({ ...group, position: index });
         }
-      } else {
-        delete this.indexesMap[oldIndex];
 
-        this.indexesMap[newIndex] = {
-          oldIndex,
-          originalIndex: oldIndex,
-        };
-      }
+        const views = acc.groups.views.reduce((acc, view, index) => {
+          // originalGroup.
+        }, []);
+
+        if (views.length) {
+          acc.views.concat(views);
+        }
+      }, { groups: [], views: [] });
     },
   },
 };
@@ -157,10 +160,6 @@ export default {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
-
-    & /deep/ .v-expansion-panel__header {
-      height: 48px;
-    }
   }
 
   .brand {
@@ -185,23 +184,6 @@ export default {
     color: white;
     font-size: 0.8em;
     line-height: 1.3em;
-  }
-
-  .panel-header {
-    max-width: 88%;
-
-    span {
-      max-width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      display: inline-block;
-      vertical-align: middle;
-
-      .editing & {
-        max-width: 73%;
-      }
-    }
   }
 
   .logo {
