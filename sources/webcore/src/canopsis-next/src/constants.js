@@ -1004,37 +1004,47 @@ export const HEARTBEAT_DURATION_UNITS = {
   hour: 'h',
 };
 
+export const TIME_UNITS = {
+  seconds: 's',
+  minute: 'm',
+  hour: 'h',
+  day: 'd',
+  week: 'w',
+  month: 'M',
+  year: 'y',
+};
+
 export const DURATION_UNITS = {
   minute: {
     text: 'common.times.minute',
-    value: 'm',
+    value: TIME_UNITS.minute,
   },
   hour: {
     text: 'common.times.hour',
-    value: 'h',
+    value: TIME_UNITS.hour,
   },
   day: {
     text: 'common.times.day',
-    value: 'd',
+    value: TIME_UNITS.day,
   },
   week: {
     text: 'common.times.week',
-    value: 'w',
+    value: TIME_UNITS.week,
   },
   month: {
     text: 'common.times.month',
-    value: 'M',
+    value: TIME_UNITS.month,
   },
   year: {
     text: 'common.times.year',
-    value: 'y',
+    value: TIME_UNITS.year,
   },
 };
 
 export const PERIODIC_REFRESH_UNITS = {
   second: {
     text: 'common.times.second',
-    value: 's',
+    value: TIME_UNITS.seconds,
   },
   minute: DURATION_UNITS.minute,
   hour: DURATION_UNITS.hour,
@@ -1043,16 +1053,22 @@ export const PERIODIC_REFRESH_UNITS = {
 export const DEFAULT_PERIODIC_REFRESH = {
   interval: 60,
   enabled: false,
-  unit: 's',
+  unit: TIME_UNITS.seconds,
+};
+
+export const DEFAULT_RETRY_FIELD = {
+  count: 0,
+  delay: RETRY_DEFAULT_DELAY,
+  unit: TIME_UNITS.seconds,
 };
 
 export const EXPLOITATION_PAGES_RULES = {
-  eventFilter: { stack: CANOPSIS_STACK.go },
-  webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  snmpRule: { edition: CANOPSIS_EDITION.cat },
-  heartbeat: { stack: CANOPSIS_STACK.go },
-  action: { stack: CANOPSIS_STACK.go },
-  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
+  eventFilter: { stack: CANOPSIS_STACK.python },
+  webhooks: { stack: CANOPSIS_STACK.python, edition: CANOPSIS_EDITION.core },
+  snmpRule: { edition: CANOPSIS_EDITION.core },
+  heartbeat: { stack: CANOPSIS_STACK.python },
+  action: { stack: CANOPSIS_STACK.python },
+  dynamicInfo: { edition: CANOPSIS_EDITION.core },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
