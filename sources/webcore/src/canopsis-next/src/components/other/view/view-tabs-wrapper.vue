@@ -5,7 +5,8 @@
       :view="view",
       :tabs.sync="tabs",
       :isTabsChanged="isTabsChanged",
-      :isEditingMode="isEditingMode",
+      :isEditingMode="isPeriodicRefreshEnabled",
+      :isPeriodicRefreshEnabled="isEditingMode",
       :hasUpdateAccess="hasUpdateAccess"
     )
     v-fade-transition
@@ -22,6 +23,7 @@
       :tabs.sync="tabs",
       :isTabsChanged="isTabsChanged",
       :isEditingMode="isEditingMode",
+      :isPeriodicRefreshEnabled="isPeriodicRefreshEnabled",
       :hasUpdateAccess="hasUpdateAccess",
       :updateViewMethod="data => updateViewMethod(data)"
     )
@@ -52,6 +54,10 @@ export default {
       default: false,
     },
     isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    isPeriodicRefreshEnabled: {
       type: Boolean,
       default: false,
     },

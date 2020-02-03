@@ -26,7 +26,8 @@
         v-bind="widgetsComponentsMap(widget.type).bind",
         :widget="widget",
         :tabId="tab._id",
-        :isEditingMode="isEditingMode"
+        :isEditingMode="isEditingMode",
+        :isPeriodicRefreshEnabled="isPeriodicRefreshEnabled"
       )
 </template>
 
@@ -80,6 +81,10 @@ export default {
       required: true,
     },
     isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    isPeriodicRefreshEnabled: {
       type: Boolean,
       default: false,
     },

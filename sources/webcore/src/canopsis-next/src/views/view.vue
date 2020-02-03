@@ -5,6 +5,7 @@
         v-if="isViewTabsReady",
         :view="view",
         :isEditingMode="isEditingMode",
+        :isPeriodicRefreshEnabled="isPeriodicRefreshEnabled",
         :hasUpdateAccess="hasUpdateAccess",
         :updateViewMethod="data => updateView({ id, data })"
       )

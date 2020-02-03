@@ -20,6 +20,7 @@
           :widget="widget",
           :tab="tab",
           :isEditingMode="isEditingMode",
+          :isPeriodicRefreshEnabled="isPeriodicRefreshEnabled",
           :row="row",
           :updateTabMethod="updateTabMethod"
         )
@@ -49,6 +50,10 @@ export default {
       default: false,
     },
     isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    isPeriodicRefreshEnabled: {
       type: Boolean,
       default: false,
     },

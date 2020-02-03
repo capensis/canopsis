@@ -155,6 +155,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isPeriodicRefreshEnabled: {
+      type: Boolean,
+      default: false,
+    },
     tabId: {
       type: String,
       default: '',
@@ -246,7 +250,7 @@ export default {
       if (this.hasColumns) {
         const query = this.getQuery();
 
-        if (isPeriodicRefresh && !isEmpty(this.$refs.dataTable.expanded)) {
+        if ((this.isPeriodicRefreshEnabled || isPeriodicRefresh) && !isEmpty(this.$refs.dataTable.expanded)) {
           query.with_steps = true;
         }
 

@@ -52,6 +52,7 @@
         slot(
           :tab="tab",
           :isEditingMode="isEditingMode",
+          :isPeriodicRefreshEnabled="isPeriodicRefreshEnabled",
           :hasUpdateAccess="hasUpdateAccess",
           :updateTabMethod="updateTab"
         )
@@ -96,6 +97,10 @@ export default {
       default: false,
     },
     isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    isPeriodicRefreshEnabled: {
       type: Boolean,
       default: false,
     },
