@@ -1063,12 +1063,12 @@ export const DEFAULT_RETRY_FIELD = {
 };
 
 export const EXPLOITATION_PAGES_RULES = {
-  eventFilter: { stack: CANOPSIS_STACK.python },
-  webhooks: { stack: CANOPSIS_STACK.python, edition: CANOPSIS_EDITION.core },
-  snmpRule: { edition: CANOPSIS_EDITION.core },
-  heartbeat: { stack: CANOPSIS_STACK.python },
-  action: { stack: CANOPSIS_STACK.python },
-  dynamicInfo: { edition: CANOPSIS_EDITION.core },
+  eventFilter: { stack: CANOPSIS_STACK.go },
+  webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { edition: CANOPSIS_EDITION.cat },
+  heartbeat: { stack: CANOPSIS_STACK.go },
+  action: { stack: CANOPSIS_STACK.go },
+  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
