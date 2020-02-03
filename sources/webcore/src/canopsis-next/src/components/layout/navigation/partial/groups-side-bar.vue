@@ -15,7 +15,8 @@
       v-if="hasReadAnyViewAccess",
       element="v-expansion-panel",
       :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-      :options="draggableOptions"
+      :options="draggableOptions",
+      @end="endMoveGroups"
     )
       v-expansion-panel-content.secondary.white--text(
         v-for="group in availableGroups",
@@ -33,42 +34,16 @@
             @click.stop="showEditGroupModal(group)"
           )
             v-icon(small) edit
-        v-card(
-          v-for="view in group.views",
-          :key="view._id",
-          :color="getColor(view._id)"
+        draggable.panel(
+          :options="draggableOptions",
+          @end=""
         )
-          router-link.panel-item-content-link(
-            :data-test="`linkView-view-${view._id}`",
-            :title="view.title",
-            :to="getViewLink(view)"
+          groups-side-bar-item-view-item(
+            v-for="view in group.views",
+            :key="view._id",
+            :view="view",
+            :isEditingMode="isEditingMode"
           )
-            v-card-text.panel-item-content
-              v-layout(align-center, justify-space-between)
-                v-flex
-                  v-layout(align-center)
-                    span.pl-2 {{ view.title }}
-                v-flex
-                  v-layout(justify-end)
-                    v-btn.ma-0(
-                      :data-test="`editViewButton-view-${view._id}`",
-                      v-show="checkViewEditButtonAccessById(view._id)",
-                      depressed,
-                      small,
-                      icon,
-                      @click.prevent="showEditViewModal(view)"
-                    )
-                      v-icon(small) edit
-                    v-btn.ma-0(
-                      :data-test="`copyViewButton-view-${view._id}`",
-                      v-show="isEditingMode",
-                      depressed,
-                      small,
-                      icon,
-                      @click.prevent="showDuplicateViewModal(view)"
-                    )
-                      v-icon(small) file_copy
-          v-divider
     v-divider
     groups-settings-button(
       tooltipRight,
@@ -78,6 +53,7 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
@@ -91,6 +67,7 @@ import GroupsSettingsButton from './groups-settings-button.vue';
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
 import ActiveSessionsCount from './active-sessions-count.vue';
+import GroupsSideBarItemViewItem from './groups-side-bar-item-view-item.vue';
 
 /**
  * Component for the side-bar, on the left of the application
@@ -106,6 +83,7 @@ export default {
     AppLogo,
     AppVersion,
     ActiveSessionsCount,
+    GroupsSideBarItemViewItem,
   },
   mixins: [
     layoutNavigationGroupMenuMixin,
@@ -117,6 +95,12 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      indexesMap: {},
+      viewIndexesMap: {},
+    };
   },
   computed: {
     isOpen: {
@@ -130,27 +114,41 @@ export default {
       },
     },
 
-    isViewActive() {
-      return viewId => this.$route.params.id && this.$route.params.id === viewId;
-    },
-
-    getColor() {
-      return id => (this.isViewActive(id) ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1');
-    },
-
     draggableOptions() {
       return { animation: VUETIFY_ANIMATION_DELAY, disabled: !this.isEditingMode };
+    },
+    isGroupsOrderChanged() {
+      return isEmpty(this.indexesMap);
+    },
+  },
+  methods: {
+    endMoveGroups({ newIndex, oldIndex }) {
+      const move = this.indexesMap[oldIndex];
+
+      if (move) {
+        if (move.originalIndex === newIndex) {
+          delete this.indexesMap[oldIndex];
+        } else {
+          this.indexesMap[newIndex] = {
+            ...move,
+
+            oldIndex,
+          };
+        }
+      } else {
+        delete this.indexesMap[oldIndex];
+
+        this.indexesMap[newIndex] = {
+          oldIndex,
+          originalIndex: oldIndex,
+        };
+      }
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
   .panel {
     box-shadow: none;
   }
@@ -203,36 +201,6 @@ export default {
       .editing & {
         max-width: 73%;
       }
-    }
-  }
-
-  .panel-item-content {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    cursor: pointer;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    position: relative;
-    padding: 12px 24px;
-    height: 48px;
-
-    & > div {
-      max-width: 100%;
-    }
-
-    & /deep/ .v-btn:not(:last-child) {
-      margin-right: 0;
-    }
-
-    .panel-item-content-link {
-      max-width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      display: inline-block;
-      vertical-align: middle;
     }
   }
 
