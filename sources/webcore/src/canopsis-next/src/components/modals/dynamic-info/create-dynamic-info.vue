@@ -36,13 +36,6 @@ export default {
       form: dynamicInfoToForm(dynamicInfo),
     };
   },
-  watch: {
-    'form.patterns': {
-      handler() {
-        this.$validator.validate('patterns');
-      },
-    },
-  },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
