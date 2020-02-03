@@ -158,7 +158,11 @@ export default {
     resolvedActions() {
       const { pbehaviorList, variablesHelp, moreInfos } = this.filteredActionsMap;
 
-      const actions = [pbehaviorList, variablesHelp];
+      const actions = [pbehaviorList];
+
+      if (this.isEditingMode) {
+        actions.push(variablesHelp);
+      }
 
       if (this.widget.parameters.moreInfoTemplate !== '') {
         actions.push(moreInfos);
