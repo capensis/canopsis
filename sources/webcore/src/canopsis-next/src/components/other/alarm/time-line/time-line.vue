@@ -32,19 +32,25 @@ export default {
       default: false,
     },
   },
-  computed: {
-    steps() {
-      return this.alarm.v.steps || [];
-    },
-
-    groupedSteps() {
-      if (this.alarm && this.alarm.v.steps) {
-        const orderedSteps = orderBy(this.alarm.v.steps, ['t'], 'desc');
-
-        return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
+  data() {
+    return {
+      groupedSteps: {},
+      steps: [],
+    };
+  },
+  watch: {
+    alarm(alarm, oldAlarm) {
+      if (alarm._id !== oldAlarm._id) {
+        this.groupedSteps = {};
+        this.steps = [];
       }
 
-      return {};
+      if (!alarm && alarm.v.steps) {
+        this.fetchItem();
+      } else {
+        this.groupedSteps = this.groupSteps(alarm.v.steps);
+        this.steps = alarm.v.steps;
+      }
     },
   },
   mounted() {
@@ -67,6 +73,12 @@ export default {
         id: this.alarm._id,
         params,
       });
+    },
+
+    groupSteps(steps) {
+      const orderedSteps = orderBy(steps, ['t'], 'desc');
+
+      return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
     },
   },
 };
