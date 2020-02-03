@@ -2,7 +2,7 @@
   v-layout
     v-flex(xs6)
       v-text-field(
-        v-field="value.count",
+        v-field.number="value.count",
         v-validate="'required|numeric|min_value:0'",
         :label="$t('modals.createWebhook.fields.retryCount')",
         :error-messages="errors.collect('retryCount')",
@@ -12,7 +12,7 @@
       )
     v-flex(xs6)
       v-text-field(
-        v-field="value.delay",
+        v-field.number="value.delay",
         v-validate="'required|numeric|min_value:0'",
         :label="$t('modals.createWebhook.fields.retryDelay')",
         :error-messages="errors.collect('retryDelay')",
