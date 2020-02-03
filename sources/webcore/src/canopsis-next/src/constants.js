@@ -659,6 +659,8 @@ export const USERS_RIGHTS = {
         associateTicket: 'listalarm_assignTicketNumber',
         cancel: 'listalarm_removeAlarm',
         changeState: 'listalarm_changeState',
+        history: 'listalarm_history',
+
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
         addFilter: 'listalarm_addFilter',
@@ -700,6 +702,7 @@ export const USERS_RIGHTS = {
 
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
+        pbehaviorList: 'serviceweather_pbehaviorList',
       },
     },
   },
@@ -724,7 +727,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     cancel: 'cancel',
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
-
+    history: 'history',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -761,6 +764,7 @@ export const WIDGETS_ACTIONS_TYPES = {
 
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
+    pbehaviorList: 'pbehaviorList',
   },
 };
 
@@ -776,6 +780,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.associateTicket]: USERS_RIGHTS.business.alarmsList.actions.associateTicket,
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -815,6 +820,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
 
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
+    [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
   },
 };
 
@@ -951,6 +957,7 @@ export const WEBHOOK_TRIGGERS = {
   comment: 'comment',
   done: 'done',
   declareticket: 'declareticket',
+  declareticketwebhook: 'declareticketwebhook',
   assocticket: 'assocticket',
   snooze: 'snooze',
   unsnooze: 'unsnooze',
@@ -969,6 +976,7 @@ export const SNMP_STATE_TYPES = {
 export const ACTION_TYPES = {
   snooze: 'snooze',
   pbehavior: 'pbehavior',
+  changeState: 'changestate',
 };
 
 export const ACTION_AUTHOR = 'engine-action';
@@ -1021,6 +1029,21 @@ export const DURATION_UNITS = {
     text: 'common.times.year',
     value: 'y',
   },
+};
+
+export const PERIODIC_REFRESH_UNITS = {
+  second: {
+    text: 'common.times.second',
+    value: 's',
+  },
+  minute: DURATION_UNITS.minute,
+  hour: DURATION_UNITS.hour,
+};
+
+export const DEFAULT_PERIODIC_REFRESH = {
+  interval: 60,
+  enabled: false,
+  unit: 's',
 };
 
 export const EXPLOITATION_PAGES_RULES = {

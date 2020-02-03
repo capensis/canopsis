@@ -18,8 +18,9 @@ import actionModule from './action';
 import heartbeatModule from './heartbeat';
 import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
-import alarmColumnFiltersModule from './alarm-column-filters';
 import pbehaviorReasonsModule from './pbehavior-reasons';
+import alarmColumnFiltersModule from './alarm-column-filters';
+import sessionModule from './session';
 
 export default {
   alarm: alarmModule,
@@ -44,4 +45,5 @@ export default {
   filterHint: filterHintModule,
   pbehaviorReasons: pbehaviorReasonsModule,
   alarmColumnFilters: alarmColumnFiltersModule,
+  session: sessionModule,
 };

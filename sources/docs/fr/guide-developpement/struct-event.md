@@ -10,7 +10,7 @@
 
 ## Structure basique d'un évènement
 
-Voici la structure de base d'un évènement, commune à tous les type d'évènements.
+Voici la structure de base d'un [évènement](../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les types d'évènements.
 
 ```javascript
 {
@@ -31,7 +31,7 @@ Voici la structure de base d'un évènement, commune à tous les type d'évènem
 
 ## Ajout d'éléments et personnalisation
 
-Aprés avoir défini la structure de base de l'évènement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
+Aprés avoir défini la structure de base de l'[évènement](../guide-utilisation/vocabulaire/index.md#evenement), choisissez le type d'événement que vous souhaitez envoyer et ajoutez les champs correspondants.
 
 ### Event Check Structure
 
@@ -94,6 +94,7 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 ```javascript
 {
   "event_type": "changestate",   // mandatory
+  "state":                       // state that will be locked for the alarm (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0, mandatory - value field is an integer `number` type
 
   "author":           // changestate author, optional
   "output":           // changestate comment, optional
@@ -194,19 +195,21 @@ Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
 Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
 
-## List of event types
+## Liste des types d'évènements
 
-Type | Description |
------|-------------|
-check | Utilisé pour envoyer le résultat d'un check (depuis Nagios, Icinga,...)  |
-statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |
-statduration | Utilisé pour ajouter une durée dans l'engine statistics |
-statstateinterval | Utilisé pour ajouter un état d'intervalle dans l'engine statistics |
-ack | Utilisé pour acquitter une alerte |
-cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
-uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
-ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
-snooze | Utilisé pour placer un Snooze sur une alarme |
-declareticket | Utilisé pour déclarer un ticket |
-assocticket | Utilisé pour associer un ticket |
-changestate | Utilisé pour changer et verrouiller la criticité d'une alarme |
+Certains de ces événements déclenchent également un [trigger](../guide-administration/architecture-interne/triggers.md).
+
+Type              | Description                                                                                                                                |
+------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+ack               | Acquitte une alarme                                                                                                                        |
+ackremove         | Supprimer l'acquittement d'une alarme. (champ ack supprimé)                                                                                |
+assocticket       | Associe un ticket                                                                                                                          |
+declareticket     | Envoie un trigger declareticket                                                                                                            |
+cancel            | Annule un évènement et met son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.    |
+changestate       | Change et verrouille la criticité d'une alarme                                                                                             |
+check             | Envoie le résultat d'un check (depuis Nagios, Icinga,...)                                                                                  |
+snooze            | Place un Snooze sur une alarme                                                                                                             |
+statcounterinc    | Incrémente un compteur dans l'engine statistics                                                                                            |
+statduration      | Ajoute une durée dans l'engine statistics                                                                                                  |
+statstateinterval | Ajoute un état d'intervalle dans l'engine statistics                                                                                       |
+uncancel          | Annule un évènement sur l'alarme et restaure son statut précédent                                                                          |

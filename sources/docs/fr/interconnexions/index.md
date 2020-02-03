@@ -45,7 +45,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ## Drivers
 
-Le driver permet de peupler le référentiel interne Canopsis en vue de l’enrichissement des évènements.
+Le driver permet de peupler le référentiel interne Canopsis en vue de l’enrichissement des alarmes.
 
 **NB :** Chaque driver dans ce tableau est à considérer comme un framework de synchronisation qui doit être adapté à chaque contexte client (modèle de données, champs à synchroniser, liens applicatifs…).
 
@@ -81,7 +81,6 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 | **Nom** | **Destination(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|:------------:|
 | Service Now | Version [Madrid](https://www.servicenow.fr/) | CAT | Oui | Outil de marché | Version ≥ 3 (moteurs Go) |
-| Zelos | Zelos | CAT | Non | Outil client | Version ≥ 2 (moteurs Python) |
 | Observer | Observer | CAT | Non |  Outil client| Version ≥ 3 (moteurs Go) |
 
 ## Exploitation par les API

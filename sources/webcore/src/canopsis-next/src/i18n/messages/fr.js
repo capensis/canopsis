@@ -189,6 +189,7 @@ export default {
         changeState: 'Changer la criticité',
         moreInfos: 'Plus d\'infos',
         variablesHelp: 'Liste des variables disponibles',
+        history: 'Historique',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -820,6 +821,7 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Durée',
+        output: 'Note',
       },
     },
     statsDateInterval: {
@@ -1133,6 +1135,10 @@ export default {
             duration: 'Durée',
             noMessage: 'Aucun message n\'est défini',
           },
+          changeState: {
+            output: 'Output',
+            noOutput: 'Aucun output n\'est défini',
+          },
         },
       },
     },
@@ -1217,7 +1223,7 @@ export default {
   validation: {
     custom: {
       tstop: {
-        after: '{0} Devrait être après le {1}',
+        after: 'La date de fin doit être postérieure à {1}',
       },
     },
   },

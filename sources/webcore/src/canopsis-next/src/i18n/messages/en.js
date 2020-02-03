@@ -96,6 +96,8 @@ export default {
     endDate: 'End date',
     links: 'Links',
     filter: 'Filter',
+    stack: 'Stack',
+    edition: 'Edition',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -199,6 +201,7 @@ export default {
         changeState: 'Change criticity',
         moreInfos: 'More infos',
         variablesHelp: 'List of available variables',
+        history: 'History',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -922,6 +925,7 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Duration',
+        output: 'Note',
       },
     },
     createHeartbeat: {
@@ -1224,6 +1228,10 @@ export default {
             duration: 'Duration',
             noMessage: 'No message is set',
           },
+          changeState: {
+            output: 'Output',
+            noOutput: 'No output is set',
+          },
         },
       },
     },
@@ -1235,6 +1243,7 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
+      activeSessions: 'Active sessions',
     },
   },
   parameters: {
@@ -1318,7 +1327,7 @@ export default {
   validation: {
     custom: {
       tstop: {
-        after: 'The {0} should be after than {1}',
+        after: 'End time should be later than {1}',
       },
       logo: {
         size: 'The {0} size must be less than {1} KB.',

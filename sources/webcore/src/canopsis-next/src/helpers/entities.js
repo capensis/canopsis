@@ -15,6 +15,7 @@ import {
   SORT_ORDERS,
   ACTION_TYPES,
   DURATION_UNITS,
+  ENTITIES_STATES,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -100,6 +101,7 @@ export function generateWidgetByType(type) {
         periodicRefresh: {
           enabled: false,
           interval: 60,
+          unit: 's',
         },
         sort: {
           order: SORT_ORDERS.asc,
@@ -499,10 +501,17 @@ export function generateAction() {
     exdate: [],
   };
 
+  // Default 'changestate' action parameters
+  const changeStateParameters = {
+    state: ENTITIES_STATES.minor,
+    output: '',
+  };
+
   return {
     generalParameters,
     snoozeParameters,
     pbehaviorParameters,
+    changeStateParameters,
   };
 }
 

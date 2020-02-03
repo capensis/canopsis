@@ -10,7 +10,7 @@ WorkingDirectory=/opt/canopsis
 Environment=VIRTUAL_ENV=/opt/canopsis
 Environment=HOME=/opt/canopsis
 Environment=PATH=$VIRTUAL_ENV/bin:/bin/:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-Environment="OPTIONS=-k gevent -b 0.0.0.0:8082"
+Environment="OPTIONS=-k gevent --limit-request-line 6800 -b 0.0.0.0:8082"
 ExecStart=/opt/canopsis/bin/webserver $OPTIONS
 PIDFile=/var/run/canopsis-webserver.pid
 Restart=on-failure

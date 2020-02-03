@@ -22,6 +22,8 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
+export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
+
 export const VUETIFY_ANIMATION_DELAY = 300;
 
 export const SIDE_BAR_WIDTH = 250;
@@ -102,6 +104,7 @@ export const API_ROUTES = {
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
+  session: '/api/v2/sessions',
 };
 
 export const COLORS = {

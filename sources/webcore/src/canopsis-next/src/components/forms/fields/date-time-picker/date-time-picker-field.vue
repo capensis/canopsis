@@ -37,6 +37,8 @@ import DateTimePicker from './date-time-picker.vue';
 /**
  * Date time picker component
  *
+ * @warning If you want to use validation on the field you shouldn't use `v-field`
+ *
  * @prop {Date} [value=null] - Date value
  * @prop {Boolean} [clearable=false] - if it is true input field will be have cross button with clear event on click
  * @prop {string} [label=''] - Label of the input field

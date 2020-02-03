@@ -70,8 +70,12 @@ export default {
   data() {
     return {
       activeHookTab: 0,
-      availableTriggers: Object.values(WEBHOOK_TRIGGERS),
     };
+  },
+  computed: {
+    availableTriggers() {
+      return Object.values(WEBHOOK_TRIGGERS);
+    },
   },
   watch: {
     hasBlockedTriggers: {

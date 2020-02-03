@@ -18,6 +18,12 @@ const commands = {
     });
   },
 
+  checkEnableHtmlValue(expected) {
+    return this.getAttribute('@enableHtmlInput', 'aria-checked', ({ value }) => {
+      this.assert.equal(value, String(expected));
+    });
+  },
+
   clickAckGroup() {
     return this.customClick('@ackGroup');
   },
@@ -38,6 +44,12 @@ const commands = {
     });
   },
 
+  checkIsMultiAckEnabled(expected) {
+    return this.getAttribute('@isMultiAckEnabledInput', 'aria-checked', ({ value }) => {
+      this.assert.equal(value, String(expected));
+    });
+  },
+
   clickFastAckOutput() {
     return this.customClick('@fastAckOutput');
   },
@@ -47,6 +59,12 @@ const commands = {
       if (value !== String(checked)) {
         this.customClick('@fastAckOutputSwitch');
       }
+    });
+  },
+
+  checkFastAckOutputSwitch(expected) {
+    return this.getAttribute('@fastAckOutputSwitchInput', 'aria-checked', ({ value }) => {
+      this.assert.equal(value, String(expected));
     });
   },
 

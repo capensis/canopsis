@@ -135,6 +135,12 @@ export default {
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
         },
+        history: {
+          type: alarmsListActionsTypes.history,
+          icon: 'history',
+          title: this.$t('alarmList.actions.titles.history'),
+          method: this.showHistoryModal,
+        },
       },
     };
   },
@@ -150,7 +156,7 @@ export default {
       };
     },
     resolvedActions() {
-      const actions = [];
+      const actions = [this.filteredActionsMap.pbehaviorList];
 
       if (this.widget.parameters.moreInfoTemplate !== '') {
         actions.push(this.filteredActionsMap.moreInfos);
@@ -166,6 +172,10 @@ export default {
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
       ];
+
+      if (this.item.entity) {
+        actions.push(filteredActionsMap.history);
+      }
 
       if (this.isEditingMode) {
         actions.push(filteredActionsMap.variablesHelp);

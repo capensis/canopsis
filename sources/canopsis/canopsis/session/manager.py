@@ -85,7 +85,7 @@ class Session(object):
         """
 
         if not self.is_session_active(id_beaker_session):
-            raise SessionError("Session Not Valid")
+            self.session_start(id_beaker_session, username)
 
         now = int(time())
         session_current = self.session_collection.find_one(
@@ -190,7 +190,7 @@ class Session(object):
     def session_tracepath(self, id_beaker_session, username, path):
 
         if not self.is_session_active(id_beaker_session):
-            raise SessionError("Session Not Valid")
+            self.session_start(id_beaker_session, username)
 
         now = int(time())
         session_current = self.session_collection.find_one(
@@ -235,8 +235,6 @@ class Session(object):
         return now
 
     def sessions_req(self, id_beaker_session, params):
-        if not self.is_session_active(id_beaker_session):
-            raise SessionError("Session Not Valid")
 
         now = int(time())
         req = {}
