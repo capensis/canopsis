@@ -35,19 +35,16 @@ export default {
   data() {
     return {
       groupedSteps: {},
-      steps: [],
     };
   },
   watch: {
     alarm(alarm, oldAlarm) {
       if (alarm._id !== oldAlarm._id) {
         this.groupedSteps = {};
-        this.steps = [];
       }
 
       if (alarm && alarm.v.steps) {
         this.groupedSteps = this.groupSteps(alarm.v.steps);
-        this.steps = alarm.v.steps;
       } else {
         this.fetchItem();
       }
