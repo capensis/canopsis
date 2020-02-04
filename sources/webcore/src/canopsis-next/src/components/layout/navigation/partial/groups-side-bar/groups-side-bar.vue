@@ -13,21 +13,21 @@
       app-version.version
     draggable.panel(
       v-if="hasReadAnyViewAccess",
-      v-model="groupss",
+      v-model="mutatedGroups",
       :component-data="{ props: { expand: true, dark: true, focusable: true } }",
       :options="draggableOptions",
       element="v-expansion-panel"
     )
       groups-side-bar-group(
-        v-for="group in groupss",
+        v-for="(group, index) in mutatedGroups",
         :key="group._id",
-        :group.sync="group",
+        :group.sync="mutatedGroups[index]",
         :isEditingMode="isEditingMode",
-        :draggableOptions="draggableOptions",
+        :draggableOptions="draggableOptions"
       )
     v-divider
     template(v-if="isGroupsOrderChanged")
-      v-btn.primary(@click="resetGroups") {{ $t('common.submit') }}
+      v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="resetGroups") {{ $t('common.cancel') }}
     groups-settings-button(
       tooltipRight,
@@ -43,6 +43,7 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { groupSchema } from '@/store/schemas';
 
+import entitiesViewMixin from '@/mixins/entities/view';
 import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
 import registrableMixin from '@/mixins/registrable';
 
@@ -69,6 +70,7 @@ export default {
     GroupsSideBarGroup,
   },
   mixins: [
+    entitiesViewMixin,
     layoutNavigationGroupMenuMixin,
 
     registrableMixin([groupSchema], 'groups'),
@@ -81,7 +83,7 @@ export default {
   },
   data() {
     return {
-      groupss: [],
+      mutatedGroups: [],
       indexesMap: {},
       viewIndexesMap: {},
     };
@@ -102,8 +104,8 @@ export default {
       return { animation: VUETIFY_ANIMATION_DELAY, disabled: !this.isEditingMode };
     },
     isGroupsOrderChanged() {
-      return this.availableGroups.some((group, index) => this.groupss[index]._id !== group._id ||
-        group.views.some((view, viewIndex) => this.groupss[index].views[viewIndex]._id !== view._id));
+      return this.availableGroups.some((group, index) => this.mutatedGroups[index]._id !== group._id ||
+        group.views.some((view, viewIndex) => this.mutatedGroups[index].views[viewIndex]._id !== view._id));
     },
   },
   watch: {
@@ -111,13 +113,13 @@ export default {
       deep: true,
       immediate: true,
       handler(groups) {
-        this.setGroups(groups);
+        this.setMutatedGroups(groups);
       },
     },
   },
   methods: {
-    setGroups(groups = []) {
-      this.groupss = groups.map(group => ({
+    setMutatedGroups(groups = []) {
+      this.mutatedGroups = groups.map(group => ({
         ...group,
 
         views: [...group.views],
@@ -125,27 +127,42 @@ export default {
     },
 
     resetGroups() {
-      this.setGroups(this.availableGroups);
+      this.setMutatedGroups(this.availableGroups);
     },
 
-    submit() {
-      // const original
-      const { groups, views } = this.groupss.reduce((acc, group, index) => {
-        const originalGroup = this.groups.find(({ _id: id }) => id === group._id);
-        const isGroupsOrderChanged = this.availableGroups[index]._id === group._id;
+    async submit() {
+      const promises = this.mutatedGroups.reduce((acc, group, index) => {
+        const isGroupsOrderChanged = this.availableGroups[index]._id !== group._id;
+        const originalGroup = this.availableGroups.find(({ _id: id }) => id === group._id);
 
         if (isGroupsOrderChanged) {
-          acc.groups.push({ ...group, position: index });
+          const groupForUpdate = { name: group.name, position: index };
+
+          acc.push(this.updateGroup({ data: groupForUpdate, id: group._id }));
         }
 
-        const views = acc.groups.views.reduce((acc, view, index) => {
-          // originalGroup.
+        const viewsPromises = group.views.reduce((viewAcc, view, viewIndex) => {
+          const originalView = originalGroup.views[viewIndex];
+
+          if (originalView && originalView._id !== view._id) {
+            const viewForUpdate = { ...view, position: viewIndex };
+
+            viewAcc.push(this.updateView({ data: viewForUpdate, id: view._id }));
+          }
+
+          return viewAcc;
         }, []);
 
-        if (views.length) {
-          acc.views.concat(views);
+        if (viewsPromises.length) {
+          acc.push(...viewsPromises);
         }
-      }, { groups: [], views: [] });
+
+        return acc;
+      }, []);
+
+      await Promise.all(promises);
+
+      this.fetchGroupsList();
     },
   },
 };

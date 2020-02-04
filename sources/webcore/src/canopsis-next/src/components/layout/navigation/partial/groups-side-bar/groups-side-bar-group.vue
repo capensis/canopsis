@@ -14,7 +14,7 @@
     draggable.panel(
       :value="group.views",
       :options="draggableOptions",
-      @update="updateViewOrdering"
+      @update="updateViewsOrdering"
     )
       groups-side-bar-group-view(
         v-for="view in group.views",
@@ -26,6 +26,7 @@
 
 <script>
 import Draggable from 'vuedraggable';
+import arrayMove from 'array-move';
 
 import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
 
@@ -46,7 +47,13 @@ export default {
     },
   },
   methods: {
-    updateViewOrdering() {},
+    updateViewsOrdering({ oldIndex, newIndex }) {
+      this.$emit('update:group', {
+        ...this.group,
+
+        views: arrayMove(this.group.views, oldIndex, newIndex),
+      });
+    },
   },
 };
 </script>

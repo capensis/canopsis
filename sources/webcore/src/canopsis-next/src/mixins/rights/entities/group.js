@@ -8,7 +8,7 @@ export default {
     availableGroups() {
       return this.groupsOrdered.reduce((acc, group) => {
         const views = group.views.filter(view => this.checkReadAccess(view._id));
-        const sortedViews = sortBy(views, ['positions']);
+        const sortedViews = sortBy(views, ['position']);
 
         if (views.length || this.isEditingMode) {
           acc.push({ ...group, views: sortedViews });

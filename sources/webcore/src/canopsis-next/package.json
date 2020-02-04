@@ -13,6 +13,7 @@
     "lint:pug": "pug-lint-vue"
   },
   "dependencies": {
+    "array-move": "^2.2.1",
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
     "chartjs-plugin-annotation": "^0.5.7",
