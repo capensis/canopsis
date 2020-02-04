@@ -3,7 +3,7 @@
     router-link.panel-item-content-link(
       :data-test="`linkView-view-${view._id}`",
       :title="view.title",
-      :to="getViewLink(view)"
+      :to="viewLink"
     )
       v-card-text.panel-item-content
         v-layout(align-center, justify-space-between)
@@ -14,11 +14,11 @@
             v-layout(justify-end)
               v-btn.ma-0(
                 :data-test="`editViewButton-view-${view._id}`",
-                v-show="checkViewEditButtonAccessById(view._id)",
+                v-show="hasViewEditButtonAccess",
                 depressed,
                 small,
                 icon,
-                @click.prevent="showEditViewModal(view)"
+                @click.prevent="showEditViewModal"
               )
                 v-icon(small) edit
               v-btn.ma-0(
@@ -27,7 +27,7 @@
                 depressed,
                 small,
                 icon,
-                @click.prevent="showDuplicateViewModal(view)"
+                @click.prevent="showDuplicateViewModal"
               )
                 v-icon(small) file_copy
     v-divider
@@ -38,24 +38,13 @@ import layoutNavigationViewItemMixin from '@/mixins/layout/navigation/view-item'
 
 export default {
   mixins: [layoutNavigationViewItemMixin],
-  props: {
-    view: {
-      type: Object,
-      required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
-  },
   computed: {
-    cardColor() {
-      return this.isViewActive(this.view._id) ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1';
+    isViewActive() {
+      return this.$route.params.id && this.$route.params.id === this.view._id;
     },
-  },
-  methods: {
-    isViewActive(viewId) {
-      return this.$route.params.id && this.$route.params.id === viewId;
+
+    cardColor() {
+      return this.isViewActive ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1';
     },
   },
 };

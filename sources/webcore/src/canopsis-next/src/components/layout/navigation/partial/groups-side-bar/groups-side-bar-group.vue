@@ -8,7 +8,7 @@
         depressed,
         small,
         icon,
-        @click.stop="showEditGroupModal(group)"
+        @click.stop="showEditGroupModal"
       )
         v-icon(small) edit
     draggable.panel(
@@ -28,22 +28,17 @@
 import Draggable from 'vuedraggable';
 import arrayMove from 'array-move';
 
+import layoutNavigationGroupItemMixin from '@/mixins/layout/navigation/group-item';
+
 import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
 
 export default {
   components: { Draggable, GroupsSideBarGroupView },
+  mixins: [layoutNavigationGroupItemMixin],
   props: {
-    group: {
-      type: Object,
-      required: true,
-    },
     draggableOptions: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
   },
   methods: {

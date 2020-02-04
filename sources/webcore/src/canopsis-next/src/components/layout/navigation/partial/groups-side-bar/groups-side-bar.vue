@@ -14,6 +14,7 @@
     draggable.panel(
       v-if="hasReadAnyViewAccess",
       v-model="mutatedGroups",
+      :class="{ groupAbsolute: isGroupsOrderChanged }",
       :component-data="{ props: { expand: true, dark: true, focusable: true } }",
       :options="draggableOptions",
       element="v-expansion-panel"
@@ -22,11 +23,11 @@
         v-for="(group, index) in mutatedGroups",
         :key="group._id",
         :group.sync="mutatedGroups[index]",
-        :isEditingMode="isEditingMode",
+        :isEditingMode="issEditingMode",
         :draggableOptions="draggableOptions"
       )
     v-divider
-    template(v-if="isGroupsOrderChanged")
+    div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="resetGroups") {{ $t('common.cancel') }}
     groups-settings-button(
@@ -51,6 +52,7 @@ import GroupsSettingsButton from '../groups-settings-button.vue';
 import AppLogo from '../app-logo.vue';
 import AppVersion from '../app-version.vue';
 import ActiveSessionsCount from '../active-sessions-count.vue';
+
 import GroupsSideBarGroup from './groups-side-bar-group.vue';
 
 /**
@@ -100,9 +102,14 @@ export default {
       },
     },
 
+    issEditingMode() {
+      return !this.isGroupsOrderChanged && this.isEditingMode;
+    },
+
     draggableOptions() {
       return { animation: VUETIFY_ANIMATION_DELAY, disabled: !this.isEditingMode };
     },
+
     isGroupsOrderChanged() {
       return this.availableGroups.some((group, index) => this.mutatedGroups[index]._id !== group._id ||
         group.views.some((view, viewIndex) => this.mutatedGroups[index].views[viewIndex]._id !== view._id));
@@ -207,5 +214,11 @@ export default {
     max-width: 100%;
     max-height: 100%;
     object-fit: scale-down;
+  }
+
+  .groupAbsolute {
+    position: absolute;
+    z-index: 9;
+    width: 100%;
   }
 </style>

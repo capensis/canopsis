@@ -64,10 +64,11 @@ import authMixin from '@/mixins/auth';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import GroupsTopBar from './groups-top-bar.vue';
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
 import ActiveSessionsCount from './active-sessions-count.vue';
+import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
+// import GroupsTopBar from './groups-top-bar.vue';
 
 /**
  * Component for the top bar of the application
@@ -76,10 +77,10 @@ import ActiveSessionsCount from './active-sessions-count.vue';
  */
 export default {
   components: {
-    GroupsTopBar,
     AppLogo,
     AppVersion,
     ActiveSessionsCount,
+    GroupsTopBar,
   },
   mixins: [
     authMixin,
