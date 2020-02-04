@@ -6,7 +6,7 @@ Licensed under the [GNU AGPLv3](COPYING).
 
 ## Requirements
 
-Requires Go 1.12+, GNU Make, and Go Mod; see the `GOLANG_IMAGE_TAG` variable in [Makefile.var](Makefile.var) for the exact version.
+Requires [Go 1.12+](https://golang.org/dl/), GNU Make, and Go Mod; see the `GOLANG_IMAGE_TAG` variable in [Makefile.var](Makefile.var) for the exact version.
 
 ## Building
 
