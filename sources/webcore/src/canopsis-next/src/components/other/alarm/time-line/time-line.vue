@@ -38,12 +38,8 @@ export default {
     };
   },
   watch: {
-    alarm(alarm, oldAlarm) {
-      if (alarm._id !== oldAlarm._id) {
-        this.groupedSteps = {};
-      }
-
-      if (alarm && alarm.v.steps) {
+    alarm(alarm) {
+      if (alarm.v.steps) {
         this.groupedSteps = this.groupSteps(alarm.v.steps);
       } else {
         this.fetchItem();
