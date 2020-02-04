@@ -21,16 +21,12 @@
       v-select(
         v-field="periodicRefresh.unit",
         v-validate="'required'",
-        :items="availableTypes",
+        :items="availableUnits",
         :error-messages="errors.collect('periodicRefreshUnit')",
         :disabled="!periodicRefresh.enabled",
         name="periodicRefreshUnit",
         hide-details
       )
-        template(slot="selection", slot-scope="data")
-          div.input-group__selections__comma {{ $tc(data.item.text, 2) }}
-        template(slot="item", slot-scope="data")
-          div.list__tile__title {{ $tc(data.item.text, 2) }}
 </template>
 
 <script>
@@ -53,8 +49,11 @@ export default {
     },
   },
   computed: {
-    availableTypes() {
-      return Object.values(PERIODIC_REFRESH_UNITS);
+    availableUnits() {
+      return Object.values(PERIODIC_REFRESH_UNITS).map(({ value, text }) => ({
+        value,
+        text: this.$tc(text, 2),
+      }));
     },
   },
 };
