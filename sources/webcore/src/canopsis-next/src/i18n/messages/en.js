@@ -1287,6 +1287,8 @@ export default {
         id: 'ID',
         requestMethod: 'Request method',
         requestUrl: 'Request URL',
+        retryDelay: 'Delay',
+        retryCount: 'Repeat',
       },
     },
     tabs: {

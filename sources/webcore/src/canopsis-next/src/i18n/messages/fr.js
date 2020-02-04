@@ -1183,6 +1183,8 @@ export default {
         id: 'ID',
         requestMethod: 'Requête: Méthode',
         requestUrl: 'Requête: URL',
+        retryDelay: 'Intervalle',
+        retryCount: 'Nombre d\'essais',
       },
     },
     tabs: {

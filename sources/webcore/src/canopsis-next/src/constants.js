@@ -1005,7 +1005,7 @@ export const HEARTBEAT_DURATION_UNITS = {
 };
 
 export const TIME_UNITS = {
-  seconds: 's',
+  second: 's',
   minute: 'm',
   hour: 'h',
   day: 'd',
@@ -1044,7 +1044,7 @@ export const DURATION_UNITS = {
 export const PERIODIC_REFRESH_UNITS = {
   second: {
     text: 'common.times.second',
-    value: TIME_UNITS.seconds,
+    value: TIME_UNITS.second,
   },
   minute: DURATION_UNITS.minute,
   hour: DURATION_UNITS.hour,
@@ -1053,22 +1053,22 @@ export const PERIODIC_REFRESH_UNITS = {
 export const DEFAULT_PERIODIC_REFRESH = {
   interval: 60,
   enabled: false,
-  unit: TIME_UNITS.seconds,
+  unit: TIME_UNITS.second,
 };
 
 export const DEFAULT_RETRY_FIELD = {
   count: 0,
   delay: RETRY_DEFAULT_DELAY,
-  unit: TIME_UNITS.seconds,
+  unit: TIME_UNITS.second,
 };
 
 export const EXPLOITATION_PAGES_RULES = {
-  eventFilter: { stack: CANOPSIS_STACK.go },
-  webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  snmpRule: { edition: CANOPSIS_EDITION.cat },
-  heartbeat: { stack: CANOPSIS_STACK.go },
-  action: { stack: CANOPSIS_STACK.go },
-  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
+  eventFilter: { stack: CANOPSIS_STACK.python },
+  webhooks: { stack: CANOPSIS_STACK.python, edition: CANOPSIS_EDITION.core },
+  snmpRule: { edition: CANOPSIS_EDITION.core },
+  heartbeat: { stack: CANOPSIS_STACK.python },
+  action: { stack: CANOPSIS_STACK.python },
+  dynamicInfo: { edition: CANOPSIS_EDITION.core },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {

@@ -2,7 +2,6 @@ import { get, omit } from 'lodash';
 
 import { setSeveralFields, unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
-import { getSecondByUnit, formatSecondByUnit } from '@/helpers/time';
 
 /**
  * Get webhook form field's values (or customizer function)
@@ -27,10 +26,6 @@ export function webhookToForm(webhook) {
   return {
     emptyResponse: webhook.empty_response || false,
     ...setSeveralFields(webhook, getWebhookFormFields(webhook)),
-    retry: webhook.retry && {
-      ...webhook.retry,
-      delay: formatSecondByUnit(webhook.retry.delay, webhook.retry.unit),
-    },
   };
 }
 
@@ -77,17 +72,7 @@ function createWebhookObject(form) {
     pathValuesMap['request.auth'] = getWebhookAuthField(form);
   }
 
-  const retry = {
-    ...form.retry,
-    delay: getSecondByUnit(form.retry.delay, form.retry.unit),
-  };
-
-  const formData = {
-    ...omit(form, ['emptyResponse']),
-    retry,
-  };
-
-  return setSeveralFields(formData, pathValuesMap);
+  return setSeveralFields(omit(form, ['emptyResponse']), pathValuesMap);
 }
 
 /**
