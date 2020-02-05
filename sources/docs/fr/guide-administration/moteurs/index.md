@@ -7,10 +7,10 @@
 
 Les [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) envoyés par des [connecteurs](../../guide-utilisation/vocabulaire/index.md#connecteur) à Canopsis sont traités à l'aide de [moteurs](../../guide-utilisation/vocabulaire/index.md#moteur).
 
-Un moteur a **plusieurs rôles** :
+Un moteur a **plusieurs rôles** :
 
-*  consommation d'un évènement : pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
-*  effectuer une tâche périodique : appelée « beat », cette tâche sera exécutée à intervalle régulier.
+*  consommation d'un évènement : pour le traiter, puis l'acheminer vers le(s) moteur(s) suivant(s).
+*  effectuer une tâche périodique : appelée « beat », cette tâche sera exécutée à intervalle régulier.
 *  consommation d'un enregistrement lorsque les enregistrements de la base de données sont disponibles.
 
 Un moteur peut avoir les **propriétés** suivantes :
@@ -58,6 +58,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | canopsis-engine@**task_mail-task_mail**.service                                                 | Gestionnaire de tâches pour envoyer du courrier.         |       |
 | canopsis-engine@**ticket-ticket**.service                                                       | Gère les tickets externes.                               |       |
 | canopsis-engine@**dynamic-watcher**.service                                                     | Gère les watchers (groupes de surveillance).             |       |
+| [canopsis-engine@kpi-kpi.service](moteur-kpi.md) | Synchronisation données vers PGSQL afin de fournir des statistiques. | ✅ |
 
 ## Flags & Usage
 
@@ -242,18 +243,18 @@ Le paramètre `-l debug` visible à la fin de la dernière ligne indique bien qu
 
 ## Moteurs obsolètes
 
-Les moteurs Python suivants ne sont plus pris en charge lors d'une nouvelle installation ou d'une mise à jour de Canopsis :
+Les moteurs Python suivants ne sont plus pris en charge lors d'une nouvelle installation ou d'une mise à jour de Canopsis :
 
 *  acknowledgement
 *  cancel
 *  context
 *  ticket
-*  task\_dataclean : non fonctionnel depuis Canopsis 3.0
+*  task\_dataclean : non fonctionnel depuis Canopsis 3.0
 *  task\_linklist : n'existe plus depuis Canopsis 3.0, remplacé par [linkbuilder](../linkbuilder/index.md)
 *  perfdata : n'existe plus depuis Canopsis 3.0, remplacé par metric
-*  eventstore : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), utile uniquement pour l'exploitation de l'ancienne vue SNMP de l'UIv2
-*  task\_mail : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), remplacé par [les Webhooks](moteur-webhook.md)
+*  eventstore : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), utile uniquement pour l'exploitation de l'ancienne vue SNMP de l'UIv2
+*  task\_mail : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), remplacé par [les Webhooks](moteur-webhook.md)
 
-Moteurs Go :
+Moteurs Go :
 
-*  engine-stat : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md)
+*  engine-stat : désactivé par défaut depuis [Canopsis 3.31.0](../../notes-de-version/3.31.0.md)
