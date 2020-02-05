@@ -1148,6 +1148,12 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
+      ordering: {
+        popups: {
+          success: 'Les groupes ont été réorganisés',
+          error: 'Plusieurs groupes n\'ont pas été réorganisés',
+        },
+      },
     },
   },
   parameters: {

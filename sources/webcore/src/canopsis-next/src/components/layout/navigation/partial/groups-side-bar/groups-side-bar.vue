@@ -24,14 +24,15 @@
           v-for="(group, index) in mutatedGroups",
           :key="group._id",
           :group.sync="mutatedGroups[index]",
-          :isEditingMode="issEditingMode",
+          :isEditingMode="isEditingMode",
+          :isGroupsOrderChanged="isGroupsOrderChanged",
           :draggableOptions="draggableOptions"
         )
       v-divider
       v-fade-transition
         div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
           v-btn.primary(@click="submit") {{ $t('common.submit') }}
-          v-btn(@click="resetGroups") {{ $t('common.cancel') }}
+          v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
       groups-settings-button(
         tooltipRight,
         :isEditingMode="isEditingMode",
@@ -90,8 +91,6 @@ export default {
   data() {
     return {
       mutatedGroups: [],
-      indexesMap: {},
-      viewIndexesMap: {},
     };
   },
   computed: {
@@ -129,6 +128,11 @@ export default {
     },
   },
   methods: {
+    /**
+     * Set mutated groups method
+     *
+     * @param {Array} [groups=[]] - New mutated groups
+     */
     setMutatedGroups(groups = []) {
       this.mutatedGroups = groups.map(group => ({
         ...group,
@@ -137,14 +141,45 @@ export default {
       }));
     },
 
-    resetGroups() {
+    /**
+     * Reset mutated groups method
+     */
+    resetMutatedGroups() {
       this.setMutatedGroups(this.availableGroups);
     },
 
-    async submit() {
-      const promises = this.mutatedGroups.reduce((acc, group, index) => {
-        const isGroupsOrderChanged = this.availableGroups[index]._id !== group._id;
-        const originalGroup = this.availableGroups.find(({ _id: id }) => id === group._id);
+    /**
+     * Get requests array for group views
+     *
+     * @param {Array} [views=[]] - Views with updated ordering
+     * @param {Array} [originalViews=[]] - Original views from store
+     * @returns {Array<Promise>}
+     */
+    getGroupViewsRequests(views = [], originalViews = []) {
+      return views.reduce((viewAcc, view, viewIndex) => {
+        const originalView = originalViews[viewIndex];
+
+        if (originalView && originalView._id !== view._id) {
+          const viewForUpdate = { ...view, position: viewIndex };
+
+          viewAcc.push(this.updateViewWithoutStore({ data: viewForUpdate, id: view._id }));
+        }
+
+        return viewAcc;
+      }, []);
+    },
+
+    /**
+     * Get requests array for groups
+     *
+     * @param {Array} [groups=[]] - Groups with updated ordering
+     * @param {Array} [originalGroups=[]] - Original groups from store
+     * @returns {Array<Promise>}
+     */
+    getGroupsRequests(groups = [], originalGroups = []) {
+      return groups.reduce((acc, group, index) => {
+        const isGroupsOrderChanged = originalGroups[index]._id !== group._id;
+        const originalGroup = originalGroups.find(({ _id: id }) => id === group._id);
 
         if (isGroupsOrderChanged) {
           const groupForUpdate = { name: group.name, position: index };
@@ -152,28 +187,32 @@ export default {
           acc.push(this.updateGroup({ data: groupForUpdate, id: group._id }));
         }
 
-        const viewsPromises = group.views.reduce((viewAcc, view, viewIndex) => {
-          const originalView = originalGroup.views[viewIndex];
+        const viewsRequests = this.getGroupViewsRequests(group.views, originalGroup.views);
 
-          if (originalView && originalView._id !== view._id) {
-            const viewForUpdate = { ...view, position: viewIndex };
-
-            viewAcc.push(this.updateView({ data: viewForUpdate, id: view._id }));
-          }
-
-          return viewAcc;
-        }, []);
-
-        if (viewsPromises.length) {
-          acc.push(...viewsPromises);
+        if (viewsRequests.length) {
+          acc.push(...viewsRequests);
         }
 
         return acc;
       }, []);
+    },
 
-      await Promise.all(promises);
+    /**
+     * Submit the sidebar ordering
+     *
+     * @returns {Promise<void>}
+     */
+    async submit() {
+      try {
+        const requests = this.getGroupsRequests(this.mutatedGroups, this.availableGroups);
 
-      this.fetchGroupsList();
+        await Promise.all(requests);
+        await this.fetchGroupsList();
+
+        this.$popups.success({ text: this.$t('layout.sideBar.ordering.popups.success') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('layout.sideBar.ordering.popups.error') });
+      }
     },
   },
 };

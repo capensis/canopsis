@@ -1242,6 +1242,12 @@ export default {
         settings: 'Settings',
       },
       activeSessions: 'Active sessions',
+      ordering: {
+        popups: {
+          success: 'The groups was reordered',
+          error: 'Several groups wasn\'t reordered',
+        },
+      },
     },
   },
   parameters: {

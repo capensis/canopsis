@@ -6,8 +6,9 @@
     div.panel-header(slot="header")
       span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
       v-btn(
-        :data-test="`editGroupButton-group-${group._id}`",
         v-show="isEditingMode",
+        :disabled="isGroupsOrderChanged",
+        :data-test="`editGroupButton-group-${group._id}`",
         depressed,
         small,
         icon,
@@ -23,7 +24,8 @@
         v-for="view in group.views",
         :key="view._id",
         :view="view",
-        :isEditingMode="isEditingMode"
+        :isEditingMode="isEditingMode",
+        :isGroupsOrderChanged="isGroupsOrderChanged"
       )
 </template>
 
@@ -42,6 +44,10 @@ export default {
     draggableOptions: {
       type: Object,
       required: true,
+    },
+    isGroupsOrderChanged: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

@@ -14,8 +14,9 @@
           v-flex
             v-layout(justify-end)
               v-btn.ma-0(
-                :data-test="`editViewButton-view-${view._id}`",
                 v-show="hasViewEditButtonAccess",
+                :disabled="isGroupsOrderChanged",
+                :data-test="`editViewButton-view-${view._id}`",
                 depressed,
                 small,
                 icon,
@@ -23,8 +24,9 @@
               )
                 v-icon(small) edit
               v-btn.ma-0(
-                :data-test="`copyViewButton-view-${view._id}`",
                 v-show="isEditingMode",
+                :disabled="isGroupsOrderChanged",
+                :data-test="`copyViewButton-view-${view._id}`",
                 depressed,
                 small,
                 icon,
@@ -39,6 +41,12 @@ import layoutNavigationGroupsBarGroupViewMixin from '@/mixins/layout/navigation/
 
 export default {
   mixins: [layoutNavigationGroupsBarGroupViewMixin],
+  props: {
+    isGroupsOrderChanged: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     isViewActive() {
       return this.$route.params.id && this.$route.params.id === this.view._id;
