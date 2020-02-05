@@ -29,8 +29,8 @@
               color="white",
               button
             )
-              span {{ periodicRefreshProgress }}
-          span {{ $t('common.refresh') }}
+              span.refresh-btn {{ refreshProgressValueByUnit }}{{ refreshProgressCurrentUnit }}
+          span {{ tooltipContent }}
         v-speed-dial(
           v-if="hasUpdateAccess",
           v-model="isVSpeedDialOpen",
@@ -114,9 +114,9 @@
 
 <script>
 import { get } from 'lodash';
-import { MODALS } from '@/constants';
+import { DATETIME_FORMATS, MODALS, TIME_UNITS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
-import { getSecondsByUnit } from '@/helpers/time';
+import { getSecondsByUnit, getUnitValueFromSeconds } from '@/helpers/time';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
@@ -147,22 +147,59 @@ export default {
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
       periodicRefreshInterval: null,
-      periodicRefreshProgress: null,
+      periodicRefreshProgress: undefined,
     };
   },
   computed: {
+    tooltipContent() {
+      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressByMaxUnit : this.$t('common.refresh');
+    },
+
+    availableUnits() {
+      return [
+        TIME_UNITS.year,
+        TIME_UNITS.month,
+        TIME_UNITS.day,
+        TIME_UNITS.hour,
+        TIME_UNITS.minute,
+        TIME_UNITS.second,
+      ];
+    },
+
+    refreshProgressCurrentUnit() {
+      return this.availableUnits.find(unit => this.getRoundedUnit(this.periodicRefreshProgress, unit));
+    },
+
+    refreshProgressValueByUnit() {
+      return this.getRoundedUnit(this.periodicRefreshProgress, this.refreshProgressCurrentUnit);
+    },
+
+    periodicRefreshProgressByMaxUnit() {
+      return this.$options.filters.duration(
+        this.periodicRefreshProgress,
+        undefined,
+        DATETIME_FORMATS.refreshFieldFormat,
+      );
+    },
+
     periodicBehaviorProgressValue() {
-      return this.periodicRefreshProgress / (this.periodicRefreshValue / 100);
+      return this.periodicRefreshProgress / (this.periodicRefreshDelay / 100);
     },
 
     isPeriodicRefreshEnabled() {
       return get(this.view, 'periodicRefresh.enabled', false);
     },
 
-    periodicRefreshValue() {
-      const value = get(this.view, 'periodicRefresh.interval') || get(this.view, 'periodicRefresh.value', 0);
+    periodicRefreshUnit() {
+      return get(this.view, 'periodicRefresh.unit');
+    },
 
-      return getSecondsByUnit(value, get(this.view, 'periodicRefresh.unit'));
+    periodicRefreshValue() {
+      return get(this.view, 'periodicRefresh.interval') || get(this.view, 'periodicRefresh.value', 0);
+    },
+
+    periodicRefreshDelay() {
+      return getSecondsByUnit(this.periodicRefreshValue, this.periodicRefreshUnit);
     },
 
     hasUpdateAccess() {
@@ -200,7 +237,7 @@ export default {
         this.stopPeriodicRefreshInterval();
       }
     },
-    periodicRefreshValue(value, oldValue) {
+    periodicRefreshDelay(value, oldValue) {
       if (value !== oldValue) {
         this.resetRefreshInterval();
       }
@@ -326,7 +363,7 @@ export default {
     },
 
     resetRefreshInterval() {
-      this.periodicRefreshProgress = this.periodicRefreshValue;
+      this.periodicRefreshProgress = this.periodicRefreshDelay;
     },
 
     refreshTick() {
@@ -352,6 +389,17 @@ export default {
 
       this.periodicRefreshInterval = undefined;
     },
+
+    getRoundedUnit(value, unit) {
+      return Math.floor(getUnitValueFromSeconds(value, unit));
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.refresh-btn {
+  text-decoration: none;
+  text-transform: none;
+}
+</style>
