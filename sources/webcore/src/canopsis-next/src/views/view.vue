@@ -152,7 +152,7 @@ export default {
   },
   computed: {
     tooltipContent() {
-      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressByMaxUnit : this.$t('common.refresh');
+      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormated : this.$t('common.refresh');
     },
 
     availableUnits() {
@@ -174,7 +174,7 @@ export default {
       return this.getRoundedUnit(this.periodicRefreshProgress, this.refreshProgressCurrentUnit);
     },
 
-    periodicRefreshProgressByMaxUnit() {
+    periodicRefreshProgressFormated() {
       return this.$options.filters.duration(
         this.periodicRefreshProgress,
         undefined,
