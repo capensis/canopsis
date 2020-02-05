@@ -25,9 +25,9 @@
 </template>
 
 <script>
-import layoutNavigationViewItemMixin from '@/mixins/layout/navigation/view-item';
+import layoutNavigationGroupsBarGroupViewMixin from '@/mixins/layout/navigation/groups-bar-group-view';
 
 export default {
-  mixins: [layoutNavigationViewItemMixin],
+  mixins: [layoutNavigationGroupsBarGroupViewMixin],
 };
 </script>

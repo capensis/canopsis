@@ -1,40 +1,44 @@
 <template lang="pug">
-  v-navigation-drawer.side-bar.secondary(
-    v-model="isOpen",
-    :width="$config.SIDE_BAR_WIDTH",
-    :class="{ editing: isEditingMode }",
-    data-test="groupsSideBar",
-    disable-resize-watcher,
-    app
-  )
-    div.brand.ma-0.secondary.lighten-1
-      app-logo.logo
-      active-sessions-count
-      app-version.version
-    draggable.panel(
-      v-if="hasReadAnyViewAccess",
-      v-model="mutatedGroups",
-      :class="{ groupAbsolute: isGroupsOrderChanged }",
-      :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-      :options="draggableOptions",
-      element="v-expansion-panel"
+  div
+    v-navigation-drawer.side-bar.secondary(
+      v-model="isOpen",
+      :width="$config.SIDE_BAR_WIDTH",
+      :class="{ editing: isEditingMode }",
+      data-test="groupsSideBar",
+      disable-resize-watcher,
+      app
     )
-      groups-side-bar-group(
-        v-for="(group, index) in mutatedGroups",
-        :key="group._id",
-        :group.sync="mutatedGroups[index]",
-        :isEditingMode="issEditingMode",
-        :draggableOptions="draggableOptions"
+      div.brand.ma-0.secondary.lighten-1
+        app-logo.logo
+        active-sessions-count
+        app-version.version
+      draggable.panel(
+        v-if="hasReadAnyViewAccess",
+        v-model="mutatedGroups",
+        :class="{ ordering: isGroupsOrderChanged }",
+        :component-data="{ props: { expand: true, dark: true, focusable: true } }",
+        :options="draggableOptions",
+        element="v-expansion-panel"
       )
-    v-divider
-    div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
-      v-btn(@click="resetGroups") {{ $t('common.cancel') }}
-    groups-settings-button(
-      tooltipRight,
-      :isEditingMode="isEditingMode",
-      @toggleEditingMode="toggleEditingMode"
-    )
+        groups-side-bar-group(
+          v-for="(group, index) in mutatedGroups",
+          :key="group._id",
+          :group.sync="mutatedGroups[index]",
+          :isEditingMode="issEditingMode",
+          :draggableOptions="draggableOptions"
+        )
+      v-divider
+      v-fade-transition
+        div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
+          v-btn.primary(@click="submit") {{ $t('common.submit') }}
+          v-btn(@click="resetGroups") {{ $t('common.cancel') }}
+      groups-settings-button(
+        tooltipRight,
+        :isEditingMode="isEditingMode",
+        @toggleEditingMode="toggleEditingMode"
+      )
+    v-fade-transition
+      div.v-overlay.v-overlay--active.content-overlay(v-show="isGroupsOrderChanged")
 </template>
 
 <script>
@@ -45,7 +49,7 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { groupSchema } from '@/store/schemas';
 
 import entitiesViewMixin from '@/mixins/entities/view';
-import layoutNavigationGroupMenuMixin from '@/mixins/layout/navigation/group-menu';
+import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
 import registrableMixin from '@/mixins/registrable';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
@@ -73,7 +77,7 @@ export default {
   },
   mixins: [
     entitiesViewMixin,
-    layoutNavigationGroupMenuMixin,
+    layoutNavigationGroupsBarMixin,
 
     registrableMixin([groupSchema], 'groups'),
   ],
@@ -176,14 +180,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .content-overlay {
+    z-index: 3;
+  }
+
   .panel {
     box-shadow: none;
+
+    &.ordering {
+      position: absolute;
+      z-index: 9;
+    }
   }
 
   .side-bar {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+    z-index: 4;
   }
 
   .brand {
@@ -214,11 +228,5 @@ export default {
     max-width: 100%;
     max-height: 100%;
     object-fit: scale-down;
-  }
-
-  .groupAbsolute {
-    position: absolute;
-    z-index: 9;
-    width: 100%;
   }
 </style>

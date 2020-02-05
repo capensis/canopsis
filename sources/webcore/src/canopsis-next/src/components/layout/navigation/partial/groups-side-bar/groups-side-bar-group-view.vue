@@ -1,6 +1,7 @@
 <template lang="pug">
   v-card(:color="cardColor")
     router-link.panel-item-content-link(
+      :class="{ editing: isEditingMode }",
       :data-test="`linkView-view-${view._id}`",
       :title="view.title",
       :to="viewLink"
@@ -34,10 +35,10 @@
 </template>
 
 <script>
-import layoutNavigationViewItemMixin from '@/mixins/layout/navigation/view-item';
+import layoutNavigationGroupsBarGroupViewMixin from '@/mixins/layout/navigation/groups-bar-group-view';
 
 export default {
-  mixins: [layoutNavigationViewItemMixin],
+  mixins: [layoutNavigationGroupsBarGroupViewMixin],
   computed: {
     isViewActive() {
       return this.$route.params.id && this.$route.params.id === this.view._id;
@@ -63,6 +64,14 @@ export default {
     text-overflow: ellipsis;
     display: inline-block;
     vertical-align: middle;
+
+    &.editing {
+      cursor: move;
+
+      .panel-item-content {
+        cursor: inherit;
+      }
+    }
   }
 
   .panel-item-content {

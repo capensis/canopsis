@@ -1,5 +1,8 @@
 <template lang="pug">
-  v-expansion-panel-content.secondary.white--text.group-item(:data-test="`panel-group-${group._id}`")
+  v-expansion-panel-content.secondary.white--text.group-item(
+    :class="{ editing: isEditingMode }",
+    :data-test="`panel-group-${group._id}`"
+  )
     div.panel-header(slot="header")
       span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
       v-btn(
@@ -28,13 +31,13 @@
 import Draggable from 'vuedraggable';
 import arrayMove from 'array-move';
 
-import layoutNavigationGroupItemMixin from '@/mixins/layout/navigation/group-item';
+import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
 
 import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
 
 export default {
   components: { Draggable, GroupsSideBarGroupView },
-  mixins: [layoutNavigationGroupItemMixin],
+  mixins: [layoutNavigationGroupsBarGroupMixin],
   props: {
     draggableOptions: {
       type: Object,
@@ -54,8 +57,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .group-item /deep/ .v-expansion-panel__header {
-    height: 48px;
+  .group-item {
+    & /deep/ .v-expansion-panel__header {
+      height: 48px;
+    }
+
+    &.editing /deep/ .v-expansion-panel__header {
+      cursor: move;
+    }
   }
 
   .panel-header {

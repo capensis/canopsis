@@ -32,13 +32,13 @@
 </template>
 
 <script>
-import layoutNavigationGroupItemMixin from '@/mixins/layout/navigation/group-item';
+import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
 
 import GroupsTopBarGroupView from './groups-top-bar-group-view.vue';
 
 export default {
   components: { GroupsTopBarGroupView },
-  mixins: [layoutNavigationGroupItemMixin],
+  mixins: [layoutNavigationGroupsBarGroupMixin],
 };
 </script>
 
