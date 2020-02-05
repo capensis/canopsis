@@ -105,29 +105,42 @@ export default {
       },
     },
 
-    issEditingMode() {
-      return !this.isGroupsOrderChanged && this.isEditingMode;
-    },
-
     draggableOptions() {
       return { animation: VUETIFY_ANIMATION_DELAY, disabled: !this.isEditingMode };
     },
 
     isGroupsOrderChanged() {
-      return this.availableGroups.some((group, index) => this.mutatedGroups[index]._id !== group._id ||
-        group.views.some((view, viewIndex) => this.mutatedGroups[index].views[viewIndex]._id !== view._id));
+      return this.checkIsGroupsOrderChanged(this.availableGroups, this.mutatedGroups);
     },
   },
   watch: {
     availableGroups: {
       deep: true,
       immediate: true,
-      handler(groups) {
-        this.setMutatedGroups(groups);
+      handler(groups, oldGroups) {
+        const isGroupsOrderChanged = this.checkIsGroupsOrderChanged(groups, oldGroups);
+
+        if (isGroupsOrderChanged) {
+          this.setMutatedGroups(groups);
+        }
       },
     },
   },
   methods: {
+    checkIsGroupsOrderChanged(groups = [], anotherGroups = []) {
+      return this.checkIsEntityOrderChanged(groups, anotherGroups, (entity = {}, anotherEntity = {}) =>
+        this.checkIsEntityOrderChanged(entity.views, anotherEntity.views));
+    },
+
+    checkIsEntityOrderChanged(entities = [], anotherEntities = [], callback = () => false) {
+      return entities.length !== anotherEntities.length ||
+        entities.some((entity, index) => {
+          const anotherEntity = anotherEntities[index] || {};
+
+          return entity._id !== anotherEntity._id || callback(entity, anotherEntity);
+        });
+    },
+
     /**
      * Set mutated groups method
      *

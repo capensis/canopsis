@@ -2,6 +2,7 @@
   v-card(:color="cardColor")
     router-link.panel-item-content-link(
       :class="{ editing: isEditingMode }",
+      :event="routerLinkEvents",
       :data-test="`linkView-view-${view._id}`",
       :title="view.title",
       :to="viewLink"
@@ -54,6 +55,10 @@ export default {
 
     cardColor() {
       return this.isViewActive ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1';
+    },
+
+    routerLinkEvents() {
+      return this.isGroupsOrderChanged ? [] : ['click'];
     },
   },
 };
