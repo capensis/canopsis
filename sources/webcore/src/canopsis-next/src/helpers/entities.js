@@ -101,6 +101,7 @@ export function generateWidgetByType(type) {
         periodicRefresh: {
           enabled: false,
           interval: 60,
+          unit: 's',
         },
         sort: {
           order: SORT_ORDERS.asc,

@@ -627,6 +627,13 @@
         "desc": "Service weather: Access to Links"
     },
     {
+        "_id": "serviceweather_pbehaviorList",
+        "loader_id": "serviceweather_pbehaviorList",
+        "crecord_name": "serviceweather_pbehaviorList",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to watcher pbehavior list"
+    },
+    {
         "_id": "crudcontext_createEntity",
         "loader_id": "crudcontext_createEntity",
         "crecord_type": "action",

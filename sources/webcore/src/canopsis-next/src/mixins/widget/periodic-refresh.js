@@ -1,3 +1,5 @@
+import { getSecondByUnit } from '@/helpers/time';
+
 export default {
   data() {
     return {
@@ -11,16 +13,18 @@ export default {
         const periodicRefresh = value || {};
         const oldPeriodicRefresh = oldValue || {};
 
-        const interval = parseInt(periodicRefresh.interval, 10) * 1000; // In seconds
-        const oldInterval = parseInt(oldPeriodicRefresh.interval, 10) * 1000; // In seconds
+        const interval = parseInt(periodicRefresh.interval, 10);
+        const oldInterval = parseInt(oldPeriodicRefresh.interval, 10);
 
         if (periodicRefresh.enabled && periodicRefresh.interval) {
           if (interval !== oldInterval || periodicRefresh.enabled !== oldPeriodicRefresh.enabled) {
+            const delay = getSecondByUnit(interval, periodicRefresh.unit);
+
             if (this.periodicRefreshInterval) {
               clearInterval(this.periodicRefreshInterval);
             }
 
-            this.periodicRefreshInterval = setInterval(() => this.fetchList({ isPeriodicRefresh: true }), interval);
+            this.periodicRefreshInterval = setInterval(() => this.fetchList({ isPeriodicRefresh: true }), delay * 1000);
           }
         } else {
           clearInterval(this.periodicRefreshInterval);
