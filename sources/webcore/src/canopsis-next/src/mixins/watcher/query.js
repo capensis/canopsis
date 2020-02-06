@@ -8,10 +8,12 @@ import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 export default {
   mixins: [queryMixin, entitiesWatcherEntityMixin],
   data() {
+    const { itemsPerPage = PAGINATION_LIMIT } = this.modal.config;
+
     return {
       query: {
         page: 1,
-        limit: PAGINATION_LIMIT,
+        limit: itemsPerPage,
       },
     };
   },

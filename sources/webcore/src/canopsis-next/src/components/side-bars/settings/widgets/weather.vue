@@ -53,6 +53,10 @@
             :columnsLabel="$t('settings.orderBy')"
           )
           v-divider
+          field-default-elements-per-page(v-model="settings.widget.parameters.modalItemsPerPage")
+            span(slot="title") {{ $t('settings.defaultNumberOfElementsPerPage') }}
+              span.font-italic.caption.ml-1 (Modal)
+          v-divider
           field-weather-template(
             data-test="widgetTemplateWeatherItem",
             v-model="settings.widget.parameters.blockTemplate",
