@@ -16,7 +16,7 @@ export default {
   props: {
     value: {
       type: Object,
-      default: DEFAULT_PERIODIC_REFRESH,
+      default: () => ({ ...DEFAULT_PERIODIC_REFRESH }),
     },
   },
 };
