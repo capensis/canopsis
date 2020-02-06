@@ -146,13 +146,11 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
-      periodicRefreshInterval: null,
-      periodicRefreshProgress: undefined,
     };
   },
   computed: {
     tooltipContent() {
-      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormated : this.$t('common.refresh');
+      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormatted : this.$t('common.refresh');
     },
 
     hasUpdateAccess() {

@@ -38,7 +38,7 @@ export default {
   },
 
   computed: {
-    periodicRefreshProgressFormated() {
+    periodicRefreshProgressFormatted() {
       return this.$options.filters.duration(
         this.periodicRefreshProgress,
         undefined,
