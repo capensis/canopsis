@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group(data-test="elementsPerPage")
     v-list-tile.items-per-page-title(slot="activator")
-      slot.pr-1(name="title")
+      slot(name="title")
         span {{ $t('settings.defaultNumberOfElementsPerPage') }}
     v-container(data-test="elementsPerPageFieldContainer",)
       v-select.select(
