@@ -14,7 +14,7 @@
       span {{ group.name }}
       v-btn(
         data-test="editGroupButton",
-        v-show="isEditingMode",
+        v-show="isNavigationEditingMode",
         depressed,
         small,
         icon,
@@ -26,8 +26,7 @@
       groups-top-bar-group-view(
         v-for="view in group.views",
         :key="view._id",
-        :view="view",
-        :isEditingMode="isEditingMode"
+        :view="view"
       )
 </template>
 

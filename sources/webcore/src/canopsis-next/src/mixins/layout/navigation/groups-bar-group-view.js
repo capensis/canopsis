@@ -2,16 +2,17 @@ import { MODALS } from '@/constants';
 
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
+import layoutNavigationEditingModeMixin from './editing-mode';
+
 export default {
-  mixins: [rightsTechnicalViewMixin],
+  mixins: [
+    rightsTechnicalViewMixin,
+    layoutNavigationEditingModeMixin,
+  ],
   props: {
     view: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {
@@ -38,7 +39,7 @@ export default {
     },
 
     hasViewEditButtonAccess() {
-      return (this.hasUpdateViewAccess || this.hasDeleteViewAccess) && this.isEditingMode;
+      return (this.hasUpdateViewAccess || this.hasDeleteViewAccess) && this.isNavigationEditingMode;
     },
   },
   methods: {

@@ -14,7 +14,7 @@
         v-icon(small) edit
       v-btn.duplicate-view-button(
         :data-test="`copyViewButton-view-${view._id}`",
-        v-show="isEditingMode",
+        v-show="isNavigationEditingMode",
         depressed,
         small,
         icon,

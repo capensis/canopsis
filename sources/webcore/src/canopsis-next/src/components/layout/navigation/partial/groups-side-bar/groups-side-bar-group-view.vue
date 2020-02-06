@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card(:color="cardColor")
     router-link.panel-item-content-link(
-      :class="{ editing: isEditingMode }",
+      :class="{ editing: isNavigationEditingMode }",
       :event="routerLinkEvents",
       :data-test="`linkView-view-${view._id}`",
       :title="view.title",
@@ -25,7 +25,7 @@
               )
                 v-icon(small) edit
               v-btn.ma-0(
-                v-show="isEditingMode",
+                v-show="isNavigationEditingMode",
                 :disabled="isGroupsOrderChanged",
                 :data-test="`copyViewButton-view-${view._id}`",
                 depressed,

@@ -1,10 +1,13 @@
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
+import layoutNavigationEditingModeMixin from './editing-mode';
+
 export default {
   mixins: [
     entitiesViewGroupMixin,
     rightsEntitiesGroupMixin,
+    layoutNavigationEditingModeMixin,
   ],
   props: {
     value: {
@@ -12,17 +15,7 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      isEditingMode: false,
-    };
-  },
   mounted() {
     this.fetchGroupsList();
-  },
-  methods: {
-    toggleEditingMode() {
-      this.isEditingMode = !this.isEditingMode;
-    },
   },
 };

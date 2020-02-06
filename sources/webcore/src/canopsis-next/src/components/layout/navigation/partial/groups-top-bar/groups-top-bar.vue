@@ -5,12 +5,10 @@
         groups-top-bar-group(
           v-for="group in availableGroups",
           :key="group._id",
-          :group="group",
-          :isEditingMode="isEditingMode"
+          :group="group"
         )
     groups-settings-button(
       tooltipLeft,
-      :isEditingMode="isEditingMode",
       :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
       :buttonProps="{ fab: true, dark: true, small: true }",
       @toggleEditingMode="toggleEditingMode"
@@ -45,7 +43,7 @@ export default {
   },
   methods: {
     toggleEditingMode() {
-      this.isEditingMode = !this.isEditingMode;
+      this.toggleNavigationEditingMode();
 
       this.$nextTick(this.callTabsOnResizeMethod);
     },

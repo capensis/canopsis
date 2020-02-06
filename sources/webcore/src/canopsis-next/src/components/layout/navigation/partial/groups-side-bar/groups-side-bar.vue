@@ -3,7 +3,7 @@
     v-navigation-drawer.side-bar.secondary(
       v-model="isOpen",
       :width="$config.SIDE_BAR_WIDTH",
-      :class="{ editing: isEditingMode }",
+      :class="{ editing: isNavigationEditingMode }",
       data-test="groupsSideBar",
       disable-resize-watcher,
       app
@@ -24,9 +24,7 @@
           v-for="(group, index) in mutatedGroups",
           :key="group._id",
           :group.sync="mutatedGroups[index]",
-          :isEditingMode="isEditingMode",
-          :isGroupsOrderChanged="isGroupsOrderChanged",
-          :draggableOptions="draggableOptions"
+          :isGroupsOrderChanged="isGroupsOrderChanged"
         )
       v-divider
       v-fade-transition
@@ -35,8 +33,7 @@
           v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
       groups-settings-button(
         tooltipRight,
-        :isEditingMode="isEditingMode",
-        @toggleEditingMode="toggleEditingMode"
+        @toggleEditingMode="toggleNavigationEditingMode"
       )
     v-fade-transition
       div.v-overlay.v-overlay--active.content-overlay(v-show="isGroupsOrderChanged")
@@ -106,7 +103,10 @@ export default {
     },
 
     draggableOptions() {
-      return { animation: VUETIFY_ANIMATION_DELAY, disabled: !this.isEditingMode };
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+        disabled: !this.isNavigationEditingMode,
+      };
     },
 
     isGroupsOrderChanged() {
@@ -117,12 +117,8 @@ export default {
     availableGroups: {
       deep: true,
       immediate: true,
-      handler(groups, oldGroups) {
-        const isGroupsOrderChanged = this.checkIsGroupsOrderChanged(groups, oldGroups);
-
-        if (isGroupsOrderChanged) {
-          this.setMutatedGroups(groups);
-        }
+      handler(groups) {
+        this.setMutatedGroups(groups);
       },
     },
   },
@@ -165,15 +161,26 @@ export default {
      * Get requests array for group views
      *
      * @param {Array} [views=[]] - Views with updated ordering
-     * @param {Array} [originalViews=[]] - Original views from store
+     * @param {Array} [groupId] - Original views from store
      * @returns {Array<Promise>}
      */
-    getGroupViewsRequests(views = [], originalViews = []) {
+    getGroupViewsRequests(views = [], groupId) {
       return views.reduce((viewAcc, view, viewIndex) => {
-        const originalView = originalViews[viewIndex];
+        if (view.group_id !== groupId) {
+          const viewForUpdate = {
+            ...view,
 
-        if (originalView && originalView._id !== view._id) {
-          const viewForUpdate = { ...view, position: viewIndex };
+            group_id: groupId,
+            position: viewIndex,
+          };
+
+          viewAcc.push(this.updateViewWithoutStore({ data: viewForUpdate, id: view._id }));
+        } else if (view.position !== viewIndex) {
+          const viewForUpdate = {
+            ...view,
+
+            position: viewIndex,
+          };
 
           viewAcc.push(this.updateViewWithoutStore({ data: viewForUpdate, id: view._id }));
         }
@@ -186,21 +193,17 @@ export default {
      * Get requests array for groups
      *
      * @param {Array} [groups=[]] - Groups with updated ordering
-     * @param {Array} [originalGroups=[]] - Original groups from store
      * @returns {Array<Promise>}
      */
-    getGroupsRequests(groups = [], originalGroups = []) {
+    getGroupsRequests(groups = []) {
       return groups.reduce((acc, group, index) => {
-        const isGroupsOrderChanged = originalGroups[index]._id !== group._id;
-        const originalGroup = originalGroups.find(({ _id: id }) => id === group._id);
-
-        if (isGroupsOrderChanged) {
+        if (group.position !== index) {
           const groupForUpdate = { name: group.name, position: index };
 
           acc.push(this.updateGroup({ data: groupForUpdate, id: group._id }));
         }
 
-        const viewsRequests = this.getGroupViewsRequests(group.views, originalGroup.views);
+        const viewsRequests = this.getGroupViewsRequests(group.views, group._id);
 
         if (viewsRequests.length) {
           acc.push(...viewsRequests);
@@ -233,7 +236,7 @@ export default {
 
 <style lang="scss" scoped>
   .content-overlay {
-    z-index: 3;
+    z-index: 6;
   }
 
   .panel {
@@ -249,7 +252,7 @@ export default {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
-    z-index: 4;
+    z-index: 7;
   }
 
   .brand {

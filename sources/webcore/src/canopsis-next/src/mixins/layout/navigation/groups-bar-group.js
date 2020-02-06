@@ -1,14 +1,13 @@
 import { MODALS } from '@/constants';
 
+import layoutNavigationEditingModeMixin from './editing-mode';
+
 export default {
+  mixins: [layoutNavigationEditingModeMixin],
   props: {
     group: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
   },
   methods: {

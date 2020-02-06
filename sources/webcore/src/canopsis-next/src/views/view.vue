@@ -124,6 +124,7 @@ import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
+import layoutNavigationEditingModeMixin from '@/mixins/layout/navigation/editing-mode';
 
 export default {
   components: {
@@ -134,6 +135,7 @@ export default {
     authMixin,
     queryMixin,
     entitiesViewMixin,
+    layoutNavigationEditingModeMixin,
   ],
   props: {
     id: {
@@ -194,15 +196,26 @@ export default {
 
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
-      if (value && (!oldValue || !this.periodicRefreshInterval)) {
+      if (value && (!oldValue || !this.periodicRefreshInterval) && !this.isNavigationEditingMode) {
         this.startPeriodicRefreshInterval();
       } else if (oldValue && !value) {
         this.stopPeriodicRefreshInterval();
       }
     },
+
     periodicRefreshValue(value, oldValue) {
       if (value !== oldValue) {
         this.resetRefreshInterval();
+      }
+    },
+
+    isNavigationEditingMode(value, oldValue) {
+      if (value !== oldValue) {
+        if (value) {
+          this.stopPeriodicRefreshInterval();
+        } else {
+          this.startPeriodicRefreshInterval(true);
+        }
       }
     },
   },
@@ -281,7 +294,11 @@ export default {
 
       await this.refreshView();
 
-      this.startPeriodicRefreshInterval();
+      if (this.isNavigationEditingMode) {
+        this.resetRefreshInterval();
+      } else {
+        this.startPeriodicRefreshInterval();
+      }
     },
 
     showCreateWidgetModal() {
@@ -337,8 +354,10 @@ export default {
       }
     },
 
-    startPeriodicRefreshInterval() {
-      this.resetRefreshInterval();
+    startPeriodicRefreshInterval(withoutReset = false) {
+      if (!withoutReset) {
+        this.resetRefreshInterval();
+      }
 
       if (this.periodicRefreshInterval) {
         this.stopPeriodicRefreshInterval();

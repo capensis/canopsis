@@ -1,12 +1,12 @@
 <template lang="pug">
   v-expansion-panel-content.secondary.white--text.group-item(
-    :class="{ editing: isEditingMode }",
+    :class="{ editing: isNavigationEditingMode }",
     :data-test="`panel-group-${group._id}`"
   )
     div.panel-header(slot="header")
       span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
       v-btn(
-        v-show="isEditingMode",
+        v-show="isNavigationEditingMode",
         :disabled="isGroupsOrderChanged",
         :data-test="`editGroupButton-group-${group._id}`",
         depressed,
@@ -18,20 +18,20 @@
     draggable.panel(
       :value="group.views",
       :options="draggableOptions",
-      @update="updateViewsOrdering"
+      @change="changeViewsOrdering"
     )
       groups-side-bar-group-view(
         v-for="view in group.views",
         :key="view._id",
         :view="view",
-        :isEditingMode="isEditingMode",
         :isGroupsOrderChanged="isGroupsOrderChanged"
       )
 </template>
 
 <script>
 import Draggable from 'vuedraggable';
-import arrayMove from 'array-move';
+
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
 
@@ -41,22 +41,41 @@ export default {
   components: { Draggable, GroupsSideBarGroupView },
   mixins: [layoutNavigationGroupsBarGroupMixin],
   props: {
-    draggableOptions: {
-      type: Object,
-      required: true,
-    },
     isGroupsOrderChanged: {
       type: Boolean,
       default: false,
     },
   },
+  computed: {
+    draggableOptions() {
+      return {
+        disabled: !this.isNavigationEditingMode,
+        animation: VUETIFY_ANIMATION_DELAY,
+        group: 'views',
+      };
+    },
+  },
   methods: {
-    updateViewsOrdering({ oldIndex, newIndex }) {
-      this.$emit('update:group', {
-        ...this.group,
+    changeViewsOrdering({ moved, added, removed }) {
+      const views = [...this.group.views];
 
-        views: arrayMove(this.group.views, oldIndex, newIndex),
-      });
+      if (moved) {
+        const [item] = views.splice(moved.oldIndex, 1);
+
+        views.splice(moved.newIndex, 0, item);
+      } else if (added) {
+        views.splice(added.newIndex, 0, added.element);
+      } else if (removed) {
+        views.splice(removed.oldIndex, 1);
+      }
+
+      if (views) {
+        this.$emit('update:group', {
+          ...this.group,
+
+          views,
+        });
+      }
     },
   },
 };
