@@ -150,7 +150,13 @@ export default {
       };
     },
     resolvedActions() {
-      const actions = [this.filteredActionsMap.pbehaviorList];
+      const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
+
+      const actions = [pbehaviorList];
+
+      if (this.isEditingMode) {
+        actions.push(variablesHelp);
+      }
 
       return actions;
     },

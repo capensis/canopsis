@@ -59,7 +59,7 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `method` (requis) : méthode HTTP
      - `payload` (requis) : le corps de la requête qui sera envoyée. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier JSON. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
      - `url` (requis) : l'URL du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
- - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme.
+ - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme. Le [trigger `declareticketwebhook`](../architecture-interne/triggers.md) est également alors déclenché.
      - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
      - `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
 
@@ -70,7 +70,7 @@ Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont 
 - `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
 !!! attention
-    Les [`triggers`](../architecture-interne/triggers.md) `unsnooze` et `resolve` n'étant pas déclenchés par des [événements](../../guide-developpement/struct-event.md), ne sont pas utilisables avec les `event_patterns`.
+    Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
 
 !!! attention
     L'`event_pattern` sait uniquement parser les champs customs (autres que ceux définis dans les [`structures d'événements`](../../guide-developpement/struct-event.md#structure-basique-dun-evenement)) qui sont de type `string`. Il ne sait pas parser les champs customs de type `number` ou `boolean`.
