@@ -1,12 +1,5 @@
-import moment from 'moment';
-import 'moment-duration-format';
-
 import { TIME_UNITS } from '@/constants';
 import { getUnitValueFromSeconds } from '@/helpers/time';
-
-import momentDurationFrLocale from '@/i18n/moment-duration-fr';
-
-moment.updateLocale('fr', momentDurationFrLocale);
 
 const AVAILABLE_UNITS = [
   TIME_UNITS.year,
