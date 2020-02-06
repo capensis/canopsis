@@ -25,11 +25,11 @@
               :rotate="270",
               :size="30",
               :width="2",
-              :value="periodicBehaviorProgressValue",
+              :value="periodicRefreshProgressValue",
               color="white",
               button
             )
-              span.refresh-btn {{ refreshProgressValueByUnit }}{{ refreshProgressCurrentUnit }}
+              span.refresh-btn {{ periodicRefreshProgress | maxDurationByUnit }}
           span {{ tooltipContent }}
         v-speed-dial(
           v-if="hasUpdateAccess",
@@ -113,16 +113,15 @@
 </template>
 
 <script>
-import { get } from 'lodash';
-import { DATETIME_FORMATS, MODALS, TIME_UNITS } from '@/constants';
+import { MODALS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
-import { getSecondsByUnit, getUnitValueFromSeconds } from '@/helpers/time';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
+import peiodicRefreshMixin from '@/mixins/view/peiodic-refresh';
 import entitiesViewMixin from '@/mixins/entities/view';
 
 export default {
@@ -134,6 +133,7 @@ export default {
     authMixin,
     queryMixin,
     entitiesViewMixin,
+    peiodicRefreshMixin,
   ],
   props: {
     id: {
@@ -153,53 +153,6 @@ export default {
   computed: {
     tooltipContent() {
       return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormated : this.$t('common.refresh');
-    },
-
-    availableUnits() {
-      return [
-        TIME_UNITS.year,
-        TIME_UNITS.month,
-        TIME_UNITS.day,
-        TIME_UNITS.hour,
-        TIME_UNITS.minute,
-        TIME_UNITS.second,
-      ];
-    },
-
-    refreshProgressCurrentUnit() {
-      return this.availableUnits.find(unit => this.getRoundedUnit(this.periodicRefreshProgress, unit));
-    },
-
-    refreshProgressValueByUnit() {
-      return this.getRoundedUnit(this.periodicRefreshProgress, this.refreshProgressCurrentUnit);
-    },
-
-    periodicRefreshProgressFormated() {
-      return this.$options.filters.duration(
-        this.periodicRefreshProgress,
-        undefined,
-        DATETIME_FORMATS.refreshFieldFormat,
-      );
-    },
-
-    periodicBehaviorProgressValue() {
-      return this.periodicRefreshProgress / (this.periodicRefreshDelay / 100);
-    },
-
-    isPeriodicRefreshEnabled() {
-      return get(this.view, 'periodicRefresh.enabled', false);
-    },
-
-    periodicRefreshUnit() {
-      return get(this.view, 'periodicRefresh.unit');
-    },
-
-    periodicRefreshValue() {
-      return get(this.view, 'periodicRefresh.interval') || get(this.view, 'periodicRefresh.value', 0);
-    },
-
-    periodicRefreshDelay() {
-      return getSecondsByUnit(this.periodicRefreshValue, this.periodicRefreshUnit);
     },
 
     hasUpdateAccess() {
@@ -223,25 +176,6 @@ export default {
     isViewTabsReady() {
       return this.view && this.$route.query.tabId;
     },
-
-    refreshHandler() {
-      return this.isPeriodicRefreshEnabled ? this.refreshViewWithProgress : this.refreshView;
-    },
-  },
-
-  watch: {
-    isPeriodicRefreshEnabled(value, oldValue) {
-      if (value && (!oldValue || !this.periodicRefreshInterval)) {
-        this.startPeriodicRefreshInterval();
-      } else if (oldValue && !value) {
-        this.stopPeriodicRefreshInterval();
-      }
-    },
-    periodicRefreshDelay(value, oldValue) {
-      if (value !== oldValue) {
-        this.resetRefreshInterval();
-      }
-    },
   },
 
   created() {
@@ -251,17 +185,11 @@ export default {
 
   mounted() {
     this.fetchView({ id: this.id });
-
-    if (this.isPeriodicRefreshEnabled) {
-      this.startPeriodicRefreshInterval();
-    }
   },
 
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
-
-    this.stopPeriodicRefreshInterval();
   },
 
   methods: {
@@ -305,22 +233,6 @@ export default {
       }
     },
 
-    async refreshView() {
-      await this.fetchView({ id: this.id });
-
-      if (this.activeTab) {
-        this.forceUpdateQuery({ id: this.activeTab._id });
-      }
-    },
-
-    async refreshViewWithProgress() {
-      this.stopPeriodicRefreshInterval();
-
-      await this.refreshView();
-
-      this.startPeriodicRefreshInterval();
-    },
-
     showCreateWidgetModal() {
       if (this.activeTab) {
         this.$modals.show({
@@ -360,38 +272,6 @@ export default {
 
     toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
-    },
-
-    resetRefreshInterval() {
-      this.periodicRefreshProgress = this.periodicRefreshDelay;
-    },
-
-    refreshTick() {
-      if (this.periodicRefreshProgress <= 0) {
-        this.refreshViewWithProgress();
-      } else {
-        this.periodicRefreshProgress -= 1;
-      }
-    },
-
-    startPeriodicRefreshInterval() {
-      this.resetRefreshInterval();
-
-      if (this.periodicRefreshInterval) {
-        this.stopPeriodicRefreshInterval();
-      }
-
-      this.periodicRefreshInterval = setInterval(this.refreshTick, 1000);
-    },
-
-    stopPeriodicRefreshInterval() {
-      clearInterval(this.periodicRefreshInterval);
-
-      this.periodicRefreshInterval = undefined;
-    },
-
-    getRoundedUnit(value, unit) {
-      return Math.floor(getUnitValueFromSeconds(value, unit));
     },
   },
 };
