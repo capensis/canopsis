@@ -50,7 +50,6 @@ export const MODALS = {
   createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
-  moreInfos: 'more-infos',
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',

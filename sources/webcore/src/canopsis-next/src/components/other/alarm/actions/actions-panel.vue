@@ -123,12 +123,6 @@ export default {
           title: this.$t('alarmList.actions.titles.changeState'),
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
-        moreInfos: {
-          type: alarmsListActionsTypes.moreInfos,
-          icon: 'info',
-          title: this.$t('alarmList.actions.titles.moreInfos'),
-          method: this.showMoreInfosModal,
-        },
         variablesHelp: {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
@@ -158,10 +152,6 @@ export default {
     resolvedActions() {
       const actions = [this.filteredActionsMap.pbehaviorList];
 
-      if (this.widget.parameters.moreInfoTemplate !== '') {
-        actions.push(this.filteredActionsMap.moreInfos);
-      }
-
       return actions;
     },
     unresolvedActions() {
@@ -179,10 +169,6 @@ export default {
 
       if (this.isEditingMode) {
         actions.push(filteredActionsMap.variablesHelp);
-      }
-
-      if (this.widget.parameters.moreInfoTemplate !== '') {
-        actions.push(filteredActionsMap.moreInfos);
       }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {

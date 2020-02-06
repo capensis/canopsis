@@ -6,7 +6,6 @@ export { default as CreateChangeStateEvent } from './alarm/create-change-state-e
 export { default as CreateDeclareTicketEvent } from './alarm/create-declare-ticket-event.vue';
 export { default as CreateSnoozeEvent } from './alarm/create-snooze-event.vue';
 export { default as VariablesHelp } from './common/variables-help.vue';
-export { default as MoreInfos } from './alarm/more-infos.vue';
 export { default as InfoPopupSetting } from './alarm/info-popup-setting/info-popup-setting.vue';
 export { default as AddInfoPopup } from './alarm/info-popup-setting/add-info-popup.vue';
 export { default as CreatePbehavior } from './pbehavior/create-pbehavior.vue';

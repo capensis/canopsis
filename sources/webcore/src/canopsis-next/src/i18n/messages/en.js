@@ -199,7 +199,6 @@ export default {
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
         changeState: 'Change criticity',
-        moreInfos: 'More infos',
         variablesHelp: 'List of available variables',
         history: 'History',
       },
@@ -223,6 +222,13 @@ export default {
         stateIncreased: 'State increased',
         stateDecreased: 'State decreases',
       },
+    },
+    tabs: {
+      moreInfos: 'More infos',
+      timeLine: 'Time line',
+    },
+    moreInfos: {
+      defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
   },
@@ -620,10 +626,6 @@ export default {
       custom: 'Custom',
       tstart: 'Begins',
       tstop: 'Ends',
-    },
-    moreInfos: {
-      moreInfos: 'More infos',
-      defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopupSetting: {
       title: 'Info popup',
