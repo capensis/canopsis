@@ -843,6 +843,8 @@ export default {
       },
       fields: {
         id: 'ID',
+        retryDelay: 'Delay',
+        retryCount: 'Repeat',
       },
       tooltips: {
         id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
@@ -1285,6 +1287,8 @@ export default {
         id: 'ID',
         requestMethod: 'Request method',
         requestUrl: 'Request URL',
+        retryDelay: 'Delay',
+        retryCount: 'Repeat',
       },
     },
     tabs: {

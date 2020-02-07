@@ -796,6 +796,8 @@ export default {
       },
       fields: {
         id: 'ID',
+        retryDelay: 'Intervalle',
+        retryCount: 'Nombre d\'essais',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
@@ -1181,6 +1183,8 @@ export default {
         id: 'ID',
         requestMethod: 'Requête: Méthode',
         requestUrl: 'Requête: URL',
+        retryDelay: 'Intervalle',
+        retryCount: 'Nombre d\'essais',
       },
     },
     tabs: {

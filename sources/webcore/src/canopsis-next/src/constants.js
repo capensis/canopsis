@@ -606,6 +606,8 @@ export const WIDGET_MAX_SIZE = 12;
 
 export const WIDGET_MIN_SIZE = 3;
 
+export const RETRY_DEFAULT_DELAY = 180;
+
 export const STATS_CALENDAR_COLORS = {
   alarm: {
     ok: COLORS.state.ok,
@@ -1002,37 +1004,47 @@ export const HEARTBEAT_DURATION_UNITS = {
   hour: 'h',
 };
 
+export const TIME_UNITS = {
+  second: 's',
+  minute: 'm',
+  hour: 'h',
+  day: 'd',
+  week: 'w',
+  month: 'M',
+  year: 'y',
+};
+
 export const DURATION_UNITS = {
   minute: {
     text: 'common.times.minute',
-    value: 'm',
+    value: TIME_UNITS.minute,
   },
   hour: {
     text: 'common.times.hour',
-    value: 'h',
+    value: TIME_UNITS.hour,
   },
   day: {
     text: 'common.times.day',
-    value: 'd',
+    value: TIME_UNITS.day,
   },
   week: {
     text: 'common.times.week',
-    value: 'w',
+    value: TIME_UNITS.week,
   },
   month: {
     text: 'common.times.month',
-    value: 'M',
+    value: TIME_UNITS.month,
   },
   year: {
     text: 'common.times.year',
-    value: 'y',
+    value: TIME_UNITS.year,
   },
 };
 
 export const PERIODIC_REFRESH_UNITS = {
   second: {
     text: 'common.times.second',
-    value: 's',
+    value: TIME_UNITS.second,
   },
   minute: DURATION_UNITS.minute,
   hour: DURATION_UNITS.hour,
@@ -1041,7 +1053,13 @@ export const PERIODIC_REFRESH_UNITS = {
 export const DEFAULT_PERIODIC_REFRESH = {
   interval: 60,
   enabled: false,
-  unit: 's',
+  unit: TIME_UNITS.second,
+};
+
+export const DEFAULT_RETRY_FIELD = {
+  count: 0,
+  delay: RETRY_DEFAULT_DELAY,
+  unit: TIME_UNITS.second,
 };
 
 export const EXPLOITATION_PAGES_RULES = {

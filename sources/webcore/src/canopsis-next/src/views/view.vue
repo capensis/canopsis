@@ -116,7 +116,7 @@
 import { get } from 'lodash';
 import { MODALS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
-import { getSecondByUnit } from '@/helpers/time';
+import { getSecondsByUnit } from '@/helpers/time';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
@@ -162,7 +162,7 @@ export default {
     periodicRefreshValue() {
       const value = get(this.view, 'periodicRefresh.interval') || get(this.view, 'periodicRefresh.value', 0);
 
-      return getSecondByUnit(value, get(this.view, 'periodicRefresh.unit'));
+      return getSecondsByUnit(value, get(this.view, 'periodicRefresh.unit'));
     },
 
     hasUpdateAccess() {
