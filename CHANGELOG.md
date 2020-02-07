@@ -2,9 +2,9 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+## Canopsis 3.36.0 - Due date : 2020-02-07
+
 ## Canopsis 3.35.0 - Due date : 2020-01-24
-
-
 
 ## Canopsis 3.34.0 - Due date : 2019-12-18
 
