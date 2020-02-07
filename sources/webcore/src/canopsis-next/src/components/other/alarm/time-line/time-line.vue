@@ -32,19 +32,18 @@ export default {
       default: false,
     },
   },
-  computed: {
-    steps() {
-      return this.alarm.v.steps || [];
-    },
-
-    groupedSteps() {
-      if (this.alarm && this.alarm.v.steps) {
-        const orderedSteps = orderBy(this.alarm.v.steps, ['t'], 'desc');
-
-        return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
+  data() {
+    return {
+      groupedSteps: {},
+    };
+  },
+  watch: {
+    alarm(alarm) {
+      if (alarm.v.steps) {
+        this.groupedSteps = this.groupSteps(alarm.v.steps);
+      } else {
+        this.fetchItem();
       }
-
-      return {};
     },
   },
   mounted() {
@@ -67,6 +66,12 @@ export default {
         id: this.alarm._id,
         params,
       });
+    },
+
+    groupSteps(steps) {
+      const orderedSteps = orderBy(steps, ['t'], 'desc');
+
+      return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
     },
   },
 };

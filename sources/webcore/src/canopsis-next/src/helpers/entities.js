@@ -16,6 +16,7 @@ import {
   ACTION_TYPES,
   DURATION_UNITS,
   ENTITIES_STATES,
+  ENTITIES_STATUSES,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -554,4 +555,13 @@ export function prepareUserByData(data, user = generateUser()) {
   }
 
   return result;
+}
+
+/**
+ * Checks if alarm is resolved
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export function isResolvedAlarm(alarm) {
+  return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
 }

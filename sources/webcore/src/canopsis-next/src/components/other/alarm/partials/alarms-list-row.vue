@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import { isResolvedAlarm } from '@/helpers/entities';
+
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
@@ -83,9 +85,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    isResolvedAlarm: {
-      type: Boolean,
-      default: false,
+  },
+  computed: {
+    isResolvedAlarm() {
+      return isResolvedAlarm(this.row.item);
     },
   },
 };

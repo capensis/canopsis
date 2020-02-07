@@ -66,7 +66,6 @@
           alarms-list-row(
             v-model="props.selected",
             :row="props",
-            :isResolvedAlarm="isResolvedAlarm(props.item)",
             :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
@@ -91,9 +90,10 @@
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { ENTITIES_STATUSES, MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
+import { isResolvedAlarm } from '@/helpers/entities';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
@@ -179,7 +179,7 @@ export default {
 
     selectedIds() {
       return this.selected
-        .filter(item => !this.isResolvedAlarm(item))
+        .filter(item => !isResolvedAlarm(item))
         .map(item => item._id);
     },
 
@@ -224,10 +224,6 @@ export default {
     this.fetchAlarmColumnFilters();
   },
   methods: {
-    isResolvedAlarm(item) {
-      return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(item.v.status.val);
-    },
-
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },
