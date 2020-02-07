@@ -63,38 +63,15 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          tr(:data-test="`tableRow-${props.item._id}`")
-            td(data-test="rowCheckbox")
-              v-checkbox-functional(
-                v-if="!isResolvedAlarm(props.item)",
-                v-model="props.selected",
-                primary,
-                hide-details
-              )
-              v-checkbox-functional(
-                v-else,
-                :value="false",
-                disabled,
-                primary,
-                hide-details
-              )
-            td(
-              v-for="column in columns",
-              @click="props.expanded = !props.expanded"
-            )
-              alarm-column-value(
-                :alarm="props.item",
-                :column="column",
-                :columnFiltersMap="columnFiltersMap",
-                :widget="widget"
-              )
-            td
-              actions-panel(
-                :item="props.item",
-                :widget="widget",
-                :isResolvedAlarm="isResolvedAlarm(props.item)",
-                :isEditingMode="isEditingMode"
-              )
+          alarms-list-row(
+            v-model="props.selected",
+            :row="props",
+            :isResolvedAlarm="isResolvedAlarm(props.item)",
+            :isEditingMode="isEditingMode",
+            :widget="widget",
+            :columns="columns",
+            :columnFiltersMap="columnFiltersMap"
+          )
         template(slot="expand", slot-scope="props")
           time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
       v-layout.white(align-center)
@@ -125,6 +102,7 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -148,6 +126,7 @@ import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 export default {
   components: {
     AlarmListSearch,
+    AlarmsListRow,
     RecordsPerPage,
     TimeLine,
     MassActionsPanel,
