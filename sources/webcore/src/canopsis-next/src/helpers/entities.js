@@ -110,6 +110,7 @@ export function generateWidgetByType(type) {
         alarmsStateFilter: {
           opened: true,
         },
+        expandCardWidthPercentage: 100,
       };
       break;
 

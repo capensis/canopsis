@@ -1,11 +1,19 @@
 <template lang="pug">
-  v-tabs.expand-panel
+  v-tabs.expand-panel(color="secondary lighten-1", slider-color="primary", dark, centered)
     v-tab {{ $t('alarmList.tabs.moreInfos') }}
     v-tab-item
-      more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
+      v-layout.pa-3.secondary.lighten-2(row)
+        v-flex(xs12)
+          v-card.tab-item-card(:width="expandCardWidthPercentage")
+            v-card-text
+              more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
     v-tab {{ $t('alarmList.tabs.timeLine') }}
     v-tab-item
-      time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
+      v-layout.pa-3.secondary.lighten-2(row)
+        v-flex(xs12)
+          v-card.tab-item-card(:width="expandCardWidthPercentage")
+            v-card-text
+              time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
 </template>
 
 <script>
@@ -31,5 +39,16 @@ export default {
       required: true,
     },
   },
+  computed: {
+    expandCardWidthPercentage() {
+      return `${this.widget.parameters.expandCardWidthPercentage || 100}%`;
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+  .tab-item-card {
+    margin: auto;
+  }
+</style>
