@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{$t('settings.periodicRefresh')}}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
-      periodic-refresh-field(v-model="value")
+      periodic-refresh-field(v-field="value")
 </template>
 
 <script>
