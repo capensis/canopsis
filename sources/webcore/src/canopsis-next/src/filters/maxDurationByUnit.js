@@ -18,5 +18,5 @@ export default function (value = 0, availableUnits = AVAILABLE_UNITS) {
     return unitValue;
   });
 
-  return `${unitValue}${maxUnit}`;
+  return `${unitValue}${maxUnit || TIME_UNITS.second}`;
 }
