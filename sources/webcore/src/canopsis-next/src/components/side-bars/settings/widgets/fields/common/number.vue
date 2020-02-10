@@ -10,12 +10,19 @@
 /**
  * Component to select a Number type setting
  *
- * @prop {Number} [value] - Value
+ * @prop {Number} [value=undefined] - Value
+ * @prop {String} [title=''] - Title
  */
 export default {
   props: {
-    value: Number,
-    title: String,
+    value: {
+      type: Number,
+      default: undefined,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
   },
 };
 </script>

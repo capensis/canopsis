@@ -50,7 +50,6 @@ export const MODALS = {
   createWatcherPauseEvent: 'create-watcher-pause-event',
   pbehaviorList: 'pbehavior-list',
   editLiveReporting: 'edit-live-reporting',
-  moreInfos: 'more-infos',
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
@@ -1095,4 +1094,10 @@ export const POPUP_TYPES = {
   info: 'info',
   warning: 'warning',
   error: 'error',
+};
+
+export const GRID_SIZES = {
+  min: 0,
+  max: 12,
+  step: 1,
 };

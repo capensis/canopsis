@@ -50,6 +50,11 @@
             :title="$t('settings.moreInfosModal')"
           )
           v-divider
+          field-grid-range-size(
+            v-model="settings.widget.parameters.expandGridRangeSize",
+            :title="$t('settings.expandGridRangeSize')"
+          )
+          v-divider
           field-switcher(
             data-test="isHtmlEnabledOnTimeLine",
             v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
@@ -99,6 +104,7 @@ import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
+import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -122,6 +128,7 @@ export default {
     FieldTextEditor,
     FieldSwitcher,
     FieldFastAckOutput,
+    FieldGridRangeSize,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {

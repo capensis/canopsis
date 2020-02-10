@@ -17,6 +17,7 @@ import {
   DURATION_UNITS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
+  GRID_SIZES,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -110,6 +111,7 @@ export function generateWidgetByType(type) {
         alarmsStateFilter: {
           opened: true,
         },
+        expandGridRangeSize: [GRID_SIZES.min, GRID_SIZES.max],
       };
       break;
 

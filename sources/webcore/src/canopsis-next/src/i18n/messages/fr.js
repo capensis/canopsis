@@ -187,7 +187,6 @@ export default {
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
         changeState: 'Changer la criticité',
-        moreInfos: 'Plus d\'infos',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
       },
@@ -201,6 +200,13 @@ export default {
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
       },
+    },
+    tabs: {
+      moreInfos: 'Plus d\'infos',
+      timeLine: 'Time line',
+    },
+    moreInfos: {
+      defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
     infoPopup: 'Info popup',
   },
@@ -316,6 +322,7 @@ export default {
       },
     },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
+    expandGridRangeSize: 'Largeur-position "Plus d\'infos / timeline"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entitées',
@@ -579,10 +586,6 @@ export default {
       custom: 'Personnalisé',
       tstart: 'Démarre le',
       tstop: 'Finit le',
-    },
-    moreInfos: {
-      moreInfos: 'Plus d\'infos',
-      defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
     infoPopupSetting: {
       title: 'Info popup',

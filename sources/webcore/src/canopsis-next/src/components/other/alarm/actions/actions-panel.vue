@@ -123,12 +123,6 @@ export default {
           title: this.$t('alarmList.actions.titles.changeState'),
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
-        moreInfos: {
-          type: alarmsListActionsTypes.moreInfos,
-          icon: 'info',
-          title: this.$t('alarmList.actions.titles.moreInfos'),
-          method: this.showMoreInfosModal,
-        },
         variablesHelp: {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
@@ -156,16 +150,12 @@ export default {
       };
     },
     resolvedActions() {
-      const { pbehaviorList, variablesHelp, moreInfos } = this.filteredActionsMap;
+      const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
 
       const actions = [pbehaviorList];
 
       if (this.isEditingMode) {
         actions.push(variablesHelp);
-      }
-
-      if (this.widget.parameters.moreInfoTemplate !== '') {
-        actions.push(moreInfos);
       }
 
       return actions;
@@ -185,10 +175,6 @@ export default {
 
       if (this.isEditingMode) {
         actions.push(filteredActionsMap.variablesHelp);
-      }
-
-      if (this.widget.parameters.moreInfoTemplate !== '') {
-        actions.push(filteredActionsMap.moreInfos);
       }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {

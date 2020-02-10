@@ -72,7 +72,11 @@
             :columnFiltersMap="columnFiltersMap"
           )
         template(slot="expand", slot-scope="props")
-          time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
+          alarms-expand-panel(
+            :alarm="props.item",
+            :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine",
+            :widget="widget"
+          )
       v-layout.white(align-center)
         v-flex(xs10)
           pagination(
@@ -96,7 +100,7 @@ import { findRange } from '@/helpers/date-intervals';
 import { isResolvedAlarm } from '@/helpers/entities';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
+import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
@@ -128,7 +132,7 @@ export default {
     AlarmListSearch,
     AlarmsListRow,
     RecordsPerPage,
-    TimeLine,
+    AlarmsExpandPanel,
     MassActionsPanel,
     ActionsPanel,
     AlarmColumnValue,

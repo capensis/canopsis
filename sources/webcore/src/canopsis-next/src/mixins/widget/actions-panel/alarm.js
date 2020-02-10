@@ -77,16 +77,6 @@ export default {
       });
     },
 
-    showMoreInfosModal() {
-      this.$modals.show({
-        name: MODALS.moreInfos,
-        config: {
-          ...this.modalConfig,
-          template: this.widget.parameters.moreInfoTemplate,
-        },
-      });
-    },
-
     showAckRemoveModal() {
       this.$modals.show({
         name: MODALS.createCancelEvent,
