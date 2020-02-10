@@ -322,7 +322,7 @@ export default {
       },
     },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
-    expandGridRangeSize: 'Expand card (more infos / timeline) width',
+    expandGridRangeSize: 'Largeur-position "Plus d\'infos / timeline"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entitées',
