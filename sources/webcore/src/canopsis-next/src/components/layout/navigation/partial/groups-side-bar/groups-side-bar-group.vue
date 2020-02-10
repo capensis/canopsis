@@ -90,6 +90,11 @@ export default {
     &.editing /deep/ .v-expansion-panel__header {
       cursor: move;
     }
+
+    & /deep/ .v-expansion-panel__body  .v-card {
+      border-radius: 0;
+      box-shadow: 0 0 0 0 rgba(0,0,0,.2),0 0 0 0 rgba(0,0,0,.14),0 0 0 0 rgba(0,0,0,.12)!important;
+    }
   }
 
   .panel-header {

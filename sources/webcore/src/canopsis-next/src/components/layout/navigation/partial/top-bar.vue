@@ -68,7 +68,6 @@ import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
 import ActiveSessionsCount from './active-sessions-count.vue';
 import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
-// import GroupsTopBar from './groups-top-bar.vue';
 
 /**
  * Component for the top bar of the application
