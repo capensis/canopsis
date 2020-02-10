@@ -25,12 +25,12 @@
               :rotate="270",
               :size="30",
               :width="2",
-              :value="periodicBehaviorProgressValue",
+              :value="periodicRefreshProgressValue",
               color="white",
               button
             )
-              span {{ periodicRefreshProgress }}
-          span {{ $t('common.refresh') }}
+              span.refresh-btn {{ periodicRefreshProgress | maxDurationByUnit }}
+          span {{ tooltipContent }}
         v-speed-dial(
           v-if="hasUpdateAccess",
           v-model="isVSpeedDialOpen",
@@ -113,16 +113,15 @@
 </template>
 
 <script>
-import { get } from 'lodash';
 import { MODALS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
-import { getSecondByUnit } from '@/helpers/time';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
+import peiodicRefreshMixin from '@/mixins/view/peiodic-refresh';
 import entitiesViewMixin from '@/mixins/entities/view';
 
 export default {
@@ -134,6 +133,7 @@ export default {
     authMixin,
     queryMixin,
     entitiesViewMixin,
+    peiodicRefreshMixin,
   ],
   props: {
     id: {
@@ -146,23 +146,11 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
-      periodicRefreshInterval: null,
-      periodicRefreshProgress: null,
     };
   },
   computed: {
-    periodicBehaviorProgressValue() {
-      return this.periodicRefreshProgress / (this.periodicRefreshValue / 100);
-    },
-
-    isPeriodicRefreshEnabled() {
-      return get(this.view, 'periodicRefresh.enabled', false);
-    },
-
-    periodicRefreshValue() {
-      const value = get(this.view, 'periodicRefresh.interval') || get(this.view, 'periodicRefresh.value', 0);
-
-      return getSecondByUnit(value, get(this.view, 'periodicRefresh.unit'));
+    tooltipContent() {
+      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormatted : this.$t('common.refresh');
     },
 
     hasUpdateAccess() {
@@ -186,25 +174,6 @@ export default {
     isViewTabsReady() {
       return this.view && this.$route.query.tabId;
     },
-
-    refreshHandler() {
-      return this.isPeriodicRefreshEnabled ? this.refreshViewWithProgress : this.refreshView;
-    },
-  },
-
-  watch: {
-    isPeriodicRefreshEnabled(value, oldValue) {
-      if (value && (!oldValue || !this.periodicRefreshInterval)) {
-        this.startPeriodicRefreshInterval();
-      } else if (oldValue && !value) {
-        this.stopPeriodicRefreshInterval();
-      }
-    },
-    periodicRefreshValue(value, oldValue) {
-      if (value !== oldValue) {
-        this.resetRefreshInterval();
-      }
-    },
   },
 
   created() {
@@ -214,17 +183,11 @@ export default {
 
   mounted() {
     this.fetchView({ id: this.id });
-
-    if (this.isPeriodicRefreshEnabled) {
-      this.startPeriodicRefreshInterval();
-    }
   },
 
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
-
-    this.stopPeriodicRefreshInterval();
   },
 
   methods: {
@@ -268,22 +231,6 @@ export default {
       }
     },
 
-    async refreshView() {
-      await this.fetchView({ id: this.id });
-
-      if (this.activeTab) {
-        this.forceUpdateQuery({ id: this.activeTab._id });
-      }
-    },
-
-    async refreshViewWithProgress() {
-      this.stopPeriodicRefreshInterval();
-
-      await this.refreshView();
-
-      this.startPeriodicRefreshInterval();
-    },
-
     showCreateWidgetModal() {
       if (this.activeTab) {
         this.$modals.show({
@@ -324,34 +271,13 @@ export default {
     toggleViewEditingMode() {
       this.isEditingMode = !this.isEditingMode;
     },
-
-    resetRefreshInterval() {
-      this.periodicRefreshProgress = this.periodicRefreshValue;
-    },
-
-    refreshTick() {
-      if (this.periodicRefreshProgress <= 0) {
-        this.refreshViewWithProgress();
-      } else {
-        this.periodicRefreshProgress -= 1;
-      }
-    },
-
-    startPeriodicRefreshInterval() {
-      this.resetRefreshInterval();
-
-      if (this.periodicRefreshInterval) {
-        this.stopPeriodicRefreshInterval();
-      }
-
-      this.periodicRefreshInterval = setInterval(this.refreshTick, 1000);
-    },
-
-    stopPeriodicRefreshInterval() {
-      clearInterval(this.periodicRefreshInterval);
-
-      this.periodicRefreshInterval = undefined;
-    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.refresh-btn {
+  text-decoration: none;
+  text-transform: none;
+}
+</style>

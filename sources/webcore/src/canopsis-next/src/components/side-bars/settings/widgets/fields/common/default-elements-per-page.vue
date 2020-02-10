@@ -1,6 +1,8 @@
 <template lang="pug">
   v-list-group(data-test="elementsPerPage")
-    v-list-tile(slot="activator") {{$t('settings.defaultNumberOfElementsPerPage')}}
+    v-list-tile.items-per-page-title(slot="activator")
+      slot(name="title")
+        span {{ $t('settings.defaultNumberOfElementsPerPage') }}
     v-container(data-test="elementsPerPageFieldContainer",)
       v-select.select(
         :label="$t('settings.elementsPerPage')",
@@ -25,3 +27,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .items-per-page-title {
+    & /deep/ .v-list__tile.theme--light {
+      padding-right: 4px !important;
+    }
+  }
+</style>

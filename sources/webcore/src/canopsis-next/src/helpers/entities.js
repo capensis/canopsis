@@ -158,6 +158,7 @@ export function generateWidgetByType(type) {
         heightFactor: 1,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
         alarmsList: alarmsListDefaultParameters,
+        modalItemsPerPage: PAGINATION_LIMIT,
       };
       break;
 
