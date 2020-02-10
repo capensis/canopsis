@@ -3,6 +3,7 @@ import date from './date';
 import duration from './duration';
 import json from './json';
 import percentage from './percentage';
+import maxDurationByUnit from './maxDurationByUnit';
 
 export default {
   install(Vue) {
@@ -11,5 +12,6 @@ export default {
     Vue.filter('duration', duration);
     Vue.filter('json', json);
     Vue.filter('percentage', percentage);
+    Vue.filter('maxDurationByUnit', maxDurationByUnit);
   },
 };

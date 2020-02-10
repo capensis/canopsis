@@ -136,6 +136,7 @@ export default {
           watcher: this.watcher,
           entityTemplate: this.widget.parameters.entityTemplate,
           modalTemplate: this.widget.parameters.modalTemplate,
+          itemsPerPage: this.widget.parameters.modalItemsPerPage,
         },
       });
     },

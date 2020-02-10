@@ -14,14 +14,10 @@
       v-select(
         v-field="value.durationType",
         v-validate="'required'",
-        :items="availableTypes",
+        :items="availableUnits",
         :error-messages="errors.collect('durationType')",
         data-vv-name="durationType"
       )
-        template(slot="selection", slot-scope="data")
-          div.input-group__selections__comma {{ $tc(data.item.text, 2) }}
-        template(slot="item", slot-scope="data")
-          div.list__tile__title {{ $tc(data.item.text, 2) }}
 </template>
 
 <script>
@@ -36,8 +32,11 @@ export default {
     },
   },
   computed: {
-    availableTypes() {
-      return Object.values(DURATION_UNITS);
+    availableUnits() {
+      return Object.values(DURATION_UNITS).map(({ value, text }) => ({
+        value,
+        text: this.$tc(text, 2),
+      }));
     },
   },
 };

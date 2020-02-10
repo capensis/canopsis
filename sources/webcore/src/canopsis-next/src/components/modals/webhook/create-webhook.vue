@@ -13,6 +13,7 @@
           v-tooltip(slot="append", left)
             v-icon(slot="activator") help_outline
             span {{ $t('modals.createWebhook.tooltips.id') }}
+        retry-field(v-model="form.retry")
         v-switch(
           v-model="form.disable_if_active_pbehavior",
           :label="$t('webhook.disableIfActivePbehavior')"
@@ -37,6 +38,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
+import RetryField from '@/components/forms/fields/retry.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -48,7 +50,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { WebhookForm, ModalWrapper },
+  components: { WebhookForm, ModalWrapper, RetryField },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { webhook } = this.modal.config;
