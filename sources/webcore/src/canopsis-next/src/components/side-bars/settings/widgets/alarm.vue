@@ -52,7 +52,7 @@
           v-divider
           field-grid-range-size(
             v-model="settings.widget.parameters.expandGridRangeSize",
-            title="Expand card (more infos / timeline) width"
+            :title="$t('settings.expandGridRangeSize')"
           )
           v-divider
           field-switcher(
@@ -104,7 +104,6 @@ import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
-import FieldNumber from './fields/common/number.vue';
 import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 
 /**
@@ -129,7 +128,6 @@ export default {
     FieldTextEditor,
     FieldSwitcher,
     FieldFastAckOutput,
-    FieldNumber,
     FieldGridRangeSize,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
