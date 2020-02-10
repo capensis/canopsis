@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group
     v-list-tile(slot="activator") {{ title }}
-      .font-italic.caption.ml-1(v-show="optional") ({{ $t('common.optional') }})
+      .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
       v-text-field(:value="value", type="number", @input="$emit('input', parseInt($event, 10))")
 </template>
@@ -10,7 +10,8 @@
 /**
  * Component to select a Number type setting
  *
- * @prop {Number} [value] - Value
+ * @prop {Number} [value=undefined] - Value
+ * @prop {String} [title=''] - Title
  */
 export default {
   props: {
@@ -21,10 +22,6 @@ export default {
     title: {
       type: String,
       default: '',
-    },
-    optional: {
-      type: Boolean,
-      default: true,
     },
   },
 };

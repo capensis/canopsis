@@ -354,6 +354,7 @@ export default {
       },
     },
     moreInfosModal: '"More Infos" Popup',
+    expandGridRangeSize: 'Expand card (more infos / timeline) width',
     weatherTemplate: 'Template - Weather item',
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entities',

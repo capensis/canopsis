@@ -69,8 +69,6 @@ export default {
           unit: DEFAULT_PERIODIC_REFRESH.unit,
           ...parameters.periodicRefresh,
         },
-
-        expandCardWidthPercentage: parameters.expandCardWidthPercentage || 100,
       };
     },
 

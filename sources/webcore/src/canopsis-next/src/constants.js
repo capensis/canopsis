@@ -1095,3 +1095,9 @@ export const POPUP_TYPES = {
   warning: 'warning',
   error: 'error',
 };
+
+export const GRID_SIZES = {
+  min: 0,
+  max: 12,
+  step: 1,
+};

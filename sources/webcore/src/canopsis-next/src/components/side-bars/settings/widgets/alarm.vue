@@ -50,11 +50,11 @@
             :title="$t('settings.moreInfosModal')"
           )
           v-divider
-          field-number(
-            v-model="settings.widget.parameters.expandCardWidthPercentage",
-            :optional="false",
-            title="Width of the moreInfos/timeline cards"
+          field-grid-range-size(
+            v-model="settings.widget.parameters.expandGridRangeSize",
+            title="Expand card (more infos / timeline) width"
           )
+          v-divider
           field-switcher(
             data-test="isHtmlEnabledOnTimeLine",
             v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
@@ -105,6 +105,7 @@ import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
 import FieldNumber from './fields/common/number.vue';
+import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -129,6 +130,7 @@ export default {
     FieldSwitcher,
     FieldFastAckOutput,
     FieldNumber,
+    FieldGridRangeSize,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
