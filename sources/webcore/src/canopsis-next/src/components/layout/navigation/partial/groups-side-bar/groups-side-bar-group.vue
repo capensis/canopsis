@@ -15,7 +15,8 @@
         @click.stop="showEditGroupModal"
       )
         v-icon(small) edit
-    draggable.panel(
+    draggable.views-panel.secondary.lighten-1(
+      :class="{ empty: isGroupEmpty }",
       :value="group.views",
       :options="draggableOptions",
       @change="changeViewsOrdering"
@@ -54,6 +55,10 @@ export default {
         group: 'views',
       };
     },
+
+    isGroupEmpty() {
+      return this.group.views && this.group.views.length === 0;
+    },
   },
   methods: {
     changeViewsOrdering({ moved, added, removed }) {
@@ -87,8 +92,21 @@ export default {
       height: 48px;
     }
 
-    &.editing /deep/ .v-expansion-panel__header {
-      cursor: move;
+    &.editing {
+      & /deep/ .v-expansion-panel__header {
+        cursor: move;
+      }
+
+      .views-panel.empty {
+        &:after {
+          content: '';
+          display: block;
+          height: 48px;
+          border: 4px dashed #4f6479;
+          border-radius: 5px;
+          position: relative;
+        }
+      }
     }
 
     & /deep/ .v-expansion-panel__body  .v-card {

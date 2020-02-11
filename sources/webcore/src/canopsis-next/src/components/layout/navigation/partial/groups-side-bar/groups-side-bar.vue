@@ -12,7 +12,7 @@
         app-logo.logo
         active-sessions-count
         app-version.version
-      draggable.panel(
+      draggable.groups-panel(
         v-if="hasReadAnyViewAccess",
         v-model="mutatedGroups",
         :class="{ ordering: isGroupsOrderChanged }",
@@ -239,7 +239,7 @@ export default {
     z-index: 6;
   }
 
-  .panel {
+  .groups-panel {
     box-shadow: none;
 
     &.ordering {
