@@ -32,6 +32,7 @@
 
 <script>
 import { cloneDeep } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { WIDGET_TYPES, WIDGET_TYPES_RULES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
@@ -50,6 +51,8 @@ import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
+
+const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   components: {
@@ -89,6 +92,8 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['edition']),
+
     widgetsComponentsMap() {
       return (widgetType) => {
         const baseMap = {
@@ -119,6 +124,7 @@ export default {
         return {
           bind: {
             ...widgetSpecificsProp,
+
             is: baseMap[widgetType],
           },
         };
