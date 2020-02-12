@@ -1154,7 +1154,7 @@ export default {
         popups: {
           success: 'Les groupes ont été réorganisés',
           error: 'Plusieurs groupes n\'ont pas été réorganisés',
-          periodicRefreshWasPaused: 'Periodic refresh was paused while you are editing the groups bar',
+          periodicRefreshWasPaused: 'Le rafraîchissement périodique est mis en pause pendant l\'édition du menu',
           periodicRefreshWasResumed: 'Reprise du rafraîchissement périodique',
         },
       },
