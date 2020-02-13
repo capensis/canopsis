@@ -69,13 +69,15 @@
             :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
-            :columnFiltersMap="columnFiltersMap"
+            :columnFiltersMap="columnFiltersMap",
+            :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
         template(slot="expand", slot-scope="props")
           alarms-expand-panel(
             :alarm="props.item",
             :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine",
-            :widget="widget"
+            :widget="widget",
+            :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
       v-layout.white(align-center)
         v-flex(xs10)
@@ -89,24 +91,20 @@
         v-spacer
         v-flex(xs2, data-test="itemsPerPage")
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+    alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 import { isResolvedAlarm } from '@/helpers/entities';
-import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
-import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
-import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
+
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
-import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
-import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue';
+import NoColumnsTable from '@/components/tables/no-columns.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -117,6 +115,14 @@ import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
+
+import ActionsPanel from './actions/actions-panel.vue';
+import MassActionsPanel from './actions/mass-actions-panel.vue';
+import AlarmListSearch from './search/alarm-list-search.vue';
+import AlarmColumnValue from './columns-formatting/alarm-column-value.vue';
+import AlarmsListRow from './partials/alarms-list-row.vue';
+import AlarmsExpandPanel from './partials/alarms-expand-panel.vue';
+import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
 
 /**
  * Alarm-list component
@@ -133,6 +139,7 @@ export default {
     AlarmsListRow,
     RecordsPerPage,
     AlarmsExpandPanel,
+    AlarmsExpandPanelTour,
     MassActionsPanel,
     ActionsPanel,
     AlarmColumnValue,
@@ -169,8 +176,17 @@ export default {
       selected: [],
     };
   },
-
   computed: {
+    tourCallbacks() {
+      return {
+        onNextStep: this.onTourNextStep,
+      };
+    },
+
+    isTourEnabled() {
+      return this.checkIsTourEnabled(TOURS.alarmsExpand) && this.alarms.length;
+    },
+
     activeRange() {
       const { tstart, tstop } = this.query;
 
@@ -223,11 +239,22 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
-
   mounted() {
     this.fetchAlarmColumnFilters();
   },
   methods: {
+    checkIsTourEnabledForAlarmByIndex(index) {
+      return this.isTourEnabled && index === 0;
+    },
+
+    onTourNextStep(currentStep) {
+      if (currentStep === 0) {
+        this.$set(this.$refs.dataTable.expanded, this.alarms[0]._id, true);
+      }
+
+      return this.$nextTick();
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },

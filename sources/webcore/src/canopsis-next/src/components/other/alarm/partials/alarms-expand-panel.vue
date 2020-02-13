@@ -6,15 +6,15 @@
     dark,
     centered
   )
-    template(v-if="widget.parameters.moreInfoTemplate")
-      v-tab {{ $t('alarmList.tabs.moreInfos') }}
+    template(v-if="widget.parameters.moreInfoTemplate || isTourEnabled")
+      v-tab(:class="{ 'v-tour-step-2': isTourEnabled }") {{ $t('alarmList.tabs.moreInfos') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
                 more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
-    v-tab {{ $t('alarmList.tabs.timeLine') }}
+    v-tab(:class="{ 'v-tour-step-3': isTourEnabled }") {{ $t('alarmList.tabs.timeLine') }}
     v-tab-item
       v-layout.pa-3.secondary.lighten-2(row)
         v-flex(:class="cardFlexClass")
@@ -48,6 +48,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isTourEnabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

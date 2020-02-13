@@ -14,7 +14,7 @@
           hide-details
         )
         v-layout.ml-2(align-center)
-          v-btn.ma-0(icon, small, @click="row.expanded = !row.expanded")
+          v-btn.ma-0(:class="{ 'v-tour-step-1': isTourEnabled }", icon, small, @click="row.expanded = !row.expanded")
             v-icon {{ row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     td(v-for="column in columns")
       alarm-column-value(
@@ -70,6 +70,10 @@ export default {
       required: true,
     },
     isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    isTourEnabled: {
       type: Boolean,
       default: false,
     },
