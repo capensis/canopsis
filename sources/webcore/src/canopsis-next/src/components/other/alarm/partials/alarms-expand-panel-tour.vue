@@ -5,6 +5,8 @@
 <script>
 import { TOURS } from '@/constants';
 
+import { getStepTarget } from '@/helpers/tour';
+
 import tourInnerMixin from '@/mixins/tour/inner';
 
 export default {
@@ -16,24 +18,24 @@ export default {
     tourSteps() {
       return [
         {
-          target: '.v-tour-step-1',
-          content: 'Step 1',
+          target: getStepTarget(this.tourName, 1),
+          content: this.$t('Step 1'),
           offset: -250,
           params: {
             placement: 'right',
           },
         },
         {
-          target: '.v-tour-step-2',
-          content: 'Step 2',
+          target: getStepTarget(this.tourName, 2),
+          content: this.$t('Step 2'),
           offset: -250,
           params: {
             placement: 'top',
           },
         },
         {
-          target: '.v-tour-step-3',
-          content: 'Step 3',
+          target: getStepTarget(this.tourName, 3),
+          content: this.$t('Step 3'),
           offset: -250,
           params: {
             placement: 'top',

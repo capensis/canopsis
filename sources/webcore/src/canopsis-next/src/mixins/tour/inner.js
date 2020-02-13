@@ -41,7 +41,7 @@ export default {
 
       await this.createUser({ data });
 
-      await this.fetchCurrentUser();
+      this.fetchCurrentUser();
     },
   },
 };
