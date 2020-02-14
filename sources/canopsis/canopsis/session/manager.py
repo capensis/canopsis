@@ -56,8 +56,8 @@ class Session(object):
     SESSION_COLLECTION = 'session_collection'
 
     def __init__(
-            self,
-            collection,
+        self,
+        collection,
     ):
         """
         :param MongoCursor collection: the collection where user sessoins are located
@@ -92,7 +92,7 @@ class Session(object):
             {'id_beaker_session': id_beaker_session, 'last_ping': {"$gt": now - self.alive_session_duration}})
         if not visible:
             self.session_collection.update({'_id': session_current['_id']}, {
-                                           '$set': {'last_ping': now}})
+                '$set': {'last_ping': now}})
             return now
 
         else:
@@ -104,20 +104,20 @@ class Session(object):
             tab_duration = session_current['tab_duration']
             if path is session_current['last_visible_path']:
                 tab_duration[view_id][tab_id] += now - \
-                    session_current['last_visible_ping']
+                                                 session_current['last_visible_ping']
             else:
                 if isinstance(tab_duration, dict) and view_id in tab_duration:
                     if isinstance(
-                            tab_duration[view_id],
-                            dict) and tab_id in tab_duration[view_id]:
+                        tab_duration[view_id],
+                        dict) and tab_id in tab_duration[view_id]:
                         tab_duration[view_id][tab_id] += now - \
-                            session_current['last_ping']
+                                                         session_current['last_ping']
                     elif view_id and isinstance(tab_duration[view_id], int):
                         tab_duration[view_id] += now - \
-                            session_current['last_ping']
+                                                 session_current['last_ping']
                     else:
                         tab_duration[view_id][tab_id] = now - \
-                            session_current['last_ping']
+                                                        session_current['last_ping']
 
                 elif len(path) != 2:
                     tab_duration[view_id] = now - session_current['last_ping']
@@ -125,13 +125,13 @@ class Session(object):
                     tab_duration[view_id] = {
                         tab_id: now - session_current['last_ping']}
             session_current['visible_duration'] += now - \
-                session_current['last_ping']
+                                                   session_current['last_ping']
             session_current['last_visible_ping'] = now
             session_current['last_visible_path'] = path
             session_current['last_ping'] = now
 
         self.session_collection.update({'_id': session_current['_id']}, {
-                                       '$set': session_current})
+            '$set': session_current})
 
         return now
 
@@ -147,7 +147,7 @@ class Session(object):
         """
         now = int(time())
         session = self.session_collection.find_one({'id_beaker_session': id_beaker_session, 'last_ping': {
-                                                   "$gt": now - self.alive_session_duration}})
+            "$gt": now - self.alive_session_duration}, 'is_close': False})
 
         if session is None:
             return False
@@ -174,8 +174,8 @@ class Session(object):
                 'last_visible_ping': now,
                 'last_visible_path': 'None',
                 'visible_duration': 0,
-                'tab_duration': {}
-
+                'tab_duration': {},
+                'is_close': False
             }
 
             self.session_collection.update({'_id': str(uuid4())},
@@ -204,20 +204,20 @@ class Session(object):
         tab_duration = session_current['tab_duration']
         if path is session_current['last_visible_path']:
             tab_duration[view_id][tab_id] += now - \
-                session_current['last_visible_ping']
+                                             session_current['last_visible_ping']
         else:
             if isinstance(tab_duration, dict) and view_id in tab_duration:
                 if isinstance(
-                        tab_duration[view_id],
-                        dict) and tab_id in tab_duration[view_id]:
+                    tab_duration[view_id],
+                    dict) and tab_id in tab_duration[view_id]:
                     tab_duration[view_id][tab_id] += now - \
-                        session_current['last_ping']
+                                                     session_current['last_ping']
                 elif view_id and isinstance(tab_duration[view_id], int):
                     tab_duration[view_id] += now - \
-                        session_current['last_ping']
+                                             session_current['last_ping']
                 else:
                     tab_duration[view_id][tab_id] = now - \
-                        session_current['last_ping']
+                                                    session_current['last_ping']
 
             elif len(path) != 2:
                 tab_duration[view_id] = now - session_current['last_ping']
@@ -225,13 +225,13 @@ class Session(object):
                 tab_duration[view_id] = {
                     tab_id: now - session_current['last_ping']}
         session_current['visible_duration'] += now - \
-            session_current['last_ping']
+                                               session_current['last_ping']
         session_current['last_visible_ping'] = now
         session_current['last_visible_path'] = path
         session_current['last_ping'] = now
 
         self.session_collection.update({'_id': session_current['_id']}, {
-                                       '$set': session_current})
+            '$set': session_current})
         return now
 
     def sessions_req(self, id_beaker_session, params):
@@ -240,8 +240,8 @@ class Session(object):
         req = {}
         if "active" in params:
             if params["active"] == "true":
-
                 req['last_ping'] = {"$gt": now - self.alive_session_duration}
+                req['is_close'] = False
             else:
                 req['last_ping'] = {"$lt": now - self.alive_session_duration}
 
@@ -259,3 +259,12 @@ class Session(object):
 
         sessions = list(self.session_collection.find(req))
         return sessions
+
+    def session_close(self, id_beaker_session):
+
+        now = int(time())
+        session_current = self.session_collection.find_one(
+            {'id_beaker_session': id_beaker_session, 'last_ping': {"$gt": now - self.alive_session_duration}})
+        session_current["is_close"] = True
+        self.session_collection.update({'_id': session_current['_id']}, {
+            '$set': session_current})
