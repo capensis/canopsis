@@ -90,7 +90,6 @@ export default {
         commit(types.LOGOUT);
         await request.get(API_ROUTES.sessionClose);
         Cookies.remove(COOKIE_SESSION_KEY);
-
         window.location.reload();
       } catch (err) {
         console.error(err);

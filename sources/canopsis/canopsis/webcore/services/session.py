@@ -28,7 +28,6 @@ from bottle import request, abort
 from canopsis.auth.check import check
 import json
 
-
 from canopsis.common.middleware import Middleware
 from canopsis.common.utils import singleton_per_scope
 from canopsis.common.ws import route
@@ -217,7 +216,7 @@ def exports(ws):
     @ws.application.post(
         '/api/v2/session_tracepath'
     )
-    def sessiontracepath ():
+    def sessiontracepath():
         try:
             data = json.loads(request.body.read())
             paths = data["path"]
@@ -253,5 +252,5 @@ def exports(ws):
             id_beaker_session, username = get_info()
             session_manager.session_close(id_beaker_session)
             return gen_json({'description': "Sessions close"})
-        except :
+        except:
             return gen_json_error({'description': "Erreur in close session"}, HTTP_ERROR)
