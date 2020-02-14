@@ -253,5 +253,5 @@ def exports(ws):
             id_beaker_session, username = get_info()
             session_manager.session_close(id_beaker_session)
             return gen_json({'description': "Sessions close"})
-        except SessionError as e :
-            pass
+        except :
+            return gen_json_error({'description': "Erreur in close session"}, HTTP_ERROR)

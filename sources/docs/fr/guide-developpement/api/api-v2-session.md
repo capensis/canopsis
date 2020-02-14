@@ -41,8 +41,6 @@ Création d'une Session.
 }
 ```
 
-
-
 ### Navigation dans l'application
 
 Permet de stocker les temps de session en fonction des différentes pages consultées dans l'application.
@@ -116,7 +114,8 @@ Permet de lister les sessions.
                 "other-tab": 50
             },
             "/exploitation/pbehaviors": 700
-        }
+        },
+        "is_close": False 
     },
     // ...
 ]
@@ -156,5 +155,30 @@ Envoi d'un keepalive.
     "time":XXXXXXX,
     "visible":true,
     "paths":"[/view/da7ac9b9-db1c-4435-a1f2-edb4d6be4db8,view-tab_edd5855b-54f1-4c51-9550-d88c2da60768]"
+}
+```
+
+### Fermeture manuelle d'une session 
+Si l'utilisateur ferme manuellement (logout) l'application, on change la valeur de `is_close` pour prendre la fin de cette session imediatement en compte.
+
+**URL :** `/api/v2/session_close`
+
+**Methode :** `GET`
+
+**Authentification requise** : Oui
+
+**Permissions requises** : Aucune
+
+#### Réponse en cas de réussite
+
+**Condition :** Session fermet
+
+**Code :** `200 OK`
+
+ **Exemple de corps de requête** :
+ 
+ ```json
+{
+  "description": "Sessions close"
 }
 ```

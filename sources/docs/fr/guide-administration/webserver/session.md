@@ -40,7 +40,8 @@ Les données renvoyées par l'API sont stockées dans la collection `default_ses
             "other-tab": 50
         },
         "/exploitation/pbehaviors": 700
-    }
+    },
+    'is_close': False // Cette session n'a pas été fermet manuellement (via logout)
 }
 ```
 Cette collection stocke l'historique des sessions utilisateurs ainsi que le temps passé sur les différentes pages. 
