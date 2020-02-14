@@ -88,6 +88,7 @@ export default {
     async logout({ commit }) {
       try {
         commit(types.LOGOUT);
+        await request.get(API_ROUTES.sessionClose);
         Cookies.remove(COOKIE_SESSION_KEY);
 
         window.location.reload();

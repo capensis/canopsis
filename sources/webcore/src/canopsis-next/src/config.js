@@ -105,6 +105,7 @@ export const API_ROUTES = {
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
   session: '/api/v2/sessions',
+  sessionClose: '/api/v2/session_close',
 };
 
 export const COLORS = {
