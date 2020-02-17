@@ -158,6 +158,7 @@ export default {
     '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
     '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
     '</dl>',
+    clear: 'Ne plus appliquer cette recherche',
   },
   entities: {
     watcher: 'Observateurs',
@@ -1076,6 +1077,9 @@ export default {
     fields: {
       mixFilters: 'Mix de filtres',
     },
+    buttons: {
+      list: 'Gérer les filtres',
+    },
   },
   validator: {
     unique: 'Le champ doit être unique',
@@ -1269,6 +1273,9 @@ export default {
     },
   },
 
+  liveReporting: {
+    button: 'Définir un intervalle de dates',
+  },
 
   ...featureService.get('i18n.fr'),
 };
