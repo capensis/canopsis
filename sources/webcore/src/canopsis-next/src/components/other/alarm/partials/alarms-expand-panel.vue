@@ -63,14 +63,14 @@ export default {
   computed: {
     moreInfosTabClass() {
       if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpand, 2);
+        return getStepClass(TOURS.alarmsExpandPanel, 2);
       }
 
       return '';
     },
     timeLineTabClass() {
       if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpand, 3);
+        return getStepClass(TOURS.alarmsExpandPanel, 3);
       }
 
       return '';

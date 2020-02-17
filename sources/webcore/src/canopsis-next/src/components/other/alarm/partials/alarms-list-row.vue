@@ -87,7 +87,7 @@ export default {
     },
     expandButtonClass() {
       if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpand, 1);
+        return getStepClass(TOURS.alarmsExpandPanel, 1);
       }
 
       return '';

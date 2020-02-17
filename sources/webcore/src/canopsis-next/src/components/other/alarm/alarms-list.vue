@@ -184,7 +184,7 @@ export default {
     },
 
     isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpand) && this.alarms.length;
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && this.alarms.length;
     },
 
     activeRange() {

@@ -13,13 +13,15 @@ export default {
   mixins: [tourInnerMixin],
   computed: {
     tourName() {
-      return TOURS.alarmsExpand;
+      return TOURS.alarmsExpandPanel;
     },
     tourSteps() {
+      const stepsContentPrefix = `tours.${this.tourName}`;
+
       return [
         {
           target: getStepTarget(this.tourName, 1),
-          content: this.$t('Step 1'),
+          content: this.$t(`${stepsContentPrefix}.step1`),
           offset: -250,
           params: {
             placement: 'right',
@@ -27,7 +29,7 @@ export default {
         },
         {
           target: getStepTarget(this.tourName, 2),
-          content: this.$t('Step 2'),
+          content: this.$t(`${stepsContentPrefix}.step2`),
           offset: -250,
           params: {
             placement: 'top',
@@ -35,7 +37,7 @@ export default {
         },
         {
           target: getStepTarget(this.tourName, 3),
-          content: this.$t('Step 3'),
+          content: this.$t(`${stepsContentPrefix}.step3`),
           offset: -250,
           params: {
             placement: 'top',

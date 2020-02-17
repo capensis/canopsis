@@ -1103,5 +1103,5 @@ export const GRID_SIZES = {
 };
 
 export const TOURS = {
-  alarmsExpand: 'alarmsExpand',
+  alarmsExpandPanel: 'alarmsExpandPanel',
 };
