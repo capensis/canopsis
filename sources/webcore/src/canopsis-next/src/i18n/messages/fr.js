@@ -242,6 +242,7 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
+    groupColumnNames: 'Groupe nom des colonnes',
     orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
     defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',

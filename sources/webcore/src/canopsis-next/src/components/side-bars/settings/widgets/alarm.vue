@@ -21,7 +21,16 @@
             :columnsLabel="$t('settings.columnName')"
           )
           v-divider
-          field-columns(v-model="settings.widget.parameters.widgetColumns", withHtml)
+          field-columns(
+            v-model="settings.widget.parameters.widgetColumns",
+            :label="$t('settings.columnNames')",
+            withHtml
+          )
+          field-columns(
+            v-model="settings.widget.parameters.widgetGroupColumns",
+            :label="$t('settings.groupColumnNames')",
+            withHtml
+          )
           v-divider
           field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
           v-divider

@@ -87,6 +87,36 @@ export function generateWidgetByType(type) {
         value: 'v.status.val',
       },
     ],
+    widgetGroupColumns: [
+      {
+        label: i18n.t('tables.alarmGeneral.connector'),
+        value: 'v.connector',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.connectorName'),
+        value: 'v.connector_name',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.resource'),
+        value: 'v.resource',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.output'),
+        value: 'v.output',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.extraDetails'),
+        value: 'extra_details',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.state'),
+        value: 'v.state.val',
+      },
+      {
+        label: i18n.t('tables.alarmGeneral.status'),
+        value: 'v.status.val',
+      },
+    ],
   };
 
   let specialParameters = {};

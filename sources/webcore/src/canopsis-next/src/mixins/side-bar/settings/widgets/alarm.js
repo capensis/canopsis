@@ -32,7 +32,7 @@ export default {
      */
     prepareAlarmWidgetParametersSettings(
       parameters,
-      keysForPreparation = ['widgetColumns', 'infoPopups', 'sort'],
+      keysForPreparation = ['widgetColumns', 'widgetGroupColumns', 'infoPopups', 'sort'],
       isInitialization = false,
     ) {
       return {
@@ -45,6 +45,14 @@ export default {
           ...v,
           value: this.prefixFormatter(v.value, isInitialization),
         })) : parameters.widgetColumns,
+
+        /**
+         * widgetGroupColumns preparation
+         */
+        widgetGroupColumns: keysForPreparation.includes('widgetGroupColumns') ? parameters.widgetGroupColumns.map(v => ({
+          ...v,
+          value: this.prefixFormatter(v.value, isInitialization),
+        })) : parameters.widgetGroupColumns,
 
         /**
          * infoPopups preparation
@@ -85,7 +93,7 @@ export default {
 
         parameters: this.prepareAlarmWidgetParametersSettings(
           widget.parameters,
-          ['widgetColumns', 'infoPopups', 'sort'],
+          ['widgetColumns', 'widgetGroupColumns', 'infoPopups', 'sort'],
           isInitialization,
         ),
       };
@@ -107,7 +115,7 @@ export default {
 
           alarmsList: this.prepareAlarmWidgetParametersSettings(
             widget.parameters.alarmsList,
-            ['widgetColumns', 'infoPopups'],
+            ['widgetColumns', 'widgetGroupColumns', 'infoPopups'],
             isInitialization,
           ),
         },
