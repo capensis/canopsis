@@ -800,7 +800,7 @@ export default {
       fields: {
         id: 'ID',
         retryDelay: 'Intervalle',
-        retryCount: 'Nombre d\'essais',
+        retryCount: 'Nombre d\'essais après échec',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
