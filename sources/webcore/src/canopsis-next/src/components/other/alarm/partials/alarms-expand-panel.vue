@@ -37,10 +37,6 @@ export default {
     MoreInfos,
   },
   props: {
-    isHTMLEnabled: {
-      type: Boolean,
-      default: false,
-    },
     alarm: {
       type: Object,
       required: true,
@@ -63,6 +59,9 @@ export default {
         `offset-xs${start}`,
         `xs${end - start}`,
       ];
+    },
+    isHTMLEnabled() {
+      return this.widget.parameters.isHtmlEnabledOnTimeLine;
     },
   },
   watch: {
