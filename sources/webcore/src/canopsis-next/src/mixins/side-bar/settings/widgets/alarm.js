@@ -142,11 +142,7 @@ export default {
 
           alarmsList: this.prepareAlarmWidgetParametersSettings(
             widget.parameters.alarmsList,
-            [
-              WIDGET_PARAMETERS_FIELDS.widgetColumns,
-              WIDGET_PARAMETERS_FIELDS.widgetGroupColumns,
-              WIDGET_PARAMETERS_FIELDS.infoPopups,
-            ],
+            [WIDGET_PARAMETERS_FIELDS.widgetColumns, WIDGET_PARAMETERS_FIELDS.infoPopups],
             isInitialization,
           ),
         },
