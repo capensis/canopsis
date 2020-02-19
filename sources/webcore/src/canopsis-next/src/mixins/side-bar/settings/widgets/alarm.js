@@ -65,12 +65,13 @@ export default {
         /**
          * widgetGroupColumns preparation
          */
-        widgetGroupColumns: keysForPreparation.includes(WIDGET_PARAMETERS_FIELDS.widgetGroupColumns)
-          ? parameters.widgetGroupColumns.map(v => ({
-            ...v,
-            value: this.prefixFormatter(v.value, isInitialization),
-          }))
-          : parameters.widgetGroupColumns,
+        widgetGroupColumns:
+          parameters.widgetGroupColumns && keysForPreparation.includes(WIDGET_PARAMETERS_FIELDS.widgetGroupColumns)
+            ? parameters.widgetGroupColumns.map(v => ({
+              ...v,
+              value: this.prefixFormatter(v.value, isInitialization),
+            }))
+            : parameters.widgetGroupColumns,
 
         /**
          * infoPopups preparation
