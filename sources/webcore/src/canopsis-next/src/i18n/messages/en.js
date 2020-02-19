@@ -269,6 +269,7 @@ export default {
     defaultSortColumn: 'Default sort column',
     sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
+    groupColumnNames: 'Group column names',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
