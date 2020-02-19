@@ -1041,6 +1041,67 @@ export const DURATION_UNITS = {
   },
 };
 
+export const DEFAULT_WIDGET_COLUMNS = [
+  {
+    label: 'tables.alarmGeneral.connector',
+    value: 'v.connector',
+  },
+  {
+    label: 'tables.alarmGeneral.connectorName',
+    value: 'v.connector_name',
+  },
+  {
+    label: 'tables.alarmGeneral.resource',
+    value: 'v.resource',
+  },
+  {
+    label: 'tables.alarmGeneral.output',
+    value: 'v.output',
+  },
+  {
+    label: 'tables.alarmGeneral.extraDetails',
+    value: 'extra_details',
+  },
+  {
+    label: 'tables.alarmGeneral.state',
+    value: 'v.state.val',
+  },
+  {
+    label: 'tables.alarmGeneral.status',
+    value: 'v.status.val',
+  },
+];
+export const DEFAULT_WIDGET_GROUP_COLUMNS = [
+  {
+    label: 'tables.alarmGeneral.connector',
+    value: 'v.connector',
+  },
+  {
+    label: 'tables.alarmGeneral.connectorName',
+    value: 'v.connector_name',
+  },
+  {
+    label: 'tables.alarmGeneral.resource',
+    value: 'v.resource',
+  },
+  {
+    label: 'tables.alarmGeneral.output',
+    value: 'v.output',
+  },
+  {
+    label: 'tables.alarmGeneral.extraDetails',
+    value: 'extra_details',
+  },
+  {
+    label: 'tables.alarmGeneral.state',
+    value: 'v.state.val',
+  },
+  {
+    label: 'tables.alarmGeneral.status',
+    value: 'v.status.val',
+  },
+];
+
 export const PERIODIC_REFRESH_UNITS = {
   second: {
     text: 'common.times.second',

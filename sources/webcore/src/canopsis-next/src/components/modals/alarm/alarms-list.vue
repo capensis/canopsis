@@ -14,7 +14,7 @@ import { MODALS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/inner';
 import queryMixin from '@/mixins/query';
 
-import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
+import AlarmsListWidget from '@/components/other/alarm/partials/alarms-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

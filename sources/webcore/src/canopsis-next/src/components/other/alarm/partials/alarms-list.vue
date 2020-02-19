@@ -42,12 +42,14 @@
       :widget="widget",
       :alarms="alarms",
       :totalItems="alarmsMeta.total",
-      :pagination.sync="vDataTablePagination",
+      :pagination="vDataTablePagination",
       :loading="alarmsPending",
       :isEditingMode="isEditingMode",
       :hasColumns="hasColumns",
       :columns="columns",
-      ref="alarmsTable"
+      ref="alarmsTable",
+      expand,
+      @change:pagination="updatePagination"
     )
     v-layout.white(align-center)
       v-flex(xs10)
@@ -70,15 +72,9 @@ import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 import AlarmsTable from '@/components/other/alarm/alarms-table.vue';
-import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
-import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
-import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
-import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -102,13 +98,7 @@ export default {
   components: {
     AlarmsTable,
     AlarmListSearch,
-    AlarmsListRow,
     RecordsPerPage,
-    AlarmsExpandPanel,
-    MassActionsPanel,
-    ActionsPanel,
-    AlarmColumnValue,
-    NoColumnsTable,
     FilterSelector,
   },
   mixins: [
@@ -166,6 +156,10 @@ export default {
   },
 
   methods: {
+    updatePagination(pagination) {
+      this.vDataTablePagination = pagination;
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },

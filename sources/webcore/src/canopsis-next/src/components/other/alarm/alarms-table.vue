@@ -6,18 +6,19 @@
     div(v-else)
       v-data-table.alarms-list-table(
         v-model="selected",
-        data-test="tableWidget",
         :class="vDataTableClass",
         :items="alarms",
         :headers="headers",
         :total-items="totalItems",
-        :pagination.sync="pagination",
+        :pagination="pagination",
         :loading="loading || alarmColumnFiltersPending",
+        data-test="tableWidget",
         ref="dataTable",
         item-key="_id",
         hide-actions,
         select-all,
-        expand
+        expand="expand",
+        @update:pagination="updatePaginationHandler"
       )
         template(slot="progress")
           v-fade-transition
@@ -31,11 +32,13 @@
             :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
-            :columnFiltersMap="columnFiltersMap"
+            :columnFiltersMap="columnFiltersMap",
+            :expand="expand"
           )
-        template(slot="expand", slot-scope="props")
+        template(v-if="expand", slot="expand", slot-scope="props")
           alarms-expand-panel(
             :alarm="props.item",
+            :isEditingMode="isEditingMode",
             :widget="widget"
           )
 </template>
@@ -52,17 +55,13 @@ import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue
 
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
-
 /**
- * Alarm-list component
+ * Alarm-table component
  *
  * @module alarm
- *
- * @prop {Object} widget - Object representing the widget
- *
- * @event openSettings#click
  */
 export default {
+  name: 'alarms-table',
   components: {
     AlarmsListRow,
     RecordsPerPage,
@@ -92,7 +91,7 @@ export default {
     },
     pagination: {
       type: Object,
-      required: true,
+      required: false,
     },
     isEditingMode: {
       type: Boolean,
@@ -100,11 +99,15 @@ export default {
     },
     loading: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     hasColumns: {
       type: Boolean,
       required: true,
+    },
+    expand: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -151,6 +154,12 @@ export default {
 
   mounted() {
     this.fetchAlarmColumnFilters();
+  },
+
+  methods: {
+    updatePaginationHandler(data) {
+      this.$emit('change:pagination', data);
+    },
   },
 };
 </script>

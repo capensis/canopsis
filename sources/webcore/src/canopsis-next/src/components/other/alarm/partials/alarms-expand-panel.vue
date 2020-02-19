@@ -21,6 +21,13 @@
           v-card.tab-item-card
             v-card-text
               time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
+    v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
+    v-tab-item
+      v-layout.pa-3.secondary.lighten-2(row)
+        v-flex(:class="cardFlexClass")
+          v-card.tab-item-card
+            v-card-text
+              group-alarms-list(:widget="widget", :alarms="[alarm]", :isEditingMode="isEditingMode")
 </template>
 
 <script>
@@ -30,9 +37,11 @@ import uid from '@/helpers/uid';
 
 import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
 import MoreInfos from '@/components/other/alarm/more-infos/more-infos.vue';
+import GroupAlarmsList from '@/components/other/alarm/group-alarms-list.vue';
 
 export default {
   components: {
+    GroupAlarmsList,
     TimeLine,
     MoreInfos,
   },
@@ -44,6 +53,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    isEditingMode: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
