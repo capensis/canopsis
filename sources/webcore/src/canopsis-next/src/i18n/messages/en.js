@@ -201,6 +201,7 @@ export default {
         changeState: 'Change criticity',
         variablesHelp: 'List of available variables',
         history: 'History',
+        group: 'Group',
       },
       iconsTitles: {
         ack: 'Ack',

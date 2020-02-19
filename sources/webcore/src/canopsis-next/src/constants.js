@@ -41,6 +41,7 @@ export const MODALS = {
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
+  createGroupEvent: 'create-group-event',
   variablesHelp: 'variables-help',
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
@@ -101,6 +102,7 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
+  group: 'group',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -317,6 +319,9 @@ export const EVENT_ENTITY_STYLE = {
   },
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
+  },
+  [EVENT_ENTITY_TYPES.group]: {
+    icon: 'note_add',
   },
 };
 
@@ -660,6 +665,7 @@ export const USERS_RIGHTS = {
         cancel: 'listalarm_removeAlarm',
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
+        group: 'listalarm_group',
 
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
@@ -728,6 +734,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
     history: 'history',
+    group: 'group',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -781,6 +788,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.group]: USERS_RIGHTS.business.alarmsList.actions.group,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 

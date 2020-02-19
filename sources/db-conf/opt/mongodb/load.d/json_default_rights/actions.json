@@ -494,6 +494,13 @@
         "desc": "Rights on listalarm: history"
     },
     {
+        "_id" : "listalarm_group",
+        "loader_id" : "listalarm_group",
+        "crecord_name" : "listalarm_group",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: group"
+    },
+    {
         "_id" : "listalarm_listPbehavior",
         "loader_id" : "listalarm_listPbehavior",
         "crecord_name" : "listalarm_listPbehavior",

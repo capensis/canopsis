@@ -82,6 +82,12 @@ export default {
           title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
+        {
+          type: alarmsListActionsTypes.group,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.group].icon,
+          title: this.$t('alarmList.actions.titles.group'),
+          method: this.showActionModal(MODALS.createGroupEvent),
+        },
       ],
     };
   },

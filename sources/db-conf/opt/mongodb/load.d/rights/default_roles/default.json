@@ -206,6 +206,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_group": {
+            "checksum": 1,
+            "desc": ""
+        },
         "listalarm_listPbehavior": {
             "checksum": 1,
             "desc": ""

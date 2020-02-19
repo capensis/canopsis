@@ -189,6 +189,7 @@ export default {
         changeState: 'Changer la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
+        group: 'Group',
       },
       iconsTitles: {
         ack: 'Ack',
