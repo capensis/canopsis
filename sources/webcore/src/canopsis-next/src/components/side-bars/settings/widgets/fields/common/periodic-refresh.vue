@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { DEFAULT_PERIODIC_REFRESH, TIME_UNITS } from '@/constants';
+import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
@@ -27,7 +27,7 @@ export default {
   },
   created() {
     if (this.value && !this.value.unit) {
-      this.updateField('unit', TIME_UNITS.second);
+      this.updateField('unit', DEFAULT_PERIODIC_REFRESH.unit);
     }
   },
 };
