@@ -158,6 +158,7 @@ export default {
     '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
     '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
     '</dl>',
+    submit: 'Rechercher',
     clear: 'Ne plus appliquer cette recherche',
   },
   entities: {
