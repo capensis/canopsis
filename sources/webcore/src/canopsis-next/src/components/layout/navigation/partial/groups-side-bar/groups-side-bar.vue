@@ -240,11 +240,20 @@ export default {
   }
 
   .groups-panel {
+    position: relative;
     box-shadow: none;
 
     &.ordering {
       position: absolute;
       z-index: 9;
+    }
+
+    .editing &:after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      width: 100%;
+      height: 48px;
     }
   }
 
