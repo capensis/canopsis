@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-form(data-test="createGroupEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ title }}
+        span {{ config.title }}
       template(slot="text")
         v-container
           v-layout(row)
@@ -14,14 +14,12 @@
             v-text-field(
               v-model="form.output",
               v-validate="'required'",
-              :label="$t('modals.createCancelEvent.fields.output')",
+              :label="$t('modals.createEvent.fields.output')",
               :error-messages="errors.collect('output')",
-              name="output",
-              data-test="createCancelEventNote"
+              name="output"
             )
       template(slot="actions")
         v-btn(
-          data-test="createCancelEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -29,7 +27,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="createCancelEventSubmitButton",
           type="submit"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
@@ -49,7 +46,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal to cancel an alarm
  */
 export default {
-  name: MODALS.createGroupEvent,
+  name: MODALS.createEvent,
   $_veeValidate: {
     validator: 'new',
   },
@@ -62,15 +59,6 @@ export default {
       },
     };
   },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createCancelEvent.title');
-    },
-
-    eventType() {
-      return this.config.eventType || EVENT_ENTITY_TYPES.cancel;
-    },
-  },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
@@ -78,7 +66,7 @@ export default {
       if (isFormValid) {
         const data = { ...this.form };
 
-        if (this.eventType === EVENT_ENTITY_TYPES.cancel) {
+        if (this.config.eventType === EVENT_ENTITY_TYPES.cancel) {
           data.cancel = 1;
         }
 

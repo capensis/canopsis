@@ -68,7 +68,7 @@ export default {
           type: alarmsListActionsTypes.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
-          method: this.showActionModal(MODALS.createCancelEvent),
+          method: this.showCancelEventModal,
         },
         {
           type: alarmsListActionsTypes.associateTicket,
@@ -84,9 +84,9 @@ export default {
         },
         {
           type: alarmsListActionsTypes.group,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.group].icon,
-          title: this.$t('alarmList.actions.titles.group'),
-          method: this.showActionModal(MODALS.createGroupEvent),
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
+          title: this.$t('alarmList.actions.titles.groupRequest'),
+          method: this.showCreateGroupRequestEventModal,
         },
       ],
     };
@@ -138,6 +138,18 @@ export default {
           ...this.modalConfig,
 
           fastAckOutput: this.widget.parameters.fastAckOutput,
+        },
+      });
+    },
+
+    showCreateGroupRequestEventModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createGroupRequestEvent.title'),
+          eventType: EVENT_ENTITY_TYPES.groupRequest,
         },
       });
     },

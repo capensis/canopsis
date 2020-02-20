@@ -34,14 +34,13 @@ export const ENTITIES_TYPES = {
 };
 
 export const MODALS = {
+  createEvent: 'create-event',
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
-  createCancelEvent: 'create-cancel-event',
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
-  createGroupEvent: 'create-group-event',
   variablesHelp: 'variables-help',
   createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
@@ -102,7 +101,7 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
-  group: 'group',
+  groupRequest: 'groupRequest',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -320,7 +319,7 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
-  [EVENT_ENTITY_TYPES.group]: {
+  [EVENT_ENTITY_TYPES.groupRequest]: {
     icon: 'note_add',
   },
 };

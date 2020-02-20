@@ -1,11 +1,10 @@
+export { default as CreateEvent } from './alarm/create-event.vue';
 export { default as CreateAckEvent } from './alarm/create-ack-event.vue';
 export { default as ConfirmAckWithTicket } from './alarm/confirm-ack-with-ticket.vue';
 export { default as CreateAssociateTicketEvent } from './alarm/create-associate-ticket-event.vue';
-export { default as CreateCancelEvent } from './alarm/create-cancel-event.vue';
 export { default as CreateChangeStateEvent } from './alarm/create-change-state-event.vue';
 export { default as CreateDeclareTicketEvent } from './alarm/create-declare-ticket-event.vue';
 export { default as CreateSnoozeEvent } from './alarm/create-snooze-event.vue';
-export { default as CreateGroupEvent } from './alarm/create-group-event.vue';
 export { default as VariablesHelp } from './common/variables-help.vue';
 export { default as InfoPopupSetting } from './alarm/info-popup-setting/info-popup-setting.vue';
 export { default as AddInfoPopup } from './alarm/info-popup-setting/add-info-popup.vue';
