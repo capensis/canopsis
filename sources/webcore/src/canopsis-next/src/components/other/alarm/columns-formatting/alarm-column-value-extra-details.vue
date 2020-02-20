@@ -72,6 +72,17 @@
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
               div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
+    div(v-if="meta")
+      v-tooltip(top)
+        v-icon.badge.purple.white--text(
+          small,
+          data-test="extraDetailsOpenButton-meta",
+          slot="activator"
+        ) {{ $constants.EVENT_ENTITY_STYLE.group.icon }}
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
+          strong {{ meta.title }}
+          div rule : {{ meta.rule }}
+          div csq : {{ meta.total }}
 </template>
 
 <script>
@@ -92,6 +103,14 @@ export default {
   computed: {
     pbehaviors() {
       return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
+    },
+
+    meta() {
+      return {
+        title: 'Rgp',
+        rule: 'tst1',
+        total: 30,
+      };
     },
   },
 };

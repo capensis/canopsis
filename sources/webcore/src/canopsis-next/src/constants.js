@@ -318,6 +318,9 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
+  group: {
+    icon: 'note',
+  },
 };
 
 export const UNKNOWN_VALUE_STYLE = {
