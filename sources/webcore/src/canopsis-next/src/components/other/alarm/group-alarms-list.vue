@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import AlarmsTable from '@/components/other/alarm/alarms-table.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 
 import widgetColumnsMixin from '@/mixins/widget/columns';
@@ -26,10 +25,7 @@ import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
  *
  */
 export default {
-  components: {
-    AlarmsTable,
-    RecordsPerPage,
-  },
+  components: { RecordsPerPage },
   mixins: [
     widgetColumnsMixin,
     widgetPaginationMixin,

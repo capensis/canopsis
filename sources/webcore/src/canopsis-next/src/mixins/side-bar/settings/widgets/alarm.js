@@ -1,5 +1,5 @@
 import { isString } from 'lodash';
-import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
+import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
 const WIDGET_PARAMETERS_FIELDS = {
   widgetColumns: 'widgetColumns',
@@ -49,6 +49,14 @@ export default {
       keysForPreparation = defaultFieldsForAlarmsPreparation,
       isInitialization = false,
     ) {
+      const widgetGroupColumns =
+        keysForPreparation.includes(WIDGET_PARAMETERS_FIELDS.widgetGroupColumns) && !parameters.widgetGroupColumns
+          ? DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ label, value }) => ({
+            label: this.$t(label),
+            value,
+          }))
+          : parameters.widgetGroupColumns;
+
       return {
         ...parameters,
 
@@ -65,13 +73,10 @@ export default {
         /**
          * widgetGroupColumns preparation
          */
-        widgetGroupColumns:
-          parameters.widgetGroupColumns && keysForPreparation.includes(WIDGET_PARAMETERS_FIELDS.widgetGroupColumns)
-            ? parameters.widgetGroupColumns.map(v => ({
-              ...v,
-              value: this.prefixFormatter(v.value, isInitialization),
-            }))
-            : parameters.widgetGroupColumns,
+        widgetGroupColumns: widgetGroupColumns && widgetGroupColumns.map(v => ({
+          ...v,
+          value: this.prefixFormatter(v.value, isInitialization),
+        })),
 
         /**
          * infoPopups preparation

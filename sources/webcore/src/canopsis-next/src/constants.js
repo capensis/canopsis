@@ -1041,64 +1041,80 @@ export const DURATION_UNITS = {
   },
 };
 
-export const DEFAULT_WIDGET_COLUMNS = [
+export const ALARM_ENTITY_FIELDS = {
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  component: 'v.component',
+  resource: 'v.resource',
+  output: 'v.output',
+  extraDetails: 'extra_details',
+  state: 'v.state.val',
+  status: 'v.status.val',
+};
+
+export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
   {
     label: 'tables.alarmGeneral.connector',
-    value: 'v.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
   },
   {
     label: 'tables.alarmGeneral.connectorName',
-    value: 'v.connector_name',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    label: 'tables.alarmGeneral.component',
+    value: ALARM_ENTITY_FIELDS.component,
   },
   {
     label: 'tables.alarmGeneral.resource',
-    value: 'v.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
   },
   {
     label: 'tables.alarmGeneral.output',
-    value: 'v.output',
+    value: ALARM_ENTITY_FIELDS.output,
   },
   {
     label: 'tables.alarmGeneral.extraDetails',
-    value: 'extra_details',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
     label: 'tables.alarmGeneral.state',
-    value: 'v.state.val',
+    value: ALARM_ENTITY_FIELDS.state,
   },
   {
     label: 'tables.alarmGeneral.status',
-    value: 'v.status.val',
+    value: ALARM_ENTITY_FIELDS.status,
   },
 ];
-export const DEFAULT_WIDGET_GROUP_COLUMNS = [
+
+export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
   {
     label: 'tables.alarmGeneral.connector',
-    value: 'v.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
   },
   {
     label: 'tables.alarmGeneral.connectorName',
-    value: 'v.connector_name',
+    value: ALARM_ENTITY_FIELDS.connectorName,
   },
   {
     label: 'tables.alarmGeneral.resource',
-    value: 'v.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
   },
   {
     label: 'tables.alarmGeneral.output',
-    value: 'v.output',
+    value: ALARM_ENTITY_FIELDS.output,
   },
   {
     label: 'tables.alarmGeneral.extraDetails',
-    value: 'extra_details',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
   },
   {
     label: 'tables.alarmGeneral.state',
-    value: 'v.state.val',
+    value: ALARM_ENTITY_FIELDS.state,
   },
   {
     label: 'tables.alarmGeneral.status',
-    value: 'v.status.val',
+    value: ALARM_ENTITY_FIELDS.status,
   },
 ];
 

@@ -71,7 +71,6 @@ import { omit, pick, isEmpty } from 'lodash';
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
-import AlarmsTable from '@/components/other/alarm/alarms-table.vue';
 import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
@@ -96,7 +95,6 @@ import entitiesAlarmMixin from '@/mixins/entities/alarm';
  */
 export default {
   components: {
-    AlarmsTable,
     AlarmListSearch,
     RecordsPerPage,
     FilterSelector,

@@ -1,4 +1,4 @@
-import { DEFAULT_WIDGET_GROUP_COLUMNS } from '@/constants';
+import { DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS } from '@/constants';
 
 export default {
   props: {
@@ -21,7 +21,7 @@ export default {
         return this.widget.parameters.widgetGroupColumns.map(this.mapColumnEntity);
       }
 
-      return DEFAULT_WIDGET_GROUP_COLUMNS.map(({ label, value }) => ({
+      return DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ label, value }) => ({
         text: this.$t(label),
         value,
       }));

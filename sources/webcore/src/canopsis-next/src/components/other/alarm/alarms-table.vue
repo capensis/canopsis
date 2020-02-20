@@ -61,7 +61,6 @@ import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
  * @module alarm
  */
 export default {
-  name: 'alarms-table',
   components: {
     AlarmsListRow,
     RecordsPerPage,

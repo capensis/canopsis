@@ -4,8 +4,8 @@ import { get, omit, cloneDeep } from 'lodash';
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
-  DEFAULT_WIDGET_COLUMNS,
-  DEFAULT_WIDGET_GROUP_COLUMNS,
+  DEFAULT_ALARMS_WIDGET_COLUMNS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
@@ -55,11 +55,11 @@ export function generateWidgetByType(type) {
       enabled: false,
       value: 'auto ack',
     },
-    widgetColumns: DEFAULT_WIDGET_COLUMNS.map(({ label, value }) => ({
+    widgetColumns: DEFAULT_ALARMS_WIDGET_COLUMNS.map(({ label, value }) => ({
       label: i18n.t(label),
       value,
     })),
-    widgetGroupColumns: DEFAULT_WIDGET_GROUP_COLUMNS.map(({ label, value }) => ({
+    widgetGroupColumns: DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ label, value }) => ({
       label: i18n.t(label),
       value,
     })),
