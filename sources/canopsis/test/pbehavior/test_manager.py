@@ -393,8 +393,8 @@ class TestManager(BaseTest):
             'w_rrule',
             'w_rrule',
             {},
-            now - hour,
-            now + hour,
+            now - 1,
+            now + 1,
             'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
             'test'
         ).to_dict()
@@ -604,6 +604,75 @@ class TestManager(BaseTest):
         intervals = list(self.pbm.get_intervals_with_pbehaviors_by_eid(
             tstart1, tstart1 + 5 * day, 2))
         self.assertEqual(intervals, expected_intervals)
+
+    def test_generate_event(self):
+        day = 24 * 3600
+        now = int(time.time()) # start-time set to nearly day for fast recurrent rule calculation
+        tstart1 = now - now % day - 2 * day  #
+        tstop1 = tstart1 + 3600
+
+        tstart2 = tstart1 + 1800
+        tstop2 = tstop1 + 1800
+
+        pbehavior1 = deepcopy(self.pbehavior)
+        pbehavior2 = deepcopy(self.pbehavior)
+        pbehavior1.update({
+            'name': 'hourly test',
+            'eids': [1],
+            'rrule': 'FREQ=HOURLY',
+            'tstart': tstart1,
+            'tstop': tstop1
+        })
+        pbehavior2.update({
+            'name': 'daily test',
+            'eids': [1],
+            'rrule': 'FREQ=DAILY',
+            'tstart': tstart2,
+            'tstop': tstop2
+        })
+        self.pbm.collection.remove()
+        self.pbm.collection.insert([pbehavior1, pbehavior2])
+        now = int(time.time())
+        events = list(self.pbm.generate_pbh_event(now))
+        # pbhenter
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]['event_type'], 'pbhenter')
+        self.assertEqual(events[0]['display_name'], 'hourly test')
+        self.assertEqual(events[0]['pbh_time'], now - now % 3600)
+        old_now = now
+
+        next_hour = old_now + 3599
+        events = list(self.pbm.generate_pbh_event(next_hour))
+        # pbhleave for above pbhenter because pbehavior reach its due date
+        self.assertEqual(len(events), 2)
+        self.assertEqual(events[0]['event_type'], 'pbhleave')
+        self.assertEqual(events[0]['display_name'], 'hourly test')
+        self.assertEqual(events[0]['pbh_time'], old_now + 3600 - old_now % 3600)
+        # new pbhenter
+        self.assertEqual(events[1]['event_type'], 'pbhenter')
+        self.assertEqual(events[1]['display_name'], 'hourly test')
+        self.assertEqual(events[1]['pbh_time'], next_hour - next_hour % 3600)
+
+        # modify rrule
+        pbehavior1.update({
+            'name': 'minutely test',
+            'eids': [1],
+            'rrule': 'FREQ=MINUTELY;INTERVAL=15',
+        })
+        self.pbm.collection.update({'_id': pbehavior1['_id']}, {"$set": pbehavior1})
+        pivot_time = next_hour-next_hour % 3600 + 13 * 60 * 3
+        events = list(self.pbm.generate_pbh_event(pivot_time))
+        self.assertEqual(len(events), 2)
+        # send pbhleave for last pbhenter
+        self.assertEqual(events[0]['event_type'], 'pbhleave')
+        self.assertEqual(events[0]['display_name'], 'hourly test')
+        self.assertEqual(events[0]['pbh_time'], next_hour - next_hour % 3600 + 3600)
+        # send new pbhenter for new rrule
+        self.assertEqual(events[1]['event_type'], 'pbhenter')
+        self.assertEqual(events[1]['display_name'], 'minutely test')
+        # because pivot time is 39th minute of hour
+        # so with FREQ=MINUTELY;INTERVAL=15 --> last start time is: 30th minute of hour
+        self.assertEqual(events[1]['pbh_time'], next_hour-next_hour % 3600 + 30 * 60)
 
 
 if __name__ == '__main__':

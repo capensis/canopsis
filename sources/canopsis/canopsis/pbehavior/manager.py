@@ -30,7 +30,7 @@ from time import time
 from uuid import uuid4
 from six import string_types
 from pymongo import DESCENDING
-
+from canopsis.event import forger
 import pytz
 
 from canopsis.common.mongo_store import MongoStore
@@ -40,6 +40,12 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.pbehavior.utils import check_valid_rrule
+import collections
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
+
+PbehaviorInterval = collections.namedtuple('PbehaviorInterval', ['pbehavior', 'pbenter_time', 'pbleave_time'])
 
 
 class BasePBehavior(dict):
@@ -95,6 +101,8 @@ class BasePBehavior(dict):
         :rtype: dict
         """
         return self.__dict__
+
+
 
 
 class PBehavior(BasePBehavior):
@@ -186,7 +194,7 @@ class PBehaviorManager(object):
 
         return config, logger, mongo_collection
 
-    def __init__(self, config, logger, pb_collection):
+    def __init__(self, config, logger, pb_collection, amqp_pub=None):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -204,6 +212,11 @@ class PBehaviorManager(object):
         pytz.timezone(self.default_tz)
         self.collection = pb_collection
         self.currently_active_pb = set()
+        self.pbehavior_event_sent_flag = {}
+
+        self.amqp_pub = amqp_pub
+        if amqp_pub is None:
+            self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), self.logger)
 
     def get(self, _id, search=None, limit=None, skip=None):
         """Get pbehavior by id.
@@ -1206,3 +1219,213 @@ class PBehaviorManager(object):
                 # keeping the most recent timestamp that still is in the past
                 ret_timestamp = pbh_last_tstop
         return ret_timestamp
+
+    def get_intervals_along_with_pbehaviors(self, after, before, pbehaviors):
+        """
+        Yields intervals between after and before with a boolean indicating if
+        one of the pbehaviors is active during this interval.
+
+        The intervals are returned as a list of tuples (start, end, pbehavior),
+        ordered chronologically. start and end are UTC timestamps, and are
+        always between after and before, pbehavior is a boolean indicating if a
+        pbehavior affects the entity during this interval. None of the
+        intervals overlap.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param List[Dict[str, Any]] pbehaviors: a list of pbehabiors
+        :rtype: Iterator[Tuple[int, int, bool]]
+        """
+        intervals = []
+
+        # Get all the intervals where a pbehavior is active
+        for pbehavior in pbehaviors:
+            for interval in self.get_active_intervals(after, before, pbehavior):
+                intervals.append(PbehaviorInterval(interval, pbehavior))
+
+        if not intervals:
+            # yield (after, before, False)
+            yield None
+            return
+
+        # Order them chronologically (by start date)
+        # intervals.sort(key=lambda a: a[0])
+        intervals.sort(key=lambda a: a.interval[0])
+
+        # Yield the first interval without any active pbehavior
+        merged_interval_start, merged_interval_end = intervals[0].interval
+
+        # At this point intervals is a list of intervals where a pbehavior is
+        # active, ordered by start date. Some of those intervals may be
+        # overlapping. This merges the overlapping intervals.
+        for pinterval in intervals[1:]:
+            interval_start, interval_end = pinterval.interval
+            if interval_end < merged_interval_end:
+                # The interval is included in the merged interval, skip it.
+                continue
+
+            if interval_start > merged_interval_end:
+                # Since the interval starts after the end of the merged
+                # interval, they cannot be merged. Yield the merged interval,
+                # and move to the new one.
+                yield PbehaviorInterval((merged_interval_start, merged_interval_end), pinterval.pbehavior)
+                # yield None
+                merged_interval_start = interval_start
+
+            merged_interval_end = interval_end
+
+        yield PbehaviorInterval((merged_interval_start, merged_interval_end), intervals[-1].pbehavior)
+
+    def get_all_active_pbehaviors_base_on_time(self, timestamp):
+        """
+        Return all pbehaviors currently active using
+        self.check_active_pbehavior
+        """
+        ret_val = list(self.collection.find({}))
+
+        results = []
+
+        for pb in ret_val:
+            try:
+                if self.check_active_pbehavior(timestamp, pb):
+                    results.append(pb)
+            except ValueError:
+                self.logger.exception(
+                    "Can't check if the pbehavior is active.")
+
+        return results
+
+    def generate_pbh_event(self, now):
+        """
+        Yields event of 2 types: pbenter and pbleave.
+
+        Detect currently active pbehaviors
+        - create pbleave event if
+            * the pbehavior id is not found in the cached pbehavior interval
+            * the pbehavior id is found in the cached pbehavior interval but the current pbevent_time is not the same as
+             the cached one. It can can happen when rrule of behavior had been changed.
+        - create pbenter event if
+            * new pbehavior interval has arrived
+
+        :rtype: Iterator[Dict]
+        """
+        currently_active_pbehaviors = self.get_all_active_pbehaviors_base_on_time(now)
+        current_pb_id = set()
+        currently_active_pb_dict = {}
+        for active_pb in currently_active_pbehaviors:
+            currently_active_pb_dict[active_pb[PBehavior.ID]] = active_pb
+            current_pb_id.add(active_pb[PBehavior.ID])
+        removed_pb_id = set(self.pbehavior_event_sent_flag.keys()).difference(current_pb_id)
+
+        for removed in removed_pb_id:
+            if removed in self.pbehavior_event_sent_flag:
+                event = self._make_pbleave_event(
+                    self.pbehavior_event_sent_flag[removed].pbehavior,
+                    self.pbehavior_event_sent_flag[removed].pbleave_time
+                )
+                self.pbehavior_event_sent_flag.pop(removed)
+                yield event
+
+        for active_pb in current_pb_id:
+            interval = self._get_interval_from_time_pivot(currently_active_pb_dict[active_pb], now)
+            if interval is None:
+                self.logger.error("Get current active interval of {} is failed.".format(
+                    currently_active_pb_dict[active_pb][PBehavior.ID]
+                ))
+                continue
+            if active_pb in self.pbehavior_event_sent_flag:
+                if self.pbehavior_event_sent_flag[active_pb].pbenter_time != interval[0]:
+                    yield self._make_pbleave_event(
+                        self.pbehavior_event_sent_flag[active_pb].pbehavior,
+                        self.pbehavior_event_sent_flag[active_pb].pbleave_time
+                    )
+            self.pbehavior_event_sent_flag[active_pb] = PbehaviorInterval(
+                pbenter_time=interval[0],
+                pbleave_time=interval[1],
+                pbehavior=currently_active_pb_dict[active_pb]
+            )
+            yield self._make_pbenter_event(
+                currently_active_pb_dict[active_pb],
+                interval[0]
+            )
+
+    def send_pbehavior_event(self):
+        now = int(time())
+        for event in self.generate_pbh_event(now):
+            self.amqp_pub.canopsis_event(event)
+
+    def _get_interval_from_time_pivot(self, pb, time_pivot):
+        """
+        return the interval that satisfies condition interval[0] <= time_pivot <= interval[1]
+        :param pb:
+        :param time_pivot:
+        :return:
+        """
+        tz_name = pb.get(PBehavior.TIMEZONE, self.default_tz)
+        rec_set = self._get_recurring_pbehavior_rruleset(pb)
+
+        # convert the timestamp to a datetime in the pbehavior's timezone
+        now = self.__convert_timestamp(time_pivot, tz_name)
+
+        start = self.__convert_timestamp(pb[PBehavior.TSTART], tz_name)
+        stop = self.__convert_timestamp(pb[PBehavior.TSTOP], tz_name)
+        duration = stop - start  # pbehavior duration
+        rec_start = rec_set.before(now)
+
+        self.logger.debug("Recurence start : {}".format(rec_start))
+        # No recurrence found
+        if rec_start is None:
+            return None
+
+        self.logger.debug("Timestamp       : {}".format(now))
+        self.logger.debug("Recurence stop  : {}".format(rec_start + duration))
+
+        rec_end = rec_start + duration
+        if rec_start <= now <= rec_end:
+            return rec_start, rec_end
+
+        return None
+
+    def _to_timestamp(self, dt):
+        utc_naive = dt.replace(tzinfo=None) - dt.utcoffset()
+        timestamp = (utc_naive - datetime(1970, 1, 1)).total_seconds()
+        return int(timestamp)
+
+    def _make_pbleave_event(self, pb, action_time):
+        """
+        mak pbleave event
+        :param pb: pbehavior
+        :param action_time: time indicates pbehavior will stop
+        :rtype: Dict
+        """
+        event = forger(
+            connector=pb[PBehavior.CONNECTOR],
+            connector_name=pb[PBehavior.CONNECTOR_NAME],
+            event_type="pbhleave",
+            source_type="component",
+            component=str(pb[PBehavior.ID]),
+            output="Stop of pbehavior of type {}".format(pb[PBehavior.TYPE]),
+            perf_data_array=[],
+            display_name=pb[PBehavior.NAME],
+            pbh_time=self._to_timestamp(action_time)
+        )
+        return event
+
+    def _make_pbenter_event(self, pb, action_time):
+        """
+        :param pb: pbehavior
+        :param action_time: time indicates pbehavior will start
+        :rtype: Dict
+        """
+        event = forger(
+            connector=pb[PBehavior.CONNECTOR],
+            connector_name=pb[PBehavior.CONNECTOR_NAME],
+            event_type="pbhenter",
+            source_type="component",
+            component=str(pb[PBehavior.ID]),
+            output="Start of pbehavior of type {}".format(pb[PBehavior.TYPE]),
+            perf_data_array=[],
+            display_name=pb[PBehavior.NAME],
+            pbh_time=self._to_timestamp(action_time)
+        )
+        return event
