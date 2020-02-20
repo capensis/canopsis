@@ -14,7 +14,7 @@
           hide-details
         )
         v-layout.ml-2(align-center)
-          v-btn.ma-0(icon, small, @click="row.expanded = !row.expanded")
+          v-btn.ma-0(:class="expandButtonClass", icon, small, @click="row.expanded = !row.expanded")
             v-icon {{ row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     td(v-for="column in columns")
       alarm-column-value(
@@ -33,7 +33,10 @@
 </template>
 
 <script>
+import { TOURS } from '@/constants';
+
 import { isResolvedAlarm } from '@/helpers/entities';
+import { getStepClass } from '@/helpers/tour';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
@@ -73,10 +76,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    isTourEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isResolvedAlarm() {
       return isResolvedAlarm(this.row.item);
+    },
+    expandButtonClass() {
+      if (this.isTourEnabled) {
+        return getStepClass(TOURS.alarmsExpandPanel, 1);
+      }
+
+      return '';
     },
   },
 };

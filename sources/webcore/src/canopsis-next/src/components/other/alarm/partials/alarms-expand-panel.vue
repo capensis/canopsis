@@ -6,15 +6,15 @@
     dark,
     centered
   )
-    template(v-if="widget.parameters.moreInfoTemplate")
-      v-tab {{ $t('alarmList.tabs.moreInfos') }}
+    template(v-if="widget.parameters.moreInfoTemplate || isTourEnabled")
+      v-tab(:class="moreInfosTabClass") {{ $t('alarmList.tabs.moreInfos') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
                 more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
-    v-tab {{ $t('alarmList.tabs.timeLine') }}
+    v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
     v-tab-item
       v-layout.pa-3.secondary.lighten-2(row)
         v-flex(:class="cardFlexClass")
@@ -24,9 +24,10 @@
 </template>
 
 <script>
-import { GRID_SIZES } from '@/constants';
+import { GRID_SIZES, TOURS } from '@/constants';
 
 import uid from '@/helpers/uid';
+import { getStepClass } from '@/helpers/tour';
 
 import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
 import MoreInfos from '@/components/other/alarm/more-infos/more-infos.vue';
@@ -49,6 +50,10 @@ export default {
       type: Object,
       required: true,
     },
+    isTourEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -56,6 +61,20 @@ export default {
     };
   },
   computed: {
+    moreInfosTabClass() {
+      if (this.isTourEnabled) {
+        return getStepClass(TOURS.alarmsExpandPanel, 2);
+      }
+
+      return '';
+    },
+    timeLineTabClass() {
+      if (this.isTourEnabled) {
+        return getStepClass(TOURS.alarmsExpandPanel, 3);
+      }
+
+      return '';
+    },
     cardFlexClass() {
       const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
 
@@ -68,8 +87,18 @@ export default {
   watch: {
     'widget.parameters.moreInfoTemplate': {
       handler() {
-        this.tabsKey = uid();
+        this.refreshTabs();
       },
+    },
+    isTourEnabled(value, oldValue) {
+      if (value !== oldValue) {
+        this.refreshTabs();
+      }
+    },
+  },
+  methods: {
+    refreshTabs() {
+      this.tabsKey = uid();
     },
   },
 };

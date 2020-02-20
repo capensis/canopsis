@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1387,6 +1388,14 @@ export default {
 
   contextGeneralTable: {
     addSelection: 'Add selection',
+  },
+
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Details',
+      step2: 'MoreInfos tab (Displayed only in case of existing confguration)',
+      step3: 'Timeline tab',
+    },
   },
 
   ...featureService.get('i18n.en'),

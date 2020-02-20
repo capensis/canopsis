@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 import featureService from '@/services/features';
 
@@ -1277,6 +1278,13 @@ export default {
     },
   },
 
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Détails',
+      step2: 'Onglet plus d\'infos (N\'apparait que s\'il existe une configuration)',
+      step3: 'Onglet timeline',
+    },
+  },
 
   ...featureService.get('i18n.fr'),
 };
