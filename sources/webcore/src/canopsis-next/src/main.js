@@ -102,7 +102,7 @@ Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 Vue.component('v-checkbox-functional', VCheckboxFunctional);
 Vue.component('v-expansion-panel-content', VExpansionPanelContent);
 
-// Since we have a recursive label, you need to register globally
+// Since we have a recursive component, you need to register globally
 Vue.component('alarms-table', AlarmsTable);
 
 Vue.use(VueMq, {
