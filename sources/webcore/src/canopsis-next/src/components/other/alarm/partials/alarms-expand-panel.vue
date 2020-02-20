@@ -21,13 +21,16 @@
           v-card.tab-item-card
             v-card-text
               time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
-    v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
-    v-tab-item
-      v-layout.pa-3.secondary.lighten-2(row)
-        v-flex(:class="cardFlexClass")
-          v-card.tab-item-card
-            v-card-text
-              group-alarms-list(:widget="widget", :alarms="[alarm]", :isEditingMode="isEditingMode")
+    // TODO replace true on alarm group field
+    template(v-if="true")
+      v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
+      v-tab-item
+        v-layout.pa-3.secondary.lighten-2(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                // TODO replace [alarm] on alarm group field
+                group-alarms-list(:widget="widget", :alarms="[alarm]", :isEditingMode="isEditingMode")
 </template>
 
 <script>
