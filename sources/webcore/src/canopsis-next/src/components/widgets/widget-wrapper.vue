@@ -40,7 +40,7 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
-import AlarmsListWidget from '@/components/other/alarm/partials/alarms-list.vue';
+import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
 import WeatherWidget from '@/components/other/service-weather/weather.vue';
 import StatsHistogramWidget from '@/components/other/stats/histogram/stats-histogram.vue';

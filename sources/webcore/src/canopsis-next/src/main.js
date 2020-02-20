@@ -39,7 +39,7 @@ import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/part
 import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
-import AlarmsTable from '@/components/other/alarm/alarms-table.vue';
+import AlarmsTable from '@/components/other/alarm/partials/alarms-table.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 
