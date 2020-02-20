@@ -38,18 +38,16 @@
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
         v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
           v-icon(:color="activeRange ? 'primary' : 'black'") schedule
-    alarms-table(
+    alarms-list-table(
       :widget="widget",
       :alarms="alarms",
       :totalItems="alarmsMeta.total",
-      :pagination="vDataTablePagination",
+      :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
       :isEditingMode="isEditingMode",
       :hasColumns="hasColumns",
       :columns="columns",
-      ref="alarmsTable",
-      expand,
-      @change:pagination="updatePagination"
+      ref="alarmsTable"
     )
     v-layout.white(align-center)
       v-flex(xs10)
@@ -154,10 +152,6 @@ export default {
   },
 
   methods: {
-    updatePagination(pagination) {
-      this.vDataTablePagination = pagination;
-    },
-
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },

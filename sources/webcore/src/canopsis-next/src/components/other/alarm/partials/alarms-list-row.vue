@@ -13,7 +13,7 @@
           disabled,
           hide-details
         )
-        v-layout.ml-2(v-if="expand", align-center)
+        v-layout.ml-2(align-center)
           v-btn.ma-0(icon, small, @click="row.expanded = !row.expanded")
             v-icon {{ row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     td(v-for="column in columns")
@@ -70,10 +70,6 @@ export default {
       required: true,
     },
     isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
-    expand: {
       type: Boolean,
       default: false,
     },

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    alarms-table(
+    alarms-list-table(
       :widget="widget",
       :alarms="alarms",
       :totalItems="totalItems",
@@ -12,11 +12,7 @@
 </template>
 
 <script>
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
-
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetPaginationMixin from '@/mixins/widget/pagination';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 
 /**
  * Group-alarm-list component
@@ -25,11 +21,8 @@ import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
  *
  */
 export default {
-  components: { RecordsPerPage },
   mixins: [
     widgetColumnsMixin,
-    widgetPaginationMixin,
-    widgetRecordsPerPageMixin,
   ],
   props: {
     widget: {

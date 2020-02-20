@@ -205,6 +205,7 @@ export default {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Time line',
       alarmsConsequences: 'Alarmes conséquences',
+      alarmsCauses: 'Alarmes les causes',
     },
     moreInfos: {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',

@@ -17,7 +17,7 @@
         item-key="_id",
         hide-actions,
         select-all,
-        expand="expand",
+        expand,
         @update:pagination="updatePaginationHandler"
       )
         template(slot="progress")
@@ -32,10 +32,9 @@
             :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
-            :columnFiltersMap="columnFiltersMap",
-            :expand="expand"
+            :columnFiltersMap="columnFiltersMap"
           )
-        template(v-if="expand", slot="expand", slot-scope="props")
+        template(slot="expand", slot-scope="props")
           alarms-expand-panel(
             :alarm="props.item",
             :isEditingMode="isEditingMode",
@@ -56,7 +55,7 @@ import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
 /**
- * Alarm-table component
+ * Alarm-list-table component
  *
  * @module alarm
  */
@@ -103,10 +102,6 @@ export default {
     hasColumns: {
       type: Boolean,
       required: true,
-    },
-    expand: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -157,7 +152,7 @@ export default {
 
   methods: {
     updatePaginationHandler(data) {
-      this.$emit('change:pagination', data);
+      this.$emit('update:pagination', data);
     },
   },
 };
