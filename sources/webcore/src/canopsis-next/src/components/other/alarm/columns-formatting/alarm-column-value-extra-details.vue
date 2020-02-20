@@ -76,13 +76,24 @@
       v-tooltip(top)
         v-icon.badge.purple.white--text(
           small,
-          data-test="extraDetailsOpenButton-meta",
+          data-test="extraDetailsOpenButton-group",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE.group.icon }}
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
-          strong {{ meta.title }}
-          div rule : {{ meta.rule }}
-          div csq : {{ meta.total }}
+          strong Grouping
+          div Title : {{ meta.title }}
+          div Consequences : {{ meta.total }}
+    div(v-if="metaAnother")
+      v-tooltip(top)
+        v-icon.badge.purple.white--text(
+          small,
+          data-test="extraDetailsOpenButton-groupAnother",
+          slot="activator"
+        ) {{ $constants.EVENT_ENTITY_STYLE.groupAnother.icon }}
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
+          strong Grouping
+          div Title : {{ metaAnother.title }}
+          div Causes : {{ metaAnother.total }}
 </template>
 
 <script>
@@ -105,10 +116,16 @@ export default {
       return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
     },
 
-    meta() {
+    /*    meta() {
       return {
-        title: 'Rgp',
-        rule: 'tst1',
+        title: 'tst1',
+        total: 30,
+      };
+    }, */
+
+    metaAnother() {
+      return {
+        title: 'tst2',
         total: 30,
       };
     },

@@ -319,6 +319,9 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'play_arrow',
   },
   group: {
+    icon: 'flash_on',
+  },
+  groupAnother: {
     icon: 'note',
   },
 };
