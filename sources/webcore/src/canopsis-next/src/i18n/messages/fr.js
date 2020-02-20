@@ -1153,6 +1153,14 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
+      ordering: {
+        popups: {
+          success: 'Les groupes ont été réorganisés',
+          error: 'Plusieurs groupes n\'ont pas été réorganisés',
+          periodicRefreshWasPaused: 'Le rafraîchissement périodique est mis en pause pendant l\'édition du menu',
+          periodicRefreshWasResumed: 'Reprise du rafraîchissement périodique',
+        },
+      },
     },
   },
   parameters: {
