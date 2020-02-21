@@ -19,6 +19,7 @@ export default {
       fetchView: 'fetchItem',
       createView: 'create',
       updateView: 'update',
+      updateViewWithoutStore: 'updateWithoutStore',
       removeView: 'remove',
     }),
   },

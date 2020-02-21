@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1252,6 +1253,14 @@ export default {
         settings: 'Settings',
       },
       activeSessions: 'Active sessions',
+      ordering: {
+        popups: {
+          success: 'The groups was reordered',
+          error: 'Several groups wasn\'t reordered',
+          periodicRefreshWasPaused: 'Periodic refresh was paused while you are editing the groups bar',
+          periodicRefreshWasResumed: 'Periodic refresh was resumed',
+        },
+      },
     },
   },
   parameters: {
@@ -1388,6 +1397,14 @@ export default {
 
   liveReporting: {
     button: 'Set a custom date range',
+  },
+
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Details',
+      step2: 'MoreInfos tab (Displayed only in case of existing confguration)',
+      step3: 'Timeline tab',
+    },
   },
 
   ...featureService.get('i18n.en'),

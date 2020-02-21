@@ -364,7 +364,7 @@ Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state.
 Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Exclure les alarmes liées à des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
-Uniquement les alarmes des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
+Uniquement les alarmes des watchers | `entity.type`  | `equal` | `watcher` (valeur string)
 
 
 ##### Info popup

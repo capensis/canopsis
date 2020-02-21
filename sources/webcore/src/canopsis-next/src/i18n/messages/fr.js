@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 import featureService from '@/services/features';
 
@@ -802,7 +803,7 @@ export default {
       fields: {
         id: 'ID',
         retryDelay: 'Intervalle',
-        retryCount: 'Nombre d\'essais',
+        retryCount: 'Nombre d\'essais après échec',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
@@ -1158,6 +1159,14 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
+      ordering: {
+        popups: {
+          success: 'Les groupes ont été réorganisés',
+          error: 'Plusieurs groupes n\'ont pas été réorganisés',
+          periodicRefreshWasPaused: 'Le rafraîchissement périodique est mis en pause pendant l\'édition du menu',
+          periodicRefreshWasResumed: 'Reprise du rafraîchissement périodique',
+        },
+      },
     },
   },
   parameters: {
@@ -1276,6 +1285,14 @@ export default {
 
   liveReporting: {
     button: 'Définir un intervalle de dates',
+  },
+
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Détails',
+      step2: 'Onglet plus d\'infos (N\'apparait que s\'il existe une configuration)',
+      step3: 'Onglet timeline',
+    },
   },
 
   ...featureService.get('i18n.fr'),
