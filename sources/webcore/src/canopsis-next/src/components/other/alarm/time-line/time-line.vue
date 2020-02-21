@@ -38,12 +38,15 @@ export default {
     };
   },
   watch: {
-    alarm(alarm) {
-      if (alarm.v.steps) {
-        this.groupedSteps = this.groupSteps(alarm.v.steps);
-      } else {
-        this.fetchItem();
-      }
+    alarm: {
+      immediate: true,
+      handler(alarm) {
+        if (alarm.v.steps) {
+          this.groupedSteps = this.groupSteps(alarm.v.steps);
+        } else {
+          this.fetchItem();
+        }
+      },
     },
   },
   mounted() {
