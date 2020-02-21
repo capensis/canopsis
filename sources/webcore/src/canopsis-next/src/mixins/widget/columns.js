@@ -21,8 +21,8 @@ export default {
         return this.widget.parameters.widgetGroupColumns.map(this.mapColumnEntity);
       }
 
-      return DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ label, value }) => ({
-        text: this.$t(label),
+      return DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ labelKey, value }) => ({
+        text: this.$t(labelKey),
         value,
       }));
     },
