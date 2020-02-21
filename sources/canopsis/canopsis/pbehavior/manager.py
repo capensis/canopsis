@@ -1247,13 +1247,13 @@ class PBehaviorManager(object):
         for status in dispatcher:
             for PBehavior in dispatcher[status]:
 
-                if not "bp_is_active" in PBehavior:
-                    PBehavior["bp_is_active"] = (status == "true")
+                if not "pb_is_active" in PBehavior:
+                    PBehavior["pb_is_active"] = (status == "true")
                     self.collection.update({'_id': PBehavior['_id']}, {
                         '$set': PBehavior})
 
-                elif PBehavior["bp_is_active"] != status:
-                    PBehavior["bp_is_active"] = (status == "true")
+                elif PBehavior["pb_is_active"] != status:
+                    PBehavior["pb_is_active"] = (status == "true")
                     self.collection.update({'_id': PBehavior['_id']}, {
                         '$set': PBehavior})
 
