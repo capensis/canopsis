@@ -55,12 +55,12 @@ export function generateWidgetByType(type) {
       enabled: false,
       value: 'auto ack',
     },
-    widgetColumns: DEFAULT_ALARMS_WIDGET_COLUMNS.map(({ label, value }) => ({
-      label: i18n.t(label),
+    widgetColumns: DEFAULT_ALARMS_WIDGET_COLUMNS.map(({ labelKey, value }) => ({
+      label: i18n.t(labelKey),
       value,
     })),
-    widgetGroupColumns: DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ label, value }) => ({
-      label: i18n.t(label),
+    widgetGroupColumns: DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ labelKey, value }) => ({
+      label: i18n.t(labelKey),
       value,
     })),
   };
