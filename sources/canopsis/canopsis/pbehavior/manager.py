@@ -32,7 +32,7 @@ from six import string_types
 from pymongo import DESCENDING
 from canopsis.event import forger
 import pytz
-
+from itertools import chain
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection, CollectionError
 from canopsis.common.utils import singleton_per_scope
@@ -1304,50 +1304,76 @@ class PBehaviorManager(object):
             * the pbehavior id is not found in the cached pbehavior interval
             * the pbehavior id is found in the cached pbehavior interval but the current pbevent_time is not the same as
              the cached one. It can can happen when rrule of behavior had been changed.
+            * those entities are no longer belong to pbehavior
         - create pbenter event if
             * new pbehavior interval has arrived
-
+            * new entities are now belong to pbehavior
         :rtype: Iterator[Dict]
         """
         currently_active_pbehaviors = self.get_all_active_pbehaviors_base_on_time(now)
-        current_pb_id = set()
         currently_active_pb_dict = {}
         for active_pb in currently_active_pbehaviors:
             currently_active_pb_dict[active_pb[PBehavior.ID]] = active_pb
-            current_pb_id.add(active_pb[PBehavior.ID])
-        removed_pb_id = set(self.pbehavior_event_sent_flag.keys()).difference(current_pb_id)
+        removed_pb_id = set(self.pbehavior_event_sent_flag.keys()).difference(currently_active_pb_dict.keys())
 
+        # pbehaviors are removed
         for removed in removed_pb_id:
             if removed in self.pbehavior_event_sent_flag:
-                event = self._make_pbleave_event(
+                events = self._make_pbleave_event(
                     self.pbehavior_event_sent_flag[removed].pbehavior,
                     self.pbehavior_event_sent_flag[removed].pbleave_time
                 )
                 self.pbehavior_event_sent_flag.pop(removed)
-                yield event
+                for env in events:
+                    yield env
 
-        for active_pb in current_pb_id:
+        for active_pb in currently_active_pb_dict:
+            events = []
             interval = self._get_interval_from_time_pivot(currently_active_pb_dict[active_pb], now)
             if interval is None:
                 self.logger.error("Get current active interval of {} is failed.".format(
                     currently_active_pb_dict[active_pb][PBehavior.ID]
                 ))
                 continue
+            # pbehavior still exists
             if active_pb in self.pbehavior_event_sent_flag:
+                # if start time is not the same of cached
+                # send pbhleave for cached pbhenter
+                # send new pbhenter for new interval
                 if self.pbehavior_event_sent_flag[active_pb].pbenter_time != interval[0]:
-                    yield self._make_pbleave_event(
+                    events = chain(events, self._make_pbleave_event(
                         self.pbehavior_event_sent_flag[active_pb].pbehavior,
                         self.pbehavior_event_sent_flag[active_pb].pbleave_time
-                    )
+                    ))
+                    events = chain(events, self._make_pbenter_event(
+                        currently_active_pb_dict[active_pb],
+                        interval[0]
+                    ))
+                else:
+                    # send pbhleave for those entities are no longer belong to pbehavior
+                    # send pbhenter for those entities are newly added to pbehavior
+                    old_eids = set(self.pbehavior_event_sent_flag[active_pb].pbehavior[PBehavior.EIDS])
+                    current_eids = set(currently_active_pb_dict[active_pb][PBehavior.EIDS])
+                    events = chain(events, self._make_pbleave_event(
+                        self.pbehavior_event_sent_flag[active_pb].pbehavior,
+                        self.pbehavior_event_sent_flag[active_pb].pbleave_time,
+                        list(old_eids.difference(current_eids))))
+                    events = chain(events, self._make_pbenter_event(
+                        self.pbehavior_event_sent_flag[active_pb].pbehavior,
+                        self.pbehavior_event_sent_flag[active_pb].pbleave_time,
+                        list(old_eids.difference(current_eids))))
+            else:
+                events = chain(events, self._make_pbenter_event(
+                    currently_active_pb_dict[active_pb],
+                    interval[0]
+                ))
             self.pbehavior_event_sent_flag[active_pb] = PbehaviorInterval(
                 pbenter_time=interval[0],
                 pbleave_time=interval[1],
                 pbehavior=currently_active_pb_dict[active_pb]
             )
-            yield self._make_pbenter_event(
-                currently_active_pb_dict[active_pb],
-                interval[0]
-            )
+            for env in events:
+                yield env
 
     def send_pbehavior_event(self):
         now = int(time())
@@ -1391,41 +1417,51 @@ class PBehaviorManager(object):
         timestamp = (utc_naive - datetime(1970, 1, 1)).total_seconds()
         return int(timestamp)
 
-    def _make_pbleave_event(self, pb, action_time):
+    def _make_pbleave_event(self, pb, action_time, eids=None):
         """
         mak pbleave event
         :param pb: pbehavior
         :param action_time: time indicates pbehavior will stop
-        :rtype: Dict
+        :rtype: List[Dict]
         """
-        event = forger(
-            connector=pb[PBehavior.CONNECTOR],
-            connector_name=pb[PBehavior.CONNECTOR_NAME],
-            event_type="pbhleave",
-            source_type="component",
-            component=str(pb[PBehavior.ID]),
-            output="Stop of pbehavior of type {}".format(pb[PBehavior.TYPE]),
-            perf_data_array=[],
-            display_name=pb[PBehavior.NAME],
-            pbh_time=self._to_timestamp(action_time)
-        )
-        return event
+        if eids is None:
+            eids = pb.get('eids', [])
+        events = []
+        for eid in eids:
+            event = forger(
+                connector="canopsis",
+                connector_name="engine",
+                event_type="pbhleave",
+                source_type="component",
+                component=str(eid),
+                output="Stop of pbehavior. Name: {}. Type:{}".format(pb[PBehavior.NAME], pb[PBehavior.TYPE]),
+                perf_data_array=[],
+                display_name=pb[PBehavior.NAME],
+                timestamp=self._to_timestamp(action_time)
+            )
+            events.append(event)
+        return events
 
-    def _make_pbenter_event(self, pb, action_time):
+    def _make_pbenter_event(self, pb, action_time, eids=None):
         """
         :param pb: pbehavior
         :param action_time: time indicates pbehavior will start
         :rtype: Dict
         """
-        event = forger(
-            connector=pb[PBehavior.CONNECTOR],
-            connector_name=pb[PBehavior.CONNECTOR_NAME],
-            event_type="pbhenter",
-            source_type="component",
-            component=str(pb[PBehavior.ID]),
-            output="Start of pbehavior of type {}".format(pb[PBehavior.TYPE]),
-            perf_data_array=[],
-            display_name=pb[PBehavior.NAME],
-            pbh_time=self._to_timestamp(action_time)
-        )
-        return event
+        events = []
+        if eids is None:
+            eids = pb.get('eids', [])
+        for eid in eids:
+            event = forger(
+                connector="canopsis",
+                connector_name="engine",
+                event_type="pbhenter",
+                source_type="component",
+                component=str(eid),
+                output="Start of pbehavior. Name: {}. Type:{}".format(pb[PBehavior.NAME], pb[PBehavior.TYPE]),
+                perf_data_array=[],
+                display_name=pb[PBehavior.NAME],
+                timestamp=self._to_timestamp(action_time)
+            )
+            events.append(event)
+        return events

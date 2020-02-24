@@ -615,7 +615,6 @@ class TestManager(BaseTest):
         tstop2 = tstop1 + 1800
 
         pbehavior1 = deepcopy(self.pbehavior)
-        pbehavior2 = deepcopy(self.pbehavior)
         pbehavior1.update({
             'name': 'hourly test',
             'eids': [1],
@@ -623,22 +622,16 @@ class TestManager(BaseTest):
             'tstart': tstart1,
             'tstop': tstop1
         })
-        pbehavior2.update({
-            'name': 'daily test',
-            'eids': [1],
-            'rrule': 'FREQ=DAILY',
-            'tstart': tstart2,
-            'tstop': tstop2
-        })
+
         self.pbm.collection.remove()
-        self.pbm.collection.insert([pbehavior1, pbehavior2])
+        self.pbm.collection.insert([pbehavior1])
         now = int(time.time())
         events = list(self.pbm.generate_pbh_event(now))
         # pbhenter
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0]['event_type'], 'pbhenter')
         self.assertEqual(events[0]['display_name'], 'hourly test')
-        self.assertEqual(events[0]['pbh_time'], now - now % 3600)
+        self.assertEqual(events[0]['timestamp'], now - now % 3600)
         old_now = now
 
         next_hour = old_now + 3599
@@ -647,11 +640,11 @@ class TestManager(BaseTest):
         self.assertEqual(len(events), 2)
         self.assertEqual(events[0]['event_type'], 'pbhleave')
         self.assertEqual(events[0]['display_name'], 'hourly test')
-        self.assertEqual(events[0]['pbh_time'], old_now + 3600 - old_now % 3600)
+        self.assertEqual(events[0]['timestamp'], old_now + 3600 - old_now % 3600)
         # new pbhenter
         self.assertEqual(events[1]['event_type'], 'pbhenter')
         self.assertEqual(events[1]['display_name'], 'hourly test')
-        self.assertEqual(events[1]['pbh_time'], next_hour - next_hour % 3600)
+        self.assertEqual(events[1]['timestamp'], next_hour - next_hour % 3600)
 
         # modify rrule
         pbehavior1.update({
@@ -666,13 +659,13 @@ class TestManager(BaseTest):
         # send pbhleave for last pbhenter
         self.assertEqual(events[0]['event_type'], 'pbhleave')
         self.assertEqual(events[0]['display_name'], 'hourly test')
-        self.assertEqual(events[0]['pbh_time'], next_hour - next_hour % 3600 + 3600)
+        self.assertEqual(events[0]['timestamp'], next_hour - next_hour % 3600 + 3600)
         # send new pbhenter for new rrule
         self.assertEqual(events[1]['event_type'], 'pbhenter')
         self.assertEqual(events[1]['display_name'], 'minutely test')
         # because pivot time is 39th minute of hour
         # so with FREQ=MINUTELY;INTERVAL=15 --> last start time is: 30th minute of hour
-        self.assertEqual(events[1]['pbh_time'], next_hour-next_hour % 3600 + 30 * 60)
+        self.assertEqual(events[1]['timestamp'], next_hour-next_hour % 3600 + 30 * 60)
 
 
 if __name__ == '__main__':
