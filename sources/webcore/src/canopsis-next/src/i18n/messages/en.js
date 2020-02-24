@@ -171,6 +171,8 @@ export default {
       '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
       '</dl>',
+    submit: 'Search',
+    clear: 'Clear search input',
   },
   entities: {
     watcher: 'Watcher',
@@ -1170,6 +1172,9 @@ export default {
     fields: {
       mixFilters: 'Mix filters',
     },
+    buttons: {
+      list: 'Manage filters',
+    },
   },
   validator: {
     unique: 'Field must be unique',
@@ -1388,6 +1393,10 @@ export default {
 
   contextGeneralTable: {
     addSelection: 'Add selection',
+  },
+
+  liveReporting: {
+    button: 'Set a custom date range',
   },
 
   tours: {

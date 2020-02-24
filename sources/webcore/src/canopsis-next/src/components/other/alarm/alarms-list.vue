@@ -36,8 +36,16 @@
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
-          v-icon(:color="activeRange ? 'primary' : 'black'") schedule
+        v-tooltip(bottom)
+          v-btn(
+            slot="activator",
+            data-test="alarmsDateInterval",
+            icon,
+            small,
+            @click="showEditLiveReportModal"
+          )
+            v-icon(:color="activeRange ? 'primary' : 'black'") schedule
+          span {{ $t('liveReporting.button') }}
       v-flex.px-3(v-show="selectedIds.length", xs12)
         mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
@@ -79,7 +87,7 @@
             :widget="widget",
             :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
-      v-layout.white(align-center)
+      v-layout.white(v-show="alarmsMeta.total", align-center)
         v-flex(xs10)
           pagination(
             data-test="bottomPagination",
