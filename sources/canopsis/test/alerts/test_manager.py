@@ -539,6 +539,29 @@ class TestManager(BaseTest):
 
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
 
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'Start of pbehavior. Name: {}. Type:{}'.format("pb1", "pbt1"),
+            'event_type': 'pbhenter',
+            'state': 0,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 3)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][2]['_t'], "pbhenter")
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][0], expected_state)
+        self.assertEqual(
+            alarm['value'][AlarmField.state.value], expected_state)
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+
     def test_archive_state_changed(self):
         alarm_id = 'ut-comp'
 
@@ -666,6 +689,26 @@ class TestManager(BaseTest):
         self.assertEqual(alarm['value'][AlarmField.state.value]['val'], 0)
         self.assertFalse(is_keeped_state(alarm['value']))
 
+        self.event_publisher.publish_statcounterinc_event.assert_not_called()
+
+        event1 = {
+            'source_type': 'component',
+            'connector': 'test',
+            'connector_name': 'test0',
+            'component': 'ut-comp',
+            'timestamp': 0,
+            'output': 'Stop of pbehavior. Name: {}. Type:{}'.format("pb1", "pbt1"),
+            'event_type': 'pbhleave',
+            'state': 0,
+        }
+        self.manager.archive(event1)
+
+        alarm = self.manager.get_current_alarm(alarm_id)
+
+        self.assertEqual(len(alarm['value'][AlarmField.steps.value]), 7)
+        self.assertEqual(
+            alarm['value'][AlarmField.steps.value][6]['_t'], "pbhleave")
+        self.assertFalse(is_keeped_state(alarm['value']))
         self.event_publisher.publish_statcounterinc_event.assert_not_called()
 
     def test_archive_status_nochange(self):
