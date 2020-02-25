@@ -6,6 +6,8 @@ Deploy Canopsis with Ansible
 
 - Ansible 2.8.7 - Use a virtualenv and `pip install "ansible==2.8.7"`
 
+⚠️ **DON'T, DON'T, DON'T** ⚠️ UPGRADE ANSIBLE, NOT EVEN TO A MINOR VERSION. It's just a perpetual breaking machine.
+
 ## Role Variables
 
 See `playbook/roles/canopsis/defaults/main.yml`, then `playbook/group_vars/all.yml`.
