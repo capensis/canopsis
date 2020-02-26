@@ -39,6 +39,8 @@ import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/part
 import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
+import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
+
 import WebhookIcon from '@/components/icons/webhook.vue';
 
 import * as modalsComponents from '@/components/modals';
@@ -99,6 +101,11 @@ Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.component('v-checkbox-functional', VCheckboxFunctional);
 Vue.component('v-expansion-panel-content', VExpansionPanelContent);
+
+/**
+ * Since we have a recursive component, you need to register globally.
+ */
+Vue.component('alarms-list-table', AlarmsListTable);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

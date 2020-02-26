@@ -1041,6 +1041,83 @@ export const DURATION_UNITS = {
   },
 };
 
+export const ALARM_ENTITY_FIELDS = {
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  component: 'v.component',
+  resource: 'v.resource',
+  output: 'v.output',
+  extraDetails: 'extra_details',
+  state: 'v.state.val',
+  status: 'v.status.val',
+};
+
+export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.component',
+    value: ALARM_ENTITY_FIELDS.component,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
+
+export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
+
 export const PERIODIC_REFRESH_UNITS = {
   second: {
     text: 'common.times.second',

@@ -226,6 +226,8 @@ export default {
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Time line',
+      alarmsConsequences: 'Alarms consequences',
+      alarmsCauses: 'Alarms causes',
     },
     moreInfos: {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
