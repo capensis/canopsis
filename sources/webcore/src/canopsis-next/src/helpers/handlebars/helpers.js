@@ -2,6 +2,8 @@ import { get, isFunction } from 'lodash';
 import Handlebars from 'handlebars';
 
 import dateFilter from '@/filters/date';
+import durationFilter from '@/filters/duration';
+import { DATETIME_FORMATS, ENTITY_INFOS_TYPE } from '@/constants';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -46,6 +48,43 @@ export function internalLink(options) {
   const link = `<router-link to="${path}" ${prepareAttributes(attributes)}>${text}</router-link>`;
 
   return new Handlebars.SafeString(link);
+}
+
+/**
+ * Return duration by seconds
+ *
+ * First example: {{duration 120}} -> 2 mins
+ * Second example: {{duration 12000}} -> 3 hrs 20 mins
+ *
+ * @param second
+ * @returns {String}
+ */
+export function durationHelper(second) {
+  return durationFilter(second, undefined, DATETIME_FORMATS.refreshFieldFormat);
+}
+
+/**
+ * Return date in long format
+ *
+ * Example: {{date 1000000}} -> 12/01/1970 20:46:40
+ *
+ * @param time
+ * @returns {string}
+ */
+export function dateHelper(time) {
+  return dateFilter(time, 'long');
+}
+
+/**
+ * Return icon by alarm state
+ *
+ * Example {{state 0}} -> draw green element with ok text
+ *
+ * @param state
+ * @returns {Handlebars.SafeString}
+ */
+export function alarmStateHelper(state) {
+  return new Handlebars.SafeString(`<alarm-chips type="${ENTITY_INFOS_TYPE.state}" value="${state}"></alarm-chips>`);
 }
 
 /**
