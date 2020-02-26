@@ -26,7 +26,7 @@
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
+          v-flex
             v-card.tab-item-card
               v-card-text
                 // TODO replace causes after api will finish
@@ -36,7 +36,7 @@
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
-          v-flex(:class="cardFlexClass")
+          v-flex
             v-card.tab-item-card
               v-card-text
                 // TODO replace consequences after api will finish

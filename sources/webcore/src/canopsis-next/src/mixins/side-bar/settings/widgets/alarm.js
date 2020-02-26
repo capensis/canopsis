@@ -18,7 +18,7 @@ const defaultFieldsForAlarmsPreparation = [
 
 export default {
   methods: {
-    alarmWidgetPreparationMap() {
+    getAlarmWidgetPreparationMap() {
       return {
         [WIDGET_PARAMETERS_FIELDS.widgetColumns]: this.widgetColumnsPreparation,
         [WIDGET_PARAMETERS_FIELDS.widgetGroupColumns]: this.widgetGroupColumnsPreparation,
@@ -112,7 +112,7 @@ export default {
       keysForPreparation = defaultFieldsForAlarmsPreparation,
       isInitialization = false,
     ) {
-      const alarmWidgetPreparationMap = this.alarmWidgetPreparationMap();
+      const alarmWidgetPreparationMap = this.getAlarmWidgetPreparationMap();
 
       return keysForPreparation.reduce((acc, field) => {
         const preparationFunc = alarmWidgetPreparationMap[field];
