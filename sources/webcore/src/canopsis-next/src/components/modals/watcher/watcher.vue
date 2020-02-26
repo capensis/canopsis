@@ -1,7 +1,9 @@
 <template lang="pug">
   modal-wrapper
-    template(slot="title")
-      span {{ watcher.display_name }}
+    template(slot="fullTitle")
+      v-card-title.white--text(:style="{ backgroundColor: color }")
+        v-layout(justify-space-between, align-center)
+          span.headline {{ watcher.display_name }}
     template(slot="text")
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
