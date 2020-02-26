@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { replaceTextNotInQuotes } from '@/helpers/searching';
+import { replaceTextNotInQuotes } from '@/helpers/searching/quotes';
 
 import searchMixin from '@/mixins/search';
 

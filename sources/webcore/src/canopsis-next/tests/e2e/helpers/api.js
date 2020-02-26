@@ -12,7 +12,7 @@ const {
   generateRoleRightByChecksum,
   generateWidgetByType,
   generateViewRow,
-} = require('@/helpers/entities');
+} = require('@/helpers/entities/entities');
 const { generateTemporaryView } = require('./entities');
 const { queueFunction, onNextQueueFunction } = require('./nightwatch-child-process');
 

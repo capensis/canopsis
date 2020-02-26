@@ -59,8 +59,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { prepareUserByData } from '@/helpers/entities';
-import { getUsersSearchByText } from '@/helpers/entities-search';
+import { prepareUserByData } from '@/helpers/entities/entities';
+import { getUsersSearchByText } from '@/helpers/searching/entities';
 
 import viewQuery from '@/mixins/view/query';
 import entitiesUserMixin from '@/mixins/entities/user';

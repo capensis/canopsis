@@ -33,7 +33,7 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateWidgetByType } from '@/helpers/entities/entities';
 
 import authMixin from '@/mixins/auth';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';

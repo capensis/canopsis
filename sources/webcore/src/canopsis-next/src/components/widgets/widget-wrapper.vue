@@ -38,7 +38,7 @@ import { WIDGET_TYPES, WIDGET_TYPES_RULES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } f
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateWidgetByType } from '@/helpers/entities/entities';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';

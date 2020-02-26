@@ -36,7 +36,7 @@ import { isUndefined, isNull } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
 
-import { dataTableCustomSortWithNullIgnoring } from '@/helpers/sort';
+import { dataTableCustomSortWithNullIgnoring } from '@/helpers/sort/sort';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetQueryMixin from '@/mixins/widget/query';

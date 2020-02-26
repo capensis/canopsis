@@ -24,7 +24,7 @@
 <script>
 import { MODALS, WIDGET_TYPES, SIDE_BARS_BY_WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_ICONS } from '@/constants';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateWidgetByType } from '@/helpers/entities/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -82,7 +82,7 @@ export default {
 
 <style lang="scss" scoped>
   .widgetType {
-    cursor: pointer,
+    cursor: pointer;
   }
 </style>
 

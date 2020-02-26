@@ -20,8 +20,8 @@ import {
   GRID_SIZES,
 } from '@/constants';
 
-import uuid from './uuid';
-import { pbehaviorToForm } from './forms/pbehavior';
+import uuid from '../uuid';
+import { pbehaviorToForm } from '../forms/pbehavior';
 
 /**
  * Generate widget by type

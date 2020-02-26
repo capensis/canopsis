@@ -1,4 +1,4 @@
-import { getSecondsByUnit } from '@/helpers/time';
+import { getSecondsByUnit } from '@/helpers/dates/time';
 
 export default {
   data() {

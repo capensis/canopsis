@@ -15,7 +15,7 @@ import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
-import { generateWidgetByType } from '@/helpers/entities';
+import { generateWidgetByType } from '@/helpers/entities/entities';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action

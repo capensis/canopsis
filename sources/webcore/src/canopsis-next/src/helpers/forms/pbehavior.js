@@ -2,7 +2,7 @@ import moment from 'moment';
 import { omit, isObject, isString, cloneDeep } from 'lodash';
 
 import uid from '@/helpers/uid';
-import convertTimestampToMoment from '@/helpers/date';
+import convertTimestampToMoment from '@/helpers/dates/date';
 
 export function pbehaviorToForm(pbehavior = {}) {
   let rrule = pbehavior.rrule || null;

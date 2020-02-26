@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { DEFAULT_KEEP_ALIVE_INTERVAL } from '@/config';
 
-import { getKeepalivePathByRoute } from '@/helpers/router';
+import { getKeepalivePathByRoute } from '@/helpers/router/access';
 
 const { mapActions } = createNamespacedHelpers('keepalive');
 

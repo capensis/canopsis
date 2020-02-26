@@ -13,7 +13,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { generateRight } from '@/helpers/entities';
+import { generateRight } from '@/helpers/entities/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';

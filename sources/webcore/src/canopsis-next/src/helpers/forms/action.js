@@ -3,7 +3,7 @@ import { omit, pick } from 'lodash';
 import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
-import { generateAction } from '@/helpers/entities';
+import { generateAction } from '@/helpers/entities/entities';
 import {
   pbehaviorToForm,
   pbehaviorToComments,

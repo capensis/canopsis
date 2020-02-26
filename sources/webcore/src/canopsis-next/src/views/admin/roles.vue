@@ -61,7 +61,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { getRolesSearchByText } from '@/helpers/entities-search';
+import { getRolesSearchByText } from '@/helpers/searching/entities';
 
 import viewQuery from '@/mixins/view/query';
 import entitiesRoleMixins from '@/mixins/entities/role';

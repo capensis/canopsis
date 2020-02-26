@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getSecondsByUnit } from '@/helpers/time';
+import { getSecondsByUnit } from '@/helpers/dates/time';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
 

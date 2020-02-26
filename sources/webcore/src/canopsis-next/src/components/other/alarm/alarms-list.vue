@@ -107,8 +107,8 @@ import { omit, pick, isEmpty } from 'lodash';
 
 import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
 
-import { findRange } from '@/helpers/date-intervals';
-import { isResolvedAlarm } from '@/helpers/entities';
+import { findRange } from '@/helpers/dates/date-intervals';
+import { isResolvedAlarm } from '@/helpers/entities/entities';
 
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';

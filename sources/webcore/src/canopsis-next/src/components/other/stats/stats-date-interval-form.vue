@@ -38,7 +38,7 @@ import {
   dateParse,
   prepareStatsStopForMonthPeriod,
   prepareStatsStartForMonthPeriod,
-} from '@/helpers/date-intervals';
+} from '@/helpers/dates/date-intervals';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 

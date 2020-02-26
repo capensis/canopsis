@@ -35,7 +35,7 @@
 <script>
 import { TOURS } from '@/constants';
 
-import { isResolvedAlarm } from '@/helpers/entities';
+import { isResolvedAlarm } from '@/helpers/entities/entities';
 import { getStepClass } from '@/helpers/tour';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';

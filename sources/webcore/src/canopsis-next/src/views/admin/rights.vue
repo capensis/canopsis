@@ -69,7 +69,7 @@ import {
 import {
   prepareUserByData,
   generateRoleRightByChecksum,
-} from '@/helpers/entities';
+} from '@/helpers/entities/entities';
 
 import authMixin from '@/mixins/auth';
 import entitiesRightMixin from '@/mixins/entities/right';

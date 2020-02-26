@@ -1,7 +1,7 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
+import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/store/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',

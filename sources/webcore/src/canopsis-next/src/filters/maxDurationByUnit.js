@@ -1,5 +1,5 @@
 import { TIME_UNITS } from '@/constants';
-import { getUnitValueFromSeconds } from '@/helpers/time';
+import { getUnitValueFromSeconds } from '@/helpers/dates/time';
 
 const AVAILABLE_UNITS = [
   TIME_UNITS.year,

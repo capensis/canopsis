@@ -19,7 +19,7 @@ import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { generateRole } from '@/helpers/entities';
+import { generateRole } from '@/helpers/entities/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewMixin from '@/mixins/entities/view';
