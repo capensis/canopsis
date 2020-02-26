@@ -31,11 +31,7 @@ export default {
       return this.links.filter(({ cat_name: catName, links = [] }) => {
         const isCategoriesEqual = !this.category || (this.category && catName === this.category);
 
-        if (links.length && isCategoriesEqual && this.hasAccessToLinks) {
-          return true;
-        }
-
-        return this.checkAccessForSpecialCategory(catName);
+        return links.length && isCategoriesEqual && this.checkAccessForSpecialCategory(catName);
       });
     },
 
@@ -62,7 +58,7 @@ export default {
       const rightPrefix = BUSINESS_USER_RIGHTS_ACTIONS_MAP.weather[WIDGETS_ACTIONS_TYPES.weather.entityLinks];
       const right = `${rightPrefix}_${category}`;
 
-      return this.checkAccess(right);
+      return this.hasAccessToLinks || this.checkAccess(right);
     },
   },
 };
