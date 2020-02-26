@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(:data-test="`view-page-${id}`")
+  div.view-wrapper(:data-test="`view-page-${id}`")
     v-fade-transition
       view-tabs-wrapper(
         v-if="isViewTabsReady",
@@ -9,8 +9,8 @@
         :updateViewMethod="data => updateView({ id, data })"
       )
     .fab
-      v-layout(data-test="controlViewLayout", column)
-        v-tooltip(left)
+      v-layout(data-test="controlViewLayout", row)
+        v-tooltip(top)
           v-btn(
             slot="activator",
             :input-value="isPeriodicRefreshEnabled",
@@ -34,7 +34,7 @@
         v-speed-dial(
           v-if="hasUpdateAccess",
           v-model="isVSpeedDialOpen",
-          direction="left",
+          direction="top",
           transition="slide-y-reverse-transition"
         )
           v-btn(
@@ -47,7 +47,7 @@
           )
             v-icon menu
             v-icon close
-          v-tooltip(top)
+          v-tooltip(left)
             v-btn(
               slot="activator",
               v-model="isFullScreenMode",
@@ -59,7 +59,7 @@
               v-icon fullscreen
               v-icon fullscreen_exit
             span alt + enter / command + enter
-          v-tooltip(v-if="hasUpdateAccess", top)
+          v-tooltip(v-if="hasUpdateAccess", left)
             v-btn(
               data-test="editViewButton",
               slot="activator",
@@ -72,7 +72,7 @@
               v-icon edit
               v-icon done
             span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
-          v-tooltip(top)
+          v-tooltip(left)
             v-btn(
               data-test="addWidgetButton",
               v-if="hasUpdateAccess",
@@ -85,7 +85,7 @@
             )
               v-icon add
             span {{ $t('common.addWidget') }}
-          v-tooltip(top)
+          v-tooltip(left)
             v-btn(
               data-test="addTabButton",
               v-if="hasUpdateAccess",
@@ -121,8 +121,8 @@ import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
-import peiodicRefreshMixin from '@/mixins/view/peiodic-refresh';
 import entitiesViewMixin from '@/mixins/entities/view';
+import periodicRefreshMixin from '@/mixins/view/peiodic-refresh';
 
 export default {
   components: {
@@ -133,7 +133,7 @@ export default {
     authMixin,
     queryMixin,
     entitiesViewMixin,
-    peiodicRefreshMixin,
+    periodicRefreshMixin,
   ],
   props: {
     id: {
@@ -279,5 +279,9 @@ export default {
 .refresh-btn {
   text-decoration: none;
   text-transform: none;
+}
+
+.view-wrapper {
+  padding-bottom: 70px;
 }
 </style>
