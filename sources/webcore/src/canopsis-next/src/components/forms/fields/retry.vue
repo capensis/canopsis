@@ -23,8 +23,9 @@
     v-flex(xs4)
       v-select(
         v-field="value.unit",
-        v-validate="'required'",
+        v-validate="unitValidateRules",
         :items="availableUnits",
+        :label="$t('modals.createWebhook.fields.retryUnit')",
         :error-messages="errors.collect('retryUnit')",
         name="retryUnit",
         hide-details
@@ -32,14 +33,14 @@
 </template>
 
 <script>
-import { PERIODIC_REFRESH_UNITS, TIME_UNITS } from '@/constants';
+import { PERIODIC_REFRESH_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
   props: {
     value: {
       type: Object,
-      default: () => ({ unit: TIME_UNITS.second }),
+      default: () => ({}),
     },
     required: {
       type: Boolean,
@@ -54,7 +55,14 @@ export default {
       }));
     },
     fieldValidateRules() {
-      return `${this.required ? 'required|' : ''}numeric|min_value:0`;
+      return {
+        required: this.required,
+        numeric: true,
+        min_value: 0,
+      };
+    },
+    unitValidateRules() {
+      return { required: this.required };
     },
   },
 };

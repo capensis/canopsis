@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { MODALS, TIME_UNITS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
 import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
@@ -55,7 +55,7 @@ export default {
   data() {
     const { webhook } = this.modal.config;
     const defaultForm = {
-      retry: { unit: TIME_UNITS.second },
+      retry: {},
       hook: {
         triggers: [],
         event_patterns: [],
