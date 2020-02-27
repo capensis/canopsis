@@ -9,7 +9,7 @@
               v-model="tstartDateString",
               v-validate="tstartRules",
               :label="$t('common.startDate')",
-              :dateObjectPreparer="getPrepareDateToObject('start')",
+              :dateObjectPreparer="getPreparerDateToObject('start')",
               :roundHours="roundHours",
               name="tstart",
               @update:objectValue="$emit('update:startObjectValue', $event)"
@@ -21,7 +21,7 @@
               v-model="tstopDateString",
               v-validate="tstopRules",
               :label="$t('common.endDate')",
-              :dateObjectPreparer="getPrepareDateToObject('stop')",
+              :dateObjectPreparer="getPreparerDateToObject('stop')",
               :roundHours="roundHours",
               name="tstop",
               @update:objectValue="$emit('update:stopObjectValue', $event)"
@@ -79,8 +79,8 @@ export default {
     },
   },
   computed: {
-    getPrepareDateToObject() {
-      return this.getDateObjectPreparer || this.defaultPrepareDateToObjectGetter;
+    getPreparerDateToObject() {
+      return this.getDateObjectPreparer || this.defaultPreparerDateToObjectGetter;
     },
     range: {
       get() {
@@ -151,7 +151,7 @@ export default {
     },
   },
   methods: {
-    defaultPrepareDateToObjectGetter(type) {
+    defaultPreparerDateToObjectGetter(type) {
       return date => prepareDateToObject(date, type, this.roundHours ? 'hour' : 'minute');
     },
   },
