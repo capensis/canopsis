@@ -49,6 +49,9 @@ export default {
     },
   },
   computed: {
+    isRequired() {
+      return this.required || Object.values(this.value).some(Boolean);
+    },
     availableUnits() {
       return Object.values(PERIODIC_REFRESH_UNITS).map(({ value, text }) => ({
         value,
@@ -57,13 +60,13 @@ export default {
     },
     fieldValidateRules() {
       return {
-        required: this.required,
+        required: this.isRequired,
         numeric: true,
         min_value: 0,
       };
     },
     unitValidateRules() {
-      return { required: this.required };
+      return { required: this.isRequired };
     },
   },
 };
