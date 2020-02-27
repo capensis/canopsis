@@ -3,11 +3,7 @@ import convertTimestampToMoment from '@/helpers/date';
 import { DATETIME_FORMATS } from '@/constants';
 
 export default function (date, format, ignoreTodayChecker, defaultValue) {
-  let momentFormat = format;
-
-  if (DATETIME_FORMATS[format]) {
-    momentFormat = DATETIME_FORMATS[format];
-  }
+  let momentFormat = DATETIME_FORMATS[format] || format;
 
   if (!date) {
     return defaultValue || date;

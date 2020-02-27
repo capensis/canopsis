@@ -10,8 +10,8 @@
               v-validate="tstartRules",
               :label="$t('common.startDate')",
               :dateObjectPreparer="getDateObjectPreparer('start')",
+              :roundHours="roundHours",
               name="tstart",
-              roundHours,
               @update:objectValue="$emit('update:startObjectValue', $event)"
             )
         v-layout(align-center)
@@ -22,8 +22,8 @@
               v-validate="tstopRules",
               :label="$t('common.endDate')",
               :dateObjectPreparer="getDateObjectPreparer('stop')",
+              :roundHours="roundHours",
               name="tstop",
-              roundHours,
               @update:objectValue="$emit('update:stopObjectValue', $event)"
             )
       v-flex.pl-1(xs6, data-test="intervalRange")
@@ -57,6 +57,10 @@ export default {
     event: 'input',
   },
   props: {
+    roundHours: {
+      type: Boolean,
+      default: true,
+    },
     value: {
       type: Object,
       required: true,
@@ -71,7 +75,7 @@ export default {
     },
     getDateObjectPreparer: {
       type: Function,
-      default: type => date => prepareDateToObject(date, type),
+      default: type => date => prepareDateToObject(date, type, 'second'),
     },
   },
   computed: {
