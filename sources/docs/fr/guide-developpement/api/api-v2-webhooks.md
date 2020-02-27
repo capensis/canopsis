@@ -55,6 +55,11 @@ Crée un nouveau Webhook à partir du corps de la requête.
         },
         "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
     },
+    "retry": {
+        "count": 3,
+        "delay": 1,
+        "unit": "m"
+    },
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
@@ -99,6 +104,11 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
             "Content-type" : "application/json"
         },
         "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "retry": {
+        "count": 3,
+        "delay": 1,
+        "unit": "m"
     },
     "declare_ticket" : {
         "ticket_id" : "id",
@@ -190,7 +200,7 @@ Modifie un Webhook à partir du corps de la requête.
         ],
         "event_patterns" : [
             {
-                "connector" : "zabbix2",
+                "connector" : "zabbix2"
             }
         ],
         "entity_patterns" : [
@@ -214,6 +224,11 @@ Modifie un Webhook à partir du corps de la requête.
             "Content-type" : "application/json"
         },
         "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "retry": {
+        "count": 3,
+        "delay": 1,
+        "unit": "m"
     },
     "declare_ticket" : {
         "ticket_id" : "id",
@@ -235,7 +250,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
         ],
         "event_patterns" : [
             {
-                "connector" : "zabbix2",
+                "connector" : "zabbix2"
             }
         ],
         "entity_patterns" : [
@@ -259,6 +274,11 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
             "Content-type" : "application/json"
         },
         "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "retry": {
+        "count": 3,
+        "delay": 1,
+        "unit": "m"
     },
     "declare_ticket" : {
         "ticket_id" : "id",
@@ -387,6 +407,11 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_
             "Content-type" : "application/json"
         },
         "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "retry": {
+        "count": 3,
+        "delay": 1,
+        "unit": "m"
     },
     "declare_ticket" : {
         "ticket_id" : "id",
