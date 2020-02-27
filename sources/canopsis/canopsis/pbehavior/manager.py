@@ -1329,11 +1329,14 @@ class PBehaviorManager(object):
 
         for active_pb in currently_active_pb_dict:
             events = []
-            interval = self._get_interval_from_time_pivot(currently_active_pb_dict[active_pb], now)
-            if interval is None:
-                self.logger.error("Get current active interval of {} is failed.".format(
+            interval = None
+            try:
+                interval = self._get_interval_from_time_pivot(currently_active_pb_dict[active_pb], now)
+            except:
+                self.logger.exception("Get current active interval of {} is failed.".format(
                     currently_active_pb_dict[active_pb][PBehavior.ID]
                 ))
+            if interval is None:
                 continue
             # pbehavior still exists
             if active_pb in self.pbehavior_event_sent_flag:
@@ -1388,13 +1391,15 @@ class PBehaviorManager(object):
         :return:
         """
         tz_name = pb.get(PBehavior.TIMEZONE, self.default_tz)
-        rec_set = self._get_recurring_pbehavior_rruleset(pb)
-
-        # convert the timestamp to a datetime in the pbehavior's timezone
-        now = self.__convert_timestamp(time_pivot, tz_name)
-
         start = self.__convert_timestamp(pb[PBehavior.TSTART], tz_name)
         stop = self.__convert_timestamp(pb[PBehavior.TSTOP], tz_name)
+        now = self.__convert_timestamp(time_pivot, tz_name)
+        if not pb[PBehavior.RRULE]:
+            if start <= now <= stop:
+                return start, stop
+            return None
+
+        rec_set = self._get_recurring_pbehavior_rruleset(pb)
         duration = stop - start  # pbehavior duration
         rec_start = rec_set.before(now)
 
