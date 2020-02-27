@@ -80,7 +80,7 @@ export default {
   },
   computed: {
     getPrepareDateToObject() {
-      return this.getDateObjectPreparer || this.defaultPrepareDateToObject;
+      return this.getDateObjectPreparer || this.defaultPrepareDateToObjectGetter;
     },
     range: {
       get() {
@@ -151,7 +151,7 @@ export default {
     },
   },
   methods: {
-    defaultPrepareDateToObject(type) {
+    defaultPrepareDateToObjectGetter(type) {
       return date => prepareDateToObject(date, type, this.roundHours ? 'hour' : 'minute');
     },
   },
