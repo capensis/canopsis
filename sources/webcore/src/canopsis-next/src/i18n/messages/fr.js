@@ -1201,6 +1201,7 @@ export default {
         requestMethod: 'Requête: Méthode',
         requestUrl: 'Requête: URL',
         retryDelay: 'Intervalle',
+        retryUnit: 'Unité',
         retryCount: 'Nombre d\'essais',
       },
     },

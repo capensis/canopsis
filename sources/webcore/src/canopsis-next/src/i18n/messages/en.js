@@ -850,6 +850,7 @@ export default {
       fields: {
         id: 'ID',
         retryDelay: 'Delay',
+        retryUnit: 'Unit',
         retryCount: 'Repeat',
       },
       tooltips: {
