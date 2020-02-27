@@ -32,14 +32,14 @@
 </template>
 
 <script>
-import { PERIODIC_REFRESH_UNITS, DEFAULT_RETRY_FIELD } from '@/constants';
+import { PERIODIC_REFRESH_UNITS, TIME_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
   props: {
     value: {
       type: Object,
-      default: () => ({ ...DEFAULT_RETRY_FIELD }),
+      default: () => ({ unit: TIME_UNITS.second }),
     },
     required: {
       type: Boolean,
