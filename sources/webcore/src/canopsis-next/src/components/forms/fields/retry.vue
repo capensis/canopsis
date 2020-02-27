@@ -3,7 +3,7 @@
     v-flex(xs4)
       v-text-field(
         v-field.number="value.count",
-        v-validate="'required|numeric|min_value:0'",
+        v-validate="fieldValidateRules",
         :label="$t('modals.createWebhook.fields.retryCount')",
         :error-messages="errors.collect('retryCount')",
         :min="0",
@@ -13,7 +13,7 @@
     v-flex(xs4)
       v-text-field(
         v-field.number="value.delay",
-        v-validate="'required|numeric|min_value:0'",
+        v-validate="fieldValidateRules",
         :label="$t('modals.createWebhook.fields.retryDelay')",
         :error-messages="errors.collect('retryDelay')",
         :min="0",
@@ -39,7 +39,11 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => DEFAULT_RETRY_FIELD,
+      default: () => ({ ...DEFAULT_RETRY_FIELD }),
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -48,6 +52,9 @@ export default {
         value,
         text: this.$tc(text, 2),
       }));
+    },
+    fieldValidateRules() {
+      return `${this.required ? 'required|' : ''}numeric|min_value:0`;
     },
   },
 };
