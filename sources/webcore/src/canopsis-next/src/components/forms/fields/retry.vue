@@ -28,6 +28,7 @@
         :label="$t('modals.createWebhook.fields.retryUnit')",
         :error-messages="errors.collect('retryUnit')",
         name="retryUnit",
+        clearable,
         hide-details
       )
 </template>
