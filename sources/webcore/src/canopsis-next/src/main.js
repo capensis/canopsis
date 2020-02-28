@@ -41,6 +41,8 @@ import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/part
 import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
 import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+
 import WebhookIcon from '@/components/icons/webhook.vue';
 
 import * as modalsComponents from '@/components/modals';
@@ -101,6 +103,8 @@ Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.component('v-checkbox-functional', VCheckboxFunctional);
 Vue.component('v-expansion-panel-content', VExpansionPanelContent);
+
+Vue.component('alarm-chips', AlarmChips);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
