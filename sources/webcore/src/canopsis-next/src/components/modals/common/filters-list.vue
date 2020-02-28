@@ -5,6 +5,7 @@
     template(slot="text")
       filters-list-component(
         :filters="filters",
+        :entitiesType="config.entitiesType",
         :hasAccessToAddFilter="config.hasAccessToAddFilter",
         :hasAccessToEditFilter="config.hasAccessToEditFilter",
         @create:filter="createFilter",
