@@ -34,12 +34,10 @@ import PopupsPlugin from '@/plugins/popups';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
+import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
-
-import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
-import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 
@@ -99,9 +97,6 @@ Vue.use(DaySpanVuetify, {
 Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
-Vue.component('v-checkbox-functional', VCheckboxFunctional);
-Vue.component('v-expansion-panel-content', VExpansionPanelContent);
-
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
@@ -147,6 +142,7 @@ Vue.use(PopupsPlugin, { store });
 Vue.use(SetSeveralPlugin);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);
+Vue.use(VuetifyReplacerPlugin);
 
 Vue.config.productionTip = false;
 

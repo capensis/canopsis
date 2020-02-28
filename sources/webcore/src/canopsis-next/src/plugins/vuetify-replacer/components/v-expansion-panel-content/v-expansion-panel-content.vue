@@ -4,8 +4,6 @@ import VExpansionPanelContent from 'vuetify/es5/components/VExpansionPanel/VExpa
 export default {
   extends: VExpansionPanelContent,
   props: {
-    ...VExpansionPanelContent.props,
-
     lazyWithUnmount: {
       type: Boolean,
       default: false,

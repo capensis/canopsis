@@ -4,7 +4,7 @@
       v-model="isOpen",
       :width="$config.SIDE_BAR_WIDTH",
       :class="{ editing: isNavigationEditingMode }",
-      :stateless="isGroupsOrderChanged",
+      :ignoreClickOutside="isGroupsOrderChanged || hasModals",
       data-test="groupsSideBar",
       disable-resize-watcher,
       app
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
@@ -57,6 +58,8 @@ import AppVersion from '../app-version.vue';
 import ActiveSessionsCount from '../active-sessions-count.vue';
 
 import GroupsSideBarGroup from './groups-side-bar-group.vue';
+
+const { mapGetters: modalMapGetters } = createNamespacedHelpers('modals');
 
 /**
  * Component for the side-bar, on the left of the application
@@ -92,6 +95,8 @@ export default {
     };
   },
   computed: {
+    ...modalMapGetters(['hasModals']),
+
     isOpen: {
       get() {
         return this.value;
@@ -262,7 +267,10 @@ export default {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
-    z-index: 7;
+
+    &.editing {
+      z-index: 9;
+    }
   }
 
   .brand {

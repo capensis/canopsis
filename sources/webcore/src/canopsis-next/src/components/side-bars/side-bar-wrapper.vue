@@ -2,7 +2,7 @@
   v-navigation-drawer(
     data-test="sideBarWrapper",
     v-model="isOpen",
-    :stateless="hasModals",
+    :ignoreClickOutside="hasModals",
     v-bind="navigationDrawerProps"
   )
     div(v-if="title")
