@@ -16,7 +16,7 @@ Plusieurs informations concernant la vue sont demandées :
 * Description: Description de la vue
 * Activée: La vue doit-elle être accessible, ou non ?
 * Rafraîchissement périodique : Les données de la vue doivent-elles être rafraîchies régulièrement ?
-![Rafraîchissement](./img/rafraîchissement_vues.gif  "Rafraîchissement des vues")
+![Rafraîchissement](./img/rafraichissement_vues.png  "Rafraîchissement des vues")
 * Labels de groupes: Labels permettant la classification
 * Groupe (*requis*): Groupe auquel la vue appartient. Le champ permet de rechercher parmi les groupes existants. Si aucun groupe n'est trouvé, appuyez sur la touche Entrée pour en créer un nouveau.
 
