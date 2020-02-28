@@ -6,9 +6,9 @@ Ce guide vous propose d'interagir avec Mattermost et avec Logstash.
 !!! Warning
     Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go dans l'édition CAT de Canopsis.
 
-Le moteur [`webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permettre de prendre en charge cette fonctionnalité.
+Le moteur [`webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permet de prendre en charge cette fonctionnalité.
 
-Vous trouverez sa documentation complète sur [la page du moteur](../../guide-administration/moteurs/moteur-webhook.md)
+Vous trouverez sa documentation complète sur la page du [moteur webhook](../../guide-administration/moteurs/moteur-webhook.md).
 
 ## Mattermost
 
@@ -221,9 +221,9 @@ output {
 
 Ici nous voulons avoir 2 envois d'emails différenciés, suivant que le `webhook` déclenché contienne le champ `reportalarm` ou le champ `declareticket`.
 
-Le fichier /etc/logstash/conf.d/email.conf` :
+Le fichier `/etc/logstash/conf.d/email.conf` :
 
-```json
+```
 output {
   if [is_webhook_reportalarm] {
     email {
@@ -325,6 +325,6 @@ Ici nous avons 2 webhooks, un qui inclut le champ `reportalarm` et un qui inclut
    "ackAuthor": "{{ .Alarm.Value.ACK.Author }}",
    "component": "{{ .Alarm.Value.Component }}",
    "resource": "{{ .Alarm.Value.Resource }}",
-   "outputStripped": {{.Alarm.Value.State.Message | replace "\\\\n" "" | replace "\\n" "" | json }}
+   "outputStripped": {{ .Alarm.Value.State.Message | replace "\\\\n" "" | replace "\\n" "" | json }}
 }
 ```
