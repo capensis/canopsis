@@ -4,19 +4,17 @@
       span {{ $t('common.filters') }}
     template(slot="text")
       filters-list-component(
-        :filters.sync="filters",
+        :filters="filters",
         :hasAccessToAddFilter="config.hasAccessToAddFilter",
         :hasAccessToEditFilter="config.hasAccessToEditFilter",
         @create:filter="createFilter",
         @update:filter="updateFilter",
         @delete:filter="deleteFilter",
-        :entitiesType="config.entitiesType"
+        @update:filters="updateFilters"
       )
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -33,8 +31,10 @@ export default {
   components: { FiltersListComponent, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
+    const { filters = [] } = this.modal.config;
+
     return {
-      filters: cloneDeep(this.modal.config.filters || []),
+      filters: [...filters],
     };
   },
   computed: {
@@ -45,19 +45,25 @@ export default {
   methods: {
     createFilter(newFilter) {
       if (this.actions.create) {
-        this.actions.create(newFilter);
+        this.filters = [...this.actions.create(newFilter)];
       }
     },
 
     updateFilter(newFilter, index) {
       if (this.actions.update) {
-        this.actions.update(newFilter, index);
+        this.filters = [...this.actions.update(newFilter, index)];
       }
     },
 
     deleteFilter(index) {
       if (this.actions.delete) {
-        this.actions.delete(index);
+        this.filters = [...this.actions.delete(index)];
+      }
+    },
+
+    updateFilters(filters) {
+      if (this.actions.updateList) {
+        this.filters = [...this.actions.updateList(filters)];
       }
     },
   },
