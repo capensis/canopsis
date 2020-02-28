@@ -98,6 +98,7 @@ export function generateWidgetByType(type) {
 
         viewFilters: [],
         mainFilter: null,
+        mainFilterUpdatedAt: 0,
         infoPopups: [],
         liveReporting: {},
         periodicRefresh: {
@@ -120,6 +121,7 @@ export function generateWidgetByType(type) {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
         mainFilter: null,
+        mainFilterUpdatedAt: 0,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),
