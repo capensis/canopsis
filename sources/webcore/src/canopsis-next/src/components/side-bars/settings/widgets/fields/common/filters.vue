@@ -15,11 +15,13 @@
         long,
         @input="$emit('input', $event)",
         @update:condition="$emit('update:condition', $event)",
-        @update:filters="$emit('update:filters', $event)"
+        @update:filters="updateFilters"
       )
 </template>
 
 <script>
+import { isUndefined } from 'lodash';
+
 import { FILTER_DEFAULT_VALUES, ENTITIES_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -61,8 +63,12 @@ export default {
     },
   },
   methods: {
-    updateFilters(filters) {
+    updateFilters(filters, value) {
       this.$emit('update:filters', filters);
+
+      if (!isUndefined(value)) {
+        this.$emit('input', value);
+      }
     },
   },
 };
