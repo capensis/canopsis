@@ -5,7 +5,7 @@
         span {{ $t('modals.liveReporting.editLiveReporting') }}
       template(slot="text")
         h3 {{ $t('modals.liveReporting.dateInterval') }}
-        date-interval-selector(v-model="form", :roundHours="false")
+        date-interval-selector(v-model="form")
       template(slot="actions")
         v-btn(
           data-test="liveReportingCancelButton",
