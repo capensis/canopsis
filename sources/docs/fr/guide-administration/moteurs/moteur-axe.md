@@ -98,43 +98,43 @@ Le champ `d` correspond à l'`_id` de l'entité à laquelle l'alarme est rattach
 ```json
 {
     "_id" : "aad73d0b-2e0e-453d-90c5-1c843cd196b2",
-    "t" : NumberLong(1567498879),
+    "t" : 1567498879,
     "d" : "disk2/serveur_de_salle_machine_DHCP",
     "v" : {
         "state" : {
             "_t" : "stateinc",
-            "t" : NumberLong(1567498879),
+            "t" : 1567498879,
             "a" : "superviseur1.superviseur1",
             "m" : "Disque plein a 98%, 50GO occupe",
-            "val" : NumberLong(2)
+            "val" : 2
         },
         "status" : {
             "_t" : "statusinc",
-            "t" : NumberLong(1567498879),
+            "t" : 1567498879,
             "a" : "superviseur1.superviseur1",
             "m" : "Disque plein a 98%, 50GO occupe",
-            "val" : NumberLong(1)
+            "val" : 1
         },
         "steps" : [
             {
                 "_t" : "stateinc",
-                "t" : NumberLong(1567498879),
+                "t" : 1567498879,
                 "a" : "superviseur1.superviseur1",
                 "m" : "Disque plein a 98%, 50GO occupe",
-                "val" : NumberLong(2)
+                "val" : 2
             },
             {
                 "_t" : "statusinc",
-                "t" : NumberLong(1567498879),
+                "t" : 1567498879,
                 "a" : "superviseur1.superviseur1",
                 "m" : "Disque plein a 98%, 50GO occupe",
-                "val" : NumberLong(1)
+                "val" : 1
             }
         ],
         "component" : "serveur_de_salle_machine_DHCP",
         "connector" : "superviseur1",
         "connector_name" : "superviseur1",
-        "creation_date" : NumberLong(1567498879),
+        "creation_date" : 1567498879,
         "display_name" : "XA-KU-AQ",
         "extra" : {},
         "initial_output" : "Disque plein a 98%, 50GO occupe",
@@ -144,12 +144,12 @@ Le champ `d` correspond à l'`_id` de l'entité à laquelle l'alarme est rattach
         "long_output_history" : [
             ""
         ],
-        "last_update_date" : NumberLong(1567498879),
-        "last_event_date" : NumberLong(1567498879),
+        "last_update_date" : 1567498879,
+        "last_event_date" : 1567498879,
         "resource" : "disk2",
-        "state_changes_since_status_update" : NumberLong(0),
+        "state_changes_since_status_update" : 0,
         "tags" : [],
-        "total_state_changes" : NumberLong(1)
+        "total_state_changes" : 1
     }
 }
 ```
