@@ -1,16 +1,16 @@
-# Axe
+# Moteur `engine-axe`
 
-Le moteur axe permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le bac à alarmes.
+Le moteur `engine-axe` permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le Bac à alarmes. Il fait partie des moteurs Go nouvelle génération.
 
-Jusqu'en `3.33.0`, dans la version CAT, il permettait aussi d'appliquer des [`webhooks`](moteur-webhook.md).
-
-Depuis la `3.34.0`, les [`webhooks`](moteur-webhook.md) sont devenus leur propre moteur (disponible uniquement en version CAT).
+Jusqu'en 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhooks, dans la version CAT. Depuis Canopsis 3.34.0, les Webhooks sont gérés par un moteur [`engine-webhook`](moteur-webhook.md) dédié (toujours en édition CAT).
 
 ## Utilisation
 
-La file du moteur est placée juste après le moteur [che](moteur-che.md).
+### Options du moteur
 
-### Options de l'engine-axe
+La commande `engine-axe -help` liste toutes les options acceptées par le moteur.
+
+Les options acceptées par la dernière version de Canopsis sont les suivantes :
 
 ```
   -d	debug
@@ -30,14 +30,15 @@ La file du moteur est placée juste après le moteur [che](moteur-che.md).
       version infos
 ```
 
+## Fichier de configuration
 
-### Fichier de configuration
+Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
 
-Au premier démarrage, le moteur `axe` lit le fichier de configuration `default_configuration.toml`.  
-Il peut relire ce fichier si le flag `-ignoreDefaultTomlConfig` est positionné et ainsi écraser les informations de configuration en base de données.
+À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet de forcer le moteur à prendre en compte toutes les nouvelles mises à jour de son fichier de configuration, après un redémarrage. Si cette option n'est pas précisée, `engine-axe` synchronisera sa configuration en base uniquement à son premier lancement.
 
+Le contenu par défaut de ce fichier de configuration est le suivant :
 
-````
+```ini
 [global]
 PrefetchCount = 10000
 PrefetchSize = 0
@@ -49,46 +50,48 @@ StealthyInterval = 0
 BaggotTime = "60s"
 EnableLastEventDate = false
 CancelAutosolveDelay = "1h"
-````
+```
 
-* Activation du champ `last_event_date`
+### Option `EnableLastEventDate`
 
 !!! attention
-    Activer cette option entraîne une action supplémentaire systématique au [moteur axe](../moteurs/moteur-axe.md) et a un impact négatif sur ses performances.
+    Activer cette option entraîne une action supplémentaire systématique dans le moteur qui a une incidence négative sur ses performances.
 
 Les alarmes dans Canopsis incluent un champ `alarm.v.last_event_date`.
 
-Cependant, la mise-à-jour de ce champ n'est pas activée par défaut. Sa valeur est celle de `alarm.v.creation_date`, soit la date de création de l'alarme par le [moteur axe](../moteurs/moteur-axe.md).  
-Pour l'activer, passez le paramètre `EnableLastEventDate` à `true`.  
+Cependant, la mise à jour de ce champ n'est pas activée par défaut. Sa valeur est celle de `alarm.v.creation_date`, soit la date de création de l'alarme par `engine-axe`.
 
+Pour l'activer, passez le paramètre `EnableLastEventDate` du fichier de configuration à `true`.
 
-* Délai de résolution d'une alarme annulée manuellement
+### Option `CancelAutosolveDelay`
 
-Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, elle n'est marquée `résolue` qu'après un délai d'une heure par défaut.  
+Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, elle n'est marquée « résolue » qu'après un certain délai, d'une heure par défaut.  
+
 Vous pouvez agir sur ce délai en modifiant le paramètre `CancelAutosolveDelay`.
 
+## Fonctionnement du moteur
 
-## Fonctionnement
+La file du moteur est placée juste après le moteur [`engine-che`](moteur-che.md).
 
-À l'arrivée dans sa file, le moteur axe va transformer les événements en alarmes qu'il va créer et mettre à jour.
+À l'arrivée dans sa file, le moteur `engine-axe` va transformer les événements en alarmes qu'il va créer et mettre à jour.
 
 ### Événements de type check
 
 3 possibilités pour un événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) :
 
-* Il ne correspond à aucune alarme en cours : l'alarme va alors être créée
-* Il correspond à une alarme en cours et son champ `state` ne vaut pas `0` : l'alarme va alors être mise à jour
-* Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
+1. Il ne correspond à aucune alarme en cours : l'alarme va alors être créée
+2. Il correspond à une alarme en cours et son champ `state` ne vaut pas `0` : l'alarme va alors être mise à jour
+3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
 
 ### Autres types d'événements
 
 Si l'événement correspond à une action (comme la mise d'un [`ACK`](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
 
-## Collection
+## Collection MongoDB associée
 
 Les alarmes sont stockées dans la collection MongoDB `periodical_alarm`.
 
-L'`_id` est générée automatiquement.
+Le champ `_id` est généré automatiquement.
 
 Le champ `d` correspond à l'`_id` de l'entité à laquelle l'alarme est rattachée.
 
