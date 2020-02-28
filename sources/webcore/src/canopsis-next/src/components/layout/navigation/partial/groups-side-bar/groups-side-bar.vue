@@ -4,6 +4,7 @@
       v-model="isOpen",
       :width="$config.SIDE_BAR_WIDTH",
       :class="{ editing: isNavigationEditingMode }",
+      :stateless="isGroupsOrderChanged",
       data-test="groupsSideBar",
       disable-resize-watcher,
       app
