@@ -73,10 +73,6 @@ export default {
       type: [String, Array],
       default: null,
     },
-    getDateObjectPreparer: {
-      type: Function,
-      required: false,
-    },
   },
   computed: {
     stopDateObjectPreparer() {
