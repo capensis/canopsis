@@ -18,6 +18,8 @@ La file du moteur est placée juste après le moteur [che](moteur-che.md).
       Enable Hide Resources Management
   -featureStatEvents
       Send statistic events
+  -ignoreDefaultTomlConfig
+    	load toml file values into database
   -postProcessorsDirectory string
       The path of the directory containing the post-processing plugins. (default ".")
   -printEventOnError
@@ -27,6 +29,44 @@ La file du moteur est placée juste après le moteur [che](moteur-che.md).
   -version
       version infos
 ```
+
+
+### Fichier de configuration
+
+Au premier démarrage, le moteur `axe` lit le fichier de configuration `default_configuration.toml`.  
+Il peut relire ce fichier si le flag `-ignoreDefaultTomlConfig` est positionné et ainsi écraser les informations de configuration en base de données.
+
+
+````
+[global]
+PrefetchCount = 10000
+PrefetchSize = 0
+
+[alarm]
+FlappingFreqLimit = 0
+FlappingInterval = 0
+StealthyInterval = 0
+BaggotTime = "60s"
+EnableLastEventDate = false
+CancelAutosolveDelay = "1h"
+````
+
+* Activation du champ `last_event_date`
+
+!!! attention
+    Activer cette option entraîne une action supplémentaire systématique au [moteur axe](../moteurs/moteur-axe.md) et a un impact négatif sur ses performances.
+
+Les alarmes dans Canopsis incluent un champ `alarm.v.last_event_date`.
+
+Cependant, la mise-à-jour de ce champ n'est pas activée par défaut. Sa valeur est celle de `alarm.v.creation_date`, soit la date de création de l'alarme par le [moteur axe](../moteurs/moteur-axe.md).  
+Pour l'activer, passez le paramètre `EnableLastEventDate` à `true`.  
+
+
+* Délai de résolution d'une alarme annulée manuellement
+
+Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, elle n'est marquée `résolue` qu'après un délai d'une heure par défaut.  
+Vous pouvez agir sur ce délai en modifiant le paramètre `CancelAutosolveDelay`.
+
 
 ## Fonctionnement
 
