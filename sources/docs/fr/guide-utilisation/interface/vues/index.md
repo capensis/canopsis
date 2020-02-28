@@ -15,6 +15,8 @@ Plusieurs informations concernant la vue sont demandées :
 * Titre (*requis*): Titre de la vue
 * Description: Description de la vue
 * Activée: La vue doit-elle être accessible, ou non ?
+* Rafraîchissement périodique : Les données de la vue doivent-elles être rafraîchies régulièrement ?
+![Rafraîchissement](./img/rafraîchissement_vues.gif  "Rafraîchissement des vues")
 * Labels de groupes: Labels permettant la classification
 * Groupe (*requis*): Groupe auquel la vue appartient. Le champ permet de rechercher parmi les groupes existants. Si aucun groupe n'est trouvé, appuyez sur la touche Entrée pour en créer un nouveau.
 
@@ -119,8 +121,12 @@ Au clic sur ce bouton, une fenêtre de confirmation s'ouvre. Cliquez sur "Oui" p
 
 **Attention: Tous les widgets à l'intérieur de l'onglet seront également supprimés**
 
+
 ## La suite...
 
-Une fois votre vue créée, il vous est possible d'y ajouter des widgets afin de commencer à utiliser l'application.
+Une fois votre vue créée, il vous est possible d'y ajouter des widgets afin de commencer à utiliser l'application.  
+
+!!! Note
+    Le rafraîchissement périodique des données de la vue est indépendant du rafraîchissement des widgets eux-mêmes.
 
 Voir : [Widgets](../index.md)
