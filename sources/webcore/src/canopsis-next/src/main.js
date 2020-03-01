@@ -39,6 +39,8 @@ import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+
 import WebhookIcon from '@/components/icons/webhook.vue';
 
 import * as modalsComponents from '@/components/modals';
@@ -96,6 +98,8 @@ Vue.use(DaySpanVuetify, {
 
 Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
+
+Vue.component('alarm-chips', AlarmChips);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

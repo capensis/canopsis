@@ -15,7 +15,7 @@ export default function (date, format, ignoreTodayChecker, defaultValue) {
 
   const dateObject = convertTimestampToMoment(date);
 
-  if (!date || !dateObject || !dateObject.isValid()) {
+  if (!dateObject || !dateObject.isValid()) {
     console.warn('Could not build a valid `moment` object from input.');
     return date;
   }

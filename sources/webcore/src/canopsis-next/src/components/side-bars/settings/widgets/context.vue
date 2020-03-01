@@ -116,6 +116,10 @@ export default {
         ...newQuery,
       };
     },
+
+    updateMainFilterUpdatedAt() {
+      this.settings.widget.parameters.mainFilterUpdatedAt = Date.now();
+    },
   },
 };
 </script>

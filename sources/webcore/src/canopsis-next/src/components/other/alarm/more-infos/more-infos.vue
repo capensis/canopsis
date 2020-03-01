@@ -3,13 +3,16 @@
     v-layout(justify-center)
       v-icon(color="info") infos
       p(class="ma-0") {{ $t('alarmList.moreInfos.defineATemplate') }}
-  .more-infos(data-test="moreInfosContent", v-else, v-html="output")
+  .more-infos(data-test="moreInfosContent", v-else)
+    v-runtime-template(:template="output")
 </template>
 
 <script>
+import VRuntimeTemplate from 'v-runtime-template';
 import { compile } from '@/helpers/handlebars';
 
 export default {
+  components: { VRuntimeTemplate },
   props: {
     template: {
       type: String,
@@ -22,7 +25,7 @@ export default {
   },
   computed: {
     output() {
-      return compile(this.template, { alarm: this.alarm, entity: this.alarm.entity });
+      return `<div>${compile(this.template, { alarm: this.alarm, entity: this.alarm.entity })}</div>`;
     },
   },
 };
