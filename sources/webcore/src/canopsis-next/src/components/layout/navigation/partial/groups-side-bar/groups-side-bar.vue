@@ -6,7 +6,6 @@
       :class="{ editing: isNavigationEditingMode }",
       :ignoreClickOutside="isGroupsOrderChanged || hasModals",
       data-test="groupsSideBar",
-      disable-resize-watcher,
       app
     )
       div.brand.ma-0.secondary.lighten-1
