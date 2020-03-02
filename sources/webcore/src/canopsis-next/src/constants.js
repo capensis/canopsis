@@ -318,10 +318,10 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
-  group: {
+  groupConsequences: {
     icon: 'flash_on',
   },
-  groupAnother: {
+  groupCauses: {
     icon: 'note',
   },
 };

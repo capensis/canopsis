@@ -72,28 +72,28 @@
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
               div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
-    div(v-if="meta")
+    div(v-if="alarm")
       v-tooltip(top)
         v-icon.badge.purple.white--text(
           small,
           data-test="extraDetailsOpenButton-group",
           slot="activator"
-        ) {{ $constants.EVENT_ENTITY_STYLE.group.icon }}
+        ) {{ $constants.EVENT_ENTITY_STYLE.groupCauses.icon }}
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
-          strong Grouping
-          div Title : {{ meta.title }}
-          div Consequences : {{ meta.total }}
-    div(v-if="metaAnother")
+          strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+          div {{ $t('common.title') }} : {{ 1 }}
+          div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ 1 }}
+    div(v-if="alarm")
       v-tooltip(top)
         v-icon.badge.purple.white--text(
           small,
           data-test="extraDetailsOpenButton-groupAnother",
           slot="activator"
-        ) {{ $constants.EVENT_ENTITY_STYLE.groupAnother.icon }}
+        ) {{ $constants.EVENT_ENTITY_STYLE.groupConsequences.icon }}
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
-          strong Grouping
-          div Title : {{ metaAnother.title }}
-          div Causes : {{ metaAnother.total }}
+          strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+          div {{ $t('common.title') }} : {{ 1 }}
+          div {{ $t('alarmList.actions.iconsFields.consequences') }} : {{ 1 }}
 </template>
 
 <script>
@@ -114,20 +114,6 @@ export default {
   computed: {
     pbehaviors() {
       return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
-    },
-
-    /*    meta() {
-      return {
-        title: 'tst1',
-        total: 30,
-      };
-    }, */
-
-    metaAnother() {
-      return {
-        title: 'tst2',
-        total: 30,
-      };
     },
   },
 };
