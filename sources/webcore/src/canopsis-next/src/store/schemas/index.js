@@ -16,6 +16,14 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   processStrategy: parentProcessStrategy,
 });
 
+export const alarmConsequencesSchema = new schema.Entity(ENTITIES_TYPES.alarmConsequences, {}, {
+  idAttribute: '_id',
+});
+
+export const alarmCausesSchema = new schema.Entity(ENTITIES_TYPES.alarmCauses, {}, {
+  idAttribute: '_id',
+});
+
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   pbehaviors: [pbehaviorSchema],
 }, {
@@ -90,6 +98,8 @@ export default {
   [ENTITIES_TYPES.viewRow]: viewRowSchema,
   [ENTITIES_TYPES.viewTab]: viewTabSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
+  [ENTITIES_TYPES.alarmConsequences]: alarmConsequencesSchema,
+  [ENTITIES_TYPES.alarmCauses]: alarmCausesSchema,
   [ENTITIES_TYPES.user]: userSchema,
   [ENTITIES_TYPES.role]: roleSchema,
   [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,

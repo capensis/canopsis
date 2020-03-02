@@ -21,26 +21,32 @@
           v-card.tab-item-card
             v-card-text
               time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
-                // TODO replace causes after api will finish
-    template(v-if="alarm.causes")
+    template(v-if="true")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex
             v-card.tab-item-card
               v-card-text
-                // TODO replace causes after api will finish
-                group-alarms-list(:widget="widget", :alarms="alarm.causes", :isEditingMode="isEditingMode")
-    // TODO replace consequences after api will finish
-    template(v-if="alarm.consequences")
+                group-alarms-list(
+                  :widget="widget",
+                  :details="alarm.causes",
+                  :alarmId="alarm._id",
+                  :isEditingMode="isEditingMode"
+                )
+    template(v-if="true")
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex
             v-card.tab-item-card
               v-card-text
-                // TODO replace consequences after api will finish
-                group-alarms-list(:widget="widget", :alarms="alarm.consequences", :isEditingMode="isEditingMode")
+                group-alarms-list(
+                  :widget="widget",
+                  :details="alarm.consequences",
+                  :alarmId="alarm._id",
+                  :isEditingMode="isEditingMode"
+                )
 </template>
 
 <script>

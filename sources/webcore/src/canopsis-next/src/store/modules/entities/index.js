@@ -24,6 +24,8 @@ import sessionModule from './session';
 
 export default {
   alarm: alarmModule,
+  alarmCauses: alarmModule,
+  alarmConsequences: alarmModule,
   entity: entityModule,
   watcher: watcherModule,
   pbehavior: pbehaviorModule,

@@ -3,8 +3,18 @@ import { DATETIME_FORMATS } from '@/constants';
 import { getSecondsByUnit } from '@/helpers/time';
 
 export default {
+  provide() {
+    return {
+      $periodicRefresh: {
+        subscribe: this.subscribe,
+        unsubscribe: this.unsubscribe,
+        subscribers: this.subscribers,
+      },
+    };
+  },
   data() {
     return {
+      subscribers: [],
       periodicRefreshInterval: null,
       periodicRefreshProgress: undefined,
     };
@@ -67,22 +77,26 @@ export default {
     },
 
     refreshHandler() {
-      return this.isPeriodicRefreshEnabled ? this.refreshViewWithProgress : this.refreshView;
+      return this.isPeriodicRefreshEnabled ? this.notify : this.refreshView;
     },
   },
   methods: {
-    async refreshView() {
-      await this.fetchView({ id: this.id });
-
-      if (this.activeTab) {
-        this.forceUpdateQuery({ id: this.activeTab._id });
+    subscribe(callback) {
+      if (typeof callback === 'function') {
+        this.subscribers.push(callback);
       }
     },
 
-    async refreshViewWithProgress() {
+    unsubscribe(callback) {
+      if (typeof callback === 'function') {
+        this.subscribers.filter(subscriber => callback !== subscriber);
+      }
+    },
+
+    async notify() {
       this.stopPeriodicRefreshInterval();
 
-      await this.refreshView();
+      await Promise.all(this.subscribers.map(subscriber => subscriber()));
 
       this.startPeriodicRefreshInterval();
     },
@@ -93,7 +107,7 @@ export default {
 
     refreshTick() {
       if (this.periodicRefreshProgress <= 0) {
-        this.refreshViewWithProgress();
+        this.notify();
       } else {
         this.periodicRefreshProgress -= 1;
       }
