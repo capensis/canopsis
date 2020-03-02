@@ -66,7 +66,8 @@
         :entitiesType="entitiesType",
         @create:filter="createFilter",
         @update:filter="updateFilter",
-        @delete:filter="deleteFilter"
+        @delete:filter="deleteFilter",
+        @update:filters="updateFilters"
       )
 </template>
 
@@ -176,47 +177,37 @@ export default {
       }
     },
 
-    updateSelectedFilter(value) {
-      this.$emit('input', value);
+    updateSelectedFilter(newValue) {
+      this.$emit('input', newValue);
     },
 
-    updateCondition(condition) {
-      this.$emit('update:condition', condition);
+    updateCondition(newCondition) {
+      this.$emit('update:condition', newCondition);
     },
 
-    updateFilters(filters, value) {
-      this.$emit('update:filters', filters, value);
+    updateFilters(newFilters, newValue) {
+      this.$emit('update:filters', newFilters, newValue);
+
+      return newFilters;
     },
 
-    createFilter(filter) {
-      this.updateFilters([...this.filters, filter]);
+    createFilter(newFilter) {
+      return this.updateFilters([...this.filters, newFilter]);
     },
 
-    updateFilter(filter, index) {
+    updateFilter(newFilter, index) {
       const oldFilter = this.filters[index];
       let newValue = this.value;
 
       if (this.isMultiple) {
-        newValue = this.value.map((selectedFilter) => {
-          if (selectedFilter.filter === oldFilter.filter) {
-            return filter;
-          }
-
-          return selectedFilter;
-        });
+        newValue = this.value.map(v => (v.filter === newFilter.filter ? newFilter : v));
       } else if (this.value && this.value.filter === oldFilter.filter) {
-        newValue = filter;
+        newValue = newFilter;
       }
 
-      const newFilters = this.filters.map((selectedFilter, i) => {
-        if (i === index) {
-          return filter;
-        }
+      const newFilters = this.filters.map((v, i) => (index === i ? newFilter : v));
 
-        return selectedFilter;
-      });
-
-      this.updateFilters(newFilters, newValue);
+      return this.updateFilters(newFilters, newValue);
     },
 
     deleteFilter(index) {
@@ -231,7 +222,7 @@ export default {
 
       const newFilters = this.filters.filter((filter, i) => i !== index);
 
-      this.updateFilters(newFilters, newValue);
+      return this.updateFilters(newFilters, newValue);
     },
 
     showFiltersListModal() {
@@ -245,6 +236,7 @@ export default {
           actions: {
             create: this.createFilter,
             update: this.updateFilter,
+            updateList: this.updateFilters,
             delete: this.deleteFilter,
           },
         },

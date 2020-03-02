@@ -1,7 +1,12 @@
 <template lang="pug">
   div
-    v-list
-      v-list-tile.pa-0(v-for="(filter, index) in filters", :key="filter.title")
+    draggable(
+      :value="filters",
+      :options="draggableOptions",
+      element="v-list",
+      @change="changeFiltersOrdering"
+    )
+      v-list-tile.filter-item.pa-0(v-for="(filter, index) in filters", :key="filter.title")
         v-layout(:data-test="`filterItem-${filter.title}`")
           v-flex(xs12)
             v-list-tile-content {{ filter.title }}
@@ -28,9 +33,13 @@
 </template>
 
 <script>
+import Draggable from 'vuedraggable';
+
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS, ENTITIES_TYPES } from '@/constants';
 
 export default {
+  components: { Draggable },
   props: {
     filters: {
       type: Array,
@@ -54,6 +63,12 @@ export default {
     existingTitles() {
       return this.filters.map(({ title }) => title);
     },
+
+    draggableOptions() {
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+      };
+    },
   },
   methods: {
     showCreateFilterModal() {
@@ -63,10 +78,7 @@ export default {
           title: this.$t('modals.filter.create.title'),
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: (newFilter) => {
-            this.$emit('create:filter', newFilter);
-            this.$emit('update:filters', [...this.filters, newFilter]);
-          },
+          action: newFilter => this.$emit('create:filter', newFilter),
         },
       });
     },
@@ -81,10 +93,7 @@ export default {
           filter,
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: (newFilter) => {
-            this.$emit('update:filter', newFilter, index);
-            this.$emit('update:filters', this.filters.map((v, i) => (index === i ? newFilter : v)));
-          },
+          action: newFilter => this.$emit('update:filter', newFilter, index),
         },
       });
     },
@@ -93,13 +102,34 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => {
-            this.$emit('delete:filter', index);
-            this.$emit('update:filters', this.filters.filter((v, i) => index !== i));
-          },
+          action: () => this.$emit('delete:filter', index),
         },
       });
+    },
+
+    changeFiltersOrdering({ moved, added, removed }) {
+      const filters = [...this.filters];
+
+      if (moved) {
+        const [item] = filters.splice(moved.oldIndex, 1);
+
+        filters.splice(moved.newIndex, 0, item);
+      } else if (added) {
+        filters.splice(added.newIndex, 0, added.element);
+      } else if (removed) {
+        filters.splice(removed.oldIndex, 1);
+      }
+
+      if (filters) {
+        this.$emit('update:filters', filters);
+      }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .filter-item {
+    cursor: move;
+  }
+</style>
