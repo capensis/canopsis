@@ -77,9 +77,20 @@ export default {
       });
     },
 
+    showCancelEventModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          ...this.modalConfig,
+          title: this.$t('modals.createCancelEvent.title'),
+          eventType: EVENT_ENTITY_TYPES.cancel,
+        },
+      });
+    },
+
     showAckRemoveModal() {
       this.$modals.show({
-        name: MODALS.createCancelEvent,
+        name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
           title: this.$t('modals.createAckRemove.title'),
