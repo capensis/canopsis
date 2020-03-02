@@ -1,4 +1,4 @@
-import { get, omit } from 'lodash';
+import { get, omit, cloneDeep } from 'lodash';
 
 import {
   MODALS,
@@ -135,6 +135,11 @@ export default {
         title: this.item.entity.name,
         filter,
       };
+
+      /**
+       * Default value for columns
+       */
+      widget.parameters.widgetColumns = cloneDeep(this.widget.parameters.widgetColumns);
 
       /**
        * Default value for liveReporting is last 30 days
