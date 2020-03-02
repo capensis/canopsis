@@ -189,7 +189,7 @@ export default {
         changeState: 'Changer la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
-        group: 'Group',
+        groupRequest: 'Demande de groupe',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -468,6 +468,11 @@ export default {
         rightRemoving: 'Erreur sur les droits de suppression',
       },
     },
+    createEvent: {
+      fields: {
+        output: 'Note',
+      },
+    },
     createAckEvent: {
       title: 'Acquitter',
       tooltips: {
@@ -495,9 +500,9 @@ export default {
     },
     createCancelEvent: {
       title: 'Annuler',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Demande de groupe',
     },
     createChangeStateEvent: {
       title: 'Changer l\'état',

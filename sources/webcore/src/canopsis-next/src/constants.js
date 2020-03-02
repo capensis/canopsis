@@ -664,7 +664,7 @@ export const USERS_RIGHTS = {
         cancel: 'listalarm_removeAlarm',
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
-        group: 'listalarm_group',
+        groupRequest: 'listalarm_groupRequest',
 
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
@@ -733,7 +733,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
     history: 'history',
-    group: 'group',
+    groupRequest: 'groupRequest',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -787,7 +787,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
-    [WIDGETS_ACTIONS_TYPES.alarmsList.group]: USERS_RIGHTS.business.alarmsList.actions.group,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.groupRequest]: USERS_RIGHTS.business.alarmsList.actions.groupRequest,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 

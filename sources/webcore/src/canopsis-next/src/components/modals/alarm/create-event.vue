@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
+  v-form(data-test="createEventModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
         span {{ config.title }}
@@ -20,6 +20,7 @@
             )
       template(slot="actions")
         v-btn(
+          data-test="createEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -27,7 +28,8 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          type="submit"
+          type="submit",
+          data-test="createEventSubmitButton"
         ) {{ $t('common.actions.saveChanges') }}
 </template>
 
