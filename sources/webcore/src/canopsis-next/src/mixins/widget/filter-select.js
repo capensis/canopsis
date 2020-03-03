@@ -11,15 +11,22 @@ export default {
     },
 
     mainFilter() {
-      const mainFilter = !isEmpty(this.userPreference.widget_preferences.mainFilter) ?
-        this.userPreference.widget_preferences.mainFilter :
-        this.widget.parameters.mainFilter;
+      const {
+        mainFilter: userMainFilter,
+        mainFilterUpdatedAt: userMainFilterUpdatedAt = 0,
+      } = this.userPreference.widget_preferences;
 
-      if (Array.isArray(mainFilter)) {
-        return mainFilter;
+      const {
+        mainFilter: widgetMainFilter,
+        mainFilterUpdatedAt: widgetMainFilterUpdatedAt = 0,
+      } = this.widget.parameters;
+
+      let mainFilter = userMainFilter;
+      if (isEmpty(mainFilter) && !isEmpty(widgetMainFilter) && widgetMainFilterUpdatedAt >= userMainFilterUpdatedAt) {
+        mainFilter = widgetMainFilter;
       }
 
-      return isEmpty(mainFilter) ? null : mainFilter;
+      return mainFilter || null;
     },
 
     viewFilters() {
@@ -61,7 +68,7 @@ export default {
     },
 
     updateSelectedFilter(filterObject) {
-      this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {} });
+      this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
       this.updateQueryBySelectedFilterAndCondition(filterObject, this.mainFilterCondition);
     },
 

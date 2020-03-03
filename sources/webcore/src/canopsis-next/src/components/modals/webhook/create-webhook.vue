@@ -55,6 +55,7 @@ export default {
   data() {
     const { webhook } = this.modal.config;
     const defaultForm = {
+      retry: {},
       hook: {
         triggers: [],
         event_patterns: [],

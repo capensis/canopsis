@@ -15,6 +15,7 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
 
+*  [3.37.0](notes-de-version/3.37.0.md)
 *  [3.36.0](notes-de-version/3.36.0.md)
 *  [3.35.0](notes-de-version/3.35.0.md)
 *  [3.34.0](notes-de-version/3.34.0.md)

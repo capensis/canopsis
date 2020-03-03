@@ -43,7 +43,8 @@
               :filters.sync="settings.widget.parameters.viewFilters",
               :condition.sync="settings.widget.parameters.mainFilterCondition",
               :hasAccessToAddFilter="hasAccessToAddFilter",
-              :hasAccessToEditFilter="hasAccessToEditFilter"
+              :hasAccessToEditFilter="hasAccessToEditFilter",
+              @input="updateMainFilterUpdatedAt"
             )
             v-divider
           field-live-reporting(v-model="settings.widget.parameters.liveReporting")
@@ -174,6 +175,10 @@ export default {
     };
   },
   methods: {
+    updateMainFilterUpdatedAt() {
+      this.settings.widget.parameters.mainFilterUpdatedAt = Date.now();
+    },
+
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
