@@ -34,10 +34,10 @@ export const ENTITIES_TYPES = {
 };
 
 export const MODALS = {
+  createEvent: 'create-event',
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
-  createCancelEvent: 'create-cancel-event',
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
@@ -101,6 +101,7 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
+  groupRequest: 'groupRequest',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -318,6 +319,10 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
+  [EVENT_ENTITY_TYPES.groupRequest]: {
+    icon: 'note_add',
+  },
+
   groupConsequences: {
     icon: 'flash_on',
   },
@@ -666,6 +671,7 @@ export const USERS_RIGHTS = {
         cancel: 'listalarm_removeAlarm',
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
+        groupRequest: 'listalarm_groupRequest',
 
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
@@ -734,6 +740,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
     history: 'history',
+    groupRequest: 'groupRequest',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -787,6 +794,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.groupRequest]: USERS_RIGHTS.business.alarmsList.actions.groupRequest,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -1046,6 +1054,83 @@ export const DURATION_UNITS = {
     value: TIME_UNITS.year,
   },
 };
+
+export const ALARM_ENTITY_FIELDS = {
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  component: 'v.component',
+  resource: 'v.resource',
+  output: 'v.output',
+  extraDetails: 'extra_details',
+  state: 'v.state.val',
+  status: 'v.status.val',
+};
+
+export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.component',
+    value: ALARM_ENTITY_FIELDS.component,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
+
+export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
 
 export const PERIODIC_REFRESH_UNITS = {
   second: {

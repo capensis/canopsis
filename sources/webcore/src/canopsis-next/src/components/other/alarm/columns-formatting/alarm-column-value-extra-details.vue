@@ -72,28 +72,27 @@
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
               div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
-    div(v-if="alarm")
+    div(v-if="alarm.causes")
       v-tooltip(top)
         v-icon.badge.purple.white--text(
           small,
-          data-test="extraDetailsOpenButton-group",
+          data-test="extraDetailsOpenButton-groupCauses",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE.groupCauses.icon }}
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
-          div {{ $t('common.title') }} : {{ 1 }}
-          div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ 1 }}
-    div(v-if="alarm")
+          div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ alarm.causes.total }}
+    div(v-if="alarm.consequences")
       v-tooltip(top)
         v-icon.badge.purple.white--text(
           small,
-          data-test="extraDetailsOpenButton-groupAnother",
+          data-test="extraDetailsOpenButton-groupConsequences",
           slot="activator"
         ) {{ $constants.EVENT_ENTITY_STYLE.groupConsequences.icon }}
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
-          div {{ $t('common.title') }} : {{ 1 }}
-          div {{ $t('alarmList.actions.iconsFields.consequences') }} : {{ 1 }}
+          div {{ $t('common.title') }} : {{ alarm.rule }}
+          div {{ $t('alarmList.actions.iconsFields.consequences') }} : {{ alarm.consequences.total }}
 </template>
 
 <script>

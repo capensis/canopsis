@@ -189,6 +189,7 @@ export default {
         changeState: 'Changer la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
+        groupRequest: 'Demande de groupe',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -207,6 +208,8 @@ export default {
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Time line',
+      alarmsConsequences: 'Alarmes conséquences',
+      alarmsCauses: 'Alarmes les causes',
     },
     moreInfos: {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
@@ -471,6 +474,11 @@ export default {
         rightRemoving: 'Erreur sur les droits de suppression',
       },
     },
+    createEvent: {
+      fields: {
+        output: 'Note',
+      },
+    },
     createAckEvent: {
       title: 'Acquitter',
       tooltips: {
@@ -498,9 +506,9 @@ export default {
     },
     createCancelEvent: {
       title: 'Annuler',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Demande de groupe',
     },
     createChangeStateEvent: {
       title: 'Changer l\'état',

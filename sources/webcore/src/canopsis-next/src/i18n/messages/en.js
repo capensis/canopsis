@@ -201,6 +201,7 @@ export default {
         changeState: 'Change criticity',
         variablesHelp: 'List of available variables',
         history: 'History',
+        groupRequest: 'Group request',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -229,6 +230,8 @@ export default {
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Time line',
+      alarmsConsequences: 'Alarms consequences',
+      alarmsCauses: 'Alarms causes',
     },
     moreInfos: {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
@@ -509,6 +512,11 @@ export default {
         rightRemoving: 'Error on right removing',
       },
     },
+    createEvent: {
+      fields: {
+        output: 'Note',
+      },
+    },
     createAckEvent: {
       title: 'Ack',
       tooltips: {
@@ -536,9 +544,9 @@ export default {
     },
     createCancelEvent: {
       title: 'Cancel',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Group request',
     },
     createChangeStateEvent: {
       title: 'Change state',
