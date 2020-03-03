@@ -10,7 +10,7 @@
 
 <script>
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetQueryMixin from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 

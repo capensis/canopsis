@@ -31,7 +31,7 @@ import { omit } from 'lodash';
 
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetQueryMixin from '@/mixins/widget/fetch-query';
 
 import WeatherItem from './weather-item.vue';
 

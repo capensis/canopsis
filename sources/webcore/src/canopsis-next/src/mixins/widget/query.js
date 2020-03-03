@@ -1,30 +1,35 @@
-import { omit, isEqual, isEmpty } from 'lodash';
+import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
 import queryMixin from '@/mixins/query';
-import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { dateParse } from '@/helpers/date-intervals';
-import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
 
 /**
- * @mixin Add query logic
+ * @mixin Add widget query logic
  */
 export default {
-  mixins: [queryMixin, entitiesUserPreferenceMixin],
+  mixins: [queryMixin],
   props: {
     tabId: {
       type: String,
       required: true,
     },
+    defaultQueryId: {
+      type: [Number, String],
+      required: false,
+    },
   },
   computed: {
+    queryId() {
+      return this.defaultQueryId || this.widget._id;
+    },
     query: {
       get() {
-        return this.getQueryById(this.widget._id);
+        return this.getQueryById(this.queryId);
       },
       set(query) {
-        return this.updateQuery({ id: this.widget._id, query });
+        return this.updateQuery({ id: this.queryId, query });
       },
     },
 
@@ -52,31 +57,8 @@ export default {
       return this.getQueryNonceById(this.tabId);
     },
   },
-  watch: {
-    query(value, oldValue) {
-      if (!isEqual(value, oldValue) && !isEmpty(value)) {
-        this.fetchList();
-      }
-    },
-    tabQueryNonce(value, oldValue) {
-      if (value > oldValue) {
-        this.fetchList();
-      }
-    },
-  },
-  async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
-
-    this.query = {
-      ...this.query,
-      ...convertWidgetToQuery(this.widget),
-      ...convertUserPreferenceToQuery(this.userPreference),
-    };
-  },
   destroyed() {
-    this.removeQuery({
-      id: this.widget._id,
-    });
+    this.removeQuery({ id: this.queryId });
   },
   methods: {
     getQuery() {
@@ -116,6 +98,12 @@ export default {
       query.skip = ((page - 1) * limit) || 0;
 
       return query;
+    },
+    updateRecordsPerPage(limit) {
+      this.updateLockedQuery({
+        id: this.queryId,
+        query: { limit },
+      });
     },
   },
 };

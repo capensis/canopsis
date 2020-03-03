@@ -4,6 +4,7 @@
       :widget="widget",
       :alarms="alarms",
       :totalItems="totalItems",
+      :pagination.sync="vDataTablePagination",
       :isEditingMode="isEditingMode",
       :hasColumns="hasGroupColumns",
       :columns="groupColumns",
@@ -12,13 +13,14 @@
     v-layout.white(align-center)
       v-flex(xs10)
         pagination(
-          :page="2",
-          :limit="2",
-          :total="2"
+          :page="query.page",
+          :limit="query.limit",
+          :total="alarmsMeta.total",
+          @input="updateQueryPage"
         )
       v-spacer
       v-flex(xs2)
-        records-per-page(:value="5", @input="updateQueryPage")
+        records-per-page(:value="query.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
@@ -26,6 +28,7 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
+import widgetQueryMixin from '@/mixins/widget/query';
 
 /**
  * Group-alarm-list component
@@ -41,6 +44,7 @@ export default {
     widgetColumnsMixin,
     entitiesAlarmMixin,
     widgetPaginationMixin,
+    widgetQueryMixin,
   ],
   props: {
     widget: {

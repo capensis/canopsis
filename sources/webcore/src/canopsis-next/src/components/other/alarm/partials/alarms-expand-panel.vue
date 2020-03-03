@@ -31,6 +31,8 @@
                 group-alarms-list(
                   :widget="widget",
                   :details="alarm.causes",
+                  :defaultQueryId="`causes_${alarm._id}`",
+                  :tabId="`causes_${alarm._id}`",
                   :alarmId="alarm._id",
                   :isEditingMode="isEditingMode"
                 )
@@ -44,6 +46,8 @@
                 group-alarms-list(
                   :widget="widget",
                   :details="alarm.consequences",
+                  :defaultQueryId="`consequences_${alarm._id}`",
+                  :tabId="`causes_${alarm._id}`",
                   :alarmId="alarm._id",
                   :isEditingMode="isEditingMode"
                 )

@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import { STATS_DEFAULT_COLOR, STATS_CURVES_POINTS_STYLES } from '@/constants';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetQueryMixin from '@/mixins/widget/fetch-query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';

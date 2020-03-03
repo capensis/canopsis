@@ -17,7 +17,7 @@ import { CANOPSIS_EDITION } from '@/constants';
 
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetQueryMixin from '@/mixins/widget/fetch-query';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
