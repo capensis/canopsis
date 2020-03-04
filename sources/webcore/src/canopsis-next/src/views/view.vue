@@ -121,8 +121,8 @@ import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
-import peiodicRefreshMixin from '@/mixins/view/peiodic-refresh';
 import entitiesViewMixin from '@/mixins/entities/view';
+import periodicRefreshMixin from '@/mixins/view/peiodic-refresh';
 
 export default {
   components: {
@@ -133,7 +133,7 @@ export default {
     authMixin,
     queryMixin,
     entitiesViewMixin,
-    peiodicRefreshMixin,
+    periodicRefreshMixin,
   ],
   props: {
     id: {
