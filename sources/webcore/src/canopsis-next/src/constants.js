@@ -1182,6 +1182,11 @@ export const POPUP_TYPES = {
   error: 'error',
 };
 
+export const ALARMS_GROUP_PREFIX = {
+  CAUSES: 'causes_',
+  CONSEQUENCES: 'consequences_',
+};
+
 export const GRID_SIZES = {
   min: 0,
   max: 12,

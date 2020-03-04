@@ -4,11 +4,12 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getSecondsByUnit } from '@/helpers/time';
+import subscribersMixin from '@/mixins/subscribers';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
 
 export default {
-  mixins: [layoutNavigationEditingModeMixin],
+  mixins: [subscribersMixin, layoutNavigationEditingModeMixin],
   provide() {
     return {
       $periodicRefresh: {
@@ -20,7 +21,6 @@ export default {
   },
   data() {
     return {
-      subscribers: [],
       periodicRefreshInterval: null,
       periodicRefreshProgress: undefined,
     };
@@ -112,26 +112,14 @@ export default {
 
     refreshHandler() {
       return this.isPeriodicRefreshEnabled && !this.isNavigationEditingMode ?
-        this.notify : this.refreshView;
+        this.callSubscribers : this.refreshView;
     },
   },
   methods: {
-    subscribe(callback) {
-      if (typeof callback === 'function') {
-        this.subscribers.push(callback);
-      }
-    },
-
-    unsubscribe(callback) {
-      if (typeof callback === 'function') {
-        this.subscribers.filter(subscriber => callback !== subscriber);
-      }
-    },
-
-    async notify() {
+    async callSubscribers() {
       this.stopPeriodicRefreshInterval();
 
-      await Promise.all(this.subscribers.map(subscriber => subscriber()));
+      await this.notify();
 
       this.startPeriodicRefreshInterval();
     },
@@ -142,7 +130,7 @@ export default {
 
     refreshTick() {
       if (this.periodicRefreshProgress <= 0) {
-        this.notify();
+        this.callSubscribers();
       } else {
         this.periodicRefreshProgress -= 1;
       }

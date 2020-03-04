@@ -1,7 +1,9 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
+import { WIDGET_TYPES, STATS_QUICK_RANGES, DATETIME_FORMATS } from '@/constants';
+
+import { dateParse } from '@/helpers/date-intervals';
 
 import prepareMainFilterToQueryFilter from './filter';
 
@@ -63,6 +65,22 @@ export function convertAlarmWidgetToQuery(widget) {
   if (widgetColumns) {
     query.active_columns = widgetColumns.map(v => v.value);
   }
+
+  return { ...query, ...convertSortToQuery(widget) };
+}
+/**
+ * This function converts widget with type 'AlarmsList' to query Object for causes or consequences
+ *
+ * @param {Object} widget
+ * @returns {{}}
+ */
+export function convertGroupAlarmWidgetToQuery(widget) {
+  const { itemsPerPage } = widget.parameters;
+
+  const query = {
+    page: 1,
+    limit: itemsPerPage || PAGINATION_LIMIT,
+  };
 
   return { ...query, ...convertSortToQuery(widget) };
 }
@@ -323,4 +341,50 @@ export function convertWidgetToQuery(widget) {
     default:
       return {};
   }
+}
+
+
+/**
+ * This function converts query to params object
+ *
+ * @param {Object} queryData
+ * @returns {{}}
+ */
+export function convertQueryToWidgetParams(queryData) {
+  const query = omit(queryData, [
+    'page',
+    'sortKey',
+    'sortDir',
+    'tstart',
+    'tstop',
+  ]);
+
+  const {
+    page,
+    tstart,
+    tstop,
+    limit = PAGINATION_LIMIT,
+  } = queryData;
+
+  if (tstart) {
+    const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
+
+    query.tstart = convertedTstart.unix();
+  }
+
+  if (tstop) {
+    const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
+
+    query.tstop = convertedTstop.unix();
+  }
+
+  if (queryData.sortKey) {
+    query.sort_key = queryData.sortKey;
+    query.sort_dir = queryData.sortDir;
+  }
+
+  query.limit = limit;
+  query.skip = ((page - 1) * limit) || 0;
+
+  return query;
 }

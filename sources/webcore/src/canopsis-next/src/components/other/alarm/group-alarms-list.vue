@@ -28,7 +28,8 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';
+import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 /**
  * Group-alarm-list component
@@ -40,18 +41,16 @@ export default {
   components: {
     RecordsPerPage,
   },
+  inject: ['$periodicRefresh'],
   mixins: [
     widgetColumnsMixin,
     entitiesAlarmMixin,
     widgetPaginationMixin,
-    widgetQueryMixin,
+    widgetGroupFetchQueryMixin,
+    widgetExpandPanelAlarm,
   ],
   props: {
     widget: {
-      type: Object,
-      required: true,
-    },
-    details: {
       type: Object,
       required: true,
     },
@@ -59,14 +58,35 @@ export default {
       type: Boolean,
       default: false,
     },
-    alarmId: {
-      type: String,
+    alarm: {
+      type: Object,
       required: true,
     },
   },
   computed: {
     totalItems() {
       return this.alarms.length;
+    },
+  },
+  created() {
+    this.$periodicRefresh.subscribe(this.fetchGroupAlarmListData);
+  },
+  beforeDestroy() {
+    this.$periodicRefresh.unsubscribe(this.fetchGroupAlarmListData);
+  },
+  methods: {
+    fetchGroupAlarmListData() {
+      const query = this.getQuery();
+
+      if (this.alarm.causes) {
+        query.with_causes = true;
+      }
+
+      if (this.alarm.consequences) {
+        query.with_consequences = true;
+      }
+
+      this.fetchAlarmItemWithParams(this.alarm, { ...query, with_steps: true });
     },
   },
 };

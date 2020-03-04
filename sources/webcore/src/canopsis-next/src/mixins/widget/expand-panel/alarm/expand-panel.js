@@ -8,21 +8,26 @@ export default {
       fetchAlarmItem: 'fetchItem',
     }),
 
-    fetchItemWithSteps() {
-      const params = {
+    fetchItemWithSteps(alarm) {
+      return this.fetchAlarmItemWithParams(alarm, {
+        with_steps: true,
+      });
+    },
+
+    fetchAlarmItemWithParams(alarm, params) {
+      const defaultParams = {
         sort_key: 't',
         sort_dir: 'DESC',
         limit: 1,
-        with_steps: true,
       };
 
-      if (this.alarm.v.resolved) {
-        params.resolved = true;
+      if (alarm.v.resolved) {
+        defaultParams.resolved = true;
       }
 
       return this.fetchAlarmItem({
-        id: this.alarm._id,
-        params,
+        id: alarm._id,
+        params: { ...defaultParams, ...params },
       });
     },
   },

@@ -1,21 +1,25 @@
 import queryWidgetMixin from '@/mixins/widget/query';
-import { convertWidgetToQuery } from '@/helpers/query';
+import { convertGroupAlarmWidgetToQuery } from '@/helpers/query';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * @mixin Add query logic with group fetch
  */
 export default {
   mixins: [queryWidgetMixin],
-  mounted() {
-    this.query = {
-      ...this.query,
-      ...convertWidgetToQuery(this.widget),
-    };
+  watch: {
+    query(value, oldValue) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
+        this.fetchGroupAlarmListData();
+      }
+    },
+    tabQueryNonce(value, oldValue) {
+      if (value > oldValue) {
+        this.fetchGroupAlarmListData();
+      }
+    },
   },
-  updateRecordsPerPage(limit) {
-    this.updateLockedQuery({
-      id: this.queryId,
-      query: { limit },
-    });
+  mounted() {
+    this.query = convertGroupAlarmWidgetToQuery(this.widget);
   },
 };

@@ -21,7 +21,7 @@
           v-card.tab-item-card
             v-card-text
               time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
-    template(v-if="true")
+    template(v-if="alarm.causes")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -30,13 +30,12 @@
               v-card-text
                 group-alarms-list(
                   :widget="widget",
-                  :details="alarm.causes",
-                  :defaultQueryId="`causes_${alarm._id}`",
-                  :tabId="`causes_${alarm._id}`",
-                  :alarmId="alarm._id",
+                  :defaultQueryId="causesKey",
+                  :tabId="causesKey",
+                  :alarm="alarm",
                   :isEditingMode="isEditingMode"
                 )
-    template(v-if="true")
+    template(v-if="alarm.consequences")
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -45,16 +44,15 @@
               v-card-text
                 group-alarms-list(
                   :widget="widget",
-                  :details="alarm.consequences",
-                  :defaultQueryId="`consequences_${alarm._id}`",
-                  :tabId="`causes_${alarm._id}`",
-                  :alarmId="alarm._id",
+                  :defaultQueryId="consequencesKey",
+                  :tabId="consequencesKey",
+                  :alarm="alarm",
                   :isEditingMode="isEditingMode"
                 )
 </template>
 
 <script>
-import { GRID_SIZES, TOURS } from '@/constants';
+import { ALARMS_GROUP_PREFIX, GRID_SIZES, TOURS } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
@@ -93,6 +91,12 @@ export default {
     };
   },
   computed: {
+    causesKey() {
+      return `${ALARMS_GROUP_PREFIX.CAUSES}${this.alarm._id}`;
+    },
+    consequencesKey() {
+      return `${ALARMS_GROUP_PREFIX.CONSEQUENCES}${this.alarm._id}`;
+    },
     moreInfosTabClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 2);

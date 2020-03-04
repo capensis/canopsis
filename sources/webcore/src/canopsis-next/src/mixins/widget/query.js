@@ -1,9 +1,6 @@
-import { omit } from 'lodash';
-
-import { PAGINATION_LIMIT } from '@/config';
-import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
+import { SORT_ORDERS } from '@/constants';
 import queryMixin from '@/mixins/query';
-import { dateParse } from '@/helpers/date-intervals';
+import { convertQueryToWidgetParams } from '@/helpers/query';
 
 /**
  * @mixin Add widget query logic
@@ -62,42 +59,7 @@ export default {
   },
   methods: {
     getQuery() {
-      const query = omit(this.query, [
-        'page',
-        'sortKey',
-        'sortDir',
-        'tstart',
-        'tstop',
-      ]);
-
-      const {
-        page,
-        tstart,
-        tstop,
-        limit = PAGINATION_LIMIT,
-      } = this.query;
-
-      if (tstart) {
-        const convertedTstart = dateParse(tstart, 'start', DATETIME_FORMATS.dateTimePicker);
-
-        query.tstart = convertedTstart.unix();
-      }
-
-      if (tstop) {
-        const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
-
-        query.tstop = convertedTstop.unix();
-      }
-
-      if (this.query.sortKey) {
-        query.sort_key = this.query.sortKey;
-        query.sort_dir = this.query.sortDir;
-      }
-
-      query.limit = limit;
-      query.skip = ((page - 1) * limit) || 0;
-
-      return query;
+      return convertQueryToWidgetParams(this.query);
     },
     updateRecordsPerPage(limit) {
       this.updateLockedQuery({

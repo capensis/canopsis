@@ -46,14 +46,15 @@ import { getStepClass } from '@/helpers/tour';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 
-import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/time-line';
+import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 export default {
   components: {
     ActionsPanel,
     AlarmColumnValue,
   },
-  mixins: [widgetExpandPanelAlarmTimeLine],
+  inject: ['$periodicRefresh'],
+  mixins: [widgetExpandPanelAlarm],
   model: {
     prop: 'selected',
     event: 'input',
@@ -107,7 +108,7 @@ export default {
   methods: {
     async showExpandPanel() {
       if (!this.row.expanded && !this.widget.parameters.moreInfoTemplate) {
-        await this.fetchItemWithSteps();
+        await this.fetchItemWithSteps(this.alarm);
       }
 
       this.row.expanded = !this.row.expanded;

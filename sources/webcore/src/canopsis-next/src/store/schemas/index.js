@@ -20,6 +20,9 @@ alarmSchema.define({
   consequences: {
     data: [alarmSchema],
   },
+  causes: {
+    data: [alarmSchema],
+  },
 });
 
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {

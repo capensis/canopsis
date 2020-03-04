@@ -17,7 +17,7 @@ import { orderBy, groupBy } from 'lodash';
 import TimeLineFlag from '@/components/other/alarm/time-line/time-line-flag.vue';
 import TimeLineCard from '@/components/other/alarm/time-line/time-line-card.vue';
 
-import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/time-line';
+import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },
@@ -44,7 +44,7 @@ export default {
         if (alarm.v.steps) {
           this.groupedSteps = this.groupSteps(alarm.v.steps);
         } else {
-          this.fetchItemWithSteps();
+          this.fetchItemWithSteps(alarm);
         }
       },
     },

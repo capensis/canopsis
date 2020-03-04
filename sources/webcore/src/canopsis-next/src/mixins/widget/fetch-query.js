@@ -30,10 +30,4 @@ export default {
       ...convertUserPreferenceToQuery(this.userPreference),
     };
   },
-  updateRecordsPerPage(limit) {
-    this.updateLockedQuery({
-      id: this.queryId,
-      query: { limit },
-    });
-  },
 };
