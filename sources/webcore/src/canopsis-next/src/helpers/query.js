@@ -3,7 +3,7 @@ import { omit, isUndefined, isEmpty } from 'lodash';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
-import prepareMainFilterToQueryFilter from './filter';
+import { prepareMainFilterToQueryFilter, getWidgetMainFilter } from './filter';
 
 /**
  * WIDGET CONVERTERS
@@ -323,4 +323,26 @@ export function convertWidgetToQuery(widget) {
     default:
       return {};
   }
+}
+
+export function prepareQuery(widget, userPreference) {
+  const widgetsWithMainFilter = [WIDGET_TYPES.alarmList, WIDGET_TYPES.context];
+  const widgetQuery = convertWidgetToQuery(widget);
+  const userPreferenceQuery = convertUserPreferenceToQuery(userPreference);
+  const query = {
+    ...widgetQuery,
+    ...userPreferenceQuery,
+  };
+
+  if (widgetsWithMainFilter.includes(widget.type)) {
+    const activeMainFilter = getWidgetMainFilter(widget, userPreference);
+
+    if (activeMainFilter) {
+      query.filter = prepareMainFilterToQueryFilter(activeMainFilter);
+    } else {
+      delete query.filter;
+    }
+  }
+
+  return query;
 }

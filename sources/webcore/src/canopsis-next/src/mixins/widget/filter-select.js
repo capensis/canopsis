@@ -2,7 +2,7 @@ import { isEmpty, isBoolean } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
-import prepareMainFilterToQueryFilter from '@/helpers/filter';
+import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 export default {
   computed: {
