@@ -5,6 +5,7 @@
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
+        ref="dataTable",
         v-model="selected",
         :class="vDataTableClass",
         :items="alarms",
@@ -13,7 +14,6 @@
         :pagination="pagination",
         :loading="loading || alarmColumnFiltersPending",
         data-test="tableWidget",
-        ref="dataTable",
         item-key="_id",
         hide-actions,
         select-all,
@@ -32,13 +32,15 @@
             :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
-            :columnFiltersMap="columnFiltersMap"
+            :columnFiltersMap="columnFiltersMap",
+            :isTourEnabled="isTourEnabled"
           )
         template(slot="expand", slot-scope="props")
           alarms-expand-panel(
             :alarm="props.item",
             :isEditingMode="isEditingMode",
-            :widget="widget"
+            :widget="widget",
+            :isTourEnabled="isTourEnabled"
           )
 </template>
 
@@ -100,6 +102,10 @@ export default {
       default: false,
     },
     hasColumns: {
+      type: Boolean,
+      required: true,
+    },
+    isTourEnabled: {
       type: Boolean,
       required: true,
     },

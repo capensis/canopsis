@@ -20,6 +20,7 @@ export default {
           add(popup) {
             return store.dispatch(`${moduleName}/add`, popup);
           },
+
           remove({ id }) {
             return store.dispatch(`${moduleName}/remove`, { id });
           },

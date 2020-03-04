@@ -1187,3 +1187,7 @@ export const GRID_SIZES = {
   max: 12,
   step: 1,
 };
+
+export const TOURS = {
+  alarmsExpandPanel: 'alarmsExpandPanel',
+};

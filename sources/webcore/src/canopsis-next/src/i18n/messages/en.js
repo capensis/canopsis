@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -170,6 +171,8 @@ export default {
       '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
       '</dl>',
+    submit: 'Search',
+    clear: 'Clear search input',
   },
   entities: {
     watcher: 'Watcher',
@@ -856,6 +859,7 @@ export default {
       fields: {
         id: 'ID',
         retryDelay: 'Delay',
+        retryUnit: 'Unit',
         retryCount: 'Repeat',
       },
       tooltips: {
@@ -1178,6 +1182,9 @@ export default {
     fields: {
       mixFilters: 'Mix filters',
     },
+    buttons: {
+      list: 'Manage filters',
+    },
   },
   validator: {
     unique: 'Field must be unique',
@@ -1256,6 +1263,14 @@ export default {
         settings: 'Settings',
       },
       activeSessions: 'Active sessions',
+      ordering: {
+        popups: {
+          success: 'The groups was reordered',
+          error: 'Several groups wasn\'t reordered',
+          periodicRefreshWasPaused: 'Periodic refresh was paused while you are editing the groups bar',
+          periodicRefreshWasResumed: 'Periodic refresh was resumed',
+        },
+      },
     },
   },
   parameters: {
@@ -1388,6 +1403,18 @@ export default {
 
   contextGeneralTable: {
     addSelection: 'Add selection',
+  },
+
+  liveReporting: {
+    button: 'Set a custom date range',
+  },
+
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Details',
+      step2: 'MoreInfos tab (Displayed only in case of existing confguration)',
+      step3: 'Timeline tab',
+    },
   },
 
   ...featureService.get('i18n.en'),

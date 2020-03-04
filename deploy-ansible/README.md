@@ -4,7 +4,9 @@ Deploy Canopsis with Ansible
 
 ## Requirements
 
-- Ansible 2.8.8 - Use a virtualenv and `pip install "ansible==2.8.8"`
+- Ansible 2.8.7 - Use a virtualenv and `pip install "ansible==2.8.7"`
+
+⚠️ **DON'T, DON'T, DON'T** ⚠️ UPGRADE ANSIBLE, NOT EVEN TO A MINOR VERSION. It's just a perpetual breaking machine.
 
 ## Role Variables
 

@@ -102,7 +102,7 @@ export default {
 <style lang="scss" scoped>
   .tabs-absolute {
     position: absolute;
-    z-index: 6;
+    z-index: 9;
     width: 100%;
   }
 </style>

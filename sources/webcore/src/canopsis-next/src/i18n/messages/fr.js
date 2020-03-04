@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 import featureService from '@/services/features';
 
@@ -158,6 +159,8 @@ export default {
     '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
     '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
     '</dl>',
+    submit: 'Rechercher',
+    clear: 'Ne plus appliquer cette recherche',
   },
   entities: {
     watcher: 'Observateurs',
@@ -1085,6 +1088,9 @@ export default {
     fields: {
       mixFilters: 'Mix de filtres',
     },
+    buttons: {
+      list: 'Gérer les filtres',
+    },
   },
   validator: {
     unique: 'Le champ doit être unique',
@@ -1162,6 +1168,14 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
+      ordering: {
+        popups: {
+          success: 'Les groupes ont été réorganisés',
+          error: 'Plusieurs groupes n\'ont pas été réorganisés',
+          periodicRefreshWasPaused: 'Le rafraîchissement périodique est mis en pause pendant l\'édition du menu',
+          periodicRefreshWasResumed: 'Reprise du rafraîchissement périodique',
+        },
+      },
     },
   },
   parameters: {
@@ -1196,6 +1210,7 @@ export default {
         requestMethod: 'Requête: Méthode',
         requestUrl: 'Requête: URL',
         retryDelay: 'Intervalle',
+        retryUnit: 'Unité',
         retryCount: 'Nombre d\'essais',
       },
     },
@@ -1278,6 +1293,17 @@ export default {
     },
   },
 
+  liveReporting: {
+    button: 'Définir un intervalle de dates',
+  },
+
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Détails',
+      step2: 'Onglet plus d\'infos (N\'apparait que s\'il existe une configuration)',
+      step3: 'Onglet timeline',
+    },
+  },
 
   ...featureService.get('i18n.fr'),
 };

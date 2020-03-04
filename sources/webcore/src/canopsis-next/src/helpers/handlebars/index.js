@@ -39,6 +39,9 @@ export function unregisterHelper(name) {
 /**
  * Register global helpers
  */
+registerHelper('duration', helpers.durationHelper);
+registerHelper('date', helpers.dateHelper);
+registerHelper('state', helpers.alarmStateHelper);
 registerHelper('timestamp', helpers.timestamp);
 registerHelper('internal-link', helpers.internalLink);
 registerHelper('compare', helpers.compare);

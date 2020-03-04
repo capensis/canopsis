@@ -96,7 +96,13 @@ function removeEmptyPatternsFromWebhook(webhook) {
  * @returns {Object}
  */
 export function formToWebhook(form) {
-  const webhook = createWebhookObject(form);
+  const hasValue = v => !v;
+
+  const webhook = unsetSeveralFieldsWithConditions(createWebhookObject(form), {
+    'retry.count': hasValue,
+    'retry.unit': hasValue,
+    'retry.delay': hasValue,
+  });
 
   return removeEmptyPatternsFromWebhook(webhook);
 }

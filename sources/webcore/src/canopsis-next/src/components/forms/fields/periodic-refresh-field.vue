@@ -41,7 +41,7 @@ export default {
   props: {
     periodicRefresh: {
       type: Object,
-      default: DEFAULT_PERIODIC_REFRESH,
+      default: () => ({ ...DEFAULT_PERIODIC_REFRESH }),
     },
     label: {
       type: String,

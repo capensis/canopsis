@@ -36,8 +36,16 @@
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
-          v-icon(:color="activeRange ? 'primary' : 'black'") schedule
+        v-tooltip(bottom)
+          v-btn(
+            slot="activator",
+            data-test="alarmsDateInterval",
+            icon,
+            small,
+            @click="showEditLiveReportModal"
+          )
+            v-icon(:color="activeRange ? 'primary' : 'black'") schedule
+          span {{ $t('liveReporting.button') }}
     alarms-list-table(
       :widget="widget",
       :alarms="alarms",
@@ -47,6 +55,7 @@
       :isEditingMode="isEditingMode",
       :hasColumns="hasColumns",
       :columns="columns",
+      :isTourEnabled="isTourEnabled",
       ref="alarmsTable"
     )
     v-layout.white(align-center)
@@ -61,15 +70,16 @@
       v-spacer
       v-flex(xs2, data-test="itemsPerPage")
         records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+    alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
-import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
+
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
@@ -80,6 +90,9 @@ import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+
+import AlarmListSearch from './search/alarm-list-search.vue';
+import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
 
 /**
  * Alarm-list component
@@ -93,8 +106,9 @@ import entitiesAlarmMixin from '@/mixins/entities/alarm';
 export default {
   components: {
     AlarmListSearch,
-    RecordsPerPage,
     FilterSelector,
+    RecordsPerPage,
+    AlarmsExpandPanelTour,
   },
   mixins: [
     authMixin,
@@ -124,8 +138,17 @@ export default {
       selected: [],
     };
   },
-
   computed: {
+    tourCallbacks() {
+      return {
+        onNextStep: this.onTourNextStep,
+      };
+    },
+
+    isTourEnabled() {
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && this.alarms.length > 0;
+    },
+
     activeRange() {
       const { tstart, tstop } = this.query;
 
@@ -148,8 +171,15 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
-
   methods: {
+    onTourNextStep(currentStep) {
+      if (currentStep === 0) {
+        this.$set(this.$refs.alarmsTable.$refs.dataTable.expanded, this.alarms[0]._id, true);
+      }
+
+      return this.$nextTick();
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },

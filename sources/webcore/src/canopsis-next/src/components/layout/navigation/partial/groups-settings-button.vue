@@ -28,7 +28,7 @@
       v-btn(
         data-test="editModeButton",
         slot="activator",
-        :input-value="isEditingMode",
+        :input-value="isNavigationEditingMode",
         color="blue darken-4",
         small,
         dark,
@@ -60,14 +60,14 @@
 import { MODALS } from '@/constants';
 
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
+import layoutNavigationEditingModeMixin from '@/mixins/layout/navigation/editing-mode';
 
 export default {
-  mixins: [rightsTechnicalViewMixin],
+  mixins: [
+    rightsTechnicalViewMixin,
+    layoutNavigationEditingModeMixin,
+  ],
   props: {
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
     tooltipRight: {
       type: Boolean,
       default: false,
