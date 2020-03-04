@@ -6,7 +6,7 @@ from canopsis.webcore.services.pbehavior import check_values, RouteHandlerPBehav
 import unittest
 from canopsis.common import root_path
 import xmlrunner
-
+from copy import deepcopy
 
 class TestPbehavior(TestCase):
 
@@ -105,18 +105,9 @@ class TestPbehaviorWebservice(TestCase):
         'tstop': 1000,
         'rrule': 'FREQ=DAILY;BYDAY=MO',
         'enabled': True,
-        'comments': [
-            {
-                "author": "comment_author_1",
-                "message": "this is comment message"
-            },
-            {
-                "author": "comment_author_2",
-                "message": "this is comment message 2"
-            }
-        ],
-        'connector': 'test_pb_connector',
-        'connector_name': 'test_pb_connector_name'
+        'comments': [],
+        'connector': 'test_pb',
+        'connector_name': 'test_pb'
     }
 
     @classmethod
@@ -134,14 +125,28 @@ class TestPbehaviorWebservice(TestCase):
         self.rhpb.create(**self.VALID_PB)
 
     def test_read_pb(self):
-        pb_id = self.rhpb.create(**self.VALID_PB)
+        valid_pb = deepcopy(self.VALID_PB)
+        valid_pb['comments'] = [
+            {
+                "author": "comment_author_1",
+                "message": "this is comment message"
+            },
+            {
+                "author": "comment_author_2",
+                "message": "this is comment message 2"
+            }
+        ]
+        valid_pb['connector'] =  'test_pb_connector'
+        valid_pb['connector_name'] =  'test_pb_connector_name'
+
+        pb_id = self.rhpb.create(**valid_pb)
         self.assertIsInstance(pb_id, str)
 
         pbehavior = self.rhpb.read(pb_id, None, None)
 
         self.assertIsInstance(pbehavior, dict)
         self.assertEquals(pbehavior.get('data')[0].get(
-            'name'), self.VALID_PB.get('name'))
+            'name'), valid_pb.get('name'))
 
         pbehavior = self.rhpb.read(None, search="doesn't_exist_in_any_field")
         self.assertIsInstance(pbehavior, dict)
@@ -151,26 +156,26 @@ class TestPbehaviorWebservice(TestCase):
         pbehavior = self.rhpb.read(None, search="test_pb_connector")
         self.assertIsInstance(pbehavior, dict)
         self.assertEquals(pbehavior.get('data')[0].get(
-            'connector'), self.VALID_PB.get('connector'))
+            'connector'), valid_pb.get('connector'))
 
         # connector_name
         pbehavior = self.rhpb.read(None, search="test_pb_connector_name")
         self.assertIsInstance(pbehavior, dict)
         self.assertEquals(pbehavior.get('data')[0].get(
-            'connector_name'), self.VALID_PB.get('connector_name'))
+            'connector_name'), valid_pb.get('connector_name'))
 
         # comment's author
         pbehavior = self.rhpb.read(None, search="comment_author_1|comment_author_2")
         self.assertIsInstance(pbehavior, dict)
         self.assertEquals(pbehavior.get('data')[0].get(
-            'comments')[0].get('author'), self.VALID_PB.get(
+            'comments')[0].get('author'), valid_pb.get(
             'comments')[0].get('author'))
 
         # comment's message
         pbehavior = self.rhpb.read(None, search="^.*comment message\s+\d")
         self.assertIsInstance(pbehavior, dict)
         self.assertEquals(pbehavior.get('data')[0].get(
-            'comments')[0].get('message'), self.VALID_PB.get(
+            'comments')[0].get('message'), valid_pb.get(
             'comments')[0].get('message'))
 
     def test_update_pb(self):
