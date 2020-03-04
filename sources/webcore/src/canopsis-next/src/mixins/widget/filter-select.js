@@ -1,8 +1,8 @@
-import { isEmpty, isBoolean } from 'lodash';
+import { isBoolean } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
-import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
+import { prepareMainFilterToQueryFilter, getMainFilter } from '@/helpers/filter';
 
 export default {
   computed: {
@@ -11,23 +11,7 @@ export default {
     },
 
     mainFilter() {
-      const {
-        mainFilter: userMainFilter,
-        mainFilterUpdatedAt: userMainFilterUpdatedAt = 0,
-      } = this.userPreference.widget_preferences;
-
-      const {
-        mainFilter: widgetMainFilter,
-        mainFilterUpdatedAt: widgetMainFilterUpdatedAt = 0,
-      } = this.widget.parameters;
-
-      let mainFilter = userMainFilter;
-
-      if (isEmpty(mainFilter) && !isEmpty(widgetMainFilter) && widgetMainFilterUpdatedAt >= userMainFilterUpdatedAt) {
-        mainFilter = widgetMainFilter;
-      }
-
-      return mainFilter || null;
+      return getMainFilter(this.widget, this.userPreferences);
     },
 
     viewFilters() {
