@@ -45,6 +45,7 @@ class DynamicInfosManager(object):
     SEARCHABLE_FIELDS = [
         DynamicInfosRule.ID, DynamicInfosRule.NAME,
         DynamicInfosRule.DESCRIPTION,
+        DynamicInfosRule.AUTHOR,
         "{}.{}".format(DynamicInfosRule.INFOS, DynamicInfo.NAME),
         "{}.{}".format(DynamicInfosRule.INFOS, DynamicInfo.VALUE),
     ]
