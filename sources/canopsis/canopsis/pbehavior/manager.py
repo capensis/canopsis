@@ -224,6 +224,10 @@ class PBehaviorManager(object):
                     {"reason": re.compile(str(search), re.IGNORECASE)},
                     {"author": re.compile(str(search), re.IGNORECASE)},
                     {"type_": re.compile(str(search), re.IGNORECASE)},
+                    {"connector": re.compile(str(search), re.IGNORECASE)},
+                    {"connector_name": re.compile(str(search), re.IGNORECASE)},
+                    {"comments.author": re.compile(str(search), re.IGNORECASE)},
+                    {"comments.message": re.compile(str(search), re.IGNORECASE)},
                     {"eids": {"$elemMatch": {
                         "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}}
                 ]
