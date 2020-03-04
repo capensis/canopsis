@@ -1,8 +1,11 @@
 <template lang="pug">
-  div
-    v-layout
-    v-fade-transition
-      v-layout.fill-height(v-if="!watchersPending", wrap)
+  div.pa-2
+    v-fade-transition(mode="out-in")
+      v-layout(v-if="watchersPending", key="progress", column)
+        v-flex(xs12)
+          v-layout(justify-center)
+            v-progress-circular(indeterminate, color="primary")
+      v-layout.fill-height(v-else, key="content", wrap)
         v-alert(type="error", :value="true", v-if="hasNoData && watchersError")
           v-layout(align-center)
             div.mr-4 {{ $t('errors.default') }}
@@ -19,11 +22,6 @@
             :template="widget.parameters.blockTemplate",
             :isEditingMode="isEditingMode"
           )
-    v-fade-transition
-      v-layout(v-if="watchersPending", column)
-        v-flex(xs12)
-          v-layout(justify-center)
-            v-progress-circular(indeterminate, color="primary")
 </template>
 
 <script>

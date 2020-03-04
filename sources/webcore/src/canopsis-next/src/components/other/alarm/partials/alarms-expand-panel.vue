@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs.expand-panel(
+  v-tabs.expand-panel.secondary.lighten-2(
     :key="tabsKey",
     color="secondary lighten-1",
     slider-color="primary",
@@ -9,14 +9,14 @@
     template(v-if="widget.parameters.moreInfoTemplate || isTourEnabled")
       v-tab(:class="moreInfosTabClass") {{ $t('alarmList.tabs.moreInfos') }}
       v-tab-item
-        v-layout.pa-3.secondary.lighten-2(row)
+        v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
               v-card-text
                 more-infos(:alarm="alarm", :template="widget.parameters.moreInfoTemplate")
     v-tab(:class="timeLineTabClass") {{ $t('alarmList.tabs.timeLine') }}
     v-tab-item
-      v-layout.pa-3.secondary.lighten-2(row)
+      v-layout.pa-3(row)
         v-flex(:class="cardFlexClass")
           v-card.tab-item-card
             v-card-text
