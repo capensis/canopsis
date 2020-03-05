@@ -2,16 +2,15 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ config.title }}
+        span {{ title }}
       template(slot="text")
         event-filter-form(
-          v-model="form",
-          :isEditing="isEditing",
-          :isDuplicating="isDuplicating"
+          v-model="form.general",
+          :isDisabledIdField="isDisabledIdField"
         )
         event-filter-enrichment-form(
-          v-if="form.type === $constants.EVENT_FILTER_RULE_TYPES.enrichment",
-          v-model="enrichmentOptions"
+          v-if="isEnrichmentType",
+          v-model="form.enrichmentOptions"
         )
       template(slot="actions")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
@@ -23,8 +22,10 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-import { MODALS, EVENT_FILTER_RULE_TYPES, EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES } from '@/constants';
+import { omit } from 'lodash';
+import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
+
+import { eventFilterRuleToForm, formToEventFilterRule } from '@/helpers/forms/event-filter-rule';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -42,85 +43,43 @@ export default {
   components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
+    const { rule, isDuplicating } = this.modal.config;
+
     return {
-      ruleTypes: Object.values(EVENT_FILTER_RULE_TYPES),
-      form: {
-        _id: '',
-        type: EVENT_FILTER_RULE_TYPES.drop,
-        description: '',
-        pattern: {},
-        priority: 0,
-        enabled: true,
-      },
-      enrichmentOptions: {
-        actions: [],
-        externalData: {},
-        onSuccess: EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
-        onFailure: EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
-      },
+      form: eventFilterRuleToForm(isDuplicating ? omit(rule, ['_id']) : rule),
     };
   },
   computed: {
-    isEditing() {
-      return !!this.config.rule;
-    },
-    isDuplicating() {
-      return this.config.isDuplicating;
-    },
-  },
-  mounted() {
-    if (this.config.rule) {
-      const {
-        _id,
-        type,
-        description,
-        pattern,
-        priority,
-        enabled = true,
-        actions,
-        external_data: externalData,
-        on_success: onSuccess,
-        on_failure: onFailure,
-      } = cloneDeep(this.config.rule);
+    title() {
+      let type = 'create';
 
-      this.form = {
-        type,
-        description,
-        pattern,
-        priority,
-        enabled,
-      };
-
-      if (!this.isDuplicating) {
-        this.form._id = _id;
+      if (this.config.rule) {
+        type = this.config.isDuplicating ? 'duplicate' : 'edit';
       }
 
-      this.enrichmentOptions = {
-        actions,
-        externalData,
-        onSuccess: onSuccess || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
-        onFailure: onFailure || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
-      };
-    }
+      return this.$t(`modals.eventFilterRule.${type}.title`);
+    },
+
+    isDisabledIdField() {
+      return this.config.rule && !this.config.isDuplicating;
+    },
+
+    isEnrichmentType() {
+      return this.form.general.type === EVENT_FILTER_RULE_TYPES.enrichment;
+    },
   },
   methods: {
     async submit() {
-      if (this.form.type === EVENT_FILTER_RULE_TYPES.enrichment) {
+      if (this.isEnrichmentType) {
         const isFormValid = await this.$validator.validateAll(['actions']);
 
         if (isFormValid) {
-          await this.config.action({
-            ...this.form,
-            actions: this.enrichmentOptions.actions,
-            external_data: this.enrichmentOptions.externalData,
-            on_success: this.enrichmentOptions.onSuccess,
-            on_failure: this.enrichmentOptions.onFailure,
-          });
+          await this.config.action(formToEventFilterRule(this.form));
 
           this.$modals.hide();
         }
       } else {
-        await this.config.action({ ...this.form });
+        await this.config.action({ ...this.form.general });
 
         this.$modals.hide();
       }

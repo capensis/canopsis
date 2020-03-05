@@ -29,12 +29,10 @@ function actionSnoozeParametersToForm(parameters = {}) {
     const foundUnit = durationUnits.find(unit =>
       moment.duration(parameters.duration, 'seconds').as(unit) % 1 === 0);
 
-    const duration = {
+    data.duration = {
       duration: moment.duration(parameters.duration, 'seconds').as(foundUnit),
       durationType: foundUnit,
     };
-
-    data.duration = duration;
   }
 
   if (parameters && parameters.message) {

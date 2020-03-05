@@ -10,7 +10,7 @@
           :readonly="isDisabledIdField",
           :disabled="isDisabledIdField"
         )
-          v-tooltip(slot="append", left)
+          v-tooltip(v-show="!isDisabledIdField", slot="append", left)
             v-icon(slot="activator") help_outline
             span {{ $t('modals.createWebhook.tooltips.id') }}
         retry-field(v-model="form.retry")
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
@@ -53,7 +55,7 @@ export default {
   components: { WebhookForm, ModalWrapper, RetryField },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
-    const { webhook } = this.modal.config;
+    const { webhook = {}, isDuplicating } = this.modal.config;
     const defaultForm = {
       retry: {},
       hook: {
@@ -73,20 +75,25 @@ export default {
       emptyResponse: false,
     };
 
+    const preparedWebhook = isDuplicating ? omit(webhook, ['_id']) : webhook;
+
     return {
-      form: webhook ? webhookToForm(webhook) : defaultForm,
+      form: webhook ? webhookToForm(preparedWebhook) : defaultForm,
     };
   },
   computed: {
     title() {
+      let type = 'create';
+
       if (this.config.webhook) {
-        return this.$t('modals.createWebhook.edit.title');
+        type = this.config.isDuplicating ? 'duplicate' : 'edit';
       }
 
-      return this.$t('modals.createWebhook.create.title');
+      return this.$t(`modals.createWebhook.${type}.title`);
     },
+
     isDisabledIdField() {
-      return !!this.config.webhook;
+      return this.config.webhook && !this.config.isDuplicating;
     },
   },
   methods: {

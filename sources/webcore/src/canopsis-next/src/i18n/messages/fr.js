@@ -514,6 +514,15 @@ export default {
       },
     },
     createPbehavior: {
+      create: {
+        title: 'Ajouter un comportement périodique',
+      },
+      edit: {
+        title: 'Éditer un comportement périodique',
+      },
+      duplicate: {
+        title: 'Dupliquer un comportement périodique',
+      },
       title: 'Ajouter un comportement périodique',
       steps: {
         general: {
@@ -797,6 +806,9 @@ export default {
         title: 'Éditer un webhook',
         success: 'Webhook édité avec succès !',
       },
+      duplicate: {
+        title: 'Dupliquer un webhook',
+      },
       remove: {
         success: 'Webhook supprimé avec succès !',
       },
@@ -862,7 +874,11 @@ export default {
         success: 'Information dynamique créé avec succès !',
       },
       edit: {
+        title: 'Éditer une information dynamique',
         success: 'Information dynamique éditée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une information dynamique',
       },
       remove: {
         success: 'Information dynamique supprimée avec succès !',
