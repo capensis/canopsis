@@ -25,7 +25,7 @@
 import { omit } from 'lodash';
 import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
-import { eventFilterRuleToForm, formToEventFilterRule } from '@/helpers/forms/event-filter-rule';
+import { eventFilterRuleToForm, formEnrichmentOptionsToEventFilterRule } from '@/helpers/forms/event-filter-rule';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -74,7 +74,10 @@ export default {
         const isFormValid = await this.$validator.validateAll(['actions']);
 
         if (isFormValid) {
-          await this.config.action(formToEventFilterRule(this.form));
+          await this.config.action({
+            ...this.form.general,
+            ...formEnrichmentOptionsToEventFilterRule(this.form.enrichmentOptions),
+          });
 
           this.$modals.hide();
         }

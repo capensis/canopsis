@@ -27,16 +27,13 @@ export function eventFilterRuleToForm(rule = {}) {
 }
 
 /**
- * Convert form to event filter rule
+ * Convert form.enrichmentOptions to event filter rule fields
  *
- * @param {Object} [general={}]
  * @param {Object} [enrichmentOptions={}]
  * @returns {Object}
  */
-export function formToEventFilterRule({ general = {}, enrichmentOptions = {} } = {}) {
+export function formEnrichmentOptionsToEventFilterRule(enrichmentOptions = {}) {
   return {
-    ...general,
-
     actions: enrichmentOptions.actions,
     external_data: enrichmentOptions.externalData,
     on_success: enrichmentOptions.onSuccess,
