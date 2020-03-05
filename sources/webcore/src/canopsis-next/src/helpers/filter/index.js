@@ -39,7 +39,7 @@ export function prepareMainFilterToQueryFilter(
  * @param {Object} userPreference
  * @returns {Object|null}
  */
-export function getWidgetMainFilter(widget, userPreference) {
+export function getMainFilter(widget, userPreference) {
   const {
     mainFilter: userMainFilter,
     mainFilterUpdatedAt: userMainFilterUpdatedAt = 0,
