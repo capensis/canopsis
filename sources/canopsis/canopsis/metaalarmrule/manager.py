@@ -98,8 +98,6 @@ class MetaAlarmRuleManager(object):
     MA_RULE_COLLECTION = 'meta_alarm_rules'
     LOG_PATH = 'var/log/metaalarmrulemanager.log'
     LOG_NAME = 'metaalarmrulemanager'
-    CONF_PATH = 'etc/meta_alarm_rules/manager.conf'
-    PBH_CAT = "PBEHAVIOR"
 
     @classmethod
     def provide_default_basics(cls):
