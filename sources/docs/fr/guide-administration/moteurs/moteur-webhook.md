@@ -94,6 +94,9 @@ Pour plus d'informations sur les `triggers` disponibles, consulter la [`document
 
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
 
+!!! attention
+    L'activation d'un webhook ne doit pas être dépendante d'un état d'une alarme appliqué par le moteur `action`. En effet, dans l’enchaînement des moteurs, `action` se situe après `webhook`. Le webhook sera donc activé **avant** que le moteur `action` ait pu changer l'état de l'alarme.
+
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
 Par exemple, ce webhook va être activé si le trigger reçu par le moteur correspond à `stateinc` ou `statedec` ET si l'évènement a comme `connector` soit `zabbix`, soit `shinken` ET si dans l'entité, l'`output` correspond à l'expression régulière `MemoryDisk.*`.
@@ -134,7 +137,7 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 `count` représente le nombre de nouvelles tentatives.  
 `delay` et `unit` représentent le délai avant une nouvelle tentative.   
 
-`unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure. 
+`unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
 
 Ces paramètres sont positionnés dans la configuration de chaque webhook.  
 Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).  
