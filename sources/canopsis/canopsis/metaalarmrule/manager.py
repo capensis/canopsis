@@ -73,8 +73,6 @@ class MetaAlarmRule(BaseMetaAlarmRule):
     FILTER = 'filter'
     ENABLED = 'enabled'
 
-    DEFAULT_TYPE = 'parentchild'
-
     _FIELDS = (NAME, TYPE, FILTER, ENABLED, ID)
 
     _EDITABLE_FIELDS = (NAME, TYPE, FILTER, ENABLED)
