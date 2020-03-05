@@ -339,8 +339,6 @@ export function prepareQuery(widget, userPreference) {
 
     if (activeMainFilter) {
       query.filter = prepareMainFilterToQueryFilter(activeMainFilter);
-    } else {
-      delete query.filter;
     }
   }
 
