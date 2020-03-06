@@ -131,23 +131,24 @@ class RightsModule(MigrationModule):
 
                 user = self.manager.get_user(default_user['_id'])
 
-            self.manager.update_fields(
-                user['_id'],
-                'user',
-                {
-                    'external': user.get('external',
-                                         default_user.get('external', False)),
-                    'enable': user.get('enable', default_user.get('enable',
-                                                                  True)),
-                    'shadowpasswd': user.get('shadowpass',
-                                             default_user.get('shadowpass',
-                                                              None)),
-                    'mail': user.get('mail', default_user.get('mail', None)),
-                    'authkey': user.get('authkey',
-                                        default_user.get('authkey',
-                                                         str(uuid1())))
-                }
-            )
+            if user is None or user['_id'] != 'root':
+                self.manager.update_fields(
+                    user['_id'],
+                    'user',
+                    {
+                        'external': user.get('external',
+                                             default_user.get('external', False)),
+                        'enable': user.get('enable', default_user.get('enable',
+                                                                      True)),
+                        'shadowpasswd': user.get('shadowpass',
+                                                 default_user.get('shadowpass',
+                                                                  None)),
+                        'mail': user.get('mail', default_user.get('mail', None)),
+                        'authkey': user.get('authkey',
+                                            default_user.get('authkey',
+                                                             str(uuid1())))
+                    }
+                )
 
     def add_roles(self, data, clear):
         for role in data:
