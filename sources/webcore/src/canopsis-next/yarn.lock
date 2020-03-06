@@ -9914,9 +9914,10 @@ uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
 
-v-runtime-template@1.5.2:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/v-runtime-template/-/v-runtime-template-1.5.2.tgz#1260a329980ae8a37ffcc6c73bdab5858393b5f8"
+v-runtime-template@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/v-runtime-template/-/v-runtime-template-1.10.0.tgz#8ea7066c37cf4be5c701a06ca247e1afda89c4be"
+  integrity sha512-WLlq9jUepSfUrMEenw3mn7FDXX6hhbl11JjC1OKhwLzifHzVrY5a696TUHDPyj9jke3GGnR7b+2T3od/RL5cww==
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
@@ -9954,6 +9955,11 @@ vm-browserify@0.0.4:
 void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
+
+vue-async-computed@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.8.2.tgz#d5dff221b62f95ad2f98ce9e7bbea5a067ec8b9a"
+  integrity sha512-If5roOhp/x0WWd0TWRD77YsuFoiIw3MbkcRlIB/FE3TqQCPje52eQp5CV5NN/7B0VAyPuGX5JQa+rc9AOcGAYw==
 
 vue-chartjs@^3.4.0:
   version "3.4.0"
