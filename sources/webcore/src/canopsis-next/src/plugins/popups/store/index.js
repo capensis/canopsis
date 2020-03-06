@@ -1,15 +1,18 @@
 import { POPUP_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
+import { POPUP_AUTO_CLOSE_DELAY } from '@/config';
 
 export const types = {
   ADD: 'ADD',
   REMOVE: 'REMOVE',
+  SET_DEFAULT_CLOSE_TIME: 'SET_DEFAULT_CLOSE_TIME',
 };
 
 export default {
   namespaced: true,
   state: {
+    defaultCloseTime: POPUP_AUTO_CLOSE_DELAY,
     popups: [],
   },
   getters: {
@@ -22,10 +25,16 @@ export default {
     [types.REMOVE](state, { id }) {
       state.popups = state.popups.filter(v => v.id !== id);
     },
+    [types.SET_DEFAULT_CLOSE_TIME](state, time) {
+      state.defaultCloseTime = time;
+    },
   },
   actions: {
-    add({ commit }, {
-      id = uid('popup'), type, text, autoClose,
+    add({ commit, state }, {
+      id = uid('popup'),
+      type,
+      text,
+      autoClose = state.defaultCloseTime,
     } = {}) {
       commit(types.ADD, {
         popup: {
@@ -33,6 +42,11 @@ export default {
         },
       });
     },
+
+    setDefaultCloseTime({ commit }, defaultCloseTime = POPUP_AUTO_CLOSE_DELAY) {
+      return commit(types.SET_DEFAULT_CLOSE_TIME, defaultCloseTime);
+    },
+
     remove({ commit }, { id }) {
       commit(types.REMOVE, { id });
     },

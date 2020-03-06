@@ -14,6 +14,18 @@
           :disabled="disabled",
           :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
+    v-layout(row)
+      v-flex
+        v-text-field(
+          data-test="defaultPopupTimeout",
+          v-model.number="form.popupTimeout",
+          v-validate="'numeric|min_value:0'",
+          :error-messages="errors.collect('popupTimeout')",
+          :disabled="disabled",
+          :label="$t('parameters.userInterfaceForm.fields.popupTimeout')",
+          name="popupTimeout",
+          type="number"
+        )
     v-layout(
       data-test="languageLayout",
       row
@@ -105,6 +117,7 @@ export default {
         language: DEFAULT_LOCALE,
         footer: '',
         description: '',
+        popupTimeout: null,
       },
     };
   },
@@ -129,6 +142,7 @@ export default {
         language: this.language || DEFAULT_LOCALE,
         footer: this.footer || '',
         description: this.description || '',
+        popupTimeout: null,
       };
     },
 
@@ -150,6 +164,7 @@ export default {
             footer: this.form.footer,
             language: this.form.language,
             login_page_description: this.form.description,
+            popup_timeout: this.form.popupTimeout,
           };
 
           if (this.logoFile) {

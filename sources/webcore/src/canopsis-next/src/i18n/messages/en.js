@@ -1281,6 +1281,7 @@ export default {
         footer: 'Login footer',
         description: 'Login page description',
         logo: 'Logo',
+        popupTimeout: 'Popup timeout',
       },
     },
   },

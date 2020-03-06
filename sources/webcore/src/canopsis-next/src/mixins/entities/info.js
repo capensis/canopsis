@@ -14,6 +14,7 @@ export default {
       version: 'version',
       logo: 'logo',
       appTitle: 'appTitle',
+      popupTimeout: 'popupTimeout',
       footer: 'footer',
       edition: 'edition',
       stack: 'stack',
