@@ -23,9 +23,27 @@ export default {
       required: false,
     },
   },
-  computed: {
-    output() {
-      return `<div>${compile(this.template, { alarm: this.alarm, entity: this.alarm.entity })}</div>`;
+  data() {
+    return {
+      output: '',
+    };
+  },
+  watch: {
+    template() {
+      this.compileTemplate();
+    },
+    alarm() {
+      this.compileTemplate();
+    },
+  },
+  created() {
+    this.compileTemplate();
+  },
+  methods: {
+    async compileTemplate() {
+      const compiledTemplate = await compile(this.template, { alarm: this.alarm, entity: this.alarm.entity });
+
+      this.output = `<div>${compiledTemplate}</div>`;
     },
   },
 };

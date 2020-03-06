@@ -1,13 +1,16 @@
-import Handlebars from 'handlebars';
+import promisedHandlebars from 'promised-handlebars';
+import HandlebarsLib from 'handlebars';
 
 import * as helpers from './helpers';
+
+const Handlebars = promisedHandlebars(HandlebarsLib);
 
 /**
  * Compile template
  *
  * @param {string} template
  * @param {Object} context
- * @returns {string}
+ * @returns {Promise}
  */
 export function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template);

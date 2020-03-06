@@ -30,6 +30,7 @@
     "moment-timezone": "^0.5.21",
     "nightwatch-xhr": "^0.4.6",
     "normalizr": "^3.2.4",
+    "promised-handlebars": "^2.0.1",
     "pug-plain-loader": "^1.0.0",
     "qs": "^6.5.2",
     "rrule": "^2.2.9",
