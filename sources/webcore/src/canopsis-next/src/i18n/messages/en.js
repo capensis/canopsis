@@ -552,7 +552,15 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Create periodical behavior',
+      create: {
+        title: 'Create periodical behavior',
+      },
+      edit: {
+        title: 'Edit periodic behavior',
+      },
+      duplicate: {
+        title: 'Duplicate periodic behavior',
+      },
       steps: {
         general: {
           title: 'General parameters',
@@ -844,6 +852,9 @@ export default {
         title: 'Edit webhook',
         success: 'Webhook successfully edited !',
       },
+      duplicate: {
+        title: 'Duplicate webhook',
+      },
       remove: {
         success: 'Webhook successfully removed !',
       },
@@ -954,7 +965,11 @@ export default {
         success: 'Dynamic information successfully created !',
       },
       edit: {
+        title: 'Edit dynamic information',
         success: 'Dynamic information successfully edited !',
+      },
+      duplicate: {
+        title: 'Duplicate dynamic information',
       },
       remove: {
         success: 'Dynamic information successfully removed !',
