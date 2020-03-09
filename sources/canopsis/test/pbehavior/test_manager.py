@@ -103,6 +103,30 @@ class TestManager(BaseTest):
         pb = self.pbm.create(**pb_new)
         self.assertTrue(pb is not None)
 
+        # create with expired
+        pb_new_2 = deepcopy(self.pbehavior)
+        pb_new_2['pbh_id'] = pb
+        pb_new_2[PBehavior.RRULE] = ''
+        pb_new_2[PBehavior.TSTOP] = int(time.time()) - 3600
+        e = None
+        try:
+            self.pbm.create(**pb_new_2)
+        except Exception as e:
+            pass
+        finally:
+            self.assertTrue(e is not None)
+            self.assertTrue(isinstance(e, ValueError))
+            e = None
+
+        pb_new_2['replace_expired'] = True
+        new_pb = self.pbm.create(**pb_new_2)
+        expired_id = 'EXP-{}'.format(pb)
+        pbh = self.pbm.get(expired_id)
+        self.assertEqual(pbh.get('count'), 1)
+        self.assertEqual(pbh.get('data')[0].get('name'), pb_new_2[PBehavior.NAME])
+        self.assertTrue(new_pb, pb)
+
+
     def test_read(self):
         pb = self.pbm.read(_id=self.pbehavior_id).get('data')[0]
         pbs = self.pbm.read().get('data')
@@ -604,6 +628,39 @@ class TestManager(BaseTest):
         intervals = list(self.pbm.get_intervals_with_pbehaviors_by_eid(
             tstart1, tstart1 + 5 * day, 2))
         self.assertEqual(intervals, expected_intervals)
+
+    def test_is_pbh_expired(self):
+        pbehavior1 = deepcopy(self.pbehavior)
+        now = datetime.utcnow()
+        pbehavior1[PBehavior.TSTART] = timegm((now - timedelta(minutes=1)).timetuple())
+        pbehavior1[PBehavior.TSTOP] = timegm((now + timedelta(days=1)).timetuple())
+        pbehavior1[PBehavior.RRULE] = ''
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm(now.timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=2)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=23)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now - timedelta(hours=23)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now - timedelta(hours=2)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=25)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=24)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=48)).timetuple())))
+
+        # rrule with count
+        pbehavior1[PBehavior.TIMEZONE] = "UTC"
+        pbehavior1[PBehavior.RRULE] = 'FREQ=HOURLY;INTERVAL=2;COUNT=3'
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm(now.timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=3)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=5)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=6)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=8)).timetuple())))
+
+        # rrule without count
+        pbehavior1[PBehavior.RRULE] = 'FREQ=HOURLY;INTERVAL=2'
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm(now.timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=5)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(days=5)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(minutes=5)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(days=365)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(days=31)).timetuple())))
 
 
 if __name__ == '__main__':
