@@ -82,6 +82,21 @@ export default {
       isInfoPopupOpen: false,
     };
   },
+  asyncComputed: {
+    popupTextContent: {
+      async get() {
+        if (this.popupData) {
+          const context = { alarm: this.alarm, entity: this.alarm.entity || {} };
+          const compiledTemplate = await compile(this.popupData.template, context);
+
+          return `<div>${compiledTemplate}</div>`;
+        }
+
+        return '';
+      },
+      default: '',
+    },
+  },
   computed: {
     value() {
       return this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '');
@@ -111,14 +126,6 @@ export default {
       const popups = get(this.widget.parameters, 'infoPopups', []);
 
       return popups.find(popup => popup.column === this.column.value);
-    },
-
-    popupTextContent() {
-      if (this.popupData) {
-        return compile(this.popupData.template, { alarm: this.alarm, entity: this.alarm.entity || {} });
-      }
-
-      return '';
     },
 
     columnFilter() {

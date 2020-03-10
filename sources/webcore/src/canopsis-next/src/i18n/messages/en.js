@@ -1423,5 +1423,15 @@ export default {
     },
   },
 
+  handlebars: {
+    requestHelper: {
+      errors: {
+        timeout: 'Request timeout',
+        unauthorized: 'Unauthorized',
+        other: 'Error while fetching data',
+      },
+    },
+  },
+
   ...featureService.get('i18n.en'),
 };

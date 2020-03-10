@@ -13,6 +13,7 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
+import VueAsyncComputed from 'vue-async-computed';
 import sanitizeHTML from 'sanitize-html';
 
 import 'vue-tour/dist/vue-tour.css';
@@ -46,6 +47,7 @@ import WebhookIcon from '@/components/icons/webhook.vue';
 import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
 
+Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
 Vue.use(filters);
 Vue.use(Vuetify, {

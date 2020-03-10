@@ -61,6 +61,16 @@ export default {
       default: false,
     },
   },
+  asyncComputed: {
+    compiledTemplate: {
+      async get() {
+        const compiledTemplate = await compile(this.template, { entity: this.watcher });
+
+        return `<div>${compiledTemplate}</div>`;
+      },
+      default: '',
+    },
+  },
   computed: {
     hasMoreInfosAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
@@ -80,10 +90,6 @@ export default {
 
     secondaryIcon() {
       return WEATHER_ICONS[this.watcher.tileSecondaryIcon];
-    },
-
-    compiledTemplate() {
-      return `<div>${compile(this.template, { entity: this.watcher })}</div>`;
     },
 
     itemClasses() {
