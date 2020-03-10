@@ -87,6 +87,49 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 }
 ```
 
+#### Cas particulier : Permettre la création d'un pbehavior avec un `_id` déjà existant
+
+Lorsque les pbehaviors sont pilotés par l'API (via un ordonnanceur par exemple), il est parfois nécessaire de devoir 
+"écraser" un pbehavior déjà existant mais qui serait expiré.  
+Un paramètre complémentaire peut être passé à l'API dans ce cas : `replace_expired`.  
+
+
+**URL** : `/api/v2/pbehavior?replace_expired=1`
+
+**Exemple de corps de requête** :
+```json
+{
+	"_id": "pbh1",
+	"author": "root",
+	"name": "Pbehavior test 1",
+	"tstart": 1567439123,
+	"tstop": 1569599100,
+	"filter": {
+		"$or": [{
+			"impact": {
+				"$in": ["pbehavior_test_1"]
+			}
+		}, {
+			"$and": [{
+				"type": "component"
+			}, {
+				"name": "pbehavior_test_1"
+			}]
+		}]
+	},
+	"type_": "Hors plage horaire de surveillance",
+	"reason": "Autre",
+	"rrule": null,
+	"comments": [],
+	"exdate": []
+}
+```
+
+Dans ce cas, si le pbehavior dont l'\_id vaut "pbh1" est expiré, alors
+
+* ce pbehavior est renommé avec le format : `EXP{current_timestamp_in_milliseconds}-{_id}`
+* un nouveau pbehavior avec les caractéristiques données en paramètre est créé
+
 ---
 
 ### Modification de PBehavior
