@@ -1,5 +1,6 @@
 import { get, isFunction } from 'lodash';
 import Handlebars from 'handlebars';
+import axios from 'axios';
 
 import dateFilter from '@/filters/date';
 import durationFilter from '@/filters/duration';
@@ -85,6 +86,49 @@ export function dateHelper(time) {
  */
 export function alarmStateHelper(state) {
   return new Handlebars.SafeString(`<alarm-chips type="${ENTITY_INFOS_TYPE.state}" value="${state}"></alarm-chips>`);
+}
+
+/**
+ * Pass response of a request to the child block
+ *
+ * Example:
+ * {{#request method="get" url="https://test.com" path="data.users" variable="users" username="test" password="test"}}
+ *   {{#each users}}
+ *     <li>{{login}}</li>
+ *   {{/each}}
+ * {{/request}}
+ *
+ * @param options
+ * @returns {Promise<string|*>}
+ */
+export async function requestHelper(options) {
+  const {
+    method = 'get',
+    url,
+    path,
+    variable,
+    username,
+    password,
+  } = options.hash;
+
+  if (!url) {
+    throw new Error('helper {{request}}: \'url\' is required');
+  }
+
+  const { data } = await axios({
+    method,
+    url,
+    auth: { username, password },
+  });
+
+  if (isFunction(options.fn)) {
+    const value = path ? get(data, path) : data;
+    const context = variable ? { [variable]: value } : value;
+
+    return options.fn(context);
+  }
+
+  return '';
 }
 
 /**

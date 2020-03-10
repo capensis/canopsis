@@ -13,7 +13,6 @@ import VRuntimeTemplate from 'v-runtime-template';
 import { compile } from '@/helpers/handlebars';
 
 export default {
-  name: 'more-infos',
   components: { VRuntimeTemplate },
   props: {
     template: {
