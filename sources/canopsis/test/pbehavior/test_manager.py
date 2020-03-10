@@ -37,6 +37,7 @@ from canopsis.pbehavior.manager import PBehavior
 from canopsis.pbehavior.manager import PBehaviorManager
 
 from test_base import BaseTest
+import re
 
 
 class TestManager(BaseTest):
@@ -120,9 +121,10 @@ class TestManager(BaseTest):
 
         pb_new_2['replace_expired'] = True
         new_pb = self.pbm.create(**pb_new_2)
-        expired_id = 'EXP-{}'.format(pb)
-        pbh = self.pbm.get(expired_id)
-        self.assertEqual(pbh.get('count'), 1)
+        pbh = self.pbm.get(_id=None)
+        self.assertGreaterEqual(pbh.get('count'), 1)
+        regex = r"EXP\d+-{}".format(pb)
+        self.assertEqual(len(filter(lambda x: re.match(regex, x['_id']), pbh.get('data'))), 1)
         self.assertEqual(pbh.get('data')[0].get('name'), pb_new_2[PBehavior.NAME])
         self.assertTrue(new_pb, pb)
 
