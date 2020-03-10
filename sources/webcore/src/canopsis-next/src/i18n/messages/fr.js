@@ -1296,5 +1296,15 @@ export default {
     },
   },
 
+  handlebars: {
+    requestHelper: {
+      errors: {
+        timeout: 'Délai d\'attente dépassé',
+        unauthorized: 'Accès non autorisé',
+        other: 'Erreur de récupération des données',
+      },
+    },
+  },
+
   ...featureService.get('i18n.fr'),
 };

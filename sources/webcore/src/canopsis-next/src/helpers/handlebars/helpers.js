@@ -6,6 +6,8 @@ import dateFilter from '@/filters/date';
 import durationFilter from '@/filters/duration';
 import { DATETIME_FORMATS, ENTITY_INFOS_TYPE } from '@/constants';
 
+import i18n from '@/i18n';
+
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
  * to `'escape(key)=escape(value) escape(keySecond)=escape(valueSecond)'` format.
@@ -117,21 +119,36 @@ export async function requestHelper(options) {
     throw new Error('helper {{request}}: \'url\' is required');
   }
 
-  const { data } = await axios({
-    method,
-    url: unescape(url),
-    auth: { username, password },
-    headers: JSON.parse(headers),
-  });
+  try {
+    const { data } = await axios({
+      method,
+      url: unescape(url),
+      auth: { username, password },
+      headers: JSON.parse(headers),
+    });
 
-  if (isFunction(options.fn)) {
-    const value = path ? get(data, path) : data;
-    const context = variable ? { [variable]: value } : value;
+    if (isFunction(options.fn)) {
+      const value = path ? get(data, path) : data;
+      const context = variable ? { [variable]: value } : value;
 
-    return options.fn(context);
+      return options.fn(context);
+    }
+
+    return '';
+  } catch (err) {
+    console.error(err);
+
+    const { status } = err.response || {};
+
+    switch (status) {
+      case 401:
+        return i18n.t('handlebars.requestHelper.errors.unauthorized');
+      case 408:
+        return i18n.t('handlebars.requestHelper.errors.timeout');
+      default:
+        return i18n.t('handlebars.requestHelper.errors.other');
+    }
   }
-
-  return '';
 }
 
 /**
