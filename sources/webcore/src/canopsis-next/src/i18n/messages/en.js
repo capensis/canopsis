@@ -1282,6 +1282,7 @@ export default {
         description: 'Login page description',
         logo: 'Logo',
         popupTimeout: 'Popup timeout',
+        popupTimeoutUnit: 'Unit',
       },
     },
   },

@@ -14,18 +14,7 @@
           :disabled="disabled",
           :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
-    v-layout(row)
-      v-flex
-        v-text-field(
-          data-test="defaultPopupTimeout",
-          v-model.number="form.popupTimeout",
-          v-validate="'numeric|min_value:0'",
-          :error-messages="errors.collect('popupTimeout')",
-          :disabled="disabled",
-          :label="$t('parameters.userInterfaceForm.fields.popupTimeout')",
-          name="popupTimeout",
-          type="number"
-        )
+    popup-timeout(v-model="form.popupTimeout")
     v-layout(
       data-test="languageLayout",
       row
@@ -95,12 +84,13 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
+import PopupTimeout from '@/components/forms/fields/popup-timeout.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { FileSelector, TextEditor },
+  components: { PopupTimeout, FileSelector, TextEditor },
   mixins: [entitiesInfoMixin],
   props: {
     disabled: {
@@ -117,7 +107,7 @@ export default {
         language: DEFAULT_LOCALE,
         footer: '',
         description: '',
-        popupTimeout: null,
+        popupTimeout: undefined,
       },
     };
   },
@@ -142,7 +132,7 @@ export default {
         language: this.language || DEFAULT_LOCALE,
         footer: this.footer || '',
         description: this.description || '',
-        popupTimeout: null,
+        popupTimeout: undefined,
       };
     },
 

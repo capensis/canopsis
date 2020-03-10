@@ -18,6 +18,7 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
+import { getSecondsByUnit } from '@/helpers/time';
 
 export default {
   components: {
@@ -44,7 +45,13 @@ export default {
 
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
-      this.$popups.setDefaultCloseTime(this.popupTimeout);
+
+      if (this.popupTimeout) {
+        const delay = getSecondsByUnit(this.popupTimeout.interval, this.popupTimeout.unit);
+        /* Convert to ms */
+        this.$popups.setDefaultCloseTime(delay * 1000);
+      }
+
       this.startKeepalive();
     } else {
       this.registerIsLoggedInOnceWatcher();
