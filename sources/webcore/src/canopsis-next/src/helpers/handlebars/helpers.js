@@ -1,4 +1,4 @@
-import { get, isFunction } from 'lodash';
+import { get, isFunction, unescape } from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
@@ -117,7 +117,7 @@ export async function requestHelper(options) {
 
   const { data } = await axios({
     method,
-    url,
+    url: unescape(url),
     auth: { username, password },
   });
 
