@@ -26,7 +26,7 @@ from calendar import timegm
 from datetime import datetime, date
 from dateutil import tz, rrule
 from json import loads, dumps
-from time import time
+from time import time, sleep
 from uuid import uuid4
 from six import string_types
 from pymongo import DESCENDING
@@ -384,7 +384,14 @@ class PBehaviorManager(object):
             try:
                 if replace_expired and self.is_pbh_expired(pb_kwargs, int(time())):
                     self.collection.remove({'_id': pbh_id})
-                    pb_kwargs[PBehavior.ID] = 'EXP-{}'.format(pbh_id)
+                    # try for five times, to prevent case of receiving more than one concurrent creating request
+                    for i in range(5):
+                        try:
+                            now = int(time() * 1000)
+                            pb_kwargs[PBehavior.ID] = 'EXP{}-{}'.format(now, pbh_id)
+                        except:
+                            sleep(0.5)
+                            pass
                     expired_data = PBehavior(**pb_kwargs)
                     self.collection.insert(expired_data.to_dict())
                     result = self.collection.insert(data.to_dict())
