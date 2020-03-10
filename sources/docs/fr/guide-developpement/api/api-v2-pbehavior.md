@@ -89,7 +89,8 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 #### Cas particulier : Permettre la création d'un pbehavior avec un `_id` déjà existant
 
-Disponible depuis Canopsis 3.38.0.
+!!! note
+    Disponible depuis Canopsis 3.38.0.
 
 Lorsque les pbehaviors sont pilotés par l'API (via un ordonnanceur par exemple), il est parfois nécessaire de devoir 
 "écraser" un pbehavior déjà existant mais qui serait expiré.  
