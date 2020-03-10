@@ -26,7 +26,7 @@ function prepareAttributes(attributes) {
  * @param {string|number} date
  * @returns {string}
  */
-export function timestamp(date) {
+export function timestampHelper(date) {
   let result = '';
 
   if (date) {
@@ -42,7 +42,7 @@ export function timestamp(date) {
  * @param {Object} options
  * @returns {Handlebars.SafeString}
  */
-export function internalLink(options) {
+export function internalLinkHelper(options) {
   const { href, text, ...attributes } = options.hash;
   const path = href.replace(window.location.origin, '');
 
@@ -92,7 +92,8 @@ export function alarmStateHelper(state) {
  * Pass response of a request to the child block
  *
  * Example:
- * {{#request method="get" url="https://test.com" path="data.users" variable="users" username="test" password="test"}}
+ * {{#request method="get" url="https://test.com" path="data.users" variable="users"
+ * username="test" password="test" headers='{ "test": "test2" }'}}
  *   {{#each users}}
  *     <li>{{login}}</li>
  *   {{/each}}
@@ -105,6 +106,7 @@ export async function requestHelper(options) {
   const {
     method = 'get',
     url,
+    headers = '{}',
     path,
     variable,
     username,
@@ -119,6 +121,7 @@ export async function requestHelper(options) {
     method,
     url: unescape(url),
     auth: { username, password },
+    headers: JSON.parse(headers),
   });
 
   if (isFunction(options.fn)) {
@@ -144,7 +147,7 @@ export async function requestHelper(options) {
  * @param {Object} options
  * @returns {*}
  */
-export function compare(a, operator, b, options = {}) {
+export function compareHelper(a, operator, b, options = {}) {
   if (arguments.length < 4) {
     throw new Error('handlebars Helper {{compare}} expects 4 arguments');
   }
