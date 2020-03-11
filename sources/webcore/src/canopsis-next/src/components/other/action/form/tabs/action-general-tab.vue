@@ -1,48 +1,25 @@
 <template lang="pug">
   div
-    template(v-if="form.generalParameters.type === $constants.ACTION_TYPES.snooze")
-      v-textarea(
-        v-field="form.snoozeParameters.message",
-        :label="$t('modals.createAction.fields.message')"
-      )
-      duration-field(v-field="form.snoozeParameters.duration")
-    template(v-else-if="form.generalParameters.type === $constants.ACTION_TYPES.pbehavior")
-      pbehavior-form(
-        v-field="form.pbehaviorParameters",
-        :author="$constants.ACTION_AUTHOR",
-        noFilter
-      )
-    template(v-else-if="form.generalParameters.type === $constants.ACTION_TYPES.changeState")
-      div.mt-3
-        v-layout(row)
-          state-criticity-field(
-            v-field="form.changeStateParameters.state",
-            :stateValues="availableStateValues"
-          )
-        v-layout.mt-4(row)
-          v-textarea(
-            v-field="form.changeStateParameters.output",
-            :label="$t('modals.createAction.fields.output')"
-          )
+    component(:is="field.component", v-model="form[field.formKey]")
 </template>
 
 <script>
-import { omit } from 'lodash';
-
-import { ENTITIES_STATES } from '@/constants';
-
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
-import DurationField from '@/components/forms/fields/duration.vue';
-import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
-import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
+import Snooze from '@/components/other/action/form/fields/snooze.vue';
+import Pbehavior from '@/components/other/action/form/fields/pbehavior.vue';
+import ChangeState from '@/components/other/action/form/fields/change-state.vue';
+import Note from '@/components/other/action/form/fields/note.vue';
+import Assocticket from '@/components/other/action/form/fields/assocticket.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    DurationField,
-    PbehaviorForm,
-    StateCriticityField,
+    Assocticket,
+    Note,
+    ChangeState,
+    Pbehavior,
+    Snooze,
   },
   mixins: [formValidationHeaderMixin],
   model: {
@@ -56,8 +33,44 @@ export default {
     },
   },
   computed: {
-    availableStateValues() {
-      return omit(ENTITIES_STATES, ['ok']);
+    fieldsMap() {
+      return ({
+        [this.$constants.ACTION_TYPES.snooze]: {
+          component: 'snooze',
+          formKey: 'snoozeParameters',
+        },
+        [this.$constants.ACTION_TYPES.pbehavior]: {
+          component: 'pbehavior',
+          formKey: 'pbehaviorParameters',
+        },
+        [this.$constants.ACTION_TYPES.changeState]: {
+          component: 'change-state',
+          formKey: 'changeStateParameters',
+        },
+        [this.$constants.ACTION_TYPES.ack]: {
+          component: 'note',
+          formKey: 'ackParameters',
+        },
+        [this.$constants.ACTION_TYPES.ackremove]: {
+          component: 'note',
+          formKey: 'ackremoveParameters',
+        },
+        [this.$constants.ACTION_TYPES.assocticket]: {
+          component: 'assocticket',
+          formKey: 'assocticketParameters',
+        },
+        [this.$constants.ACTION_TYPES.declareticket]: {
+          component: 'note',
+          formKey: 'declareticketParameters',
+        },
+        [this.$constants.ACTION_TYPES.cancel]: {
+          component: 'note',
+          formKey: 'cancelParameters',
+        },
+      });
+    },
+    field() {
+      return this.fieldsMap[this.form.generalParameters.type];
     },
   },
 };

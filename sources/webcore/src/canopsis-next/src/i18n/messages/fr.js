@@ -828,6 +828,7 @@ export default {
         message: 'Message',
         duration: 'Durée',
         output: 'Note',
+        ticket: 'Numéro du ticket',
       },
     },
     statsDateInterval: {

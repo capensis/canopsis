@@ -977,6 +977,11 @@ export const ACTION_TYPES = {
   snooze: 'snooze',
   pbehavior: 'pbehavior',
   changeState: 'changestate',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  assocticket: 'assocticket',
+  declareticket: 'declareticket',
+  cancel: 'cancel',
 };
 
 export const ACTION_AUTHOR = 'engine-action';
