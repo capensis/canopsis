@@ -1,4 +1,3 @@
-
 ## New FIFO Engine
 FIFO Engine consists of following sub-modules:
 * Alarm queues manager
@@ -22,7 +21,7 @@ Now it's possible to tune a ttl time.
 So the main rule is that if you receive alarm lock has been expired kind of log and everything else is OK, like engines are working and all connections are OK, than ttl time is low, you need to increase it.
 
 #### Depreciated alwaysFlushEntities flag
-alwaysFlushEntities was removed with making CHE engine stateless. This flag served aimed to control cache store policy, and lost its meaning when cache was removed from CHE.
+`alwaysFlushEntities` was removed with making CHE engine stateless. This flag aimed to control cache store policy, and lost its meaning when cache was removed from CHE.
 
 ## Deployment
 In the section below there are changes need to be done to run and test application.  
