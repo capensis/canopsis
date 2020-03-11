@@ -169,7 +169,7 @@ class RouteHandlerPBehavior(object):
                enabled=True, comments=None,
                connector='canopsis', connector_name='canopsis',
                type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
-               exdate=None, _id=None):
+               exdate=None, _id=None, replace_expired=False):
         """
         Create a pbehavior.
 
@@ -186,6 +186,7 @@ class RouteHandlerPBehavior(object):
         :param str type_: an associated type_
         :param str reason: a reason to apply this behavior
         :param str _id: the pb id (optional)
+        :param bool replace_expired: rename current _id to EXP={_id} if exists or not
         """
         if exdate is None:
             exdate = []
@@ -230,7 +231,8 @@ class RouteHandlerPBehavior(object):
             type_=type_,
             reason=reason,
             timezone=timezone,
-            exdate=exdate
+            exdate=exdate,
+            replace_expired=replace_expired
         )
 
         return result
@@ -407,7 +409,14 @@ def exports(ws):
         if len(invalid_keys) != 0:
             ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
 
+        replace_expired = False
         try:
+            replace_expired = int(request.params['replace_expired']) == 1
+        except:
+            pass
+
+        try:
+            elements['replace_expired'] = replace_expired
             return rhpb.create(**elements)
         except TypeError:
             return gen_json_error(

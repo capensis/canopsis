@@ -26,7 +26,7 @@ from calendar import timegm
 from datetime import datetime, date
 from dateutil import tz, rrule
 from json import loads, dumps
-from time import time
+from time import time, sleep
 from uuid import uuid4
 from six import string_types
 from pymongo import DESCENDING
@@ -271,7 +271,7 @@ class PBehaviorManager(object):
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
             type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
-            exdate=None, pbh_id=None):
+            exdate=None, pbh_id=None, replace_expired=False):
         """
         Method creates pbehavior record
 
@@ -303,6 +303,9 @@ class PBehaviorManager(object):
         zero-padded.
         :param str pbh_id: Optional id for pbh. If not specified or none, a
         random id will be generated
+        :param bool replace_expired: If pbh_id exists then:
+            - If the pbh is not expired, returns an error like before.
+            - If the pbh is expired, renames the existing pbh and creates the new one
         :raises ValueError: invalid RRULE
         :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
@@ -378,7 +381,24 @@ class PBehaviorManager(object):
             result = self.collection.insert(data.to_dict())
         except CollectionError:
             # when inserting already existing id
-            raise ValueError("Trying to insert PBehavior with already existing _id")
+            try:
+                if replace_expired and self.is_pbh_expired(pb_kwargs, int(time())):
+                    self.collection.remove({'_id': pbh_id})
+                    # try for five times, to prevent case of receiving more than one concurrent creating request
+                    for i in range(5):
+                        try:
+                            now = int(time() * 1000)
+                            pb_kwargs[PBehavior.ID] = 'EXP{}-{}'.format(now, pbh_id)
+                        except:
+                            sleep(0.5)
+                            pass
+                    expired_data = PBehavior(**pb_kwargs)
+                    self.collection.insert(expired_data.to_dict())
+                    result = self.collection.insert(data.to_dict())
+                else:
+                    raise ValueError("Trying to insert PBehavior with already existing _id")
+            except Exception as e:
+                raise e
 
         return result
 
@@ -516,6 +536,21 @@ class PBehaviorManager(object):
         result = self.collection.remove(filter_)
 
         return self._check_response(result)
+
+    def is_pbh_expired(self, pbh, pivot):
+        try:
+            if not pbh[PBehavior.RRULE]:
+                return not pivot < pbh[PBehavior.TSTOP]
+            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+            ts = datetime.fromtimestamp(pbh[PBehavior.TSTART], tz.gettz(tz_name))
+            pivot_dt = datetime.fromtimestamp(pivot, tz.gettz(tz_name))
+            rec_set = rrule.rruleset()
+            rec_set.rrule(rrule.rrulestr(pbh[PBehavior.RRULE], dtstart=ts))
+            next_start = rec_set.after(pivot_dt)
+            return next_start is None
+        except Exception as e:
+            self.logger.error("Failed to check pbh is expired or not. Error: {}".format(e))
+        return False
 
     def _update_pbehavior(self, pbehavior_id, query):
         result = self.collection.update(
