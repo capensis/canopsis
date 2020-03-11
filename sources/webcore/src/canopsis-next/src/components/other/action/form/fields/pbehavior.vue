@@ -7,8 +7,6 @@
 </template>
 
 <script>
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
-
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 
 export default {
@@ -16,7 +14,6 @@ export default {
   components: {
     PbehaviorForm,
   },
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',

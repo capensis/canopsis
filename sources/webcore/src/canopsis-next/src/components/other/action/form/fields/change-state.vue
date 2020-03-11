@@ -15,7 +15,6 @@
 <script>
 import { omit } from 'lodash';
 
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 import { ENTITIES_STATES } from '@/constants';
@@ -25,7 +24,6 @@ export default {
   components: {
     StateCriticityField,
   },
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',

@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
-
 import DurationField from '@/components/forms/fields/duration.vue';
 
 export default {
@@ -17,7 +15,6 @@ export default {
   components: {
     DurationField,
   },
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',

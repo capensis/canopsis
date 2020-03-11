@@ -7,11 +7,8 @@
 </template>
 
 <script>
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
-
 export default {
   inject: ['$validator'],
-  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'value',
     event: 'input',

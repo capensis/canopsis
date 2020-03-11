@@ -1,10 +1,15 @@
 <template lang="pug">
   div
-    component(:is="field.component", v-model="form[field.formKey]")
+    component(
+      v-model="form[$constants.ACTION_FORM_FIELD_MAP_BY_TYPE[form.generalParameters.type]]",
+      :is="fieldComponent"
+    )
 </template>
 
 <script>
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
+
+import { ACTION_TYPES } from '@/constants';
 
 import Snooze from '@/components/other/action/form/fields/snooze.vue';
 import Pbehavior from '@/components/other/action/form/fields/pbehavior.vue';
@@ -33,44 +38,20 @@ export default {
     },
   },
   computed: {
-    fieldsMap() {
+    fieldComponentsMap() {
       return ({
-        [this.$constants.ACTION_TYPES.snooze]: {
-          component: 'snooze',
-          formKey: 'snoozeParameters',
-        },
-        [this.$constants.ACTION_TYPES.pbehavior]: {
-          component: 'pbehavior',
-          formKey: 'pbehaviorParameters',
-        },
-        [this.$constants.ACTION_TYPES.changeState]: {
-          component: 'change-state',
-          formKey: 'changeStateParameters',
-        },
-        [this.$constants.ACTION_TYPES.ack]: {
-          component: 'note',
-          formKey: 'ackParameters',
-        },
-        [this.$constants.ACTION_TYPES.ackremove]: {
-          component: 'note',
-          formKey: 'ackremoveParameters',
-        },
-        [this.$constants.ACTION_TYPES.assocticket]: {
-          component: 'assocticket',
-          formKey: 'assocticketParameters',
-        },
-        [this.$constants.ACTION_TYPES.declareticket]: {
-          component: 'note',
-          formKey: 'declareticketParameters',
-        },
-        [this.$constants.ACTION_TYPES.cancel]: {
-          component: 'note',
-          formKey: 'cancelParameters',
-        },
+        [ACTION_TYPES.snooze]: 'snooze',
+        [ACTION_TYPES.pbehavior]: 'pbehavior',
+        [ACTION_TYPES.changeState]: 'change-state',
+        [ACTION_TYPES.assocticket]: 'assocticket',
+        [ACTION_TYPES.ack]: 'note',
+        [ACTION_TYPES.ackremove]: 'note',
+        [ACTION_TYPES.declareticket]: 'note',
+        [ACTION_TYPES.cancel]: 'note',
       });
     },
-    field() {
-      return this.fieldsMap[this.form.generalParameters.type];
+    fieldComponent() {
+      return this.fieldComponentsMap[this.form.generalParameters.type];
     },
   },
 };
