@@ -77,6 +77,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         filter: prepareMainFilterToQueryFilter(filter, condition),
       };
     },
