@@ -63,6 +63,8 @@ class BaseMetaAlarmRule(dict):
         return self.__dict__
 
 
+META_ALARM_CONFIG_FIELD = 'config'
+
 class MetaAlarmRule(BaseMetaAlarmRule):
     """
     MetaAlarmRule class.
@@ -70,21 +72,17 @@ class MetaAlarmRule(BaseMetaAlarmRule):
     ID = "_id"
     NAME = 'name'
     TYPE = 'type'
-    FILTER = 'filter'
-    ENABLED = 'enabled'
+    PATTERNS = 'patterns'
+    CONFIG = 'config'
 
-    _FIELDS = (NAME, TYPE, FILTER, ENABLED, ID)
+    _FIELDS = (NAME, TYPE, PATTERNS, CONFIG, ID)
 
-    _EDITABLE_FIELDS = (NAME, TYPE, FILTER, ENABLED)
+    _EDITABLE_FIELDS = (NAME, TYPE, PATTERNS, CONFIG)
 
     def __init__(self, **kwargs):
-        if MetaAlarmRule.FILTER in kwargs:
-            kwargs[MetaAlarmRule.FILTER] = dumps(kwargs[MetaAlarmRule.FILTER])
         super(MetaAlarmRule, self).__init__(**kwargs)
 
     def update(self, **kwargs):
-        if MetaAlarmRule.FILTER in kwargs:
-            kwargs[MetaAlarmRule.FILTER] = dumps(kwargs[MetaAlarmRule.FILTER])
         super(MetaAlarmRule, self).update(**kwargs)
 
 
@@ -125,7 +123,7 @@ class MetaAlarmRuleManager(object):
         self.logger = logger
         self.collection = ma_rule_collection
 
-    def create(self, name, rule_type, filter, enabled=False, ma_rule_id=None):
+    def create(self, name, rule_type, patterns=None, config=None, ma_rule_id=None):
         if ma_rule_id is None:
             ma_rule_id = str(uuid4())
 
@@ -133,11 +131,17 @@ class MetaAlarmRuleManager(object):
             MetaAlarmRule.ID: ma_rule_id,
             MetaAlarmRule.NAME: name,
             MetaAlarmRule.TYPE: rule_type,
-            MetaAlarmRule.FILTER: filter,
-            MetaAlarmRule.ENABLED: enabled
+            MetaAlarmRule.PATTERNS: patterns,
+            MetaAlarmRule.CONFIG: config,
         }
 
         data = MetaAlarmRule(**create_kwargs)
+
+        config_dict = data.to_dict().get("config")
+
+        if not config_dict is None and not isinstance(config_dict, dict):
+            raise ValueError("config_dict {} from {}".format(config_dict, config))
+
         try:
             result = self.collection.insert(data.to_dict())
         except CollectionError:

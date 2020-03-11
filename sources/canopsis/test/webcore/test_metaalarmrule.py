@@ -7,53 +7,75 @@ import xmlrunner
 
 class TestMetaAlarmRuleWebservice(unittest.TestCase):
 
-    INVALID_RULE = {
+    INVALID_RULES = [{
         'name': 'test_bad_pb',
-        'filter': 'bad filter',
-        'enabled': True,
+        'patterns': 'bad patterns',
+        'config': 'bad config',
         'rule_type': None,
-    }
-
-    VALID_RULE = {
+    }, {
         'name': 'test_pb',
-        'filter': '{"nokey": "novalue"}',
-        'enabled': True,
-        'rule_type': 'relation',
-    }
+        'config': '{"time_interval": 3}',
+        'rule_type': 'attribute',
+        'patterns': None,
+    }, {
+        'name': 'test_pb',
+        'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }]}',
+        'rule_type': 'time',
+        'patterns': None,
+    }]
+
+    VALID_RULES = [{
+        'name': 'test_pb',
+        'patterns': '{"nokey": "novalue"}',
+        'config': '{"time_interval": 3}',
+        'rule_type': 'time',
+    }, {
+        'name': 'test_pb',
+        'patterns': None,
+        'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }]}',
+        'rule_type': 'attribute',
+    }]
 
     @classmethod
     def setUpClass(cls):
-        ma_rule_manager = MetaAlarmRuleManager(*MetaAlarmRuleManager.provide_default_basics())
+        ma_rule_manager = MetaAlarmRuleManager(
+            *MetaAlarmRuleManager.provide_default_basics())
         cls.rh_ma_rule = RouteHandlerMetaAlarmRule(ma_rule_manager)
 
     def test_create_bad_rule(self):
-        with self.assertRaises(ValueError):
-            self.rh_ma_rule.create(**self.INVALID_RULE)
+        for rule in self.INVALID_RULES:
+            with self.assertRaises(ValueError):
+                self.rh_ma_rule.create(**rule)
 
     def test_create_rule(self):
-        self.rh_ma_rule.create(**self.VALID_RULE)
+        for rule in self.VALID_RULES:
+            self.rh_ma_rule.create(**rule)
 
     def test_read_rule(self):
-        ma_rule_id = self.rh_ma_rule.create(**self.VALID_RULE)
-        self.assertIsInstance(ma_rule_id, str)
+        for rule in self.VALID_RULES:
+            ma_rule_id = self.rh_ma_rule.create(**rule)
+            self.assertIsInstance(ma_rule_id, str)
 
-        ma_rule = self.rh_ma_rule.read(ma_rule_id)
+            ma_rule = self.rh_ma_rule.read(ma_rule_id)
 
-        self.assertIsInstance(ma_rule, dict)
-        self.assertEquals(ma_rule.get('name'), self.VALID_RULE.get('name'))
+            self.assertIsInstance(ma_rule, dict)
+            self.assertEquals(ma_rule.get('name'), rule.get('name'))
+
+            self.assertIsInstance(ma_rule.get("config"), dict)
 
     def test_delete_rule(self):
-        ma_rule_id = self.rh_ma_rule.create(**self.VALID_RULE)
+        for rule in self.VALID_RULES:
+            ma_rule_id = self.rh_ma_rule.create(**rule)
 
-        ma_rule = self.rh_ma_rule.read(ma_rule_id)
+            ma_rule = self.rh_ma_rule.read(ma_rule_id)
 
-        self.assertEquals(ma_rule.get('name'), self.VALID_RULE.get('name'))
+            self.assertEquals(ma_rule.get('name'), rule.get('name'))
 
-        delres = self.rh_ma_rule.delete(ma_rule_id)
-        self.assertEquals(delres.get('deletedCount'), 1)
+            delres = self.rh_ma_rule.delete(ma_rule_id)
+            self.assertEquals(delres.get('deletedCount'), 1)
 
-        ma_rule = self.rh_ma_rule.read(ma_rule_id)
-        self.assertIsNone(ma_rule)
+            ma_rule = self.rh_ma_rule.read(ma_rule_id)
+            self.assertIsNone(ma_rule)
 
 
 if __name__ == '__main__':
