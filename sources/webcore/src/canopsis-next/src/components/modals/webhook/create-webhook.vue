@@ -15,6 +15,10 @@
             span {{ $t('modals.createWebhook.tooltips.id') }}
         retry-field(v-model="form.retry")
         v-switch(
+          v-model="form.enabled",
+          :label="$t('common.enabled')"
+        )
+        v-switch(
           v-model="form.disable_if_active_pbehavior",
           :label="$t('webhook.disableIfActivePbehavior')"
         )
@@ -73,6 +77,7 @@ export default {
       declare_ticket: [],
       disable_if_active_pbehavior: false,
       emptyResponse: false,
+      enabled: true,
     };
 
     const preparedWebhook = isDuplicating ? omit(webhook, ['_id']) : webhook;
