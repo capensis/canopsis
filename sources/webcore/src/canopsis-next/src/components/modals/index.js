@@ -46,3 +46,5 @@ export { default as CreateAction } from './action/create-action.vue';
 export { default as CreateHeartbeat } from './heartbeat/create-heartbeat.vue';
 export { default as CreateDynamicInfo } from './dynamic-info/create-dynamic-info.vue';
 export { default as CreateDynamicInfoInformation } from './dynamic-info/create-dynamic-info-information.vue';
+export { default as DynamicInfoTemplatesList } from './dynamic-info/dynamic-info-templates-list.vue';
+export { default as CreateDynamicInfoTemplate } from './dynamic-info/create-dynamic-info-template.vue';

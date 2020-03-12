@@ -82,6 +82,8 @@ export const MODALS = {
   createHeartbeat: 'create-heartbeat',
   createDynamicInfo: 'create-dynamic-info',
   createDynamicInfoInformation: 'create-dynamic-info-information',
+  dynamicInfoTemplatesList: 'dynamic-info-templates-list',
+  createDynamicInfoTemplate: 'create-dynamic-info-template',
 };
 
 export const EVENT_ENTITY_TYPES = {
