@@ -5,7 +5,12 @@
     tile,
     @click.native="showAdditionalInfoModal"
   )
-    v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
+    v-btn.helpBtn.ma-0(
+      v-if="isEditingMode && hasAvailableVariablesAccess",
+      icon,
+      small,
+      @click.stop="showVariablesHelpModal(watcher)"
+    )
       v-icon help
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
@@ -78,6 +83,10 @@ export default {
 
     hasAlarmsListAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
+    },
+
+    hasAvailableVariablesAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.variablesHelp);
     },
 
     color() {

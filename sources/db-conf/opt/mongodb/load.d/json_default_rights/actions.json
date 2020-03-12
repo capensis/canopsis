@@ -854,5 +854,12 @@
         "crecord_name": "showview_view_notifications",
         "crecord_type" : "action",
         "desc": "Access to view.notifications menu"
+    },
+    {
+        "_id" : "common_availableVariablesList",
+        "loader_id" : "common_availableVariablesList",
+        "crecord_name": "common_availableVariablesList",
+        "crecord_type" : "action",
+        "desc": "Access to available variables list"
     }
 ]
