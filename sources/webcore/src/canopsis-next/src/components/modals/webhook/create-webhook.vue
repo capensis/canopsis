@@ -55,7 +55,7 @@ export default {
   components: { WebhookForm, ModalWrapper, RetryField },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
-    const { webhook = {}, isDuplicating } = this.modal.config;
+    const { webhook, isDuplicating } = this.modal.config;
     const defaultForm = {
       retry: {},
       hook: {
