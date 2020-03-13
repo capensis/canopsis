@@ -43,7 +43,6 @@ export function unregisterHelper(name) {
  * Register global helpers
  */
 registerHelper('duration', helpers.durationHelper);
-registerHelper('date', helpers.dateHelper);
 registerHelper('state', helpers.alarmStateHelper);
 registerHelper('request', helpers.requestHelper);
 registerHelper('timestamp', helpers.timestampHelper);
