@@ -77,8 +77,13 @@ export function actionToForm(action) {
     return data;
   }
 
-  if (data.delay) {
-    // TODO prepare delay
+  if (action.delay) {
+    const [, value, unit] = action.delay.match(/^(\d+)(\w)$/);
+
+    data.delay = {
+      value,
+      unit,
+    };
   }
 
   data.generalParameters = pick(action, ['_id', 'type', 'hook']);
@@ -167,10 +172,8 @@ export function formToAction({
     'delay.value': hasValue,
   });
 
-  if (data.delay) {
-    const { value, unit } = data.delay;
-
-    data.delay = `${value}${unit}`;
+  if (data.delay && data.delay.value) {
+    data.delay = `${data.delay.value}${data.delay.unit}`;
   }
 
   const formToActionPrepareMap = {

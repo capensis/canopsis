@@ -44,7 +44,7 @@ export default {
   },
   computed: {
     isRequired() {
-      return this.required || !!this.delay.value || isNumber(this.delay.value);
+      return this.required || !!this.delay.unit || isNumber(this.delay.value);
     },
     availableUnits() {
       return Object.values(PERIODIC_REFRESH_UNITS).map(({ value, text }) => ({
