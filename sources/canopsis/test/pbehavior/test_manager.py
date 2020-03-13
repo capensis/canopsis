@@ -614,6 +614,15 @@ class TestManager(BaseTest):
         tstart2 = tstart1 + 1800
         tstop2 = tstop1 + 1800
 
+        self.pbm.context._put_entities([{
+            '_id': 1,
+            'name': 'pbehavior-engine-test1',
+            'depends': ["connector/connector_name"],
+            'type': 'pbehavior-metric-test',
+            PBehavior.FILTER: {},
+            'infos': {}
+        }])
+
         pbehavior1 = deepcopy(self.pbehavior)
         pbehavior1.update({
             "_id": "259f5636-132e-11e9-a604-0242ac10a037",
@@ -645,7 +654,7 @@ class TestManager(BaseTest):
 
         pbehavior1.update({
             "_id": "259f5636-132e-11e9-a604-0242ac10a037",
-            "filter": "{\"_id\": \"xxxxxx/scenario\"}",
+            "filter": "{\"_id\": 1}",
             "name": "downtime",
             "author": "xxx",
             "enabled": True,

@@ -1311,6 +1311,7 @@ class PBehaviorManager(object):
         :rtype: Iterator[Dict]
         """
         currently_active_pbehaviors = self.get_all_active_pbehaviors_base_on_time(now)
+        self.logger.info("Currently, number of active pbehaviors: {}".format(len(currently_active_pbehaviors)))
         currently_active_pb_dict = {}
         for active_pb in currently_active_pbehaviors:
             currently_active_pb_dict[active_pb[PBehavior.ID]] = active_pb
@@ -1381,6 +1382,7 @@ class PBehaviorManager(object):
     def send_pbehavior_event(self):
         now = int(time())
         for event in self.generate_pbh_event(now):
+            self.logger.info(event)
             self.amqp_pub.canopsis_event(event)
 
     def _get_interval_from_time_pivot(self, pb, time_pivot):
@@ -1429,23 +1431,7 @@ class PBehaviorManager(object):
         :param action_time: time indicates pbehavior will stop
         :rtype: List[Dict]
         """
-        if eids is None:
-            eids = pb.get('eids', [])
-        events = []
-        for eid in eids:
-            event = forger(
-                connector="canopsis",
-                connector_name="engine",
-                event_type="pbhleave",
-                source_type="component",
-                component=str(eid),
-                output="Stop of pbehavior. Name: {}. Type:{}".format(pb[PBehavior.NAME], pb[PBehavior.TYPE]),
-                perf_data_array=[],
-                display_name=pb[PBehavior.NAME],
-                timestamp=self._to_timestamp(action_time)
-            )
-            events.append(event)
-        return events
+        return self._make_pbehavior_event(pb, action_time, "pbhleave", "End of pbehavior", eids)
 
     def _make_pbenter_event(self, pb, action_time, eids=None):
         """
@@ -1453,20 +1439,35 @@ class PBehaviorManager(object):
         :param action_time: time indicates pbehavior will start
         :rtype: Dict
         """
+        return self._make_pbehavior_event(pb, action_time, "pbhenter", "Start of pbehavior", eids)
+
+    def _make_pbehavior_event(self, pb, action_time, pb_event_type, message, eids=None):
         events = []
         if eids is None:
             eids = pb.get('eids', [])
         for eid in eids:
-            event = forger(
-                connector="canopsis",
-                connector_name="engine",
-                event_type="pbhenter",
-                source_type="component",
-                component=str(eid),
-                output="Start of pbehavior. Name: {}. Type:{}".format(pb[PBehavior.NAME], pb[PBehavior.TYPE]),
-                perf_data_array=[],
-                display_name=pb[PBehavior.NAME],
-                timestamp=self._to_timestamp(action_time)
+            entities = self.context.ent_storage.get_elements(
+                query={"_id": eid}
             )
-            events.append(event)
+            if len(entities) != 1:
+                return events
+            if "depends" not in entities[0]:
+                return events
+            for impact in entities[0]["depends"]:
+                parts = impact.split("/")
+                if len(parts) != 2:
+                    continue
+                connector, connector_name = parts
+                event = forger(
+                    connector=connector,
+                    connector_name=connector_name,
+                    event_type=pb_event_type,
+                    source_type="component",
+                    component=str(eid),
+                    output="{}. Name: {}. Type:{}".format(message, pb[PBehavior.NAME], pb[PBehavior.TYPE]),
+                    perf_data_array=[],
+                    display_name=pb[PBehavior.NAME],
+                    timestamp=self._to_timestamp(action_time)
+                )
+                events.append(event)
         return events
