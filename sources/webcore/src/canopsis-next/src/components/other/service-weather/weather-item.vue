@@ -6,7 +6,7 @@
     @click.native="showAdditionalInfoModal"
   )
     v-btn.helpBtn.ma-0(
-      v-if="isEditingMode && hasAvailableVariablesAccess",
+      v-if="isEditingMode && hasVariablesHelpAccess",
       icon,
       small,
       @click.stop="showVariablesHelpModal(watcher)"
@@ -85,7 +85,7 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
     },
 
-    hasAvailableVariablesAccess() {
+    hasVariablesHelpAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.variablesHelp);
     },
 

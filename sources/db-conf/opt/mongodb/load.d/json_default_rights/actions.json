@@ -856,9 +856,9 @@
         "desc": "Access to view.notifications menu"
     },
     {
-        "_id" : "common_availableVariablesList",
-        "loader_id" : "common_availableVariablesList",
-        "crecord_name": "common_availableVariablesList",
+        "_id" : "common_variablesHelp",
+        "loader_id" : "common_variablesHelp",
+        "crecord_name": "common_variablesHelp",
         "crecord_type" : "action",
         "desc": "Access to available variables list"
     }
