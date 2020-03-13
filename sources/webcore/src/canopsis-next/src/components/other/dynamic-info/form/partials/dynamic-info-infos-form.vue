@@ -6,17 +6,18 @@
     v-data-table(
       :headers="headers",
       :items="form",
-      :no-data-text="$t('tables.noData')"
+      :no-data-text="$t('tables.noData')",
+      item-key="key"
     )
-      template(slot="items", slot-scope="{ item, index }")
+      template(slot="items", slot-scope="{ item }")
         tr
           td {{ item.name }}
           td {{ item.value }}
           td
             v-layout
-              v-btn(icon, small, @click="showEditInfoModal(index)")
+              v-btn(icon, small, @click="showEditInfoModal(item)")
                 v-icon edit
-              v-btn(icon, small, @click="removeItemFromArray(index)")
+              v-btn(icon, small, @click="removeInfo(item)")
                 v-icon(color="error") delete
 </template>
 
@@ -48,22 +49,40 @@ export default {
     },
   },
   methods: {
+    findInfoIndex(info = {}) {
+      return this.form.findIndex(({ name }) => name === info.name);
+    },
+
     showAddInfoModal() {
       this.$modals.show({
         name: MODALS.createDynamicInfoInformation,
         config: {
-          action: info => this.addItemIntoArray(info),
+          existingNames: this.form.map(info => info.name),
+          action: newInfo => this.addItemIntoArray(newInfo),
         },
       });
     },
-    showEditInfoModal(index) {
+
+    showEditInfoModal(info) {
       this.$modals.show({
         name: MODALS.createDynamicInfoInformation,
         config: {
-          info: this.form[index],
-          action: info => this.updateItemInArray(index, info),
+          info,
+
+          existingNames: this.form.map(({ name }) => name),
+          action: (newInfo) => {
+            const index = this.findInfoIndex(info);
+
+            this.updateItemInArray(index, newInfo);
+          },
         },
       });
+    },
+
+    removeInfo(info) {
+      const index = this.findInfoIndex(info);
+
+      this.removeItemFromArray(index);
     },
   },
 };
