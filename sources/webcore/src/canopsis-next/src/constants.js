@@ -986,7 +986,7 @@ export const ACTION_TYPES = {
 
 export const ACTION_AUTHOR = 'engine-action';
 
-export const ACTION_FORM_FIELD_MAP_BY_TYPE = {
+export const ACTION_FORM_FIELDS_MAP_BY_TYPE = {
   [ACTION_TYPES.snooze]: 'snoozeParameters',
   [ACTION_TYPES.pbehavior]: 'pbehaviorParameters',
   [ACTION_TYPES.changeState]: 'changeStateParameters',

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { omit, pick } from 'lodash';
-import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR, ACTION_FORM_FIELD_MAP_BY_TYPE } from '@/constants';
+import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
@@ -89,7 +89,7 @@ export function actionToForm(action) {
     ? prepareHandler(action.parameters)
     : action.parameters;
 
-  const fieldKey = ACTION_FORM_FIELD_MAP_BY_TYPE[action.type];
+  const fieldKey = ACTION_FORM_FIELDS_MAP_BY_TYPE[action.type];
 
   data[fieldKey] = {
     ...data[fieldKey],
@@ -168,7 +168,7 @@ export function formToAction({
   const prepareField = formToActionPrepareMap[generalParameters.type];
   const parameters = prepareField
     ? prepareField(form)
-    : form[ACTION_FORM_FIELD_MAP_BY_TYPE[generalParameters.type]];
+    : form[ACTION_FORM_FIELDS_MAP_BY_TYPE[generalParameters.type]];
 
   data.parameters = {
     ...parameters,

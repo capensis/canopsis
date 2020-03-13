@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     component(
-      v-model="form[$constants.ACTION_FORM_FIELD_MAP_BY_TYPE[form.generalParameters.type]]",
+      v-model="form[$constants.ACTION_FORM_FIELDS_MAP_BY_TYPE[form.generalParameters.type]]",
       :is="fieldComponent"
     )
 </template>
@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     fieldComponentsMap() {
-      return ({
+      return {
         [ACTION_TYPES.snooze]: 'snooze',
         [ACTION_TYPES.pbehavior]: 'pbehavior',
         [ACTION_TYPES.changeState]: 'change-state',
@@ -48,7 +48,7 @@ export default {
         [ACTION_TYPES.ackremove]: 'note',
         [ACTION_TYPES.declareticket]: 'note',
         [ACTION_TYPES.cancel]: 'note',
-      });
+      };
     },
     fieldComponent() {
       return this.fieldComponentsMap[this.form.generalParameters.type];
