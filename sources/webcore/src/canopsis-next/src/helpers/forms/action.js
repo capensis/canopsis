@@ -77,16 +77,16 @@ export function actionToForm(action) {
     return data;
   }
 
+  data.generalParameters = pick(action, ['_id', 'type', 'hook']);
+
   if (action.delay) {
     const [, value, unit] = action.delay.match(/^(\d+)(\w)$/);
 
-    data.delay = {
-      value,
+    data.generalParameters.delay = {
+      value: +value,
       unit,
     };
   }
-
-  data.generalParameters = pick(action, ['_id', 'type', 'hook']);
 
   const actionToFormPrepareMap = {
     [ACTION_TYPES.snooze]: actionSnoozeParametersToForm,

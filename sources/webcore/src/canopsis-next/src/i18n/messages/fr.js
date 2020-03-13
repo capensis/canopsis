@@ -1127,6 +1127,7 @@ export default {
   actions: {
     title: 'Actions',
     addAction: 'Ajouter une action',
+    delay: 'Intervalle',
     table: {
       id: 'Id',
       type: 'Type',

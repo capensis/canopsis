@@ -1224,6 +1224,7 @@ export default {
     table: {
       id: 'Id',
       type: 'Type',
+      delay: 'Delay',
       expand: {
         tabs: {
           general: 'General',
