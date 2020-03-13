@@ -482,6 +482,7 @@ export function generateAction() {
     alarm_patterns: [],
     entity_patterns: [],
     triggers: [],
+    delay: {},
   };
 
   // Get basic action parameters

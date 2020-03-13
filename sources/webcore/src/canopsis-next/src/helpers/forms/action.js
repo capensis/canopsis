@@ -77,6 +77,10 @@ export function actionToForm(action) {
     return data;
   }
 
+  if (data.delay) {
+    // TODO prepare delay
+  }
+
   data.generalParameters = pick(action, ['_id', 'type', 'hook']);
 
   const actionToFormPrepareMap = {
@@ -153,12 +157,21 @@ export function formToAction({
   let data = { ...generalParameters };
 
   const patternsCondition = value => !value || !value.length;
+  const hasValue = v => !v;
 
   data = unsetSeveralFieldsWithConditions(data, {
     'hook.event_patterns': patternsCondition,
     'hook.alarm_patterns': patternsCondition,
     'hook.entity_patterns': patternsCondition,
+    'delay.unit': hasValue,
+    'delay.value': hasValue,
   });
+
+  if (data.delay) {
+    const { value, unit } = data.delay;
+
+    data.delay = `${value}${unit}`;
+  }
 
   const formToActionPrepareMap = {
     [ACTION_TYPES.snooze]: prepareSnoozeParameters,

@@ -829,6 +829,8 @@ export default {
         duration: 'Durée',
         output: 'Note',
         ticket: 'Numéro du ticket',
+        delay: 'Intervalle',
+        delayUnit: 'Unité',
       },
     },
     statsDateInterval: {
