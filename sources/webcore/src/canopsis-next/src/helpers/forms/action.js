@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { omit, pick } from 'lodash';
+import { omit, pick, isEmpty } from 'lodash';
 import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
@@ -172,8 +172,10 @@ export function formToAction({
     'delay.value': hasValue,
   });
 
-  if (data.delay && data.delay.value) {
+  if (!isEmpty(data.delay)) {
     data.delay = `${data.delay.value}${data.delay.unit}`;
+  } else {
+    delete data.delay;
   }
 
   const formToActionPrepareMap = {
