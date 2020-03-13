@@ -1365,7 +1365,7 @@ class PBehaviorManager(object):
                     events = chain(events, self._make_pbenter_event(
                         self.pbehavior_event_sent_flag[active_pb].pbehavior,
                         self.pbehavior_event_sent_flag[active_pb].pbleave_time,
-                        list(old_eids.difference(current_eids))))
+                        list(current_eids.difference(old_eids))))
             else:
                 events = chain(events, self._make_pbenter_event(
                     currently_active_pb_dict[active_pb],
