@@ -8,32 +8,37 @@ import xmlrunner
 class TestMetaAlarmRuleWebservice(unittest.TestCase):
 
     INVALID_RULES = [{
-        'name': 'test_bad_pb',
+        'name': 'test_bad_ma',
         'patterns': 'bad patterns',
         'config': 'bad config',
         'rule_type': None,
     }, {
-        'name': 'test_pb',
+        'name': 'test_ma',
         'config': '{"time_interval": 3}',
         'rule_type': 'attribute',
         'patterns': None,
     }, {
-        'name': 'test_pb',
+        'name': 'test_ma_1',
         'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }]}',
         'rule_type': 'time',
         'patterns': None,
     }]
 
     VALID_RULES = [{
-        'name': 'test_pb',
+        'name': 'test_valid_ma1',
         'patterns': '{"nokey": "novalue"}',
         'config': '{"time_interval": 3}',
         'rule_type': 'time',
     }, {
-        'name': 'test_pb',
+        'name': 'test_valid_ma2',
         'patterns': None,
         'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }]}',
         'rule_type': 'attribute',
+    }, {
+        'name': 'test_valid_ma3',
+        'patterns': None,
+        'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }], "threshold_count": 3, "time_interval": 10}',
+        'rule_type': 'complex',
     }]
 
     @classmethod

@@ -17,6 +17,8 @@ VALID_PARAMS = [
 
 VALID_CONFIG_PARAMS = {
     'time_interval': ['time', 'complex'],
+    'threshold_count': ['complex'],
+    'threshold_rate': ['complex'],
     'attribute_patterns': ['attribute', 'complex'],
 }
 
