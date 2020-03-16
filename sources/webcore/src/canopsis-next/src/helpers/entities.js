@@ -552,7 +552,7 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...user, ...omit(data, ['password']) };
+  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);
