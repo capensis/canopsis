@@ -11,7 +11,7 @@ export default {
     },
 
     mainFilter() {
-      return getMainFilter(this.widget, this.userPreferences);
+      return getMainFilter(this.widget, this.userPreference);
     },
 
     viewFilters() {
