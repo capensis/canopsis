@@ -324,7 +324,7 @@ export const EVENT_ENTITY_STYLE = {
   },
   pbhleave: {
     color: COLORS.entitiesEvents.pbhleave,
-    icon: 'pause',
+    icon: 'play_arrow',
   },
 };
 
