@@ -1,0 +1,19 @@
+_canopsis_completion() {
+    local args cur opts
+    # COMPREPLY : completion answer
+    COMPREPLY=()
+
+    # argc : index current word
+    argc=${COMP_CWORD};
+
+    # cur : current word
+    cur="${COMP_WORDS[argc]}"
+
+    # list option
+    opts="--cat --debug --build_all --build_go --build_python --build_ui --start_go --start_python --help"
+
+    # auto complete using opts in cur
+    COMPREPLY=( $(compgen -W "$opts" -- $cur ) )
+
+}
+complete -F _canopsis_completion -o default canopsis-sdk

@@ -1,0 +1,8 @@
+[Unit]
+Description=Canopsis Engine %i
+
+[Service]
+ExecStart=/bin/systemctl --user stop canopsis-engine-go@action.service canopsis-engine-go@axe.service canopsis-engine-go@che.service canopsis-engine-go@heartbeat.service canopsis-engine-go@watcher.service canopsis-webserver.service canopsis-engine@dynamic-pbehavior.service canopsis-engine@dynamic-alerts.service canopsis-engine@dynamic-context-graph.service canopsis-engine@cleaner-cleaner_alerts.service canopsis-engine@cleaner-cleaner_events.service canopsis-engine@dynamic-watcher.service
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,23 @@
+[Unit]
+Description=Canopsis Engine %i
+Requires=canopsis-engine-go@engine-action.service
+Requires=canopsis-engine-go@engine-axe.service
+Requires=canopsis-engine-go@engine-che.service
+Requires=canopsis-engine-go@engine-heartbeat.service
+Requires=canopsis-engine-go@engine-watcher.service
+Requires=canopsis-engine@dynamic-pbehavior.service
+Requires=canopsis-webserver.service
+Conflicts=canopsis-engine@dynamic-alerts.service
+Conflicts=canopsis-engine@dynamic-context-graph.service
+Conflicts=canopsis-engine@cleaner-cleaner_alerts.service
+Conflicts=canopsis-engine@cleaner-cleaner_events.service
+Conflicts=canopsis-engine@dynamic-watcher.service
+Documentation=https://doc.canopsis.net
+
+[Service]
+ExecStart=/bin/echo "Moteur GO Lance"
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,117 @@
+---
+version: '3.7'
+
+x-global-vars: &global-vars
+  ALL_CONTANERS_VARIABLE: "sample"
+
+volumes:
+  mongodbdata-python:
+    driver: local
+  influxdbdata:
+    driver: local
+  rabbitmqdata:
+    driver: local
+  dumpdata:
+    driver: local
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 128M
+        reservations:
+          cpus: '0.25'
+          memory: 64M
+    environment:
+      <<: *global-vars
+      RABBITMQ_DEFAULT_USER: cpsrabbit
+      RABBITMQ_DEFAULT_PASS: canopsis
+      RABBITMQ_DEFAULT_VHOST: canopsis
+
+  mongodb-python:
+    image: mongo:3.6-jessie
+    #image: bitnami/mongodb:3.6
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=canopsis
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodbdata-python:/data/db
+      - dumpdata:/dump/dumpdata
+      - ./files/mongo/:/docker-entrypoint-initdb.d
+    #command: mongo -u root -p root --authenticationDatabase canopsis --eval "db.getSiblingDB('canopsis').createUser({user:'cpsmongo', pwd:'canopsis', roles:[{role:'readWrite',db:'canopsis'}]});"
+    #command: mongod --eval "db.getSiblingDB('canopsis').createUser({user:'cpsmongo', pwd:'canopsis', roles:[{role:'readWrite',db:'canopsis'}]});"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+ 
+  influxdb:
+    image: influxdb:1.5-alpine
+    ports:
+      - "8086:8086"
+      - "4444:4444/udp"
+      - "8083:8083"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+    
+    environment:
+      <<: *global-vars
+      INFLUXDB_DB: canopsis
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: admin
+      INFLUXDB_USER: cpsinflux
+      INFLUXDB_USER_PASSWORD: canopsis
+    volumes:
+      - influxdbdata:/var/lib/influxdb
+  redis:
+    image: redis:4.0
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+  provisionning-python:
+    #image: canopsis/canopsis-prov:develop
+    image: canopsis/canopsis-prov:3.31.0
+    environment:
+      <<: *global-vars
+      CPS_EDITION: core
+      CPS_STACK: python
+      CPS_AMQP_URL: amqp://cpsrabbit:canopsis@rabbitmq/canopsis
+      CPS_MONGO_URL: mongodb://cpsmongo:canopsis@mongodb-python/canopsis
+      CPS_REDIS_URL: redis://redis:6379/0
+      CPS_INFLUX_URL: influxdb://cpsinflux:canopsis@influxdb/canopsis
+    depends_on:
+      - "mongodb-python"
+    restart: "no"
+
+  init:
+    image: canopsis/init:develop
+    depends_on:
+      - rabbitmq
+    environment:
+      <<: *global-vars
+      CPS_AMQP_URL: amqp://cpsrabbit:canopsis@rabbitmq/canopsis
+      CPS_MONGO_URL: mongodb://cpsmongo:canopsis@mongodb-go/canopsis
+      CPS_REDIS_URL: redis://redis:6379/0
+      CPS_INFLUX_URL: influxdb://cpsinflux:canopsis@influxdb/canopsis
+    volumes:
+      - "./initialisation.toml:/initialisation.toml"
+    restart: "no"
+

@@ -1,0 +1,328 @@
+#!/bin/bash -eEu
+
+shopt -s extglob
+
+trap '1>&2 echo "Command \"${BASH_COMMAND}\" (Line: ${LINENO}) exit with status $?"' ERR
+
+CPS_HOME="/opt/canopsis"
+CPS_SRC="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" >/dev/null 2>&1 && pwd )"
+CPS_SDK="${CPS_SRC}/sdk"
+CPS_SDK_BIN="${CPS_SDK}/bin"
+
+ARGUMENT_LIST=(
+    "help"
+    "build_all"
+    "build_go"
+    "build_python"
+    "build_ui"
+    "start_go"
+    "start_python"
+    "cat"
+    "debug"
+)
+
+CAT=0
+ALL=0
+GO=0
+PYTHON=0
+UI=0
+STACKPYTHON=0
+STACKGO=0
+DEBUG=0
+CWD=$(pwd)
+
+help()
+{
+    echo -ne "$(basename $0) <--build_all | build {go| python | ui } > < --start_ go | python >\n\n"
+    echo -ne "Options are:\n"
+    echo -ne "\t\t--cat\t\tadd cat components to the build/stack"
+    echo -ne "\t\t--build_all\t\tcompile and install all Canopsis python core/engines, go engines and ui into Canopsis rundir\n"
+    echo -ne "\t\t--build_python\t\tcompile and install only Canopsis python core/engines into Canopsis rundir\n"
+    echo -ne "\t\t--build_go\t\tcompile and install only Canopsis go engines into Canopsis rundir\n"
+    echo -ne "\t\t--build_ui\t\tcompile and install only Canopsis ui into Canopsis rundir\n"
+    echo -ne "\t\t--start_go\t\tstart Canopsis Go stack\n"
+    echo -ne "\t\t--start_python\t\tstart Canopsis Python stack\n"
+    echo -ne "\t\t--help\t\t\tshow canopsis-sdk available options\n"
+    echo -ne "\t\t--debug\t\t\tshow debug informations\n"
+    echo
+    exit 0
+}
+
+
+if [ $# -eq 0 ]
+then
+    help
+    exit 1
+fi
+
+
+# read arguments
+opts=$(getopt \
+    --longoptions "$(printf "%s," "${ARGUMENT_LIST[@]}")" \
+    --name "$(basename "$0")" \
+    --options "" \
+    -- "$@"
+)
+
+eval set --$opts
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+
+        --cat)
+          CAT=1
+          shift 1
+          ;;
+
+         --build_all)
+            ALL=1
+            shift 1
+            ;;
+
+        --build_go)
+            GO=1
+            shift 1
+            ;;
+
+        --build_python)
+            PYTHON=1
+            shift 1
+            ;;
+
+        --build_ui)
+            UI=1
+            shift 1
+            ;;
+
+
+        --start_go)
+            STACKGO=1
+            shift 1
+            ;;
+
+        --start_python)
+            STACKPYTHON=1
+            shift 1
+            ;;
+
+        --help|--h)
+            help
+            ;;
+
+        --debug)
+          DEBUG=1
+          shift 1
+          ;;
+
+        *)
+            shift
+            break
+            ;;
+        esac
+done
+
+check_cat_dirs() {
+  local cat_dirs=(
+    "${CPS_SRC}/deps/cat/canopsis-cat/sources/canopsis_cat/"
+    "${CPS_SRC}/deps/cat/go-engines-cat"
+  )
+  local dir status=0
+  1>&2 echo "Checking cat directories..."
+  for dir in "${@}";do
+    if [[ ! -d "${dir}" ]];then
+      1>&2 echo "${dir} is required but is missing..."
+      status=1
+    fi
+  done
+  return $status
+}
+
+init_systemd(){
+
+  mkdir -p ${HOME}/.config/systemd/user
+  mkdir -p ${HOME}/.local/run
+
+  # copy sources systemd to user systemd
+  cp ${CPS_SRC}/docker/files/systemd/*.service  ${HOME}/.config/systemd/user/
+  cp ${CPS_SRC}/deps/canopsis/go-engines/systemd/*.service ${HOME}/.config/systemd/user/
+
+  # create systemd config dir for each service
+  # add user/group override
+  for service in ${HOME}/.config/systemd/user/canopsis*.service;do
+    local dir="${HOME}/.config/systemd/user/${service##*/}.d"
+    mkdir -p "${dir}"
+    cp ${CPS_SDK}/etc/systemd/override_user_group.conf ${dir}
+  done
+
+  # specific override systemd
+  cp ${CPS_SDK}/etc/systemd/override_engine_go_pidfile.conf ${HOME}/.config/systemd/user/canopsis-engine-go@.service.d/
+  mkdir -p ${HOME}/.config/systemd/user/canopsis-engine-go@engine-che.service.d/
+  cp ${CPS_SDK}/etc/systemd/override_engine_che_execstart.conf ${HOME}/.config/systemd/user/canopsis-engine-go@engine-che.service.d/
+
+  # sdk specific units
+  cp ${CPS_SDK}/etc/systemd/canopsis-go-systemd.service ${HOME}/.config/systemd/user/
+  cp ${CPS_SDK}/etc/systemd/canopsis-python-systemd.service ${HOME}/.config/systemd/user/
+  cp ${CPS_SDK}/etc/systemd/canopsis-down.service ${HOME}/.config/systemd/user/
+
+  systemctl --user daemon-reload
+
+}
+
+# Init symlinks
+install_python_virtualenv() {
+  python2_version=$(python -V 2>&1|awk '{print $NF}')
+  virtualenv ${CPS_HOME}
+}
+
+python_build(){
+    mkdir -p ${CPS_HOME}/bin
+    mkdir -p ${CPS_HOME}/var/log
+
+    init_systemd
+    systemctl --user start canopsis-down.service
+
+    # venv creation
+    [[ -f "${CPS_HOME}/bin/activate" ]] || install_python_virtualenv
+
+    # install
+    { set +u; . ${CPS_HOME}/bin/activate; set -u; }
+    pip install ${CPS_SRC}/sources/canopsis
+    if ((CAT));then
+      pip install ${CPS_SRC}/deps/cat/canopsis-cat/sources/canopsis_cat/
+    fi
+    deactivate
+
+    # copy configuration files
+    cp -R ${CPS_SRC}/sources/canopsis/etc/ ${CPS_HOME}/
+    cp ${CPS_HOME}/etc/amqp2engines-python.conf.example ${CPS_HOME}/etc/amqp2engines.conf
+    if ((CAT));then
+      cp -R ${CPS_SRC}/deps/cat/canopsis-cat/sources/canopsis_cat/etc/ ${CPS_HOME}/
+    fi
+
+    # copy interface files (exclude uiv3)
+    mkdir -p ${CPS_HOME}/var/www/src
+    cp -R ${CPS_SRC}/sources/webcore/src/!(canopsis-next) ${CPS_HOME}/var/www/src/
+}
+
+
+go_build(){
+    mkdir -p ${CPS_HOME}/bin
+
+    init_systemd
+    systemctl --user start canopsis-down.service
+
+    echo "Build go-engines..."
+    rm -rf ${CPS_SRC}/deps/canopsis/go-engines/releases/*
+    cd ${CPS_SRC}/deps/canopsis/go-engines
+    make release
+    cd releases
+    tar zxvf *-amd64.tar.gz
+    cp canopsis-*/* ${CPS_HOME}/bin/
+
+    # copy configuration files
+    cp ${CPS_SRC}/deps/canopsis/go-engines/default_configuration.toml ${CPS_HOME}/etc/default_configuration.toml
+    cp ${CPS_SRC}/sources/canopsis/etc/amqp2engines-go.conf.example ${CPS_HOME}/etc/amqp2engines.conf
+    cp ${CPS_SRC}/sdk/etc/systemd/go-engines-vars.conf ${CPS_HOME}/etc/go-engines-vars.conf
+
+    if ((CAT));then
+      echo "Build go-engines-cat..."
+      cd  ${CPS_SRC}/deps/cat/go-engines-cat
+      make build
+      cp -f ${CPS_SRC}/deps/cat/go-engines-cat/build/cmd/* ${CPS_HOME}/bin
+      cp -rf ${CPS_SRC}/deps/cat/go-engines-cat/build/plugins/* ${CPS_HOME}/bin
+    fi
+## .so a déplacer,webhook a voir aussi
+
+}
+
+
+uiv3(){
+    cd  ${CPS_SRC}/sources/webcore/src/canopsis-next
+    yarn
+    yarn build --dest dist
+    mkdir -p ${CPS_HOME}/var/www/src/canopsis-next
+    cp -R dist/ ${CPS_HOME}/var/www/src/canopsis-next/
+}
+
+
+stack-python(){
+    systemctl --user start canopsis-down.service
+    cp ${CPS_SRC}/sources/canopsis/etc/amqp2engines-python.conf.example ${CPS_HOME}/etc/amqp2engines.conf
+    if [[ -f "${CPS_HOME}/tmp/docker-compose/docker-compose.yml" ]];then
+      docker-compose -f ${CPS_HOME}/tmp/docker-compose/docker-compose.yml down --remove-orphans
+    fi
+    mkdir -p ${CPS_HOME}/tmp/
+    cp -R ${CPS_SRC}/sdk/docker-compose/ ${CPS_HOME}/tmp/
+    cp ${CPS_SRC}/sdk/docker-compose/docker-compose-python.yml ${CPS_HOME}/tmp/docker-compose/docker-compose.yml
+    if ((CAT));then
+      cp ${CPS_SRC}/deps/canopsis/go-engines/cmd/init/initialisation-cat.toml.example ${CPS_HOME}/tmp/docker-compose/initialisation.toml
+    else
+      cp ${CPS_SRC}/deps/canopsis/go-engines/cmd/init/initialisation.toml.example ${CPS_HOME}/tmp/docker-compose/initialisation.toml
+    fi
+    docker-compose -f ${CPS_HOME}/tmp/docker-compose/docker-compose.yml up -d
+    systemctl --user start canopsis-python-systemd
+}
+
+
+stack-go(){
+    systemctl --user start canopsis-down.service
+    cp ${CPS_SRC}/sources/canopsis/etc/amqp2engines-go.conf.example ${CPS_HOME}/etc/amqp2engines.conf
+    if [[ -f "${CPS_HOME}/tmp/docker-compose/docker-compose.yml" ]];then
+      docker-compose -f ${CPS_HOME}/tmp/docker-compose/docker-compose.yml down --remove-orphans
+    fi
+    mkdir -p ${CPS_HOME}/tmp/
+    cp -R ${CPS_SRC}/sdk/docker-compose/ ${CPS_HOME}/tmp/
+    cp ${CPS_SRC}/sdk/docker-compose/docker-compose-go.yml ${CPS_HOME}/tmp/docker-compose/docker-compose.yml
+    if ((CAT));then
+      cp ${CPS_SRC}/deps/canopsis/go-engines/cmd/init/initialisation-cat.toml.example ${CPS_HOME}/tmp/docker-compose/initialisation.toml
+    else
+      cp ${CPS_SRC}/deps/canopsis/go-engines/cmd/init/initialisation.toml.example ${CPS_HOME}/tmp/docker-compose/initialisation.toml
+    fi
+    docker-compose -f ${CPS_HOME}/tmp/docker-compose/docker-compose.yml up -d
+    systemctl --user start canopsis-go-systemd
+    systemctl --user restart canopsis-engine@event_filter-event_filter.service canopsis-webserver.service
+}
+
+if [ ${ALL} -eq 0 ] && [ ${GO} -eq 0 ] && [ ${PYTHON} -eq 0 ] && [ ${UI} -eq 0 ] && [ ${STACKPYTHON} -eq 1 ] && [ ${STACKGO} -eq 1 ]
+then
+    help
+fi
+
+if ((DEBUG));then
+  set -x
+fi
+
+if ((CAT));then
+  check_cat_dirs
+fi
+
+if [ ${ALL} -eq 1 ]; then
+    python_build
+    cd ${CWD}
+    go_build
+    cd ${CWD}
+    uiv3
+    cd ${CWD}
+fi
+
+if [ ${GO} -eq 1 ]; then
+    go_build
+fi
+
+if [ ${PYTHON} -eq 1 ]; then
+    python_build
+fi
+
+if [ ${UI} -eq 1 ]; then
+    uiv3
+fi
+
+if [ ${STACKPYTHON} -eq 1 ]; then
+    stack-python
+fi
+
+if [ ${STACKGO} -eq 1 ]; then
+    stack-go
+fi
+
+cd ${CWD}
+exit 0

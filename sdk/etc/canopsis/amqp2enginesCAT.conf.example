@@ -1,0 +1,35 @@
+# amqp2engines.conf for CAT Go stack
+
+[engine:event_filter]
+next = pbehavior,axe
+
+[engine:pbehavior]
+event_processing = canopsis.pbehavior.process.event_processing
+beat_processing = canopsis.pbehavior.process.beat_processing
+next=eventstore,alerts
+#next = context-graph,eventstore,alerts,statsng
+
+[engine:eventstore]
+# NB: will soon be remplaced by alerts engine
+
+[engine:metric]
+
+[engine:scheduler]
+
+[engine:task_mail]
+
+[engine:task_dataclean]
+
+[engine:task_importctx]
+
+[engine:task_shell]
+
+[engine:task_file]
+
+[engine:task_ackcentreon]
+
+[engine:snmp]
+routing_keys = #
+exchange_name = canopsis.snmp
+
+[engine:statsng]
