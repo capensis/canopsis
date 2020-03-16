@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { omit, pick } from 'lodash';
-import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
+import { ACTION_TYPES, TIME_UNITS, ACTION_AUTHOR } from '@/constants';
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
@@ -23,15 +23,23 @@ function actionSnoozeParametersToForm(parameters = {}) {
   const data = {};
 
   if (parameters.duration) {
-    const durationUnits = Object.values(DURATION_UNITS).map(unit => unit.value);
+    const durationUnits = [
+      TIME_UNITS.year,
+      TIME_UNITS.month,
+      TIME_UNITS.week,
+      TIME_UNITS.week,
+      TIME_UNITS.day,
+      TIME_UNITS.hour,
+      TIME_UNITS.minute,
+      TIME_UNITS.second,
+    ];
 
     // Check for the lowest possible unit to convert the duration in.
-    const foundUnit = durationUnits.find(unit =>
-      moment.duration(parameters.duration, 'seconds').as(unit) % 1 === 0);
+    const durationType = durationUnits.find(unit => moment.duration(parameters.duration, 'seconds').as(unit) % 1 === 0);
 
     data.duration = {
-      duration: moment.duration(parameters.duration, 'seconds').as(foundUnit),
-      durationType: foundUnit,
+      duration: moment.duration(parameters.duration, 'seconds').as(durationType),
+      durationType,
     };
   }
 

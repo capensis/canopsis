@@ -1014,7 +1014,11 @@ export const TIME_UNITS = {
   year: 'y',
 };
 
-export const DURATION_UNITS = {
+export const AVAILABLE_TIME_UNITS = {
+  second: {
+    text: 'common.times.second',
+    value: TIME_UNITS.second,
+  },
   minute: {
     text: 'common.times.minute',
     value: TIME_UNITS.minute,
@@ -1041,13 +1045,24 @@ export const DURATION_UNITS = {
   },
 };
 
+export const DURATION_UNITS = {
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
+  day: AVAILABLE_TIME_UNITS.day,
+  week: AVAILABLE_TIME_UNITS.week,
+  month: AVAILABLE_TIME_UNITS.month,
+  year: AVAILABLE_TIME_UNITS.month,
+};
+
+export const SNOOZE_DURATION_UNITS = {
+  second: AVAILABLE_TIME_UNITS.second,
+  ...DURATION_UNITS,
+};
+
 export const PERIODIC_REFRESH_UNITS = {
-  second: {
-    text: 'common.times.second',
-    value: TIME_UNITS.second,
-  },
-  minute: DURATION_UNITS.minute,
-  hour: DURATION_UNITS.hour,
+  second: AVAILABLE_TIME_UNITS.second,
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
 };
 
 export const DEFAULT_PERIODIC_REFRESH = {
