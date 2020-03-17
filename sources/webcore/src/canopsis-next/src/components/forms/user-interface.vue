@@ -132,7 +132,7 @@ export default {
         language: this.language || DEFAULT_LOCALE,
         footer: this.footer || '',
         description: this.description || '',
-        popupTimeout: undefined,
+        popupTimeout: this.popupTimeout,
       };
     },
 
