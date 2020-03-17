@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { omit, pick } from 'lodash';
-import { ACTION_TYPES, TIME_UNITS, ACTION_AUTHOR } from '@/constants';
-
+import { ACTION_TYPES, TIME_UNITS, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
 import {
@@ -87,44 +86,76 @@ export function actionToForm(action) {
 
   data.generalParameters = pick(action, ['_id', 'type', 'hook']);
 
-  switch (action.type) {
-    case ACTION_TYPES.snooze:
-      data.snoozeParameters = {
-        ...data.snoozeParameters,
-        ...actionSnoozeParametersToForm(action.parameters),
-      };
-      break;
-    case ACTION_TYPES.pbehavior:
-      data.pbehaviorParameters = {
-        ...data.pbehaviorParameters,
-        ...actionPbehaviorParametersToForm(action.parameters),
-      };
-      break;
-    case ACTION_TYPES.changeState:
-      data.changeStateParameters = {
-        ...data.changeStateParameters,
-        ...action.parameters,
-      };
-      break;
-  }
+  const actionToFormPrepareMap = {
+    [ACTION_TYPES.snooze]: actionSnoozeParametersToForm,
+    [ACTION_TYPES.pbehavior]: actionPbehaviorParametersToForm,
+  };
+  const prepareHandler = actionToFormPrepareMap[action.type];
+
+  const parameters = prepareHandler
+    ? prepareHandler(action.parameters)
+    : action.parameters;
+
+  const fieldKey = ACTION_FORM_FIELDS_MAP_BY_TYPE[action.type];
+
+  data[fieldKey] = {
+    ...data[fieldKey],
+    ...parameters,
+  };
 
   return data;
 }
 
 /**
+ * Prepare snooze parameters from form
+ *
+ * @param snoozeParameters
+ * @returns {{duration: number}}
+ */
+export function prepareSnoozeParameters({ snoozeParameters = {} }) {
+  return ({
+    ...snoozeParameters,
+    duration: moment.duration(
+      parseInt(snoozeParameters.duration.duration, 10),
+      snoozeParameters.duration.durationType,
+    ).asSeconds(),
+  });
+}
+
+/**
+ * Prepare pbehavior parameters from form
+ *
+ * @param pbehaviorParameters
+ * @returns {{ tstart: number, exdate: Array, comments: Array, tstop: number }}
+ */
+export function preparePbehaviorParameters({ pbehaviorParameters = {} }) {
+  const pbehavior = formToPbehavior(pbehaviorParameters.general);
+
+  return {
+    ...pbehavior,
+    comments: commentsToPbehaviorComments(pbehaviorParameters.comments),
+    exdate: exdatesToPbehaviorExdates(pbehaviorParameters.exdate),
+  };
+}
+
+/**
  * Prepare action object by form object
  *
- * @param [generalParameters={}]
- * @param [pbehaviorParameters={}]
- * @param [snoozeParameters={}]
- * @param [changeStateParameters={}]
+ * @param [generalParameters]
+ * @param {Object} form
+ * @param [form.pbehaviorParameters]
+ * @param [form.snoozeParameters]
+ * @param [form.changeStateParameters]
+ * @param [form.ackParameters]
+ * @param [form.ackremoveParameters]
+ * @param [form.assocticketParameters]
+ * @param [form.declareticketParameters]
+ * @param [form.cancelParameters]
  * @returns {Object}
  */
 export function formToAction({
   generalParameters = {},
-  pbehaviorParameters = {},
-  snoozeParameters = {},
-  changeStateParameters = {},
+  ...form
 }) {
   let data = { ...generalParameters };
 
@@ -136,29 +167,20 @@ export function formToAction({
     'hook.entity_patterns': patternsCondition,
   });
 
-  if (generalParameters.type === ACTION_TYPES.snooze) {
-    const duration = moment.duration(
-      parseInt(snoozeParameters.duration.duration, 10),
-      snoozeParameters.duration.durationType,
-    ).asSeconds();
+  const formToActionPrepareMap = {
+    [ACTION_TYPES.snooze]: prepareSnoozeParameters,
+    [ACTION_TYPES.pbehavior]: preparePbehaviorParameters,
+  };
 
-    data.parameters = {
-      ...snoozeParameters,
-      duration,
-    };
-  } else if (generalParameters.type === ACTION_TYPES.pbehavior) {
-    const pbehavior = formToPbehavior(pbehaviorParameters.general);
+  const prepareField = formToActionPrepareMap[generalParameters.type];
+  const parameters = prepareField
+    ? prepareField(form)
+    : form[ACTION_FORM_FIELDS_MAP_BY_TYPE[generalParameters.type]];
 
-    pbehavior.comments =
-      commentsToPbehaviorComments(pbehaviorParameters.comments);
-    pbehavior.exdate = exdatesToPbehaviorExdates(pbehaviorParameters.exdate);
-
-    data.parameters = { ...pbehavior };
-  } else if (generalParameters.type === ACTION_TYPES.changeState) {
-    data.parameters = { ...changeStateParameters };
-  }
-
-  data.parameters.author = ACTION_AUTHOR;
+  data.parameters = {
+    ...parameters,
+    author: ACTION_AUTHOR,
+  };
 
   return data;
 }

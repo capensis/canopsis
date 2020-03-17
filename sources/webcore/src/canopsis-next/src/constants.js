@@ -977,9 +977,25 @@ export const ACTION_TYPES = {
   snooze: 'snooze',
   pbehavior: 'pbehavior',
   changeState: 'changestate',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  assocticket: 'assocticket',
+  declareticket: 'declareticket',
+  cancel: 'cancel',
 };
 
 export const ACTION_AUTHOR = 'engine-action';
+
+export const ACTION_FORM_FIELDS_MAP_BY_TYPE = {
+  [ACTION_TYPES.snooze]: 'snoozeParameters',
+  [ACTION_TYPES.pbehavior]: 'pbehaviorParameters',
+  [ACTION_TYPES.changeState]: 'changeStateParameters',
+  [ACTION_TYPES.ack]: 'ackParameters',
+  [ACTION_TYPES.ackremove]: 'ackremoveParameters',
+  [ACTION_TYPES.assocticket]: 'assocticketParameters',
+  [ACTION_TYPES.declareticket]: 'declareticketParameters',
+  [ACTION_TYPES.cancel]: 'cancelParameters',
+};
 
 export const CANOPSIS_STACK = {
   go: 'go',

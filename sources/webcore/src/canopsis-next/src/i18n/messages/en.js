@@ -944,6 +944,7 @@ export default {
         message: 'Message',
         duration: 'Duration',
         output: 'Note',
+        ticket: 'Associate ticket',
       },
     },
     createHeartbeat: {

@@ -513,11 +513,42 @@ export function generateAction() {
     output: '',
   };
 
+  // Default 'ack' action parameters
+  const ackParameters = {
+    output: '',
+  };
+
+  // Default 'ackremove' action parameters
+  const ackremoveParameters = {
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const assocticketParameters = {
+    ticket: '',
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const declareticketParameters = {
+    output: '',
+  };
+
+  // Default 'cancel' action parameters
+  const cancelParameters = {
+    output: '',
+  };
+
   return {
     generalParameters,
     snoozeParameters,
     pbehaviorParameters,
     changeStateParameters,
+    ackParameters,
+    ackremoveParameters,
+    assocticketParameters,
+    declareticketParameters,
+    cancelParameters,
   };
 }
 
