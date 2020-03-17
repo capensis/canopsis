@@ -11,15 +11,15 @@
           template(slot="label", slot-scope="{ item }")
             v-flex(xs12)
               v-layout(row)
-                v-flex(xs6) {{ item.name }}
+                v-flex(xs2) {{ item.name }}
                   span(v-show="item.isValueRule") :
                 template(v-if="item.isValueRule")
-                  v-flex(v-if="isSimpleValueRule(item.value)")
-                    span.body-1.font-italic {{ item.value | treeViewValue }}
-                  v-flex(v-else)
-                    v-layout(column)
-                      v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
-                        p.body-1.font-italic {{ fieldKey }} {{ field }}
+                  v-flex(xs10, v-if="isSimpleValueRule(item.value)")
+                    span.body-1.font-italic.text-break {{ item.value | treeViewValue }}
+                  v-flex(xs10, v-else)
+                    v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
+                      p.body-1.font-italic {{ fieldKey }}
+                      p.body-1.font-italic.text-field {{ field }}
           template(slot="append", slot-scope="{ item }")
             div
               v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
@@ -296,3 +296,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .v-treeview-node__content, .v-treeview-node__label {
+    flex-shrink: 20;
+  }
+  .text-field {
+    word-break: break-all;
+    margin-bottom: 0;
+  }
+</style>
