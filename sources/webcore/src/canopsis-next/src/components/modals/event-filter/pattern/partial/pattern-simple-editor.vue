@@ -21,7 +21,7 @@
                       p.body-1.font-italic {{ fieldKey }}
                       p.body-1.font-italic.text-field {{ field }}
           template(slot="append", slot-scope="{ item }")
-            div
+            v-layout(row)
               v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
                 v-btn(slot="activator", icon, @click="action.action(item)")
                   v-icon(:class="action.iconClass") {{ action.icon }}
@@ -300,6 +300,9 @@ export default {
 <style lang="scss">
   .v-treeview-node__content, .v-treeview-node__label {
     flex-shrink: 20;
+  }
+  .v-treeview-node__label {
+    width: 100%;
   }
   .text-field {
     word-break: break-all;
