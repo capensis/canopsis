@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.pattern-simple-editor
     v-layout(justify-end)
       v-tooltip(v-for="(action, index) in mainActions", :key="`action-${index}`", top)
         v-btn(slot="activator", icon, @click="action.action()")
@@ -297,15 +297,19 @@ export default {
 };
 </script>
 
-<style lang="scss">
-  .v-treeview-node__content, .v-treeview-node__label {
-    flex-shrink: 8;
-  }
-  .v-treeview-node__label {
-    width: 100%;
-  }
-  .text-field {
-    word-break: break-all;
-    margin-bottom: 0;
+<style lang="scss" scoped>
+  .pattern-simple-editor {
+    & /deep/ {
+      .v-treeview-node__content, .v-treeview-node__label {
+        flex-shrink: 8;
+      }
+      .v-treeview-node__label {
+        width: 100%;
+      }
+      .text-field {
+        word-break: break-all;
+        margin-bottom: 0;
+      }
+    }
   }
 </style>
