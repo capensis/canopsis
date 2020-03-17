@@ -1,6 +1,7 @@
 import moment from 'moment';
-import { omit, pick } from 'lodash';
+import { omit, pick, isEmpty } from 'lodash';
 import { ACTION_TYPES, TIME_UNITS, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
+
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
 import {
@@ -86,6 +87,15 @@ export function actionToForm(action) {
 
   data.generalParameters = pick(action, ['_id', 'type', 'hook']);
 
+  if (action.delay) {
+    const [, value, unit] = action.delay.match(/^(\d+)(\w)$/);
+
+    data.generalParameters.delay = {
+      value: +value,
+      unit,
+    };
+  }
+
   const actionToFormPrepareMap = {
     [ACTION_TYPES.snooze]: actionSnoozeParametersToForm,
     [ACTION_TYPES.pbehavior]: actionPbehaviorParametersToForm,
@@ -160,12 +170,21 @@ export function formToAction({
   let data = { ...generalParameters };
 
   const patternsCondition = value => !value || !value.length;
+  const hasValue = v => !v;
 
   data = unsetSeveralFieldsWithConditions(data, {
     'hook.event_patterns': patternsCondition,
     'hook.alarm_patterns': patternsCondition,
     'hook.entity_patterns': patternsCondition,
+    'delay.unit': hasValue,
+    'delay.value': hasValue,
   });
+
+  if (!isEmpty(data.delay)) {
+    data.delay = `${data.delay.value}${data.delay.unit}`;
+  } else {
+    delete data.delay;
+  }
 
   const formToActionPrepareMap = {
     [ACTION_TYPES.snooze]: prepareSnoozeParameters,
