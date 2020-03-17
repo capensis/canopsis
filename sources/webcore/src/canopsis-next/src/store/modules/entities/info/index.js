@@ -20,6 +20,7 @@ export default {
     isLDAPAuthEnabled: false,
     isCASAuthEnabled: false,
     casConfig: {},
+    popupTimeout: undefined,
   },
   getters: {
     version: state => state.version,

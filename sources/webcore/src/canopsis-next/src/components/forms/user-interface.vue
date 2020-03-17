@@ -79,6 +79,7 @@
 import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
 
 import { getFileDataUrlContent } from '@/helpers/file-select';
+import { getSecondsByUnit } from '@/helpers/time';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -163,6 +164,11 @@ export default {
 
           await this.updateUserInterface({ data });
           await this.fetchAllInfos();
+
+          if (this.popupTimeout) {
+            const delay = getSecondsByUnit(this.popupTimeout.interval, this.popupTimeout.unit);
+            this.$popups.setDefaultCloseTime(delay * 1000);
+          }
 
           this.$popups.success({ text: this.$t('success.default') });
           this.reset();
