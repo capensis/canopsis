@@ -15,7 +15,7 @@
                   span(v-show="item.isValueRule") :
                 template(v-if="item.isValueRule")
                   v-flex(xs10, v-if="isSimpleValueRule(item.value)")
-                    span.body-1.font-italic.text-break {{ item.value | treeViewValue }}
+                    span.body-1.font-italic.text-field {{ item.value | treeViewValue }}
                   v-flex(xs10, v-else)
                     v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
                       p.body-1.font-italic {{ fieldKey }}
