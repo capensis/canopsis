@@ -104,6 +104,7 @@ export const API_ROUTES = {
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
+  dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
 };
 
