@@ -171,4 +171,4 @@ L'action 'Historique' permet de consulter l'historique de cette alarme durant le
 
 ![Historique](./img/history.png  "Historique")
 
-En utilisant le [suivi personnalisé](../../bac-a-alarmes/#suivi-personnalise), vous pouvez modifier l'intervalle de dates pour cette historique.
+En utilisant le [suivi personnalisé](../../bac-a-alarmes/#suivi-personnalise), vous pouvez modifier l'intervalle de dates pour cet historique.
