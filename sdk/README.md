@@ -1,5 +1,9 @@
 # Canopsis SDK Usage
 
+## Repositories dependencies
+
+Some additional repositories needed to build the canopsis project will be download under `[canopsis-sources]/deps` by the `install.sh` script provided by the `sdk`.
+
 ## Requirements for CAT projet
 
 * :warning: You must have 
@@ -20,56 +24,52 @@ https://www.virtualbox.org/wiki/Downloads
 
 https://www.vagrantup.com/downloads.html
 
-#### Once these softwares are installed, you can retrieve Vagrantfile from Canopsis SDK
+#### Once these softwares are installed, you can use the Vagrantfile provided with canopsis sources under the `sdk`  directory
 
 ```shell
-$ mkdir -p ~/vagrant/canopsis-sdk
-$ cd ~/vagrant/canopsis-sdk
-$ curl https://gitlab.capensis.fr/capensis-opensource/sdk-canopsis-core/raw/go-system/vagrant/Vagrantfile -o Vagrantfile
-```
-
-An start Vagrant box
-
-```sh
-$ cd ~/vagrant/canopsis-sdk
-$ vagrant up
+[canopsis-sources] $ cd sdk 
+[canopsis-sources]/sdk $ vagrant up
 ```
 
 If you want to update sdk use `provision` method
 
 ```sh
-$ cd ~/vagrant/canopsis-sdk
-$ vagrant provision
-``
+[canopsis-sources] $ cd sdk 
+[canopsis-sources]/sdk $ vagrant provision
+```
 
 If you want to use some options to sdk, go inside the box and use
 
 * `debug` mode
 
 ```shell
-$ cd ~/vagrant/canopsis-sdk
-$ vagrant ssh
-$ vagrant@ubuntu-bionic:~$ /bin/sh ./install.sh -d
+[canopsis-sources] $ cd sdk 
+[canopsis-sources]/sdk $ vagrant ssh
+vagrant@ubuntu-bionic:~ $ cd canopsis/sdk
+vagrant@ubuntu-bionic:~/canopsis/sdk $ install.sh -d
 ```
+
 * `CAT` installation
 
 ```shell
-$ cd ~/vagrant/canopsis-sdk
-$ vagrant ssh
-$ vagrant@ubuntu-bionic:~$ /bin/sh ./install.sh -c
+[canopsis-sources] $ cd sdk 
+[canopsis-sources]/sdk $ vagrant ssh
+vagrant@ubuntu-bionic:~ $ cd canopsis/sdk
+vagrant@ubuntu-bionic:~/canopsis/sdk $ install.sh -c
 ```
 
 :warning: Be sure to logout at the end of the install !
 
 **Restart the VM if you use ssh ControlMaster sockets or if you're not sure to
 don't use them**
-```
-$ vagrant reload
+
+```shell
+canopsis-sources/sdk $ vagrant reload
 ```
 
-Vagrant installation is sharing local vagrant box directory `/opt/canopsis-sdk` whith a symlink to `~/canopsis-sdk`, between local machine and vagrant box.
+Vagrant installation is sharing current canopsis sources with the directory `~/canopsis` inside the VagrantBox.
 
-:rocket: So you can now work with you preferred IDE with this sources location ( `~/canopsis-sdk` ) :up:
+:rocket: So you can now work with you preferred IDE with the canopsis sources you previously cloned :up:
 
 
 ### `EXPERIMENTAL METHOS` - Local Installation inside a supported OS
@@ -84,36 +84,22 @@ Vagrant installation is sharing local vagrant box directory `/opt/canopsis-sdk` 
 
 :warning: You must have `sudo` configured to install some packages and create some links
 
-* Get Canopsis SDK Install Script
-
-Using wget
-
-```sh
-$ cd /tmp && wget https://gitlab.capensis.fr/capensis-opensource/sdk-canopsis-core/raw/go-system/install.sh
-```
-
-Or Curl
-
-```sh
-$ cd /tmp && curl https://gitlab.capensis.fr/capensis-opensource/sdk-canopsis-core/raw/go-system/install.sh -o install.sh
-```
-
 * Install Canopsis OpenCore SDK
 
 ```sh
-$ /bin/sh /tmp/install.sh
+[canopsis-sources] $ sdk/install.sh
 ```
 
 * Using `debug` mode
 
 ```sh
-$ /bin/sh /tmp/install.sh -d
+[canopsis-sources] $ sdk/install.sh -d
 ```
 
 * Install Canopsis CAT SDK
 
 ```sh
-$ sudo /bin/sh /tmp/install.sh -c
+[canopsis-sources] $ sdk/install.sh -c
 ```
 
 
@@ -123,12 +109,12 @@ $ sudo /bin/sh /tmp/install.sh -c
 
 ## How to Launch Canopsis stack from SDK
 
-:warning: If you are within the Vagrant Box, don't forget to `vagrant ssh` first, before executing these commands
+:warning: If you are outside the Vagrant Box, don't forget to `vagrant ssh` first, before executing these commands
 
 ### Requirements
 
 If your Canopsis's version < `3.31.0` ,
-In ```/opt/canopsis-sdk/src/canopsis/sources/canopsis/etc/common/redis_store.conf``` 
+edit ```[canopsis-sources]/sources/canopsis/etc/common/redis_store.conf``` 
 
 Fist Update host var :
 
@@ -141,7 +127,7 @@ host = localhost
 * For compiling Canopsis
 
 ```sh
-$ canopsis-sdk --build_all | --build_go | --build_python | --build_ui
+$ canopsis-sdk --build_all | --build_go | --build_python | --build_ui | --cat
 ```
 
 * To start Canopsis
