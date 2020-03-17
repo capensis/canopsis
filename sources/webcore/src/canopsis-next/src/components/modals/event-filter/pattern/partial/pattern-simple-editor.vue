@@ -11,12 +11,12 @@
           template(slot="label", slot-scope="{ item }")
             v-flex(xs12)
               v-layout(row)
-                v-flex(xs2) {{ item.name }}
+                v-flex.text-field(xs6) {{ item.name }}
                   span(v-show="item.isValueRule") :
                 template(v-if="item.isValueRule")
-                  v-flex(xs10, v-if="isSimpleValueRule(item.value)")
+                  v-flex(xs6, v-if="isSimpleValueRule(item.value)")
                     span.body-1.font-italic.text-field {{ item.value | treeViewValue }}
-                  v-flex(xs10, v-else)
+                  v-flex(xs6, v-else)
                     v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
                       p.body-1.font-italic {{ fieldKey }}
                       p.body-1.font-italic.text-field {{ field }}
@@ -299,7 +299,7 @@ export default {
 
 <style lang="scss">
   .v-treeview-node__content, .v-treeview-node__label {
-    flex-shrink: 20;
+    flex-shrink: 8;
   }
   .v-treeview-node__label {
     width: 100%;
