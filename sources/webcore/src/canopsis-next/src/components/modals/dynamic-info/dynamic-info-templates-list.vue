@@ -7,7 +7,12 @@
         v-layout(justify-end)
           v-btn.primary(fab, small, flat, @click="showAddTemplateModal")
             v-icon add
-        v-data-table(:items="templates", :headers="headers", expand)
+        v-data-table(
+          :items="templates",
+          :headers="headers",
+          :loading="pending",
+          expand
+        )
           template(slot="items", slot-scope="props")
             tr(@click="props.expanded = !props.expanded")
               td {{ props.item.title }}
@@ -42,13 +47,15 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
 
-import uid from '@/helpers/uid';
+import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
 import ModalWrapper from '../modal-wrapper.vue';
+
+const { mapActions, mapGetters } = createNamespacedHelpers('dynamicInfoTemplate');
 
 /**
  * Modal to create dynamic info's information
@@ -57,22 +64,9 @@ export default {
   name: MODALS.dynamicInfoTemplatesList,
   components: { ModalWrapper },
   mixins: [modalInnerMixin],
-  data() {
-    return {
-      templates: [
-        {
-          id: uid(),
-          title: 'Test template',
-          values: [
-            { name: 'attr_dynamique1' },
-            { name: 'attr_dynamique2' },
-            { name: 'attr_statique' },
-          ],
-        },
-      ],
-    };
-  },
   computed: {
+    ...mapGetters(['pending', 'templates']),
+
     headers() {
       return [
         {
@@ -87,14 +81,42 @@ export default {
       ];
     },
   },
+  mounted() {
+    this.fetchTemplatesList();
+  },
   methods: {
+    ...mapActions({
+      fetchTemplatesList: 'fetchList',
+      createTemplate: 'create',
+      updateTemplate: 'update',
+      deleteTemplate: 'delete',
+    }),
+
     showAddTemplateModal() {
       this.$modals.show({
         name: MODALS.createDynamicInfoTemplate,
+        config: {
+          action: async (newTemplate) => {
+            await this.createTemplate({ data: newTemplate });
+
+            this.fetchTemplatesList();
+          },
+        },
       });
     },
-    showEditTemplateModal() {
+    showEditTemplateModal(template) {
+      this.$modals.show({
+        name: MODALS.createDynamicInfoTemplate,
+        config: {
+          template,
 
+          action: async (newTemplate) => {
+            await this.createTemplate({ data: newTemplate });
+
+            this.fetchTemplatesList();
+          },
+        },
+      });
     },
     showDeleteTemplateModal() {
 

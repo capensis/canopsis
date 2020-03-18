@@ -11,11 +11,11 @@ export default {
   namespaced: true,
   state: {
     pending: false,
-    dynamicInfoTemplates: [],
+    templates: [],
   },
   getters: {
     pending: state => state.pending,
-    dynamicInfoTemplates: state => state.dynamicInfoTemplates,
+    templates: state => state.templates,
   },
   mutations: {
     [types.FETCH_DYNAMIC_INFO_TEMPLATES](state) {
@@ -23,13 +23,18 @@ export default {
     },
     [types.FETCH_DYNAMIC_INFO_TEMPLATES_COMPLETED](state, { templates = [] }) {
       state.pending = false;
-      state.dynamicInfoTemplates = templates;
+      state.templates = templates;
     },
   },
   actions: {
+    /**
+     *
+     * @param commit
+     * @returns {Promise<void>}
+     */
     async fetchList({ commit }) {
       try {
-        commit(types.FETCH_PBEHAVIOR_REASONS);
+        commit(types.FETCH_DYNAMIC_INFO_TEMPLATES);
 
         const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
 
@@ -39,27 +44,39 @@ export default {
       }
     },
 
-    async create({ dispatch }, { template }) {
+    /**
+     *
+     * @param dispatch
+     * @param template
+     * @returns {Promise<AxiosResponse<any>|*>}
+     */
+    async create({ dispatch }, { data }) {
       const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
 
       if (templates) {
-        return dispatch('updateTemplate', { template });
+        return dispatch('updateTemplate', { template: data });
       }
 
-      return request.post(API_ROUTES.dynamicInfoTemplates, { templates: [template] });
+      return request.post(API_ROUTES.dynamicInfoTemplates, { templates: [data] });
     },
 
-    async update({ dispatch }, { template }) {
+    /**
+     *
+     * @param dispatch
+     * @param template
+     * @returns {Promise<AxiosResponse<any>|*>}
+     */
+    async update({ dispatch }, { data }) {
       const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
 
       if (!templates) {
-        return dispatch('createTemplate', { template });
+        return dispatch('createTemplate', { template: data });
       }
 
       return request.put(API_ROUTES.dynamicInfoTemplates, {
         templates: templates.map((v) => {
-          if (v._id === template._id) {
-            return template;
+          if (v._id === data._id) {
+            return data;
           }
 
           return v;
@@ -67,6 +84,12 @@ export default {
       });
     },
 
+    /**
+     *
+     * @param context
+     * @param id
+     * @returns {Promise<void>}
+     */
     async delete(context, { id }) {
       const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
 
