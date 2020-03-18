@@ -49,7 +49,8 @@ class TestActionManager(unittest.TestCase):
                 "reason": "Madness",
                 "type": "Mercenary War",
                 "rrule": ""
-            }
+            },
+            "delay": ""
         }
 
     def tearDown(self):
