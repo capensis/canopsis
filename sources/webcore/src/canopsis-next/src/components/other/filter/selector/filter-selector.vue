@@ -171,12 +171,12 @@ export default {
     },
   },
   methods: {
-    updateIsMultipleFlag(value) {
+    updateIsMultipleFlag(checked) {
       const isValueArray = Array.isArray(this.value);
 
-      if (value && !isValueArray) {
+      if (checked && !isValueArray) {
         this.updateSelectedFilter(!isEmpty(this.value) ? [this.value] : []);
-      } else if (!value && isValueArray) {
+      } else if (!checked && isValueArray) {
         this.updateSelectedFilter(!isEmpty(this.value[0]) ? this.value[0] : null);
       }
     },
