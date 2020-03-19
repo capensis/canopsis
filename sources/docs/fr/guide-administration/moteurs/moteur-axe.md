@@ -30,7 +30,7 @@ Les options acceptées par la dernière version de Canopsis sont les suivantes 
       version infos
 ```
 
-## Fichier de configuration
+## Fichier de configuration
 
 Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
 
