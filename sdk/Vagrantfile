@@ -1,0 +1,37 @@
+Vagrant.configure("2") do |config|
+
+  class Install_sdk_options
+    def to_s
+      o = ''
+      print "Do you want to install the CAT version ( require some special credentials on Canopsis gitlab ) ? [Y/n]"
+      prompt = STDIN.gets.chomp
+      if prompt.downcase == 'y' || prompt == ''
+        o += ' -c'
+      end
+      o.inspect
+    end
+  end
+  
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.box_version = "20200206.0.0"
+
+  config.vm.network "forwarded_port", guest: 8082, host: 8082
+  config.vm.network "forwarded_port", guest: 15672, host: 15672
+  config.vm.network "forwarded_port", guest: 27017, host: 27017
+  config.vm.network "forwarded_port", guest: 6379, host: 6379
+  config.vm.network "forwarded_port", guest: 5432, host: 5432
+
+  config.vm.synced_folder "../", "/home/vagrant/canopsis", type: "virtualbox", create: true
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2560"
+    vb.cpus = 2
+  end
+
+  config.ssh.forward_agent = true
+
+  config.vm.provision "shell", inline: "ssh-keyscan -H gitlab.capensis.fr >> ~/.ssh/known_hosts 2>/dev/null", privileged: false
+  config.vm.provision "shell", inline: "ssh-keyscan -H git.canopsis.net >> ~/.ssh/known_hosts 2>/dev/null", privileged: false
+
+	config.vm.provision "shell", env: {"SDK_OPTIONS" => Install_sdk_options.new}, inline: "/home/vagrant/canopsis/sdk/install.sh ${SDK_OPTIONS}", privileged: false
+end
