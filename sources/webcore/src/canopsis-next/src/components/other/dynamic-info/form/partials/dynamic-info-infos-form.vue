@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    v-alert(:value="hasAnyError", type="error") {{ $t('modals.createDynamicInfo.steps.patterns.validationError') }}
     v-layout(justify-end)
       v-btn.primary(fab, small, flat, @click="showAddInfoModal")
         v-icon add
@@ -25,9 +26,10 @@
 import { MODALS } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
-  mixins: [formArrayMixin],
+  mixins: [formArrayMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -47,6 +49,15 @@ export default {
         { text: this.$t('common.actionsLabel'), value: 'actions' },
       ];
     },
+  },
+  created() {
+    this.$validator.attach({
+      name: 'values',
+      rules: 'required:true',
+      getter: () => !this.form.some(({ value }) => !value),
+      context: () => this,
+      vm: this,
+    });
   },
   methods: {
     findInfoIndex(info = {}) {
@@ -74,6 +85,8 @@ export default {
             const index = this.findInfoIndex(info);
 
             this.updateItemInArray(index, newInfo);
+
+            this.$nextTick(() => this.$validator.validate('values'));
           },
         },
       });
@@ -83,6 +96,8 @@ export default {
       const index = this.findInfoIndex(info);
 
       this.removeItemFromArray(index);
+
+      this.$nextTick(() => this.$validator.validate('values'));
     },
   },
 };

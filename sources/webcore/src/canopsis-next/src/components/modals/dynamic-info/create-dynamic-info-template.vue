@@ -41,6 +41,7 @@
 import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
+import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -82,14 +83,16 @@ export default {
     deleteValue(index) {
       this.form.values = this.form.values.filter((v, i) => i !== index);
     },
-    formToTemplate({ title = '', names = [] } = {}) {
+    templateToForm({ _id = uuid('dynamic-info-template'), title = '', names = [] } = {}) {
       return {
+        _id,
         title,
         names: names.map(name => ({ key: uid(), value: name })),
       };
     },
-    templateToForm({ title = '', names = [] } = {}) {
+    formToTemplate({ _id = uuid('dynamic-info-template'), title = '', names = [] } = {}) {
       return {
+        _id,
         title,
         names: names.map(({ value }) => value),
       };

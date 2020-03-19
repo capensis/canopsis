@@ -46,42 +46,48 @@ export default {
 
     /**
      *
-     * @param dispatch
+     * @param context
      * @param template
-     * @returns {Promise<AxiosResponse<any>|*>}
+     * @returns {Promise<void>}
      */
-    async create({ dispatch }, { data }) {
+    async create({ commit }, { data }) {
       const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
+      const method = templates ? 'put' : 'post';
 
-      if (templates) {
-        return dispatch('updateTemplate', { template: data });
+      const newTemplates = [...templates, data];
+      const success = await request[method](API_ROUTES.dynamicInfoTemplates, { templates: newTemplates });
+
+      if (success) {
+        commit(types.FETCH_DYNAMIC_INFO_TEMPLATES_COMPLETED, { templates: newTemplates });
       }
-
-      return request.post(API_ROUTES.dynamicInfoTemplates, { templates: [data] });
     },
 
     /**
      *
-     * @param dispatch
+     * @param context
      * @param template
-     * @returns {Promise<AxiosResponse<any>|*>}
+     * @returns {Promise<void>}
      */
-    async update({ dispatch }, { data }) {
+    async update({ commit }, { data }) {
       const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
 
-      if (!templates) {
-        return dispatch('createTemplate', { template: data });
-      }
-
-      return request.put(API_ROUTES.dynamicInfoTemplates, {
-        templates: templates.map((v) => {
+      if (templates) {
+        const newTemplates = templates.map((v) => {
           if (v._id === data._id) {
             return data;
           }
 
           return v;
-        }),
-      });
+        });
+
+        const success = await request.put(API_ROUTES.dynamicInfoTemplates, {
+          templates: newTemplates,
+        });
+
+        if (success) {
+          commit(types.FETCH_DYNAMIC_INFO_TEMPLATES_COMPLETED, { templates: newTemplates });
+        }
+      }
     },
 
     /**
@@ -90,13 +96,19 @@ export default {
      * @param id
      * @returns {Promise<void>}
      */
-    async delete(context, { id }) {
+    async delete({ commit }, { id }) {
       const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
 
       if (templates) {
-        await request.put(API_ROUTES.dynamicInfoTemplates, {
-          templates: templates.filter(v => v._id !== id),
+        const newTemplates = templates.filter(v => v._id !== id);
+
+        const success = await request.put(API_ROUTES.dynamicInfoTemplates, {
+          templates: newTemplates,
         });
+
+        if (success) {
+          commit(types.FETCH_DYNAMIC_INFO_TEMPLATES_COMPLETED, { templates: newTemplates });
+        }
       }
     },
   },

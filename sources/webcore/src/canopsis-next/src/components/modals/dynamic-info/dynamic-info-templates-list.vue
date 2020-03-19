@@ -11,6 +11,7 @@
           :items="templates",
           :headers="headers",
           :loading="pending",
+          item-key="_id",
           expand
         )
           template(slot="items", slot-scope="props")
@@ -21,7 +22,7 @@
                   v-btn(
                     icon,
                     small,
-                    @click.stop="showEditTemplateModal(props.item)"
+                    @click.stop="selectTemplate(props.item)"
                   )
                     v-icon done
                   v-btn(
@@ -40,10 +41,10 @@
             v-container.secondary.lighten-2
               v-card
                 v-card-text
-                  v-data-iterator(:items="props.item.values")
-                    v-flex(slot="item", slot-scope="valueProps")
+                  v-data-iterator(:items="props.item.names")
+                    v-flex(slot="item", slot-scope="nameProps")
                       v-card
-                        v-card-title {{ valueProps.item.name }}
+                        v-card-title {{ nameProps.item }}
 </template>
 
 <script>
@@ -96,11 +97,7 @@ export default {
       this.$modals.show({
         name: MODALS.createDynamicInfoTemplate,
         config: {
-          action: async (newTemplate) => {
-            await this.createTemplate({ data: newTemplate });
-
-            this.fetchTemplatesList();
-          },
+          action: newTemplate => this.createTemplate({ data: newTemplate }),
         },
       });
     },
@@ -110,19 +107,34 @@ export default {
         config: {
           template,
 
-          action: async (newTemplate) => {
-            await this.createTemplate({ data: newTemplate });
-
-            this.fetchTemplatesList();
-          },
+          action: newTemplate => this.updateTemplate({ id: template._id, data: newTemplate }),
         },
       });
     },
-    showDeleteTemplateModal() {
-
+    showDeleteTemplateModal(id) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.deleteTemplate({ id }),
+        },
+      });
     },
-    selectTemplate() {
+    async selectTemplate(template) {
+      this.$modals.show({
+        name: MODALS.createDynamicInfo,
+        config: {
+          dynamicInfo: {
+            infos: template.names.map(name => ({ name, value: '' })),
+          },
+          action: async (data) => {
+            if (this.config.action) {
+              await this.config.action(data);
+            }
 
+            this.$modals.hide();
+          },
+        },
+      });
     },
   },
 };
