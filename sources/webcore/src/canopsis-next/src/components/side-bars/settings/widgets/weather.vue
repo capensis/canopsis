@@ -137,6 +137,7 @@
           )
           v-divider
           field-modal-type(v-model="settings.widget.parameters.modalType")
+    copy-widget-id(:widgetId="settings.widget._id")
     v-btn.primary(data-test="submitWeather", @click="submit") {{ $t('common.save') }}
 </template>
 
@@ -147,6 +148,7 @@ import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
+import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 import FieldSortColumn from './fields/weather/sort-column.vue';
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
@@ -170,6 +172,7 @@ export default {
     validator: 'new',
   },
   components: {
+    CopyWidgetId,
     FieldSortColumn,
     FieldRowGridSize,
     FieldTitle,

@@ -10,6 +10,7 @@ import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathBy
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
+import Alarm from '@/views/alarm.vue';
 import AdminRights from '@/views/admin/rights.vue';
 import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
@@ -51,6 +52,18 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: route => route.params.id,
+      },
+    },
+    props: route => ({ id: route.params.id }),
+  },
+  {
+    path: '/get-alarm/:id',
+    name: 'get-alarm',
+    component: Alarm,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.view,
       },
     },
     props: route => ({ id: route.params.id }),

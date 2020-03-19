@@ -56,6 +56,7 @@ export default {
     username: 'Nom d\'utilisateur',
     password: 'Mot de passe',
     authKey: 'Auth. key',
+    widgetId: 'Widget id',
     connect: 'Connexion',
     optional: 'Optionnel',
     logout: 'Se déconnecter',
@@ -1059,6 +1060,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
     pathCopied: 'Chemin copié dans le presse-papier',
+    widgetIdCopied: 'Widget id copié dans le presse-papier',
   },
   filterEditor: {
     title: 'Éditeur de filtre',

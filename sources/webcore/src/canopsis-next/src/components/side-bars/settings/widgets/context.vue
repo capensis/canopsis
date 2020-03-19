@@ -34,6 +34,7 @@
             v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
       v-divider
+    copy-widget-id(:widgetId="settings.widget._id")
     v-btn.primary(data-test="submitContext", @click="submit") {{ $t('common.save') }}
 </template>
 
@@ -44,6 +45,7 @@ import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -61,6 +63,7 @@ export default {
     validator: 'new',
   },
   components: {
+    CopyWidgetId,
     FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,

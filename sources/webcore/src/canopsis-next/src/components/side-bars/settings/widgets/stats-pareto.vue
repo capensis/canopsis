@@ -26,6 +26,7 @@
         v-model="settings.widget.parameters.statsColors"
       )
       v-divider
+    copy-widget-id(:widgetId="settings.widget._id")
     v-btn.primary(
       data-test="paretoDiagramSubmitButton",
       @click="submit"
@@ -38,6 +39,7 @@ import { cloneDeep, omit } from 'lodash';
 import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -49,6 +51,7 @@ import FieldStatsColors from './fields/stats/stats-colors.vue';
 export default {
   name: SIDE_BARS.statsParetoSettings,
   components: {
+    CopyWidgetId,
     FieldRowGridSize,
     FieldTitle,
     FieldFilterEditor,
