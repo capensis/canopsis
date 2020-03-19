@@ -30,6 +30,7 @@
             v-model="props.selected",
             :selectable="selectable",
             :expandable="expandable",
+            :withoutActions="withoutActions",
             :row="props",
             :isEditingMode="isEditingMode",
             :widget="widget",
@@ -97,11 +98,11 @@ export default {
     },
     isEditingMode: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     isTourEnabled: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     loading: {
       type: Boolean,
@@ -109,13 +110,17 @@ export default {
     },
     hasColumns: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     selectable: {
       type: Boolean,
       default: false,
     },
     expandable: {
+      type: Boolean,
+      default: false,
+    },
+    withoutActions: {
       type: Boolean,
       default: false,
     },
@@ -138,11 +143,21 @@ export default {
     },
 
     headers() {
-      if (this.hasColumns) {
-        return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+      if (!this.hasColumns) {
+        return [];
       }
 
-      return [];
+      const headers = [...this.columns];
+
+      if (this.expandable && !this.selectable) {
+        headers.unshift({ sortable: false });
+      }
+
+      if (!this.withoutActions) {
+        headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
+      }
+
+      return headers;
     },
 
     vDataTableClass() {

@@ -1,6 +1,6 @@
 <template lang="pug">
   tr(:data-test="`tableRow-${alarm._id}`")
-    td.pr-0(v-if="selectable && expandable", data-test="rowCheckbox")
+    td.pr-0(v-if="selectable || expandable", data-test="rowCheckbox")
       v-layout(row, align-center)
         template(v-if="selectable")
           v-checkbox-functional(
@@ -29,7 +29,7 @@
         :columnFiltersMap="columnFiltersMap",
         :widget="widget"
       )
-    td
+    td(v-if="!withoutActions")
       actions-panel(
         :item="alarm",
         :widget="widget",
@@ -65,6 +65,10 @@ export default {
       default: false,
     },
     expandable: {
+      type: Boolean,
+      default: false,
+    },
+    withoutActions: {
       type: Boolean,
       default: false,
     },
