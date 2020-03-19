@@ -2,6 +2,7 @@ import { USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
 
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
+import { getSecondsByUnit } from '@/helpers/time';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
@@ -45,6 +46,14 @@ export default {
       };
 
       return isMatch(appInfo, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right]);
+    },
+
+    setPopupTimeout() {
+      if (this.popupTimeout) {
+        Object.entries(this.popupTimeout).forEach(([type, { unit, interval }]) => {
+          this.$popups.setDefaultCloseTime(type, getSecondsByUnit(interval, unit) * 1000);
+        });
+      }
     },
   },
 };

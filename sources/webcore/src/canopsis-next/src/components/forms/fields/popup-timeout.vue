@@ -4,7 +4,7 @@
       v-text-field(
         v-field.number="value.interval",
         v-validate="fieldValidateRules",
-        :label="$t('parameters.userInterfaceForm.fields.popupTimeout')",
+        :label="label",
         :error-messages="errors.collect('retryDelay')",
         :disabled="disabled",
         :min="0",
@@ -44,6 +44,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    label: {
+      type: String,
+      required: true,
     },
   },
   computed: {

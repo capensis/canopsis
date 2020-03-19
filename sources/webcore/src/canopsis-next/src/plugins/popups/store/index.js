@@ -12,7 +12,12 @@ export const types = {
 export default {
   namespaced: true,
   state: {
-    defaultCloseTime: POPUP_AUTO_CLOSE_DELAY,
+    defaultCloseTimeByType: {
+      [POPUP_TYPES.error]: POPUP_AUTO_CLOSE_DELAY,
+      [POPUP_TYPES.success]: POPUP_AUTO_CLOSE_DELAY,
+      [POPUP_TYPES.info]: POPUP_AUTO_CLOSE_DELAY,
+      [POPUP_TYPES.warning]: POPUP_AUTO_CLOSE_DELAY,
+    },
     popups: [],
   },
   getters: {
@@ -25,8 +30,8 @@ export default {
     [types.REMOVE](state, { id }) {
       state.popups = state.popups.filter(v => v.id !== id);
     },
-    [types.SET_DEFAULT_CLOSE_TIME](state, time) {
-      state.defaultCloseTime = time;
+    [types.SET_DEFAULT_CLOSE_TIME](state, { type, time }) {
+      state.defaultCloseTimeByType[type] = time;
     },
   },
   actions: {
@@ -34,7 +39,7 @@ export default {
       id = uid('popup'),
       type,
       text,
-      autoClose = state.defaultCloseTime,
+      autoClose = state.defaultCloseTimeByType[type],
     } = {}) {
       commit(types.ADD, {
         popup: {
@@ -43,8 +48,8 @@ export default {
       });
     },
 
-    setDefaultCloseTime({ commit }, defaultCloseTime = POPUP_AUTO_CLOSE_DELAY) {
-      return commit(types.SET_DEFAULT_CLOSE_TIME, defaultCloseTime);
+    setDefaultCloseTime({ commit }, { type, time = POPUP_AUTO_CLOSE_DELAY }) {
+      return commit(types.SET_DEFAULT_CLOSE_TIME, { type, time });
     },
 
     remove({ commit }, { id }) {

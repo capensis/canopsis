@@ -41,8 +41,8 @@ export default {
             return store.dispatch(`${moduleName}/error`, popup);
           },
 
-          setDefaultCloseTime(time) {
-            return store.dispatch(`${moduleName}/setDefaultCloseTime`, time);
+          setDefaultCloseTime(type, time) {
+            return store.dispatch(`${moduleName}/setDefaultCloseTime`, { type, time });
           },
         };
       },
