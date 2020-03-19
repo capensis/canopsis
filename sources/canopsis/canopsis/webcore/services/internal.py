@@ -135,6 +135,26 @@ def check_values(ws, edition, stack):
     return True
 
 
+def sanitize_popup_timeout(popup_setting):
+    if not isinstance(popup_setting, dict):
+        return {
+            'unit': 's',
+            'interval': 10
+        }
+
+    else:
+        if 'unit' not in popup_setting or popup_setting['unit'] not in VALID_POPUP_UNIT:
+            popup_setting['unit'] = 's'
+        if 'interval' not in popup_setting or not isinstance(popup_setting['interval'], int) or \
+            popup_setting['interval'] < 0:
+            popup_setting['interval'] = 10
+    # remove redundant keys in popup_timeout
+    for k in popup_setting.keys():
+        if k not in VALID_POPUP_PARAMS:
+            popup_setting.pop(k)
+    return popup_setting
+
+
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
@@ -225,28 +245,18 @@ def exports(ws):
                 interface.pop(key)
             elif key == 'popup_timeout':
                 # set default value for popup_timeout
-                if not isinstance(interface[key], dict):
-                    interface[key] = {
-                        'unit': 's',
-                        'interval': 10
-                    }
-
-                else:
-                    if 'unit' not in interface[key] or interface[key]['unit'] not in VALID_POPUP_UNIT:
-                        interface[key]['unit'] = 's'
-                    if 'interval' not in interface[key] or not isinstance(interface[key]['interval'], int):
-                        interface[key]['interval'] = 10
-                # remove redundant keys in popup_timeout
-                for k in interface[key].keys():
-                    if k not in VALID_POPUP_PARAMS:
-                        interface[key].pop(k)
+                interface[key]['info'] = sanitize_popup_timeout(interface[key].get('info'))
+                interface[key]['error'] = sanitize_popup_timeout(interface[key].get('error'))
 
         # set default value for popup_timeout
         if 'popup_timeout' not in interface.keys():
-            interface['popup_timeout'] = {
+            interface['popup_timeout'] = dict(info={
                 'unit': 's',
                 'interval': 10
-            }
+            }, error={
+                'unit': 's',
+                'interval': 10
+            })
 
         language = interface.get('language', None)
         if language is not None and language not in VALID_CANOPSIS_LANGUAGES:
