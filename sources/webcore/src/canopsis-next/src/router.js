@@ -57,8 +57,8 @@ const routes = [
     props: route => ({ id: route.params.id }),
   },
   {
-    path: '/get-alarm/:id',
-    name: 'get-alarm',
+    path: '/alarms/:id',
+    name: 'alarms',
     component: Alarm,
     meta: {
       requiresLogin: true,
