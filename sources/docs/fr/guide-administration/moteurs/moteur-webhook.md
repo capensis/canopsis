@@ -76,7 +76,7 @@ Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont 
 
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
-- `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
+- `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
 
 

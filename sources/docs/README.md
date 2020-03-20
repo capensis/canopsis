@@ -83,11 +83,10 @@ De la même façon, les liens internes comportant des ancres doivent suivre
 
 ### Installation des pré-requis
 
-On a besoin d'installer une version récente de mkdocs (https://www.mkdocs.org/) avec le thème `material` (https://squidfunk.github.io/mkdocs-material/) associé :
+On a besoin d'installer une version récente de [mkdocs](https://www.mkdocs.org/) avec le thème [`material`](https://squidfunk.github.io/mkdocs-material/) associé :
 
 ```sh
-$ pip install mkdocs
-$ pip install mkdocs-material
+$ python3 -m pip install mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin
 ```
 
 Les réglages de mkdocs sont dans le fichier `mkdocs.yml` à la racine du dépôt.
