@@ -14,8 +14,11 @@
           :disabled="disabled",
           :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
-    popup-timeout(v-model="form.popupTimeout.info", :label="$t('parameters.userInterfaceForm.fields.infoPopupTimeout')")
-    popup-timeout(
+    popup-timeout-field(
+      v-model="form.popupTimeout.info",
+      :label="$t('parameters.userInterfaceForm.fields.infoPopupTimeout')"
+    )
+    popup-timeout-field(
       v-model="form.popupTimeout.error",
       :label="$t('parameters.userInterfaceForm.fields.errorPopupTimeout')"
     )
@@ -88,13 +91,13 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
-import PopupTimeout from '@/components/forms/fields/popup-timeout.vue';
+import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PopupTimeout, FileSelector, TextEditor },
+  components: { PopupTimeoutField, FileSelector, TextEditor },
   mixins: [entitiesInfoMixin],
   props: {
     disabled: {
