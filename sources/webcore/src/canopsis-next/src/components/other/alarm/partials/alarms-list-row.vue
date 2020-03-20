@@ -61,7 +61,6 @@ export default {
   props: {
     selected: {
       type: Boolean,
-      required: false,
       default: false,
     },
     row: {
