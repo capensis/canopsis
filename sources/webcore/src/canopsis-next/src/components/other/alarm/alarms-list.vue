@@ -56,8 +56,6 @@
       :isTourEnabled="isTourEnabled",
       :hasColumns="hasColumns",
       :columns="columns",
-      selectable,
-      expandable,
       ref="alarmsTable"
     )
       v-layout.white(v-show="alarmsMeta.total", align-center)

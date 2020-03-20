@@ -12,11 +12,11 @@
         :total-items="totalItems",
         :pagination="pagination",
         :loading="loading || alarmColumnFiltersPending",
-        :select-all="selectable",
-        :expand="expandable",
         data-test="tableWidget",
         ref="dataTable",
         item-key="_id",
+        expand,
+        select-all,
         hide-actions,
         @update:pagination="updatePaginationHandler"
       )
@@ -29,8 +29,6 @@
           alarms-list-row(
             v-model="props.selected",
             :selectable="selectable",
-            :expandable="expandable",
-            :withoutActions="withoutActions",
             :row="props",
             :isEditingMode="isEditingMode",
             :widget="widget",
@@ -116,14 +114,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    expandable: {
-      type: Boolean,
-      default: false,
-    },
-    withoutActions: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -147,17 +137,7 @@ export default {
         return [];
       }
 
-      const headers = [...this.columns];
-
-      if (this.expandable && !this.selectable) {
-        headers.unshift({ sortable: false });
-      }
-
-      if (!this.withoutActions) {
-        headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
-      }
-
-      return headers;
+      return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
     },
 
     vDataTableClass() {
