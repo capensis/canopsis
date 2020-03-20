@@ -11,12 +11,12 @@
         :headers="headers",
         :total-items="totalItems",
         :pagination="pagination",
+        :select-all="selectable",
         :loading="loading || alarmColumnFiltersPending",
         data-test="tableWidget",
         ref="dataTable",
         item-key="_id",
         expand,
-        select-all,
         hide-actions,
         @update:pagination="updatePaginationHandler"
       )
@@ -137,7 +137,13 @@ export default {
         return [];
       }
 
-      return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+      const filters = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+
+      if (!this.selectable) {
+        filters.unshift({ sortable: false });
+      }
+
+      return filters;
     },
 
     vDataTableClass() {

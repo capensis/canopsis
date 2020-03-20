@@ -2,17 +2,18 @@
   tr(:data-test="`tableRow-${alarm._id}`")
     td.pr-0(data-test="rowCheckbox")
       v-layout(row, align-center)
-        v-checkbox-functional(
-          v-if="!isResolvedAlarm",
-          v-field="selected",
-          hide-details
-        )
-        v-checkbox-functional(
-          v-else,
-          :value="false",
-          disabled,
-          hide-details
-        )
+        template(v-if="selectable")
+          v-checkbox-functional(
+            v-if="!isResolvedAlarm",
+            v-field="selected",
+            hide-details
+          )
+          v-checkbox-functional(
+            v-else,
+            :value="false",
+            disabled,
+            hide-details
+          )
         v-layout.ml-2(align-center)
           v-btn.ma-0(
             :class="expandButtonClass",
@@ -60,6 +61,10 @@ export default {
   },
   props: {
     selected: {
+      type: Boolean,
+      default: false,
+    },
+    selectable: {
       type: Boolean,
       default: false,
     },

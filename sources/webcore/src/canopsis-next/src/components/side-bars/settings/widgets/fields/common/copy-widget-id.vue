@@ -1,6 +1,7 @@
 <template lang="pug">
   v-layout.pl-3(justify-end, align-center)
-    div {{ $t('common.widgetId') }}: {{ widgetId }}
+    div {{ $t('common.widgetId') }}:
+      span.pl-1.font-italic.grey--text.text--darken-2 {{ widgetId }}
     v-tooltip(left)
       v-btn(
         v-clipboard:copy="widgetId",
