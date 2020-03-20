@@ -3,8 +3,7 @@
     :widget="widget",
     :alarms="alarmItems",
     :columns="columns",
-    hasColumns,
-    withoutActions
+    hasColumns
   )
 </template>
 

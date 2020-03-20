@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-flex
+  v-flex.white
     v-flex.px-3(v-show="selectedIds.length", xs12)
       mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
