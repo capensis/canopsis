@@ -19,7 +19,7 @@ class TestMetaAlarmRuleWebservice(unittest.TestCase):
         'patterns': None,
     }, {
         'name': 'test_ma_1',
-        'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }]}',
+        'config': '{"alarm_patterns": [{"v": {"state": {"val": 3} } }]}',
         'rule_type': 'time',
         'patterns': None,
     }]
@@ -32,13 +32,18 @@ class TestMetaAlarmRuleWebservice(unittest.TestCase):
     }, {
         'name': 'test_valid_ma2',
         'patterns': None,
-        'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }]}',
+        'config': '{"alarm_patterns": [{"v": {"state": {"val": 3} } }]}',
         'rule_type': 'attribute',
     }, {
         'name': 'test_valid_ma3',
         'patterns': None,
-        'config': '{"attribute_patterns": [{"v": {"state": {"val": 3} } }], "threshold_count": 3, "time_interval": 10}',
+        'config': '{"alarm_patterns": [{"v": {"state": {"val": 3} } }], "threshold_count": 3, "time_interval": 10}',
         'rule_type': 'complex',
+    }, {
+        'name': 'test_valid_ma4',
+        'patterns': None,
+        'config': '{"entity_patterns": [{"infos": {"customer": {"value": "CAPENSIS"} } }] }',
+        'rule_type': 'attribute',
     }]
 
     @classmethod

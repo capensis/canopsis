@@ -19,6 +19,9 @@ VALID_CONFIG_PARAMS = {
     'time_interval': ['time', 'complex'],
     'threshold_count': ['complex'],
     'threshold_rate': ['complex'],
+    'alarm_patterns': ['attribute', 'complex'],
+    'entity_patterns': ['attribute', 'complex'],
+    'event_patterns': ['attribute', 'complex'],
     'attribute_patterns': ['attribute', 'complex'],
 }
 
