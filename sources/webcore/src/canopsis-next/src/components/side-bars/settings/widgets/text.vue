@@ -31,7 +31,6 @@
           v-divider
           field-date-interval(v-model="settings.widget.parameters.dateInterval")
           v-divider
-    copy-widget-id(:widgetId="settings.widget._id")
     v-btn.primary(data-test="submitText", @click="submit") {{ $t('common.save') }}
 </template>
 
@@ -42,7 +41,6 @@ import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import entitiesInfoMixin from '@/mixins/entities/info';
-import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -57,7 +55,6 @@ export default {
     validator: 'new',
   },
   components: {
-    CopyWidgetId,
     FieldRowGridSize,
     FieldTitle,
     FieldDateInterval,

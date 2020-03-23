@@ -33,7 +33,6 @@
       v-divider
       field-stats-annotation-line(v-model="settings.widget.parameters.annotationLine")
       v-divider
-    copy-widget-id(:widgetId="settings.widget._id")
     v-btn.primary(data-test="statsCurvesSubmitButton", @click="submit") {{ $t('common.save') }}
 </template>
 
@@ -43,7 +42,6 @@ import { cloneDeep } from 'lodash';
 import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
-import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -60,7 +58,6 @@ export default {
     validator: 'new',
   },
   components: {
-    CopyWidgetId,
     FieldRowGridSize,
     FieldTitle,
     FieldFilterEditor,

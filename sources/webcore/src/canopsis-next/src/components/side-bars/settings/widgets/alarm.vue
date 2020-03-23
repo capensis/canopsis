@@ -79,7 +79,6 @@
             v-divider
             field-fast-ack-output(v-model="settings.widget.parameters.fastAckOutput")
       v-divider
-    copy-widget-id(:widgetId="settings.widget._id")
     v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>
 
@@ -92,7 +91,6 @@ import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
-import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
@@ -118,7 +116,6 @@ export default {
     validator: 'new',
   },
   components: {
-    CopyWidgetId,
     FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,
