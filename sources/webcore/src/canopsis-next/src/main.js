@@ -14,7 +14,6 @@ import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
-import sanitizeHTML from 'sanitize-html';
 
 import 'vue-tour/dist/vue-tour.css';
 import 'vuetify/dist/vuetify.min.css';
@@ -36,6 +35,7 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
+import SanitizePlugin from '@/plugins/sanitize';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
@@ -149,6 +149,7 @@ Vue.use(SetSeveralPlugin);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);
 Vue.use(VuetifyReplacerPlugin);
+Vue.use(SanitizePlugin, { defaultOptions: config.SANITIZE_TEXT_EDITOR_OPTIONS });
 
 Vue.config.productionTip = false;
 
@@ -166,7 +167,6 @@ if (process.env.NODE_ENV === 'development') {
 
 Vue.prototype.$constants = deepFreeze(constants);
 Vue.prototype.$config = deepFreeze(config);
-Vue.prototype.$sanitize = sanitizeHTML;
 
 new Vue({
   router,

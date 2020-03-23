@@ -65,7 +65,10 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
+          await this.config.action({
+            column: this.form.selectedColumn.value,
+            template: this.$sanitize(this.form.template),
+          });
         }
 
         this.$modals.hide();
