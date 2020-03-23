@@ -139,7 +139,7 @@ export default {
         language: this.language || DEFAULT_LOCALE,
         footer: this.footer || '',
         description: this.description || '',
-        popupTimeout: this.popupTimeout || {},
+        popupTimeout: this.popupTimeout ? { ...this.popupTimeout } : {},
       };
     },
 
