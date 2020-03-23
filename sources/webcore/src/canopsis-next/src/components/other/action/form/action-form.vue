@@ -34,8 +34,7 @@
       v-tab-item
         webhook-form-hook-tab(
           ref="hookForm",
-          v-field="form.generalParameters.hook",
-          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
+          v-field="form.generalParameters.hook"
         )
 </template>
 
