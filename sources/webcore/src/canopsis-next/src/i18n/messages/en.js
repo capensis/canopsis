@@ -1326,6 +1326,7 @@ export default {
         requestUrl: 'Request URL',
         retryDelay: 'Delay',
         retryCount: 'Repeat',
+        enabled: 'Enabled',
       },
     },
     tabs: {
