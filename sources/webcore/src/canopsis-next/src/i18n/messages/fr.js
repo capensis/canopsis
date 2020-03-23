@@ -1219,6 +1219,7 @@ export default {
         retryDelay: 'Intervalle',
         retryUnit: 'Unité',
         retryCount: 'Nombre d\'essais',
+        enabled: 'Activé',
       },
     },
     tabs: {
