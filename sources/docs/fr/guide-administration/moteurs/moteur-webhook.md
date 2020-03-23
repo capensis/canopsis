@@ -12,6 +12,8 @@ Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement e
 
 Depuis la `3.37.0`, la fonction de répétition est disponible.
 
+Depuis la `3.39.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
+
 Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
@@ -50,6 +52,7 @@ Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dan
 Une règle est un document JSON contenant les paramètres suivants :
 
  - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `enabled` (requis) : le webhook est-il activé ou non (booléen).
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
@@ -172,6 +175,7 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "hook" : {
         "triggers" : [
             "create"
@@ -224,6 +228,7 @@ Les webhooks sont stockés dans la collection MongoDB `webhooks`.
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior" : false,
     "request" : {
         "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",

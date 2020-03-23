@@ -23,6 +23,7 @@ Crée un nouveau Webhook à partir du corps de la requête.
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior": false,
     "hook" : {
         "triggers" : [
@@ -73,6 +74,7 @@ Crée un nouveau Webhook à partir du corps de la requête.
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior": false,
     "hook" : {
         "triggers" : [
@@ -193,6 +195,7 @@ Modifie un Webhook à partir du corps de la requête.
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior": true,
     "hook" : {
         "triggers" : [
@@ -243,6 +246,7 @@ Modifie un Webhook à partir du corps de la requête.
 ```sh
 curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior": true,
     "hook" : {
         "triggers" : [
@@ -381,6 +385,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "hook" : {
         "triggers" : [
             "create"
