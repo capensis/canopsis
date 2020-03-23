@@ -1,33 +1,23 @@
 <template lang="pug">
   v-layout
-    v-flex(xs4)
+    v-flex(xs6)
       v-text-field(
-        v-field.number="value.count",
+        v-field.number="delay.value",
         v-validate="fieldValidateRules",
-        :label="$t('modals.createWebhook.fields.retryCount')",
-        :error-messages="errors.collect('retryCount')",
+        :label="$t('modals.createAction.fields.delay')",
+        :error-messages="errors.collect('delayValue')",
         :min="0",
-        name="retryCount",
+        name="delayValue",
         type="number"
       )
-    v-flex(xs4)
-      v-text-field(
-        v-field.number="value.delay",
-        v-validate="fieldValidateRules",
-        :label="$t('modals.createWebhook.fields.retryDelay')",
-        :error-messages="errors.collect('retryDelay')",
-        :min="0",
-        name="retryDelay",
-        type="number"
-      )
-    v-flex(xs4)
+    v-flex(xs6)
       v-select(
-        v-field="value.unit",
+        v-field="delay.unit",
         v-validate="unitValidateRules",
         :items="availableUnits",
-        :label="$t('modals.createWebhook.fields.retryUnit')",
-        :error-messages="errors.collect('retryUnit')",
-        name="retryUnit",
+        :label="$t('modals.createAction.fields.delayUnit')",
+        :error-messages="errors.collect('delayUnit')",
+        name="delayUnit",
         clearable
       )
 </template>
@@ -38,8 +28,12 @@ import { PERIODIC_REFRESH_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
+  model: {
+    prop: 'delay',
+    event: 'input',
+  },
   props: {
-    value: {
+    delay: {
       type: Object,
       default: () => ({}),
     },
@@ -50,7 +44,7 @@ export default {
   },
   computed: {
     isRequired() {
-      return this.required || isNumber(this.value.count) || isNumber(this.value.delay) || Boolean(this.value.unit);
+      return this.required || isNumber(this.delay.value) || Boolean(this.delay.unit);
     },
     availableUnits() {
       return Object.values(PERIODIC_REFRESH_UNITS).map(({ value, text }) => ({
@@ -62,7 +56,7 @@ export default {
       return {
         required: this.isRequired,
         numeric: true,
-        min_value: 0,
+        min_value: 1,
       };
     },
     unitValidateRules() {

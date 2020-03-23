@@ -944,6 +944,9 @@ export default {
         message: 'Message',
         duration: 'Duration',
         output: 'Note',
+        ticket: 'Associate ticket',
+        delay: 'Delay',
+        delayUnit: 'Unit',
       },
     },
     createHeartbeat: {
@@ -1236,6 +1239,7 @@ export default {
     table: {
       id: 'Id',
       type: 'Type',
+      delay: 'Delay',
       expand: {
         tabs: {
           general: 'General',

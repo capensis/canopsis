@@ -840,6 +840,9 @@ export default {
         message: 'Message',
         duration: 'Durée',
         output: 'Note',
+        ticket: 'Numéro du ticket',
+        delay: 'Intervalle',
+        delayUnit: 'Unité',
       },
     },
     statsDateInterval: {
@@ -1140,6 +1143,7 @@ export default {
   actions: {
     title: 'Actions',
     addAction: 'Ajouter une action',
+    delay: 'Intervalle',
     table: {
       id: 'Id',
       type: 'Type',
