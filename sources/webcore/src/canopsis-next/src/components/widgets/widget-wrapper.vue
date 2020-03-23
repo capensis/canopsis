@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    template(v-if="widget.title || isEditingMode")
+    template(v-show="widget.title || isEditingMode")
       v-card-title.lighten-1.pa-1
         v-layout(justify-space-between, align-center)
           v-flex
@@ -28,7 +28,7 @@
         :tabId="tab._id",
         :isEditingMode="isEditingMode"
       )
-    copy-widget-id(v-if="isEditingMode", :widgetId="widget._id")
+    copy-widget-id(v-show="isEditingMode", :widgetId="widget._id")
 </template>
 
 <script>
