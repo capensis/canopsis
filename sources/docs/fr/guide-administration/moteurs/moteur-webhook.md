@@ -50,6 +50,7 @@ Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dan
 Une règle est un document JSON contenant les paramètres suivants :
 
  - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `enabled` (requis) : le webhook est-il activé ou non (booléen).
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
@@ -172,6 +173,7 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "hook" : {
         "triggers" : [
             "create"
@@ -224,6 +226,7 @@ Les webhooks sont stockés dans la collection MongoDB `webhooks`.
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior" : false,
     "request" : {
         "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
