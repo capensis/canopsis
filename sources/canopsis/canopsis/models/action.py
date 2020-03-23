@@ -21,8 +21,9 @@ class Action(object):
     FIELDS = 'fields'
     REGEX = 'regex'
     PARAMETERS = 'parameters'
+    DELAY = 'delay'
 
-    def __init__(self, _id, type_, hook=None, fields=None, regex=None, parameters=None,
+    def __init__(self, _id, type_, hook=None, fields=None, regex=None, parameters=None, delay="",
                  *args, **kwargs):
         """
         :param str _id: action id
@@ -44,6 +45,7 @@ class Action(object):
         self.fields = fields
         self.regex = regex
         self.parameters = parameters
+        self.delay = delay
 
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
@@ -83,6 +85,7 @@ class Action(object):
             self.FIELDS: self.fields,
             self.REGEX: self.regex,
             self.PARAMETERS: self.parameters,
+            self.DELAY: self.delay
         }
 
         return dictionnary
