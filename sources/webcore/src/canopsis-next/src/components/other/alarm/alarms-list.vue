@@ -74,7 +74,6 @@
           alarms-list-row(
             v-model="props.selected",
             :row="props",
-            :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
             :columnFiltersMap="columnFiltersMap",
@@ -169,10 +168,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     tabId: {
       type: String,

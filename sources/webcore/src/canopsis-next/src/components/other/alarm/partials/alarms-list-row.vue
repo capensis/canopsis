@@ -32,8 +32,7 @@
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :isResolvedAlarm="isResolvedAlarm",
-        :isEditingMode="isEditingMode"
+        :isResolvedAlarm="isResolvedAlarm"
       )
 </template>
 
@@ -79,10 +78,6 @@ export default {
     columns: {
       type: Array,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     isTourEnabled: {
       type: Boolean,

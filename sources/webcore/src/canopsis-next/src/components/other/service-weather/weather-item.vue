@@ -6,7 +6,7 @@
     @click.native="showAdditionalInfoModal"
   )
     v-btn.helpBtn.ma-0(
-      v-if="isEditingMode && hasVariablesHelpAccess",
+      v-if="hasVariablesHelpAccess",
       icon,
       small,
       @click.stop="showVariablesHelpModal(watcher)"
@@ -60,10 +60,6 @@ export default {
     },
     widget: {
       type: Object,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
   },
   asyncComputed: {
