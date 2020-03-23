@@ -86,7 +86,7 @@ De la même façon, les liens internes comportant des ancres doivent suivre
 On a besoin d'installer une version récente de [mkdocs](https://www.mkdocs.org/) avec le thème [`material`](https://squidfunk.github.io/mkdocs-material/) associé :
 
 ```sh
-$ python3 -m pip install mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin
+$ python3 -m pip install -r ./sources/docs/requirements.txt
 ```
 
 Les réglages de mkdocs sont dans le fichier `mkdocs.yml` à la racine du dépôt.
