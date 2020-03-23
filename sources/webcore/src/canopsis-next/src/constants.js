@@ -318,6 +318,14 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
+  pbhenter: {
+    color: COLORS.entitiesEvents.pbhenter,
+    icon: 'pause',
+  },
+  pbhleave: {
+    color: COLORS.entitiesEvents.pbhleave,
+    icon: 'play_arrow',
+  },
 };
 
 export const UNKNOWN_VALUE_STYLE = {
