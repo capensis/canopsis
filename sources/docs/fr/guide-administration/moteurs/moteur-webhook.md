@@ -12,6 +12,8 @@ Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement e
 
 Depuis la `3.37.0`, la fonction de répétition est disponible.
 
+Depuis la `3.38.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
+
 Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
