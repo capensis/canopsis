@@ -3,7 +3,7 @@ import { omit, isUndefined, isEmpty } from 'lodash';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
-import prepareMainFilterToQueryFilter from './filter';
+import { prepareMainFilterToQueryFilter, getMainFilter } from './filter';
 
 /**
  * WIDGET CONVERTERS
@@ -37,8 +37,6 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
-    mainFilter,
-    mainFilterCondition,
   } = widget.parameters;
 
   const query = {
@@ -47,10 +45,6 @@ export function convertAlarmWidgetToQuery(widget) {
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
   };
-
-  if (!isEmpty(mainFilter)) {
-    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
-  }
 
   if (!isEmpty(liveReporting)) {
     query.tstart = liveReporting.tstart;
@@ -225,18 +219,10 @@ export function convertStatsParetoWidgetToQuery(widget) {
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   const query = {};
-  const {
-    itemsPerPage,
-    mainFilter,
-    mainFilterCondition,
-  } = widgetPreferences;
+  const { itemsPerPage } = widgetPreferences;
 
   if (itemsPerPage) {
     query.limit = itemsPerPage;
-  }
-
-  if (!isEmpty(mainFilter)) {
-    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   return query;
@@ -250,19 +236,10 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  */
 export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences = {} }) {
   const query = {};
-  const {
-    itemsPerPage,
-    mainFilter,
-    mainFilterCondition,
-    selectedTypes,
-  } = widgetPreferences;
+  const { itemsPerPage, selectedTypes } = widgetPreferences;
 
   if (itemsPerPage) {
     query.limit = itemsPerPage;
-  }
-
-  if (!isEmpty(mainFilter)) {
-    query.mainFilter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   if (!isEmpty(selectedTypes)) {
@@ -323,4 +300,37 @@ export function convertWidgetToQuery(widget) {
     default:
       return {};
   }
+}
+
+/**
+ * Prepare query by widget and userPreference objects
+ *
+ * @param {Object} widget
+ * @param {Object} userPreference
+ * @returns {Object}
+ */
+export function prepareQuery(widget, userPreference) {
+  const widgetQuery = convertWidgetToQuery(widget);
+  const userPreferenceQuery = convertUserPreferenceToQuery(userPreference);
+  const query = {
+    ...widgetQuery,
+    ...userPreferenceQuery,
+  };
+
+  const WIDGET_FILTER_KEYS_MAP = {
+    [WIDGET_TYPES.alarmList]: 'filter',
+    [WIDGET_TYPES.context]: 'mainFilter',
+  };
+
+  const filterKey = WIDGET_FILTER_KEYS_MAP[widget.type];
+
+  if (filterKey) {
+    const activeMainFilter = getMainFilter(widget, userPreference);
+
+    if (activeMainFilter) {
+      query[filterKey] = prepareMainFilterToQueryFilter(activeMainFilter);
+    }
+  }
+
+  return query;
 }

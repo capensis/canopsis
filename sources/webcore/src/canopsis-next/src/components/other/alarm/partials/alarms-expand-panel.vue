@@ -38,10 +38,6 @@ export default {
     MoreInfos,
   },
   props: {
-    isHTMLEnabled: {
-      type: Boolean,
-      default: false,
-    },
     alarm: {
       type: Object,
       required: true,
@@ -61,6 +57,9 @@ export default {
     };
   },
   computed: {
+    isHTMLEnabled() {
+      return this.widget.parameters.isHtmlEnabledOnTimeLine;
+    },
     moreInfosTabClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 2);

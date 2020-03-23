@@ -83,7 +83,7 @@
 import { omit, isString } from 'lodash';
 
 import { USERS_RIGHTS } from '@/constants';
-import prepareMainFilterToQueryFilter from '@/helpers/filter';
+import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';

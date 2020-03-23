@@ -25,13 +25,15 @@
               color="white"
             )
               v-icon(small, color="error") close
-        v-card-text.pa-2(data-test="alarmInfoPopupContent", v-html="popupTextContent")
+        v-card-text.pa-2(data-test="alarmInfoPopupContent")
+          v-runtime-template(:template="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
 <script>
 import { get } from 'lodash';
+import VRuntimeTemplate from 'v-runtime-template';
 
 import { compile } from '@/helpers/handlebars';
 
@@ -53,6 +55,7 @@ import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue
  */
 export default {
   components: {
+    VRuntimeTemplate,
     Ellipsis,
     AlarmColumnValueState,
     AlarmColumnValueLinks,

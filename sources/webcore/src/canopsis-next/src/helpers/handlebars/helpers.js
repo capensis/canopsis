@@ -25,6 +25,8 @@ function prepareAttributes(attributes) {
 /**
  * Convert date to long format
  *
+ * Example: {{date 1000000}} -> 12/01/1970 20:46:40
+ *
  * @param {string|number} date
  * @returns {string}
  */
@@ -64,18 +66,6 @@ export function internalLinkHelper(options) {
  */
 export function durationHelper(second) {
   return durationFilter(second, undefined, DATETIME_FORMATS.refreshFieldFormat);
-}
-
-/**
- * Return date in long format
- *
- * Example: {{date 1000000}} -> 12/01/1970 20:46:40
- *
- * @param time
- * @returns {string}
- */
-export function dateHelper(time) {
-  return dateFilter(time, 'long');
 }
 
 /**
