@@ -1,4 +1,4 @@
-import { USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
+import { POPUP_TYPES, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
 
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
@@ -48,11 +48,33 @@ export default {
       return isMatch(appInfo, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right]);
     },
 
+    setErrorPopupTime() {
+      const { interval, unit } = this.popup.error;
+      const delay = getSecondsByUnit(interval, unit) * 1000;
+
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.error, delay);
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.warning, delay);
+    },
+
+    setInfoPopupTime() {
+      const { interval, unit } = this.popup.info;
+      const delay = getSecondsByUnit(interval, unit) * 1000;
+
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.infos, delay);
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.success, delay);
+    },
+
     setPopupTimeout() {
-      if (this.popupTimeout) {
-        Object.entries(this.popupTimeout).forEach(([type, { unit, interval }]) => {
-          this.$popups.setDefaultCloseTime(type, getSecondsByUnit(interval, unit) * 1000);
-        });
+      if (!this.popupTimeout) {
+        return;
+      }
+
+      if (this.popup.error) {
+        this.setErrorPopupTime();
+      }
+
+      if (this.popup.info) {
+        this.setInfoPopupTime();
       }
     },
   },
