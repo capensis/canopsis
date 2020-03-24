@@ -25,6 +25,8 @@ import { find } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { sanitize } from '@/helpers/sanitizer';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
@@ -67,7 +69,7 @@ export default {
         if (this.config.action) {
           await this.config.action({
             column: this.form.selectedColumn.value,
-            template: this.$sanitize(this.form.template),
+            template: sanitize(this.form.template),
           });
         }
 

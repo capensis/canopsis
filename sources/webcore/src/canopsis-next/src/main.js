@@ -35,7 +35,6 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
-import SanitizePlugin from '@/plugins/sanitize';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
@@ -149,7 +148,6 @@ Vue.use(SetSeveralPlugin);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ToursPlugin);
 Vue.use(VuetifyReplacerPlugin);
-Vue.use(SanitizePlugin, { defaultOptions: config.SANITIZE_TEXT_EDITOR_OPTIONS });
 
 Vue.config.productionTip = false;
 

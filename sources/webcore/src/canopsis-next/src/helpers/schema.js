@@ -2,6 +2,10 @@ import { schema } from 'normalizr';
 import { get } from 'lodash';
 
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
+import { WIDGET_TYPES } from '@/constants';
+
+import { defaultSanitizer, getDefaultSanitizerForArray } from '@/helpers/sanitizer';
+import { setSeveralFields } from '@/helpers/immutable';
 
 /**
  * If parent has children we should use this processStrategy
@@ -63,6 +67,45 @@ export const childMergeStrategy = (entityA, entityB) => {
   }
 
   return result;
+};
+
+/**
+ * Process strategy for the widget schema
+ *
+ * @param {Object} widget
+ * @returns {{parameters: (Object|Array)}|*}
+ */
+export const widgetProcessStrategy = (widget) => {
+  const templatesMap = {
+    [WIDGET_TYPES.alarmList]: {
+      moreInfoTemplate: defaultSanitizer,
+      infoPopups: getDefaultSanitizerForArray('template'),
+    },
+
+    [WIDGET_TYPES.weather]: {
+      entityTemplate: defaultSanitizer,
+      modalTemplate: defaultSanitizer,
+      blockTemplate: defaultSanitizer,
+    },
+
+    [WIDGET_TYPES.text]: {
+      template: defaultSanitizer,
+    },
+  };
+
+  const widgetTemplatesMap = templatesMap[widget.type];
+
+  if (widgetTemplatesMap) {
+    const parameters = setSeveralFields(widget.parameters, widgetTemplatesMap);
+
+    return {
+      ...widget,
+
+      parameters,
+    };
+  }
+
+  return widget;
 };
 
 /* eslint-disable */

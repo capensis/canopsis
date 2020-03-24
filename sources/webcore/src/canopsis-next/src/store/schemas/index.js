@@ -1,7 +1,13 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
+
+import {
+  childProcessStrategy,
+  childMergeStrategy,
+  parentProcessStrategy,
+  widgetProcessStrategy,
+} from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
@@ -35,6 +41,7 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
 
 export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
   idAttribute: '_id',
+  processStrategy: widgetProcessStrategy,
 });
 
 export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {

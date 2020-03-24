@@ -23,6 +23,8 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { sanitize } from '@/helpers/sanitizer';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
@@ -49,7 +51,7 @@ export default {
   methods: {
     async submit() {
       if (this.config.action) {
-        await this.config.action(this.$sanitize(this.text));
+        await this.config.action(sanitize(this.text));
       }
 
       this.$modals.hide();
