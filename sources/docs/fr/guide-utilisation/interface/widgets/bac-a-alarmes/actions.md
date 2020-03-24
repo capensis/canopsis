@@ -15,6 +15,7 @@ Les différentes actions possibles sur cette alarme sont :
     *  [Comportement périodique](#comportement-périodique)
     *  [Lister les comportements périodiques](#lister-les-comportements-périodiques)
     *  [Historique](#historique)
+    *  [Liste des variables disponibles](#liste-des-variables-disponibles)
 
 ## Accuser réception (ACK)
 
@@ -172,3 +173,12 @@ L'action 'Historique' permet de consulter l'historique de cette alarme durant le
 ![Historique](./img/history.png  "Historique")
 
 En utilisant le [suivi personnalisé](../../bac-a-alarmes/#suivi-personnalise), vous pouvez modifier l'intervalle de dates pour cet historique.
+
+### Liste des variables disponibles
+
+Cette action permet de montrer à l'utilisateur l'ensemble des variables disponibles concernant l'alarme et son entité.  
+
+![Liste des variables disponibles](./img/available_variables.png  "Liste des variables disponibles")
+
+!!! Info
+    Cette action est autorisée grâce au droit `common_variablesHelp(Access to available variables list)`.
