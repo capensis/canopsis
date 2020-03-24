@@ -32,6 +32,9 @@ canopsis_redis_host: localhost
 canopsis_redis_port: "6379"
 canopsis_redis_dbnum: 0
 
+# use 'cat' if you have CAT engines
+canopsis_stack_type: core
+
 # use 'go' if you want to use Go engines
 canopsis_engines_type: python
 
@@ -80,3 +83,22 @@ canopsis_go_engines:
     name: engine-heartbeat
   -
     name: engine-watcher
+
+# When choosing canopsis_engines_type: "go"
+# and canopsis_stack_type: "cat"
+canopsis_cat_go_additional_engines:
+  -
+    name: engine-dynamic-infos
+  -
+    name: engine-webhook
+
+# When choosing canopsis_stack_type: "cat"
+canopsis_cat_common_additional_engines:
+  -
+    module: task_ackcentreon
+    name: task_ackcentreon
+
+# Same as above, but snmp engine has a broken name…
+canopsis_cat_common_additional_engines_broken_names:
+  -
+    name: snmp

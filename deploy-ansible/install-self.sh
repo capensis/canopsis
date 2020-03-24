@@ -14,6 +14,11 @@ deploy-go)
 	;;
 esac
 
+stack_type=core
+if [ -d /opt/canopsis/lib/python2.7/site-packages/canopsis_cat ]; then
+	stack_type=cat
+fi
+
 workdir=$(dirname $(readlink -e $0))
 cd ${workdir}
 
@@ -23,4 +28,5 @@ source ${user_home}/venv-ansible/bin/activate
 
 ansible-playbook playbook/canopsis.yml \
     -e "canopsis_engines_type=$engines_type" \
+    -e "canopsis_stack_type=$stack_type" \
     -i inventory.self
