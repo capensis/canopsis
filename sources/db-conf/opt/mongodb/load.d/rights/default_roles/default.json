@@ -577,6 +577,10 @@
         "listalarm_addFilter": {
             "checksum": 1,
             "desc": ""
+        },
+        "common_variablesHelp": {
+            "checksum": 1,
+            "desc": ""
         }
     },
 	"defaultview": "view.current_alarms"

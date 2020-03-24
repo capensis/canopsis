@@ -30,7 +30,6 @@
             v-model="props.selected",
             :selectable="selectable",
             :row="props",
-            :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
             :columnFiltersMap="columnFiltersMap",
@@ -93,10 +92,6 @@ export default {
     pagination: {
       type: Object,
       required: false,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     isTourEnabled: {
       type: Boolean,

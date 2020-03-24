@@ -52,7 +52,6 @@
       :totalItems="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
-      :isEditingMode="isEditingMode",
       :isTourEnabled="isTourEnabled",
       :hasColumns="hasColumns",
       :columns="columns",
@@ -129,10 +128,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     tabId: {
       type: String,
