@@ -36,6 +36,7 @@ import { get } from 'lodash';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import { compile } from '@/helpers/handlebars';
+import { sanitize } from '@/helpers/sanitizer';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
@@ -107,7 +108,7 @@ export default {
 
     sanitizedValue() {
       try {
-        return this.$sanitize(this.value);
+        return sanitize(this.value);
       } catch (err) {
         console.warn(err);
 
