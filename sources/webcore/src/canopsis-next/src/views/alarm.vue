@@ -35,18 +35,18 @@ export default {
     },
   },
   computed: {
-    ...entitiesMapGetters({ getWidgetItem: 'getItem' }),
+    ...entitiesMapGetters({ getEntityItem: 'getItem' }),
 
     widgetId() {
       return this.$route.query.widgetId;
     },
 
     alarmItems() {
-      return this.alarm ? [this.alarm] : [];
+      return this.getAlarmsList([this.id]);
     },
 
     widget() {
-      const widget = this.getWidgetItem(ENTITIES_TYPES.widget, this.widgetId);
+      const widget = this.getEntityItem(ENTITIES_TYPES.widget, this.widgetId);
 
       return !widget || widget.type !== WIDGET_TYPES.alarmList
         ? generateWidgetByType(WIDGET_TYPES.alarmList)
