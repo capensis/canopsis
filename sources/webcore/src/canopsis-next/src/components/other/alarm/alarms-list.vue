@@ -36,48 +36,29 @@
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-btn(data-test="alarmsDateInterval", @click="showEditLiveReportModal", icon, small)
-          v-icon(:color="activeRange ? 'primary' : 'black'") schedule
-      v-flex.px-3(v-show="selectedIds.length", xs12)
-        mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
-    no-columns-table(v-if="!hasColumns")
-    div(v-else)
-      v-data-table.alarms-list-table(
-        data-test="tableWidget",
-        :class="vDataTableClass",
-        v-model="selected",
-        :items="alarms",
-        :headers="headers",
-        :total-items="alarmsMeta.total",
-        :pagination.sync="vDataTablePagination",
-        :loading="alarmsPending || alarmColumnFiltersPending",
-        ref="dataTable",
-        item-key="_id",
-        hide-actions,
-        select-all,
-        expand
-      )
-        template(slot="progress")
-          v-fade-transition
-            v-progress-linear(height="2", indeterminate, color="primary")
-        template(slot="headerCell", slot-scope="props")
-          span {{ props.header.text }}
-        template(slot="items", slot-scope="props")
-          alarms-list-row(
-            v-model="props.selected",
-            :row="props",
-            :isEditingMode="isEditingMode",
-            :widget="widget",
-            :columns="columns",
-            :columnFiltersMap="columnFiltersMap"
+        v-tooltip(bottom)
+          v-btn(
+            slot="activator",
+            data-test="alarmsDateInterval",
+            icon,
+            small,
+            @click="showEditLiveReportModal"
           )
-        template(slot="expand", slot-scope="props")
-          alarms-expand-panel(
-            :alarm="props.item",
-            :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine",
-            :widget="widget"
-          )
-      v-layout.white(align-center)
+            v-icon(:color="activeRange ? 'primary' : 'black'") schedule
+          span {{ $t('liveReporting.button') }}
+    alarms-list-table(
+      :widget="widget",
+      :alarms="alarms",
+      :totalItems="alarmsMeta.total",
+      :pagination.sync="vDataTablePagination",
+      :loading="alarmsPending",
+      :isEditingMode="isEditingMode",
+      :isTourEnabled="isTourEnabled",
+      :hasColumns="hasColumns",
+      :columns="columns",
+      ref="alarmsTable"
+    )
+      v-layout.white(v-show="alarmsMeta.total", align-center)
         v-flex(xs10)
           pagination(
             data-test="bottomPagination",
@@ -89,24 +70,18 @@
         v-spacer
         v-flex(xs2, data-test="itemsPerPage")
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+    alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
-import { isResolvedAlarm } from '@/helpers/entities';
-import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
-import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
-import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
+
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
-import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
-import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -117,6 +92,10 @@ import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
+
+import AlarmListSearch from './search/alarm-list-search.vue';
+import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsListTable from './partials/alarms-list-table.vue';
 
 /**
  * Alarm-list component
@@ -130,13 +109,9 @@ import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 export default {
   components: {
     AlarmListSearch,
-    AlarmsListRow,
     RecordsPerPage,
-    AlarmsExpandPanel,
-    MassActionsPanel,
-    ActionsPanel,
-    AlarmColumnValue,
-    NoColumnsTable,
+    AlarmsListTable,
+    AlarmsExpandPanelTour,
     FilterSelector,
   },
   mixins: [
@@ -169,8 +144,17 @@ export default {
       selected: [],
     };
   },
-
   computed: {
+    tourCallbacks() {
+      return {
+        onNextStep: this.onTourNextStep,
+      };
+    },
+
+    isTourEnabled() {
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && this.alarms.length;
+    },
+
     activeRange() {
       const { tstart, tstop } = this.query;
 
@@ -179,36 +163,6 @@ export default {
       }
 
       return null;
-    },
-
-    selectedIds() {
-      return this.selected
-        .filter(item => !isResolvedAlarm(item))
-        .map(item => item._id);
-    },
-
-    headers() {
-      if (this.hasColumns) {
-        return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
-      }
-
-      return [];
-    },
-
-    vDataTableClass() {
-      const columnsLength = this.headers.length;
-      const COLUMNS_SIZES_VALUES = {
-        sm: { min: 0, max: 10, label: 'sm' },
-        md: { min: 11, max: 12, label: 'md' },
-        lg: { min: 13, max: Number.MAX_VALUE, label: 'lg' },
-      };
-
-      const { label = COLUMNS_SIZES_VALUES.sm.label } = Object.values(COLUMNS_SIZES_VALUES)
-        .find(({ min, max }) => columnsLength >= min && columnsLength <= max);
-
-      return {
-        [`columns-${label}`]: true,
-      };
     },
 
     hasAccessToListFilter() {
@@ -223,11 +177,15 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
-
-  mounted() {
-    this.fetchAlarmColumnFilters();
-  },
   methods: {
+    onTourNextStep(currentStep) {
+      if (currentStep === 0) {
+        this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
+      }
+
+      return this.$nextTick();
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },
@@ -246,7 +204,7 @@ export default {
       if (this.hasColumns) {
         const query = this.getQuery();
 
-        if (isPeriodicRefresh && !isEmpty(this.$refs.dataTable.expanded)) {
+        if (isPeriodicRefresh && !isEmpty(this.$refs.alarmsTable.expanded)) {
           query.with_steps = true;
         }
 
@@ -259,62 +217,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-  .alarms-list-table {
-    &.columns-lg {
-      table.v-table {
-        tbody, thead {
-          td, th {
-            padding: 0 8px;
-          }
-
-          @media screen and (max-width: 1600px) {
-            td, th {
-              padding: 0 4px;
-            }
-          }
-
-          @media screen and (max-width: 1450px) {
-            td, th {
-              font-size: 0.85em;
-            }
-
-            .badge {
-              font-size: inherit;
-            }
-          }
-        }
-      }
-    }
-
-    &.columns-md {
-      table.v-table {
-        tbody, thead {
-          @media screen and (max-width: 1700px) {
-            td, th {
-              padding: 0 12px;
-            }
-          }
-
-          @media screen and (max-width: 1250px) {
-            td, th {
-              padding: 0 8px;
-            }
-          }
-
-          @media screen and (max-width: 1150px) {
-            td, th {
-              font-size: 0.85em;
-              padding: 0 4px;
-            }
-
-            .badge {
-              font-size: inherit;
-            }
-          }
-        }
-      }
-    }
-  }
-</style>

@@ -131,6 +131,8 @@ export const COLORS = {
     declareTicket: '#2196f3',
     snooze: '#e91e63',
     done: '#00a65a',
+    pbhenter: '#18ffff',
+    pbhleave: '#18ffff',
   },
   statsDefault: '#dddddd',
 };

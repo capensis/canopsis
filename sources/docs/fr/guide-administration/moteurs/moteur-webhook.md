@@ -10,6 +10,10 @@ Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous 
 
 Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
 
+Depuis la `3.37.0`, la fonction de répétition est disponible.
+
+Depuis la `3.39.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
+
 Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
@@ -25,18 +29,21 @@ Pour cela, il est nécessaire de lancer le moteur `dynamic-infos` avec l'option 
 ### Options de l'engine-webhook
 
 ```
+-configPath string
+    Webhook engine configuration file path. (default "./webhook.conf.toml")
 -d	debug
 -publishQueue string
-Publish event to this queue. (default "Engine_action")
+    Publish event to this queue. (default "Engine_action")
 -version
-version infos
+    version infos
 ```
 
 ## Fonctionnement
 
 À l'arrivée dans sa file, le moteur va vérifier si l'événement correspond à un ou plusieurs de ces Webhooks.
 
-Si oui, il va alors appliquer le ou les Webhooks correspondant.
+Si oui, il va alors appliquer le ou les Webhooks correspondant.  
+En cas d'échec, il existe un mécanisme de réémission du webhook.  
 
 Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dans le guide d'utilisation](../../guide-utilisation/cas-d-usage/notifications.md).
 
@@ -45,6 +52,7 @@ Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dan
 Une règle est un document JSON contenant les paramètres suivants :
 
  - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `enabled` (requis) : le webhook est-il activé ou non (booléen).
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
@@ -59,6 +67,10 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `method` (requis) : méthode HTTP
      - `payload` (requis) : le corps de la requête qui sera envoyée. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier JSON. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
      - `url` (requis) : l'URL du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
+ - `retry` (optionnel) : politique à suivre en cas d'échec
+     - `count` (optionnel) : nombre de répétition
+     - `delay` (optionnel) : intervalle entre 2 essais
+     - `unit` (optionnel) : unité de temps de l'intervalle (notation : "s" pour seconde, "m" pour minute, "h" pour heure)
  - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme. Le [trigger `declareticketwebhook`](../architecture-interne/triggers.md) est également alors déclenché.
      - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
      - `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
@@ -67,7 +79,9 @@ Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont 
 
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
-- `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
+- `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
+
+
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
@@ -82,6 +96,9 @@ Le champ `hook` représente les conditions d'activation d'un webhook. Il contien
 Pour plus d'informations sur les `triggers` disponibles, consulter la [`documentation sur les triggers`](../architecture-interne/triggers.md)
 
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
+
+!!! attention
+    L'activation d'un webhook ne doit pas être dépendante d'un état d'une alarme appliqué par le moteur `action`. En effet, dans l’enchaînement des moteurs, `action` se situe après `webhook`. Le webhook sera donc activé **avant** que le moteur `action` ait pu changer l'état de l'alarme.
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
@@ -117,6 +134,24 @@ Les champs `payload` et `url` sont personnalisables grâce aux templates. Les te
 
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
 
+### Tentatives en cas d'échec
+
+Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP != 200 ou timeout du service), plusieurs nouvelles tentatives sont effectuées avec un délai.  
+`count` représente le nombre de nouvelles tentatives.  
+`delay` et `unit` représentent le délai avant une nouvelle tentative.   
+
+`unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
+
+Ces paramètres sont positionnés dans la configuration de chaque webhook.  
+Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).  
+````
+cat webhook.conf
+count=5
+delay=1
+unit="m"
+````
+
+
 ### Données externes
 
 Si `declare_ticket` est défini, les données récupérées du service externe sont stockées dans l'alarme et un step `declareticket` est ajouté à l'alarme.
@@ -140,6 +175,7 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "hook" : {
         "triggers" : [
             "create"
@@ -172,6 +208,11 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
         },
         "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
     },
+    "retry" : {
+        "count": 5,
+        "delay" : 1,
+        "unit" : "m"
+    },
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
@@ -182,11 +223,12 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 
 ## Collection
 
-Les webhooks sont stockés dans la collection MongoDB `periodical_alarm`.
+Les webhooks sont stockés dans la collection MongoDB `webhooks`.
 
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior" : false,
     "request" : {
         "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",
@@ -199,6 +241,11 @@ Les webhooks sont stockés dans la collection MongoDB `periodical_alarm`.
             "password" : "a!(b)-c_"
         },
         "payload" : "{{ $comp := .Alarm.Value.Component }}{{ $reso := .Alarm.Value.Resource }}{{ $val := .Alarm.Value.Status.Value }}{\"component\": \"{{$comp}}\",\"resource\": \"{{$reso}}\", \"parity\": {{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}},  \"value\": {{$val}} }"
+    },
+    "retry" : {
+        "count": 5,
+        "delay" : 1,
+        "unit" : "m"
     },
     "declare_ticket" : {
         "priority" : "priority",

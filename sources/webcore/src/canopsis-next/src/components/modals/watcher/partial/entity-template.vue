@@ -26,9 +26,14 @@ export default {
       default: '',
     },
   },
-  computed: {
-    compiledTemplate() {
-      return `<div>${compile(this.template, { entity: this.entity })}</div>`;
+  asyncComputed: {
+    compiledTemplate: {
+      async get() {
+        const compiledTemplate = await compile(this.template, { entity: this.entity });
+
+        return `<div>${compiledTemplate}</div>`;
+      },
+      default: '',
     },
   },
   beforeCreate() {

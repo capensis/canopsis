@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -170,6 +171,8 @@ export default {
       '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
       '</dl>',
+    submit: 'Search',
+    clear: 'Clear search input',
   },
   entities: {
     watcher: 'Watcher',
@@ -549,7 +552,15 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Create periodical behavior',
+      create: {
+        title: 'Create periodical behavior',
+      },
+      edit: {
+        title: 'Edit periodic behavior',
+      },
+      duplicate: {
+        title: 'Duplicate periodic behavior',
+      },
       steps: {
         general: {
           title: 'General parameters',
@@ -841,12 +852,16 @@ export default {
         title: 'Edit webhook',
         success: 'Webhook successfully edited !',
       },
+      duplicate: {
+        title: 'Duplicate webhook',
+      },
       remove: {
         success: 'Webhook successfully removed !',
       },
       fields: {
         id: 'ID',
         retryDelay: 'Delay',
+        retryUnit: 'Unit',
         retryCount: 'Repeat',
       },
       tooltips: {
@@ -929,6 +944,9 @@ export default {
         message: 'Message',
         duration: 'Duration',
         output: 'Note',
+        ticket: 'Associate ticket',
+        delay: 'Delay',
+        delayUnit: 'Unit',
       },
     },
     createHeartbeat: {
@@ -950,7 +968,11 @@ export default {
         success: 'Dynamic information successfully created !',
       },
       edit: {
+        title: 'Edit dynamic information',
         success: 'Dynamic information successfully edited !',
+      },
+      duplicate: {
+        title: 'Duplicate dynamic information',
       },
       remove: {
         success: 'Dynamic information successfully removed !',
@@ -1169,6 +1191,9 @@ export default {
     fields: {
       mixFilters: 'Mix filters',
     },
+    buttons: {
+      list: 'Manage filters',
+    },
   },
   validator: {
     unique: 'Field must be unique',
@@ -1214,6 +1239,7 @@ export default {
     table: {
       id: 'Id',
       type: 'Type',
+      delay: 'Delay',
       expand: {
         tabs: {
           general: 'General',
@@ -1247,6 +1273,14 @@ export default {
         settings: 'Settings',
       },
       activeSessions: 'Active sessions',
+      ordering: {
+        popups: {
+          success: 'The groups was reordered',
+          error: 'Several groups wasn\'t reordered',
+          periodicRefreshWasPaused: 'Periodic refresh was paused while you are editing the groups bar',
+          periodicRefreshWasResumed: 'Periodic refresh was resumed',
+        },
+      },
     },
   },
   parameters: {
@@ -1292,6 +1326,7 @@ export default {
         requestUrl: 'Request URL',
         retryDelay: 'Delay',
         retryCount: 'Repeat',
+        enabled: 'Enabled',
       },
     },
     tabs: {
@@ -1379,6 +1414,28 @@ export default {
 
   contextGeneralTable: {
     addSelection: 'Add selection',
+  },
+
+  liveReporting: {
+    button: 'Set a custom date range',
+  },
+
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Details',
+      step2: 'MoreInfos tab (Displayed only in case of existing confguration)',
+      step3: 'Timeline tab',
+    },
+  },
+
+  handlebars: {
+    requestHelper: {
+      errors: {
+        timeout: 'Request timeout',
+        unauthorized: 'Unauthorized',
+        other: 'Error while fetching data',
+      },
+    },
   },
 
   ...featureService.get('i18n.en'),

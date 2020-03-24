@@ -5,6 +5,7 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
 } from '@/constants';
 import featureService from '@/services/features';
 
@@ -158,6 +159,8 @@ export default {
     '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
     '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
     '</dl>',
+    submit: 'Rechercher',
+    clear: 'Ne plus appliquer cette recherche',
   },
   entities: {
     watcher: 'Observateurs',
@@ -511,6 +514,15 @@ export default {
       },
     },
     createPbehavior: {
+      create: {
+        title: 'Ajouter un comportement périodique',
+      },
+      edit: {
+        title: 'Éditer un comportement périodique',
+      },
+      duplicate: {
+        title: 'Dupliquer un comportement périodique',
+      },
       title: 'Ajouter un comportement périodique',
       steps: {
         general: {
@@ -794,13 +806,16 @@ export default {
         title: 'Éditer un webhook',
         success: 'Webhook édité avec succès !',
       },
+      duplicate: {
+        title: 'Dupliquer un webhook',
+      },
       remove: {
         success: 'Webhook supprimé avec succès !',
       },
       fields: {
         id: 'ID',
         retryDelay: 'Intervalle',
-        retryCount: 'Nombre d\'essais',
+        retryCount: 'Nombre d\'essais après échec',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
@@ -825,6 +840,9 @@ export default {
         message: 'Message',
         duration: 'Durée',
         output: 'Note',
+        ticket: 'Numéro du ticket',
+        delay: 'Intervalle',
+        delayUnit: 'Unité',
       },
     },
     statsDateInterval: {
@@ -859,7 +877,11 @@ export default {
         success: 'Information dynamique créé avec succès !',
       },
       edit: {
+        title: 'Éditer une information dynamique',
         success: 'Information dynamique éditée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une information dynamique',
       },
       remove: {
         success: 'Information dynamique supprimée avec succès !',
@@ -1076,6 +1098,9 @@ export default {
     fields: {
       mixFilters: 'Mix de filtres',
     },
+    buttons: {
+      list: 'Gérer les filtres',
+    },
   },
   validator: {
     unique: 'Le champ doit être unique',
@@ -1118,6 +1143,7 @@ export default {
   actions: {
     title: 'Actions',
     addAction: 'Ajouter une action',
+    delay: 'Intervalle',
     table: {
       id: 'Id',
       type: 'Type',
@@ -1153,6 +1179,14 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
+      ordering: {
+        popups: {
+          success: 'Les groupes ont été réorganisés',
+          error: 'Plusieurs groupes n\'ont pas été réorganisés',
+          periodicRefreshWasPaused: 'Le rafraîchissement périodique est mis en pause pendant l\'édition du menu',
+          periodicRefreshWasResumed: 'Reprise du rafraîchissement périodique',
+        },
+      },
     },
   },
   parameters: {
@@ -1187,7 +1221,9 @@ export default {
         requestMethod: 'Requête: Méthode',
         requestUrl: 'Requête: URL',
         retryDelay: 'Intervalle',
+        retryUnit: 'Unité',
         retryCount: 'Nombre d\'essais',
+        enabled: 'Activé',
       },
     },
     tabs: {
@@ -1269,6 +1305,27 @@ export default {
     },
   },
 
+  liveReporting: {
+    button: 'Définir un intervalle de dates',
+  },
+
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Détails',
+      step2: 'Onglet plus d\'infos (N\'apparait que s\'il existe une configuration)',
+      step3: 'Onglet timeline',
+    },
+  },
+
+  handlebars: {
+    requestHelper: {
+      errors: {
+        timeout: 'Délai d\'attente dépassé',
+        unauthorized: 'Accès non autorisé',
+        other: 'Erreur de récupération des données',
+      },
+    },
+  },
 
   ...featureService.get('i18n.fr'),
 };

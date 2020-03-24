@@ -13,8 +13,10 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
+import VueAsyncComputed from 'vue-async-computed';
 import sanitizeHTML from 'sanitize-html';
 
+import 'vue-tour/dist/vue-tour.css';
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
@@ -32,18 +34,20 @@ import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
+import ToursPlugin from '@/plugins/tours';
+import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
-import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
-import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 
 import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
 
+Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
 Vue.use(filters);
 Vue.use(Vuetify, {
@@ -97,8 +101,7 @@ Vue.use(DaySpanVuetify, {
 Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
-Vue.component('v-checkbox-functional', VCheckboxFunctional);
-Vue.component('v-expansion-panel-content', VExpansionPanelContent);
+Vue.component('alarm-chips', AlarmChips);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -144,6 +147,8 @@ Vue.use(ModalsPlugin, {
 Vue.use(PopupsPlugin, { store });
 Vue.use(SetSeveralPlugin);
 Vue.use(UpdateFieldPlugin);
+Vue.use(ToursPlugin);
+Vue.use(VuetifyReplacerPlugin);
 
 Vue.config.productionTip = false;
 

@@ -4,9 +4,10 @@
       v-text-field(
         v-field="form._id",
         :label="$t('eventFilter.id')",
-        :disabled="isEditing && !isDuplicating"
+        :disabled="isDisabledIdField",
+        :readonly="isDisabledIdField"
       )
-        v-tooltip(v-if="!isEditing || isDuplicating", slot="append", left)
+        v-tooltip(v-show="!isDisabledIdField", slot="append", left)
           v-icon(slot="activator") help
           span {{ $t('eventFilter.idHelp') }}
     v-select(
@@ -41,11 +42,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    isEditing: {
-      type: Boolean,
-      default: false,
-    },
-    isDuplicating: {
+    isDisabledIdField: {
       type: Boolean,
       default: false,
     },

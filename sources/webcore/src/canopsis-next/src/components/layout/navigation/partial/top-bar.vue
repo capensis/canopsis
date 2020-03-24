@@ -55,19 +55,18 @@
 </template>
 
 <script>
-import sha1 from 'sha1';
-import { omit, cloneDeep } from 'lodash';
-
 import { MODALS, USERS_RIGHTS } from '@/constants';
+
+import { prepareUserByData } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import GroupsTopBar from './groups-top-bar.vue';
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
 import ActiveSessionsCount from './active-sessions-count.vue';
+import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
 
 /**
  * Component for the top bar of the application
@@ -76,10 +75,10 @@ import ActiveSessionsCount from './active-sessions-count.vue';
  */
 export default {
   components: {
-    GroupsTopBar,
     AppLogo,
     AppVersion,
     ActiveSessionsCount,
+    GroupsTopBar,
   },
   mixins: [
     authMixin,
@@ -178,13 +177,7 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            const editedUser = cloneDeep(this.currentUser);
-
-            if (data.password && data.password !== '') {
-              editedUser.shadowpasswd = sha1(data.password);
-            }
-
-            await this.createUser({ data: { ...editedUser, ...omit(data, ['password']) } });
+            await this.createUser({ data: prepareUserByData(data, this.currentUser) });
 
             await this.fetchCurrentUser();
           },

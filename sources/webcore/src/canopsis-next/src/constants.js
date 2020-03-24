@@ -318,6 +318,14 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
+  pbhenter: {
+    color: COLORS.entitiesEvents.pbhenter,
+    icon: 'pause',
+  },
+  pbhleave: {
+    color: COLORS.entitiesEvents.pbhleave,
+    icon: 'play_arrow',
+  },
 };
 
 export const UNKNOWN_VALUE_STYLE = {
@@ -977,9 +985,25 @@ export const ACTION_TYPES = {
   snooze: 'snooze',
   pbehavior: 'pbehavior',
   changeState: 'changestate',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  assocticket: 'assocticket',
+  declareticket: 'declareticket',
+  cancel: 'cancel',
 };
 
 export const ACTION_AUTHOR = 'engine-action';
+
+export const ACTION_FORM_FIELDS_MAP_BY_TYPE = {
+  [ACTION_TYPES.snooze]: 'snoozeParameters',
+  [ACTION_TYPES.pbehavior]: 'pbehaviorParameters',
+  [ACTION_TYPES.changeState]: 'changeStateParameters',
+  [ACTION_TYPES.ack]: 'ackParameters',
+  [ACTION_TYPES.ackremove]: 'ackremoveParameters',
+  [ACTION_TYPES.assocticket]: 'assocticketParameters',
+  [ACTION_TYPES.declareticket]: 'declareticketParameters',
+  [ACTION_TYPES.cancel]: 'cancelParameters',
+};
 
 export const CANOPSIS_STACK = {
   go: 'go',
@@ -1014,7 +1038,11 @@ export const TIME_UNITS = {
   year: 'y',
 };
 
-export const DURATION_UNITS = {
+export const AVAILABLE_TIME_UNITS = {
+  second: {
+    text: 'common.times.second',
+    value: TIME_UNITS.second,
+  },
   minute: {
     text: 'common.times.minute',
     value: TIME_UNITS.minute,
@@ -1041,13 +1069,24 @@ export const DURATION_UNITS = {
   },
 };
 
+export const DURATION_UNITS = {
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
+  day: AVAILABLE_TIME_UNITS.day,
+  week: AVAILABLE_TIME_UNITS.week,
+  month: AVAILABLE_TIME_UNITS.month,
+  year: AVAILABLE_TIME_UNITS.month,
+};
+
+export const SNOOZE_DURATION_UNITS = {
+  second: AVAILABLE_TIME_UNITS.second,
+  ...DURATION_UNITS,
+};
+
 export const PERIODIC_REFRESH_UNITS = {
-  second: {
-    text: 'common.times.second',
-    value: TIME_UNITS.second,
-  },
-  minute: DURATION_UNITS.minute,
-  hour: DURATION_UNITS.hour,
+  second: AVAILABLE_TIME_UNITS.second,
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
 };
 
 export const DEFAULT_PERIODIC_REFRESH = {
@@ -1100,4 +1139,8 @@ export const GRID_SIZES = {
   min: 0,
   max: 12,
   step: 1,
+};
+
+export const TOURS = {
+  alarmsExpandPanel: 'alarmsExpandPanel',
 };

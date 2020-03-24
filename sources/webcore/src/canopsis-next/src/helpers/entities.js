@@ -98,6 +98,7 @@ export function generateWidgetByType(type) {
 
         viewFilters: [],
         mainFilter: null,
+        mainFilterUpdatedAt: 0,
         infoPopups: [],
         liveReporting: {},
         periodicRefresh: {
@@ -120,6 +121,7 @@ export function generateWidgetByType(type) {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
         mainFilter: null,
+        mainFilterUpdatedAt: 0,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),
@@ -486,6 +488,7 @@ export function generateAction() {
   const generalParameters = {
     _id: uuid('action'),
     type: ACTION_TYPES.snooze,
+    delay: {},
     hook: defaultHook,
   };
 
@@ -511,11 +514,42 @@ export function generateAction() {
     output: '',
   };
 
+  // Default 'ack' action parameters
+  const ackParameters = {
+    output: '',
+  };
+
+  // Default 'ackremove' action parameters
+  const ackremoveParameters = {
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const assocticketParameters = {
+    ticket: '',
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const declareticketParameters = {
+    output: '',
+  };
+
+  // Default 'cancel' action parameters
+  const cancelParameters = {
+    output: '',
+  };
+
   return {
     generalParameters,
     snoozeParameters,
     pbehaviorParameters,
     changeStateParameters,
+    ackParameters,
+    ackremoveParameters,
+    assocticketParameters,
+    declareticketParameters,
+    cancelParameters,
   };
 }
 
@@ -550,7 +584,7 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...user, ...omit(data, ['password']) };
+  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);

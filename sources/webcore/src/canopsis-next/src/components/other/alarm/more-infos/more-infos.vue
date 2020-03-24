@@ -1,15 +1,19 @@
 <template lang="pug">
-  .more-infos(data-test="moreInfosTemplateContent", v-if="!template")
+  .more-infos(v-if="!template", data-test="moreInfosTemplateContent")
     v-layout(justify-center)
       v-icon(color="info") infos
       p(class="ma-0") {{ $t('alarmList.moreInfos.defineATemplate') }}
-  .more-infos(data-test="moreInfosContent", v-else, v-html="output")
+  .more-infos(v-else, data-test="moreInfosContent")
+    v-runtime-template(:template="compiledTemplate")
 </template>
 
 <script>
+import VRuntimeTemplate from 'v-runtime-template';
+
 import { compile } from '@/helpers/handlebars';
 
 export default {
+  components: { VRuntimeTemplate },
   props: {
     template: {
       type: String,
@@ -20,9 +24,14 @@ export default {
       required: false,
     },
   },
-  computed: {
-    output() {
-      return compile(this.template, { alarm: this.alarm, entity: this.alarm.entity });
+  asyncComputed: {
+    compiledTemplate: {
+      async get() {
+        const compiledTemplate = await compile(this.template, { alarm: this.alarm, entity: this.alarm.entity });
+
+        return `<div>${compiledTemplate}</div>`;
+      },
+      default: '',
     },
   },
 };

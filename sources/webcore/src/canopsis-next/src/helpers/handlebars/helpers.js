@@ -1,7 +1,12 @@
-import { get, isFunction } from 'lodash';
+import { get, isFunction, unescape } from 'lodash';
 import Handlebars from 'handlebars';
+import axios from 'axios';
 
 import dateFilter from '@/filters/date';
+import durationFilter from '@/filters/duration';
+import { DATETIME_FORMATS, ENTITY_INFOS_TYPE } from '@/constants';
+
+import i18n from '@/i18n';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -20,10 +25,12 @@ function prepareAttributes(attributes) {
 /**
  * Convert date to long format
  *
+ * Example: {{date 1000000}} -> 12/01/1970 20:46:40
+ *
  * @param {string|number} date
  * @returns {string}
  */
-export function timestamp(date) {
+export function timestampHelper(date) {
   let result = '';
 
   if (date) {
@@ -39,13 +46,99 @@ export function timestamp(date) {
  * @param {Object} options
  * @returns {Handlebars.SafeString}
  */
-export function internalLink(options) {
+export function internalLinkHelper(options) {
   const { href, text, ...attributes } = options.hash;
   const path = href.replace(window.location.origin, '');
 
   const link = `<router-link to="${path}" ${prepareAttributes(attributes)}>${text}</router-link>`;
 
   return new Handlebars.SafeString(link);
+}
+
+/**
+ * Return duration by seconds
+ *
+ * First example: {{duration 120}} -> 2 mins
+ * Second example: {{duration 12000}} -> 3 hrs 20 mins
+ *
+ * @param second
+ * @returns {String}
+ */
+export function durationHelper(second) {
+  return durationFilter(second, undefined, DATETIME_FORMATS.refreshFieldFormat);
+}
+
+/**
+ * Return icon by alarm state
+ *
+ * Example {{state 0}} -> draw green element with ok text
+ *
+ * @param state
+ * @returns {Handlebars.SafeString}
+ */
+export function alarmStateHelper(state) {
+  return new Handlebars.SafeString(`<alarm-chips type="${ENTITY_INFOS_TYPE.state}" value="${state}"></alarm-chips>`);
+}
+
+/**
+ * Pass response of a request to the child block
+ *
+ * Example:
+ * {{#request method="get" url="https://test.com" path="data.users" variable="users"
+ * username="test" password="test" headers='{ "test": "test2" }'}}
+ *   {{#each users}}
+ *     <li>{{login}}</li>
+ *   {{/each}}
+ * {{/request}}
+ *
+ * @param options
+ * @returns {Promise<string|*>}
+ */
+export async function requestHelper(options) {
+  const {
+    method = 'get',
+    url,
+    headers = '{}',
+    path,
+    variable,
+    username,
+    password,
+  } = options.hash;
+
+  if (!url) {
+    throw new Error('helper {{request}}: \'url\' is required');
+  }
+
+  try {
+    const { data } = await axios({
+      method,
+      url: unescape(url),
+      auth: { username, password },
+      headers: JSON.parse(headers),
+    });
+
+    if (isFunction(options.fn)) {
+      const value = path ? get(data, path) : data;
+      const context = variable ? { [variable]: value } : value;
+
+      return options.fn(context);
+    }
+
+    return '';
+  } catch (err) {
+    console.error(err);
+
+    const { status } = err.response || {};
+
+    switch (status) {
+      case 401:
+        return i18n.t('handlebars.requestHelper.errors.unauthorized');
+      case 408:
+        return i18n.t('handlebars.requestHelper.errors.timeout');
+      default:
+        return i18n.t('handlebars.requestHelper.errors.other');
+    }
+  }
 }
 
 /**
@@ -61,7 +154,7 @@ export function internalLink(options) {
  * @param {Object} options
  * @returns {*}
  */
-export function compare(a, operator, b, options = {}) {
+export function compareHelper(a, operator, b, options = {}) {
   if (arguments.length < 4) {
     throw new Error('handlebars Helper {{compare}} expects 4 arguments');
   }
