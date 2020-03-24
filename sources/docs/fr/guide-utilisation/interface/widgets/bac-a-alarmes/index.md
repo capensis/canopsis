@@ -313,6 +313,13 @@ Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Champ enrichi	| `entity.infos.NOM_DU_CHAMP_ENRICHI.value` | equal | *VALEUR_DU_CHAMP_ENRICHI*
 
+###### En fonction des informations dynamiques
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Les alarmes qui contiennent une informations dynamique de type `consignes`	| `v.infos.*.type` | equal | *consigne*
+
+
 ###### ACK
 
 Description  | 1° colonne  | 2° colonne | 3° colonne
