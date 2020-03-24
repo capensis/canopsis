@@ -137,13 +137,14 @@ export default {
         return [];
       }
 
-      const filters = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+      const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
 
       if (!this.selectable) {
-        filters.unshift({ sortable: false });
+        // We need it for the expand panel open button
+        headers.unshift({ sortable: false });
       }
 
-      return filters;
+      return headers;
     },
 
     vDataTableClass() {

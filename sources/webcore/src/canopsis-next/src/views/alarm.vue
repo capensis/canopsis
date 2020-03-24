@@ -53,10 +53,6 @@ export default {
         : widget;
     },
 
-    alarm() {
-      return this.getAlarmItem(this.id);
-    },
-
     columns() {
       return this.widget.parameters.widgetColumns.map(({ label: text, value }) => ({
         sortable: false,
