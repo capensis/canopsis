@@ -474,6 +474,20 @@ class AlertsReader(object):
 
         return final_filter
 
+    def contains_wildcard_dynamic_filter(self, query, has_dynamic_filter=[False]):
+        if isinstance(query, dict):
+            for key in query.keys():
+                if isinstance(key, (str, unicode)):
+                    if key.startswith("v.infos.*."):
+                        query["infos_array.v.{}".format(key[10:])] = query.pop(key)
+                        has_dynamic_filter[0] = True
+                    elif isinstance(query[key], (list, dict)):
+                        self.contains_wildcard_dynamic_filter(query[key], has_dynamic_filter)
+        elif isinstance(query, list):
+            for element in query:
+                self.contains_wildcard_dynamic_filter(element, has_dynamic_filter)
+        return has_dynamic_filter[0]
+
     def add_pbh_filter(self, pipeline, filter_):
         """Add to the aggregation pipeline the stages to filter the alarm
         with their pbehavior.
@@ -529,7 +543,8 @@ class AlertsReader(object):
                                   sort_key,
                                   sort_dir,
                                   with_steps,
-                                  filter_):
+                                  filter_,
+                                  has_wildcard_dynamic_filter=False):
         """
         :param dict final_filter: the filter sent by the front page
         :param str sort_key: Name of the column to sort. If the value ends with
@@ -572,6 +587,9 @@ class AlertsReader(object):
             pipeline.insert(0, {"$project": {"v.steps": False}})
 
         self.add_pbh_filter(pipeline, filter_)
+        if has_wildcard_dynamic_filter:
+            pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
+            pipeline.append({"$project": {"infos_array": 0}})
         return pipeline
 
     def _search_aggregate(self,
@@ -821,15 +839,18 @@ class AlertsReader(object):
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
+        print filter_, type(filter_), time_filter, search, active_columns
         final_filter = self._get_final_filter(
             filter_, time_filter, search, active_columns
         )
+        print final_filter
 
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
+        has_wildcard_dynamic_filter = self.contains_wildcard_dynamic_filter(final_filter)
         pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
-                                                  sort_dir, with_steps, filter_)
+                                                  sort_dir, with_steps, filter_, has_wildcard_dynamic_filter)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"

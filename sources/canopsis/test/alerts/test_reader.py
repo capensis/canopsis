@@ -366,6 +366,74 @@ class TestReader(BaseTest):
         }
         self.assertEqual(res_filter, filter_)
 
+    def test_contains_wildcard_dynamic_filter(self):
+        # not contains dynamic wildcard filter
+        view_filter = {}
+        time_filter = {}
+        search = 11111
+        active_columns = ['resource']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, search, active_columns
+        )
+
+        self.maxDiff = None
+        res_filter = {
+            '$and': [
+                {'$or': [
+                    {'resource': {'$options': 'i', '$regex': '.*11111.*'}},
+                    {'d': {'$options': 'i', '$regex': '.*11111.*'}}
+                ]}
+            ]
+        }
+        t = self.reader.contains_wildcard_dynamic_filter(filter_)
+        self.assertFalse(t)
+        self.assertEqual(res_filter, filter_)
+
+        # contains dynamic wildcard filter
+        view_filter = {}
+        time_filter = {}
+        search = 11111
+        active_columns = ['v.infos.*.type']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, search, active_columns
+        )
+
+        t = self.reader.contains_wildcard_dynamic_filter(filter_)
+        self.maxDiff = None
+        res_filter = {
+            '$and': [
+                {'$or': [
+                    {'infos_array.v.type': {'$options': 'i', '$regex': '.*11111.*'}},
+                    {'d': {'$options': 'i', '$regex': '.*11111.*'}}
+                ]}
+            ]
+        }
+        self.assertTrue(t)
+        self.assertEqual(res_filter, filter_)
+
+        # contains dynamic wildcard filter
+        view_filter = {'$and': [{'v.infos.*.tt': 'companion cube'}]}
+        time_filter = {'glados': 'shell'}
+        bnf_search = 'NOT resource="turret"'
+        active_columns = ['resource', 'component']
+
+        filter_ = self.reader._get_final_filter(
+            view_filter, time_filter, bnf_search, active_columns
+        )
+
+        ref_filter = {
+            '$and': [
+                {'$and': [{'infos_array.v.tt': 'companion cube'}]},
+                time_filter,
+                {'resource': {'$not': {'$eq': 'turret'}}}
+            ]
+        }
+        t = self.reader.contains_wildcard_dynamic_filter(filter_)
+        self.assertTrue(t)
+        self.assertEqual(ref_filter, filter_)
+
     def test_count_alarms_by_period(self):
         day = 24 * 3600
 
