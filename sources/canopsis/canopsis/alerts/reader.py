@@ -70,6 +70,8 @@ class AlertsReader(object):
                               "v.connector",
                               "v.resource",
                               "v.connector_name"]
+    WILDCARD_DYNAMIC_INFOS_FILTER_PREFIX = "v.infos.*."
+    WILDCARD_DYNAMIC_INFOS_FILTER_POSITION = 10
 
     def __init__(self, logger, config, storage, pbehavior_manager):
         """
@@ -478,8 +480,8 @@ class AlertsReader(object):
         if isinstance(query, dict):
             for key in query.keys():
                 if isinstance(key, (str, unicode)):
-                    if key.startswith("v.infos.*."):
-                        query["infos_array.v.{}".format(key[10:])] = query.pop(key)
+                    if key.startswith(self.WILDCARD_DYNAMIC_INFOS_FILTER_PREFIX):
+                        query["infos_array.v.{}".format(key[self.WILDCARD_DYNAMIC_INFOS_FILTER_POSITION:])] = query.pop(key)
                         has_dynamic_filter[0] = True
                     elif isinstance(query[key], (list, dict)):
                         self.contains_wildcard_dynamic_filter(query[key], has_dynamic_filter)
@@ -839,11 +841,10 @@ class AlertsReader(object):
             return {'alarms': [], 'total': 0, 'first': 0, 'last': 0}
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
-        print filter_, type(filter_), time_filter, search, active_columns
         final_filter = self._get_final_filter(
             filter_, time_filter, search, active_columns
         )
-        print final_filter
+
 
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
