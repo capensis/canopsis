@@ -4,11 +4,19 @@
     src: go-engines/go-engines-vars.j2
     dest: "{{ canopsis_home }}/etc/go-engines-vars.conf"
 
-- name: Override initialisation.toml with initialisation.toml.example
+- name: Override initialisation.toml with initialisation.toml.example (Core)
   copy:
     src: "{{ canopsis_home }}/etc/initialisation.toml.example"
     dest: "{{ canopsis_home }}/etc/initialisation.toml"
     remote_src: yes
+  when: canopsis_edition == "core"
+
+- name: Override initialisation.toml with initialisation.toml.example (CAT)
+  copy:
+    src: "{{ canopsis_home }}/etc/initialisation-cat.toml.example"
+    dest: "{{ canopsis_home }}/etc/initialisation.toml"
+    remote_src: yes
+  when: canopsis_edition == "cat"
 
 - name: Override amqp2engines.conf with amqp2engines-go-core.conf.example (Core)
   copy:
