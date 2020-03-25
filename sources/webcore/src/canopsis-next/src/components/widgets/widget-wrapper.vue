@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    template(v-if="widget.title || isEditingMode")
+    template(v-show="widget.title || isEditingMode")
       v-card-title.lighten-1.pa-1
         v-layout(justify-space-between, align-center)
           v-flex
@@ -28,6 +28,7 @@
         :tabId="tab._id",
         :isEditingMode="isEditingMode"
       )
+    copy-widget-id(v-show="isEditingMode", :widgetId="widget._id")
 </template>
 
 <script>
@@ -51,11 +52,13 @@ import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
+import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   components: {
+    CopyWidgetId,
     AlarmsListWidget,
     EntitiesListWidget,
     WeatherWidget,

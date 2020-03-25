@@ -59,6 +59,7 @@ export default {
     username: 'Username',
     password: 'Password',
     authKey: 'Auth. key',
+    widgetId: 'Widget id',
     connect: 'Connect',
     optional: 'optional',
     logout: 'Logout',
@@ -1154,6 +1155,7 @@ export default {
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
     authKeyCopied: 'Auth key copied to clipboard',
+    widgetIdCopied: 'Widget id copied to clipboard',
   },
   filterEditor: {
     title: 'Filter editor',
