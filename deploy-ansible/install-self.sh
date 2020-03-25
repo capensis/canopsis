@@ -14,15 +14,15 @@ deploy-go)
 	;;
 esac
 
-cps_edition=core
-if [ -d /opt/canopsis/lib/python2.7/site-packages/canopsis_cat ]; then
-	cps_edition=cat
-fi
-
 workdir=$(dirname $(readlink -e $0))
 cd ${workdir}
 
 user_home=$(su - canopsis -c 'echo -n ${HOME}')
+
+cps_edition=core
+if [ -d "${user_home}/lib/python2.7/site-packages/canopsis_cat" ]; then
+	cps_edition=cat
+fi
 
 source ${user_home}/venv-ansible/bin/activate
 
