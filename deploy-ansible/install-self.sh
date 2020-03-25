@@ -7,16 +7,16 @@ set -o pipefail
 
 case "$1" in
 deploy-python|"")
-	engines_type=python
+	cps_engines_type=python
 	;;
 deploy-go)
-	engines_type=go
+	cps_engines_type=go
 	;;
 esac
 
-stack_type=core
+cps_edition=core
 if [ -d /opt/canopsis/lib/python2.7/site-packages/canopsis_cat ]; then
-	stack_type=cat
+	cps_edition=cat
 fi
 
 workdir=$(dirname $(readlink -e $0))
@@ -27,6 +27,6 @@ user_home=$(su - canopsis -c 'echo -n ${HOME}')
 source ${user_home}/venv-ansible/bin/activate
 
 ansible-playbook playbook/canopsis.yml \
-    -e "canopsis_engines_type=$engines_type" \
-    -e "canopsis_stack_type=$stack_type" \
+    -e "canopsis_engines_type=$cps_engines_type" \
+    -e "canopsis_edition=$cps_edition" \
     -i inventory.self

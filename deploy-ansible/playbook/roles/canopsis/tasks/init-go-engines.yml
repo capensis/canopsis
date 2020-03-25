@@ -33,4 +33,4 @@
     state: started
     enabled: true
   with_items: "{{ canopsis_cat_go_additional_engines }}"
-  when: canopsis_stack_type == "cat"
+  when: canopsis_edition == "cat"

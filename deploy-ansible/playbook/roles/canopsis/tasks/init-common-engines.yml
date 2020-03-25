@@ -12,7 +12,7 @@
     state: started
     enabled: true
   with_items: "{{ canopsis_cat_common_additional_engines }}"
-  when: canopsis_stack_type == "cat"
+  when: canopsis_edition == "cat"
 
 - name: Start and enable Canopsis common engines (CAT additions, part 2)
   systemd:
@@ -20,7 +20,7 @@
     state: started
     enabled: true
   with_items: "{{ canopsis_cat_common_additional_engines_broken_names }}"
-  when: canopsis_stack_type == "cat"
+  when: canopsis_edition == "cat"
 
 - name: Start and enable Canopsis webserver
   systemd:

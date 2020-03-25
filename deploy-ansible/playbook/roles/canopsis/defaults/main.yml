@@ -33,7 +33,7 @@ canopsis_redis_port: "6379"
 canopsis_redis_dbnum: 0
 
 # use 'cat' if you have CAT engines
-canopsis_stack_type: core
+canopsis_edition: core
 
 # use 'go' if you want to use Go engines
 canopsis_engines_type: python
@@ -85,14 +85,14 @@ canopsis_go_engines:
     name: engine-watcher
 
 # When choosing canopsis_engines_type: "go"
-# and canopsis_stack_type: "cat"
+# and canopsis_edition: "cat"
 canopsis_cat_go_additional_engines:
   -
     name: engine-dynamic-infos
   -
     name: engine-webhook
 
-# When choosing canopsis_stack_type: "cat"
+# When choosing canopsis_edition: "cat"
 canopsis_cat_common_additional_engines:
   -
     module: task_ackcentreon
