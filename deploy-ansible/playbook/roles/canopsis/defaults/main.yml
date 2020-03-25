@@ -80,6 +80,8 @@ canopsis_go_engines:
   -
     name: engine-che
   -
+    name: engine-fifo
+  -
     name: engine-heartbeat
   -
     name: engine-watcher
