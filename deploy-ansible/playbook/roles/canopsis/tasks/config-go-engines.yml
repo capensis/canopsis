@@ -10,8 +10,16 @@
     dest: "{{ canopsis_home }}/etc/initialisation.toml"
     remote_src: yes
 
-- name: Override amqp2engines.conf with amqp2engines-go.conf.example
+- name: Override amqp2engines.conf with amqp2engines-go-core.conf.example (Core)
   copy:
-    src: "{{ canopsis_home }}/etc/amqp2engines-go.conf.example"
+    src: "{{ canopsis_home }}/etc/amqp2engines-go-core.conf.example"
     dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
     remote_src: yes
+  when: canopsis_edition == "core"
+
+- name: Override amqp2engines.conf with amqp2engines-go-core.conf.example (CAT)
+  copy:
+    src: "{{ canopsis_home }}/etc/amqp2engines-go-cat.conf.example"
+    dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
+    remote_src: yes
+  when: canopsis_edition == "cat"
