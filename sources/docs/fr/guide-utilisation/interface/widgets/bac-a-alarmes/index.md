@@ -12,6 +12,7 @@
 4. [Actions](#actions)
 5. [Elements par page](#elements-par-page)
 6. [Suivi personnalisé](#suivi-personnalise)
+7. [Lien direct vers une alarme](#lien-direct-vers-une-alarme)
 
 ### Guide exploitant
 
@@ -90,6 +91,18 @@ Celui-ci est visible en haut du Bac à alarmes.
 ![Filtre par période selectionné](./img/filter-current-period.png "Filtre par période selectionné")
 
 Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le filtre (*Cf Image ci-dessus*)
+
+#### Lien direct vers une alarme
+
+Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
+Cette URL est de la forme : `http(s)://IP_CANOPSIS:PORT/alarms/<alarmID>[?widgetId=<widgetID>]`.  
+
+* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.  
+* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)  
+
+L'identifiant d'un widget est disponible pour copie dans le mode **édition** d'une vue en bas d'un widget.  
+
+
 
 ### Actions
 
