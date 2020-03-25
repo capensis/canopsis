@@ -135,6 +135,10 @@ Les actions peuvent être les suivantes :
 - `resource.trim=right` donnera "␣deux mots" avec l'espace à droite supprimé
 - `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
 
+A partie de la `3.XX.0`
+
+* *print* : Permet d'assigner directement une valeur au champ a partir du template.
+
 La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
 
 - `MAIL_BODY`, `MAIL_DATE`, `MAIL_ID`, `MAIL_SENDER`, et `MAIL_SUBJECT` sont les différentes parties de l'email
