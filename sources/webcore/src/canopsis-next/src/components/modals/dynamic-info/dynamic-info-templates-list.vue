@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper
     template(slot="title")
-      span Dynamic info templates
+      span {{ $t('modals.dynamicInfoTemplatesList.title') }}
     template(slot="text")
       div
         v-layout(justify-end)
@@ -71,7 +71,7 @@ export default {
     headers() {
       return [
         {
-          text: 'Title',
+          text: this.$t('common.title'),
           sortable: false,
           value: 'title',
         },

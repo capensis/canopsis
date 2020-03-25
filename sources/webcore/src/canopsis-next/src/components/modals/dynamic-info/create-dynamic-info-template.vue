@@ -2,25 +2,30 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span Edit dynamic info template
+        span {{ title }}
       template(slot="text")
         div
           v-text-field(
             v-model="form.title",
             v-validate="'required'",
             :error-messages="errors.collect('title')",
-            label="Title",
+            :label="$t('common.title')",
             name="title"
           )
-          h3 Names
-          v-layout(v-for="(name, index) in form.names", :key="name.key", row, justify-space-between)
+          h3 {{ $t('modals.createDynamicInfoTemplate.fields.names') }}
+          v-layout(
+            v-for="(name, index) in form.names",
+            :key="name.key",
+            row,
+            justify-space-between
+          )
             v-flex(xs11)
               v-text-field(
                 v-model="name.value",
                 v-validate="'required'",
                 :error-messages="errors.collect(`name[${name.key}]`)",
                 :name="`name[${name.key}]`",
-                placeholder="Name"
+                :placeholder="$t('common.name')"
               )
             v-flex(xs1)
               v-btn(
@@ -29,9 +34,9 @@
                 @click="deleteValue(index)"
               )
                 v-icon delete
-          v-btn.primary.mx-0(@click="showAddValueModal") Add new value
+          v-btn.primary.mx-0(@click="showAddValueModal") {{ $t('modals.createDynamicInfoTemplate.buttons.addName') }}
           v-alert(:value="errors.has('names')", type="error")
-            span {{ errors.first('names') }}
+            span {{ $t('modals.createDynamicInfoTemplate.errors.noNames') }}
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
@@ -40,8 +45,11 @@
 <script>
 import { MODALS } from '@/constants';
 
-import uid from '@/helpers/uid';
-import uuid from '@/helpers/uuid';
+import {
+  templateToForm,
+  formToTemplate,
+  generateTemplateFormName,
+} from '@/helpers/forms/dynamic-info-template';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -62,8 +70,17 @@ export default {
     const { template = {} } = this.modal.config;
 
     return {
-      form: this.templateToForm(template),
+      form: templateToForm(template),
     };
+  },
+  computed: {
+    title() {
+      if (this.config.template) {
+        return this.$t('modals.createDynamicInfoTemplate.edit.title');
+      }
+
+      return this.$t('modals.createDynamicInfoTemplate.create.title');
+    },
   },
   created() {
     this.$validator.attach({
@@ -76,33 +93,21 @@ export default {
   },
   methods: {
     showAddValueModal() {
-      this.form.names.push({ key: uid(), value: '' });
+      this.form.names.push(generateTemplateFormName());
 
       this.$nextTick(() => this.$validator.validate('names'));
     },
+
     deleteValue(index) {
-      this.form.values = this.form.values.filter((v, i) => i !== index);
+      this.form.names = this.form.names.filter((v, i) => i !== index);
     },
-    templateToForm({ _id = uuid('dynamic-info-template'), title = '', names = [] } = {}) {
-      return {
-        _id,
-        title,
-        names: names.map(name => ({ key: uid(), value: name })),
-      };
-    },
-    formToTemplate({ _id = uuid('dynamic-info-template'), title = '', names = [] } = {}) {
-      return {
-        _id,
-        title,
-        names: names.map(({ value }) => value),
-      };
-    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.formToTemplate(this.form));
+          await this.config.action(formToTemplate(this.form));
         }
 
         this.$modals.hide();

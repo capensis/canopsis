@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-alert(:value="hasAnyError", type="error") {{ $t('modals.createDynamicInfo.steps.patterns.validationError') }}
+    v-alert(:value="hasAnyError", type="error") {{ $t('modals.createDynamicInfo.steps.infos.validationError') }}
     v-layout(justify-end)
       v-btn.primary(fab, small, flat, @click="showAddInfoModal")
         v-icon add
