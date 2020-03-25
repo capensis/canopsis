@@ -85,7 +85,7 @@ Vous pouvez alors procéder à votre [première connexion à l'interface Canopsi
 
 À partir de [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), vous pouvez choisir de déployer facilement votre environnement Canopsis mono-nœud avec les [moteurs Python « historiques »](../moteurs/index.md#moteurs-python) ou avec les [moteurs Go « nouvelle génération »](../moteurs/index.md#moteurs-go).
 
-L'environnement Python reste l'environnement par défaut pour l'instant, mais les efforts de développement se concentrent dorénavant sur les moteurs Go, qui apportent notamment de meilleures performances et de nouvelles fonctionnalités.
+L'environnement Python reste disponible pour l'instant, mais les efforts de développement se concentrent dorénavant sur les moteurs Go, qui apportent notamment de meilleures performances et de nouvelles fonctionnalités.
 
 Si vous souhaitez réaliser une installation de Canopsis en environnement Python, exécutez la commande suivante :
 
@@ -93,7 +93,7 @@ Si vous souhaitez réaliser une installation de Canopsis en environnement Python
 canoctl deploy-python
 ```
 
-Si vous souhaitez plutôt bénéficier des moteurs Go nouvelle génération, exécutez les commandes suivantes :
+Si vous souhaitez plutôt bénéficier des moteurs Go nouvelle génération (recommandé), exécutez les commandes suivantes :
 
 ```sh
 # Sur Debian :
