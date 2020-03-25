@@ -39,6 +39,9 @@ apt install canopsis-core
 
 ### Sur CentOS 7
 
+!!! important
+    Assurez-vous d'avoir [désactivé SELinux](pre-requis-parefeu-et-selinux.md) au préalable.
+
 Activation d'EPEL et application des dernières mises à jour du système :
 ```sh
 yum install yum-utils epel-release
