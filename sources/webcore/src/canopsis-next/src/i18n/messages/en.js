@@ -997,7 +997,6 @@ export default {
           validationError: 'At least one pattern must be set. Please add an alarm patterns and/or an entity pattern',
         },
       },
-
     },
     createDynamicInfoInformation: {
       create: {

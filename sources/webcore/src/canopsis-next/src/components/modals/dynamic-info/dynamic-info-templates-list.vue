@@ -52,15 +52,14 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
 
+import { templateToDynamicInfoInfos } from '@/helpers/forms/dynamic-info-template';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('dynamicInfoTemplate');
 
-/**
- * Modal to create dynamic info's information
- */
 export default {
   name: MODALS.dynamicInfoTemplatesList,
   components: { ModalWrapper },
@@ -101,6 +100,7 @@ export default {
         },
       });
     },
+
     showEditTemplateModal(template) {
       this.$modals.show({
         name: MODALS.createDynamicInfoTemplate,
@@ -111,6 +111,7 @@ export default {
         },
       });
     },
+
     showDeleteTemplateModal(id) {
       this.$modals.show({
         name: MODALS.confirmation,
@@ -119,12 +120,13 @@ export default {
         },
       });
     },
-    async selectTemplate(template) {
+
+    selectTemplate(template) {
       this.$modals.show({
         name: MODALS.createDynamicInfo,
         config: {
           dynamicInfo: {
-            infos: template.names.map(name => ({ name, value: '' })),
+            infos: templateToDynamicInfoInfos(template),
           },
           action: async (data) => {
             if (this.config.action) {

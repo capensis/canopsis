@@ -56,9 +56,6 @@ import submittableMixin from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
-/**
- * Modal to create dynamic info's information
- */
 export default {
   name: MODALS.createDynamicInfoTemplate,
   $_veeValidate: {
