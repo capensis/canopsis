@@ -149,22 +149,11 @@ def exports(ws):
             entity_dict[entity.get('_id')] = entity
 
         list_alarm = []
-        skipped_count = 0
         for alarm in alarms['alarms']:
-            if alarm.get('v', {}).get("parents"):
-                if not filter:
-                    # skip grouped alarm
-                    skipped_count += 1
-                    continue
-                alarm_parents = alarm['v'].get('parents', [])
-                alarm["causes"] = {'total': len(alarm_parents), 'rules': alarm_parents}
+            rules = alarms['rules'].get(alarm['_id'], [])
+            if rules:
+                alarm["causes"] = {'total': len(rules), 'rules': rules}
             if alarm.get('v', {}).get('meta'):
-                if filter:
-                    skipped_count += 1
-                    continue
-                alarm["rule"] = alarm['v']['meta']
-                alarm["metaalarm"] = 1
-                alarm["consequences"] = {'total': len(alarm['v'].get('children', []))}
                 del alarm['v']['meta']
 
             now = int(time())
@@ -195,6 +184,7 @@ def exports(ws):
 
             list_alarm.append(alarm)
 
+        del alarms['rules']
         alarms['alarms'] = list_alarm
 
         return alarms

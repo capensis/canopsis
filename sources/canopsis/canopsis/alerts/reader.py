@@ -426,6 +426,8 @@ class AlertsReader(object):
         """
         final_filter = {'$and': []}
 
+        if view_filter:
+            final_filter['$and'].append({"v.meta": {"$exists": False}})
         t_view_filter = self._translate_filter(view_filter)
         # add the view filter if not empty
         if view_filter not in [None, {}]:
@@ -567,6 +569,13 @@ class AlertsReader(object):
                 }
             }
         ]
+        if not filter_:
+            pipeline.insert(4, {"$addFields": {
+                "rule": "$v.meta", 
+                "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
+                "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, {"total": {"$size": "$v.children"}}]}
+            }})
+            pipeline.insert(3, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {"v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
@@ -660,6 +669,7 @@ class AlertsReader(object):
                         sort_key,
                         sort_dir,
                         api_limit,
+                        rules,
                         pipeline):
         """
         :param int skip: Number of alarms to skip (pagination)
@@ -674,6 +684,7 @@ class AlertsReader(object):
         :param dict filter_: Mongo filter
         :param int apt_limit: A hard limit for when hide_resources is active
         :param list pipeline: list of steps in mongo aggregate command
+        :param dict rules: map of alarm IDs to meta-alarm rules
 
         :returns: Dict containing alarms, truncated, first and last
         :rtype: dict
@@ -681,6 +692,7 @@ class AlertsReader(object):
         len_alarms = 0
         results = {
             'alarms': [],
+            'rules': rules,
             'total': total,
             'truncated': False,
             'first': 1+skip,
@@ -742,6 +754,18 @@ class AlertsReader(object):
                     self.logger.exception("Unable to check if pbehavior {} is active".format(pbehavior.get('_id')))
 
                 pbehavior['isActive'] = active
+
+    def _metaalarm_children_rules(self):
+        """
+        Create map with mataalarms children IDs as key and list of rule names as value
+        """
+        pipeline = [
+            {"$match": {"$and": [{"v.meta": {"$exists": True}}, {"v.meta": {"$ne": ""}}]}}, 
+            {"$project": {"children": "$v.children", "rule": "$v.meta"}}, {"$unwind": "$children"},
+            {"$group": {"_id": {"children": "$children"}, "rule": {"$addToSet": "$rule"}}}, 
+            {"$project": {"_id": "$_id.children", "rule": "$rule"}}
+        ]
+        return {child["_id"]:child["rule"] for child in self.alarm_collection.aggregate(pipeline)}
 
     def get(
             self,
@@ -842,6 +866,10 @@ class AlertsReader(object):
         except IndexError:
             total = 0
 
+        rules = dict()
+        if filter_:
+            rules = self._metaalarm_children_rules()
+
         if limit is None:
             limit = total
 
@@ -863,7 +891,7 @@ class AlertsReader(object):
         result = self._loop_aggregate(skip, limit, filters,
                                       post_sort, total,
                                       sort_key, sort_dir,
-                                      api_limit, pipeline)
+                                      api_limit, rules, pipeline)
 
         return result
 
