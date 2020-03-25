@@ -54,7 +54,7 @@ export default {
       const { templates } = await request.get(API_ROUTES.dynamicInfoTemplates);
       const method = templates ? 'put' : 'post';
 
-      const newTemplates = [...templates, data];
+      const newTemplates = [...(templates || []), data];
       const success = await request[method](API_ROUTES.dynamicInfoTemplates, { templates: newTemplates });
 
       if (success) {
