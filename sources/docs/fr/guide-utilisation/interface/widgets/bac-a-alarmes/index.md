@@ -94,6 +94,9 @@ Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le 
 
 #### Lien direct vers une alarme
 
+!!! Note 
+    Disponible depuis Canopsis 3.39.0
+
 Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
 Cette URL est de la forme : `http(s)://IP_CANOPSIS:PORT/alarms/<alarmID>[?widgetId=<widgetID>]`.  
 
