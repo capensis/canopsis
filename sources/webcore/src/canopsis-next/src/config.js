@@ -26,6 +26,8 @@ export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
 
 export const VUETIFY_ANIMATION_DELAY = 300;
 
+export const POPUP_TICK_DELAY = 100;
+
 export const SIDE_BAR_WIDTH = 250;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
