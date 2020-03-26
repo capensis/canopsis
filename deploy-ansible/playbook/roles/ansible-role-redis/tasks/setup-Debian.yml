@@ -9,7 +9,7 @@
 - name: Install Redis 5 from backports
   apt:
     name: "{{ redis_package }}"
-    state: present
+    state: latest
     default_release: stretch-backports
     update_cache: yes
 
