@@ -309,6 +309,7 @@ class TestReader(BaseTest):
 
         ref_filter = {
             '$and': [
+                {u'v.meta': {u'$exists': False}},
                 view_filter,
                 time_filter,
                 {'resource': {'$not': {'$eq': 'turret'}}}
@@ -329,6 +330,7 @@ class TestReader(BaseTest):
         self.maxDiff = None
         ref_filter = {
             '$and': [
+                {u'v.meta': {u'$exists': False}},
                 view_filter,
                 time_filter,
                 {
