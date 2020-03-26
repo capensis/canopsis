@@ -49,7 +49,7 @@ export default {
     },
 
     setErrorPopupTime() {
-      const { interval, unit } = this.popup.error;
+      const { interval, unit } = this.popupTimeout.error;
       const delay = getSecondsByUnit(interval, unit) * 1000;
 
       this.$popups.setDefaultCloseTime(POPUP_TYPES.error, delay);
@@ -57,7 +57,7 @@ export default {
     },
 
     setInfoPopupTime() {
-      const { interval, unit } = this.popup.info;
+      const { interval, unit } = this.popupTimeout.info;
       const delay = getSecondsByUnit(interval, unit) * 1000;
 
       this.$popups.setDefaultCloseTime(POPUP_TYPES.infos, delay);
@@ -69,11 +69,11 @@ export default {
         return;
       }
 
-      if (this.popup.error) {
+      if (this.popupTimeout.error) {
         this.setErrorPopupTime();
       }
 
-      if (this.popup.info) {
+      if (this.popupTimeout.info) {
         this.setInfoPopupTime();
       }
     },
