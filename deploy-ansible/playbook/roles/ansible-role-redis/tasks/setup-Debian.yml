@@ -1,5 +1,20 @@
 ---
-- name: Ensure Redis is installed.
+- name: Enable stretch-backports repository
+  apt_repository:
+    repo: deb http://deb.debian.org/debian stretch-backports main
+    state: present
+    filename: stretch-backports
+    update_cache: yes
+
+- name: Install Redis 5 from backports
   apt:
     name: "{{ redis_package }}"
     state: present
+    default_release: stretch-backports
+    update_cache: yes
+
+- name: Symlink Redis configuration file
+  file:
+    src: /etc/redis/redis.conf
+    dest: /etc/redis.conf
+    state: link
