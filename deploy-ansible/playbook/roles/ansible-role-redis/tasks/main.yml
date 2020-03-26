@@ -23,4 +23,4 @@
   notify: restart redis
 
 - name: Ensure Redis is running and enabled on boot.
-  service: "name={{ redis_daemon }} state=started enabled=yes"
+  systemd: "name={{ redis_daemon }} state=started enabled=yes"
