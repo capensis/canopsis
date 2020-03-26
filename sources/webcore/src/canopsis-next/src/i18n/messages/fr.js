@@ -917,7 +917,7 @@ export default {
       },
     },
     dynamicInfoTemplatesList: {
-      title: 'Dynamic info templates',
+      title: 'Modèles d\'informations dynamiques',
     },
     createDynamicInfoTemplate: {
       create: {
@@ -927,10 +927,10 @@ export default {
         title: 'Edit dynamic info template',
       },
       fields: {
-        names: 'Names',
+        names: 'Attributs',
       },
       buttons: {
-        addName: 'Add new name',
+        addName: 'Ajouter un attribut',
       },
       errors: {
         noNames: 'You have to add at least 1 name',
