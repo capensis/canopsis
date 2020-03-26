@@ -48,3 +48,4 @@ registerHelper('request', helpers.requestHelper);
 registerHelper('timestamp', helpers.timestampHelper);
 registerHelper('internal-link', helpers.internalLinkHelper);
 registerHelper('compare', helpers.compareHelper);
+registerHelper('concat', helpers.concatHelper);
