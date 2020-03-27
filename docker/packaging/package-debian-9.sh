@@ -14,21 +14,18 @@ cat > ${deb_path}/DEBIAN/control << EOF
 Package: ${deb_name}
 Architecture: ${arch}
 Maintainer: Capensis
-Depends: base-files, bash, ca-certificates, dirmngr, libsasl2-2, libxml2, libxslt1.1, lsb-base, libffi6, libgmp10, libgnutls30, libgnutlsxx28, libgnutls-openssl27, libhogweed4, libicu57, libidn11, libnettle6, libp11-kit0, libpsl5, libssl1.1, libtasn1-6, libxmlsec1, libxmlsec1-openssl, libldap-2.4-2, python, python2.7, rsync, sudo, snmp, smitools
+Depends: base-files, bash, ca-certificates, curl, dirmngr, libsasl2-2, libxml2, libxslt1.1, lsb-base, libffi6, libgmp10, libgnutls30, libgnutlsxx28, libgnutls-openssl27, libhogweed4, libicu57, libidn11, libnettle6, libp11-kit0, libpsl5, libssl1.1, libtasn1-6, libxmlsec1, libxmlsec1-openssl, libldap-2.4-2, python, python2.7, rsync, sudo, snmp, smitools
 Version: ${deb_version}-${deb_release}
 Description: Canopsis open-core package.
 EOF
 
 cat > ${deb_path}/DEBIAN/preinst << EOF
-#!/bin/bash
-grep canopsis /etc/passwd
-if [ ! "\$?" = "0" ]; then
-    useradd -d /opt/canopsis -M -s /bin/bash canopsis
-fi
+#!/bin/sh
+getent passwd canopsis >/dev/null 2>&1 || useradd -d /opt/canopsis -M -s /bin/bash canopsis
 EOF
 
 cat > ${deb_path}/DEBIAN/postinst << EOF
-#!/bin/bash
+#!/bin/sh
 chmod +x /opt/canopsis/bin/*
 chown -R canopsis:canopsis /opt/canopsis/var/log
 chown -R canopsis:canopsis /opt/canopsis/var/cache
