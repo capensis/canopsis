@@ -1204,7 +1204,7 @@ export default {
       title: 'Interface utilisateur',
       fields: {
         appTitle: 'Titre de l\'application',
-        language: 'Langue par défault',
+        language: 'Langue par défaut',
         footer: 'Page d\'identification : pied de page',
         description: 'Page d\'identification : description',
         logo: 'Logo',
