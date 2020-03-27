@@ -176,13 +176,12 @@ Supprimer une alarme qui a été annulée
 db.periodical_alarm.remove({"v.component" : "XXXX", "v.resource" : "Ping", "v.resolved" : null, "v.status.val" : 4})
 ```
 
+Vider le cache :
 
-Redémarrer le cache :
-
+```sh
+redis-cli
+> FLUSHALL
 ```
-# systemctl restart redis-server
-```
-
 
 ## Status de service
 

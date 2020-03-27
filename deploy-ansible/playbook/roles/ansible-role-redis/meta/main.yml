@@ -10,20 +10,10 @@ galaxy_info:
   platforms:
     - name: EL
       versions:
-      - 6
       - 7
-    - name: Fedora
-      versions:
-      - all
     - name: Debian
       versions:
-      - all
-    - name: Ubuntu
-      versions:
-      - all
-    - name: Archlinux
-      versions:
-      - all
+      - stretch
   galaxy_tags:
     - database
     - development

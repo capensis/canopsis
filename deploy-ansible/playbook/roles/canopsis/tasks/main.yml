@@ -21,6 +21,11 @@
     - cps_config
   when: canopsis_engines_type == "go"
 
+- import_tasks: config-systemd-go-engines-cat.yml
+  tags:
+    - cps_config
+  when: canopsis_engines_type == "go" and canopsis_edition == "cat"
+
 - import_tasks: init-python-engines.yml
   tags:
     - cps_python_engines
