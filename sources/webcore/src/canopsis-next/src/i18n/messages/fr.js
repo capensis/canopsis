@@ -897,7 +897,7 @@ export default {
         },
         infos: {
           title: 'Informations',
-          validationError: 'Every values must be filled',
+          validationError: 'Toutes les valeurs doivent être saisies',
         },
         patterns: {
           title: 'Patterns',
@@ -921,10 +921,10 @@ export default {
     },
     createDynamicInfoTemplate: {
       create: {
-        title: 'Create dynamic info template',
+        title: 'Créer un modèle d\'informations dynamiques',
       },
       edit: {
-        title: 'Edit dynamic info template',
+        title: 'Editer un modèle d\'informations dynamiques',
       },
       fields: {
         names: 'Attributs',
@@ -933,7 +933,7 @@ export default {
         addName: 'Ajouter un attribut',
       },
       errors: {
-        noNames: 'You have to add at least 1 name',
+        noNames: 'Vous devez ajouter au moins 1 attribut',
       },
     },
 
