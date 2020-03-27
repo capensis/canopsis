@@ -26,8 +26,9 @@
               color="white"
             )
               v-icon(small, color="error") close
-        v-card-text.pa-2(data-test="alarmInfoPopupContent")
-          v-runtime-template(:template="popupTextContent")
+        v-fade-transition
+          v-card-text.pa-2(v-if="isInfoPopupOpen", data-test="alarmInfoPopupContent")
+            v-runtime-template(:template="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
@@ -88,6 +89,8 @@ export default {
   },
   asyncComputed: {
     popupTextContent: {
+      lazy: true,
+
       async get() {
         if (this.popupData) {
           const context = { alarm: this.alarm, entity: this.alarm.entity || {} };
