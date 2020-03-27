@@ -5,7 +5,8 @@
       v-model="isInfoPopupOpen",
       :close-on-content-click="false",
       :open-on-click="false",
-      offset-x
+      offset-x,
+      lazy
     )
       div(slot="activator")
         v-layout(align-center)
