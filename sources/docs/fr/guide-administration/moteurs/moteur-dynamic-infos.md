@@ -95,3 +95,28 @@ Seules les fonctions suivantes sont disponibles dans les templates `dynamic-info
 
 
 Un exemple concret d'utilisation du moteur `dynamic-infos` pour l'affichage de consignes techniques dans le bac à alarmes est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
+
+### Pré remplissage des attributs
+
+!!! Info
+    Disponible à partir de Canopsis 3.39.0
+
+Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour n'avoir plus que la saisie des valeurs à effectuer.  
+
+Pour cela, vous devez 
+
+* Ajouter un `modèle` depuis l'interface graphique :  
+
+![Ajouter un modèle](img/dynamic-infos-template1.png "Ajouter un modèle")
+
+* Appuyer sur le bouton `+` 
+
+![Ajouter un modèle](img/dynamic-infos-template2.png "Appuyer sur +")
+
+* Saisir un titre puis des attributs puis cliquer sur "Soumettre"
+
+![Ajouter un modèle](img/dynamic-infos-template3.png "Saisie titre et attributs")
+
+A ce stade, il vous reste à **instancier** le modèle avec vos valeurs
+
+![Instancier un modèle](img/dynamic-infos-template4.png "Instancier un modèle")
