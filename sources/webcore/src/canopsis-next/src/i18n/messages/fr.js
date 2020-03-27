@@ -1200,6 +1200,19 @@ export default {
         topBar: 'Barre d\'entête',
       },
     },
+    userInterfaceForm: {
+      title: 'Interface utilisateur',
+      fields: {
+        appTitle: 'Titre de l\'application',
+        language: 'Langue par défaut',
+        footer: 'Page d\'identification : pied de page',
+        description: 'Page d\'identification : description',
+        logo: 'Logo',
+        infoPopupTimeout: 'Timeout pour les popup d\'informations',
+        errorPopupTimeout: 'Timeout pour les popup d\'erreurs',
+        popupTimeoutUnit: 'Unité',
+      },
+    },
   },
   view: {
     errors: {
