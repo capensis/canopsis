@@ -427,7 +427,8 @@ class AlertsReader(object):
         final_filter = {'$and': []}
 
         # filtered list must have all alarms but meta-alarms except the filter by alarm id_ 
-        if view_filter and not view_filter.has_key("_id"):
+        if isinstance(view_filter, dict) and view_filter and not "_id" in view_filter or \
+            (isinstance(view_filter, list) and view_filter != []):
             final_filter['$and'].append({"v.meta": {"$exists": False}})
         t_view_filter = self._translate_filter(view_filter)
         # add the view filter if not empty
@@ -532,6 +533,7 @@ class AlertsReader(object):
                                   sort_key,
                                   sort_dir,
                                   with_steps,
+                                  with_consequences,
                                   filter_):
         """
         :param dict final_filter: the filter sent by the front page
@@ -570,7 +572,8 @@ class AlertsReader(object):
                 }
             }
         ]
-        if not filter_:
+        if (isinstance(filter_, dict) and filter_ and not "_id" in filter_ or \
+            (isinstance(filter_, list) and filter_ != [])) or with_consequences:
             pipeline.insert(4, {"$addFields": {
                 "rule": "$v.meta", 
                 "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
@@ -784,7 +787,8 @@ class AlertsReader(object):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            with_consequences=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -854,7 +858,7 @@ class AlertsReader(object):
             sort_key = 'v.last_update_date'
 
         pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
-                                                  sort_dir, with_steps, filter_)
+                                                  sort_dir, with_steps, with_consequences, filter_)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"
@@ -868,7 +872,7 @@ class AlertsReader(object):
             total = 0
 
         rules = dict()
-        if filter_:
+        if filter_ and not with_consequences:
             rules = self._metaalarm_children_rules()
 
         if limit is None:

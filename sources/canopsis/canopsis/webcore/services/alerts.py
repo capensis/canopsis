@@ -62,7 +62,9 @@ def exports(ws):
             'with_steps',
             'natural_search',
             'active_columns',
-            'hide_resources'
+            'hide_resources',
+            'with_consequences',
+            'with_causes'
         ]
     )
     def get_alarms(
@@ -80,7 +82,9 @@ def exports(ws):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            with_consequences=False,
+            with_causes=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -132,7 +136,8 @@ def exports(ws):
                 with_steps=with_steps,
                 natural_search=natural_search,
                 active_columns=active_columns,
-                hide_resources=hide_resources
+                hide_resources=hide_resources,
+                with_consequences=with_consequences
             )
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)
