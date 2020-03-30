@@ -54,6 +54,8 @@ export default {
     trend: 'Trend',
     users: 'Users',
     roles: 'Roles',
+    import: 'Import',
+    export: 'Export',
     rights: 'Rights',
     profile: 'Profile',
     username: 'Username',
