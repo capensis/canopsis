@@ -32,6 +32,7 @@ export { default as AlarmsList } from './alarm/alarms-list.vue';
 export { default as CreateUser } from './admin/create-user.vue';
 export { default as CreateRole } from './admin/create-role.vue';
 export { default as CreateRight } from './admin/create-right.vue';
+export { default as CreateBroadcastMessage } from './admin/create-broadcast-message.vue';
 export { default as CreateEventFilterRule } from './event-filter/create-event-filter-rule.vue';
 export { default as CreateEventFilterRulePattern } from './event-filter/pattern/create-event-filter-rule-pattern.vue';
 export { default as AddEventFilterRuleToPattern } from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';

@@ -21,6 +21,7 @@ import dynamicInfoModule from './dynamic-info';
 import pbehaviorReasonsModule from './pbehavior-reasons';
 import alarmColumnFiltersModule from './alarm-column-filters';
 import sessionModule from './session';
+import broadcastMessageModule from './broadcast-message';
 
 export default {
   alarm: alarmModule,
@@ -46,4 +47,5 @@ export default {
   pbehaviorReasons: pbehaviorReasonsModule,
   alarmColumnFilters: alarmColumnFiltersModule,
   session: sessionModule,
+  broadcastMessage: broadcastMessageModule,
 };

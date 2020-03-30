@@ -31,6 +31,7 @@ export const ENTITIES_TYPES = {
   action: 'action',
   heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
+  broadcastMessage: 'broadcastMessage',
 };
 
 export const MODALS = {
@@ -68,6 +69,7 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createRight: 'create-right',
+  createBroadcastMessage: 'create-broadcast-message',
   createEventFilterRule: 'create-event-filter-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
@@ -644,6 +646,7 @@ export const USERS_RIGHTS = {
     action: 'models_action',
     user: 'models_user',
     parameters: 'models_parameters',
+    broadcastMessages: 'models_broadcastMessages',
     exploitation: {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
@@ -1149,3 +1152,5 @@ export const GRID_SIZES = {
 export const TOURS = {
   alarmsExpandPanel: 'alarmsExpandPanel',
 };
+
+export const DEFAULT_BROADCAST_MESSAGE_COLOR = '#e75e40';

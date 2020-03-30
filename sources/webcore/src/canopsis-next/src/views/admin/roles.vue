@@ -94,8 +94,8 @@ export default {
           value: '_id',
         },
         {
-          text: this.$t('tables.rolesList.actions'),
-          value: 'actions',
+          text: this.$t('common.actionsLabel'),
+          sortable: false,
         },
       ];
     },
