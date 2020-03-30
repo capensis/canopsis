@@ -12,7 +12,7 @@ export function dynamicInfoToForm(dynamicInfo = {}) {
       name: dynamicInfo.name || '',
       description: dynamicInfo.description || '',
     },
-    infos: dynamicInfo.infos || [],
+    infos: dynamicInfo.infos ? [...dynamicInfo.infos] : [],
     patterns: {
       alarm_patterns: dynamicInfo.alarm_patterns || [],
       entity_patterns: dynamicInfo.entity_patterns || [],
