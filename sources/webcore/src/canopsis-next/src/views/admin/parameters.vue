@@ -18,7 +18,7 @@ import rightsTechnicalParametersMixin from '@/mixins/rights/technical/parameters
 
 import UserInterfaceForm from '@/components/forms/user-interface.vue';
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
-import ViewImportExport from '@/components/other/view/view-import-export.vue';
+import ViewImportExport from '@/components/other/view/views-import-export.vue';
 
 import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
