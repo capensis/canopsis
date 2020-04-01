@@ -21,7 +21,9 @@ redis_rdbchecksum: "yes"
 redis_dbfilename: dump.rdb
 redis_dbdir: /var/lib/redis
 
-redis_maxmemory: 0
+# Note: critical policy for Canopsis. Memory amount needs to be adjusted
+# to the size of the environment.
+redis_maxmemory: "512mb"
 redis_maxmemory_policy: "noeviction"
 redis_maxmemory_samples: 5
 
