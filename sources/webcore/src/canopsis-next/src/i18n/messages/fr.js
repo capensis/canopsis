@@ -205,6 +205,20 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+    timeLine: {
+      titlePaths: {
+        by: 'by',
+      },
+      stateCounter: {
+        header: 'Cropped State (since last change of status)',
+        stateIncreased: 'State increased',
+        stateDecreased: 'State decreases',
+      },
+      types: {
+        pbhenter: 'Comportement périodique activé',
+        pbhleave: 'Comportement périodique désactivé',
+      },
+    },
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Time line',

@@ -103,6 +103,8 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
+  pbhenter: 'pbhenter',
+  pbhleave: 'pbhleave',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -320,11 +322,11 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
-  pbhenter: {
+  [EVENT_ENTITY_TYPES.pbhenter]: {
     color: COLORS.entitiesEvents.pbhenter,
     icon: 'pause',
   },
-  pbhleave: {
+  [EVENT_ENTITY_TYPES.pbhleave]: {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
   },
