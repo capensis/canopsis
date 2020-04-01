@@ -34,6 +34,7 @@ from canopsis.common.ws import route, WebServiceError
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.pbehavior.manager import PBehaviorManager,PBehavior
 
 
 def exports(ws):
@@ -43,6 +44,7 @@ def exports(ws):
     context_manager = ContextGraph(ws.logger)
     am = Alerts(*Alerts.provide_default_basics())
     ar = AlertsReader(*AlertsReader.provide_default_basics())
+    pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
     @route(
         ws.application.get,
@@ -181,6 +183,116 @@ def exports(ws):
         alarms['alarms'] = list_alarm
 
         return alarms
+
+    @route(
+        ws.application.get,
+        name='alerts/get-counters',
+        payload=[
+            'tstart',
+            'tstop',
+            'opened',
+            'resolved',
+            'lookups',
+            'filter',
+            'search',
+            'sort_key',
+            'sort_dir',
+            'skip',
+            'limit',
+            'with_steps',
+            'natural_search',
+            'active_columns',
+            'hide_resources'
+        ]
+    )
+    def get_counters(
+        tstart=None,
+        tstop=None,
+        opened=True,
+        resolved=False,
+        lookups=[],
+        filter={},
+        search='',
+        sort_key='opened',
+        sort_dir='DESC',
+        skip=0,
+        limit=None,
+        with_steps=False,
+        natural_search=False,
+        active_columns=None,
+        hide_resources=False
+    ):
+
+        if isinstance(search, int):
+            search = str(search)
+
+        try:
+            alarms = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=opened,
+                resolved=resolved,
+                lookups=lookups,
+                filter_=filter,
+                search=search.strip(),
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=limit,
+                with_steps=with_steps,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources,
+                add_pbh_filter=False
+            )
+        except OperationFailure as of_err:
+            message = 'Operation failure on get-alarms: {}'.format(of_err)
+            raise WebServiceError(message)
+
+        counters = {
+            "total": len(alarms['alarms']),
+            "total_active": 0,
+            "snooze": 0,
+            "ack": 0,
+            "ticket": 0,
+            "pbehavior_active": 0
+        }
+
+        alarms_ids = []
+        for alarm in alarms['alarms']:
+            tmp_id = alarm.get('d')
+            if tmp_id:
+                alarms_ids.append(tmp_id)
+        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
+        entity_id = []
+        for entity in entities:
+            _id = entity.get('_id')
+            if _id:
+                entity_id.append(_id)
+
+        active_pbh = pbm.get_active_pbehaviors_on_entities(entity_id)
+        enabled_pbh_entity_dict = set()
+        for pbh in active_pbh:
+            if pbh[PBehavior.ENABLED]:
+                for eid in pbh.get(PBehavior.EIDS, []):
+                    if eid in entity_id:
+                        enabled_pbh_entity_dict.add(eid)
+
+        for alarm in alarms['alarms']:
+            v = alarm.get('v')
+            if isinstance(v, dict):
+                if v.get('ack', {}).get('_t') == 'ack':
+                    counters['ack'] += 1
+                if v.get('snooze', {}).get('_t') == 'snooze':
+                    counters['snooze'] += 1
+                if v.get('ticket', {}).get('_t') in ['declareticket', 'assocticket']:
+                    counters['ticket'] += 1
+            d = alarm.get('d')
+            if d in enabled_pbh_entity_dict:
+                counters['pbehavior_active'] += 1
+
+        counters['active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze']
+        return counters
 
     @route(
         ws.application.get,
