@@ -239,6 +239,7 @@ export default {
       statsNumberSettings: 'Paramètres du compteur de stats',
       statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
+      counterSettings: 'Paramètres du widget de compteur',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
@@ -685,6 +686,9 @@ export default {
         },
         text: {
           title: 'Texte',
+        },
+        counter: {
+          title: 'Compteur',
         },
       },
     },

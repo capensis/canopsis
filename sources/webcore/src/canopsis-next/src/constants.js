@@ -228,6 +228,7 @@ export const WIDGET_TYPES = {
   statsNumber: 'StatsNumber',
   statsPareto: 'StatsPareto',
   text: 'Text',
+  counter: 'Counter',
 };
 
 export const WIDGET_ICONS = {
@@ -241,6 +242,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.statsNumber]: 'table_chart',
   [WIDGET_TYPES.statsPareto]: 'multiline_chart',
   [WIDGET_TYPES.text]: 'view_headline',
+  [WIDGET_TYPES.counter]: 'view_module',
 };
 
 export const SIDE_BARS = {
@@ -254,6 +256,7 @@ export const SIDE_BARS = {
   statsNumberSettings: 'stats-number-settings',
   statsParetoSettings: 'stats-pareto-settings',
   textSettings: 'text-settings',
+  counterSettings: 'counter-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -267,6 +270,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
   [WIDGET_TYPES.statsPareto]: SIDE_BARS.statsParetoSettings,
   [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
+  [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
@@ -1150,4 +1154,13 @@ export const GRID_SIZES = {
 
 export const TOURS = {
   alarmsExpandPanel: 'alarmsExpandPanel',
+};
+
+export const AVAILABLE_COUNTERS = {
+  total: 'total',
+  total_active: 'total_active',
+  snooze: 'snooze',
+  ack: 'ack',
+  ticket: 'ticket',
+  pbehavior_active: 'pbehavior_active',
 };

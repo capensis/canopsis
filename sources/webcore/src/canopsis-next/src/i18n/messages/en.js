@@ -266,6 +266,7 @@ export default {
       statsNumberSettings: 'Stats number settings',
       statsParetoSettings: 'Stats Pareto diagram settings',
       textSettings: 'Text settings',
+      counterSettings: 'Counter settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -725,6 +726,9 @@ export default {
         },
         text: {
           title: 'Text',
+        },
+        counter: {
+          title: 'Counter',
         },
       },
     },

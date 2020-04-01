@@ -2,7 +2,7 @@ import sha1 from 'sha1';
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
@@ -17,7 +17,7 @@ import {
   DURATION_UNITS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  GRID_SIZES,
+  GRID_SIZES, AVAILABLE_COUNTERS,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -280,6 +280,36 @@ export function generateWidgetByType(type) {
         mfilter: {},
         stats: {},
         template: '',
+      };
+      break;
+    case WIDGET_TYPES.counter:
+      specialParameters = {
+        viewFilters: [],
+        blockTemplate: '',
+        columnSM: 6,
+        columnMD: 4,
+        columnLG: 3,
+        margin: {
+          top: 1,
+          right: 1,
+          bottom: 1,
+          left: 1,
+        },
+        levels: {
+          counter: AVAILABLE_COUNTERS.total,
+          colors: {
+            ok: COLORS.state.ok,
+            minor: COLORS.state.minor,
+            major: COLORS.state.major,
+            critical: COLORS.state.critical,
+          },
+          values: {
+            minor: 20,
+            major: 30,
+            critical: 40,
+          },
+        },
+        alarmsList: alarmsListDefaultParameters,
       };
       break;
   }

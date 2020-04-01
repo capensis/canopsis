@@ -108,6 +108,7 @@ export const API_ROUTES = {
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
   dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
+  counter: '/api/get-counter',
 };
 
 export const COLORS = {
