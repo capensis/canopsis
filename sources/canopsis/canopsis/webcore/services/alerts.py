@@ -291,7 +291,7 @@ def exports(ws):
             if d in enabled_pbh_entity_dict:
                 counters['pbehavior_active'] += 1
 
-        counters['active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze']
+        counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze']
         return counters
 
     @route(
