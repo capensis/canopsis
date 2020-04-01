@@ -207,7 +207,7 @@ export default {
     },
     timeLine: {
       titlePaths: {
-        by: 'by',
+        by: 'par',
       },
       stateCounter: {
         header: 'Cropped State (since last change of status)',
