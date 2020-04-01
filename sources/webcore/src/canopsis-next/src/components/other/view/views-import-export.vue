@@ -1,38 +1,40 @@
 <template lang="pug">
   div
-    v-expansion-panel(readonly, hide-actions, expand, dark, focusable, :value="openedPanels")
-      group-panel(
-        v-for="group in groupsOrdered",
-        :group="group",
-        :key="group._id",
-        hideActions
-      )
-        v-layout(row, slot="title")
-          v-checkbox.group-checkbox(
-            v-model="groupIds",
-            :value="group._id",
-            primary,
-            @change="changeGroupHandler(group._id, $event)"
+    v-layout
+      v-flex.export-views-block(xs6)
+        v-expansion-panel(readonly, hide-actions, expand, dark, focusable, :value="openedPanels")
+          group-panel(
+            v-for="group in groupsOrdered",
+            :group="group",
+            :key="group._id",
+            hideActions
           )
-          | {{ group.name }}
-        group-view-panel(
-          v-for="view in group.views",
-          :key="view._id",
-          :view="view"
+            template(slot="title")
+              v-checkbox.group-checkbox(
+                v-model="groupIds",
+                :value="group._id",
+                primary,
+                @change="changeGroupHandler(group._id, $event)"
+              )
+              span.group-title {{ group.name }}
+            group-view-panel(
+              v-for="view in group.views",
+              :key="view._id",
+              :view="view"
+            )
+              template(slot="title")
+                v-layout(align-center, row)
+                  v-checkbox(v-model="viewIds", :value="view._id")
+                  | {{ view.name }}
+      v-flex(co)
+        v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
+        file-selector(
+          ref="fileSelector",
+          multiple,
+          hide-details,
+          @change="importViews"
         )
-          template(slot="title")
-            v-layout(align-center, row)
-              v-checkbox.group-checkbox(v-model="viewIds", :value="view._id")
-              | {{ view.name }}
-    v-layout(row)
-      v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
-      file-selector(
-        ref="fileSelector",
-        multiple,
-        hide-details,
-        @change="importViews"
-      )
-        v-btn(slot="activator") {{ $t('common.import') }}
+          v-btn(slot="activator") {{ $t('common.import') }}
 </template>
 
 <script>
@@ -134,7 +136,14 @@ export default {
     padding: 0;
   }
 
-  /deep/ .panel-header span {
+  .group-title {
     overflow: auto;
+  }
+  .export-views-block {
+    & /deep/ .panel-header {
+      display: flex;
+      flex: inherit;
+      align-items: center;
+    }
   }
 </style>

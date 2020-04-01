@@ -1,5 +1,28 @@
 import uuid from '@/helpers/uuid';
 
+export const mapViewToExport = view => ({
+  ...view,
+  _id: uuid(),
+  exported: true,
+});
+
+export const mapGroupToExport = ({ views, name }, exportedViewIds = []) => {
+  const groupId = uuid();
+
+  return ({
+    views: views.reduce((acc, { _id: viewId, ...view }) => {
+      if (exportedViewIds.includes(viewId)) {
+        acc.push(mapViewToExport({ ...view, group_id: groupId }));
+      }
+
+      return acc;
+    }, []),
+    _id: groupId,
+    exported: true,
+    name,
+  });
+};
+
 /**
  * Prepare group and views to export data object.
  * @param {Array} groups - groups with selected views.
@@ -11,26 +34,14 @@ export const prepareGroupsAndViewsToImport = ({ groups, views }) => {
   const groupsIds = groups.map(({ _id }) => _id);
 
   return {
-    groups: groups.map(({ views: groupViews, _id: groupId, ...group }) => ({
-      views: groupViews.reduce((acc, { _id: viewId, ...view }) => {
-        if (viewsIds.includes(viewId)) {
-          acc.push({
-            ...view,
-            _id: uuid(),
-          });
-        }
-
-        return acc;
-      }, []),
-      _id: uuid(),
-      ...group,
-    })),
+    groups: groups.map(group => mapGroupToExport(group, viewsIds)),
     views: views.reduce((acc, { group_id: groupId, ...view }) => {
       if (!groupsIds.includes(groupId)) {
-        acc.push(view);
+        acc.push(mapViewToExport(view));
       }
 
       return acc;
     }, []),
+    viewsIds,
   };
 };

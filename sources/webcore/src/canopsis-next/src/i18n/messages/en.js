@@ -1012,6 +1012,12 @@ export default {
         value: 'Value',
       },
     },
+    importExportViews: {
+      title: 'Import/Export views',
+      groups: 'Groups',
+      views: 'Views',
+      result: 'Result',
+    },
   },
   tables: {
     noData: 'No data',
