@@ -574,10 +574,13 @@ class AlertsReader(object):
         ]
         if (isinstance(filter_, dict) and filter_ and not "_id" in filter_ or \
             (isinstance(filter_, list) and filter_ != [])) or with_consequences:
+            consequences_pipeline = {"total": {"$size": "$v.children"}}
+            if with_consequences:
+                consequences_pipeline["data"] = "$v.children"
             pipeline.insert(4, {"$addFields": {
                 "rule": "$v.meta", 
                 "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
-                "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, {"total": {"$size": "$v.children"}}]}
+                "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
             }})
             pipeline.insert(3, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {"v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
 

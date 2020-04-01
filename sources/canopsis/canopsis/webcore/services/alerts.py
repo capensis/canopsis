@@ -144,7 +144,10 @@ def exports(ws):
             raise WebServiceError(message)
 
         alarms_ids = []
+        consequences_children, consequences_alarms = [], []
         for alarm in alarms['alarms']:
+            if with_consequences:
+                consequences_children.append(*alarm.get('consequences', {}).get('data', []))
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
@@ -153,6 +156,22 @@ def exports(ws):
         for entity in entities:
             entity_dict[entity.get('_id')] = entity
 
+        if consequences_children:
+            consequences_alarms = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=opened,
+                resolved=resolved,
+                lookups=lookups,
+                filter_={'_id': {'$in': consequences_children}},
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=limit,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources,
+            )
         list_alarm = []
         for alarm in alarms['alarms']:
             rules = alarms['rules'].get(alarm['_id'], [])
@@ -186,6 +205,9 @@ def exports(ws):
                         alarm['infos'] = data
 
             alarm = compat_go_crop_states(alarm)
+
+            if with_consequences and isinstance(alarm.get('consequences'), dict) and consequences_alarms['total'] > 0:
+                alarm['consequences']['data'] = consequences_alarms['alarms']
 
             list_alarm.append(alarm)
 
