@@ -4,15 +4,23 @@
       span {{ $t('common.import') }}/{{ $t('common.export') }}
     template(slot="text")
       v-layout(row)
-        v-flex(xs4)
+        v-flex.pl-1.pr-1(xs4)
+          v-flex.text-xs-center.mb-2 Groups
           draggable-groups(v-model="importedGroups")
-        v-flex(xs4)
+        v-flex.pl-1.pr-1(xs4)
+          v-flex.text-xs-center.mb-2 Views
           draggable-group-views(v-model="importedViews")
-        v-flex(xs4)
+        v-flex.pl-1.pr-1(xs4)
+          v-flex.text-xs-center.mb-2 Result
           draggable-groups(v-model="currentGroups")
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn.primary(type="submit", @click="updateViews") {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -37,21 +45,30 @@ export default {
     rightsEntitiesGroupMixin,
   ],
   data() {
-    const { groups, views } = this.modal.config;
-
     return {
-      importedGroups: [...groups],
-      importedViews: [...views],
+      importedViews: [],
+      importedGroups: [],
       currentGroups: [],
     };
   },
+  watch: {
+    groupsOrdered: {
+      immediate: true,
+      handler() {
+        this.setDefaultValues();
+      },
+    },
+  },
   methods: {
-    async updateViews(tabId, viewId) {
-      if (this.config.action) {
-        await this.config.action({ tabId, viewId });
-      }
-
+    async updateViews() {
       this.$modals.hide();
+    },
+    setDefaultValues() {
+      const { groups, views } = this.modal.config;
+
+      this.importedViews = cloneDeep(views);
+      this.importedGroups = cloneDeep(groups);
+      this.currentGroups = cloneDeep(this.groupsOrdered);
     },
   },
 };
