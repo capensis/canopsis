@@ -20,11 +20,13 @@ export default {
     isLDAPAuthEnabled: false,
     isCASAuthEnabled: false,
     casConfig: {},
+    popupTimeout: undefined,
   },
   getters: {
     version: state => state.version,
     logo: state => state.logo,
     appTitle: state => state.appTitle,
+    popupTimeout: state => state.popupTimeout,
     footer: state => state.footer,
     edition: state => state.edition,
     stack: state => state.stack,
@@ -56,6 +58,7 @@ export default {
       version,
       logo,
       appTitle,
+      popupTimeout,
       edition,
       stack,
       language,
@@ -63,6 +66,7 @@ export default {
       state.version = version;
       state.logo = logo;
       state.appTitle = appTitle;
+      state.popupTimeout = popupTimeout;
       state.edition = edition;
       state.stack = stack;
       state.language = language;
@@ -93,6 +97,7 @@ export default {
           version,
           logo,
           app_title: appTitle,
+          popup_timeout: popupTimeout,
           edition,
           stack,
           language,
@@ -105,6 +110,7 @@ export default {
             logo,
             appTitle,
             edition,
+            popupTimeout,
             stack,
             language,
           },

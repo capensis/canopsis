@@ -903,6 +903,7 @@ export default {
         },
         infos: {
           title: 'Informations',
+          validationError: 'Toutes les valeurs doivent être saisies',
         },
         patterns: {
           title: 'Patterns',
@@ -921,6 +922,27 @@ export default {
         value: 'Valeur',
       },
     },
+    dynamicInfoTemplatesList: {
+      title: 'Modèles d\'informations dynamiques',
+    },
+    createDynamicInfoTemplate: {
+      create: {
+        title: 'Créer un modèle d\'informations dynamiques',
+      },
+      edit: {
+        title: 'Editer un modèle d\'informations dynamiques',
+      },
+      fields: {
+        names: 'Attributs',
+      },
+      buttons: {
+        addName: 'Ajouter un attribut',
+      },
+      errors: {
+        noNames: 'Vous devez ajouter au moins 1 attribut',
+      },
+    },
+
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1200,6 +1222,19 @@ export default {
       items: {
         sideBar: 'Barre latérale',
         topBar: 'Barre d\'entête',
+      },
+    },
+    userInterfaceForm: {
+      title: 'Interface utilisateur',
+      fields: {
+        appTitle: 'Titre de l\'application',
+        language: 'Langue par défaut',
+        footer: 'Page d\'identification : pied de page',
+        description: 'Page d\'identification : description',
+        logo: 'Logo',
+        infoPopupTimeout: 'Timeout pour les popup d\'informations',
+        errorPopupTimeout: 'Timeout pour les popup d\'erreurs',
+        popupTimeoutUnit: 'Unité',
       },
     },
   },

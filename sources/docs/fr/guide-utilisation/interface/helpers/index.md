@@ -260,3 +260,44 @@ Afficher une pastille « Invalid val » (l'état de criticité étant invalide
 ```handlebars
 {{state 9}}
 ```
+
+
+## Helper `concat`
+
+!!! note
+    Disponible depuis Canopsis 3.39.0.
+
+Le helper `concat` permet de concaténer des chaînes de caractères.  
+
+```handlebars
+{{concat "chaine1" "chaine2" "chaineN"}}
+```
+
+Ce helper attend en paramètre un ensemble de chaînes de caractères à concaténer.  
+Ces chaînes peuvent être également des variables de l'alarme ou de l'entité.  
+
+#### Exemples d'utilisation du helper `concat`
+
+Afficher la concaténation de "chaine1" et "chaine2" :
+
+```handlebars
+{{concat "chaine1" "chaine2"}}
+```
+
+Afficher la concaténation de "http://wiki.local/?co=" et du composant d'une alarme :
+
+```handlebars
+{{concat "http://wiki.local/?co=" alarm.v.component}}
+```
+
+Utiliser la concaténation dans le helper [request](#helper-request) pour bâtir une URL dynamique :
+
+```handlebars
+{{#request
+  url=(concat "https://wiki.local/?co=" alarm.v.component)
+  variable="items"}}
+     {{#each items}}
+       <li>{{name}}</li>
+     {{/each}}
+{{/request}}
+```

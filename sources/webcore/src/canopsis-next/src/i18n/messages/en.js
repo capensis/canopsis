@@ -994,6 +994,7 @@ export default {
         },
         infos: {
           title: 'Informations',
+          validationError: 'Every values must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1010,6 +1011,26 @@ export default {
       fields: {
         name: 'Name',
         value: 'Value',
+      },
+    },
+    dynamicInfoTemplatesList: {
+      title: 'Dynamic info templates',
+    },
+    createDynamicInfoTemplate: {
+      create: {
+        title: 'Create dynamic info template',
+      },
+      edit: {
+        title: 'Edit dynamic info template',
+      },
+      fields: {
+        names: 'Names',
+      },
+      buttons: {
+        addName: 'Add new name',
+      },
+      errors: {
+        noNames: 'You have to add at least 1 name',
       },
     },
     importExportViews: {
@@ -1310,6 +1331,9 @@ export default {
         footer: 'Login footer',
         description: 'Login page description',
         logo: 'Logo',
+        infoPopupTimeout: 'Info popup timeout',
+        errorPopupTimeout: 'Error popup timeout',
+        popupTimeoutUnit: 'Unit',
       },
     },
   },

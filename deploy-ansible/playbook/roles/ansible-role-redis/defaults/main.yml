@@ -1,11 +1,9 @@
 ---
-# Used for RHEL/CentOS/Fedora only. Allows the use of different repos.
-redis_enablerepo: epel
-
 redis_port: 6379
 redis_bind_interface: 127.0.0.1
 redis_unixsocket: ''
-redis_timeout: 300
+redis_tcp_keepalive: 300
+redis_timeout: 0
 
 redis_loglevel: "notice"
 redis_logfile: /var/log/redis/redis-server.log
@@ -19,6 +17,7 @@ redis_save:
   - 60 10000
 
 redis_rdbcompression: "yes"
+redis_rdbchecksum: "yes"
 redis_dbfilename: dump.rdb
 redis_dbdir: /var/lib/redis
 

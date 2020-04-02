@@ -33,6 +33,8 @@ from canopsis.task.core import register_task
 from canopsis.models.pbehavior import PBehavior as PBehaviorModel
 from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.watcher.manager import Watcher
+from canopsis.engines.core import DROP
+
 
 EVENT_TYPE = 'pbehavior'
 PBEHAVIOR_CREATE = 'create'
@@ -186,8 +188,10 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
                 logger.error(ERROR_MSG.format(event.get('action', 'no_action'), event))
 
         except ValueError as err:
-            logger.error('cannot handle event: {}'.format(err))
 
+            logger.error('cannot handle event: {}'.format(err))
+    if event.get('event_type') in ['pbhleave', 'pbhenter']:
+        return DROP
     return event
 
 
@@ -196,10 +200,11 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
     """
     Beat processing.
     """
-    engine.logger.debug("Start beat processing")
+    engine.logger.info("Start beat processing")
 
     try:
         pbm.compute_pbehaviors_filters()
+        pbm.send_pbehavior_event()
         pbm.launch_update_watcher(watcher_manager)
     except Exception as ex:
         engine.logger.exception('Processing error {}'.format(str(ex)))

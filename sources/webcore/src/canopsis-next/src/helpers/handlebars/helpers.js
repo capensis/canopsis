@@ -1,4 +1,4 @@
-import { get, isFunction, unescape } from 'lodash';
+import { get, isFunction, isObject, unescape } from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
@@ -208,4 +208,17 @@ export function compareHelper(a, operator, b, options = {}) {
   }
 
   return result;
+}
+
+/**
+ * Concat every primitive arguments
+ *
+ * Example: {{concat "example" object.field}}
+ * Example with request helper: {{#request url=(concat "http://example.com/" object.field)}}something{{/request}}
+ *
+ * @param {...any} args
+ * @returns {string}
+ */
+export function concatHelper(...args) {
+  return args.reduce((acc, arg) => (!isObject(arg) ? acc + arg : acc), '');
 }

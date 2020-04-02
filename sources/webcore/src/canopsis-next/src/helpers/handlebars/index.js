@@ -12,10 +12,15 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  * @param {Object} context
  * @returns {Promise}
  */
-export function compile(template, context) {
+export async function compile(template, context) {
   const handleBarFunction = Handlebars.compile(template);
+  const result = await handleBarFunction(context);
 
-  return handleBarFunction(context);
+  const element = document.createElement('div');
+
+  element.innerHTML = result;
+
+  return element.innerHTML;
 }
 
 /**
@@ -48,3 +53,4 @@ registerHelper('request', helpers.requestHelper);
 registerHelper('timestamp', helpers.timestampHelper);
 registerHelper('internal-link', helpers.internalLinkHelper);
 registerHelper('compare', helpers.compareHelper);
+registerHelper('concat', helpers.concatHelper);

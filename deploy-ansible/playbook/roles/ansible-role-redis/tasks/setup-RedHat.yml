@@ -1,0 +1,16 @@
+---
+- name: Enable remi repository
+  yum:
+    name: "http://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+    state: present
+
+- name: Import remi GPG key
+  rpm_key:
+    key: http://rpms.remirepo.net/RPM-GPG-KEY-remi
+    state: present
+
+- name: Install Redis 5 from remi repository
+  yum:
+    name: "{{ redis_package }}"
+    state: latest
+    enablerepo: remi
