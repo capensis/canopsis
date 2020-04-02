@@ -142,7 +142,7 @@ export default {
       const { views } = this.getGroupById(groupId);
 
       const selectedViewIds = views.map(({ _id }) => _id);
-      const viewsIdsWithoutGroupViews = this.selectedViewIds.filter(viewId => !this.viewIds.includes(viewId));
+      const viewsIdsWithoutGroupViews = this.selectedViewIds.filter(viewId => !selectedViewIds.includes(viewId));
 
       if (checked) {
         this.selectedViewIds = [
