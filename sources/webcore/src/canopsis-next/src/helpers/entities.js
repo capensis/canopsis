@@ -21,6 +21,7 @@ import {
 } from '@/constants';
 
 import uuid from './uuid';
+import { getCountDuplicateName } from './searching';
 import { pbehaviorToForm } from './forms/pbehavior';
 
 /**
@@ -600,4 +601,17 @@ export function prepareUserByData(data, user = generateUser()) {
  */
 export function isResolvedAlarm(alarm) {
   return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
+}
+
+
+/**
+ * Function return new name if name is not uniq
+ * @param {Object} entity
+ * @param {Array} entities
+ * @returns {string}
+ */
+export function getDuplicateEntityName(entity, entities) {
+  const duplicateEntityCount = getCountDuplicateName(entities, entity);
+
+  return duplicateEntityCount !== 0 ? `${entity.name} (${duplicateEntityCount})` : entity.name;
 }

@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-layout
-      v-flex.export-views-block(xs6)
+      v-flex.export-views-block.mr-0.ma-4(xs6)
         v-expansion-panel(readonly, hide-actions, expand, dark, focusable, :value="openedPanels")
           group-panel(
             v-for="group in groupsOrdered",
@@ -25,16 +25,18 @@
               template(slot="title")
                 v-layout(align-center, row)
                   v-checkbox(v-model="viewIds", :value="view._id")
-                  | {{ view.name }}
-      v-flex(co)
-        v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
-        file-selector(
-          ref="fileSelector",
-          multiple,
-          hide-details,
-          @change="importViews"
-        )
-          v-btn(slot="activator") {{ $t('common.import') }}
+                  | {{ view.title }}
+      v-flex.btn-group(xs2)
+        v-layout(column)
+          v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
+          v-btn
+            file-selector.view-import-btn(
+              ref="fileSelector",
+              multiple,
+              hide-details,
+              @change="importViews"
+            )
+              span(slot="activator") {{ $t('common.import') }}
 </template>
 
 <script>
@@ -81,7 +83,7 @@ export default {
     async importViews([file]) {
       try {
         const content = await getFileTextContent(file);
-        const { groups, views } = JSON.parse(content);
+        const { groups = [], views = [] } = JSON.parse(content);
 
         this.$modals.show({
           name: MODALS.importExportViews,
@@ -91,9 +93,7 @@ export default {
           },
         });
       } catch (e) {
-        this.$popups.error({
-          text: this.$t('errors.default'),
-        });
+        this.$popups.error({ text: this.$t('errors.default') });
       }
 
       this.$refs.fileSelector.clear();
@@ -134,6 +134,15 @@ export default {
     height: 24px;
     margin: 0;
     padding: 0;
+  }
+
+  .btn-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .view-import-btn {
+    display: inline-flex;
   }
 
   .group-title {

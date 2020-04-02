@@ -12,9 +12,9 @@ export function replaceTextNotInQuotes(str, text, value) {
  * @param {Array} list
  * @param {Object} item
  * @return {Number}
- * Example: getDuplicateCountItems([{ name: 'test' }, { name: 'test' }, { name: 'other' }], { name: 'test' }) -> 2
+ * Example: getCountDuplicateName([{ name: 'test' }, { name: 'test' }, { name: 'other' }], { name: 'test' }) -> 2
  */
-export const getDuplicateCountItems = (list, item) => {
+export const getCountDuplicateName = (list, item) => {
   const nameRegexp = new RegExp(`^${item.name}(\\s\\(\\d+\\))?$`);
 
   return list.reduce((count, { name }) => {

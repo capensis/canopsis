@@ -12,14 +12,20 @@
       :group="group",
       :key="group._id"
     )
-      draggable-group-views(v-model="group.views")
+      draggable-group-views(
+        v-model="group.views",
+        :allViewsList="allViewsList",
+        :prepareView="mapViewEntity",
+        :put="viewPut",
+        :pull="viewPull"
+      )
 </template>
 
 <script>
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { getDuplicateCountItems } from '@/helpers/searching';
+import { getDuplicateEntityName } from '@/helpers/entities';
 
 import DraggableGroupViews from './draggable-group-views.vue';
 import GroupPanel from './group-panel.vue';
@@ -35,20 +41,56 @@ export default {
       type: Array,
       required: true,
     },
+    put: {
+      type: Boolean,
+      default: false,
+    },
+    pull: {
+      type: [Boolean, String],
+      default: false,
+    },
+    viewPut: {
+      type: Boolean,
+      default: false,
+    },
+    viewPull: {
+      type: [Boolean, String],
+      default: false,
+    },
   },
   computed: {
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
-        group: 'groups',
+        group: { name: 'groups', put: this.put, pull: this.pull },
       };
     },
 
     isGroupsEmpty() {
       return this.groups.length === 0;
     },
+
+    allViewsList() {
+      return this.groups.reduce((ids, { views }) => {
+        ids.push(...views);
+
+        return ids;
+      }, []);
+    },
   },
   methods: {
+    mapViewEntity(view) {
+      return { ...view, name: getDuplicateEntityName(view, this.allViewsList) };
+    },
+
+    mapGroupEntity(group) {
+      return {
+        ...group,
+        name: getDuplicateEntityName(group, this.groups),
+        views: group.views.map(this.mapViewEntity),
+      };
+    },
+
     changeGroupsOrdering({ moved, added, removed }) {
       const groups = [...this.groups];
 
@@ -57,13 +99,7 @@ export default {
 
         groups.splice(moved.newIndex, 0, item);
       } else if (added) {
-        const duplicateGroupCount = getDuplicateCountItems(groups, added.element);
-
-        const group = duplicateGroupCount !== 0
-          ? { ...added.element, name: `${added.element.name} (${duplicateGroupCount})` }
-          : added.element;
-
-        groups.splice(added.newIndex, 0, group);
+        groups.splice(added.newIndex, 0, this.mapGroupEntity(added.element));
       } else if (removed) {
         groups.splice(removed.oldIndex, 1);
       }

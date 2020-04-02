@@ -15,7 +15,6 @@
 <script>
 import Draggable from 'vuedraggable';
 
-import { getDuplicateCountItems } from '@/helpers/searching';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import GroupViewPanel from './group-view-panel.vue';
@@ -31,6 +30,22 @@ export default {
       type: Array,
       required: true,
     },
+    allViewsList: {
+      type: Array,
+      default: () => [],
+    },
+    put: {
+      type: Boolean,
+      default: false,
+    },
+    pull: {
+      type: [Boolean, String],
+      default: false,
+    },
+    prepareView: {
+      type: Function,
+      default: v => v,
+    },
   },
   computed: {
     isViewsEmpty() {
@@ -40,7 +55,7 @@ export default {
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
-        group: { name: 'views' },
+        group: { name: 'views', put: this.put, pull: this.pull },
       };
     },
   },
@@ -53,13 +68,7 @@ export default {
 
         views.splice(moved.newIndex, 0, item);
       } else if (added) {
-        const duplicateViewsCount = getDuplicateCountItems(views, added.element);
-
-        const view = duplicateViewsCount !== 0
-          ? { ...added.element, name: `${added.element.name}_${duplicateViewsCount}` }
-          : added.element;
-
-        views.splice(added.newIndex, 0, view);
+        views.splice(added.newIndex, 0, this.prepareView(added.element));
       } else if (removed) {
         views.splice(removed.oldIndex, 1);
       }
