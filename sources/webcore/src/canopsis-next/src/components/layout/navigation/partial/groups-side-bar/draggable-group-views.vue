@@ -16,6 +16,7 @@
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import GroupViewPanel from './group-view-panel.vue';
 
@@ -56,22 +57,8 @@ export default {
     },
   },
   methods: {
-    changeViewsOrdering({ moved, added, removed }) {
-      const views = [...this.views];
-
-      if (moved) {
-        const [item] = views.splice(moved.oldIndex, 1);
-
-        views.splice(moved.newIndex, 0, item);
-      } else if (added) {
-        views.splice(added.newIndex, 0, this.prepareView(added.element));
-      } else if (removed) {
-        views.splice(removed.oldIndex, 1);
-      }
-
-      if (views) {
-        this.$emit('change', views);
-      }
+    changeViewsOrdering(event) {
+      this.$emit('change', dragDropChangePositionHandler(this.views, event, this.prepareView));
     },
   },
 };

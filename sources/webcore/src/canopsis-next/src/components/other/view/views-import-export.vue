@@ -54,7 +54,7 @@ import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-b
 import { saveJsonFile } from '@/helpers/files';
 import { getFileTextContent } from '@/helpers/file-select';
 import { prepareGroupsAndViewsToImport } from '@/helpers/groups';
-import { MODALS } from '@/constants';
+import { EXPORT_VIEWS_AND_GROUPS_SUFFIX, MODALS } from '@/constants';
 
 export default {
   components: {
@@ -129,7 +129,7 @@ export default {
         views: this.selectedViewIds.map(this.getViewById),
       });
 
-      saveJsonFile(exportData, `canopsis_groups_views-${new Date().toLocaleString()}`);
+      saveJsonFile(exportData, `${EXPORT_VIEWS_AND_GROUPS_SUFFIX}${new Date().toLocaleString()}`);
 
       this.resetSelected();
     },

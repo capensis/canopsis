@@ -1152,3 +1152,5 @@ export const GRID_SIZES = {
 export const TOURS = {
   alarmsExpandPanel: 'alarmsExpandPanel',
 };
+
+export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';

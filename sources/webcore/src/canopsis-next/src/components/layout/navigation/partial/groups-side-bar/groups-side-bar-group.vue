@@ -23,6 +23,7 @@
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
 
@@ -52,26 +53,11 @@ export default {
     },
   },
   methods: {
-    changeViewsOrdering({ moved, added, removed }) {
-      const views = [...this.group.views];
-
-      if (moved) {
-        const [item] = views.splice(moved.oldIndex, 1);
-
-        views.splice(moved.newIndex, 0, item);
-      } else if (added) {
-        views.splice(added.newIndex, 0, added.element);
-      } else if (removed) {
-        views.splice(removed.oldIndex, 1);
-      }
-
-      if (views) {
-        this.$emit('update:group', {
-          ...this.group,
-
-          views,
-        });
-      }
+    changeViewsOrdering(event) {
+      this.$emit('update:group', {
+        ...this.group,
+        views: dragDropChangePositionHandler(this.group.views, event),
+      });
     },
   },
 };

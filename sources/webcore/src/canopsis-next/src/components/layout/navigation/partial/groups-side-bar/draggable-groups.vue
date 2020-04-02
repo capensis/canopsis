@@ -25,6 +25,7 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { getDuplicateEntityName } from '@/helpers/entities';
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import DraggableGroupViews from './draggable-group-views.vue';
 import GroupPanel from './group-panel.vue';
@@ -90,22 +91,8 @@ export default {
       };
     },
 
-    changeGroupsOrdering({ moved, added, removed }) {
-      const groups = [...this.groups];
-
-      if (moved) {
-        const [item] = groups.splice(moved.oldIndex, 1);
-
-        groups.splice(moved.newIndex, 0, item);
-      } else if (added) {
-        groups.splice(added.newIndex, 0, this.mapGroupEntity(added.element));
-      } else if (removed) {
-        groups.splice(removed.oldIndex, 1);
-      }
-
-      if (groups) {
-        this.$emit('change', groups);
-      }
+    changeGroupsOrdering(event) {
+      this.$emit('change', dragDropChangePositionHandler(this.groups, event, this.mapGroupEntity));
     },
   },
 };
