@@ -31,7 +31,7 @@
       v-flex.btn-group(xs2)
         v-layout(column)
           v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
-          v-btn
+          v-btn.import-btn(tag="label")
             file-selector.view-import-btn(
               ref="fileSelector",
               multiple,
@@ -158,6 +158,10 @@ export default {
 </script>
 
 <style lang="scss">
+  .import-btn {
+    cursor: pointer;
+  }
+
   .group-checkbox {
     height: 24px;
     margin: 0;
