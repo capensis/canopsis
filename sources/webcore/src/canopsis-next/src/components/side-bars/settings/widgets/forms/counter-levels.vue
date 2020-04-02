@@ -5,7 +5,7 @@
       v-list-group(data-test="elementsPerPage")
         v-list-tile.items-per-page-title(slot="activator")
           slot(name="title")
-            span {{ $t('settings.defaultNumberOfElementsPerPage') }}
+            span {{ $t('settings.mainCounter') }}
         v-container
           v-select.select(
             v-field="form.counter",

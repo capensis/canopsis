@@ -285,6 +285,9 @@ export function generateWidgetByType(type) {
     case WIDGET_TYPES.counter:
       specialParameters = {
         viewFilters: [],
+        alarmsStateFilter: {
+          opened: true,
+        },
         blockTemplate: '',
         columnSM: 6,
         columnMD: 4,

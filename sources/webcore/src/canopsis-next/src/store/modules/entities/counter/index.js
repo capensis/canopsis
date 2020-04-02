@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { get } from 'lodash';
 
-const counter = {
+const COUNTER = {
   total: 0,
   total_active: 0,
   snooze: 0,
@@ -41,12 +41,13 @@ export default {
       try {
         commit(types.FETCH_LIST, { widgetId });
 
-        const promises = filters.map(() => counter);
-        const counters = await Promise.all(promises);
+        const promises = filters.map(() => ({ data: [COUNTER] }));
+        const responses = await Promise.all(promises);
 
         commit(types.FETCH_LIST_COMPLETED, {
           widgetId,
-          counters,
+
+          counters: responses.map(({ data: [counter] }) => counter),
         });
       } catch (err) {
         commit(types.FETCH_LIST_FAILED, { widgetId });
