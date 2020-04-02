@@ -31,14 +31,13 @@
       v-flex.btn-group(xs2)
         v-layout(column)
           v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
-          v-btn.import-btn(tag="label")
-            file-selector.view-import-btn(
-              ref="fileSelector",
-              multiple,
-              hide-details,
-              @change="importViews"
-            )
-              span(slot="activator") {{ $t('common.import') }}
+          file-selector.ma-2.view-import-selector(
+            ref="fileSelector",
+            multiple,
+            hide-details,
+            @change="importViews"
+          )
+            v-btn.import-btn.ma-0(slot="activator") {{ $t('common.import') }}
 </template>
 
 <script>
@@ -158,10 +157,6 @@ export default {
 </script>
 
 <style lang="scss">
-  .import-btn {
-    cursor: pointer;
-  }
-
   .group-checkbox {
     height: 24px;
     margin: 0;
@@ -173,8 +168,17 @@ export default {
     align-items: center;
   }
 
-  .view-import-btn {
+  .view-import-selector {
     display: inline-flex;
+
+    & /deep/ .file-selector-button-wrapper {
+      width: 100%;
+    }
+
+    .import-btn {
+      cursor: pointer;
+      width: 100%;
+    }
   }
 
   .group-title {
