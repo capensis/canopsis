@@ -30,9 +30,7 @@
                   span.ml-1 ({{ view.description }})
       v-flex.btn-group(xs2)
         v-layout(column)
-          v-layout(column)
-            span.ml-2.font-italic {{ fileName }}
-            v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
+          v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
           v-btn
             file-selector.view-import-btn(
               ref="fileSelector",
@@ -71,7 +69,6 @@ export default {
   ],
   data() {
     return {
-      fileName: `canopsis_groups_views-${new Date().toLocaleString()}.json`,
       selectedGroupsIds: [],
       selectedViewIds: [],
     };
@@ -132,7 +129,7 @@ export default {
         views: this.selectedViewIds.map(this.getViewById),
       });
 
-      saveJsonFile(exportData, this.fileName);
+      saveJsonFile(exportData, `canopsis_groups_views-${new Date().toLocaleString()}`);
 
       this.resetSelected();
     },
