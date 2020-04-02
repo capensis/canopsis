@@ -30,10 +30,6 @@ export default {
       type: Array,
       required: true,
     },
-    allViewsList: {
-      type: Array,
-      default: () => [],
-    },
     put: {
       type: Boolean,
       default: false,

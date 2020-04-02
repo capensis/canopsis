@@ -1,11 +1,23 @@
 import uuid from '@/helpers/uuid';
 
+/**
+ * Convert view to export view entity.
+ * @param {Object} view
+ * @return {Object}
+ */
 export const mapViewToExport = view => ({
   ...view,
   _id: uuid(),
   exported: true,
 });
 
+/**
+ * Convert Group to export group entity.
+ * @param {Array} views
+ * @param {String} name
+ * @param {Array} exportedViewIds
+ * @return {Object}
+ */
 export const mapGroupToExport = ({ views, name }, exportedViewIds = []) => {
   const groupId = uuid();
 
