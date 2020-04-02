@@ -114,7 +114,7 @@ def check_values(data):
                 if not isinstance(date, int):
                     raise ValueError("The date inside exdate must be an int.")
         else:
-            raise ValueError("Exdate must be a list of string.")
+            raise ValueError("Exdate must be a list.")
     # useful when enabled doesn't exist in document
     if ("enabled" not in data
             or data["enabled"] is None
