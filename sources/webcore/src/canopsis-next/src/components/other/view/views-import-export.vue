@@ -2,6 +2,7 @@
   div
     v-layout
       v-flex.export-views-block.mr-0.ma-4(xs6)
+        v-checkbox(v-model="isAllSelected", :label="$t('importExportViews.selectAll')")
         v-expansion-panel(readonly, hide-actions, expand, dark, focusable, :value="openedPanels")
           group-panel(
             v-for="group in groupsOrdered",
@@ -11,7 +12,7 @@
           )
             template(slot="title")
               v-checkbox.group-checkbox(
-                v-model="groupIds",
+                v-model="selectedGroupsIds",
                 :value="group._id",
                 primary,
                 @change="changeGroupHandler(group._id, $event)"
@@ -23,12 +24,15 @@
               :view="view"
             )
               template(slot="title")
-                v-layout(align-center, row)
-                  v-checkbox(v-model="viewIds", :value="view._id")
-                  | {{ view.title }}
+                v-layout(align-center, row, justify-space-between)
+                  v-checkbox(v-model="selectedViewIds", :value="view._id")
+                  span {{ view.title }}
+                  span.ml-1 ({{ view.description }})
       v-flex.btn-group(xs2)
         v-layout(column)
-          v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
+          v-layout(column)
+            span.ml-2.font-italic {{ fileName }}
+            v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
           v-btn
             file-selector.view-import-btn(
               ref="fileSelector",
@@ -67,8 +71,9 @@ export default {
   ],
   data() {
     return {
-      groupIds: [],
-      viewIds: [],
+      fileName: `canopsis_groups_views-${new Date().toLocaleString()}.json`,
+      selectedGroupsIds: [],
+      selectedViewIds: [],
     };
   },
   computed: {
@@ -76,7 +81,30 @@ export default {
       return new Array(this.groupsOrdered.length).fill(true);
     },
     selectedDataIsEmpty() {
-      return !this.groupIds.length && !this.viewIds.length;
+      return !this.selectedGroupsIds.length && !this.selectedViewIds.length;
+    },
+    viewIds() {
+      return this.groups.reduce((acc, { views }) => {
+        acc.push(...views.map(({ _id }) => _id));
+        return acc;
+      }, []);
+    },
+    groupIds() {
+      return this.groups.map(({ _id }) => _id);
+    },
+    isAllSelected: {
+      get() {
+        return this.groupIds.every(id => this.selectedGroupsIds.includes(id))
+          && this.viewIds.every(id => this.selectedViewIds.includes(id));
+      },
+      set(checked) {
+        if (checked) {
+          this.selectedGroupsIds = [...this.groupIds];
+          this.selectedViewIds = [...this.viewIds];
+        } else {
+          this.resetSelected();
+        }
+      },
     },
   },
   methods: {
@@ -100,29 +128,32 @@ export default {
     },
     exportViews() {
       const exportData = prepareGroupsAndViewsToImport({
-        groups: this.groupIds.map(this.getGroupById),
-        views: this.viewIds.map(this.getViewById),
+        groups: this.selectedGroupsIds.map(this.getGroupById),
+        views: this.selectedViewIds.map(this.getViewById),
       });
 
-      saveJsonFile(exportData, 'groups');
+      saveJsonFile(exportData, this.fileName);
 
-      this.groupIds = [];
-      this.viewIds = [];
+      this.resetSelected();
     },
-    changeGroupHandler(groupId, groupIds) {
-      const checked = groupIds.includes(groupId);
+    resetSelected() {
+      this.selectedGroupsIds = [];
+      this.selectedViewIds = [];
+    },
+    changeGroupHandler(groupId, selectedGroupsIds) {
+      const checked = selectedGroupsIds.includes(groupId);
       const { views } = this.getGroupById(groupId);
 
-      const viewIds = views.map(({ _id }) => _id);
-      const viewsIdsWithoutGroupViews = this.viewIds.filter(viewId => !viewIds.includes(viewId));
+      const selectedViewIds = views.map(({ _id }) => _id);
+      const viewsIdsWithoutGroupViews = this.selectedViewIds.filter(viewId => !this.viewIds.includes(viewId));
 
       if (checked) {
-        this.viewIds = [
+        this.selectedViewIds = [
           ...viewsIdsWithoutGroupViews,
-          ...viewIds,
+          ...selectedViewIds,
         ];
       } else {
-        this.viewIds = viewsIdsWithoutGroupViews;
+        this.selectedViewIds = viewsIdsWithoutGroupViews;
       }
     },
   },

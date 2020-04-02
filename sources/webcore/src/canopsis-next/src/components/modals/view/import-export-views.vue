@@ -7,10 +7,11 @@
         v-flex.pl-1.pr-1(xs4)
           v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.groups') }}
           draggable-groups(v-model="importedGroups", pull, viewPull, viewPut)
-        v-flex.pl-1.pr-1(xs4)
+        v-flex.pl-1(xs4)
           v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.views') }}
           draggable-group-views(v-model="importedViews", pull)
-        v-flex.pl-1.pr-1(xs4)
+        v-divider.ml-1.mr-1.secondary(vertical)
+        v-flex(xs4)
           v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.result') }}
           draggable-groups(v-model="currentGroups", put, pull, viewPull, viewPut)
     template(slot="actions")
@@ -126,7 +127,7 @@ export default {
 
     async submit() {
       await this.updateGroups();
-      await this.fetchGroupsList();
+      this.fetchGroupsList();
 
       this.$modals.hide();
     },

@@ -21,7 +21,6 @@ import {
 } from '@/constants';
 
 import uuid from './uuid';
-import { getCountDuplicateName } from './searching';
 import { pbehaviorToForm } from './forms/pbehavior';
 
 /**
@@ -611,7 +610,16 @@ export function isResolvedAlarm(alarm) {
  * @returns {string}
  */
 export function getDuplicateEntityName(entity, entities) {
-  const duplicateEntityCount = getCountDuplicateName(entities, entity);
+  const suffixRegexp = '(\\s\\(\\d+\\))?$';
+  const clearName = entity.name.replace(new RegExp(suffixRegexp), '');
 
-  return duplicateEntityCount !== 0 ? `${entity.name} (${duplicateEntityCount})` : entity.name;
+  const nameRegexp = new RegExp(`^${clearName}${suffixRegexp}`);
+
+  const duplicateEntityCount = entities.reduce((count, { name }) => {
+    const isDuplicate = nameRegexp.test(name);
+
+    return isDuplicate ? count + 1 : count;
+  }, 0);
+
+  return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.name;
 }

@@ -942,7 +942,12 @@ export default {
         noNames: 'Vous devez ajouter au moins 1 attribut',
       },
     },
-
+    importExportViews: {
+      title: 'Vues d\'importation / exportation',
+      groups: 'Groupes',
+      views: 'Vues',
+      result: 'Résultat',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1364,6 +1369,10 @@ export default {
         other: 'Erreur de récupération des données',
       },
     },
+  },
+
+  importExportViews: {
+    selectAll: 'Sélectionnez tous les groupes et vues',
   },
 
   ...featureService.get('i18n.fr'),

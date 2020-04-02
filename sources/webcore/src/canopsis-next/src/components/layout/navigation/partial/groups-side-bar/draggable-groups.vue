@@ -14,7 +14,6 @@
     )
       draggable-group-views(
         v-model="group.views",
-        :allViewsList="allViewsList",
         :prepareView="mapViewEntity",
         :put="viewPut",
         :pull="viewPull"
@@ -113,15 +112,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .groups-panel.empty {
-    &:after {
-      content: '';
-      display: block;
-      height: 48px;
-      width: 100%;
-      border: 4px dashed #3c5365;
-      border-radius: 5px;
-      position: relative;
+  .groups-panel {
+    cursor: move;
+
+    & /deep/ .v-expansion-panel__header {
+      cursor: move;
+    }
+
+    &.empty {
+      &:after {
+        content: '';
+        display: block;
+        height: 48px;
+        width: 100%;
+        border: 4px dashed #3c5365;
+        border-radius: 5px;
+        position: relative;
+      }
     }
   }
 </style>

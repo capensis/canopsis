@@ -78,14 +78,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .views-panel.empty {
-    &:after {
-      content: '';
-      display: block;
-      height: 48px;
-      border: 4px dashed #4f6479;
-      border-radius: 5px;
-      position: relative;
+  .views-panel {
+    & /deep/ .panel-item-content {
+      cursor: move;
+    }
+
+    &.empty {
+      &:after {
+        content: '';
+        display: block;
+        height: 48px;
+        border: 4px dashed #4f6479;
+        border-radius: 5px;
+        position: relative;
+      }
     }
   }
 </style>

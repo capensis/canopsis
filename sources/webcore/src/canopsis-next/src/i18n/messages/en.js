@@ -1472,5 +1472,9 @@ export default {
     },
   },
 
+  importExportViews: {
+    selectAll: 'Select all groups and views',
+  },
+
   ...featureService.get('i18n.en'),
 };
