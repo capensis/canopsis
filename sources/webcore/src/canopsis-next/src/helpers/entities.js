@@ -299,7 +299,7 @@ export function generateWidgetByType(type) {
           bottom: 1,
           left: 1,
         },
-        heightFactor: 1,
+        heightFactor: 6,
         levels: {
           counter: AVAILABLE_COUNTERS.total,
           colors: {
