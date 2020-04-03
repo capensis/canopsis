@@ -36,7 +36,9 @@ Compteur  | Variable | Signification
 
 L'ensemble des compteurs est présenté sous forme de tuiles. 
 
-Exemple d'une tuile : ![Exemple d'une tuile - Compteur](./img/tuile-counter.png  "Exemple d'une tuile - Compteur")
+Exemple d'une tuile :
+
+![Exemple d'une tuile - Compteur](./img/tuile-counter.png  "Exemple d'une tuile - Compteur")
 
 Chaque tuile est associée à un [filtre d'alarmes](../../filtres/index.md) et met à disposition un ensemble de compteurs relatifs à ce filtre.  
 
