@@ -68,7 +68,7 @@ Durant la configuration de votre widget `Compteur`, notamment le Template, il vo
 Afin de connaitre les variables disponibles, une modale d'aide est disponible grâce au point d'interrogation présent en haut à droite de la tuile.  
 Un droit est toutefois requis pour y accéder : `Access to available variables list(common_variablesHelp)`
 
-Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles pour la template de tuile. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
+Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles pour le template de tuile. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
 
 ### Paramètres du widget
 
