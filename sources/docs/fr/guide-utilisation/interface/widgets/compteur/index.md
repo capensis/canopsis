@@ -28,7 +28,7 @@ Compteur  | Variable | Signification
 `total_active`     | {{ counter.total_active }}     | Nombre d'alarmes non mises en veille et sans comportement périodique actif
 `ack`              | {{ counter.ack }}              | Nombre d'alarmes acquittées
 `pbehavior_active` | {{ counter.pbehavior_active }} | Nombre d'alarmes avec un comportement périodique actif
-`snooze`           | {{ counter.snooze }}           | Nombre d'alarmes snoozées
+`snooze`           | {{ counter.snooze }}           | Nombre d'alarmes mises en veille
 `ticket`           | {{ counter.ticket }}           | Nombre d'alarmes avec un ticket d'incident associé
 
 
