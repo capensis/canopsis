@@ -54,3 +54,7 @@ registerHelper('timestamp', helpers.timestampHelper);
 registerHelper('internal-link', helpers.internalLinkHelper);
 registerHelper('compare', helpers.compareHelper);
 registerHelper('concat', helpers.concatHelper);
+registerHelper('sum', helpers.sumHelper);
+registerHelper('minus', helpers.minusHelper);
+registerHelper('mul', helpers.mulHelper);
+registerHelper('divide', helpers.divideHelper);

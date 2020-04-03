@@ -282,6 +282,7 @@ export default {
       statsNumberSettings: 'Stats number settings',
       statsParetoSettings: 'Stats Pareto diagram settings',
       textSettings: 'Text settings',
+      counterSettings: 'Counter settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
@@ -378,6 +379,7 @@ export default {
     weatherTemplate: 'Template - Weather item',
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entities',
+    blockTemplate: 'Template - Tile',
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
@@ -441,6 +443,12 @@ export default {
     },
     liveReporting: {
       title: 'Live reporting',
+    },
+    counterLevels: {
+      title: 'Levels',
+      fields: {
+        counter: 'Counter',
+      },
     },
   },
   modals: {
@@ -741,6 +749,9 @@ export default {
         },
         text: {
           title: 'Text',
+        },
+        counter: {
+          title: 'Counter',
         },
       },
     },

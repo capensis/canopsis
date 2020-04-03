@@ -113,6 +113,13 @@ export const ENTITY_INFOS_TYPE = {
   action: 'action',
 };
 
+export const ENTITIES_STATES_KEYS = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+};
+
 export const ENTITIES_STATES = {
   ok: 0,
   minor: 1,
@@ -181,6 +188,13 @@ export const PAUSE_REASONS = {
   other: 'Autre',
 };
 
+export const COUNTER_STATES_ICONS = {
+  [ENTITIES_STATES_KEYS.ok]: 'wb_sunny',
+  [ENTITIES_STATES_KEYS.minor]: 'person',
+  [ENTITIES_STATES_KEYS.major]: 'person',
+  [ENTITIES_STATES_KEYS.critical]: 'wb_cloudy',
+};
+
 export const WEATHER_ICONS = {
   [WATCHER_STATES.ok]: 'wb_sunny',
   [WATCHER_STATES.minor]: 'person',
@@ -230,6 +244,7 @@ export const WIDGET_TYPES = {
   statsNumber: 'StatsNumber',
   statsPareto: 'StatsPareto',
   text: 'Text',
+  counter: 'Counter',
 };
 
 export const WIDGET_ICONS = {
@@ -243,6 +258,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.statsNumber]: 'table_chart',
   [WIDGET_TYPES.statsPareto]: 'multiline_chart',
   [WIDGET_TYPES.text]: 'view_headline',
+  [WIDGET_TYPES.counter]: 'view_module',
 };
 
 export const SIDE_BARS = {
@@ -256,6 +272,7 @@ export const SIDE_BARS = {
   statsNumberSettings: 'stats-number-settings',
   statsParetoSettings: 'stats-pareto-settings',
   textSettings: 'text-settings',
+  counterSettings: 'counter-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -269,6 +286,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
   [WIDGET_TYPES.statsPareto]: SIDE_BARS.statsParetoSettings,
   [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
+  [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
@@ -719,6 +737,12 @@ export const USERS_RIGHTS = {
         variablesHelp: 'common_variablesHelp',
       },
     },
+    counter: {
+      actions: {
+        alarmsList: 'counter_alarmsList',
+        variablesHelp: 'common_variablesHelp',
+      },
+    },
   },
 };
 
@@ -781,6 +805,10 @@ export const WIDGETS_ACTIONS_TYPES = {
     pbehaviorList: 'pbehaviorList',
     variablesHelp: 'variablesHelp',
   },
+  counter: {
+    alarmsList: 'alarmsList',
+    variablesHelp: 'variablesHelp',
+  },
 };
 
 export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
@@ -838,6 +866,11 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
     [WIDGETS_ACTIONS_TYPES.weather.variablesHelp]: USERS_RIGHTS.business.weather.actions.variablesHelp,
+  },
+
+  counter: {
+    [WIDGETS_ACTIONS_TYPES.counter.alarmsList]: USERS_RIGHTS.business.counter.actions.alarmsList,
+    [WIDGETS_ACTIONS_TYPES.counter.variablesHelp]: USERS_RIGHTS.business.counter.actions.variablesHelp,
   },
 };
 
@@ -1153,3 +1186,18 @@ export const GRID_SIZES = {
 export const TOURS = {
   alarmsExpandPanel: 'alarmsExpandPanel',
 };
+
+export const AVAILABLE_COUNTERS = {
+  total: 'total',
+  total_active: 'total_active',
+  snooze: 'snooze',
+  ack: 'ack',
+  ticket: 'ticket',
+  pbehavior_active: 'pbehavior_active',
+};
+
+export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
+  <strong>{{ counter.filter.title }}</strong></h2><br>
+  <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
+  <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
+  <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;

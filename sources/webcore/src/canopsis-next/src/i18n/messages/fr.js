@@ -265,6 +265,7 @@ export default {
       statsNumberSettings: 'Paramètres du compteur de stats',
       statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
+      counterSettings: 'Paramètres du widget de compteur',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
@@ -356,6 +357,7 @@ export default {
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modale',
     entityTemplate: 'Template - Entitées',
+    blockTemplate: 'Template - Tuiles',
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
@@ -414,6 +416,12 @@ export default {
     },
     liveReporting: {
       title: 'Suivi personnalisé',
+    },
+    counterLevels: {
+      title: 'Niveaux',
+      fields: {
+        counter: 'Compteur',
+      },
     },
   },
   modals: {
@@ -711,6 +719,9 @@ export default {
         },
         text: {
           title: 'Texte',
+        },
+        counter: {
+          title: 'Compteur',
         },
       },
     },
