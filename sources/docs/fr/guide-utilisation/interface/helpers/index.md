@@ -262,7 +262,7 @@ Afficher une pastille « Invalid val » (l'état de criticité étant invalide
 ```
 
 
-## Math's Helpers
+## Helpers mathématiques basiques
 
 !!! note
     Disponible depuis Canopsis 3.39.0.
@@ -280,7 +280,7 @@ Afficher une pastille « Invalid val » (l'état de criticité étant invalide
 {{sum 1 2 3}}
 ```
 
-Ce helper attend en paramètre un ensemble d'entiers en renvoie leur somme
+Ce helper attend en paramètre un ensemble de nombres renvoie leur somme
 
 #### Exemple d'utilisation du helper `sum`
 
@@ -296,7 +296,7 @@ Afficher la somme de 1, 2, et 3 :
 {{minus 10 1}}
 ```
 
-Ce helper attend en paramètre 2 entiers et renvoie leur différence
+Ce helper attend en paramètre 2 nombres et renvoie leur différence
 
 #### Exemple d'utilisation du helper `minus`
 
@@ -312,7 +312,7 @@ Afficher la différence entre 10 et 1 :
 {{mul 5 6}}
 ```
 
-Ce helper attend en paramètre 2 entiers et renvoie leur produit
+Ce helper attend en paramètre 2 nombres et renvoie leur produit
 
 #### Exemple d'utilisation du helper `mul`
 
@@ -328,7 +328,7 @@ Afficher le produit entre 5 et 6 :
 {{divde 10 2}}
 ```
 
-Ce helper attend en paramètre 2 entiers et renvoie leur division
+Ce helper attend en paramètre 2 nombres et renvoie le résultat de leur division
 
 #### Exemple d'utilisation du helper `divide`
 
@@ -337,6 +337,9 @@ Afficher la division 10 par 2 :
 ```handlebars
 {{divide 10 2}}
 ```
+
+!!! Note
+    Une division par 0 affichera `infinity`
 
 ## Helper `concat`
 
