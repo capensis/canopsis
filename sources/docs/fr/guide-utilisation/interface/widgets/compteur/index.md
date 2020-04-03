@@ -25,7 +25,7 @@ Les compteurs sont relatifs à un filtre d'alarmes.
 Compteur  | Variable | Signification 
 --|--|--
 `total`            | {{ counter.total }}            | Nombre total d'alarmes
-`total_active`     | {{ counter.total_active }}     | Nombre d'alarmes non snoozée et sans comportement périodique actif
+`total_active`     | {{ counter.total_active }}     | Nombre d'alarmes non mises en veille et sans comportement périodique actif
 `ack`              | {{ counter.ack }}              | Nombre d'alarmes acquittées
 `pbehavior_active` | {{ counter.pbehavior_active }} | Nombre d'alarmes avec un comportement périodique actif
 `snooze`           | {{ counter.snooze }}           | Nombre d'alarmes snoozées
