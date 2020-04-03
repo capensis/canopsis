@@ -331,6 +331,7 @@ export default {
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entitées',
+    blockTemplate: 'Template - Tuiles',
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
@@ -389,6 +390,12 @@ export default {
     },
     liveReporting: {
       title: 'Suivi personnalisé',
+    },
+    counterLevels: {
+      title: 'Niveaux',
+      fields: {
+        counter: 'Compteur',
+      },
     },
   },
   modals: {
