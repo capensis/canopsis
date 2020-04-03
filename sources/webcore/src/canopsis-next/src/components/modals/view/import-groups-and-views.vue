@@ -6,14 +6,26 @@
       v-layout(row)
         v-flex.pl-1.pr-1(xs4)
           v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.groups') }}
-          draggable-groups(v-model="importedGroups", pull, viewPull, viewPut)
+          draggable-groups(
+            v-model="importedGroups",
+            pull,
+            viewPull,
+            viewPut,
+            @change:group="changeImportedGroupHandler"
+          )
         v-flex.pl-1(xs4)
           v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.views') }}
           draggable-group-views(v-model="importedViews", pull)
         v-divider.ml-1.mr-1.secondary(vertical)
         v-flex(xs4)
           v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.result') }}
-          draggable-groups(v-model="currentGroups", put, pull, viewPull, viewPut)
+          draggable-groups(
+            v-model="currentGroups",
+            put,
+            pull,
+            viewPut,
+            @change:group="changeCurrentGroupHandler"
+          )
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(
@@ -80,6 +92,22 @@ export default {
     },
   },
   methods: {
+    changeImportedGroupHandler(groupIndex, group) {
+      const groups = [...this.importedGroups];
+
+      groups.splice(groupIndex, 1, group);
+
+      this.importedGroups = groups;
+    },
+
+    changeCurrentGroupHandler(groupIndex, group) {
+      const groups = [...this.currentGroups];
+
+      groups.splice(groupIndex, 1, group);
+
+      this.currentGroups = groups;
+    },
+
     setDefaultValues() {
       const { groups, views } = this.modal.config;
 
@@ -111,8 +139,8 @@ export default {
       }, Promise.resolve());
     },
 
-    async updateGroups() {
-      await this.currentGroups.reduce((promise, group, groupIndex) => {
+    updateGroups() {
+      return this.currentGroups.reduce((promise, group, groupIndex) => {
         const data = { name: group.name, position: groupIndex };
 
         if (group.exported) {
@@ -120,10 +148,10 @@ export default {
             .then(() => this.createGroup({ data }))
             .then(({ _id: groupId }) => this.checkViewsInGroup(group.views, groupId));
         } else if (group.position !== groupIndex) {
-          return promise.then(this.updateGroup({ data, id: group._id }));
+          return promise.then(() => this.updateGroup({ data, id: group._id }));
         }
 
-        return promise.then(this.checkViewsInGroup(group.views, group._id));
+        return promise.then(() => this.checkViewsInGroup(group.views, group._id));
       }, Promise.resolve());
     },
 

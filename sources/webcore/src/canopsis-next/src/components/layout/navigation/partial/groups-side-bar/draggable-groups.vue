@@ -97,12 +97,9 @@ export default {
     },
 
     changeViewsHandler(groupIndex, views) {
-      const groups = [...this.groups];
       const group = this.groups[groupIndex];
 
-      groups.splice(groupIndex, 1, { ...group, views });
-
-      this.$emit('change', groups);
+      this.$emit('change:group', groupIndex, { ...group, views });
     },
   },
 };
