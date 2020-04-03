@@ -206,27 +206,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  $seeAlarmBtnHeight: 18px;
-
-  .v-card__with-see-alarms-btn {
-    padding-bottom: $seeAlarmBtnHeight;
-
-    .see-alarms-btn {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      font-size: .6em;
-      height: $seeAlarmBtnHeight;
-      color: white;
-      margin: 0;
-      background-color: rgba(0, 0, 0, .2);
-
-      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
-        background-color: rgba(0, 0, 0, .5);
-      }
-    }
-  }
-
   .pauseIcon {
     position: absolute;
     right: 0;
@@ -252,10 +231,6 @@ export default {
 
   .blinking {
     animation: blink 2s linear infinite;
-  }
-
-  .cursor-pointer {
-    cursor: pointer;
   }
 
   .helpBtn {
