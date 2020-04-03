@@ -1,14 +1,10 @@
 import Vue from 'vue';
 import { get } from 'lodash';
 
-const COUNTER = {
-  total: 2937,
-  total_active: 2582,
-  snooze: 0,
-  ack: 36,
-  ticket: 14,
-  pbehavior_active: 355,
-};
+import request from '@/services/request';
+import i18n from '@/i18n';
+
+import { API_ROUTES } from '@/config';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -37,12 +33,20 @@ export default {
     },
   },
   actions: {
-    async fetchList({ commit }, { widgetId, filters = [] }) {
+    async fetchList({ commit, dispatch }, { widgetId, params = {}, filters = [] }) {
       try {
         commit(types.FETCH_LIST, { widgetId });
 
-        const promises = filters.map(async () => ({ data: [COUNTER] }));
-        const responses = await Promise.all(promises);
+        const requests = filters.map(filter =>
+          request.get(API_ROUTES.counter, {
+            params: {
+              ...params,
+
+              filter,
+            },
+          }));
+
+        const responses = await Promise.all(requests);
 
         commit(types.FETCH_LIST_COMPLETED, {
           widgetId,
@@ -51,6 +55,8 @@ export default {
         });
       } catch (err) {
         commit(types.FETCH_LIST_FAILED, { widgetId });
+
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
       }
     },
   },

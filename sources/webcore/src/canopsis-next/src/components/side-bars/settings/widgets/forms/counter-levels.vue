@@ -5,11 +5,11 @@
       v-list-group(data-test="elementsPerPage")
         v-list-tile.items-per-page-title(slot="activator")
           slot(name="title")
-            span {{ $t('settings.mainCounter') }}
+            span {{ $t('settings.counterLevels.fields.counter') }}
         v-container
           v-select.select(
             v-field="form.counter",
-            :label="$t('settings.mainCounter')",
+            :label="$t('settings.counterLevels.fields.counter')",
             :items="availableCounters",
             hide-details,
             single-line,

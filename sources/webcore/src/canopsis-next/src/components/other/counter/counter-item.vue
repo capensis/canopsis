@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.white--text.cursor-pointer(
+  v-card.white--text(
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile
@@ -48,10 +48,6 @@ export default {
       type: Object,
       required: true,
     },
-    template: {
-      type: String,
-      required: true,
-    },
     widget: {
       type: Object,
       required: true,
@@ -64,7 +60,8 @@ export default {
   asyncComputed: {
     compiledTemplate: {
       async get() {
-        const compiledTemplate = await compile(this.template, { counter: this.counter });
+        const { blockTemplate } = this.widget.parameters;
+        const compiledTemplate = await compile(blockTemplate, { counter: this.counter });
 
         return `<div>${compiledTemplate}</div>`;
       },
@@ -86,16 +83,9 @@ export default {
         ENTITIES_STATES_KEYS.minor,
       ].find(state => count >= values[state]) || ENTITIES_STATES_KEYS.ok;
     },
-    hasMoreInfosAccess() {
-      return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
-    },
-
-    hasAlarmsListAccess() {
-      return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
-    },
 
     hasVariablesHelpAccess() {
-      return this.checkAccess(USERS_RIGHTS.business.weather.actions.variablesHelp);
+      return this.checkAccess(USERS_RIGHTS.business.counter.actions.variablesHelp);
     },
 
     color() {
@@ -164,7 +154,6 @@ export default {
       color: white;
     }
   }
-
 
   .helpBtn {
     position: absolute;

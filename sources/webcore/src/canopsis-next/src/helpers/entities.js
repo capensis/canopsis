@@ -298,6 +298,7 @@ export function generateWidgetByType(type) {
           bottom: 1,
           left: 1,
         },
+        heightFactor: 1,
         levels: {
           counter: AVAILABLE_COUNTERS.total,
           colors: {

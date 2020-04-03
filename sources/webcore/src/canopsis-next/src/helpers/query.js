@@ -225,7 +225,13 @@ export function convertStatsParetoWidgetToQuery(widget) {
  * @returns {{filters: *}}
  */
 export function convertCounterWidgetToQuery(widget) {
-  return convertAlarmStateFilterToQuery(widget);
+  const { viewFilters } = widget.parameters;
+
+  return {
+    ...convertAlarmStateFilterToQuery(widget),
+
+    filters: viewFilters.map(({ filter }) => filter),
+  };
 }
 
 /**

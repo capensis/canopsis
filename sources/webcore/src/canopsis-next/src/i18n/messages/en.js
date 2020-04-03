@@ -363,6 +363,7 @@ export default {
     weatherTemplate: 'Template - Weather item',
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entities',
+    blockTemplate: 'Template - Tile',
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
@@ -426,6 +427,12 @@ export default {
     },
     liveReporting: {
       title: 'Live reporting',
+    },
+    counterLevels: {
+      title: 'Levels',
+      fields: {
+        counter: 'Counter',
+      },
     },
   },
   modals: {

@@ -25,7 +25,7 @@
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-template(
             v-model="settings.widget.parameters.blockTemplate",
-            :title="$t('settings.tileTemplate')"
+            :title="$t('settings.blockTemplate')"
           )
           v-divider
           field-grid-size(
@@ -44,6 +44,14 @@
           )
           v-divider
           margins-form(v-model="settings.widget.parameters.margin")
+          v-divider
+          field-slider(
+            data-test="widgetHeightFactory",
+            v-model="settings.widget.parameters.heightFactor",
+            :title="$t('settings.height')",
+            :min="1",
+            :max="20"
+          )
           v-divider
           counter-levels-form(v-model="settings.widget.parameters.levels")
       v-divider
@@ -64,6 +72,7 @@ import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue
 import FieldTemplate from './fields/common/template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldFilters from './fields/common/filters.vue';
+import FieldSlider from './fields/common/slider.vue';
 import AlarmsListModalForm from './forms/alarms-list-modal.vue';
 import MarginsForm from './forms/margins.vue';
 import CounterLevelsForm from './forms/counter-levels.vue';
@@ -80,6 +89,7 @@ export default {
     FieldTemplate,
     FieldGridSize,
     FieldFilters,
+    FieldSlider,
     AlarmsListModalForm,
     MarginsForm,
     CounterLevelsForm,

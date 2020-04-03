@@ -8,16 +8,17 @@
       v-layout.fill-height(v-else, key="content", wrap)
         v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('tables.noData') }}
         template(v-else)
-          v-flex(v-for="(item, index) in counters", :key="item._id", :class="flexSize")
+          v-flex(v-for="{ counter, filter } in countersWithFilters", :key="filter.title", :class="flexSize")
             counter-item.weatherItem(
-              :counter="item",
+              :counter="counter",
               :widget="widget",
-              :template="widget.parameters.blockTemplate",
-              :filter="widget.parameters.viewFilters[index]"
+              :filter="filter"
             )
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesCounterMixin from '@/mixins/entities/counter';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -47,20 +48,27 @@ export default {
         `lg${this.widget.parameters.columnLG}`,
       ];
     },
+
     hasNoData() {
       return this.counters.length === 0;
+    },
+
+    countersWithFilters() {
+      const { viewFilters } = this.widget.parameters;
+
+      return this.counters.map((counter, index) => ({ counter, filter: viewFilters[index] }));
     },
   },
   methods: {
     getQuery() {
-      return this.query;
+      return omit(this.query, ['filters']);
     },
 
     fetchList() {
       this.fetchCountersList({
-        filters: this.widget.parameters.viewFilters,
-        params: this.getQuery(),
         widgetId: this.widget._id,
+        filters: this.query.filters,
+        params: this.getQuery(),
       });
     },
   },
