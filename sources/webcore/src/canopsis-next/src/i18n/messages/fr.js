@@ -44,7 +44,7 @@ export default {
     end: 'Fin',
     recursive: 'Récursif',
     select: 'Sélectionner',
-    states: 'États',
+    states: 'Сriticités',
     sla: 'Sla',
     authors: 'Auteurs',
     stat: 'Statistique',
@@ -55,7 +55,7 @@ export default {
     export: 'Exportation',
     rights: 'Droits',
     profile: 'Profil',
-    username: 'Nom d\'utilisateur',
+    username: 'Identifiant utilisateur',
     password: 'Mot de passe',
     authKey: 'Auth. key',
     widgetId: 'Widget id',
@@ -192,7 +192,7 @@ export default {
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
-        changeState: 'Changer la criticité',
+        changeState: 'Changer et verrouiller la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
       },
@@ -207,9 +207,35 @@ export default {
         ticketNumber: 'Numéro de ticket',
       },
     },
+    timeLine: {
+      titlePaths: {
+        by: 'par',
+      },
+      stateCounter: {
+        header: 'Criticités compressées (depuis le dernier changement de statut)',
+        stateIncreased: 'Criticité augmentée',
+        stateDecreased: 'Criticité diminuée',
+      },
+      types: {
+        ack: 'Acquittement',
+        ackremove: 'Suppression d\'acquittement',
+        stateinc: 'Augmentation de la criticité',
+        statedec: 'Diminution de la criticité',
+        statusinc: 'Augmentation du statut',
+        statusdec: 'Diminution du statut',
+        assocticket: 'Association d\'un ticket',
+        declareticket: 'Déclaration d\'un ticket',
+        snooze: 'Alarme mise en veille',
+        unsooze: 'Alarme sortie de veille',
+        changestate: 'Changement et verrouillage de la criticité',
+        pbhenter: 'Comportement périodique activé',
+        pbhleave: 'Comportement périodique désactivé',
+        cancel: 'Alarme annulée',
+      },
+    },
     tabs: {
       moreInfos: 'Plus d\'infos',
-      timeLine: 'Time line',
+      timeLine: 'Chronologie',
     },
     moreInfos: {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
@@ -220,14 +246,14 @@ export default {
     moreInfos: 'Plus d\'infos',
   },
   pbehaviors: {
-    connector: 'Connecteur',
+    connector: 'Type de connecteur',
     connectorName: 'Nom du connecteur',
     isEnabled: 'Est actif',
     begins: 'Débute',
     ends: 'Se termine',
     type: 'Type',
     reason: 'Raison',
-    rrule: 'Rrule',
+    rrule: 'Récurrence',
   },
   settings: {
     titles: {
@@ -241,6 +267,7 @@ export default {
       statsNumberSettings: 'Paramètres du compteur de stats',
       statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
+      counterSettings: 'Paramètres du widget de compteur',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
@@ -260,7 +287,7 @@ export default {
     isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
-    isHtmlEnabledOnTimeLine: 'HTML activé dans la time line ?',
+    isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -328,10 +355,11 @@ export default {
       },
     },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
-    expandGridRangeSize: 'Largeur-position "Plus d\'infos / timeline"',
+    expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
     weatherTemplate: 'Template - Tuiles',
-    modalTemplate: 'Template - Modal',
+    modalTemplate: 'Template - Modale',
     entityTemplate: 'Template - Entitées',
+    blockTemplate: 'Template - Tuiles',
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
@@ -348,7 +376,7 @@ export default {
       title: 'Type d\'entité',
       fields: {
         component: 'Composant',
-        connector: 'Connecteur',
+        connector: 'Type de connecteur',
         resource: 'Ressource',
         watcher: 'Observateur',
       },
@@ -391,6 +419,12 @@ export default {
     liveReporting: {
       title: 'Suivi personnalisé',
     },
+    counterLevels: {
+      title: 'Niveaux',
+      fields: {
+        counter: 'Compteur',
+      },
+    },
   },
   modals: {
     contextInfos: {
@@ -412,7 +446,7 @@ export default {
         impact: 'Impacts',
         depends: 'Dépendances',
         types: {
-          connector: 'connecteur',
+          connector: 'type de connecteur',
           component: 'composant',
           resource: 'ressource',
         },
@@ -505,7 +539,7 @@ export default {
       },
     },
     createChangeStateEvent: {
-      title: 'Changer l\'état',
+      title: 'Changer la сriticité',
       states: {
         ok: 'Info',
         minor: 'Mineur',
@@ -620,7 +654,7 @@ export default {
       organization: 'Organisation',
       numberOk: 'Nombre Ok',
       numberKo: 'Nombre Ko',
-      state: 'État',
+      state: 'Criticité',
       name: 'Nom',
       org: 'Org',
       noData: 'Pas de données',
@@ -688,6 +722,9 @@ export default {
         text: {
           title: 'Texte',
         },
+        counter: {
+          title: 'Compteur',
+        },
       },
     },
     manageHistogramGroups: {
@@ -723,7 +760,7 @@ export default {
     createUser: {
       title: 'Créer un utilisateur',
       fields: {
-        username: 'Nom d\'utilisateur',
+        username: 'Identifiant utilisateur',
         firstName: 'Prénom',
         lastName: 'Nom',
         email: 'Email',
@@ -960,7 +997,7 @@ export default {
     alarmGeneral: {
       title: 'Generale',
       author: 'Auteur',
-      connector: 'Connecteur',
+      connector: 'Type de connecteur',
       connectorName: 'Nom du connecteur',
       component: 'Composant',
       resource: 'Ressource',
@@ -968,7 +1005,7 @@ export default {
       lastUpdateDate: 'Date de dernière modification',
       creationDate: 'Date de création',
       duration: 'Durée',
-      state: 'État',
+      state: 'Criticité',
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
@@ -978,14 +1015,14 @@ export default {
     pbehaviorList: {
       name: 'Nom',
       author: 'Auteur',
-      connector: 'Connecteur',
+      connector: 'Type de connecteur',
       connectorName: 'Nom du connecteur',
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finit',
       type_: 'Type',
       reason: 'Raison',
-      rrule: 'Rrule',
+      rrule: 'Récurrence',
     },
     rolesList: {
       name: 'Nom',
@@ -1017,7 +1054,7 @@ export default {
     admin: {
       users: {
         columns: {
-          username: 'Nom d\'utilisateur',
+          username: 'Identifiant utilisateur',
           role: 'Rôle',
           enabled: 'Actif',
         },
@@ -1026,14 +1063,14 @@ export default {
   },
   rRule: {
     advancedHint: 'Séparer les nombres par une virgule',
-    textLabel: 'Rrule',
+    textLabel: 'Récurrence',
     stringLabel: 'Résumé',
     tabs: {
       simple: 'Simple',
       advanced: 'Avancé',
     },
     errors: {
-      main: 'La Rrule choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
+      main: 'La récurrence choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
     },
     fields: {
       freq: 'Fréquence',
@@ -1108,7 +1145,7 @@ export default {
     },
     resultsTableHeaders: {
       alarm: {
-        connector: 'Connecteur',
+        connector: 'Type de connecteur',
         connectorName: 'Nom du connecteur',
         component: 'Composant',
         resource: 'Ressource',
@@ -1144,10 +1181,10 @@ export default {
       [STATS_TYPES.alarmsAcknowledged.value]: 'Alarmes acquittées',
       [STATS_TYPES.ackTimeSla.value]: 'Taux d\'Ack conforme Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Taux de résolution conforme Sla',
-      [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
-      [STATS_TYPES.stateRate.value]: 'Taux à cet état',
+      [STATS_TYPES.timeInState.value]: 'Proportion du temps dans la сriticité',
+      [STATS_TYPES.stateRate.value]: 'Taux à cette сriticité',
       [STATS_TYPES.mtbf.value]: 'Temps moyen entre pannes',
-      [STATS_TYPES.currentState.value]: 'État courant',
+      [STATS_TYPES.currentState.value]: 'Criticité courante',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
       [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',
@@ -1287,7 +1324,7 @@ export default {
           url: 'URL',
           authSwitch: 'Authentification ?',
           auth: 'Auth',
-          username: 'Nom d\'utilisateur',
+          username: 'Identifiant utilisateur',
           password: 'Mot de passe',
           headers: 'Headers',
           headerKey: 'Clé',
@@ -1356,8 +1393,8 @@ export default {
   tours: {
     [TOURS.alarmsExpandPanel]: {
       step1: 'Détails',
-      step2: 'Onglet plus d\'infos (N\'apparait que s\'il existe une configuration)',
-      step3: 'Onglet timeline',
+      step2: 'Onglet plus d\'infos (N\'apparaît que s\'il existe une configuration)',
+      step3: 'Onglet chronologie',
     },
   },
 

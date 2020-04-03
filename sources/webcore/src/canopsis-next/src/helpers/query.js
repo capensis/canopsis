@@ -10,7 +10,7 @@ import { prepareMainFilterToQueryFilter, getMainFilter } from './filter';
  */
 
 /**
- * This function converts widget.default_sort_column to query Object
+ * This function converts widget.parameters.sort to query Object
  *
  * @param {Object} widget
  * @returns {{}}
@@ -23,6 +23,29 @@ export function convertSortToQuery({ parameters }) {
   }
 
   return { sortKey: null, sortDir: null };
+}
+
+/**
+ *  This function converts widget.parameters.alarmsStateFilter to query Object
+ *
+ * @param {Object} parameters
+ * @returns {{}}
+ */
+export function convertAlarmStateFilterToQuery({ parameters }) {
+  const { alarmsStateFilter } = parameters;
+  const query = {};
+
+  if (alarmsStateFilter) {
+    if (!isUndefined(alarmsStateFilter.opened)) {
+      query.opened = alarmsStateFilter.opened;
+    }
+
+    if (!isUndefined(alarmsStateFilter.resolved)) {
+      query.resolved = alarmsStateFilter.resolved;
+    }
+  }
+
+  return query;
 }
 
 /**
@@ -128,7 +151,6 @@ export function convertWidgetStatsParameterToQuery(widget) {
 export function convertStatsCalendarWidgetToQuery(widget) {
   const {
     filters,
-    alarmsStateFilter,
     considerPbehaviors,
   } = widget.parameters;
 
@@ -137,17 +159,7 @@ export function convertStatsCalendarWidgetToQuery(widget) {
     filters: filters || [],
   };
 
-  if (alarmsStateFilter) {
-    if (!isUndefined(alarmsStateFilter.opened)) {
-      query.opened = alarmsStateFilter.opened;
-    }
-
-    if (!isUndefined(alarmsStateFilter.resolved)) {
-      query.resolved = alarmsStateFilter.resolved;
-    }
-  }
-
-  return query;
+  return { ...query, ...convertAlarmStateFilterToQuery(widget) };
 }
 
 /**
@@ -205,6 +217,21 @@ export function convertStatsParetoWidgetToQuery(widget) {
   }
 
   return query;
+}
+
+/**
+ *
+ * @param widget
+ * @returns {{filters: *}}
+ */
+export function convertCounterWidgetToQuery(widget) {
+  const { viewFilters } = widget.parameters;
+
+  return {
+    ...convertAlarmStateFilterToQuery(widget),
+
+    filters: viewFilters.map(({ filter }) => filter),
+  };
 }
 
 /**
@@ -297,6 +324,8 @@ export function convertWidgetToQuery(widget) {
       return convertStatsParetoWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
       return convertStatsCalendarWidgetToQuery(widget);
+    case WIDGET_TYPES.counter:
+      return convertCounterWidgetToQuery(widget);
     default:
       return {};
   }
