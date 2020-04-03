@@ -156,7 +156,7 @@ Celui-ci est séparé en quatre, vous permettant de régler l'espace que vous so
 
 Pour modifier ce paramètre, faites glisser le sélecteur, afin de choisir une valeur entre 0 et 5 (0 correspondant à l'absence de marge, 5 le maximum de marge).
 
-Par défaut, ce paramètre est réglé sur une valeur de 1 pour chacuns des côtés des tuiles.
+Par défaut, ce paramètre est réglé sur une valeur de 1 pour chacun des côtés des tuiles.
 
 ##### Hauteur
 
