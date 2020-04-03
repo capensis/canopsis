@@ -107,7 +107,7 @@ Ce paramètre permet de définir les filtres pour lesquels vous souhaitez des co
 Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../filtres/index.md).
 
 Pour créer un filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre alors.
-Vous avez la possibilité d'éditez ou de supprimer des filtres existants.  
+Vous avez la possibilité d'éditer ou de supprimer des filtres existants.  
 
 !!! warning "Champs utilisables dans le filtre"
     Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). 
