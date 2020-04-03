@@ -226,6 +226,10 @@ export default {
         stateIncreased: 'State increased',
         stateDecreased: 'State decreases',
       },
+      types: {
+        pbhenter: 'Pbehavior enabled',
+        pbhleave: 'Pbehavior disabled',
+      },
     },
     tabs: {
       moreInfos: 'More infos',
