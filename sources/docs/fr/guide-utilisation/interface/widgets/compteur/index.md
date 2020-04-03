@@ -164,8 +164,5 @@ Ce paramètre permet de régler la hauteur des tuiles.
 
 Pour le modifier, faites glisser le sélecteur, afin de choisir une valeur entre 1 (hauteur minimale) et 20 (hauteur maximale).
 
-Par défaut, ce paramètre est réglé sur une valeur de 1.
-
-##### Type de modale
-
+Par défaut, ce paramètre est réglé sur une valeur de 6.
 
