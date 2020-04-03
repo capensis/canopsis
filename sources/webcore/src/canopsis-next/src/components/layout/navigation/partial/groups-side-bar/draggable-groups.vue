@@ -8,15 +8,16 @@
     @change="changeGroupsOrdering"
   )
     group-panel(
-      v-for="group in groups",
+      v-for="(group, groupIndex) in groups",
       :group="group",
       :key="group._id"
     )
       draggable-group-views(
-        v-model="group.views",
+        :views="group.views",
         :prepareView="mapViewEntity",
         :put="viewPut",
-        :pull="viewPull"
+        :pull="viewPull",
+        @change="changeViewsHandler(groupIndex, $event)"
       )
 </template>
 
@@ -93,6 +94,15 @@ export default {
 
     changeGroupsOrdering(event) {
       this.$emit('change', dragDropChangePositionHandler(this.groups, event, this.mapGroupEntity));
+    },
+
+    changeViewsHandler(groupIndex, views) {
+      const groups = [...this.groups];
+      const group = this.groups[groupIndex];
+
+      groups.splice(groupIndex, 1, { ...group, views });
+
+      this.$emit('change', groups);
     },
   },
 };

@@ -41,7 +41,7 @@ export default {
     },
     prepareView: {
       type: Function,
-      default: v => v,
+      default: () => v => v,
     },
   },
   computed: {

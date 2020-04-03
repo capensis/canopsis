@@ -27,7 +27,7 @@
                 v-layout(align-center, row, justify-space-between)
                   v-checkbox(v-model="selectedViewIds", :value="view._id")
                   span {{ view.title }}
-                  span.ml-1 ({{ view.description }})
+                  span.ml-1(v-show="view.description") ({{ view.description }})
       v-flex.btn-group(xs2)
         v-layout(column)
           v-btn(@click="exportViews", :disabled="selectedDataIsEmpty") {{ $t('common.export') }}
@@ -52,8 +52,9 @@ import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-b
 
 import { saveJsonFile } from '@/helpers/files';
 import { getFileTextContent } from '@/helpers/file-select';
-import { prepareGroupsAndViewsToImport } from '@/helpers/groups';
-import { EXPORT_VIEWS_AND_GROUPS_SUFFIX, MODALS } from '@/constants';
+import { prepareGroupsAndViewsToExport } from '@/helpers/groups';
+import { EXPORT_VIEWS_AND_GROUPS_SUFFIX } from '@/config';
+import { MODALS } from '@/constants';
 
 export default {
   components: {
@@ -123,7 +124,7 @@ export default {
       this.$refs.fileSelector.clear();
     },
     exportViews() {
-      const exportData = prepareGroupsAndViewsToImport({
+      const exportData = prepareGroupsAndViewsToExport({
         groups: this.selectedGroupsIds.map(this.getGroupById),
         views: this.selectedViewIds.map(this.getViewById),
       });

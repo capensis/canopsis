@@ -89,7 +89,7 @@ export default {
     },
 
     checkViewsInGroup(views, groupId) {
-      return Promise.all(views.map(async (view, viewIndex) => {
+      return views.reduce((promise, view, viewIndex) => {
         const {
           exported, position, _id: viewId, group_id: viewGroupId, ...viewData
         } = view;
@@ -100,29 +100,31 @@ export default {
         };
 
         if (this.groupsOrderedViewsIds.includes(viewId) && (viewGroupId !== groupId || position !== viewIndex)) {
-          await this.updateViewWithoutStore({ id: viewId, data });
+          return promise.then(() => this.updateViewWithoutStore({ id: viewId, data }));
         } else if (exported) {
-          const response = await this.createView({ data });
-          await this.createRightByViewId(response._id);
+          return promise
+            .then(() => this.createView({ data }))
+            .then(({ _id }) => this.createRightByViewId(_id));
         }
 
-        return Promise.resolve();
-      }, []));
+        return promise;
+      }, Promise.resolve());
     },
 
     async updateGroups() {
-      return Promise.all(this.currentGroups.map(async (group, groupIndex) => {
+      await this.currentGroups.reduce((promise, group, groupIndex) => {
         const data = { name: group.name, position: groupIndex };
 
         if (group.exported) {
-          const { _id: groupId } = await this.createGroup({ data });
-          return this.checkViewsInGroup(group.views, groupId);
+          return promise
+            .then(() => this.createGroup({ data }))
+            .then(({ _id: groupId }) => this.checkViewsInGroup(group.views, groupId));
         } else if (group.position !== groupIndex) {
-          await this.updateGroup({ data, id: group._id });
+          return promise.then(this.updateGroup({ data, id: group._id }));
         }
 
-        return this.checkViewsInGroup(group.views, group._id);
-      }));
+        return promise.then(this.checkViewsInGroup(group.views, group._id));
+      }, Promise.resolve());
     },
 
     async submit() {

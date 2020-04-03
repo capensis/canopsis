@@ -82,7 +82,7 @@ export const MODALS = {
   createHeartbeat: 'create-heartbeat',
   createDynamicInfo: 'create-dynamic-info',
   createDynamicInfoInformation: 'create-dynamic-info-information',
-  importExportViews: 'import-export-views',
+  importExportViews: 'import-groups-and-views',
   dynamicInfoTemplatesList: 'dynamic-info-templates-list',
   createDynamicInfoTemplate: 'create-dynamic-info-template',
 };
@@ -1152,5 +1152,3 @@ export const GRID_SIZES = {
 export const TOURS = {
   alarmsExpandPanel: 'alarmsExpandPanel',
 };
-
-export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';

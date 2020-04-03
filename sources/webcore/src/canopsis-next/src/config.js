@@ -45,6 +45,8 @@ export const MAX_LOGO_SIZE_IN_KB = 16384;
 
 export const DEFAULT_APP_TITLE = 'Canopsis';
 
+export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';
+
 export const API_ROUTES = {
   auth: '/auth',
   currentUser: '/account/me',

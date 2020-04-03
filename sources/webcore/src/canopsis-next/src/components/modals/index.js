@@ -22,7 +22,7 @@ export { default as AddEntityInfo } from './context/add-entity-info.vue';
 export { default as SelectView } from './view/select-view.vue';
 export { default as CreateView } from './view/create-view.vue';
 export { default as CreateGroup } from './view/create-group.vue';
-export { default as ImportExportViews } from './view/import-export-views.vue';
+export { default as ImportGroupsAndViews } from './view/import-groups-and-views.vue';
 export { default as CreateFilter } from './common/create-filter.vue';
 export { default as Watcher } from './watcher/watcher.vue';
 export { default as CreateWatcherPauseEvent } from './watcher/create-watcher-pause-event.vue';

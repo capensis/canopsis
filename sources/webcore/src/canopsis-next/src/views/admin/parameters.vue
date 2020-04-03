@@ -10,7 +10,7 @@
                 user-interface-form(:disabled="!hasUpdateParametersAccess")
             v-tab {{ $t('common.import') }}/{{ $t('common.export') }}
             v-tab-item
-              view-import-export
+              views-import-export
 </template>
 
 <script>
@@ -18,10 +18,10 @@ import rightsTechnicalParametersMixin from '@/mixins/rights/technical/parameters
 
 import UserInterfaceForm from '@/components/forms/user-interface.vue';
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
-import ViewImportExport from '@/components/other/view/views-import-export.vue';
+import ViewsImportExport from '@/components/other/view/views-import-export.vue';
 
 export default {
-  components: { ViewImportExport, UserInterfaceForm, GroupsSideBarGroup },
+  components: { ViewsImportExport, UserInterfaceForm, GroupsSideBarGroup },
   mixins: [rightsTechnicalParametersMixin],
 };
 </script>
