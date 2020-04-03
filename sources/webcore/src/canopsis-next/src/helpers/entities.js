@@ -636,3 +636,25 @@ export function prepareUserByData(data, user = generateUser()) {
 export function isResolvedAlarm(alarm) {
   return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
 }
+
+
+/**
+ * Function return new name if name is not uniq
+ * @param {Object} entity
+ * @param {Array} entities
+ * @returns {string}
+ */
+export function getDuplicateEntityName(entity, entities) {
+  const suffixRegexp = '(\\s\\(\\d+\\))?$';
+  const clearName = entity.name.replace(new RegExp(suffixRegexp), '');
+
+  const nameRegexp = new RegExp(`^${clearName}${suffixRegexp}`);
+
+  const duplicateEntityCount = entities.reduce((count, { name }) => {
+    const isDuplicate = nameRegexp.test(name);
+
+    return isDuplicate ? count + 1 : count;
+  }, 0);
+
+  return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.name;
+}

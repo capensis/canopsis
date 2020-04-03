@@ -54,6 +54,8 @@ export default {
     trend: 'Trend',
     users: 'Users',
     roles: 'Roles',
+    import: 'Import',
+    export: 'Export',
     rights: 'Rights',
     profile: 'Profile',
     username: 'Username',
@@ -1058,6 +1060,12 @@ export default {
         noNames: 'You have to add at least 1 name',
       },
     },
+    importExportViews: {
+      title: 'Import/Export views',
+      groups: 'Groups',
+      views: 'Views',
+      result: 'Result',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1489,6 +1497,10 @@ export default {
         other: 'Error while fetching data',
       },
     },
+  },
+
+  importExportViews: {
+    selectAll: 'Select all groups and views',
   },
 
   ...featureService.get('i18n.en'),
