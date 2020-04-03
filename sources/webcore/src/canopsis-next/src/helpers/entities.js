@@ -18,6 +18,7 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   GRID_SIZES, AVAILABLE_COUNTERS,
+  DEFAULT_COUNTER_BLOCK_TEMPLATE,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -288,7 +289,7 @@ export function generateWidgetByType(type) {
         alarmsStateFilter: {
           opened: true,
         },
-        blockTemplate: '',
+        blockTemplate: DEFAULT_COUNTER_BLOCK_TEMPLATE,
         columnSM: 6,
         columnMD: 4,
         columnLG: 3,

@@ -16,6 +16,7 @@
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
         v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
         v-btn.see-alarms-btn(
+          v-if="hasAlarmsListAccess",
           flat,
           @click.stop="showAlarmListModal"
         ) {{ $t('serviceWeather.seeAlarms') }}

@@ -16,10 +16,10 @@
             dense
           )
       v-divider
-      field-criticity-levels(v-field="form.criticityLevels")
+      field-criticity-levels(v-field="form.values")
       v-divider
       field-levels-colors-selector(
-        v-field="form.criticityLevelsColors",
+        v-field="form.colors",
         colorType="hex",
         hideSuffix
       )
