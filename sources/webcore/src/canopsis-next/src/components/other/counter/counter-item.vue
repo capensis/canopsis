@@ -56,8 +56,12 @@ export default {
   asyncComputed: {
     compiledTemplate: {
       async get() {
-        const { blockTemplate } = this.widget.parameters;
-        const compiledTemplate = await compile(blockTemplate, { counter: this.counter });
+        const { blockTemplate, levels } = this.widget.parameters;
+        const compiledTemplate = await compile(blockTemplate, {
+          levels,
+
+          counter: this.counter,
+        });
 
         return `<div>${compiledTemplate}</div>`;
       },
@@ -130,7 +134,8 @@ export default {
 
     showVariablesHelpModal() {
       const counterFields = convertObjectToTreeview(this.counter, 'counter');
-      const variables = [counterFields];
+      const levelsFields = convertObjectToTreeview(this.widget.parameters.levels, 'levels');
+      const variables = [counterFields, levelsFields];
 
       this.$modals.show({
         name: MODALS.variablesHelp,
