@@ -262,6 +262,82 @@ Afficher une pastille « Invalid val » (l'état de criticité étant invalide
 ```
 
 
+## Math's Helpers
+
+!!! note
+    Disponible depuis Canopsis 3.39.0.
+
+4 helpers sont disponibles pour les opérations mathématiques de base.  
+
+1. sum : renvoie la somme des nombres passés en paramètre
+2. minus : renvoie la différence entre 2 nombres
+3. mul : renvoie le produit de 2 nombres
+4. divide : renvoie le résultat de la division entre 2 nombres
+
+### Helper `sum`
+
+```handlebars
+{{sum 1 2 3}}
+```
+
+Ce helper attend en paramètre un ensemble d'entiers en renvoie leur somme
+
+#### Exemple d'utilisation du helper `sum`
+
+Afficher la somme de 1, 2, et 3 :
+
+```handlebars
+{{sum 1 2 3}}
+```
+
+### Helper `minus`
+
+```handlebars
+{{minus 10 1}}
+```
+
+Ce helper attend en paramètre 2 entiers et renvoie leur différence
+
+#### Exemple d'utilisation du helper `minus`
+
+Afficher la différence entre 10 et 1 :
+
+```handlebars
+{{minus 10 1}}
+```
+
+### Helper `mul`
+
+```handlebars
+{{mul 5 6}}
+```
+
+Ce helper attend en paramètre 2 entiers et renvoie leur produit
+
+#### Exemple d'utilisation du helper `mul`
+
+Afficher le produit entre 5 et 6 :
+
+```handlebars
+{{mul 5 6}}
+```
+
+### Helper `divide`
+
+```handlebars
+{{divde 10 2}}
+```
+
+Ce helper attend en paramètre 2 entiers et renvoie leur division
+
+#### Exemple d'utilisation du helper `divide`
+
+Afficher la division 10 par 2 :
+
+```handlebars
+{{divide 10 2}}
+```
+
 ## Helper `concat`
 
 !!! note
