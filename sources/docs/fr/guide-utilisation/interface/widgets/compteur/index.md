@@ -97,7 +97,7 @@ La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est d
 
 #### Titre (*optionnel*)
 
-Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus de celui-ci.
+Ce paramètre permet de définir le titre du widget, qui sera affiché au-dessus de celui-ci.
 
 Un champ de texte vous permet de définir ce titre.
 
