@@ -116,7 +116,7 @@ Vous avez la possibilité d'éditer ou de supprimer des filtres existants.
 
 ##### Template - Tuile
 
-Ce paramètre permet de personaliser les informations affichées à l'intérieur des tuiles de Compteur.
+Ce paramètre permet de personnaliser les informations affichées à l'intérieur des tuiles de Compteur.
 
 Le langage utilisé ici est le Handlebars.
 
