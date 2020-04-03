@@ -51,6 +51,7 @@ import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calenda
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
+import CounterWidget from '@/components/other/counter/counter.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
@@ -69,6 +70,7 @@ export default {
     StatsNumberWidget,
     StatsParetoWidget,
     TextWidget,
+    CounterWidget,
     AlertOverlay,
   },
   mixins: [sideBarMixin],
@@ -110,6 +112,7 @@ export default {
           [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
           [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
           [WIDGET_TYPES.text]: 'text-widget',
+          [WIDGET_TYPES.counter]: 'counter-widget',
         };
 
         let widgetSpecificsProp = {};

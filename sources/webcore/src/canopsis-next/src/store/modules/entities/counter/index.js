@@ -2,12 +2,12 @@ import Vue from 'vue';
 import { get } from 'lodash';
 
 const COUNTER = {
-  total: 0,
-  total_active: 0,
+  total: 2937,
+  total_active: 2582,
   snooze: 0,
-  ack: 0,
-  ticket: 0,
-  pbehavior_active: 0,
+  ack: 36,
+  ticket: 14,
+  pbehavior_active: 355,
 };
 
 export const types = {
@@ -41,7 +41,7 @@ export default {
       try {
         commit(types.FETCH_LIST, { widgetId });
 
-        const promises = filters.map(() => ({ data: [COUNTER] }));
+        const promises = filters.map(async () => ({ data: [COUNTER] }));
         const responses = await Promise.all(promises);
 
         commit(types.FETCH_LIST_COMPLETED, {

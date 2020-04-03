@@ -1,3 +1,5 @@
+$seeAlarmBtnHeight: 18px;
+
 .v-toolbar--fixed {
   z-index: 3;
 }
@@ -63,4 +65,27 @@
   &:active {
     cursor: grabbing;
   }
+}
+
+.v-card__with-see-alarms-btn {
+  padding-bottom: $seeAlarmBtnHeight;
+
+  .see-alarms-btn {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: .6em;
+    height: $seeAlarmBtnHeight;
+    color: white;
+    margin: 0;
+    background-color: rgba(0, 0, 0, .2);
+
+    &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
+      background-color: rgba(0, 0, 0, .5);
+    }
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

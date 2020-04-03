@@ -1,24 +1,21 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer(
     :class="itemClasses",
-    :style="{ height: itemHeight + 'em', backgroundColor: color}",
+    :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile
   )
     v-btn.helpBtn.ma-0(
       v-if="hasVariablesHelpAccess",
       icon,
       small,
-      @click.stop="showVariablesHelpModal(watcher)"
+      @click.stop="showVariablesHelpModal"
     )
       v-icon help
     div
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
         v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
-        v-btn.pauseIcon(v-if="secondaryIcon", icon)
-          v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
-          v-if="isBothModalType && hasAlarmsListAccess",
           flat,
           @click.stop="showAlarmListModal"
         ) {{ $t('serviceWeather.seeAlarms') }}
@@ -31,40 +28,43 @@ import {
   MODALS,
   USERS_RIGHTS,
   WIDGET_TYPES,
-  WATCHER_STATES_COLORS,
-  WEATHER_ICONS,
-  SERVICE_WEATHER_WIDGET_MODAL_TYPES,
+  ENTITIES_STATES_KEYS,
+  COUNTER_STATES_ICONS,
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
 import { generateWidgetByType } from '@/helpers/entities';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import authMixin from '@/mixins/auth';
-import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
-
-import { convertObjectToTreeview } from '@/helpers/treeview';
 
 export default {
   components: {
     VRuntimeTemplate,
   },
-  mixins: [authMixin, entitiesWatcherEntityMixin],
+  mixins: [authMixin],
   props: {
-    watcher: {
+    counter: {
       type: Object,
       required: true,
     },
     template: {
       type: String,
+      required: true,
     },
     widget: {
       type: Object,
+      required: true,
+    },
+    filter: {
+      type: Object,
+      required: true,
     },
   },
   asyncComputed: {
     compiledTemplate: {
       async get() {
-        const compiledTemplate = await compile(this.template, { entity: this.watcher });
+        const compiledTemplate = await compile(this.template, { counter: this.counter });
 
         return `<div>${compiledTemplate}</div>`;
       },
@@ -72,6 +72,20 @@ export default {
     },
   },
   computed: {
+    stateKey() {
+      const {
+        counter,
+        values,
+      } = this.widget.parameters.levels;
+
+      const count = this.counter[counter];
+
+      return [
+        ENTITIES_STATES_KEYS.critical,
+        ENTITIES_STATES_KEYS.major,
+        ENTITIES_STATES_KEYS.minor,
+      ].find(state => count >= values[state]) || ENTITIES_STATES_KEYS.ok;
+    },
     hasMoreInfosAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.moreInfos);
     },
@@ -85,109 +99,48 @@ export default {
     },
 
     color() {
-      return WATCHER_STATES_COLORS[this.watcher.tileColor];
+      const { colors } = this.widget.parameters.levels;
+
+      return colors[this.stateKey];
     },
 
     icon() {
-      return WEATHER_ICONS[this.watcher.tileIcon];
-    },
-
-    secondaryIcon() {
-      return WEATHER_ICONS[this.watcher.tileSecondaryIcon];
+      return COUNTER_STATES_ICONS[this.stateKey];
     },
 
     itemClasses() {
-      const classes = [
+      return [
+        'v-card__with-see-alarms-btn',
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
         `ml-${this.widget.parameters.margin.left}`,
       ];
-
-      if (this.isBothModalType && this.hasAlarmsListAccess) {
-        classes.push('v-card__with-see-alarms-btn');
-      }
-
-      return classes;
     },
 
     itemHeight() {
       return 4 + this.widget.parameters.heightFactor;
     },
-
-    isBothModalType() {
-      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.both;
-    },
-
-    isAlarmListModalType() {
-      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
-    },
   },
   methods: {
-    showAdditionalInfoModal(e) {
-      if (e.target.tagName !== 'A' || !e.target.href) {
-        if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
-          this.showAlarmListModal();
-        } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
-          this.showMainInfoModal();
-        }
-      }
-    },
+    async showAlarmListModal() {
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
 
-    showMainInfoModal() {
+      widget.parameters.alarmsStateFilter = this.widget.parameters.alarmsStateFilter;
+      widget.parameters.mainFilter = this.filter;
+      widget.parameters.viewFilters = [this.filter];
+
       this.$modals.show({
-        name: MODALS.watcher,
+        name: MODALS.alarmsList,
         config: {
-          color: this.color,
-          watcher: this.watcher,
-          entityTemplate: this.widget.parameters.entityTemplate,
-          modalTemplate: this.widget.parameters.modalTemplate,
-          itemsPerPage: this.widget.parameters.modalItemsPerPage,
+          widget,
         },
       });
     },
 
-    async showAlarmListModal() {
-      try {
-        const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
-
-        const filter = { $and: [{ 'entity.impact': this.watcher.entity_id }] };
-
-        const watcherFilter = {
-          title: this.watcher.display_name,
-          filter,
-        };
-
-        const widgetParameters = {
-          ...this.widget.parameters.alarmsList,
-
-          mainFilter: watcherFilter,
-          viewFilters: [watcherFilter],
-        };
-
-        this.$modals.show({
-          name: MODALS.alarmsList,
-          config: {
-            widget: {
-              ...widget,
-
-              parameters: {
-                ...widget.parameters,
-                ...widgetParameters,
-              },
-            },
-          },
-        });
-      } catch (err) {
-        this.$popups.error({
-          text: this.$t('errors.default'),
-        });
-      }
-    },
-
     showVariablesHelpModal() {
-      const entityFields = convertObjectToTreeview(this.watcher, 'entity');
-      const variables = [entityFields];
+      const counterFields = convertObjectToTreeview(this.counter, 'counter');
+      const variables = [counterFields];
 
       this.$modals.show({
         name: MODALS.variablesHelp,
@@ -201,34 +154,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  $seeAlarmBtnHeight: 18px;
-
-  .v-card__with-see-alarms-btn {
-    padding-bottom: $seeAlarmBtnHeight;
-
-    .see-alarms-btn {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      font-size: .6em;
-      height: $seeAlarmBtnHeight;
-      color: white;
-      margin: 0;
-      background-color: rgba(0, 0, 0, .2);
-
-      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
-        background-color: rgba(0, 0, 0, .5);
-      }
-    }
-  }
-
-  .pauseIcon {
-    position: absolute;
-    right: 0;
-    bottom: 1em;
-    cursor: inherit;
-  }
-
   .watcherName {
     max-width: 100%;
     overflow: hidden;
@@ -240,18 +165,6 @@ export default {
     }
   }
 
-  @keyframes blink {
-    0% { opacity: 1 }
-    50% { opacity: 0.3 }
-  }
-
-  .blinking {
-    animation: blink 2s linear infinite;
-  }
-
-  .cursor-pointer {
-    cursor: pointer;
-  }
 
   .helpBtn {
     position: absolute;

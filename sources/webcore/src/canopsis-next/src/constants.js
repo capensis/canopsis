@@ -111,6 +111,13 @@ export const ENTITY_INFOS_TYPE = {
   action: 'action',
 };
 
+export const ENTITIES_STATES_KEYS = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
+};
+
 export const ENTITIES_STATES = {
   ok: 0,
   minor: 1,
@@ -177,6 +184,13 @@ export const PAUSE_REASONS = {
   scenarioProblem: 'Problème Scénario',
   flashFunctionnalProblem: 'Problème Flash Fonctionnel',
   other: 'Autre',
+};
+
+export const COUNTER_STATES_ICONS = {
+  [ENTITIES_STATES_KEYS.ok]: 'wb_sunny',
+  [ENTITIES_STATES_KEYS.minor]: 'person',
+  [ENTITIES_STATES_KEYS.major]: 'person',
+  [ENTITIES_STATES_KEYS.critical]: 'wb_cloudy',
 };
 
 export const WEATHER_ICONS = {
@@ -721,6 +735,11 @@ export const USERS_RIGHTS = {
         variablesHelp: 'common_variablesHelp',
       },
     },
+    counter: {
+      actions: {
+        variablesHelp: 'common_variablesHelp',
+      },
+    },
   },
 };
 
@@ -783,6 +802,9 @@ export const WIDGETS_ACTIONS_TYPES = {
     pbehaviorList: 'pbehaviorList',
     variablesHelp: 'variablesHelp',
   },
+  counter: {
+    variablesHelp: 'variablesHelp',
+  },
 };
 
 export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
@@ -840,6 +862,10 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
     [WIDGETS_ACTIONS_TYPES.weather.variablesHelp]: USERS_RIGHTS.business.weather.actions.variablesHelp,
+  },
+
+  counter: {
+    [WIDGETS_ACTIONS_TYPES.counter.variablesHelp]: USERS_RIGHTS.business.counter.actions.variablesHelp,
   },
 };
 

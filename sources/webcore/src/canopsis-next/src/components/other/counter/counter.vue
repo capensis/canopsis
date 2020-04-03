@@ -1,33 +1,25 @@
 <template lang="pug">
   div.pa-2
     v-fade-transition(mode="out-in")
-      v-layout(v-if="watchersPending", key="progress", column)
+      v-layout(v-if="countersPending", key="progress", column)
         v-flex(xs12)
           v-layout(justify-center)
             v-progress-circular(indeterminate, color="primary")
       v-layout.fill-height(v-else, key="content", wrap)
-        v-alert(type="error", :value="true", v-if="hasNoData && watchersError")
-          v-layout(align-center)
-            div.mr-4 {{ $t('errors.default') }}
-            v-tooltip(top)
-              v-icon(slot="activator") help
-              div(v-if="watchersError.name") {{ $t('common.name') }}: {{ watchersError.name }}
-              div(v-if="watchersError.description") {{ $t('common.description') }}: {{ watchersError.description }}
-        v-alert(v-else-if="hasNoData", type="info", :value="true") {{ $t('tables.noData') }}
-        v-flex(v-else, v-for="item in watchers", :key="item._id", :class="flexSize")
-          counter-item.weatherItem(
-            :data-test="item.entity_id",
-            :watcher="item",
-            :widget="widget",
-            :template="widget.parameters.blockTemplate"
-          )
+        v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('tables.noData') }}
+        template(v-else)
+          v-flex(v-for="(item, index) in counters", :key="item._id", :class="flexSize")
+            counter-item.weatherItem(
+              :counter="item",
+              :widget="widget",
+              :template="widget.parameters.blockTemplate",
+              :filter="widget.parameters.viewFilters[index]"
+            )
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
-import entitiesWatcherMixin from '@/mixins/entities/watcher';
+import entitiesCounterMixin from '@/mixins/entities/counter';
 import widgetQueryMixin from '@/mixins/widget/query';
 
 import CounterItem from './counter-item.vue';
@@ -38,7 +30,7 @@ export default {
   },
   mixins: [
     widgetPeriodicRefreshMixin,
-    entitiesWatcherMixin,
+    entitiesCounterMixin,
     widgetQueryMixin,
   ],
   props: {
@@ -56,28 +48,17 @@ export default {
       ];
     },
     hasNoData() {
-      return this.watchers.length === 0;
+      return this.counters.length === 0;
     },
   },
   methods: {
     getQuery() {
-      const query = omit(this.query, [
-        'page',
-        'sortKey',
-        'sortDir',
-      ]);
-
-      if (this.query.sortKey) {
-        query.orderby = this.query.sortKey;
-        query.direction = this.query.sortDir;
-      }
-
-      return query;
+      return this.query;
     },
 
     fetchList() {
-      this.fetchWatchersList({
-        filter: this.widget.parameters.mfilter.filter,
+      this.fetchCountersList({
+        filters: this.widget.parameters.viewFilters,
         params: this.getQuery(),
         widgetId: this.widget._id,
       });
