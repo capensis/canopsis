@@ -51,7 +51,7 @@ export default {
         commit(types.FETCH_LIST_COMPLETED, {
           widgetId,
 
-          counters: responses.map(({ data: [counter] }) => counter),
+          counters: responses.map(({ data: [counter] }, index) => ({ ...counter, filter: filters[index] })),
         });
       } catch (err) {
         commit(types.FETCH_LIST_FAILED, { widgetId });

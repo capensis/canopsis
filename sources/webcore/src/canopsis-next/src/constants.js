@@ -737,6 +737,7 @@ export const USERS_RIGHTS = {
     },
     counter: {
       actions: {
+        alarmsList: 'counter_alarmsList',
         variablesHelp: 'common_variablesHelp',
       },
     },
@@ -803,6 +804,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     variablesHelp: 'variablesHelp',
   },
   counter: {
+    alarmsList: 'alarmsList',
     variablesHelp: 'variablesHelp',
   },
 };
@@ -865,6 +867,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
   },
 
   counter: {
+    [WIDGETS_ACTIONS_TYPES.counter.alarmsList]: USERS_RIGHTS.business.counter.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.counter.variablesHelp]: USERS_RIGHTS.business.counter.actions.variablesHelp,
   },
 };

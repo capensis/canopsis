@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.white--text(
+  v-card.white--text.weather__item(
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile
@@ -52,10 +52,6 @@ export default {
       type: Object,
       required: true,
     },
-    filter: {
-      type: Object,
-      required: true,
-    },
   },
   asyncComputed: {
     compiledTemplate: {
@@ -88,6 +84,10 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.counter.actions.variablesHelp);
     },
 
+    hasAlarmsListAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.counter.actions.alarmsList);
+    },
+
     color() {
       const { colors } = this.widget.parameters.levels;
 
@@ -117,8 +117,8 @@ export default {
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
 
       widget.parameters.alarmsStateFilter = this.widget.parameters.alarmsStateFilter;
-      widget.parameters.mainFilter = this.filter;
-      widget.parameters.viewFilters = [this.filter];
+      widget.parameters.mainFilter = this.counter.filter;
+      widget.parameters.viewFilters = [this.counter.filter];
 
       this.$modals.show({
         name: MODALS.alarmsList,
@@ -142,23 +142,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .watcherName {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2em;
-
-    &, & /deep/ a {
-      color: white;
-    }
-  }
-
-  .helpBtn {
-    position: absolute;
-    right: 0.2em;
-    top: 0;
-    z-index: 1;
-  }
-</style>

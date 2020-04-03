@@ -8,11 +8,10 @@
       v-layout.fill-height(v-else, key="content", wrap)
         v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('tables.noData') }}
         template(v-else)
-          v-flex(v-for="{ counter, filter } in countersWithFilters", :key="filter.title", :class="flexSize")
+          v-flex(v-for="counter in counters", :key="counter.filter.title", :class="flexSize")
             counter-item.weatherItem(
               :counter="counter",
-              :widget="widget",
-              :filter="filter"
+              :widget="widget"
             )
 </template>
 
@@ -51,12 +50,6 @@ export default {
 
     hasNoData() {
       return this.counters.length === 0;
-    },
-
-    countersWithFilters() {
-      const { viewFilters } = this.widget.parameters;
-
-      return this.counters.map((counter, index) => ({ counter, filter: viewFilters[index] }));
     },
   },
   methods: {
