@@ -128,7 +128,7 @@ Exemple :
 * Pour afficher le compteur `total`, il vous faut écrire dans le template : `{{ counter.total }}`.
 * Pour afficher le seuil `critique`, il vous faut écrire dans le template : `{{ levels.values.critical }}`.
 
-Lorsque le droit `Counter: Access to 'Alarms list' modal(counter_alarmsList)` vous est affecté, vous pouvez cliquer sur la partie basse de la tuile sur `Voir les alarmes`. Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes correspondantes au filtre de la tuile. Ce widget est configurable grace aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
+Lorsque le droit `Counter: Access to 'Alarms list' modal(counter_alarmsList)` vous est affecté, vous pouvez cliquer sur la partie basse de la tuile sur `Voir les alarmes`. Cette modale vous permet d'afficher un widget Bac à alarmes, regroupant les alarmes correspondantes au filtre de la tuile. Ce widget est configurable grâce aux [Paramètres du bac à alarmes](#parametres-du-bac-a-alarmes).
 
 ##### Colonnes - Petit
 
