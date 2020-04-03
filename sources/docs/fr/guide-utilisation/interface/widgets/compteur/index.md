@@ -140,7 +140,7 @@ Il suffit de faire glisser le curseur pour sélectionner le nombre souhaité de 
 
 Ce paramètre permet de définir la proportion de l'écran, en largeur, prise par chaque tuile. Ce paramètre concerne les écrans de tablettes (largeur < 900px). Une tuile occupe au minimum une colonne (1/12 de la largeur de la page), et au maximum 12 colonnes (100 % de la largeur de la page).
 
-Il suffit de faire glisser le curseur pour sélectionner le nombre de colonne par tuile souhaité.
+Il suffit de faire glisser le curseur pour sélectionner le nombre souhaité de colonnes par tuile.
 
 ##### Colonnes - Large
 
