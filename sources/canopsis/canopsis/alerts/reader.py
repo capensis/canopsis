@@ -490,11 +490,12 @@ class AlertsReader(object):
                 self.contains_wildcard_dynamic_filter(element, has_dynamic_filter)
         return has_dynamic_filter[0]
 
-    def add_pbh_filter(self, pipeline, filter_):
+    def add_pbh_filter(self, pipeline, filter_, add_pbh_filter=True):
         """Add to the aggregation pipeline the stages to filter the alarm
         with their pbehavior.
         :param list pipeline: the aggregation pipeline
-        :param dict filter_: the filter received from the front."""
+        :param dict filter_: the filter received from the front.
+        :param bool add_pbh_filter: explicitly tell adding pbh filter"""
         self.parse_filter(filter_)
         pipeline.append({"$lookup": {
             "from": "default_pbehavior",
@@ -502,7 +503,7 @@ class AlertsReader(object):
             "foreignField": "eids",
             "as": "pbehaviors"}})
 
-        if self.has_active_pbh is not None:
+        if add_pbh_filter and self.has_active_pbh is not None:
             tnow = int(time())
             stage = {
                 "$project": {
@@ -539,13 +540,13 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
-
     def _build_aggregate_pipeline(self,
                                   final_filter,
                                   sort_key,
                                   sort_dir,
                                   with_steps,
                                   filter_,
+                                  add_pbh_filter=True,
                                   has_wildcard_dynamic_filter=False):
         """
         :param dict final_filter: the filter sent by the front page
@@ -588,7 +589,7 @@ class AlertsReader(object):
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
 
-        self.add_pbh_filter(pipeline, filter_)
+        self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
         if has_wildcard_dynamic_filter:
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
@@ -779,7 +780,8 @@ class AlertsReader(object):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            add_pbh_filter=True
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -814,6 +816,8 @@ class AlertsReader(object):
 
         :param bool hide_resources: hide resources' alarms if the component has
         an alarm
+
+        :param bool add_pbh_filter: add pbehavior filter or not
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
@@ -851,7 +855,8 @@ class AlertsReader(object):
 
         has_wildcard_dynamic_filter = self.contains_wildcard_dynamic_filter(final_filter)
         pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
-                                                  sort_dir, with_steps, filter_, has_wildcard_dynamic_filter)
+                                                  sort_dir, with_steps, filter_,
+                                                  add_pbh_filter, has_wildcard_dynamic_filter)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"
