@@ -163,7 +163,7 @@ def exports(ws):
                 opened=opened,
                 resolved=resolved,
                 lookups=lookups,
-                filter_={'_id': {'$in': consequences_children}},
+                filter_={'d': {'$in': consequences_children}},
                 sort_key=sort_key,
                 sort_dir=sort_dir,
                 skip=skip,
@@ -174,7 +174,7 @@ def exports(ws):
             )
         list_alarm = []
         for alarm in alarms['alarms']:
-            rules = alarms['rules'].get(alarm['_id'], [])
+            rules = alarms['rules'].get(alarm['d'], [])
             if rules:
                 alarm["causes"] = {'total': len(rules), 'rules': rules}
             if alarm.get('v', {}).get('meta'):
