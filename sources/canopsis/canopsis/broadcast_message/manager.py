@@ -20,6 +20,7 @@
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
+import time
 
 
 class BroadcastMessageManager(object):
@@ -100,3 +101,17 @@ class BroadcastMessageManager(object):
         """
         resp = self.__collection.remove({'_id': wid})
         return self.__collection.is_successfull(resp)
+
+    def get_active(self):
+        now = int(time.time())
+        resp = self.__collection.find({'$and': [{
+            "start":{
+                "$lte": now
+            }
+        },{
+            "end":{
+                "$gte": now
+            }
+        }]
+        })
+        return list(resp)

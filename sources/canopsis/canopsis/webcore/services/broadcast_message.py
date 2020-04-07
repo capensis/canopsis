@@ -20,7 +20,7 @@
 
 import uuid
 from bottle import request
-
+from six import string_types
 from pymongo.errors import PyMongoError
 
 from canopsis.common.collection import CollectionError
@@ -28,7 +28,6 @@ from canopsis.broadcast_message import BroadcastMessageManager
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_NOT_FOUND, HTTP_ERROR)
 from dateutil.parser import parse
-
 
 FIELDS = {"message", "color", "start", "end"}
 
@@ -39,16 +38,16 @@ def sanitize_payload(payload):
             payload.pop(k)
     if not set(payload.keys()) == FIELDS:
         raise Exception("payload contains not enough fields")
-    try:
-        parse(payload["start"])
-        parse(payload["end"])
-    except:
-        raise Exception("invalid date time format")
+    if not isinstance(payload["message"], string_types) or \
+        not isinstance(payload["color"], string_types) or \
+        not isinstance(payload["start"], (int, float)) or \
+        not isinstance(payload["end"], (int, float)):
+
+        raise Exception("invalid field type")
     return payload
 
 
 def exports(ws):
-
     message_manager = BroadcastMessageManager(BroadcastMessageManager.default_collection())
 
     @ws.application.get(
@@ -211,3 +210,24 @@ def exports(ws):
                 HTTP_ERROR)
 
         return gen_json({"status": ok})
+
+    @ws.application.get(
+        '/api/v2/broadcast-message/active'
+    )
+    def get_active():
+        """
+        Delete an existing message, given its id.
+
+        :param message_id: ID of the message
+        :type message_id: str
+        :rtype: dict
+        """
+        try:
+            active_msg = message_manager.get_active()
+        except PyMongoError:
+            return gen_json_error(
+                {"description": "Can not retrieve the message data from "
+                                "database, contact your administrator."},
+                HTTP_ERROR)
+
+        return gen_json(active_msg)
