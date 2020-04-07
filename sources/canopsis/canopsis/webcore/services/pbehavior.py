@@ -262,19 +262,23 @@ class RouteHandlerPBehavior(object):
             raise ValueError("_id should be str, a list, None (null) not {}"
                              .format(type(_id)))
         pbehaviors = self.pb_manager.read(_id, search, limit, skip)
-        if current_active_pbh is True:
-            return self._get_active_only(pbehaviors)
-        return pbehaviors
+        return self._get_active_only(pbehaviors, current_active_pbh)
 
-    def _get_active_only(self, pbehaviors_data):
+    def _get_active_only(self, pbehaviors_data, current_active_pbh=False):
         active_ones = []
         now = int(time.time())
         for pb in pbehaviors_data.get("data", []):
             if self.pb_manager.check_active_pbehavior(now, pb):
-                active_ones.append(pb)
-        pbehaviors_data["data"] = active_ones
-        pbehaviors_data["total_count"] = len(active_ones)
-        pbehaviors_data["count"] = len(active_ones)
+                pb["is_currently_active"] = True
+                if current_active_pbh:
+                    active_ones.append(pb)
+            else:
+                pb["is_currently_active"] = False
+
+        if current_active_pbh:
+            pbehaviors_data["data"] = active_ones
+            pbehaviors_data["total_count"] = len(active_ones)
+            pbehaviors_data["count"] = len(active_ones)
         return pbehaviors_data
 
     def update(self, _id, **kwargs):
