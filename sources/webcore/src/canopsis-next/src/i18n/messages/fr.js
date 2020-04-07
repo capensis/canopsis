@@ -115,6 +115,7 @@ export default {
       month: 'mois | mois',
       year: 'année | années',
     },
+    healthcheck: 'Healthcheck',
   },
   user: {
     role: 'Rôle',
@@ -1058,6 +1059,17 @@ export default {
           role: 'Rôle',
           enabled: 'Actif',
         },
+      },
+    },
+    healthcheck: {
+      overall: {
+        success: 'Tous les services sont opérationnels',
+        error: 'Tous les services ne sont pas opérationnels',
+      },
+      columns: {
+        state: 'Etat',
+        message: 'Message',
+        timestamp: 'La dernière fois vérifié',
       },
     },
   },

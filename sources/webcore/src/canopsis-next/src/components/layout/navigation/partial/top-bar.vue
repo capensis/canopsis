@@ -163,6 +163,12 @@ export default {
           icon: 'settings',
           right: USERS_RIGHTS.technical.parameters,
         },
+        {
+          route: { name: 'admin-healthcheck' },
+          text: this.$t('common.healthcheck'),
+          icon: 'favorite',
+          right: USERS_RIGHTS.technical.healthcheck,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));

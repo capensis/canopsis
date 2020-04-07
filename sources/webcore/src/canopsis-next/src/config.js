@@ -111,6 +111,7 @@ export const API_ROUTES = {
   dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
   counter: '/alerts/get-counters',
+  healthcheck: '/api/v2/healthcheck/',
 };
 
 export const COLORS = {

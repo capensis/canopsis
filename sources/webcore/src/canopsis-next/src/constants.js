@@ -667,6 +667,7 @@ export const USERS_RIGHTS = {
     action: 'models_action',
     user: 'models_user',
     parameters: 'models_parameters',
+    healthcheck: 'models_healthcheck',
     exploitation: {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',

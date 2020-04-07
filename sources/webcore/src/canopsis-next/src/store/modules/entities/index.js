@@ -23,6 +23,7 @@ import pbehaviorReasonsModule from './pbehavior-reasons';
 import alarmColumnFiltersModule from './alarm-column-filters';
 import sessionModule from './session';
 import counterModule from './counter';
+import healthcheckModule from './healthcheck';
 
 export default {
   alarm: alarmModule,
@@ -50,4 +51,5 @@ export default {
   alarmColumnFilters: alarmColumnFiltersModule,
   session: sessionModule,
   counter: counterModule,
+  healthcheck: healthcheckModule,
 };

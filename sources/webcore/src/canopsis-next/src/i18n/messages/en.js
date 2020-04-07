@@ -126,6 +126,7 @@ export default {
       month: 'month | months',
       year: 'year | years',
     },
+    healthcheck: 'Healthcheck',
   },
   user: {
     role: 'Role',
@@ -1139,6 +1140,17 @@ export default {
           role: 'Role',
           enabled: 'Enabled',
         },
+      },
+    },
+    healthcheck: {
+      overall: {
+        success: 'All services are operational',
+        error: 'All services are not operational',
+      },
+      columns: {
+        state: 'State',
+        message: 'Message',
+        timestamp: 'Last time checked',
       },
     },
   },

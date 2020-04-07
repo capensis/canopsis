@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { get, isEmpty, isUndefined, transform } from 'lodash';
+import { get, isEmpty, isUndefined, transform, omit } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -318,10 +318,11 @@ export default {
 
       const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
       const allRightsIds = flatten(USERS_RIGHTS);
-      const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
+      const allTechnicalAdminRightsIds = omit(USERS_RIGHTS.technical, ['exploitation']);
+      const allTechnicalExploitationRightsIds = USERS_RIGHTS.technical.exploitation;
       const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
 
-      this.groupedRights = rights.reduce((acc, right) => {
+      const { admin, exploitation, ...groupedRights } = rights.reduce((acc, right) => {
         const rightId = String(right._id);
         const view = allViews.find(({ _id }) => _id === rightId);
 
@@ -331,8 +332,10 @@ export default {
 
             desc: right.desc.replace(view._id, view.name),
           });
-        } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
-          acc.technical.push(right);
+        } else if (Object.values(allTechnicalAdminRightsIds).indexOf(rightId) !== -1) {
+          acc.admin.push(right);
+        } else if (Object.values(allTechnicalExploitationRightsIds).indexOf(rightId) !== -1) {
+          acc.exploitation.push(right);
         } else if (
           Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
           NOT_COMPLETED_USER_RIGHTS_KEYS.some(userRightKey => rightId.startsWith(allRightsIds[userRightKey]))
@@ -341,7 +344,11 @@ export default {
         }
 
         return acc;
-      }, { business: [], view: [], technical: [] });
+      }, {
+        business: [], view: [], admin: [], exploitation: [],
+      });
+
+      this.groupedRights = { ...groupedRights, technical: [...admin, ...exploitation] };
     },
   },
 };

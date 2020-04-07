@@ -268,6 +268,13 @@
         "type": "RW"
     },
     {
+        "_id" : "models_healthcheck",
+        "loader_id" : "models_healthcheck",
+        "crecord_name": "models_healthcheck",
+        "crecord_type" : "action",
+        "desc": "Healthcheck"
+    },
+    {
         "_id" : "models_serie",
         "loader_id" : "models_serie",
         "crecord_name": "models_serie",
