@@ -38,7 +38,7 @@ import { omit } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
-import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
+import { formToWebhook, getDefaultWebhookForm, webhookToForm } from '@/helpers/forms/webhook';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -60,30 +60,11 @@ export default {
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { webhook, isDuplicating } = this.modal.config;
-    const defaultForm = {
-      retry: {},
-      hook: {
-        triggers: [],
-        event_patterns: [],
-        alarm_patterns: [],
-        entity_patterns: [],
-      },
-      request: {
-        method: '',
-        url: '',
-        headers: [],
-        payload: '{}',
-      },
-      declare_ticket: [],
-      disable_if_active_pbehavior: false,
-      emptyResponse: false,
-      enabled: true,
-    };
 
     const preparedWebhook = isDuplicating ? omit(webhook, ['_id']) : webhook;
 
     return {
-      form: webhook ? webhookToForm(preparedWebhook) : defaultForm,
+      form: webhook ? webhookToForm(preparedWebhook) : getDefaultWebhookForm(),
     };
   },
   computed: {
@@ -109,7 +90,7 @@ export default {
         if (this.config.action) {
           const preparedForm = this.hasBlockedTriggers ? setSeveralFields(this.form, {
             'hook.event_patterns': null,
-            declare_ticket: {},
+            postProcessors: [],
           }) : this.form;
 
           await this.config.action(formToWebhook(preparedForm));

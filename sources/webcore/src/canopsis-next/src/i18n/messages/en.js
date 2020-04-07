@@ -1418,6 +1418,7 @@ export default {
       declareTicket: {
         title: 'Declare ticket',
         emptyResponse: 'Empty response',
+        ticketId: 'Ticket id',
         fields: {
           text: 'Key',
           value: 'Value',

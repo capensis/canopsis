@@ -79,24 +79,22 @@ export default {
           title: this.$t('webhook.tabs.request.title'),
           component: 'webhook-form-request-tab',
           bind: {
-            request: this.form.request,
+            requests: this.form.requests,
             disabled: this.disabled,
           },
           on: {
-            input: event => this.updateField('request', event),
+            input: event => this.updateField('requests', event),
           },
         },
         {
           title: this.$t('webhook.tabs.declareTicket.title'),
           component: 'webhook-form-declare-ticket-tab',
           bind: {
-            declareTicket: this.form.declare_ticket,
+            postProcessors: this.form.postProcessors,
             disabled: this.disabled,
-            emptyResponse: this.form.emptyResponse,
           },
           on: {
-            input: event => this.updateField('declare_ticket', event),
-            'update:emptyResponse': event => this.updateField('emptyResponse', event),
+            input: event => this.updateField('postProcessors', event),
           },
         },
       ];

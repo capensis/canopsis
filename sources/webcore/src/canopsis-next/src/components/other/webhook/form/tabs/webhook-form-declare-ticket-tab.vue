@@ -1,34 +1,37 @@
 <template lang="pug">
   div
-    v-switch(
-      v-if="!disabled",
-      :input-value="emptyResponse",
-      :label="$t('webhook.tabs.declareTicket.emptyResponse')",
-      @change="$emit('update:emptyResponse', $event)",
-      color="primary"
-    )
-    text-pairs(
-      :textLabel="$t('webhook.tabs.declareTicket.fields.text')",
-      :valueLabel="$t('webhook.tabs.declareTicket.fields.value')",
-      :items="declareTicket",
-      :disabled="disabled",
-      valueValidationRules="required",
-      mixed,
-      @input="$emit('input', $event)"
-    )
+    v-layout(v-for="(postProcessor, index) in postProcessors", :key="index", row)
+      v-flex
+        webhook-form-post-processor-field(
+          v-field="postProcessors[index]",
+          :disabled="disabled",
+          :name="`postProcessors[${index}]`"
+        )
+      v-btn(v-if="!disabled", :disabled="isRemoveDisabled", color="error", icon, @click="removeItemFromArray(index)")
+        v-icon delete
+    v-layout(row)
+      v-btn.ma-0.mt-2(v-if="!disabled", color="primary", @click="addPostProcessorHandler") {{ $t('common.add') }}
 </template>
 
 <script>
 import TextPairs from '@/components/forms/fields/text-pairs.vue';
+import WebhookFormPostProcessorField from '@/components/other/webhook/partials/webhook-form-post-processor-field.vue';
+
+import { getDefaultPostProcessorField } from '@/helpers/forms/webhook';
+
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import formArrayMixin from '@/mixins/form/array';
 
 export default {
-  components: { TextPairs },
+  inject: ['$validator'],
+  components: { WebhookFormPostProcessorField, TextPairs },
+  mixins: [formArrayMixin, formValidationHeaderMixin],
   model: {
-    prop: 'declareTicket',
+    prop: 'postProcessors',
     event: 'input',
   },
   props: {
-    declareTicket: {
+    postProcessors: {
       type: Array,
       default: () => [],
     },
@@ -36,9 +39,15 @@ export default {
       type: Boolean,
       default: false,
     },
-    emptyResponse: {
-      type: Boolean,
-      default: false,
+  },
+  computed: {
+    isRemoveDisabled() {
+      return this.postProcessors.length === 1;
+    },
+  },
+  methods: {
+    addPostProcessorHandler() {
+      this.addItemIntoArray(getDefaultPostProcessorField());
     },
   },
 };

@@ -1,94 +1,132 @@
-import { get, omit } from 'lodash';
-
 import { setSeveralFields, unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
+import { POST_PROCESSOR_TYPES } from '@/constants';
 
 /**
- * Get webhook form field's values (or customizer function)
- * @param {Object} webhook
- * @returns {Object}
+ * Create default webhook request field
+ * @return {Object}
  */
-function getWebhookFormFields(webhook) {
+export const getDefaultRequestField = () => ({
+  method: '',
+  url: '',
+  headers: [],
+  payload: '{}',
+  auth: {
+    username: '',
+    password: '',
+  },
+  withAuth: false,
+});
+
+/**
+ * Create default hook
+ * @return {Object}
+ */
+export const getDefaultHookField = () => ({
+  triggers: [],
+  event_patterns: [],
+  alarm_patterns: [],
+  entity_patterns: [],
+});
+
+/**
+ * Create default post processor
+ * @return {Object}
+ */
+export const getDefaultPostProcessorField = () => ({
+  emptyResponse: false,
+  ticketId: '',
+  fields: [],
+});
+
+/**
+ * Create webhook form
+ * @return {Object}
+ */
+export const getDefaultWebhookForm = () => ({
+  retry: {},
+  hook: getDefaultHookField(),
+  requests: [getDefaultRequestField()],
+  postProcessors: [getDefaultPostProcessorField()],
+  disable_if_active_pbehavior: false,
+  enabled: true,
+});
+
+/**
+ *
+ * @param {Array} postProcessors
+ * @param {Object} webhook
+ * @return {Object}
+ */
+export function webhookToForm({
+  post_processors: postProcessors, enabled, request, ...webhook
+}) {
   const patternsFieldsCustomizer = value => value || [];
 
-  const declareTicketField = webhook.declare_ticket ? omit(webhook.declare_ticket, ['empty_response']) : {};
-
-  return {
-    declare_ticket: () => objectToTextPairs(declareTicketField),
-    'request.headers': objectToTextPairs,
+  return setSeveralFields(webhook, {
     'hook.event_patterns': patternsFieldsCustomizer,
     'hook.alarm_patterns': patternsFieldsCustomizer,
     'hook.entity_patterns': patternsFieldsCustomizer,
-  };
-}
+    enabled: enabled === undefined ? true : enabled,
+    requests: request.map(({ headers, auth, ...otherRequestFields }) => ({
+      headers: objectToTextPairs(headers),
+      withAuth: !!auth,
+      auth,
+      ...otherRequestFields,
+    })),
+    postProcessors: postProcessors.map(({ parameters }) => {
+      const { empty_response: emptyResponse, fields, ...postProcessor } = parameters;
 
-export function webhookToForm(webhook) {
-  return {
-    emptyResponse: webhook.empty_response || false,
-    enabled: webhook.enabled || true,
-    ...setSeveralFields(webhook, getWebhookFormFields(webhook)),
-  };
-}
-
-/**
- * Tranform webhook declare ticket field to object (editable in the UI)
- * @returns {Function}
- */
-function getWebhookDeclareTicketField() {
-  return value => ({
-    ...textPairsToObject(value),
+      return {
+        ...postProcessor,
+        fields: objectToTextPairs(fields),
+        emptyResponse,
+      };
+    }),
   });
 }
 
 /**
- * Get webhook's auth fields values
- * @param {Object} form
- * @returns {Object}
+ *
+ * @param requests
+ * @return {Object}
  */
-function getWebhookAuthField(form) {
-  return {
-    username: form.request.auth.username,
-    password: form.request.auth.password,
-  };
-}
+function formRequestFieldToWebhook(requests) {
+  return requests.map(({
+    emptyResponse, withAuth, auth, headers, ...otherFields
+  }) => {
+    const request = {
+      empty_response: !!emptyResponse,
+      headers: textPairsToObject(headers),
+      ...otherFields,
+    };
 
-/**
- * Create a webhook object that is valid to the API
- * @param {Object} form
- * @returns {Object}
- */
-function createWebhookObject(form) {
-  const hasAuth = get(form, 'request.auth');
+    if (withAuth) {
+      request.auth = auth;
+    }
 
-  const pathValuesMap = {
-    'request.headers': textPairsToObject,
-    empty_response: form.emptyResponse || false,
-  };
-
-  if (form.declare_ticket) {
-    pathValuesMap.declare_ticket = getWebhookDeclareTicketField(form);
-  }
-
-  if (hasAuth) {
-    pathValuesMap['request.auth'] = getWebhookAuthField(form);
-  }
-
-  return setSeveralFields(omit(form, ['emptyResponse']), pathValuesMap);
-}
-
-/**
- * Remove empty "patterns" (alarmpattern, entitypattern and eventpattern) fields from webhook
- * @param {Object} webhook
- * @returns {Object}
- */
-function removeEmptyPatternsFromWebhook(webhook) {
-  const patternsCondition = value => !value || !value.length;
-
-  return unsetSeveralFieldsWithConditions(webhook, {
-    'hook.event_patterns': patternsCondition,
-    'hook.alarm_patterns': patternsCondition,
-    'hook.entity_patterns': patternsCondition,
+    return request;
   });
+}
+
+/**
+ * Prepare post processors to webhook object
+ * @param {Array} postProcessors
+ * @return {Array}
+ */
+function formPostProcessorsToWebhook(postProcessors) {
+  return postProcessors.map(({
+    fields,
+    ticketId,
+    ...postProcessorParameters
+  }) => ({
+    type: POST_PROCESSOR_TYPES.declareTicket,
+    parameters: {
+      fields: textPairsToObject(fields),
+      ticket_id: ticketId,
+      ...postProcessorParameters,
+    },
+  }));
 }
 
 /**
@@ -96,15 +134,22 @@ function removeEmptyPatternsFromWebhook(webhook) {
  * @param {Object} form
  * @returns {Object}
  */
-export function formToWebhook(form) {
+export function formToWebhook({ requests, postProcessors, ...webhookForm }) {
+  const patternsCondition = value => !value || !value.length;
   const hasValue = v => !v;
 
-  const webhook = unsetSeveralFieldsWithConditions(createWebhookObject(form), {
+  const webhook = unsetSeveralFieldsWithConditions(webhookForm, {
+    'hook.event_patterns': patternsCondition,
+    'hook.alarm_patterns': patternsCondition,
+    'hook.entity_patterns': patternsCondition,
     'retry.count': hasValue,
     'retry.unit': hasValue,
     'retry.delay': hasValue,
   });
 
-  return removeEmptyPatternsFromWebhook(webhook);
+  return {
+    request: formRequestFieldToWebhook(requests),
+    post_processors: formPostProcessorsToWebhook(postProcessors),
+    ...webhook,
+  };
 }
-

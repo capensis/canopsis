@@ -1202,3 +1202,19 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
+
+export const AVAILABLE_REQUEST_METHODS = {
+  post: 'POST',
+  get: 'GET',
+  put: 'PUT',
+  patch: 'PATCH',
+  delete: 'DELETE',
+  head: 'HEAD',
+  connect: 'CONNECT',
+  options: 'OPTIONS',
+  trace: 'TRACE',
+};
+
+export const POST_PROCESSOR_TYPES = {
+  declareTicket: 'DeclareTicket',
+};
