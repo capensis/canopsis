@@ -1152,6 +1152,7 @@ export default {
         message: 'Message',
         timestamp: 'Last time checked',
       },
+      defaultMessage: 'Everything is ok',
     },
   },
   rRule: {

@@ -1069,8 +1069,9 @@ export default {
       columns: {
         state: 'Etat',
         message: 'Message',
-        timestamp: 'La dernière fois vérifié',
+        timestamp: 'Date de dernière vérification',
       },
+      defaultMessage: 'Service en état de fonctionnement',
     },
   },
   rRule: {

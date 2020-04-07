@@ -30,6 +30,8 @@
 import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
+import { HEALTHCHECK_FIELDS } from '@/constants';
+
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 
 const { mapActions } = createNamespacedHelpers('healthcheck');
@@ -56,11 +58,11 @@ export default {
         return [];
       }
 
-      return ['time_series', 'amqp', 'engines', 'database', 'cache'].map(field => ({
+      return HEALTHCHECK_FIELDS.map(field => ({
         type: field,
         state: !this.healthcheck[field],
         timestamp: this.healthcheck.timestamp,
-        message: this.healthcheck[field],
+        message: this.healthcheck[field] || this.$t('tables.healthcheck.defaultMessage'),
       }));
     },
     overallInfo() {
