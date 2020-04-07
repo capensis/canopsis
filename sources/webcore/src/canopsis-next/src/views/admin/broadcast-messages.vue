@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.roles') }}
+    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.broadcastMessages') }}
     div.white
       v-data-table(
         :headers="headers",
@@ -16,8 +16,6 @@
             td Expired
             td.broadcast-message-cell
               broadcast-message(:message="props.item.message", :color="props.item.color")
-            td
-              enabled-column(:value="props.item.enabled")
             td {{ props.item.start | date('long', true) }}
             td {{ props.item.end | date('long', true) }}
             td
@@ -61,7 +59,6 @@ import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broa
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
-import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
 
@@ -70,7 +67,6 @@ export default {
     RefreshBtn,
     SearchField,
     BroadcastMessage,
-    EnabledColumn,
   },
   mixins: [
     viewQuery,
@@ -93,10 +89,6 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t('common.enabled'),
-          value: 'enabled',
-        },
-        {
           text: this.$t('common.start'),
           value: 'start',
         },
@@ -116,29 +108,19 @@ export default {
       fetchBroadcastMessagesList: 'fetchList',
       createBroadcastMessage: 'create',
       updateBroadcastMessage: 'update',
-      deleteBroadcastMessage: 'delete',
+      removeBroadcastMessage: 'remove',
     }),
 
     showCreateBroadcastMessageModal() {
       this.$modals.show({
         name: MODALS.createBroadcastMessage,
-        action: async () => {
-          try {
-            this.$popups.success({ text: this.$t('success.default') });
-          } catch (err) {
-            this.$popups.error({ text: this.$t('errors.default') });
-          }
-        },
-      });
-    },
-
-    showEditBroadcastMessageModal(message) {
-      this.$modals.show({
-        name: MODALS.createBroadcastMessage,
         config: {
-          message,
-          action: async () => {
+          action: async (newMessage) => {
             try {
+              await this.createBroadcastMessage({ data: newMessage });
+
+              await this.fetchList();
+
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
               this.$popups.error({ text: this.$t('errors.default') });
@@ -148,12 +130,36 @@ export default {
       });
     },
 
-    showRemoveBroadcastMessageModal() {
+    showEditBroadcastMessageModal(message) {
+      this.$modals.show({
+        name: MODALS.createBroadcastMessage,
+        config: {
+          message,
+          action: async (newMessage) => {
+            try {
+              await this.updateBroadcastMessage({ id: message._id, data: newMessage });
+
+              await this.fetchList();
+
+              this.$popups.success({ text: this.$t('success.default') });
+            } catch (err) {
+              this.$popups.error({ text: this.$t('errors.default') });
+            }
+          },
+        },
+      });
+    },
+
+    showRemoveBroadcastMessageModal(id) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
             try {
+              await this.removeBroadcastMessage({ id });
+
+              await this.fetchList();
+
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
               this.$popups.error({ text: this.$t('errors.default') });

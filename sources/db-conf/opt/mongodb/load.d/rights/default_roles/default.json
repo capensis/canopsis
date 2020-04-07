@@ -371,6 +371,9 @@
 		"crecord_type" : "right"
 	}
     },
+    "models_broadcastMessage": {
+        "checksum": 15
+    },
 	"defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
 },{
     "_id": "Supervision",

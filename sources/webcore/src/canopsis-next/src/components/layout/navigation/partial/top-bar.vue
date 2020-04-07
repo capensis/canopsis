@@ -167,7 +167,7 @@ export default {
           route: { name: 'admin-broadcast-messages' },
           text: this.$t('common.broadcastMessages'),
           icon: '$vuetify.icons.bullhorn',
-          right: USERS_RIGHTS.technical.broadcastMessages,
+          right: USERS_RIGHTS.technical.broadcastMessage,
         },
       ];
 

@@ -3,7 +3,7 @@
     v-layout(v-if="!pending")
       navigation#main-navigation(v-if="$route.name !== 'login'")
       v-content#main-content
-        broadcast-message(message="Your message here", color="#e75e40")
+        active-broadcast-message
         router-view(:key="routeViewKey")
     side-bars
     the-modals
@@ -13,7 +13,7 @@
 <script>
 import Navigation from '@/components/layout/navigation/index.vue';
 import SideBars from '@/components/side-bars/index.vue';
-import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
+import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
@@ -25,7 +25,7 @@ export default {
   components: {
     Navigation,
     SideBars,
-    BroadcastMessage,
+    ActiveBroadcastMessage,
   },
   mixins: [authMixin, entitiesInfoMixin, keepaliveMixin],
   data() {

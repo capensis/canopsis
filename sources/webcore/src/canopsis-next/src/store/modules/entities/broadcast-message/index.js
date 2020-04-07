@@ -1,3 +1,5 @@
+import request from '@/services/request';
+
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
@@ -14,4 +16,10 @@ export default createEntityModule({
   route: API_ROUTES.broadcastMessage,
   entityType: ENTITIES_TYPES.broadcastMessage,
   withFetchingParams: true,
+}, {
+  actions: {
+    fetchActiveWithoutStore() {
+      return request.get(API_ROUTES.activeBroadcastMessage);
+    },
+  },
 });

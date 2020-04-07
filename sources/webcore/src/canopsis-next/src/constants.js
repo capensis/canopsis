@@ -646,7 +646,7 @@ export const USERS_RIGHTS = {
     action: 'models_action',
     user: 'models_user',
     parameters: 'models_parameters',
-    broadcastMessages: 'models_broadcastMessages',
+    broadcastMessage: 'models_broadcastMessage',
     exploitation: {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',

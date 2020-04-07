@@ -15,8 +15,6 @@
         dark
       ) {{ $t('modals.createBroadcastMessage.buttons.selectColor') }}
     v-layout(row)
-      v-switch(v-field="form.enabled", :label="$t('common.enabled')")
-    v-layout(row)
       date-time-picker-field(
         v-validate="startRules",
         :value="form.start",

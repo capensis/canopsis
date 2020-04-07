@@ -120,7 +120,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresRight: {
-        id: USERS_RIGHTS.technical.broadcastMessages,
+        id: USERS_RIGHTS.technical.broadcastMessage,
       },
     },
   },
