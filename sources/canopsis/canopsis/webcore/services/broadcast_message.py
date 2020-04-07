@@ -214,7 +214,7 @@ def exports(ws):
     @ws.application.route(
         '/api/v2/broadcast-message/active',
         method='GET',
-        skip=True
+        skip=["AuthKeyBackend", "EnsureAuthenticated"]
     )
     def get_active():
         """
