@@ -1071,7 +1071,7 @@ export default {
         message: 'Message',
         timestamp: 'Date de dernière vérification',
       },
-      defaultMessage: 'Service en état de fonctionnement',
+      defaultMessage: 'Everything is ok',
     },
   },
   rRule: {
