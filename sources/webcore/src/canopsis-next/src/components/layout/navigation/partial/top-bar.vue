@@ -163,6 +163,9 @@ export default {
           icon: 'settings',
           right: USERS_RIGHTS.technical.parameters,
         },
+      ];
+
+      const linksWithDefaultRight = [
         {
           route: { name: 'admin-healthcheck' },
           text: this.$t('common.healthcheck'),
@@ -171,7 +174,8 @@ export default {
         },
       ];
 
-      return links.filter(({ right }) => this.checkReadAccess(right));
+      return links.filter(({ right }) => this.checkReadAccess(right))
+        .concat(linksWithDefaultRight.filter(({ right }) => this.checkAccess(right)));
     },
   },
   methods: {

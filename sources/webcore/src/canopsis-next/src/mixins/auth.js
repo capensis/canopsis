@@ -14,7 +14,8 @@ export default {
     }),
 
     checkAccess() {
-      return (rightId, rightMask = 1) => checkUserAccess(this.currentUser, rightId, rightMask);
+      return (rightId, rightMask = USERS_RIGHTS_MASKS.default) =>
+        checkUserAccess(this.currentUser, rightId, rightMask);
     },
 
     checkCreateAccess() {

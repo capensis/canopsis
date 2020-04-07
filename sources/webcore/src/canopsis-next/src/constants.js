@@ -653,6 +653,7 @@ export const USERS_RIGHTS_MASKS = {
   read: 4,
   update: 2,
   delete: 1,
+  default: 1,
 };
 
 export const USERS_RIGHTS_TYPES = {
