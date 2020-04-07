@@ -1071,7 +1071,6 @@ export default {
         message: 'Message',
         timestamp: 'Date de dernière vérification',
       },
-      defaultMessage: 'Everything is ok',
     },
   },
   rRule: {

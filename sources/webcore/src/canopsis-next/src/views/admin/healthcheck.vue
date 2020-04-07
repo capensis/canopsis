@@ -62,7 +62,7 @@ export default {
         type: field,
         state: !this.healthcheck[field],
         timestamp: this.healthcheck.timestamp,
-        message: this.healthcheck[field] || this.$t('tables.healthcheck.defaultMessage'),
+        message: this.healthcheck[field] || 'Everything is ok',
       }));
     },
     overallInfo() {
