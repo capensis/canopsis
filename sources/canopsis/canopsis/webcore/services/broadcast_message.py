@@ -211,8 +211,10 @@ def exports(ws):
 
         return gen_json({"status": ok})
 
-    @ws.application.get(
-        '/api/v2/broadcast-message/active'
+    @ws.application.route(
+        '/api/v2/broadcast-message/active',
+        method='GET',
+        skip=True
     )
     def get_active():
         """
