@@ -1,22 +1,24 @@
 <template lang="pug">
   div
+    v-alert(:value="hasAnyError", type="error") {{ $t('modals.createDynamicInfo.steps.infos.validationError') }}
     v-layout(justify-end)
       v-btn.primary(fab, small, flat, @click="showAddInfoModal")
         v-icon add
     v-data-table(
       :headers="headers",
       :items="form",
-      :no-data-text="$t('tables.noData')"
+      :no-data-text="$t('tables.noData')",
+      item-key="key"
     )
-      template(slot="items", slot-scope="{ item, index }")
+      template(slot="items", slot-scope="{ item }")
         tr
           td {{ item.name }}
           td {{ item.value }}
           td
             v-layout
-              v-btn(icon, small, @click="showEditInfoModal(index)")
+              v-btn(icon, small, @click="showEditInfoModal(item)")
                 v-icon edit
-              v-btn(icon, small, @click="removeItemFromArray(index)")
+              v-btn(icon, small, @click="removeInfo(item)")
                 v-icon(color="error") delete
 </template>
 
@@ -24,9 +26,10 @@
 import { MODALS } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
-  mixins: [formArrayMixin],
+  mixins: [formArrayMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -47,23 +50,54 @@ export default {
       ];
     },
   },
+  created() {
+    this.$validator.attach({
+      name: 'values',
+      rules: 'required:true',
+      getter: () => !this.form.some(({ value }) => !value),
+      context: () => this,
+      vm: this,
+    });
+  },
   methods: {
+    findInfoIndex(info = {}) {
+      return this.form.findIndex(({ name }) => name === info.name);
+    },
+
     showAddInfoModal() {
       this.$modals.show({
         name: MODALS.createDynamicInfoInformation,
         config: {
-          action: info => this.addItemIntoArray(info),
+          existingNames: this.form.map(info => info.name),
+          action: newInfo => this.addItemIntoArray(newInfo),
         },
       });
     },
-    showEditInfoModal(index) {
+
+    showEditInfoModal(info) {
       this.$modals.show({
         name: MODALS.createDynamicInfoInformation,
         config: {
-          info: this.form[index],
-          action: info => this.updateItemInArray(index, info),
+          info,
+
+          existingNames: this.form.map(({ name }) => name),
+          action: (newInfo) => {
+            const index = this.findInfoIndex(info);
+
+            this.updateItemInArray(index, newInfo);
+
+            this.$nextTick(() => this.$validator.validate('values'));
+          },
         },
       });
+    },
+
+    removeInfo(info) {
+      const index = this.findInfoIndex(info);
+
+      this.removeItemFromArray(index);
+
+      this.$nextTick(() => this.$validator.validate('values'));
     },
   },
 };

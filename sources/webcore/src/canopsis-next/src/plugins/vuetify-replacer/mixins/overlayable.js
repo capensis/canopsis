@@ -1,0 +1,25 @@
+import { addPassiveEventListener } from 'vuetify/es5/util/helpers';
+
+
+export default {
+  methods: {
+    hideScroll() {
+      this.htmlAlreadyContainsOverflowYClass = document.documentElement.classList.contains('overflow-y-hidden');
+
+      if (this.$vuetify.breakpoint.smAndDown && !this.htmlAlreadyContainsOverflowYClass) {
+        document.documentElement.classList.add('overflow-y-hidden');
+      } else {
+        addPassiveEventListener(window, 'wheel', this.scrollListener, { passive: false });
+        window.addEventListener('keydown', this.scrollListener);
+      }
+    },
+    showScroll() {
+      if (!this.htmlAlreadyContainsOverflowYClass) {
+        document.documentElement.classList.remove('overflow-y-hidden');
+      }
+
+      window.removeEventListener('wheel', this.scrollListener);
+      window.removeEventListener('keydown', this.scrollListener);
+    },
+  },
+};

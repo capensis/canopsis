@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { DURATION_UNITS } from '@/constants';
+import { SNOOZE_DURATION_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     availableUnits() {
-      return Object.values(DURATION_UNITS).map(({ value, text }) => ({
+      return Object.values(SNOOZE_DURATION_UNITS).map(({ value, text }) => ({
         value,
         text: this.$tc(text, 2),
       }));

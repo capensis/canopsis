@@ -10,6 +10,10 @@ En édition `core`, la file du moteur est placée juste après le moteur [Axe](m
 
 En édition `CAT`, la file du moteur est placée juste après le moteur [Webhook](moteur-webhook.md).
 
+!!! Note
+    Depuis la version 3.39.0, les actions ack, ackremove, assocticket, declareticket, et cancel sont disponibles.  
+    Par ailleurs il existe aussi la possibilité de déclencher les actions après un délai paramétré
+
 ### Options de l'engine-action
 
 ```
@@ -27,6 +31,11 @@ Les types d'actions disponibles sont :
 * `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille l'état de l'alarme dans une criticité donnée jusqu'à sa résolution
 * `pbehavior` : pose un [PBehavior](moteur-pbehavior.md)
 * `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose un snooze automatique sur l'alarme
+* `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme
+* `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme
+* `assocticket`, qui correspond à un événement [`assocticket`](../../guide-developpement/struct-event.md#event-assocticket-structure) : associe un ticket à l'alarme
+* `declareticket`, qui correspond à un événement [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : déclarer un ticket pour l'alarme
+* `cancel`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-cancel-structure) : annule l'alarme
 
 ### Paramètres généraux
 
@@ -39,6 +48,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 "hook"       // conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée, optionnel
 "triggers"   // conditions de déclenchement sur la vie de l'alarme, si plusieurs triggers sont indiqués, au moins un de ces triggers doit avoir eu lieu pour que l'action soit appelée
 "parameters" // paramétrage spécifique à chaque type d'action.
+"delay"	    // délai avant l'exécution de l'action 
 }
 ```
 
@@ -89,6 +99,53 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 }
 ```
 
+#### Ack
+
+```javascript
+{
+"output":   // commentaire de l'ack, optionnel - le champ est de type `string`
+"author":    // auteur de l'ack, optionnel - le champ est de type `string`
+}
+```
+
+#### Ackremove
+
+```javascript
+{
+"output":   // commentaire de la suppression de l'ack, optionnel - le champ est de type `string`
+"author":    // auteur de la suppression de l'ack, optionnel - le champ est de type `string`
+}
+```
+
+#### Assocticket
+
+```javascript
+{
+"output":   // commentaire de l'association de ticket, optionnel - le champ est de type `string`
+"author":    // auteur de l'association de ticket, optionnel - le champ est de type `string`
+}
+```
+
+#### Declareticket
+
+```javascript
+{
+"output":   // commentaire de la déclaration de ticket, optionnel - le champ est de type `string`
+"author":    // auteur de la déclaration de ticket, optionnel - le champ est de type `string`
+}
+```
+
+#### Cancel
+
+```javascript
+{
+"output":   // commentaire de l'annulation de l'alarme, optionnel - le champ est de type `string`
+"author":    // auteur de l'annulation de l'alarme, optionnel - le champ est de type `string`
+}
+```
+
+
+
 ## Collection
 
 Les actions sont stockées dans la collection MongoDB `default_action` (voir [API Action](../../guide-developpement/api/api-v2-action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un pbehavior, le champ `type` vaut `pbehavior` :
@@ -110,6 +167,7 @@ Les actions sont stockées dans la collection MongoDB `default_action` (voir [AP
             "create"
         ]
     },
+    "delay" : "1m",
     "parameters" : {
         "author" : "whalefact",
         "name" : "Big",

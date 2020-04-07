@@ -78,15 +78,15 @@ def exports(ws):
                 {"description": "limit should be an integer"},
                 HTTP_ERROR)
         try:
-            offset = int(request.query.offset or '0')
+            skip = int(request.query.skip or '0')
         except ValueError:
             return gen_json_error(
-                {"description": "offset should be an integer"},
+                {"description": "skip should be an integer"},
                 HTTP_ERROR)
 
         try:
             count = manager.count(search, search_fields)
-            rules = manager.list(search, search_fields, limit, offset)
+            rules = manager.list(search, search_fields, limit, skip)
         except CollectionError:
             return gen_json_error(
                 {"description": "Cannot retrieve the dynamic infos list from "

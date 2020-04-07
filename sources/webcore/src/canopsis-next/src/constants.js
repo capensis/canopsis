@@ -82,6 +82,9 @@ export const MODALS = {
   createHeartbeat: 'create-heartbeat',
   createDynamicInfo: 'create-dynamic-info',
   createDynamicInfoInformation: 'create-dynamic-info-information',
+  importExportViews: 'import-groups-and-views',
+  dynamicInfoTemplatesList: 'dynamic-info-templates-list',
+  createDynamicInfoTemplate: 'create-dynamic-info-template',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -101,12 +104,21 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
+  pbhenter: 'pbhenter',
+  pbhleave: 'pbhleave',
 };
 
 export const ENTITY_INFOS_TYPE = {
   state: 'state',
   status: 'status',
   action: 'action',
+};
+
+export const ENTITIES_STATES_KEYS = {
+  ok: 'ok',
+  minor: 'minor',
+  major: 'major',
+  critical: 'critical',
 };
 
 export const ENTITIES_STATES = {
@@ -177,6 +189,13 @@ export const PAUSE_REASONS = {
   other: 'Autre',
 };
 
+export const COUNTER_STATES_ICONS = {
+  [ENTITIES_STATES_KEYS.ok]: 'wb_sunny',
+  [ENTITIES_STATES_KEYS.minor]: 'person',
+  [ENTITIES_STATES_KEYS.major]: 'person',
+  [ENTITIES_STATES_KEYS.critical]: 'wb_cloudy',
+};
+
 export const WEATHER_ICONS = {
   [WATCHER_STATES.ok]: 'wb_sunny',
   [WATCHER_STATES.minor]: 'person',
@@ -226,6 +245,7 @@ export const WIDGET_TYPES = {
   statsNumber: 'StatsNumber',
   statsPareto: 'StatsPareto',
   text: 'Text',
+  counter: 'Counter',
 };
 
 export const WIDGET_ICONS = {
@@ -239,6 +259,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.statsNumber]: 'table_chart',
   [WIDGET_TYPES.statsPareto]: 'multiline_chart',
   [WIDGET_TYPES.text]: 'view_headline',
+  [WIDGET_TYPES.counter]: 'view_module',
 };
 
 export const SIDE_BARS = {
@@ -252,6 +273,7 @@ export const SIDE_BARS = {
   statsNumberSettings: 'stats-number-settings',
   statsParetoSettings: 'stats-pareto-settings',
   textSettings: 'text-settings',
+  counterSettings: 'counter-settings',
 };
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
@@ -265,6 +287,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.statsCurves]: SIDE_BARS.statsCurvesSettings,
   [WIDGET_TYPES.statsPareto]: SIDE_BARS.statsParetoSettings,
   [WIDGET_TYPES.text]: SIDE_BARS.textSettings,
+  [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings,
 };
 
 export const EVENT_ENTITY_STYLE = {
@@ -316,6 +339,14 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'pause',
   },
   [EVENT_ENTITY_TYPES.play]: {
+    icon: 'play_arrow',
+  },
+  [EVENT_ENTITY_TYPES.pbhenter]: {
+    color: COLORS.entitiesEvents.pbhenter,
+    icon: 'pause',
+  },
+  [EVENT_ENTITY_TYPES.pbhleave]: {
+    color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
   },
 };
@@ -660,6 +691,7 @@ export const USERS_RIGHTS = {
         cancel: 'listalarm_removeAlarm',
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
+        variablesHelp: 'common_variablesHelp',
 
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
@@ -703,6 +735,13 @@ export const USERS_RIGHTS = {
         moreInfos: 'serviceweather_moreInfos',
         alarmsList: 'serviceweather_alarmsList',
         pbehaviorList: 'serviceweather_pbehaviorList',
+        variablesHelp: 'common_variablesHelp',
+      },
+    },
+    counter: {
+      actions: {
+        alarmsList: 'counter_alarmsList',
+        variablesHelp: 'common_variablesHelp',
       },
     },
   },
@@ -765,6 +804,11 @@ export const WIDGETS_ACTIONS_TYPES = {
     moreInfos: 'moreInfos',
     alarmsList: 'alarmsList',
     pbehaviorList: 'pbehaviorList',
+    variablesHelp: 'variablesHelp',
+  },
+  counter: {
+    alarmsList: 'alarmsList',
+    variablesHelp: 'variablesHelp',
   },
 };
 
@@ -781,6 +825,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.cancel]: USERS_RIGHTS.business.alarmsList.actions.cancel,
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp]: USERS_RIGHTS.business.alarmsList.actions.variablesHelp,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -821,6 +866,12 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.moreInfos]: USERS_RIGHTS.business.weather.actions.moreInfos,
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
+    [WIDGETS_ACTIONS_TYPES.weather.variablesHelp]: USERS_RIGHTS.business.weather.actions.variablesHelp,
+  },
+
+  counter: {
+    [WIDGETS_ACTIONS_TYPES.counter.alarmsList]: USERS_RIGHTS.business.counter.actions.alarmsList,
+    [WIDGETS_ACTIONS_TYPES.counter.variablesHelp]: USERS_RIGHTS.business.counter.actions.variablesHelp,
   },
 };
 
@@ -977,9 +1028,25 @@ export const ACTION_TYPES = {
   snooze: 'snooze',
   pbehavior: 'pbehavior',
   changeState: 'changestate',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  assocticket: 'assocticket',
+  declareticket: 'declareticket',
+  cancel: 'cancel',
 };
 
 export const ACTION_AUTHOR = 'engine-action';
+
+export const ACTION_FORM_FIELDS_MAP_BY_TYPE = {
+  [ACTION_TYPES.snooze]: 'snoozeParameters',
+  [ACTION_TYPES.pbehavior]: 'pbehaviorParameters',
+  [ACTION_TYPES.changeState]: 'changeStateParameters',
+  [ACTION_TYPES.ack]: 'ackParameters',
+  [ACTION_TYPES.ackremove]: 'ackremoveParameters',
+  [ACTION_TYPES.assocticket]: 'assocticketParameters',
+  [ACTION_TYPES.declareticket]: 'declareticketParameters',
+  [ACTION_TYPES.cancel]: 'cancelParameters',
+};
 
 export const CANOPSIS_STACK = {
   go: 'go',
@@ -1014,7 +1081,11 @@ export const TIME_UNITS = {
   year: 'y',
 };
 
-export const DURATION_UNITS = {
+export const AVAILABLE_TIME_UNITS = {
+  second: {
+    text: 'common.times.second',
+    value: TIME_UNITS.second,
+  },
   minute: {
     text: 'common.times.minute',
     value: TIME_UNITS.minute,
@@ -1041,13 +1112,24 @@ export const DURATION_UNITS = {
   },
 };
 
+export const DURATION_UNITS = {
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
+  day: AVAILABLE_TIME_UNITS.day,
+  week: AVAILABLE_TIME_UNITS.week,
+  month: AVAILABLE_TIME_UNITS.month,
+  year: AVAILABLE_TIME_UNITS.month,
+};
+
+export const SNOOZE_DURATION_UNITS = {
+  second: AVAILABLE_TIME_UNITS.second,
+  ...DURATION_UNITS,
+};
+
 export const PERIODIC_REFRESH_UNITS = {
-  second: {
-    text: 'common.times.second',
-    value: TIME_UNITS.second,
-  },
-  minute: DURATION_UNITS.minute,
-  hour: DURATION_UNITS.hour,
+  second: AVAILABLE_TIME_UNITS.second,
+  minute: AVAILABLE_TIME_UNITS.minute,
+  hour: AVAILABLE_TIME_UNITS.hour,
 };
 
 export const DEFAULT_PERIODIC_REFRESH = {
@@ -1101,3 +1183,22 @@ export const GRID_SIZES = {
   max: 12,
   step: 1,
 };
+
+export const TOURS = {
+  alarmsExpandPanel: 'alarmsExpandPanel',
+};
+
+export const AVAILABLE_COUNTERS = {
+  total: 'total',
+  total_active: 'total_active',
+  snooze: 'snooze',
+  ack: 'ack',
+  ticket: 'ticket',
+  pbehavior_active: 'pbehavior_active',
+};
+
+export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
+  <strong>{{ counter.filter.title }}</strong></h2><br>
+  <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
+  <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
+  <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;

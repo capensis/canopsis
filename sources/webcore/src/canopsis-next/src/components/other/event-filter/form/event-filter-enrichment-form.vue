@@ -52,7 +52,7 @@ export default {
           actions: this.form.actions,
           action: (updatedActions) => {
             this.updateField('actions', updatedActions);
-            this.$validator.validate('actions');
+            this.$nextTick(() => this.$validator.validate('actions'));
           },
         },
       });

@@ -30,13 +30,11 @@
 </template>
 
 <script>
-import { find, omit } from 'lodash';
+import { find } from 'lodash';
 
-import { MODALS, USERS_RIGHTS_TYPES, USERS_RIGHTS_MASKS, DEFAULT_PERIODIC_REFRESH } from '@/constants';
+import { MODALS, DEFAULT_PERIODIC_REFRESH } from '@/constants';
 import {
   generateView,
-  generateRight,
-  generateRoleRightByChecksum,
   generateCopyOfView,
   getViewsWidgetsIdsMappings,
 } from '@/helpers/entities';
@@ -45,6 +43,7 @@ import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import entitiesViewMixin from '@/mixins/entities/view';
+import entitiesViewRightsMixin from '@/mixins/entities/view/rights';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
@@ -72,6 +71,7 @@ export default {
     entitiesRoleMixin,
     entitiesRightMixin,
     entitiesViewGroupMixin,
+    entitiesViewRightsMixin,
     entitiesUserPreferenceMixin,
     rightsTechnicalViewMixin,
   ],
@@ -144,60 +144,6 @@ export default {
     }
   },
   methods: {
-    async createRightByViewId(viewId) {
-      try {
-        const checksum = USERS_RIGHTS_MASKS.read + USERS_RIGHTS_MASKS.update + USERS_RIGHTS_MASKS.delete;
-        const role = await this.fetchRoleWithoutStore({ id: this.currentUser.role });
-
-        const right = {
-          ...generateRight(),
-
-          _id: viewId,
-          type: USERS_RIGHTS_TYPES.rw,
-          desc: `Rights on view: ${viewId}`,
-        };
-
-        await this.createRight({ data: right });
-        await this.createRole({
-          data: {
-            ...role,
-            rights: {
-              ...role.rights,
-
-              [right._id]: generateRoleRightByChecksum(checksum),
-            },
-          },
-        });
-
-        return this.fetchCurrentUser();
-      } catch (err) {
-        this.$popups.error({ text: this.$t('modals.view.errors.rightCreating') });
-
-        return Promise.resolve();
-      }
-    },
-
-    async removeRightByViewId(viewId) {
-      try {
-        const { data: roles } = await this.fetchRolesListWithoutStore({ params: { limit: 10000 } });
-
-        return Promise.all([
-          this.removeRight({ id: viewId }),
-
-          ...roles.map(role => this.createRole({
-            data: {
-              ...role,
-              rights: omit(role.rights, [viewId]),
-            },
-          })),
-        ]);
-      } catch (err) {
-        this.$popups.error({ text: this.$t('modals.view.errors.rightRemoving') });
-
-        return Promise.resolve();
-      }
-    },
-
     remove() {
       this.$modals.show({
         name: MODALS.confirmation,

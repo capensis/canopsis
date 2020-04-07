@@ -1,6 +1,6 @@
 ---
 - name: Taking care of database migration
-  command: "{{ canopsis_home }}/bin/canopsinit --canopsis-edition core --canopsis-stack {{ canopsis_engines_type }}"
+  command: "{{ canopsis_home }}/bin/canopsinit --canopsis-edition {{ canopsis_edition }} --canopsis-stack {{ canopsis_engines_type }}"
   register: canospinitcmd
   failed_when: canospinitcmd.rc != 0
   tags:

@@ -41,3 +41,4 @@ unittest-xml-reporting<2.2.0
 validictory<1.2.0
 xmlsec<1.4.0
 redlock-py<1.2.0
+durationpy==0.5

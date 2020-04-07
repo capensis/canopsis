@@ -1,6 +1,6 @@
 <template lang="pug">
   v-card
-    template(v-if="widget.title || isEditingMode")
+    template(v-show="widget.title || isEditingMode")
       v-card-title.lighten-1.pa-1
         v-layout(justify-space-between, align-center)
           v-flex
@@ -28,6 +28,7 @@
         :tabId="tab._id",
         :isEditingMode="isEditingMode"
       )
+    copy-widget-id(v-show="isEditingMode", :widgetId="widget._id")
 </template>
 
 <script>
@@ -50,12 +51,15 @@ import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calenda
 import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
 import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
 import TextWidget from '@/components/other/text/text.vue';
+import CounterWidget from '@/components/other/counter/counter.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
+import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   components: {
+    CopyWidgetId,
     AlarmsListWidget,
     EntitiesListWidget,
     WeatherWidget,
@@ -66,6 +70,7 @@ export default {
     StatsNumberWidget,
     StatsParetoWidget,
     TextWidget,
+    CounterWidget,
     AlertOverlay,
   },
   mixins: [sideBarMixin],
@@ -107,6 +112,7 @@ export default {
           [WIDGET_TYPES.statsNumber]: 'stats-number-widget',
           [WIDGET_TYPES.statsPareto]: 'stats-pareto-widget',
           [WIDGET_TYPES.text]: 'text-widget',
+          [WIDGET_TYPES.counter]: 'counter-widget',
         };
 
         let widgetSpecificsProp = {};

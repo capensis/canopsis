@@ -1,9 +1,11 @@
 <template lang="pug">
   modal-wrapper
     template(slot="fullTitle")
-      span.headline {{ $t('modals.alarmsList.title') }}
-      v-btn(icon, dark, @click.native="$modals.hide")
-        v-icon close
+      v-card-title.primary.white--text
+        v-layout(justify-space-between, align-center)
+          span.headline {{ $t('modals.alarmsList.title') }}
+          v-btn(icon, dark, @click.native="$modals.hide")
+            v-icon close
     template(slot="text")
       alarms-list-widget(:widget="config.widget")
 </template>

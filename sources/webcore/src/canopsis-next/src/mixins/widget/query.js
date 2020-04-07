@@ -5,7 +5,7 @@ import { SORT_ORDERS, DATETIME_FORMATS } from '@/constants';
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { dateParse } from '@/helpers/date-intervals';
-import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
+import { prepareQuery } from '@/helpers/query';
 
 /**
  * @mixin Add query logic
@@ -67,11 +67,7 @@ export default {
   async mounted() {
     await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
 
-    this.query = {
-      ...this.query,
-      ...convertWidgetToQuery(this.widget),
-      ...convertUserPreferenceToQuery(this.userPreference),
-    };
+    this.query = prepareQuery(this.widget, this.userPreference);
   },
   destroyed() {
     this.removeQuery({

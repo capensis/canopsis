@@ -595,13 +595,17 @@ class Alerts(object):
         initial_state = None
 
         lock_id = self.lock_manager.lock(entity_id)
-        if event_type in [Check.EVENT_TYPE, 'watcher']:
+        if event_type in [Check.EVENT_TYPE, 'watcher', 'pbhenter', 'pbhleave']:
             initial_state = event["state"]
             alarm = self.get_current_alarm(entity_id)
 
             is_new_alarm = alarm is None
 
             if is_new_alarm:
+                # ignore event if event_type if pbh*
+                if event_type in ['pbhenter', 'pbhleave']:
+                    self.lock_manager.unlock(lock_id)
+                    return
                 if event[Check.STATE] == Check.OK:
                     # If a check event with an OK state concerns an entity for
                     # which no alarm is opened, there is no point continuing
@@ -624,7 +628,12 @@ class Alerts(object):
                     self.lock_manager.unlock(lock_id)
                     return
 
-                alarm = self.update_state(alarm, event[Check.STATE], event)
+                # just add pbh* step into steps
+                # not affect state of alarm
+                if event_type in ['pbhenter', 'pbhleave']:
+                    alarm = self._add_pbehavior_step(alarm, event)
+                else:
+                    alarm = self.update_state(alarm, event[Check.STATE], event)
 
             # set default value to event["long_output"] and event["output"]
             if "long_output" not in event:
@@ -656,6 +665,19 @@ class Alerts(object):
                               author=event.get(self.AUTHOR, self.filter_author),
                               entity_id=entity_id)
         self.lock_manager.unlock(lock_id)
+
+    def _add_pbehavior_step(self, alarm, event):
+        value = alarm['value']
+        step = {
+            '_t': event['event_type'],
+            't': event['timestamp'],
+            'a': event.get("author", DEFAULT_AUTHOR),
+            'm': event['output'],
+            'val': 0,
+            'role': event.get('role', None)
+        }
+        value[AlarmField.steps.value].append(step)
+        return alarm
 
     def execute_task(self, name, event, entity_id,
                      author=None, new_state=None, diff_counter=None):

@@ -51,3 +51,21 @@ export function dataTableCustomSortWithNullIgnoring(items, index, isDescending) 
     return 0;
   });
 }
+
+/**
+ * Get collection comparator for the sort by special field
+ *
+ * @param {string} field
+ * @returns {function(...[*]=)}
+ */
+export function getCollectionComparator(field) {
+  return (a, b) => {
+    if (a[field] > b[field]) {
+      return 1;
+    } else if (a[field] < b[field]) {
+      return -1;
+    }
+
+    return 0;
+  };
+}

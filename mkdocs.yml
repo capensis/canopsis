@@ -30,3 +30,5 @@ markdown_extensions:
 
 plugins:
     - search
+    - git-revision-date-localized:
+        type: iso_date

@@ -8,7 +8,7 @@
     "_id": "root",
     "enable": true,
     "external": false,
-    "shadowpass": "DC76E9F0C0006E8F919E0C515C66DBBA3982F785",
+    "shadowpasswd": "DC76E9F0C0006E8F919E0C515C66DBBA3982F785",
     "role": "admin",
     "rights": {}
   }, {
@@ -20,7 +20,7 @@
     "_id": "canopsis",
     "enable": true,
     "external": false,
-    "shadowpass": "3f1889001882f411c2f476dd1f2fd0861fc6b49d",
+    "shadowpasswd": "3f1889001882f411c2f476dd1f2fd0861fc6b49d",
     "role": "Manager",
     "rights": {}
   }

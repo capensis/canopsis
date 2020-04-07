@@ -49,7 +49,8 @@ class TestActionManager(unittest.TestCase):
                 "reason": "Madness",
                 "type": "Mercenary War",
                 "rrule": ""
-            }
+            },
+            "delay": ""
         }
 
     def tearDown(self):
@@ -78,6 +79,17 @@ class TestActionManager(unittest.TestCase):
 
         res = self.manager.get_id(self.id_)
         self.assertIsNone(res)
+
+    def test_is_delay_valid(self):
+        self.assertTrue(self.manager.is_delay_valid(""))
+        self.assertTrue(self.manager.is_delay_valid("30s"))
+        self.assertTrue(self.manager.is_delay_valid("1.0s"))
+        self.assertTrue(self.manager.is_delay_valid("1m"))
+        self.assertTrue(self.manager.is_delay_valid("10h"))
+        self.assertTrue(self.manager.is_delay_valid("1m3s"))
+        self.assertFalse(self.manager.is_delay_valid("1m3"))
+        self.assertFalse(self.manager.is_delay_valid("1k"))
+        self.assertFalse(self.manager.is_delay_valid("1h3m5p"))
 
 
 if __name__ == '__main__':

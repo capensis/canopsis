@@ -3,7 +3,7 @@
     v-list-tile.items-per-page-title(slot="activator")
       slot(name="title")
         span {{ $t('settings.defaultNumberOfElementsPerPage') }}
-    v-container(data-test="elementsPerPageFieldContainer",)
+    v-container(data-test="elementsPerPageFieldContainer")
       v-select.select(
         :label="$t('settings.elementsPerPage')",
         :items="$config.PAGINATION_PER_PAGE_VALUES",

@@ -2,7 +2,7 @@
   v-form(data-test="createPbehaviorModal", @submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ $t('modals.createPbehavior.title') }}
+        span {{ title }}
       template(slot="text")
         pbehavior-form(v-model="form")
       template(slot="actions")
@@ -57,6 +57,17 @@ export default {
         comments: pbehaviorToComments(pbehavior),
       },
     };
+  },
+  computed: {
+    title() {
+      let type = 'create';
+
+      if (this.config.pbehavior) {
+        type = this.config.isDuplicating ? 'duplicate' : 'edit';
+      }
+
+      return this.$t(`modals.createPbehavior.${type}.title`);
+    },
   },
   methods: {
     async submit() {

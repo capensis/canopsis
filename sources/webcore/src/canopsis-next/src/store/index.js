@@ -18,6 +18,7 @@ import i18nModule from './modules/i18n';
 import eventModule from './modules/event';
 import queryModule from './modules/query';
 import sideBarModule from './modules/side-bar';
+import navigationModule from './modules/navigation';
 import entitiesModules from './modules/entities';
 
 
@@ -43,6 +44,7 @@ export default new Vuex.Store({
     event: eventModule,
     query: queryModule,
     sideBar: sideBarModule,
+    navigation: navigationModule,
 
     ...entitiesModules,
     ...featuresService.get('store.modules'),

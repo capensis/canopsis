@@ -79,6 +79,10 @@ export default {
       }
     },
 
+    updateWithoutStore(context, { id, data }) {
+      return request.put(`${API_ROUTES.view}/${id}`, data);
+    },
+
     remove(context, { id }) {
       return request.delete(`${API_ROUTES.view}/${id}`);
     },

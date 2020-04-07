@@ -79,7 +79,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const formData = this.isNew ? { ...generateRole() } : { ...this.role };
+        const formData = this.isNew ? generateRole() : { ...this.role };
         formData._id = this.form._id;
 
         await this.createRole({ data: { ...formData, ...this.form } });

@@ -9,7 +9,7 @@ galaxy_info:
   issue_tracker_url:
     https://git.canopsis.net/canopsis/canopsis/issues
 
-  license: license (GPLv2, CC-BY, etc)
+  license: AGPLv3
 
   min_ansible_version: 2.4
 

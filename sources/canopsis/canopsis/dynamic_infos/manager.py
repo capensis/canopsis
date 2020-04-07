@@ -45,6 +45,7 @@ class DynamicInfosManager(object):
     SEARCHABLE_FIELDS = [
         DynamicInfosRule.ID, DynamicInfosRule.NAME,
         DynamicInfosRule.DESCRIPTION,
+        DynamicInfosRule.AUTHOR,
         "{}.{}".format(DynamicInfosRule.INFOS, DynamicInfo.NAME),
         "{}.{}".format(DynamicInfosRule.INFOS, DynamicInfo.VALUE),
     ]
@@ -176,8 +177,8 @@ class DynamicInfosManager(object):
         if rule_id != rule.id:
             raise ValueError("the _id field should not be modified")
 
-        if DynamicInfosRule.AUTHOR in previous_value:
-            rule.author = previous_value[DynamicInfosRule.AUTHOR]
+        # if DynamicInfosRule.AUTHOR in previous_value:
+        #     rule.author = previous_value[DynamicInfosRule.AUTHOR]
         if DynamicInfosRule.CREATION_DATE in previous_value:
             rule.creation_date = previous_value[DynamicInfosRule.CREATION_DATE]
 

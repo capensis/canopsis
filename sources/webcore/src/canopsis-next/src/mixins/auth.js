@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { USERS_RIGHTS_MASKS, GROUPS_NAVIGATION_TYPES } from '@/constants';
@@ -60,5 +61,9 @@ export default {
   },
   methods: {
     ...mapActions(['login', 'logout', 'fetchCurrentUser']),
+
+    checkIsTourEnabled(tour) {
+      return !get(this.currentUser, ['tours', tour]);
+    },
   },
 };

@@ -20,6 +20,7 @@ export default {
           add(popup) {
             return store.dispatch(`${moduleName}/add`, popup);
           },
+
           remove({ id }) {
             return store.dispatch(`${moduleName}/remove`, { id });
           },
@@ -38,6 +39,10 @@ export default {
 
           error(popup) {
             return store.dispatch(`${moduleName}/error`, popup);
+          },
+
+          setDefaultCloseTime(type, time) {
+            return store.dispatch(`${moduleName}/setDefaultCloseTime`, { type, time });
           },
         };
       },

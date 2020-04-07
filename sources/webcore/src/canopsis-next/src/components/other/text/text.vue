@@ -52,10 +52,17 @@ export default {
       stats: {},
     };
   },
-  computed: {
-    compiledTemplate() {
-      return `<div>${compile(this.widget.parameters.template)}</div>`;
+  asyncComputed: {
+    compiledTemplate: {
+      async get() {
+        const compiledTemplate = await compile(this.widget.parameters.template);
+
+        return `<div>${compiledTemplate}</div>`;
+      },
+      default: '',
     },
+  },
+  computed: {
     /**
      * Check if there are 'stats' associated with the widget. As stats are only available with 'cat' edition
      * Override editionError computed prop from widgetStatsWrapperMixin

@@ -41,7 +41,7 @@ Laissez le port ouvert dans le pare-feu, avec les restrictions adéquates.
 
 ## SELinux
 
-SELinux n'est pas pris en charge par l'édition open-source de Canopsis.
+SELinux n'est pas pris en charge par Canopsis.
 
 Il est alors préférable de le désactiver :
 

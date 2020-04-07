@@ -5,18 +5,18 @@
 
 ## Introduction
 
-Le connecteur email2canopsis permet de lire des emails dans une boite aux lettres POP3 pour les convertir en événements Canopsis (grâce à un système de template).
+Le connecteur email2canopsis permet de lire des emails dans une boîte aux lettres POP3 pour les convertir en événements Canopsis (grâce à un système de template).
 
 ## Fonctionnement
 
-Les événements générés embarquent des attributs dont les valeurs sont contenues dans les emails et parsés par un mécanisme de template.
+Les événements générés embarquent des attributs dont les valeurs sont contenues dans les emails et parsées par un mécanisme de template.
 
 ### Configuration
 
 Le fichier de configuration du connecteur est `/opt/canopsis_connectors/email2canopsis/etc/email2canopsis.ini`.
 
 ```ini
-# Chaine de connexion au bus AMQP
+# Adresse de connexion à RabbitMQ
 [amqp]
 url=amqp://cpsrabbit:canopsis@rabbitmq/canopsis
 
@@ -50,11 +50,25 @@ resource.value=param2
 output.value=paramn
 state.constant=0
 
+[event_error]
+connector.constant=email2canopsis
+event_type.constant=check
+source_type.constant=resource
+connector_name.constant=resource
+component.constant=connection
+resource.constant=resource
+output.constant=output
+state.constant=2
+
 [template]
 # Expéditeur des emails à traiter
 template1.sender=sender@mail.net
+# Vous pouvez définir une regex pour lier des expéditeurs génériques à un template (3.39.0+)
+template1.regex=sender\d*@mail.net
 # Template à appliquer sur ces emails
 template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
+
+
 ```
 
 #### Configuration de la connexion RabbitMQ et Redis
@@ -79,11 +93,13 @@ On peut y définir les différents champs d'un [événement de type check](../..
 
 On peut définir les champs `component`, `resource` et `output` de manière dynamique en faisant appel aux templates. Pour cela, on utilise `param1`, `param2` ou `paramn`.
 
+À partir de la `3.39.0`; le bloc `[event_error]` permet de définir l'événement envoyé en cas [d'erreur de connexion](#gestion-derreur-dans-la-connexion-pop3).
+
 #### Configuration des templates
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc et que le contenu de l'email corresponde bien au template appliqué à cette même adresse email.
+Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une regex définie, depuis Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
@@ -91,6 +107,8 @@ Ici, pour
 [template]
 # Expéditeur des emails à traiter
 template1.sender=sender@mail.net
+# Vous pouvez définir une regex pour lier des expéditeurs génériques à un template (3.39.0+)
+template1.regex=sender\d*@mail.net
 # Template à appliquer sur ces emails
 template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 ```
@@ -101,7 +119,7 @@ Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit 
 
 #### Principe du template
 
-Les templates permettent d'analyser un email en suivant quelques régles de transformations simples.
+Les templates permettent d'analyser un email en suivant quelques règles de transformations simples.
 
 Un fichier template devrait ressembler à quelque chose comme suit :
 
@@ -135,20 +153,40 @@ Les actions peuvent être les suivantes :
 - `resource.trim=right` donnera "␣deux mots" avec l'espace à droite supprimé
 - `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
 
+À partir de la `3.39.0`, l'option `print` assigne directement une valeur au champ à partir du template.
+
+- `resource.print=Valeur`
+
 La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
 
 - `MAIL_BODY`, `MAIL_DATE`, `MAIL_ID`, `MAIL_SENDER`, et `MAIL_SUBJECT` sont les différentes parties de l'email
 - `line(a)` sélectionne une ligne entière numéro a
+- `line(a,b)` sélectionne les lignes entières entre a et b
+- `line(*)` sélectionne l'ensemble des lignes
 - `line(a).word(b)` sélectionne le b-ième mot de la ligne a
 - `line(a).word(b).untilword(c)` sélectionne tous les mots entre le b-ième et le c-ième sur la ligne a
 - `line(a).word(b).untilword()` sélectionne tous les mots à partir du b-ième jusqu'à la fin de la ligne a
 - `line(a).after(d)` sélectionne tous les mots après le mot d
+- `line(a).after_incl(d)` sélectionne tous les mots après le mot d, d inclus
 - `line(a).after(d).untilword(c)` sélectionne les mots après le mot d et c mots ensuite
 - `line(a).after(d).word(b).untilword(c)` sélectionne les mots après le mot d, à partir du b-ième jusqu'au c-ième
 - `line(a).before(e)` sélectionne tous les mots avant e
+- `line(a).before_incl(e)` sélectionne tous les mots avant e, e inclus
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
+- `and` permet d'effectuer une concaténation entre deux opérations.
+- `print(word)` permet d'assigner la valeur word dans le champ
 
 MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une action 'dateformat' dessus.
+
+!!! info
+    À partir de Canopsis 3.39.0, il existe la méthode `print` et la règle `print(word)`.  
+    Exemple :  
+
+        resource.print = valeur
+        # et
+        resource = print(valeur)  
+
+    Il faut privilégier la méthode `print` pour l'insertion de valeur statique, et la règle `print(word)` lorsque l'on doit la combiner avec `and` et d'autres règles.
 
 !!! attention
     Les numéros de lignes et de mots commencent à partir de 0, non de 1.
@@ -160,3 +198,9 @@ Exemple : La séquence à la 1° ligne située entre les 5° et le 18° mots son
 #### Appliquer des changements de configuration
 
 Pour appliquer un changement (modification de la configuration, ajout de templates, etc.), il faut redémarrer le connecteur.
+
+#### Gestion d'erreur dans la connexion POP3
+
+En cas d'erreur de connexion au serveur mail, le connecteur envoie un événement à Canopsis. Vous pouvez paramétrer cette alerte avec la section `[event_error]` du fichier de configuration.  
+
+En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec un state de 0. Cela permet de fermer d'éventuelles alarmes.
