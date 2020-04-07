@@ -53,8 +53,47 @@ export const getDefaultWebhookForm = () => ({
 });
 
 /**
- *
+ * Prepare post processors to form
  * @param {Array} postProcessors
+ * @return {Array}
+ */
+function preparePostProcessorsToForm(postProcessors) {
+  return postProcessors.map(({ parameters }) => {
+    const {
+      empty_response: emptyResponse,
+      ticket_id: ticketId,
+      fields,
+      ...postProcessor
+    } = parameters;
+
+    return {
+      ...postProcessor,
+      fields: objectToTextPairs(fields),
+      emptyResponse,
+      ticketId,
+    };
+  });
+}
+
+/**
+ * Prepare requests to form
+ * @param {Array} requests
+ * @return {Array}
+ */
+function prepareRequestsToForm(requests) {
+  return requests.map(({ headers, auth, ...otherRequestFields }) => ({
+    headers: objectToTextPairs(headers),
+    withAuth: !!auth,
+    auth,
+    ...otherRequestFields,
+  }));
+}
+
+/**
+ *
+ * @param {Array} request
+ * @param {Array} postProcessors
+ * @param {Boolean} enabled
  * @param {Object} webhook
  * @return {Object}
  */
@@ -68,21 +107,8 @@ export function webhookToForm({
     'hook.alarm_patterns': patternsFieldsCustomizer,
     'hook.entity_patterns': patternsFieldsCustomizer,
     enabled: enabled === undefined ? true : enabled,
-    requests: request.map(({ headers, auth, ...otherRequestFields }) => ({
-      headers: objectToTextPairs(headers),
-      withAuth: !!auth,
-      auth,
-      ...otherRequestFields,
-    })),
-    postProcessors: postProcessors.map(({ parameters }) => {
-      const { empty_response: emptyResponse, fields, ...postProcessor } = parameters;
-
-      return {
-        ...postProcessor,
-        fields: objectToTextPairs(fields),
-        emptyResponse,
-      };
-    }),
+    requests: prepareRequestsToForm(request),
+    postProcessors: preparePostProcessorsToForm(postProcessors),
   });
 }
 
@@ -93,10 +119,9 @@ export function webhookToForm({
  */
 function formRequestFieldToWebhook(requests) {
   return requests.map(({
-    emptyResponse, withAuth, auth, headers, ...otherFields
+    withAuth, auth, headers, ...otherFields
   }) => {
     const request = {
-      empty_response: !!emptyResponse,
       headers: textPairsToObject(headers),
       ...otherFields,
     };
@@ -115,16 +140,12 @@ function formRequestFieldToWebhook(requests) {
  * @return {Array}
  */
 function formPostProcessorsToWebhook(postProcessors) {
-  return postProcessors.map(({
-    fields,
-    ticketId,
-    ...postProcessorParameters
-  }) => ({
+  return postProcessors.map(({ fields, ticketId, emptyResponse }) => ({
     type: POST_PROCESSOR_TYPES.declareTicket,
     parameters: {
       fields: textPairsToObject(fields),
       ticket_id: ticketId,
-      ...postProcessorParameters,
+      empty_response: emptyResponse,
     },
   }));
 }
