@@ -8,11 +8,8 @@
     )
     v-text-field(
       v-field="postProcessor.ticketId",
-      v-validate="'required'",
       :label="$t('webhook.tabs.declareTicket.ticketId')",
-      :disabled="disabled",
-      :error-messages="errors.collect(getFieldName('ticketId'))",
-      :name="getFieldName('ticketId')"
+      :disabled="disabled"
     )
     text-pairs(
       v-field="postProcessor.fields",

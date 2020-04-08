@@ -90,15 +90,14 @@ function prepareRequestsToForm(requests) {
 }
 
 /**
- *
- * @param {Array} request
+ * Convert webhook to object for form
  * @param {Array} postProcessors
  * @param {Boolean} enabled
  * @param {Object} webhook
  * @return {Object}
  */
 export function webhookToForm({
-  post_processors: postProcessors, enabled, request, ...webhook
+  post_processors: postProcessors, enabled, ...webhook
 }) {
   const patternsFieldsCustomizer = value => value || [];
 
@@ -106,8 +105,8 @@ export function webhookToForm({
     'hook.event_patterns': patternsFieldsCustomizer,
     'hook.alarm_patterns': patternsFieldsCustomizer,
     'hook.entity_patterns': patternsFieldsCustomizer,
+    requests: prepareRequestsToForm,
     enabled: enabled === undefined ? true : enabled,
-    requests: prepareRequestsToForm(request),
     postProcessors: preparePostProcessorsToForm(postProcessors),
   });
 }
@@ -169,7 +168,7 @@ export function formToWebhook({ requests, postProcessors, ...webhookForm }) {
   });
 
   return {
-    request: formRequestFieldToWebhook(requests),
+    requests: formRequestFieldToWebhook(requests),
     post_processors: formPostProcessorsToWebhook(postProcessors),
     ...webhook,
   };
