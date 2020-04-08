@@ -18,6 +18,7 @@ export default {
   getters: {
     modals: state => state.allIds.map(id => state.byId[id]),
     hasModals: state => Boolean(state.allIds.length),
+    hasModalById: state => id => !!state.byId[id],
   },
   mutations: {
     [types.SHOW](state, { id, name, config = {} }) {
@@ -51,6 +52,7 @@ export default {
     show({ commit }, { name, config = {}, id = uid('modal') } = {}) {
       commit(types.SHOW, { id, name, config });
     },
+
     /**
      * Hide modal by id
      *

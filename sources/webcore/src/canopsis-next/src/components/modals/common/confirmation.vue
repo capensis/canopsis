@@ -2,6 +2,8 @@
   modal-wrapper(data-test="confirmationModal")
     template(slot="title")
       span {{ $t('common.confirmation') }}
+    template(v-if="config.text", slot="text")
+      span.subheading {{ config.text }}
     template(slot="actions")
       v-layout(wrap, justify-center)
         v-btn.primary(

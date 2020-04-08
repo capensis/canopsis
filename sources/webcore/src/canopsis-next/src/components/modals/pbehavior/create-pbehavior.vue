@@ -26,6 +26,7 @@ import { MODALS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmatableMixin from '@/mixins/confirmatable';
 
 import {
   commentsToPbehaviorComments,
@@ -46,7 +47,12 @@ export default {
     validator: 'new',
   },
   components: { PbehaviorForm, ModalWrapper },
-  mixins: [authMixin, modalInnerMixin, submittableMixin()],
+  mixins: [
+    authMixin,
+    modalInnerMixin,
+    submittableMixin(),
+    confirmatableMixin(),
+  ],
   data() {
     const { pbehavior = {} } = this.modal.config;
 
