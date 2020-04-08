@@ -10,24 +10,7 @@
       v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
-      v-list-group(data-test="widgetAlarmsList")
-        v-list-tile(slot="activator") {{ $t('settings.titles.alarmListSettings') }}
-        v-list.grey.lighten-4.px-2.py-0(expand)
-          field-columns(v-model="settings.widget.parameters.alarmsList.widgetColumns", withHtml)
-          v-divider
-          field-default-elements-per-page(v-model="settings.widget.parameters.alarmsList.itemsPerPage")
-          v-divider
-          field-info-popup(
-            :columns="settings.widget.parameters.alarmsList.widgetColumns",
-            data-test="widgetInfoPopup",
-            v-model="settings.widget.parameters.alarmsList.infoPopups"
-          )
-          v-divider
-          field-text-editor(
-            data-test="widgetMoreInfoTemplate",
-            v-model="settings.widget.parameters.alarmsList.moreInfoTemplate",
-            :title="$t('settings.moreInfosModal')"
-          )
+      alarms-list-modal-form(v-model="settings.widget.parameters.alarmsList")
       v-divider
       stats-calendar-advanced-form(v-model="settings.widget.parameters")
       v-divider
@@ -49,10 +32,7 @@ import FieldFilters from './fields/common/filters.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldCriticityLevels from './fields/stats/criticity-levels.vue';
 import FieldLevelsColorsSelector from './fields/stats/levels-colors-selector.vue';
-import FieldColumns from './fields/common/columns.vue';
-import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
-import FieldInfoPopup from './fields/alarm/info-popup.vue';
-import FieldTextEditor from './fields/common/text-editor.vue';
+import AlarmsListModalForm from './forms/alarms-list-modal.vue';
 import StatsCalendarAdvancedForm from './forms/stats-calendar-advanced.vue';
 
 /**
@@ -71,10 +51,7 @@ export default {
     FieldSwitcher,
     FieldCriticityLevels,
     FieldLevelsColorsSelector,
-    FieldColumns,
-    FieldDefaultElementsPerPage,
-    FieldInfoPopup,
-    FieldTextEditor,
+    AlarmsListModalForm,
     StatsCalendarAdvancedForm,
   },
   mixins: [widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],

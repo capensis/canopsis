@@ -106,6 +106,7 @@ export default {
   methods: {
     ...mapActions({
       fetchBroadcastMessagesList: 'fetchList',
+      fetchActiveBroadcastMessagesList: 'fetchActiveList',
       createBroadcastMessage: 'create',
       updateBroadcastMessage: 'update',
       removeBroadcastMessage: 'remove',
@@ -119,7 +120,8 @@ export default {
             try {
               await this.createBroadcastMessage({ data: newMessage });
 
-              await this.fetchList();
+              this.fetchList();
+              this.fetchActiveBroadcastMessagesList();
 
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
@@ -139,7 +141,8 @@ export default {
             try {
               await this.updateBroadcastMessage({ id: message._id, data: newMessage });
 
-              await this.fetchList();
+              this.fetchList();
+              this.fetchActiveBroadcastMessagesList();
 
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
@@ -158,7 +161,8 @@ export default {
             try {
               await this.removeBroadcastMessage({ id });
 
-              await this.fetchList();
+              this.fetchList();
+              this.fetchActiveBroadcastMessagesList();
 
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {

@@ -11,6 +11,7 @@ export default {
     ...mapGetters({
       groupsPending: 'pending',
       groups: 'items',
+      getGroupById: 'getItemById',
     }),
 
     groupsOrdered() {

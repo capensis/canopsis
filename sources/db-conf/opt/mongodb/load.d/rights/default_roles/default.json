@@ -372,7 +372,16 @@
 	}
     },
     "models_broadcastMessage": {
-        "checksum": 15
+        "checksum": 15,
+        "desc": ""
+    },
+    "common_variablesHelp": {
+        "checksum": 1,
+        "desc": ""
+    },
+    "counter_alarmsList": {
+        "checksum": 1,
+        "desc": ""
     },
 	"defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
 },{
@@ -578,10 +587,6 @@
             "desc": ""
         },
         "listalarm_addFilter": {
-            "checksum": 1,
-            "desc": ""
-        },
-        "common_variablesHelp": {
             "checksum": 1,
             "desc": ""
         }

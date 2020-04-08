@@ -47,6 +47,8 @@ export const MAX_LOGO_SIZE_IN_KB = 16384;
 
 export const DEFAULT_APP_TITLE = 'Canopsis';
 
+export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';
+
 export const API_ROUTES = {
   auth: '/auth',
   currentUser: '/account/me',
@@ -108,9 +110,13 @@ export const API_ROUTES = {
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
+  dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
-  broadcastMessage: '/api/v2/broadcast-message',
-  activeBroadcastMessage: '/api/v2/broadcast-message/active',
+  broadcastMessage: {
+    list: '/api/v2/broadcast-message',
+    activeList: '/api/v2/broadcast-message/active',
+  },
+  counter: '/alerts/get-counters',
 };
 
 export const COLORS = {

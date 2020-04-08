@@ -15,15 +15,17 @@ import { ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL } from '@/config';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
 
-const { mapActions } = createNamespacedHelpers('broadcastMessage');
+const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
 
 export default {
   components: { BroadcastMessage },
   data() {
     return {
-      activeMessages: [],
       timeout: null,
     };
+  },
+  computed: {
+    ...mapGetters(['activeMessages']),
   },
   mounted() {
     this.startPolling();
@@ -33,11 +35,11 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchActiveBroadcastMessageWithoutStore: 'fetchActiveWithoutStore',
+      fetchActiveBroadcastMessagesList: 'fetchActiveList',
     }),
 
     async startPolling() {
-      this.activeMessages = await this.fetchActiveBroadcastMessageWithoutStore();
+      await this.fetchActiveBroadcastMessagesList();
       this.timeout = setTimeout(this.startPolling, ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL);
     },
 
