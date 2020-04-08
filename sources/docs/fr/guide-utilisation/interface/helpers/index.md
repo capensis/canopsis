@@ -280,7 +280,7 @@ Afficher une pastille « Invalid val » (l'état de criticité étant invalide
 {{sum 1 2 3}}
 ```
 
-Ce helper attend en paramètre un ensemble de nombres renvoie leur somme
+Ce helper attend en paramètre un ensemble de nombres et renvoie leur somme
 
 #### Exemple d'utilisation du helper `sum`
 
