@@ -146,7 +146,9 @@ class Alarm(object):
             ticket,
             alarm_filter=None,
             done=None,
-            extra={}
+            extra={},
+            parents=[],
+            children=[]
     ):
         """
         :param str _id: db ID of the alarm
@@ -168,6 +170,8 @@ class Alarm(object):
         :param list tags: list of associated tags
         :param AlarmStep ticket: declareticket step
         :param AlarmStep done: done step
+        :param list parents: list of metaalarm parents
+        :param list children: list of metaalarm children
         """
         self._id = _id
         self.identity = identity
@@ -189,6 +193,8 @@ class Alarm(object):
         self.steps = steps
         self.tags = tags
         self.ticket = ticket
+        self.parents = parents
+        self.children = children
 
     def to_dict(self):
         """
@@ -216,7 +222,9 @@ class Alarm(object):
             'canceled': None,
             'resolved': self.resolved,
             'ack': None,
-            'steps': []
+            'steps': [],
+            'parents': self.parents,
+            'children': self.children
         }
         if self.status is not None:
             value['status'] = self.status.to_dict()

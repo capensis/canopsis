@@ -280,7 +280,9 @@ def make_alarm_from_mongo(alarm_dict):
         ticket=ticket,
         alarm_filter=ald.get('alarm_filter'),
         done=done,
-        extra=ald.get('extra')
+        extra=ald.get('extra'),
+        parents=ald.get('parents'),
+        children=ald.get('children')
     )
 
 
