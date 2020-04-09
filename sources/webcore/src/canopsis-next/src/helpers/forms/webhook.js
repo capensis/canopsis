@@ -6,6 +6,7 @@ import { POST_PROCESSOR_TYPES } from '@/constants';
 
 /**
  * Create default webhook request field
+ *
  * @return {Object}
  */
 export const getDefaultRequestField = () => ({
@@ -22,6 +23,7 @@ export const getDefaultRequestField = () => ({
 
 /**
  * Create default hook
+ *
  * @return {Object}
  */
 export const getDefaultHookField = () => ({
@@ -33,6 +35,7 @@ export const getDefaultHookField = () => ({
 
 /**
  * Create default post processor
+ *
  * @return {Object}
  */
 export const getDefaultPostProcessorField = () => ({
@@ -43,6 +46,7 @@ export const getDefaultPostProcessorField = () => ({
 
 /**
  * Create webhook form
+ *
  * @return {Object}
  */
 export const getDefaultWebhookForm = () => ({
@@ -56,6 +60,7 @@ export const getDefaultWebhookForm = () => ({
 
 /**
  * Prepare post processors to form
+ *
  * @param {Array} postProcessors
  * @return {Array}
  */
@@ -79,6 +84,7 @@ function preparePostProcessorsToForm(postProcessors) {
 
 /**
  * Prepare requests to form
+ *
  * @param {Array} requests
  * @return {Array}
  */
@@ -93,6 +99,7 @@ function prepareRequestsToForm(requests) {
 
 /**
  * Convert webhook to object for form
+ *
  * @param {Array} postProcessors
  * @param {Boolean} enabled
  * @param {Object} webhook
@@ -114,6 +121,7 @@ export function webhookToForm({
 }
 
 /**
+ * Prepare request field to form
  *
  * @param requests
  * @return {Object}
@@ -137,6 +145,7 @@ function formRequestFieldToWebhook(requests) {
 
 /**
  * Prepare post processors to webhook object
+ *
  * @param {Array} postProcessors
  * @return {Array}
  */
@@ -153,6 +162,7 @@ function formPostProcessorsToWebhook(postProcessors) {
 
 /**
  * Transform webhook "form" object to valid webhook to the API
+ *
  * @param {Object} form
  * @returns {Object}
  */

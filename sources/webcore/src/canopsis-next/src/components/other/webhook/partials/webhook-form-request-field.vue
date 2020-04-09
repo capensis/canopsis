@@ -23,7 +23,7 @@
     v-layout(row, wrap)
       v-flex(xs12)
         v-switch(
-          v-model="request.withAuth",
+          v-field="request.withAuth",
           :label="$t('webhook.tabs.request.fields.authSwitch')",
           :disabled="disabled",
           color="primary"
