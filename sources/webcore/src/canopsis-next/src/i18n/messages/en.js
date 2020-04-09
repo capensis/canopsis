@@ -105,6 +105,8 @@ export default {
     filter: 'Filter',
     stack: 'Stack',
     edition: 'Edition',
+    broadcastMessages: 'Broadcast messages',
+    status: 'Status',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1069,6 +1071,18 @@ export default {
       views: 'Views',
       result: 'Result',
     },
+    createBroadcastMessage: {
+      create: {
+        title: 'Create broadcast message',
+      },
+      edit: {
+        title: 'Edit broadcast message',
+      },
+      defaultMessage: 'Your message here',
+      buttons: {
+        selectColor: 'Select background color',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1142,6 +1156,13 @@ export default {
           role: 'Role',
           enabled: 'Enabled',
         },
+      },
+    },
+    broadcastMessages: {
+      statuses: {
+        pending: 'Pending',
+        active: 'Active',
+        expired: 'Expired',
       },
     },
   },

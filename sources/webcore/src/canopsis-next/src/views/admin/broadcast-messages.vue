@@ -4,16 +4,14 @@
     div.white
       v-data-table(
         :headers="headers",
-        :items="broadcastMessages",
+        :items="preparedBroadcastMessages",
         :loading="broadcastMessagesPending",
-        :pagination.sync="pagination",
         :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-        :total-items="broadcastMessages.length",
         item-key="_id"
       )
         template(slot="items", slot-scope="props")
           tr(:data-test="`role-${props.item._id}`")
-            td Expired
+            td {{ props.item.status }}
             td.broadcast-message-cell
               broadcast-message(:message="props.item.message", :color="props.item.color")
             td {{ props.item.start | date('long', true) }}
@@ -45,15 +43,15 @@
             @click.stop="showCreateBroadcastMessageModal"
           )
             v-icon add
-          span {{ $t('modals.createBroadcastMessage.title') }}
+          span {{ $t('modals.createBroadcastMessage.create.title') }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
+import moment from 'moment';
 
 import { MODALS } from '@/constants';
 
-import viewQuery from '@/mixins/view/query';
 import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broadcast-message';
 
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
@@ -68,10 +66,7 @@ export default {
     SearchField,
     BroadcastMessage,
   },
-  mixins: [
-    viewQuery,
-    rightsTechnicalBroadcastMessageMixin,
-  ],
+  mixins: [rightsTechnicalBroadcastMessageMixin],
   computed: {
     ...mapGetters({
       broadcastMessages: 'items',
@@ -102,6 +97,30 @@ export default {
         },
       ];
     },
+
+    preparedBroadcastMessages() {
+      return this.broadcastMessages.map((message) => {
+        const now = moment().unix();
+        let status = this.$t('tables.broadcastMessages.statuses.expired');
+
+        if (now >= message.start) {
+          if (now <= message.end) {
+            status = this.$t('tables.broadcastMessages.statuses.active');
+          } else {
+            status = this.$t('tables.broadcastMessages.statuses.pending');
+          }
+        }
+
+        return {
+          ...message,
+
+          status,
+        };
+      });
+    },
+  },
+  mounted() {
+    this.fetchList();
   },
   methods: {
     ...mapActions({
@@ -112,22 +131,31 @@ export default {
       removeBroadcastMessage: 'remove',
     }),
 
+    /**
+     * Function for calling of the action with popups and fetching
+     *
+     * @param {Function} action
+     * @returns {Promise<void>}
+     */
+    async callActionWithFetching(action) {
+      try {
+        await action();
+
+        this.fetchList();
+        this.fetchActiveBroadcastMessagesList();
+
+        this.$popups.success({ text: this.$t('success.default') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
+    },
+
     showCreateBroadcastMessageModal() {
       this.$modals.show({
         name: MODALS.createBroadcastMessage,
         config: {
-          action: async (newMessage) => {
-            try {
-              await this.createBroadcastMessage({ data: newMessage });
-
-              this.fetchList();
-              this.fetchActiveBroadcastMessagesList();
-
-              this.$popups.success({ text: this.$t('success.default') });
-            } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
-            }
-          },
+          action: newMessage =>
+            this.callActionWithFetching(() => this.createBroadcastMessage({ data: newMessage })),
         },
       });
     },
@@ -137,18 +165,9 @@ export default {
         name: MODALS.createBroadcastMessage,
         config: {
           message,
-          action: async (newMessage) => {
-            try {
-              await this.updateBroadcastMessage({ id: message._id, data: newMessage });
 
-              this.fetchList();
-              this.fetchActiveBroadcastMessagesList();
-
-              this.$popups.success({ text: this.$t('success.default') });
-            } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
-            }
-          },
+          action: newMessage =>
+            this.callActionWithFetching(() => this.updateBroadcastMessage({ id: message._id, data: newMessage })),
         },
       });
     },
@@ -157,24 +176,13 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: async () => {
-            try {
-              await this.removeBroadcastMessage({ id });
-
-              this.fetchList();
-              this.fetchActiveBroadcastMessagesList();
-
-              this.$popups.success({ text: this.$t('success.default') });
-            } catch (err) {
-              this.$popups.error({ text: this.$t('errors.default') });
-            }
-          },
+          action: () => this.callActionWithFetching(() => this.removeBroadcastMessage({ id })),
         },
       });
     },
 
     fetchList() {
-      this.fetchBroadcastMessagesList({ params: this.getQuery() });
+      this.fetchBroadcastMessagesList();
     },
   },
 };
@@ -182,6 +190,6 @@ export default {
 
 <style lang="scss" scoped>
   .broadcast-message-cell {
-    max-width: 350px;
+    max-width: 300px;
   }
 </style>

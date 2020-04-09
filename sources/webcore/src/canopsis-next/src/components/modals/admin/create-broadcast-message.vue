@@ -44,7 +44,9 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createBroadcastMessage.title');
+      const type = this.modal.config.message ? 'edit' : 'create';
+
+      return this.$t(`modals.createBroadcastMessage.${type}.title`);
     },
     message() {
       return this.form.message || this.$t('modals.createBroadcastMessage.defaultMessage');

@@ -40,6 +40,7 @@ export default {
 
     async startPolling() {
       await this.fetchActiveBroadcastMessagesList();
+
       this.timeout = setTimeout(this.startPolling, ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL);
     },
 

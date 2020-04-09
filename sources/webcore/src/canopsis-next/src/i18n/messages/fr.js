@@ -91,6 +91,8 @@ export default {
     search: 'Recherche',
     webhooks: 'Webhooks',
     links: 'Liens',
+    broadcastMessages: 'Diffuser des messages',
+    status: 'Statut',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -985,6 +987,18 @@ export default {
       views: 'Vues',
       result: 'Résultat',
     },
+    createBroadcastMessage: {
+      create: {
+        title: 'Créer un message de diffusion',
+      },
+      edit: {
+        title: 'Modifier le message diffusé',
+      },
+      defaultMessage: 'Votre message ici',
+      buttons: {
+        selectColor: 'Sélectionnez la couleur d\'arrière-plan',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1058,6 +1072,13 @@ export default {
           role: 'Rôle',
           enabled: 'Actif',
         },
+      },
+    },
+    broadcastMessages: {
+      statuses: {
+        pending: 'En attente',
+        active: 'Actif',
+        expired: 'Expiré',
       },
     },
   },
