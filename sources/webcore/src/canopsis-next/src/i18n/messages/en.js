@@ -1066,6 +1066,15 @@ export default {
       views: 'Views',
       result: 'Result',
     },
+    formConfirmation: {
+      title: 'Are you sure?',
+      text: 'Changes will not be saved. Are you sure?',
+      buttons: {
+        save: 'Save',
+        dontSave: 'Don\'t save',
+        backToForm: 'Back to form',
+      },
+    },
   },
   tables: {
     noData: 'No data',
