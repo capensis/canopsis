@@ -11,7 +11,7 @@
       )
         template(slot="items", slot-scope="props")
           tr(:data-test="`role-${props.item._id}`")
-            td {{ props.item.status }}
+            td {{ $t(`tables.broadcastMessages.statuses.${props.item.status}`) }}
             td.broadcast-message-cell
               broadcast-message(:message="props.item.message", :color="props.item.color")
             td {{ props.item.start | date('long', true) }}
@@ -50,7 +50,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import moment from 'moment';
 
-import { MODALS } from '@/constants';
+import { MODALS, BROADCAST_MESSAGES_STATUSES } from '@/constants';
 
 import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broadcast-message';
 
@@ -101,13 +101,13 @@ export default {
     preparedBroadcastMessages() {
       return this.broadcastMessages.map((message) => {
         const now = moment().unix();
-        let status = this.$t('tables.broadcastMessages.statuses.pending');
+        let status = BROADCAST_MESSAGES_STATUSES.pending;
 
         if (now >= message.start) {
           if (now <= message.end) {
-            status = this.$t('tables.broadcastMessages.statuses.active');
+            status = BROADCAST_MESSAGES_STATUSES.active;
           } else {
-            status = this.$t('tables.broadcastMessages.statuses.expired');
+            status = BROADCAST_MESSAGES_STATUSES.expired;
           }
         }
 

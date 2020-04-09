@@ -6,6 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
+  BROADCAST_MESSAGES_STATUSES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1160,9 +1161,9 @@ export default {
     },
     broadcastMessages: {
       statuses: {
-        pending: 'Pending',
-        active: 'Active',
-        expired: 'Expired',
+        [BROADCAST_MESSAGES_STATUSES.active]: 'Active',
+        [BROADCAST_MESSAGES_STATUSES.pending]: 'Pending',
+        [BROADCAST_MESSAGES_STATUSES.expired]: 'Expired',
       },
     },
   },
