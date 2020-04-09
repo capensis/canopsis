@@ -144,10 +144,12 @@ def exports(ws):
             raise WebServiceError(message)
 
         alarms_ids = []
-        consequences_children, consequences_alarms = [], []
+        consequences_children, alarm_children = [], []
         for alarm in alarms['alarms']:
             if with_consequences:
                 consequences_children.append(*alarm.get('consequences', {}).get('data', []))
+            elif with_causes and alarm.get('v') and alarm['v'].get('parents'):
+                consequences_children.append(*alarm['v']['parents'])
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
@@ -157,7 +159,7 @@ def exports(ws):
             entity_dict[entity.get('_id')] = entity
 
         if consequences_children:
-            consequences_alarms = ar.get(
+            alarm_children = ar.get(
                 tstart=tstart,
                 tstop=tstop,
                 opened=opened,
@@ -174,10 +176,17 @@ def exports(ws):
             )
         list_alarm = []
         for alarm in alarms['alarms']:
-            rules = alarms['rules'].get(alarm['d'], [])
+            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm else None
             if rules:
-                alarm["causes"] = {'total': len(rules), 'rules': rules}
-            if alarm.get('v', {}).get('meta'):
+                alarm['causes'] = {'total': len(rules)}
+                if with_causes:
+                    alarm['causes']['data'] = alarm_children['alarms']
+                else:
+                    alarm['causes']['rules'] = rules
+
+            if alarm.get('v') is None:
+                alarm['v'] = dict()
+            if alarm.get('v').get('meta'):
                 del alarm['v']['meta']
 
             now = int(time())
@@ -206,8 +215,8 @@ def exports(ws):
 
             alarm = compat_go_crop_states(alarm)
 
-            if with_consequences and isinstance(alarm.get('consequences'), dict) and consequences_alarms['total'] > 0:
-                alarm['consequences']['data'] = consequences_alarms['alarms']
+            if with_consequences and isinstance(alarm.get('consequences'), dict) and alarm_children['total'] > 0:
+                alarm['consequences']['data'] = alarm_children['alarms']
 
             list_alarm.append(alarm)
 

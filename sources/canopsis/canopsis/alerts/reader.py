@@ -426,8 +426,8 @@ class AlertsReader(object):
         """
         final_filter = {'$and': []}
 
-        # filtered list must have all alarms but meta-alarms except the filter by alarm id_ 
-        if isinstance(view_filter, dict) and view_filter and not "_id" in view_filter or \
+        # filtered list must have all alarms but meta-alarms except the filter by alarm _id or entity id 
+        if isinstance(view_filter, dict) and view_filter and not "_id" in view_filter and not "d" in view_filter or \
             (isinstance(view_filter, list) and view_filter != []):
             final_filter['$and'].append({"v.meta": {"$exists": False}})
         t_view_filter = self._translate_filter(view_filter)
