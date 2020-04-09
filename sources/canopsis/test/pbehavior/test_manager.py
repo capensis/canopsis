@@ -100,15 +100,16 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
 
         pb_new = deepcopy(self.pbehavior)
+        pb_new[PBehavior.RRULE] = ''
         pb_new.update({'filter': {'author': {'$in': ['author1, author2']}}})
+        pb_new[PBehavior.TSTOP] = int(time.time()) - 24 * 3600
         pb = self.pbm.create(**pb_new)
         self.assertTrue(pb is not None)
 
         # create with expired
         pb_new_2 = deepcopy(self.pbehavior)
         pb_new_2['pbh_id'] = pb
-        pb_new_2[PBehavior.RRULE] = ''
-        pb_new_2[PBehavior.TSTOP] = int(time.time()) - 3600
+        pb_new_2[PBehavior.TSTOP] = int(time.time()) + 24 * 3600
         e = None
         try:
             self.pbm.create(**pb_new_2)

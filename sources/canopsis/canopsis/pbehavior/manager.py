@@ -395,7 +395,8 @@ class PBehaviorManager(object):
         except CollectionError:
             # when inserting already existing id
             try:
-                if replace_expired and self.is_pbh_expired(pb_kwargs, int(time())):
+                current_pbh = self.get(_id=pbh_id).get('data', [{}])[0]
+                if replace_expired and not self.check_active_pbehavior(int(time()), current_pbh):
                     self.collection.remove({'_id': pbh_id})
                     # try for five times, to prevent case of receiving more than one concurrent creating request
                     for i in range(5):
