@@ -1,3 +1,5 @@
+import { isUndefined } from 'lodash';
+
 import { setSeveralFields, unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 import { POST_PROCESSOR_TYPES } from '@/constants';
@@ -106,7 +108,7 @@ export function webhookToForm({
     'hook.alarm_patterns': patternsFieldsCustomizer,
     'hook.entity_patterns': patternsFieldsCustomizer,
     requests: prepareRequestsToForm,
-    enabled: enabled === undefined ? true : enabled,
+    enabled: isUndefined(enabled) ? true : enabled,
     postProcessors: preparePostProcessorsToForm(postProcessors),
   });
 }
