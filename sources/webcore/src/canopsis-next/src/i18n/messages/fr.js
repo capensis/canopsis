@@ -254,6 +254,7 @@ export default {
     type: 'Type',
     reason: 'Raison',
     rrule: 'Récurrence',
+    status: 'Statut',
   },
   settings: {
     titles: {

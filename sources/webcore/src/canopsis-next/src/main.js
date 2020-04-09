@@ -43,6 +43,7 @@ import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/part
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
+import PbehaviorActiveIcon from '@/components/icons/pbehavior-active.vue';
 
 import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
@@ -59,6 +60,9 @@ Vue.use(Vuetify, {
   icons: {
     webhook: {
       component: WebhookIcon,
+    },
+    pbehavior_active: {
+      component: PbehaviorActiveIcon,
     },
   },
 });
