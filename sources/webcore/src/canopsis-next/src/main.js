@@ -80,7 +80,8 @@ Vue.use(DaySpanVuetify, {
   data: {
     defaults: {
       dsWeeksView: {
-        weekdays: moment.weekdaysShort(true),
+        // dayspan-vuetify doesn't not supported first day in weekend, because return weekdays without locale sort.
+        weekdays: moment.weekdaysShort(),
       },
       dsCalendarEventTime: {
         placeholderStyle: false,
