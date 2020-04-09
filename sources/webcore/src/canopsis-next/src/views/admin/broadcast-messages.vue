@@ -101,13 +101,13 @@ export default {
     preparedBroadcastMessages() {
       return this.broadcastMessages.map((message) => {
         const now = moment().unix();
-        let status = this.$t('tables.broadcastMessages.statuses.expired');
+        let status = this.$t('tables.broadcastMessages.statuses.pending');
 
         if (now >= message.start) {
           if (now <= message.end) {
             status = this.$t('tables.broadcastMessages.statuses.active');
           } else {
-            status = this.$t('tables.broadcastMessages.statuses.pending');
+            status = this.$t('tables.broadcastMessages.statuses.expired');
           }
         }
 
