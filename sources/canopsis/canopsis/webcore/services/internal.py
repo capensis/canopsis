@@ -30,7 +30,8 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
-    'app_title', 'footer', 'login_page_description', 'logo', 'language', 'popup_timeout'
+    'app_title', 'footer', 'login_page_description', 'logo', 'language', 'popup_timeout',
+    'allow_change_severity_to_info'
 ]
 
 VALID_POPUP_UNIT = {
@@ -214,7 +215,7 @@ def exports(ws):
         user_interface = get_user_interface().get("user_interface", None)
         if user_interface is not None:
             for key in user_interface.keys():
-                if key not in ['app_title', 'logo', 'language', 'popup_timeout']:
+                if key not in ['app_title', 'logo', 'language', 'popup_timeout', 'allow_change_severity_to_info']:
                     user_interface.pop(key)
             cservices.update(user_interface)
         ws.logger.error(get_version())
@@ -258,6 +259,10 @@ def exports(ws):
                 'interval': 10
             })
 
+        if 'allow_change_severity_to_info' not in interface.keys() or \
+                not isinstance(interface['allow_change_severity_to_info'], bool):
+            interface['allow_change_severity_to_info'] = False
+
         language = interface.get('language', None)
         if language is not None and language not in VALID_CANOPSIS_LANGUAGES:
             ws.logger.error(
@@ -284,3 +289,4 @@ def exports(ws):
             *UserInterfaceManager.provide_default_basics())
 
         return gen_json(user_interface_manager.delete())
+
