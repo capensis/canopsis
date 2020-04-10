@@ -21,6 +21,7 @@ import { MODALS, SNMP_STATE_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableMixin from '@/mixins/confirmable';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
@@ -29,7 +30,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.createSnmpRule,
   components: { SnmpRuleForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [modalInnerMixin, submittableMixin(), confirmableMixin()],
   data() {
     const defaultModuleMibObjectForm = {
       value: '',

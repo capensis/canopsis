@@ -19,6 +19,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableMixin from '@/mixins/confirmable';
 
 import HeartbeatForm from '@/components/other/heartbeat/form/heartbeat-form.vue';
 
@@ -33,7 +34,7 @@ export default {
     validator: 'new',
   },
   components: { HeartbeatForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [modalInnerMixin, submittableMixin(), confirmableMixin()],
   data() {
     return {
       form: {

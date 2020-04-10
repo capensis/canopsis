@@ -10,7 +10,7 @@ export default {
   extends: VDialog,
   mixins: [overlayableMixin],
   props: {
-    onClickOutside: {
+    customCloseConditional: {
       type: Function,
       default: null,
     },
@@ -29,7 +29,10 @@ export default {
       directives: [{
         name: 'click-outside',
         value: () => {
-          if (!this.onClickOutside || (this.onClickOutside && this.onClickOutside() !== false)) {
+          if (
+            !this.customCloseConditional ||
+            (this.customCloseConditional && this.customCloseConditional() !== false)
+          ) {
             this.isActive = false;
           }
         },

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { find } from 'lodash';
+import { get, pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -40,24 +40,21 @@ export default {
   components: { InfoPopupForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
-    return {
-      form: {
-        selectedColumn: {},
-        template: '',
-      },
+    const { popup, columns } = this.modal.config;
+    let form = {
+      template: '',
+      column: null,
     };
-  },
-  mounted() {
-    if (this.config) {
-      [this.form.selectedColumn] = this.config.columns;
 
-      if (this.config.popup) {
-        const { template, column } = this.config.popup;
-
-        this.form.template = template;
-        this.form.selectedColumn = find(this.config.columns, { value: column });
-      }
+    if (popup) {
+      form = pick(popup, ['template', 'column']);
+    } else if (columns && columns.length) {
+      form.column = get(columns[0], 'value');
     }
+
+    return {
+      form,
+    };
   },
   methods: {
     async submit() {
@@ -65,7 +62,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action({ column: this.form.selectedColumn.value, template: this.form.template });
+          await this.config.action(this.form);
         }
 
         this.$modals.hide();

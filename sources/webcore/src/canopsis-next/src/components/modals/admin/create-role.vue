@@ -22,9 +22,7 @@ import { MODALS } from '@/constants';
 import { generateRole } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesRoleMixin from '@/mixins/entities/role';
-import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import submittableMixin from '@/mixins/submittable';
 
 import RoleForm from '@/components/other/role/role-form.vue';
@@ -39,16 +37,14 @@ export default {
   components: { RoleForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    entitiesViewMixin,
     entitiesRoleMixin,
-    entitiesViewGroupMixin,
     submittableMixin(),
   ],
   data() {
-    const group = this.modal.config.group || { name: '', description: '', defaultView: '' };
+    const role = this.modal.config.role || { name: '', description: '', defaultView: '' };
 
     return {
-      form: pick(group, ['_id', 'description', 'defaultview']),
+      form: pick(role, ['_id', 'description', 'defaultview']),
       defaultViewMenu: false,
     };
   },
@@ -57,22 +53,9 @@ export default {
       return this.config.title || this.$t('modals.createRole.title');
     },
 
-    role() {
-      return this.config.roleId ? this.getRoleById(this.config.roleId) : null;
-    },
-
     isNew() {
-      return !this.role;
+      return !this.config.role;
     },
-  },
-  mounted() {
-    if (!this.isNew) {
-      this.form = pick(this.role, [
-        '_id',
-        'description',
-        'defaultview',
-      ]);
-    }
   },
   methods: {
     async submit() {
@@ -80,7 +63,6 @@ export default {
 
       if (isFormValid) {
         const formData = this.isNew ? generateRole() : { ...this.role };
-        formData._id = this.form._id;
 
         await this.createRole({ data: { ...formData, ...this.form } });
         await this.fetchRolesListWithPreviousParams();

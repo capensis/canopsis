@@ -42,6 +42,7 @@ import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableMixin from '@/mixins/confirmable';
 
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
 import RetryField from '@/components/forms/fields/retry.vue';
@@ -57,7 +58,7 @@ export default {
     validator: 'new',
   },
   components: { WebhookForm, ModalWrapper, RetryField },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [modalInnerMixin, submittableMixin(), confirmableMixin()],
   data() {
     const { webhook, isDuplicating } = this.modal.config;
     const defaultForm = {

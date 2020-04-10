@@ -15,6 +15,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableMixin from '@/mixins/confirmable';
 
 import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
@@ -29,7 +30,7 @@ export default {
     validator: 'new',
   },
   components: { ActionForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [modalInnerMixin, submittableMixin(), confirmableMixin()],
   data() {
     const { item, isDuplicating } = this.modal.config;
 

@@ -42,7 +42,7 @@ export default {
         ...dialogPropsMap[this.modal.name],
         ...this.modal.dialogProps,
 
-        onClickOutside: (...args) => this.$clickOutside.call(...args),
+        customCloseConditional: (...args) => this.$clickOutside.call(...args),
       };
     },
   },

@@ -31,8 +31,8 @@ export default ({ field = 'form', method = 'submit' } = {}) => {
             id: this[confirmationModalIdField],
             name: MODALS.formConfirmation,
             config: {
-              action: async (submitted) => {
-                if (submitted) {
+              action: async (confirmed) => {
+                if (confirmed) {
                   return this[method]();
                 }
 

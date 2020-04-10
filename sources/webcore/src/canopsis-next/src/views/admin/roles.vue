@@ -33,7 +33,7 @@
                 v-if="hasUpdateAnyRoleAccess",
                 data-test="editButton",
                 icon,
-                @click="showEditRoleModal(props.item._id)"
+                @click="showEditRoleModal(props.item)"
               )
                 v-icon edit
               v-btn.ma-0(
@@ -138,12 +138,12 @@ export default {
       });
     },
 
-    showEditRoleModal(roleId) {
+    showEditRoleModal(role) {
       this.$modals.show({
         name: MODALS.createRole,
         config: {
           title: this.$t('modals.editRole.title'),
-          roleId,
+          role,
         },
       });
     },

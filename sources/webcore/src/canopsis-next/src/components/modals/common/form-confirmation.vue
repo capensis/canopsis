@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { isUndefined } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -35,11 +37,14 @@ export default {
   name: MODALS.formConfirmation,
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
+  destroyed() {
+    if (this.config.action && !isUndefined(this.confirmed)) {
+      this.config.action(this.confirmed);
+    }
+  },
   methods: {
-    async submit(submitted) {
-      if (this.config.action) {
-        await this.config.action(submitted);
-      }
+    async submit(confirmed) {
+      this.confirmed = confirmed;
 
       this.$modals.hide();
     },

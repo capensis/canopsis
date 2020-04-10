@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import { pick } from 'lodash';
+import { MODALS } from '@/constants';
 
-import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { userToForm } from '@/helpers/forms/user';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -42,19 +42,10 @@ export default {
   components: { UserForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
+    const { user } = this.modal.config;
+
     return {
-      form: {
-        _id: '',
-        firstname: '',
-        lastname: '',
-        mail: '',
-        password: '',
-        role: null,
-        ui_language: '',
-        enable: true,
-        defaultview: '',
-        groupsNavigationType: GROUPS_NAVIGATION_TYPES.sideBar,
-      },
+      form: userToForm(user),
     };
   },
   computed: {
@@ -65,26 +56,6 @@ export default {
     isNew() {
       return !this.config.user;
     },
-  },
-  async mounted() {
-    if (!this.isNew) {
-      this.form = pick(this.config.user, [
-        '_id',
-        'firstname',
-        'lastname',
-        'mail',
-        'password',
-        'role',
-        'ui_language',
-        'enable',
-        'defaultview',
-        'groupsNavigationType',
-      ]);
-
-      if (!this.form.groupsNavigationType) {
-        this.form.groupsNavigationType = GROUPS_NAVIGATION_TYPES.sideBar;
-      }
-    }
   },
   methods: {
     async submit() {
