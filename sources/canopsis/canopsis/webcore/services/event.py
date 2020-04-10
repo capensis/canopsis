@@ -204,8 +204,12 @@ def exports(ws):
             if isinstance(event, list):
                 for evt in event:
                     alarm = am.get_last_alarm_by_connector_eid(evt['connector'], evt['ref_rk'])
-                    if alarm is not None:
+                    if isinstance(alarm, dict) and 'v' in alarm:
                         ws.logger.info("alarm value {}".format(alarm.get("v")))
+                        if 'children' in alarm['v']:
+                            evt['ma_children'] = list(alarm['v']['children'])
+                        if 'parents' in alarm['v']:
+                            evt['ma_parents'] = list(alarm['v']['parents'])
             return send_events(ws, event)
 
     @route(ws.application.get,

@@ -377,7 +377,6 @@ class Alerts(object):
         result = list(self.alerts_storage.get_elements(query=query, limit=1, sort=['ts', -1]))
         if not result:
             return None
-        self.logger.info("get_last_alarm_by_connector_eid {}".format(result))
 
         return result[0]
 
