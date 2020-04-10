@@ -1,6 +1,6 @@
 <template>
   <svg
-    class="pbehavior-active-svg-icon"
+    class="settings-sync-svg-icon"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 57 50"
     version="1.1">
@@ -44,7 +44,7 @@
 </template>
 
 <style scoped>
-  .pbehavior-active-svg-icon {
+  .settings-sync-svg-icon {
     fill: currentColor;
   }
 </style>
