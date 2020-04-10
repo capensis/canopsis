@@ -59,7 +59,7 @@ le fichier `/etc/mongodb.conf` :
 Et redémarrer le service
 
 ```sh
-systemctl restart mongod
+systemctl restart mongod.service
 ```
 
 Puis, éditer `shinken-specific.cfg` :
