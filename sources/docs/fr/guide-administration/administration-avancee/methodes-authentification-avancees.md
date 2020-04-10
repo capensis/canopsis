@@ -1,4 +1,4 @@
-# Authentification
+# Méthodes d'authentification avancées (LDAP, CAS, SAML2)
 
 ## Authentification LDAP
 
