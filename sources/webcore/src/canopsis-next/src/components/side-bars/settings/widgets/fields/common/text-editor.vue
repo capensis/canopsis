@@ -24,6 +24,10 @@ export default {
       type: String,
       default: '',
     },
+    extraButtons: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     isValueEmpty() {
@@ -37,6 +41,7 @@ export default {
         config: {
           text: this.value,
           action: value => this.$emit('input', value),
+          extraButtons: this.extraButtons,
         },
       });
     },

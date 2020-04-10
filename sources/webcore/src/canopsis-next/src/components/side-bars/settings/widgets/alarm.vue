@@ -48,7 +48,8 @@
           field-text-editor(
             data-test="widgetMoreInfoTemplate",
             v-model="settings.widget.parameters.moreInfoTemplate",
-            :title="$t('settings.moreInfosModal')"
+            :title="$t('settings.moreInfosModal')",
+            :extraButtons="variablesButtons"
           )
           v-divider
           field-grid-range-size(
@@ -87,6 +88,8 @@ import { get, cloneDeep } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
+
+import { createJoditVariablesButton } from '@/helpers/jodit';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
@@ -157,6 +160,14 @@ export default {
     hasAccessToAddFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.addFilter);
     },
+    variablesButtons() {
+      return [
+        createJoditVariablesButton([
+          { label: 'Total', value: '{{ counter.total }}' },
+          { label: 'Total active', value: '{{ counter.total_active }}' },
+        ], { containerClassName: 'jodit-variables-btb' }),
+      ];
+    },
   },
   mounted() {
     const { widget_preferences: widgetPreference } = this.userPreference;
@@ -178,3 +189,21 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .jodit-variables-btb {
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+
+    button {
+      padding: 3px;
+      text-align: start;
+      transition: .16s;
+
+      &:hover {
+        background: #dde4ef;
+      }
+    }
+  }
+</style>

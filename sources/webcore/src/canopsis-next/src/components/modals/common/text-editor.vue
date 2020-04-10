@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        text-editor-component(v-model="text", data-test="jodit")
+        text-editor-component(v-model="text", data-test="jodit", :extraButtons="extraButtons")
       template(slot="actions")
         v-btn(
           data-test="textEditorCancelButton",
@@ -44,6 +44,9 @@ export default {
   computed: {
     title() {
       return this.config.title || this.$t('modals.textEditor.title');
+    },
+    extraButtons() {
+      return this.config.extraButtons;
     },
   },
   methods: {
