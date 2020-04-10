@@ -18,7 +18,6 @@ export default {
   getters: {
     modals: state => state.allIds.map(id => state.byId[id]),
     hasModals: state => Boolean(state.allIds.length),
-    hasModalById: state => id => !!state.byId[id],
   },
   mutations: {
     [types.SHOW](state, { id, name, config = {} }) {

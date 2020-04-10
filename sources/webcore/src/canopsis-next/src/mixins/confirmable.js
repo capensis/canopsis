@@ -1,4 +1,4 @@
-import { cloneDeep, isEqual } from 'lodash';
+import { get, cloneDeep, isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -24,9 +24,9 @@ export default ({ field = 'form', method = 'submit' } = {}) => {
     methods: {
       [clickOutsideHandlerMethodKey]() {
         const equal = isEqual(this[field], this[originalField]);
-        const getterKey = `${this.$modals.moduleName}/hasModalById`;
+        const statePath = [this.$modals.moduleName, 'byId', this[confirmationModalIdField]];
 
-        if (!equal && !this.$store.getters[getterKey](this[confirmationModalIdField])) {
+        if (!equal && !get(this.$store.state, statePath)) {
           this.$modals.show({
             id: this[confirmationModalIdField],
             name: MODALS.formConfirmation,
