@@ -43,6 +43,16 @@ Voici la liste de paramètres nécessaires à la configuration LDAP :
 | attrs         | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | default_role  | Rôle Canopsis par défaut au moment de la première connexion                                                                                | Visualisation                                                  |
 
+#### Récupération de la configuration courante
+
+Si une configuration est déjà présente en base, elle peut être récupérée à l'aide de la commande suivante :
+
+```sh
+curl -u root:root -X GET http://localhost:8082/rest/object/ldapconfig/cservice.ldapconfig
+```
+
+#### Envoi d'une configuration
+
 La configuration se fait dans un fichier JSON : **ldapconfig.json**
 
 ```json
@@ -73,7 +83,7 @@ La requête suivante permet d'envoyer cette configuration :
 ```sh
 curl -u root:root -X POST \
   -H "Content-type: application/json" -d @ldapconfig.json \
-  'http://CANOPSIS_HOST:CANOPSIS_PORT/rest/object/ldapconfig/cservice.ldapconfig'
+  http://localhost:8082/rest/object/ldapconfig/cservice.ldapconfig
 ```
 
 Le résultat renvoyé doit être de type :
