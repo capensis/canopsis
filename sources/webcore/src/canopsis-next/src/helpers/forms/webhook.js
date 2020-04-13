@@ -25,6 +25,7 @@ function getWebhookFormFields(webhook) {
 export function webhookToForm(webhook) {
   return {
     emptyResponse: webhook.empty_response || false,
+    enabled: webhook.enabled || true,
     ...setSeveralFields(webhook, getWebhookFormFields(webhook)),
   };
 }

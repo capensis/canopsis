@@ -6,8 +6,8 @@
       template(slot="text")
         div
           v-text-field(
-            v-validate="'required'",
             v-model="form.name",
+            v-validate="'required|unique-name'",
             :label="$t('modals.createDynamicInfoInformation.fields.name')",
             :error-messages="errors.collect('name')",
             name="name"
@@ -51,6 +51,21 @@ export default {
         value: info.value || '',
       },
     };
+  },
+  computed: {
+    initialName() {
+      return this.config.info && this.config.info.name;
+    },
+    existingNames() {
+      return this.config.existingNames;
+    },
+  },
+  created() {
+    this.$validator.extend('unique-name', {
+      getMessage: () => this.$t('validator.unique'),
+      validate: value => (this.initialName && this.initialName === value) ||
+        !this.existingNames.find(name => name === value),
+    });
   },
   methods: {
     async submit() {

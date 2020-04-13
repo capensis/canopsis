@@ -11,11 +11,12 @@
 <script>
 import { BUSINESS_USER_RIGHTS_ACTIONS_MAP, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
-import linksMixin from '@/mixins/links';
+import { harmonizeLinks } from '@/helpers/links';
+
 import authMixin from '@/mixins/auth';
 
 export default {
-  mixins: [linksMixin, authMixin],
+  mixins: [authMixin],
   props: {
     links: {
       type: Array,
@@ -37,7 +38,7 @@ export default {
 
     linkList() {
       return this.filteredLinks.map((category) => {
-        const categoryLinks = this.harmonizeLinks(category.links, category.cat_name);
+        const categoryLinks = harmonizeLinks(category.links, category.cat_name);
 
         return {
           cat_name: category.cat_name,

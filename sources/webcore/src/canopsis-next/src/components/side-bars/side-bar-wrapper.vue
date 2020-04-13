@@ -2,7 +2,7 @@
   v-navigation-drawer(
     data-test="sideBarWrapper",
     v-model="isOpen",
-    :stateless="hasModals",
+    :ignoreClickOutside="hasModals",
     v-bind="navigationDrawerProps"
   )
     div(v-if="title")
@@ -54,6 +54,7 @@ export default {
         [SIDE_BARS.statsNumberSettings]: this.$t('settings.titles.statsNumberSettings'),
         [SIDE_BARS.statsParetoSettings]: this.$t('settings.titles.statsParetoSettings'),
         [SIDE_BARS.textSettings]: this.$t('settings.titles.textSettings'),
+        [SIDE_BARS.counterSettings]: this.$t('settings.titles.counterSettings'),
       };
 
       return this.sideBarConfig.sideBarTitle || TITLES_MAP[this.sideBarName];

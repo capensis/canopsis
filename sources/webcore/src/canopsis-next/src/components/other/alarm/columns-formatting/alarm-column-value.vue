@@ -5,7 +5,8 @@
       v-model="isInfoPopupOpen",
       :close-on-content-click="false",
       :open-on-click="false",
-      offset-x
+      offset-x,
+      lazy
     )
       div(slot="activator")
         v-layout(align-center)
@@ -25,13 +26,16 @@
               color="white"
             )
               v-icon(small, color="error") close
-        v-card-text.pa-2(data-test="alarmInfoPopupContent", v-html="popupTextContent")
+        v-fade-transition
+          v-card-text.pa-2(v-if="isInfoPopupOpen", data-test="alarmInfoPopupContent")
+            v-runtime-template(:template="popupTextContent")
     div(v-else-if="column.isHtml", v-html="sanitizedValue")
     div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
 <script>
 import { get } from 'lodash';
+import VRuntimeTemplate from 'v-runtime-template';
 
 import { compile } from '@/helpers/handlebars';
 
@@ -53,6 +57,7 @@ import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue
  */
 export default {
   components: {
+    VRuntimeTemplate,
     Ellipsis,
     AlarmColumnValueState,
     AlarmColumnValueLinks,
@@ -81,6 +86,23 @@ export default {
     return {
       isInfoPopupOpen: false,
     };
+  },
+  asyncComputed: {
+    popupTextContent: {
+      lazy: true,
+
+      async get() {
+        if (this.popupData) {
+          const context = { alarm: this.alarm, entity: this.alarm.entity || {} };
+          const compiledTemplate = await compile(this.popupData.template, context);
+
+          return `<div>${compiledTemplate}</div>`;
+        }
+
+        return '';
+      },
+      default: '',
+    },
   },
   computed: {
     value() {
@@ -111,14 +133,6 @@ export default {
       const popups = get(this.widget.parameters, 'infoPopups', []);
 
       return popups.find(popup => popup.column === this.column.value);
-    },
-
-    popupTextContent() {
-      if (this.popupData) {
-        return compile(this.popupData.template, { alarm: this.alarm, entity: this.alarm.entity || {} });
-      }
-
-      return '';
     },
 
     columnFilter() {

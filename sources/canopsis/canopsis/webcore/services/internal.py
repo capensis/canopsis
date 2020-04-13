@@ -30,8 +30,16 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
-    'app_title', 'footer',  'login_page_description', 'logo', 'language'
+    'app_title', 'footer', 'login_page_description', 'logo', 'language', 'popup_timeout'
 ]
+
+VALID_POPUP_UNIT = {
+    's', 'h', 'm'
+}
+
+VALID_POPUP_PARAMS = {
+    'unit', 'interval'
+}
 
 VALID_CANOPSIS_EDITIONS = [
     'cat', 'core'
@@ -62,7 +70,7 @@ def get_version():
     store = MongoStore.get_default()
     version_collection = \
         store.get_collection(name=CanopsisVersionManager.COLLECTION)
-    document = CanopsisVersionManager(version_collection).\
+    document = CanopsisVersionManager(version_collection). \
         find_canopsis_document()
 
     if document is not None:
@@ -127,6 +135,26 @@ def check_values(ws, edition, stack):
     return True
 
 
+def sanitize_popup_timeout(popup_setting):
+    if not isinstance(popup_setting, dict):
+        return {
+            'unit': 's',
+            'interval': 10
+        }
+
+    else:
+        if 'unit' not in popup_setting or popup_setting['unit'] not in VALID_POPUP_UNIT:
+            popup_setting['unit'] = 's'
+        if 'interval' not in popup_setting or not isinstance(popup_setting['interval'], int) or \
+            popup_setting['interval'] < 0:
+            popup_setting['interval'] = 10
+    # remove redundant keys in popup_timeout
+    for k in popup_setting.keys():
+        if k not in VALID_POPUP_PARAMS:
+            popup_setting.pop(k)
+    return popup_setting
+
+
 def exports(ws):
     session = session_module
     rights = rights_module.get_manager()
@@ -157,9 +185,9 @@ def exports(ws):
             ok = check_values(
                 ws, doc.get("edition"), doc.get("stack"))
             if ok:
-                success = CanopsisVersionManager(version_collection).\
+                success = CanopsisVersionManager(version_collection). \
                     put_canopsis_document(
-                        doc.get("edition"), doc.get("stack"), None)
+                    doc.get("edition"), doc.get("stack"), None)
 
                 if not success:
                     return gen_json_error({'description': 'failed to update edition/stack'},
@@ -186,7 +214,7 @@ def exports(ws):
         user_interface = get_user_interface().get("user_interface", None)
         if user_interface is not None:
             for key in user_interface.keys():
-                if key not in ['app_title', 'logo', 'language']:
+                if key not in ['app_title', 'logo', 'language', 'popup_timeout']:
                     user_interface.pop(key)
             cservices.update(user_interface)
         ws.logger.error(get_version())
@@ -215,6 +243,20 @@ def exports(ws):
         for key in interface.keys():
             if key not in VALID_USER_INTERFACE_PARAMS:
                 interface.pop(key)
+            elif key == 'popup_timeout':
+                # set default value for popup_timeout
+                interface[key]['info'] = sanitize_popup_timeout(interface[key].get('info'))
+                interface[key]['error'] = sanitize_popup_timeout(interface[key].get('error'))
+
+        # set default value for popup_timeout
+        if 'popup_timeout' not in interface.keys():
+            interface['popup_timeout'] = dict(info={
+                'unit': 's',
+                'interval': 10
+            }, error={
+                'unit': 's',
+                'interval': 10
+            })
 
         language = interface.get('language', None)
         if language is not None and language not in VALID_CANOPSIS_LANGUAGES:

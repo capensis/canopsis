@@ -28,6 +28,7 @@ from canopsis.common.collection import CollectionError
 from canopsis.common.converters import id_filter
 from canopsis.models.action import Action
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, HTTP_UNAUTHORIZED
+import durationpy
 
 
 def exports(ws):
@@ -102,6 +103,10 @@ def exports(ws):
         if element.get("hook") and (element.get("fields") or element.get("regex")):
             return gen_json_error(
                 {'description': 'Sent data has a hook and fields/regex defined at the same time'}, HTTP_ERROR)
+
+        delay = element.get("delay")
+        if delay and not action_manager.is_delay_valid(delay):
+            return gen_json_error({"description": "delay value is invalid"}, HTTP_ERROR)
 
         try:
             Action(**Action.convert_keys(element))

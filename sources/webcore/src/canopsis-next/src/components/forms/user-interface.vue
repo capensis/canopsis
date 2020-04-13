@@ -14,6 +14,14 @@
           :disabled="disabled",
           :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
+    popup-timeout-field(
+      v-model="form.popupTimeout.info",
+      :label="$t('parameters.userInterfaceForm.fields.infoPopupTimeout')"
+    )
+    popup-timeout-field(
+      v-model="form.popupTimeout.error",
+      :label="$t('parameters.userInterfaceForm.fields.errorPopupTimeout')"
+    )
     v-layout(
       data-test="languageLayout",
       row
@@ -83,12 +91,13 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
+import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { FileSelector, TextEditor },
+  components: { PopupTimeoutField, FileSelector, TextEditor },
   mixins: [entitiesInfoMixin],
   props: {
     disabled: {
@@ -105,6 +114,7 @@ export default {
         language: DEFAULT_LOCALE,
         footer: '',
         description: '',
+        popupTimeout: {},
       },
     };
   },
@@ -129,6 +139,7 @@ export default {
         language: this.language || DEFAULT_LOCALE,
         footer: this.footer || '',
         description: this.description || '',
+        popupTimeout: this.popupTimeout ? { ...this.popupTimeout } : {},
       };
     },
 
@@ -150,6 +161,7 @@ export default {
             footer: this.form.footer,
             language: this.form.language,
             login_page_description: this.form.description,
+            popup_timeout: this.form.popupTimeout,
           };
 
           if (this.logoFile) {
@@ -158,6 +170,8 @@ export default {
 
           await this.updateUserInterface({ data });
           await this.fetchAllInfos();
+
+          this.setPopupTimeout();
 
           this.$popups.success({ text: this.$t('success.default') });
           this.reset();

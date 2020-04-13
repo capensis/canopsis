@@ -19,8 +19,7 @@
             :data-test="item.entity_id",
             :watcher="item",
             :widget="widget",
-            :template="widget.parameters.blockTemplate",
-            :isEditingMode="isEditingMode"
+            :template="widget.parameters.blockTemplate"
           )
 </template>
 
@@ -46,10 +45,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {
