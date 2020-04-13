@@ -572,7 +572,7 @@ class AlertsReader(object):
                 }
             }
         ]
-        if (isinstance(filter_, dict) and filter_ and not "_id" in filter_ or \
+        if (isinstance(filter_, dict) and (filter_ == {} or filter_ and not "_id" in filter_) or \
             (isinstance(filter_, list) and filter_ != [])) or with_consequences:
             consequences_pipeline = {"total": {"$size": "$v.children"}}
             if with_consequences:
