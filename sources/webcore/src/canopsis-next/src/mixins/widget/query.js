@@ -24,10 +24,10 @@ export default {
   computed: {
     query: {
       get() {
-        return this.getQueryById(this.widget._id);
+        return this.getQueryById(this.queryId);
       },
       set(query) {
-        return this.updateQuery({ id: this.widget._id, query });
+        return this.updateQuery({ id: this.queryId, query });
       },
     },
 
@@ -61,7 +61,7 @@ export default {
   },
   destroyed() {
     this.removeQuery({
-      id: this.widget._id,
+      id: this.queryId,
     });
   },
   methods: {

@@ -32,7 +32,7 @@
                   :widget="widget",
                   :defaultQueryId="causesKey",
                   :tabId="causesKey",
-                  :alarm="alarm",
+                  :alarm="alarm.causes",
                   :isEditingMode="isEditingMode"
                 )
     template(v-if="alarm.consequences")
@@ -46,7 +46,7 @@
                   :widget="widget",
                   :defaultQueryId="consequencesKey",
                   :tabId="consequencesKey",
-                  :alarm="alarm",
+                  :alarms="alarm.consequences",
                   :isEditingMode="isEditingMode"
                 )
 </template>
