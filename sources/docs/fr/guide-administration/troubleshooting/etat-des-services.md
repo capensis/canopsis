@@ -4,30 +4,26 @@ Voici les commandes afin de connaître l'état des services autour de Canopsis.
 
 ## MongoDB
 
-```bash
-#connaître l'état du service
-systemctl status mongod
+```sh
+systemctl status mongod.service
 ```
 
 ## RabbitMQ
 
-```bash
-#connaître l'état du service
-systemctl status rabbitmq-server
+```sh
+systemctl status rabbitmq-server.service
 ```
 
 ## InfluxDB
 
-```bash
-#connaître l'état du service
-systemctl status influxdb
+```sh
+systemctl status influxdb.service
 ```
 
 ## Redis
 
-```bash
-#connaître l'état du service
-systemctl status redis
+```sh
+systemctl status redis.service
 ```
 
 ## Canopsis
@@ -35,14 +31,13 @@ systemctl status redis
 ### Gestion de l'hyperviseur
 
 ```sh
-#connaître l'état du service
 canoctl status
 ```
 
 ## Gestion avancées des services
 
-[Install, arrêt et relance](../gestion-services/installation-arret-relance.md)
+[Arrêt et relance des services](../gestion-services/arret-relance-services.md)
 
-## A venir
+## À venir
 
 Healtheck va bientôt arriver sur votre interface Canopsis ! 
