@@ -20,7 +20,7 @@ import { omit } from 'lodash';
 
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesCounterMixin from '@/mixins/entities/counter';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 
 import CounterItem from './counter-item.vue';
 
@@ -31,7 +31,7 @@ export default {
   mixins: [
     widgetPeriodicRefreshMixin,
     entitiesCounterMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
   ],
   props: {
     widget: {

@@ -2,7 +2,7 @@ import { isEqual, isEmpty } from 'lodash';
 
 import queryWidgetMixin from '@/mixins/widget/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import { convertWidgetToQuery, convertUserPreferenceToQuery } from '@/helpers/query';
+import { prepareQuery } from '@/helpers/query';
 
 /**
  * @mixin Add query logic with fetch
@@ -24,10 +24,6 @@ export default {
   async mounted() {
     await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
 
-    this.query = {
-      ...this.query,
-      ...convertWidgetToQuery(this.widget),
-      ...convertUserPreferenceToQuery(this.userPreference),
-    };
+    this.query = prepareQuery(this.widget, this.userPreference);
   },
 };

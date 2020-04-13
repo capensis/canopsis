@@ -68,26 +68,5 @@ export default {
       return this.alarms.length;
     },
   },
-  created() {
-    this.$periodicRefresh.subscribe(this.fetchGroupAlarmListData);
-  },
-  beforeDestroy() {
-    this.$periodicRefresh.unsubscribe(this.fetchGroupAlarmListData);
-  },
-  methods: {
-    fetchGroupAlarmListData() {
-      const query = this.getQuery();
-
-      if (this.alarm.causes) {
-        query.with_causes = true;
-      }
-
-      if (this.alarm.consequences) {
-        query.with_consequences = true;
-      }
-
-      this.fetchAlarmItemWithParams(this.alarm, { ...query, with_steps: true });
-    },
-  },
 };
 </script>

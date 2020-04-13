@@ -36,7 +36,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { STATS_DISPLAY_MODE, STATS_CRITICITY, SORT_ORDERS } from '@/constants';
 
 import entitiesStatsMixin from '@/mixins/entities/stats';
-import widgetQueryMixin from '@/mixins/widget/fetch-query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
@@ -56,7 +56,7 @@ export default {
   },
   mixins: [
     entitiesStatsMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
     entitiesUserPreferenceMixin,
     widgetStatsQueryMixin,
     widgetStatsWrapperMixin,

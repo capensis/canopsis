@@ -28,7 +28,7 @@ import { omit } from 'lodash';
 
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import widgetQueryMixin from '@/mixins/widget/fetch-query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 
 import WeatherItem from './weather-item.vue';
 
@@ -39,7 +39,7 @@ export default {
   mixins: [
     widgetPeriodicRefreshMixin,
     entitiesWatcherMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
   ],
   props: {
     widget: {

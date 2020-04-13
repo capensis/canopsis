@@ -93,7 +93,7 @@ import FilterSelector from '@/components/other/filter/selector/filter-selector.v
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 import authMixin from '@/mixins/auth';
-import widgetQueryMixin from '@/mixins/widget/fetch-query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
@@ -129,7 +129,7 @@ export default {
   },
   mixins: [
     authMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,

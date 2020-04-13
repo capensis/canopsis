@@ -40,7 +40,7 @@ import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
-import widgetQueryMixin from '@/mixins/widget/fetch-query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 
 
@@ -53,7 +53,7 @@ const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: { ProgressOverlay, DsCalendar, AlertOverlay },
-  mixins: [widgetQueryMixin, widgetStatsWrapperMixin],
+  mixins: [widgetFetchQueryMixin, widgetStatsWrapperMixin],
   props: {
     widget: {
       type: Object,
