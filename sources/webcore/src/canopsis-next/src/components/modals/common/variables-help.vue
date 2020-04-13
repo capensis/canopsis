@@ -16,7 +16,15 @@
             span.pl-1(v-else-if="!props.leaf && !(props.item.children && props.item.children.length)") :
               .pl-1.d-inline-block.grey--text.text--darken-1.body-1.font-italic {{ $t('common.emptyObject') }}
         template(slot="append", slot-scope="props", v-if="props.leaf")
-          v-tooltip(left)
+          v-btn(
+            v-if="selectable",
+            slot="activator",
+            small,
+            icon,
+            @click="selectVariablesHandler(props.item.path)"
+          )
+            v-icon file_copy
+          v-tooltip(v-else, left)
             v-btn(
               v-clipboard:copy="props.item.path",
               v-clipboard:success="() => $popups.success({ text: $t('success.pathCopied') })",
@@ -42,5 +50,17 @@ export default {
   name: MODALS.variablesHelp,
   components: { Ellipsis, ModalWrapper },
   mixins: [modalInnerMixin],
+  computed: {
+    selectable() {
+      return !!this.config.selectable;
+    },
+  },
+  methods: {
+    selectVariablesHandler(path) {
+      this.config.action(path);
+
+      this.$modals.hide();
+    },
+  },
 };
 </script>

@@ -22,6 +22,10 @@ export default {
       type: String,
       required: true,
     },
+    extraButtons: {
+      type: Array,
+      required: false,
+    },
   },
   methods: {
     showTextEditorModal() {
@@ -30,6 +34,7 @@ export default {
         config: {
           text: this.value,
           action: value => this.$emit('input', value),
+          extraButtons: this.extraButtons,
         },
       });
     },

@@ -1,29 +1,18 @@
 /**
  * Function for create custom variables button.
  *
- * @param {Array} data
- * @param {String} containerClassName
- * @param {String} icon
+ * @param {Function} onClick
  * @return {Object}
  */
-export const createJoditVariablesButton = (data = [], { containerClassName, icon = 'source' }) => ({
+export const createJoditVariablesButton = ({ onClick }) => ({
   name: 'variables',
-  icon,
-  data,
-  popup(editor, _, control) {
-    const popup = document.createElement('div');
-    popup.classList.add(containerClassName);
+  mode: 3,
+  getContent: (editor) => {
+    const controlButton = document.createElement('span');
 
-    control.data.forEach(({ label, value }) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.innerHTML = label;
+    controlButton.classList.add('jodit-variables-help-btn');
+    controlButton.addEventListener('click', event => onClick(editor, event));
 
-      button.addEventListener('click', () => editor.selection.insertHTML(value));
-
-      popup.appendChild(button);
-    });
-
-    return popup;
+    return controlButton;
   },
 });

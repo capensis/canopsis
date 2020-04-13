@@ -43,19 +43,22 @@
           field-template(
             data-test="widgetTemplateWeatherItem",
             v-model="settings.widget.parameters.blockTemplate",
-            :title="$t('settings.weatherTemplate')"
+            :title="$t('settings.weatherTemplate')",
+            :extraButtons="templateVariablesButton"
           )
           v-divider
           field-template(
             data-test="widgetTemplateModal",
             v-model="settings.widget.parameters.modalTemplate",
-            :title="$t('settings.modalTemplate')"
+            :title="$t('settings.modalTemplate')",
+            :extraButtons="modalTemplateVariablesButton"
           )
           v-divider
           field-template(
             data-test="widgetTemplateEntities",
             v-model="settings.widget.parameters.entityTemplate",
-            :title="$t('settings.entityTemplate')"
+            :title="$t('settings.entityTemplate')",
+            :extraButtons="entitiesTemplateVariablesButton"
           )
           v-divider
           field-grid-size(
@@ -93,7 +96,14 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { SIDE_BARS } from '@/constants';
+import {
+  MODALS,
+  SIDE_BARS,
+  WIDGET_WEATHER_ENTITIES_VARIABLES,
+  WIDGET_WEATHER_WATCHER_VARIABLES,
+} from '@/constants';
+import { convertObjectToTreeview } from '@/helpers/treeview';
+import { createJoditVariablesButton } from '@/helpers/jodit';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
@@ -149,11 +159,55 @@ export default {
       ],
     };
   },
+  computed: {
+    watcherVariables() {
+      return convertObjectToTreeview(WIDGET_WEATHER_WATCHER_VARIABLES, 'watcher');
+    },
+
+    entitiesVariables() {
+      return convertObjectToTreeview(WIDGET_WEATHER_ENTITIES_VARIABLES, 'entities');
+    },
+
+    templateVariablesButton() {
+      return [createJoditVariablesButton({ onClick: this.setTemplateWidgetVariable })];
+    },
+
+    modalTemplateVariablesButton() {
+      return [createJoditVariablesButton({ onClick: this.setModalTemplateWidgetVariable })];
+    },
+
+    entitiesTemplateVariablesButton() {
+      return [createJoditVariablesButton({ onClick: this.setEntitiesTemplateWidgetVariable })];
+    },
+  },
   methods: {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
       return this.prepareWidgetWithAlarmParametersSettings(widget);
+    },
+
+    setTemplateWidgetVariable(editor) {
+      this.showVariablesHelpModal(editor, [this.watcherVariables]);
+    },
+
+    setModalTemplateWidgetVariable(editor) {
+      this.showVariablesHelpModal(editor, [this.watcherVariables, this.entitiesVariables]);
+    },
+
+    setEntitiesTemplateWidgetVariable(editor) {
+      this.showVariablesHelpModal(editor, [this.entitiesVariables]);
+    },
+
+    showVariablesHelpModal(editor, variables) {
+      this.$modals.show({
+        name: MODALS.variablesHelp,
+        config: {
+          selectable: true,
+          action: value => editor.selection.insertHTML(`{{ ${value} }}`),
+          variables,
+        },
+      });
     },
   },
 };

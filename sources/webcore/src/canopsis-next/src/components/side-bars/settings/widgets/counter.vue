@@ -25,7 +25,8 @@
         v-list.grey.lighten-4.px-2.py-0(expand)
           field-template(
             v-model="settings.widget.parameters.blockTemplate",
-            :title="$t('settings.blockTemplate')"
+            :title="$t('settings.blockTemplate')",
+            :extraButtons="variablesButtons"
           )
           v-divider
           field-grid-size(
@@ -61,7 +62,9 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { SIDE_BARS } from '@/constants';
+import { MODALS, SIDE_BARS, WIDGET_COUNTER_VARIABLES } from '@/constants';
+import { createJoditVariablesButton } from '@/helpers/jodit';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
@@ -105,13 +108,36 @@ export default {
       },
     };
   },
+  computed: {
+    counterVariables() {
+      return convertObjectToTreeview(WIDGET_COUNTER_VARIABLES, 'counter');
+    },
+
+    variablesButtons() {
+      return [createJoditVariablesButton({ onClick: this.setWidgetVariable })];
+    },
+  },
   methods: {
     prepareWidgetSettings() {
       const { widget } = this.settings;
 
       return this.prepareWidgetWithAlarmParametersSettings(widget);
     },
+
+    setWidgetVariable(editor) {
+      this.showVariablesHelpModal(editor, [this.counterVariables]);
+    },
+
+    showVariablesHelpModal(editor, variables) {
+      this.$modals.show({
+        name: MODALS.variablesHelp,
+        config: {
+          selectable: true,
+          action: value => editor.selection.insertHTML(`{{ ${value} }}`),
+          variables,
+        },
+      });
+    },
   },
 };
 </script>
-

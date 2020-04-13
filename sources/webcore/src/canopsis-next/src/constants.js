@@ -1202,3 +1202,16 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
+
+export const WIDGET_COUNTER_VARIABLES = {
+  total: 2,
+  total_active: 2,
+  snooze: 2,
+  ack: 2,
+  ticket: 2,
+  pbehavior_active: 2,
+};
+
+export const WIDGET_WEATHER_WATCHER_VARIABLES = {};
+
+export const WIDGET_WEATHER_ENTITIES_VARIABLES = {};

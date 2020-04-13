@@ -116,3 +116,18 @@ $seeAlarmBtnHeight: 18px;
     z-index: 1;
   }
 }
+
+.jodit-variables-help-btn {
+  display: flex;
+  width: 100%;
+  height: 100%;
+
+  &:after {
+    content: '?';
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: black;
+    font-size: 15px;
+  }
+}
