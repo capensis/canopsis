@@ -2,8 +2,8 @@
   div
     alarms-list-table(
       :widget="widget",
-      :alarms="alarms",
-      :totalItems="totalItems",
+      :alarms="displayedAlarms",
+      :totalItems="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :isEditingMode="isEditingMode",
       :hasColumns="hasGroupColumns",
@@ -26,7 +26,6 @@
 <script>
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
@@ -43,10 +42,9 @@ export default {
   },
   inject: ['$periodicRefresh'],
   mixins: [
-    widgetColumnsMixin,
-    entitiesAlarmMixin,
-    widgetPaginationMixin,
     widgetGroupFetchQueryMixin,
+    widgetColumnsMixin,
+    widgetPaginationMixin,
     widgetExpandPanelAlarm,
   ],
   props: {
@@ -57,15 +55,6 @@ export default {
     isEditingMode: {
       type: Boolean,
       default: false,
-    },
-    alarm: {
-      type: Object,
-      required: true,
-    },
-  },
-  computed: {
-    totalItems() {
-      return this.alarms.length;
     },
   },
 };
