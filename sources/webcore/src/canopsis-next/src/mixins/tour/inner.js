@@ -1,6 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { setField } from '@/helpers/immutable';
+import { prepareUserByData } from '@/helpers/entities';
 
 const { mapActions: authMapActions, mapGetters: authMapGetters } = createNamespacedHelpers('auth');
 const { mapActions: userMapActions } = createNamespacedHelpers('user');
@@ -37,7 +38,8 @@ export default {
         await this.callbacks.onStop();
       }
 
-      const data = setField(this.currentUser, ['tours', this.tourName], true);
+      const user = prepareUserByData({}, this.currentUser);
+      const data = setField(user, ['tours', this.tourName], true);
 
       await this.createUser({ data });
 

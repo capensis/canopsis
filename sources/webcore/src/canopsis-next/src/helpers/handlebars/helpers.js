@@ -1,9 +1,12 @@
-import { get, isFunction } from 'lodash';
+import { get, isFunction, isNumber, isObject, unescape } from 'lodash';
 import Handlebars from 'handlebars';
+import axios from 'axios';
 
 import dateFilter from '@/filters/date';
 import durationFilter from '@/filters/duration';
 import { DATETIME_FORMATS, ENTITY_INFOS_TYPE } from '@/constants';
+
+import i18n from '@/i18n';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -22,10 +25,12 @@ function prepareAttributes(attributes) {
 /**
  * Convert date to long format
  *
+ * Example: {{date 1000000}} -> 12/01/1970 20:46:40
+ *
  * @param {string|number} date
  * @returns {string}
  */
-export function timestamp(date) {
+export function timestampHelper(date) {
   let result = '';
 
   if (date) {
@@ -41,7 +46,7 @@ export function timestamp(date) {
  * @param {Object} options
  * @returns {Handlebars.SafeString}
  */
-export function internalLink(options) {
+export function internalLinkHelper(options) {
   const { href, text, ...attributes } = options.hash;
   const path = href.replace(window.location.origin, '');
 
@@ -64,18 +69,6 @@ export function durationHelper(second) {
 }
 
 /**
- * Return date in long format
- *
- * Example: {{date 1000000}} -> 12/01/1970 20:46:40
- *
- * @param time
- * @returns {string}
- */
-export function dateHelper(time) {
-  return dateFilter(time, 'long');
-}
-
-/**
  * Return icon by alarm state
  *
  * Example {{state 0}} -> draw green element with ok text
@@ -85,6 +78,67 @@ export function dateHelper(time) {
  */
 export function alarmStateHelper(state) {
   return new Handlebars.SafeString(`<alarm-chips type="${ENTITY_INFOS_TYPE.state}" value="${state}"></alarm-chips>`);
+}
+
+/**
+ * Pass response of a request to the child block
+ *
+ * Example:
+ * {{#request method="get" url="https://test.com" path="data.users" variable="users"
+ * username="test" password="test" headers='{ "test": "test2" }'}}
+ *   {{#each users}}
+ *     <li>{{login}}</li>
+ *   {{/each}}
+ * {{/request}}
+ *
+ * @param options
+ * @returns {Promise<string|*>}
+ */
+export async function requestHelper(options) {
+  const {
+    method = 'get',
+    url,
+    headers = '{}',
+    path,
+    variable,
+    username,
+    password,
+  } = options.hash;
+
+  if (!url) {
+    throw new Error('helper {{request}}: \'url\' is required');
+  }
+
+  try {
+    const { data } = await axios({
+      method,
+      url: unescape(url),
+      auth: { username, password },
+      headers: JSON.parse(headers),
+    });
+
+    if (isFunction(options.fn)) {
+      const value = path ? get(data, path) : data;
+      const context = variable ? { [variable]: value } : value;
+
+      return options.fn(context);
+    }
+
+    return '';
+  } catch (err) {
+    console.error(err);
+
+    const { status } = err.response || {};
+
+    switch (status) {
+      case 401:
+        return i18n.t('handlebars.requestHelper.errors.unauthorized');
+      case 408:
+        return i18n.t('handlebars.requestHelper.errors.timeout');
+      default:
+        return i18n.t('handlebars.requestHelper.errors.other');
+    }
+  }
 }
 
 /**
@@ -100,7 +154,7 @@ export function alarmStateHelper(state) {
  * @param {Object} options
  * @returns {*}
  */
-export function compare(a, operator, b, options = {}) {
+export function compareHelper(a, operator, b, options = {}) {
   if (arguments.length < 4) {
     throw new Error('handlebars Helper {{compare}} expects 4 arguments');
   }
@@ -154,4 +208,92 @@ export function compare(a, operator, b, options = {}) {
   }
 
   return result;
+}
+
+/**
+ * Concat every primitive arguments
+ *
+ * Example: {{concat "example" object.field}}
+ * Example with request helper: {{#request url=(concat "http://example.com/" object.field)}}something{{/request}}
+ *
+ * @param {...any} args
+ * @returns {string}
+ */
+export function concatHelper(...args) {
+  return args.reduce((acc, arg) => (!isObject(arg) ? acc + arg : acc), '');
+}
+
+/**
+ * Sum for every number arguments
+ *
+ * Example: {{sum 1 2 3 4 5}}
+ *
+ * @param {...numbers} args
+ * @returns {string}
+ */
+export function sumHelper(...args) {
+  return args.reduce((acc, arg) => (isNumber(arg) ? acc + arg : acc), 0);
+}
+
+/**
+ * Subtracting one number from the second
+ *
+ * Example: {{minus 10 1}}
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+export function minusHelper(a, b) {
+  if (!isNumber(a)) {
+    throw new TypeError('expected the first argument to be a number');
+  }
+
+  if (!isNumber(b)) {
+    throw new TypeError('expected the second argument to be a number');
+  }
+
+  return a - b;
+}
+
+/**
+ * Multiple two numbers
+ *
+ * Example: {{mul 2 4}}
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+export function mulHelper(a, b) {
+  if (!isNumber(a)) {
+    throw new TypeError('expected the first argument to be a number');
+  }
+
+  if (!isNumber(b)) {
+    throw new TypeError('expected the second argument to be a number');
+  }
+
+  return a * b;
+}
+
+/**
+ * Division of two numbers
+ *
+ * Example: {{divide 10 2}}
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+export function divideHelper(a, b) {
+  if (!isNumber(a)) {
+    throw new TypeError('expected the first argument to be a number');
+  }
+
+  if (!isNumber(b)) {
+    throw new TypeError('expected the second argument to be a number');
+  }
+
+  return a / b;
 }

@@ -1,23 +1,23 @@
 <template lang="pug">
-  v-flex
+  v-flex.white
     v-flex.px-3(v-show="selectedIds.length", xs12)
       mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
-        ref="dataTable",
         v-model="selected",
         :class="vDataTableClass",
         :items="alarms",
         :headers="headers",
         :total-items="totalItems",
         :pagination="pagination",
+        :select-all="selectable",
         :loading="loading || alarmColumnFiltersPending",
         data-test="tableWidget",
+        ref="dataTable",
         item-key="_id",
-        hide-actions,
-        select-all,
         expand,
+        hide-actions,
         @update:pagination="updatePaginationHandler"
       )
         template(slot="progress")
@@ -28,20 +28,20 @@
         template(slot="items", slot-scope="props")
           alarms-list-row(
             v-model="props.selected",
+            :selectable="selectable",
             :row="props",
-            :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
             :columnFiltersMap="columnFiltersMap",
-            :isTourEnabled="isTourEnabled"
+            :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
         template(slot="expand", slot-scope="props")
           alarms-expand-panel(
             :alarm="props.item",
-            :isEditingMode="isEditingMode",
             :widget="widget",
-            :isTourEnabled="isTourEnabled"
+            :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
+    slot
 </template>
 
 <script>
@@ -57,10 +57,10 @@ import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
 /**
- * Alarm-list-table component
- *
- * @module alarm
- */
+   * Alarm-list-table component
+   *
+   * @module alarm
+   */
 export default {
   components: {
     AlarmsListRow,
@@ -93,9 +93,9 @@ export default {
       type: Object,
       required: false,
     },
-    isEditingMode: {
+    isTourEnabled: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     loading: {
       type: Boolean,
@@ -103,11 +103,11 @@ export default {
     },
     hasColumns: {
       type: Boolean,
-      required: true,
+      default: false,
     },
-    isTourEnabled: {
+    selectable: {
       type: Boolean,
-      required: true,
+      default: false,
     },
   },
   data() {
@@ -128,11 +128,18 @@ export default {
     },
 
     headers() {
-      if (this.hasColumns) {
-        return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+      if (!this.hasColumns) {
+        return [];
       }
 
-      return [];
+      const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+
+      if (!this.selectable) {
+        // We need it for the expand panel open button
+        headers.unshift({ sortable: false });
+      }
+
+      return headers;
     },
 
     vDataTableClass() {
@@ -157,6 +164,10 @@ export default {
   },
 
   methods: {
+    checkIsTourEnabledForAlarmByIndex(index) {
+      return this.isTourEnabled && index === 0;
+    },
+
     updatePaginationHandler(data) {
       this.$emit('update:pagination', data);
     },
