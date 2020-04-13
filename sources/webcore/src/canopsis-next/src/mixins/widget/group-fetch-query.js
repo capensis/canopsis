@@ -1,5 +1,5 @@
 import queryWidgetMixin from '@/mixins/widget/query';
-import { convertGroupAlarmWidgetToQuery } from '@/helpers/query';
+import { convertWidgetToQuery } from '@/helpers/query';
 import { isEmpty, isEqual } from 'lodash';
 
 /**
@@ -20,6 +20,8 @@ export default {
     },
   },
   mounted() {
-    this.query = convertGroupAlarmWidgetToQuery(this.widget);
+    this.query = {
+      ...convertWidgetToQuery(this.widget),
+    };
   },
 };
