@@ -16,15 +16,6 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   processStrategy: parentProcessStrategy,
 });
 
-alarmSchema.define({
-  consequences: {
-    data: [alarmSchema],
-  },
-  causes: {
-    data: [alarmSchema],
-  },
-});
-
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   pbehaviors: [pbehaviorSchema],
 }, {
