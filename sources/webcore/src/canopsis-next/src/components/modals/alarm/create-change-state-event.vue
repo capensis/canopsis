@@ -39,6 +39,7 @@ import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
@@ -53,7 +54,7 @@ export default {
     validator: 'new',
   },
   components: { StateCriticityField, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
+  mixins: [entitiesInfoMixin, modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
       form: {
@@ -64,7 +65,7 @@ export default {
   },
   computed: {
     availableStateValues() {
-      return omit(ENTITIES_STATES, ['ok']);
+      return this.allowChangeSeverityToInfo ? ENTITIES_STATES : omit(ENTITIES_STATES, ['ok']);
     },
   },
   mounted() {
