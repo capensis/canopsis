@@ -572,32 +572,40 @@ class AlertsReader(object):
                 }
             }
         ]
-        if (isinstance(filter_, dict) and (filter_ == {} or filter_ and not "_id" in filter_) or \
-            (isinstance(filter_, list) and filter_ != [])) or with_consequences:
-            consequences_pipeline = {"total": {"$size": "$v.children"}}
-            if with_consequences:
-                consequences_pipeline["data"] = "$v.children"
-            pipeline.insert(4, {'$project': {'t': 1, 'd': 1, 'v': 1, 'entity': 1, "rule": 1,
-                "consequences": {
-                    "$cond": {
-                    "if": { "$eq": [ {}, "$consequences" ] },
-                    "then": "$$REMOVE",
-                    "else": "$consequences"
-                    }
-                },
-                'metaalarm': 1 }})
-            pipeline.insert(4, {"$addFields": {
-                "rule": "$v.meta", 
-                "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
-                "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
-            }})
-            pipeline.insert(3, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {"v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+        if self._can_add_metaalarm_filter(filter_, with_consequences):
+            self._add_metaalarm_filter(pipeline, 3, with_consequences)
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
 
         self.add_pbh_filter(pipeline, filter_)
         return pipeline
+
+    def _can_add_metaalarm_filter(self, filter_, with_consequences):
+        not_by_id = lambda x: "u'_id':" not in str(x)
+        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and not_by_id(filter_)) or \
+            (isinstance(filter_, list) and filter_ != [] and not_by_id(filter_))) or with_consequences
+
+    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
+        consequences_pipeline = {"total": {"$size": "$v.children"}}
+        if with_consequences:
+            consequences_pipeline["data"] = "$v.children"
+        pipeline.insert(start_pos+1, {'$project': {'t': 1, 'd': 1, 'v': 1, 'entity': 1, "rule": 1,
+            "consequences": {
+                "$cond": {
+                "if": { "$eq": [ {}, "$consequences" ] },
+                "then": "$$REMOVE",
+                "else": "$consequences"
+                }
+            },
+            'metaalarm': 1 }})
+        pipeline.insert(start_pos+1, {"$addFields": {
+            "rule": "$v.meta", 
+            "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
+            "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
+        }})
+        pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {"v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+
 
     def _search_aggregate(self,
                           skip,
