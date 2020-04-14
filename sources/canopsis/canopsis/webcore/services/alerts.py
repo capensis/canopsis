@@ -143,8 +143,8 @@ def exports(ws):
             message = 'Operation failure on get-alarms: {}'.format(of_err)
             raise WebServiceError(message)
 
-        alarms_ids = []
-        consequences_children, alarm_children = [], []
+        alarms_ids, consequences_children = [], []
+        alarm_children = {'alarms': [], 'total': 0}
         for alarm in alarms['alarms']:
             if with_consequences:
                 consequences_children.append(*alarm.get('consequences', {}).get('data', []))
