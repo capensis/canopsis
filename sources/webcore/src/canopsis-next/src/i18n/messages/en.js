@@ -266,6 +266,7 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    status: 'Status',
     tabs: {
       filter: 'Filter',
       eids: 'Eids',
