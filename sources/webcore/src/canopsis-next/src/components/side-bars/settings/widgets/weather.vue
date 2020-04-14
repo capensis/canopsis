@@ -161,11 +161,11 @@ export default {
   },
   computed: {
     watcherVariables() {
-      return convertObjectToTreeview(WIDGET_WEATHER_WATCHER_VARIABLES, 'watcher');
+      return convertObjectToTreeview(WIDGET_WEATHER_WATCHER_VARIABLES, 'entity');
     },
 
     entitiesVariables() {
-      return convertObjectToTreeview(WIDGET_WEATHER_ENTITIES_VARIABLES, 'entities');
+      return convertObjectToTreeview(WIDGET_WEATHER_ENTITIES_VARIABLES, 'entity');
     },
 
     templateVariablesButton() {
