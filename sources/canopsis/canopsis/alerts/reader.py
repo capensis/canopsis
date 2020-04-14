@@ -577,7 +577,7 @@ class AlertsReader(object):
             consequences_pipeline = {"total": {"$size": "$v.children"}}
             if with_consequences:
                 consequences_pipeline["data"] = "$v.children"
-            pipeline.insert(4, {'$project': {'t': 1, 'd': 1, 'v': 1, 'entity': 1, 
+            pipeline.insert(4, {'$project': {'t': 1, 'd': 1, 'v': 1, 'entity': 1, "rule": 1,
                 "consequences": {
                     "$cond": {
                     "if": { "$eq": [ {}, "$consequences" ] },

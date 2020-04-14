@@ -33,6 +33,7 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route, WebServiceError
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
+from canopsis.metaalarmrule.manager import MetaAlarmRuleManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 
@@ -43,6 +44,8 @@ def exports(ws):
     context_manager = ContextGraph(ws.logger)
     am = Alerts(*Alerts.provide_default_basics())
     ar = AlertsReader(*AlertsReader.provide_default_basics())
+    ma_rule_manager = MetaAlarmRuleManager(
+        *MetaAlarmRuleManager.provide_default_basics())
 
     @route(
         ws.application.get,
@@ -174,15 +177,32 @@ def exports(ws):
                 active_columns=active_columns,
                 hide_resources=hide_resources,
             )
+
         list_alarm = []
+        rule_ids = set()
+        for alarm_rules in alarms['rules'].values():
+            for v in alarm_rules:
+                rule_ids.add(v)
+        named_rules = ma_rule_manager.read_rules_with_names(list(rule_ids))
+        for d, alarm_rules in alarms['rules'].items():
+            alarm_named_rules = []
+            for v in alarm_rules:
+                alarm_named_rules.append({'id': v, 'name': named_rules.get(v, "")})
+            alarms['rules'][d] = alarm_named_rules
+
         for alarm in alarms['alarms']:
             rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm else None
             if rules:
-                alarm['causes'] = {'total': len(rules)}
                 if with_causes:
-                    alarm['causes']['data'] = alarm_children['alarms']
+                    alarm['causes'] = {
+                        'total': len(alarm_children['alarms']),
+                        'data': alarm_children['alarms'],
+                    }
                 else:
-                    alarm['causes']['rules'] = rules
+                    alarm['causes'] = {
+                        'total': len(rules),
+                        'rules': rules,
+                    }
 
             if alarm.get('v') is None:
                 alarm['v'] = dict()
