@@ -91,11 +91,11 @@ export default {
       return new Handlebars.SafeString(`
         <div class="mt-2" v-for="watcherEntity in watcherEntities" :key="watcherEntity._id">
           <watcher-entity
-            :watcherId="watcher.entity_id"
-            :isWatcherOnPbehavior="watcher.active_pb_watcher"
+            :watcher-id="watcher.entity_id"
+            :is-watcher-on-pbehavior="watcher.active_pb_watcher"
             :entity="watcherEntity"
             :template="entityTemplate"
-            entityNameField="${entityNameField}"
+            entity-name-field="${entityNameField}"
             @addEvent="addEventToQueue"
           ></watcher-entity>
         </div>
