@@ -30,7 +30,7 @@ export default {
     },
 
     /**
-     * Call emit addEvent for ack entity event
+     * Call emit add:event for ack entity event
      *
      * @param {Object} entity
      * @param {string} output
@@ -42,11 +42,11 @@ export default {
         output,
       };
 
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.ack, data });
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.ack, data });
     },
 
     /**
-     * Call emit addEvent for associate ticket event
+     * Call emit add:event for associate ticket event
      *
      * @param {Object} entity
      * @param {string} ticket
@@ -58,11 +58,11 @@ export default {
         ticket,
       };
 
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.assocTicket, data });
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.assocTicket, data });
     },
 
     /**
-     * Call emit addEvent for validate entity event
+     * Call emit add:event for validate entity event
      *
      * @param {Object} entity
      */
@@ -75,11 +75,11 @@ export default {
         keep_state: true,
       };
 
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.changeState, data });
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.changeState, data });
     },
 
     /**
-     * Call emit addEvent for invalidate entity event
+     * Call emit add:event for invalidate entity event
      *
      * @param {Object} entity
      */
@@ -92,11 +92,11 @@ export default {
         keep_state: true,
       };
 
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.cancel, data });
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.cancel, data });
     },
 
     /**
-     * Call emit addEvent for pause entity event
+     * Call emit add:event for pause entity event
      *
      * @param {Object} entity
      * @param {string} comment
@@ -119,20 +119,20 @@ export default {
         type_: 'pause',
       };
 
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.pause, data, entity });
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.pause, data, entity });
     },
 
     /**
-     * Call emit addEvent for play entity event
+     * Call emit add:event for play entity event
      *
      * @param {Object} entity
      */
     addPlayActionToQueue({ entity }) {
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.play, data: entity });
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.play, data: entity });
     },
 
     /**
-     * Call emit addEvent for cancel entity event
+     * Call emit add:event for cancel entity event
      *
      * @param {Object} entity
      * @param {string} output
@@ -144,7 +144,7 @@ export default {
         output,
       };
 
-      this.$emit('addEvent', { type: EVENT_ENTITY_TYPES.cancel, data });
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.cancel, data });
     },
   },
 };

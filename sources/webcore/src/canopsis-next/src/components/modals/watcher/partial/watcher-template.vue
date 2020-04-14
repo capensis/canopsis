@@ -96,7 +96,7 @@ export default {
             :entity="watcherEntity"
             :template="entityTemplate"
             entity-name-field="${entityNameField}"
-            @addEvent="addEventToQueue"
+            @add:event="addEventToQueue"
           ></watcher-entity>
         </div>
       `);
@@ -107,7 +107,7 @@ export default {
   },
   methods: {
     addEventToQueue(event) {
-      this.$emit('addEvent', event);
+      this.$emit('add:event', event);
     },
     showPbehaviorsListModal() {
       this.$modals.show({
