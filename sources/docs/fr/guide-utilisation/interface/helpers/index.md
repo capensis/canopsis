@@ -172,7 +172,7 @@ Ce helper accepte les attributs suivants :
 *  `method` (optionnel, `GET` par défaut). La méthode HTTP à utiliser pour effectuer la requête.
 *  `url` (obligatoire). URL de l'API JSON à interroger.
 *  `headers` (optionnel). Entêtes HTTP, au format JSON (`{"Nom-Entete": "valeur"}`), à intégrer lors de l'envoi de la requête.
-    *  **Note :** tout entête envoyé doit apparaître dans la directive `Access-Control-Allow-Headers` du [serveur Nginx intégré à Canopsis](../../../guide-administration/administration-avancee/reverse-proxy.md#configuration-de-nginx).
+    *  **Note :** tout entête envoyé doit apparaître dans la directive `Access-Control-Allow-Headers` du [serveur Nginx intégré à Canopsis](../../../guide-administration/administration-avancee/configuration-services/reverse-proxy-nginx.md#configuration-de-nginx).
 *  `username` (optionnel). Utilisateur pour l'authentification basique.
 *  `password` (optionnel). Mot de passe pour l'authentification basique.
     *  **Attention :** la requête étant exécutée par le navigateur client, ces identifiants peuvent être interceptés par un utilisateur.

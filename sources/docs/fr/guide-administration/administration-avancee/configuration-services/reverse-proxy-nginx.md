@@ -1,8 +1,8 @@
-# Configuration avancée du reverse proxy HTTP de Canopsis
+# Configuration avancée du reverse proxy HTTP Nginx de Canopsis
 
 Par défaut, l'interface Canopsis et ses API sont accessibles sur le port 8082, par le biais du [serveur HTTP Gunicorn](https://gunicorn.org).
 
-À partir de [Canopsis 3.35.0](../../notes-de-version/3.35.0.md), un *reverse proxy* HTTP ([Nginx](https://nginx.org)) est aussi proposé par défaut, afin d'apporter une configuration plus avancée du service HTTP lié à Canopsis.
+À partir de [Canopsis 3.35.0](../../../notes-de-version/3.35.0.md), un *reverse proxy* HTTP ([Nginx](https://nginx.org)) est aussi proposé par défaut, afin d'apporter une configuration plus avancée du service HTTP lié à Canopsis.
 
 ## Activation de Nginx dans une installation Canopsis
 
@@ -30,7 +30,7 @@ La variable `TARGET` correspond à l'URL d'écoute du service Gunicorn, qui s'ap
 
 ### Mise en place dans une installation par paquets
 
-Dans une installation par paquets, la commande [`canoctl`](../installation/installation-paquets.md) s'occupe d'installer un serveur Nginx, pour toute nouvelle installation à partir de Canopsis 3.35.0.
+Dans une installation par paquets, la commande [`canoctl`](../../installation/installation-paquets.md) s'occupe d'installer un serveur Nginx, pour toute nouvelle installation à partir de Canopsis 3.35.0.
 
 ## Configuration de Nginx
 

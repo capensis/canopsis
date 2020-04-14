@@ -44,6 +44,7 @@ import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
+import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
 
 import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
@@ -63,6 +64,9 @@ Vue.use(Vuetify, {
     },
     bullhorn: {
       component: BullhornIcon,
+    },
+    settings_sync: {
+      component: SettingsSyncIcon,
     },
   },
 });
@@ -84,7 +88,8 @@ Vue.use(DaySpanVuetify, {
   data: {
     defaults: {
       dsWeeksView: {
-        weekdays: moment.weekdaysShort(true),
+        // dayspan-vuetify doesn't not supported first day in weekend, because return weekdays without locale sort.
+        weekdays: moment.weekdaysShort(),
       },
       dsCalendarEventTime: {
         placeholderStyle: false,
