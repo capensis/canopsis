@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('alarm');
@@ -20,11 +19,11 @@ export default {
         with_steps: true,
       };
 
-      if (!isEmpty(alarm.causes)) {
+      if (alarm.causes) {
         params.with_causes = true;
       }
 
-      if (!isEmpty(alarm.consequences)) {
+      if (alarm.consequences) {
         params.with_consequences = true;
       }
 
