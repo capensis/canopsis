@@ -44,7 +44,7 @@ export default {
         if (alarm.v.steps) {
           this.groupedSteps = this.groupSteps(alarm.v.steps);
         } else {
-          this.fetchItemWithSteps(alarm);
+          this.fetchAlarmItemWithGroupsAndSteps(alarm);
         }
       },
     },

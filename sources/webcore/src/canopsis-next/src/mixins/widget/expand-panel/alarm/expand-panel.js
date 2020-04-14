@@ -8,13 +8,7 @@ export default {
       fetchAlarmItem: 'fetchItem',
     }),
 
-    fetchItemWithSteps(alarm) {
-      return this.fetchAlarmItemWithParams(alarm, {
-        with_steps: true,
-      });
-    },
-
-    fetchItemWithGroups(alarm) {
+    fetchAlarmItemWithGroupsAndSteps(alarm) {
       const params = {
         with_steps: true,
       };

@@ -106,8 +106,8 @@ export default {
   },
   methods: {
     async showExpandPanel() {
-      if (!this.row.expanded && !this.widget.parameters.moreInfoTemplate) {
-        await this.fetchItemWithSteps(this.alarm);
+      if (!this.row.expanded) {
+        await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
       }
 
       this.row.expanded = !this.row.expanded;

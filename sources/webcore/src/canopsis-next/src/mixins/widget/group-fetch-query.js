@@ -31,11 +31,7 @@ export default {
       return this.alarms.slice((page - 1) * limit, page * limit);
     },
   },
-  async mounted() {
-    await this.fetchItemWithGroups(this.alarm);
-
-    this.query = {
-      ...convertWidgetToQuery(this.widget),
-    };
+  mounted() {
+    this.query = convertWidgetToQuery(this.widget);
   },
 };
