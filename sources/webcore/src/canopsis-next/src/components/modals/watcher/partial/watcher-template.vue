@@ -91,12 +91,12 @@ export default {
       return new Handlebars.SafeString(`
         <div class="mt-2" v-for="watcherEntity in watcherEntities" :key="watcherEntity._id">
           <watcher-entity
-            :watcherId="watcher.entity_id"
-            :isWatcherOnPbehavior="watcher.active_pb_watcher"
+            :watcher-id="watcher.entity_id"
+            :is-watcher-on-pbehavior="watcher.active_pb_watcher"
             :entity="watcherEntity"
             :template="entityTemplate"
-            entityNameField="${entityNameField}"
-            @addEvent="addEventToQueue"
+            entity-name-field="${entityNameField}"
+            @add:event="addEventToQueue"
           ></watcher-entity>
         </div>
       `);
@@ -107,7 +107,7 @@ export default {
   },
   methods: {
     addEventToQueue(event) {
-      this.$emit('addEvent', event);
+      this.$emit('add:event', event);
     },
     showPbehaviorsListModal() {
       this.$modals.show({
