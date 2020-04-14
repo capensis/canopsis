@@ -43,7 +43,6 @@ import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/part
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
-import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
 
 import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
@@ -60,9 +59,6 @@ Vue.use(Vuetify, {
   icons: {
     webhook: {
       component: WebhookIcon,
-    },
-    settings_sync: {
-      component: SettingsSyncIcon,
     },
   },
 });
