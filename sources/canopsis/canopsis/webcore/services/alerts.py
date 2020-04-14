@@ -150,9 +150,9 @@ def exports(ws):
         alarm_children = {'alarms': [], 'total': 0}
         for alarm in alarms['alarms']:
             if with_consequences:
-                consequences_children.append(*alarm.get('consequences', {}).get('data', []))
+                consequences_children.extend(alarm.get('consequences', {}).get('data', []))
             elif with_causes and alarm.get('v') and alarm['v'].get('parents'):
-                consequences_children.append(*alarm['v']['parents'])
+                consequences_children.extend(alarm['v']['parents'])
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
