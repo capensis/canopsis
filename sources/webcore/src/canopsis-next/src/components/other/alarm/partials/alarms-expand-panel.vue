@@ -21,7 +21,7 @@
           v-card.tab-item-card
             v-card-text
               time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
-    template(v-if="alarm.causes")
+    template(v-if="hasCauses")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -32,10 +32,10 @@
                   :widget="widget",
                   :defaultQueryId="causesKey",
                   :tabId="causesKey",
-                  :alarm="alarm.causes",
+                  :alarm="alarm",
                   :isEditingMode="isEditingMode"
                 )
-    template(v-if="alarm.consequences")
+    template(v-if="hasConsequences")
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -46,12 +46,13 @@
                   :widget="widget",
                   :defaultQueryId="consequencesKey",
                   :tabId="consequencesKey",
-                  :alarms="alarm.consequences",
+                  :alarm="alarm",
                   :isEditingMode="isEditingMode"
                 )
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
 import { ALARMS_GROUP_PREFIX, GRID_SIZES, TOURS } from '@/constants';
 
 import uid from '@/helpers/uid';
@@ -91,6 +92,12 @@ export default {
     };
   },
   computed: {
+    hasCauses() {
+      return !isEmpty(this.alarm.causes);
+    },
+    hasConsequences() {
+      return !isEmpty(this.alarm.consequences);
+    },
     causesKey() {
       return `${ALARMS_GROUP_PREFIX.CAUSES}${this.alarm._id}`;
     },

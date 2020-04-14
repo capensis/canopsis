@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions } = createNamespacedHelpers('alarm');
@@ -12,6 +13,22 @@ export default {
       return this.fetchAlarmItemWithParams(alarm, {
         with_steps: true,
       });
+    },
+
+    fetchItemWithGroups(alarm) {
+      const params = {
+        with_steps: true,
+      };
+
+      if (!isEmpty(alarm.causes)) {
+        params.with_causes = true;
+      }
+
+      if (!isEmpty(alarm.consequences)) {
+        params.with_consequences = true;
+      }
+
+      return this.fetchAlarmItemWithParams(alarm, params);
     },
 
     fetchAlarmItemWithParams(alarm, params) {
