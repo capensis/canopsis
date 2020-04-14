@@ -165,8 +165,8 @@ class MetaAlarmRuleManager(object):
         return _check_response(self.collection.remove({"_id": id}))
 
     def read_rules_with_names(self, ids):
-        if not ids:
-            return dict()
+        query = dict()
+        if ids:
+            query["_id"] = {"$in": ids}
 
-        query = {"_id": {"$in": ids}}
         return dict(((rule[MetaAlarmRule.ID], rule[MetaAlarmRule.NAME]) for rule in self.collection.find(query)))

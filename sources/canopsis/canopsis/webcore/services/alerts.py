@@ -209,6 +209,9 @@ def exports(ws):
             if alarm.get('v').get('meta'):
                 del alarm['v']['meta']
 
+            if isinstance(alarm.get('rule'), basestring) and alarm['rule'] != "":
+                alarm['rule'] = {'id': alarm['rule'], 'name': named_rules.get(alarm['rule'], alarm['rule'])}
+
             now = int(time())
 
             alarm_end = alarm.get('v', {}).get('resolved')
