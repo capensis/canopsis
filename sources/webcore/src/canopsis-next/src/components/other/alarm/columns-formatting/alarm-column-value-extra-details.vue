@@ -72,6 +72,27 @@
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
               div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
+    div(v-if="alarm.causes")
+      v-tooltip(top)
+        v-icon.badge.purple.white--text(
+          slot="activator",
+          data-test="extraDetailsOpenButton-groupCauses",
+          small
+        ) {{ $constants.EVENT_ENTITY_STYLE.groupCauses.icon }}
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
+          strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+          div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ alarm.causes.total }}
+    div(v-if="alarm.consequences")
+      v-tooltip(top)
+        v-icon.badge.purple.white--text(
+          slot="activator",
+          data-test="extraDetailsOpenButton-groupConsequences",
+          small
+        ) {{ $constants.EVENT_ENTITY_STYLE.groupConsequences.icon }}
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
+          strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+          div {{ $t('common.title') }} : {{ alarm.rule | get('name', '') }}
+          div {{ $t('alarmList.actions.iconsFields.consequences') }} : {{ alarm.consequences.total }}
 </template>
 
 <script>

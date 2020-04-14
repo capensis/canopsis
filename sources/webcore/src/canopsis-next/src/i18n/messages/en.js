@@ -215,9 +215,12 @@ export default {
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
+        grouping: 'Grouping',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
+        causes: 'Causes',
+        consequences: 'Consequences',
       },
     },
     timeLine: {
