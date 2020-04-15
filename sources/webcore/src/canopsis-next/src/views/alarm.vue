@@ -3,6 +3,7 @@
     :widget="widget",
     :alarms="alarmItems",
     :columns="columns",
+    expandable,
     hasColumns
   )
 </template>

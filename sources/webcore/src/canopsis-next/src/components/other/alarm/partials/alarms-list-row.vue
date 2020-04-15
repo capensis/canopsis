@@ -14,7 +14,7 @@
             disabled,
             hide-details
           )
-        v-layout.ml-2(align-center)
+        v-layout.ml-2(v-if="expandable", align-center)
           v-btn.ma-0(
             :class="expandButtonClass",
             icon,
@@ -53,7 +53,6 @@ export default {
     ActionsPanel,
     AlarmColumnValue,
   },
-  inject: ['$periodicRefresh'],
   mixins: [widgetExpandPanelAlarm],
   model: {
     prop: 'selected',
@@ -65,6 +64,10 @@ export default {
       default: false,
     },
     selectable: {
+      type: Boolean,
+      default: false,
+    },
+    expandable: {
       type: Boolean,
       default: false,
     },
