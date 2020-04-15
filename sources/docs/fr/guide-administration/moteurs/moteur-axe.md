@@ -34,7 +34,7 @@ Les options acceptées par la dernière version de Canopsis sont les suivantes 
 
 Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
 
-À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet de forcer le moteur à prendre en compte toutes les nouvelles mises à jour de son fichier de configuration, après un redémarrage. Si cette option n'est pas précisée, `engine-axe` synchronisera sa configuration en base uniquement à son premier lancement.
+À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet au moteur de ne pas prendre en compte les paramètres qui se trouvent dans son fichier de configuration lors du démarrage. Il se basera alors uniquement sur les données présentes en base. Si cette option n'est pas précisée, `engine-axe` synchronisera les informations présentes en base avec celles contenues dans le fichier lors de son premier lancement.
 
 Le contenu par défaut de ce fichier de configuration est le suivant :
 
