@@ -582,11 +582,32 @@ class AlertsReader(object):
         return pipeline
 
     def _can_add_metaalarm_filter(self, filter_, with_consequences):
+        """
+        Method checks ability to filter metaalarms
+
+        With any conditions in filter except filter by _id metaalarms grouping must be skipped, a regular alarms list
+        in this case.
+        An empty filter or filter by _id or `with_consequences` allows to group metaalarms.
+
+        :param dict| list of dict filter_: MongoDB filter
+        :param bool with_consequences: `with_consequences` request parameter to group alarms with metaalarm under
+        `consequneces` key
+        :returns: true when filter can be changed to find metaalarms
+        :rtype: bool
+        """
         not_by_id = lambda x: "u'_id':" not in str(x)
         return (isinstance(filter_, dict) and (filter_ == {} or filter_ and not_by_id(filter_)) or \
             (isinstance(filter_, list) and filter_ != [] and not_by_id(filter_))) or with_consequences
 
     def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
+        """
+        Method adds filter to find metaalarms
+
+        :param list of dict pipeline: MongoDB aggregation pipeline
+        :param int start_pos: pipeline item position to insert filter
+        :param bool with_consequences: `with_consequences` request parameter to group alarms with metaalarm under
+        `consequneces` key
+        """
         consequences_pipeline = {"total": {"$size": "$v.children"}}
         if with_consequences:
             consequences_pipeline["data"] = "$v.children"
