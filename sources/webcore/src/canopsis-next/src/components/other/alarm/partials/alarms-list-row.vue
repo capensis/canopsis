@@ -1,6 +1,6 @@
 <template lang="pug">
   tr(:data-test="`tableRow-${alarm._id}`")
-    td.pr-0(data-test="rowCheckbox")
+    td.pr-0(v-if="selectable || expandable", data-test="rowCheckbox")
       v-layout(row, align-center)
         template(v-if="selectable")
           v-checkbox-functional(

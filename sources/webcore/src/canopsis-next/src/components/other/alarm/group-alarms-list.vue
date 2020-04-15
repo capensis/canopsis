@@ -40,7 +40,6 @@ export default {
   components: {
     RecordsPerPage,
   },
-  inject: ['$periodicRefresh'],
   mixins: [
     widgetGroupFetchQueryMixin,
     widgetColumnsMixin,
