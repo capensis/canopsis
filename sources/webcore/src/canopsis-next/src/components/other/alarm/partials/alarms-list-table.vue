@@ -159,10 +159,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.fetchAlarmColumnFilters();
-  },
-
   methods: {
     checkIsTourEnabledForAlarmByIndex(index) {
       return this.isTourEnabled && index === 0;

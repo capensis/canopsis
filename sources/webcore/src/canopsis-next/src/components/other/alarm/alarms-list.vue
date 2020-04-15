@@ -90,6 +90,7 @@ import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
 import AlarmListSearch from './search/alarm-list-search.vue';
 import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
@@ -114,6 +115,7 @@ export default {
   },
   mixins: [
     authMixin,
+    alarmColumnFilters,
     widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
@@ -168,6 +170,9 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+  },
+  mounted() {
+    this.fetchAlarmColumnFilters();
   },
   methods: {
     onTourNextStep(currentStep) {
