@@ -221,6 +221,7 @@ export default {
         ticketNumber: 'Ticket number',
         causes: 'Causes',
         consequences: 'Consequences',
+        rule: 'Rule | Rules',
       },
     },
     timeLine: {

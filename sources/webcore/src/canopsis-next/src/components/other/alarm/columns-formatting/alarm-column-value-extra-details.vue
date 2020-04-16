@@ -81,6 +81,15 @@
         ) {{ $constants.EVENT_ENTITY_STYLE.groupCauses.icon }}
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+          v-layout(row)
+            v-flex(xs6)
+              div {{ $tc('alarmList.actions.iconsFields.rule', causesRules.length) }}&nbsp;:
+            v-flex(xs6)
+              div(
+                v-for="(rule, index) in causesRules",
+                :key="rule.id",
+                :style="index | ruleStyle"
+              ) &nbsp;{{ rule.name }}
           div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ alarm.causes.total }}
     div(v-if="alarm.consequences")
       v-tooltip(top)
@@ -96,6 +105,8 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+
 /**
  * Component for the 'extra-details' column of the alarms list
  *
@@ -104,6 +115,15 @@
  * @prop {Object} alarm - Object representing the alarm
  */
 export default {
+  filters: {
+    ruleStyle(index) {
+      if (index % 2 === 1) {
+        return { color: '#b5b5b5' };
+      }
+
+      return {};
+    },
+  },
   props: {
     alarm: {
       type: Object,
@@ -113,6 +133,9 @@ export default {
   computed: {
     pbehaviors() {
       return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
+    },
+    causesRules() {
+      return get(this.alarm.causes, 'rules', []);
     },
   },
 };
