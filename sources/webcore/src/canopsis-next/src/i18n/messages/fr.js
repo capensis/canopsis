@@ -203,9 +203,13 @@ export default {
         canceled: 'Annulé',
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
+        grouping: 'Grouping',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
+        causes: 'Causes',
+        consequences: 'Conséquences',
+        rule: 'Règle | Règles',
       },
     },
     timeLine: {

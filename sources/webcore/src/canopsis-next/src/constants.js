@@ -353,6 +353,12 @@ export const EVENT_ENTITY_STYLE = {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
   },
+  groupConsequences: {
+    icon: 'flash_on',
+  },
+  groupCauses: {
+    icon: 'note',
+  },
 };
 
 export const UNKNOWN_VALUE_STYLE = {
