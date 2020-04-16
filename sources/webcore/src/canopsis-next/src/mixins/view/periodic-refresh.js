@@ -4,19 +4,15 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getSecondsByUnit } from '@/helpers/time';
-import subscribersMixin from '@/mixins/subscribers';
+import Observer from '@/helpers/observer';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
 
 export default {
-  mixins: [subscribersMixin, layoutNavigationEditingModeMixin],
+  mixins: [layoutNavigationEditingModeMixin],
   provide() {
     return {
-      $periodicRefresh: {
-        subscribe: this.subscribe,
-        unsubscribe: this.unsubscribe,
-        subscribers: this.subscribers,
-      },
+      $periodicRefresh: this.$periodicRefresh,
     };
   },
   data() {
@@ -24,6 +20,10 @@ export default {
       periodicRefreshInterval: null,
       periodicRefreshProgress: undefined,
     };
+  },
+
+  beforeCreate() {
+    this.$periodicRefresh = new Observer();
   },
 
   watch: {
@@ -119,7 +119,7 @@ export default {
     async callSubscribers() {
       this.stopPeriodicRefreshInterval();
 
-      await this.notify();
+      await this.$periodicRefresh.notify();
 
       this.startPeriodicRefreshInterval();
     },
