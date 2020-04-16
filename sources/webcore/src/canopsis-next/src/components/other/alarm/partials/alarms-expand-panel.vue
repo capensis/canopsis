@@ -21,7 +21,7 @@
           v-card.tab-item-card
             v-card-text
               time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
-    template(v-if="alarm.causes")
+    template(v-if="alarm.causes && !hideGroups")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -35,7 +35,7 @@
                   :alarm="alarm",
                   :isEditingMode="isEditingMode"
                 )
-    template(v-if="alarm.consequences")
+    template(v-if="alarm.consequences && !hideGroups")
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -77,6 +77,10 @@ export default {
       required: true,
     },
     isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+    hideGroups: {
       type: Boolean,
       default: false,
     },

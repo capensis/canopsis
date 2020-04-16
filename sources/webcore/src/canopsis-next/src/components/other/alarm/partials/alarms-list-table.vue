@@ -40,6 +40,7 @@
           alarms-expand-panel(
             :alarm="props.item",
             :widget="widget",
+            :hideGroups="hideGroups",
             :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
     slot
@@ -107,6 +108,10 @@ export default {
       default: false,
     },
     selectable: {
+      type: Boolean,
+      default: false,
+    },
+    hideGroups: {
       type: Boolean,
       default: false,
     },

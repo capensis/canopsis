@@ -8,6 +8,8 @@
       :isEditingMode="isEditingMode",
       :hasColumns="hasGroupColumns",
       :columns="groupColumns",
+      expandable,
+      hideGroups,
       ref="alarmsTable"
     )
     v-layout.white(align-center)
