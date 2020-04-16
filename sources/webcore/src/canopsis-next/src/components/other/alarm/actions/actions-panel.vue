@@ -153,7 +153,6 @@ export default {
       const { filteredActionsMap } = this;
 
       const actions = [
-        filteredActionsMap.changeState,
         filteredActionsMap.snooze,
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
