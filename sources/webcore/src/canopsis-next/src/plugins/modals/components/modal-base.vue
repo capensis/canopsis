@@ -47,7 +47,7 @@ export default {
       },
 
       call(...args) {
-        return this.handlers.reduce((acc, handler) => handler(...args), true);
+        return this.handlers.reduce((acc, handler) => acc && handler(...args), true);
       },
     };
   },
