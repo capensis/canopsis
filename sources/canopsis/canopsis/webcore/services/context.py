@@ -20,9 +20,11 @@
 
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.alerts.reader import AlertsReader
 
 
 def exports(ws):
+    alr = AlertsReader(*AlertsReader.provide_default_basics())
     manager = ContextGraph(ws.logger)
 
     @route(ws.application.get)
@@ -57,9 +59,10 @@ def exports(ws):
 
         return result
 
-    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
+    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter', 'search'])
     def context(context=None,
                 _filter=None,
+                search='',
                 extended=False,
                 limit=0,
                 start=0,
@@ -69,8 +72,18 @@ def exports(ws):
         if _filter is not None:
             query.update(_filter)
 
+        final_filter = {'$and': [query]}
+        # try grammar search
+        try:
+            _, bnf_search_filter = alr.interpret_search(search)
+        except ValueError:
+            bnf_search_filter = None
+
+        if bnf_search_filter is not None:
+            final_filter['$and'].append(bnf_search_filter)
+
         data, count = manager.get_entities(
-            query=query,
+            query=final_filter,
             limit=limit,
             start=start,
             sort=sort,
