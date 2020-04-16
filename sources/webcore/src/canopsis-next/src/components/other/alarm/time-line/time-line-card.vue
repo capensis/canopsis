@@ -81,10 +81,13 @@ export default {
 
     stepTitle() {
       const { _t: type, a: author, role } = this.step;
+      const typeMessageKey = `alarmList.timeLine.types.${type}`;
 
       let formattedStepTitle = '';
 
-      if (this.isStepTypeAction) {
+      if (this.$te(typeMessageKey)) {
+        formattedStepTitle = this.$t(typeMessageKey);
+      } else if (this.isStepTypeAction) {
         formattedStepTitle = type.replace(/(declare)|(ack)/g, '$& ');
       } else {
         formattedStepTitle = type.replace(/(status)|(state)/g, '$& ').replace(/(inc)|(dec)/g, '$&reased');

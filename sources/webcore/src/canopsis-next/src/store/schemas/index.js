@@ -78,6 +78,8 @@ export const heartbeatSchema = new schema.Entity(ENTITIES_TYPES.heartbeat, {}, {
 
 export const dynamicInfoSchema = new schema.Entity(ENTITIES_TYPES.dynamicInfo, {}, { idAttribute: '_id' });
 
+export const broadcastMessageSchema = new schema.Entity(ENTITIES_TYPES.broadcastMessage, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -98,4 +100,5 @@ export default {
   [ENTITIES_TYPES.action]: actionSchema,
   [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
   [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
+  [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
 };

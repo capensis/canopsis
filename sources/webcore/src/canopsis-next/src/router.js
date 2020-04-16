@@ -10,10 +10,12 @@ import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathBy
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
+import Alarm from '@/views/alarm.vue';
 import AdminRights from '@/views/admin/rights.vue';
 import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
+import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
@@ -51,6 +53,18 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: route => route.params.id,
+      },
+    },
+    props: route => ({ id: route.params.id }),
+  },
+  {
+    path: '/alarms/:id',
+    name: 'alarms',
+    component: Alarm,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.view,
       },
     },
     props: route => ({ id: route.params.id }),
@@ -96,6 +110,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.parameters,
+      },
+    },
+  },
+  {
+    path: '/admin/broadcast-messages',
+    name: 'admin-broadcast-messages',
+    component: AdminBroadcastMessages,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.broadcastMessage,
       },
     },
   },

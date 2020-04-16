@@ -268,6 +268,14 @@
         "type": "RW"
     },
     {
+        "_id" : "models_broadcastMessage",
+        "loader_id" : "models_broadcastMessage",
+        "crecord_name": "models_broadcastMessage",
+        "crecord_type" : "action",
+        "desc": "Broadcast Messages",
+        "type": "CRUD"
+    },
+    {
         "_id" : "models_serie",
         "loader_id" : "models_serie",
         "crecord_name": "models_serie",
@@ -854,5 +862,19 @@
         "crecord_name": "showview_view_notifications",
         "crecord_type" : "action",
         "desc": "Access to view.notifications menu"
+    },
+    {
+        "_id" : "common_variablesHelp",
+        "loader_id" : "common_variablesHelp",
+        "crecord_name": "common_variablesHelp",
+        "crecord_type" : "action",
+        "desc": "Access to available variables list"
+    },
+    {
+        "_id" : "counter_alarmsList",
+        "loader_id" : "counter_alarmsList",
+        "crecord_name": "counter_alarmsList",
+        "crecord_type" : "action",
+        "desc": "Counter: Access to 'Alarms list' modal"
     }
 ]

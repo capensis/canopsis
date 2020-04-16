@@ -1,6 +1,6 @@
 import moment from 'moment';
-import { omit, pick } from 'lodash';
-import { ACTION_TYPES, DURATION_UNITS, ACTION_AUTHOR } from '@/constants';
+import { omit, pick, isEmpty } from 'lodash';
+import { ACTION_TYPES, TIME_UNITS, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
@@ -23,18 +23,24 @@ function actionSnoozeParametersToForm(parameters = {}) {
   const data = {};
 
   if (parameters.duration) {
-    const durationUnits = Object.values(DURATION_UNITS).map(unit => unit.value);
+    const durationUnits = [
+      TIME_UNITS.year,
+      TIME_UNITS.month,
+      TIME_UNITS.week,
+      TIME_UNITS.week,
+      TIME_UNITS.day,
+      TIME_UNITS.hour,
+      TIME_UNITS.minute,
+      TIME_UNITS.second,
+    ];
 
     // Check for the lowest possible unit to convert the duration in.
-    const foundUnit = durationUnits.find(unit =>
-      moment.duration(parameters.duration, 'seconds').as(unit) % 1 === 0);
+    const durationType = durationUnits.find(unit => moment.duration(parameters.duration, 'seconds').as(unit) % 1 === 0);
 
-    const duration = {
-      duration: moment.duration(parameters.duration, 'seconds').as(foundUnit),
-      durationType: foundUnit,
+    data.duration = {
+      duration: moment.duration(parameters.duration, 'seconds').as(durationType),
+      durationType,
     };
-
-    data.duration = duration;
   }
 
   if (parameters && parameters.message) {
@@ -81,78 +87,119 @@ export function actionToForm(action) {
 
   data.generalParameters = pick(action, ['_id', 'type', 'hook']);
 
-  switch (action.type) {
-    case ACTION_TYPES.snooze:
-      data.snoozeParameters = {
-        ...data.snoozeParameters,
-        ...actionSnoozeParametersToForm(action.parameters),
-      };
-      break;
-    case ACTION_TYPES.pbehavior:
-      data.pbehaviorParameters = {
-        ...data.pbehaviorParameters,
-        ...actionPbehaviorParametersToForm(action.parameters),
-      };
-      break;
-    case ACTION_TYPES.changeState:
-      data.changeStateParameters = {
-        ...data.changeStateParameters,
-        ...action.parameters,
-      };
-      break;
+  if (action.delay) {
+    const [, value, unit] = action.delay.match(/^(\d+)(\w)$/);
+
+    data.generalParameters.delay = {
+      value: +value,
+      unit,
+    };
   }
+
+  const actionToFormPrepareMap = {
+    [ACTION_TYPES.snooze]: actionSnoozeParametersToForm,
+    [ACTION_TYPES.pbehavior]: actionPbehaviorParametersToForm,
+  };
+  const prepareHandler = actionToFormPrepareMap[action.type];
+
+  const parameters = prepareHandler
+    ? prepareHandler(action.parameters)
+    : action.parameters;
+
+  const fieldKey = ACTION_FORM_FIELDS_MAP_BY_TYPE[action.type];
+
+  data[fieldKey] = {
+    ...data[fieldKey],
+    ...parameters,
+  };
 
   return data;
 }
 
 /**
+ * Prepare snooze parameters from form
+ *
+ * @param snoozeParameters
+ * @returns {{duration: number}}
+ */
+export function prepareSnoozeParameters({ snoozeParameters = {} }) {
+  return ({
+    ...snoozeParameters,
+    duration: moment.duration(
+      parseInt(snoozeParameters.duration.duration, 10),
+      snoozeParameters.duration.durationType,
+    ).asSeconds(),
+  });
+}
+
+/**
+ * Prepare pbehavior parameters from form
+ *
+ * @param pbehaviorParameters
+ * @returns {{ tstart: number, exdate: Array, comments: Array, tstop: number }}
+ */
+export function preparePbehaviorParameters({ pbehaviorParameters = {} }) {
+  const pbehavior = formToPbehavior(pbehaviorParameters.general);
+
+  return {
+    ...pbehavior,
+    comments: commentsToPbehaviorComments(pbehaviorParameters.comments),
+    exdate: exdatesToPbehaviorExdates(pbehaviorParameters.exdate),
+  };
+}
+
+/**
  * Prepare action object by form object
  *
- * @param [generalParameters={}]
- * @param [pbehaviorParameters={}]
- * @param [snoozeParameters={}]
- * @param [changeStateParameters={}]
+ * @param [generalParameters]
+ * @param {Object} form
+ * @param [form.pbehaviorParameters]
+ * @param [form.snoozeParameters]
+ * @param [form.changeStateParameters]
+ * @param [form.ackParameters]
+ * @param [form.ackremoveParameters]
+ * @param [form.assocticketParameters]
+ * @param [form.declareticketParameters]
+ * @param [form.cancelParameters]
  * @returns {Object}
  */
 export function formToAction({
   generalParameters = {},
-  pbehaviorParameters = {},
-  snoozeParameters = {},
-  changeStateParameters = {},
+  ...form
 }) {
   let data = { ...generalParameters };
 
   const patternsCondition = value => !value || !value.length;
+  const hasValue = v => !v;
 
   data = unsetSeveralFieldsWithConditions(data, {
     'hook.event_patterns': patternsCondition,
     'hook.alarm_patterns': patternsCondition,
     'hook.entity_patterns': patternsCondition,
+    'delay.unit': hasValue,
+    'delay.value': hasValue,
   });
 
-  if (generalParameters.type === ACTION_TYPES.snooze) {
-    const duration = moment.duration(
-      parseInt(snoozeParameters.duration.duration, 10),
-      snoozeParameters.duration.durationType,
-    ).asSeconds();
-
-    data.parameters = {
-      ...snoozeParameters,
-      duration,
-    };
-  } else if (generalParameters.type === ACTION_TYPES.pbehavior) {
-    const pbehavior = formToPbehavior(pbehaviorParameters.general);
-
-    pbehavior.comments =
-      commentsToPbehaviorComments(pbehaviorParameters.comments);
-    pbehavior.exdate = exdatesToPbehaviorExdates(pbehaviorParameters.exdate);
-
-    data.parameters = { ...pbehavior };
-  } else if (generalParameters.type === ACTION_TYPES.changeState) {
-    data.parameters = { ...changeStateParameters };
+  if (!isEmpty(data.delay)) {
+    data.delay = `${data.delay.value}${data.delay.unit}`;
+  } else {
+    delete data.delay;
   }
 
-  data.parameters.author = ACTION_AUTHOR;
+  const formToActionPrepareMap = {
+    [ACTION_TYPES.snooze]: prepareSnoozeParameters,
+    [ACTION_TYPES.pbehavior]: preparePbehaviorParameters,
+  };
+
+  const prepareField = formToActionPrepareMap[generalParameters.type];
+  const parameters = prepareField
+    ? prepareField(form)
+    : form[ACTION_FORM_FIELDS_MAP_BY_TYPE[generalParameters.type]];
+
+  data.parameters = {
+    ...parameters,
+    author: ACTION_AUTHOR,
+  };
 
   return data;
 }

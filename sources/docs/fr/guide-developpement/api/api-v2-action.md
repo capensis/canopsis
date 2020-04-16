@@ -34,6 +34,7 @@ Crée une nouvelle Action à partir du corps de la requête.
             "create"
         ]
     },
+    "delay": "1m",
     "parameters": {
         "name": "pbehavior_name",
         "author": "System",
@@ -65,6 +66,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
             "create"
         ]
     },
+    "delay": "1m",
     "parameters": {
         "name": "pbehavior_test_action",
         "author": "System",
@@ -166,6 +168,7 @@ Modifie une action à partir du corps de la requête.
             "create"
         ]
     },
+    "delay": "1m",
     "parameters": {
         "name": "pbehavior_name",
         "author": "System",
@@ -197,6 +200,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
             "create"
         ]
     },
+    "delay": "1m",
     "parameters": {
         "name": "pbehavior_name",
         "author": "System",

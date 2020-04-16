@@ -1,6 +1,14 @@
 ---
-- name: Override amqp2engines.conf with amqp2engines-python.conf.example
+- name: Override amqp2engines.conf with amqp2engines-python.conf.example (Core)
   copy:
-    src: "{{ canopsis_home }}/etc/amqp2engines-python.conf.example"
+    src: "{{ canopsis_home }}/etc/amqp2engines-python-core.conf.example"
     dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
     remote_src: yes
+  when: canopsis_edition == "core"
+
+- name: Override amqp2engines.conf with amqp2engines-python.conf.example (CAT)
+  copy:
+    src: "{{ canopsis_home }}/etc/amqp2engines-python-cat.conf.example"
+    dest: "{{ canopsis_home }}/etc/amqp2engines.conf"
+    remote_src: yes
+  when: canopsis_edition == "cat"

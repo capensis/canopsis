@@ -22,10 +22,10 @@ Plusieurs options sont disponibles pour personnaliser l'interface de Canopsis.
 
 Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
 
-## Les helpers Handlebars
+## Helpers Handlebars
 
-A différents endroits de l'interface de Canopsis, le texte affiché est personnalisable grâce au langage Handlebars.
+À différents endroits de l'interface de Canopsis, le texte affiché est personnalisable grâce au langage Handlebars.
 
-Différents helpers sont disponibles pour ajouter un peu de logique dans ces templates.
+Différents *helpers* sont disponibles pour ajouter un peu de logique dans ces templates.
 
-Pour plus de détails, rendez-vous [ici](./helpers/index.md)
+Pour plus de détails, consultez la [documentation des helpers Handlebars de Canopsis](helpers/index.md).

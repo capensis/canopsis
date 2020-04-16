@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { isNumber } from 'lodash';
 import { PERIODIC_REFRESH_UNITS } from '@/constants';
 
 export default {
@@ -49,7 +50,7 @@ export default {
   },
   computed: {
     isRequired() {
-      return this.required || Object.values(this.value).some(Boolean);
+      return this.required || isNumber(this.value.count) || isNumber(this.value.delay) || Boolean(this.value.unit);
     },
     availableUnits() {
       return Object.values(PERIODIC_REFRESH_UNITS).map(({ value, text }) => ({

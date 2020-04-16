@@ -29,7 +29,6 @@ import featuresService from '@/services/features';
  *
  * @prop {Object} item - Object representing an alarm
  * @prop {Object} widget - Full widget object
- * @prop {boolean} [isEditingMode=false] - Is editing mode enable on a view
  */
 export default {
   components: { SharedActionsPanel },
@@ -48,10 +47,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     isResolvedAlarm: {
       type: Boolean,
@@ -152,13 +147,7 @@ export default {
     resolvedActions() {
       const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
 
-      const actions = [pbehaviorList];
-
-      if (this.isEditingMode) {
-        actions.push(variablesHelp);
-      }
-
-      return actions;
+      return [pbehaviorList, variablesHelp];
     },
     unresolvedActions() {
       const { filteredActionsMap } = this;
@@ -173,9 +162,7 @@ export default {
         actions.push(filteredActionsMap.history);
       }
 
-      if (this.isEditingMode) {
-        actions.push(filteredActionsMap.variablesHelp);
-      }
+      actions.push(filteredActionsMap.variablesHelp);
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {

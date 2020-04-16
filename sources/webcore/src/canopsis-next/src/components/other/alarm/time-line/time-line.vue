@@ -17,11 +17,11 @@ import { orderBy, groupBy } from 'lodash';
 import TimeLineFlag from '@/components/other/alarm/time-line/time-line-flag.vue';
 import TimeLineCard from '@/components/other/alarm/time-line/time-line-card.vue';
 
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/time-line';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },
-  mixins: [entitiesAlarmMixin],
+  mixins: [widgetExpandPanelAlarmTimeLine],
   props: {
     alarm: {
       type: Object,
@@ -38,36 +38,18 @@ export default {
     };
   },
   watch: {
-    alarm(alarm) {
-      if (alarm.v.steps) {
-        this.groupedSteps = this.groupSteps(alarm.v.steps);
-      } else {
-        this.fetchItem();
-      }
+    alarm: {
+      immediate: true,
+      handler(alarm) {
+        if (alarm.v.steps) {
+          this.groupedSteps = this.groupSteps(alarm.v.steps);
+        } else {
+          this.fetchItemWithSteps();
+        }
+      },
     },
-  },
-  mounted() {
-    this.fetchItem();
   },
   methods: {
-    fetchItem() {
-      const params = {
-        sort_key: 't',
-        sort_dir: 'DESC',
-        limit: 1,
-        with_steps: true,
-      };
-
-      if (this.alarm.v.resolved) {
-        params.resolved = true;
-      }
-
-      this.fetchAlarmItem({
-        id: this.alarm._id,
-        params,
-      });
-    },
-
     groupSteps(steps) {
       const orderedSteps = orderBy(steps, ['t'], 'desc');
 
@@ -89,9 +71,9 @@ export default {
       li:last-child {
         .timeline-item:last-child {
           border-image: linear-gradient(
-              to bottom,
-              $border-line 60%,
-              $background) 1 100%;
+                  to bottom,
+                  $border-line 60%,
+                  $background) 1 100%;
         }
       }
     }

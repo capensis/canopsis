@@ -1,8 +1,8 @@
-import { isEmpty, isBoolean } from 'lodash';
+import { isBoolean } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
-import prepareMainFilterToQueryFilter from '@/helpers/filter';
+import { prepareMainFilterToQueryFilter, getMainFilter } from '@/helpers/filter';
 
 export default {
   computed: {
@@ -11,15 +11,7 @@ export default {
     },
 
     mainFilter() {
-      const mainFilter = !isEmpty(this.userPreference.widget_preferences.mainFilter) ?
-        this.userPreference.widget_preferences.mainFilter :
-        this.widget.parameters.mainFilter;
-
-      if (Array.isArray(mainFilter)) {
-        return mainFilter;
-      }
-
-      return isEmpty(mainFilter) ? null : mainFilter;
+      return getMainFilter(this.widget, this.userPreference);
     },
 
     viewFilters() {
@@ -61,7 +53,7 @@ export default {
     },
 
     updateSelectedFilter(filterObject) {
-      this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {} });
+      this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
       this.updateQueryBySelectedFilterAndCondition(filterObject, this.mainFilterCondition);
     },
 
@@ -69,6 +61,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         filter: prepareMainFilterToQueryFilter(filter, condition),
       };
     },

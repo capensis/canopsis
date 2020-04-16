@@ -22,6 +22,7 @@
       date-interval-selector.my-1(
         v-field="form",
         :tstopRules="tstopRules",
+        roundHours,
         @update:startObjectValue="updateStartObjectValue",
         @update:stopObjectValue="updateStopObjectValue"
       )

@@ -17,11 +17,11 @@ Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la 
 
 L['event-filter](moteur-che-event_filter.md) peut utiliser des sources de données externes pour enrichir les évènements. Ces sources externes (à l'exception de `entity`) sont des [plugins](../../guide-developpement/plugins/event-filter-data-source.md) disponibles dans Canopsis CAT.
 
-Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
+Les plugins doivent être placés dans un dossier accessible par le moteur `che`.
 
 ### Activation avec Docker
 
-Les plugins doivent-être ajoutés dans un volume dans l'image docker, et leur emplacement doit-être précisé dans la commande. Par exemple, avec `docker-compose` :
+Les plugins doivent être ajoutés dans un volume dans l'image Docker, et leur emplacement doit être précisé dans la commande. Par exemple, avec `docker-compose` :
 
 ```yaml
   che:
@@ -36,7 +36,7 @@ Les plugins doivent-être ajoutés dans un volume dans l'image docker, et leur e
 
 Dans une installation Docker, l'image `canopsis/engine-che-cat` remplace l'image par défaut `canopsis/engine-che`. Le moteur `che` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin d'enrichissement externe soit chargé : `engine-che -dataSourceDirectory /data-source-plugins`
 
-Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
+Les plugins doivent être placés dans un dossier accessible par le moteur `che`.
 
 L'exécutable `engine-che` accepte une option `-dataSourceDirectory` permettant de préciser le dossier contenant les plugins. Par défaut, ce dossier est celui contenant `engine-che`.
 
@@ -149,7 +149,7 @@ Les règles de types `enrichment` sont des règles d'enrichissement, qui permett
 Ces règles peuvent avoir les paramètres suivants (en plus de `type`, `pattern`, `priority` et `enabled`) :
 
  - `actions` (requis) : une liste d'actions à appliquer à l'évènement (voir [Actions](#actions) pour plus de détails).
- - `external_data` (optionnel) : des sources de données externes (voir [Données externes](#données-externes) pour plus de détails).
+ - `external_data` (optionnel) : des sources de données externes (voir [Données externes](#donnees-externes) pour plus de détails).
  - `on_success` (optionnel, `pass` par défaut) : le résultat de la règle en cas de succès (`pass`, `break` ou `drop`).
  - `on_failure` (optionnel, `pass` par défaut) : le résultat de la règle en cas d'échec (`pass`, `break` ou `drop`).
 
@@ -202,7 +202,7 @@ go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
 [Expressions régulières](#expressions-régulières) pour plus de détails), ou
-d'utiliser des [données externes](#données-externes).
+d'utiliser des [données externes](#donnees-externes).
 
 Par exemple, l'action suivante modifie l'output d'un évènement pour y ajouter
 son auteur :
@@ -234,7 +234,7 @@ go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
 [Expressions régulières](#expressions-régulières) pour plus de détails), ou
-d'utiliser des [données externes](#données-externes).
+d'utiliser des [données externes](#donnees-externes).
 
 
 Par exemple, l'action suivante modifie l'information `customer` d'une entité :
@@ -265,7 +265,7 @@ Les paramètres de l'action sont :
    d'un champ de l'évènement (`Event.NomDuChamp`), d'un sous-groupe d'une
    expression régulière (voir [Expressions
    régulières](#expressions-régulières)), ou d'une donnée externe (voir
-   [Données externes](#données-externes)).
+   [Données externes](#donnees-externes)).
  - `to` : le nom du champ de l'évènement dans lequel la valeur doit être
    copiée.
 
@@ -313,12 +313,12 @@ qui vaudra `97.5`, dans un template.
 ### Données externes
 
 Le champ `external_data` est un objet JSON contenant des couples `<nom de la
-données>: <source de données>`.
+donnée>: <source de données>`.
 
 Lors de l'application d'une règle d'enrichissement à un évènement, les sources
 de données sont utilisées pour récupérer les données correspondant à cet
 évènement. Ces données sont alors disponibles dans `{{.ExternalData.<nom de la
-données>}}` pour les templates, et dans `ExternalData.<nom de la données>` pour
+donnée>}}` pour les templates, et dans `ExternalData.<nom de la donnée>` pour
 les actions de type `copy`.
 
 Une source de données est un objet JSON contenant un champ `type` indiquant le
@@ -380,7 +380,7 @@ Il est donc déconseillé de les utiliser dans des règles appliquées à tous l
 
 ## En cas de problème
 
-Les logs du container docker `che` peuvent contenir des informations sur
+Les logs du conteneur Docker `che` peuvent contenir des informations sur
 l'exécution de l'event-filter.
 
 ### Délai d'application des règles
@@ -394,10 +394,10 @@ Lors du chargement des règles, les règles dont le format est invalide sont
 ignorées. Un message d'erreur est écrit dans les logs, contenant la règle et la
 raison pour laquelle elle n'est pas valide.
 
-### Mode débug
+### Mode debug
 
 Pour tester le fonctionnement de l'event-filter, il est possible d'envoyer des
-évènements en mode débug, permettant de tracer l'exécution de l'event-filter
+évènements en mode debug, permettant de tracer l'exécution de l'event-filter
 sur cet évènement. Pour cela, il faut définir le champ `debug` de l'évènement à
 `true`.
 
@@ -496,7 +496,7 @@ l'event-filter, avec une priorité inférieure à celle des règles de traductio
 
 ### Passer des évènements en mode debug
 
-La règle suivante permet de passer les évènements d'un composant en mode débug.
+La règle suivante permet de passer les évènements d'un composant en mode debug.
 
 ```json
 {
