@@ -25,6 +25,8 @@ alarmSchema.define({
   },
 });
 
+alarmSchema.disabledCache = true;
+
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   pbehaviors: [pbehaviorSchema],
 }, {
