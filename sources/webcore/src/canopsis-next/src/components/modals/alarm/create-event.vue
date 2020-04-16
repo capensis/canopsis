@@ -72,7 +72,7 @@ export default {
           data.cancel = 1;
         }
 
-        await this.createEvent(this.eventType, this.items, data);
+        await this.createEvent(this.config.eventType, this.items, data);
 
         this.$modals.hide();
       }
