@@ -26,6 +26,7 @@
             :label="$t('settings.columnNames')",
             withHtml
           )
+          v-divider
           field-columns(
             v-model="settings.widget.parameters.widgetGroupColumns",
             :label="$t('settings.groupColumnNames')",
