@@ -6,7 +6,9 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
+  BROADCAST_MESSAGES_STATUSES,
 } from '@/constants';
+
 import featureService from '@/services/features';
 
 export default {
@@ -42,6 +44,9 @@ export default {
     date: 'Date',
     comment: 'Commentaire | Commentaires',
     end: 'Fin',
+    start: 'Début',
+    message: 'Message',
+    preview: 'Aperçu',
     recursive: 'Récursif',
     select: 'Sélectionner',
     states: 'Сriticités',
@@ -91,6 +96,8 @@ export default {
     search: 'Recherche',
     webhooks: 'Webhooks',
     links: 'Liens',
+    broadcastMessages: 'Diffuser des messages',
+    status: 'Statut',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -255,6 +262,7 @@ export default {
     type: 'Type',
     reason: 'Raison',
     rrule: 'Récurrence',
+    status: 'Statut',
   },
   settings: {
     titles: {
@@ -986,6 +994,18 @@ export default {
       views: 'Vues',
       result: 'Résultat',
     },
+    createBroadcastMessage: {
+      create: {
+        title: 'Créer un message de diffusion',
+      },
+      edit: {
+        title: 'Modifier le message diffusé',
+      },
+      defaultMessage: 'Votre message ici',
+      buttons: {
+        selectColor: 'Sélectionnez la couleur d\'arrière-plan',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1070,6 +1090,13 @@ export default {
         state: 'Etat',
         message: 'Message',
         timestamp: 'Date de dernière vérification',
+      },
+    },
+    broadcastMessages: {
+      statuses: {
+        [BROADCAST_MESSAGES_STATUSES.active]: 'Actif',
+        [BROADCAST_MESSAGES_STATUSES.pending]: 'En attente',
+        [BROADCAST_MESSAGES_STATUSES.expired]: 'Expiré',
       },
     },
   },

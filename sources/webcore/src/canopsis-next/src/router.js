@@ -16,6 +16,7 @@ import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
 import AdminHealthcheck from '@/views/admin/healthcheck.vue';
+import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
@@ -122,6 +123,17 @@ const routes = [
       requiresRight: {
         mask: USERS_RIGHTS_MASKS.default,
         id: USERS_RIGHTS.technical.healthcheck,
+      },
+    },
+  },
+  {
+    path: '/admin/broadcast-messages',
+    name: 'admin-broadcast-messages',
+    component: AdminBroadcastMessages,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.broadcastMessage,
       },
     },
   },

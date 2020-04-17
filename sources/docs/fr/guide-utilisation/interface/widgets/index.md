@@ -7,6 +7,7 @@ Plusieurs types de widgets sont disponibles dans Canopsis :
 * [Bac à alarmes](bac-a-alarmes/index.md)
 * [Explorateur de contexte](contexte/index.md)
 * [Météo de services](meteo-des-services/index.md)
+* [Compteur](compteur/index.md)
 * Statistiques :
     - Tableau
     - Compteur
@@ -43,6 +44,14 @@ Le widget **Météo de services** permet de visualiser rapidement l'état des se
 Celui-ci présente sous forme de grille un ensemble de services, avec un jeu de couleurs et d'icones permettant de rapidement visualiser une éventuelle source de problème.
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services/index.md)
+
+### [Compteur](compteur/index.md)
+
+Le widget **Compteur** permet de présenter des compteurs d'alarmes.  
+
+Il se présente sous la forme d'une grille de tuiles, avec un un jeu de couleurs et d'icônes permettant de visualiser un dépassement de seuil. 
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur](./compteur/index.md)
 
 ### Tableau de statistiques
 

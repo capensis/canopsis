@@ -1,7 +1,7 @@
 <template lang="pug">
   modal-wrapper(data-test="colorPickerModal")
     template(slot="title")
-      span {{ config.title }}
+      span {{ title }}
     template(slot="text")
       v-layout
         v-flex
@@ -50,6 +50,11 @@ export default {
     }
 
     return data;
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.colorPicker.title');
+    },
   },
   methods: {
     async submit() {

@@ -268,11 +268,19 @@
         "type": "RW"
     },
     {
-        "_id" : "models_healthcheck",
-        "loader_id" : "models_healthcheck",
+        "_id": "models_healthcheck",
+        "loader_id": "models_healthcheck",
         "crecord_name": "models_healthcheck",
-        "crecord_type" : "action",
+        "crecord_type": "action",
         "desc": "Healthcheck"
+    },
+    {
+        "_id" : "models_broadcastMessage",
+        "loader_id" : "models_broadcastMessage",
+        "crecord_name": "models_broadcastMessage",
+        "crecord_type" : "action",
+        "desc": "Broadcast Messages",
+        "type": "CRUD"
     },
     {
         "_id" : "models_serie",

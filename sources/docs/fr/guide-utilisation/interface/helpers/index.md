@@ -172,7 +172,7 @@ Ce helper accepte les attributs suivants :
 *  `method` (optionnel, `GET` par défaut). La méthode HTTP à utiliser pour effectuer la requête.
 *  `url` (obligatoire). URL de l'API JSON à interroger.
 *  `headers` (optionnel). Entêtes HTTP, au format JSON (`{"Nom-Entete": "valeur"}`), à intégrer lors de l'envoi de la requête.
-    *  **Note :** tout entête envoyé doit apparaître dans la directive `Access-Control-Allow-Headers` du [serveur Nginx intégré à Canopsis](../../../guide-administration/administration-avancee/reverse-proxy.md#configuration-de-nginx).
+    *  **Note :** tout entête envoyé doit apparaître dans la directive `Access-Control-Allow-Headers` du [serveur Nginx intégré à Canopsis](../../../guide-administration/administration-avancee/configuration-services/reverse-proxy-nginx.md#configuration-de-nginx).
 *  `username` (optionnel). Utilisateur pour l'authentification basique.
 *  `password` (optionnel). Mot de passe pour l'authentification basique.
     *  **Attention :** la requête étant exécutée par le navigateur client, ces identifiants peuvent être interceptés par un utilisateur.
@@ -261,6 +261,85 @@ Afficher une pastille « Invalid val » (l'état de criticité étant invalide
 {{state 9}}
 ```
 
+
+## Helpers mathématiques basiques
+
+!!! note
+    Disponible depuis Canopsis 3.39.0.
+
+4 helpers sont disponibles pour les opérations mathématiques de base.  
+
+1. sum : renvoie la somme des nombres passés en paramètre
+2. minus : renvoie la différence entre 2 nombres
+3. mul : renvoie le produit de 2 nombres
+4. divide : renvoie le résultat de la division entre 2 nombres
+
+### Helper `sum`
+
+```handlebars
+{{sum 1 2 3}}
+```
+
+Ce helper attend en paramètre un ensemble de nombres et renvoie leur somme
+
+#### Exemple d'utilisation du helper `sum`
+
+Afficher la somme de 1, 2, et 3 :
+
+```handlebars
+{{sum 1 2 3}}
+```
+
+### Helper `minus`
+
+```handlebars
+{{minus 10 1}}
+```
+
+Ce helper attend en paramètre 2 nombres et renvoie leur différence
+
+#### Exemple d'utilisation du helper `minus`
+
+Afficher la différence entre 10 et 1 :
+
+```handlebars
+{{minus 10 1}}
+```
+
+### Helper `mul`
+
+```handlebars
+{{mul 5 6}}
+```
+
+Ce helper attend en paramètre 2 nombres et renvoie leur produit
+
+#### Exemple d'utilisation du helper `mul`
+
+Afficher le produit entre 5 et 6 :
+
+```handlebars
+{{mul 5 6}}
+```
+
+### Helper `divide`
+
+```handlebars
+{{divde 10 2}}
+```
+
+Ce helper attend en paramètre 2 nombres et renvoie le résultat de leur division
+
+#### Exemple d'utilisation du helper `divide`
+
+Afficher la division 10 par 2 :
+
+```handlebars
+{{divide 10 2}}
+```
+
+!!! Note
+    Une division par 0 affichera `infinity`
 
 ## Helper `concat`
 

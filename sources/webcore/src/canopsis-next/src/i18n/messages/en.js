@@ -6,6 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
+  BROADCAST_MESSAGES_STATUSES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -43,7 +44,10 @@ export default {
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
+    start: 'Start',
     end: 'End',
+    message: 'Message',
+    preview: 'Preview',
     recursive: 'Recursive',
     select: 'Select',
     states: 'Severities',
@@ -102,6 +106,8 @@ export default {
     filter: 'Filter',
     stack: 'Stack',
     edition: 'Edition',
+    broadcastMessages: 'Broadcast messages',
+    status: 'Status',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -267,6 +273,7 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    status: 'Status',
     tabs: {
       filter: 'Filter',
       eids: 'Eids',
@@ -1067,6 +1074,18 @@ export default {
       views: 'Views',
       result: 'Result',
     },
+    createBroadcastMessage: {
+      create: {
+        title: 'Create broadcast message',
+      },
+      edit: {
+        title: 'Edit broadcast message',
+      },
+      defaultMessage: 'Your message here',
+      buttons: {
+        selectColor: 'Select background color',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1151,6 +1170,13 @@ export default {
         state: 'State',
         message: 'Message',
         timestamp: 'Last time checked',
+      },
+    },
+    broadcastMessages: {
+      statuses: {
+        [BROADCAST_MESSAGES_STATUSES.active]: 'Active',
+        [BROADCAST_MESSAGES_STATUSES.pending]: 'Pending',
+        [BROADCAST_MESSAGES_STATUSES.expired]: 'Expired',
       },
     },
   },
