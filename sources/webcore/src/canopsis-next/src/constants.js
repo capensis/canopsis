@@ -22,8 +22,6 @@ export const ENTITIES_TYPES = {
   viewRow: 'viewRow',
   viewTab: 'viewTab',
   widget: 'widget',
-  alarmConsequences: 'alarmConsequences',
-  alarmCauses: 'alarmCauses',
   stat: 'stat',
   user: 'user',
   role: 'role',

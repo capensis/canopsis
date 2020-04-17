@@ -4,7 +4,7 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getSecondsByUnit } from '@/helpers/time';
-import Observer from '@/helpers/observer';
+import Observer from '@/services/observer';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
 
