@@ -192,7 +192,7 @@ export default {
     },
 
     setModalTemplateWidgetVariable(editor) {
-      this.showVariablesHelpModal(editor, [this.watcherVariables, this.entitiesVariables]);
+      this.showVariablesHelpModal(editor, [this.watcherVariables]);
     },
 
     setEntitiesTemplateWidgetVariable(editor) {
