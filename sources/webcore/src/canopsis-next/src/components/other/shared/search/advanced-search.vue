@@ -1,10 +1,5 @@
 <template lang="pug">
-  search-field(
-    data-test="tableSearch",
-    v-model="searchingText",
-    @submit="submit",
-    @clear="clear"
-  )
+  search-field(v-model="searchingText", @submit="submit", @clear="clear")
     v-tooltip(bottom)
       v-btn(
         data-test="tableSearchHelp",
@@ -16,40 +11,65 @@
 </template>
 
 <script>
-import { replaceTextNotInQuotes } from '@/helpers/searching';
+import { omit } from 'lodash';
 
-import searchMixin from '@/mixins/search';
+import { replaceTextNotInQuotes } from '@/helpers/searching';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 /**
- * Search component for the alarms list
- *
- * @module alarm
- */
+   * Search component for the entities list
+   *
+   * @module context
+   */
 export default {
   components: { SearchField },
-  mixins: [searchMixin],
   props: {
+    query: {
+      type: Object,
+      required: true,
+    },
     columns: {
       type: Array,
       default: () => [],
+    },
+    parameter: {
+      type: String,
+      default: 'search',
     },
   },
   data() {
     return {
       searchingText: '',
-      requestParam: 'search',
     };
   },
-  computed: {
-    requestData() {
+  methods: {
+    getRequestData() {
       if (this.searchingText.startsWith('-')) {
         return this.columns.reduce((acc, { text, value }) =>
           replaceTextNotInQuotes(acc, text, value), this.searchingText.replace(/^-(\s*)/, ''));
       }
 
       return this.searchingText;
+    },
+
+    clear() {
+      this.searchingText = '';
+
+      this.$emit('update:query', omit(this.query, [this.parameter]));
+    },
+
+    submit() {
+      const requestData = this.getRequestData();
+
+      if (requestData || this.query[this.parameter]) {
+        this.$emit('update:query', {
+          ...this.query,
+
+          page: 1,
+          [this.parameter]: requestData,
+        });
+      }
     },
   },
 };

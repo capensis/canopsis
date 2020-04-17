@@ -2,7 +2,7 @@
   div
     v-layout.white(justify-space-between, align-center)
       v-flex
-        context-search(:query.sync="query")
+        advanced-search(:query.sync="query", :columns="columns")
       v-flex
         pagination(
           v-if="hasColumns",
@@ -86,11 +86,11 @@ import { USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
-import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -118,7 +118,6 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
 export default {
   components: {
     Ellipsis,
-    ContextSearch,
     RecordsPerPage,
     NoColumnsTable,
     FilterSelector,
@@ -127,6 +126,7 @@ export default {
     ActionsPanel,
     MassActionsPanel,
     EnabledColumn,
+    AdvancedSearch,
   },
   mixins: [
     authMixin,
@@ -201,7 +201,7 @@ export default {
         }];
       }
 
-      const filters = ['mainFilter', 'searchFilter', 'typesFilter'].reduce((acc, filterKey) => {
+      const filters = ['mainFilter', 'typesFilter'].reduce((acc, filterKey) => {
         const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
 
         if (queryFilter) {
