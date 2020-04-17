@@ -24,6 +24,8 @@ export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
 export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
 
+export const ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL = 60000;
+
 export const VUETIFY_ANIMATION_DELAY = 300;
 
 export const POPUP_TICK_DELAY = 100;
@@ -111,6 +113,10 @@ export const API_ROUTES = {
   dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
   sessionClose: '/api/v2/session_close',
+  broadcastMessage: {
+    list: '/api/v2/broadcast-message',
+    activeList: '/api/v2/broadcast-message/active',
+  },
   counter: '/alerts/get-counters',
 };
 

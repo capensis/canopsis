@@ -5,7 +5,7 @@
 Dans Canopsis, la création d'une vue est trés simple, il vous suffit de cliquer sur le bouton 'Créer une vue', présent dans le menu 'Paramètres' de la barre latérale.
 ![Bouton création vue ](./img/bouton_creation_vue.png  "Bouton création vue ")
 
-Une fenêtre apparaît : 
+Une fenêtre apparaît :
 
 ![Modal création de vue](./img/modal_creation_vue.png  "Modal création de vue")
 
@@ -42,7 +42,7 @@ Une fois la vue créée, il est bien évidemment possible de modifier les inform
 
 ### Éditer une vue
 
-Afin d'éditer une vue, il faut tout d'abord [activer le mode d'édition](#mode-edition). 
+Afin d'éditer une vue, il faut tout d'abord [activer le mode d'édition](#mode-edition).
 
 Des icones d'édition aparaissent alors à côté de chacune des vues. Cliquez sur l'icone correspondant à la vue que vous souhaitez éditer.
 
@@ -63,7 +63,7 @@ Une fois un groupe créé, il est bien évidemment possible de modifier les info
 
 ### Éditer un groupe
 
-Afin d'éditer un groupe, il faut tout d'abord [activer le mode d'édition](#mode-edition). 
+Afin d'éditer un groupe, il faut tout d'abord [activer le mode d'édition](#mode-edition).
 Des icones d'édition aparaissent alors à côté de chacuns des groupes. Cliquez sur l'icone correspondant au groupe que vous souhaitez éditer.
 
 Une fenêtre apparait. Le formulaire présent dans cette fenêtre reprend les éléments renseignés lors de la création du groupe (Nom).
@@ -130,3 +130,7 @@ Une fois votre vue créée, il vous est possible d'y ajouter des widgets afin de
     Le rafraîchissement périodique des données de la vue est indépendant du rafraîchissement des widgets eux-mêmes.
 
 Voir : [Widgets](../index.md)
+
+## Importation / Exportation
+
+Vous avez aussi la possibilité d'importer et d'exporter vos vues et vos groupes. La procédure complète est disponible en suivant [ce lien](import-export.md)

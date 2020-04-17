@@ -13,7 +13,7 @@
             :watchersMeta="metaData",
             :modalTemplate="config.modalTemplate",
             :entityTemplate="config.entityTemplate",
-            @addEvent="addEventToQueue",
+            @add:event="addEventToQueue",
             @change:page="changePage",
             @change:limit="changeLimit"
           )
