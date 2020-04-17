@@ -26,6 +26,13 @@
                 :error-messages="errors.collect('output_template')",
                 name="output_template"
               )
+        v-layout(wrap, justify-center)
+          v-flex(xs11)
+            v-switch(
+              v-field="form.enabled",
+              :label="$t('common.enabled')",
+              color="primary"
+            )
     v-tab-item
       v-card
         v-card-text
