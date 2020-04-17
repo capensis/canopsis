@@ -2,7 +2,7 @@ import sha1 from 'sha1';
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -19,7 +19,8 @@ import {
   DURATION_UNITS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  GRID_SIZES,
+  GRID_SIZES, AVAILABLE_COUNTERS,
+  DEFAULT_COUNTER_BLOCK_TEMPLATE,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -258,6 +259,40 @@ export function generateWidgetByType(type) {
         template: '',
       };
       break;
+    case WIDGET_TYPES.counter:
+      specialParameters = {
+        viewFilters: [],
+        alarmsStateFilter: {
+          opened: true,
+        },
+        blockTemplate: DEFAULT_COUNTER_BLOCK_TEMPLATE,
+        columnSM: 6,
+        columnMD: 4,
+        columnLG: 3,
+        margin: {
+          top: 1,
+          right: 1,
+          bottom: 1,
+          left: 1,
+        },
+        heightFactor: 6,
+        levels: {
+          counter: AVAILABLE_COUNTERS.total,
+          colors: {
+            ok: COLORS.state.ok,
+            minor: COLORS.state.minor,
+            major: COLORS.state.major,
+            critical: COLORS.state.critical,
+          },
+          values: {
+            minor: 20,
+            major: 30,
+            critical: 40,
+          },
+        },
+        alarmsList: alarmsListDefaultParameters,
+      };
+      break;
   }
 
   widget.parameters = { ...widget.parameters, ...specialParameters };
@@ -464,6 +499,7 @@ export function generateAction() {
   const generalParameters = {
     _id: uuid('action'),
     type: ACTION_TYPES.snooze,
+    delay: {},
     hook: defaultHook,
   };
 
@@ -489,11 +525,42 @@ export function generateAction() {
     output: '',
   };
 
+  // Default 'ack' action parameters
+  const ackParameters = {
+    output: '',
+  };
+
+  // Default 'ackremove' action parameters
+  const ackremoveParameters = {
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const assocticketParameters = {
+    ticket: '',
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const declareticketParameters = {
+    output: '',
+  };
+
+  // Default 'cancel' action parameters
+  const cancelParameters = {
+    output: '',
+  };
+
   return {
     generalParameters,
     snoozeParameters,
     pbehaviorParameters,
     changeStateParameters,
+    ackParameters,
+    ackremoveParameters,
+    assocticketParameters,
+    declareticketParameters,
+    cancelParameters,
   };
 }
 
@@ -528,7 +595,7 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...user, ...omit(data, ['password']) };
+  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);
@@ -544,4 +611,26 @@ export function prepareUserByData(data, user = generateUser()) {
  */
 export function isResolvedAlarm(alarm) {
   return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
+}
+
+
+/**
+ * Function return new name if name is not uniq
+ * @param {Object} entity
+ * @param {Array} entities
+ * @returns {string}
+ */
+export function getDuplicateEntityName(entity, entities) {
+  const suffixRegexp = '(\\s\\(\\d+\\))?$';
+  const clearName = entity.name.replace(new RegExp(suffixRegexp), '');
+
+  const nameRegexp = new RegExp(`^${clearName}${suffixRegexp}`);
+
+  const duplicateEntityCount = entities.reduce((count, { name }) => {
+    const isDuplicate = nameRegexp.test(name);
+
+    return isDuplicate ? count + 1 : count;
+  }, 0);
+
+  return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.name;
 }

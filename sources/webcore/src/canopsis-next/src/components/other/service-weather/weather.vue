@@ -19,8 +19,7 @@
             :data-test="item.entity_id",
             :watcher="item",
             :widget="widget",
-            :template="widget.parameters.blockTemplate",
-            :isEditingMode="isEditingMode"
+            :template="widget.parameters.blockTemplate"
           )
 </template>
 
@@ -29,7 +28,7 @@ import { omit } from 'lodash';
 
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 
 import WeatherItem from './weather-item.vue';
 
@@ -40,16 +39,12 @@ export default {
   mixins: [
     widgetPeriodicRefreshMixin,
     entitiesWatcherMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
   ],
   props: {
     widget: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {

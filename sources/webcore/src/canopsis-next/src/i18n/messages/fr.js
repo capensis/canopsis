@@ -44,18 +44,21 @@ export default {
     end: 'Fin',
     recursive: 'Récursif',
     select: 'Sélectionner',
-    states: 'États',
+    states: 'Сriticités',
     sla: 'Sla',
     authors: 'Auteurs',
     stat: 'Statistique',
     trend: 'Tendance',
     users: 'Utilisateurs',
     roles: 'Rôles',
+    import: 'Importation',
+    export: 'Exportation',
     rights: 'Droits',
     profile: 'Profil',
-    username: 'Nom d\'utilisateur',
+    username: 'Identifiant utilisateur',
     password: 'Mot de passe',
     authKey: 'Auth. key',
+    widgetId: 'Widget id',
     connect: 'Connexion',
     optional: 'Optionnel',
     logout: 'Se déconnecter',
@@ -189,7 +192,7 @@ export default {
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
         cancel: 'Annuler l\'alarme',
-        changeState: 'Changer la criticité',
+        changeState: 'Changer et verrouiller la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Demande de groupe',
@@ -200,14 +203,44 @@ export default {
         canceled: 'Annulé',
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
+        grouping: 'Grouping',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
+        causes: 'Causes',
+        consequences: 'Conséquences',
+        rule: 'Règle | Règles',
+      },
+    },
+    timeLine: {
+      titlePaths: {
+        by: 'par',
+      },
+      stateCounter: {
+        header: 'Criticités compressées (depuis le dernier changement de statut)',
+        stateIncreased: 'Criticité augmentée',
+        stateDecreased: 'Criticité diminuée',
+      },
+      types: {
+        ack: 'Acquittement',
+        ackremove: 'Suppression d\'acquittement',
+        stateinc: 'Augmentation de la criticité',
+        statedec: 'Diminution de la criticité',
+        statusinc: 'Augmentation du statut',
+        statusdec: 'Diminution du statut',
+        assocticket: 'Association d\'un ticket',
+        declareticket: 'Déclaration d\'un ticket',
+        snooze: 'Alarme mise en veille',
+        unsooze: 'Alarme sortie de veille',
+        changestate: 'Changement et verrouillage de la criticité',
+        pbhenter: 'Comportement périodique activé',
+        pbhleave: 'Comportement périodique désactivé',
+        cancel: 'Alarme annulée',
       },
     },
     tabs: {
       moreInfos: 'Plus d\'infos',
-      timeLine: 'Time line',
+      timeLine: 'Chronologie',
       alarmsConsequences: 'Alarmes conséquences',
       alarmsCauses: 'Alarmes les causes',
     },
@@ -220,14 +253,14 @@ export default {
     moreInfos: 'Plus d\'infos',
   },
   pbehaviors: {
-    connector: 'Connecteur',
+    connector: 'Type de connecteur',
     connectorName: 'Nom du connecteur',
     isEnabled: 'Est actif',
     begins: 'Débute',
     ends: 'Se termine',
     type: 'Type',
     reason: 'Raison',
-    rrule: 'Rrule',
+    rrule: 'Récurrence',
   },
   settings: {
     titles: {
@@ -241,6 +274,7 @@ export default {
       statsNumberSettings: 'Paramètres du compteur de stats',
       statsParetoSettings: 'Paramètres du diagramme de Pareto',
       textSettings: 'Paramètres du widget de texte',
+      counterSettings: 'Paramètres du widget de compteur',
     },
     advancedSettings: 'Paramètres avancés',
     widgetTitle: 'Titre du widget',
@@ -261,7 +295,7 @@ export default {
     isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
-    isHtmlEnabledOnTimeLine: 'HTML activé dans la time line ?',
+    isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -329,10 +363,11 @@ export default {
       },
     },
     moreInfosModal: 'Fenêtre "Plus d\'infos"',
-    expandGridRangeSize: 'Largeur-position "Plus d\'infos / timeline"',
+    expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
     weatherTemplate: 'Template - Tuiles',
-    modalTemplate: 'Template - Modal',
+    modalTemplate: 'Template - Modale',
     entityTemplate: 'Template - Entitées',
+    blockTemplate: 'Template - Tuiles',
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
     columnLG: 'Colonnes - Large',
@@ -349,7 +384,7 @@ export default {
       title: 'Type d\'entité',
       fields: {
         component: 'Composant',
-        connector: 'Connecteur',
+        connector: 'Type de connecteur',
         resource: 'Ressource',
         watcher: 'Observateur',
       },
@@ -392,6 +427,12 @@ export default {
     liveReporting: {
       title: 'Suivi personnalisé',
     },
+    counterLevels: {
+      title: 'Niveaux',
+      fields: {
+        counter: 'Compteur',
+      },
+    },
   },
   modals: {
     contextInfos: {
@@ -413,7 +454,7 @@ export default {
         impact: 'Impacts',
         depends: 'Dépendances',
         types: {
-          connector: 'connecteur',
+          connector: 'type de connecteur',
           component: 'composant',
           resource: 'ressource',
         },
@@ -511,7 +552,7 @@ export default {
       title: 'Demande de groupe',
     },
     createChangeStateEvent: {
-      title: 'Changer l\'état',
+      title: 'Changer la сriticité',
       states: {
         ok: 'Info',
         minor: 'Mineur',
@@ -523,6 +564,15 @@ export default {
       },
     },
     createPbehavior: {
+      create: {
+        title: 'Ajouter un comportement périodique',
+      },
+      edit: {
+        title: 'Éditer un comportement périodique',
+      },
+      duplicate: {
+        title: 'Dupliquer un comportement périodique',
+      },
       title: 'Ajouter un comportement périodique',
       steps: {
         general: {
@@ -617,7 +667,7 @@ export default {
       organization: 'Organisation',
       numberOk: 'Nombre Ok',
       numberKo: 'Nombre Ko',
-      state: 'État',
+      state: 'Criticité',
       name: 'Nom',
       org: 'Org',
       noData: 'Pas de données',
@@ -685,6 +735,9 @@ export default {
         text: {
           title: 'Texte',
         },
+        counter: {
+          title: 'Compteur',
+        },
       },
     },
     manageHistogramGroups: {
@@ -720,7 +773,7 @@ export default {
     createUser: {
       title: 'Créer un utilisateur',
       fields: {
-        username: 'Nom d\'utilisateur',
+        username: 'Identifiant utilisateur',
         firstName: 'Prénom',
         lastName: 'Nom',
         email: 'Email',
@@ -806,6 +859,9 @@ export default {
         title: 'Éditer un webhook',
         success: 'Webhook édité avec succès !',
       },
+      duplicate: {
+        title: 'Dupliquer un webhook',
+      },
       remove: {
         success: 'Webhook supprimé avec succès !',
       },
@@ -837,6 +893,9 @@ export default {
         message: 'Message',
         duration: 'Durée',
         output: 'Note',
+        ticket: 'Numéro du ticket',
+        delay: 'Intervalle',
+        delayUnit: 'Unité',
       },
     },
     statsDateInterval: {
@@ -871,7 +930,11 @@ export default {
         success: 'Information dynamique créé avec succès !',
       },
       edit: {
+        title: 'Éditer une information dynamique',
         success: 'Information dynamique éditée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une information dynamique',
       },
       remove: {
         success: 'Information dynamique supprimée avec succès !',
@@ -890,6 +953,7 @@ export default {
         },
         infos: {
           title: 'Informations',
+          validationError: 'Toutes les valeurs doivent être saisies',
         },
         patterns: {
           title: 'Patterns',
@@ -908,6 +972,32 @@ export default {
         value: 'Valeur',
       },
     },
+    dynamicInfoTemplatesList: {
+      title: 'Modèles d\'informations dynamiques',
+    },
+    createDynamicInfoTemplate: {
+      create: {
+        title: 'Créer un modèle d\'informations dynamiques',
+      },
+      edit: {
+        title: 'Editer un modèle d\'informations dynamiques',
+      },
+      fields: {
+        names: 'Attributs',
+      },
+      buttons: {
+        addName: 'Ajouter un attribut',
+      },
+      errors: {
+        noNames: 'Vous devez ajouter au moins 1 attribut',
+      },
+    },
+    importExportViews: {
+      title: 'Vues d\'importation / exportation',
+      groups: 'Groupes',
+      views: 'Vues',
+      result: 'Résultat',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -920,7 +1010,7 @@ export default {
     alarmGeneral: {
       title: 'Generale',
       author: 'Auteur',
-      connector: 'Connecteur',
+      connector: 'Type de connecteur',
       connectorName: 'Nom du connecteur',
       component: 'Composant',
       resource: 'Ressource',
@@ -928,7 +1018,7 @@ export default {
       lastUpdateDate: 'Date de dernière modification',
       creationDate: 'Date de création',
       duration: 'Durée',
-      state: 'État',
+      state: 'Criticité',
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
@@ -938,14 +1028,14 @@ export default {
     pbehaviorList: {
       name: 'Nom',
       author: 'Auteur',
-      connector: 'Connecteur',
+      connector: 'Type de connecteur',
       connectorName: 'Nom du connecteur',
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finit',
       type_: 'Type',
       reason: 'Raison',
-      rrule: 'Rrule',
+      rrule: 'Récurrence',
     },
     rolesList: {
       name: 'Nom',
@@ -977,7 +1067,7 @@ export default {
     admin: {
       users: {
         columns: {
-          username: 'Nom d\'utilisateur',
+          username: 'Identifiant utilisateur',
           role: 'Rôle',
           enabled: 'Actif',
         },
@@ -986,14 +1076,14 @@ export default {
   },
   rRule: {
     advancedHint: 'Séparer les nombres par une virgule',
-    textLabel: 'Rrule',
+    textLabel: 'Récurrence',
     stringLabel: 'Résumé',
     tabs: {
       simple: 'Simple',
       advanced: 'Avancé',
     },
     errors: {
-      main: 'La Rrule choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
+      main: 'La récurrence choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
     },
     fields: {
       freq: 'Fréquence',
@@ -1052,6 +1142,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
     pathCopied: 'Chemin copié dans le presse-papier',
+    widgetIdCopied: 'Widget id copié dans le presse-papier',
   },
   filterEditor: {
     title: 'Éditeur de filtre',
@@ -1067,7 +1158,7 @@ export default {
     },
     resultsTableHeaders: {
       alarm: {
-        connector: 'Connecteur',
+        connector: 'Type de connecteur',
         connectorName: 'Nom du connecteur',
         component: 'Composant',
         resource: 'Ressource',
@@ -1103,10 +1194,10 @@ export default {
       [STATS_TYPES.alarmsAcknowledged.value]: 'Alarmes acquittées',
       [STATS_TYPES.ackTimeSla.value]: 'Taux d\'Ack conforme Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Taux de résolution conforme Sla',
-      [STATS_TYPES.timeInState.value]: 'Proportion du temps dans l\'état',
-      [STATS_TYPES.stateRate.value]: 'Taux à cet état',
+      [STATS_TYPES.timeInState.value]: 'Proportion du temps dans la сriticité',
+      [STATS_TYPES.stateRate.value]: 'Taux à cette сriticité',
       [STATS_TYPES.mtbf.value]: 'Temps moyen entre pannes',
-      [STATS_TYPES.currentState.value]: 'État courant',
+      [STATS_TYPES.currentState.value]: 'Criticité courante',
       [STATS_TYPES.ongoingAlarms.value]: 'Nombre d\'alarmes en cours pendant la période',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Nombre d\'alarmes actuellement en cours',
       [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Nombre d\'alarmes acquittées actuellement en cours',
@@ -1133,6 +1224,7 @@ export default {
   actions: {
     title: 'Actions',
     addAction: 'Ajouter une action',
+    delay: 'Intervalle',
     table: {
       id: 'Id',
       type: 'Type',
@@ -1187,6 +1279,19 @@ export default {
         topBar: 'Barre d\'entête',
       },
     },
+    userInterfaceForm: {
+      title: 'Interface utilisateur',
+      fields: {
+        appTitle: 'Titre de l\'application',
+        language: 'Langue par défaut',
+        footer: 'Page d\'identification : pied de page',
+        description: 'Page d\'identification : description',
+        logo: 'Logo',
+        infoPopupTimeout: 'Timeout pour les popup d\'informations',
+        errorPopupTimeout: 'Timeout pour les popup d\'erreurs',
+        popupTimeoutUnit: 'Unité',
+      },
+    },
   },
   view: {
     errors: {
@@ -1212,6 +1317,7 @@ export default {
         retryDelay: 'Intervalle',
         retryUnit: 'Unité',
         retryCount: 'Nombre d\'essais',
+        enabled: 'Activé',
       },
     },
     tabs: {
@@ -1231,7 +1337,7 @@ export default {
           url: 'URL',
           authSwitch: 'Authentification ?',
           auth: 'Auth',
-          username: 'Nom d\'utilisateur',
+          username: 'Identifiant utilisateur',
           password: 'Mot de passe',
           headers: 'Headers',
           headerKey: 'Clé',
@@ -1300,9 +1406,23 @@ export default {
   tours: {
     [TOURS.alarmsExpandPanel]: {
       step1: 'Détails',
-      step2: 'Onglet plus d\'infos (N\'apparait que s\'il existe une configuration)',
-      step3: 'Onglet timeline',
+      step2: 'Onglet plus d\'infos (N\'apparaît que s\'il existe une configuration)',
+      step3: 'Onglet chronologie',
     },
+  },
+
+  handlebars: {
+    requestHelper: {
+      errors: {
+        timeout: 'Délai d\'attente dépassé',
+        unauthorized: 'Accès non autorisé',
+        other: 'Erreur de récupération des données',
+      },
+    },
+  },
+
+  importExportViews: {
+    selectAll: 'Sélectionnez tous les groupes et vues',
   },
 
   ...featureService.get('i18n.fr'),

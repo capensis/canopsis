@@ -26,13 +26,13 @@ from calendar import timegm
 from datetime import datetime, date
 from dateutil import tz, rrule
 from json import loads, dumps
-from time import time
+from time import time, sleep
 from uuid import uuid4
 from six import string_types
 from pymongo import DESCENDING
-
+from canopsis.event import forger
 import pytz
-
+from itertools import chain
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection, CollectionError
 from canopsis.common.utils import singleton_per_scope
@@ -40,6 +40,12 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.logger import Logger
 from canopsis.pbehavior.utils import check_valid_rrule
+import collections
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
+
+PbehaviorInterval = collections.namedtuple('PbehaviorInterval', ['pbehavior', 'pbenter_time', 'pbleave_time'])
 
 
 class BasePBehavior(dict):
@@ -95,6 +101,8 @@ class BasePBehavior(dict):
         :rtype: dict
         """
         return self.__dict__
+
+
 
 
 class PBehavior(BasePBehavior):
@@ -186,7 +194,7 @@ class PBehaviorManager(object):
 
         return config, logger, mongo_collection
 
-    def __init__(self, config, logger, pb_collection):
+    def __init__(self, config, logger, pb_collection, amqp_pub=None):
         """
         :param dict config: configuration
         :param pb_storage: PBehavior Storage object
@@ -204,6 +212,11 @@ class PBehaviorManager(object):
         pytz.timezone(self.default_tz)
         self.collection = pb_collection
         self.currently_active_pb = set()
+        self.pbehavior_event_sent_flag = {}
+
+        self.amqp_pub = amqp_pub
+        if amqp_pub is None:
+            self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), self.logger)
 
     def get(self, _id, search=None, limit=None, skip=None):
         """Get pbehavior by id.
@@ -224,6 +237,10 @@ class PBehaviorManager(object):
                     {"reason": re.compile(str(search), re.IGNORECASE)},
                     {"author": re.compile(str(search), re.IGNORECASE)},
                     {"type_": re.compile(str(search), re.IGNORECASE)},
+                    {"connector": re.compile(str(search), re.IGNORECASE)},
+                    {"connector_name": re.compile(str(search), re.IGNORECASE)},
+                    {"comments.author": re.compile(str(search), re.IGNORECASE)},
+                    {"comments.message": re.compile(str(search), re.IGNORECASE)},
                     {"eids": {"$elemMatch": {
                         "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}}
                 ]
@@ -267,7 +284,7 @@ class PBehaviorManager(object):
             enabled=True, comments=None,
             connector='canopsis', connector_name='canopsis',
             type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
-            exdate=None, pbh_id=None):
+            exdate=None, pbh_id=None, replace_expired=False):
         """
         Method creates pbehavior record
 
@@ -299,6 +316,9 @@ class PBehaviorManager(object):
         zero-padded.
         :param str pbh_id: Optional id for pbh. If not specified or none, a
         random id will be generated
+        :param bool replace_expired: If pbh_id exists then:
+            - If the pbh is not expired, returns an error like before.
+            - If the pbh is expired, renames the existing pbh and creates the new one
         :raises ValueError: invalid RRULE
         :raises pytz.UnknownTimeZoneError: invalid timezone
         :return: created element eid
@@ -374,7 +394,25 @@ class PBehaviorManager(object):
             result = self.collection.insert(data.to_dict())
         except CollectionError:
             # when inserting already existing id
-            raise ValueError("Trying to insert PBehavior with already existing _id")
+            try:
+                current_pbh = self.get(_id=pbh_id).get('data', [{}])[0]
+                if replace_expired and not self.check_active_pbehavior(int(time()), current_pbh):
+                    self.collection.remove({'_id': pbh_id})
+                    # try for five times, to prevent case of receiving more than one concurrent creating request
+                    for i in range(5):
+                        try:
+                            now = int(time() * 1000)
+                            pb_kwargs[PBehavior.ID] = 'EXP{}-{}'.format(now, pbh_id)
+                        except:
+                            sleep(0.5)
+                            pass
+                    expired_data = PBehavior(**pb_kwargs)
+                    self.collection.insert(expired_data.to_dict())
+                    result = self.collection.insert(data.to_dict())
+                else:
+                    raise ValueError("Trying to insert PBehavior with already existing _id")
+            except Exception as e:
+                raise e
 
         return result
 
@@ -512,6 +550,21 @@ class PBehaviorManager(object):
         result = self.collection.remove(filter_)
 
         return self._check_response(result)
+
+    def is_pbh_expired(self, pbh, pivot):
+        try:
+            if not pbh[PBehavior.RRULE]:
+                return not pivot < pbh[PBehavior.TSTOP]
+            tz_name = pbh.get(PBehavior.TIMEZONE, self.default_tz)
+            ts = datetime.fromtimestamp(pbh[PBehavior.TSTART], tz.gettz(tz_name))
+            pivot_dt = datetime.fromtimestamp(pivot, tz.gettz(tz_name))
+            rec_set = rrule.rruleset()
+            rec_set.rrule(rrule.rrulestr(pbh[PBehavior.RRULE], dtstart=ts))
+            next_start = rec_set.after(pivot_dt)
+            return next_start is None
+        except Exception as e:
+            self.logger.error("Failed to check pbh is expired or not. Error: {}".format(e))
+        return False
 
     def _update_pbehavior(self, pbehavior_id, query):
         result = self.collection.update(
@@ -1206,3 +1259,268 @@ class PBehaviorManager(object):
                 # keeping the most recent timestamp that still is in the past
                 ret_timestamp = pbh_last_tstop
         return ret_timestamp
+
+    def get_intervals_along_with_pbehaviors(self, after, before, pbehaviors):
+        """
+        Yields intervals between after and before with a boolean indicating if
+        one of the pbehaviors is active during this interval.
+
+        The intervals are returned as a list of tuples (start, end, pbehavior),
+        ordered chronologically. start and end are UTC timestamps, and are
+        always between after and before, pbehavior is a boolean indicating if a
+        pbehavior affects the entity during this interval. None of the
+        intervals overlap.
+
+        :param int after: a UTC timestamp
+        :param int before: a UTC timestamp
+        :param List[Dict[str, Any]] pbehaviors: a list of pbehabiors
+        :rtype: Iterator[Tuple[int, int, bool]]
+        """
+        intervals = []
+
+        # Get all the intervals where a pbehavior is active
+        for pbehavior in pbehaviors:
+            for interval in self.get_active_intervals(after, before, pbehavior):
+                intervals.append(PbehaviorInterval(interval, pbehavior))
+
+        if not intervals:
+            # yield (after, before, False)
+            yield None
+            return
+
+        # Order them chronologically (by start date)
+        # intervals.sort(key=lambda a: a[0])
+        intervals.sort(key=lambda a: a.interval[0])
+
+        # Yield the first interval without any active pbehavior
+        merged_interval_start, merged_interval_end = intervals[0].interval
+
+        # At this point intervals is a list of intervals where a pbehavior is
+        # active, ordered by start date. Some of those intervals may be
+        # overlapping. This merges the overlapping intervals.
+        for pinterval in intervals[1:]:
+            interval_start, interval_end = pinterval.interval
+            if interval_end < merged_interval_end:
+                # The interval is included in the merged interval, skip it.
+                continue
+
+            if interval_start > merged_interval_end:
+                # Since the interval starts after the end of the merged
+                # interval, they cannot be merged. Yield the merged interval,
+                # and move to the new one.
+                yield PbehaviorInterval((merged_interval_start, merged_interval_end), pinterval.pbehavior)
+                # yield None
+                merged_interval_start = interval_start
+
+            merged_interval_end = interval_end
+
+        yield PbehaviorInterval((merged_interval_start, merged_interval_end), intervals[-1].pbehavior)
+
+    def get_all_active_pbehaviors_base_on_time(self, timestamp):
+        """
+        Return all pbehaviors currently active using
+        self.check_active_pbehavior
+        """
+        ret_val = list(self.collection.find({}))
+
+        results = []
+
+        for pb in ret_val:
+            try:
+                if self.check_active_pbehavior(timestamp, pb):
+                    results.append(pb)
+            except ValueError:
+                self.logger.exception(
+                    "Can't check if the pbehavior is active.")
+
+        return results
+
+    def generate_pbh_event(self, now):
+        """
+        Yields event of 2 types: pbenter and pbleave.
+
+        Detect currently active pbehaviors
+        - create pbleave event if
+            * the pbehavior id is not found in the cached pbehavior interval
+            * the pbehavior id is found in the cached pbehavior interval but the current pbevent_time is not the same as
+             the cached one. It can can happen when rrule of behavior had been changed.
+            * those entities are no longer belong to pbehavior
+        - create pbenter event if
+            * new pbehavior interval has arrived
+            * new entities are now belong to pbehavior
+        :rtype: Iterator[Dict]
+        """
+        currently_active_pbehaviors = self.get_all_active_pbehaviors_base_on_time(now)
+        self.logger.info("Currently, number of active pbehaviors: {}".format(len(currently_active_pbehaviors)))
+        currently_active_pb_dict = {}
+        for active_pb in currently_active_pbehaviors:
+            currently_active_pb_dict[active_pb[PBehavior.ID]] = active_pb
+        removed_pb_id = set(self.pbehavior_event_sent_flag.keys()).difference(currently_active_pb_dict.keys())
+
+        # pbehaviors are removed
+        for removed in removed_pb_id:
+            if removed in self.pbehavior_event_sent_flag:
+                events = self._make_pbleave_event(
+                    now,
+                    self.pbehavior_event_sent_flag[removed].pbehavior,
+                    self.pbehavior_event_sent_flag[removed].pbleave_time
+                )
+                self.pbehavior_event_sent_flag.pop(removed)
+                for env in events:
+                    yield env
+
+        for active_pb in currently_active_pb_dict:
+            events = []
+            interval = None
+            try:
+                interval = self._get_interval_from_time_pivot(currently_active_pb_dict[active_pb], now)
+            except:
+                self.logger.exception("Get current active interval of {} is failed.".format(
+                    currently_active_pb_dict[active_pb][PBehavior.ID]
+                ))
+            if interval is None:
+                continue
+            # pbehavior still exists
+            if active_pb in self.pbehavior_event_sent_flag:
+                # if start time is not the same of cached
+                # send pbhleave for cached pbhenter
+                # send new pbhenter for new interval
+                if self.pbehavior_event_sent_flag[active_pb].pbenter_time != interval[0]:
+                    events = chain(events, self._make_pbleave_event(
+                        now,
+                        self.pbehavior_event_sent_flag[active_pb].pbehavior,
+                        self.pbehavior_event_sent_flag[active_pb].pbleave_time
+                    ))
+                    events = chain(events, self._make_pbenter_event(
+                        now,
+                        currently_active_pb_dict[active_pb],
+                        interval[0]
+                    ))
+                else:
+                    # send pbhleave for those entities are no longer belong to pbehavior
+                    # send pbhenter for those entities are newly added to pbehavior
+                    old_eids = set(self.pbehavior_event_sent_flag[active_pb].pbehavior[PBehavior.EIDS])
+                    current_eids = set(currently_active_pb_dict[active_pb][PBehavior.EIDS])
+                    events = chain(events, self._make_pbleave_event(
+                        now,
+                        self.pbehavior_event_sent_flag[active_pb].pbehavior,
+                        self.pbehavior_event_sent_flag[active_pb].pbleave_time,
+                        list(old_eids.difference(current_eids))))
+                    events = chain(events, self._make_pbenter_event(
+                        now,
+                        self.pbehavior_event_sent_flag[active_pb].pbehavior,
+                        self.pbehavior_event_sent_flag[active_pb].pbleave_time,
+                        list(current_eids.difference(old_eids))))
+            else:
+                events = chain(events, self._make_pbenter_event(
+                    now,
+                    currently_active_pb_dict[active_pb],
+                    interval[0]
+                ))
+            self.pbehavior_event_sent_flag[active_pb] = PbehaviorInterval(
+                pbenter_time=interval[0],
+                pbleave_time=interval[1],
+                pbehavior=currently_active_pb_dict[active_pb]
+            )
+            for env in events:
+                yield env
+
+    def send_pbehavior_event(self):
+        now = int(time())
+        for event in self.generate_pbh_event(now):
+            self.amqp_pub.canopsis_event(event)
+
+    def _get_interval_from_time_pivot(self, pb, time_pivot):
+        """
+        return the interval that satisfies condition interval[0] <= time_pivot <= interval[1]
+        :param pb:
+        :param time_pivot:
+        :return:
+        """
+        tz_name = pb.get(PBehavior.TIMEZONE, self.default_tz)
+        start = self.__convert_timestamp(pb[PBehavior.TSTART], tz_name)
+        stop = self.__convert_timestamp(pb[PBehavior.TSTOP], tz_name)
+        now = self.__convert_timestamp(time_pivot, tz_name)
+        if not pb[PBehavior.RRULE]:
+            if start <= now <= stop:
+                return start, stop
+            return None
+
+        rec_set = self._get_recurring_pbehavior_rruleset(pb)
+        duration = stop - start  # pbehavior duration
+        rec_start = rec_set.before(now)
+
+        self.logger.debug("Recurence start : {}".format(rec_start))
+        # No recurrence found
+        if rec_start is None:
+            return None
+
+        self.logger.debug("Timestamp       : {}".format(now))
+        self.logger.debug("Recurence stop  : {}".format(rec_start + duration))
+
+        rec_end = rec_start + duration
+        if rec_start <= now <= rec_end:
+            return rec_start, rec_end
+
+        return None
+
+    def _to_timestamp(self, dt):
+        utc_naive = dt.replace(tzinfo=None) - dt.utcoffset()
+        timestamp = (utc_naive - datetime(1970, 1, 1)).total_seconds()
+        return int(timestamp)
+
+    def _make_pbleave_event(self, start_time, pb, action_time, eids=None):
+        """
+        mak pbleave event
+        :param pb: pbehavior
+        :param action_time: time indicates pbehavior will stop
+        :rtype: List[Dict]
+        """
+        return self._make_pbehavior_event(start_time, pb, action_time, "pbhleave", eids)
+
+    def _make_pbenter_event(self, start_time, pb, action_time, eids=None):
+        """
+        :param pb: pbehavior
+        :param action_time: time indicates pbehavior will start
+        :rtype: Dict
+        """
+        return self._make_pbehavior_event(start_time, pb, action_time, "pbhenter", eids)
+
+    def _make_pbehavior_event(self, start_time, pb, action_time, pb_event_type, eids=None):
+        events = []
+        if eids is None:
+            eids = pb.get('eids', [])
+        for eid in eids:
+            entities = self.context.ent_storage.get_elements(
+                query={"_id": eid}
+            )
+            if len(entities) != 1:
+                return events
+            if "depends" not in entities[0]:
+                return events
+            if entities[0]["depends"]:
+                average_time = round((time() - start_time) / len(entities[0]["depends"]), 5)
+                for impact in entities[0]["depends"]:
+                    parts = impact.split("/")
+                    if len(parts) != 2:
+                        continue
+                    connector, connector_name = parts
+                    event = forger(
+                        connector=connector,
+                        connector_name=connector_name,
+                        event_type=pb_event_type,
+                        source_type="component",
+                        component=str(eid),
+                        output="Pbehavior {}. Type: {}. Reason: {}".format(pb[PBehavior.NAME].encode('utf-8'),
+                                                                           pb[PBehavior.TYPE].encode('utf-8'),
+                                                                           pb[PBehavior.REASON].encode('utf-8')),#"{}. Name: {}. Type:{}".format(message, pb[PBehavior.NAME], pb[PBehavior.TYPE]),
+                        perf_data_array=[{
+                            "metric": "cps_sec_per_evt",
+                            "unit": "s",
+                            "value": average_time
+                        }],
+                        display_name=pb[PBehavior.NAME],
+                        timestamp=self._to_timestamp(action_time)
+                    )
+                    events.append(event)
+        return events

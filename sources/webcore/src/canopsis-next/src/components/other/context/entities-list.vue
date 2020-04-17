@@ -83,7 +83,7 @@
 import { omit, isString } from 'lodash';
 
 import { USERS_RIGHTS } from '@/constants';
-import prepareMainFilterToQueryFilter from '@/helpers/filter';
+import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import ContextSearch from '@/components/other/context/search/context-search.vue';
@@ -93,11 +93,10 @@ import FilterSelector from '@/components/other/filter/selector/filter-selector.v
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 import authMixin from '@/mixins/auth';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import MoreInfos from './more-infos/more-infos.vue';
@@ -130,11 +129,10 @@ export default {
   },
   mixins: [
     authMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
-    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
   ],
   props: {

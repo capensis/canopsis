@@ -12,6 +12,8 @@ Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement e
 
 Depuis la `3.37.0`, la fonction de répétition est disponible.
 
+Depuis la `3.39.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
+
 Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
@@ -50,6 +52,7 @@ Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dan
 Une règle est un document JSON contenant les paramètres suivants :
 
  - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `enabled` (requis) : le webhook est-il activé ou non (booléen).
  - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
      - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
@@ -76,7 +79,7 @@ Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont 
 
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
-- `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
+- `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
 
 
@@ -93,6 +96,9 @@ Le champ `hook` représente les conditions d'activation d'un webhook. Il contien
 Pour plus d'informations sur les `triggers` disponibles, consulter la [`documentation sur les triggers`](../architecture-interne/triggers.md)
 
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
+
+!!! attention
+    L'activation d'un webhook ne doit pas être dépendante d'un état d'une alarme appliqué par le moteur `action`. En effet, dans l’enchaînement des moteurs, `action` se situe après `webhook`. Le webhook sera donc activé **avant** que le moteur `action` ait pu changer l'état de l'alarme.
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
@@ -134,7 +140,7 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 `count` représente le nombre de nouvelles tentatives.  
 `delay` et `unit` représentent le délai avant une nouvelle tentative.   
 
-`unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure. 
+`unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
 
 Ces paramètres sont positionnés dans la configuration de chaque webhook.  
 Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).  
@@ -169,6 +175,7 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "hook" : {
         "triggers" : [
             "create"
@@ -221,6 +228,7 @@ Les webhooks sont stockés dans la collection MongoDB `webhooks`.
 ```json
 {
     "_id" : "declare_external_ticket",
+    "enabled" : true,
     "disable_if_active_pbehavior" : false,
     "request" : {
         "url" : "{{ $val := .Alarm.Value.Status.Value }}http://127.0.0.1:5000/{{if ((eq $val 0) or (eq $val 2) or (eq $val 4))}}even{{else}}odd{{end}}",

@@ -1,0 +1,15 @@
+---
+- name: Make sure that engine-watcher systemd directory directory exists (CAT)
+  file:
+    path: "/etc/systemd/system/canopsis-engine-go@engine-watcher.service.d"
+    state: directory
+    recurse: yes
+
+- name: Override default engine-watcher -publishQueue, for go-engines-cat additional engines (CAT)
+  template:
+    src: systemd/watcher.j2
+    dest: "/etc/systemd/system/canopsis-engine-go@engine-watcher.service.d/watcher.conf"
+
+- name: Reload systemd
+  systemd:
+    daemon-reload: yes

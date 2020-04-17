@@ -40,6 +40,10 @@ export default {
           error(popup) {
             return store.dispatch(`${moduleName}/error`, popup);
           },
+
+          setDefaultCloseTime(type, time) {
+            return store.dispatch(`${moduleName}/setDefaultCloseTime`, { type, time });
+          },
         };
       },
     });

@@ -19,7 +19,10 @@
             :columnsLabel="$t('settings.columnName')"
           )
           v-divider
-          field-columns(v-model="settings.widget.parameters.widgetColumns")
+          field-columns(
+            v-model="settings.widget.parameters.widgetColumns",
+            :label="$t('settings.columnNames')"
+          )
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
@@ -28,7 +31,8 @@
               :filters.sync="settings.widget.parameters.viewFilters",
               :condition.sync="settings.widget.parameters.mainFilterCondition",
               :hasAccessToAddFilter="hasAccessToAddFilter",
-              :hasAccessToEditFilter="hasAccessToEditFilter"
+              :hasAccessToEditFilter="hasAccessToEditFilter",
+              @input="updateMainFilterUpdatedAt"
             )
             v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")

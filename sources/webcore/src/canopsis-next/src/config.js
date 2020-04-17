@@ -26,6 +26,8 @@ export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
 
 export const VUETIFY_ANIMATION_DELAY = 300;
 
+export const POPUP_TICK_DELAY = 100;
+
 export const SIDE_BAR_WIDTH = 250;
 
 export const EXPAND_DEFAULT_MAX_LETTERS = 50;
@@ -42,6 +44,8 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 export const MAX_LOGO_SIZE_IN_KB = 16384;
 
 export const DEFAULT_APP_TITLE = 'Canopsis';
+
+export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';
 
 export const API_ROUTES = {
   auth: '/auth',
@@ -104,7 +108,9 @@ export const API_ROUTES = {
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
   pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
+  dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
+  counter: '/alerts/get-counters',
 };
 
 export const COLORS = {
@@ -131,6 +137,8 @@ export const COLORS = {
     declareTicket: '#2196f3',
     snooze: '#e91e63',
     done: '#00a65a',
+    pbhenter: '#18ffff',
+    pbhleave: '#18ffff',
   },
   statsDefault: '#dddddd',
 };

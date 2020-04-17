@@ -30,6 +30,8 @@ Si le moteur [`webhook`](moteur-webhook.md) est activé, le moteur `dynamic-info
 
 ## Fonctionnement
 
+### Règles
+
 Les règles sont définies dans la collection MongoDB `dynamic-infos`, et peuvent être ajoutées et modifiées avec l'[API Informations Dynamiques](../../guide-developpement/api/api-v2-dynamic-infos.md).
 
 Une règle est représentée par un document JSON de la forme suivante :
@@ -75,4 +77,46 @@ Les informations définies dans `infos` sont ajoutées aux alarmes correspondant
 
 Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux patterns `entity_patterns` et `alarm_patterns`. Dans l'exemple précédent, si une alarme passe d'un état critique à un état majeur, l'information `v.infos.dynamic_infos_1` est supprimée.
 
-Un exemple concret d'utilisation du moteur `dynamic-info` pour l'affichage de consignes techniques dans le bac à alarmes est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
+
+### Templates
+
+!!! Info
+    Disponible à partir de Canopsis 3.38.0
+
+Les champs `value` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme ou de l'entité.  
+Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
+
+Seules les fonctions suivantes sont disponibles dans les templates `dynamic-infos` :
+
+* lowercase
+* uppercase
+* split
+* trim
+
+
+Un exemple concret d'utilisation du moteur `dynamic-infos` pour l'affichage de consignes techniques dans le bac à alarmes est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
+
+### Pré remplissage des attributs
+
+!!! Info
+    Disponible à partir de Canopsis 3.39.0
+
+Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour n'avoir plus que la saisie des valeurs à effectuer.  
+
+Pour cela, vous devez 
+
+* Ajouter un `modèle` depuis l'interface graphique :  
+
+![Ajouter un modèle](img/dynamic-infos-template1.png "Ajouter un modèle")
+
+* Appuyer sur le bouton `+` 
+
+![Ajouter un modèle](img/dynamic-infos-template2.png "Appuyer sur +")
+
+* Saisir un titre puis des attributs puis cliquer sur "Soumettre"
+
+![Ajouter un modèle](img/dynamic-infos-template3.png "Saisie titre et attributs")
+
+A ce stade, il vous reste à **instancier** le modèle avec vos valeurs
+
+![Instancier un modèle](img/dynamic-infos-template4.png "Instancier un modèle")

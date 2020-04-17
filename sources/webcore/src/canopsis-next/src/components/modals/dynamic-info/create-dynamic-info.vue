@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ $t('modals.createDynamicInfo.create.title') }}
+        span {{ title }}
       template(slot="text")
         dynamic-info-form(v-model="form")
       template(slot="actions")
@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -30,11 +32,22 @@ export default {
   components: { DynamicInfoForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
-    const { dynamicInfo = {} } = this.modal.config;
+    const { dynamicInfo = {}, isDuplicating } = this.modal.config;
 
     return {
-      form: dynamicInfoToForm(dynamicInfo),
+      form: dynamicInfoToForm(isDuplicating ? omit(dynamicInfo, ['_id']) : dynamicInfo),
     };
+  },
+  computed: {
+    title() {
+      let type = 'create';
+
+      if (this.config.dynamicInfo) {
+        type = this.config.isDuplicating ? 'duplicate' : 'edit';
+      }
+
+      return this.$t(`modals.createDynamicInfo.${type}.title`);
+    },
   },
   methods: {
     async submit() {

@@ -6,8 +6,24 @@
     enabled: true
   with_items: "{{ canopsis_common_engines }}"
 
+- name: Start and enable Canopsis common engines (CAT additions)
+  systemd:
+    name: "canopsis-engine-cat@{{ item.module }}-{{ item.name }}.service"
+    state: started
+    enabled: true
+  with_items: "{{ canopsis_cat_common_additional_engines }}"
+  when: canopsis_edition == "cat"
+
+- name: Start and enable Canopsis common engines (CAT additions, part 2)
+  systemd:
+    name: "canopsis-engine-cat@{{ item.name }}.service"
+    state: started
+    enabled: true
+  with_items: "{{ canopsis_cat_common_additional_engines_broken_names }}"
+  when: canopsis_edition == "cat"
+
 - name: Start and enable Canopsis webserver
   systemd:
-    name: canopsis-webserver
+    name: "canopsis-webserver.service"
     state: started
     enabled: true

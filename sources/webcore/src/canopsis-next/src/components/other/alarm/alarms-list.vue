@@ -52,24 +52,25 @@
       :totalItems="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
-      :isEditingMode="isEditingMode",
+      :isTourEnabled="isTourEnabled",
       :hasColumns="hasColumns",
       :columns="columns",
-      :isTourEnabled="isTourEnabled",
+      selectable,
+      expandable,
       ref="alarmsTable"
     )
-    v-layout.white(align-center)
-      v-flex(xs10)
-        pagination(
-          data-test="bottomPagination",
-          :page="query.page",
-          :limit="query.limit",
-          :total="alarmsMeta.total",
-          @input="updateQueryPage"
-        )
-      v-spacer
-      v-flex(xs2, data-test="itemsPerPage")
-        records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+      v-layout.white(v-show="alarmsMeta.total", align-center)
+        v-flex(xs10)
+          pagination(
+            data-test="bottomPagination",
+            :page="query.page",
+            :limit="query.limit",
+            :total="alarmsMeta.total",
+            @input="updateQueryPage"
+          )
+        v-spacer
+        v-flex(xs2, data-test="itemsPerPage")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
@@ -84,16 +85,17 @@ import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
 
 import authMixin from '@/mixins/auth';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
 import AlarmListSearch from './search/alarm-list-search.vue';
 import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsListTable from './partials/alarms-list-table.vue';
 
 /**
  * Alarm-list component
@@ -107,17 +109,18 @@ import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
 export default {
   components: {
     AlarmListSearch,
-    FilterSelector,
     RecordsPerPage,
+    AlarmsListTable,
     AlarmsExpandPanelTour,
+    FilterSelector,
   },
   mixins: [
     authMixin,
-    widgetQueryMixin,
+    alarmColumnFilters,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
-    widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
   ],
@@ -125,10 +128,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     tabId: {
       type: String,
@@ -148,7 +147,7 @@ export default {
     },
 
     isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && this.alarms.length > 0;
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && !!this.alarms.length;
     },
 
     activeRange() {
@@ -173,10 +172,13 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
   },
+  mounted() {
+    this.fetchAlarmColumnFilters();
+  },
   methods: {
     onTourNextStep(currentStep) {
       if (currentStep === 0) {
-        this.$set(this.$refs.alarmsTable.$refs.dataTable.expanded, this.alarms[0]._id, true);
+        this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
 
       return this.$nextTick();

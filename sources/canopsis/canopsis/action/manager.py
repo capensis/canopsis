@@ -29,6 +29,7 @@ from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
 from canopsis.models.action import Action
+import durationpy
 
 
 class ActionManager(object):
@@ -123,3 +124,15 @@ class ActionManager(object):
         resp = self.collection.remove(query=query)
 
         return self.collection.is_successfull(resp)
+
+    def is_delay_valid(self, delay):
+        if not delay:
+            return True
+        try:
+            if delay[-1].isdigit():
+                # delay can not be end with digit
+                return False
+            durationpy.from_str(delay)
+        except:
+            return False
+        return True

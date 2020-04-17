@@ -37,6 +37,7 @@ from canopsis.pbehavior.manager import PBehavior
 from canopsis.pbehavior.manager import PBehaviorManager
 
 from test_base import BaseTest
+import re
 
 
 class TestManager(BaseTest):
@@ -99,9 +100,35 @@ class TestManager(BaseTest):
         self.assertTrue(pb is not None)
 
         pb_new = deepcopy(self.pbehavior)
+        pb_new[PBehavior.RRULE] = ''
         pb_new.update({'filter': {'author': {'$in': ['author1, author2']}}})
+        pb_new[PBehavior.TSTOP] = int(time.time()) - 24 * 3600
         pb = self.pbm.create(**pb_new)
         self.assertTrue(pb is not None)
+
+        # create with expired
+        pb_new_2 = deepcopy(self.pbehavior)
+        pb_new_2['pbh_id'] = pb
+        pb_new_2[PBehavior.TSTOP] = int(time.time()) + 24 * 3600
+        e = None
+        try:
+            self.pbm.create(**pb_new_2)
+        except Exception as e:
+            pass
+        finally:
+            self.assertTrue(e is not None)
+            self.assertTrue(isinstance(e, ValueError))
+            e = None
+
+        pb_new_2['replace_expired'] = True
+        new_pb = self.pbm.create(**pb_new_2)
+        pbh = self.pbm.get(_id=None)
+        self.assertGreaterEqual(pbh.get('count'), 1)
+        regex = r"EXP\d+-{}".format(pb)
+        self.assertEqual(len(filter(lambda x: re.match(regex, x['_id']), pbh.get('data'))), 1)
+        self.assertEqual(pbh.get('data')[0].get('name'), pb_new_2[PBehavior.NAME])
+        self.assertTrue(new_pb, pb)
+
 
     def test_read(self):
         pb = self.pbm.read(_id=self.pbehavior_id).get('data')[0]
@@ -393,8 +420,8 @@ class TestManager(BaseTest):
             'w_rrule',
             'w_rrule',
             {},
-            now - hour,
-            now + hour,
+            now - 1,
+            now + 1,
             'FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
             'test'
         ).to_dict()
@@ -470,30 +497,30 @@ class TestManager(BaseTest):
         timestamps = []
 
         # Vendredi 15 Juin 2018 15h13
-        timestamps.append((False, 1529154801-24*3600))
-        timestamps.append((True, 1529154801-24*3600+5*3600)
+        timestamps.append((False, 1529154801 - 24 * 3600))
+        timestamps.append((True, 1529154801 - 24 * 3600 + 5 * 3600)
                           )  # Vendredi 15 Juin 2018 20h13
         timestamps.append((True, 1529154801))  # Samedi 16 Juin 2018 15h13
         timestamps.append((True, 1529290800))  # Lundi 18 Juin 2018 05h00
 
         timestamps.append((False, 1529308800))  # Lundi 18 Juin 2018 10h00
-        timestamps.append((False, 1529308800+7*24*3600))
-        timestamps.append((False, 1529308800+7*24*3600*2))
-        timestamps.append((False, 1529308800+7*24*3600*3))
-        timestamps.append((False, 1529308800+7*24*3600*4))
-        timestamps.append((False, 1529308800+7*24*3600*5))
+        timestamps.append((False, 1529308800 + 7 * 24 * 3600))
+        timestamps.append((False, 1529308800 + 7 * 24 * 3600 * 2))
+        timestamps.append((False, 1529308800 + 7 * 24 * 3600 * 3))
+        timestamps.append((False, 1529308800 + 7 * 24 * 3600 * 4))
+        timestamps.append((False, 1529308800 + 7 * 24 * 3600 * 5))
 
         timestamps.append((True, 1529740800))  # Samedi 23 Juin 2018 10h00
-        timestamps.append((True, 1529740800+7*24*3600))  # +7j
-        timestamps.append((True, 1529740800+7*24*3600*2))  # ...
-        timestamps.append((True, 1529740800+7*24*3600*3))
-        timestamps.append((True, 1529740800+7*24*3600*4))
-        timestamps.append((True, 1529740800+7*24*3600*5))
+        timestamps.append((True, 1529740800 + 7 * 24 * 3600))  # +7j
+        timestamps.append((True, 1529740800 + 7 * 24 * 3600 * 2))  # ...
+        timestamps.append((True, 1529740800 + 7 * 24 * 3600 * 3))
+        timestamps.append((True, 1529740800 + 7 * 24 * 3600 * 4))
+        timestamps.append((True, 1529740800 + 7 * 24 * 3600 * 5))
 
         pbehavior = {
             "rrule": "FREQ=WEEKLY;BYDAY=FR",
             "tstart": 1529085600,
-            "tstop":  1529294400,
+            "tstop": 1529294400,
             "timezone": "UTC"
         }
 
@@ -605,6 +632,163 @@ class TestManager(BaseTest):
             tstart1, tstart1 + 5 * day, 2))
         self.assertEqual(intervals, expected_intervals)
 
+    def test_is_pbh_expired(self):
+        pbehavior1 = deepcopy(self.pbehavior)
+        now = datetime.utcnow()
+        pbehavior1[PBehavior.TSTART] = timegm((now - timedelta(minutes=1)).timetuple())
+        pbehavior1[PBehavior.TSTOP] = timegm((now + timedelta(days=1)).timetuple())
+        pbehavior1[PBehavior.RRULE] = ''
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm(now.timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=2)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=23)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now - timedelta(hours=23)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now - timedelta(hours=2)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=25)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=24)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=48)).timetuple())))
+
+        # rrule with count
+        pbehavior1[PBehavior.TIMEZONE] = "UTC"
+        pbehavior1[PBehavior.RRULE] = 'FREQ=HOURLY;INTERVAL=2;COUNT=3'
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm(now.timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=3)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=5)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=6)).timetuple())))
+        self.assertTrue(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=8)).timetuple())))
+
+        # rrule without count
+        pbehavior1[PBehavior.RRULE] = 'FREQ=HOURLY;INTERVAL=2'
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm(now.timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(hours=5)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(days=5)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(minutes=5)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(days=365)).timetuple())))
+        self.assertFalse(self.pbm.is_pbh_expired(pbehavior1, timegm((now + timedelta(days=31)).timetuple())))
+
+    def test_generate_event(self):
+        day = 24 * 3600
+        now = int(time.time())  # start-time set to nearly day for fast recurrent rule calculation
+        tstart1 = now - now % day - 2 * day  #
+        tstop1 = tstart1 + 3600
+
+        tstart2 = tstart1 + 1800
+        tstop2 = tstop1 + 1800
+
+        self.pbm.context._put_entities([{
+            '_id': 1,
+            'name': 'pbehavior-engine-test1',
+            'depends': ["connector/connector_name"],
+            'type': 'pbehavior-metric-test',
+            PBehavior.FILTER: {},
+            'infos': {}
+        }])
+
+        pbehavior1 = deepcopy(self.pbehavior)
+        pbehavior1.update({
+            "_id": "259f5636-132e-11e9-a604-0242ac10a037",
+            "filter": "{\"_id\": \"xxxxxx/scenario\"}",
+            "name": "downtime",
+            "author": "xxx",
+            "enabled": True,
+            "type_": "pause",
+            "comments": [
+                {
+                    "message": "Scénario  non fonctionnel",
+                    "_id": "43043416-db8c-421c-947f-7a21100bd6f7",
+                    "author": "xxx"
+                }
+            ],
+            "connector": "canopsis",
+            "reason": "Problème Scénario",
+            "connector_name": "canopsis",
+            "rrule": 'invalid rrule ff',
+            "tstart": 1546942445,
+            "tstop": 2147483647,
+            "eids": [1]
+        })
+        self.pbm.collection.remove()
+        self.pbm.collection.insert([pbehavior1])
+        now = int(time.time())
+        events = list(self.pbm.generate_pbh_event(now))
+        self.assertEqual(len(events), 0)
+
+        pbehavior1.update({
+            "_id": "259f5636-132e-11e9-a604-0242ac10a037",
+            "filter": "{\"_id\": 1}",
+            "name": "downtime",
+            "author": "xxx",
+            "enabled": True,
+            "type_": "pause",
+            "comments": [
+                {
+                    "message": "Scénario  non fonctionnel",
+                    "_id": "43043416-db8c-421c-947f-7a21100bd6f7",
+                    "author": "xxx"
+                }
+            ],
+            "connector": "canopsis",
+            "reason": "Problème Scénario",
+            "connector_name": "canopsis",
+            "rrule": '',
+            "tstart": 1546942445,
+            "tstop": 2147483647,
+            "eids": [1]
+            }
+        )
+        self.pbm.collection.update({'_id': pbehavior1['_id']}, {"$set": pbehavior1})
+        now = int(time.time())
+        events = list(self.pbm.generate_pbh_event(now))
+        self.assertEqual(len(events), 1)
+
+        pbehavior1.update({
+            'name': 'hourly test',
+            'eids': [1],
+            'rrule': 'FREQ=HOURLY',
+            'tstart': tstart1,
+            'tstop': tstop1
+        })
+        self.pbm.collection.update({'_id': pbehavior1['_id']}, {"$set": pbehavior1})
+        now = int(time.time())
+        events = list(self.pbm.generate_pbh_event(now))
+        # pbhenter
+        self.assertEqual(len(events), 2)
+        self.assertEqual(events[0]['event_type'], 'pbhleave')
+        self.assertEqual(events[0]['display_name'], 'downtime')
+        self.assertEqual(events[0]['timestamp'], 2147483647)
+        old_now = now
+
+        next_hour = old_now + 3599
+        events = list(self.pbm.generate_pbh_event(next_hour))
+        # pbhleave for above pbhenter because pbehavior reach its due date
+        self.assertEqual(len(events), 2)
+        self.assertEqual(events[0]['event_type'], 'pbhleave')
+        self.assertEqual(events[0]['display_name'], 'hourly test')
+        self.assertEqual(events[0]['timestamp'], old_now + 3600 - old_now % 3600)
+        # new pbhenter
+        self.assertEqual(events[1]['event_type'], 'pbhenter')
+        self.assertEqual(events[1]['display_name'], 'hourly test')
+        self.assertEqual(events[1]['timestamp'], next_hour - next_hour % 3600)
+
+        # modify rrule
+        pbehavior1.update({
+            'name': 'minutely test',
+            'eids': [1],
+            'rrule': 'FREQ=MINUTELY;INTERVAL=15',
+        })
+        self.pbm.collection.update({'_id': pbehavior1['_id']}, {"$set": pbehavior1})
+        pivot_time = next_hour - next_hour % 3600 + 13 * 60 * 3
+        events = list(self.pbm.generate_pbh_event(pivot_time))
+        self.assertEqual(len(events), 2)
+        # send pbhleave for last pbhenter
+        self.assertEqual(events[0]['event_type'], 'pbhleave')
+        self.assertEqual(events[0]['display_name'], 'hourly test')
+        self.assertEqual(events[0]['timestamp'], next_hour - next_hour % 3600 + 3600)
+        # send new pbhenter for new rrule
+        self.assertEqual(events[1]['event_type'], 'pbhenter')
+        self.assertEqual(events[1]['display_name'], 'minutely test')
+        # because pivot time is 39th minute of hour
+        # so with FREQ=MINUTELY;INTERVAL=15 --> last start time is: 30th minute of hour
+        self.assertEqual(events[1]['timestamp'], next_hour - next_hour % 3600 + 30 * 60)
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

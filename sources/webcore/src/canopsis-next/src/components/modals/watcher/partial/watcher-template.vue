@@ -69,11 +69,17 @@ export default {
       default: '',
     },
   },
-  computed: {
-    compiledTemplate() {
-      return `<div>${compile(this.modalTemplate, { entity: this.watcher })}</div>`;
-    },
+  asyncComputed: {
+    compiledTemplate: {
+      async get() {
+        const compiledTemplate = await compile(this.modalTemplate, { entity: this.watcher });
 
+        return `<div>${compiledTemplate}</div>`;
+      },
+      default: '',
+    },
+  },
+  computed: {
     hasPbehaviorListAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.pbehaviorList);
     },

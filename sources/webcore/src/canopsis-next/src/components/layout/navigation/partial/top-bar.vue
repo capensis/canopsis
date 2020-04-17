@@ -55,10 +55,9 @@
 </template>
 
 <script>
-import sha1 from 'sha1';
-import { omit, cloneDeep } from 'lodash';
-
 import { MODALS, USERS_RIGHTS } from '@/constants';
+
+import { prepareUserByData } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import entitiesUserMixin from '@/mixins/entities/user';
@@ -178,13 +177,7 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            const editedUser = cloneDeep(this.currentUser);
-
-            if (data.password && data.password !== '') {
-              editedUser.shadowpasswd = sha1(data.password);
-            }
-
-            await this.createUser({ data: { ...editedUser, ...omit(data, ['password']) } });
+            await this.createUser({ data: prepareUserByData(data, this.currentUser) });
 
             await this.fetchCurrentUser();
           },

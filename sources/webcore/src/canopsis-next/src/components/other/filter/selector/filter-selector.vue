@@ -72,6 +72,8 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
 import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
 import FiltersList from '@/components/other/filter/list/filters-list.vue';
@@ -169,11 +171,13 @@ export default {
     },
   },
   methods: {
-    updateIsMultipleFlag(value) {
-      if (value && !Array.isArray(this.value)) {
-        this.updateSelectedFilter(this.value ? [this.value] : []);
-      } else if (!value && Array.isArray(this.value)) {
-        this.updateSelectedFilter(this.value[0] || null);
+    updateIsMultipleFlag(checked) {
+      const isValueArray = Array.isArray(this.value);
+
+      if (checked && !isValueArray) {
+        this.updateSelectedFilter(!isEmpty(this.value) ? [this.value] : []);
+      } else if (!checked && isValueArray) {
+        this.updateSelectedFilter(!isEmpty(this.value[0]) ? this.value[0] : null);
       }
     },
 

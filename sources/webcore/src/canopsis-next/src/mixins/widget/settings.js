@@ -9,7 +9,7 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import { WIDGET_MIN_SIZE, WIDGET_MAX_SIZE } from '@/constants';
 import { viewSchema, viewTabSchema, viewRowSchema, widgetSchema } from '@/store/schemas';
 
-import { convertUserPreferenceToQuery, convertWidgetToQuery } from '@/helpers/query';
+import { prepareQuery } from '@/helpers/query';
 
 export default {
   props: {
@@ -177,10 +177,7 @@ export default {
         ]);
 
         const oldQuery = this.getQueryById(this.widget._id);
-        const newQuery = {
-          ...convertWidgetToQuery(widget),
-          ...convertUserPreferenceToQuery(userPreference),
-        };
+        const newQuery = prepareQuery(widget, userPreference);
 
         this.updateQuery({
           id: widget._id,

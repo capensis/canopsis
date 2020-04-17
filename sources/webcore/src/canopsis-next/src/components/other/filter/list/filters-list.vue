@@ -37,6 +37,7 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 export default {
   components: { Draggable },
@@ -107,22 +108,8 @@ export default {
       });
     },
 
-    changeFiltersOrdering({ moved, added, removed }) {
-      const filters = [...this.filters];
-
-      if (moved) {
-        const [item] = filters.splice(moved.oldIndex, 1);
-
-        filters.splice(moved.newIndex, 0, item);
-      } else if (added) {
-        filters.splice(added.newIndex, 0, added.element);
-      } else if (removed) {
-        filters.splice(removed.oldIndex, 1);
-      }
-
-      if (filters) {
-        this.$emit('update:filters', filters);
-      }
+    changeFiltersOrdering(event) {
+      this.$emit('update:filters', dragDropChangePositionHandler(this.filters, event));
     },
   },
 };

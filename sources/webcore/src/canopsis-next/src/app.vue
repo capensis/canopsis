@@ -45,6 +45,8 @@ export default {
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
 
+      this.setPopupTimeout();
+
       this.startKeepalive();
     } else {
       this.registerIsLoggedInOnceWatcher();

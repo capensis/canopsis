@@ -1,19 +1,20 @@
 <template lang="pug">
   tr(:data-test="`tableRow-${alarm._id}`")
-    td.pr-0(data-test="rowCheckbox")
+    td.pr-0(v-if="selectable || expandable", data-test="rowCheckbox")
       v-layout(row, align-center)
-        v-checkbox-functional(
-          v-if="!isResolvedAlarm",
-          v-field="selected",
-          hide-details
-        )
-        v-checkbox-functional(
-          v-else,
-          :value="false",
-          disabled,
-          hide-details
-        )
-        v-layout.ml-2(align-center)
+        template(v-if="selectable")
+          v-checkbox-functional(
+            v-if="!isResolvedAlarm",
+            v-field="selected",
+            hide-details
+          )
+          v-checkbox-functional(
+            v-else,
+            :value="false",
+            disabled,
+            hide-details
+          )
+        v-layout.ml-2(v-if="expandable", align-center)
           v-btn.ma-0(
             :class="expandButtonClass",
             icon,
@@ -32,8 +33,7 @@
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :isResolvedAlarm="isResolvedAlarm",
-        :isEditingMode="isEditingMode"
+        :isResolvedAlarm="isResolvedAlarm"
       )
 </template>
 
@@ -46,14 +46,14 @@ import { getStepClass } from '@/helpers/tour';
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 
-import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/time-line';
+import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 export default {
   components: {
     ActionsPanel,
     AlarmColumnValue,
   },
-  mixins: [widgetExpandPanelAlarmTimeLine],
+  mixins: [widgetExpandPanelAlarm],
   model: {
     prop: 'selected',
     event: 'input',
@@ -61,7 +61,14 @@ export default {
   props: {
     selected: {
       type: Boolean,
-      required: false,
+      default: false,
+    },
+    selectable: {
+      type: Boolean,
+      default: false,
+    },
+    expandable: {
+      type: Boolean,
       default: false,
     },
     row: {
@@ -79,10 +86,6 @@ export default {
     columns: {
       type: Array,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     isTourEnabled: {
       type: Boolean,
@@ -106,8 +109,8 @@ export default {
   },
   methods: {
     async showExpandPanel() {
-      if (!this.row.expanded && !this.widget.parameters.moreInfoTemplate) {
-        await this.fetchItemWithSteps();
+      if (!this.row.expanded) {
+        await this.fetchAlarmItemWithGroupsAndSteps(this.alarm);
       }
 
       this.row.expanded = !this.row.expanded;
