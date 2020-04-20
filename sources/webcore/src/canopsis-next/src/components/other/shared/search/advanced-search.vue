@@ -1,13 +1,13 @@
 <template lang="pug">
   search-field(v-model="searchingText", @submit="submit", @clear="clear")
-    v-tooltip(bottom)
+    v-tooltip(v-if="tooltip", bottom)
       v-btn(
         data-test="tableSearchHelp",
         icon,
         slot="activator"
       )
         v-icon help_outline
-      div(data-test="tableSearchHelpInfo", v-html="$t('search.advancedSearch')")
+      div(data-test="tableSearchHelpInfo", v-html="tooltip")
 </template>
 
 <script>
@@ -36,6 +36,10 @@ export default {
     parameter: {
       type: String,
       default: 'search',
+    },
+    tooltip: {
+      type: String,
+      default: '',
     },
   },
   data() {

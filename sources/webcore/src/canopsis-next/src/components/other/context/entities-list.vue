@@ -2,7 +2,11 @@
   div
     v-layout.white(justify-space-between, align-center)
       v-flex
-        advanced-search(:query.sync="query", :columns="columns")
+        advanced-search(
+          :query.sync="query",
+          :columns="columns",
+          :tooltip="$t('search.contextAdvancedSearch')"
+        )
       v-flex
         pagination(
           v-if="hasColumns",

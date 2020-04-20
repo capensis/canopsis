@@ -2,7 +2,11 @@
   div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        advanced-search(:query.sync="query", :columns="columns")
+        advanced-search(
+          :query.sync="query",
+          :columns="columns",
+          :tooltip="$t('search.alarmAdvancedSearch')"
+        )
       v-flex
         pagination(
           data-test="topPagination",
