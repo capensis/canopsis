@@ -62,7 +62,7 @@
 <script>
 import { cloneDeep } from 'lodash';
 
-import { MODALS, SIDE_BARS, WIDGET_COUNTER_VARIABLES } from '@/constants';
+import { MODALS, SIDE_BARS, WIDGET_COUNTER_ENTITY_VARIABLES } from '@/constants';
 import { createJoditVariablesButton } from '@/helpers/jodit';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -110,7 +110,7 @@ export default {
   },
   computed: {
     counterVariables() {
-      return convertObjectToTreeview(WIDGET_COUNTER_VARIABLES, 'counter');
+      return convertObjectToTreeview(WIDGET_COUNTER_ENTITY_VARIABLES, 'counter');
     },
 
     variablesButtons() {

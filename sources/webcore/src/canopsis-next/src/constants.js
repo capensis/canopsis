@@ -1208,10 +1208,9 @@ export const STRING_TYPES = {
   string: 'String',
   bool: 'Boolean',
   array: 'Array',
-  object: 'Object',
 };
 
-export const WIDGET_COUNTER_VARIABLES = {
+export const WIDGET_COUNTER_ENTITY_VARIABLES = {
   total: STRING_TYPES.number,
   total_active: STRING_TYPES.number,
   snooze: STRING_TYPES.number,
@@ -1220,37 +1219,30 @@ export const WIDGET_COUNTER_VARIABLES = {
   pbehavior_active: STRING_TYPES.number,
 };
 
-export const ACTION_VARIABLES = {
+export const ENTITY_EVENT_ENTITY_VARIABLES = {
   a: STRING_TYPES.string,
   m: STRING_TYPES.string,
   t: STRING_TYPES.number,
   _t: STRING_TYPES.string,
-};
-
-export const STATE_ENTITY_VARIABLES = {
-  a: STRING_TYPES.string,
-  _t: STRING_TYPES.string,
-  m: STRING_TYPES.string,
-  t: STRING_TYPES.string,
   val: STRING_TYPES.string,
 };
 
-export const INFOS_ENTITY_VARIABLES = {
+export const INFO_FIELD_ENTITY_VARIABLES = {
   name: STRING_TYPES.string,
   value: STRING_TYPES.string,
   description: STRING_TYPES.string,
 };
 
-export const INFOS_VARIABLES = {
-  sicode: INFOS_ENTITY_VARIABLES,
-  statutlabel: INFOS_ENTITY_VARIABLES,
-  description: INFOS_ENTITY_VARIABLES,
-  statut: INFOS_ENTITY_VARIABLES,
-  type: INFOS_ENTITY_VARIABLES,
-  typecode: INFOS_ENTITY_VARIABLES,
-  criticity: INFOS_ENTITY_VARIABLES,
-  si: INFOS_ENTITY_VARIABLES,
-  criticitylabel: INFOS_ENTITY_VARIABLES,
+export const INFOS_ENTITY_VARIABLES = {
+  sicode: INFO_FIELD_ENTITY_VARIABLES,
+  statutlabel: INFO_FIELD_ENTITY_VARIABLES,
+  description: INFO_FIELD_ENTITY_VARIABLES,
+  statut: INFO_FIELD_ENTITY_VARIABLES,
+  type: INFO_FIELD_ENTITY_VARIABLES,
+  typecode: INFO_FIELD_ENTITY_VARIABLES,
+  criticity: INFO_FIELD_ENTITY_VARIABLES,
+  si: INFO_FIELD_ENTITY_VARIABLES,
+  criticitylabel: INFO_FIELD_ENTITY_VARIABLES,
 };
 
 export const PBEHAVIOR_COMMENT_ENTITY_VARIABLES = {
@@ -1275,29 +1267,31 @@ export const WATCHER_PBEHAVIOR_ENTITY_VARIABLES = {
 };
 
 export const WIDGET_WEATHER_WATCHER_VARIABLES = {
-  ack: ACTION_VARIABLES,
-  resource: ACTION_VARIABLES,
-  snooze: ACTION_VARIABLES,
+  ack: ENTITY_EVENT_ENTITY_VARIABLES,
+  resource: ENTITY_EVENT_ENTITY_VARIABLES,
+  snooze: ENTITY_EVENT_ENTITY_VARIABLES,
+  comment: ENTITY_EVENT_ENTITY_VARIABLES,
+  status: ENTITY_EVENT_ENTITY_VARIABLES,
+  state: ENTITY_EVENT_ENTITY_VARIABLES,
   connector_name: STRING_TYPES.string,
   component: STRING_TYPES.string,
   entity_id: STRING_TYPES.string,
   isAllEntitiesPaused: STRING_TYPES.bool,
   display_name: STRING_TYPES.string,
   connector: STRING_TYPES.string,
-  state: STATE_ENTITY_VARIABLES,
   mfilter: STRING_TYPES.string,
-  status: STATE_ENTITY_VARIABLES,
   watcher_pbehavior: [WATCHER_PBEHAVIOR_ENTITY_VARIABLES],
   isWatcherPaused: STRING_TYPES.bool,
   tileColor: STRING_TYPES.string,
   last_update_date: STRING_TYPES.number,
   isActionRequired: STRING_TYPES.bool,
-  infos: INFOS_VARIABLES,
+  infos: INFOS_ENTITY_VARIABLES,
   sla_tex: STRING_TYPES.string,
   linklist: STRING_TYPES.array,
 };
 
 export const WIDGET_WEATHER_ENTITIES_VARIABLES = {
+  state: ENTITY_EVENT_ENTITY_VARIABLES,
   sla_tex: STRING_TYPES.string,
   entity_id: STRING_TYPES.string,
   stats: {
@@ -1310,7 +1304,6 @@ export const WIDGET_WEATHER_ENTITIES_VARIABLES = {
   pbehavior: STRING_TYPES.array,
   linklist: STRING_TYPES.array,
   source_type: STRING_TYPES.string,
-  state: STATE_ENTITY_VARIABLES,
   org: STRING_TYPES.string,
-  infos: INFOS_VARIABLES,
+  infos: INFOS_ENTITY_VARIABLES,
 };
