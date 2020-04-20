@@ -6,7 +6,7 @@ The `enableMetaAlarmProcessing` flag was added to the `engine-fifo`. It's `true`
 
 ## Multi-axe concurrency
 
-The one thing instances compete for is periodical process. Only one instance should do periodical process when it ticks. It is resolved by `redlock`. If an instance acquire the lock it does the periodical process or skips it otherwise. 
+The one thing instances compete for is periodical process. Only one instance should do periodical process when it ticks. It is resolved by `redlock`. If an instance acquire the lock it does the periodical process or skips it otherwise. `"Obtain redis lock: unexpected error"` printed to log in case of other error.
 
 ## Start multi-axe
 
