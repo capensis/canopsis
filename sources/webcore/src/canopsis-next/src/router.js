@@ -23,6 +23,7 @@ import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
+import Playlist from '@/views/playlist.vue';
 
 Vue.use(Router);
 
@@ -200,6 +201,18 @@ const routes = [
         id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
       },
     },
+  },
+  {
+    path: '/playlist/:id',
+    name: 'playlist',
+    component: Playlist,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
+      },
+    },
+    props: route => ({ id: route.params.id }),
   },
 ];
 

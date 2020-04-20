@@ -31,6 +31,24 @@
         div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
           v-btn.primary(@click="submit") {{ $t('common.submit') }}
           v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
+      v-divider
+      v-expansion-panel(expand, focusable, dark)
+        v-expansion-panel-content.secondary.lighten-1.white--text
+          div.panel-header(slot="header")
+            span Playlists
+          v-card(
+            v-for="playlist in availablePlaylists",
+            :key="playlist._id"
+          )
+            router-link.secondary.lighten-2(
+              :title="playlist.name",
+              :to="'/'"
+            )
+              v-card-text.panel-item-content
+                v-layout(align-center, justify-space-between)
+                  v-flex
+                    v-layout(align-center)
+                      span.pl-2 {{ playlist.name }}
       groups-settings-button(
         tooltipRight,
         @toggleEditingMode="toggleNavigationEditingMode"
@@ -116,6 +134,20 @@ export default {
 
     isGroupsOrderChanged() {
       return this.checkIsGroupsOrderChanged(this.availableGroups, this.mutatedGroups);
+    },
+
+    availablePlaylists() {
+      return [
+        {
+          _id: 'asdasd',
+          name: 'Playlist #1',
+          interval: {
+            value: 12,
+            unit: 'm',
+          },
+          enabled: true,
+        },
+      ];
     },
   },
   watch: {
