@@ -21,11 +21,14 @@
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.alerts.reader import AlertsReader
+import re
 
 
 def exports(ws):
     alr = AlertsReader(*AlertsReader.provide_default_basics())
     manager = ContextGraph(ws.logger)
+
+    DEFAULT_ACTIVE_COLUMNS = ["name", "type"]
 
     @route(ws.application.get)
     def context(_type, names=None, context=None, extended=None):
@@ -59,10 +62,11 @@ def exports(ws):
 
         return result
 
-    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter', 'search'])
+    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter', 'search', 'active_columns'])
     def context(context=None,
                 _filter=None,
                 search='',
+                active_columns=None,
                 extended=False,
                 limit=0,
                 start=0,
@@ -79,8 +83,25 @@ def exports(ws):
         except ValueError:
             bnf_search_filter = None
 
+        if not active_columns:
+            active_columns = DEFAULT_ACTIVE_COLUMNS
+
         if bnf_search_filter is not None:
             final_filter['$and'].append(bnf_search_filter)
+        else:
+            escaped_search = re.escape(str(search))
+            column_filter = {'$or': []}
+            for column in active_columns:
+                column_filter['$or'].append(
+                    {
+                        column: {
+                            '$regex': '.*{}.*'.format(escaped_search),
+                            '$options': 'i'
+                        }
+                    }
+                )
+
+            final_filter['$and'].append(column_filter)
 
         data, count = manager.get_entities(
             query=final_filter,
