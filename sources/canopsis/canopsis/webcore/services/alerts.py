@@ -33,6 +33,7 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route, WebServiceError
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
+from canopsis.metaalarmrule.manager import MetaAlarmRuleManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.pbehavior.manager import PBehaviorManager,PBehavior
 
@@ -44,6 +45,8 @@ def exports(ws):
     context_manager = ContextGraph(ws.logger)
     am = Alerts(*Alerts.provide_default_basics())
     ar = AlertsReader(*AlertsReader.provide_default_basics())
+    ma_rule_manager = MetaAlarmRuleManager(
+        *MetaAlarmRuleManager.provide_default_basics())
     pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
     @route(
@@ -64,7 +67,9 @@ def exports(ws):
             'with_steps',
             'natural_search',
             'active_columns',
-            'hide_resources'
+            'hide_resources',
+            'with_consequences',
+            'with_causes'
         ]
     )
     def get_alarms(
@@ -82,7 +87,9 @@ def exports(ws):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            with_consequences=False,
+            with_causes=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -134,14 +141,20 @@ def exports(ws):
                 with_steps=with_steps,
                 natural_search=natural_search,
                 active_columns=active_columns,
-                hide_resources=hide_resources
+                hide_resources=hide_resources,
+                with_consequences=with_consequences
             )
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)
             raise WebServiceError(message)
 
-        alarms_ids = []
+        alarms_ids, consequences_children = [], []
+        alarm_children = {'alarms': [], 'total': 0}
         for alarm in alarms['alarms']:
+            if with_consequences:
+                consequences_children.extend(alarm.get('consequences', {}).get('data', []))
+            elif with_causes and alarm.get('v') and alarm['v'].get('parents'):
+                consequences_children.extend(alarm['v']['parents'])
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
@@ -150,8 +163,57 @@ def exports(ws):
         for entity in entities:
             entity_dict[entity.get('_id')] = entity
 
+        if consequences_children:
+            alarm_children = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=opened,
+                resolved=resolved,
+                lookups=lookups,
+                filter_={'d': {'$in': consequences_children}},
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=limit,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources,
+            )
+
         list_alarm = []
+        rule_ids = set()
+        for alarm_rules in alarms['rules'].values():
+            for v in alarm_rules:
+                rule_ids.add(v)
+        named_rules = ma_rule_manager.read_rules_with_names(list(rule_ids))
+        for d, alarm_rules in alarms['rules'].items():
+            alarm_named_rules = []
+            for v in alarm_rules:
+                alarm_named_rules.append({'id': v, 'name': named_rules.get(v, "")})
+            alarms['rules'][d] = alarm_named_rules
+
         for alarm in alarms['alarms']:
+            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm else None
+            if rules:
+                if with_causes:
+                    alarm['causes'] = {
+                        'total': len(alarm_children['alarms']),
+                        'data': alarm_children['alarms'],
+                    }
+                else:
+                    alarm['causes'] = {
+                        'total': len(rules),
+                        'rules': rules,
+                    }
+
+            if alarm.get('v') is None:
+                alarm['v'] = dict()
+            if alarm.get('v').get('meta'):
+                del alarm['v']['meta']
+
+            if isinstance(alarm.get('rule'), basestring) and alarm['rule'] != "":
+                alarm['rule'] = {'id': alarm['rule'], 'name': named_rules.get(alarm['rule'], alarm['rule'])}
+
             now = int(time())
 
             alarm_end = alarm.get('v', {}).get('resolved')
@@ -178,8 +240,12 @@ def exports(ws):
 
             alarm = compat_go_crop_states(alarm)
 
+            if with_consequences and isinstance(alarm.get('consequences'), dict) and alarm_children['total'] > 0:
+                alarm['consequences']['data'] = alarm_children['alarms']
+
             list_alarm.append(alarm)
 
+        del alarms['rules']
         alarms['alarms'] = list_alarm
 
         return alarms
