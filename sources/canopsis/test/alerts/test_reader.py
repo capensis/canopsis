@@ -427,6 +427,7 @@ class TestReader(BaseTest):
 
         ref_filter = {
             '$and': [
+                {u'v.meta': {u'$exists': False}},
                 {'$and': [{'infos_array.v.tt': 'companion cube'}]},
                 time_filter,
                 {'resource': {'$not': {'$eq': 'turret'}}}
