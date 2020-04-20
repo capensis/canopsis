@@ -94,6 +94,7 @@ export function convertContextWidgetToQuery(widget) {
   const {
     itemsPerPage,
     selectedTypes,
+    widgetColumns,
   } = widget.parameters;
 
   const query = {
@@ -101,6 +102,10 @@ export function convertContextWidgetToQuery(widget) {
     limit: itemsPerPage || PAGINATION_LIMIT,
     selectedTypes,
   };
+
+  if (widgetColumns) {
+    query.active_columns = widgetColumns.map(v => v.value);
+  }
 
   return { ...query, ...convertSortToQuery(widget) };
 }
