@@ -17,11 +17,6 @@ import { replaceTextNotInQuotes } from '@/helpers/searching';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 
-/**
-   * Search component for the entities list
-   *
-   * @module context
-   */
 export default {
   components: { SearchField },
   props: {
@@ -33,7 +28,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    parameter: {
+    field: {
       type: String,
       default: 'search',
     },
@@ -60,18 +55,18 @@ export default {
     clear() {
       this.searchingText = '';
 
-      this.$emit('update:query', omit(this.query, [this.parameter]));
+      this.$emit('update:query', omit(this.query, [this.field]));
     },
 
     submit() {
       const requestData = this.getRequestData();
 
-      if (requestData || this.query[this.parameter]) {
+      if (requestData || this.query[this.field]) {
         this.$emit('update:query', {
           ...this.query,
 
           page: 1,
-          [this.parameter]: requestData,
+          [this.field]: requestData,
         });
       }
     },
