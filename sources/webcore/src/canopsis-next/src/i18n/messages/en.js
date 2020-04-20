@@ -122,6 +122,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Play',
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
     },
     times: {
       second: 'second | seconds',
@@ -213,6 +214,7 @@ export default {
         changeState: 'Change and lock severity',
         variablesHelp: 'List of available variables',
         history: 'History',
+        comment: 'Comment',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -220,6 +222,7 @@ export default {
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
+        comment: 'Comment',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
@@ -1083,6 +1086,12 @@ export default {
       defaultMessage: 'Your message here',
       buttons: {
         selectColor: 'Select background color',
+      },
+    },
+    createCommentEvent: {
+      title: 'Add comment',
+      fields: {
+        comment: 'Comment',
       },
     },
   },

@@ -112,6 +112,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Commentaire',
     },
     times: {
       second: 'seconde | secondes',
@@ -202,6 +203,7 @@ export default {
         changeState: 'Changer et verrouiller la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
+        comment: 'Commentaire',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -209,6 +211,7 @@ export default {
         canceled: 'Annulé',
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
+        comment: 'Commentaire',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
@@ -1003,6 +1006,12 @@ export default {
       defaultMessage: 'Votre message ici',
       buttons: {
         selectColor: 'Sélectionnez la couleur d\'arrière-plan',
+      },
+    },
+    createCommentEvent: {
+      title: 'Ajouter un commentaire',
+      fields: {
+        comment: 'Commentaire',
       },
     },
   },

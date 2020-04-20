@@ -33,6 +33,16 @@ export default {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
     },
 
+    showCreateCommentModal() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          ...this.modalConfig,
+          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
+        },
+      });
+    },
+
     async createMassFastAckEvent() {
       let eventData = {};
 

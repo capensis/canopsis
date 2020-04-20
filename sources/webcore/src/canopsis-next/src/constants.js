@@ -39,6 +39,7 @@ export const MODALS = {
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
   createCancelEvent: 'create-cancel-event',
+  createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
@@ -108,6 +109,7 @@ export const EVENT_ENTITY_TYPES = {
   play: 'play',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
+  comment: 'comment',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -350,6 +352,10 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.pbhleave]: {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
+  },
+  [EVENT_ENTITY_TYPES.comment]: {
+    color: COLORS.entitiesEvents.comment,
+    icon: 'comment',
   },
 };
 
@@ -695,6 +701,7 @@ export const USERS_RIGHTS = {
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
         variablesHelp: 'common_variablesHelp',
+        comment: 'listalarm_comment',
 
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
@@ -726,6 +733,7 @@ export const USERS_RIGHTS = {
       actions: {
         entityAck: 'serviceweather_entityAck',
         entityAssocTicket: 'serviceweather_entityAssocTicket',
+        entityСomment: 'serviceweather_entityСomment',
         entityValidate: 'serviceweather_entityValidate',
         entityInvalidate: 'serviceweather_entityInvalidate',
         entityPause: 'serviceweather_entityPause',
@@ -770,6 +778,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
     history: 'history',
+    comment: 'comment',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -801,6 +810,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityPause: 'entityPause',
     entityPlay: 'entityPlay',
     entityCancel: 'entityCancel',
+    comment: 'entityComment',
 
     entityLinks: 'entityLinks',
 
@@ -829,6 +839,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
     [WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp]: USERS_RIGHTS.business.alarmsList.actions.variablesHelp,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.comment]: USERS_RIGHTS.business.alarmsList.actions.comment,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -870,6 +881,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
     [WIDGETS_ACTIONS_TYPES.weather.variablesHelp]: USERS_RIGHTS.business.weather.actions.variablesHelp,
+    [WIDGETS_ACTIONS_TYPES.weather.comment]: USERS_RIGHTS.business.weather.actions.comment,
   },
 
   counter: {
