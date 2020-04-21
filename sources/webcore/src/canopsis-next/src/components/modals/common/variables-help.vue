@@ -23,7 +23,7 @@
             icon,
             @click="selectVariablesHandler(props.item.path)"
           )
-            v-icon file_copy
+            v-icon content_copy
           v-tooltip(v-else, left)
             v-btn(
               v-clipboard:copy="props.item.path",
@@ -52,12 +52,12 @@ export default {
   mixins: [modalInnerMixin],
   computed: {
     selectable() {
-      return !!this.config.selectable;
+      return !!this.config.select;
     },
   },
   methods: {
     selectVariablesHandler(path) {
-      this.config.action(path);
+      this.config.select(path);
 
       this.$modals.hide();
     },

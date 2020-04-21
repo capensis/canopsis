@@ -1203,7 +1203,7 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
 
-export const STRING_TYPES = {
+export const TYPES_STRINGS = {
   number: 'Number',
   string: 'String',
   bool: 'Boolean',
@@ -1211,26 +1211,26 @@ export const STRING_TYPES = {
 };
 
 export const WIDGET_COUNTER_ENTITY_VARIABLES = {
-  total: STRING_TYPES.number,
-  total_active: STRING_TYPES.number,
-  snooze: STRING_TYPES.number,
-  ack: STRING_TYPES.number,
-  ticket: STRING_TYPES.number,
-  pbehavior_active: STRING_TYPES.number,
+  total: TYPES_STRINGS.number,
+  total_active: TYPES_STRINGS.number,
+  snooze: TYPES_STRINGS.number,
+  ack: TYPES_STRINGS.number,
+  ticket: TYPES_STRINGS.number,
+  pbehavior_active: TYPES_STRINGS.number,
 };
 
 export const ENTITY_EVENT_ENTITY_VARIABLES = {
-  a: STRING_TYPES.string,
-  m: STRING_TYPES.string,
-  t: STRING_TYPES.number,
-  _t: STRING_TYPES.string,
-  val: STRING_TYPES.string,
+  a: TYPES_STRINGS.string,
+  m: TYPES_STRINGS.string,
+  t: TYPES_STRINGS.number,
+  _t: TYPES_STRINGS.string,
+  val: TYPES_STRINGS.string,
 };
 
 export const INFO_FIELD_ENTITY_VARIABLES = {
-  name: STRING_TYPES.string,
-  value: STRING_TYPES.string,
-  description: STRING_TYPES.string,
+  name: TYPES_STRINGS.string,
+  value: TYPES_STRINGS.string,
+  description: TYPES_STRINGS.string,
 };
 
 export const INFOS_ENTITY_VARIABLES = {
@@ -1246,24 +1246,24 @@ export const INFOS_ENTITY_VARIABLES = {
 };
 
 export const PBEHAVIOR_COMMENT_ENTITY_VARIABLES = {
-  message: STRING_TYPES.string,
-  _id: STRING_TYPES.string,
-  author: STRING_TYPES.string,
+  message: TYPES_STRINGS.string,
+  _id: TYPES_STRINGS.string,
+  author: TYPES_STRINGS.string,
 };
 
 export const WATCHER_PBEHAVIOR_ENTITY_VARIABLES = {
-  connector: STRING_TYPES.string,
-  name: STRING_TYPES.string,
-  author: STRING_TYPES.string,
-  enabled: STRING_TYPES.bool,
-  reason: STRING_TYPES.string,
+  connector: TYPES_STRINGS.string,
+  name: TYPES_STRINGS.string,
+  author: TYPES_STRINGS.string,
+  enabled: TYPES_STRINGS.bool,
+  reason: TYPES_STRINGS.string,
   comments: [PBEHAVIOR_COMMENT_ENTITY_VARIABLES],
-  filter: STRING_TYPES.string,
-  connector_name: STRING_TYPES.string,
-  tstart: STRING_TYPES.number,
-  timezone: STRING_TYPES.string,
-  tstop: STRING_TYPES.number,
-  rrule: STRING_TYPES.string,
+  filter: TYPES_STRINGS.string,
+  connector_name: TYPES_STRINGS.string,
+  tstart: TYPES_STRINGS.number,
+  timezone: TYPES_STRINGS.string,
+  tstop: TYPES_STRINGS.number,
+  rrule: TYPES_STRINGS.string,
 };
 
 export const WIDGET_WEATHER_WATCHER_VARIABLES = {
@@ -1273,37 +1273,37 @@ export const WIDGET_WEATHER_WATCHER_VARIABLES = {
   comment: ENTITY_EVENT_ENTITY_VARIABLES,
   status: ENTITY_EVENT_ENTITY_VARIABLES,
   state: ENTITY_EVENT_ENTITY_VARIABLES,
-  connector_name: STRING_TYPES.string,
-  component: STRING_TYPES.string,
-  entity_id: STRING_TYPES.string,
-  isAllEntitiesPaused: STRING_TYPES.bool,
-  display_name: STRING_TYPES.string,
-  connector: STRING_TYPES.string,
-  mfilter: STRING_TYPES.string,
+  connector_name: TYPES_STRINGS.string,
+  component: TYPES_STRINGS.string,
+  entity_id: TYPES_STRINGS.string,
+  isAllEntitiesPaused: TYPES_STRINGS.bool,
+  display_name: TYPES_STRINGS.string,
+  connector: TYPES_STRINGS.string,
+  mfilter: TYPES_STRINGS.string,
   watcher_pbehavior: [WATCHER_PBEHAVIOR_ENTITY_VARIABLES],
-  isWatcherPaused: STRING_TYPES.bool,
-  tileColor: STRING_TYPES.string,
-  last_update_date: STRING_TYPES.number,
-  isActionRequired: STRING_TYPES.bool,
+  isWatcherPaused: TYPES_STRINGS.bool,
+  tileColor: TYPES_STRINGS.string,
+  last_update_date: TYPES_STRINGS.number,
+  isActionRequired: TYPES_STRINGS.bool,
   infos: INFOS_ENTITY_VARIABLES,
-  sla_tex: STRING_TYPES.string,
-  linklist: STRING_TYPES.array,
+  sla_tex: TYPES_STRINGS.string,
+  linklist: TYPES_STRINGS.array,
 };
 
 export const WIDGET_WEATHER_ENTITIES_VARIABLES = {
   state: ENTITY_EVENT_ENTITY_VARIABLES,
-  sla_tex: STRING_TYPES.string,
-  entity_id: STRING_TYPES.string,
+  sla_tex: TYPES_STRINGS.string,
+  entity_id: TYPES_STRINGS.string,
   stats: {
-    ko: STRING_TYPES.number,
-    last_ko: STRING_TYPES.string,
-    ok: STRING_TYPES.number,
-    last_event: STRING_TYPES.string,
+    ko: TYPES_STRINGS.number,
+    last_ko: TYPES_STRINGS.string,
+    ok: TYPES_STRINGS.number,
+    last_event: TYPES_STRINGS.string,
   },
-  name: STRING_TYPES.string,
-  pbehavior: STRING_TYPES.array,
-  linklist: STRING_TYPES.array,
-  source_type: STRING_TYPES.string,
-  org: STRING_TYPES.string,
+  name: TYPES_STRINGS.string,
+  pbehavior: TYPES_STRINGS.array,
+  linklist: TYPES_STRINGS.array,
+  source_type: TYPES_STRINGS.string,
+  org: TYPES_STRINGS.string,
   infos: INFOS_ENTITY_VARIABLES,
 };

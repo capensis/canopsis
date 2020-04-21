@@ -203,8 +203,7 @@ export default {
       this.$modals.show({
         name: MODALS.variablesHelp,
         config: {
-          selectable: true,
-          action: value => editor.selection.insertHTML(`{{ ${value} }}`),
+          select: value => editor.selection.insertHTML(`{{ ${value} }}`),
           variables,
         },
       });
