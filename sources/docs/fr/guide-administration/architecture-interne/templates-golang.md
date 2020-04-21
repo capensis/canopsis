@@ -1,6 +1,6 @@
 # Templates (Go)
 
-Dans les [Webhooks](../moteurs/moteur-webhook.md), les champs `payload` et `url` sont personnalisables grâce aux templates Go. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
+Dans les [Webhooks](../moteurs/moteur-webhook.md), les champs `payload` et `url` sont personnalisables grâce aux templates Go. Les templates permettent de générer du texte en fonction de la criticité de l'alarme, de l'évènement ou de l'entité.
 
 Les templates des champs `payload` et `url` peuvent se décomposer en deux parties : la déclaration de variables et le corps du texte lui-même.
 
@@ -23,12 +23,12 @@ Voici une liste des principales données et la manière de la récupérer.
 | Ressource           | `{{ .Alarm.Value.Resource }}`       |
 | Message             | `{{ .Alarm.Value.State.Message }}`  |
 | Statut              | `{{ .Alarm.Value.Status.Value }}`   |
-| Etat                | `{{ .Alarm.Value.State.Value }}`    |
+| Criticité           | `{{ .Alarm.Value.State.Value }}`    |
 | Auteur du ticket    | `{{ .Alarm.Value.Ticket.Author }}`  |
 | Numéro du ticket    | `{{ .Alarm.Value.Ticket.Value }}`   |
 | Message du ticket   | `{{ .Alarm.Value.Ticket.Message }}` |
-| Auteur de l'ACK     | `{{ .Alarm.Value.ACK.Author }}`     |
-| Message de l'ACK    | `{{ .Alarm.Value.ACK.Message }}`    |
+| Auteur de l'acquittement | `{{ .Alarm.Value.ACK.Author }}`     |
+| Message de l'acquittement | `{{ .Alarm.Value.ACK.Message }}`    |
 | `abc` dans l'entité | `{{ .Entity.Infos.abc.Value }}`     |
 
 Pour les champs de date, comme par exemple `{{ .Event.Timestamp }}`, il est possible de récupérer l'information de différents manières.
@@ -83,7 +83,7 @@ On peut aussi enchaîner différentes fonctions à la suite si on veut transform
 
 #### `urlquery`
 
-`urlquery` va transformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de l'état de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
+`urlquery` va transformer le contenu de la variable en une chaîne de caractères compatible avec le format des URL. Cette fonction a son intérêt si l'adresse du service externe dépend de la criticité de l'alarme ou du ticket et que le contenu contient des caractères spéciaux. Un exemple d'adresse serait `http://une-api.org/edit/{{ .Alarm.Value.Ticket.Value | urlquery }}` pour modifier un ticket déjà existant.
 
 #### Fonctionnalités spécifiques à Canopsis
 

@@ -105,5 +105,5 @@ On contrôle le bac :
 
 La remontée de l'alarme dans le bac s'opère :
 
-- À chaque changement d'état
-- Lorsqu'un ACK a été posé sur l'alarme et qu'elle remonte à nouveau.
+- À chaque changement de criticité
+- Lorsqu'un acquittement a été posé sur l'alarme et qu'elle remonte à nouveau.

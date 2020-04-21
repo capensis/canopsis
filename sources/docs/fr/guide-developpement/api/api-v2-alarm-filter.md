@@ -24,7 +24,7 @@ Crée une nouvelle action à partir du corps de la requête.
     "tasks": [
         "alerts.useraction.state_increase"
     ],
-    "output_format": "L'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+    "output_format": "L'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
     "limit": 3600,
     "postpone_if_active_pbehavior": true
 }
@@ -40,7 +40,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "tasks": [
         "alerts.useraction.state_increase"
     ],
-    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
     "limit": 3600,
     "postpone_if_active_pbehavior": true
 }' 'http://<Canopsis_URL>/api/v2/alerts/filters'
@@ -62,7 +62,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "tasks": [
         "alerts.useraction.state_increase"
     ],
-    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
     "limit": 3600,
     "postpone_if_active_pbehavior": true,
     "repeat": 1
@@ -98,7 +98,7 @@ Modifie une action à partir du corps de la requête.
     "tasks": [
         "alerts.useraction.state_increase"
     ],
-    "output_format": "L'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+    "output_format": "L'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
     "limit": 3600,
     "postpone_if_active_pbehavior": true
 }
@@ -115,7 +115,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "tasks": [
         "alerts.useraction.state_increase"
     ],
-    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
     "limit": 3600,
     "postpone_if_active_pbehavior": true
 }' 'http://<Canopsis_URL>/api/v2/alerts/filters/ad8457d0-d593-492e-bb41-c701d396b0b2'
@@ -137,7 +137,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "tasks": [
         "alerts.useraction.state_increase"
     ],
-    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+    "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
     "limit": 3600,
     "postpone_if_active_pbehavior": true,
     "repeat": 1
@@ -218,7 +218,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/alerts/filters/ad8457d0-d
         "tasks": [
             "alerts.useraction.state_increase"
         ],
-        "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+        "output_format": "L'"'"'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
         "limit": 3600,
         "postpone_if_active_pbehavior": true,
         "repeat": 1

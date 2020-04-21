@@ -81,11 +81,11 @@ La file du moteur est placée juste après le moteur [`engine-che`](moteur-che.m
 
 1. Il ne correspond à aucune alarme en cours : l'alarme va alors être créée
 2. Il correspond à une alarme en cours et son champ `state` ne vaut pas `0` : l'alarme va alors être mise à jour
-3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
+3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
 
 ### Autres types d'événements
 
-Si l'événement correspond à une action (comme la mise d'un [`ACK`](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
+Si l'événement correspond à une action (comme la mise d'un [acquittement](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
 
 ## Collection MongoDB associée
 
