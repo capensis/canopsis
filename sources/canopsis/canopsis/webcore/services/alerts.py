@@ -182,15 +182,18 @@ def exports(ws):
 
         list_alarm = []
         rule_ids = set()
-        for alarm_rules in alarms['rules'].values():
-            for v in alarm_rules:
-                rule_ids.add(v)
-        named_rules = ma_rule_manager.read_rules_with_names(list(rule_ids))
-        for d, alarm_rules in alarms['rules'].items():
-            alarm_named_rules = []
-            for v in alarm_rules:
-                alarm_named_rules.append({'id': v, 'name': named_rules.get(v, "")})
-            alarms['rules'][d] = alarm_named_rules
+        if 'rules' in alarms:
+            for alarm_rules in alarms['rules'].values():
+                for v in alarm_rules:
+                    rule_ids.add(v)
+            named_rules = ma_rule_manager.read_rules_with_names(list(rule_ids))
+            for d, alarm_rules in alarms['rules'].items():
+                alarm_named_rules = []
+                for v in alarm_rules:
+                    alarm_named_rules.append({'id': v, 'name': named_rules.get(v, "")})
+                alarms['rules'][d] = alarm_named_rules
+        else:
+            alarms['rules'] = dict()
 
         for alarm in alarms['alarms']:
             rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm else None
