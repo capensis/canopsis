@@ -72,7 +72,6 @@ def exports(ws):
                 start=0,
                 sort=None,
                 active_columns=None):
-        print request.json
         query = {}
         if _filter is not None:
             query.update(_filter)
@@ -84,7 +83,8 @@ def exports(ws):
         except ValueError:
             bnf_search_filter = None
 
-        active_columns = request.json.get('active_columns', [])
+        if request.json:
+            active_columns = request.json.get('active_columns', [])
         if not active_columns:
             active_columns = DEFAULT_ACTIVE_COLUMNS
 
