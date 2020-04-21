@@ -1285,6 +1285,11 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Paramètres',
+      importExportViews: 'Importation/Exportation',
+      createPlaylist: 'Créer playlist',
+    },
     interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {
       title: 'Type d\'affichage de la barre de vues',

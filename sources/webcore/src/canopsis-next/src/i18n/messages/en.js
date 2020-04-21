@@ -1368,6 +1368,11 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Parameters',
+      importExportViews: 'Import/Export',
+      createPlaylist: 'Create playlist',
+    },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
       title: 'Groups navigation type',
