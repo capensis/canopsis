@@ -2,7 +2,11 @@
   div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        alarm-list-search(:query.sync="query", :columns="columns")
+        advanced-search(
+          :query.sync="query",
+          :columns="columns",
+          :tooltip="$t('search.alarmAdvancedSearch')"
+        )
       v-flex
         pagination(
           data-test="topPagination",
@@ -82,6 +86,7 @@ import { findRange } from '@/helpers/date-intervals';
 
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetQueryMixin from '@/mixins/widget/query';
@@ -93,7 +98,6 @@ import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
-import AlarmListSearch from './search/alarm-list-search.vue';
 import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
 import AlarmsListTable from './partials/alarms-list-table.vue';
 
@@ -108,11 +112,11 @@ import AlarmsListTable from './partials/alarms-list-table.vue';
  */
 export default {
   components: {
-    AlarmListSearch,
     RecordsPerPage,
+    FilterSelector,
+    AdvancedSearch,
     AlarmsListTable,
     AlarmsExpandPanelTour,
-    FilterSelector,
   },
   mixins: [
     authMixin,
