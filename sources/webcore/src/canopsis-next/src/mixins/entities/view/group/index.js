@@ -9,7 +9,9 @@ const { mapGetters, mapActions } = createNamespacedHelpers('view/group');
 export default {
   computed: {
     ...mapGetters({
+      groupsPending: 'pending',
       groups: 'items',
+      getGroupById: 'getItemById',
     }),
 
     groupsOrdered() {

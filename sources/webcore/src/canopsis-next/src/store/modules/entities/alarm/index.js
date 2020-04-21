@@ -26,6 +26,8 @@ export default {
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
     getItem: (state, getters, rootState, rootGetters) => id =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.alarm, id),
+    getList: (state, getters, rootState, rootGetters) => ids =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, ids),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
@@ -88,7 +90,7 @@ export default {
     fetchListWithPreviousParams({ dispatch, state }, { widgetId }) {
       return dispatch('fetchList', {
         widgetId,
-        params: state.widgets[widgetId].fetchingParams,
+        params: get(state, ['widgets', widgetId, 'fetchingParams'], {}),
         withoutPending: true,
       });
     },

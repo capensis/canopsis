@@ -1,20 +1,10 @@
 <template lang="pug">
-  v-expansion-panel-content.secondary.white--text.group-item(
-    :class="{ editing: isNavigationEditingMode }",
-    :data-test="`panel-group-${group._id}`"
+  group-panel(
+    :group="group",
+    :orderChanged="isGroupsOrderChanged",
+    :isEditing="isNavigationEditingMode",
+    @change="showEditGroupModal"
   )
-    div.panel-header(slot="header")
-      span(:data-test="`groupsSideBar-group-${group._id}`") {{ group.name }}
-      v-btn(
-        v-show="isNavigationEditingMode",
-        :disabled="isGroupsOrderChanged",
-        :data-test="`editGroupButton-group-${group._id}`",
-        depressed,
-        small,
-        icon,
-        @click.stop="showEditGroupModal"
-      )
-        v-icon(small) edit
     draggable.views-panel.secondary.lighten-1(
       :class="{ empty: isGroupEmpty }",
       :value="group.views",
@@ -33,13 +23,15 @@
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
 
 import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
+import GroupPanel from './group-panel.vue';
 
 export default {
-  components: { Draggable, GroupsSideBarGroupView },
+  components: { GroupPanel, Draggable, GroupsSideBarGroupView },
   mixins: [layoutNavigationGroupsBarGroupMixin],
   props: {
     isGroupsOrderChanged: {
@@ -61,26 +53,11 @@ export default {
     },
   },
   methods: {
-    changeViewsOrdering({ moved, added, removed }) {
-      const views = [...this.group.views];
-
-      if (moved) {
-        const [item] = views.splice(moved.oldIndex, 1);
-
-        views.splice(moved.newIndex, 0, item);
-      } else if (added) {
-        views.splice(added.newIndex, 0, added.element);
-      } else if (removed) {
-        views.splice(removed.oldIndex, 1);
-      }
-
-      if (views) {
-        this.$emit('update:group', {
-          ...this.group,
-
-          views,
-        });
-      }
+    changeViewsOrdering(event) {
+      this.$emit('update:group', {
+        ...this.group,
+        views: dragDropChangePositionHandler(this.group.views, event),
+      });
     },
   },
 };
@@ -112,23 +89,6 @@ export default {
     & /deep/ .v-expansion-panel__body  .v-card {
       border-radius: 0;
       box-shadow: 0 0 0 0 rgba(0,0,0,.2),0 0 0 0 rgba(0,0,0,.14),0 0 0 0 rgba(0,0,0,.12)!important;
-    }
-  }
-
-  .panel-header {
-    max-width: 88%;
-
-    span {
-      max-width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      display: inline-block;
-      vertical-align: middle;
-
-      .editing & {
-        max-width: 73%;
-      }
     }
   }
 </style>

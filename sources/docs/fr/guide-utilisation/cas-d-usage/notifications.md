@@ -193,6 +193,7 @@ Statut : {{status}}
 Connecteur : {{connector}}
 Ressource : {{resource}}
 
+<a href="http://IP_CANOPSIS/alarms/{{_id}}">Lien vers l'alarme</a>
 --
 Canopsis webhook
 </pre>

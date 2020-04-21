@@ -1,11 +1,16 @@
 <template lang="pug">
-  v-card.white--text.cursor-pointer(
+  v-card.white--text.cursor-pointer.weather__item(
     :class="itemClasses",
     :style="{ height: itemHeight + 'em', backgroundColor: color}",
     tile,
     @click.native="showAdditionalInfoModal"
   )
-    v-btn.helpBtn.ma-0(@click.stop="showVariablesHelpModal(watcher)", v-if="isEditingMode", icon, small)
+    v-btn.helpBtn.ma-0(
+      v-if="hasVariablesHelpAccess",
+      icon,
+      small,
+      @click.stop="showVariablesHelpModal(watcher)"
+    )
       v-icon help
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
@@ -56,10 +61,6 @@ export default {
     widget: {
       type: Object,
     },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
   },
   asyncComputed: {
     compiledTemplate: {
@@ -78,6 +79,10 @@ export default {
 
     hasAlarmsListAccess() {
       return this.checkAccess(USERS_RIGHTS.business.weather.actions.alarmsList);
+    },
+
+    hasVariablesHelpAccess() {
+      return this.checkAccess(USERS_RIGHTS.business.weather.actions.variablesHelp);
     },
 
     color() {
@@ -201,45 +206,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  $seeAlarmBtnHeight: 18px;
-
-  .v-card__with-see-alarms-btn {
-    padding-bottom: $seeAlarmBtnHeight;
-
-    .see-alarms-btn {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      font-size: .6em;
-      height: $seeAlarmBtnHeight;
-      color: white;
-      margin: 0;
-      background-color: rgba(0, 0, 0, .2);
-
-      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
-        background-color: rgba(0, 0, 0, .5);
-      }
-    }
-  }
-
-  .pauseIcon {
-    position: absolute;
-    right: 0;
-    bottom: 1em;
-    cursor: inherit;
-  }
-
-  .watcherName {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2em;
-
-    &, & /deep/ a {
-      color: white;
-    }
-  }
-
   @keyframes blink {
     0% { opacity: 1 }
     50% { opacity: 0.3 }
@@ -247,16 +213,5 @@ export default {
 
   .blinking {
     animation: blink 2s linear infinite;
-  }
-
-  .cursor-pointer {
-    cursor: pointer;
-  }
-
-  .helpBtn {
-    position: absolute;
-    right: 0.2em;
-    top: 0;
-    z-index: 1;
   }
 </style>

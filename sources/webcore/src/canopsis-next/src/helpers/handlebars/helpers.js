@@ -1,4 +1,4 @@
-import { get, isFunction, unescape } from 'lodash';
+import { get, isFunction, isNumber, isObject, unescape } from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
@@ -208,4 +208,92 @@ export function compareHelper(a, operator, b, options = {}) {
   }
 
   return result;
+}
+
+/**
+ * Concat every primitive arguments
+ *
+ * Example: {{concat "example" object.field}}
+ * Example with request helper: {{#request url=(concat "http://example.com/" object.field)}}something{{/request}}
+ *
+ * @param {...any} args
+ * @returns {string}
+ */
+export function concatHelper(...args) {
+  return args.reduce((acc, arg) => (!isObject(arg) ? acc + arg : acc), '');
+}
+
+/**
+ * Sum for every number arguments
+ *
+ * Example: {{sum 1 2 3 4 5}}
+ *
+ * @param {...numbers} args
+ * @returns {string}
+ */
+export function sumHelper(...args) {
+  return args.reduce((acc, arg) => (isNumber(arg) ? acc + arg : acc), 0);
+}
+
+/**
+ * Subtracting one number from the second
+ *
+ * Example: {{minus 10 1}}
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+export function minusHelper(a, b) {
+  if (!isNumber(a)) {
+    throw new TypeError('expected the first argument to be a number');
+  }
+
+  if (!isNumber(b)) {
+    throw new TypeError('expected the second argument to be a number');
+  }
+
+  return a - b;
+}
+
+/**
+ * Multiple two numbers
+ *
+ * Example: {{mul 2 4}}
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+export function mulHelper(a, b) {
+  if (!isNumber(a)) {
+    throw new TypeError('expected the first argument to be a number');
+  }
+
+  if (!isNumber(b)) {
+    throw new TypeError('expected the second argument to be a number');
+  }
+
+  return a * b;
+}
+
+/**
+ * Division of two numbers
+ *
+ * Example: {{divide 10 2}}
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+export function divideHelper(a, b) {
+  if (!isNumber(a)) {
+    throw new TypeError('expected the first argument to be a number');
+  }
+
+  if (!isNumber(b)) {
+    throw new TypeError('expected the second argument to be a number');
+  }
+
+  return a / b;
 }

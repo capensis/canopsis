@@ -43,6 +43,8 @@ import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/part
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
+import BullhornIcon from '@/components/icons/bullhorn.vue';
+import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
 
 import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
@@ -59,6 +61,12 @@ Vue.use(Vuetify, {
   icons: {
     webhook: {
       component: WebhookIcon,
+    },
+    bullhorn: {
+      component: BullhornIcon,
+    },
+    settings_sync: {
+      component: SettingsSyncIcon,
     },
   },
 });
@@ -80,7 +88,8 @@ Vue.use(DaySpanVuetify, {
   data: {
     defaults: {
       dsWeeksView: {
-        weekdays: moment.weekdaysShort(true),
+        // dayspan-vuetify doesn't not supported first day in weekend, because return weekdays without locale sort.
+        weekdays: moment.weekdaysShort(),
       },
       dsCalendarEventTime: {
         placeholderStyle: false,
@@ -139,6 +148,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
     [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
     [MODALS.watcher]: { maxWidth: 920, lazy: true },
+    [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

@@ -5,7 +5,7 @@
 
 ## Principes des numéros de version de Canopsis
 
-Une nouvelle version de Canopsis sort généralement tous les 15 jours.
+Une nouvelle version de Canopsis sort généralement toutes les 3 semaines.
 
 Afin de décrire ses changements, Canopsis suit le principe du *versionnage sémantique*.
 

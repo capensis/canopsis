@@ -8,7 +8,7 @@ Deploy Canopsis with Ansible
 
 ⚠️ **DON'T, DON'T, DON'T** ⚠️ UPGRADE ANSIBLE, NOT EVEN TO A MINOR VERSION. It's just a perpetual breaking machine.
 
-## Role Variables
+## Role Variables
 
 See `playbook/roles/canopsis/defaults/main.yml`, then `playbook/group_vars/all.yml`.
 

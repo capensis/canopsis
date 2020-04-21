@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-flex
+  v-flex.white
     v-flex.px-3(v-show="selectedIds.length", xs12)
       mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
     no-columns-table(v-if="!hasColumns")
@@ -11,12 +11,12 @@
         :headers="headers",
         :total-items="totalItems",
         :pagination="pagination",
+        :select-all="selectable",
         :loading="loading || alarmColumnFiltersPending",
         data-test="tableWidget",
         ref="dataTable",
         item-key="_id",
         expand,
-        select-all,
         hide-actions,
         @update:pagination="updatePaginationHandler"
       )
@@ -30,7 +30,6 @@
             v-model="props.selected",
             :selectable="selectable",
             :row="props",
-            :isEditingMode="isEditingMode",
             :widget="widget",
             :columns="columns",
             :columnFiltersMap="columnFiltersMap",
@@ -94,10 +93,6 @@ export default {
       type: Object,
       required: false,
     },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
     isTourEnabled: {
       type: Boolean,
       default: false,
@@ -137,7 +132,14 @@ export default {
         return [];
       }
 
-      return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+      const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
+
+      if (!this.selectable) {
+        // We need it for the expand panel open button
+        headers.unshift({ sortable: false });
+      }
+
+      return headers;
     },
 
     vDataTableClass() {

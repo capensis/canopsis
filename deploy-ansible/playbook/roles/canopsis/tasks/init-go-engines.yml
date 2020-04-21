@@ -26,3 +26,11 @@
     state: started
     enabled: true
   with_items: "{{ canopsis_go_engines }}"
+
+- name: Start and enable Canopsis default Go engines (CAT additions)
+  systemd:
+    name: "canopsis-engine-go@{{ item.name }}.service"
+    state: started
+    enabled: true
+  with_items: "{{ canopsis_cat_go_additional_engines }}"
+  when: canopsis_edition == "cat"

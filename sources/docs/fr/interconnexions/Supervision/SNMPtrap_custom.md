@@ -227,10 +227,10 @@ On place ce fichier sous le nom `guitare.py` dans
 `/opt/canopsis/lib/python2.7/site-packages/canopsis_cat/snmp/custom_handler/`.
 
 On redémarre le service ou conteneur `snmp` Canopsis. Cette étape dépend du
-type d'installation. Par exemple, sur une installation Docker :
+type d'installation. Par exemple, sur une installation Docker Compose :
 
-```console
-docker restart canopsis_snmp_1
+```sh
+docker-compose restart snmp
 ```
 
 Pour la validation de fonctionnement de la classe avec le script, placer

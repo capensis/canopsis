@@ -36,14 +36,14 @@ et son résultat :
 }
 ```
 
-## Depuis un environnement Docker
+## Depuis un environnement Docker Compose
 
-Dans un environnement Docker, la procédure est la même, tant que vous ciblez un conteneur disposant d'un environnement Python Canopsis.
+Dans un environnement Docker Compose, la procédure est la même, tant que vous ciblez un conteneur disposant d'un environnement Python Canopsis.
 
 On peut, par exemple, exécuter un shell dans le conteneur `webserver` :
 
 ```sh
-docker exec -ti canopsis_webserver_1 /bin/bash
+docker-compose exec webserver /bin/bash
 ```
 
 Puis, une fois connecté sur celui-ci, `amqp2tty` sera disponible dans le virtualenv Python :

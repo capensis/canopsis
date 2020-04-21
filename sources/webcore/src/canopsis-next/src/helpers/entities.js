@@ -2,7 +2,7 @@ import sha1 from 'sha1';
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
@@ -17,7 +17,8 @@ import {
   DURATION_UNITS,
   ENTITIES_STATES,
   ENTITIES_STATUSES,
-  GRID_SIZES,
+  GRID_SIZES, AVAILABLE_COUNTERS,
+  DEFAULT_COUNTER_BLOCK_TEMPLATE,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -280,6 +281,40 @@ export function generateWidgetByType(type) {
         mfilter: {},
         stats: {},
         template: '',
+      };
+      break;
+    case WIDGET_TYPES.counter:
+      specialParameters = {
+        viewFilters: [],
+        alarmsStateFilter: {
+          opened: true,
+        },
+        blockTemplate: DEFAULT_COUNTER_BLOCK_TEMPLATE,
+        columnSM: 6,
+        columnMD: 4,
+        columnLG: 3,
+        margin: {
+          top: 1,
+          right: 1,
+          bottom: 1,
+          left: 1,
+        },
+        heightFactor: 6,
+        levels: {
+          counter: AVAILABLE_COUNTERS.total,
+          colors: {
+            ok: COLORS.state.ok,
+            minor: COLORS.state.minor,
+            major: COLORS.state.major,
+            critical: COLORS.state.critical,
+          },
+          values: {
+            minor: 20,
+            major: 30,
+            critical: 40,
+          },
+        },
+        alarmsList: alarmsListDefaultParameters,
       };
       break;
   }
@@ -600,4 +635,26 @@ export function prepareUserByData(data, user = generateUser()) {
  */
 export function isResolvedAlarm(alarm) {
   return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
+}
+
+
+/**
+ * Function return new name if name is not uniq
+ * @param {Object} entity
+ * @param {Array} entities
+ * @returns {string}
+ */
+export function getDuplicateEntityName(entity, entities) {
+  const suffixRegexp = '(\\s\\(\\d+\\))?$';
+  const clearName = entity.name.replace(new RegExp(suffixRegexp), '');
+
+  const nameRegexp = new RegExp(`^${clearName}${suffixRegexp}`);
+
+  const duplicateEntityCount = entities.reduce((count, { name }) => {
+    const isDuplicate = nameRegexp.test(name);
+
+    return isDuplicate ? count + 1 : count;
+  }, 0);
+
+  return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.name;
 }

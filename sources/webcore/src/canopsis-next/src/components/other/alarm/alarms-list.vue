@@ -52,10 +52,10 @@
       :totalItems="alarmsMeta.total",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
-      :isEditingMode="isEditingMode",
       :isTourEnabled="isTourEnabled",
       :hasColumns="hasColumns",
       :columns="columns",
+      selectable,
       ref="alarmsTable"
     )
       v-layout.white(v-show="alarmsMeta.total", align-center)
@@ -130,10 +130,6 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
     tabId: {
       type: String,
       default: '',
@@ -152,7 +148,7 @@ export default {
     },
 
     isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && this.alarms.length;
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && !!this.alarms.length;
     },
 
     activeRange() {

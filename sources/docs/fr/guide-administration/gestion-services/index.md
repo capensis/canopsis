@@ -1,9 +1,9 @@
 # Sommaire
 
-Cette section présente le fonctionnement des services.
+Cette section présente le fonctionnement des services liés à Canopsis.
 
-- [Listing des services](liste-des-services.md)
-- [Arrêt / Relance des services](installation-arret-relance.md)
+- [Liste des services](liste-des-services.md)
+- [Arrêt et relance des services liés](arret-relance-services.md)
 - [Rétention des fichiers journaux](retention-des-logs.md)
 
 ## Liste des services

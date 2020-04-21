@@ -266,7 +266,7 @@ Différents exemples de retour des routes `PUT /api/contextgraph/import` et `GET
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
 ```sh
-curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "json":{
         "cis":[
             {

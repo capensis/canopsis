@@ -1,10 +1,19 @@
 <template lang="pug">
-  v-alert(v-model="isVisible", :type="type", transition="fade-transition", dismissible)
+  v-alert.alert-without-border(
+    v-model="visible",
+    :type="type",
+    transition="fade-transition",
+    dismissible,
+    @mouseover="pauseProgress",
+    @mouseout="playProgress"
+  )
+    .progress(v-if="autoClose")
+      .progress-line(:style="progressLineStyle", :class="progressLineClass")
     div(v-html="text")
 </template>
 
 <script>
-import { POPUP_AUTO_CLOSE_DELAY, VUETIFY_ANIMATION_DELAY } from '@/config';
+import { VUETIFY_ANIMATION_DELAY, POPUP_TICK_DELAY } from '@/config';
 
 /**
  * Popup component
@@ -30,45 +39,119 @@ export default {
     },
     autoClose: {
       type: [Number, Boolean],
-      default: POPUP_AUTO_CLOSE_DELAY,
+      required: true,
     },
   },
   data() {
     return {
-      timeouts: [],
+      animationTimeout: null,
+      closeInterval: null,
+      closeValue: this.autoClose,
+      isPaused: false,
       visible: false,
     };
   },
   computed: {
-    isVisible: {
-      get() {
-        return this.visible;
-      },
-      set(value) {
-        this.visible = value;
-
-        if (!value) {
-          this.removeWithTimeout();
-        }
-      },
+    progressLineStyle() {
+      return { animationDuration: `${this.autoClose / 1000}s` };
+    },
+    progressLineClass() {
+      return {
+        'progress-line--active': this.visible,
+        'progress-line--paused': this.isPaused,
+      };
+    },
+  },
+  watch: {
+    isVisible(value) {
+      if (!value) {
+        this.removeWithTimeout();
+      }
     },
   },
   mounted() {
     this.visible = true;
 
-    if (this.autoClose) {
-      this.timeouts.push(setTimeout(() => this.isVisible = false, this.autoClose));
+    if (this.closeValue) {
+      this.playProgress();
     }
   },
   beforeDestroy() {
-    if (this.timeouts.length) {
-      this.timeouts.forEach(timeout => clearTimeout(timeout));
-    }
+    clearInterval(this.closeInterval);
+    clearTimeout(this.animationTimeout);
   },
   methods: {
+    playProgress() {
+      this.closeInterval = setInterval(this.progressTick, POPUP_TICK_DELAY);
+      this.isPaused = false;
+    },
+
+    stopProgress() {
+      clearInterval(this.closeInterval);
+      this.closeInterval = undefined;
+      this.closeValue = this.autoClose;
+    },
+
+    pauseProgress() {
+      clearInterval(this.closeInterval);
+      this.isPaused = true;
+    },
+
+    progressTick() {
+      if (this.closeValue <= 0) {
+        this.visible = false;
+      } else {
+        this.closeValue -= POPUP_TICK_DELAY;
+      }
+    },
+
     removeWithTimeout() {
-      this.timeouts.push(setTimeout(() => this.$popups.remove({ id: this.id }), VUETIFY_ANIMATION_DELAY));
+      this.stopProgress();
+      this.animationTimeout = setTimeout(() => this.$popups.remove({ id: this.id }), VUETIFY_ANIMATION_DELAY);
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  @keyframes progress {
+    from {
+      width: 0;
+    }
+
+    to {
+      width: 100%;
+    }
+  }
+
+  .alert-without-border {
+    border: 0;
+  }
+
+  .progress {
+    height: 5px;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    left: 0;
+
+    &-line {
+      animation-play-state: paused;
+      animation: progress linear;
+      display: block;
+      height: 100%;
+      background: black;
+      opacity: 0.2;
+
+      &--active {
+        animation-play-state: running;
+      }
+
+      &--paused {
+        animation-play-state: paused;
+      }
+    }
+  }
+</style>
