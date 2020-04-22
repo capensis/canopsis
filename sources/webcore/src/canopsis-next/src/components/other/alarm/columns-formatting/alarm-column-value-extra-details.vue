@@ -12,7 +12,7 @@
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
           div(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
-    div(v-if="alarm.v.comment")
+    div(v-if="alarm.v.lastComment")
       v-tooltip(top)
         v-icon.badge.white--text.purple.lighten-2(
           small,
@@ -20,9 +20,9 @@
         ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.comment].icon }}
         div.text-md-center
           strong {{ $t('alarmList.actions.iconsTitles.comment') }}
-          div {{ $t('common.by') }} : {{ alarm.v.comment.a }}
-          div {{ $t('common.date') }} : {{ alarm.v.comment.t | date('long') }}
-          div(v-if="alarm.v.comment.m") {{ $tc('common.comment') }} : {{ alarm.v.comment.m }}
+          div {{ $t('common.by') }} : {{ alarm.v.lastComment.a }}
+          div {{ $t('common.date') }} : {{ alarm.v.lastComment.t | date('long') }}
+          div(v-if="alarm.v.lastComment.m") {{ $tc('common.comment') }} : {{ alarm.v.lastComment.m }}
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
         v-icon.badge.blue.white--text(
