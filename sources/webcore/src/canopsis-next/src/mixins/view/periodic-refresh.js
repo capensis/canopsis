@@ -4,16 +4,26 @@ import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getSecondsByUnit } from '@/helpers/time';
+import Observer from '@/services/observer';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
 
 export default {
   mixins: [layoutNavigationEditingModeMixin],
+  provide() {
+    return {
+      $periodicRefresh: this.$periodicRefresh,
+    };
+  },
   data() {
     return {
       periodicRefreshInterval: null,
       periodicRefreshProgress: undefined,
     };
+  },
+
+  beforeCreate() {
+    this.$periodicRefresh = new Observer();
   },
 
   watch: {
@@ -102,22 +112,14 @@ export default {
 
     refreshHandler() {
       return this.isPeriodicRefreshEnabled && !this.isNavigationEditingMode ?
-        this.refreshViewWithProgress : this.refreshView;
+        this.callSubscribers : this.refreshView;
     },
   },
   methods: {
-    async refreshView() {
-      await this.fetchView({ id: this.id });
-
-      if (this.activeTab) {
-        this.forceUpdateQuery({ id: this.activeTab._id });
-      }
-    },
-
-    async refreshViewWithProgress() {
+    async callSubscribers() {
       this.stopPeriodicRefreshInterval();
 
-      await this.refreshView();
+      await this.$periodicRefresh.notify();
 
       this.startPeriodicRefreshInterval();
     },
@@ -128,7 +130,7 @@ export default {
 
     refreshTick() {
       if (this.periodicRefreshProgress <= 0) {
-        this.refreshViewWithProgress();
+        this.callSubscribers();
       } else {
         this.periodicRefreshProgress -= 1;
       }

@@ -60,6 +60,7 @@
       :hasColumns="hasColumns",
       :columns="columns",
       selectable,
+      expandable,
       ref="alarmsTable"
     )
       v-layout.white(v-show="alarmsMeta.total", align-center)
@@ -89,11 +90,10 @@ import FilterSelector from '@/components/other/filter/selector/filter-selector.v
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
@@ -120,14 +120,13 @@ export default {
   },
   mixins: [
     authMixin,
-    widgetQueryMixin,
+    alarmColumnFilters,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
-    widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    alarmColumnFilters,
   ],
   props: {
     widget: {
@@ -176,6 +175,9 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+  },
+  mounted() {
+    this.fetchAlarmColumnFilters();
   },
   methods: {
     onTourNextStep(currentStep) {

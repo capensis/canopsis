@@ -226,6 +226,7 @@ export default {
         changeState: 'Change and lock severity',
         variablesHelp: 'List of available variables',
         history: 'History',
+        groupRequest: 'Group request',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -233,9 +234,13 @@ export default {
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
+        grouping: 'Grouping',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
+        causes: 'Causes',
+        consequences: 'Consequences',
+        rule: 'Rule | Rules',
       },
     },
     timeLine: {
@@ -267,6 +272,8 @@ export default {
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Timeline',
+      alarmsConsequences: 'Alarms consequences',
+      alarmsCauses: 'Alarms causes',
     },
     moreInfos: {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
@@ -312,6 +319,7 @@ export default {
     defaultSortColumn: 'Default sort column',
     sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
+    groupColumnNames: 'Group column names',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
@@ -555,6 +563,11 @@ export default {
         rightRemoving: 'Error on right removing',
       },
     },
+    createEvent: {
+      fields: {
+        output: 'Note',
+      },
+    },
     createAckEvent: {
       title: 'Ack',
       tooltips: {
@@ -582,9 +595,9 @@ export default {
     },
     createCancelEvent: {
       title: 'Cancel',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Group request',
     },
     createChangeStateEvent: {
       title: 'Change severity',

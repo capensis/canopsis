@@ -97,11 +97,10 @@ import EnabledColumn from '@/components/tables/enabled-column.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import MoreInfos from './more-infos/more-infos.vue';
@@ -134,11 +133,10 @@ export default {
   },
   mixins: [
     authMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
-    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
   ],
   props: {

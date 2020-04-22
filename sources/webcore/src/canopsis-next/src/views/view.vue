@@ -122,7 +122,7 @@ import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
-import periodicRefreshMixin from '@/mixins/view/peiodic-refresh';
+import periodicRefreshMixin from '@/mixins/view/periodic-refresh';
 
 export default {
   components: {
@@ -179,6 +179,7 @@ export default {
   created() {
     document.addEventListener('keydown', this.keyDownListener);
     this.registerViewOnceWatcher();
+    this.$periodicRefresh.subscribe(this.refreshView);
   },
 
   mounted() {
@@ -188,9 +189,18 @@ export default {
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
+    this.$periodicRefresh.unsubscribe(this.refreshView);
   },
 
   methods: {
+    async refreshView() {
+      await this.fetchView({ id: this.id });
+
+      if (this.activeTab) {
+        this.forceUpdateQuery({ id: this.activeTab._id });
+      }
+    },
+
     registerViewOnceWatcher() {
       const unwatch = this.$watch('view', (view) => {
         if (view) {

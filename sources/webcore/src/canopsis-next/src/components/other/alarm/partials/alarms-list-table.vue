@@ -13,10 +13,10 @@
         :pagination="pagination",
         :select-all="selectable",
         :loading="loading || alarmColumnFiltersPending",
+        :expand="expandable",
         data-test="tableWidget",
         ref="dataTable",
         item-key="_id",
-        expand,
         hide-actions,
         @update:pagination="updatePaginationHandler"
       )
@@ -29,6 +29,7 @@
           alarms-list-row(
             v-model="props.selected",
             :selectable="selectable",
+            :expandable="expandable",
             :row="props",
             :widget="widget",
             :columns="columns",
@@ -39,6 +40,7 @@
           alarms-expand-panel(
             :alarm="props.item",
             :widget="widget",
+            :hideGroups="hideGroups",
             :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
     slot
@@ -109,6 +111,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideGroups: {
+      type: Boolean,
+      default: false,
+    },
+    expandable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -134,7 +144,7 @@ export default {
 
       const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
 
-      if (!this.selectable) {
+      if (this.expandable && !this.selectable) {
         // We need it for the expand panel open button
         headers.unshift({ sortable: false });
       }
@@ -157,10 +167,6 @@ export default {
         [`columns-${label}`]: true,
       };
     },
-  },
-
-  mounted() {
-    this.fetchAlarmColumnFilters();
   },
 
   methods: {
