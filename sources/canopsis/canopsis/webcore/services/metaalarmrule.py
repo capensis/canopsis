@@ -16,7 +16,7 @@ VALID_PARAMS = [
 ]
 
 VALID_CONFIG_PARAMS = {
-    'time_interval': ['time', 'complex'],
+    'time_interval': ['timebased', 'complex'],
     'threshold_count': ['complex'],
     'threshold_rate': ['complex'],
     'alarm_patterns': ['attribute', 'complex'],
@@ -26,7 +26,7 @@ VALID_CONFIG_PARAMS = {
 }
 
 VALID_RULE_TYPES = [
-    'relation', 'time', 'attribute', 'complex',
+    'relation', 'timebased', 'attribute', 'complex',
 ]
 
 
