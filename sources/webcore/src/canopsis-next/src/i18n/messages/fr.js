@@ -215,7 +215,7 @@ export default {
         changeState: 'Changer et verrouiller la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
-        groupRequest: 'Proposition de regroupement pour meta alarme',
+        groupRequest: 'Proposition de regroupement pour meta alarmes',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -223,7 +223,7 @@ export default {
         canceled: 'Annulé',
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
-        grouping: 'Meta alarme',
+        grouping: 'Meta alarmes',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
@@ -570,7 +570,7 @@ export default {
       title: 'Annuler',
     },
     createGroupRequestEvent: {
-      title: 'Proposition de regropement pour meta alarmes',
+      title: 'Proposition de regroupement pour meta alarmes',
     },
     createChangeStateEvent: {
       title: 'Changer la сriticité',
