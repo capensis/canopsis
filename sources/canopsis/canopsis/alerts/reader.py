@@ -612,13 +612,11 @@ class AlertsReader(object):
 
         :param dict| list of dict filter_: MongoDB filter
         :param bool with_consequences: `with_consequences` request parameter to group alarms with metaalarm under
-        `consequneces` key
+        `consequences` key
         :returns: true when filter can be changed to find metaalarms
         :rtype: bool
         """
-        not_by_id = lambda x: "u'_id':" not in str(x)
-        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and not_by_id(filter_)) or \
-            (isinstance(filter_, list) and filter_ != [] and not_by_id(filter_))) or with_consequences
+        return not filter_ or with_consequences
 
     def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
         """
