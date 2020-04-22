@@ -1005,6 +1005,16 @@ export default {
         selectColor: 'Sélectionnez la couleur d\'arrière-plan',
       },
     },
+    createPlaylist: {
+      create: {
+        title: 'Créer playlist',
+      },
+      edit: {
+        title: 'Éditée playlist',
+      },
+      groups: 'Groupe',
+      result: 'Résultat',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1288,7 +1298,6 @@ export default {
     tabs: {
       parameters: 'Paramètres',
       importExportViews: 'Importation/Exportation',
-      createPlaylist: 'Créer playlist',
     },
     interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {

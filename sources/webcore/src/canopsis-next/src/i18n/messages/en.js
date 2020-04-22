@@ -1085,6 +1085,16 @@ export default {
         selectColor: 'Select background color',
       },
     },
+    createPlaylist: {
+      create: {
+        title: 'Create playlist',
+      },
+      edit: {
+        title: 'Edit playlist',
+      },
+      groups: 'Groups',
+      result: 'Result',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1371,7 +1381,6 @@ export default {
     tabs: {
       parameters: 'Parameters',
       importExportViews: 'Import/Export',
-      createPlaylist: 'Create playlist',
     },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {

@@ -87,6 +87,7 @@ export const MODALS = {
   importExportViews: 'import-groups-and-views',
   dynamicInfoTemplatesList: 'dynamic-info-templates-list',
   createDynamicInfoTemplate: 'create-dynamic-info-template',
+  createPlaylist: 'create-playlist',
 };
 
 export const EVENT_ENTITY_TYPES = {

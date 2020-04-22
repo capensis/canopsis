@@ -18,7 +18,7 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   GRID_SIZES, AVAILABLE_COUNTERS,
-  DEFAULT_COUNTER_BLOCK_TEMPLATE,
+  DEFAULT_COUNTER_BLOCK_TEMPLATE, TIME_UNITS,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -657,4 +657,21 @@ export function getDuplicateEntityName(entity, entities) {
   }, 0);
 
   return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.name;
+}
+
+/**
+ * Create default playlist entity
+ *
+ * @returns {Object}
+ */
+export function getDefaultPlaylist() {
+  return {
+    name: '',
+    fullscreen: true,
+    interval: {
+      value: 10,
+      unit: TIME_UNITS.minute,
+    },
+    tabs: [],
+  };
 }
