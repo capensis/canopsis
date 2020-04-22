@@ -234,7 +234,7 @@ export default {
     showCreateWidgetModal() {
       if (this.activeTab) {
         this.$modals.show({
-          name: MODALS.createPlaylist,
+          name: MODALS.createWidget,
           config: {
             tabId: this.activeTab._id,
           },
