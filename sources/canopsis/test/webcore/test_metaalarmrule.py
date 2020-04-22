@@ -20,7 +20,7 @@ class TestMetaAlarmRuleWebservice(unittest.TestCase):
     }, {
         'name': 'test_ma_1',
         'config': '{"alarm_patterns": [{"v": {"state": {"val": 3} } }]}',
-        'rule_type': 'time',
+        'rule_type': 'timebased',
         'patterns': None,
     }]
 
@@ -28,7 +28,7 @@ class TestMetaAlarmRuleWebservice(unittest.TestCase):
         'name': 'test_valid_ma1',
         'patterns': '{"nokey": "novalue"}',
         'config': '{"time_interval": 3}',
-        'rule_type': 'time',
+        'rule_type': 'timebased',
     }, {
         'name': 'test_valid_ma2',
         'patterns': None,
