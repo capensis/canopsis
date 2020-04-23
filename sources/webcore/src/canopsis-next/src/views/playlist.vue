@@ -16,16 +16,28 @@ import { ENTITIES_TYPES } from '@/constants';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 
-const { mapGetters } = createNamespacedHelpers('entities');
+const { mapActions, mapGetters } = createNamespacedHelpers('playlist');
+const {
+  mapActions: mapPlaylistPlayerActions,
+  mapGetters: mapPlaylistPlayerGetters,
+} = createNamespacedHelpers('playlistPlayer');
+
+const { mapActions: mapGroupsActions } = createNamespacedHelpers('view/group');
+
+const { mapGetters: mapEntitiesGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { ViewTabRows },
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      playing: false,
-      activeTabIndex: 0,
-      playlist: {
-        _id: 'id123',
+      pl: {
+        _id: 'asd',
         name: 'Playlist #1',
         fullscreen: true,
         interval: {
@@ -41,64 +53,50 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['getList']),
+    ...mapEntitiesGetters(['getList']),
+
+    ...mapGetters({
+      getPlaylistItem: 'getItem',
+    }),
+
+    ...mapPlaylistPlayerGetters(['playing', 'activeTabIndex']),
+
+    availableTabs() {
+      return this.getList(this.pl.tabs, ENTITIES_TYPES.viewTab, true);
+    },
+
+    playlist() {
+      return this.getPlaylistItem(this.id);
+    },
 
     tabs() {
-      return this.getList(ENTITIES_TYPES.viewTab, this.playlist.tabs);
+      return (this.playlist && this.playlist.tabs) || [];
     },
 
     activeTab() {
-      return this.tabs[this.activeTabIndex];
+      return this.availableTabs[this.activeTabIndex];
     },
   },
-  mounted() {
-    this.play();
+  async mounted() {
+    await this.fetchGroupsList();
+
+    await this.fetchPlaylistItem({ id: this.id });
+
+    this.setPlaylist({ playlist: this.playlist });
   },
   beforeDestroy() {
-    this.stopTabsChanging();
+    this.setPlaylist({ playlist: {} });
   },
   methods: {
-    play() {
-      if (this.playing) {
-        return;
-      }
+    ...mapActions({
+      fetchPlaylistItem: 'fetchItem',
+    }),
 
-      if (!this.playlist.fullscreen) {
-        this.startTabsChanging();
-        this.playing = true;
+    ...mapGroupsActions({
+      fetchGroupsList: 'fetchList',
+    }),
 
-        return;
-      }
-
-      if (this.$refs.playlistWrapper) {
-        this.$fullscreen.toggle(this.$refs.playlistWrapper, {
-          fullscreenClass: 'full-screen',
-          background: 'white',
-          callback: (value) => {
-            this.playing = value;
-
-            if (value) {
-              this.startTabsChanging();
-            } else {
-              this.stopTabsChanging();
-            }
-          },
-        });
-      }
-    },
-    startTabsChanging() {
-      this.timer = setTimeout(this.changeTabTick, 10000);
-    },
-
-    changeTabTick() {
-      this.activeTabIndex = this.activeTabIndex >= this.tabs.length - 1 ? 0 : this.activeTabIndex + 1;
-
-      this.timer = setTimeout(this.changeTabTick, 10000);
-    },
-
-    stopTabsChanging() {
-      clearTimeout(this.timer);
-    },
+    ...mapPlaylistPlayerActions(['setPlaylist', 'play']),
   },
 };
 </script>

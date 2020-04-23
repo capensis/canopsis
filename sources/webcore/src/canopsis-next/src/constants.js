@@ -32,6 +32,7 @@ export const ENTITIES_TYPES = {
   heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
+  playlist: 'playlist',
 };
 
 export const MODALS = {
