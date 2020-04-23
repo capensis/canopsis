@@ -26,6 +26,7 @@ export const ENTITIES_TYPES = {
   user: 'user',
   role: 'role',
   eventFilterRule: 'eventFilterRule',
+  metaAlarmRule: 'metaAlarmRule',
   webhook: 'webhook',
   snmpRule: 'snmpRule',
   action: 'action',
@@ -71,6 +72,7 @@ export const MODALS = {
   createRight: 'create-right',
   createBroadcastMessage: 'create-broadcast-message',
   createEventFilterRule: 'create-event-filter-rule',
+  createMetaAlarmRule: 'create-meta-alarm-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
@@ -688,6 +690,7 @@ export const USERS_RIGHTS = {
       action: 'models_exploitation_action',
       heartbeat: 'models_exploitation_heartbeat',
       dynamicInfo: 'models_exploitation_dynamicInfo',
+      metaAlarmRule: 'models_exploitation_metaAlarmRule',
     },
   },
   business: {
@@ -900,6 +903,13 @@ export const EVENT_FILTER_RULE_TYPES = {
   drop: 'drop',
   break: 'break',
   enrichment: 'enrichment',
+};
+
+export const META_ALARMS_RULE_TYPES = {
+  relation: 'relation',
+  timebased: 'timebased',
+  attribute: 'attribute',
+  complex: 'complex',
 };
 
 export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {

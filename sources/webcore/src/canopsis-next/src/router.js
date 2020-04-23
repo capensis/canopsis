@@ -23,6 +23,7 @@ import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
+import ExploitationMetaAlarmRule from '@/views/exploitation/meta-alarm-rule.vue';
 
 Vue.use(Router);
 
@@ -198,6 +199,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
+      },
+    },
+  },
+  {
+    path: '/exploitation/meta-alarm-rule',
+    name: 'exploitation-meta-alarm-rules',
+    component: ExploitationMetaAlarmRule,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
       },
     },
   },

@@ -860,6 +860,25 @@ export default {
         removeRuleField: 'Supprimer le groupe/la règle',
       },
     },
+    metaAlarmRule: {
+      create: {
+        title: 'Créer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      edit: {
+        title: 'Éditer une règle',
+        success: 'Règle éditée avec succès !',
+      },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
+      editPattern: 'Éditer le pattern',
+      actions: 'Actions',
+    },
     viewTab: {
       create: {
         title: 'Ajouter un onglet',
@@ -1253,6 +1272,14 @@ export default {
     actions: 'Actions',
     externalDatas: 'Données externes',
     actionsRequired: 'Veuillez ajouter au moins une action',
+    id: 'Id',
+    idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+  },
+  metaAlarmRule: {
+    title: 'Meta alarm rule',
+    type: 'Type',
+    pattern: 'Pattern',
+    actions: 'Actions',
     id: 'Id',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   },

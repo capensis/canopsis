@@ -87,6 +87,7 @@ export const API_ROUTES = {
     remove: '/account/delete/role',
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
+  metaAlarmRule: '/api/v2/metaalarmrule',
   webhook: '/api/v2/webhook',
   snmpRule: {
     list: '/snmprule',
