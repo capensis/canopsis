@@ -360,6 +360,7 @@ class TestReader(BaseTest):
         self.maxDiff = None
         res_filter = {
             '$and': [
+                {u'v.meta': {u'$exists': False}},
                 {'$or': [
                     {'resource': {'$options': 'i', '$regex': '.*11111.*'}},
                     {'d': {'$options': 'i', '$regex': '.*11111.*'}}
@@ -382,6 +383,7 @@ class TestReader(BaseTest):
         self.maxDiff = None
         res_filter = {
             '$and': [
+                {u'v.meta': {u'$exists': False}},
                 {'$or': [
                     {'resource': {'$options': 'i', '$regex': '.*11111.*'}},
                     {'d': {'$options': 'i', '$regex': '.*11111.*'}}
