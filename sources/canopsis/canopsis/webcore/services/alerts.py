@@ -69,7 +69,8 @@ def exports(ws):
             'active_columns',
             'hide_resources',
             'with_consequences',
-            'with_causes'
+            'with_causes',
+            'correlation'
         ]
     )
     def get_alarms(
@@ -89,7 +90,8 @@ def exports(ws):
             active_columns=None,
             hide_resources=False,
             with_consequences=False,
-            with_causes=False
+            with_causes=False,
+            correlation=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -142,7 +144,8 @@ def exports(ws):
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
-                with_consequences=with_consequences
+                with_consequences=with_consequences,
+                correlation=correlation
             )
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)
@@ -178,6 +181,7 @@ def exports(ws):
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
+                correlation=correlation
             )
 
         list_alarm = []
