@@ -157,7 +157,7 @@ export default {
     },
   },
   search: {
-    advancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
+    alarmAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
     '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
     '<p>Le "-" avant la recherche est obligatoire</p>\n' +
     '<p>Opérateurs:\n' +
@@ -170,6 +170,19 @@ export default {
     '    <dd>Alarmes dont le connecteur contient 1 ou 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
     '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
     '</dl>',
+    contextAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
+      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
+      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
+      '<p>Opérateurs:\n' +
+      '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
+      '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Exemples :</dt><dt>- Name = "name_1"</dt>\n' +
+      '    <dd>Entités dont le names est "name_1"</dd><dt>- Name="name_1" AND Type="watcher"</dt>\n' +
+      '    <dd>Entités dont le names est "name_1" et la types est "watcher"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
+      '    <dd>Entités dont le infos.custom.value est "Custom value" ou la type est "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
+      '    <dd>Entités dont le infos.custom.value contient 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
+      '    <dd>Entités dont le name n\'est pas "name_1"</dd>\n' +
+      '</dl>',
     submit: 'Rechercher',
     clear: 'Ne plus appliquer cette recherche',
   },
@@ -203,6 +216,7 @@ export default {
         changeState: 'Changer et verrouiller la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
+        groupRequest: 'Demande de groupe',
         comment: 'Commentaire',
       },
       iconsTitles: {
@@ -212,9 +226,13 @@ export default {
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
         comment: 'Commentaire',
+        grouping: 'Grouping',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
+        causes: 'Causes',
+        consequences: 'Conséquences',
+        rule: 'Règle | Règles',
       },
     },
     timeLine: {
@@ -246,6 +264,8 @@ export default {
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Chronologie',
+      alarmsConsequences: 'Alarmes conséquences',
+      alarmsCauses: 'Alarmes les causes',
     },
     moreInfos: {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
@@ -286,6 +306,7 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
+    groupColumnNames: 'Groupe nom des colonnes',
     orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
     defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
@@ -518,6 +539,11 @@ export default {
         rightRemoving: 'Erreur sur les droits de suppression',
       },
     },
+    createEvent: {
+      fields: {
+        output: 'Note',
+      },
+    },
     createAckEvent: {
       title: 'Acquitter',
       tooltips: {
@@ -545,9 +571,9 @@ export default {
     },
     createCancelEvent: {
       title: 'Annuler',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Demande de groupe',
     },
     createChangeStateEvent: {
       title: 'Changer la сriticité',

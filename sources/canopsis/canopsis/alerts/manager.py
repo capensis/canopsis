@@ -366,6 +366,20 @@ class Alerts(object):
 
         return list(self.alerts_storage.get_elements(query=query))
 
+    def get_last_alarm_by_connector_eid(self, connector, eid):
+        """
+        Get alarm from an eid.
+
+        :param eid: The desired entity_id
+        :type eid: str
+        """
+        query = {'d': eid, 'v.connector': connector}
+        result = list(self.alerts_storage.get_elements(query=query, limit=1, sort=['ts', -1]))
+        if not result:
+            return None
+
+        return result[0]
+
     def get_current_alarm(self, alarm_entity_id):
         """
         Get current unresolved alarm.

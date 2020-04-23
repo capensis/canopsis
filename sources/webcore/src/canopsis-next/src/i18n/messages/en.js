@@ -168,7 +168,7 @@ export default {
     },
   },
   search: {
-    advancedSearch: '<span>Help on the advanced research :</span>\n' +
+    alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
       '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
       '<p>The "-" before the research is required</p>\n' +
       '<p>Operators :\n' +
@@ -176,10 +176,23 @@ export default {
       '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
       '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
       '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
+      '</dl>',
+    contextAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators :\n' +
+      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="watcher"</dt>\n' +
+      '    <dd>Entities whose names is "name_1" and the types is "watcher"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
+      '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
+      '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose name isn\'t "name_1"</dd>\n' +
       '</dl>',
     submit: 'Search',
     clear: 'Clear search input',
@@ -214,6 +227,7 @@ export default {
         changeState: 'Change and lock severity',
         variablesHelp: 'List of available variables',
         history: 'History',
+        groupRequest: 'Group request',
         comment: 'Comment',
       },
       iconsTitles: {
@@ -222,10 +236,14 @@ export default {
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
+        grouping: 'Grouping',
         comment: 'Comment',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
+        causes: 'Causes',
+        consequences: 'Consequences',
+        rule: 'Rule | Rules',
       },
     },
     timeLine: {
@@ -257,6 +275,8 @@ export default {
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Timeline',
+      alarmsConsequences: 'Alarms consequences',
+      alarmsCauses: 'Alarms causes',
     },
     moreInfos: {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
@@ -302,6 +322,7 @@ export default {
     defaultSortColumn: 'Default sort column',
     sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
+    groupColumnNames: 'Group column names',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
@@ -545,6 +566,11 @@ export default {
         rightRemoving: 'Error on right removing',
       },
     },
+    createEvent: {
+      fields: {
+        output: 'Note',
+      },
+    },
     createAckEvent: {
       title: 'Ack',
       tooltips: {
@@ -572,9 +598,9 @@ export default {
     },
     createCancelEvent: {
       title: 'Cancel',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Group request',
     },
     createChangeStateEvent: {
       title: 'Change severity',
