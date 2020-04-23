@@ -52,6 +52,7 @@ export function generateWidgetByType(type) {
     isAckNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
+    isCorrelationEnabled: false,
     fastAckOutput: {
       enabled: false,
       value: 'auto ack',

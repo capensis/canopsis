@@ -317,6 +317,7 @@ export default {
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
+    isCorrelationEnabled: 'Correlation activé ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
