@@ -174,7 +174,7 @@ def exports(ws):
                 sort_key=sort_key,
                 sort_dir=sort_dir,
                 skip=skip,
-                limit=limit,
+                limit=None,
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
