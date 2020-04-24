@@ -333,6 +333,7 @@ export default {
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline ?',
+    isCorrelationEnabled: 'Is correlation enabled ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',

@@ -20,7 +20,7 @@
         v-flex(:class="cardFlexClass")
           v-card.tab-item-card
             v-card-text
-              time-line(:alarm="alarm", :isHTMLEnabled="isHTMLEnabled")
+              time-line(:alarm="alarm", :widget="widget", :isHTMLEnabled="isHTMLEnabled")
     template(v-if="alarm.causes && !hideGroups")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
