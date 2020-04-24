@@ -113,9 +113,9 @@ def exports(ws):
 
         try:
             return rh_ma_rule.create(elements["name"], elements["type"], elements.get("patterns"), elements.get("config"))
-        except TypeError:
+        except (TypeError, KeyError):
             return gen_json_error(
-                {'description': 'The fields name and type are required.'},
+                {'description': 'The fields \'name\' and \'type\' are required.'},
                 HTTP_ERROR
             )
         except ValueError as exc:
