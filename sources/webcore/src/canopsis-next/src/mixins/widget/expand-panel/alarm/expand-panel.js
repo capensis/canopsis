@@ -11,6 +11,7 @@ export default {
     fetchAlarmItemWithGroupsAndSteps(alarm) {
       const params = {
         with_steps: true,
+        correlation: this.widget.parameters.isCorrelationEnabled || false,
       };
 
       if (alarm.causes) {
