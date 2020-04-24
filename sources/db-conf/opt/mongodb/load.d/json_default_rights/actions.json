@@ -418,6 +418,14 @@
         "type": "CRUD"
     },
     {
+      "_id": "models_exploitation_metaAlarmsRules",
+      "loader_id": "models_exploitation_metaAlarmsRules",
+      "crecord_name": "models_exploitation_metaAlarmsRules",
+      "crecord_type": "action",
+      "desc": "Exploitation: Meta alarms rules",
+      "type": "CRUD"
+    },
+    {
         "_id" : "listalarm_ack",
         "loader_id" : "listalarm_ack",
         "crecord_name" : "listalarm_ack",
