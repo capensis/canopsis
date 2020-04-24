@@ -1360,10 +1360,18 @@ export default {
   metaAlarmRule: {
     title: 'Meta alarm rule',
     type: 'Type',
-    pattern: 'Pattern',
+    patterns: 'Patterns',
     actions: 'Actions',
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+    fields: {
+      eventPatterns: 'Event patterns',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
+      thresholdRate: 'Threshold rate',
+      thresholdCount: 'Threshold count',
+      timeInterval: 'Time interval',
+    },
   },
   snmpRules: {
     title: 'SNMP rules',

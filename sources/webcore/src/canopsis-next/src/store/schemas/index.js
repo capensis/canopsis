@@ -79,6 +79,8 @@ export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribu
 
 export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
 
+export const metaAlarmRuleSchema = new schema.Entity(ENTITIES_TYPES.metaAlarmRule, {}, { idAttribute: '_id' });
+
 export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idAttribute: '_id' });
 
 export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { idAttribute: '_id' });
@@ -112,4 +114,5 @@ export default {
   [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
   [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
+  [ENTITIES_TYPES.metaAlarmRule]: metaAlarmRuleSchema,
 };

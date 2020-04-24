@@ -21,7 +21,7 @@
 import { omit } from 'lodash';
 import { MODALS } from '@/constants';
 
-import { metaAlarmRuleToForm } from '@/helpers/forms/meta-alarm-rule';
+import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/forms/meta-alarm-rule';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -67,7 +67,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config.action(this.form);
+        await this.config.action(formToMetaAlarmRule(this.form));
 
         this.$modals.hide();
       }

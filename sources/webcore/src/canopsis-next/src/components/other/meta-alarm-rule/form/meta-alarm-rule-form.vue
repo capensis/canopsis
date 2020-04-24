@@ -10,18 +10,37 @@
         v-tooltip(v-show="!isDisabledIdField", slot="append", left)
           v-icon(slot="activator") help
           span {{ $t('metaAlarmRule.idHelp') }}
+    v-text-field(
+      v-validate="'required'",
+      v-field="form.name",
+      :error-messages="errors.collect('name')",
+      :label="$t('common.name')",
+      name="name"
+    )
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
-    v-textarea(v-field="form.description", :label="$t('common.description')")
-    v-btn(@click="editPattern") {{ $t('modals.metaAlarmRule.editPattern') }}
+    meta-alarm-rule-patterns-form(v-if="isPatternsType", v-field="form.config")
+    meta-alarm-rule-threshhold-form(v-if="isThresholdType", v-field="form.config")
+    meta-alarm-rule-timebased-form(v-if="isTimebasedType", v-field="form.config")
 </template>
 
 <script>
-import { MODALS, META_ALARMS_RULE_TYPES } from '@/constants';
+import { META_ALARMS_RULE_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
+import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+import MetaAlarmRuleThreshholdForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-threshhold-form.vue';
+import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
+import MetaAlarmRuleTimebasedForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-timebased-form.vue';
+
 export default {
   inject: ['$validator'],
+  components: {
+    MetaAlarmRuleTimebasedForm,
+    MetaAlarmRulePatternsForm,
+    MetaAlarmRuleThreshholdForm,
+    PatternsList,
+  },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -37,20 +56,23 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      activePatternTab: 0,
+    };
+  },
   computed: {
     ruleTypes() {
       return Object.values(META_ALARMS_RULE_TYPES);
     },
-  },
-  methods: {
-    editPattern() {
-      this.$modals.show({
-        name: MODALS.createEventFilterRulePattern,
-        config: {
-          pattern: this.form.alarm_patterns,
-          action: alarmPatterns => this.updateField('alarm_patterns', alarmPatterns),
-        },
-      });
+    isPatternsType() {
+      return this.form.type === META_ALARMS_RULE_TYPES.attribute;
+    },
+    isThresholdType() {
+      return this.form.type === META_ALARMS_RULE_TYPES.complex;
+    },
+    isTimebasedType() {
+      return this.form.type === META_ALARMS_RULE_TYPES.timebased;
     },
   },
 };
