@@ -34,7 +34,7 @@ class RouteHandlerMetaAlarmRule(object):
     def __init__(self, ma_rule_manager):
         self.ma_rule_manager = ma_rule_manager
 
-    def _sanitize(self,  name, rule_type, patterns, config):
+    def _sanitize(self, rule_type, patterns, config):
         if rule_type not in VALID_RULE_TYPES:
             raise ValueError("rule type invalid value {}".format(rule_type))
         if isinstance(patterns, string_types):
@@ -58,14 +58,15 @@ class RouteHandlerMetaAlarmRule(object):
                                      .format(rule_type, config_type))
         elif config is not None:
             raise ValueError("invalid config value type {}".format(config))
+        return rule_type, patterns, config
 
     def create(self, name, rule_type, patterns, config):
-        self._sanitize(name, rule_type, patterns, config)
+        rule_type, patterns, config = self._sanitize(rule_type, patterns, config)
         result = self.ma_rule_manager.create(name, rule_type, patterns, config)
         return result
 
     def update(self, _id, name, rule_type, patterns, config):
-        self._sanitize(name, rule_type, patterns, config)
+        rule_type, patterns, config = self._sanitize(rule_type, patterns, config)
         result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config)
         return result
 
