@@ -14,6 +14,7 @@ import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
+import PortalVue from 'portal-vue';
 import sanitizeHTML from 'sanitize-html';
 
 import 'vue-tour/dist/vue-tour.css';
@@ -51,6 +52,7 @@ import * as modalsComponents from '@/components/modals';
 
 Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
+Vue.use(PortalVue);
 Vue.use(filters);
 Vue.use(Vuetify, {
   iconfont: 'md',

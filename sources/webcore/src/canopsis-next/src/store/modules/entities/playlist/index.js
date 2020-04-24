@@ -1,20 +1,8 @@
-import { normalize } from 'normalizr';
-
-import { ENTITIES_TYPES } from '@/constants';
-
-import { types } from '../../../plugins/entities/index';
-
-import { playlistSchema } from '../../../schemas/index';
-
 export default {
   namespaced: true,
-  getters: {
-    getItem: (state, getters, rootState, rootGetters) => id =>
-      rootGetters['entities/getItem'](ENTITIES_TYPES.playlist, id),
-  },
   actions: {
-    fetchItem({ commit }) {
-      const playlist = {
+    fetchItemWithoutStore() {
+      return {
         _id: 'asd',
         name: 'Playlist #1',
         fullscreen: true,
@@ -28,10 +16,6 @@ export default {
           'view-tab_c02ae48e-7f0a-4ba4-9215-ba5662e1550c', // Meteo correct
         ],
       };
-
-      const normalizedData = normalize(playlist, playlistSchema);
-
-      commit(types.ENTITIES_UPDATE, normalizedData.entities, { root: true });
     },
   },
 };

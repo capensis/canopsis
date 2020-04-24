@@ -43,7 +43,11 @@ export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
 
 export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
   rows: [viewRowSchema],
-}, { idAttribute: '_id' });
+}, {
+  idAttribute: '_id',
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   tabs: [viewTabSchema],

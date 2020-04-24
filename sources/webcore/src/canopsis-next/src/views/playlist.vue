@@ -1,6 +1,20 @@
 <template lang="pug">
   div
     h1 Playlist title
+    portal(to="additional-top-bar-items")
+      v-fade-transition
+        v-toolbar-items.mr-2(v-if="!pending")
+          span.playlist-timer.white--text.mr-2 {{ 120 | duration }}
+          v-btn(dark, icon, @click="prevTab")
+            v-icon skip_previous
+          v-btn(v-if="playing", dark, icon, @click="stop")
+            v-icon stop
+          v-btn(v-else, dark, icon, @click="play")
+            v-icon play_arrow
+          v-btn(dark, icon, @click="nextTab")
+            v-icon skip_next
+          v-btn(dark, icon, @click="toggleFullscreen")
+            v-icon fullscreen
     div.position-relative(ref="playlistWrapper")
       div.play-button-wrapper(v-if="!playing")
         v-btn.play-button(color="primary", large, @click="play")
@@ -12,22 +26,25 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import { SCHEMA_EMBEDDED_KEY } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('playlist');
-const {
-  mapActions: mapPlaylistPlayerActions,
-  mapGetters: mapPlaylistPlayerGetters,
-} = createNamespacedHelpers('playlistPlayer');
+const { mapActions } = createNamespacedHelpers('playlist');
 
-const { mapActions: mapGroupsActions } = createNamespacedHelpers('view/group');
+const {
+  mapActions: mapGroupsActions,
+  mapGetters: mapGroupsGetters,
+} = createNamespacedHelpers('view/group');
 
 const { mapGetters: mapEntitiesGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { ViewTabRows },
+  mixins: [authMixin],
   props: {
     id: {
       type: String,
@@ -36,37 +53,23 @@ export default {
   },
   data() {
     return {
-      pl: {
-        _id: 'asd',
-        name: 'Playlist #1',
-        fullscreen: true,
-        interval: {
-          value: 10,
-          unit: 'm',
-        },
-        tabs: [
-          '875df4c2-027b-4549-8add-e20ed7ff7d4f', // Alarm default
-          'view-tab_5a339b3a-0611-4d4c-b307-dc1b92aeb27d', // Meteo technic
-          'view-tab_c02ae48e-7f0a-4ba4-9215-ba5662e1550c', // Meteo correct
-        ],
-      },
+      pending: false,
+      playing: false,
+      playlist: null,
+      activeTabIndex: 0,
     };
   },
   computed: {
     ...mapEntitiesGetters(['getList']),
 
-    ...mapGetters({
-      getPlaylistItem: 'getItem',
+    ...mapGroupsGetters({
+      groupsPending: 'pending',
     }),
 
-    ...mapPlaylistPlayerGetters(['playing', 'activeTabIndex']),
-
     availableTabs() {
-      return this.getList(this.pl.tabs, ENTITIES_TYPES.viewTab, true);
-    },
+      const tabs = this.getList(ENTITIES_TYPES.viewTab, this.tabs, true);
 
-    playlist() {
-      return this.getPlaylistItem(this.id);
+      return tabs.filter(tab => tab[SCHEMA_EMBEDDED_KEY].parents.some(parent => this.checkReadAccess(parent.id)));
     },
 
     tabs() {
@@ -78,25 +81,51 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchGroupsList();
+    this.pending = true;
 
-    await this.fetchPlaylistItem({ id: this.id });
+    if (!this.groupsPending) {
+      await this.fetchGroupsList();
+    }
 
-    this.setPlaylist({ playlist: this.playlist });
-  },
-  beforeDestroy() {
-    this.setPlaylist({ playlist: {} });
+    this.playlist = await this.fetchPlaylistItemWithoutStore({ id: this.id });
+    this.pending = false;
   },
   methods: {
     ...mapActions({
-      fetchPlaylistItem: 'fetchItem',
+      fetchPlaylistItemWithoutStore: 'fetchItemWithoutStore',
     }),
 
     ...mapGroupsActions({
       fetchGroupsList: 'fetchList',
     }),
 
-    ...mapPlaylistPlayerActions(['setPlaylist', 'play']),
+    play() {
+      this.playing = true;
+    },
+
+    stop() {
+      this.playing = false;
+    },
+
+    prevTab() {
+      if (this.availableTabs.length) {
+        this.activeTabIndex = this.activeTabIndex <= 0 ? 0 : this.activeTabIndex - 1;
+      }
+    },
+
+    nextTab() {
+      if (this.availableTabs.length) {
+        const lastIndex = this.availableTabs.length - 1;
+        this.activeTabIndex = this.activeTabIndex >= lastIndex ? lastIndex : this.activeTabIndex + 1;
+      }
+    },
+
+    toggleFullscreen() {
+      this.$fullscreen.toggle(this.$refs.playlistWrapper, {
+        fullscreenClass: 'full-screen',
+        background: 'white',
+      });
+    },
   },
 };
 </script>
@@ -113,5 +142,9 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .playlist-timer {
+    line-height: 48px;
   }
 </style>

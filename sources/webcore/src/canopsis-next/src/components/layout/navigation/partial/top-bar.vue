@@ -16,7 +16,7 @@
         app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
-    playlist
+    portal-target(name="additional-top-bar-items")
     v-toolbar-items
       v-menu(v-show="exploitationLinks.length", bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ $t('common.exploitation') }}
@@ -66,7 +66,6 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';
-import Playlist from './playlist.vue';
 import ActiveSessionsCount from './active-sessions-count.vue';
 import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
 
@@ -79,7 +78,6 @@ export default {
   components: {
     AppLogo,
     AppVersion,
-    Playlist,
     ActiveSessionsCount,
     GroupsTopBar,
   },
