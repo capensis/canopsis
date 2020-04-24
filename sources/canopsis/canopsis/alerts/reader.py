@@ -389,7 +389,8 @@ class AlertsReader(object):
         return alarms
 
     def _get_final_filter(
-            self, view_filter, time_filter, search, active_columns
+            self, view_filter, time_filter, search, active_columns,
+            correlation=False
     ):
         """
         Computes the real filter:
@@ -425,12 +426,13 @@ class AlertsReader(object):
             in a column ends with '.' it will be ignored.
 
             The 'd' column is always added.
+        :param bool correlation: True to return meta-alarms instead of alarms list that was grouped 
         """
         final_filter = {'$and': []}
 
         # filtered list must have all alarms but meta-alarms except the filter by alarm _id or entity id 
         if isinstance(view_filter, dict) and view_filter and not "_id" in view_filter and not "d" in view_filter or \
-            (isinstance(view_filter, list) and view_filter != []):
+            (isinstance(view_filter, list) and view_filter != []) or not correlation:
             final_filter['$and'].append({"v.meta": {"$exists": False}})
         t_view_filter = self._translate_filter(view_filter)
         # add the view filter if not empty
@@ -552,7 +554,8 @@ class AlertsReader(object):
                                   with_consequences,
                                   filter_,
                                   add_pbh_filter=True,
-                                  has_wildcard_dynamic_filter=False):
+                                  has_wildcard_dynamic_filter=False,
+                                  correlation=False):
         """
         :param dict final_filter: the filter sent by the front page
         :param str sort_key: Name of the column to sort. If the value ends with
@@ -560,6 +563,7 @@ class AlertsReader(object):
         :param str sort_dir: Either "ASC" or "DESC"
         :param bool with_steps: True if you want alarm steps in your alarm.
         :param dict filter_: Mongo filter
+        :param bool correlation: True to return meta-alarms instead of grouped alarms 
 
         :returns: List of steps used in mongo aggregation
         :rtype: list
@@ -590,7 +594,7 @@ class AlertsReader(object):
                 }
             }
         ]
-        if self._can_add_metaalarm_filter(filter_, with_consequences):
+        if correlation and self._can_add_metaalarm_filter(filter_, with_consequences):
             self._add_metaalarm_filter(pipeline, 3, with_consequences)
 
         if not with_steps:
@@ -612,13 +616,11 @@ class AlertsReader(object):
 
         :param dict| list of dict filter_: MongoDB filter
         :param bool with_consequences: `with_consequences` request parameter to group alarms with metaalarm under
-        `consequneces` key
-        :returns: true when filter can be changed to find metaalarms
+        `consequences` key
+        :returns: True when filter can be changed to find metaalarms
         :rtype: bool
         """
-        not_by_id = lambda x: "u'_id':" not in str(x)
-        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and not_by_id(filter_)) or \
-            (isinstance(filter_, list) and filter_ != [] and not_by_id(filter_))) or with_consequences
+        return not filter_ or with_consequences
 
     def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
         """
@@ -851,7 +853,8 @@ class AlertsReader(object):
             active_columns=None,
             hide_resources=False,
             with_consequences=False,
-            add_pbh_filter=True
+            add_pbh_filter=True,
+            correlation=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -887,9 +890,11 @@ class AlertsReader(object):
         :param bool hide_resources: hide resources' alarms if the component has
         an alarm
 
-        :param bool with_consequences: display meta-alarms, grouped alarms as consequences
+        :param bool with_consequences: display meta-alarm consequences: grouped alarms
 
         :param bool add_pbh_filter: add pbehavior filter or not
+
+        :param bool correlation: display meta-alarms, grouped alarms as consequences
 
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
@@ -918,7 +923,7 @@ class AlertsReader(object):
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         final_filter = self._get_final_filter(
-            filter_, time_filter, search, active_columns
+            filter_, time_filter, search, active_columns, correlation=correlation
         )
 
 
@@ -926,9 +931,10 @@ class AlertsReader(object):
             sort_key = 'v.last_update_date'
 
         has_wildcard_dynamic_filter = self.contains_wildcard_dynamic_filter(final_filter)
-        pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
-                                                  sort_dir, with_steps, with_consequences, filter_,
-                                                  add_pbh_filter, has_wildcard_dynamic_filter)
+        pipeline = self._build_aggregate_pipeline(
+            final_filter, sort_key, sort_dir, with_steps, with_consequences, filter_,
+            add_pbh_filter=add_pbh_filter, has_wildcard_dynamic_filter=has_wildcard_dynamic_filter,
+            correlation=correlation)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"
@@ -942,7 +948,7 @@ class AlertsReader(object):
             total = 0
 
         rules = dict()
-        if filter_ and not with_consequences:
+        if correlation and filter_ and not with_consequences:
             rules = self._metaalarm_children_rules()
 
         if limit is None:
