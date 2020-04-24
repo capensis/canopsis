@@ -28,7 +28,6 @@ import { META_ALARMS_RULE_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
-import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 import MetaAlarmRuleThreshholdForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-threshhold-form.vue';
 import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 import MetaAlarmRuleTimebasedForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-timebased-form.vue';
@@ -39,7 +38,6 @@ export default {
     MetaAlarmRuleTimebasedForm,
     MetaAlarmRulePatternsForm,
     MetaAlarmRuleThreshholdForm,
-    PatternsList,
   },
   mixins: [formMixin],
   model: {
@@ -55,11 +53,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      activePatternTab: 0,
-    };
   },
   computed: {
     ruleTypes() {
