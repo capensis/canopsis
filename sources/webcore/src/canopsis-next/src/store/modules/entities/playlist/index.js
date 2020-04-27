@@ -13,6 +13,7 @@ export default createEntityModule({
   types,
   route: API_ROUTES.playlist,
   entityType: ENTITIES_TYPES.playlist,
+  withFetchingParams: true,
 }, {
   actions: {
     fetchItemWithoutStore() {
