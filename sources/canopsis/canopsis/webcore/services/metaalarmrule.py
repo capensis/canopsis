@@ -34,9 +34,13 @@ class RouteHandlerMetaAlarmRule(object):
     def __init__(self, ma_rule_manager):
         self.ma_rule_manager = ma_rule_manager
 
-    def _sanitize(self, rule_type, patterns, config):
+    def _sanitize(self, name, rule_type, patterns, config, ma_rule_id):
         if rule_type not in VALID_RULE_TYPES:
             raise ValueError("rule type invalid value {}".format(rule_type))
+        if name is not None and not isinstance(name, string_types):
+            raise ValueError("name has invalid value: {}".format(name))
+        if ma_rule_id is not None and not isinstance(ma_rule_id, string_types):
+            raise ValueError("_id has invalid value: {}".format(ma_rule_id))
         if isinstance(patterns, string_types):
             try:
                 patterns = loads(patterns)
@@ -58,15 +62,15 @@ class RouteHandlerMetaAlarmRule(object):
                                      .format(rule_type, config_type))
         elif config is not None:
             raise ValueError("invalid config value type {}".format(config))
-        return rule_type, patterns, config
+        return name, rule_type, patterns, config, ma_rule_id
 
-    def create(self, name, rule_type, patterns, config):
-        rule_type, patterns, config = self._sanitize(rule_type, patterns, config)
-        result = self.ma_rule_manager.create(name, rule_type, patterns, config)
+    def create(self, name, rule_type, patterns, config, ma_rule_id=None):
+        name, rule_type, patterns, config, ma_rule_id = self._sanitize(name, rule_type, patterns, config, ma_rule_id)
+        result = self.ma_rule_manager.create(name, rule_type, patterns, config, ma_rule_id=ma_rule_id)
         return result
 
     def update(self, _id, name, rule_type, patterns, config):
-        rule_type, patterns, config = self._sanitize(rule_type, patterns, config)
+        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id)
         result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config)
         return result
 
@@ -111,8 +115,14 @@ def exports(ws):
         if len(invalid_keys) != 0:
             ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
 
+        ma_rule_id = elements.get("_id")
+        if ma_rule_id == "":
+            ma_rule_id = None
+
         try:
-            return rh_ma_rule.create(elements["name"], elements["type"], elements.get("patterns"), elements.get("config"))
+            return rh_ma_rule.create(
+                elements["name"], elements["type"], elements.get("patterns"), elements.get("config"), 
+                ma_rule_id=ma_rule_id)
         except (TypeError, KeyError):
             return gen_json_error(
                 {'description': 'The fields \'name\' and \'type\' are required.'},

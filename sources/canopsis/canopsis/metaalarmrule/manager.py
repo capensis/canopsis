@@ -106,7 +106,7 @@ class MetaAlarmRuleManager(object):
         :return: config, logger, storage
         :rtype: Union[dict, logging.Logger, canopsis.storage.core.Storage]
         """
-        logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
+        logger = Logger.get('metaalarmrule', cls.LOG_PATH)
         mongo = MongoStore.get_default()
         collection = mongo.get_collection(cls.MA_RULE_COLLECTION)
         mongo_collection = MongoCollection(collection)
