@@ -113,9 +113,9 @@ def exports(ws):
 
         try:
             return rh_ma_rule.create(elements["name"], elements["type"], elements.get("patterns"), elements.get("config"))
-        except TypeError:
+        except (TypeError, KeyError):
             return gen_json_error(
-                {'description': 'The fields name and type are required.'},
+                {'description': 'The fields \'name\' and \'type\' are required.'},
                 HTTP_ERROR
             )
         except ValueError as exc:
@@ -156,7 +156,7 @@ def exports(ws):
             )
         return gen_json({"is_success": success})
 
-    @ws.application.get('/api/v2/metaalarmrule/<rule_id:id_filter>')
+    @ws.application.get('/api/v2/metaalarmrule/<rule_id>')
     def read(rule_id=None):
         return gen_json(rh_ma_rule.read(rule_id))
 
@@ -167,8 +167,8 @@ def exports(ws):
         """
         return gen_json(rh_ma_rule.read_all())
 
-    @ws.application.delete('/api/v2/metaalarmrule/<rule_id:id_filter>')
-    def delete(rule_id):
+    @ws.application.delete('/api/v2/metaalarmrule/<rule_id>')
+    def delete_rule(rule_id):
         """Delete the meta-alarm rule that match the rule_id
 
         :param rule_id: the meta-alarm rule id
