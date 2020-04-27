@@ -261,7 +261,7 @@ export default {
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Chronologie',
-      alarmsConsequences: 'Alarmes conséquences',
+      alarmsConsequences: 'Alarmes liées',
       alarmsCauses: 'Causes des alarmes',
     },
     moreInfos: {
