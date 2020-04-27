@@ -1144,9 +1144,8 @@ export const DEFAULT_PERIODIC_REFRESH = {
   unit: TIME_UNITS.second,
 };
 
-export const DEFAULT_RETRY_FIELD = {
-  count: 0,
-  delay: RETRY_DEFAULT_DELAY,
+export const DEFAULT_TIME_INTERVAL = {
+  interval: 60,
   unit: TIME_UNITS.second,
 };
 

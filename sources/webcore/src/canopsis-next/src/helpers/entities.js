@@ -672,7 +672,7 @@ export function getDefaultPlaylist() {
     enabled: true,
     interval: {
       interval: 10,
-      unit: TIME_UNITS.minute,
+      unit: TIME_UNITS.second,
     },
     tabs_list: [],
   };

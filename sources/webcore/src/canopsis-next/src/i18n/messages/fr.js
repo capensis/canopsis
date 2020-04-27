@@ -97,6 +97,9 @@ export default {
     webhooks: 'Webhooks',
     links: 'Liens',
     broadcastMessages: 'Diffuser des messages',
+    playlists: 'Playlists',
+    fullscreen: 'Plein écran',
+    interval: 'Période',
     status: 'Statut',
     actions: {
       close: 'Fermer',
@@ -1011,6 +1014,16 @@ export default {
       },
       edit: {
         title: 'Éditée playlist',
+      },
+      duplicate: {
+        title: 'Dupliquer une playlist',
+      },
+      errors: {
+        emptyTabs: 'Merci de ajouter un onglet',
+      },
+      fields: {
+        interval: 'Période',
+        unit: 'Unité',
       },
       groups: 'Groupe',
       result: 'Résultat',

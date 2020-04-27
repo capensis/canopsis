@@ -107,6 +107,9 @@ export default {
     stack: 'Stack',
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
+    playlists: 'Playlists',
+    fullscreen: 'Fullscreen',
+    interval: 'Interval',
     status: 'Status',
     actions: {
       close: 'Close',
@@ -1091,6 +1094,16 @@ export default {
       },
       edit: {
         title: 'Edit playlist',
+      },
+      duplicate: {
+        title: 'Duplicate playlist',
+      },
+      errors: {
+        emptyTabs: 'You should add a tab',
+      },
+      fields: {
+        interval: 'Interval',
+        unit: 'Unit',
       },
       groups: 'Groups',
       result: 'Result',

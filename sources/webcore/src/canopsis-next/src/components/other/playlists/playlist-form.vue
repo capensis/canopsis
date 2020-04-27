@@ -1,6 +1,11 @@
 <template lang="pug">
   div
     v-layout(row)
+      v-switch(
+        v-field="form.enabled",
+        :label="$t('common.enabled')"
+      )
+    v-layout(row)
       v-text-field(
         v-field="form.name",
         v-validate="'required'",
@@ -8,15 +13,11 @@
         :error-messages="errors.collect('name')",
         name="name"
       )
+    time-interval(v-field="form.interval")
     v-layout(row)
       v-switch(
         v-field="form.fullscreen",
         :label="$t('common.fullscreen')"
-      )
-    v-layout(row)
-      v-switch(
-        v-field="form.enabled",
-        :label="$t('common.enabled')"
       )
     v-layout.py-4(row)
       v-flex.export-views-block.mr-2(xs6)
@@ -45,7 +46,7 @@
         v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.result') }}
         draggable-tabs(v-field="form.tabs_list", put, pull, @change="validateTabs")
     v-layout
-      v-alert(:value="errors.has('tabs')", type="error") {{ $t('modals.createPlaylist.errors.tabs') }}
+      v-alert(:value="errors.has('tabs')", type="error") {{ $t('modals.createPlaylist.errors.emptyTabs') }}
 </template>
 
 <script>
@@ -53,13 +54,15 @@ import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-b
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
-import DraggableTabs from '@/components/other/playlist/partials/draggable-tabs.vue';
+import DraggableTabs from '@/components/other/playlists/partials/draggable-tabs.vue';
+import TimeInterval from '@/components/forms/fields/time-interval.vue';
 
 import TabPanelContent from './partials/tab-panel-content.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    TimeInterval,
     DraggableTabs,
     TabPanelContent,
     GroupViewPanel,
