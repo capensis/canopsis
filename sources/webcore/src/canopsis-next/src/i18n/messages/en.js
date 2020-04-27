@@ -226,7 +226,7 @@ export default {
         changeState: 'Change and lock severity',
         variablesHelp: 'List of available variables',
         history: 'History',
-        groupRequest: 'Group request',
+        groupRequest: 'Suggest group request for meta alarm',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -234,7 +234,7 @@ export default {
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
-        grouping: 'Grouping',
+        grouping: 'Meta alarm',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
@@ -319,7 +319,7 @@ export default {
     defaultSortColumn: 'Default sort column',
     sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
-    groupColumnNames: 'Group column names',
+    groupColumnNames: 'Column names for meta alarms',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
@@ -598,7 +598,7 @@ export default {
       title: 'Cancel',
     },
     createGroupRequestEvent: {
-      title: 'Group request',
+      title: 'Suggest group request for meta alarm',
     },
     createChangeStateEvent: {
       title: 'Change severity',
