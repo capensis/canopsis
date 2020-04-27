@@ -4,16 +4,16 @@
     portal(to="additional-top-bar-items")
       v-fade-transition
         v-toolbar-items.mr-2(v-if="!pending")
-          span.playlist-timer.white--text.mr-2 {{ 120 | duration }}
+          span.playlist-timer.white--text.mr-2 {{ time | duration }}
           v-btn(dark, icon, @click="prevTab")
             v-icon skip_previous
-          v-btn(v-if="playing", dark, icon, @click="stop")
-            v-icon stop
+          v-btn(v-if="playing", dark, icon, @click="pause")
+            v-icon pause
           v-btn(v-else, dark, icon, @click="play")
             v-icon play_arrow
           v-btn(dark, icon, @click="nextTab")
             v-icon skip_next
-          v-btn(dark, icon, @click="toggleFullscreen")
+          v-btn(dark, icon, @click="toggleFullScreenMode")
             v-icon fullscreen
     div.position-relative(ref="playlistWrapper")
       div.play-button-wrapper(v-if="!playing")
@@ -53,6 +53,7 @@ export default {
   },
   data() {
     return {
+      time: 0,
       pending: false,
       playing: false,
       playlist: null,
@@ -67,13 +68,10 @@ export default {
     }),
 
     availableTabs() {
-      const tabs = this.getList(ENTITIES_TYPES.viewTab, this.tabs, true);
+      const tabsIds = (this.playlist && this.playlist.tabs) || [];
+      const tabs = this.getList(ENTITIES_TYPES.viewTab, tabsIds, true);
 
       return tabs.filter(tab => tab[SCHEMA_EMBEDDED_KEY].parents.some(parent => this.checkReadAccess(parent.id)));
-    },
-
-    tabs() {
-      return (this.playlist && this.playlist.tabs) || [];
     },
 
     activeTab() {
@@ -89,6 +87,10 @@ export default {
 
     this.playlist = await this.fetchPlaylistItemWithoutStore({ id: this.id });
     this.pending = false;
+    this.time = this.playlist.interval.value;
+  },
+  beforeDestroy() {
+    this.stopTimer();
   },
   methods: {
     ...mapActions({
@@ -101,26 +103,61 @@ export default {
 
     play() {
       this.playing = true;
+      this.startTimer();
     },
 
-    stop() {
+    pause() {
       this.playing = false;
+      this.stopTimer();
     },
 
     prevTab() {
       if (this.availableTabs.length) {
-        this.activeTabIndex = this.activeTabIndex <= 0 ? 0 : this.activeTabIndex - 1;
+        const lastIndex = this.availableTabs.length - 1;
+
+        this.activeTabIndex = this.activeTabIndex <= 0 ? lastIndex : this.activeTabIndex - 1;
+        this.time = this.playlist.interval.value;
+
+        this.restartTimer();
       }
     },
 
     nextTab() {
       if (this.availableTabs.length) {
         const lastIndex = this.availableTabs.length - 1;
-        this.activeTabIndex = this.activeTabIndex >= lastIndex ? lastIndex : this.activeTabIndex + 1;
+        this.activeTabIndex = this.activeTabIndex >= lastIndex ? 0 : this.activeTabIndex + 1;
+
+        this.restartTimer();
       }
     },
 
-    toggleFullscreen() {
+    timerTick() {
+      this.time -= 1;
+
+
+      if (this.time <= 0) {
+        return this.nextTab();
+      }
+
+      return this.startTimer();
+    },
+
+    startTimer() {
+      this.timer = setTimeout(this.timerTick, 1000);
+    },
+
+    stopTimer() {
+      clearTimeout(this.timer);
+    },
+
+    restartTimer() {
+      this.time = this.playlist.interval.value;
+
+      this.stopTimer();
+      this.startTimer();
+    },
+
+    toggleFullScreenMode() {
       this.$fullscreen.toggle(this.$refs.playlistWrapper, {
         fullscreenClass: 'full-screen',
         background: 'white',
