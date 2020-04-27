@@ -169,6 +169,12 @@ export default {
           icon: '$vuetify.icons.bullhorn',
           right: USERS_RIGHTS.technical.broadcastMessage,
         },
+        {
+          route: { name: 'admin-playlists' },
+          text: this.$t('common.playlists'),
+          icon: 'playlist_play',
+          right: USERS_RIGHTS.technical.playlist,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));
