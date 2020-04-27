@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { get, isEmpty, isUndefined, transform } from 'lodash';
+import { get, omit, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -76,6 +76,7 @@ import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import entitiesPlaylistMixin from '@/mixins/entities/playlist';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
@@ -92,6 +93,7 @@ export default {
     entitiesRoleMixin,
     entitiesUserMixin,
     entitiesViewGroupMixin,
+    entitiesPlaylistMixin,
     rightsTechnicalUserMixin,
     rightsTechnicalRoleMixin,
     rightsTechnicalActionMixin,
@@ -321,15 +323,22 @@ export default {
       const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
       const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
 
-      this.groupedRights = rights.reduce((acc, right) => {
+      const groupedRights = rights.reduce((acc, right) => {
         const rightId = String(right._id);
         const view = allViews.find(({ _id }) => _id === rightId);
+        const playlist = this.playlists.find(({ _id }) => _id === rightId);
 
         if (view) {
           acc.view.push({
             ...right,
 
             desc: right.desc.replace(view._id, view.name),
+          });
+        } else if (playlist) {
+          acc.playlist.push({
+            ...right,
+
+            desc: right.desc.replace(playlist._id, playlist.name),
           });
         } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
           acc.technical.push(right);
@@ -341,7 +350,16 @@ export default {
         }
 
         return acc;
-      }, { business: [], view: [], technical: [] });
+      }, {
+        business: [],
+        view: [],
+        playlist: [],
+        technical: [],
+      });
+
+      groupedRights.view = [...groupedRights.view, ...groupedRights.playlist];
+
+      this.groupedRights = omit(groupedRights, ['playlist']);
     },
   },
 };
