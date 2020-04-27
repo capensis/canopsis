@@ -26,8 +26,6 @@
 <script>
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
-
 import MetaAlarmRuleThreshholdForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-threshhold-form.vue';
 import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 import MetaAlarmRuleTimebasedForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-timebased-form.vue';
@@ -39,7 +37,6 @@ export default {
     MetaAlarmRulePatternsForm,
     MetaAlarmRuleThreshholdForm,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',

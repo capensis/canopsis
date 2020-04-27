@@ -32,12 +32,17 @@ export function metaAlarmRuleToForm(rule = {}) {
 export function formToMetaAlarmRule(form = {}) {
   const metaAlarmRule = omit(form, ['config']);
 
-  metaAlarmRule.config = {
-    [META_ALARMS_RULE_TYPES.attribute]: pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']),
-    [META_ALARMS_RULE_TYPES.complex]: pick(form.config, ['threshold_rate', 'threshold_count']),
-    [META_ALARMS_RULE_TYPES.relation]: null,
-    [META_ALARMS_RULE_TYPES.timebased]: pick(form.config, ['time_interval']),
-  }[form.type];
+  switch (form.type) {
+    case META_ALARMS_RULE_TYPES.attribute:
+      metaAlarmRule.config = pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']);
+      break;
+    case META_ALARMS_RULE_TYPES.complex:
+      metaAlarmRule.config = pick(form.config, ['threshold_rate', 'threshold_count']);
+      break;
+    case META_ALARMS_RULE_TYPES.timebased:
+      metaAlarmRule.config = pick(form.config, ['time_interval']);
+      break;
+  }
 
   return metaAlarmRule;
 }

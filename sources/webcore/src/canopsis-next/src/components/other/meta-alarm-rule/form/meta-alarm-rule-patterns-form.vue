@@ -14,14 +14,11 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
   inject: ['$validator'],
   components: { PatternsList },
-  mixins: [formMixin],
   model: {
     prop: 'patterns',
     event: 'input',

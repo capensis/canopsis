@@ -23,11 +23,8 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
   model: {
     prop: 'threshold',
     event: 'input',
