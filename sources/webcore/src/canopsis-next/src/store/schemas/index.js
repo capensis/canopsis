@@ -43,7 +43,11 @@ export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
 
 export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
   rows: [viewRowSchema],
-}, { idAttribute: '_id' });
+}, {
+  idAttribute: '_id',
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   tabs: [viewTabSchema],
@@ -80,6 +84,10 @@ export const dynamicInfoSchema = new schema.Entity(ENTITIES_TYPES.dynamicInfo, {
 
 export const broadcastMessageSchema = new schema.Entity(ENTITIES_TYPES.broadcastMessage, {}, { idAttribute: '_id' });
 
+export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {
+  tabs: [viewTabSchema],
+}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -101,4 +109,5 @@ export default {
   [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
   [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
+  [ENTITIES_TYPES.playlist]: playlistSchema,
 };

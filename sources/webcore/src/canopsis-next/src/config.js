@@ -117,6 +117,7 @@ export const API_ROUTES = {
     activeList: '/api/v2/broadcast-message/active',
   },
   counter: '/alerts/get-counters',
+  playlist: '/api/v2/playlist',
 };
 
 export const COLORS = {

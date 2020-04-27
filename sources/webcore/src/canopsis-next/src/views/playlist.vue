@@ -1,6 +1,20 @@
 <template lang="pug">
   div
     h1 Playlist title
+    portal(to="additional-top-bar-items")
+      v-fade-transition
+        v-toolbar-items.mr-2(v-if="!pending")
+          span.playlist-timer.white--text.mr-2 {{ time | duration }}
+          v-btn(dark, icon, @click="prevTab")
+            v-icon skip_previous
+          v-btn(v-if="playing", dark, icon, @click="pause")
+            v-icon pause
+          v-btn(v-else, dark, icon, @click="play")
+            v-icon play_arrow
+          v-btn(dark, icon, @click="nextTab")
+            v-icon skip_next
+          v-btn(dark, icon, @click="toggleFullScreenMode")
+            v-icon fullscreen
     div.position-relative(ref="playlistWrapper")
       div.play-button-wrapper(v-if="!playing")
         v-btn.play-button(color="primary", large, @click="play")
@@ -12,92 +26,142 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import { SCHEMA_EMBEDDED_KEY } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import authMixin from '@/mixins/auth';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 
-const { mapGetters } = createNamespacedHelpers('entities');
+const { mapActions } = createNamespacedHelpers('playlist');
+
+const {
+  mapActions: mapGroupsActions,
+  mapGetters: mapGroupsGetters,
+} = createNamespacedHelpers('view/group');
+
+const { mapGetters: mapEntitiesGetters } = createNamespacedHelpers('entities');
 
 export default {
   components: { ViewTabRows },
+  mixins: [authMixin],
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
+      time: 0,
+      pending: false,
       playing: false,
+      playlist: null,
       activeTabIndex: 0,
-      playlist: {
-        _id: 'id123',
-        name: 'Playlist #1',
-        fullscreen: true,
-        interval: {
-          value: 10,
-          unit: 'm',
-        },
-        tabs: [
-          '875df4c2-027b-4549-8add-e20ed7ff7d4f', // Alarm default
-          'view-tab_5a339b3a-0611-4d4c-b307-dc1b92aeb27d', // Meteo technic
-          'view-tab_c02ae48e-7f0a-4ba4-9215-ba5662e1550c', // Meteo correct
-        ],
-      },
     };
   },
   computed: {
-    ...mapGetters(['getList']),
+    ...mapEntitiesGetters(['getList']),
 
-    tabs() {
-      return this.getList(ENTITIES_TYPES.viewTab, this.playlist.tabs);
+    ...mapGroupsGetters({
+      groupsPending: 'pending',
+    }),
+
+    availableTabs() {
+      const tabsIds = (this.playlist && this.playlist.tabs) || [];
+      const tabs = this.getList(ENTITIES_TYPES.viewTab, tabsIds, true);
+
+      return tabs.filter(tab => tab[SCHEMA_EMBEDDED_KEY].parents.some(parent => this.checkReadAccess(parent.id)));
     },
 
     activeTab() {
-      return this.tabs[this.activeTabIndex];
+      return this.availableTabs[this.activeTabIndex];
     },
   },
-  mounted() {
-    this.play();
+  async mounted() {
+    this.pending = true;
+
+    if (!this.groupsPending) {
+      await this.fetchGroupsList();
+    }
+
+    this.playlist = await this.fetchPlaylistItemWithoutStore({ id: this.id });
+    this.pending = false;
+    this.time = this.playlist.interval.value;
   },
   beforeDestroy() {
-    this.stopTabsChanging();
+    this.stopTimer();
   },
   methods: {
+    ...mapActions({
+      fetchPlaylistItemWithoutStore: 'fetchItemWithoutStore',
+    }),
+
+    ...mapGroupsActions({
+      fetchGroupsList: 'fetchList',
+    }),
+
     play() {
-      if (this.playing) {
-        return;
-      }
-
-      if (!this.playlist.fullscreen) {
-        this.startTabsChanging();
-        this.playing = true;
-
-        return;
-      }
-
-      if (this.$refs.playlistWrapper) {
-        this.$fullscreen.toggle(this.$refs.playlistWrapper, {
-          fullscreenClass: 'full-screen',
-          background: 'white',
-          callback: (value) => {
-            this.playing = value;
-
-            if (value) {
-              this.startTabsChanging();
-            } else {
-              this.stopTabsChanging();
-            }
-          },
-        });
-      }
-    },
-    startTabsChanging() {
-      this.timer = setTimeout(this.changeTabTick, 10000);
+      this.playing = true;
+      this.startTimer();
     },
 
-    changeTabTick() {
-      this.activeTabIndex = this.activeTabIndex >= this.tabs.length - 1 ? 0 : this.activeTabIndex + 1;
-
-      this.timer = setTimeout(this.changeTabTick, 10000);
+    pause() {
+      this.playing = false;
+      this.stopTimer();
     },
 
-    stopTabsChanging() {
+    prevTab() {
+      if (this.availableTabs.length) {
+        const lastIndex = this.availableTabs.length - 1;
+
+        this.activeTabIndex = this.activeTabIndex <= 0 ? lastIndex : this.activeTabIndex - 1;
+        this.time = this.playlist.interval.value;
+
+        this.restartTimer();
+      }
+    },
+
+    nextTab() {
+      if (this.availableTabs.length) {
+        const lastIndex = this.availableTabs.length - 1;
+        this.activeTabIndex = this.activeTabIndex >= lastIndex ? 0 : this.activeTabIndex + 1;
+
+        this.restartTimer();
+      }
+    },
+
+    timerTick() {
+      this.time -= 1;
+
+
+      if (this.time <= 0) {
+        return this.nextTab();
+      }
+
+      return this.startTimer();
+    },
+
+    startTimer() {
+      this.timer = setTimeout(this.timerTick, 1000);
+    },
+
+    stopTimer() {
       clearTimeout(this.timer);
+    },
+
+    restartTimer() {
+      this.time = this.playlist.interval.value;
+
+      this.stopTimer();
+      this.startTimer();
+    },
+
+    toggleFullScreenMode() {
+      this.$fullscreen.toggle(this.$refs.playlistWrapper, {
+        fullscreenClass: 'full-screen',
+        background: 'white',
+      });
     },
   },
 };
@@ -115,5 +179,9 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .playlist-timer {
+    line-height: 48px;
   }
 </style>
