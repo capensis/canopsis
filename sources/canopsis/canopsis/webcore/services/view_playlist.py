@@ -33,17 +33,17 @@ from canopsis.webcore.services.internal import sanitize_popup_timeout
 FIELDS = {"name", "title", "interval", "fullscreen", "enabled", "tabs_list"}
 # 0 is view
 # 1 is view_group
-VIEW_TYPE = {0, 1}
-
-
-def check_view(view):
-    if not isinstance(view, dict) or \
-        view.get('type') not in VIEW_TYPE or \
-            'id' not in view:
-        raise Exception("invalid view")
-    for k in view:
-        if k not in ['type', 'id']:
-            view.pop(k)
+# VIEW_TYPE = {0, 1}
+#
+#
+# def check_view(view):
+#     if not isinstance(view, dict) or \
+#         view.get('type') not in VIEW_TYPE or \
+#             'id' not in view:
+#         raise Exception("invalid view")
+#     for k in view:
+#         if k not in ['type', 'id']:
+#             view.pop(k)
 
 
 def sanitize_payload(payload):
@@ -60,8 +60,8 @@ def sanitize_payload(payload):
 
         raise Exception("invalid field type")
 
-    for view in payload['tabs_list']:
-        check_view(view)
+    # for view in payload['tabs_list']:
+    #     check_view(view)
 
     sanitize_popup_timeout(payload['interval'])
     return payload
