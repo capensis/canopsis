@@ -669,10 +669,11 @@ export function getDefaultPlaylist() {
   return {
     name: '',
     fullscreen: true,
+    enabled: true,
     interval: {
-      value: 10,
+      interval: 10,
       unit: TIME_UNITS.minute,
     },
-    tabs: [],
+    tabs_list: [],
   };
 }

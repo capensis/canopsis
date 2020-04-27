@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        create-playlist-form(v-model="form")
+        playlist-form(v-model="form")
       template(slot="actions")
         v-btn(
           data-test="createPbehaviorCancelButton",
@@ -21,23 +21,30 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 import { getDefaultPlaylist } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
-import CreatePlaylistForm from '@/components/other/playlist/create-playlist-form.vue';
+import PlaylistForm from '@/components/other/playlist/playlist-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createPlaylist,
-  components: { CreatePlaylistForm, ModalWrapper },
+
+  $_veeValidate: {
+    validator: 'new',
+  },
+
+  components: { PlaylistForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
-      form: this.modal.config.playlist || getDefaultPlaylist(),
+      form: this.modal.config.playlist ? cloneDeep(this.modal.config.playlist) : getDefaultPlaylist(),
     };
   },
   computed: {
@@ -47,11 +54,15 @@ export default {
   },
   methods: {
     async submit() {
-      if (this.config.action) {
-        await this.config.action(this.form);
-      }
+      const isFormValid = await this.$validator.validateAll();
 
-      this.$modals.hide();
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.form);
+        }
+
+        this.$modals.hide();
+      }
     },
   },
 };
