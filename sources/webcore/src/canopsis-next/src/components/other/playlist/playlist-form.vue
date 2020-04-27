@@ -23,7 +23,7 @@
         v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.groups') }}
         v-expansion-panel(readonly, hide-actions, expand, dark, focusable, :value="openedPanels")
           group-panel(
-            v-for="group in groupsOrdered",
+            v-for="group in groups",
             :group="group",
             :key="group._id",
             hideActions
@@ -55,9 +55,6 @@ import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/g
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
 import DraggableTabs from '@/components/other/playlist/partials/draggable-tabs.vue';
 
-import entitiesViewMixin from '@/mixins/entities/view';
-import entitiesViewGroupMixin from '@/mixins/entities/view/group';
-
 import TabPanelContent from './partials/tab-panel-content.vue';
 
 export default {
@@ -70,10 +67,6 @@ export default {
     GroupPanel,
     GroupsSideBarGroup,
   },
-  mixins: [
-    entitiesViewMixin,
-    entitiesViewGroupMixin,
-  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -83,10 +76,14 @@ export default {
       type: Object,
       required: false,
     },
+    groups: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     openedPanels() {
-      return this.getPanelValueFromArray(this.groupsOrdered);
+      return this.getPanelValueFromArray(this.groups);
     },
   },
   created() {
