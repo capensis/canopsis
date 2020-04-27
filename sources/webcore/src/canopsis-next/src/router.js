@@ -221,7 +221,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresRight: {
-        id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
+        id: route => route.params.id,
       },
     },
     props: route => ({ id: route.params.id }),

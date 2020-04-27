@@ -29,6 +29,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
+import { getSecondsByUnit } from '@/helpers/time';
+
 import authMixin from '@/mixins/auth';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
@@ -68,7 +70,7 @@ export default {
     }),
 
     availableTabs() {
-      const tabsIds = (this.playlist && this.playlist.tabs) || [];
+      const tabsIds = (this.playlist && this.playlist.tabs_list) || [];
       const tabs = this.getList(ENTITIES_TYPES.viewTab, tabsIds, true);
 
       return tabs.filter(tab => tab[SCHEMA_EMBEDDED_KEY].parents.some(parent => this.checkReadAccess(parent.id)));
@@ -86,8 +88,10 @@ export default {
     }
 
     this.playlist = await this.fetchPlaylistItemWithoutStore({ id: this.id });
+
+    this.initTime();
+
     this.pending = false;
-    this.time = this.playlist.interval.value;
   },
   beforeDestroy() {
     this.stopTimer();
@@ -101,8 +105,15 @@ export default {
       fetchGroupsList: 'fetchList',
     }),
 
+    initTime() {
+      const { interval, unit } = this.playlist.interval;
+
+      this.time = getSecondsByUnit(interval, unit);
+    },
+
     play() {
       this.playing = true;
+      this.toggleFullScreenMode();
       this.startTimer();
     },
 
@@ -151,9 +162,8 @@ export default {
     },
 
     restartTimer() {
-      this.time = this.playlist.interval.value;
-
       this.stopTimer();
+      this.initTime();
       this.startTimer();
     },
 
