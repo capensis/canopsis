@@ -1,20 +1,24 @@
 <template lang="pug">
-  v-expansion-panel(v-if="availablePlaylists.length", expand, focusable, dark)
-    v-expansion-panel-content.secondary.lighten-1.white--text
-      div.panel-header(slot="header")
-        span {{ $t('common.playlists') }}
-      router-link(
+  v-menu.group-item(
+    v-if="availablePlaylists.length",
+    content-class="group-v-menu-content secondary",
+    close-delay="0",
+    open-on-hover,
+    offset-y,
+    bottom,
+    dark
+  )
+    div.v-btn.v-btn--flat.theme--dark.secondary.lighten-1(slot="activator")
+      span {{ $t('common.playlists') }}
+      v-icon(dark) arrow_drop_down
+    v-list
+      v-list-tile(
         v-for="playlist in availablePlaylists",
         :key="playlist._id",
-        :title="playlist.name",
         :to="{ name: 'playlist', params: { id: playlist._id } }"
       )
-        v-card.secondary.lighten-2
-          v-card-text
-            v-layout(align-center, justify-space-between)
-              v-flex
-                v-layout(align-center)
-                  span.pl-3 {{ playlist.name }}
+        v-list-tile-title
+          span {{ playlist.name }}
 </template>
 
 <script>
@@ -38,10 +42,5 @@ export default {
   a {
     color: inherit;
     text-decoration: none;
-
-  &.router-link-active /deep/ .v-card {
-     background-color: #73879a !important;
-     border-color: #73879a !important;
-   }
   }
 </style>

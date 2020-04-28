@@ -1,3 +1,5 @@
+import { omit } from 'lodash';
+
 /**
  * Convert playlist to playlist form
  *
@@ -6,7 +8,7 @@
  */
 export function playlistToForm(playlist = {}) {
   return {
-    ...playlist,
+    ...omit(playlist, ['_id']),
 
     interval: { ...playlist.interval },
     tabs_list: [],

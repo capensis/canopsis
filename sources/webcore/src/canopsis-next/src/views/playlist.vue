@@ -96,7 +96,11 @@ export default {
 
     play() {
       this.playing = true;
-      this.toggleFullScreenMode();
+
+      if (this.playlist.fullscreen) {
+        this.toggleFullScreenMode();
+      }
+
       this.startTimer();
     },
 
