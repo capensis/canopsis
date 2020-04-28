@@ -1015,9 +1015,6 @@ export default {
       edit: {
         title: 'Éditée playlist',
       },
-      duplicate: {
-        title: 'Dupliquer une playlist',
-      },
       errors: {
         emptyTabs: 'Merci de ajouter un onglet',
       },

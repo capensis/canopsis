@@ -13,7 +13,7 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import TabPanelContent from '@/components/other/playlists/partials/tab-panel-content.vue';
+import TabPanelContent from '@/components/other/playlists/form/partials/tab-panel-content.vue';
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 export default {

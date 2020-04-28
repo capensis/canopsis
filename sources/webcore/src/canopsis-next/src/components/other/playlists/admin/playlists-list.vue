@@ -20,21 +20,12 @@
             td
               v-btn.ma-0(
                 v-if="hasUpdateAnyPlaylistAccess",
-                data-test="editButton",
                 icon,
                 @click="$emit('edit', props.item)"
               )
                 v-icon edit
-              v-btn(
-                v-if="hasCreateAnyPlaylistAccess",
-                icon,
-                small,
-                @click.stop="$emit('duplicate', props.item)"
-              )
-                v-icon file_copy
               v-btn.ma-0(
                 v-if="hasDeleteAnyPlaylistAccess",
-                data-test="deleteButton",
                 icon,
                 @click="$emit('delete', props.item._id)"
               )

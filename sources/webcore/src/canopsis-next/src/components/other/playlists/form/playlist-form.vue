@@ -13,7 +13,7 @@
         :error-messages="errors.collect('name')",
         name="name"
       )
-    time-interval(v-field="form.interval")
+    time-interval-field(v-field="form.interval")
     v-layout(row)
       v-switch(
         v-field="form.fullscreen",
@@ -51,22 +51,20 @@
 
 <script>
 import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-bar/group-view-panel.vue';
-import FileSelector from '@/components/forms/fields/file-selector.vue';
 import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
-import DraggableTabs from '@/components/other/playlists/partials/draggable-tabs.vue';
-import TimeInterval from '@/components/forms/fields/time-interval.vue';
+import DraggableTabs from '@/components/other/playlists/form/partials/draggable-tabs.vue';
+import TimeIntervalField from '@/components/forms/fields/time-interval.vue';
 
 import TabPanelContent from './partials/tab-panel-content.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    TimeInterval,
+    TimeIntervalField,
     DraggableTabs,
     TabPanelContent,
     GroupViewPanel,
-    FileSelector,
     GroupPanel,
     GroupsSideBarGroup,
   },

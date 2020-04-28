@@ -4,8 +4,7 @@
       :playlists="playlists",
       :pending="playlistsPending",
       @edit="showEditPlaylistModal",
-      @delete="showRemovePlaylistModal",
-      @duplicate="showDuplicatePlaylistModal"
+      @delete="showRemovePlaylistModal"
     )
     .fab(v-if="hasCreateAnyPlaylistAccess")
       v-layout(column)
@@ -28,9 +27,8 @@ import { MODALS } from '@/constants';
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 import entitiesPlaylistMixin from '@/mixins/entities/playlist';
 
-import PlaylistsList from '@/components/other/playlists/playlists-list.vue';
+import PlaylistsList from '@/components/other/playlists/admin/playlists-list.vue';
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
-import { omit } from 'lodash';
 
 export default {
   components: {
@@ -75,7 +73,6 @@ export default {
       this.$modals.show({
         name: MODALS.createPlaylist,
         config: {
-          title: this.$t('modals.createPlaylist.edit.title'),
           playlist,
 
           action:
@@ -89,17 +86,6 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: this.callActionWithFetching(() => this.removePlaylist({ id })),
-        },
-      });
-    },
-
-    showDuplicatePlaylistModal(playlist) {
-      this.$modals.show({
-        name: MODALS.createPlaylist,
-        config: {
-          title: this.$t('modals.createPlaylist.duplicate.title'),
-          playlist: omit(playlist, ['_id']),
-          action: this.callActionWithFetching(newPlaylist => this.createPlaylist({ data: newPlaylist })),
         },
       });
     },

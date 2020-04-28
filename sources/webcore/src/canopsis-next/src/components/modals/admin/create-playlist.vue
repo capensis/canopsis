@@ -21,17 +21,19 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { SCHEMA_EMBEDDED_KEY } from '@/config';
-import { ENTITIES_TYPES, MODALS } from '@/constants';
-import { getDefaultPlaylist } from '@/helpers/entities';
+import { MODALS } from '@/constants';
 
-import authMixin from '@/mixins/auth';
+import { getDefaultPlaylist } from '@/helpers/entities';
+import { playlistToForm, formToPlaylist } from '@/helpers/forms/playlist';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
+import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
 import submittableMixin from '@/mixins/submittable';
 
-import PlaylistForm from '@/components/other/playlists/playlist-form.vue';
+import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -44,51 +46,40 @@ export default {
     validator: 'new',
   },
 
-  components: { PlaylistForm, ModalWrapper },
+  components: { PlaylistForm, ProgressOverlay, ModalWrapper },
   mixins: [
-    authMixin,
     modalInnerMixin,
     entitiesViewGroupMixin,
     rightsEntitiesGroupMixin,
+    rightsEntitiesPlaylistTabMixin,
     submittableMixin(),
   ],
   data() {
+    const { playlist } = this.modal.config;
+
     return {
-      pending: false,
-      form: this.modal.config.playlist
-        ? {
-          ...this.modal.config.playlist,
-          tabs_list: [],
-        }
-        : getDefaultPlaylist(),
+      form: playlist ? playlistToForm(playlist) : getDefaultPlaylist(),
     };
   },
   computed: {
     ...mapEntitiesGetters(['getList']),
 
     title() {
-      return this.config.title || this.$t('modals.createPlaylist.create.title');
-    },
+      const type = this.modal.config.playlist ? 'edit' : 'create';
 
-    playlist() {
-      return this.modal.config.playlist;
+      return this.$t(`modals.createPlaylist.${type}.title`);
     },
   },
   async mounted() {
-    this.pending = true;
+    const { playlist } = this.config;
 
     if (!this.groupsPending) {
       await this.fetchGroupsList();
     }
 
-    if (this.playlist && this.playlist.tabs_list.length) {
-      const tabs = this.getList(ENTITIES_TYPES.viewTab, this.playlist.tabs_list, true);
-
-      this.form.tabs_list = tabs.filter(tab =>
-        tab[SCHEMA_EMBEDDED_KEY].parents.some(parent => this.checkReadAccess(parent.id)));
+    if (playlist && playlist.tabs_list.length) {
+      this.form.tabs_list = this.getAvailableTabsByIds(playlist.tabs_list);
     }
-
-    this.pending = false;
   },
   methods: {
     async submit() {
@@ -96,10 +87,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action({
-            ...this.form,
-            tabs_list: this.form.tabs_list.map(({ _id }) => _id),
-          });
+          await this.config.action(formToPlaylist(this.form));
         }
 
         this.$modals.hide();
