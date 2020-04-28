@@ -673,6 +673,8 @@ class TestManager(BaseTest):
 
         tstart2 = tstart1 + 1800
         tstop2 = tstop1 + 1800
+        alarm_coll = self.pbm.alarmAdapter.collection
+        alarm_coll.remove()
 
         self.pbm.context._put_entities([{
             '_id': 1,
@@ -735,6 +737,32 @@ class TestManager(BaseTest):
             "eids": [1]
             }
         )
+
+        alarm_coll.insert({
+            "_id": "alarm_2",
+            "d": 1,
+            "v": {
+                "state": {
+                    "_t": 'stateinc',
+                    "t": 1587429072,
+                    "a": 'webinar.webinar',
+                    "m": 'noveo alarm',
+                    "val": 3
+                },
+                "status": {
+                    "_t": 'statusinc',
+                    "t": 1587429072,
+                    "a": 'webinar.webinar',
+                    "m": 'noveo alarm',
+                    "val": 1
+                },
+                "resolved": None
+            },
+            "component": "com1",
+            "connector": "conn1",
+            "connector_name": "conn_name1"
+        })
+
         self.pbm.collection.update({'_id': pbehavior1['_id']}, {"$set": pbehavior1})
         now = int(time.time())
         events = list(self.pbm.generate_pbh_event(now))
