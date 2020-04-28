@@ -24,8 +24,10 @@
 <script>
 import { MODALS } from '@/constants';
 
+import authMixin from '@/mixins/auth';
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 import entitiesPlaylistMixin from '@/mixins/entities/playlist';
+import entitiesPlaylistRightMixin from '@/mixins/entities/playlist/right';
 
 import PlaylistsList from '@/components/other/playlists/admin/playlists-list.vue';
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
@@ -35,7 +37,12 @@ export default {
     PlaylistsList,
     RefreshBtn,
   },
-  mixins: [rightsTechnicalPlaylistMixin, entitiesPlaylistMixin],
+  mixins: [
+    authMixin,
+    rightsTechnicalPlaylistMixin,
+    entitiesPlaylistMixin,
+    entitiesPlaylistRightMixin,
+  ],
   mounted() {
     this.fetchList();
   },
@@ -64,7 +71,11 @@ export default {
       this.$modals.show({
         name: MODALS.createPlaylist,
         config: {
-          action: this.callActionWithFetching(newPlaylist => this.createPlaylist({ data: newPlaylist })),
+          action: this.callActionWithFetching(async (newPlaylist) => {
+            const { _id: playlistId } = await this.createPlaylist({ data: newPlaylist });
+
+            return this.createRightByPlaylistId(playlistId);
+          }),
         },
       });
     },
@@ -85,7 +96,11 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: this.callActionWithFetching(() => this.removePlaylist({ id })),
+          action: this.callActionWithFetching(async () => {
+            await this.removePlaylist({ id });
+
+            return this.removeRightByPlaylistId(id);
+          }),
         },
       });
     },

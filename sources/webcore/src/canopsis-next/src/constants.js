@@ -653,6 +653,7 @@ export const STATS_CALENDAR_COLORS = {
 };
 
 export const USERS_RIGHTS_MASKS = {
+  default: 1,
   create: 8,
   read: 4,
   update: 2,

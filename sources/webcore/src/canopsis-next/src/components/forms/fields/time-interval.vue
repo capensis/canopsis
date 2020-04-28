@@ -2,7 +2,7 @@
   v-layout.mb-3(align-center)
     v-flex(xs6)
       v-text-field(
-        v-field="interval.interval",
+        v-field.number="interval.interval",
         v-validate="'required|numeric|min_value:1'",
         :error-messages="errors.collect('interval')",
         :min="1",

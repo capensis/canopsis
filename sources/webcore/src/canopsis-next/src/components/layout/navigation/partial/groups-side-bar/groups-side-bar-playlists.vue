@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-expansion-panel(v-if="availablePlaylists.length", expand, focusable, dark)
+  v-expansion-panel.sidebar-playlists(v-if="availablePlaylists.length", expand, focusable, dark)
     v-expansion-panel-content.secondary.lighten-1.white--text
       div.panel-header(slot="header")
         span {{ $t('common.playlists') }}
@@ -35,6 +35,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .sidebar-playlists {
+    padding: 10px;
+    box-shadow: none;
+  }
+
   a {
     color: inherit;
     text-decoration: none;

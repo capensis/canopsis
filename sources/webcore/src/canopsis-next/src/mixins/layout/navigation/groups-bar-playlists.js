@@ -9,7 +9,7 @@ export default {
   ],
   computed: {
     availablePlaylists() {
-      return this.playlists.filter(playlist => this.checkReadAccess(playlist._id) && playlist.enabled);
+      return this.playlists.filter(playlist => this.checkAccess(playlist._id) && playlist.enabled);
     },
   },
   mounted() {

@@ -18,7 +18,7 @@
                 v-icon skip_next
               v-btn(:disabled="!activeTab", dark, icon, @click="toggleFullScreenMode")
                 v-icon fullscreen
-        div.white.position-relative(ref="playlistWrapper", v-if="activeTab")
+        div.position-relative.playlist-tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
           div.play-button-wrapper(v-if="!playing")
             v-btn.play-button(color="primary", large, @click="play")
               v-icon(large) play_arrow
@@ -151,11 +151,14 @@ export default {
     restartTimer() {
       this.stopTimer();
       this.initTime();
-      this.startTimer();
+
+      if (this.playing) {
+        this.startTimer();
+      }
     },
 
     toggleFullScreenMode() {
-      this.$fullscreen.toggle(this.$refs.playlistWrapper, {
+      this.$fullscreen.toggle(this.$refs.playlistTabsWrapper, {
         fullscreenClass: 'full-screen',
         background: 'white',
       });
@@ -165,6 +168,10 @@ export default {
 </script>
 
 <style lang="scss">
+  .playlist-tabs-wrapper {
+    min-height: 60px;
+  }
+
   .play-button-wrapper {
     position: absolute;
     width: 100%;
