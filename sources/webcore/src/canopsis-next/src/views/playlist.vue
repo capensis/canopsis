@@ -1,52 +1,47 @@
 <template lang="pug">
   div
-    h1 Playlist title
-    portal(to="additional-top-bar-items")
-      v-fade-transition
-        v-toolbar-items.mr-2(v-if="!pending")
-          span.playlist-timer.white--text.mr-2 {{ time | duration }}
-          v-btn(dark, icon, @click="prevTab")
-            v-icon skip_previous
-          v-btn(v-if="playing", dark, icon, @click="pause")
-            v-icon pause
-          v-btn(v-else, dark, icon, @click="play")
-            v-icon play_arrow
-          v-btn(dark, icon, @click="nextTab")
-            v-icon skip_next
-          v-btn(dark, icon, @click="toggleFullScreenMode")
-            v-icon fullscreen
-    div.position-relative(ref="playlistWrapper")
-      div.play-button-wrapper(v-if="!playing")
-        v-btn.play-button(color="primary", large, @click="play")
-          v-icon(large) play_arrow
-      v-fade-transition(v-if="activeTab", mode="out-in")
-        view-tab-rows(:tab="activeTab", :key="activeTab._id")
+    v-fade-transition(mode="out-in")
+      progress-overlay(v-if="pending", :pending="true")
+      div(v-else-if="playlist")
+        h2.text-xs-center.my-3.display-1.font-weight-medium {{ playlist.name }}
+        portal(to="additional-top-bar-items")
+          v-fade-transition
+            v-toolbar-items.mr-2(v-if="!pending")
+              span.playlist-timer.white--text.mr-2 {{ time | duration }}
+              v-btn(:disabled="!activeTab", dark, icon, @click="prevTab")
+                v-icon skip_previous
+              v-btn(v-if="playing", :disabled="!activeTab", dark, icon, @click="pause")
+                v-icon pause
+              v-btn(v-else, :disabled="!activeTab", dark, icon, @click="play")
+                v-icon play_arrow
+              v-btn(:disabled="!activeTab", dark, icon, @click="nextTab")
+                v-icon skip_next
+              v-btn(:disabled="!activeTab", dark, icon, @click="toggleFullScreenMode")
+                v-icon fullscreen
+        div.white.position-relative(ref="playlistWrapper", v-if="activeTab")
+          div.play-button-wrapper(v-if="!playing")
+            v-btn.play-button(color="primary", large, @click="play")
+              v-icon(large) play_arrow
+          v-fade-transition(mode="out-in")
+            view-tab-rows(:tab="activeTab", :key="activeTab._id")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { SCHEMA_EMBEDDED_KEY } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
-
 import { getSecondsByUnit } from '@/helpers/time';
 
-import authMixin from '@/mixins/auth';
+import entitiesViewGroupMixin from '@/mixins/entities/view/group';
+import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
 
 import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
+import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 const { mapActions } = createNamespacedHelpers('playlist');
 
-const {
-  mapActions: mapGroupsActions,
-  mapGetters: mapGroupsGetters,
-} = createNamespacedHelpers('view/group');
-
-const { mapGetters: mapEntitiesGetters } = createNamespacedHelpers('entities');
-
 export default {
-  components: { ViewTabRows },
-  mixins: [authMixin],
+  components: { ViewTabRows, ProgressOverlay },
+  mixins: [entitiesViewGroupMixin, rightsEntitiesPlaylistTabMixin],
   props: {
     id: {
       type: String,
@@ -63,17 +58,10 @@ export default {
     };
   },
   computed: {
-    ...mapEntitiesGetters(['getList']),
-
-    ...mapGroupsGetters({
-      groupsPending: 'pending',
-    }),
-
     availableTabs() {
       const tabsIds = (this.playlist && this.playlist.tabs_list) || [];
-      const tabs = this.getList(ENTITIES_TYPES.viewTab, tabsIds, true);
 
-      return tabs.filter(tab => tab[SCHEMA_EMBEDDED_KEY].parents.some(parent => this.checkReadAccess(parent.id)));
+      return this.getAvailableTabsByIds(tabsIds);
     },
 
     activeTab() {
@@ -88,7 +76,6 @@ export default {
     }
 
     this.playlist = await this.fetchPlaylistItemWithoutStore({ id: this.id });
-
     this.initTime();
 
     this.pending = false;
@@ -99,10 +86,6 @@ export default {
   methods: {
     ...mapActions({
       fetchPlaylistItemWithoutStore: 'fetchItemWithoutStore',
-    }),
-
-    ...mapGroupsActions({
-      fetchGroupsList: 'fetchList',
     }),
 
     initTime() {

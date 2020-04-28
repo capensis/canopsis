@@ -88,6 +88,7 @@ export const MODALS = {
   importExportViews: 'import-groups-and-views',
   dynamicInfoTemplatesList: 'dynamic-info-templates-list',
   createDynamicInfoTemplate: 'create-dynamic-info-template',
+  createPlaylist: 'create-playlist',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -671,6 +672,7 @@ export const USERS_RIGHTS = {
     user: 'models_user',
     parameters: 'models_parameters',
     broadcastMessage: 'models_broadcastMessage',
+    playlist: 'models_playlist',
     exploitation: {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
@@ -1142,9 +1144,8 @@ export const DEFAULT_PERIODIC_REFRESH = {
   unit: TIME_UNITS.second,
 };
 
-export const DEFAULT_RETRY_FIELD = {
-  count: 0,
-  delay: RETRY_DEFAULT_DELAY,
+export const DEFAULT_TIME_INTERVAL = {
+  interval: 60,
   unit: TIME_UNITS.second,
 };
 

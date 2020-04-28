@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('playlist');
+const { mapActions, mapGetters } = createNamespacedHelpers('playlist');
 
 export default {
   computed: {

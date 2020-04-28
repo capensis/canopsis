@@ -107,6 +107,9 @@ export default {
     stack: 'Stack',
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
+    playlists: 'Playlists',
+    fullscreen: 'Fullscreen',
+    interval: 'Interval',
     status: 'Status',
     actions: {
       close: 'Close',
@@ -1085,6 +1088,23 @@ export default {
         selectColor: 'Select background color',
       },
     },
+    createPlaylist: {
+      create: {
+        title: 'Create playlist',
+      },
+      edit: {
+        title: 'Edit playlist',
+      },
+      errors: {
+        emptyTabs: 'You should add a tab',
+      },
+      fields: {
+        interval: 'Interval',
+        unit: 'Unit',
+      },
+      groups: 'Groups',
+      result: 'Result',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1368,6 +1388,10 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Parameters',
+      importExportViews: 'Import/Export',
+    },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
       title: 'Groups navigation type',

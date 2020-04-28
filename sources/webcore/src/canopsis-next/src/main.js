@@ -151,6 +151,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
     [MODALS.watcher]: { maxWidth: 920, lazy: true },
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
+    [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

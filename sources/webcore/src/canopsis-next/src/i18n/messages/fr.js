@@ -97,6 +97,9 @@ export default {
     webhooks: 'Webhooks',
     links: 'Liens',
     broadcastMessages: 'Diffuser des messages',
+    playlists: 'Playlists',
+    fullscreen: 'Plein écran',
+    interval: 'Période',
     status: 'Statut',
     actions: {
       close: 'Fermer',
@@ -1005,6 +1008,23 @@ export default {
         selectColor: 'Sélectionnez la couleur d\'arrière-plan',
       },
     },
+    createPlaylist: {
+      create: {
+        title: 'Créer playlist',
+      },
+      edit: {
+        title: 'Éditée playlist',
+      },
+      errors: {
+        emptyTabs: 'Merci de ajouter un onglet',
+      },
+      fields: {
+        interval: 'Période',
+        unit: 'Unité',
+      },
+      groups: 'Groupe',
+      result: 'Résultat',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1285,6 +1305,10 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Paramètres',
+      importExportViews: 'Importation/Exportation',
+    },
     interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {
       title: 'Type d\'affichage de la barre de vues',
