@@ -30,7 +30,7 @@ from canopsis.webcore.utils import (gen_json, gen_json_error,
 from canopsis.webcore.services.internal import sanitize_popup_timeout
 
 
-FIELDS = {"name", "title", "interval", "fullscreen", "enabled", "tabs_list"}
+FIELDS = {"name", "interval", "fullscreen", "enabled", "tabs_list"}
 # 0 is view
 # 1 is view_group
 # VIEW_TYPE = {0, 1}
@@ -53,7 +53,6 @@ def sanitize_payload(payload):
     if not set(payload.keys()) == FIELDS:
         raise Exception("payload contains not enough fields")
     if not isinstance(payload["name"], string_types) or \
-        not isinstance(payload["title"], string_types) or \
         not isinstance(payload["fullscreen"], bool) or \
         not isinstance(payload['enabled'], bool) or \
         not isinstance(payload["tabs_list"], list):
