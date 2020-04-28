@@ -1429,7 +1429,7 @@ class PBehaviorManager(object):
     def send_pbehavior_event(self):
         now = int(time())
         for event in self.generate_pbh_event(now):
-            self.amqp_pub.canopsis_event(event)
+            self.amqp_pub.direct_event(event, "Engine_pbehavior")
 
     def _get_interval_from_time_pivot(self, pb, time_pivot):
         """
