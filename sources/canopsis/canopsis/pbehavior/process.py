@@ -190,8 +190,8 @@ def event_processing(engine, event, pbm=_pb_manager, logger=None, **kwargs):
         except ValueError as err:
 
             logger.error('cannot handle event: {}'.format(err))
-    if event.get('event_type') in ['pbhleave', 'pbhenter']:
-        return DROP
+    # if event.get('event_type') in ['pbhleave', 'pbhenter']:
+    #     return DROP
     return event
 
 

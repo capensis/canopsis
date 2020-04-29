@@ -35,10 +35,10 @@ export const ENTITIES_TYPES = {
 };
 
 export const MODALS = {
+  createEvent: 'create-event',
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
-  createCancelEvent: 'create-cancel-event',
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
@@ -106,6 +106,7 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
+  groupRequest: 'groupRequest',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
 };
@@ -343,6 +344,9 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
+  [EVENT_ENTITY_TYPES.groupRequest]: {
+    icon: 'note_add',
+  },
   [EVENT_ENTITY_TYPES.pbhenter]: {
     color: COLORS.entitiesEvents.pbhenter,
     icon: 'pause',
@@ -350,6 +354,12 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.pbhleave]: {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
+  },
+  groupConsequences: {
+    icon: 'flash_on',
+  },
+  groupCauses: {
+    icon: 'note',
   },
 };
 
@@ -695,6 +705,7 @@ export const USERS_RIGHTS = {
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
         variablesHelp: 'common_variablesHelp',
+        groupRequest: 'listalarm_groupRequest',
 
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
@@ -770,6 +781,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
     history: 'history',
+    groupRequest: 'groupRequest',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -829,6 +841,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
     [WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp]: USERS_RIGHTS.business.alarmsList.actions.variablesHelp,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.groupRequest]: USERS_RIGHTS.business.alarmsList.actions.groupRequest,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -1129,6 +1142,83 @@ export const SNOOZE_DURATION_UNITS = {
   ...DURATION_UNITS,
 };
 
+export const ALARM_ENTITY_FIELDS = {
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  component: 'v.component',
+  resource: 'v.resource',
+  output: 'v.output',
+  extraDetails: 'extra_details',
+  state: 'v.state.val',
+  status: 'v.status.val',
+};
+
+export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.component',
+    value: ALARM_ENTITY_FIELDS.component,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
+
+export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
+
 export const PERIODIC_REFRESH_UNITS = {
   second: AVAILABLE_TIME_UNITS.second,
   minute: AVAILABLE_TIME_UNITS.minute,
@@ -1179,6 +1269,11 @@ export const POPUP_TYPES = {
   info: 'info',
   warning: 'warning',
   error: 'error',
+};
+
+export const ALARMS_GROUP_PREFIX = {
+  CAUSES: 'causes_',
+  CONSEQUENCES: 'consequences_',
 };
 
 export const GRID_SIZES = {

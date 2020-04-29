@@ -366,6 +366,20 @@ class Alerts(object):
 
         return list(self.alerts_storage.get_elements(query=query))
 
+    def get_last_alarm_by_connector_eid(self, connector, eid):
+        """
+        Get alarm from an eid.
+
+        :param eid: The desired entity_id
+        :type eid: str
+        """
+        query = {'d': eid, 'v.connector': connector}
+        result = list(self.alerts_storage.get_elements(query=query, limit=1, sort=['ts', -1]))
+        if not result:
+            return None
+
+        return result[0]
+
     def get_current_alarm(self, alarm_entity_id):
         """
         Get current unresolved alarm.
@@ -593,6 +607,7 @@ class Alerts(object):
         entity_id = self.context_manager.get_id(event)
         event_type = event['event_type']
         initial_state = None
+        is_pbehavior_event = False
 
         lock_id = self.lock_manager.lock(entity_id)
         if event_type in [Check.EVENT_TYPE, 'watcher', 'pbhenter', 'pbhleave']:
@@ -631,6 +646,7 @@ class Alerts(object):
                 # just add pbh* step into steps
                 # not affect state of alarm
                 if event_type in ['pbhenter', 'pbhleave']:
+                    is_pbehavior_event = True
                     alarm = self._add_pbehavior_step(alarm, event)
                 else:
                     alarm = self.update_state(alarm, event[Check.STATE], event)
@@ -639,15 +655,13 @@ class Alerts(object):
             if "long_output" not in event:
                 event["long_output"] = alarm.get(AlarmField.long_output.value,
                                                  "")
-
             if "output" not in event:
                 event["output"] = alarm.get(AlarmField.output.value, "")
 
             state_updated = not initial_state == alarm["value"]["state"]["val"]
-
             value = alarm.get(self.alerts_storage.VALUE)
-
-            value = self.update_output_fields(value, event, state_updated)
+            if not is_pbehavior_event:
+                value = self.update_output_fields(value, event, state_updated)
 
             value = self.crop_flapping_steps(value)
 

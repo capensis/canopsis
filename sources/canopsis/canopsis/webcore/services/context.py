@@ -20,10 +20,16 @@
 
 from canopsis.common.ws import route
 from canopsis.context_graph.manager import ContextGraph
+from canopsis.alerts.reader import AlertsReader
+import re
+from bottle import request
 
 
 def exports(ws):
+    alr = AlertsReader(*AlertsReader.provide_default_basics())
     manager = ContextGraph(ws.logger)
+
+    DEFAULT_ACTIVE_COLUMNS = ["name", "type"]
 
     @route(ws.application.get)
     def context(_type, names=None, context=None, extended=None):
@@ -57,20 +63,50 @@ def exports(ws):
 
         return result
 
-    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter'])
+    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter', 'search', 'active_columns'])
     def context(context=None,
                 _filter=None,
+                search='',
                 extended=False,
                 limit=0,
                 start=0,
-                sort=None):
-
+                sort=None,
+                active_columns=None):
         query = {}
         if _filter is not None:
             query.update(_filter)
 
+        final_filter = {'$and': [query]}
+        # try grammar search
+        try:
+            _, bnf_search_filter = alr.interpret_search(search)
+        except ValueError:
+            bnf_search_filter = None
+
+        if request.json:
+            active_columns = request.json.get('active_columns', [])
+        if not active_columns:
+            active_columns = DEFAULT_ACTIVE_COLUMNS
+
+        if bnf_search_filter is not None:
+            final_filter['$and'].append(bnf_search_filter)
+        else:
+            escaped_search = re.escape(str(search))
+            column_filter = {'$or': []}
+            for column in active_columns:
+                column_filter['$or'].append(
+                    {
+                        column: {
+                            '$regex': '.*{}.*'.format(escaped_search),
+                            '$options': 'i'
+                        }
+                    }
+                )
+
+            final_filter['$and'].append(column_filter)
+
         data, count = manager.get_entities(
-            query=query,
+            query=final_filter,
             limit=limit,
             start=start,
             sort=sort,

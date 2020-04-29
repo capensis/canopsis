@@ -40,6 +40,7 @@ import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
+import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
@@ -111,6 +112,8 @@ Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.component('alarm-chips', AlarmChips);
+
+Vue.component('alarms-list-table', AlarmsListTable);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
