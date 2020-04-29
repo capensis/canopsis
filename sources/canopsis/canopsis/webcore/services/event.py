@@ -47,7 +47,7 @@ def is_valid(ws, event):
     return True
 
 
-def transform_event(ws, event):
+def transform_event(ws, am, event):
     """
     Transform an event according its properties.
 
@@ -73,6 +73,21 @@ def transform_event(ws, event):
             new_event["long_output"] = ""
             ws.logger.warn(u'Long output field is not a string : {}. Replacing it by ""'.format(
                 type(long_output)))
+
+    # Meta-alarm children and parents
+    eid = None
+    if 'ref_rk' in new_event:
+        eid = new_event['ref_rk']
+    if not eid:
+        eid = new_event['component']
+        if new_event.get('resource'): 
+            eid = "{}/{}".format(new_event['resource'], eid)
+    alarm = am.get_last_alarm_by_connector_eid(new_event['connector'], eid)
+    if isinstance(alarm, dict) and 'v' in alarm:
+        if 'children' in alarm['v']:
+            new_event['ma_children'] = list(alarm['v']['children'])
+        if 'parents' in alarm['v']:
+            new_event['ma_parents'] = list(alarm['v']['parents'])
 
     return new_event
 
@@ -116,7 +131,7 @@ def get_role(ws):
     return role
 
 
-def send_events(ws, events, exchange='canopsis.events'):
+def send_events(ws, am, events, exchange='canopsis.events'):
     events = ensure_iterable(events)
 
     sent_events = []
@@ -131,7 +146,7 @@ def send_events(ws, events, exchange='canopsis.events'):
             continue
 
         try:
-            transformed_event = transform_event(ws, event)
+            transformed_event = transform_event(ws, am, event)
         except Exception as e:
             ws.logger.error('Failed to transform event : {}'.format(e))
             failed_events.append(event)
@@ -180,7 +195,7 @@ def exports(ws):
                 HTTPError
             )
 
-        return send_events(ws, events)
+        return send_events(ws, am, events)
 
     @route(ws.application.post, name='event', payload=['event', 'url'])
     @route(ws.application.put, name='event', payload=['event', 'url'])
@@ -197,20 +212,9 @@ def exports(ws):
 
                 return (api_response['data'], api_response['total'])
 
-            else:
-                return HTTPError(response.status_code, response.text)
+            return HTTPError(response.status_code, response.text)
 
-        else:
-            if isinstance(event, list):
-                for evt in event:
-                    alarm = am.get_last_alarm_by_connector_eid(evt['connector'], evt['ref_rk'])
-                    if isinstance(alarm, dict) and 'v' in alarm:
-                        ws.logger.info("alarm value {}".format(alarm.get("v")))
-                        if 'children' in alarm['v']:
-                            evt['ma_children'] = list(alarm['v']['children'])
-                        if 'parents' in alarm['v']:
-                            evt['ma_parents'] = list(alarm['v']['parents'])
-            return send_events(ws, event)
+        return send_events(ws, am, event)
 
     @route(ws.application.get,
            name='eventslog/count',

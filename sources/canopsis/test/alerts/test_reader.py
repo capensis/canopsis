@@ -21,6 +21,7 @@
 
 from __future__ import unicode_literals
 
+import re
 import time
 import unittest
 
@@ -309,7 +310,7 @@ class TestReader(BaseTest):
 
         ref_filter = {
             '$and': [
-                {u'v.meta': {u'$exists': False}},
+                {"d": {"$not": re.compile("^meta-alarm-entity-.+")}},
                 view_filter,
                 time_filter,
                 {'resource': {'$not': {'$eq': 'turret'}}}
@@ -330,7 +331,7 @@ class TestReader(BaseTest):
         self.maxDiff = None
         ref_filter = {
             '$and': [
-                {u'v.meta': {u'$exists': False}},
+                {"d": {"$not": re.compile("^meta-alarm-entity-.+")}},
                 view_filter,
                 time_filter,
                 {
@@ -360,6 +361,7 @@ class TestReader(BaseTest):
         self.maxDiff = None
         res_filter = {
             '$and': [
+                {"d": {"$not": re.compile("^meta-alarm-entity-.+")}},
                 {'$or': [
                     {'resource': {'$options': 'i', '$regex': '.*11111.*'}},
                     {'d': {'$options': 'i', '$regex': '.*11111.*'}}
@@ -382,6 +384,7 @@ class TestReader(BaseTest):
         self.maxDiff = None
         res_filter = {
             '$and': [
+                {"d": {"$not": re.compile("^meta-alarm-entity-.+")}},
                 {'$or': [
                     {'resource': {'$options': 'i', '$regex': '.*11111.*'}},
                     {'d': {'$options': 'i', '$regex': '.*11111.*'}}
@@ -406,6 +409,7 @@ class TestReader(BaseTest):
         self.maxDiff = None
         res_filter = {
             '$and': [
+                {"d": {"$not": re.compile("^meta-alarm-entity-.+")}},
                 {'$or': [
                     {'infos_array.v.type': {'$options': 'i', '$regex': '.*11111.*'}},
                     {'d': {'$options': 'i', '$regex': '.*11111.*'}}
@@ -427,7 +431,7 @@ class TestReader(BaseTest):
 
         ref_filter = {
             '$and': [
-                {u'v.meta': {u'$exists': False}},
+                {"d": {"$not": re.compile("^meta-alarm-entity-.+")}},
                 {'$and': [{'infos_array.v.tt': 'companion cube'}]},
                 time_filter,
                 {'resource': {'$not': {'$eq': 'turret'}}}

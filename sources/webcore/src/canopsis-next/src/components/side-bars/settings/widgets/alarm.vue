@@ -72,6 +72,11 @@
             :title="$t('settings.isHtmlEnabledOnTimeLine')"
           )
           v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.isCorrelationEnabled",
+            :title="$t('settings.isCorrelationEnabled')"
+          )
+          v-divider
           v-list-group(data-test="ackGroup")
             v-list-tile(slot="activator") Ack
             v-list.grey.lighten-4.px-2.py-0(expand)

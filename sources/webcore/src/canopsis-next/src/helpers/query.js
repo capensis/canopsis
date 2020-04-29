@@ -60,10 +60,12 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
+    isCorrelationEnabled,
   } = widget.parameters;
 
   const query = {
     page: 1,
+    correlation: isCorrelationEnabled || false,
     opened: alarmsStateFilter.opened || false,
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,

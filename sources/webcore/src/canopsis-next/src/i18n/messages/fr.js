@@ -216,7 +216,7 @@ export default {
         changeState: 'Changer et verrouiller la criticité',
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
-        groupRequest: 'Demande de groupe',
+        groupRequest: 'Proposition de regroupement pour meta alarmes',
         comment: 'Commentaire',
       },
       iconsTitles: {
@@ -225,8 +225,8 @@ export default {
         canceled: 'Annulé',
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
+        grouping: 'Meta alarmes',
         comment: 'Commentaire',
-        grouping: 'Grouping',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
@@ -264,8 +264,8 @@ export default {
     tabs: {
       moreInfos: 'Plus d\'infos',
       timeLine: 'Chronologie',
-      alarmsConsequences: 'Alarmes conséquences',
-      alarmsCauses: 'Alarmes les causes',
+      alarmsConsequences: 'Alarmes liées',
+      alarmsCauses: 'Causes des alarmes',
     },
     moreInfos: {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
@@ -306,7 +306,7 @@ export default {
     defaultSortColumn: 'Colonne de tri par défaut',
     sortColumnNoData: 'Appuyez sur <kbd>enter</kbd> pour en créer une nouvelle',
     columnNames: 'Nom des colonnes',
-    groupColumnNames: 'Groupe nom des colonnes',
+    groupColumnNames: 'Nom des colonnes des meta alarmes',
     orderBy: 'Trier par',
     periodicRefresh: 'Rafraichissement périodique',
     defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
@@ -320,6 +320,7 @@ export default {
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
+    isCorrelationEnabled: 'Correlation activé ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -573,7 +574,7 @@ export default {
       title: 'Annuler',
     },
     createGroupRequestEvent: {
-      title: 'Demande de groupe',
+      title: 'Proposition de regroupement pour meta alarmes',
     },
     createChangeStateEvent: {
       title: 'Changer la сriticité',
