@@ -1,12 +1,9 @@
-# Webhook
+# Moteur `engine-webhook` (Go, CAT)
 
 !!! info
-    Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
+    Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
 
-!!! info
-    Disponible à partir de Canopsis 3.34.0
-
-Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `axe` en version CAT.
+Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `engine-axe` (en version CAT).
 
 Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
 
@@ -22,9 +19,9 @@ Des exemples pratiques d'utilisation des webhooks sont disponibles dans la parti
 
 ## Utilisation
 
-Le moteur doit être placé en sortie du moteur [`dynamic-infos`](moteur-dynamic-infos).
+Le moteur doit être placé en sortie du moteur [`engine-dynamic-infos`](moteur-dynamic-infos).
 
-Pour cela, il est nécessaire de lancer le moteur `dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `webhook`.
+Pour cela, il est nécessaire de lancer le moteur `engine-dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `webhook`.
 
 ### Options de l'engine-webhook
 
@@ -80,8 +77,6 @@ Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont 
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
 - `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
-
-
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
@@ -143,14 +138,14 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 `unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
 
 Ces paramètres sont positionnés dans la configuration de chaque webhook.  
-Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).  
+Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
+
 ````
 cat webhook.conf
 count=5
 delay=1
 unit="m"
 ````
-
 
 ### Données externes
 
@@ -221,7 +216,7 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 }
 ```
 
-## Collection
+## Collection MongoDB associée
 
 Les webhooks sont stockés dans la collection MongoDB `webhooks`.
 

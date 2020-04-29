@@ -1,12 +1,9 @@
-# Dynamic-infos
+# Moteur `engine-dynamic-infos` (Go, CAT)
 
 !!! info
-    Disponible uniquement dans Canopsis CAT
+    Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
 
-!!! info
-    Disponible à partir de Canopsis 3.34.0
-
-Le moteur `dynamic-infos` permet d'ajouter des informations aux alarmes. Ces informations sont définies avec des règles indiquant dans quelles conditions une information doit être présente sur une alarme.
+Le moteur `engine-dynamic-infos` permet d'ajouter des informations aux alarmes. Ces informations sont définies avec des règles indiquant dans quelles conditions une information doit être présente sur une alarme.
 
 ## Utilisation
 
@@ -77,7 +74,6 @@ Les informations définies dans `infos` sont ajoutées aux alarmes correspondant
 
 Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux patterns `entity_patterns` et `alarm_patterns`. Dans l'exemple précédent, si une alarme passe d'un état critique à un état majeur, l'information `v.infos.dynamic_infos_1` est supprimée.
 
-
 ### Templates
 
 !!! Info
@@ -99,17 +95,17 @@ Un exemple concret d'utilisation du moteur `dynamic-infos` pour l'affichage de c
 ### Pré remplissage des attributs
 
 !!! Info
-    Disponible à partir de Canopsis 3.39.0
+    Disponible à partir de Canopsis 3.39.0.
 
 Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour n'avoir plus que la saisie des valeurs à effectuer.  
 
-Pour cela, vous devez 
+Pour cela, vous devez
 
-* Ajouter un `modèle` depuis l'interface graphique :  
+* Ajouter un `modèle` depuis l'interface graphique :
 
 ![Ajouter un modèle](img/dynamic-infos-template1.png "Ajouter un modèle")
 
-* Appuyer sur le bouton `+` 
+* Appuyer sur le bouton `+`
 
 ![Ajouter un modèle](img/dynamic-infos-template2.png "Appuyer sur +")
 
@@ -117,6 +113,6 @@ Pour cela, vous devez
 
 ![Ajouter un modèle](img/dynamic-infos-template3.png "Saisie titre et attributs")
 
-A ce stade, il vous reste à **instancier** le modèle avec vos valeurs
+À ce stade, il vous reste à **instancier** le modèle avec vos valeurs
 
 ![Instancier un modèle](img/dynamic-infos-template4.png "Instancier un modèle")

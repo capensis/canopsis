@@ -1,14 +1,14 @@
-# Action
+# Moteur `engine-action` (Go, Core)
 
-Le moteur action permet de déclencher conditionnellement des actions sur des alarmes.
+Le moteur `engine-action` permet de déclencher conditionnellement des actions sur des alarmes.
 
 Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
 
 ## Utilisation
 
-En édition `core`, la file du moteur est placée juste après le moteur [Axe](moteur-axe.md).
+En édition Core, la file du moteur est placée juste après le moteur [`engine-axe`](moteur-axe.md).
 
-En édition `CAT`, la file du moteur est placée juste après le moteur [Webhook](moteur-webhook.md).
+En édition CAT, la file du moteur est placée juste après le moteur [`engine-webhook`](moteur-webhook.md).
 
 !!! Note
     Depuis la version 3.39.0, les actions ack, ackremove, assocticket, declareticket, et cancel sont disponibles.  
@@ -48,7 +48,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 "hook"       // conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée, optionnel
 "triggers"   // conditions de déclenchement sur la vie de l'alarme, si plusieurs triggers sont indiqués, au moins un de ces triggers doit avoir eu lieu pour que l'action soit appelée
 "parameters" // paramétrage spécifique à chaque type d'action.
-"delay"	    // délai avant l'exécution de l'action 
+"delay"	    // délai avant l'exécution de l'action
 }
 ```
 
@@ -144,9 +144,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 }
 ```
 
-
-
-## Collection
+## Collection MongoDB associée
 
 Les actions sont stockées dans la collection MongoDB `default_action` (voir [API Action](../../guide-developpement/api/api-v2-action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un pbehavior, le champ `type` vaut `pbehavior` :
 

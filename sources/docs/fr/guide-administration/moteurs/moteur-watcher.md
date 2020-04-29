@@ -1,9 +1,9 @@
-# Watcher
+# Moteur `engine-watcher` (Go, Core)
 
 !!! note
     Cette page concerne les watchers nouvelle génération, disponibles uniquement avec le moteur Go `engine-watcher`.
 
-Les watchers sont une fonctionnalité permettant de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
+Les moteur `engine-watcher` permet de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
 
 Les watchers sont définis dans la collection MongoDB `default_entities`, et peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/api/api-v2-watcherng.md).
 
@@ -11,7 +11,7 @@ Des exemples pratiques d'utilisation des watchers sont disponibles dans la parti
 
 ## Utilisation
 
-La file du moteur est placée juste après le moteur [axe](moteur-axe.md).
+La file du moteur est placée juste après le moteur [`engine-axe`](moteur-axe.md).
 
 ### Options de l'engine-watcher
 
@@ -31,8 +31,8 @@ La file du moteur est placée juste après le moteur [axe](moteur-axe.md).
 
 ### Concept d'un watcher
 
-Un watcher, ancienne comme nouvelle génération, représente un groupe de surveillance.
-C'est à dire que l'état d'une entité de type watcher dépendra de l'état des entités surveillées, et des alarmes ouvertes sur ces entités.
+Un watcher représente un groupe de surveillance.
+C'est-à-dire que l'état d'une entité de type watcher dépendra de l'état des entités surveillées, et des alarmes ouvertes sur ces entités.
 
 Le but d'un watcher est de donner une visibilité accrue et claire sur l'état d'un groupe d'entités, afin de détecter un changement d'état positif ou négatif sur les alarmes liées aux entités du groupe surveillé.
 

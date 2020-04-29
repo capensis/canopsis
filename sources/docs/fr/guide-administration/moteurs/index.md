@@ -28,14 +28,13 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 | Moteur                                     | Description                                                                                                                                         | CAT ? |
 |:------------------------------------------ |:--------------------------------------------------------------------------------------------------------------------------------------------------- |:-----:|
-| [action](moteur-action.md)                 | Applique des actions définies par l'utilisateur.                                                                                                    |       |
-| [axe](moteur-axe.md)                       | Gère le cycle de vie des alarmes.                                                                                                                   |       |
-| [webhook](moteur-webhook.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
-| [che](moteur-che.md)                       | Supprime les évènements invalides, gère le contexte, et enrichit les évènements via sa fonctionnalité d'[event-filter](moteur-che-event_filter.md). |       |
-| [dynamic-infos](moteur-dynamic-infos.md)   | Enrichit les alarmes.                                                                                                                               |  ✅   |
-| [heartbeat](moteur-heartbeat.md)           | Surveille des entités, et lève des alarmes en cas d'absence d'information.                                                                          |       |
-| stat                                       | Calcule des statistiques sur les états des alarmes.                                                                                                 |       |
-| [watcher](moteur-watcher.md)               | Calcule les états des [watchers](moteur-watcher.md).                                                                                                |       |
+| [engine-action](moteur-action.md)                 | Applique des actions définies par l'utilisateur.                                                                                                    |       |
+| [engine-axe](moteur-axe.md)                       | Gère le cycle de vie des alarmes.                                                                                                                   |       |
+| [engine-che](moteur-che.md)                       | Supprime les évènements invalides, gère le contexte, et enrichit les évènements via sa fonctionnalité d'[event-filter](moteur-che-event_filter.md). |       |
+| [engine-dynamic-infos](moteur-dynamic-infos.md)   | Enrichit les alarmes.                                                                                                                               |  ✅   |
+| [engine-heartbeat](moteur-heartbeat.md)           | Surveille des entités, et lève des alarmes en cas d'absence d'information.                                                                          |       |
+| [engine-watcher](moteur-watcher.md)               | Calcule les états des [watchers](moteur-watcher.md).                                                                                                |       |
+| [engine-webhook](moteur-webhook.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
 
 ### Moteurs Python
 
@@ -73,12 +72,8 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 
 ```
   -d    debug
-  -featureHideResources
-        Active les features de gestion de ressources cachées.
   -featureStatEvents
         Envoie les évènements de statistiques
-  -postProcessorsDirectory
-        Le répetoire contenant les plugins de post-traitement (par défaut ".")
   -printEventOnError
         Afficher les évènements sur les erreurs de traitement.
   -publishQueue
@@ -130,14 +125,6 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 ```
 
 ### Utilisation de engine-heartbeat
-
-```
-  -d    debug
-  -version
-        version infos
-```
-
-### Utilisation de engine-stat
 
 ```
   -d    debug
