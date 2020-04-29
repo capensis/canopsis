@@ -149,7 +149,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         version infos
 ```
 
-Le flag `-autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur watcher.
+Le flag `-autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur `engine-watcher`.
 
 ## Changer le niveau de log d'un moteur
 

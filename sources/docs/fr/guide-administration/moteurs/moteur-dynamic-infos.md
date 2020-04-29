@@ -7,11 +7,11 @@ Le moteur `engine-dynamic-infos` permet d'ajouter des informations aux alarmes. 
 
 ## Utilisation
 
-Le moteur doit être placé en sortie du moteur [`watcher`](moteur-watcher.md).
+Le moteur doit être placé en sortie du moteur [`engine-watcher`](moteur-watcher.md).
 
-Pour cela, il est nécessaire de lancer le moteur `watcher` avec l'option `-publishQueue Engine_dynamic_infos` pour qu'il publie dans la file du moteur `dynamic-infos`.
+Pour cela, il est nécessaire de lancer le moteur `engine-watcher` avec l'option `-publishQueue Engine_dynamic_infos` pour qu'il publie dans la file du moteur `engine-dynamic-infos`.
 
-Si le moteur [`webhook`](moteur-webhook.md) est activé, le moteur `dynamic-infos` doit être lancé avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file de ce moteur. Sinon, il publie dans la file du moteur [`action`](moteur-action.md).
+Si le moteur [`engine-webhook`](moteur-webhook.md) est activé, le moteur `engine-dynamic-infos` doit être lancé avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file de ce moteur. Sinon, il publie dans la file du moteur [`engine-action`](moteur-action.md).
 
 ### Options de l'engine-dynamic-infos
 
@@ -90,7 +90,7 @@ Seules les fonctions suivantes sont disponibles dans les templates `dynamic-info
 * trim
 
 
-Un exemple concret d'utilisation du moteur `dynamic-infos` pour l'affichage de consignes techniques dans le bac à alarmes est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
+Un exemple concret d'utilisation du moteur `engine-dynamic-infos` pour l'affichage de consignes techniques dans le bac à alarmes est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
 
 ### Pré remplissage des attributs
 
