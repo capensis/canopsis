@@ -40,6 +40,7 @@ import { MODALS } from '@/constants';
 import { setSeveralFields } from '@/helpers/immutable';
 import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
 
+import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
@@ -57,7 +58,7 @@ export default {
     validator: 'new',
   },
   components: { WebhookForm, ModalWrapper, RetryField },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [authMixin, modalInnerMixin, submittableMixin()],
   data() {
     const { webhook, isDuplicating } = this.modal.config;
     const defaultForm = {
@@ -111,6 +112,8 @@ export default {
             'hook.event_patterns': null,
             declare_ticket: {},
           }) : this.form;
+
+          preparedForm.author = this.currentUser._id;
 
           await this.config.action(formToWebhook(preparedForm));
         }
