@@ -546,6 +546,43 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
+
+    @staticmethod
+    def _last_comment_aggregation():
+        """
+        Aggregation pipelie step to add field v.comment with last comment from steps with {"_t": "comment"}
+        Empty line when comments not found
+        """
+        return {"$addFields": {
+            "v.comment": {
+                # concat comment message with empty string
+                "$reduce": {
+                    "input": {
+                        # slice array to top 1
+                        "$slice": [{
+                            "$map": {
+                                "input": {
+                                    # filter steps with comment type, newer first
+                                    "$filter": {
+                                        "input": {"$reverseArray": "$v.steps"},
+                                        "as": "steps",
+                                        "cond": {
+                                            "$eq": ["$$steps._t", "comment"]
+                                        }
+                                    }
+                                },
+                                "as": "step",
+                                "in": "$$step.m"
+                            }},
+                            1
+                        ]
+                    },
+                    "initialValue": "",
+                    "in": {"$concat": ["", "$$this"]}
+                }
+            }
+        }}
+
     def _build_aggregate_pipeline(self,
                                   final_filter,
                                   sort_key,
@@ -599,6 +636,7 @@ class AlertsReader(object):
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
+        pipeline.insert(0, self._last_comment_aggregation())
 
         self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
         if has_wildcard_dynamic_filter:
