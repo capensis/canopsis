@@ -113,9 +113,10 @@ export default {
             declare_ticket: {},
           }) : this.form;
 
-          preparedForm.author = this.currentUser._id;
+          const webhook = formToWebhook(preparedForm);
+          webhook.author = this.currentUser._id;
 
-          await this.config.action(formToWebhook(preparedForm));
+          await this.config.action(webhook);
         }
 
         this.$modals.hide();
