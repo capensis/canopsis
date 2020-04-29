@@ -550,11 +550,11 @@ class AlertsReader(object):
     @staticmethod
     def _last_comment_aggregation():
         """
-        Aggregation pipelie step to add field v.comment with last comment from steps with {"_t": "comment"}
+        Aggregation pipelie step to add field v.lastComment with last comment from steps with {"_t": "comment"}
         Empty line when comments not found
         """
         return {"$addFields": {
-            "v.comment": {
+            "v.lastComment": {
                 # concat comment message with empty string
                 "$reduce": {
                     "input": {
