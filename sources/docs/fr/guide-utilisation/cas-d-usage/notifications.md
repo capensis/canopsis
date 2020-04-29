@@ -6,9 +6,7 @@ Ce guide vous propose d'interagir avec Mattermost et avec Logstash.
 !!! Warning
     Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go dans l'édition CAT de Canopsis.
 
-Le moteur [`webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permet de prendre en charge cette fonctionnalité.
-
-Vous trouverez sa documentation complète sur la page du [moteur webhook](../../guide-administration/moteurs/moteur-webhook.md).
+Le moteur [`engine-webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permet de prendre en charge cette fonctionnalité.
 
 ## Mattermost
 

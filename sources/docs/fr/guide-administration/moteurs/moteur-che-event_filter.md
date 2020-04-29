@@ -1,4 +1,4 @@
-# Che - Event-filter
+# `engine-che` - Event-filter
 
 !!! note
     Cette page concerne l'event-filter nouvelle génération, disponible uniquement

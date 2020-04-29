@@ -4,7 +4,7 @@
 
 !!! info "Disponible à partir de Canopsis 3.34.0"
 
-Le moteur [`dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) de Canopsis permet d'ajouter dynamiquement des informations aux alarmes.
+Le moteur [`engine-dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) de Canopsis permet d'ajouter dynamiquement des informations aux alarmes.
 
 Il est possible d'utiliser cette fonctionnalité pour ajouter des liens vers des consignes techniques aux alarmes, et pour afficher ces liens dans le Bac à alarmes et dans la Météo des services.
 
