@@ -546,7 +546,6 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
-
     @staticmethod
     def _last_comment_aggregation():
         """
@@ -555,31 +554,19 @@ class AlertsReader(object):
         """
         return {"$addFields": {
             "v.lastComment": {
-                # concat comment message with empty string
-                "$reduce": {
-                    "input": {
-                        # slice array to top 1
-                        "$slice": [{
-                            "$map": {
-                                "input": {
-                                    # filter steps with comment type, newer first
-                                    "$filter": {
-                                        "input": {"$reverseArray": "$v.steps"},
-                                        "as": "steps",
-                                        "cond": {
-                                            "$eq": ["$$steps._t", "comment"]
-                                        }
-                                    }
-                                },
-                                "as": "step",
-                                "in": "$$step.m"
-                            }},
-                            1
-                        ]
-                    },
-                    "initialValue": "",
-                    "in": {"$concat": ["", "$$this"]}
-                }
+                # slice array to top 1
+                "$slice": [{
+                    # filter steps with comment type, newer first
+                    "$filter": {
+                        "input": {"$reverseArray": "$v.steps"},
+                        "as": "steps",
+                        "cond": {
+                            "$eq": ["$$steps._t", "comment"]
+                        }
+                    }
+                },
+                    1
+                ]
             }
         }}
 
