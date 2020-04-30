@@ -238,6 +238,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_comment": {
+            "checksum": 1,
+            "desc": ""
+        },
         "serviceweather_moreInfos": {
             "checksum": 1,
             "desc": ""
