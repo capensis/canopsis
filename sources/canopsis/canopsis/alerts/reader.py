@@ -549,24 +549,30 @@ class AlertsReader(object):
     @staticmethod
     def _last_comment_aggregation():
         """
-        Aggregation pipelie step to add field v.lastComment with last comment from steps with {"_t": "comment"}
-        Empty line when comments not found
+        Aggregation pipeline step to add field v.lastComment with last comment step
+        Empty dictionary when comments not found
         """
         return {"$addFields": {
             "v.lastComment": {
-                # slice array to top 1
-                "$slice": [{
-                    # filter steps with comment type, newer first
-                    "$filter": {
-                        "input": {"$reverseArray": "$v.steps"},
-                        "as": "steps",
-                        "cond": {
-                            "$eq": ["$$steps._t", "comment"]
-                        }
-                    }
-                },
-                    1
-                ]
+                "$reduce": {
+                    "input": {
+                        # slice array to top 1
+                        "$slice": [{
+                            # filter steps with comment type, newer first
+                            "$filter": {
+                                "input": {"$reverseArray": "$v.steps"},
+                                "as": "steps",
+                                "cond": {
+                                    "$eq": ["$$steps._t", "comment"]
+                                }
+                            }
+                        },
+                            1
+                        ]
+                    },
+                    "initialValue": {},
+                    "in": {"$mergeObjects": [{}, "$$this"]}
+                }
             }
         }}
 
