@@ -120,7 +120,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ### Modification d'un observateur
 
-Modifie un nouveal observateur à partir du corps de la requête.
+Modifie un nouvel observateur à partir du corps de la requête.
 
 **URL** : `/api/v2/watcherng/<watcher_id>`
 
