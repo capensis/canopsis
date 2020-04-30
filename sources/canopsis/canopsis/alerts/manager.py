@@ -975,7 +975,8 @@ class Alerts(object):
                     if field in event
                 },
                 AlarmField.initial_long_output.value:
-                event.get("long_output", "")
+                event.get("long_output", ""),
+                AlarmField.activation_date.value: None,
             }
         }
 

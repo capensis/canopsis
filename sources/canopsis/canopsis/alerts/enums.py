@@ -58,6 +58,7 @@ class AlarmField(DefaultEnum):
     resource = "resource"
     parents = "parents"
     children = "children"
+    activation_date = 'activation_date'
 
 
 class States(DefaultEnum):
