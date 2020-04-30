@@ -553,7 +553,7 @@ class AlertsReader(object):
         Empty dictionary when comments not found
         """
         return {"$addFields": {
-            "v.lastComment": {
+            "lastComment": {
                 "$reduce": {
                     "input": {
                         # slice array to top 1
@@ -629,6 +629,18 @@ class AlertsReader(object):
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
+        # insert pipeline operations into 0 position in reverse order:
+        # aggregate last comment from steps as lastComment, replace with null when empty, move lastComment 
+        # into v.lastComment
+        pipeline.insert(0, {"$project": {"lastComment": False}})
+        pipeline.insert(0, {'$addFields': {"v.lastComment": "$lastComment"}})
+        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "lastComment": {
+            "$cond": {
+                "if": {"$eq": [{}, "$lastComment"]},
+                "then": None,
+                "else": "$lastComment"
+            }
+        }}})
         pipeline.insert(0, self._last_comment_aggregation())
 
         self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
