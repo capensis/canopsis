@@ -114,7 +114,7 @@ Après avoir configuré le filtre, créer l'action suivante :
 !!! attention
     Cette procédure est obligatoire dans le cas d'un environnement Go. Elle n'a pas besoin d'être exécutée dans un environnement pur Python.
 
-Lorsque vous utilisez un environnement Canopsis avec moteurs en Go, vous devez spécifier une règle d'enrichissement supplémentaire, pour le moteur `che`.
+Lorsque vous utilisez un environnement Canopsis avec moteurs en Go, vous devez spécifier une règle d'enrichissement supplémentaire, pour le moteur `engine-che`.
 
 Cette règle permet d'ajouter aux évènements qui circulent les informations de l'entité correspondante disponible dans Canopsis. Contrairement aux moteurs Python où cette information est ajoutée par défaut, les moteurs Go nécessitent une règle explicite. Sans cette règle, la tâche `ackcentreon` ne peut pas fonctionner en environnement Go.
 

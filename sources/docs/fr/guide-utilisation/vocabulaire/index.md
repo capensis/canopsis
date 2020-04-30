@@ -48,9 +48,9 @@ Une [alarme](#alarme) a une *criticité*, indiquant la gravité de l'incident. I
 
 L'*enrichissement* est l'action d'ajouter des informations supplémentaires. On peut enrichir :
 
-- Un [évènement](#evenement) via l'[event-filter du moteur Che](../../guide-administration/moteurs/moteur-che-event_filter.md)
-- Une [entité](#entite) via l'[event-filter du moteur Che](../../guide-administration/moteurs/moteur-che-event_filter.md#set_entity_info_from_template), l'[explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers)
-- Une [alarme](#alarme) via le [moteur Dynamic Infos](../../guide-administration/moteurs/moteur-dynamic-infos.md)
+- Un [évènement](#evenement) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md)
+- Une [entité](#entite) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#set_entity_info_from_template), l'[explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers)
+- Une [alarme](#alarme) via le [moteur `engine-dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md)
 
 ## Entité
 

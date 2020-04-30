@@ -1,4 +1,4 @@
-# Moteur `engine-che`
+# Moteur `engine-che` (Go, Core)
 
 Le moteur `engine-che` permet d'enrichir les [événements](../../guide-developpement/struct-event.md) (via son [`event-filter`](moteur-che-event_filter.md)), de créer et d'enrichir les entités et de créer le context-graph.
 
@@ -35,6 +35,17 @@ La file du moteur est placée juste après l'exchange `canopsis.events`.
   -version
         version infos
 ```
+
+### Multi-instanciation
+
+!!! note
+    Cette fonctionnalité est disponible à partir de Canopsis 3.39.0. Elle ne doit pas être utilisée sur les versions antérieures.
+
+Il est possible, à partir de **Canopsis 3.39.0**, de lancer plusieurs instances du moteur `engine-che`, afin d'améliorer sa performance de traitement et sa résilience.
+
+En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale che=2` pour que le moteur `engine-che` soit lancé avec 2 instances.
+
+Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
 
 ## Fonctionnement
 

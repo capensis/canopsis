@@ -1,4 +1,4 @@
-# Moteur pbehavior
+# Moteur `pbehavior` (Python, Core)
 
 Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes, par exemple).
 
@@ -8,7 +8,7 @@ Les comportements sont définis dans la collection MongoDB `default_pbehavior`, 
 
 ## Fonctionnement
 
-Dans une stack en Go classique, la file du moteur `pbehavior` n'est pas alimentée.
+Ce moteur doit toujours être présent, que vous utilisiez des moteurs Go ou non.
 
 Un comportement périodique contient un filtre (`filter`) qui est appliqué sur une entité.
 
@@ -26,7 +26,7 @@ Un comportement périodique se caractérise par les informations suivantes.
 |  `author`  | string |              Auteur ou application ayant créé le comportement périodique.                            |     |
 | `enabled`  |  bool  |    Activer ou désactiver le pbehavior, pour qu’il puisse être ignoré, même sur une plage active.     |     |
 | `comments` | liste  |                                 `null` ou une liste de commentaires.                                 |     |
-|  `rrule`   | string |                   Règle de récurrence, champ texte défini par la RFC 2445.                           |     |
+|  `rrule`   | string | Règle de récurrence, champ texte [défini par la RFC 2445](https://www.kanzaki.com/docs/ical/recur.html).  |   |
 |  `tstart`  |  int   | Timestamp fournissant la date de départ, recalculée à partir de la `rrule` si présente.              |     |
 |  `tstop`   |  int   |  Timestamp fournissant la date de fin, recalculée à partir de la `rrule` si présente.                |     |
 |  `type_`   | string |             Optionnel. Type de comportement périodique (pause, maintenance…).                        |     |
@@ -122,7 +122,7 @@ Si le fichier de configuration n'existe pas ou si le champ `default_timezone` n'
 
 Si le fuseau horaire choisi comporte des heures d'hiver et d'été, celles-ci seront respectées tout au long de l'année. Ainsi, un comportement périodique devant se déclencher à 16 heures s'exécutera à 16 heures en heure d'été et à 16 heures en heure d'hiver.
 
-## Représentation dans MongoDB
+## Collection MongoDB associée
 
 Les comportements périodiques sont stockés dans la collection MongoDB `default_pbehavior` (voir [API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md)).
 

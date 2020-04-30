@@ -1,4 +1,4 @@
-# SNMP
+# Moteur `snmp` (Python, CAT)
 
 !!! attention
     Ce moteur n'est disponible que dans l'édition CAT de Canopsis.
@@ -39,7 +39,7 @@ systemctl start canopsis-engine-cat@snmp
 
 ### Traduction des traps
 
-Pour créer des règles de transformations il faut se logger sur la page dédiée accessible par le menu d'exploitation.  
+Pour créer des règles de transformations il faut se logger sur la page dédiée accessible par le menu d'exploitation.
 
 ![Menu exploitation](img/menu_exploitation_snmprules.png)
 
@@ -96,7 +96,7 @@ On vérifie que le traducteur a bien trouvé des objets de type `notification`
 On exécute à nouveau l'émisson du trap SNMP :
 
 ```sh
-/usr/bin/snmptrap -v 2c -c public IP_RECEPTEUR_SNMP '' NAGIOS-NOTIFY-MIB::nSvcEvent nSvcHostname s "Equipement Impacte" nSvcDesc s "Ressource Impactee" nSvcStateID i 3 nSvcOutput s "Message de sortie du trap SNMP"  
+/usr/bin/snmptrap -v 2c -c public IP_RECEPTEUR_SNMP '' NAGIOS-NOTIFY-MIB::nSvcEvent nSvcHostname s "Equipement Impacte" nSvcDesc s "Ressource Impactee" nSvcStateID i 3 nSvcOutput s "Message de sortie du trap SNMP"
 ```
 
 On contrôle le bac :

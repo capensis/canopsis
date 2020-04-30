@@ -1,9 +1,9 @@
-# `engine-watcher`
+# Moteur `engine-watcher` (Go, Core)
 
 !!! note
     Cette page concerne les observateurs nouvelle génération, disponibles uniquement avec le moteur Go `engine-watcher`.
 
-Les observateurs (*watchers*) sont une fonctionnalité permettant de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
+Les moteur `engine-watcher` permet de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
 
 Les observateurs sont définis dans la collection MongoDB `default_entities`, et peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/api/api-v2-watcherng.md).
 
@@ -11,7 +11,7 @@ Des exemples pratiques d'utilisation des observateurs sont disponibles dans la p
 
 ## Utilisation
 
-La file du moteur est placée juste après le moteur [axe](moteur-axe.md).
+La file du moteur est placée juste après le moteur [`engine-axe`](moteur-axe.md).
 
 ### Options de l'engine-watcher
 
@@ -31,8 +31,8 @@ La file du moteur est placée juste après le moteur [axe](moteur-axe.md).
 
 ### Concept d'un observateur
 
-Un observateur, ancienne comme nouvelle génération, représente un groupe de surveillance.
-C'est à dire que la criticité d'une entité de type *watcher* dépendra de la criticité des entités surveillées, et des alarmes ouvertes sur ces entités.
+Un observateur représente un groupe de surveillance.
+C'est-à-dire que la criticité d'une entité de type watcher dépendra de la criticité des entités surveillées, et des alarmes ouvertes sur ces entités.
 
 Le but d'un observateur est de donner une visibilité accrue et claire sur l'état d'un groupe d'entités, afin de détecter un changement de criticité positif ou négatif sur les alarmes liées aux entités du groupe surveillé.
 

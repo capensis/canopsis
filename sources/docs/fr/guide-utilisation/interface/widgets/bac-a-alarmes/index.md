@@ -287,7 +287,7 @@ Pour modifier ce paramètre, sélectionnez les types d'alarmes que vous souhaite
 
 Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée), une des deux cases, ou les deux cases (les alarmes ouvertes ET résolues seront alors affichées).
 
-Lorsqu'une alarme est résolue, elle reste entre 1 et 2 minutes dans le bac à Alarmes "Ouvertes" avant de basculer dans le bac à Alarmes "Résolues". Pour plus d'informations sur le sujet, consulter la [documentation du moteur `axe`](../../../../guide-administration/moteurs/moteur-axe.md)).
+Lorsqu'une alarme est résolue, elle reste entre 1 et 2 minutes dans le bac à Alarmes "Ouvertes" avant de basculer dans le bac à Alarmes "Résolues". Pour plus d'informations sur le sujet, consulter la [documentation du moteur `engine-axe`](../../../../guide-administration/moteurs/moteur-axe.md)).
 
 Lorsqu'une alarme est annulée, elle reste pendant 1 heure dans le bac à Alarmes "Ouvertes" avant de passer dans le bac à Alarmes "Résolues".
 
