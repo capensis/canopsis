@@ -22,8 +22,8 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 | `"declareticketwebhook"` | Déclaration d'un ticket à l'alarme par un webhook        | ❌                           |
 | `"done"`                 | Fin de l'alarme                                          | ✅                           |
 | `"resolve"`              | Résolution de l'alarme                                   | ❌                           |
-| `"snooze"`               | Report de l'alarme                                       | ✅                           |
+| `"snooze"`               | Mise en veille de l'alarme                               | ✅                           |
 | `"statedec"`             | Diminution de la criticité de l'alarme                   | ✅                           |
 | `"stateinc"`             | Augmentation de la criticité de l'alarme                 | ✅                           |
 | `"uncancel"`             | Rétablissement de l'alarme                               | ✅                           |
-| `"unsnooze"`             | Fin du report de l'alarme                                | ❌                           |
+| `"unsnooze"`             | Sortie de veille de l'alarme                             | ❌                           |

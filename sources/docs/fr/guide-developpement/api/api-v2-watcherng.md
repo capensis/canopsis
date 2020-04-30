@@ -1,12 +1,12 @@
-# Watchers
+# API watcherng 
 
-L'API Watchers permet de consulter, créer et supprimer des Watchers.
+L'API watcherng permet de consulter, créer et supprimer des observateurs.
 
-Pour plus d'informations sur ce qu'est un watcher, consulter la [documentation sur les Watchers](../../guide-administration/moteurs/moteur-watcher.md).
+Pour plus d'informations sur ce qu'est un observateur, consulter la [documentation sur les observateurs](../../guide-administration/moteurs/moteur-watcher.md).
 
-### Creation de watcher
+### Création d'un observateur
 
-Crée un nouveau watcher à partir du corps de la requête.
+Crée un nouvel observateur à partir du corps de la requête.
 
 **URL** : `/api/v2/watcherng`
 
@@ -63,7 +63,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 #### Réponse en cas de réussite
 
-**Condition** : le watcher est créé
+**Condition** : l'observateur est créé
 
 **Code** : `200 OK`
 
@@ -90,7 +90,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ---
 
-**Condition** : Si un watcher similaire existe déjà en base.
+**Condition** : Si un observateur similaire existe déjà en base.
 
 **Code** : `400 BAD REQUEST`
 
@@ -118,9 +118,9 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 }
 ```
 
-### Modification de watcher
+### Modification d'un observateur
 
-Modifie un nouveau watcher à partir du corps de la requête.
+Modifie un nouvel observateur à partir du corps de la requête.
 
 **URL** : `/api/v2/watcherng/<watcher_id>`
 
@@ -177,7 +177,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 
 #### Réponse en cas de réussite
 
-**Condition** : le watcher est créé
+**Condition** : l'observateur est créé
 
 **Code** : `200 OK`
 
@@ -190,9 +190,9 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 
 ---
 
-### Suppression de watcher
+### Suppression d'un observateur
 
-Supprime un watcher en fonction de son `id`.
+Supprime un observateur en fonction de son `id`.
 
 **URL** : `/api/v2/watcherng/<watcher>`
 
@@ -202,7 +202,7 @@ Supprime un watcher en fonction de son `id`.
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le watcher avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer l'observateur avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
 curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
@@ -210,7 +210,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-
 
 #### Réponse en cas de réussite
 
-**Condition** : La suppresion du watcher a réussi.
+**Condition** : La suppression de l'observateur a réussi.
 
 **Code** : `200 OK`
 
@@ -237,12 +237,11 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-
 }
 ```
 
+### Récupération des observateurs
 
-### Récupération des watchers
+Récupère un ou plusieurs observateurs présents en base.
 
-Récupère un ou plusieurs watchers présent en base.
-
-#### Récupération d'un watcher par id
+#### Récupération d'un observateur par id
 
 **URL** : `/api/v2/watcherng/<watcher_id>`
 
@@ -252,7 +251,7 @@ Récupère un ou plusieurs watchers présent en base.
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le watcher avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'observateur avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
 curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
@@ -260,7 +259,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64r
 
 ##### Réponse en cas de réussite
 
-**Condition** : Un watcher correspondant à l'`id` est trouvé.
+**Condition** : Un observateur correspondant à l'`id` est trouvé.
 
 **Code** : `200 OK`
 
@@ -289,7 +288,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64r
 
 ##### Réponse en cas d'erreur
 
-**Condition** : Aucun watcher correspondant à l'`id` n'est trouvé.
+**Condition** : Aucun observateur correspondant à l'`id` n'est trouvé.
 
 **Code** : `404 NOT FOUND`
 
@@ -316,9 +315,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64r
 }
 ```
 
-#### Récupération de tous les watchers en base de données
+#### Récupération de tous les observateurs en base de données
 
-Récupère tous les watchers stockés en base
+Récupère tous les observateurs stockés en base
 
 **URL** : `/api/v2/watcherng`
 
@@ -373,9 +372,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/watcherng'
 }
 ```
 
-### Recalcul du context-graph d'un watcher
+### Recalcul du context-graph d'un observateur
 
-Force un watcher à recalculer ses `impact/depends`.
+Force un observateur à recalculer ses `impact/depends`.
 
 **URL** : `/api/v2/watcherng/<watcher_id>`
 
@@ -385,7 +384,7 @@ Force un watcher à recalculer ses `impact/depends`.
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le watcher avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'observateur avec l'`id` `h4z25rzg6rt-64rge354-5re4g` :
 
 ```sh
 curl -X PUT -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64rge354-5re4g'
@@ -393,7 +392,7 @@ curl -X PUT -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64r
 
 #### Réponse en cas de réussite
 
-**Condition** : le context-graph du watcher a été recalculé
+**Condition** : le context-graph de l'observateur a été recalculé
 
 **Code** : `200 OK`
 
@@ -472,7 +471,7 @@ curl -X PUT -u root:root 'http://<Canopsis_URL>/api/v2/watcherng/h4z25rzg6rt-64r
 
 #### Réponse en cas d'erreur
 
-**Condition** : Si l'`_id` du watcher n'existe pas.
+**Condition** : Si l'`_id` de l'observateur n'existe pas.
 
 **Code** : `400 BAD REQUEST`
 

@@ -14,7 +14,7 @@ Depuis la `3.37.0`, la fonction de répétition est disponible.
 
 Depuis la `3.39.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
 
-Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
+Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de la criticité des évènements ou des alarmes.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
@@ -58,10 +58,10 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
      - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
      - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
- - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le webhook si un pbehavior est actif sur l'entité.
+ - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le Webhook si un comportement périodique est actif sur l'entité.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
-       - `username` (optionnel) : nom d'utilisateur employé pour l'authentification HTTP
+       - `username` (optionnel) : identifiant utilisateur employé pour l'authentification HTTP
        - `password` (optionnel) : mot de passé employé pour l'authentification HTTP
      - `headers` (optionnel) : les en-têtes de la requête
      - `method` (requis) : méthode HTTP
@@ -81,8 +81,6 @@ Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont 
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
 - `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
-
-
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
 
@@ -98,7 +96,7 @@ Pour plus d'informations sur les `triggers` disponibles, consulter la [`document
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
 
 !!! attention
-    L'activation d'un webhook ne doit pas être dépendante d'un état d'une alarme appliqué par le moteur `action`. En effet, dans l’enchaînement des moteurs, `action` se situe après `webhook`. Le webhook sera donc activé **avant** que le moteur `action` ait pu changer l'état de l'alarme.
+    L'activation d'un webhook ne doit pas être dépendante de la criticité d'une alarme appliquée par le moteur `action`. En effet, dans l’enchaînement des moteurs, `action` se situe après `webhook`. Le webhook sera donc activé **avant** que le moteur `action` ait pu changer la criticité de l'alarme.
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
@@ -130,7 +128,7 @@ Par exemple, ce webhook va être activé si le trigger reçu par le moteur corre
 
 ### Templates
 
-Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
+Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de la criticité de l'alarme, de l'évènement ou de l'entité.
 
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
 

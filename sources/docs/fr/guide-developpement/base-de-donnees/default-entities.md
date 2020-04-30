@@ -53,7 +53,7 @@ Voici comment sont graphées les entités d'un [évènement](../../guide-utilisa
 
 ### Observateur
 
-Un [Observateur](../../guide-utilisation/vocabulaire/index.md#observateur) (ou « watcher » ) est conçu pour que les `depends` de son `context-graph` incluent les entités correspondant à son ou ses patterns.
+Un [observateur](../../guide-utilisation/vocabulaire/index.md#observateur) (ou « watcher » ) est conçu pour que les `depends` de son `context-graph` incluent les entités correspondant à son ou ses patterns.
 
 En retour, il est automatiquement ajouté aux `impact` des entités en question.
 
@@ -73,7 +73,7 @@ La valeur du champ `_id` de la ressource est la concaténation des champs `resou
 
 ### Watcher
 
-La valeur du champ `_id` du watcher est celle indiquée à l'ajout via l'[API watcherng](../api/api-v2-watcherng.md). En l'absence d'`_id` (comme lors de l'ajout via l'[explorateur de contexte](../../guide-utilisation/interface/widgets/contexte/index.md), un `_id` unique est généré automatiquement.
+La valeur du champ `_id` de l'observateur est celle indiquée à l'ajout via l'[API watcherng](../api/api-v2-watcherng.md). En l'absence d'`_id` (comme lors de l'ajout via l'[explorateur de contexte](../../guide-utilisation/interface/widgets/contexte/index.md), un `_id` unique est généré automatiquement.
 
 ## Collection MongoDB
 

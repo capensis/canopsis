@@ -10,9 +10,9 @@ Le moteur `dynamic-infos` permet d'ajouter des informations aux alarmes. Ces inf
 
 ## Utilisation
 
-Le moteur doit être placé en sortie du moteur [`watcher`](moteur-watcher.md).
+Le moteur doit être placé en sortie du moteur [`engine-watcher`](moteur-watcher.md).
 
-Pour cela, il est nécessaire de lancer le moteur `watcher` avec l'option `-publishQueue Engine_dynamic_infos` pour qu'il publie dans la file du moteur `dynamic-infos`.
+Pour cela, il est nécessaire de lancer le moteur `engine-watcher` avec l'option `-publishQueue Engine_dynamic_infos` pour qu'il publie dans la file du moteur `dynamic-infos`.
 
 Si le moteur [`webhook`](moteur-webhook.md) est activé, le moteur `dynamic-infos` doit être lancé avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file de ce moteur. Sinon, il publie dans la file du moteur [`action`](moteur-action.md).
 
@@ -75,7 +75,7 @@ Les informations définies dans `infos` sont ajoutées aux alarmes correspondant
 }
 ```
 
-Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux patterns `entity_patterns` et `alarm_patterns`. Dans l'exemple précédent, si une alarme passe d'un état critique à un état majeur, l'information `v.infos.dynamic_infos_1` est supprimée.
+Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux patterns `entity_patterns` et `alarm_patterns`. Dans l'exemple précédent, si une alarme passe d'une criticité critique à majeure, l'information `v.infos.dynamic_infos_1` est supprimée.
 
 
 ### Templates
@@ -83,7 +83,7 @@ Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux p
 !!! Info
     Disponible à partir de Canopsis 3.38.0
 
-Les champs `value` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme ou de l'entité.  
+Les champs `value` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de la criticité de l'alarme ou de l'entité.  
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
 
 Seules les fonctions suivantes sont disponibles dans les templates `dynamic-infos` :

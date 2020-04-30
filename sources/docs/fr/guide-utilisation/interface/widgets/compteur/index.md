@@ -1,23 +1,27 @@
 # Compteur
 
 !!! Note
-    Disponible à partir de Canopsis 3.39.0
+    Disponible à partir de Canopsis 3.39.0.
 
 ![Compteur](./img/counter.png  "Compteur")
 
 ## Sommaire
 
 ### Guide utilisateur
+
 1. [Présentation générale](#presentation-generale)
 2. [Les compteurs](#les-tuiles)
 3. [Les tuiles](#les-compteurs)
 
 ### Guide exploitant
+
 1. [Aide sur les variables](#aide-variables)
 2. [Paramètres du widget](#parametres-du-widget)
 
 ## Guide utilisateur
+
 ### Présentation générale
+
 ### Les compteurs
 
 Les compteurs sont relatifs à un filtre d'alarmes.  
@@ -31,7 +35,6 @@ Compteur  | Variable | Signification
 `snooze`           | {{ counter.snooze }}           | Nombre d'alarmes mises en veille
 `ticket`           | {{ counter.ticket }}           | Nombre d'alarmes avec un ticket d'incident associé
 
-
 ### Les tuiles
 
 L'ensemble des compteurs est présenté sous forme de tuiles. 
@@ -41,7 +44,6 @@ Exemple d'une tuile :
 ![Exemple d'une tuile - Compteur](./img/tuile-counter.png  "Exemple d'une tuile - Compteur")
 
 Chaque tuile est associée à un [filtre d'alarmes](../../filtres/index.md) et met à disposition un ensemble de compteurs relatifs à ce filtre.  
-
 Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter les compteurs sous la forme souhaitée.
 
 La couleur de la tuile et l'icône présente sur celle-ci représentent des dépassements de seuils.
@@ -165,4 +167,3 @@ Ce paramètre permet de régler la hauteur des tuiles.
 Pour le modifier, faites glisser le sélecteur, afin de choisir une valeur entre 1 (hauteur minimale) et 20 (hauteur maximale).
 
 Par défaut, ce paramètre est réglé sur une valeur de 6.
-

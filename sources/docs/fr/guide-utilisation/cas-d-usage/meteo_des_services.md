@@ -3,7 +3,6 @@
 La météo des services permet de représenter des états agrégés de services selon différentes règles.  
 La documentation complète est disponible [ici](../../guide-utilisation/interface/widgets/meteo-des-services/index.md)
 
-
 L'interface Canopsis utilise des *tuiles* pour représenter ces états.  
 Une tuile correspond à l'état d'un *observateur*, qui est calculé selon des règles.  
 
