@@ -39,7 +39,6 @@ export const MODALS = {
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
-  createCancelEvent: 'create-cancel-event',
   createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
@@ -823,7 +822,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityPause: 'entityPause',
     entityPlay: 'entityPlay',
     entityCancel: 'entityCancel',
-    comment: 'entityComment',
+    entityComment: 'entityComment',
 
     entityLinks: 'entityLinks',
 
@@ -895,7 +894,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
     [WIDGETS_ACTIONS_TYPES.weather.variablesHelp]: USERS_RIGHTS.business.weather.actions.variablesHelp,
-    [WIDGETS_ACTIONS_TYPES.weather.comment]: USERS_RIGHTS.business.weather.actions.comment,
+    [WIDGETS_ACTIONS_TYPES.weather.entityComment]: USERS_RIGHTS.business.weather.actions.entityComment,
   },
 
   counter: {

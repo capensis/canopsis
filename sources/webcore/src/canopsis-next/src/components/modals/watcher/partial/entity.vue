@@ -147,7 +147,7 @@ export default {
           action: this.prepareCancelAction,
         },
         comment: {
-          type: weatherActionsTypes.comment,
+          type: weatherActionsTypes.entityComment,
           eventType: EVENT_ENTITY_TYPES.comment,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
           action: this.prepareCommentAction,
