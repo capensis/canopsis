@@ -266,7 +266,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8cc
 
 ### Récupération des comportements périodiques
 
-Récupère un ou plusieurs comportement périodique appliqués sur une entité, via l'`eid` (pour `entity id`).
+Récupère un ou plusieurs comportements périodiques appliqués sur une entité, via l'`eid` (pour `entity id`).
 
 #### Récupération d'un comportement périodique par eid
 
