@@ -282,7 +282,7 @@ def make_alarm_from_mongo(alarm_dict):
         done=done,
         extra=ald.get('extra'),
         parents=ald.get('parents'),
-        children=ald.get('children')
+        children=ald.get('children'),
         activation_date=ald.get('activation_date')
     )
 
