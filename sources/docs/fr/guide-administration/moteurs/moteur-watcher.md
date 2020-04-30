@@ -1,13 +1,13 @@
 # Moteur `engine-watcher` (Go, Core)
 
 !!! note
-    Cette page concerne les watchers nouvelle génération, disponibles uniquement avec le moteur Go `engine-watcher`.
+    Cette page concerne les observateurs nouvelle génération, disponibles uniquement avec le moteur Go `engine-watcher`.
 
 Les moteur `engine-watcher` permet de surveiller et de répercuter les états d'alarmes ouvertes sur des entités surveillées.
 
-Les watchers sont définis dans la collection MongoDB `default_entities`, et peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/api/api-v2-watcherng.md).
+Les observateurs sont définis dans la collection MongoDB `default_entities`, et peuvent être ajoutés et modifiés avec l'[API watcherng](../../guide-developpement/api/api-v2-watcherng.md).
 
-Des exemples pratiques d'utilisation des watchers sont disponibles dans la partie [Exemples](#exemples).
+Des exemples pratiques d'utilisation des observateurs sont disponibles dans la partie [Exemples](#exemples).
 
 ## Utilisation
 
@@ -29,24 +29,24 @@ La file du moteur est placée juste après le moteur [`engine-axe`](moteur-axe.m
 
 ## Fonctionnement
 
-### Concept d'un watcher
+### Concept d'un observateur
 
-Un watcher représente un groupe de surveillance.
-C'est-à-dire que l'état d'une entité de type watcher dépendra de l'état des entités surveillées, et des alarmes ouvertes sur ces entités.
+Un observateur représente un groupe de surveillance.
+C'est-à-dire que la criticité d'une entité de type watcher dépendra de la criticité des entités surveillées, et des alarmes ouvertes sur ces entités.
 
-Le but d'un watcher est de donner une visibilité accrue et claire sur l'état d'un groupe d'entités, afin de détecter un changement d'état positif ou négatif sur les alarmes liées aux entités du groupe surveillé.
+Le but d'un observateur est de donner une visibilité accrue et claire sur l'état d'un groupe d'entités, afin de détecter un changement de criticité positif ou négatif sur les alarmes liées aux entités du groupe surveillé.
 
-### Définition d'un watcher
+### Définition d'un observateur
 
-Un watcher est un document JSON contenant les paramètres suivants :
+Un observateur est un document JSON contenant les paramètres suivants :
 
- - `_id` (optionnel): l'identifiant du watcher (généré automatiquement ou choisi par l'utilisateur).
- - `name` (requis) : Le nom du watcher, qui sera utilisé dans la météo de services.
+ - `_id` (optionnel): l'identifiant de l'observateur (généré automatiquement ou choisi par l'utilisateur).
+ - `name` (requis) : Le nom de l'observateur, qui sera utilisé dans la météo de services.
  - `entities` (requis) : La liste des patterns permettant de filtrer les entités surveillées. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
  - `state` (requis) : Un document contenant :
-    - `method` (requis) : Le nom de la méthode de calcul de l'état du watcher en fonction des alarmes ouvertes sur les entités. Actuellement, seule la méthode `worst` est implémentée.
+    - `method` (requis) : Le nom de la méthode de calcul de la criticité de l'observateur, en fonction des alarmes ouvertes sur les entités. Actuellement, seule la méthode `worst` est implémentée.
     - Les différents paramètres des méthodes ci-dessus.
-- `output_template` (requis) : Le template utilisé par le watcher pour déterminer la sortie de l'alarme.
+- `output_template` (requis) : Le template utilisé par l'observateur pour déterminer la sortie de l'alarme.
 
 Le schéma en base est proche, puisqu'il s'agit de ces paramètres, ajoutés à ceux déjà présents pour une entitié.
 
@@ -54,25 +54,25 @@ Le schéma en base est proche, puisqu'il s'agit de ces paramètres, ajoutés à 
 
 Actuellement, seule la méthode `worst` est implémentée.
 
-- `worst` : L'état du watcher est l'état de la pire alarme ouverte sur les entités surveillées.
+- `worst` : la criticité de l'observateur est la criticité de la pire alarme ouverte sur les entités surveillées.
 
 #### Templates
 
 L'`output_template` est un [template](https://golang.org/pkg/text/template/)
 permettant d'afficher diverses informations dans l'output de l'alarme
-correspondant au watchers.
+correspondant à l'observateur.
 
 Les informations disponibles sont :
 
- - `{{.Alarms}}` : le nombre d'alarmes en cours sur les entités observées par le watchers.
- - `{{.State.Info}}` : le nombre d'entités observées n'ayant pas d'alarmes, ou une alarme en état `Info`.
+ - `{{.Alarms}}` : le nombre d'alarmes en cours sur les entités observées par l'observateur.
+ - `{{.State.Info}}` : le nombre d'entités observées n'ayant pas d'alarmes, ou une alarme en criticité `Info`.
  - `{{.State.Minor}}` : le nombre d'alarmes mineures sur les entités observées.
  - `{{.State.Major}}` : le nombre d'alarmes majeures sur les entités observées.
  - `{{.State.Critical}}` : le nombre d'alarmes critiques sur les entités observées.
  - `{{.Acknowledged}}` : le nombre d'alarmes acquittées sur les entités observées.
  - `{{.NotAcknowledged}}` : le nombre d'alarmes non-acquittées sur les entités observées.
 
-Par exemple, l'output d'un watcher avec l'`output_template` suivant :
+Par exemple, l'output d'un observateur avec l'`output_template` suivant :
 
 ```
 Crit : {{.State.Critical}} / Total : {{.Alarms}}

@@ -55,10 +55,10 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
      - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
      - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
- - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le webhook si un pbehavior est actif sur l'entité.
+ - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le Webhook si un comportement périodique est actif sur l'entité.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
-       - `username` (optionnel) : nom d'utilisateur employé pour l'authentification HTTP
+       - `username` (optionnel) : identifiant utilisateur employé pour l'authentification HTTP
        - `password` (optionnel) : mot de passé employé pour l'authentification HTTP
      - `headers` (optionnel) : les en-têtes de la requête
      - `method` (requis) : méthode HTTP
@@ -93,7 +93,7 @@ Pour plus d'informations sur les `triggers` disponibles, consulter la [`document
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
 
 !!! attention
-    L'activation d'un webhook ne doit pas être dépendante d'un état d'une alarme appliqué par le moteur `engine-action`. En effet, dans l’enchaînement des moteurs, `action` se situe après `webhook`. Le webhook sera donc activé **avant** que le moteur `engine-action` ait pu changer l'état de l'alarme.
+    L'activation d'un webhook ne doit pas être dépendante de la criticité d'une alarme appliquée par le moteur `engine-action`. En effet, dans l’enchaînement des moteurs, `engine-action` se situe après `engine-webhook`. Le webhook sera donc activé **avant** que le moteur `engine-action` ait pu changer la criticité de l'alarme.
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
@@ -125,7 +125,7 @@ Par exemple, ce webhook va être activé si le trigger reçu par le moteur corre
 
 ### Templates
 
-Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
+Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de la criticité de l'alarme, de l'évènement ou de l'entité.
 
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
 

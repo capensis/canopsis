@@ -198,7 +198,7 @@ Afficher une liste d'alarmes depuis une instance de Canopsis, en interrogeant la
 </ul>
 ```
 
-Afficher une liste des noms d'utilisateurs inscrits à GitHub :
+Afficher une liste des identifiants d'utilisateurs inscrits à GitHub :
 
 ```handlebars
 <ul>
@@ -217,17 +217,17 @@ Afficher une liste des noms d'utilisateurs inscrits à GitHub :
 !!! note
     Disponible depuis Canopsis 3.38.0.
 
-Le helper `state` permet de transformer [l'état de criticité](../../vocabulaire/index.md#etat) d'une alarme (sous sa forme numérique 0, 1, 2 ou 3) en une pastille de couleur associée à cette criticité, telle qu'elle peut apparaître dans un Bac à alarmes. Le texte de ces pastilles est actuellement toujours affiché en anglais.
+Le helper `state` permet de transformer [la criticité](../../vocabulaire/index.md#criticite) d'une alarme (sous sa forme numérique 0, 1, 2 ou 3) en une pastille de couleur associée à cette criticité, telle qu'elle peut apparaître dans un Bac à alarmes. Le texte de ces pastilles est actuellement toujours affiché en anglais.
 
 Utilisation générique :
 
 ```handlebars
-{{state numero-etat-criticite}}
+{{state numero-criticite}}
 ```
 
 Ce helper attend un unique paramètre :
 
-*  `numero-etat-criticite` (obligatoire). Une variable, ou un entier représentant l'état de criticité d'une alarme, tel que défini par Canopsis (0, 1, 2 ou 3). Un état de criticité différent de ces valeurs provoquera l'affichage d'une pastille d'erreur.
+*  `numero-criticite` (obligatoire). Une variable, ou un entier représentant la criticité d'une alarme, telle que définie par Canopsis (0, 1, 2 ou 3). Une criticité différente de ces valeurs provoquera l'affichage d'une pastille d'erreur.
 
 #### Exemples d'utilisation du helper `state`
 
@@ -255,7 +255,7 @@ Afficher une pastille « critical » rouge :
 {{state 3}}
 ```
 
-Afficher une pastille « Invalid val » (l'état de criticité étant invalide) :
+Afficher une pastille « Invalid val » (la criticité étant invalide) :
 
 ```handlebars
 {{state 9}}

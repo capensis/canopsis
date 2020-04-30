@@ -16,7 +16,7 @@ Prenons le cas d'usage suivant :
 
 !!! note ""
     Je souhaite notifier Mattermost depuis Canopsis dans les cas suivants :
-    Création d'alarme, Mise à jour d'état, Ack d'un utilisateur
+    Création d'alarme, Mise à jour de de criticité, acquittement d'un utilisateur
 
 Pour cela, RDV sur le menu des **webhooks**
 
@@ -81,7 +81,7 @@ Prenons le cas d'usage suivant :
 
 !!! note ""
     Je souhaite envoyer un message HTTP à Logstash depuis Canopsis dans les cas suivants :
-    Création d'alarme, Mise à jour d'état, Ack d'un utilisateur
+    Création d'alarme, Mise à jour de criticité, acquittement d'un utilisateur
 
 Pour cela, RDV sur le menu des **webhooks**
 

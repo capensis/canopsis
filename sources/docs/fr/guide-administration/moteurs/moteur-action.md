@@ -28,9 +28,9 @@ En édition CAT, la file du moteur est placée juste après le moteur [`engine-w
 
 Les types d'actions disponibles sont :
 
-* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille l'état de l'alarme dans une criticité donnée jusqu'à sa résolution
-* `pbehavior` : pose un [PBehavior](moteur-pbehavior.md)
-* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose un snooze automatique sur l'alarme
+* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille la criticité de l'alarme jusqu'à sa résolution
+* `pbehavior` : met en place un [comportement périodique](moteur-pbehavior.md)
+* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose une mise en veille automatique sur l'alarme
 * `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme
 * `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme
 * `assocticket`, qui correspond à un événement [`assocticket`](../../guide-developpement/struct-event.md#event-assocticket-structure) : associe un ticket à l'alarme
@@ -44,7 +44,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 ```javascript
 {
 "_id"        // identifiant de l'action , optionnel, s'il n'est pas fourni par l'utilisateur il sera généré automatiquement - le champ est de type `string`
-"type"       // type du pbehavior (`changestate`, `pbehavior` ou `snooze`), obligatoire - le champ est de type `string`
+"type"       // type d'action (`changestate`, `pbehavior` ou `snooze`), obligatoire - le champ est de type `string`
 "hook"       // conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée, optionnel
 "triggers"   // conditions de déclenchement sur la vie de l'alarme, si plusieurs triggers sont indiqués, au moins un de ces triggers doit avoir eu lieu pour que l'action soit appelée
 "parameters" // paramétrage spécifique à chaque type d'action.
@@ -61,7 +61,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 ```javascript
 {
-"state":   // état dans lequel sera verrouillée l'alarme (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), le champ est de type `integer`
+"state":   // criticité dans laquelle sera verrouillée l'alarme (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), le champ est de type `integer`
 "output":  // commentaire du changestate, optionnel - le champ est de type `string`
 "author":  // auteur du changestate, optionnel - le champ est de type `string`
 }
@@ -93,9 +93,9 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 ```javascript
 {
-"message":   // commentaire du snooze, optionnel - le champ est de type `string`
-"duration":  // durée du snooze en secondes, optionnel - le champ est de type `number`
-"author":    // auteur du snooze, optionnel - le champ est de type `string`
+"message":   // commentaire de la mise en veille, optionnel - le champ est de type `string`
+"duration":  // durée de la mise en veille en secondes, optionnel - le champ est de type `number`
+"author":    // auteur de la mise en veille, optionnel - le champ est de type `string`
 }
 ```
 
@@ -103,8 +103,8 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 ```javascript
 {
-"output":   // commentaire de l'ack, optionnel - le champ est de type `string`
-"author":    // auteur de l'ack, optionnel - le champ est de type `string`
+"output":   // commentaire de l'acquittement, optionnel - le champ est de type `string`
+"author":    // auteur de l'acquittement, optionnel - le champ est de type `string`
 }
 ```
 
@@ -112,8 +112,8 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 ```javascript
 {
-"output":   // commentaire de la suppression de l'ack, optionnel - le champ est de type `string`
-"author":    // auteur de la suppression de l'ack, optionnel - le champ est de type `string`
+"output":   // commentaire de la suppression de l'acquittement, optionnel - le champ est de type `string`
+"author":    // auteur de la suppression de l'acquittement, optionnel - le champ est de type `string`
 }
 ```
 
@@ -146,7 +146,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 ## Collection MongoDB associée
 
-Les actions sont stockées dans la collection MongoDB `default_action` (voir [API Action](../../guide-developpement/api/api-v2-action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un pbehavior, le champ `type` vaut `pbehavior` :
+Les actions sont stockées dans la collection MongoDB `default_action` (voir [API Action](../../guide-developpement/api/api-v2-action.md) pour la création d'actions). Le champ `type` de l'objet définit le type d'action. Par exemple, avec un comportement périodique, le champ `type` vaut `pbehavior` :
 
 ```json
 {
@@ -178,9 +178,9 @@ Les actions sont stockées dans la collection MongoDB `default_action` (voir [AP
 }
 ```
 
-Un exemple d'action concernant le snooze automatique (le `type` d'action est donc `snooze`). Il a lieu à la création de l'alarme et si le champ `resource` de l'évènement contient les termes `CPU`  ou `HDD`.
+Un exemple d'action concernant la mise en veille automatique (le `type` d'action est donc `snooze`). Il a lieu à la création de l'alarme et si le champ `resource` de l'évènement contient les termes `CPU`  ou `HDD`.
 
-Dans les `parameters`, on définit la durée du snooze (600 secondes, soit 10 minutes dans cet exemple), l'auteur et le message accompagnant le snooze.
+Dans les `parameters`, on définit la durée de la mise en veille (600 secondes, soit 10 minutes dans cet exemple), l'auteur et le message accompagnant la mise en veille.
 
 ```json
 {

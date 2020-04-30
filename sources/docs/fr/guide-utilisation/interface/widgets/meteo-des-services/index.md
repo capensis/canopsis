@@ -5,16 +5,20 @@
 ## Sommaire
 
 ### Guide utilisateur
+
 1. [Présentation générale](#presentation-generale)
 2. [Les tuiles](#les-tuiles)
 3. [La modale](#la-modale)
 
 ### Guide exploitant
+
 1. [Aide sur les variables](#aide-variables)
 2. [Paramètres du widget](#parametres-du-widget)
 
 ## Guide utilisateur
+
 ### Présentation générale
+
 ### Les tuiles
 
 La météo de services est composée de tuiles.
@@ -25,26 +29,26 @@ Chaque tuile correspond à un observateur.
 
 Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur l'observateur.
 
-La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **l'état** de l'observateur:
+La couleur de la tuile et l'icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** de l'observateur:
 
 #### La couleur
 
-La couleur de la tuile correspond à l'état de l'observateur. Cet état est calculé en prenant en compte le pire état parmi les entités surveillées par cet observateur.
+La couleur de la tuile correspond à la criticité de l'observateur. Elle est calculée en prenant en compte la pire criticité parmi les entités surveillées par cet observateur.
 
 Exemple :
-Un observateur surveille deux entités, A et B. A a un état de 1. B a un état de 3. L'état de l'observateur sera alors égal à 3.
+Un observateur surveille deux entités, A et B. A a un criticité de 1. B a une criticité de 3. La criticité de l'observateur sera alors égale à 3.
 
-- Vert: Etat = 0 => Ok
-- Jaune: Etat = 1 => Mineur
-- Orange: Etat = 2 => Majeur
-- Rouge: Etat = 3 => Critique
-- Gris: L'observateur (ou toutes les entités de l'observateur) possède un comportement périodique actif (pause, maintenance, ...).
+- Vert: Criticité = 0 => Ok
+- Jaune: Criticité = 1 => Mineur
+- Orange: Criticité = 2 => Majeur
+- Rouge: Criticité = 3 => Critique
+- Gris: L'observateur (ou toutes les entités de l'observateur) possède un comportement périodique actif (pause, maintenance…).
 
 #### L'icone
 
-- Soleil: L'observateur possède un état "Ok" (égal à 0)
-- Personne: L'observateur possède un état Mineur (égal à 1) ou Majeur (égal à 2)
-- Nuage: L'observateur possède un état: "Critique" (égal à 3)
+- Soleil: L'observateur possède une criticité "Ok" (égale à 0)
+- Personne: L'observateur possède une criticité "Mineure" (égale à 1) ou "Majeure" (égale à 2)
+- Nuage: L'observateur possède une criticité "Critique" (égale à 3)
 - Clé: L'observateur possède un comportement périodique actif, de type "Maintenance"
 - Lune: L'observateur possède un comportement périodique actif, de type "Hors plage de surveillance"
 - Pause: L'observateur ne possède pas de comportement périodique, mais toutes les entités liées à cet observateur possèdent un comportement périodique actif.
@@ -73,16 +77,16 @@ Celle-ci contient, au choix :
 
 Dans [la modale "Plus d'infos"](#la-modale), il vous est possible d'afficher la liste des entités concernées par l'observateur (*Cf: [Template - modale](#template-modale)*).
 
-Si la liste d'entités est affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de l'état de l'entité.
+Si la liste d'entités est affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de la criticité de l'entité.
 
 Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne sont exécutées qu'au clic sur le bouton ```Envoyer``` de la modale "Plus d'infos".
 
 - ![Action: Déclarer un incident](./img/action_declareTicket.png "Action: Déclarer un incident") *Déclarer un incident*: Cette action vous permet de déclarer un numéro de ticket, associé à un incident. Au clic sur cette action, une fenêtre s'ouvre, vous permettant d'indiquer un numéro de ticket. Cette action déclenche également automatiquement une action d'acquittement.
 - ![Action: Pause](./img/action_pause.png "Action: Pause") *Pause*: Cette action vous permet de mettre une entité en pause. Au clic, une fenêtre s'ouvre. Celle-ci vous permet de renseigner un commentaire, ainsi que la raison de la pause. Cette action n'est disponible que pour les entités qui ne sont pas déjà en pause.
 - ![Action: Play](./img/action_play.png "Action: Play") *Play*: Cette action vous permet de modifier tout les comportements périodiques de type `Pause`. La date de fin de ces comportements périodiques est modifiée pour passer à la date actuelle, ce qui met de fait fin à la pause. Cette action n'est disponible que pour les entités en pause.
-- ![Action: acquittement](./img/action_ack.png "Action: acquittement") *Acquittement*: Cette action vous permet d'acquitter une alarme présente sur une entité. Cette action n'est disponible que pour les entités ayant un état différent de "Ok" (0), et ayant une alarme non acquittée.
-- ![Action: Validate](./img/action_validate.png "Action: Validate") *Valider*: Cette action déclenche un changement d'état de l'alarme, de majeur (2) à critique (3). Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant un état majeur (2).
-- ![Action: Invalidate](./img/action_invalidate.png "Action: Invalidate") *Invalider*: Cette action déclenche une action d'annulation de l'alarme. Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant un état majeur (2).
+- ![Action: acquittement](./img/action_ack.png "Action: acquittement") *Acquittement*: Cette action vous permet d'acquitter une alarme présente sur une entité. Cette action n'est disponible que pour les entités ayant une criticité différente de "Ok" (0), et ayant une alarme non acquittée.
+- ![Action: Validate](./img/action_validate.png "Action: Validate") *Valider*: Cette action déclenche un changement de criticité de l'alarme, de majeure (2) à critique (3). Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant une criticité majeure (2).
+- ![Action: Invalidate](./img/action_invalidate.png "Action: Invalidate") *Invalider*: Cette action déclenche une action d'annulation de l'alarme. Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant un criticité majeure (2).
 
 ## Guide exploitant
 
@@ -145,7 +149,7 @@ Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouto
 Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression se trouvant à droite du bouton 'Créer/Editer'. Une fenêtre vous demande alors de confirmer la suppression.
 
 !!! warning "Champs utilisables dans le filtre"
-    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un watcher, il faut utiliser `name`, et non `display_name`.
+    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un observateur, il faut utiliser `name`, et non `display_name`.
 
 #### Paramètres avancés
 

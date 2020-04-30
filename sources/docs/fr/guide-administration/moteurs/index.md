@@ -33,9 +33,9 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | [engine-che](moteur-che.md)                       | Supprime les évènements invalides, gère le contexte, et enrichit les évènements via sa fonctionnalité d'[event-filter](moteur-che-event_filter.md). |       |
 | [engine-dynamic-infos](moteur-dynamic-infos.md)   | Enrichit les alarmes.                                                                                                                               |  ✅   |
 | [engine-heartbeat](moteur-heartbeat.md)           | Surveille des entités, et lève des alarmes en cas d'absence d'information.                                                                          |       |
-| [engine-watcher](moteur-watcher.md)               | Calcule les états des [watchers](moteur-watcher.md).                                                                                                |       |
+| [engine-watcher](moteur-watcher.md)               | Calcule les états des observateurs.                                                                                                |       |
 | [engine-webhook](moteur-webhook.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
-
+                                                                                              |       |
 ### Moteurs Python
 
 | Moteur                                                                                          | Description                                              | CAT ? |
@@ -47,7 +47,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | **datametrie**                                                                                  | Gère le connecteur datametrie.                           |  ✅   |
 | [canopsis-engine@**event_filter-event_filter**.service](moteur-event_filter.md)                 | Applique des règles de filtrage.                         |       |
 | canopsis-engine@**metric-metric**.service                                                       | Stocke les données de métrologie des évènements.         |       |
-| [canopsis-engine@**dynamic-pbehavior**.service](moteur-pbehavior.md)                            | Gère les périodes de maintenance.                        |       |
+| [canopsis-engine@**dynamic-pbehavior**.service](moteur-pbehavior.md)                            | Gère les comportements périodiques.                        |       |
 | canopsis-engine@**scheduler-scheduler**.service                                                 | Envoyer un travail à des gestionnaires de tâches.        |       |
 | [canopsis-engine-cat@**snmp**](moteur-snmp.md)                                                  | Gère les traps SNMP.                                     |  ✅   |
 | canopsis-engine-cat@**statsng-statsng**.service                                                 | Calcule des statistiques sur les alarmes et les entités. |  ✅   |
@@ -56,7 +56,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | [canopsis-engine-cat@**task_ackcentreon-task_ackcentreon**.service](moteur-task_ackcentreon.md) | ACK descendants vers Centreon.                           |  ✅   |
 | canopsis-engine@**task_mail-task_mail**.service                                                 | Gestionnaire de tâches pour envoyer du courrier.         |       |
 | canopsis-engine@**ticket-ticket**.service                                                       | Gère les tickets externes.                               |       |
-| canopsis-engine@**dynamic-watcher**.service                                                     | Gère les watchers (groupes de surveillance).             |       |
+| canopsis-engine@**dynamic-watcher**.service                                                     | Gère les observateurs (groupes de surveillance).             |       |
 
 ## Flags & Usage
 
@@ -149,7 +149,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
         version infos
 ```
 
-Le flag `-autoRecomputeWatchers` permet de s'assurer que l'état des watchers est mis à jour à chaque battement du moteur `engine-watcher`.
+Le flag `-autoRecomputeWatchers` permet de s'assurer que l'état des observateurs est mis à jour à chaque battement du moteur.
 
 ## Changer le niveau de log d'un moteur
 

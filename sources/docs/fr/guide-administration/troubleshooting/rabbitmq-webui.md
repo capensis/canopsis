@@ -26,8 +26,8 @@ La première colonne *Overview* vous présente plusieurs informations telles que
 
 La seconde, *Messages*, vous présente :
 
-- **Ready :** Nombre de messages prêts à être ack.
-- **Unacked :** Nombre de messages qui ne sont pas encore ack.
+- **Ready :** Nombre de messages prêts à être acquittés.
+- **Unacked :** Nombre de messages qui ne sont pas encore acquittés.
 - **Total :** Nombre de message total.
 
 La troisième, *Message rates* permet d'avoir une idée sur les performances du moteur à gérer les files arrivantes. Trois statistiques permettent de juger l'efficacité en messages/seconde :

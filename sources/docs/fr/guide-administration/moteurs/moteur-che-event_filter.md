@@ -115,7 +115,7 @@ Pour plus d'expressivité, il est possible d'associer à un champ un objet conte
  - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
  - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est celle de [go](https://golang.org/pkg/regexp/syntax/), et est similaire à celle acceptée par Perl et Python.
 
-Par exemple, le pattern suivant sélectionne les évènements dont l'état est compris entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
+Par exemple, le pattern suivant sélectionne les évènements dont la criticité est comprise entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
 
 ```json
 "pattern": {
@@ -178,7 +178,7 @@ Les paramètres de l'action sont :
  - `name` (requis) : le nom du champ.
  - `value` (requis) : la nouvelle valeur du champ.
 
-Par exemple, l'action suivante remplace l'état d'un évènement par un état critique :
+Par exemple, l'action suivante passe la criticité d'un évènement en critique :
 
 ```json
 {
