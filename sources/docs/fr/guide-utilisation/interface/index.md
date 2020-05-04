@@ -32,6 +32,6 @@ Pour plus de détails, consultez la [documentation des helpers Handlebars de Can
 
 ## La diffusion de messages
 
-Il est possible de programmer l'affichage d'un bandeau contenant des messages d'information qui apparaîtront l'interface de Canopsis.
+Il est possible de programmer l'affichage d'un bandeau contenant des messages d'information qui apparaîtront dans l'interface de Canopsis.
 
 Reportez vous à cette [page](broadcast-messages.md) pour en savoir plus.
