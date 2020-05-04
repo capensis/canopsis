@@ -305,7 +305,8 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior_byeid/disk2/pbe
 	"tstop": 1569599100,
 	"_id": "4c441d4e-9cc8-4f84-be73-9a4e97ba5e74",
 	"isActive": true,
-	"exdate": []
+	"exdate": [],
+	"is_currently_active": false
 }]
 ```
 
@@ -361,9 +362,22 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/pbehavior/read'
 			"tstop": 1569599100,
 			"_id": "aaa9d5c3-b245-481f-b23a-844893cb3cfe",
 			"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
-			"exdate": []
+			"exdate": [],
+			"is_currently_active": true
 		}]
 	}],
 	"success": true
 }
 ```
+
+!!! note
+    Disponible depuis Canopsis 3.40.0.
+
+Le paramètre `current_active_pbh` permet de récupérer uniquement les comportements périodiques qui sont actifs au moment de la requête.
+
+
+Ce paramètre est de type **booléen**.
+
+**URL** : `/api/v2/pbehavior?current_active_pbh=true`
+
+
