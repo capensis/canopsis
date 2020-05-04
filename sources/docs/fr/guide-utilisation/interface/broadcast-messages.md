@@ -1,6 +1,6 @@
 # Diffusion de messages
 
-A partir de la version 3.40.0 vous pouvez diffuser des messages par le biais de l'interface de Canopsis.
+À partir de la version 3.40.0, vous pouvez diffuser des messages par le biais de l'interface de Canopsis.
 
 Ces messages seront affichés dans des bandeaux situés en haut de la page. Il sont programmables, personnalisables et apparaîtront à l'écran de façon dynamique, sans avoir besoin de rafraîchir la vue en cours.
 
