@@ -306,7 +306,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior_byeid/disk2/pbe
 	"_id": "4c441d4e-9cc8-4f84-be73-9a4e97ba5e74",
 	"isActive": true,
 	"exdate": [],
-	is_currently_active: false
+	"is_currently_active": false
 }]
 ```
 
