@@ -4,7 +4,7 @@
 
 Ces messages seront affichés dans des bandeaux situés en haut de la page. Il sont programmables, personnalisables et apparaîtront à l'écran de façon dynamique, sans avoir besoin de rafraîchir la vue en cours.
 
-# Accès au paramétrage des messages
+## Accès au paramétrage des messages
 
 L'accès au paramétrage de ces bandeaux d'information nécessite des droits spécifiques. Ouvrez le menu Administration puis cliquez sur Droits et sur l'onglet Technical.
 
