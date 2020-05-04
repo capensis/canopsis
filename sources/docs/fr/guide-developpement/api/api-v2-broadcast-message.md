@@ -5,7 +5,7 @@
 
 L'API broadcast-message permet de consulter, créer, modifier et supprimer des messages d'informations qui seront affichés sur l'interface graphique de Canopsis.
 
-Pour plus d'informations sur ce qu'est un `message d'informations`, consulter la [documentation sur les messages](../../guide-utilisation/interface/broadcast-message.md).
+Pour plus d'informations sur ce qu'est un `message d'informations`, consulter la [documentation sur les messages](../../guide-utilisation/interface/broadcast-messages.md).
 
 ### Création d'un message d'information
 
@@ -179,10 +179,10 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/broadcast-message/4be6eb2
 
 ```json
 {
-    "color": "#e75e40", 
-    "start": 1588601154, 
-    "message": "Maintenance en pr\u00e9vision", 
-    "_id": "4be6eb22-f173-4ac1-8352-1f37cf5caf48", 
+    "color": "#e75e40",
+    "start": 1588601154,
+    "message": "Maintenance en pr\u00e9vision",
+    "_id": "4be6eb22-f173-4ac1-8352-1f37cf5caf48",
     "end": 1588601400
 }
 ```
