@@ -29,3 +29,9 @@ Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
 Différents *helpers* sont disponibles pour ajouter un peu de logique dans ces templates.
 
 Pour plus de détails, consultez la [documentation des helpers Handlebars de Canopsis](helpers/index.md).
+
+## La diffusion de messages
+
+Il est possible de programmer l'affichage d'un bandeau contenant des messages d'information qui apparaîtront l'interface de Canopsis.
+
+Reportez vous à cette [page](broadcast-messages.md) pour en savoir plus.
