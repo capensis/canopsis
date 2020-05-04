@@ -22,7 +22,7 @@ Cochez les cases nécessaires pour octroyer les droits voulus aux profils désig
 
 - Delete : autorise le profil à supprimer des messages dans le CRUD.
 
-# Paramétrage des bandeaux
+## Paramétrage des bandeaux
 
 L'accès au paramétrage des bandeaux se fait ensuite via le menu Administration dans lequel est apparu une nouvelle entrée.
 
