@@ -4,7 +4,7 @@
 
 !!! info "Disponible à partir de Canopsis 3.40.0"
 
-Le moteur [engine-correlation](lien-vers-la-doc-du-moteur.md) de Canopsis permet de grouper dynamiquement des alarmes selon des critères définis dans une règle.
+Le moteur [engine-correlation](../../guide-administration/moteurs/moteur-correlation.md) de Canopsis permet de grouper dynamiquement des alarmes selon des critères définis dans une règle.
 
 Ces groupements d'alarmes permettent de visualiser rapidement les corrélations entre les différentes alarmes présentes dans le [bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
