@@ -45,7 +45,7 @@ Ce helper accepte quatre paramètres, dans l'ordre suivant :
     *  Seul l'opérateur `regex` est concerné par ce paramètre optionnel, pour l'instant. Il s'agit d'une chaîne regroupant l'ensemble des [flags de regex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2) à appliquer lors de son évaluation.
 
 !!! note
-    Disponible depuis Canopsis 3.40.0.
+    Disponible depuis Canopsis 3.41.0.
 
 Les opérateurs de comparaison `==` et `===` supportent le flag `i` dans leur évaluation.  
 
@@ -72,7 +72,7 @@ Afficher `Test` uniquement si une chaîne se *termine* par « motif », en ign
 Afficher `Test` uniquement si le contenu de `variable` est égal à `Cette phrase insensible à la CASSE` sans tenir compte de la casse :
 
 !!! note
-    Disponible depuis Canopsis 3.40.0.
+    Disponible depuis Canopsis 3.41.0.
 
 ```handlebars
 {{#compare variable '==' 'Cette phrase insensible à la CASSE'  flags='i'}}Test{{/compare}}
