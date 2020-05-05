@@ -31,17 +31,16 @@ Au clic sur une entité (en dehors du texte des colonnes), des détails supplém
 
 ### Recherche
 
+
 Le champ de recherche permet d'effectuer une recherche parmi les entités.
 
-![Champ de recherche](img/champ-recherche.png "Champ de recherche")
+![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche, il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icône ![Icône recherche](../../recherche/img/search-icon.png "Icône recherche").
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
 
-La recherche passe automatiquement par une expression régulière Mongo insensible à la casse qui est appliquée uniquement aux champs `name` et `type` des entités.
+Dans l'explorateur de contexte, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cette aspect [ici](../../recherche/index.md) !
 
-Il est impossible d'effectuer une recherche sur un autre champ des entités.
-
-Pour supprimer la recherche, cliquez sur l'icône ![Icône suppression recherche](../../recherche/img/delete-search-icon.png "Icône suppression recherche").
+Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche")
 
 ### Filtres
 
@@ -123,17 +122,17 @@ Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles
 - **Editer** : Au clic sur l'icône d'édition ![Icône Editer entité](./img/edit-entity-icon.png "Icône Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
 - **Dupliquer**: Au clic sur l'icône ![Icône Dupliquer entité](./img/duplicate-entity-icon.png "Icône Dupliquer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de l'observateur que vous souhaitez dupliquer (*Cf: [Création d'entités de d'observateur](#creation-dentites-et-dobservateurs)*). Après avoir entré les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe qu'une nouvelle entité a été créée avec succès !
 - **Supprimer** : Permet de supprimer une entité/un observateur. Au clic sur l'icône de suppression ![icône Supprimer entité](./img/delete-entity-icon.png "icône Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de l'observateur.
-- **Ajouter un comportement périodique** : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clic sur l'icône ![icône Ajouter un comportement périodique](./img/add-pbehavior-icon.png "icône Ajouter un comportement périodique"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques](../../pbehaviors/index.md).
+- **Ajouter un comportement périodique** : Permet d'ajouter un comportement périodique à l'entité/à l'observateur. Au clic sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
 ### Comportements périodiques
 
 Depuis l'explorateur de contexte, il est possible d'ajouter un comportement périodique directement sur une entité, ou sur un sélection d'entités.
 
-Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques](../../pbehaviors/index.md).
+Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
-Pour ajouter un comportement périodique sur un entité, cliquez sur l'icône ![icône Ajouter un comportement périodique](./img/add-pbehavior-icon.png "icône Ajouter un comportement périodique") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
+Pour ajouter un comportement périodique sur un entité, cliquez sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
 
-Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. La première icône permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![icône Ajouter un comportement périodique](./img/add-pbehavior-icon.png "icône Ajouter un comportement périodique"). Une fenêtre de création de comportement périodique apparaît alors.
+Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. La première icône permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"). Une fenêtre de création de comportement périodique apparaît alors.
 
 ## Guide exploitant
 
