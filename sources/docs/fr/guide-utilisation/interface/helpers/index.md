@@ -69,7 +69,7 @@ Afficher `Test` uniquement si une chaîne se *termine* par « motif », en ign
 {{#compare 'Cette phrase se termine par MOTIF' 'regex' 'motif$' flags='i'}}Test{{/compare}}
 ```
 
-Afficher `Test` uniquement si le contenu de `variable` est égale à `Cette phrase insensible à la CASSE` sans tenir compte de la casse :
+Afficher `Test` uniquement si le contenu de `variable` est égal à `Cette phrase insensible à la CASSE` sans tenir compte de la casse :
 
 !!! note
     Disponible depuis Canopsis 3.40.0.
