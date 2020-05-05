@@ -35,7 +35,7 @@ Le listing des moteurs peut être réalisé grâce à cette commande : `systemct
 | [engine-heartbeat](moteur-heartbeat.md)           | Surveille des entités, et lève des alarmes en cas d'absence d'information.                                                                          |       |
 | [engine-watcher](moteur-watcher.md)               | Calcule les états des observateurs.                                                                                                |       |
 | [engine-webhook](moteur-webhook.md) | Gère le système de webhooks vers des services externes.                                                                                             |  ✅   |
-| [engine-correlation](moteur-correlation.md) | Applique et gère les règles de corréaltion.                                                                                    |  ✅   |
+| [engine-correlation](moteur-correlation.md) | Applique et gère les règles de corrélation.                                                                                    |  ✅   |
                                                                                               |       |
 
 ### Moteurs Python
