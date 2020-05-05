@@ -22,10 +22,10 @@ Il existe plusieurs types de groupements pour corréler vos alarmes.
 
 ### Groupement par relation parent-enfant
 
-Il permet de regrouper les alarmes qui ont un lien de parenté. Par exemple si un composant a provoqué une alarme, toutes les alarmes des ressources ayant le même composant seront regroupées dans une même méta-alarme.
+Il permet de regrouper les alarmes qui ont un lien de parenté. Par exemple, si un composant a provoqué une alarme, toutes les alarmes des ressources ayant le même composant seront regroupées dans une même méta-alarme.
 
 Exemple :
-```
+```json
 {
   "name": "Règle de groupement par relation",
   "type": "relation"
@@ -38,7 +38,7 @@ Cette règle s'applique à toutes les entités.
 Ce type de méta-alarme regroupe toutes les alarmes survenues dans un intervalle de temps donné. Par exemple toutes les alarmes apparues au cours de la même minute (à partir de la création de la première alarme) seront regroupées sous une même méta-alarme.
 
 Exemple :
-```
+```json
 {
   "name": "Règle de groupement par intervalle de temps",
   "type": "timebased",
@@ -54,7 +54,7 @@ Cette règle s'applique à toutes les alarmes créées dans un intervalle de tem
 Ce type de groupement utilise les mêmes patterns que les autres moteurs pour identifier un attribut dans l'évènement, dans l'entité ou dans l'alarme. Par exemple si on utilise un `event_pattern` qui vaut `component = srv001`, toutes les alarmes créées à partir d'un évènement dont le composant est égal à srv001 seront regroupées dans une méta-alarme.
 
 Exemple :
-```
+```json
 {
   "name": "Règle de groupement par attribut",
   "type": "attribute",
@@ -76,7 +76,7 @@ Cette règle reprend les éléments cités ci-dessus.
 C'est une combinaison de groupement par attribut et de groupement par intervalle de temps, il possède aussi une notion de seuil de déclenchement. Par exemple on pourra l'utiliser pour regrouper toutes les alarmes créées pour une même entité durant un intervalle de temps donné, seulement si le nombre d'alarmes créées dépasse un certain seuil.
 
 Exemple :
-```
+```json
 {
   "name": "Règle de groupement complexe",
   "type": "complex",
@@ -95,14 +95,14 @@ Exemple :
 ```
 Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, ont été créées durant un intervalle de temps de 60 secondes.
 
-## Création d'une méta-alarme
+## Processus de création d'une méta-alarme
 
 En reprenant l'exemple d'un groupement par relation parent-enfant la création d'une méta-alarme se déroule de la façon suivante.
 
 Une erreur se produit sur un composant `component_meta` ce qui envoie un évènement à Canopsis.
 
-```sh
-curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+```json
+{
   "event_type": "check",
   "connector": "connector_meta",
   "connector_name": "test_meta",
@@ -112,17 +112,17 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
   "state": 3,
   "debug": true,
   "output": "Exemple de création meta alarmes - component"
-}' 'http://localhost:8082/api/v2/event'
+}
 ```
 
-Ce qui créé une alarme sur le composant visible dans le bac à alarmes.
+Une alarme sur le composant est créée et visible dans le bac à alarmes.
 
 ![Alarme en cours sur le composant](img/correlation_alarme_isolee.png)
 
 Comme le composant est en erreur ses ressources envoient elles aussi des évènements qui vont conduire à la création d'alarmes.
 
-```sh
-curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+```json
+{
   "event_type": "check",
   "connector": "connector_meta",
   "connector_name": "test_meta",
@@ -133,12 +133,12 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
   "state": 3,
   "debug": true,
   "output": "Exemple de création meta alarmes - ressource X"
-}' 'http://localhost:8082/api/v2/event'
+}
 ```
 
 Le moteur corrélation détecte la relation et l'alarme sur le composant devient alors une méta-alarme. Les alarmes sur les ressources sont vues comme des conséquences du dysfonctionnement du composant et sont regroupées dans la méta-alarme.
 
-Dans le bac à alarme cela se traduit de la façon suivante :
+Dans l'interface cela se traduit de la façon suivante :
 
 ![Meta-alarme relation parent-enfant](img/correlation_alarmes_groupees.png)
 
@@ -156,7 +156,7 @@ La méta-alarme a été enrichie avec de nouvelles variables.
 
 - `rule` : contient l'`id` et le `name` de la règle qui a déclenché la création de cette méta-alarme.
 
-![Variables de a méta-alarme](img/correlation_variables_meta_alarme_01.png)
+![Variables de a méta-alarme](img/correlation_variables_meta_alarme_02.png)
 
 - `v.children` : embarque les `id` des entités liées.
 
