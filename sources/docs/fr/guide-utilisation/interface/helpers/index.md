@@ -44,6 +44,11 @@ Ce helper accepte quatre paramètres, dans l'ordre suivant :
 *  `options` (optionnel). Permet de définir des options propres à un opérateur de comparaison.
     *  Seul l'opérateur `regex` est concerné par ce paramètre optionnel, pour l'instant. Il s'agit d'une chaîne regroupant l'ensemble des [flags de regex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2) à appliquer lors de son évaluation.
 
+!!! note
+    Disponible depuis Canopsis 3.40.0.
+
+Les opérateurs de comparaison `==` et `===` supportent le flag `i` dans leur évaluation.  
+
 #### Exemples d'utilisation du helper `compare`
 
 Afficher `Test` uniquement si le nombre d'`essais` est supérieur à 10 :
@@ -63,6 +68,16 @@ Afficher `Test` uniquement si une chaîne se *termine* par « motif », en ign
 ```handlebars
 {{#compare 'Cette phrase se termine par MOTIF' 'regex' 'motif$' flags='i'}}Test{{/compare}}
 ```
+
+Afficher `Test` uniquement si le contenu de `variable` est égale à `Cette phrase insensible à la CASSE` sans tenir compte de la casse :
+
+!!! note
+    Disponible depuis Canopsis 3.40.0.
+
+```handlebars
+{{#compare variable '==' 'Cette phrase insensible à la CASSE'  flags='i'}}Test{{/compare}}
+```
+
 
 ### Helper `duration`
 
