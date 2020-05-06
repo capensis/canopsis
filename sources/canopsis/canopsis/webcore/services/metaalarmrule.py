@@ -9,7 +9,7 @@ import os.path
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
 from canopsis.metaalarmrule.manager import MetaAlarmRuleManager
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, HTTP_NOT_FOUND
 
 VALID_PARAMS = [
     '_id', 'name', 'type', 'patterns', 'config',
@@ -168,7 +168,13 @@ def exports(ws):
 
     @ws.application.get('/api/v2/metaalarmrule/<rule_id>')
     def read(rule_id=None):
-        return gen_json(rh_ma_rule.read(rule_id))
+        result = rh_ma_rule.read(rule_id)
+        if result is None:
+            return gen_json_error(
+                {'name': rule_id, 'description': 'rule not found'},
+                HTTP_NOT_FOUND
+            )
+        return gen_json(result)
 
     @ws.application.get('/api/v2/metaalarmrule')
     def read_all():
