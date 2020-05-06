@@ -6,6 +6,8 @@
     @change="changeTabsOrdering"
   )
     tab-panel-content(v-for="tab in tabs", hideActions, :key="tab._id", :tab="tab")
+      template(slot="title")
+        slot(name="title")
 </template>
 
 <script>
