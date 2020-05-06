@@ -47,6 +47,10 @@ export default {
       type: String,
       required: true,
     },
+    autoplay: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -79,6 +83,10 @@ export default {
     this.initTime();
 
     this.pending = false;
+
+    if (this.autoplay) {
+      this.play(true);
+    }
   },
   beforeDestroy() {
     this.stopTimer();
@@ -94,10 +102,10 @@ export default {
       this.time = getSecondsByUnit(interval, unit);
     },
 
-    play() {
+    play(ignoreFullscreen) {
       this.playing = true;
 
-      if (this.playlist.fullscreen) {
+      if (this.playlist.fullscreen && !ignoreFullscreen) {
         this.toggleFullScreenMode();
       }
 
