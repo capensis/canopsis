@@ -41,9 +41,9 @@ Cette fonctionnalité sera aussi disponible en installation par paquets lors d'u
 
 Tous les événements qui circulent dans Canopsis sont transmis à la file `Engine_correlation` et seront donc lus par le moteur `engine-correlation`.
 
-Le moteur va alors vérifier si une règle de corrélation doit s'appliquer et si c'est le cas, il générera ou modifiera une meta alarme.
+Le moteur va alors vérifier si une règle de corrélation doit s'appliquer et si c'est le cas, il générera ou modifiera une méta alarme.
 
-Le moteur [engine-correlation](../../guide-administration/moteurs/moteur-correlation.md) de Canopsis permet de grouper dynamiquement des alarmes selon des critères définis dans une règle.
+Une méta alarme permet de grouper dynamiquement des alarmes selon des critères définis dans une règle.
 
 Ces groupements d'alarmes permettent de visualiser rapidement les corrélations entre les différentes alarmes présentes dans le [bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
@@ -150,7 +150,7 @@ Une erreur se produit sur un composant `component_meta` ce qui envoie un évène
   "author": "Canopsis",
   "state": 3,
   "debug": true,
-  "output": "Exemple de création meta alarmes - component"
+  "output": "Exemple de création méta alarmes - component"
 }
 ```
 
@@ -171,7 +171,7 @@ Comme le composant est en erreur ses ressources envoient elles aussi des évène
   "author": "Canopsis",
   "state": 3,
   "debug": true,
-  "output": "Exemple de création meta alarmes - ressource X"
+  "output": "Exemple de création méta alarmes - ressource X"
 }
 ```
 
@@ -232,7 +232,6 @@ La règle à utiliser dans ce cas sera la suivante :
 ## Collection MongoDB associée
 
 Les entités sont stockées dans la collection MongoDB `meta_alarm_rules`.
-
 
 ```json
 {
