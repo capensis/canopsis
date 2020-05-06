@@ -138,7 +138,7 @@ Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, on
 
 En reprenant l'exemple d'un groupement par relation parent-enfant la création d'une méta alarme se déroule de la façon suivante.
 
-Une erreur se produit sur un composant `component_meta` ce qui envoie un évènement à Canopsis.
+Une erreur se produit sur un composant `component_meta` qui envoie un évènement à Canopsis.
 
 ```json
 {
