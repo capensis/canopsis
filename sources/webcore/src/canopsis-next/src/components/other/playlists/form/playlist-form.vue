@@ -105,7 +105,9 @@ export default {
       });
     },
     getViewByTab(tab) {
-      const { parents: [parent] } = tab[SCHEMA_EMBEDDED_KEY];
+      const tabWithEmbedded = this.getEntityItem(ENTITIES_TYPES.viewTab, tab._id, true);
+
+      const { parents: [parent] } = tabWithEmbedded[SCHEMA_EMBEDDED_KEY];
 
       return this.getEntityItem(parent.type, parent.id);
     },
