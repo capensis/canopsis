@@ -8,7 +8,7 @@
       :is-resizable="resizable",
       :vertical-compact="true",
       :use-css-transforms="true",
-      :responsive="false"
+      :responsive="true"
     )
       grid-item(
         v-for="item in layout",
