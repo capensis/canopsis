@@ -7,7 +7,6 @@
       :is-draggable="draggable",
       :is-resizable="resizable",
       :vertical-compact="true",
-      :use-css-transforms="true",
       :responsive="true"
     )
       grid-item(
@@ -18,10 +17,14 @@
         :w="item.w",
         :h="item.h",
         :i="item.i",
-        dragAllowFrom=".drag-handler"
+        dragAllowFrom=".drag-handler",
+        @resized="resized"
       )
-        div.wrapper
+        div.wrapper(:class="{ 'fixed-height': item.i.fixedHeight }")
           div.drag-handler
+          v-btn-toggle.lock-icon(v-model="item.i.fixedHeight", @change="change($event, item.i.index)")
+            v-btn(small, :value="true")
+              v-icon lock
           widget-wrapper(
             :widget="item.i.widget",
             :tab="{ _id: '123' }",
@@ -33,13 +36,15 @@
 </template>
 
 <script>
-import { GridLayout, GridItem } from 'vue-grid-layout';
+import { GridLayout } from 'vue-grid-layout';
 
 import { WIDGET_TYPES } from '@/constants';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
+
+import GridItem from './grid-item.vue';
 
 export default {
   components: {
@@ -64,13 +69,26 @@ export default {
         y: index * defaultHeight,
         w: defaultWidth,
         h: defaultHeight,
-        i: { index, widget },
+        i: { index, widget, fixedHeight: true },
       })),
       draggable: true,
       resizable: true,
       index: 0,
       widgets,
     };
+  },
+  methods: {
+    resized(i, h, previousW, height, width, autoSize) {
+      if (!autoSize && !i.fixedHeight) {
+        this.$nextTick(() => this.$refs.widgets[i.index].$parent.autoSizeHeight());
+      }
+    },
+
+    change(value, index) {
+      if (!value) {
+        this.$nextTick(() => this.$refs.widgets[index].$parent.autoSizeHeight());
+      }
+    },
   },
 };
 </script>
@@ -100,8 +118,18 @@ export default {
 
   .wrapper {
     position: relative;
-    height: 100%;
     overflow-y: auto;
+
+    .lock-icon {
+      position: absolute;
+      right: 3px;
+      top: 3px;
+      z-index: 2;
+    }
+
+    &.fixed-height {
+      height: 100%;
+    }
 
     .drag-handler {
       content: '';
