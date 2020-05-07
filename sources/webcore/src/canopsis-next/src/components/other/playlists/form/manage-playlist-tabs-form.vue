@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-4(row)
-    v-flex.export-views-block.mr-2(xs12)
+    v-flex.manage-playlist-tabs.mr-2(xs12)
       v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.groups') }}
       v-expansion-panel(readonly, hide-actions, expand, dark, focusable, :value="openedPanels")
         group-panel(
@@ -148,8 +148,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .manage-playlist-tabs {
+    & /deep/ .panel-header {
+      display: flex;
+      flex: inherit;
+      align-items: center;
+    }
+    & /deep/ .v-expansion-panel__body {
+      transition: none !important;
+    }
+  }
   .tabs-panel {
-    /deep/ .v-expansion-panel__header {
+    & /deep/ .v-expansion-panel__header {
       padding: 0;
       margin: 0;
     }
