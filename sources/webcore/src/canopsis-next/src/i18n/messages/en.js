@@ -1104,6 +1104,7 @@ export default {
       },
       groups: 'Groups',
       result: 'Result',
+      manageTabs: 'Manage tabs',
     },
   },
   tables: {

@@ -40,13 +40,14 @@
                     span.ml-1(v-show="view.description") ({{ view.description }})
               tab-panel-content(v-for="tab in view.tabs", :key="tab._id", :tab="tab", hideActions)
                 template(slot="title")
-                  v-checkbox.group-checkbox(
-                    :input-value="selectedTabsIds",
-                    :value="tab._id",
-                    @change="selectTabHandler(tab, $event)",
-                    primary
-                  )
-                  span {{ tab.title }}
+                  v-layout.ml-5
+                    v-checkbox.tab-checkbox(
+                      :input-value="selectedTabsIds",
+                      :value="tab._id",
+                      @change="selectTabHandler(tab, $event)",
+                      primary
+                    )
+                    span {{ tab.title }}
 </template>
 
 <script>
@@ -151,6 +152,12 @@ export default {
     /deep/ .v-expansion-panel__header {
       padding: 0;
       margin: 0;
+    }
+    .tab-checkbox {
+      flex: none;
+      height: 24px;
+      margin: 0;
+      padding: 0;
     }
   }
 </style>
