@@ -23,6 +23,7 @@ import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
+import GridDemo from '@/views/grid-demo.vue';
 
 Vue.use(Router);
 
@@ -199,6 +200,15 @@ const routes = [
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
       },
+    },
+  },
+
+  {
+    path: '/grid-demo',
+    name: 'grid-demo',
+    component: GridDemo,
+    meta: {
+      requiresLogin: true,
     },
   },
 ];
