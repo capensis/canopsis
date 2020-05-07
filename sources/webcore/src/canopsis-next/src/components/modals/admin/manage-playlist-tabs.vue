@@ -31,10 +31,6 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.managePlaylistTabs,
 
-  $_veeValidate: {
-    validator: 'new',
-  },
-
   components: {
     ManagePlaylistTabsForm,
     ModalWrapper,
