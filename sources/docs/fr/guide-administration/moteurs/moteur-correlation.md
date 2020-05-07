@@ -3,7 +3,7 @@
 !!! note
     Ce moteur est disponible à partir de Canopsis 3.40.0.
 
-Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`. Ces règles peuvent être ajoutées via l'[API méta alarmes](guide-developpement/api/api-v2-meta-alarm-rule.md).
+Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`. Ces règles peuvent être ajoutées via l'[API méta alarmes](../../guide-developpement/api/api-v2-meta-alarm-rule.md).
 
 Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la partie [Exemples](#exemples).
 
@@ -45,9 +45,9 @@ Le moteur va alors vérifier si une règle de corrélation doit s'appliquer et s
 
 Une méta alarme permet de grouper dynamiquement des alarmes selon des critères définis dans une règle.
 
-Ces groupements d'alarmes permettent de visualiser rapidement les corrélations entre les différentes alarmes présentes dans le [bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
+Ces groupements d'alarmes permettent de visualiser rapidement les corrélations entre les différentes alarmes présentes dans le [bac à alarmes](../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md).
 
-## Activation de la corrélation
+### Activation de la corrélation
 
 Passez votre bac à alarmes en mode édition (`CTRL + E`) pour accéder aux paramètres avancés et activez la corrélation.
 
@@ -55,11 +55,11 @@ Passez votre bac à alarmes en mode édition (`CTRL + E`) pour accéder aux para
 
 Sauvegardez les changements et désactivez le mode édition.
 
-## Types de groupements
+### Types de groupements
 
 Il existe plusieurs types de groupements pour corréler vos alarmes.
 
-### Groupement par relation parent-enfant
+#### Groupement par relation parent-enfant
 
 Il permet de regrouper les alarmes qui ont un lien de parenté. Par exemple, si un composant a provoqué une alarme, toutes les alarmes des ressources ayant le même composant seront regroupées dans une même méta alarme.
 
@@ -72,7 +72,7 @@ Exemple :
 ```
 Cette règle s'applique à toutes les entités.
 
-### Groupement par intervalle de temps
+#### Groupement par intervalle de temps
 
 Ce type de méta alarme regroupe toutes les alarmes survenues dans un intervalle de temps donné. Par exemple toutes les alarmes apparues au cours de la même minute (à partir de la création de la première alarme) seront regroupées sous une même méta alarme.
 
@@ -82,15 +82,14 @@ Exemple :
   "name": "Règle de groupement par intervalle de temps",
   "type": "timebased",
   "config": {
-    "time_interval": 30
+    "time_interval": 60
   }
 }
 ```
-Cette règle s'applique à toutes les alarmes créées dans un intervalle de temps de 30 secondes.
 
-### Groupement par attribut
+#### Groupement par attribut
 
-Ce type de groupement utilise les mêmes patterns que les autres moteurs pour identifier un attribut dans l'évènement, dans l'entité ou dans l'alarme. Par exemple si on utilise un `event_pattern` qui vaut `component = srv001`, toutes les alarmes créées à partir d'un évènement dont le composant est égal à srv001 seront regroupées dans une méta alarme.
+Ce type de groupement utilise les mêmes [patterns](backlink) que les autres moteurs pour identifier un attribut dans l'évènement, dans l'entité ou dans l'alarme. Par exemple si on utilise un `event_pattern` qui vaut `component = srv001`, toutes les alarmes créées à partir d'un évènement dont le composant est égal à srv001 seront regroupées dans une méta alarme.
 
 Exemple :
 ```json
@@ -98,7 +97,7 @@ Exemple :
   "name": "Règle de groupement par attribut",
   "type": "attribute",
   "config": {
-    "event_patterns": [
+    "alarm_patterns": [
       {
         "v": {
           "component": "srv001"
@@ -108,9 +107,8 @@ Exemple :
   }
 }
 ```
-Cette règle reprend les éléments cités ci-dessus.
 
-### Groupement complexe
+#### Groupement complexe
 
 C'est une combinaison de groupement par attribut et de groupement par intervalle de temps, il possède aussi une notion de seuil de déclenchement. Par exemple on pourra l'utiliser pour regrouper toutes les alarmes créées pour une même entité durant un intervalle de temps donné, seulement si le nombre d'alarmes créées dépasse un certain seuil.
 
@@ -134,7 +132,7 @@ Exemple :
 ```
 Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, ont été créées durant un intervalle de temps de 60 secondes.
 
-## Processus de création d'une méta alarme
+### Processus de création d'une méta alarme
 
 En reprenant l'exemple d'un groupement par relation parent-enfant la création d'une méta alarme se déroule de la façon suivante.
 
@@ -158,7 +156,7 @@ Une alarme sur le composant est créée et visible dans le bac à alarmes.
 
 ![Alarme en cours sur le composant](img/correlation_alarme_isolee.png)
 
-Comme le composant est en erreur ses ressources envoient elles aussi des évènements qui vont conduire à la création d'alarmes.
+Comme le composant est en erreur, ses ressources envoient probablement elles aussi des évènements qui vont conduire à la création d'alarmes.
 
 ```json
 {
@@ -181,17 +179,17 @@ Dans l'interface cela se traduit de la façon suivante :
 
 ![Meta-alarme relation parent-enfant](img/correlation_alarmes_groupees.png)
 
-Au passage de la souris sur l'icône de la colonne `Extra Details` une info-bulle apparaît et indique le nom de la règle qui a créé la méta alarme et le nombre l'alarmes liées.
+Au passage de la souris sur l'icône de la colonne `Extra Details` une info-bulle apparaît et indique le nom de la règle qui a créé la méta alarme et le nombre d'alarmes liées.
 
-Le détails des alarmes liées peut-être consulté en déroulant le détail de la méta alarme et en affichant l'onglet `Alarmes Liées`.
+Le détail des alarmes liées peut-être consulté en déroulant le détail de la méta alarme et en affichant l'onglet `Alarmes Liées`.
 
 La méta alarme a été enrichie avec de nouvelles variables.
 
-![Variables de a méta alarme](img/correlation_variables_meta_alarme_01.png)
+![Variables de la méta alarme](img/correlation_variables_meta_alarme_01.png)
 
 - `consequences` : contient le nombre d'alarmes liées ainsi que les données de ces alarmes dans un tableau `data`.
 
-- `metaalarme` : la valeur 1 indique qu'il s'agit d'une méta alarme.
+- `metaalarm` : la valeur 1 indique qu'il s'agit d'une méta alarme.
 
 - `rule` : contient l'`id` et le `name` de la règle qui a déclenché la création de cette méta alarme.
 
@@ -201,9 +199,9 @@ La méta alarme a été enrichie avec de nouvelles variables.
 
 - `v.parents` : est présent dans les variables mais ne sera renseigné que pour les alarmes liées à la méta alarme.
 
-## Exemples
+### Exemples
 
-Vous avez 5 composants sur le site de Wasquehal et vous souhaitez que les alarmes soient groupées si au moins 80% du site présente un dysfonctionnement. C'est à dire si au moins 4 composants de ce site ont remonté une alarme sur une période de 10 minutes.
+Vous avez 5 composants sur le site de Wasquehal et vous souhaitez que les alarmes soient groupées si au moins 4 d'entre eux présentent un dysfonctionnement sur une période de 10 minutes.
 
 Au préalable vous aurez pris soin de renseigner le site dans les `infos` des composants concernés.
 
@@ -228,6 +226,10 @@ La règle à utiliser dans ce cas sera la suivante :
   }
 }
 ```
+
+### Cas d'usage
+
+Pour d'autres exemples d'utilisation de la corrélation vous pouvez consulter la [cette page](../../guide-utilisation/cas-d-usage/groupement-alarmes.md).
 
 ## Collection MongoDB associée
 
