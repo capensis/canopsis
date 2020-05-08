@@ -5,9 +5,8 @@
     :options="draggableOptions",
     @change="changeTabsOrdering"
   )
-    tab-panel-content(v-for="tab in tabs", hideActions, :key="tab._id", :tab="tab")
-      template(slot="title")
-        slot(name="title", :tab="tab")
+    tab-panel-content(v-for="tab in tabs", :tab="tab", hideActions, :key="tab._id")
+      playlist-tab-item(slot="title", :tab="tab")
 </template>
 
 <script>
@@ -16,10 +15,11 @@ import Draggable from 'vuedraggable';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import TabPanelContent from '@/components/other/playlists/form/partials/tab-panel-content.vue';
+import PlaylistTabItem from '@/components/other/playlists/form/partials/playlist-tab-item.vue';
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 export default {
-  components: { TabPanelContent, Draggable },
+  components: { PlaylistTabItem, TabPanelContent, Draggable },
   model: {
     prop: 'tabs',
     event: 'change',

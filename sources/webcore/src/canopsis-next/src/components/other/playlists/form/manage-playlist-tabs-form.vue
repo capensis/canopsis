@@ -13,8 +13,8 @@
             v-checkbox.group-checkbox(
               :input-value="selectedGroupsIds",
               :value="group._id",
-              @change="selectGroupHandler(group, $event)",
-              primary
+              primary,
+              @change="selectGroupHandler(group, $event)"
             )
             span.group-title {{ group.name }}
           v-expansion-panel.tabs-panel(
@@ -44,8 +44,8 @@
                     v-checkbox.tab-checkbox(
                       :input-value="selectedTabsIds",
                       :value="tab._id",
-                      @change="selectTabHandler(tab, $event)",
-                      primary
+                      primary,
+                      @change="selectTabHandler(tab, $event)"
                     )
                     span {{ tab.title }}
 </template>
@@ -117,13 +117,13 @@ export default {
     selectTabHandler(tab, checkedTabs) {
       const checked = checkedTabs.includes(tab._id);
 
-      this.$emit('input', this.getSelectedTabs([tab], checked));
+      this.updateSelectedTabs([tab], checked);
     },
 
     selectViewHandler(view, checkedViewsIds) {
       const checked = checkedViewsIds.includes(view._id);
 
-      this.$emit('input', this.getSelectedTabs(view.tabs, checked));
+      this.updateSelectedTabs(view.tabs, checked);
     },
 
     selectGroupHandler(group, selectedGroups) {
@@ -133,15 +133,14 @@ export default {
         return acc;
       }, []);
 
-      this.$emit('input', this.getSelectedTabs(groupTabs, checked));
+      this.updateSelectedTabs(groupTabs, checked);
     },
 
-    getSelectedTabs(tabs, checked) {
-      const tabsWithoutSelected = this.selectedTabs.filter(({ _id: tabId }) => !tabs.some(({ _id }) => _id === tabId));
+    updateSelectedTabs(tabs, checked) {
+      const tabIds = tabs.map(({ _id }) => _id);
+      const tabsWithoutSelected = this.selectedTabs.filter(({ _id: tabId }) => !tabIds.includes(tabId));
 
-      return !checked
-        ? tabsWithoutSelected
-        : [...tabsWithoutSelected, ...tabs];
+      this.$emit('input', !checked ? tabsWithoutSelected : [...tabsWithoutSelected, ...tabs]);
     },
   },
 };
