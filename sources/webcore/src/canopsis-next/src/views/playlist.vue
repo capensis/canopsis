@@ -10,7 +10,7 @@
               span.playlist-timer.white--text.mr-2 {{ time | duration }}
               v-btn(:disabled="!activeTab", dark, icon, @click="prevTab")
                 v-icon skip_previous
-              v-btn(v-if="pausing", :disabled="!activeTab", dark, icon, @click="play")
+              v-btn(v-if="pausing || !played", :disabled="!activeTab", dark, icon, @click="play")
                 v-icon play_arrow
               v-btn(v-else, :disabled="!activeTab", dark, icon, @click="pause")
                 v-icon pause
