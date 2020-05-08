@@ -24,7 +24,7 @@
     v-layout.py-4(row)
       v-flex(xs12)
         v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.result') }}
-        draggable-playlist-tabs(v-field="form.tabs_list", put, pull, @change="validateTabs")
+        draggable-playlist-tabs(v-field="form.tabs_list", put, pull)
     v-layout
       v-alert(:value="errors.has('tabs')", type="error") {{ $t('modals.createPlaylist.errors.emptyTabs') }}
 </template>
@@ -87,7 +87,10 @@ export default {
         config: {
           groups: this.groups,
           selectedTabs: this.form.tabs_list,
-          action: tabs => this.updateField('tabs_list', tabs),
+          action: (tabs) => {
+            this.updateField('tabs_list', tabs);
+            this.validateTabs();
+          },
         },
       });
     },
