@@ -1024,6 +1024,7 @@ export default {
       },
       groups: 'Groupe',
       result: 'Résultat',
+      manageTabs: 'Gérer les onglet',
     },
   },
   tables: {

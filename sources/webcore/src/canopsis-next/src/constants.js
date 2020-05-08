@@ -89,6 +89,7 @@ export const MODALS = {
   dynamicInfoTemplatesList: 'dynamic-info-templates-list',
   createDynamicInfoTemplate: 'create-dynamic-info-template',
   createPlaylist: 'create-playlist',
+  managePlaylistTabs: 'manage-playlist-tabs',
 };
 
 export const EVENT_ENTITY_TYPES = {

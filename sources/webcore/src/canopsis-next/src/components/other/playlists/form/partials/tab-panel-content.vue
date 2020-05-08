@@ -1,7 +1,7 @@
 <template lang="pug" functional>
   v-layout(column)
-    v-layout.pl-5.secondary.lighten-2.tab-panel-item(align-center)
-      v-flex
+    v-layout.secondary.lighten-2.tab-panel-item(align-center)
+      slot(name="title")
         span.white--text {{ props.tab.title }}
     v-divider(dark)
 </template>
