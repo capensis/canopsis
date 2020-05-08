@@ -24,7 +24,7 @@
     v-layout.py-4(row)
       v-flex(xs12)
         v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.result') }}
-        draggable-playlist-tabs(v-field="form.tabs_list", put, pull)
+        draggable-playlist-tabs(v-field="form.tabs_list")
     v-layout
       v-alert(:value="errors.has('tabs')", type="error") {{ $t('modals.createPlaylist.errors.emptyTabs') }}
 </template>

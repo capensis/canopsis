@@ -7,10 +7,11 @@
         :items="playlists",
         :loading="pending",
         :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-        item-key="_id"
+        item-key="_id",
+        expand
       )
         template(slot="items", slot-scope="props")
-          tr
+          tr(@click="props.expanded = !props.expanded")
             td {{ props.item.name }}
             td
               enabled-column(:value="props.item.fullscreen")
@@ -30,12 +31,16 @@
                 @click="$emit('delete', props.item._id)"
               )
                 v-icon(color="error") delete
+        template(slot="expand", slot-scope="{ item }")
+          playlist-list-expand-item(:playlist="item")
 </template>
 
 <script>
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+
+import PlaylistListExpandItem from './playlists-list-expand-item.vue';
 
 export default {
   filters: {
@@ -45,6 +50,7 @@ export default {
   },
   components: {
     EnabledColumn,
+    PlaylistListExpandItem,
   },
   mixins: [rightsTechnicalPlaylistMixin],
   props: {

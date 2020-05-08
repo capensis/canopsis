@@ -1,7 +1,7 @@
 <template lang="pug">
   draggable.tabs-draggable-panel.secondary.lighten-1(
     :value="tabs",
-    :class="{ empty: isTabsEmpty }",
+    :class="{ empty: isTabsEmpty, disabled: disabled }",
     :options="draggableOptions",
     @change="changeTabsOrdering"
   )
@@ -29,12 +29,8 @@ export default {
       type: Array,
       required: true,
     },
-    put: {
+    disabled: {
       type: Boolean,
-      default: false,
-    },
-    pull: {
-      type: [Boolean, String],
       default: false,
     },
   },
@@ -46,7 +42,7 @@ export default {
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
-        group: { name: 'tabs', put: this.put, pull: this.pull },
+        disabled: this.disabled,
       };
     },
   },
@@ -60,7 +56,7 @@ export default {
 
 <style lang="scss" scoped>
   .tabs-draggable-panel {
-    & /deep/ .tab-panel-item {
+    &:not(.disabled) /deep/ .tab-panel-item {
       cursor: move;
     }
 

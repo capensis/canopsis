@@ -10,16 +10,16 @@
               span.playlist-timer.white--text.mr-2 {{ time | duration }}
               v-btn(:disabled="!activeTab", dark, icon, @click="prevTab")
                 v-icon skip_previous
-              v-btn(v-if="playing", :disabled="!activeTab", dark, icon, @click="pause")
-                v-icon pause
-              v-btn(v-else, :disabled="!activeTab", dark, icon, @click="play")
+              v-btn(v-if="pausing", :disabled="!activeTab", dark, icon, @click="play")
                 v-icon play_arrow
+              v-btn(v-else, :disabled="!activeTab", dark, icon, @click="pause")
+                v-icon pause
               v-btn(:disabled="!activeTab", dark, icon, @click="nextTab")
                 v-icon skip_next
               v-btn(:disabled="!activeTab", dark, icon, @click="toggleFullScreenMode")
                 v-icon fullscreen
         div.position-relative.playlist-tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
-          div.play-button-wrapper(v-if="!playing")
+          div.play-button-wrapper(v-if="!played")
             v-btn.play-button(color="primary", large, @click="play")
               v-icon(large) play_arrow
           v-fade-transition(mode="out-in")
@@ -56,7 +56,8 @@ export default {
     return {
       time: 0,
       pending: false,
-      playing: false,
+      pausing: false,
+      played: false,
       playlist: null,
       activeTabIndex: 0,
     };
@@ -103,7 +104,8 @@ export default {
     },
 
     play(ignoreFullscreen) {
-      this.playing = true;
+      this.played = true;
+      this.pausing = false;
 
       if (this.playlist.fullscreen && !ignoreFullscreen) {
         this.toggleFullScreenMode();
@@ -113,7 +115,7 @@ export default {
     },
 
     pause() {
-      this.playing = false;
+      this.pausing = true;
       this.stopTimer();
     },
 
@@ -160,7 +162,7 @@ export default {
       this.stopTimer();
       this.initTime();
 
-      if (this.playing) {
+      if (this.played && !this.pausing) {
         this.startTimer();
       }
     },
