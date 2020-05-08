@@ -8,19 +8,19 @@
           v-fade-transition
             v-toolbar-items.mr-2(v-if="!pending")
               span.playlist-timer.white--text.mr-2 {{ time | duration }}
-              v-btn(:disabled="!activeTab", dark, icon, @click="prevTab")
+              v-btn(:disabled="!activeTab", dark, icon, @click="prevTab()")
                 v-icon skip_previous
-              v-btn(v-if="pausing || !played", :disabled="!activeTab", dark, icon, @click="play")
+              v-btn(v-if="pausing || !played", :disabled="!activeTab", dark, icon, @click="play()")
                 v-icon play_arrow
-              v-btn(v-else, :disabled="!activeTab", dark, icon, @click="pause")
+              v-btn(v-else, :disabled="!activeTab", dark, icon, @click="pause()")
                 v-icon pause
-              v-btn(:disabled="!activeTab", dark, icon, @click="nextTab")
+              v-btn(:disabled="!activeTab", dark, icon, @click="nextTab()")
                 v-icon skip_next
               v-btn(:disabled="!activeTab", dark, icon, @click="toggleFullScreenMode")
                 v-icon fullscreen
         div.position-relative.playlist-tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
           div.play-button-wrapper(v-if="!played")
-            v-btn.play-button(color="primary", large, @click="play")
+            v-btn.play-button(color="primary", large, @click="play()")
               v-icon(large) play_arrow
           v-fade-transition(mode="out-in")
             view-tab-rows(:tab="activeTab", :key="activeTab._id")
