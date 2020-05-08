@@ -225,7 +225,7 @@ const routes = [
         mask: USERS_RIGHTS_MASKS.default,
       },
     },
-    props: route => ({ id: route.params.id, autoplay: route.query.autoplay === 'true' }),
+    props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
 ];
 

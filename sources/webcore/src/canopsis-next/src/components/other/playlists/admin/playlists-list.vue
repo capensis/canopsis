@@ -20,15 +20,20 @@
             td {{ props.item.interval | interval }}
             td
               v-btn.ma-0(
+                :to="{ name: 'playlist', params: { id: props.item._id }, query: { autoplay: true } }",
+                icon
+              )
+                v-icon play_arrow
+              v-btn.ma-0(
                 v-if="hasUpdateAnyPlaylistAccess",
                 icon,
-                @click="$emit('edit', props.item)"
+                @click.stop="$emit('edit', props.item)"
               )
                 v-icon edit
               v-btn.ma-0(
                 v-if="hasDeleteAnyPlaylistAccess",
                 icon,
-                @click="$emit('delete', props.item._id)"
+                @click.stop="$emit('delete', props.item._id)"
               )
                 v-icon(color="error") delete
         template(slot="expand", slot-scope="{ item }")

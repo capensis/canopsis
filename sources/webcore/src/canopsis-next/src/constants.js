@@ -1217,3 +1217,7 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
+
+export const PORTALS_NAMES = {
+  additionalTopBarItems: 'additional-top-bar-items',
+};

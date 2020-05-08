@@ -4,7 +4,7 @@
       progress-overlay(v-if="pending", :pending="true")
       div(v-else-if="playlist")
         h2.text-xs-center.my-3.display-1.font-weight-medium {{ playlist.name }}
-        portal(to="additional-top-bar-items")
+        portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
           v-fade-transition
             v-toolbar-items.mr-2(v-if="!pending")
               span.playlist-timer.white--text.mr-2 {{ time | duration }}
