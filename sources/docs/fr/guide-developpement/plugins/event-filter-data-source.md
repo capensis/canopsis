@@ -1,6 +1,6 @@
 # Sources de données pour l'event-filter
 
-Les plugins de sources de données permettent d'utiliser des données externes à Canopsis dans les règles de l'[event-filter du moteur che](../../guide-administration/moteurs/moteur-che-event_filter.md).
+Les plugins de sources de données permettent d'utiliser des données externes à Canopsis dans les règles de l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md).
 
 Les plugins de sources de données suivantes sont disponibles dans Canopsis :
 

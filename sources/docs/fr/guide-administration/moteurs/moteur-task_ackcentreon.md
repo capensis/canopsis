@@ -3,20 +3,20 @@
 !!! attention
     Ce moteur n'est disponible que dans l'édition CAT de Canopsis.
 
-Le moteur `task_ackcentreon` permet de *descendre* les ACK positionnés depuis Canopsis vers l'outil Centreon. Ceci est valable aussi bien pour les poses d'ACK que pour les suppressions d'ACK.
+Le moteur `task_ackcentreon` permet de *descendre* les acquittements positionnés depuis Canopsis vers l'outil Centreon. Ceci est valable aussi bien pour les poses d'acquittement que pour les suppressions d'acquittement.
 
-Ainsi, lorsqu'un ACK est posé sur Canopsis, l'information est *répliquée* sur le Poller Centreon qui avait généré l'alarme. En utilisation conjointe du [connecteur Centreon](../../interconnexions/Supervision/Centreon.md), la communication est bi-directionnelle.
+Ainsi, lorsqu'un acquittement est posé sur Canopsis, l'information est *répliquée* sur le Poller Centreon qui avait généré l'alarme. En utilisation conjointe du [connecteur Centreon](../../interconnexions/Supervision/Centreon.md), la communication est bi-directionnelle.
 
 ## Fonctionnement
 
 Voici les différentes étapes permettant d'obtenir le résultat souhaité :
 
-*  Un ACK est posé ou retiré depuis Canopsis
+*  Un acquittement est posé ou retiré depuis Canopsis
 *  Le moteur [`event_filter`] (**Python**) est configuré pour exécuter un job
 *  Le job `ackcentreon` est exécuté et suit les étapes suivantes :
     *  Connexion SSH vers le serveur Centreon Central
     *  Demande d'informations via CLAPI (ID du poller qui a généré l'alarme à l'origine)
-    *  Génération d'une commande externe conforme à la pose ou la suppression de l'ACK
+    *  Génération d'une commande externe conforme à la pose ou la suppression de l'acquittement
     *  POST de la commande dans le fichier de commande externe
 
 ## Mise en place
@@ -66,7 +66,7 @@ Renseignez ensuite les informations demandées :
 
 ### Ajout d'une règle dans l'event\_filter Python
 
-Le moteur `event_filter` (Python) doit exécuter le job `ack_centreon` lorsqu'il reçoit un évènement de type `ack` ou `ackremove` (pause et suppression d'un ACK).
+Le moteur `event_filter` (Python) doit exécuter le job `ack_centreon` lorsqu'il reçoit un évènement de type `ack` ou `ackremove` (pause et suppression d'un acquittement).
 
 !!! note
     Le moteur `event_filter` Python est requis pour `task_ackcentreon`, même dans un environnement Go.
@@ -114,7 +114,7 @@ Après avoir configuré le filtre, créer l'action suivante :
 !!! attention
     Cette procédure est obligatoire dans le cas d'un environnement Go. Elle n'a pas besoin d'être exécutée dans un environnement pur Python.
 
-Lorsque vous utilisez un environnement Canopsis avec moteurs en Go, vous devez spécifier une règle d'enrichissement supplémentaire, pour le moteur `che`.
+Lorsque vous utilisez un environnement Canopsis avec moteurs en Go, vous devez spécifier une règle d'enrichissement supplémentaire, pour le moteur `engine-che`.
 
 Cette règle permet d'ajouter aux évènements qui circulent les informations de l'entité correspondante disponible dans Canopsis. Contrairement aux moteurs Python où cette information est ajoutée par défaut, les moteurs Go nécessitent une règle explicite. Sans cette règle, la tâche `ackcentreon` ne peut pas fonctionner en environnement Go.
 
@@ -150,4 +150,4 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d @enrichentity.j
 
 ## Procédure de test
 
-À ce stade, vous pouvez poser un ACK dans Canopsis et vérifier sur l'interface de Centreon qu'il a bien été transmis, et même chose pour la suppression d'un ACK.
+À ce stade, vous pouvez poser un acquittement dans Canopsis et vérifier sur l'interface de Centreon qu'il a bien été transmis, et même chose pour la suppression d'un acquittement.

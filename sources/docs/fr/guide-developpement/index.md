@@ -16,10 +16,11 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 * [Healthcheck](api/api-v2-healthcheck.md)
 * [Heartbeat](api/api-v2-heartbeat.md)
 * [Import](api/api-v2-import.md)
-* [PBehavior](api/api-v2-pbehavior.md)
-* [Watchers](api/api-v2-watcherng.md)
+* [Pbehavior](api/api-v2-pbehavior.md)
+* [Watcherng](api/api-v2-watcherng.md)
 * [Météo des services](api/api-v2-weather.md)
 * [Webhooks](api/api-v2-webhooks.md)
+* [Message d'information](api/api-v2-broadcast-message.md)
 
 # [Base de données](base-de-donnees/index.md)
 

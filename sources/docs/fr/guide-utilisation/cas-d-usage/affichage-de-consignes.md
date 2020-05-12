@@ -4,7 +4,7 @@
 
 !!! info "Disponible à partir de Canopsis 3.34.0"
 
-Le moteur [`dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) de Canopsis permet d'ajouter dynamiquement des informations aux alarmes.
+Le moteur [`engine-dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) de Canopsis permet d'ajouter dynamiquement des informations aux alarmes.
 
 Il est possible d'utiliser cette fonctionnalité pour ajouter des liens vers des consignes techniques aux alarmes, et pour afficher ces liens dans le Bac à alarmes et dans la Météo des services.
 
@@ -51,7 +51,7 @@ Lorsqu'une alarme majeure est créée sur une ressource du composant `server1`, 
 
 ![Info popup](img/dynamicinfos_simple_infopopup.png)
 
-Lorsque cette alarme passe en état mineur, cliquer sur l'icône ![info popup](img/dynamicinfos_infopopup_icon.png "info popup") de la colonne *Extra details* du Bac à alarmes. L'alarme ne correspond plus au pattern de la règle définie précédemment, l'*info popup* ne contient donc plus le lien "Consigne technique 1" :
+Lorsque cette alarme passe en criticité mineure, cliquer sur l'icône ![info popup](img/dynamicinfos_infopopup_icon.png "info popup") de la colonne *Extra details* du Bac à alarmes. L'alarme ne correspond plus au pattern de la règle définie précédemment, l'*info popup* ne contient donc plus le lien "Consigne technique 1" :
 
 ![Info popup](img/dynamicinfos_simple_infopopup_empty.png)
 
@@ -123,6 +123,6 @@ Lorsque l'alarme est acquittée, elle ne correspond plus à la deuxième règle.
 
 ![Info popup](img/dynamicinfos_complex_infopopup2.png)
 
-Si l'alarme passe en état mineur, et si son output ne contient plus "WARNING", elle ne correspond à aucune des règles, et ne contient donc aucun lien.
+Si l'alarme passe en criticité mineure, et si son output ne contient plus "WARNING", elle ne correspond à aucune des règles, et ne contient donc aucun lien.
 
 ![Info popup](img/dynamicinfos_complex_infopopup3.png)

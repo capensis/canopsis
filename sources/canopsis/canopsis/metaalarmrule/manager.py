@@ -106,7 +106,7 @@ class MetaAlarmRuleManager(object):
         :return: config, logger, storage
         :rtype: Union[dict, logging.Logger, canopsis.storage.core.Storage]
         """
-        logger = Logger.get(cls.LOG_NAME, cls.LOG_PATH)
+        logger = Logger.get('metaalarmrule', cls.LOG_PATH)
         mongo = MongoStore.get_default()
         collection = mongo.get_collection(cls.MA_RULE_COLLECTION)
         mongo_collection = MongoCollection(collection)
@@ -123,7 +123,7 @@ class MetaAlarmRuleManager(object):
         self.logger = logger
         self.collection = ma_rule_collection
 
-    def create(self, name, rule_type, patterns=None, config=None, ma_rule_id=None):
+    def _build_metaalarm(self, name, rule_type, patterns=None, config=None, ma_rule_id=None):
         if ma_rule_id is None:
             ma_rule_id = str(uuid4())
 
@@ -141,7 +141,10 @@ class MetaAlarmRuleManager(object):
 
         if not config_dict is None and not isinstance(config_dict, dict):
             raise ValueError("config_dict {} from {}".format(config_dict, config))
+        return data
 
+    def create(self, name, rule_type, patterns=None, config=None, ma_rule_id=None):
+        data = self._build_metaalarm(name, rule_type, patterns, config, ma_rule_id)
         try:
             result = self.collection.insert(data.to_dict())
         except CollectionError:
@@ -152,6 +155,17 @@ class MetaAlarmRuleManager(object):
 
     def read(self, id):
         return self.collection.find_one({"_id": id})
+
+    def read_all(self):
+        return list(self.collection.find({}))
+
+    def update(self, _id, name, rule_type, patterns=None, config=None):
+        data = self._build_metaalarm(name, rule_type, patterns, config, _id)
+        try:
+            resp = self.collection.update(query={'_id': _id}, document=data.to_dict())
+        except Exception as e:
+            raise e
+        return self.collection.is_successfull(resp)
 
     def delete(self, id):
         def _check_response(response):

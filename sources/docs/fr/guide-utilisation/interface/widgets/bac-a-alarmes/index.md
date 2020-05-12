@@ -29,11 +29,11 @@ En plus de détails de l'alarme, chaque ligne expose une liste d'actions opérab
 
 Il est possible d'attacher à chaque colonne une Info popup, qui s'ouvrira au clic sur le texte de la colonne, présentant dans une fenêtre un texte personnalisable (*Cf: [Guide exploitant](#guide-exploitant)*).
 
-Au clic sur une alarme (en dehors du texte des colonnes), l'historique de l'alarme s'affiche.
+Au clic sur une alarme (en dehors du texte des colonnes), la chronologie de l'alarme s'affiche.
 
-![Time line](./img/timeline.png "Time line")
+![Chronologie de l'alarme](./img/timeline.png "Chronologie de l'alarme")
 
-Cet historique reprend certains éléments du cycle de vie de l'alarme (notamment les actions effectuées sur celle-ci).
+Cette chronologie reprend certains éléments du cycle de vie de l'alarme (notamment les actions effectuées sur celle-ci).
 
 ### Recherche
 
@@ -131,7 +131,7 @@ Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: 
 
 Durant la configuration de votre widget Bac à alarmes, notamment paramètres "Info popup", et "Fenêtre Plus d'infos", il vous sera possible d'accéder à des variables concernant les alarmes et les entités.
 
-Exemple: Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", l'état de l'alarme.
+Exemple : Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", la criticité de l'alarme.
 
 Afin de connaitre les variables disponibles, une modale d'aide est disponible.
 
@@ -224,16 +224,16 @@ Nom du champ enrichi	| `infos.NOM_DU_CHAMP_ENRICHI`
 Label  | Valeur
 --|--
 Date de création | `alarm.v.creation_date`
-Date du dernier changement d'état | `alarm.v.state.t`
+Date du dernier changement de criticité | `alarm.v.state.t`
 Date de fin | `alarm.v.resolved`
 Durée de l'alarme | `alarm.v.duration`
 
-###### ACK
+###### Acquittement
 
 Label  | Valeur
 --|--
-Auteur de l'ACK | `alarm.v.ack.a`
-Message de l'ACK | `alarm.v.ack.m`
+Auteur de l'acquittement | `alarm.v.ack.a`
+Message de l'acquittement | `alarm.v.ack.m`
 
 ###### Ticket
 
@@ -244,11 +244,11 @@ Numéro du Ticket | `alarm.v.ticket.val`
 Message du Ticket | `alarm.v.ticket.m`
 Type du Ticket | `alarm.v.ticket._t`
 
-###### Snooze
+###### Mise en veille
 
 Label  | Valeur
 --|--
-Auteur du Snooze | `alarm.v.snooze.a`
+Auteur de la mise en veille | `alarm.v.snooze.a`
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
@@ -278,7 +278,7 @@ Les valeurs disponibles sont : 5, 10, 20, 50 et 100.
 
 ##### Filtre sur Open/Resolved
 
-Ce paramètre permet de filtrer les alarmes en fonction de leur état.
+Ce paramètre permet de filtrer les alarmes en fonction de leur état de résolution.
 
 *  Open : Alarmes "Ouvertes"
 *  Resolved : Alarmes "Résolues"
@@ -287,7 +287,7 @@ Pour modifier ce paramètre, sélectionnez les types d'alarmes que vous souhaite
 
 Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée), une des deux cases, ou les deux cases (les alarmes ouvertes ET résolues seront alors affichées).
 
-Lorsqu'une alarme est résolue, elle reste entre 1 et 2 minutes dans le bac à Alarmes "Ouvertes" avant de basculer dans le bac à Alarmes "Résolues". Pour plus d'informations sur le sujet, consulter la [documentation du moteur `axe`](../../../../guide-administration/moteurs/moteur-axe.md)).
+Lorsqu'une alarme est résolue, elle reste entre 1 et 2 minutes dans le bac à Alarmes "Ouvertes" avant de basculer dans le bac à Alarmes "Résolues". Pour plus d'informations sur le sujet, consulter la [documentation du moteur `engine-axe`](../../../../guide-administration/moteurs/moteur-axe.md)).
 
 Lorsqu'une alarme est annulée, elle reste pendant 1 heure dans le bac à Alarmes "Ouvertes" avant de passer dans le bac à Alarmes "Résolues".
 
@@ -335,17 +335,16 @@ Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
 Les alarmes qui contiennent une information dynamique de type `consignes`	| `v.infos.*.type` | equal | *consigne*
 
-
-###### ACK
+###### Acquittement
 
 Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
-Exclure les alarmes avec ACK  | `v.ack._t`  | `not equal` | `ack` (valeur string)
-Uniquement les alarmes avec ACK  | `v.ack._t`  | `equal` | `ack` (valeur string)
-Uniquement les alarmes avec ACK sans champ `Note` (fast-ack basique)  | `v.ack.m`  | `is empty` | *PAS_DE_VALEUR*
-Exclure les alarmes avec ACK avec un champ `Note`  | `v.ack.m`  | `is not empty` | *PAS_DE_VALEUR*
-Auteur de l'ACK  | `v.ack.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DE_L_ACK*
-Message de l'ACK | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_ACK*
+Exclure les alarmes avec acquittement  | `v.ack._t`  | `not equal` | `ack` (valeur string)
+Uniquement les alarmes avec acquittement  | `v.ack._t`  | `equal` | `ack` (valeur string)
+Uniquement les alarmes avec acquittement sans champ `Note` (fast-ack basique)  | `v.ack.m`  | `is empty` | *PAS_DE_VALEUR*
+Exclure les alarmes avec acquittement avec un champ `Note`  | `v.ack.m`  | `is not empty` | *PAS_DE_VALEUR*
+Auteur de l'acquittement  | `v.ack.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DE_L_ACQUITTEMENT*
+Message de l'acquittement | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_ACQUITTEMENT*
 
 ###### Ticket
 
@@ -357,23 +356,23 @@ Exclure les alarmes avec Ticket de type `declareticket`  | `v.ticket._t`  | `not
 Uniquement les alarmes avec Ticket  | `v.ticket._t`  | `is not null` | *PAS_DE_VALEUR*
 Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_TICKET*
 
-###### Snooze
+###### Mise en veille
 
 Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
-Exclure les alarmes avec Snooze  | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
-Uniquement les alarmes avec Snooze  | `v.snooze._t`  | `equal` | `snooze` (valeur string)
-Auteur du Snooze  | `v.snooze.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_SNOOZE*
+Exclure les alarmes mises en veille | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
+Uniquement les alarmes mises en veille | `v.snooze._t`  | `equal` | `snooze` (valeur string)
+Auteur de la mise en veille | `v.snooze.a`  |  `equal`  | *NOM_DE_L_AUTEUR_MISE_EN_VEILLE*
 
-###### PBehaviors
+###### Comportements périodiques
 
 Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
-Exclure les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
-Uniquement les alarmes avec un `PBehavior` actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
+Exclure les alarmes avec un comportement périodique actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
+Uniquement les alarmes avec un comportement périodique actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
 
 !!! attention
-    L'attribut fictif `has_active_pb` ne prend pas en compte les [rrule](../../../../guide-administration/moteurs/moteur-pbehavior.md#regles-de-recurrence-rrule) (règles de récurrence). Il ne prend en compte que la première occurrence du PBehavior.
+    L'attribut fictif `has_active_pb` ne prend pas en compte les [règles de récurrence](../../../../guide-administration/moteurs/moteur-pbehavior.md#regles-de-recurrence-rrule). Il ne prend en compte que la première occurrence du comportement périodique.
 
 ###### Changement de criticité
 
@@ -382,13 +381,12 @@ Description  | 1° colonne  | 2° colonne | 3° colonne
 Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
 Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
 
-###### Watchers
+###### Observateurs
 
 Description  | 1° colonne  | 2° colonne | 3° colonne
 --|---|--|--
-Exclure les alarmes liées à des watchers | `entity.type`  | `not equal` | `watcher` (valeur string)
-Uniquement les alarmes des watchers | `entity.type`  | `equal` | `watcher` (valeur string)
-
+Exclure les alarmes liées à des observateurs | `entity.type`  | `not equal` | `watcher` (valeur string)
+Uniquement les alarmes des observateurs | `entity.type`  | `equal` | `watcher` (valeur string)
 
 ##### Info popup
 
@@ -401,7 +399,7 @@ Cette case comporte deux champs :
 
 *  Colonne : Ce champ permet de définir sur quelle colonne l'info popup sera disponible. Il faut ici entrer la **valeur** de la colonne, et non son nom.
 Exemple : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "alarm.v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "alarm.v.connector" et non "Connecteur".
-*  Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template l'état de l'alarme, ajoutez au template `{{ alarm.v.state.val }}`.
+*  Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template la criticité de l'alarme, ajoutez au template `{{ alarm.v.state.val }}`.
 
 Vous pouvez ajouter autant d'info popup que vous le souhaitez.
 
@@ -417,4 +415,4 @@ Deux variables sont disponibles ici, 'alarm' et 'entity'.
 
 En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme ou de l'entité concernée par cette alarme.
 
-Exemple : Pour afficher l'état de l'alarme, ajoutez `{{ alarm.v.state.val }}`.
+Exemple : Pour afficher la criticité de l'alarme, ajoutez `{{ alarm.v.state.val }}`.

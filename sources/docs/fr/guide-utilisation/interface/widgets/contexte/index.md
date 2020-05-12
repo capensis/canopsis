@@ -31,17 +31,16 @@ Au clic sur une entité (en dehors du texte des colonnes), des détails supplém
 
 ### Recherche
 
+
 Le champ de recherche permet d'effectuer une recherche parmi les entités.
 
-![Champ de recherche](img/champ-recherche.png "Champ de recherche")
+![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
 
-Pour effectuer une recherche, il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icône ![Icône recherche](../../recherche/img/search-icon.png "Icône recherche").
+Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
 
-La recherche passe automatiquement par une expression régulière Mongo insensible à la casse qui est appliquée uniquement aux champs `name` et `type` des entités.
+Dans l'explorateur de contexte, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cet aspect [ici](../../recherche/index.md) !
 
-Il est impossible d'effectuer une recherche sur un autre champ des entités.
-
-Pour supprimer la recherche, cliquez sur l'icône ![Icône suppression recherche](../../recherche/img/delete-search-icon.png "Icône suppression recherche").
+Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche")
 
 ### Filtres
 

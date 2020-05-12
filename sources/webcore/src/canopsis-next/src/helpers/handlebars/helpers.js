@@ -159,48 +159,57 @@ export function compareHelper(a, operator, b, options = {}) {
     throw new Error('handlebars Helper {{compare}} expects 4 arguments');
   }
 
+  const flags = get(options, ['hash', 'flags']);
   let result;
 
-  switch (operator) {
-    case '==':
-      result = a == b; // eslint-disable-line eqeqeq
-      break;
-    case '===':
-      result = a === b;
-      break;
-    case '!=':
-      result = a != b; // eslint-disable-line eqeqeq
-      break;
-    case '!==':
-      result = a !== b;
-      break;
-    case '<':
-    case '&lt;':
-      result = a < b;
-      break;
-    case '>':
-    case '&gt;':
-      result = a > b;
-      break;
-    case '<=':
-    case '&lte;':
-    case '&lt;=':
-      result = a <= b;
-      break;
-    case '>=':
-    case '&gte;':
-    case '&gt;=':
-      result = a >= b;
-      break;
-    case 'typeof':
-      result = typeof a === b; // eslint-disable-line valid-typeof
-      break;
-    case 'regex':
-    case 'regexp':
-      result = new RegExp(b, get(options, ['hash', 'flags'])).test(a);
-      break;
-    default:
-      throw new Error(`helper {{compare}}: invalid operator: '${operator}'`);
+  if (['regex', 'regexp'].includes(operator)) {
+    result = new RegExp(b, flags).test(a);
+  } else {
+    let preparedA = a;
+    let preparedB = b;
+
+    if (flags && flags.search('i') !== -1) {
+      preparedA = String(a).toLowerCase();
+      preparedB = String(b).toLowerCase();
+    }
+
+    switch (operator) {
+      case '==':
+        result = preparedA == preparedB; // eslint-disable-line eqeqeq
+        break;
+      case '===':
+        result = preparedA === preparedB;
+        break;
+      case '!=':
+        result = preparedA != preparedB; // eslint-disable-line eqeqeq
+        break;
+      case '!==':
+        result = preparedA !== preparedB;
+        break;
+      case '<':
+      case '&lt;':
+        result = preparedA < preparedB;
+        break;
+      case '>':
+      case '&gt;':
+        result = preparedA > preparedB;
+        break;
+      case '<=':
+      case '&lte;':
+      case '&lt;=':
+        result = preparedA <= preparedB;
+        break;
+      case '>=':
+      case '&gte;':
+      case '&gt;=':
+        result = preparedA >= preparedB;
+        break;
+      case 'typeof':
+        result = typeof preparedA === preparedB; // eslint-disable-line valid-typeof
+        break;
+      default:
+        throw new Error(`helper {{compare}}: invalid operator: '${operator}'`);
+    }
   }
 
   if (isFunction(options.fn) && isFunction(options.inverse)) {

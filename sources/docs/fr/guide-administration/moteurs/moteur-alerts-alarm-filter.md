@@ -1,9 +1,9 @@
 # Alerts - Alarm filter
 
 !!! note
-    Cette page concerne l'alarm-filter disponible dans le moteur Python `alerts`. Le moteur [action](moteur-action.md) propose des fonctionnalités similaires pour une stack Go.
+    Cette page concerne l'alarm-filter disponible dans le moteur Python `alerts`. Le moteur [`engine-action`](moteur-action.md) propose des fonctionnalités similaires pour une stack Go.
 
-L'alarm-filter est une fonctionnalité du moteur alerts permettant de déclencher conditionnellement des actions lors de la création d'alarmes.
+L'alarm-filter est une fonctionnalité du moteur `alerts` permettant de déclencher conditionnellement des actions lors de la création d'alarmes.
 
 Les actions sont définies dans la collection MongoDB `default_alarmfilter`, et peuvent être ajoutées et modifiées avec l'[API alarm-filter](../../guide-developpement/api/api-v2-alarm-filter.md).
 
@@ -16,7 +16,7 @@ Une action est un document JSON contenant les paramètres suivants :
  - `tasks` (requis) : une liste de tâches à appliquer à l'alarme.
  - `output_format` (optionnel) : le message à afficher dans la timeline des alarmes.
  - `limit` (requis) : la durée (en secondes) entre la création de l'alarme et l'exécution de l'action, et entre deux exécutions consécutives de l'action.
- - `postpone_if_active_pbehavior` (optionnel, `false` par défaut): `true` pour que l'action ne soit pas exécutée si un pbehavior est actif sur l'alarme, et pour que le décompte du délai `limit` soit réinitialisé en sortie de pbehavior.
+ - `postpone_if_active_pbehavior` (optionnel, `false` par défaut): `true` pour que l'action ne soit pas exécutée si un comportement périodique est actif sur l'alarme, et pour que le décompte du délai `limit` soit réinitialisé en sortie de comportement périodique.
  - `repeat` (optionnel, 1 par défaut) : le nombre d'exécutions de l'action.
 
 
@@ -40,7 +40,7 @@ Les tâches utilisables dans le champ `tasks` sont :
 
 ## Exemple
 
-L'action suivante augmente automatiquement l'état des alarmes au bout d'une heure.
+L'action suivante augmente automatiquement la criticité des alarmes au bout d'une heure.
 
 ```json
 {
@@ -49,7 +49,7 @@ L'action suivante augmente automatiquement l'état des alarmes au bout d'une heu
     "tasks": [
         "alerts.useraction.state_increase"
     ],
-    "output_format": "L'alarme a été créée il y a une heure. Augmentation automatique de son état.",
+    "output_format": "L'alarme a été créée il y a une heure. Augmentation automatique de sa criticité.",
     "limit": 3600,
     "postpone_if_active_pbehavior": true
 }

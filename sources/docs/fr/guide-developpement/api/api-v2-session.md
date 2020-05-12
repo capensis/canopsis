@@ -10,7 +10,6 @@ Les données disponibles sont :
 
 Pour cela, elle se base notamment sur le signal keepalive envoyé par l'UIv3.
 
-
 ### Configuration 
 
 Les paramètres de configuration (notamment la durée d'une session) se trouvent dans le fichier `etc/session/session.conf`

@@ -1,10 +1,10 @@
-# Che - Event-filter
+# `engine-che` - Event-filter
 
 !!! note
     Cette page concerne l'event-filter nouvelle génération, disponible uniquement
-    avec le moteur Go `che`.
+    avec le moteur Go `engine-che`.
 
-L'event-filter est une fonctionnalité du moteur [`che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
+L'event-filter est une fonctionnalité du moteur [`engine-che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
 
 Les règles sont définies dans la collection MongoDB `eventfilter`, et peuvent être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/api/api-v2-event-filter.md).
 
@@ -17,7 +17,7 @@ Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la 
 
 L['event-filter](moteur-che-event_filter.md) peut utiliser des sources de données externes pour enrichir les évènements. Ces sources externes (à l'exception de `entity`) sont des [plugins](../../guide-developpement/plugins/event-filter-data-source.md) disponibles dans Canopsis CAT.
 
-Les plugins doivent être placés dans un dossier accessible par le moteur `che`.
+Les plugins doivent être placés dans un dossier accessible par le moteur `engine-che`.
 
 ### Activation avec Docker
 
@@ -34,9 +34,9 @@ Les plugins doivent être ajoutés dans un volume dans l'image Docker, et leur e
       - "./plugins:/data-source-plugins"
 ```
 
-Dans une installation Docker, l'image `canopsis/engine-che-cat` remplace l'image par défaut `canopsis/engine-che`. Le moteur `che` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin d'enrichissement externe soit chargé : `engine-che -dataSourceDirectory /data-source-plugins`
+Dans une installation Docker, l'image `canopsis/engine-che-cat` remplace l'image par défaut `canopsis/engine-che`. Le moteur `engine-che` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin d'enrichissement externe soit chargé : `engine-che -dataSourceDirectory /data-source-plugins`
 
-Les plugins doivent être placés dans un dossier accessible par le moteur `che`.
+Les plugins doivent être placés dans un dossier accessible par le moteur `engine-che`.
 
 L'exécutable `engine-che` accepte une option `-dataSourceDirectory` permettant de préciser le dossier contenant les plugins. Par défaut, ce dossier est celui contenant `engine-che`.
 
@@ -44,7 +44,7 @@ L'exécutable `engine-che` accepte une option `-dataSourceDirectory` permettant 
 
 Pour pouvoir utiliser l'enrichissement depuis une ressource externe, il faut :
 
-*  lancer le moteur `che` avec l'option `-dataSourceDirectory <dossier contenant les plugins>`. Par défaut, ce dossier est celui contenant `engine-che`.
+*  lancer le moteur `engine-che` avec l'option `-dataSourceDirectory <dossier contenant les plugins>`. Par défaut, ce dossier est celui contenant `engine-che`.
 
 
 ## Règles
@@ -79,7 +79,7 @@ Cette règle supprime donc les évènements dont la ressource vaut `invalid_reso
 
 ### Application des règles
 
-Lors de la réception d'un évènement par le moteur `che`, les règles sont parcourues par ordre de priorité croissante. Si l'évènement est reconnu par le `pattern` d'une règle, celle-ci est appliquée à l'évènement. Le traitement effectué dépend du `type` de la règle (voir [Types de règles](#types-de-regles) pour plus de détails).
+Lors de la réception d'un évènement par le moteur `engine-che`, les règles sont parcourues par ordre de priorité croissante. Si l'évènement est reconnu par le `pattern` d'une règle, celle-ci est appliquée à l'évènement. Le traitement effectué dépend du `type` de la règle (voir [Types de règles](#types-de-regles) pour plus de détails).
 
 **Note :** Pour pouvoir être traité par Canopsis, un évènement doit respecter l'une des conditions suivantes :
 
@@ -89,8 +89,7 @@ Lors de la réception d'un évènement par le moteur `che`, les règles sont par
 
  - son champ `source_type` vaut `resource`, et ses champs `component` et `resource` sont définis et ne valent pas `""`.
 
-Les évènements ne respectant pas l'une de ces conditions en entrée du moteur `che` ou en sortie de l'event-filter sont supprimés.
-
+Les évènements ne respectant pas l'une de ces conditions en entrée du moteur `engine-che` ou en sortie de l'event-filter sont supprimés.
 
 ### Patterns
 
@@ -116,7 +115,7 @@ Pour plus d'expressivité, il est possible d'associer à un champ un objet conte
  - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
  - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est celle de [go](https://golang.org/pkg/regexp/syntax/), et est similaire à celle acceptée par Perl et Python.
 
-Par exemple, le pattern suivant sélectionne les évènements dont l'état est compris entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
+Par exemple, le pattern suivant sélectionne les évènements dont la criticité est comprise entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
 
 ```json
 "pattern": {
@@ -131,7 +130,7 @@ Par exemple, le pattern suivant sélectionne les évènements dont l'état est c
 
 Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évènement est supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est ignoré par Canopsis.
 
-Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur `che` l'affiche sur sa sortie de log :
+Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur `engine-che` l'affiche sur sa sortie de log :
 
 ```
 2019/05/02 12:45:19 event dropped by event filter: {"hostgroups":["HG_FOOBAR"],"event_type":"check","execution_time":2.139087200164795,"timestamp":1556793914,"component":"foobar","state_type":0,"source_type":"resource","resource":"PING","current_attempt":1,"connector":"foobar","long_output":"","state":2,"connector_name":"foobar","output":"foo","command_name":"foo","perf_data":"","max_attempts":2}
@@ -179,7 +178,7 @@ Les paramètres de l'action sont :
  - `name` (requis) : le nom du champ.
  - `value` (requis) : la nouvelle valeur du champ.
 
-Par exemple, l'action suivante remplace l'état d'un évènement par un état critique :
+Par exemple, l'action suivante passe la criticité d'un évènement en critique :
 
 ```json
 {
@@ -374,7 +373,7 @@ Voir [Ajout d'informations à l'entité](#ajout-dinformations-a-lentite) pour un
 exemple de règle utilisant cette source de données.
 
 **Note :** Chaque utilisation d'une source de données de type `mongo` effectue
-une requête MongoDB, ce qui risque d'affecter les performances du moteur `che`.
+une requête MongoDB, ce qui risque d'affecter les performances du moteur `engine-che`.
 Il est donc déconseillé de les utiliser dans des règles appliquées à tous les
 évènements.
 

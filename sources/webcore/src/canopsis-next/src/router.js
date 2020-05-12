@@ -213,6 +213,12 @@ const routes = [
       },
     },
   },
+  {
+    path: '*',
+    redirect: {
+      name: 'home',
+    },
+  },
 ];
 
 const router = new Router({

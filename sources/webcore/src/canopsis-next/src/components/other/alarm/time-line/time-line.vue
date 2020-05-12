@@ -27,6 +27,10 @@ export default {
       type: Object,
       required: true,
     },
+    widget: {
+      type: Object,
+      required: true,
+    },
     isHTMLEnabled: {
       type: Boolean,
       default: false,

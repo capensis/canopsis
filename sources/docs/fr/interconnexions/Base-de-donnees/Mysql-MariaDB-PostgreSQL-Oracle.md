@@ -221,9 +221,9 @@ metrique2.metric.value=age
 metrique2.metric.crit=5:
 ```
 
-Dans cet exemple, l'état « min » sera atteint lorsque la valeur associée à `metrique1` (ici `nb`) dépassera 50.
+Dans cet exemple, la criticité « min » sera atteinte lorsque la valeur associée à `metrique1` (ici `nb`) dépassera 50.
 
-De la même façon, l'état « crit » sera atteint lorsque la valeur associée à `metrique2` (ici `age`) sera en dessous de 5. Les « : » à la suite du nombre (`5:`) permettent en effet de préciser que l'état sera atteint lorsque la valeur sera *inférieure* au nombre indiqué.
+De la même façon, la criticité « crit » sera atteinte lorsque la valeur associée à `metrique2` (ici `age`) sera en dessous de 5. Les « : » à la suite du nombre (`5:`) permettent en effet de préciser que la criticité sera atteinte lorsque la valeur sera *inférieure* au nombre indiqué.
 
 Lorsque plusieurs métriques sont utilisées pour générer des évènements, le niveau de criticité le plus important sera retenu.
 

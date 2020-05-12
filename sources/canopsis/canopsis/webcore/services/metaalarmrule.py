@@ -12,7 +12,7 @@ from canopsis.metaalarmrule.manager import MetaAlarmRuleManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 
 VALID_PARAMS = [
-    '_id', 'name', 'type', 'paatterns', 'config',
+    '_id', 'name', 'type', 'patterns', 'config',
 ]
 
 VALID_CONFIG_PARAMS = {
@@ -34,9 +34,13 @@ class RouteHandlerMetaAlarmRule(object):
     def __init__(self, ma_rule_manager):
         self.ma_rule_manager = ma_rule_manager
 
-    def create(self, name, rule_type, patterns, config):
+    def _sanitize(self, name, rule_type, patterns, config, ma_rule_id):
         if rule_type not in VALID_RULE_TYPES:
             raise ValueError("rule type invalid value {}".format(rule_type))
+        if name is not None and not isinstance(name, string_types):
+            raise ValueError("name has invalid value: {}".format(name))
+        if ma_rule_id is not None and not isinstance(ma_rule_id, string_types):
+            raise ValueError("_id has invalid value: {}".format(ma_rule_id))
         if isinstance(patterns, string_types):
             try:
                 patterns = loads(patterns)
@@ -58,12 +62,23 @@ class RouteHandlerMetaAlarmRule(object):
                                      .format(rule_type, config_type))
         elif config is not None:
             raise ValueError("invalid config value type {}".format(config))
+        return name, rule_type, patterns, config, ma_rule_id
 
-        result = self.ma_rule_manager.create(name, rule_type, patterns, config)
+    def create(self, name, rule_type, patterns, config, ma_rule_id=None):
+        name, rule_type, patterns, config, ma_rule_id = self._sanitize(name, rule_type, patterns, config, ma_rule_id)
+        result = self.ma_rule_manager.create(name, rule_type, patterns, config, ma_rule_id=ma_rule_id)
+        return result
+
+    def update(self, _id, name, rule_type, patterns, config):
+        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id)
+        result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config)
         return result
 
     def read(self, rule_id):
         return self.ma_rule_manager.read(rule_id)
+
+    def read_all(self):
+        return self.ma_rule_manager.read_all()
 
     def delete(self, rule_id):
         return self.ma_rule_manager.delete(rule_id)
@@ -100,11 +115,17 @@ def exports(ws):
         if len(invalid_keys) != 0:
             ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
 
+        ma_rule_id = elements.get("_id")
+        if ma_rule_id == "":
+            ma_rule_id = None
+
         try:
-            return rh_ma_rule.create(elements["name"], elements["type"], elements.get("patterns"), elements.get("config"))
-        except TypeError:
+            return rh_ma_rule.create(
+                elements["name"], elements["type"], elements.get("patterns"), elements.get("config"), 
+                ma_rule_id=ma_rule_id)
+        except (TypeError, KeyError):
             return gen_json_error(
-                {'description': 'The fields name and type are required.'},
+                {'description': 'The fields \'name\' and \'type\' are required.'},
                 HTTP_ERROR
             )
         except ValueError as exc:
@@ -113,12 +134,51 @@ def exports(ws):
                 HTTP_ERROR
             )
 
-    @ws.application.get('/api/v2/metaalarmrule/<rule_id:id_filter>')
+    @ws.application.put('/api/v2/metaalarmrule/<rule_id>')
+    def update(rule_id):
+        """
+        Create a metaalarmrule.
+        """
+        try:
+            elements = request.json
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid JSON'},
+                HTTP_ERROR
+            )
+        invalid_keys = []
+
+        for key in elements.keys():
+            if key not in VALID_PARAMS:
+                invalid_keys.append(key)
+                elements.pop(key)
+
+        if len(invalid_keys) != 0:
+            ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
+
+        try:
+            success = rh_ma_rule.update(rule_id, elements["name"], elements["type"], elements.get("patterns"),
+                                     elements.get("config"))
+        except Exception as exc:
+            return gen_json_error(
+                {'description': '{}'.format(exc)},
+                HTTP_ERROR
+            )
+        return gen_json({"is_success": success})
+
+    @ws.application.get('/api/v2/metaalarmrule/<rule_id>')
     def read(rule_id=None):
         return gen_json(rh_ma_rule.read(rule_id))
 
-    @ws.application.delete('/api/v2/metaalarmrule/<rule_id:id_filter>')
-    def delete(rule_id):
+    @ws.application.get('/api/v2/metaalarmrule')
+    def read_all():
+        """
+        :return:
+        """
+        return gen_json(rh_ma_rule.read_all())
+
+    @ws.application.delete('/api/v2/metaalarmrule/<rule_id>')
+    def delete_rule(rule_id):
         """Delete the meta-alarm rule that match the rule_id
 
         :param rule_id: the meta-alarm rule id

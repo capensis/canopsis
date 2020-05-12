@@ -6,9 +6,7 @@ Ce guide vous propose d'interagir avec Mattermost et avec Logstash.
 !!! Warning
     Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go dans l'édition CAT de Canopsis.
 
-Le moteur [`webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permet de prendre en charge cette fonctionnalité.
-
-Vous trouverez sa documentation complète sur la page du [moteur webhook](../../guide-administration/moteurs/moteur-webhook.md).
+Le moteur [`engine-webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permet de prendre en charge cette fonctionnalité.
 
 ## Mattermost
 
@@ -18,7 +16,7 @@ Prenons le cas d'usage suivant :
 
 !!! note ""
     Je souhaite notifier Mattermost depuis Canopsis dans les cas suivants :
-    Création d'alarme, Mise à jour d'état, Ack d'un utilisateur
+    Création d'alarme, Mise à jour de de criticité, acquittement d'un utilisateur
 
 Pour cela, RDV sur le menu des **webhooks**
 
@@ -83,7 +81,7 @@ Prenons le cas d'usage suivant :
 
 !!! note ""
     Je souhaite envoyer un message HTTP à Logstash depuis Canopsis dans les cas suivants :
-    Création d'alarme, Mise à jour d'état, Ack d'un utilisateur
+    Création d'alarme, Mise à jour de criticité, acquittement d'un utilisateur
 
 Pour cela, RDV sur le menu des **webhooks**
 
