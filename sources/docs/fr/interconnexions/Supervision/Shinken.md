@@ -21,7 +21,7 @@ chown shinken:shinken /etc/shinken/modules/broker-exporter-canopsis.cfg
 ## Configuration
 
 Éditez le fichier `/etc/shinken/brokers/broker-master.cfg` et ajoutez `broker-exporter-canopsis` à la liste des modules activés.
-```
+```apacheconf
 #======== Modules to enable for this daemon =========
     # Available:
     # - Simple-log            : save all logs into a common file
