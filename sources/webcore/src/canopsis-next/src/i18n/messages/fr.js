@@ -259,6 +259,7 @@ export default {
         pbhenter: 'Comportement périodique activé',
         pbhleave: 'Comportement périodique désactivé',
         cancel: 'Alarme annulée',
+        comment: 'Alarme commentaire',
       },
     },
     tabs: {

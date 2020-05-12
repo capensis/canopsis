@@ -270,6 +270,7 @@ export default {
         pbhenter: 'Periodic behavior enabled',
         pbhleave: 'Periodic behavior disabled',
         cancel: 'Alarm cancelled',
+        comment: 'Alarm commented',
       },
     },
     tabs: {
