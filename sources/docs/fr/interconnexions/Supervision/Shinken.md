@@ -34,7 +34,7 @@ chown shinken:shinken /etc/shinken/modules/broker-exporter-canopsis.cfg
 ```
 
 Personnalisez ensuite le contenu du fichier `/etc/shinken/modules/broker-exporter-canopsis.cfg`, par exemple :
-```
+```apacheconf
     #======== Canopsis address =========
     # Canopsis host to connect to
     host                 192.168.0.123
