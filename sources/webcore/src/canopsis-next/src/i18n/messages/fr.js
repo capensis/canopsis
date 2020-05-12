@@ -112,6 +112,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
     },
     times: {
       second: 'seconde | secondes',
@@ -216,6 +217,7 @@ export default {
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour meta alarmes',
+        comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -224,6 +226,7 @@ export default {
         snooze: 'Snooze',
         pbehaviors: 'Comportement périodique',
         grouping: 'Meta alarmes',
+        comment: 'Commentaire',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
@@ -256,6 +259,7 @@ export default {
         pbhenter: 'Comportement périodique activé',
         pbhleave: 'Comportement périodique désactivé',
         cancel: 'Alarme annulée',
+        comment: 'Alarme commentée',
       },
     },
     tabs: {
@@ -1030,6 +1034,12 @@ export default {
       defaultMessage: 'Votre message ici',
       buttons: {
         selectColor: 'Sélectionnez la couleur d\'arrière-plan',
+      },
+    },
+    createCommentEvent: {
+      title: 'Ajouter un commentaire',
+      fields: {
+        comment: 'Commentaire',
       },
     },
   },
