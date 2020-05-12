@@ -98,6 +98,8 @@ export default {
     links: 'Liens',
     broadcastMessages: 'Diffuser des messages',
     status: 'Statut',
+    interval: 'Intervalle',
+    unit: 'Unité',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
