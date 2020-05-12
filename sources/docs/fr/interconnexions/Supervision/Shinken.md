@@ -14,7 +14,7 @@ Le module broker Canopsis sera bientôt présent de manière native dans la dist
 Copiez le dossier `broker-exporter-canopsis` vers `/var/lib/shinken/modules/`
 
 Puis copiez le fichier `broker-exporter-canopsis.cfg` vers `/etc/shinken/modules/` et modifiez les droits du fichier avec la commande suivante :
-```
+```sh
 chown shinken:shinken /etc/shinken/modules/broker-exporter-canopsis.cfg
 ```
 
