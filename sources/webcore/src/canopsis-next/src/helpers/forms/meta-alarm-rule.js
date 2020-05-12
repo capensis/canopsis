@@ -18,9 +18,9 @@ export function metaAlarmRuleToForm(rule = {}) {
       alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
       entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
-      threshold_rate: rule.threshold_rate || 1,
-      threshold_count: rule.threshold_count || 1,
-      time_interval: rule.time_interval || 1,
+      threshold_rate: config.threshold_rate || 1,
+      threshold_count: config.threshold_count || 1,
+      time_interval: config.time_interval || 1,
     },
   };
 }
