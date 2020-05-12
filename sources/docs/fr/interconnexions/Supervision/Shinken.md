@@ -4,7 +4,7 @@ Convertit des évènements de supervision Shinken en évènements Canopsis.
 
 ## Prérequis
 
-- Installez Shinken Entreprise 02.07.06 ou supérieure en suivant la documentation de l'éditeur.
+- Installez Shinken Entreprise 02.07.06 ou supérieur en suivant la documentation de l'éditeur.
 - Installez également la librairie kombu soit avec `pip` soit en passant par le gestionnaire de paquet de votre distribution `yum install python2-kombu`/`apt-get install python-kombu`
 
 ## Installation
