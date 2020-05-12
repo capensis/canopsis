@@ -1,16 +1,10 @@
 <template lang="pug">
   v-layout
     v-flex(xs6)
-      v-text-field(
+      percents-field(
         v-field.number="threshold.threshold_rate",
-        v-validate="'required|decimal|min_value:0|max_value:1'",
         :label="$t('metaAlarmRule.fields.thresholdRate')",
-        :error-messages="errors.collect('thresholdRate')",
-        :min="0",
-        :max="1",
-        :step="0.1",
-        name="thresholdRate",
-        type="number"
+        name="thresholdRate"
       )
     v-flex(xs6)
       v-text-field(
@@ -25,7 +19,10 @@
 </template>
 
 <script>
+import PercentsField from '@/components/forms/fields/percents.vue';
+
 export default {
+  components: { PercentsField },
   inject: ['$validator'],
   model: {
     prop: 'threshold',
