@@ -58,7 +58,7 @@ Vous pouvez modifier la valeur de `maxqueuelength` (le nombre maximal d'évènem
 
 Enfin redémarrez Shinken.
 
-```
+```sh
 service shinken restart
 ```
 
