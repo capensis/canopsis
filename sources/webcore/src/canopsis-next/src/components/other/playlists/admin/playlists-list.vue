@@ -20,7 +20,7 @@
             td {{ props.item.interval | interval }}
             td
               v-btn.ma-0(
-                :to="{ name: 'playlist', params: { id: props.item._id }, query: { autoplay: true } }",
+                :to="{ name: 'playlist', params: { id: props.item._id, userAction: true }, query: { autoplay: true } }",
                 icon
               )
                 v-icon play_arrow
