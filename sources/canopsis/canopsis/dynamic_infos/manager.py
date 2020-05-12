@@ -110,7 +110,9 @@ class DynamicInfosManager(object):
             sort_dir = DESCENDING
         else:
             sort_dir = None
-        if sort_key not in [DynamicInfosRule.AUTHOR, DynamicInfosRule.LAST_MODIFIED_DATE]:
+        if sort_key not in (
+                DynamicInfosRule.NAME, DynamicInfosRule.DESCRIPTION, DynamicInfosRule.AUTHOR,
+                DynamicInfosRule.CREATION_DATE, DynamicInfosRule.LAST_MODIFIED_DATE):
             sort_key = DynamicInfosRule.ID
         return list(self.collection.find(query).sort(sort_key, sort_dir).limit(limit).skip(offset))
 
