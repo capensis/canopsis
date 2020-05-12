@@ -3,10 +3,12 @@
     v-flex(xs6)
       v-text-field(
         v-field.number="threshold.threshold_rate",
-        v-validate="'required|numeric|min_value:0'",
+        v-validate="'required|decimal|min_value:0|max_value:1'",
         :label="$t('metaAlarmRule.fields.thresholdRate')",
         :error-messages="errors.collect('thresholdRate')",
-        :min="1",
+        :min="0",
+        :max="1",
+        :step="0.1",
         name="thresholdRate",
         type="number"
       )
