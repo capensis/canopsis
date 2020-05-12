@@ -54,11 +54,11 @@ VALID_CANOPSIS_LANGUAGES = [
     'en', 'fr'
 ]
 
-
-def get_user_interface():
-    user_interface_manager = UserInterfaceManager(
+user_interface_manager = UserInterfaceManager(
         *UserInterfaceManager.provide_default_basics())
 
+
+def get_user_interface():
     user_interface = user_interface_manager.get()
 
     if user_interface is not None:
@@ -272,10 +272,6 @@ def exports(ws):
                     language)},
                 HTTP_ERROR
             )
-
-        user_interface_manager = UserInterfaceManager(
-            *UserInterfaceManager.provide_default_basics())
-
         if len(interface) > 0:
             return gen_json(user_interface_manager.update(interface))
         return gen_json_error(
@@ -285,8 +281,6 @@ def exports(ws):
 
     @ws.application.delete('/api/internal/user_interface')
     def delete_internal_interface():
-        user_interface_manager = UserInterfaceManager(
-            *UserInterfaceManager.provide_default_basics())
 
         return gen_json(user_interface_manager.delete())
 
