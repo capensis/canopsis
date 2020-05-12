@@ -12,6 +12,12 @@ Si vous avez les droits nécessaires, il vous est possible de créer/modifier de
 
 Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues", en cliquant [ici](./vues/index.md).
 
+## Les playlists
+
+Les vues peuvent être affichées sous forme de playlists c'est-à-dire les unes après les autres avec un délai associé.
+
+Pour utiliser cette fonctionnalité, rendez-vous sur la page explicative en cliquant [ici](./playlists/index.md).
+
 ## Les widgets
 
 Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonctionnement, rendez-vous dans les sections "Les widgets", en cliquant [ici](./widgets/index.md).
