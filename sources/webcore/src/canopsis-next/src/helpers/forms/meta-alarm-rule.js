@@ -8,14 +8,16 @@ import { META_ALARMS_RULE_TYPES } from '@/constants';
  * @returns {Object}
  */
 export function metaAlarmRuleToForm(rule = {}) {
+  const config = rule.config || {};
+
   return {
     _id: rule._id || '',
     type: rule.type || META_ALARMS_RULE_TYPES.attribute,
     name: rule.name || '',
     config: {
-      alarm_patterns: rule.alarm_patterns ? cloneDeep(rule.alarm_patterns) : [],
-      entity_patterns: rule.entity_patterns ? cloneDeep(rule.entity_patterns) : [],
-      event_patterns: rule.event_patterns ? cloneDeep(rule.event_patterns) : [],
+      alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
+      entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
+      event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
       threshold_rate: rule.threshold_rate || 1,
       threshold_count: rule.threshold_count || 1,
       time_interval: rule.time_interval || 1,
