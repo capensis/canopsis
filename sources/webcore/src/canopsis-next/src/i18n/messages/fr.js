@@ -1491,5 +1491,13 @@ export default {
     selectAll: 'Sélectionnez tous les groupes et vues',
   },
 
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Les actions sont désactivées en mode plein écran',
+      },
+    },
+  },
+
   ...featureService.get('i18n.fr'),
 };

@@ -1581,5 +1581,13 @@ export default {
     selectAll: 'Select all groups and views',
   },
 
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Actions are disabled in full screen mode',
+      },
+    },
+  },
+
   ...featureService.get('i18n.en'),
 };
