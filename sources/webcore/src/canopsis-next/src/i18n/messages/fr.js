@@ -217,7 +217,7 @@ export default {
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour meta alarmes',
-        comment: 'Commentaire',
+        comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
         ack: 'Ack',
