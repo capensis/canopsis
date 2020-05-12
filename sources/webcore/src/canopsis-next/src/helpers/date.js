@@ -13,6 +13,7 @@ export default function convertTimestampToMoment(timestamp) {
 
   return dateObject;
 }
+
 /**
  * Convert duration to interval object
  *
