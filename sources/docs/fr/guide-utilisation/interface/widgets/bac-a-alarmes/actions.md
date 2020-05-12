@@ -14,6 +14,7 @@ Les différentes actions possibles sur cette alarme sont :
     *  [Changer la criticité](#changer-la-criticite)
     *  [Comportement périodique](#comportement-periodique)
     *  [Lister les comportements périodiques](#lister-les-comportements-periodiques)
+    *  [Commenter l'alarme](#commenter-lalarme) 
     *  [Historique](#historique)
     *  [Liste des variables disponibles](#liste-des-variables-disponibles)
 
@@ -165,6 +166,15 @@ Cette fenêtre présente une liste des comportements périodiques affectant cet 
 Il est possible depuis cette fenêtre de supprimer les comportements périodiques.
 
 Pour fermer la fenêtre, cliquez en dehors de celle-ci, ou sur le bouton 'Annuler'
+
+### Commenter l'alarme
+
+L'action 'Commenter l'alarme' permet de poser un commentaire sur une alarme. 
+
+![Commenter l'alarme](./img/comment.png "Commenter l'alarme")
+
+Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Comment Extra details](./img/comment-extra-details-icon.png  "Icone Comment Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
+
 
 ### Historique
 
