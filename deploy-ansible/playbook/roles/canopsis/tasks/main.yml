@@ -53,3 +53,11 @@
 - import_tasks: init-nginx.yml
   tags:
     - cps_nginx
+
+- import_tasks: init-postgres.yml
+  tags:
+    - cps_postgres
+
+- import_tasks: config-rundeck.yml
+  tags:
+    - cps_rundeck

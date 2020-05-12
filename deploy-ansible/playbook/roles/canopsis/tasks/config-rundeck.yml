@@ -1,0 +1,58 @@
+---
+- name: Configure Rundeck properties
+  lineinfile:
+    dest: "/etc/rundeck/rundeck-config.properties"
+    line: "{{ item.parameter }} = {{ item.value }}"
+    regexp: "^{{ item.parameter }}"
+    create: yes
+  loop: "{{ rundeck_config }}"
+  loop_control:
+    label: "{{ item.parameter }}"
+
+- name: Configure Rundeck framework properties
+  lineinfile:
+    dest: "/etc/rundeck/framework.properties"
+    line: "{{ item.parameter }} = {{ item.value }}"
+    regexp: "^{{ item.parameter }}"
+    create: yes
+  loop: "{{ rundeck_framework }}"
+  loop_control:
+    label: "{{ item.parameter }}"
+
+- name: Configure Rundeck users
+  lineinfile:
+    dest: "/etc/rundeck/realm.properties"
+    line: "{{ item.username }}:{{ item.password }},{{ item.roles }}"
+    regexp: "^{{ item.username }}"
+  loop: "{{ rundeck_users }}"
+  loop_control:
+    label: "{{ item.username }}"
+
+- name: Add Rundeck plugins
+  get_url:
+    url: "{{ item }}"
+    dest: /var/lib/rundeck/libext
+  loop: "{{ rundeck_addons }}"
+  when: rundeck_addons is defined
+
+- name: "[Debian]Change JavaVM memory usage"
+  lineinfile:
+    dest: "/etc/default/rundeckd"
+    line: "RDECK_JVM_SETTINGS=\"-Xmx{{ rundeck_xmx }}m -Xms{{ rundeck_xms }}m -XX:MaxMetaspaceSize={{ rundeck_maxmetaspacesize }}m -server\""
+    regexp: "^RDECK_JVM_SETTINGS"
+    create: yes
+  when: ansible_facts['os_family'] == 'Debian'
+ 
+- name: "[Debian]Change JavaVM memory usage"
+  lineinfile:
+    dest: "/etc/sysconfig/rundeckd"
+    line: "RDECK_JVM_SETTINGS=\"-Xmx{{ rundeck_xmx }}m -Xms{{ rundeck_xms }}m -XX:MaxMetaspaceSize={{ rundeck_maxmetaspacesize }}m -server\""
+    regexp: "^RDECK_JVM_SETTINGS"
+    create: yes
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Start and enable Rundeck
+  service:
+    name: rundeckd
+    state: restarted
+    enabled: yes

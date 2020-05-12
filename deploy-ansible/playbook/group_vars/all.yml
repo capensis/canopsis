@@ -22,3 +22,60 @@ mongodb_user_admin_password: admin
 # Unfortunately, there's no portable syntax between CentOS and Debian
 #nginx_version: "-1.17.6"
 #nginx_version: "=1.17.6-1~stretch"
+
+postgres_dbs:
+  - name: "rundeck"
+  - name: "canopsis"
+postgres_users:
+  - username: "canopsis"
+    password: "canopsis"
+  - username: "cpsrundeck"
+    password: "canopsis"
+postgres_privs:
+  - db: "rundeck"
+    privs: "ALL"
+    role: "cpsrundeck"
+  - db: "canopsis"
+    privs: "ALL"
+    role: "canopsis"
+postgres_connection:
+  type: "local"
+  database: "all"
+  user: "all"
+  address: "127.0.0.1/32"
+  method: "md5"
+
+rundeck_xmx: 1025
+rundeck_xms: 257
+rundeck_maxmetaspacesize: 129
+rundeck_config:
+  - parameter: "server.address"
+    value: "{{ ansible_fqdn }}"
+  - parameter: "grails.serverURL"
+    value: "http://{{ ansible_fqdn }}:4400"
+  - parameter: "rundeck.api.tokens.duration.max"
+    value: "0"
+  - parameter: "dataSource.driverClassName"
+    value: "org.postgresql.Driver"
+  - parameter: "dataSource.url"
+    value: "jdbc:postgresql://{{ ansible_fqdn }}/rundeck"
+  - parameter: "dataSource.username"
+    value: "cpsrundeck"
+  - parameter: "dataSource.password"
+    value: "canopsis"
+rundeck_framework:
+  - parameter: "framework.server.hostname"
+    value: "{{ ansible_hostname }}"
+  - parameter: "framework.server.name"
+    value: "{{ ansible_fqdn }}"
+  - parameter: "framework.rundeck.url"
+    value: "http://{{ ansible_fqdn}}:4400/"
+rundeck_users:
+  - username: "admin"
+    password: "admin"
+    roles: "user,admin"
+  - username: "user"
+    password: "user"
+    roles: "user"
+rundeck_addons:
+  - https://github.com/tinoji/rundeck-json-webhook-plugin/releases/download/v1.1/rundeck-json-webhook-plugin-1.1.jar

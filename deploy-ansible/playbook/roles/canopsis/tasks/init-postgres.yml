@@ -1,0 +1,36 @@
+---
+- name: Init script of postgres
+  command: "initdb --auth-host=md5 --locale=en_US.UTF-8 -D /var/lib/pgsql/data" 
+  become: yes
+  become_user: postgres
+
+- name: Create databases                                
+  become: yes
+  become_user: postgres
+  postgresql_db:                                                                 
+    name: "{{ item.name }}"
+  loop: "{{ postgres_dbs }}"
+
+- name: Create users                                                      
+  become: yes
+  become_user: postgres
+  postgresql_user:                                                               
+    name: "{{ item.username }}"
+    password: "{{ item.password }}"                                                           
+  loop: "{{ postgres_users }}"
+                                                                                 
+- name: Grant privileges on databases
+  become: yes
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ item.db }}" 
+    privs: "{{ item.privs }}"
+    type: database
+    role: "{{ item.role }}"
+  loop: "{{ postgres_privs }}"
+
+- name: Start and enable postgres
+  service:
+    - name: "postgresql"
+      state: restarted
+      enabled: yes
