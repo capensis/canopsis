@@ -47,7 +47,7 @@ Considérons l'événement suivant :
 En publiant cet événement, l'attribut **client** ne sera pas interprété car il ne participe pas à la spécification d'un événement.  
 Vous souhaitez néanmoins que cette information soit disponible pour l'entité **ressource-doc1/composant-doc1**.  
 
-2 options du moteur **che** vont vous permettre de systématiser cette prise en charge.
+Deux options du moteur `engine-che` vont vous permettre de systématiser cette prise en charge.
 
 ```
 -enrichContext
@@ -100,7 +100,7 @@ Considérons l'événement suivant :
 }
 ````
 
-Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des événements de la documentation de l'event-filter du moteur che](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).  
+Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des événements de la documentation de l'event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).  
 Dans notre cas, l'attribut **groupe** est personalisé et sera donc positionné *automatiquement* dans un dictionnaire *extrainfos*.  
 
 On commence en ajoutant une règle via le menu adéquat

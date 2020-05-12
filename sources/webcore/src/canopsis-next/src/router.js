@@ -227,6 +227,12 @@ const routes = [
     },
     props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
+  {
+    path: '*',
+    redirect: {
+      name: 'home',
+    },
+  },
 ];
 
 const router = new Router({

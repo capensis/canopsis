@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group(data-test="columnNames")
     v-list-tile(slot="activator")
-      div(:class="validationHeaderClass") {{ $t('settings.columnNames') }}
+      div(:class="validationHeaderClass") {{ label }}
     v-container
       v-card.my-2(
         data-test="columnName",
@@ -91,6 +91,10 @@ export default {
     withHtml: {
       type: Boolean,
       default: false,
+    },
+    label: {
+      type: String,
+      required: true,
     },
   },
   methods: {

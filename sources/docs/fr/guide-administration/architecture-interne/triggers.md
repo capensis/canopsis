@@ -1,6 +1,6 @@
 # Triggers (Go)
 
-Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) par le moteur [axe](../moteurs/moteur-axe.md), des actions automatisées par le moteur [action](../moteurs/moteur-action.md) et des webhooks par le moteur [webhook](../moteurs/moteur-webhook.md) peuvent déclencher des `triggers`.
+Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) par le moteur [`engine-axe`](../moteurs/moteur-axe.md), des actions automatisées par le moteur [`engine-action`](../moteurs/moteur-action.md) et des webhooks par le moteur [`engine-webhook`](../moteurs/moteur-webhook.md) peuvent déclencher des `triggers`.
 
 Ces `triggers` peuvent servir comme point de déclenchement pour les [actions automatisées](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-webhook.md).
 
@@ -22,8 +22,8 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 | `"declareticketwebhook"` | Déclaration d'un ticket à l'alarme par un webhook        | ❌                           |
 | `"done"`                 | Fin de l'alarme                                          | ✅                           |
 | `"resolve"`              | Résolution de l'alarme                                   | ❌                           |
-| `"snooze"`               | Report de l'alarme                                       | ✅                           |
+| `"snooze"`               | Mise en veille de l'alarme                               | ✅                           |
 | `"statedec"`             | Diminution de la criticité de l'alarme                   | ✅                           |
 | `"stateinc"`             | Augmentation de la criticité de l'alarme                 | ✅                           |
 | `"uncancel"`             | Rétablissement de l'alarme                               | ✅                           |
-| `"unsnooze"`             | Fin du report de l'alarme                                | ❌                           |
+| `"unsnooze"`             | Sortie de veille de l'alarme                             | ❌                           |

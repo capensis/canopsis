@@ -123,7 +123,7 @@ db.periodical_alarm.find({"v.component" : "NOM_MACHINE", "v.resource" : "Traffic
 }
 ```
 
-Pour « mesurer » l'état courant de l'alarme, il faut vous référer à l'attribut `v.state`
+Pour « mesurer » la criticité courante de l'alarme, il faut vous référer à l'attribut `v.state`
 
 ```js
 "state" : {
@@ -135,11 +135,11 @@ Pour « mesurer » l'état courant de l'alarme, il faut vous référer à l'at
 }
 ```
 
-* `_t` : type d'état (`stateinc`, `statedec`) : en croissance ou en décroissance
+* `_t` : type d'évolution de la criticité (`stateinc`, `statedec`) : en croissance ou en décroissance
 * `t` : timestamp associé
 * `a` : auteur
 * `m` : message de l'alarme
-* `val` (0, 1, 2, 3) : état de l'alarme : Info, Mineure, Majeure, Critique.
+* `val` (0, 1, 2, 3) : criticité de l'alarme : Info, Mineure, Majeure, Critique.
 
 Notez que l'attribut `step` conserve l'historique des changements sur l'alarme.
 
@@ -160,7 +160,7 @@ Voici sa description :
 * `t` : timestamp associé
 * `a` : auteur
 * `m` : message de l'alarme
-* `val` (0, 1, 2, 3, 4) : état de l'alarme : Off, En cours, Furtif, Bagot, Annulé.
+* `val` (0, 1, 2, 3, 4) : statut de l'alarme : Off, En cours, Furtif, Bagot, Annulé.
 
 **Suppression**
 
@@ -183,6 +183,6 @@ redis-cli
 > FLUSHALL
 ```
 
-## Status de service
+## État des services
 
 [Rendez-vous ici](etat-des-services.md)

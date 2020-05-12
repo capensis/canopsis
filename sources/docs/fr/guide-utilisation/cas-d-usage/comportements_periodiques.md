@@ -6,8 +6,7 @@ Vous avez la possibilité dans Canopsis de définir des périodes de temps penda
 * Maintenance : vous souhaitez déclarer en maintenance des entités pour que leurs alarmes ne remontent pas visuellement
 * Pause : vous souhaitez mettre en *pause* une application pour un temps indéterminé
 
-Cette fonctionnalité porte le nom de `periodic behavior`.
-
+Cette fonctionnalité porte le nom de « Comportement périodique ».
 
 !!! note
     Voici une méthode vous permettant de
@@ -15,14 +14,13 @@ Cette fonctionnalité porte le nom de `periodic behavior`.
     * définir la plage de service d'une application
     * mettre en maintenance une entité
 
-
 ### Contexte du cas d'usage
 
 Nous considérons l'application `ERP` (sous forme d'observateur) composée des entités *Comptabilite* et *Gestion*.
 
-![Situation initiale](./img/pbh_situation_initiale.png "Situation Initiale")  
+![Situation initiale](./img/pbh_situation_initiale.png "Situation initiale")
 
-## Plages de services
+## Comportements périodiques
 
 ### Définition de la plage de service
 
@@ -39,20 +37,20 @@ Pour fabriquer une plage 5 jours/7 de 8h à 19h15, vous devez créer :
 
 ![Plage 00h-08h](./img/pbh_plage_00h-08h.png "Plage 00h-08h")  
 
-### Rendus visuels
+### Rendu visuel
 
-En dehors des plages de services, la tuile de météo se comporte ainsi :
+En dehors des comportements périodiques, la tuile de météo se comporte ainsi :
 
-
-![En dehors des plages](./img/pbh_en_dehots_des_plages.png "En dehors des plages")  
+![En dehors des plages](./img/pbh_en_dehots_des_plages.png "En dehors des plages")
 
 ## Maintenance d'une entité
 
-En parallèle des plages de services, vous pouvez déclarer des entités en maintenance ou en pause par exemple.  
+En parallèle des plages de services, vous pouvez déclarer des entités en maintenance ou en pause par exemple.
+
 Vous avez la possibilité d'effectuer ces opérations :
 
-* Depuis le bac à alarmes : dans ce cas, la mise en maintenance se fait de manière unitaire (En sélectionnant individuellement la ou les alarmes concernées).
-* Depuis l'explorateur de contexte : dans ce cas, la mise en maintenance se fait de manière unitaire sur des entités quelconques
+* Depuis le Bac à alarmes : dans ce cas, la mise en maintenance se fait de manière unitaire (En sélectionnant individuellement la ou les alarmes concernées).
+* Depuis l'Explorateur de contexte : dans ce cas, la mise en maintenance se fait de manière unitaire sur des entités quelconques
 * Depuis le panneau d'exploitation des comportements périodiques : dans ce cas, la mise en maintenance s'effectue à partir d'un filtre
 
 !!! note
@@ -62,16 +60,14 @@ Vous avez la possibilité d'effectuer ces opérations :
 Pour cela, RDV sur le panneau d'exploitation *Comportement périodiques*  
 Vous ajoutez un comportement avec un filtre qui sélectionne les entités de *ERP*
 
-
 ![Ajout comportement](./img/pbh_ajout_comportement.png "Ajout comportement")  
 ![Filtre comportement](./img/pbh_filtre_comportement.png "Filtre comportement")  
 
 Ainsi, de 15h30 à 16h, les entités *comptabilite* et *gestion* sont en maintenance.  
 
-
 ![Maintenance entités](./img/pbh_maintenance_entites.png "Maintenance entités")  
 
-Etant donné que ces entités constituent de manière exhaustive l'application *ERP*, l'application elle-même est considérée comme en maintenance.  
+Étant donné que ces entités constituent de manière exhaustive l'application *ERP*, l'application elle-même est considérée comme en maintenance.  
 
 ![Maintenance ERP](./img/pbh_maintenance_erp.png "Maintenance ERP")  
 
@@ -79,14 +75,14 @@ Dans le cas où toutes les entités d'une application ne sont pas en maintenance
 
 ![Maintenance ERP partielle](./img/pbh_maintenance_entites_1.png "Maintenance ERP partielle")  
 
-## Coté bac à alarmes
+## Côté Bac à alarmes
 
 Jusqu'ici nous nous sommes concentrés sur la météo de service.
 Le but de ce paragraphe est de montrer les impacts des comportements périodiques sur le bac à alarmes.  
 
 Il est possible d'appliquer des filtres sur les comportements périodiques, actifs ou non.  
 
-Sur un bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) :
+Sur un Bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propriétés du widget) :
 
 ![Ajout filtre](./img/pbh_ajout_filtre.png "Ajout filtre")  
 
