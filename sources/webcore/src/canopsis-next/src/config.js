@@ -146,6 +146,7 @@ export const COLORS = {
     done: '#00a65a',
     pbhenter: '#18ffff',
     pbhleave: '#18ffff',
+    comment: '#ba68c8',
   },
   statsDefault: '#dddddd',
 };

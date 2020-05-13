@@ -122,6 +122,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Play',
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
     },
     times: {
       second: 'second | seconds',
@@ -227,6 +228,7 @@ export default {
         variablesHelp: 'List of available variables',
         history: 'History',
         groupRequest: 'Suggest group request for meta alarm',
+        comment: 'Comment',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -235,6 +237,7 @@ export default {
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
         grouping: 'Meta alarm',
+        comment: 'Comment',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
@@ -267,6 +270,7 @@ export default {
         pbhenter: 'Periodic behavior enabled',
         pbhleave: 'Periodic behavior disabled',
         cancel: 'Alarm cancelled',
+        comment: 'Alarm commented',
       },
     },
     tabs: {
@@ -1129,6 +1133,12 @@ export default {
       defaultMessage: 'Your message here',
       buttons: {
         selectColor: 'Select background color',
+      },
+    },
+    createCommentEvent: {
+      title: 'Add comment',
+      fields: {
+        comment: 'Comment',
       },
     },
   },

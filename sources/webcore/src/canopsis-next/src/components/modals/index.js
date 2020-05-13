@@ -51,3 +51,4 @@ export { default as CreateDynamicInfoInformation } from './dynamic-info/create-d
 export { default as DynamicInfoTemplatesList } from './dynamic-info/dynamic-info-templates-list.vue';
 export { default as CreateDynamicInfoTemplate } from './dynamic-info/create-dynamic-info-template.vue';
 export { default as CreateMetaAlarmRule } from './meta-alarm-rule/create-meta-alarm-rule.vue';
+export { default as CreateCommentEvent } from './common/create-comment-event.vue';
