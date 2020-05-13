@@ -146,6 +146,7 @@ export default {
   computed: {
     tourCallbacks() {
       return {
+        onPreviousStep: this.onTourPreviousStep,
         onNextStep: this.onTourNextStep,
       };
     },
@@ -175,15 +176,33 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+
+    firstAlarmExpanded() {
+      const [alarm] = this.alarms;
+
+      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
+    },
   },
   mounted() {
     this.fetchAlarmColumnFilters();
   },
   methods: {
-    onTourNextStep(currentStep) {
-      if (currentStep === 0) {
+    expandFirstAlarm() {
+      if (this.alarms[0] && !this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
+    },
+
+    onTourPreviousStep(currentStep) {
+      if (currentStep !== 1) {
+        this.expandFirstAlarm();
+      }
+
+      return this.$nextTick();
+    },
+
+    onTourNextStep() {
+      this.expandFirstAlarm();
 
       return this.$nextTick();
     },
