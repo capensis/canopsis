@@ -176,7 +176,7 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).before(e)` sélectionne tous les mots avant e
 - `line(a).before_incl(e)` sélectionne tous les mots avant e, e inclus
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
-- `line(a).replace(e,f)`  remplace la chaine de caractère e par la chaine f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée.(À partir de la `3.40.0`)
+- `line(a).replace(e,f)`  remplace la chaine de caractères e par la chaine f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (À partir de la `3.40.0`)
 - `line(a).remove(e)` suprime la chaine de caractère e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée.(À partir de la `3.40.0`)
 - `line(a).LOWER_CASE` passe la sélection (ici une ligne entière numéro a) en Minuscule. (À partir de la `3.40.0`)
 - `line(a).UPPER_CASE` passe la sélection (ici une ligne entière numéro a) en Majuscule. (À partir de la `3.40.0`)
