@@ -4,7 +4,7 @@
       v-text-field(
         v-field.number="interval.interval",
         v-validate="'required|numeric|min_value:1'",
-        :label="$t('common.interval')",
+        :label="intervalLabel || $t('common.interval')",
         :error-messages="errors.collect('interval')",
         :min="1",
         name="interval",
@@ -15,7 +15,7 @@
       v-select(
         v-field="interval.unit",
         v-validate="'required'",
-        :label="$t('common.unit')",
+        :label="unitLabel || $t('common.unit')",
         :error-messages="errors.collect('unit')",
         :items="availableUnits",
         name="unit",
@@ -37,7 +37,11 @@ export default {
       type: Object,
       default: () => ({ ...DEFAULT_TIME_INTERVAL }),
     },
-    label: {
+    intervalLabel: {
+      type: String,
+      required: false,
+    },
+    unitLabel: {
       type: String,
       required: false,
     },

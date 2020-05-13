@@ -1,7 +1,10 @@
 <template lang="pug">
   v-layout
     v-flex(xs12)
-      time-interval-field(v-field="timebased.time_interval")
+      time-interval-field(
+        v-field="timebased.time_interval",
+        :intervalLabel="$t('metaAlarmRule.fields.timeInterval')"
+      )
 </template>
 
 <script>
