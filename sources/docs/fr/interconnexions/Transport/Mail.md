@@ -147,7 +147,7 @@ Les actions peuvent être les suivantes :
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
     * À partir de la `3.40.0` on peut utiliser le symbole `~` pour que la chaîne de caractères soit relatif. Dans l’exemple ci-dessus la chaine `Alarme 3` sera remplacé par 2.
-    * À partir de la `3.40.0` on peut définir une valeur par défaut avec `?>`. Dans l’exemple ci-dessus si `state` match avec aucune conversion il sera remplacé par 0.
+    * À partir de la `3.40.0` on peut définir une valeur par défaut avec `?>`. Dans l’exemple ci-dessus, tout élément de `state` ne correspondant à aucun des motifs de conversion donnés sera remplacé par `0`.
 
 
 À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :
