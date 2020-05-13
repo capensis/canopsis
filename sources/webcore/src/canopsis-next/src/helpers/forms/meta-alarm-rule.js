@@ -44,7 +44,7 @@ export function formToMetaAlarmRule(form = {}) {
       metaAlarmRule.config = pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']);
       break;
     case META_ALARMS_RULE_TYPES.complex:
-      metaAlarmRule.config = form.config;
+      metaAlarmRule.config = { ...form.config };
       break;
     case META_ALARMS_RULE_TYPES.timebased:
       metaAlarmRule.config = pick(form.config, ['time_interval']);
