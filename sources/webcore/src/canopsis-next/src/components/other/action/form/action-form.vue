@@ -8,7 +8,7 @@
       label="Id",
       name="id"
     )
-    delay(v-field="form.generalParameters.delay")
+    delay-field(v-field="form.generalParameters.delay")
     v-select(
       v-field="form.generalParameters.type",
       v-validate="'required'",
@@ -17,6 +17,12 @@
       label="Type",
       name="actionType",
       @change="errors.clear()"
+    )
+    v-switch(
+      v-field="form.generalParameters.enabled",
+      :label="$t('common.enabled')",
+      color="primary",
+      hide-details
     )
     v-tabs(fixed-tabs, slider-color="primary")
       v-tab
@@ -45,13 +51,13 @@ import { ACTION_TYPES } from '@/constants';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
-import Delay from '@/components/other/action/form/fields/delay.vue';
+import DelayField from '@/components/other/action/form/fields/delay.vue';
 import ActionGeneralTab from './tabs/action-general-tab.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    Delay,
+    DelayField,
     ActionGeneralTab,
     WebhookFormHookTab,
   },
