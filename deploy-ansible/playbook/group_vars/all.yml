@@ -52,7 +52,7 @@ rundeck_config:
   - parameter: "server.address"
     value: "{{ ansible_fqdn }}"
   - parameter: "grails.serverURL"
-    value: "http://{{ ansible_fqdn }}:4400"
+    value: "http://{{ ansible_fqdn }}:4440"
   - parameter: "rundeck.api.tokens.duration.max"
     value: "0"
   - parameter: "dataSource.driverClassName"
@@ -69,7 +69,7 @@ rundeck_framework:
   - parameter: "framework.server.name"
     value: "{{ ansible_fqdn }}"
   - parameter: "framework.rundeck.url"
-    value: "http://{{ ansible_fqdn}}:4400/"
+    value: "http://{{ ansible_fqdn}}:4440"
 rundeck_users:
   - username: "admin"
     password: "admin"

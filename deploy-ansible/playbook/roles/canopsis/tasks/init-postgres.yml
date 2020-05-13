@@ -4,6 +4,38 @@
   become: yes
   become_user: postgres
 
+# Module error in the venv, using lineinfile instead of postgresql_pg_hba
+
+#- name: Edit pg_hba.conf                                                         
+#  become: yes
+#  become_user: postgres
+#  postgresql_pg_hba:                                                             
+#    dest: /var/lib/pgsql/data/pg_hba.conf                                        
+#    contype: host                                                                
+#    databases: all                                                               
+#    users: all                                                                   
+#    source: all                                                                  
+#    method: md5
+
+- name: Edit pg_hba.conf
+  lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: '^host.*127\.0\.0\.1'
+    line: "host    all             all             all            md5"
+
+- name: Edit postgresql.conf
+  lineinfile:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: '^listen_addresses'
+    line: "listen_addresses = '*'"
+    insertbefore: '^#listen_addresses'
+
+- name: Start and enable postgres
+  service:
+      name: "postgresql"
+      state: restarted
+      enabled: yes
+
 - name: Create databases                                
   become: yes
   become_user: postgres
@@ -28,9 +60,3 @@
     type: database
     role: "{{ item.role }}"
   loop: "{{ postgres_privs }}"
-
-- name: Start and enable postgres
-  service:
-    - name: "postgresql"
-      state: restarted
-      enabled: yes
