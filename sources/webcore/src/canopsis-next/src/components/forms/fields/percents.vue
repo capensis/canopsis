@@ -1,6 +1,6 @@
 <template lang="pug">
   v-text-field(
-    v-validate="rules",
+    v-validate="'required|numeric|min_value:0|max_value:100'",
     :label="label",
     :error-messages="errors.collect(name)",
     :value="percentValue",
@@ -41,22 +41,10 @@ export default {
       type: Number,
       default: 0,
     },
-    validateRules: {
-      type: [Object, String],
-      default: () => ({}),
-    },
   },
   computed: {
     percentValue() {
       return Math.round(this.value * 100);
-    },
-    rules() {
-      return {
-        ...this.validateRules,
-        numeric: true,
-        min_value: 0,
-        max_value: 100,
-      };
     },
   },
   methods: {
