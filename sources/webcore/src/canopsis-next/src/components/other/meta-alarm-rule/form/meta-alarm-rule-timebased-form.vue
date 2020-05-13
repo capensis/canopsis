@@ -1,20 +1,20 @@
 <template lang="pug">
   v-layout
     v-flex(xs12)
-      v-text-field(
-        v-field.number="timebased.time_interval",
-        v-validate="'required|numeric|min_value:1'",
-        :label="$t('metaAlarmRule.fields.timeInterval')",
-        :error-messages="errors.collect('timeInterval')",
-        :min="1",
-        name="timeInterval",
-        type="number"
+      time-interval-field(
+        v-field="timebased.time_interval",
+        :intervalLabel="$t('metaAlarmRule.fields.timeInterval')"
       )
 </template>
 
 <script>
+import TimeIntervalField from '@/components/forms/fields/time-interval.vue';
+
 export default {
   inject: ['$validator'],
+  components: {
+    TimeIntervalField,
+  },
   model: {
     prop: 'timebased',
     event: 'input',

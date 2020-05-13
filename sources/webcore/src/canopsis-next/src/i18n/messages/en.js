@@ -108,6 +108,8 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
     status: 'Status',
+    interval: 'Interval',
+    unit: 'Unit',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

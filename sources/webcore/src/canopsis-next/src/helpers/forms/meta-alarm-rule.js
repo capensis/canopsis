@@ -1,5 +1,8 @@
 import { cloneDeep, omit, pick } from 'lodash';
-import { META_ALARMS_RULE_TYPES } from '@/constants';
+import moment from 'moment';
+
+import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES } from '@/constants';
+import { convertDurationToIntervalObject } from '@/helpers/date';
 
 /**
  * Convert meta alarm rule to form
@@ -8,7 +11,7 @@ import { META_ALARMS_RULE_TYPES } from '@/constants';
  * @returns {Object}
  */
 export function metaAlarmRuleToForm(rule = {}) {
-  const config = rule.config || {};
+  const { config = {} } = rule;
 
   return {
     _id: rule._id || '',
@@ -20,7 +23,9 @@ export function metaAlarmRuleToForm(rule = {}) {
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
       threshold_rate: config.threshold_rate || 1,
       threshold_count: config.threshold_count || 1,
-      time_interval: config.time_interval || 1,
+      time_interval: config.time_interval
+        ? convertDurationToIntervalObject(config.time_interval)
+        : DEFAULT_TIME_INTERVAL,
     },
   };
 }
@@ -44,6 +49,15 @@ export function formToMetaAlarmRule(form = {}) {
     case META_ALARMS_RULE_TYPES.timebased:
       metaAlarmRule.config = pick(form.config, ['time_interval']);
       break;
+  }
+
+  if (metaAlarmRule.config && metaAlarmRule.config.time_interval) {
+    const { unit, interval } = metaAlarmRule.config.time_interval;
+
+    metaAlarmRule.config.time_interval = moment.duration(
+      interval,
+      unit,
+    ).asSeconds();
   }
 
   return metaAlarmRule;
