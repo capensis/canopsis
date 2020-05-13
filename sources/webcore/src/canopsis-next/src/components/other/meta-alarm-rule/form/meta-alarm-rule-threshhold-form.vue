@@ -4,6 +4,7 @@
       percents-field(
         v-field.number="threshold.threshold_rate",
         :label="$t('metaAlarmRule.fields.thresholdRate')",
+        :validateRules="thresholdRateRules",
         name="thresholdRate"
       )
     v-flex(xs6)
