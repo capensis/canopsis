@@ -11,7 +11,7 @@ import { convertDurationToIntervalObject } from '@/helpers/date';
  * @returns {Object}
  */
 export function metaAlarmRuleToForm(rule = {}) {
-  const { config = {} } = rule;
+  const config = rule.config || {};
 
   return {
     _id: rule._id || '',
