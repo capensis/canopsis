@@ -178,7 +178,9 @@ export default {
     },
 
     firstAlarmExpanded() {
-      return this.alarms[0] && this.$refs.alarmsTable.expanded[this.alarms[0]._id];
+      const [alarm] = this.alarms;
+
+      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
     },
   },
   mounted() {
