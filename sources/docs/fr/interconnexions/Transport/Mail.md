@@ -179,7 +179,7 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).replace(e,f)`  remplace la chaine de caractères e par la chaine f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (À partir de la `3.40.0`)
 - `line(a).remove(e)` supprime la chaine de caractères e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (À partir de la `3.40.0`)
 - `line(a).LOWER_CASE` passe la sélection (ici une ligne entière numéro a) en minuscules. (À partir de la `3.40.0`)
-- `line(a).UPPER_CASE` passe la sélection (ici une ligne entière numéro a) en Majuscule. (À partir de la `3.40.0`)
+- `line(a).UPPER_CASE` passe la sélection (ici une ligne entière numéro a) en majuscules. (À partir de la `3.40.0`)
 - `and` permet d'effectuer une concaténation entre deux opérations.(A partir de la `3.39.0`)
 - `print(word)` permet d'assigner la valeur word dans le champ. (A partir de la `3.39.0`)
 
