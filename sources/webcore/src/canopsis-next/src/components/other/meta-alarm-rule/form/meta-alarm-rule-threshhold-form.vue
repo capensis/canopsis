@@ -9,7 +9,7 @@
     v-flex(xs6)
       v-text-field(
         v-field.number="threshold.threshold_count",
-        v-validate="'required|numeric|min_value:1'",
+        v-validate="'numeric|min_value:0'",
         :label="$t('metaAlarmRule.fields.thresholdCount')",
         :error-messages="errors.collect('thresholdCount')",
         :min="0",

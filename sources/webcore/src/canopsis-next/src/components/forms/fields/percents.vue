@@ -1,6 +1,6 @@
 <template lang="pug">
   v-text-field(
-    v-validate="'required|numeric|min_value:0|max_value:100'",
+    v-validate="'numeric|min_value:0|max_value:100'",
     :label="label",
     :error-messages="errors.collect(name)",
     :value="percentValue",
