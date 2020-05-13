@@ -18,7 +18,7 @@
       name="actionType",
       @change="errors.clear()"
     )
-    v-switch(
+    v-switch.mb-3(
       v-field="form.generalParameters.enabled",
       :label="$t('common.enabled')",
       color="primary",
