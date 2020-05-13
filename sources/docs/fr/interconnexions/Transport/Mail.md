@@ -132,7 +132,7 @@ resource.trim=left
 output=MAIL_BODY.line(6).word(3).untilword()
 long_output=MAIL_BODY.line(7).after(le).untilword()
 state=MAIL_SUBJECT.line(0).word(1)
-state.converter=Mineur>1,Majeur>2,Critique>3
+state.converter=Mineur>1,Majeur>2,Critique>3,Alarme~2,?>0
 timestamp=MAIL_DATE
 timestamp.output=timestamp
 ```
@@ -146,6 +146,9 @@ Les actions peuvent être les suivantes :
 
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
+    * À partir de la `3.40.0` on peut utiliser le symbole `~` pour que la chaîne de caractères soit relatif. Dans l’exemple ci-dessus la chaine `Alarme 3` sera remplacé par 2.
+    * À partir de la `3.40.0` on peut définir une valeur par défaut avec `?>`. Dans l’exemple ci-dessus si `state` match avec aucune conversion il sera remplacé par 0.
+
 
 À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :
 
@@ -157,7 +160,7 @@ Les actions peuvent être les suivantes :
 
 - `resource.print=Valeur`
 
-La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
+La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e, f des chaînes de caractères) :
 
 - `MAIL_BODY`, `MAIL_DATE`, `MAIL_ID`, `MAIL_SENDER`, et `MAIL_SUBJECT` sont les différentes parties de l'email
 - `line(a)` sélectionne une ligne entière numéro a
@@ -173,8 +176,13 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).before(e)` sélectionne tous les mots avant e
 - `line(a).before_incl(e)` sélectionne tous les mots avant e, e inclus
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
-- `and` permet d'effectuer une concaténation entre deux opérations.
-- `print(word)` permet d'assigner la valeur word dans le champ
+- `line(a).replace(e,f)`  remplace la chaine de caractère e par la chaine f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée.(À partir de la `3.40.0`)
+- `line(a).remove(e)` suprime la chaine de caractère e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée.(À partir de la `3.40.0`)
+- `line(a).LOWER_CASE` passe la sélection (ici une ligne entière numéro a) en Minuscule. (À partir de la `3.40.0`)
+- `line(a).UPPER_CASE` passe la sélection (ici une ligne entière numéro a) en Majuscule. (À partir de la `3.40.0`)
+- `and` permet d'effectuer une concaténation entre deux opérations.(A partir de la `3.39.0`)
+- `print(word)` permet d'assigner la valeur word dans le champ. (A partir de la `3.39.0`)
+
 
 MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une action 'dateformat' dessus.
 
