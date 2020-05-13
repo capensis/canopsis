@@ -151,4 +151,12 @@ export default {
   .tab-item-card {
     margin: auto;
   }
+
+  @media (min-width: 0) {
+    .xs0 {
+      max-width: 0;
+      max-height: 0;
+      overflow: hidden;
+    }
+  }
 </style>
