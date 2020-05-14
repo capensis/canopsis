@@ -25,7 +25,7 @@
               small,
               icon
             )
-              v-icon file_copy
+              v-icon content_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
 </template>
 

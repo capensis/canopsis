@@ -86,7 +86,7 @@
           icon,
           depressed
         )
-          v-icon file_copy
+          v-icon content_copy
         span {{ $t('modals.variablesHelp.copyToClipboard') }}
     v-layout(row)
       v-switch(

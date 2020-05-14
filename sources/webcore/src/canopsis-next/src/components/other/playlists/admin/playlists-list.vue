@@ -32,6 +32,13 @@
                 icon,
                 @click.stop
               )
+                v-icon content_copy
+              v-btn(
+                v-if="hasCreateAnyPlaylistAccess",
+                icon,
+                small,
+                @click.stop="$emit('duplicate', props.item)"
+              )
                 v-icon file_copy
               v-btn.ma-0(
                 v-if="hasUpdateAnyPlaylistAccess",
