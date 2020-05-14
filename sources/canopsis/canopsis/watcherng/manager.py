@@ -23,6 +23,7 @@ import uuid
 from canopsis.event import forger
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection, CollectionError
+from canopsis.common.errors import NotFoundError
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
@@ -152,6 +153,11 @@ class WatcherManager(object):
         :rtype: bool
         :raises: CollectionError if the update fails.
         """
+        previous_value = self.get_watcher_by_id(wid)
+        if previous_value is None:
+            raise NotFoundError("No watcher found with ID {}".format(
+                wid))
+
         watcher = self.check_watcher_fields(watcher)
 
         resp = self.__collection.update(query={'_id': wid, "type": "watcher"},

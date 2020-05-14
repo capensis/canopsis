@@ -23,6 +23,7 @@ from bottle import request
 from pymongo.errors import PyMongoError
 
 from canopsis.common.collection import CollectionError
+from canopsis.common.errors import NotFoundError
 from canopsis.watcherng import WatcherManager
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_NOT_FOUND, HTTP_ERROR)
@@ -132,6 +133,11 @@ def exports(ws):
             ws.logger.error('Watcherng update error : {}'.format(ce))
             return gen_json_error(
                 {'description': 'Error while updating a watcher'},
+                HTTP_ERROR
+            )
+        except NotFoundError as ex:
+            return gen_json_error(
+                {'description': ex.message},
                 HTTP_ERROR
             )
 
