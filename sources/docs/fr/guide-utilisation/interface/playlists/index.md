@@ -25,7 +25,7 @@ Plusieurs informations concernant la playlist sont demandées :
 * Plein écran: La playlist doit-elle être affichée en plein écran, ou non ?
 * Gérer les onglets: Il s'agit de sélectionner les onglets de vues qui participent à cette playlist.
 
-Une fois les champs renseignés, cliquez sur "Sauvegarder", votre playlist apparaitra dans la liste des playlists.
+Une fois les champs renseignés, cliquez sur "Sauvegarder". Votre playlist apparaîtra dans la liste des playlists.
 
 ![Liste des playlists](./img/liste_playlists.png  "Liste des playlists")
 
