@@ -361,7 +361,7 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'play_arrow',
   },
   groupConsequences: {
-    icon: 'flash_on',
+    icon: 'center_focus_strong',
   },
   groupCauses: {
     icon: 'note',
