@@ -57,8 +57,6 @@
 </template>
 
 <script>
-import qs from 'qs';
-
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
@@ -114,7 +112,9 @@ export default {
   },
   methods: {
     getPlaylistRoute({ _id }) {
-      return `${window.location.origin}/playlist/${_id}?${qs.stringify({ autoplay: true })}`;
+      const { href } = this.$router.resolve({ name: 'playlist', params: { id: _id }, query: { autoplay: true } });
+
+      return `${window.location.origin}${href}`;
     },
 
     onSuccessCopied() {
