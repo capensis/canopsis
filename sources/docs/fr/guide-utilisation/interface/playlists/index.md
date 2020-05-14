@@ -9,7 +9,7 @@ Elles peuvent être affichées en mode "plein écran" sur un téléviseur par ex
 Dans Canopsis, la création d'une playlist s'effectue par le menu 'Administration' puis 'Playlists'.
 ![Menu playlists](./img/menu_playlists.png)
 
-Il est ensuite possible de créer une playlist en cliquant sur le bouton "+"
+Il est ensuite possible de créer une playlist en cliquant sur le bouton "+".
 
 ![Bouton création playlist](./img/bouton_creation_playlist.png  "Bouton création playlist")
 
