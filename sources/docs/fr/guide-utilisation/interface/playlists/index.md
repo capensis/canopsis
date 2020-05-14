@@ -81,13 +81,8 @@ Pour cela, il vous faut cliquer sur le bouton permettant de recopier le lien de 
 Vous pouvez démarrer une playlist à partir de la liste des playlists en cliquant sur le bouton de lecture ![Lecture playlist](./img/lecture_playlists.png  "Lecture de playlists") 
 
 ### Boutons de navigation
-
-Lorsque vous exploitez votre playlist, vous avez à disposition plusieurs actions dans le bandeau haut de l'application
-
-![Bandeau playlist](./img/bandeau_playlists.png  "Bandeau playlists") 
-
-* **Temps restant avant le chargement de la vue suivante**
-* **Vue précédente**
-* **Démarrer la playlist / Mettre en pause la playlist**
-* **Vue suivante**
-* **Mode plein écran**
+* Temps restant avant le chargement de la vue suivante
+* Vue précédente
+* Démarrer la playlist / Mettre en pause la playlist
+* Vue suivante
+* Mode plein écran
