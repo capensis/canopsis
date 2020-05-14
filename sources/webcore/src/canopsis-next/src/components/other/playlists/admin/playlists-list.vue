@@ -24,6 +24,15 @@
                 icon
               )
                 v-icon play_arrow
+              v-btn(
+                v-clipboard:copy="getPlaylistRoute(props.item)",
+                v-clipboard:success="onSuccessCopied",
+                v-clipboard:error="onErrorCopied",
+                small,
+                icon,
+                @click.stop
+              )
+                v-icon file_copy
               v-btn.ma-0(
                 v-if="hasUpdateAnyPlaylistAccess",
                 icon,
@@ -41,6 +50,8 @@
 </template>
 
 <script>
+import qs from 'qs';
+
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
@@ -92,6 +103,19 @@ export default {
           sortable: false,
         },
       ];
+    },
+  },
+  methods: {
+    getPlaylistRoute({ _id }) {
+      return `${window.location.origin}/playlist/${_id}?${qs.stringify({ autoplay: true })}`;
+    },
+
+    onSuccessCopied() {
+      this.$popups.success({ text: this.$t('success.pathCopied') });
+    },
+
+    onErrorCopied() {
+      this.$popups.success({ text: this.$t('errors.default') });
     },
   },
 };
