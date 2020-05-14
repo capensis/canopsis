@@ -546,6 +546,36 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
+    @staticmethod
+    def _last_comment_aggregation():
+        """
+        Aggregation pipeline step to add field v.lastComment with last comment step
+        Empty dictionary when comments not found
+        """
+        return {"$addFields": {
+            "lastComment": {
+                "$reduce": {
+                    "input": {
+                        # slice array to top 1
+                        "$slice": [{
+                            # filter steps with comment type, newer first
+                            "$filter": {
+                                "input": {"$reverseArray": "$v.steps"},
+                                "as": "steps",
+                                "cond": {
+                                    "$eq": ["$$steps._t", "comment"]
+                                }
+                            }
+                        },
+                            1
+                        ]
+                    },
+                    "initialValue": {},
+                    "in": {"$mergeObjects": [{}, "$$this"]}
+                }
+            }
+        }}
+
     def _build_aggregate_pipeline(self,
                                   final_filter,
                                   sort_key,
@@ -599,6 +629,19 @@ class AlertsReader(object):
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
+        # insert pipeline operations into 0 position in reverse order:
+        # aggregate last comment from steps as lastComment, replace with null when empty, move lastComment 
+        # into v.lastComment
+        pipeline.insert(0, {"$project": {"lastComment": False}})
+        pipeline.insert(0, {'$addFields': {"v.lastComment": "$lastComment"}})
+        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "lastComment": {
+            "$cond": {
+                "if": {"$eq": [{}, "$lastComment"]},
+                "then": None,
+                "else": "$lastComment"
+            }
+        }}})
+        pipeline.insert(0, self._last_comment_aggregation())
 
         self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
         if has_wildcard_dynamic_filter:

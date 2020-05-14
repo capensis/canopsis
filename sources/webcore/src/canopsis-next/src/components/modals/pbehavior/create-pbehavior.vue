@@ -79,9 +79,7 @@ export default {
         pbehavior.comments = commentsToPbehaviorComments(this.form.comments);
         pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
 
-        if (!pbehavior.author) {
-          pbehavior.author = this.currentUser._id;
-        }
+        pbehavior.author = this.currentUser._id;
 
         if (this.config.action) {
           await this.config.action(pbehavior);

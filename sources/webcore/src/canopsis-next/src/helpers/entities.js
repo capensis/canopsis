@@ -500,6 +500,7 @@ export function generateAction() {
   const generalParameters = {
     _id: uuid('action'),
     type: ACTION_TYPES.snooze,
+    enabled: true,
     delay: {},
     hook: defaultHook,
   };
