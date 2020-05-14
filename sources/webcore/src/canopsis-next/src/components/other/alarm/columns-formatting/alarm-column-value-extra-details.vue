@@ -162,6 +162,6 @@ export default {
   }
 
   .meta-alarm {
-    background-color: #98D5BE;
+    background-color: #6D4C41;
   }
 </style>
