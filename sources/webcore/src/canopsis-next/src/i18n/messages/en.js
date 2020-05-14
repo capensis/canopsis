@@ -1132,6 +1132,9 @@ export default {
       edit: {
         title: 'Edit playlist',
       },
+      duplicate: {
+        title: 'Duplicate playlist',
+      },
       errors: {
         emptyTabs: 'You should add a tab',
       },

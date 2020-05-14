@@ -4,7 +4,8 @@
       :playlists="playlists",
       :pending="playlistsPending",
       @edit="showEditPlaylistModal",
-      @delete="showRemovePlaylistModal"
+      @delete="showRemovePlaylistModal",
+      @duplicate="showDuplicatePlaylistModal"
     )
     .fab(v-if="hasCreateAnyPlaylistAccess")
       v-layout(column)
@@ -22,6 +23,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -86,6 +89,7 @@ export default {
         config: {
           playlist,
 
+          title: this.$t('modals.createPlaylist.edit.title'),
           action:
             this.callActionWithFetching(newPlaylist => this.updatePlaylist({ id: playlist._id, data: newPlaylist })),
         },
@@ -100,6 +104,21 @@ export default {
             await this.removePlaylist({ id });
 
             return this.removeRightByPlaylistId(id);
+          }),
+        },
+      });
+    },
+
+    showDuplicatePlaylistModal(playlist) {
+      this.$modals.show({
+        name: MODALS.createPlaylist,
+        config: {
+          title: this.$t('modals.createPlaylist.duplicate.title'),
+          playlist: omit(playlist, ['_id']),
+          action: this.callActionWithFetching(async (newPlaylist) => {
+            const { _id: playlistId } = await this.createPlaylist({ data: newPlaylist });
+
+            return this.createRightByPlaylistId(playlistId);
           }),
         },
       });

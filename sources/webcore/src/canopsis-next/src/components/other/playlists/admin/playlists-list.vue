@@ -24,6 +24,22 @@
                 icon
               )
                 v-icon play_arrow
+              v-btn(
+                v-clipboard:copy="getPlaylistRoute(props.item)",
+                v-clipboard:success="onSuccessCopied",
+                v-clipboard:error="onErrorCopied",
+                small,
+                icon,
+                @click.stop
+              )
+                v-icon content_copy
+              v-btn(
+                v-if="hasCreateAnyPlaylistAccess",
+                icon,
+                small,
+                @click.stop="$emit('duplicate', props.item)"
+              )
+                v-icon file_copy
               v-btn.ma-0(
                 v-if="hasUpdateAnyPlaylistAccess",
                 icon,
@@ -92,6 +108,21 @@ export default {
           sortable: false,
         },
       ];
+    },
+  },
+  methods: {
+    getPlaylistRoute({ _id }) {
+      const { href } = this.$router.resolve({ name: 'playlist', params: { id: _id }, query: { autoplay: true } });
+
+      return `${window.location.origin}${href}`;
+    },
+
+    onSuccessCopied() {
+      this.$popups.success({ text: this.$t('success.pathCopied') });
+    },
+
+    onErrorCopied() {
+      this.$popups.success({ text: this.$t('errors.default') });
     },
   },
 };

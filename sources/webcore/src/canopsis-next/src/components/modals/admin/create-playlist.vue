@@ -65,9 +65,7 @@ export default {
     ...mapEntitiesGetters(['getList']),
 
     title() {
-      const type = this.modal.config.playlist ? 'edit' : 'create';
-
-      return this.$t(`modals.createPlaylist.${type}.title`);
+      return this.config.title || this.$t('modals.createPlaylist.create.title');
     },
   },
   async mounted() {
