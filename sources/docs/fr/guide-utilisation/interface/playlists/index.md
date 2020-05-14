@@ -74,7 +74,7 @@ Pour cela, il vous faut cliquer sur le bouton permettant de recopier le lien de 
 ![Copie lien  playlist](./img/copie_lien_playlists.png  "Copie lien playlists") 
 
 !!! Note
-    Vous pouve utiliser le paramètre `autoplay=true` pour que la playlist démarre automatiquement sans intervention
+    Vous pouvez utiliser le paramètre `autoplay=true` pour que la playlist démarre automatiquement sans intervention
 
 **A partir de la liste des playlists**
 
