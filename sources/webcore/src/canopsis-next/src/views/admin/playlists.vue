@@ -115,7 +115,11 @@ export default {
         config: {
           title: this.$t('modals.createPlaylist.duplicate.title'),
           playlist: omit(playlist, ['_id']),
-          action: this.callActionWithFetching(newPlaylist => this.createPlaylist({ data: newPlaylist })),
+          action: this.callActionWithFetching(async (newPlaylist) => {
+            const { _id: playlistId } = await this.createPlaylist({ data: newPlaylist });
+
+            return this.createRightByPlaylistId(playlistId);
+          }),
         },
       });
     },
