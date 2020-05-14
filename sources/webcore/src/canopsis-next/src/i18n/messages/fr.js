@@ -97,6 +97,9 @@ export default {
     webhooks: 'Webhooks',
     links: 'Liens',
     broadcastMessages: 'Diffuser des messages',
+    playlists: 'Playlists',
+    fullscreen: 'Plein écran',
+    interval: 'Période',
     status: 'Statut',
     actions: {
       close: 'Fermer',
@@ -1042,6 +1045,27 @@ export default {
         comment: 'Commentaire',
       },
     },
+    createPlaylist: {
+      create: {
+        title: 'Créer playlist',
+      },
+      edit: {
+        title: 'Éditée playlist',
+      },
+      duplicate: {
+        title: 'Dupliquer une playlist',
+      },
+      errors: {
+        emptyTabs: 'Merci de ajouter un onglet',
+      },
+      fields: {
+        interval: 'Période',
+        unit: 'Unité',
+      },
+      groups: 'Groupe',
+      result: 'Résultat',
+      manageTabs: 'Gérer les onglet',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1322,6 +1346,10 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Paramètres',
+      importExportViews: 'Importation/Exportation',
+    },
     interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {
       title: 'Type d\'affichage de la barre de vues',
@@ -1474,6 +1502,14 @@ export default {
 
   importExportViews: {
     selectAll: 'Sélectionnez tous les groupes et vues',
+  },
+
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Les actions sont désactivées en mode plein écran',
+      },
+    },
   },
 
   ...featureService.get('i18n.fr'),

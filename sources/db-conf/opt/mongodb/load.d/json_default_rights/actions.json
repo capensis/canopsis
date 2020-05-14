@@ -276,6 +276,14 @@
         "type": "CRUD"
     },
     {
+        "_id" : "models_playlist",
+        "loader_id" : "models_playlist",
+        "crecord_name": "models_playlist",
+        "crecord_type" : "action",
+        "desc": "Playlists",
+        "type": "CRUD"
+    },
+    {
         "_id" : "models_serie",
         "loader_id" : "models_serie",
         "crecord_name": "models_serie",

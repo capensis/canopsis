@@ -7,6 +7,7 @@
           :key="group._id",
           :group="group"
         )
+      groups-top-bar-playlists
     groups-settings-button(
       tooltipLeft,
       :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
@@ -26,9 +27,14 @@ import registrableMixin from '@/mixins/registrable';
 import GroupsSettingsButton from '../groups-settings-button.vue';
 
 import GroupsTopBarGroup from './groups-top-bar-group.vue';
+import GroupsTopBarPlaylists from './groups-top-bar-playlists.vue';
 
 export default {
-  components: { GroupsSettingsButton, GroupsTopBarGroup },
+  components: {
+    GroupsSettingsButton,
+    GroupsTopBarGroup,
+    GroupsTopBarPlaylists,
+  },
   mixins: [
     vuetifyTabsMixin,
     entitiesViewGroupMixin,
@@ -55,12 +61,34 @@ export default {
   .groups-wrapper {
     height: 48px;
 
-    .v-speed-dial--bottom.v-speed-dial--absolute {
-      bottom: -10px;
-    }
+    .v-speed-dial--absolute {
+      &.v-speed-dial--bottom {
+        bottom: -10px;
+      }
 
-    .v-speed-dial--right.v-speed-dial--absolute {
-      right: 25px;
+      &.v-speed-dial--right {
+        right: 25px;
+      }
     }
+  }
+
+  .group-v-menu-content {
+    .v-list {
+      background-color: inherit;
+
+      .v-list__tile__title {
+        height: 28px;
+        line-height: 28px;
+      }
+
+      .edit-view-button, .duplicate-view-button {
+        vertical-align: top;
+        margin: 0 0 0 8px;
+      }
+    }
+  }
+
+  .group-item .v-menu__activator .v-btn {
+    text-transform: none;
   }
 </style>

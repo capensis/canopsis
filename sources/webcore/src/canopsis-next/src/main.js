@@ -14,6 +14,7 @@ import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
+import PortalVue from 'portal-vue';
 import sanitizeHTML from 'sanitize-html';
 
 import 'vue-tour/dist/vue-tour.css';
@@ -52,6 +53,7 @@ import * as modalsComponents from '@/components/modals';
 
 Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
+Vue.use(PortalVue);
 Vue.use(filters);
 Vue.use(Vuetify, {
   iconfont: 'md',
@@ -152,6 +154,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
     [MODALS.watcher]: { maxWidth: 920, lazy: true },
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
+    [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

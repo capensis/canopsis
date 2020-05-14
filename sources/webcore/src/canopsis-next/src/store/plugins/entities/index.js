@@ -24,7 +24,7 @@ export const entitiesModule = {
   namespaced: true,
   getters: {
     getItem(state) {
-      return (type, id, withEmbedded) => {
+      return (type, id, withEmbedded = false) => {
         let schema = schemas[type];
 
         if (typeof type !== 'string') {
@@ -59,7 +59,7 @@ export const entitiesModule = {
       };
     },
     getList(state) {
-      return (type, ids = []) => {
+      return (type, ids = [], withEmbedded = false) => {
         if (typeof type !== 'string') {
           throw new Error('[entities/getList] Missing required argument.');
         }
@@ -67,9 +67,14 @@ export const entitiesModule = {
         if (!state[type] || ids.length === 0) {
           return [];
         }
-        const schema = schemas[type];
-        const { idAttribute, disabledCache } = schema;
 
+        let schema = schemas[type];
+
+        if (withEmbedded) {
+          schema = cloneSchemaWithEmbedded(schema);
+        }
+
+        const { idAttribute, disabledCache } = schema;
         const entities = denormalize(ids, [schema], state)
           .filter(item => !!item);
 

@@ -54,7 +54,7 @@ export default {
     },
     updateTabMethod: {
       type: Function,
-      required: true,
+      default: () => () => {},
     },
   },
   computed: {

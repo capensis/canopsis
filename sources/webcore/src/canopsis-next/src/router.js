@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import Cookies from 'js-cookie';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
-import { USERS_RIGHTS } from '@/constants';
+import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
 import store from '@/store';
 import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
 
@@ -16,6 +16,7 @@ import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
 import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
+import AdminPlaylists from '@/views/admin/playlists.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
@@ -23,6 +24,7 @@ import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
+import Playlist from '@/views/playlist.vue';
 
 Vue.use(Router);
 
@@ -125,6 +127,17 @@ const routes = [
     },
   },
   {
+    path: '/admin/playlists',
+    name: 'admin-playlists',
+    component: AdminPlaylists,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.playlist,
+      },
+    },
+  },
+  {
     path: '/exploitation/pbehaviors',
     name: 'exploitation-pbehaviors',
     component: ExploitationPbehaviors,
@@ -200,6 +213,19 @@ const routes = [
         id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
       },
     },
+  },
+  {
+    path: '/playlist/:id',
+    name: 'playlist',
+    component: Playlist,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: route => route.params.id,
+        mask: USERS_RIGHTS_MASKS.default,
+      },
+    },
+    props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
   {
     path: '*',
