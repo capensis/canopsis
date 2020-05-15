@@ -1301,7 +1301,7 @@ export default {
       entityPatterns: 'Pattern des entités',
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',
-      thresholdType: 'Threshold type',
+      thresholdType: 'Type de seuil',
       timeInterval: 'Intervalle de temps',
     },
   },
