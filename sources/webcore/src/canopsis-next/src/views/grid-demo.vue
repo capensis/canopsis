@@ -1,6 +1,9 @@
 <template lang="pug">
   div.grid-layout-wrapper
+    v-layout
+      v-switch(v-model="editMode", label="Edit grid")
     grid-layout(
+      v-if="editMode",
       :layout.sync="layout",
       :col-num="12",
       :row-height="20",
@@ -33,6 +36,19 @@
             :updateTabMethod="() => {}",
             ref="widgets"
           )
+    .grid-wrapper(v-else)
+      div.grid-item(
+        v-for="item in layout",
+        :key="item.i._id",
+        :style="getWidgetFlexStyle(item)"
+      )
+        widget-wrapper(
+          :widget="item.i.widget",
+          :tab="{ _id: '123' }",
+          :row="{}",
+          :updateTabMethod="() => {}",
+          ref="widgets"
+        )
 </template>
 
 <script>
@@ -73,6 +89,7 @@ export default {
       })),
       draggable: true,
       resizable: true,
+      editMode: true,
       index: 0,
       widgets,
     };
@@ -82,6 +99,15 @@ export default {
       if (!autoSize && !i.fixedHeight) {
         this.$nextTick(() => this.$refs.widgets[i.index].$parent.autoSizeHeight());
       }
+    },
+
+    getWidgetFlexStyle(widget) {
+      return {
+        gridColumnStart: widget.x + 1,
+        gridColumnEnd: widget.x + 1 + widget.w,
+        gridRowStart: widget.y + 1,
+        gridRowEnd: widget.y + widget.h,
+      };
     },
 
     change(value, index) {
@@ -96,6 +122,11 @@ export default {
 <style lang="scss">
   .grid-layout-wrapper {
     padding-bottom: 500px;
+  }
+  .grid-wrapper {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(12, calc(80% / 12));
   }
   .vue-grid-item {
     overflow: hidden;
