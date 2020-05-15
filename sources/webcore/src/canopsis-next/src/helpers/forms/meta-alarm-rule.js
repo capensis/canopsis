@@ -1,4 +1,4 @@
-import { cloneDeep, omit, pick } from 'lodash';
+import { cloneDeep, omit, pick, isNumber } from 'lodash';
 import moment from 'moment';
 
 import { convertDurationToIntervalObject } from '@/helpers/date';
@@ -23,7 +23,7 @@ export function metaAlarmRuleToForm(rule = {}) {
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
       threshold_rate: config.threshold_rate || 1,
       threshold_count: config.threshold_count || 1,
-      threshold_type: config.threshold_count
+      threshold_type: isNumber(config.threshold_count)
         ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
       time_interval: config.time_interval
