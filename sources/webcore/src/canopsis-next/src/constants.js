@@ -31,13 +31,16 @@ export const ENTITIES_TYPES = {
   action: 'action',
   heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
+  broadcastMessage: 'broadcastMessage',
+  playlist: 'playlist',
 };
 
 export const MODALS = {
+  createEvent: 'create-event',
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
-  createCancelEvent: 'create-cancel-event',
+  createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
@@ -68,6 +71,7 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createRight: 'create-right',
+  createBroadcastMessage: 'create-broadcast-message',
   createEventFilterRule: 'create-event-filter-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
@@ -85,6 +89,8 @@ export const MODALS = {
   importExportViews: 'import-groups-and-views',
   dynamicInfoTemplatesList: 'dynamic-info-templates-list',
   createDynamicInfoTemplate: 'create-dynamic-info-template',
+  createPlaylist: 'create-playlist',
+  managePlaylistTabs: 'manage-playlist-tabs',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -104,8 +110,10 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
+  groupRequest: 'groupRequest',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
+  comment: 'comment',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -341,6 +349,9 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.play]: {
     icon: 'play_arrow',
   },
+  [EVENT_ENTITY_TYPES.groupRequest]: {
+    icon: 'note_add',
+  },
   [EVENT_ENTITY_TYPES.pbhenter]: {
     color: COLORS.entitiesEvents.pbhenter,
     icon: 'pause',
@@ -348,6 +359,16 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.pbhleave]: {
     color: COLORS.entitiesEvents.pbhleave,
     icon: 'play_arrow',
+  },
+  groupConsequences: {
+    icon: 'flash_on',
+  },
+  groupCauses: {
+    icon: 'note',
+  },
+  [EVENT_ENTITY_TYPES.comment]: {
+    color: COLORS.entitiesEvents.comment,
+    icon: 'comment',
   },
 };
 
@@ -649,6 +670,7 @@ export const STATS_CALENDAR_COLORS = {
 };
 
 export const USERS_RIGHTS_MASKS = {
+  default: 1,
   create: 8,
   read: 4,
   update: 2,
@@ -667,6 +689,8 @@ export const USERS_RIGHTS = {
     action: 'models_action',
     user: 'models_user',
     parameters: 'models_parameters',
+    broadcastMessage: 'models_broadcastMessage',
+    playlist: 'models_playlist',
     exploitation: {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
@@ -692,6 +716,8 @@ export const USERS_RIGHTS = {
         changeState: 'listalarm_changeState',
         history: 'listalarm_history',
         variablesHelp: 'common_variablesHelp',
+        groupRequest: 'listalarm_groupRequest',
+        comment: 'listalarm_comment',
 
         listFilters: 'listalarm_listFilters',
         editFilter: 'listalarm_editFilter',
@@ -723,6 +749,7 @@ export const USERS_RIGHTS = {
       actions: {
         entityAck: 'serviceweather_entityAck',
         entityAssocTicket: 'serviceweather_entityAssocTicket',
+        entityComment: 'serviceweather_entityСomment',
         entityValidate: 'serviceweather_entityValidate',
         entityInvalidate: 'serviceweather_entityInvalidate',
         entityPause: 'serviceweather_entityPause',
@@ -767,6 +794,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     changeState: 'changeState',
     variablesHelp: 'variablesHelp',
     history: 'history',
+    groupRequest: 'groupRequest',
+    comment: 'comment',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -798,6 +827,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityPause: 'entityPause',
     entityPlay: 'entityPlay',
     entityCancel: 'entityCancel',
+    entityComment: 'entityComment',
 
     entityLinks: 'entityLinks',
 
@@ -826,6 +856,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
     [WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp]: USERS_RIGHTS.business.alarmsList.actions.variablesHelp,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.comment]: USERS_RIGHTS.business.alarmsList.actions.comment,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.groupRequest]: USERS_RIGHTS.business.alarmsList.actions.groupRequest,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -867,6 +899,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
     [WIDGETS_ACTIONS_TYPES.weather.variablesHelp]: USERS_RIGHTS.business.weather.actions.variablesHelp,
+    [WIDGETS_ACTIONS_TYPES.weather.entityComment]: USERS_RIGHTS.business.weather.actions.entityComment,
   },
 
   counter: {
@@ -1126,6 +1159,83 @@ export const SNOOZE_DURATION_UNITS = {
   ...DURATION_UNITS,
 };
 
+export const ALARM_ENTITY_FIELDS = {
+  connector: 'v.connector',
+  connectorName: 'v.connector_name',
+  component: 'v.component',
+  resource: 'v.resource',
+  output: 'v.output',
+  extraDetails: 'extra_details',
+  state: 'v.state.val',
+  status: 'v.status.val',
+};
+
+export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.component',
+    value: ALARM_ENTITY_FIELDS.component,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
+
+export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
+  {
+    labelKey: 'tables.alarmGeneral.connector',
+    value: ALARM_ENTITY_FIELDS.connector,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.connectorName',
+    value: ALARM_ENTITY_FIELDS.connectorName,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.resource',
+    value: ALARM_ENTITY_FIELDS.resource,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.output',
+    value: ALARM_ENTITY_FIELDS.output,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.extraDetails',
+    value: ALARM_ENTITY_FIELDS.extraDetails,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.state',
+    value: ALARM_ENTITY_FIELDS.state,
+  },
+  {
+    labelKey: 'tables.alarmGeneral.status',
+    value: ALARM_ENTITY_FIELDS.status,
+  },
+];
+
 export const PERIODIC_REFRESH_UNITS = {
   second: AVAILABLE_TIME_UNITS.second,
   minute: AVAILABLE_TIME_UNITS.minute,
@@ -1138,9 +1248,8 @@ export const DEFAULT_PERIODIC_REFRESH = {
   unit: TIME_UNITS.second,
 };
 
-export const DEFAULT_RETRY_FIELD = {
-  count: 0,
-  delay: RETRY_DEFAULT_DELAY,
+export const DEFAULT_TIME_INTERVAL = {
+  interval: 60,
   unit: TIME_UNITS.second,
 };
 
@@ -1178,6 +1287,11 @@ export const POPUP_TYPES = {
   error: 'error',
 };
 
+export const ALARMS_GROUP_PREFIX = {
+  CAUSES: 'causes_',
+  CONSEQUENCES: 'consequences_',
+};
+
 export const GRID_SIZES = {
   min: 0,
   max: 12,
@@ -1186,6 +1300,14 @@ export const GRID_SIZES = {
 
 export const TOURS = {
   alarmsExpandPanel: 'alarmsExpandPanel',
+};
+
+export const DEFAULT_BROADCAST_MESSAGE_COLOR = '#e75e40';
+
+export const BROADCAST_MESSAGES_STATUSES = {
+  active: 0,
+  pending: 1,
+  expired: 2,
 };
 
 export const AVAILABLE_COUNTERS = {
@@ -1202,3 +1324,7 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
+
+export const PORTALS_NAMES = {
+  additionalTopBarItems: 'additional-top-bar-items',
+};

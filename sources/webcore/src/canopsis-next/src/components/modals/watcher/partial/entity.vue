@@ -146,6 +146,12 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           action: this.prepareCancelAction,
         },
+        comment: {
+          type: weatherActionsTypes.entityComment,
+          eventType: EVENT_ENTITY_TYPES.comment,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
+          action: this.prepareCommentAction,
+        },
       },
     };
   },
@@ -229,7 +235,7 @@ export default {
 
     availableActions() {
       const { filteredActionsMap } = this;
-      const actions = [];
+      const actions = [filteredActionsMap.comment];
 
       if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);

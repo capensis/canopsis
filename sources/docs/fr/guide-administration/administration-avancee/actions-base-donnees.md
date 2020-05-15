@@ -23,7 +23,7 @@ WriteResult({ "nRemoved" : 17 })
 !!! attention
     La requête vide `{}` va s'appliquer à tous les documents de la collection. Par conséquent, **`db.<nom de la collection>.remove({})` va vider complètement la collection**. Pensez donc à ne jamais avoir `{}` comme paramètre, sauf si vous voulez vider complètement la collection.
 
-Le tableau suivant montre plusieurs examples de requêtes sur les collections d'objets Canopsis, avec la collection MongoDB en _italique_ et le filtre en **gras**. Pour rappel, les entités sont stockées dans la collection `default_entities` tandis que les alarmes sont stockées dans `periodical_alarm`, les pbehaviors dans `default_pbehavior` et les vues dans `views`.
+Le tableau suivant montre plusieurs examples de requêtes sur les collections d'objets Canopsis, avec la collection MongoDB en _italique_ et le filtre en **gras**. Pour rappel, les entités sont stockées dans la collection `default_entities` tandis que les alarmes sont stockées dans `periodical_alarm`, les comportements périodiques dans `default_pbehavior` et les vues dans `views`.
 
 | Type d'objets                                                             | Requête MongoDB                                                                               |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------|
@@ -33,8 +33,8 @@ Le tableau suivant montre plusieurs examples de requêtes sur les collections d'
 | Alarmes associées à l'entité `XXX/ZZZ`                                    | `db.`_`periodical_alarm`_`.find(`**`{"v.component" : "ZZZ", "v.resource" : "XXX"}`**`)`       |
 | Alarmes non mises à jour depuis le 1er janvier 2019 00:00:00 GMT          | `db.`_`periodical_alarm`_`.find(`**`{"v.last_update_date":{$lte:1546300800}}`**`)`            |
 | Expression régulière sur l'attribut `client` dans l'entité                | `db.`_`default_entities`_`.find(`**`{"infos.client.value":{$regex:'.*SSBU.*',$options:'i'}}`**`)`|
-| Pbehaviors créés par `emile-zola`                                         | `db.`_`default_pbehavior`_`.find(`**`{"author":"emile-zola"}`**`)`                            |
-| Pbehaviors avec un `tstart` placé dans le futur                           | `db.`_`default_pbehavior`_`.find(`**`{"tstart" : {$gt : Math.floor(Date.now() / 1000)}})`**`)`|
+| Comportements périodiques créés par `emile-zola`                                         | `db.`_`default_pbehavior`_`.find(`**`{"author":"emile-zola"}`**`)`                            |
+| Comoportements périodiques avec un `tstart` placé dans le futur                           | `db.`_`default_pbehavior`_`.find(`**`{"tstart" : {$gt : Math.floor(Date.now() / 1000)}})`**`)`|
 | Vues désactivées                                                          | `db.`_`views`_`.find(`**`{"enabled":false}`**`)`                                              |
 
 Pour les requêtes sur les dates, vous pouvez vous aider de sites comme [epochconverter.com](https://www.epochconverter.com/) pour convertir les dates en timestamp UNIX. Le timestamp correspondant au temps courant est `Math.floor(Date.now() / 1000)`. Vous pouvez également vous servir des objets `Date()` pour les requêtes temporelles (voir la [documentation officielle de MongoDB sur `Date()`](https://docs.mongodb.com/manual/reference/method/Date/index.html)) qu'il faudra convertir en timestamp pour le filtrage. L'exemple suivant montre l'affichage des alarmes non mises à jour depuis un mois.

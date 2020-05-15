@@ -1,12 +1,9 @@
-# Webhook
+# Moteur `engine-webhook` (Go, CAT)
 
 !!! info
-    Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
+    Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
 
-!!! info
-    Disponible à partir de Canopsis 3.34.0
-
-Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `axe` en version CAT.
+Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `engine-axe` (en version CAT).
 
 Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
 
@@ -14,7 +11,7 @@ Depuis la `3.37.0`, la fonction de répétition est disponible.
 
 Depuis la `3.39.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
 
-Le moteur webhook permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
+Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
@@ -22,9 +19,9 @@ Des exemples pratiques d'utilisation des webhooks sont disponibles dans la parti
 
 ## Utilisation
 
-Le moteur doit être placé en sortie du moteur [`dynamic-infos`](moteur-dynamic-infos).
+Le moteur doit être placé en sortie du moteur [`engine-dynamic-infos`](moteur-dynamic-infos).
 
-Pour cela, il est nécessaire de lancer le moteur `dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `webhook`.
+Pour cela, il est nécessaire de lancer le moteur `engine-dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `engine-webhook`.
 
 ### Options de l'engine-webhook
 
@@ -58,10 +55,10 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
      - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
      - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
- - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le webhook si un pbehavior est actif sur l'entité.
+ - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le Webhook si un comportement périodique est actif sur l'entité.
  - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
      - `auth` (optionnel) : les identifiants pour l'authentification HTTP
-       - `username` (optionnel) : nom d'utilisateur employé pour l'authentification HTTP
+       - `username` (optionnel) : identifiant utilisateur employé pour l'authentification HTTP
        - `password` (optionnel) : mot de passé employé pour l'authentification HTTP
      - `headers` (optionnel) : les en-têtes de la requête
      - `method` (requis) : méthode HTTP
@@ -75,13 +72,11 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
      - `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
 
-Lors du lancement du moteur `webhook`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
+Lors du lancement du moteur `engine-webhook`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
 
 - `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 - `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
 - `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
-
-
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
@@ -98,7 +93,7 @@ Pour plus d'informations sur les `triggers` disponibles, consulter la [`document
 `entity_patterns` est un tableau pouvant contenir plusieurs patterns d'entités. Si plusieurs patterns sont ainsi définis, il suffit qu'un seul pattern d'entités corresponde à l'alarme en cours pour que la condition sur les `entity_patterns` soit validée. Il en va de même pour `alarm_patterns` (tableaux de patterns d'alarmes) et `event_patterns` (tableaux de patterns d'évènements).
 
 !!! attention
-    L'activation d'un webhook ne doit pas être dépendante d'un état d'une alarme appliqué par le moteur `action`. En effet, dans l’enchaînement des moteurs, `action` se situe après `webhook`. Le webhook sera donc activé **avant** que le moteur `action` ait pu changer l'état de l'alarme.
+    L'activation d'un webhook ne doit pas être dépendante de la criticité d'une alarme appliquée par le moteur `engine-action`. En effet, dans l’enchaînement des moteurs, `engine-action` se situe après `engine-webhook`. Le webhook sera donc activé **avant** que le moteur `engine-action` ait pu changer la criticité de l'alarme.
 
 Si des triggers et des patterns sont définies dans le même hook, le webhook est activé s'il correspond à la liste des triggers et en même temps aux différentes listes de patterns.
 
@@ -130,7 +125,7 @@ Par exemple, ce webhook va être activé si le trigger reçu par le moteur corre
 
 ### Templates
 
-Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de l'état de l'alarme, de l'évènement ou de l'entité.
+Les champs `payload` et `url` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de la criticité de l'alarme, de l'évènement ou de l'entité.
 
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
 
@@ -143,14 +138,14 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 `unit` est exprimé en "s" pour seconde, "m" pour minute, et "h" pour heure.
 
 Ces paramètres sont positionnés dans la configuration de chaque webhook.  
-Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).  
+Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
+
 ````
 cat webhook.conf
 count=5
 delay=1
 unit="m"
 ````
-
 
 ### Données externes
 
@@ -221,7 +216,7 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
 }
 ```
 
-## Collection
+## Collection MongoDB associée
 
 Les webhooks sont stockés dans la collection MongoDB `webhooks`.
 

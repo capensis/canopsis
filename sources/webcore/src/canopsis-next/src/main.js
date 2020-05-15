@@ -14,6 +14,7 @@ import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
+import PortalVue from 'portal-vue';
 import sanitizeHTML from 'sanitize-html';
 
 import 'vue-tour/dist/vue-tour.css';
@@ -40,15 +41,19 @@ import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
+import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
+import BullhornIcon from '@/components/icons/bullhorn.vue';
+import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
 
 import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
 
 Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
+Vue.use(PortalVue);
 Vue.use(filters);
 Vue.use(Vuetify, {
   iconfont: 'md',
@@ -59,6 +64,12 @@ Vue.use(Vuetify, {
   icons: {
     webhook: {
       component: WebhookIcon,
+    },
+    bullhorn: {
+      component: BullhornIcon,
+    },
+    settings_sync: {
+      component: SettingsSyncIcon,
     },
   },
 });
@@ -104,6 +115,8 @@ Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.component('alarm-chips', AlarmChips);
 
+Vue.component('alarms-list-table', AlarmsListTable);
+
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
 });
@@ -141,6 +154,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
     [MODALS.watcher]: { maxWidth: 920, lazy: true },
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
+    [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

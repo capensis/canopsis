@@ -9,9 +9,9 @@ Les données pouvant être calculées sont :
 *  Les alarmes créées, résolues et annulées.
 *  Le temps SLA (Service Level Agreement) des accusés de réception.
 *  Le temps de résolution SLA.
-*  Le taux d'état (d'alarme).
+*  Le taux de criticité (d'alarme).
 *  Le MTBF (mean time between failures), temps moyen entre pannes.
-*  L'état courant.
+*  La criticité courante.
 *  Les alarmes en cours : Ongoing alarms
 *  Les alarmes actuellement en cours : Current Ongoing alarms
 

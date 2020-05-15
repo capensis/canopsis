@@ -86,6 +86,7 @@ export function actionToForm(action) {
   }
 
   data.generalParameters = pick(action, ['_id', 'type', 'hook']);
+  data.generalParameters.enabled = action.enabled !== false;
 
   if (action.delay) {
     const [, value, unit] = action.delay.match(/^(\d+)(\w)$/);

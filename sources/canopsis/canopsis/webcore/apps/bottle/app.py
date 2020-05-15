@@ -129,7 +129,7 @@ class WebServer():
         self.cookie_expires = int(session.get('cookie_expires',
                                               DEFAULT_COOKIES_EXPIRE))
         self.secret = session.get('secret', DEFAULT_SECRET)
-        self.data_dir = session.get('data_dir', DEFAULT_DATA_DIR)
+        self.data_dir = os.path.expanduser(session.get('data_dir', DEFAULT_DATA_DIR))
 
         self.webservices = self.config.get('webservices', {})
 

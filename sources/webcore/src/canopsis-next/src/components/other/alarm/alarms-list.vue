@@ -2,7 +2,11 @@
   div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        alarm-list-search(:query.sync="query", :columns="columns")
+        advanced-search(
+          :query.sync="query",
+          :columns="columns",
+          :tooltip="$t('search.alarmAdvancedSearch')"
+        )
       v-flex
         pagination(
           data-test="topPagination",
@@ -56,6 +60,7 @@
       :hasColumns="hasColumns",
       :columns="columns",
       selectable,
+      expandable,
       ref="alarmsTable"
     )
       v-layout.white(v-show="alarmsMeta.total", align-center)
@@ -82,18 +87,17 @@ import { findRange } from '@/helpers/date-intervals';
 
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
-import AlarmListSearch from './search/alarm-list-search.vue';
 import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
 import AlarmsListTable from './partials/alarms-list-table.vue';
 
@@ -108,22 +112,21 @@ import AlarmsListTable from './partials/alarms-list-table.vue';
  */
 export default {
   components: {
-    AlarmListSearch,
     RecordsPerPage,
+    FilterSelector,
+    AdvancedSearch,
     AlarmsListTable,
     AlarmsExpandPanelTour,
-    FilterSelector,
   },
   mixins: [
     authMixin,
-    widgetQueryMixin,
+    alarmColumnFilters,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
-    widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
-    alarmColumnFilters,
   ],
   props: {
     widget: {
@@ -143,6 +146,7 @@ export default {
   computed: {
     tourCallbacks() {
       return {
+        onPreviousStep: this.onTourPreviousStep,
         onNextStep: this.onTourNextStep,
       };
     },
@@ -172,12 +176,33 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+
+    firstAlarmExpanded() {
+      const [alarm] = this.alarms;
+
+      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
+    },
+  },
+  mounted() {
+    this.fetchAlarmColumnFilters();
   },
   methods: {
-    onTourNextStep(currentStep) {
-      if (currentStep === 0) {
+    expandFirstAlarm() {
+      if (this.alarms[0] && !this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
+    },
+
+    onTourPreviousStep(currentStep) {
+      if (currentStep !== 1) {
+        this.expandFirstAlarm();
+      }
+
+      return this.$nextTick();
+    },
+
+    onTourNextStep() {
+      this.expandFirstAlarm();
 
       return this.$nextTick();
     },

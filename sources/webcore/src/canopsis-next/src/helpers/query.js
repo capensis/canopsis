@@ -60,10 +60,12 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
+    isCorrelationEnabled,
   } = widget.parameters;
 
   const query = {
     page: 1,
+    correlation: isCorrelationEnabled || false,
     opened: alarmsStateFilter.opened || false,
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
@@ -94,6 +96,7 @@ export function convertContextWidgetToQuery(widget) {
   const {
     itemsPerPage,
     selectedTypes,
+    widgetColumns,
   } = widget.parameters;
 
   const query = {
@@ -101,6 +104,10 @@ export function convertContextWidgetToQuery(widget) {
     limit: itemsPerPage || PAGINATION_LIMIT,
     selectedTypes,
   };
+
+  if (widgetColumns) {
+    query.active_columns = widgetColumns.map(v => v.value);
+  }
 
   return { ...query, ...convertSortToQuery(widget) };
 }

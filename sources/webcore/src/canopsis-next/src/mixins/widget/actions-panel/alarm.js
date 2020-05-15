@@ -33,6 +33,16 @@ export default {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
     },
 
+    showCreateCommentModal() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          ...this.modalConfig,
+          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
+        },
+      });
+    },
+
     async createMassFastAckEvent() {
       let eventData = {};
 
@@ -77,9 +87,20 @@ export default {
       });
     },
 
+    showCancelEventModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          ...this.modalConfig,
+          title: this.$t('modals.createCancelEvent.title'),
+          eventType: EVENT_ENTITY_TYPES.cancel,
+        },
+      });
+    },
+
     showAckRemoveModal() {
       this.$modals.show({
-        name: MODALS.createCancelEvent,
+        name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
           title: this.$t('modals.createAckRemove.title'),

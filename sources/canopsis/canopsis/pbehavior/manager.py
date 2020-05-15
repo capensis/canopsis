@@ -44,6 +44,7 @@ import collections
 from canopsis.common.amqp import AmqpPublisher
 from canopsis.common.amqp import get_default_connection as \
     get_default_amqp_conn
+from canopsis.alarms.adapters import AlarmAdapter
 
 PbehaviorInterval = collections.namedtuple('PbehaviorInterval', ['pbehavior', 'pbenter_time', 'pbleave_time'])
 
@@ -213,7 +214,7 @@ class PBehaviorManager(object):
         self.collection = pb_collection
         self.currently_active_pb = set()
         self.pbehavior_event_sent_flag = {}
-
+        self.alarmAdapter = AlarmAdapter(MongoStore.get_default())
         self.amqp_pub = amqp_pub
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), self.logger)
@@ -1428,7 +1429,7 @@ class PBehaviorManager(object):
     def send_pbehavior_event(self):
         now = int(time())
         for event in self.generate_pbh_event(now):
-            self.amqp_pub.canopsis_event(event)
+            self.amqp_pub.direct_event(event, "Engine_pbehavior")
 
     def _get_interval_from_time_pivot(self, pb, time_pivot):
         """
@@ -1491,36 +1492,24 @@ class PBehaviorManager(object):
         if eids is None:
             eids = pb.get('eids', [])
         for eid in eids:
-            entities = self.context.ent_storage.get_elements(
-                query={"_id": eid}
-            )
-            if len(entities) != 1:
-                return events
-            if "depends" not in entities[0]:
-                return events
-            if entities[0]["depends"]:
-                average_time = round((time() - start_time) / len(entities[0]["depends"]), 5)
-                for impact in entities[0]["depends"]:
-                    parts = impact.split("/")
-                    if len(parts) != 2:
-                        continue
-                    connector, connector_name = parts
-                    event = forger(
-                        connector=connector,
-                        connector_name=connector_name,
-                        event_type=pb_event_type,
-                        source_type="component",
-                        component=str(eid),
-                        output="Pbehavior {}. Type: {}. Reason: {}".format(pb[PBehavior.NAME].encode('utf-8'),
-                                                                           pb[PBehavior.TYPE].encode('utf-8'),
-                                                                           pb[PBehavior.REASON].encode('utf-8')),#"{}. Name: {}. Type:{}".format(message, pb[PBehavior.NAME], pb[PBehavior.TYPE]),
-                        perf_data_array=[{
-                            "metric": "cps_sec_per_evt",
-                            "unit": "s",
-                            "value": average_time
-                        }],
-                        display_name=pb[PBehavior.NAME],
-                        timestamp=self._to_timestamp(action_time)
-                    )
-                    events.append(event)
+            alarms = self.alarmAdapter.find_unresolved_alarms([eid])
+            for al in alarms:
+                average_time = round((time() - start_time), 5)
+                event = forger(
+                    connector=al.identity.connector,
+                    connector_name=al.identity.connector_name,
+                    event_type=pb_event_type,
+                    component=str(eid),
+                    output="Pbehavior {}. Type: {}. Reason: {}".format(pb[PBehavior.NAME].encode('utf-8'),
+                                                                       pb[PBehavior.TYPE].encode('utf-8'),
+                                                                       pb[PBehavior.REASON].encode('utf-8')),#"{}. Name: {}. Type:{}".format(message, pb[PBehavior.NAME], pb[PBehavior.TYPE]),
+                    perf_data_array=[{
+                        "metric": "cps_sec_per_evt",
+                        "unit": "s",
+                        "value": average_time
+                    }],
+                    display_name=pb[PBehavior.NAME],
+                    timestamp=self._to_timestamp(action_time)
+                )
+                events.append(event)
         return events

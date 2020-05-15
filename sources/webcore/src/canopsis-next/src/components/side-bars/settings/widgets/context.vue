@@ -19,7 +19,10 @@
             :columnsLabel="$t('settings.columnName')"
           )
           v-divider
-          field-columns(v-model="settings.widget.parameters.widgetColumns")
+          field-columns(
+            v-model="settings.widget.parameters.widgetColumns",
+            :label="$t('settings.columnNames')"
+          )
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(

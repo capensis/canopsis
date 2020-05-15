@@ -60,7 +60,7 @@ Le driver permet de peupler le référentiel interne Canopsis en vue de l’enri
 
 ## Notifications
 
-Canopsis permet d’émettre des notifications vers différents outils à partir d’un jeu de règles et de déclencheurs (créations d’alarmes, ACK, changements d’état…). Les possibilités de notifications offertes par Canopsis sont toutes dépendantes du modèle de données de l’outil cible (la création d’un ticket d’incident Snow n’est pas forcément identique d’une instance à l’autre).
+Canopsis permet d’émettre des notifications vers différents outils à partir d’un jeu de règles et de déclencheurs (créations d’alarmes, acquittements, changements de criticité…). Les possibilités de notifications offertes par Canopsis sont toutes dépendantes du modèle de données de l’outil cible (la création d’un ticket d’incident Snow n’est pas forcément identique d’une instance à l’autre).
 
 ### Générique
 
@@ -88,5 +88,5 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 | **Nom** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Type** | **Compatibilité Canopsis** |
 |:-----:|:---------:|:----------:|:-----------:|:------------:|
 | [Publication d’évènement](../guide-developpement/index.md#api) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
-| [Manipulation de Plage de Maintenance](../guide-utilisation/interface/pbehaviors/index.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
+| [Manipulation de comportements périodiques](../guide-utilisation/interface/pbehaviors/index.md) | OpenCore | Oui | Outil de marché | Version ≥ 3 |
 | [Récupération de l’état de Santé de Canopsis](../guide-developpement/api/api-v2-healthcheck.md) | OpenCore | Oui |  Outil de marché | Version ≥ 3.4 |

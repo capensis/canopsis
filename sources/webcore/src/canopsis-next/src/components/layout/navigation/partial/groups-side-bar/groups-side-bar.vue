@@ -31,6 +31,7 @@
         div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
           v-btn.primary(@click="submit") {{ $t('common.submit') }}
           v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
+      groups-side-bar-playlists
       groups-settings-button(
         tooltipRight,
         @toggleEditingMode="toggleNavigationEditingMode"
@@ -57,6 +58,7 @@ import AppVersion from '../app-version.vue';
 import ActiveSessionsCount from '../active-sessions-count.vue';
 
 import GroupsSideBarGroup from './groups-side-bar-group.vue';
+import GroupsSideBarPlaylists from './groups-side-bar-playlists.vue';
 
 const { mapGetters: modalMapGetters } = createNamespacedHelpers('modals');
 
@@ -75,6 +77,7 @@ export default {
     AppVersion,
     ActiveSessionsCount,
     GroupsSideBarGroup,
+    GroupsSideBarPlaylists,
   },
   mixins: [
     entitiesViewMixin,

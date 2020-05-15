@@ -1,8 +1,8 @@
-# Moteur `engine-axe`
+# Moteur `engine-axe` (Go, Core)
 
-Le moteur `engine-axe` permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le Bac à alarmes. Il fait partie des moteurs Go nouvelle génération.
+Le moteur `engine-axe` permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le Bac à alarmes.
 
-Jusqu'en 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhooks, dans la version CAT. Depuis Canopsis 3.34.0, les Webhooks sont gérés par un moteur [`engine-webhook`](moteur-webhook.md) dédié (toujours en édition CAT).
+Jusqu'à Canopsis 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhooks, dans la version CAT. Depuis Canopsis 3.34.0, les Webhooks sont gérés par un moteur [`engine-webhook`](moteur-webhook.md) dédié (toujours en édition CAT).
 
 ## Utilisation
 
@@ -14,14 +14,10 @@ Les options acceptées par la dernière version de Canopsis sont les suivantes 
 
 ```
   -d	debug
-  -featureHideResources
-      Enable Hide Resources Management
   -featureStatEvents
       Send statistic events
   -ignoreDefaultTomlConfig
-    	load toml file values into database
-  -postProcessorsDirectory string
-      The path of the directory containing the post-processing plugins. (default ".")
+      load toml file values into database
   -printEventOnError
       Print event on processing error
   -publishQueue string
@@ -30,11 +26,22 @@ Les options acceptées par la dernière version de Canopsis sont les suivantes 
       version infos
 ```
 
+### Multi-instanciation
+
+!!! note
+    Cette fonctionnalité est disponible à partir de Canopsis 3.40.0. Elle ne doit pas être utilisée sur les versions antérieures.
+
+Il est possible, à partir de **Canopsis 3.40.0**, de lancer plusieurs instances du moteur `engine-axe`, afin d'améliorer sa performance de traitement et sa résilience.
+
+En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale axe=2` pour que le moteur `engine-axe` soit lancé avec 2 instances.
+
+Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
+
 ## Fichier de configuration
 
 Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
 
-À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet de forcer le moteur à prendre en compte toutes les nouvelles mises à jour de son fichier de configuration, après un redémarrage. Si cette option n'est pas précisée, `engine-axe` synchronisera sa configuration en base uniquement à son premier lancement.
+À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet au moteur de ne pas prendre en compte les paramètres qui se trouvent dans son fichier de configuration lors du démarrage. Il se basera alors uniquement sur les données présentes en base. Si cette option n'est pas précisée, `engine-axe` synchronisera les informations présentes en base avec celles contenues dans le fichier lors de son lancement.
 
 Le contenu par défaut de ce fichier de configuration est le suivant :
 
@@ -75,17 +82,19 @@ La file du moteur est placée juste après le moteur [`engine-che`](moteur-che.m
 
 À l'arrivée dans sa file, le moteur `engine-axe` va transformer les événements en alarmes qu'il va créer et mettre à jour.
 
-### Événements de type check
+Lorsque la multi-instanciation est activée, une seule instance d'`engine-axe` s'occupe du *periodical process*. Ce mécanisme est automatique.
+
+### Gestion des événements de type check
 
 3 possibilités pour un événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) :
 
 1. Il ne correspond à aucune alarme en cours : l'alarme va alors être créée
 2. Il correspond à une alarme en cours et son champ `state` ne vaut pas `0` : l'alarme va alors être mise à jour
-3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en état `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
+3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
 
-### Autres types d'événements
+### Gestion des autres types d'événements
 
-Si l'événement correspond à une action (comme la mise d'un [`ACK`](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
+Si l'événement correspond à une action (comme la mise d'un [acquittement](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
 
 ## Collection MongoDB associée
 

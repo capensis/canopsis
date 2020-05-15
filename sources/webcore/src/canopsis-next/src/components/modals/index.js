@@ -1,7 +1,7 @@
+export { default as CreateEvent } from './alarm/create-event.vue';
 export { default as CreateAckEvent } from './alarm/create-ack-event.vue';
 export { default as ConfirmAckWithTicket } from './alarm/confirm-ack-with-ticket.vue';
 export { default as CreateAssociateTicketEvent } from './alarm/create-associate-ticket-event.vue';
-export { default as CreateCancelEvent } from './alarm/create-cancel-event.vue';
 export { default as CreateChangeStateEvent } from './alarm/create-change-state-event.vue';
 export { default as CreateDeclareTicketEvent } from './alarm/create-declare-ticket-event.vue';
 export { default as CreateSnoozeEvent } from './alarm/create-snooze-event.vue';
@@ -33,6 +33,7 @@ export { default as AlarmsList } from './alarm/alarms-list.vue';
 export { default as CreateUser } from './admin/create-user.vue';
 export { default as CreateRole } from './admin/create-role.vue';
 export { default as CreateRight } from './admin/create-right.vue';
+export { default as CreateBroadcastMessage } from './admin/create-broadcast-message.vue';
 export { default as CreateEventFilterRule } from './event-filter/create-event-filter-rule.vue';
 export { default as CreateEventFilterRulePattern } from './event-filter/pattern/create-event-filter-rule-pattern.vue';
 export { default as AddEventFilterRuleToPattern } from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
@@ -49,3 +50,6 @@ export { default as CreateDynamicInfo } from './dynamic-info/create-dynamic-info
 export { default as CreateDynamicInfoInformation } from './dynamic-info/create-dynamic-info-information.vue';
 export { default as DynamicInfoTemplatesList } from './dynamic-info/dynamic-info-templates-list.vue';
 export { default as CreateDynamicInfoTemplate } from './dynamic-info/create-dynamic-info-template.vue';
+export { default as CreateCommentEvent } from './common/create-comment-event.vue';
+export { default as CreatePlaylist } from './admin/create-playlist.vue';
+export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue';

@@ -110,7 +110,7 @@ export default {
           type: alarmsListActionsTypes.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
-          method: this.showActionModal(MODALS.createCancelEvent),
+          method: this.showCancelEventModal,
         },
         changeState: {
           type: alarmsListActionsTypes.changeState,
@@ -129,6 +129,12 @@ export default {
           icon: 'history',
           title: this.$t('alarmList.actions.titles.history'),
           method: this.showHistoryModal,
+        },
+        comment: {
+          type: alarmsListActionsTypes.comment,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
+          title: this.$t('alarmList.actions.titles.comment'),
+          method: this.showCreateCommentModal,
         },
       },
     };
@@ -156,6 +162,7 @@ export default {
         filteredActionsMap.snooze,
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
+        filteredActionsMap.comment,
       ];
 
       if (this.item.entity) {

@@ -4,6 +4,8 @@ import { get, omit, cloneDeep } from 'lodash';
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
+  DEFAULT_ALARMS_WIDGET_COLUMNS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
@@ -19,6 +21,7 @@ import {
   ENTITIES_STATUSES,
   GRID_SIZES, AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
+  TIME_UNITS,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -50,44 +53,19 @@ export function generateWidgetByType(type) {
     isAckNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
+    isCorrelationEnabled: false,
     fastAckOutput: {
       enabled: false,
       value: 'auto ack',
     },
-    widgetColumns: [
-      {
-        label: i18n.t('tables.alarmGeneral.connector'),
-        value: 'v.connector',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.connectorName'),
-        value: 'v.connector_name',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.component'),
-        value: 'v.component',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.resource'),
-        value: 'v.resource',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.output'),
-        value: 'v.output',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.extraDetails'),
-        value: 'extra_details',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.state'),
-        value: 'v.state.val',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.status'),
-        value: 'v.status.val',
-      },
-    ],
+    widgetColumns: DEFAULT_ALARMS_WIDGET_COLUMNS.map(({ labelKey, value }) => ({
+      label: i18n.t(labelKey),
+      value,
+    })),
+    widgetGroupColumns: DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ labelKey, value }) => ({
+      label: i18n.t(labelKey),
+      value,
+    })),
   };
 
   let specialParameters = {};
@@ -523,6 +501,7 @@ export function generateAction() {
   const generalParameters = {
     _id: uuid('action'),
     type: ACTION_TYPES.snooze,
+    enabled: true,
     delay: {},
     hook: defaultHook,
   };
@@ -657,4 +636,22 @@ export function getDuplicateEntityName(entity, entities) {
   }, 0);
 
   return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.name;
+}
+
+/**
+ * Create default playlist entity
+ *
+ * @returns {Object}
+ */
+export function getDefaultPlaylist() {
+  return {
+    name: '',
+    fullscreen: true,
+    enabled: true,
+    interval: {
+      interval: 10,
+      unit: TIME_UNITS.second,
+    },
+    tabs_list: [],
+  };
 }

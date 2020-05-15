@@ -12,6 +12,17 @@
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
           div(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
+    div(v-if="alarm.v.lastComment")
+      v-tooltip(top)
+        v-icon.badge.white--text.purple.lighten-2(
+          small,
+          slot="activator"
+        ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.comment].icon }}
+        div.text-md-center
+          strong {{ $t('alarmList.actions.iconsTitles.comment') }}
+          div {{ $t('common.by') }} : {{ alarm.v.lastComment.a }}
+          div {{ $t('common.date') }} : {{ alarm.v.lastComment.t | date('long') }}
+          div(v-if="alarm.v.lastComment.m") {{ $tc('common.comment') }} : {{ alarm.v.lastComment.m }}
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
         v-icon.badge.blue.white--text(
@@ -72,9 +83,41 @@
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
               div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
+    div(v-if="alarm.causes")
+      v-tooltip(top)
+        v-icon.badge.purple.white--text(
+          slot="activator",
+          data-test="extraDetailsOpenButton-groupCauses",
+          small
+        ) {{ $constants.EVENT_ENTITY_STYLE.groupCauses.icon }}
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
+          strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+          v-layout(row)
+            v-flex(xs6)
+              div {{ $tc('alarmList.actions.iconsFields.rule', causesRules.length) }}&nbsp;:
+            v-flex(xs6)
+              div(
+                v-for="(rule, index) in causesRules",
+                :key="rule.id",
+                :style="index | ruleStyle"
+              ) &nbsp;{{ rule.name }}
+          div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ alarm.causes.total }}
+    div(v-if="alarm.consequences")
+      v-tooltip(top)
+        v-icon.badge.purple.white--text(
+          slot="activator",
+          data-test="extraDetailsOpenButton-groupConsequences",
+          small
+        ) {{ $constants.EVENT_ENTITY_STYLE.groupConsequences.icon }}
+        div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
+          strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
+          div {{ $t('common.title') }} : {{ alarm.rule | get('name', '') }}
+          div {{ $t('alarmList.actions.iconsFields.consequences') }} : {{ alarm.consequences.total }}
 </template>
 
 <script>
+import { get } from 'lodash';
+
 /**
  * Component for the 'extra-details' column of the alarms list
  *
@@ -83,6 +126,15 @@
  * @prop {Object} alarm - Object representing the alarm
  */
 export default {
+  filters: {
+    ruleStyle(index) {
+      if (index % 2 === 1) {
+        return { color: '#b5b5b5' };
+      }
+
+      return {};
+    },
+  },
   props: {
     alarm: {
       type: Object,
@@ -92,6 +144,9 @@ export default {
   computed: {
     pbehaviors() {
       return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
+    },
+    causesRules() {
+      return get(this.alarm.causes, 'rules', []);
     },
   },
 };

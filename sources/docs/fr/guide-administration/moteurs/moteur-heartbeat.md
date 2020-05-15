@@ -1,6 +1,6 @@
-# Heartbeat
+# Moteur `engine-heartbeat` (Go, Core)
 
-Le moteur heartbeat permet de créer des alarmes en l'absence d'événements correspondant à un pattern donné durant un intervalle donné.
+Le moteur `engine-heartbeat` permet de créer des alarmes, si des événements suivant un motif donné n'ont pas été rencontrés depuis un intervalle donné.
 
 Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent être ajoutés et modifiés avec l'[API Heartbeat](../../guide-developpement/api/api-v2-heartbeat.md).
 
@@ -24,13 +24,11 @@ Passé cet intervalle de temps, si le moteur n'a pas traité d'événements corr
 
 L'alarme levée reste en cours jusqu'à l'arrivée d'un nouvel événement correspondant au pattern donné.
 
+#### Motifs
 
+Les motifs acceptés sont une version simplifiée de ceux utilisés pour l'[event-filter](moteur-che-event_filter.md).
 
-#### Patterns
-
-Les patterns acceptés sont une version simplifiée de ceux utilisés pour l'[event-filter](moteur-che-event_filter.md).
-
-Les valeurs acceptées sont uniquement de type `string` et la seule condition acceptée est de type `equal` (pas d'expression régulière, de `not equal`, etc.)
+Les valeurs acceptées sont uniquement de type `string` et la seule condition acceptée est de type `equal` (pas d'expression régulière, de `not equal`, etc.).
 
 #### Intervalles
 
@@ -56,7 +54,7 @@ Seul le champ `resource` peut varier. Il est la concaténation des patterns de r
 
 Ici : `"connector" : "heartbeat_test_1"` et `"connector_name" : "heartbeat_test_1_name"`.
 
-## Collection
+## Collection MongoDB associée
 
 Les heartbeats sont stockés dans la collection MongoDB `heartbeat` (voir [API Heartbeat](../../guide-developpement/api/api-v2-heartbeat.md) pour la création des heartbeats).
 

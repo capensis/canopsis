@@ -8,13 +8,13 @@ Convertit des alertes issues de triggers Zabbix en évènements Canopsis.
 
 ## Introduction
 
-Le connecteur Zabbix est un [script shell](#mise-en-place-du-script-zabbix2filebeatsh) configuré comme `media type` et déclenché par une `action` permettant de tracer dans un fichier de log les changements d'état des `triggers` configurés dans Zabbix. Le fichier de log est ensuite lu par Filebeat qui transfère le contenu à Logstash.
+Le connecteur Zabbix est un [script shell](#mise-en-place-du-script-zabbix2filebeatsh) configuré comme `media type` et déclenché par une `action` permettant de tracer dans un fichier de log les changements de criticité des `triggers` configurés dans Zabbix. Le fichier de log est ensuite lu par Filebeat qui transfère le contenu à Logstash.
 
 ## Mapping
 
-Canopsis utilise 4 états (0 : Info, 1 : Mineur , 2 : Majeur, 3 : Critique).
+Canopsis utilise 4 criticités (0 : Info, 1 : Mineur , 2 : Majeur, 3 : Critique).
 
-Zabbix utilise 6 états (0 : Not classified, 1 : Information, 2 : Warning, 3 : Average, 4 : High, 5 : Disaster).
+Zabbix utilise 6 criticités (0 : Not classified, 1 : Information, 2 : Warning, 3 : Average, 4 : High, 5 : Disaster).
 
 Du fait de ces différences le mapping suivant a été décidé :
 

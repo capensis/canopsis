@@ -34,6 +34,7 @@ from canopsis.common.errors import NotFoundError
 from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
 from canopsis.models.dynamic_infos import DynamicInfo, DynamicInfosRule
+from pymongo import ASCENDING, DESCENDING
 
 
 class DynamicInfosManager(object):
@@ -49,6 +50,9 @@ class DynamicInfosManager(object):
         "{}.{}".format(DynamicInfosRule.INFOS, DynamicInfo.NAME),
         "{}.{}".format(DynamicInfosRule.INFOS, DynamicInfo.VALUE),
     ]
+
+    SORT_DIRECTION_ASC = 'ASC'
+    SORT_DIRECTION_DESC = 'DESC'
 
     def __init__(self, logger, mongo_collection):
         self.logger = logger
@@ -86,7 +90,7 @@ class DynamicInfosManager(object):
         query = self._get_search_query(search, search_fields)
         return self.collection.find(query).count()
 
-    def list(self, search="", search_fields=None, limit=0, offset=0):
+    def list(self, search="", search_fields=None, limit=0, offset=0, sort_key=None, sort_dir=None):
         """Return a list of the DynamicInfosRules as dictionaries.
 
         If search is defined, only the rules where one of the fields listed in
@@ -100,7 +104,17 @@ class DynamicInfosManager(object):
         :rtype: List[Dict[str, Any]]
         """
         query = self._get_search_query(search, search_fields)
-        return list(self.collection.find(query).limit(limit).skip(offset))
+        if sort_dir == self.SORT_DIRECTION_ASC:
+            sort_dir = ASCENDING
+        elif sort_dir == self.SORT_DIRECTION_DESC:
+            sort_dir = DESCENDING
+        else:
+            sort_dir = None
+        if sort_key not in (
+                DynamicInfosRule.NAME, DynamicInfosRule.DESCRIPTION, DynamicInfosRule.AUTHOR,
+                DynamicInfosRule.CREATION_DATE, DynamicInfosRule.LAST_MODIFIED_DATE):
+            sort_key = DynamicInfosRule.ID
+        return list(self.collection.find(query).sort(sort_key, sort_dir).limit(limit).skip(offset))
 
     def _get_search_query(self, search="", search_fields=None):
         """Return a MongoDB query used to search DynamicInfosRules.

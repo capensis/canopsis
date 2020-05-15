@@ -59,6 +59,18 @@ export default {
       });
     },
 
+    prepareCommentAction() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          action: ({ output }) => {
+            this.addCommentActionToQueue({ entity: this.entity, output });
+            this.actionsClicked.push(EVENT_ENTITY_TYPES.comment);
+          },
+        },
+      });
+    },
+
     prepareValidateAction() {
       this.addAckActionToQueue({ entity: this.entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk });
       this.addValidateActionToQueue({ entity: this.entity });

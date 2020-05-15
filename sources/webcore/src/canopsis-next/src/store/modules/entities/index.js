@@ -22,7 +22,9 @@ import dynamicInfoTemplateModule from './dynamic-info-template';
 import pbehaviorReasonsModule from './pbehavior-reasons';
 import alarmColumnFiltersModule from './alarm-column-filters';
 import sessionModule from './session';
+import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
+import playlistModule from './playlist';
 
 export default {
   alarm: alarmModule,
@@ -49,5 +51,7 @@ export default {
   pbehaviorReasons: pbehaviorReasonsModule,
   alarmColumnFilters: alarmColumnFiltersModule,
   session: sessionModule,
+  broadcastMessage: broadcastMessageModule,
   counter: counterModule,
+  playlist: playlistModule,
 };

@@ -6,6 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
+  BROADCAST_MESSAGES_STATUSES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -43,7 +44,10 @@ export default {
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
+    start: 'Start',
     end: 'End',
+    message: 'Message',
+    preview: 'Preview',
     recursive: 'Recursive',
     select: 'Select',
     states: 'Severities',
@@ -102,6 +106,11 @@ export default {
     filter: 'Filter',
     stack: 'Stack',
     edition: 'Edition',
+    broadcastMessages: 'Broadcast messages',
+    playlists: 'Playlists',
+    fullscreen: 'Fullscreen',
+    interval: 'Interval',
+    status: 'Status',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -116,6 +125,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Play',
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
     },
     times: {
       second: 'second | seconds',
@@ -161,7 +171,7 @@ export default {
     },
   },
   search: {
-    advancedSearch: '<span>Help on the advanced research :</span>\n' +
+    alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
       '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
       '<p>The "-" before the research is required</p>\n' +
       '<p>Operators :\n' +
@@ -169,10 +179,23 @@ export default {
       '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
       '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
       '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
+      '</dl>',
+    contextAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators :\n' +
+      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="watcher"</dt>\n' +
+      '    <dd>Entities whose names is "name_1" and the types is "watcher"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
+      '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
+      '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose name isn\'t "name_1"</dd>\n' +
       '</dl>',
     submit: 'Search',
     clear: 'Clear search input',
@@ -207,6 +230,8 @@ export default {
         changeState: 'Change and lock severity',
         variablesHelp: 'List of available variables',
         history: 'History',
+        groupRequest: 'Suggest group request for meta alarm',
+        comment: 'Comment',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -214,9 +239,14 @@ export default {
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
+        grouping: 'Meta alarm',
+        comment: 'Comment',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
+        causes: 'Causes',
+        consequences: 'Consequences',
+        rule: 'Rule | Rules',
       },
     },
     timeLine: {
@@ -243,11 +273,14 @@ export default {
         pbhenter: 'Periodic behavior enabled',
         pbhleave: 'Periodic behavior disabled',
         cancel: 'Alarm cancelled',
+        comment: 'Alarm commented',
       },
     },
     tabs: {
       moreInfos: 'More infos',
       timeLine: 'Timeline',
+      alarmsConsequences: 'Alarms consequences',
+      alarmsCauses: 'Alarms causes',
     },
     moreInfos: {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
@@ -266,6 +299,7 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    status: 'Status',
     tabs: {
       filter: 'Filter',
       eids: 'Eids',
@@ -292,6 +326,7 @@ export default {
     defaultSortColumn: 'Default sort column',
     sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
+    groupColumnNames: 'Column names for meta alarms',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
@@ -305,6 +340,7 @@ export default {
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline ?',
+    isCorrelationEnabled: 'Is correlation enabled ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -535,6 +571,11 @@ export default {
         rightRemoving: 'Error on right removing',
       },
     },
+    createEvent: {
+      fields: {
+        output: 'Note',
+      },
+    },
     createAckEvent: {
       title: 'Ack',
       tooltips: {
@@ -562,9 +603,9 @@ export default {
     },
     createCancelEvent: {
       title: 'Cancel',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Suggest group request for meta alarm',
     },
     createChangeStateEvent: {
       title: 'Change severity',
@@ -1066,6 +1107,45 @@ export default {
       views: 'Views',
       result: 'Result',
     },
+    createBroadcastMessage: {
+      create: {
+        title: 'Create broadcast message',
+      },
+      edit: {
+        title: 'Edit broadcast message',
+      },
+      defaultMessage: 'Your message here',
+      buttons: {
+        selectColor: 'Select background color',
+      },
+    },
+    createCommentEvent: {
+      title: 'Add comment',
+      fields: {
+        comment: 'Comment',
+      },
+    },
+    createPlaylist: {
+      create: {
+        title: 'Create playlist',
+      },
+      edit: {
+        title: 'Edit playlist',
+      },
+      duplicate: {
+        title: 'Duplicate playlist',
+      },
+      errors: {
+        emptyTabs: 'You should add a tab',
+      },
+      fields: {
+        interval: 'Interval',
+        unit: 'Unit',
+      },
+      groups: 'Groups',
+      result: 'Result',
+      manageTabs: 'Manage tabs',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1139,6 +1219,13 @@ export default {
           role: 'Role',
           enabled: 'Enabled',
         },
+      },
+    },
+    broadcastMessages: {
+      statuses: {
+        [BROADCAST_MESSAGES_STATUSES.active]: 'Active',
+        [BROADCAST_MESSAGES_STATUSES.pending]: 'Pending',
+        [BROADCAST_MESSAGES_STATUSES.expired]: 'Expired',
       },
     },
   },
@@ -1342,6 +1429,10 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Parameters',
+      importExportViews: 'Import/Export',
+    },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
       title: 'Groups navigation type',
@@ -1502,6 +1593,14 @@ export default {
 
   importExportViews: {
     selectAll: 'Select all groups and views',
+  },
+
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Actions are disabled in full screen mode',
+      },
+    },
   },
 
   ...featureService.get('i18n.en'),
