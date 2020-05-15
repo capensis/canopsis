@@ -1299,6 +1299,7 @@ export default {
       eventPatterns: 'Patterns des événements',
       alarmPatterns: 'Patterns des alarmes',
       entityPatterns: 'Pattern des entités',
+      thresholdType: 'Type de seuil',
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',
       timeInterval: 'Intervalle de temps',

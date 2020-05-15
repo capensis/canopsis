@@ -1381,6 +1381,7 @@ export default {
       eventPatterns: 'Event patterns',
       alarmPatterns: 'Alarm patterns',
       entityPatterns: 'Entity patterns',
+      thresholdType: 'Threshold type',
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
       timeInterval: 'Time interval',
