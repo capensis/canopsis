@@ -104,7 +104,7 @@
           div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ alarm.causes.total }}
     div(v-if="alarm.consequences")
       v-tooltip(top)
-        v-icon.badge.meta-alarm.white--text(
+        v-icon.badge.brown.darken-1.white--text(
           slot="activator",
           data-test="extraDetailsOpenButton-groupConsequences",
           small
@@ -159,9 +159,5 @@ export default {
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: 10px;
-  }
-
-  .meta-alarm {
-    background-color: #6D4C41;
   }
 </style>
