@@ -31,6 +31,7 @@ from canopsis.common.ws import route
 from canopsis.event.eventslogmanager import EventsLog
 from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
+from canopsis.userinterface.manager import is_allow_allow_change_severity_to_info
 
 
 def is_valid(ws, event):
@@ -40,7 +41,8 @@ def is_valid(ws, event):
     :returns: True if the event is valid, False otherwise.
     """
     event_type = event.get("event_type")
-    if event_type in ['changestate', 'keepstate'] and event.get('state', None) == 0:
+    if event_type in ['changestate', 'keepstate'] and (event.get('state', None) == 0 and
+                                                       not is_allow_allow_change_severity_to_info()):
         ws.logger.error("cannot set state to info with changestate/keepstate")
         return False
 

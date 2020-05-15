@@ -22,9 +22,10 @@ class UserInterface(object):
     LOGO = 'logo'
     LANGUAGE = 'language'
     POPUP_TIMEOUT = 'popup_timeout'
+    AllowChangeSeverityToInfo = 'allow_change_severity_to_info'
 
     def __init__(self, _id, app_title=None, footer=None, login_page_description=None, logo=None, language=None,
-                 popup_timeout=None, *args, **kwargs):
+                 popup_timeout=None, allow_change_severity_to_info=False, *args, **kwargs):
 
         self._id = _id
         self.app_title = app_title
@@ -33,6 +34,7 @@ class UserInterface(object):
         self.logo = logo
         self.language = language
         self.popup_timeout = popup_timeout
+        self.allow_change_severity_to_info = allow_change_severity_to_info
 
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
@@ -55,7 +57,8 @@ class UserInterface(object):
             self.LOGIN_PAGE_DESCRIPTION: self.login_page_description,
             self.LOGO: self.logo,
             self.LANGUAGE: self.language,
-            self.POPUP_TIMEOUT: self.popup_timeout
+            self.POPUP_TIMEOUT: self.popup_timeout,
+            self.AllowChangeSeverityToInfo: self.allow_change_severity_to_info
         }
 
         return dictionnary

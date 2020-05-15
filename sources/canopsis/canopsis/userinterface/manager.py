@@ -30,6 +30,12 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
 from canopsis.models.userinterface import UserInterface
 
+allow_change_severity_to_info = False
+
+
+def is_allow_allow_change_severity_to_info():
+    return allow_change_severity_to_info
+
 
 class UserInterfaceManager(object):
     """
@@ -42,6 +48,10 @@ class UserInterfaceManager(object):
     def __init__(self, logger, mongo_collection):
         self.logger = logger
         self.collection = mongo_collection
+        current_interface = self.get()
+        if current_interface:
+            global allow_change_severity_to_info
+            allow_change_severity_to_info = current_interface.to_dict()['allow_change_severity_to_info']
 
     @classmethod
     def provide_default_basics(cls):
@@ -82,9 +92,11 @@ class UserInterfaceManager(object):
         :param dict user_interface: an user interface config as a dict
         :rtype: bool
         """
+        global allow_change_severity_to_info
         resp = self.collection.update({"_id": self.__DOCUMENT_ID}, {
                                       '$set': interface}, upsert=True)
-
+        if self.collection.is_successfull(resp):
+            allow_change_severity_to_info = interface['allow_change_severity_to_info']
         return self.collection.is_successfull(resp)
 
     def delete(self):
