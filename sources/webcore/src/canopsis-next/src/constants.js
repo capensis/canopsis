@@ -924,6 +924,11 @@ export const META_ALARMS_RULE_TYPES = {
   complex: 'complex',
 };
 
+export const META_ALARMS_THRESHOLD_TYPES = {
+  thresholdRate: 'threshold rate',
+  thresholdCount: 'threshold count',
+};
+
 export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
   pass: 'pass',
   break: 'break',

@@ -1,8 +1,8 @@
 import { cloneDeep, omit, pick } from 'lodash';
 import moment from 'moment';
 
-import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES } from '@/constants';
 import { convertDurationToIntervalObject } from '@/helpers/date';
+import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES } from '@/constants';
 
 /**
  * Convert meta alarm rule to form
@@ -23,6 +23,9 @@ export function metaAlarmRuleToForm(rule = {}) {
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
       threshold_rate: config.threshold_rate || 1,
       threshold_count: config.threshold_count || 1,
+      threshold_type: config.threshold_count
+        ? META_ALARMS_THRESHOLD_TYPES.thresholdCount
+        : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
       time_interval: config.time_interval
         ? convertDurationToIntervalObject(config.time_interval)
         : DEFAULT_TIME_INTERVAL,
@@ -44,7 +47,12 @@ export function formToMetaAlarmRule(form = {}) {
       metaAlarmRule.config = pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']);
       break;
     case META_ALARMS_RULE_TYPES.complex:
-      metaAlarmRule.config = { ...form.config };
+      metaAlarmRule.config = omit(form.config, [
+        'threshold_type',
+        form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
+          ? 'threshold_rate'
+          : 'threshold_count',
+      ]);
       break;
     case META_ALARMS_RULE_TYPES.timebased:
       metaAlarmRule.config = pick(form.config, ['time_interval']);
