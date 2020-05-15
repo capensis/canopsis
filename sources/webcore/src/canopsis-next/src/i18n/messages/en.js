@@ -1361,6 +1361,7 @@ export default {
         infoPopupTimeout: 'Info popup timeout',
         errorPopupTimeout: 'Error popup timeout',
         popupTimeoutUnit: 'Unit',
+        allowChangeSeverityToInfo: 'Allow change severity to info',
       },
     },
   },
