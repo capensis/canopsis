@@ -925,8 +925,8 @@ export const META_ALARMS_RULE_TYPES = {
 };
 
 export const META_ALARMS_THRESHOLD_TYPES = {
-  thresholdRate: 'threshold rate',
-  thresholdCount: 'threshold count',
+  thresholdRate: 'thresholdRate',
+  thresholdCount: 'thresholdCount',
 };
 
 export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {

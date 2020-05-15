@@ -7,7 +7,9 @@
         :items="thresholdTypes",
         :label="$t('metaAlarmRule.fields.thresholdType')",
         :error-messages="errors.collect('thresholdType')",
-        name="thresholdType"
+        name="thresholdType",
+        item-text="label",
+        item-value="field"
       )
     v-flex(xs6)
       v-text-field(
@@ -48,7 +50,10 @@ export default {
   },
   computed: {
     thresholdTypes() {
-      return Object.values(META_ALARMS_THRESHOLD_TYPES);
+      return Object.values(META_ALARMS_THRESHOLD_TYPES).map(field => ({
+        label: this.$t(`metaAlarmRule.fields.${field}`),
+        field,
+      }));
     },
   },
 };
