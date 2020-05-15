@@ -41,6 +41,8 @@ paths:
   /api/v2/playlist:
     get:
       summary: Get playlist list
+      tags:
+        - playlist
       responses:
         '200':
           description: List of playlist
@@ -51,6 +53,8 @@ paths:
 
     post:
       summary: Create playlist
+      tags:
+        - playlist
       parameters:
         - in: body
           name: playlist
@@ -68,6 +72,8 @@ paths:
   /api/v2/playlist/{playlist_id}:
     get:
       summary: Returns a playlist by ID
+      tags:
+        - playlist
       parameters:
         - in: path
           name: playlist_id
@@ -79,14 +85,16 @@ paths:
             description: A playlist object
             schema:
               $ref: "#/definitions/Playlist"
-        '404':
-          description: Playlist not found
+        '400':
+          description: Get playlist has error
           schema:
             properties:
               description:
                 type: string
     put:
       summary: Update a playlist by ID
+      tags:
+        - playlist
       parameters:
         - in: path
           name: playlist_id
@@ -97,9 +105,7 @@ paths:
         '200':
           description: Playlist has been updated
           schema:
-            properties:
-              description:
-                type: object
+            type: object
         '400':
           description: Playlist update error
           schema:
@@ -108,6 +114,8 @@ paths:
                 type: string
     delete:
       summary: Delete a playlist by ID
+      tags:
+        - playlist
       parameters:
         - in: path
           name: playlist_id
