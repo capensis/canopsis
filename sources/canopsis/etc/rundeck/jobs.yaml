@@ -1,0 +1,80 @@
+- defaultTab: nodes
+  description: exit with status 1
+  executionEnabled: true
+  id: 8f0bcaa3-c051-43cc-bfde-5f69234e5de7
+  loglevel: INFO
+  name: job ko
+  nodeFilterEditable: false
+  notification:
+    onfailure:
+      plugin:
+        configuration:
+          webhookURL: http://127.0.0.1:4440/api/34/webhook/K9bNAikGsg5a2A63c2aODtsKA7ccwqAm#update-canopsis-jobs
+        type: JsonWebhookNotification
+    onsuccess:
+      plugin:
+        configuration:
+          webhookURL: http://127.0.0.1:4440/api/34/webhook/K9bNAikGsg5a2A63c2aODtsKA7ccwqAm#update-canopsis-jobs
+        type: JsonWebhookNotification
+  notifyAvgDurationThreshold: null
+  scheduleEnabled: true
+  sequence:
+    commands:
+    - script: |-
+        #!/usr/bin/env bash
+
+        set -eou pipefail
+
+        lllll
+    keepgoing: false
+    strategy: node-first
+  uuid: 8f0bcaa3-c051-43cc-bfde-5f69234e5de7
+- defaultTab: nodes
+  description: Job with exit status 0
+  executionEnabled: true
+  id: eefe5c94-e3c0-4279-8486-11d885d4fae9
+  loglevel: INFO
+  name: job ok
+  nodeFilterEditable: false
+  schedule:
+    dayofmonth:
+      day: '*'
+    month: '*'
+    time:
+      hour: '*'
+      minute: '*'
+      seconds: 0/30
+    year: '*'
+  scheduleEnabled: false
+  sequence:
+    commands:
+    - description: echo
+      exec: echo "$(date) Hello from Rundeck"
+    keepgoing: false
+    strategy: node-first
+  timeZone: Europe/Paris
+  uuid: eefe5c94-e3c0-4279-8486-11d885d4fae9
+- defaultTab: nodes
+  description: update status for job
+  executionEnabled: true
+  id: 73282194-5282-4096-9a43-d36116e3e48e
+  loglevel: INFO
+  name: update canopsis job status
+  nodeFilterEditable: false
+  scheduleEnabled: true
+  sequence:
+    commands:
+    - script: |-
+        #!/usr/bin/env bash
+
+        echo "------"
+        echo "TRIGGER: $RD_OPTION_TRIGGER"
+        echo "------"
+        echo "UNIX DATE STARTED: $RD_OPTION_DATESTARTED"
+        echo "------"
+        echo "PAYLOAD: $RD_OPTION_PAYLOAD"
+        echo "------"
+    keepgoing: false
+    strategy: node-first
+  uuid: 73282194-5282-4096-9a43-d36116e3e48e
+

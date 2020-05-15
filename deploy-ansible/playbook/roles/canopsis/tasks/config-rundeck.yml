@@ -56,3 +56,54 @@
     name: rundeckd
     state: restarted
     enabled: yes
+
+- name:  Wait for Rundeck to be up
+  uri:
+    url: "http://{{ ansible_fqdn }}:4440"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 12
+  delay: 5
+
+- name: get rundeck session cookie
+  uri:
+    url: "http://{{ ansible_fqdn }}:4440/j_security_check"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      j_username: admin
+      j_password: admin
+    status_code: 302
+  register: login
+
+- name: Test project Canopsis
+  uri:
+    url: "http://{{ ansible_fqdn }}:4440/api/11/project/Canopsis"
+    method: GET
+    headers:
+      Cookie: "{{ login.set_cookie }}"
+      Content-Type: "application/json"
+  register: project
+  ignore_errors: True
+
+- name: Create project Canopsis
+  uri:
+    url: "http://{{ ansible_fqdn }}:4440/api/11/projects"
+    method: POST
+    body_format: json
+    body:
+      name: "Canopsis"
+      config: {"project.label": "Canopsis jobs"}
+    headers:
+      Cookie: "{{ login.set_cookie }}"
+  when: "{{project.status}} != 200"
+
+- name: Import Rundeck jobs
+  uri:
+    url: "http://{{ ansible_fqdn }}:4440/api/14/project/Canopsis/jobs/import?fileformat=yaml&dupeOption=update&uuidOption=remove"
+    method: POST
+    src: "{{ canopsis_home }}/etc/rundeck/jobs.yaml"
+    headers:
+      Cookie: "{{ login.set_cookie }}"
+      Content-Type: application/yaml
