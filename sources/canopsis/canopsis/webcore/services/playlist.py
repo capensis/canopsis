@@ -19,7 +19,7 @@
 # ---------------------------------
 
 import uuid
-from bottle import request
+from bottle import request, install
 from six import string_types
 from pymongo.errors import PyMongoError
 
@@ -28,22 +28,21 @@ from canopsis.playlist import ViewPlaylistManager
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_NOT_FOUND, HTTP_ERROR)
 from canopsis.webcore.services.internal import sanitize_popup_timeout
+import yaml
+from bottle_swagger import SwaggerPlugin
+import os
 
 
 FIELDS = {"name", "interval", "fullscreen", "enabled", "tabs_list"}
-# 0 is view
-# 1 is view_group
-# VIEW_TYPE = {0, 1}
-#
-#
-# def check_view(view):
-#     if not isinstance(view, dict) or \
-#         view.get('type') not in VIEW_TYPE or \
-#             'id' not in view:
-#         raise Exception("invalid view")
-#     for k in view:
-#         if k not in ['type', 'id']:
-#             view.pop(k)
+
+
+def init_swagger():
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    with open("{}/swagger/playlist.yml".format(this_dir)) as f:
+        swagger_def = yaml.load(f)
+
+    swagger_plugin = SwaggerPlugin(swagger_def, ignore_undefined_api_routes=True, serve_swagger_ui=True)
+    install(swagger_plugin)
 
 
 def sanitize_payload(payload):
@@ -59,14 +58,18 @@ def sanitize_payload(payload):
 
         raise Exception("invalid field type")
 
-    # for view in payload['tabs_list']:
-    #     check_view(view)
-
     sanitize_popup_timeout(payload['interval'])
     return payload
 
 
 def exports(ws):
+    try:
+        init_swagger()
+    except Exception as exc:
+        ws.logger.exception("init_swagger exception {}".format(exc))
+    else:
+        ws.logger.info("init_swagger done")
+
     playlist_manager = ViewPlaylistManager(ViewPlaylistManager.default_collection())
 
     @ws.application.get(
