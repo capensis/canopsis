@@ -28,21 +28,9 @@ from canopsis.playlist import ViewPlaylistManager
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_NOT_FOUND, HTTP_ERROR)
 from canopsis.webcore.services.internal import sanitize_popup_timeout
-import yaml
-from bottle_swagger import SwaggerPlugin
-import os
 
 
 FIELDS = {"name", "interval", "fullscreen", "enabled", "tabs_list"}
-
-
-def init_swagger():
-    this_dir = os.path.dirname(os.path.abspath(__file__))
-    with open("{}/swagger/playlist.yml".format(this_dir)) as f:
-        swagger_def = yaml.load(f)
-
-    swagger_plugin = SwaggerPlugin(swagger_def, ignore_undefined_api_routes=True, serve_swagger_ui=True)
-    install(swagger_plugin)
 
 
 def sanitize_payload(payload):
@@ -52,9 +40,9 @@ def sanitize_payload(payload):
     if not set(payload.keys()) == FIELDS:
         raise Exception("payload contains not enough fields")
     if not isinstance(payload["name"], string_types) or \
-        not isinstance(payload["fullscreen"], bool) or \
-        not isinstance(payload['enabled'], bool) or \
-        not isinstance(payload["tabs_list"], list):
+            not isinstance(payload["fullscreen"], bool) or \
+            not isinstance(payload['enabled'], bool) or \
+            not isinstance(payload["tabs_list"], list):
 
         raise Exception("invalid field type")
 
@@ -63,14 +51,8 @@ def sanitize_payload(payload):
 
 
 def exports(ws):
-    try:
-        init_swagger()
-    except Exception as exc:
-        ws.logger.exception("init_swagger exception {}".format(exc))
-    else:
-        ws.logger.info("init_swagger done")
-
-    playlist_manager = ViewPlaylistManager(ViewPlaylistManager.default_collection())
+    playlist_manager = ViewPlaylistManager(
+        ViewPlaylistManager.default_collection())
 
     @ws.application.get(
         '/api/v2/playlist'
