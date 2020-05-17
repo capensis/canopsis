@@ -32,6 +32,11 @@
           :items="languages",
           :label="$t('parameters.userInterfaceForm.fields.language')"
         )
+    v-layout(row)
+      v-switch(
+        v-model="form.allowChangeSeverityToInfo",
+        :label="$t('parameters.userInterfaceForm.fields.allowChangeSeverityToInfo')"
+      )
     v-layout(
       data-test="footerLayout",
       row
@@ -115,6 +120,7 @@ export default {
         footer: '',
         description: '',
         popupTimeout: {},
+        allowChangeSeverityToInfo: false,
       },
     };
   },
@@ -140,6 +146,7 @@ export default {
         footer: this.footer || '',
         description: this.description || '',
         popupTimeout: this.popupTimeout ? { ...this.popupTimeout } : {},
+        allowChangeSeverityToInfo: this.allowChangeSeverityToInfo || false,
       };
     },
 
@@ -162,6 +169,7 @@ export default {
             language: this.form.language,
             login_page_description: this.form.description,
             popup_timeout: this.form.popupTimeout,
+            allow_change_severity_to_info: this.form.allowChangeSeverityToInfo,
           };
 
           if (this.logoFile) {

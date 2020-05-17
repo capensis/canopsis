@@ -2,9 +2,9 @@
   div
     v-layout(row)
       v-switch(
-        data-test="pbehaviorRuleSwitcher",
         v-model="showRRule",
         :label="$t('modals.createPbehavior.steps.rrule.fields.rRuleQuestion')",
+        data-test="pbehaviorRuleSwitcher",
         color="primary"
       )
     template(v-if="showRRule")
@@ -16,15 +16,15 @@
             div
               div(data-test="pbehaviorFrequency")
                 v-select(
-                  :label="$t('rRule.fields.freq')",
                   v-model="form.rRuleOptions.freq",
+                  :label="$t('rRule.fields.freq')",
                   :items="frequencies",
                   @input="changeRRuleOption"
                 )
               div(data-test="pbehaviorByWeekDay")
                 v-select(
-                  :label="$t('rRule.fields.byweekday')",
                   v-model="form.rRuleOptions.byweekday",
+                  :label="$t('rRule.fields.byweekday')",
                   :items="weekDays",
                   multiple,
                   chips,
@@ -32,141 +32,149 @@
                 )
               div
                 v-text-field(
+                  v-model.number="form.rRuleOptions.count",
+                  v-validate="'numeric|min_value:1'",
+                  :label="$t('rRule.fields.count')",
+                  :error-messages="errors.collect('count')",
                   data-test="pbehaviorRepeat",
                   type="number",
-                  :label="$t('rRule.fields.count')",
-                  v-model="form.rRuleOptions.count",
+                  name="count",
+                  min="1",
                   @input="changeRRuleOption"
                 )
               div
                 v-text-field(
+                  v-model.number="form.rRuleOptions.interval",
+                  v-validate="'numeric|min_value:1'",
+                  :label="$t('rRule.fields.interval')",
+                  :error-messages="errors.collect('interval')",
                   data-test="pbehaviorInterval",
                   type="number",
-                  :label="$t('rRule.fields.interval')",
-                  v-model="form.rRuleOptions.interval",
+                  name="interval",
+                  min="1",
                   @input="changeRRuleOption"
                 )
           v-tab-item(value="advanced")
             div
               div(data-test="pbehaviorWeekStart")
                 v-select(
-                  :label="$t('rRule.fields.wkst')",
                   v-model="form.rRuleOptions.wkst",
+                  :label="$t('rRule.fields.wkst')",
                   :items="weekDays",
                   @input="changeRRuleOption"
                 )
               div(data-test="pbehaviorByMonth")
                 v-select(
-                  :label="$t('rRule.fields.bymonth')",
                   v-model="form.rRuleOptions.bymonth",
+                  :label="$t('rRule.fields.bymonth')",
                   :items="months",
-                  @input="changeRRuleOption",
                   multiple,
-                  chips
+                  chips,
+                  @input="changeRRuleOption"
                 )
               div
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
-                      data-test="pbehaviorBySetPos",
-                      :label="$t('rRule.fields.bysetpos.label')",
                       v-model="form.advancedRRuleOptions.bysetpos",
+                      v-validate="{ regex: advancedFieldRegex }",
+                      :label="$t('rRule.fields.bysetpos.label')",
                       :error-messages="errors.collect('bysetpos')",
                       :hint="$t('rRule.advancedHint')",
-                      @input="changeRRuleOption",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      data-vv-name="bysetpos",
-                      persistent-hint
+                      data-test="pbehaviorBySetPos",
+                      name="bysetpos",
+                      persistent-hint,
+                      @input="changeRRuleOption"
                     )
                   span {{ $t('rRule.fields.bysetpos.tooltip') }}
               div
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
-                      data-test="pbehaviorByMonthDay",
-                      :label="$t('rRule.fields.bymonthday.label')",
                       v-model="form.advancedRRuleOptions.bymonthday",
+                      v-validate="{ regex: advancedFieldRegex }",
+                      :label="$t('rRule.fields.bymonthday.label')",
                       :error-messages="errors.collect('bymonthday')",
                       :hint="$t('rRule.advancedHint')",
-                      @input="changeRRuleOption",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      data-vv-name="bymonthday",
-                      persistent-hint
+                      data-test="pbehaviorByMonthDay",
+                      name="bymonthday",
+                      persistent-hint,
+                      @input="changeRRuleOption"
                     )
                   span {{ $t('rRule.fields.bymonthday.tooltip') }}
               div
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
-                      data-test="pbehaviorByYearDay",
-                      :label="$t('rRule.fields.byyearday.label')",
                       v-model="form.advancedRRuleOptions.byyearday",
+                      v-validate="{ regex: advancedFieldRegex }",
+                      :label="$t('rRule.fields.byyearday.label')",
                       :error-messages="errors.collect('byyearday')",
                       :hint="$t('rRule.advancedHint')",
-                      @input="changeRRuleOption",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      data-vv-name="byyearday",
-                      persistent-hint
+                      data-test="pbehaviorByYearDay",
+                      name="byyearday",
+                      persistent-hint,
+                      @input="changeRRuleOption"
                     )
                   span {{ $t('rRule.fields.byyearday.tooltip') }}
               div
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
-                      data-test="pbehaviorByWeekNo",
-                      :label="$t('rRule.fields.byweekno.label')",
                       v-model="form.advancedRRuleOptions.byweekno",
+                      v-validate="{ regex: advancedFieldRegex }",
+                      :label="$t('rRule.fields.byweekno.label')",
                       :error-messages="errors.collect('byweekno')",
                       :hint="$t('rRule.advancedHint')",
-                      @input="changeRRuleOption",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      data-vv-name="byweekno",
-                      persistent-hint
+                      data-test="pbehaviorByWeekNo",
+                      name="byweekno",
+                      persistent-hint,
+                      @input="changeRRuleOption"
                     )
                   span {{ $t('rRule.fields.byweekno.tooltip') }}
               div
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
-                      data-test="pbehaviorByHour",
-                      :label="$t('rRule.fields.byhour.label')",
                       v-model="form.advancedRRuleOptions.byhour",
+                      v-validate="{ regex: advancedFieldRegex }",
+                      :label="$t('rRule.fields.byhour.label')",
                       :error-messages="errors.collect('byhour')",
                       :hint="$t('rRule.advancedHint')",
-                      @input="changeRRuleOption",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      data-vv-name="byhour",
-                      persistent-hint
+                      data-test="pbehaviorByHour",
+                      name="byhour",
+                      persistent-hint,
+                      @input="changeRRuleOption"
                     )
                   span {{ $t('rRule.fields.byhour.tooltip') }}
               div
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
-                      data-test="pbehaviorByMinute",
-                      :label="$t('rRule.fields.byminute.label')",
                       v-model="form.advancedRRuleOptions.byminute",
+                      v-validate="{ regex: advancedFieldRegex }",
+                      :label="$t('rRule.fields.byminute.label')",
                       :error-messages="errors.collect('byminute')",
                       :hint="$t('rRule.advancedHint')",
-                      @input="changeRRuleOption",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      data-vv-name="byminute",
-                      persistent-hint
+                      data-test="pbehaviorByMinute",
+                      name="byminute",
+                      persistent-hint,
+                      @input="changeRRuleOption"
                     )
                   span {{ $t('rRule.fields.byminute.tooltip') }}
               div
                 v-tooltip(left, max-width="250")
                   div(slot="activator")
                     v-text-field(
-                      data-test="pbehaviorBySecond",
-                      :label="$t('rRule.fields.bysecond.label')",
                       v-model="form.advancedRRuleOptions.bysecond",
+                      v-validate="{ regex: advancedFieldRegex }",
+                      :label="$t('rRule.fields.bysecond.label')",
                       :error-messages="errors.collect('bysecond')",
                       :hint="$t('rRule.advancedHint')",
-                      @input="changeRRuleOption",
-                      v-validate="{ regex: advancedFieldRegex }",
-                      data-vv-name="bysecond",
-                      persistent-hint
+                      data-test="pbehaviorBySecond",
+                      name="bysecond",
+                      persistent-hint,
+                      @input="changeRRuleOption"
                     )
                   span {{ $t('rRule.fields.bysecond.tooltip') }}
       v-layout(row)

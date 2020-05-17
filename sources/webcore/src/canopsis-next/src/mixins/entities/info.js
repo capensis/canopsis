@@ -22,6 +22,7 @@ export default {
       description: 'description',
       language: 'language',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
+      allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
     }),

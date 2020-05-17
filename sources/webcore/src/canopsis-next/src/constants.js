@@ -33,6 +33,7 @@ export const ENTITIES_TYPES = {
   heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
+  playlist: 'playlist',
 };
 
 export const MODALS = {
@@ -90,6 +91,8 @@ export const MODALS = {
   importExportViews: 'import-groups-and-views',
   dynamicInfoTemplatesList: 'dynamic-info-templates-list',
   createDynamicInfoTemplate: 'create-dynamic-info-template',
+  createPlaylist: 'create-playlist',
+  managePlaylistTabs: 'manage-playlist-tabs',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -669,6 +672,7 @@ export const STATS_CALENDAR_COLORS = {
 };
 
 export const USERS_RIGHTS_MASKS = {
+  default: 1,
   create: 8,
   read: 4,
   update: 2,
@@ -688,6 +692,7 @@ export const USERS_RIGHTS = {
     user: 'models_user',
     parameters: 'models_parameters',
     broadcastMessage: 'models_broadcastMessage',
+    playlist: 'models_playlist',
     exploitation: {
       eventFilter: 'models_exploitation_eventFilter',
       pbehavior: 'models_exploitation_pbehavior',
@@ -1334,3 +1339,7 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
+
+export const PORTALS_NAMES = {
+  additionalTopBarItems: 'additional-top-bar-items',
+};

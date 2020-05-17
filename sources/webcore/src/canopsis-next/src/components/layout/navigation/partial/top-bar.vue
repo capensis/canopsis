@@ -16,6 +16,7 @@
         app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
+    portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items
       v-menu(v-show="exploitationLinks.length", bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ $t('common.exploitation') }}
@@ -174,6 +175,12 @@ export default {
           text: this.$t('common.broadcastMessages'),
           icon: '$vuetify.icons.bullhorn',
           right: USERS_RIGHTS.technical.broadcastMessage,
+        },
+        {
+          route: { name: 'admin-playlists' },
+          text: this.$t('common.playlists'),
+          icon: 'playlist_play',
+          right: USERS_RIGHTS.technical.playlist,
         },
       ];
 

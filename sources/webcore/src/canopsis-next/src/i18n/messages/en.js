@@ -107,8 +107,10 @@ export default {
     stack: 'Stack',
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
-    status: 'Status',
+    playlists: 'Playlists',
+    fullscreen: 'Fullscreen',
     interval: 'Interval',
+    status: 'Status',
     unit: 'Unit',
     actions: {
       close: 'Close',
@@ -1143,6 +1145,27 @@ export default {
         comment: 'Comment',
       },
     },
+    createPlaylist: {
+      create: {
+        title: 'Create playlist',
+      },
+      edit: {
+        title: 'Edit playlist',
+      },
+      duplicate: {
+        title: 'Duplicate playlist',
+      },
+      errors: {
+        emptyTabs: 'You should add a tab',
+      },
+      fields: {
+        interval: 'Interval',
+        unit: 'Unit',
+      },
+      groups: 'Groups',
+      result: 'Result',
+      manageTabs: 'Manage tabs',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1443,6 +1466,10 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Parameters',
+      importExportViews: 'Import/Export',
+    },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
       title: 'Groups navigation type',
@@ -1462,6 +1489,7 @@ export default {
         infoPopupTimeout: 'Info popup timeout',
         errorPopupTimeout: 'Error popup timeout',
         popupTimeoutUnit: 'Unit',
+        allowChangeSeverityToInfo: 'Allow change severity to info',
       },
     },
   },
@@ -1602,6 +1630,14 @@ export default {
 
   importExportViews: {
     selectAll: 'Select all groups and views',
+  },
+
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Actions are disabled in full screen mode',
+      },
+    },
   },
 
   ...featureService.get('i18n.en'),
