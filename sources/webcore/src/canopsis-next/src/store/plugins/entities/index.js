@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { get, pick, uniq, mergeWith } from 'lodash';
+import { get, pick, uniqWith, mergeWith, isEqual } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
@@ -143,7 +143,7 @@ export const entitiesModule = {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             const newEntity = mergeWith({}, state[type][key] || {}, entity, (objValue, srcValue) => {
               if (Array.isArray(objValue)) {
-                return uniq(objValue.concat(srcValue));
+                return uniqWith(objValue.concat(srcValue), isEqual);
               }
 
               return undefined;
