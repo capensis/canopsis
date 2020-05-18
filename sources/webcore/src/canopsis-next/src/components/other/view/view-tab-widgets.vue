@@ -6,7 +6,6 @@
       :widget="widget",
       :tab="tab",
       :isEditingMode="isEditingMode",
-      :row="row",
       :updateTabMethod="updateTabMethod"
     )
 </template>
