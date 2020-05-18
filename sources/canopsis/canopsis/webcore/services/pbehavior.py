@@ -241,7 +241,7 @@ class RouteHandlerPBehavior(object):
     def get_by_eid(self, eid):
         return self.pb_manager.get_pbehaviors_by_eid(eid)
 
-    def read(self, _id, search=None, limit=None, skip=None, current_active_pbh=False):
+    def read(self, _id, search=None, limit=None, skip=None, current_active_pbh=False, sort=None):
         """
         Read a pbehavior.
 
@@ -261,7 +261,7 @@ class RouteHandlerPBehavior(object):
         if not is_ok:
             raise ValueError("_id should be str, a list, None (null) not {}"
                              .format(type(_id)))
-        pbehaviors = self.pb_manager.read(_id, search, limit, skip)
+        pbehaviors = self.pb_manager.read(_id, search, limit, skip, sort)
         return self._get_active_only(pbehaviors, current_active_pbh)
 
     def _get_active_only(self, pbehaviors_data, current_active_pbh=False):
@@ -498,13 +498,13 @@ def exports(ws):
     @route(
         ws.application.get,
         name='pbehavior/read',
-        payload=['_id', 'search', 'limit', 'skip', 'current_active_pbh']
+        payload=['_id', 'search', 'limit', 'skip', 'current_active_pbh', 'sort']
     )
-    def read(_id=None, search=None, limit=None, skip=None, current_active_pbh=False):
+    def read(_id=None, search=None, limit=None, skip=None, current_active_pbh=False, sort=None):
         """
         Get a pbehavior.
         """
-        return rhpb.read(_id, search=search, limit=limit, skip=skip, current_active_pbh=current_active_pbh)
+        return rhpb.read(_id, search=search, limit=limit, skip=skip, current_active_pbh=current_active_pbh, sort=sort)
 
     @route(
         ws.application.put,
