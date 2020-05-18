@@ -1,6 +1,6 @@
 import { schema } from 'normalizr';
 
-import { ENTITIES_TYPES } from '@/constants';
+import { ENTITIES_TYPES, WIDGET_GRID_SIZES_KEYS } from '@/constants';
 import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
@@ -53,10 +53,55 @@ export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
 }, { idAttribute: '_id' });
 
 export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
-  rows: [viewRowSchema],
+  widgets: [widgetSchema],
 }, {
   idAttribute: '_id',
-  processStrategy: childProcessStrategy,
+  processStrategy(entity, parent, key) {
+    const newEntity = childProcessStrategy.call(this, entity, parent, key);
+
+    if (!newEntity.grid || !newEntity.widgets) {
+      newEntity.grid = {};
+
+      newEntity.widgets = newEntity.rows.reduce((acc, { widgets }, rowIndex) => {
+        const prevEnd = {
+          [WIDGET_GRID_SIZES_KEYS.mobile]: 0,
+          [WIDGET_GRID_SIZES_KEYS.tablet]: 0,
+          [WIDGET_GRID_SIZES_KEYS.desktop]: 0,
+        };
+
+        const GRID_SIZES_MAP = {
+          [WIDGET_GRID_SIZES_KEYS.mobile]: 'sm',
+          [WIDGET_GRID_SIZES_KEYS.tablet]: 'md',
+          [WIDGET_GRID_SIZES_KEYS.desktop]: 'lg',
+        };
+
+        acc.push(...widgets);
+
+        widgets.forEach((widget) => {
+          newEntity.grid[widget._id] = Object.values(WIDGET_GRID_SIZES_KEYS).reduce((secondAcc, size) => {
+            const currentSizeEnd = prevEnd[size] + widget.size[GRID_SIZES_MAP[size]];
+
+            // eslint-disable-next-line no-param-reassign
+            secondAcc[size] = {
+              x: prevEnd[size],
+              y: rowIndex,
+              w: currentSizeEnd,
+              h: 0,
+              fixedHeight: false,
+            };
+
+            prevEnd[size] = currentSizeEnd;
+
+            return secondAcc;
+          }, {});
+        });
+
+        return acc;
+      }, []);
+    }
+
+    return newEntity;
+  },
   mergeStrategy: childMergeStrategy,
 });
 

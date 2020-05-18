@@ -1328,3 +1328,9 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
 export const PORTALS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
 };
+
+export const WIDGET_GRID_SIZES_KEYS = {
+  mobile: 'mobile',
+  tablet: 'tablet',
+  desktop: 'desktop',
+};
