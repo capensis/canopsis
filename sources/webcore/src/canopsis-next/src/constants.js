@@ -364,7 +364,7 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'center_focus_strong',
   },
   groupCauses: {
-    icon: 'note',
+    icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.comment]: {
     color: COLORS.entitiesEvents.comment,
