@@ -85,7 +85,7 @@
             v-divider
     div(v-if="alarm.causes")
       v-tooltip(top)
-        v-icon.badge.purple.white--text(
+        v-icon.badge.brown.darken-1.white--text(
           slot="activator",
           data-test="extraDetailsOpenButton-groupCauses",
           small
@@ -93,9 +93,9 @@
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
           v-layout(row)
-            v-flex(xs6)
+            v-flex
               div {{ $tc('alarmList.actions.iconsFields.rule', causesRules.length) }}&nbsp;:
-            v-flex(xs6)
+            v-flex
               div(
                 v-for="(rule, index) in causesRules",
                 :key="rule.id",
@@ -104,7 +104,7 @@
           div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ alarm.causes.total }}
     div(v-if="alarm.consequences")
       v-tooltip(top)
-        v-icon.badge.purple.white--text(
+        v-icon.badge.brown.darken-1.white--text(
           slot="activator",
           data-test="extraDetailsOpenButton-groupConsequences",
           small
