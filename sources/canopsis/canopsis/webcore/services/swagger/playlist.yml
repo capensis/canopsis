@@ -63,6 +63,10 @@ paths:
       responses:
         '200':
           description: Playlist has been created
+          schema:
+            properties:
+              _id:
+                type: string
         '400':
           description: Playlist create error
           schema:
@@ -105,7 +109,9 @@ paths:
         '200':
           description: Playlist has been updated
           schema:
-            type: object
+            properties:
+              is_success:
+                type: boolean
         '400':
           description: Playlist update error
           schema:
@@ -127,6 +133,5 @@ paths:
           description: Playlist has been deleted
           schema:
             properties:
-              status:
-                description: True for success
+              is_success:
                 type: boolean
