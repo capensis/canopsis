@@ -34,33 +34,23 @@ export default {
       required: true,
     },
   },
-  computed: {
-    wrapperStyles() {
-      return {
-        gridTemplateRows: this.tab.widgets.reduce((style, { gridParameters }) => {
-          const { h, fixedHeight } = gridParameters.desktop;
-
-          return fixedHeight ? `${style} repeat(${h}, 20px)` : `${style} auto`;
-        }, ''),
-      };
-    },
-  },
   methods: {
-    getWidgetFlexStyle(widget) {
-      const parameters = this.getGridByWindowSize(widget.gridParameters);
+    getWidgetFlexStyle({ gridParameters }) {
+      const parameters = this.getGridByWindowSize(gridParameters);
 
       return {
         gridColumnStart: parameters.x + 1,
         gridColumnEnd: parameters.x + 1 + parameters.w,
         gridRowStart: parameters.y + 1,
         gridRowEnd: parameters.fixedHeight
-          ? parameters.y + parameters.h
+          ? parameters.y + parameters.h + 1
           : parameters.y + 2,
       };
     },
 
     getGridByWindowSize(gridParameters = {}) {
       return {
+        xl: gridParameters.desktop,
         l: gridParameters.desktop,
         t: gridParameters.tablet,
         m: gridParameters.mobile,
@@ -74,7 +64,6 @@ export default {
   .gird-overview {
     display: grid;
     grid-gap: 10px;
-    grid-template-columns: repeat(12, calc(80% / 12));
   }
   .grid-item {
     overflow: auto;
