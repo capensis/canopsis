@@ -1,23 +1,21 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
-    widget-wrapper(
-      v-for="widget in tab.widgets",
-      :key="widget._id",
-      :widget="widget",
+    grid-overview-widget(
+      v-if="!isEditingMode",
       :tab="tab",
-      :isEditingMode="isEditingMode",
-      :row="row",
       :updateTabMethod="updateTabMethod"
     )
 </template>
 
 <script>
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
+import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
   components: {
+    GridOverviewWidget,
     WidgetWrapper,
   },
   mixins: [
