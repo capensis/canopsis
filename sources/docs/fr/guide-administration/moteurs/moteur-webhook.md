@@ -162,7 +162,7 @@ Si l'API renvoie une réponse sous forme de JSON imbriqué, il faut prendre en c
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
-A partir de la version 3.41.0 de Canopsis, les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expresson régulière.
+A partir de la version 3.41.0 de Canopsis, les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières.
 
 Pour cela, il est nécessaire de positionner l'option `regexp` à `true` comme dans l'exemple suivant :
 
