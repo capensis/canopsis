@@ -68,12 +68,12 @@ def _set_status(status):
 
 
 def exports(ws):
-    try:
-        init_swagger()
-    except Exception as exc:
-        ws.logger.exception("init_swagger exception {}".format(exc))
-    else:
-        ws.logger.info("init_swagger done")
+    # try:
+    #     init_swagger()
+    # except Exception as exc:
+    #     ws.logger.exception("init_swagger exception {}".format(exc))
+    # else:
+    #     ws.logger.info("init_swagger done")
 
     playlist_manager = ViewPlaylistManager(ViewPlaylistManager.default_collection())
 
