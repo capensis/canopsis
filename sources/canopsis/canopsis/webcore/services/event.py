@@ -67,6 +67,13 @@ def transform_event(ws, event):
         ws.logger.info(
             u'Role added to the event. event_type = {}, role = {}'.format(event_type, role))
 
+    if event_type == 'changestate' and new_event.get('state', 0) == 0:
+        if 'extra' not in new_event:
+            new_event['extra'] = {}
+        # need to add in both places due to fifo and che engine handle extra info differently
+        new_event['allow_zero_state'] = True
+        new_event['extra']['allow_zero_state'] = True
+
     # Long output must be a string
     long_output = new_event.get("long_output")
     if long_output is not None:
