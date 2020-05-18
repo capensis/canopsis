@@ -19,7 +19,7 @@
 # ---------------------------------
 
 import uuid
-from bottle import request, install
+from bottle import request, response
 from six import string_types
 from pymongo.errors import PyMongoError
 
@@ -50,6 +50,11 @@ def sanitize_payload(payload):
     return payload
 
 
+def _set_status(status):
+    if isinstance(status, int):
+        response.status = status
+
+
 def exports(ws):
     playlist_manager = ViewPlaylistManager(
         ViewPlaylistManager.default_collection())
@@ -65,14 +70,12 @@ def exports(ws):
         :rtype: list
         """
         try:
-            document = playlist_manager.get_playlist_list()
+            documents = playlist_manager.get_playlist_list()
         except PyMongoError:
-            return gen_json_error(
-                {"description": "Can not retrieve the playlists list from "
-                                "database, contact your administrator."},
-                HTTP_ERROR)
+            _set_status(HTTP_ERROR)
+            return {"description": "Can not retrieve the playlists list from database, contact your administrator."}
 
-        return gen_json(document)
+        return documents
 
     @ws.application.get(
         '/api/v2/playlist/<playlist_id>'
@@ -89,17 +92,14 @@ def exports(ws):
         try:
             document = playlist_manager.get_playlist_by_id(playlist_id)
         except PyMongoError:
-            return gen_json_error(
-                {"description": "Can not retrieve the playlist data from "
-                                "database, contact your administrator."},
-                HTTP_ERROR)
+            _set_status(HTTP_ERROR)
+            return {"description": "Can not retrieve the playlist data from database, contact your administrator."},
 
         if document is None:
-            return gen_json_error(
-                {"description": "No message found with ID " + playlist_id},
-                HTTP_ERROR)
+            _set_status(HTTP_ERROR)
+            return {"description": "No message found with ID " + playlist_id}
 
-        return gen_json(document)
+        return document
 
     @ws.application.post(
         '/api/v2/playlist'
@@ -114,23 +114,17 @@ def exports(ws):
         try:
             message = request.json
         except ValueError:
-            return gen_json_error(
-                {'description': 'Invalid JSON'},
-                HTTP_ERROR
-            )
+            _set_status(HTTP_ERROR)
+            return {'description': 'Invalid JSON'}
 
         if message is None or not isinstance(message, dict):
-            return gen_json_error(
-                {'description': 'Nothing to create'}, HTTP_ERROR)
+            return {'description': 'Nothing to create'}
 
         try:
             message = sanitize_payload(message)
         except Exception as e:
             ws.logger.error('message creation error : {}'.format(e))
-            return gen_json_error(
-                {'description': 'Invalid payload'},
-                HTTP_ERROR
-            )
+            return {'description': 'Invalid payload'}
 
         if '_id' not in message:
             message['_id'] = str(uuid.uuid4())
@@ -140,10 +134,8 @@ def exports(ws):
             return {'_id': _id}
         except CollectionError as ce:
             ws.logger.error('message creation error : {}'.format(ce))
-            return gen_json_error(
-                {'description': 'Error while creating an message'},
-                HTTP_ERROR
-            )
+            _set_status(HTTP_ERROR)
+            return {'description': 'Error while creating an message'}
 
     @ws.application.put(
         '/api/v2/playlist/<playlist_id>'
@@ -159,40 +151,26 @@ def exports(ws):
         try:
             message = request.json
         except ValueError:
-            return gen_json_error(
-                {'description': 'Invalid JSON'},
-                HTTP_ERROR
-            )
+            return {'description': 'Invalid JSON'}
 
         if message is None or not isinstance(message, dict):
-            return gen_json_error(
-                {'description': 'Nothing to update'}, HTTP_ERROR)
+            return {'description': 'Nothing to update'}
 
         try:
             message = sanitize_payload(message)
         except Exception as e:
             ws.logger.error('message creation error : {}'.format(e))
-            return gen_json_error(
-                {'description': 'Invalid payload'},
-                HTTP_ERROR
-            )
+            _set_status(HTTP_ERROR)
+            return {'description': 'Invalid payload'}
 
         try:
             ok = playlist_manager.update_playlist_by_id(message, playlist_id)
         except CollectionError as ce:
             ws.logger.error('message update error : {}'.format(ce))
-            return gen_json_error(
-                {'description': 'Error while updating an message'},
-                HTTP_ERROR
-            )
+            _set_status(HTTP_ERROR)
+            return {'description': 'Error while updating an message'}
 
-        if not ok:
-            return gen_json_error(
-                {'description': 'Failed to update message'},
-                HTTP_ERROR
-            )
-
-        return gen_json({})
+        return {"is_success": ok}
 
     @ws.application.delete(
         '/api/v2/playlist/<playlist_id>'
@@ -208,9 +186,7 @@ def exports(ws):
         try:
             ok = playlist_manager.delete_playlist_by_id(playlist_id)
         except PyMongoError:
-            return gen_json_error(
-                {"description": "Can not retrieve the playlist data from "
-                                "database, contact your administrator."},
-                HTTP_ERROR)
+            _set_status(HTTP_ERROR)
+            return {"description": "Can not retrieve the playlist data from database, contact your administrator."}
 
-        return gen_json({"status": ok})
+        return {"is_success": ok}
