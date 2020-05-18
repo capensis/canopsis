@@ -430,9 +430,7 @@ class AlertsReader(object):
         """
         final_filter = {'$and': []}
 
-        # filtered list must have all alarms but meta-alarms except the filter by alarm _id or entity id 
-        if isinstance(view_filter, dict) and view_filter and not "_id" in view_filter and not "d" in view_filter or \
-            (isinstance(view_filter, list) and view_filter != []) or not correlation:
+        if not correlation:
             final_filter['$and'].append({"d": {"$not": re.compile("^meta-alarm-entity-.+")}})
         t_view_filter = self._translate_filter(view_filter)
         # add the view filter if not empty
@@ -585,7 +583,8 @@ class AlertsReader(object):
                                   filter_,
                                   add_pbh_filter=True,
                                   has_wildcard_dynamic_filter=False,
-                                  correlation=False):
+                                  correlation=False,
+                                  consequneces_children=False):
         """
         :param dict final_filter: the filter sent by the front page
         :param str sort_key: Name of the column to sort. If the value ends with
@@ -624,7 +623,7 @@ class AlertsReader(object):
                 }
             }
         ]
-        if correlation and self._can_add_metaalarm_filter(filter_, with_consequences):
+        if correlation and not consequneces_children:
             self._add_metaalarm_filter(pipeline, 3, with_consequences)
 
         if not with_steps:
@@ -648,22 +647,6 @@ class AlertsReader(object):
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
         return pipeline
-
-    def _can_add_metaalarm_filter(self, filter_, with_consequences):
-        """
-        Method checks ability to filter metaalarms
-
-        With any conditions in filter except filter by _id metaalarms grouping must be skipped, a regular alarms list
-        in this case.
-        An empty filter or filter by _id or `with_consequences` allows to group metaalarms.
-
-        :param dict| list of dict filter_: MongoDB filter
-        :param bool with_consequences: `with_consequences` request parameter to group alarms with metaalarm under
-        `consequences` key
-        :returns: True when filter can be changed to find metaalarms
-        :rtype: bool
-        """
-        return not filter_ or with_consequences
 
     def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
         """
@@ -897,7 +880,8 @@ class AlertsReader(object):
             hide_resources=False,
             with_consequences=False,
             add_pbh_filter=True,
-            correlation=False
+            correlation=False,
+            consequneces_children=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -977,7 +961,7 @@ class AlertsReader(object):
         pipeline = self._build_aggregate_pipeline(
             final_filter, sort_key, sort_dir, with_steps, with_consequences, filter_,
             add_pbh_filter=add_pbh_filter, has_wildcard_dynamic_filter=has_wildcard_dynamic_filter,
-            correlation=correlation)
+            correlation=correlation, consequneces_children=consequneces_children)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"

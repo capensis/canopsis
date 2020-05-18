@@ -181,7 +181,8 @@ def exports(ws):
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
-                correlation=correlation
+                correlation=correlation,
+                consequneces_children=True
             )
 
         list_alarm = []
