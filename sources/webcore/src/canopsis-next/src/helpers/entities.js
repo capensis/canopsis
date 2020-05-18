@@ -22,6 +22,7 @@ import {
   GRID_SIZES, AVAILABLE_COUNTERS,
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
   TIME_UNITS,
+  WIDGET_GRID_SIZES_KEYS,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -39,11 +40,16 @@ export function generateWidgetByType(type) {
     _id: uuid(`widget_${type}`),
     title: '',
     parameters: {},
-    size: {
-      sm: 3,
-      md: 3,
-      lg: 3,
-    },
+    gridParameters: Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+      acc[size] = {
+        x: 0,
+        y: 0,
+        h: 0,
+        w: 12, // TODO: use values from constants
+      };
+
+      return acc;
+    }, {}),
   };
 
   const alarmsListDefaultParameters = {
@@ -453,15 +459,11 @@ export function generateRoleRightByChecksum(checksum) {
 export function generateCopyOfViewTab(tab) {
   return {
     ...generateViewTab(),
+    ...omit(tab, ['_id', 'widgets']),
 
-    rows: tab.rows.map(row => ({
-      ...generateViewRow(),
-
-      title: row.title,
-      widgets: row.widgets.map(widget => ({
-        ...generateWidgetByType(widget.type),
-        ...omit(widget, ['_id']),
-      })),
+    widgets: tab.widgets.map(widget => ({
+      ...generateWidgetByType(widget.type),
+      ...omit(widget, ['_id']),
     })),
   };
 }
@@ -477,11 +479,7 @@ export function generateCopyOfView(view) {
     ...generateView(),
     ...omit(view, ['_id', 'tabs']),
 
-    tabs: view.tabs.map(tab => ({
-      ...generateCopyOfViewTab(tab),
-
-      ...omit(tab, ['_id', 'rows']),
-    })),
+    tabs: view.tabs.map(tab => generateCopyOfViewTab(tab)),
   };
 }
 
@@ -575,13 +573,15 @@ export function generateAction() {
  * @returns {Array.<{ oldId: number, newId: number }>}
  */
 export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
-  return oldTab.rows.reduce((acc, row, rowIndex) => {
+  return oldTab.widgets.reduce((acc, row, rowIndex) => {
     const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
       oldId: widget._id,
       newId: get(newTab, `rows.${rowIndex}.widgets.${widgetIndex}._id`, null),
     }));
 
-    return acc.concat(widgetsIds);
+    acc.push(...widgetsIds);
+
+    return acc;
   }, []);
 }
 

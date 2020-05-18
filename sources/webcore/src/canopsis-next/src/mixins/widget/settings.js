@@ -1,4 +1,4 @@
-import { setField } from '@/helpers/immutable';
+import { addTo, setField } from '@/helpers/immutable';
 
 import queryMixin from '@/mixins/query';
 import sideBarMixins from '@/mixins/side-bar/side-bar';
@@ -50,7 +50,7 @@ export default {
       const isFormValid = await this.isFormValid();
 
       if (isFormValid) {
-        const widget = {
+        const newWidget = {
           ...this.settings.widget,
           ...this.prepareWidgetSettings(),
         };
@@ -64,7 +64,14 @@ export default {
           },
         };
 
-        const viewData = setField(this.activeView, ['tabs', this.config.tabId, widget._id], widget);
+        const { tabs } = this.activeView;
+        const tabIndex = tabs.findIndex(tab => tab._id === this.config.tabId);
+        const { widgets } = tabs[tabIndex];
+        const widgetIndex = widgets.findIndex(widget => widget._id === newWidget._id);
+
+        const viewData = widgetIndex === -1 ?
+          addTo(this.activeView, ['tabs', tabIndex, 'widgets'], newWidget) :
+          setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], newWidget);
 
         await Promise.all([
           this.createUserPreference({ userPreference }),
@@ -72,10 +79,10 @@ export default {
         ]);
 
         const oldQuery = this.getQueryById(this.widget._id);
-        const newQuery = prepareQuery(widget, userPreference);
+        const newQuery = prepareQuery(newWidget, userPreference);
 
         this.updateQuery({
-          id: widget._id,
+          id: newWidget._id,
           query: this.prepareWidgetQuery(newQuery, oldQuery),
         });
 
