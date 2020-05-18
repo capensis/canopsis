@@ -50,6 +50,7 @@ export { default as CreateDynamicInfo } from './dynamic-info/create-dynamic-info
 export { default as CreateDynamicInfoInformation } from './dynamic-info/create-dynamic-info-information.vue';
 export { default as DynamicInfoTemplatesList } from './dynamic-info/dynamic-info-templates-list.vue';
 export { default as CreateDynamicInfoTemplate } from './dynamic-info/create-dynamic-info-template.vue';
+export { default as CreateMetaAlarmRule } from './meta-alarm-rule/create-meta-alarm-rule.vue';
 export { default as CreateCommentEvent } from './common/create-comment-event.vue';
 export { default as CreatePlaylist } from './admin/create-playlist.vue';
 export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue';

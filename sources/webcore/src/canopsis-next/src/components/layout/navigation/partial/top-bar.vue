@@ -131,6 +131,12 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.dynamicInfo,
         },
+        {
+          route: { name: 'exploitation-meta-alarm-rules' },
+          text: this.$t('metaAlarmRule.title'),
+          icon: 'list',
+          right: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
+        },
       ];
 
       return links.filter(({ right }) =>

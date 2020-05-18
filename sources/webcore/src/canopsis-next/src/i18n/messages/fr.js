@@ -101,6 +101,7 @@ export default {
     fullscreen: 'Plein écran',
     interval: 'Période',
     status: 'Statut',
+    unit: 'Unité',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -868,6 +869,25 @@ export default {
         removeRuleField: 'Supprimer le groupe/la règle',
       },
     },
+    metaAlarmRule: {
+      create: {
+        title: 'Créer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      edit: {
+        title: 'Éditer une règle',
+        success: 'Règle éditée avec succès !',
+      },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
+      editPattern: 'Éditer le pattern',
+      actions: 'Actions',
+    },
     viewTab: {
       create: {
         title: 'Ajouter un onglet',
@@ -1290,6 +1310,23 @@ export default {
     actionsRequired: 'Veuillez ajouter au moins une action',
     id: 'Id',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+  },
+  metaAlarmRule: {
+    title: 'Meta alarm rule',
+    type: 'Type',
+    patterns: 'Patterns',
+    actions: 'Actions',
+    id: 'Id',
+    idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+    fields: {
+      eventPatterns: 'Patterns des événements',
+      alarmPatterns: 'Patterns des alarmes',
+      entityPatterns: 'Pattern des entités',
+      thresholdType: 'Type de seuil',
+      thresholdRate: 'Taux de déclenchement',
+      thresholdCount: 'Seuil de déclenchement',
+      timeInterval: 'Intervalle de temps',
+    },
   },
   snmpRules: {
     title: 'Règles SNMP',

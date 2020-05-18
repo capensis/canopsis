@@ -111,6 +111,7 @@ export default {
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
+    unit: 'Unit',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -900,6 +901,25 @@ export default {
         removeRuleField: 'Remove rule field',
       },
     },
+    metaAlarmRule: {
+      create: {
+        title: 'Create meta alarm rule',
+        success: 'Rule successfully created !',
+      },
+      duplicate: {
+        title: 'Duplicate meta alarm rule',
+        success: 'Rule successfully created !',
+      },
+      edit: {
+        title: 'Edit an meta alarm rule',
+        success: 'Rule successfully edited !',
+      },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
+      editPattern: 'Edit pattern',
+      actions: 'Actions',
+    },
     viewTab: {
       create: {
         title: 'Create tab',
@@ -1372,6 +1392,23 @@ export default {
     actionsRequired: 'Please add at least one action',
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+  },
+  metaAlarmRule: {
+    title: 'Meta alarm rule',
+    type: 'Type',
+    patterns: 'Patterns',
+    actions: 'Actions',
+    id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+    fields: {
+      eventPatterns: 'Event patterns',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
+      thresholdType: 'Threshold type',
+      thresholdRate: 'Threshold rate',
+      thresholdCount: 'Threshold count',
+      timeInterval: 'Time interval',
+    },
   },
   snmpRules: {
     title: 'SNMP rules',

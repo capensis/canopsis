@@ -24,6 +24,7 @@ import alarmColumnFiltersModule from './alarm-column-filters';
 import sessionModule from './session';
 import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
+import metaAlarmRuleModule from './meta-alarm-rule';
 import playlistModule from './playlist';
 
 export default {
@@ -54,4 +55,5 @@ export default {
   broadcastMessage: broadcastMessageModule,
   counter: counterModule,
   playlist: playlistModule,
+  metaAlarmRule: metaAlarmRuleModule,
 };
