@@ -75,25 +75,27 @@ export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
           [WIDGET_GRID_SIZES_KEYS.desktop]: 'lg',
         };
 
-        acc.push(...widgets);
-
         widgets.forEach((widget) => {
-          newEntity.grid[widget._id] = Object.values(WIDGET_GRID_SIZES_KEYS).reduce((secondAcc, size) => {
-            const currentSizeEnd = prevEnd[size] + widget.size[GRID_SIZES_MAP[size]];
-
+          const gridParameters = Object.values(WIDGET_GRID_SIZES_KEYS).reduce((secondAcc, size) => {
             // eslint-disable-next-line no-param-reassign
             secondAcc[size] = {
               x: prevEnd[size],
               y: rowIndex,
-              w: currentSizeEnd,
+              w: widget.size[GRID_SIZES_MAP[size]],
               h: 0,
               fixedHeight: false,
             };
 
-            prevEnd[size] = currentSizeEnd;
+            prevEnd[size] += widget.size[GRID_SIZES_MAP[size]];
 
             return secondAcc;
           }, {});
+
+          acc.push({
+            ...widget,
+
+            gridParameters,
+          });
         });
 
         return acc;

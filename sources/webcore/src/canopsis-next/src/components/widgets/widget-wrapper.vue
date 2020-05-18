@@ -12,7 +12,7 @@
                 v-icon(small) more_horiz
               v-list(dense)
                 v-list-tile(
-                  @click="showSettings({ tabId: tab._id, rowId: row._id, widget })",
+                  @click="showSettings({ tabId: tab._id, widget })",
                   :data-test="`editWidgetButton-${widget._id}`"
                 )
                   div {{ $t('common.edit') }}
@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { WIDGET_TYPES, WIDGET_TYPES_RULES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
@@ -40,6 +39,7 @@ import { WIDGET_TYPES, WIDGET_TYPES_RULES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } f
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 import { generateWidgetByType } from '@/helpers/entities';
+import { unsetField } from '@/helpers/immutable';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
@@ -80,10 +80,6 @@ export default {
       required: true,
     },
     tab: {
-      type: Object,
-      required: true,
-    },
-    row: {
       type: Object,
       required: true,
     },
@@ -138,16 +134,8 @@ export default {
     },
   },
   methods: {
-    deleteWidgetFromTabRow(widgetId) {
-      const newTab = cloneDeep(this.tab);
-
-      const rowIndex = this.tab.rows.findIndex(row => row.widgets.find(widget => widget._id === widgetId));
-
-      const widgetIndex = this.tab.rows[rowIndex].widgets.findIndex(widget => widget._id === widgetId);
-
-      newTab.rows[rowIndex].widgets.splice(widgetIndex, 1);
-
-      return newTab;
+    deleteWidgetFromTab(widgetId) {
+      return unsetField(this.tab, ['widgets', widgetId]);
     },
 
     /**
@@ -185,14 +173,12 @@ export default {
       viewId,
       widget,
       tabId,
-      rowId,
     }) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
         config: {
           viewId,
           tabId,
-          rowId,
           widget,
         },
       });
@@ -212,7 +198,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: () => {
-            const updatedTab = this.deleteWidgetFromTabRow(this.widget._id);
+            const updatedTab = this.deleteWidgetFromTab(this.widget._id);
 
             return this.updateTabMethod(updatedTab);
           },

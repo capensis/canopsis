@@ -52,7 +52,6 @@
         slot(
           :tab="tab",
           :isEditingMode="isEditingMode",
-          :hasUpdateAccess="hasUpdateAccess",
           :updateTabMethod="updateTab"
         )
 </template>

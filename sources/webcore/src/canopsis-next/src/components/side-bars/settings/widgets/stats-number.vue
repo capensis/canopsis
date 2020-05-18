@@ -1,13 +1,6 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-row-grid-size(
-        :rowId.sync="settings.rowId",
-        :size.sync="settings.widget.size",
-        :availableRows="availableRows",
-        @createRow="createRow"
-      )
-      v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval", :hiddenFields="['periodValue']")
@@ -39,7 +32,6 @@ import { cloneDeep } from 'lodash';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import { SIDE_BARS } from '@/constants';
 
-import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
@@ -54,7 +46,6 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldRowGridSize,
     FieldTitle,
     FieldDateInterval,
     FieldFilterEditor,
@@ -65,11 +56,10 @@ export default {
   },
   mixins: [widgetSettingsMixin],
   data() {
-    const { widget, rowId } = this.config;
+    const { widget } = this.config;
 
     return {
       settings: {
-        rowId,
         widget: cloneDeep(widget),
       },
     };

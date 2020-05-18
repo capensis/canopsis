@@ -25,7 +25,7 @@
       :hasUpdateAccess="hasUpdateAccess",
       :updateViewMethod="data => updateViewMethod(data)"
     )
-      view-tab-rows(
+      view-tab-widgets(
         slot-scope="props",
         v-bind="props"
       )
@@ -35,12 +35,12 @@
 import { isEqual } from 'lodash';
 
 import ViewTabs from './view-tabs.vue';
-import ViewTabRows from './view-tab-rows.vue';
+import ViewTabWidgets from './view-tab-widgets.vue';
 
 export default {
   components: {
     ViewTabs,
-    ViewTabRows,
+    ViewTabWidgets,
   },
   props: {
     view: {
