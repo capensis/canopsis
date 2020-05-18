@@ -85,7 +85,7 @@
             v-divider
     div(v-if="alarm.causes")
       v-tooltip(top)
-        v-icon.brown.darken-1.white--text(
+        v-icon.badge.brown.darken-1.white--text(
           slot="activator",
           data-test="extraDetailsOpenButton-groupCauses",
           small
