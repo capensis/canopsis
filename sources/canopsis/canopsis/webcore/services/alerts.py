@@ -248,6 +248,7 @@ def exports(ws):
             alarm = compat_go_crop_states(alarm)
 
             if with_consequences and isinstance(alarm.get('consequences'), dict) and alarm_children['total'] > 0:
+                map(lambda al_ch: al_ch.update({'causes': {'rules': [alarm['rule']], 'total': 1}}),  alarm_children['alarms'])
                 alarm['consequences']['data'] = alarm_children['alarms']
 
             list_alarm.append(alarm)
