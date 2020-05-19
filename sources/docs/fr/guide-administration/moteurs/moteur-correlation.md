@@ -183,6 +183,14 @@ Au passage de la souris sur l'icône de la colonne `Extra Details` une info-bull
 
 Le détail des alarmes liées peut-être consulté en déroulant le détail de la méta alarme et en affichant l'onglet `Alarmes Liées`.
 
+Dans le cas ci-dessus (groupement par relation parent-enfant) c'est l'alarme parent qui devient la méta alarme. Ses valeurs de `connector`, `connector_name` et `component` sont alors conservées. Pour les autres types de groupement une méta alarme est générée par Canopsis, celle-ci aura toujours les valeurs suivantes :
+
+- connector : `engine`
+- connector_name : `correlation`
+- component : `metaalarm`
+
+### Variables d'une méta alarme
+
 La méta alarme a été enrichie avec de nouvelles variables.
 
 ![Variables de la méta alarme](img/correlation_variables_meta_alarme_01.png)
