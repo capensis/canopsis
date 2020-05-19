@@ -53,6 +53,7 @@ def exports(ws):
         ws.application.get,
         name='alerts/get-alarms',
         payload=[
+            'authkey',
             'tstart',
             'tstop',
             'opened',
@@ -74,6 +75,7 @@ def exports(ws):
         ]
     )
     def get_alarms(
+            authkey=None,
             tstart=None,
             tstop=None,
             opened=True,
