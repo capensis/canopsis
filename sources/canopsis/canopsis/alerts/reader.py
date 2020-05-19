@@ -584,7 +584,7 @@ class AlertsReader(object):
                                   add_pbh_filter=True,
                                   has_wildcard_dynamic_filter=False,
                                   correlation=False,
-                                  consequneces_children=False):
+                                  consequences_children=False):
         """
         :param dict final_filter: the filter sent by the front page
         :param str sort_key: Name of the column to sort. If the value ends with
@@ -623,7 +623,7 @@ class AlertsReader(object):
                 }
             }
         ]
-        if correlation and not consequneces_children:
+        if correlation and not consequences_children:
             self._add_metaalarm_filter(pipeline, 3, with_consequences)
 
         if not with_steps:
@@ -881,7 +881,7 @@ class AlertsReader(object):
             with_consequences=False,
             add_pbh_filter=True,
             correlation=False,
-            consequneces_children=False
+            consequences_children=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -961,7 +961,7 @@ class AlertsReader(object):
         pipeline = self._build_aggregate_pipeline(
             final_filter, sort_key, sort_dir, with_steps, with_consequences, filter_,
             add_pbh_filter=add_pbh_filter, has_wildcard_dynamic_filter=has_wildcard_dynamic_filter,
-            correlation=correlation, consequneces_children=consequneces_children)
+            correlation=correlation, consequences_children=consequences_children)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"

@@ -182,7 +182,7 @@ def exports(ws):
                 active_columns=active_columns,
                 hide_resources=hide_resources,
                 correlation=correlation,
-                consequneces_children=True
+                consequences_children=True
             )
 
         list_alarm = []
