@@ -53,6 +53,7 @@ def exports(ws):
         ws.application.get,
         name='alerts/get-alarms',
         payload=[
+            'authkey',
             'tstart',
             'tstop',
             'opened',
@@ -74,6 +75,7 @@ def exports(ws):
         ]
     )
     def get_alarms(
+            authkey=None,
             tstart=None,
             tstop=None,
             opened=True,
@@ -181,7 +183,8 @@ def exports(ws):
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
-                correlation=correlation
+                correlation=correlation,
+                consequences_children=True
             )
 
         list_alarm = []
