@@ -35,7 +35,8 @@ Une playlist est contituée d'un ensemble d'onglets appartenant eux-mêmes à de
 
 Le gestionnaire d'onglets permet de sélectionner et de définir l'ordre des onglets appartenant à une playlist.
 
-Attention : Le rafraichissement périodique des vues est désactivé dans les playlists.
+!!! warning
+    Le rafraichissement périodique des vues est désactivé dans les playlists.
 
 ![Gestionnaire d'onglets](./img/onglets_playlists.png  "Gestionnaire d'onglets")
 
