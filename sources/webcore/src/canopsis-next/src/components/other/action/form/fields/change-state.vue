@@ -15,6 +15,8 @@
 <script>
 import { omit } from 'lodash';
 
+import entitiesInfoMixin from '@/mixins/entities/info';
+
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 import { ENTITIES_STATES } from '@/constants';
@@ -24,6 +26,7 @@ export default {
   components: {
     StateCriticityField,
   },
+  mixins: [entitiesInfoMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -36,7 +39,7 @@ export default {
   },
   computed: {
     availableStateValues() {
-      return omit(ENTITIES_STATES, ['ok']);
+      return this.allowChangeSeverityToInfo ? ENTITIES_STATES : omit(ENTITIES_STATES, ['ok']);
     },
   },
 };
