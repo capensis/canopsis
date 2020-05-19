@@ -8,12 +8,17 @@
     v-layout.mt-4(row)
       v-textarea(
         v-field="value.output",
-        :label="$t('modals.createAction.fields.output')"
+        :label="label || $t('modals.createAction.fields.output')",
+        v-validate="'required'",
+        :error-messages="errors.collect('output')",
+        name="output"
       )
 </template>
 
 <script>
 import { omit } from 'lodash';
+
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
@@ -24,6 +29,7 @@ export default {
   components: {
     StateCriticityField,
   },
+  mixins: [entitiesInfoMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -33,10 +39,14 @@ export default {
       type: Object,
       required: true,
     },
+    label: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     availableStateValues() {
-      return omit(ENTITIES_STATES, ['ok']);
+      return this.allowChangeSeverityToInfo ? ENTITIES_STATES : omit(ENTITIES_STATES, ['ok']);
     },
   },
 };
