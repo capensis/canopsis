@@ -665,9 +665,9 @@
         "desc": "Service weather: Access to Links"
     },
     {
-        "_id": "serviceweather_entityСomment",
-        "loader_id": "serviceweather_entityСomment",
-        "crecord_name": "serviceweather_entityСomment",
+        "_id": "serviceweather_entityComment",
+        "loader_id": "serviceweather_entityComment",
+        "crecord_name": "serviceweather_entityComment",
         "crecord_type": "action",
         "desc": "Service weather: Access to 'Comment' action"
     },
