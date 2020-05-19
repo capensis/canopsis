@@ -38,9 +38,9 @@
           transition="slide-y-reverse-transition"
         )
           v-btn(
-            data-test="menuViewButton",
             slot="activator",
             :input-value="isVSpeedDialOpen",
+            data-test="menuViewButton",
             color="primary",
             dark,
             fab
@@ -61,21 +61,21 @@
             span alt + enter / command + enter
           v-tooltip(v-if="hasUpdateAccess", left)
             v-btn(
+              v-model="isEditingMode",
               data-test="editViewButton",
               slot="activator",
               fab,
               dark,
               small,
-              @click.stop="toggleViewEditingMode",
-              v-model="isEditingMode"
+              @click.stop="toggleViewEditingMode"
             )
               v-icon edit
               v-icon done
             span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
           v-tooltip(left)
             v-btn(
-              data-test="addWidgetButton",
               v-if="hasUpdateAccess",
+              data-test="addWidgetButton",
               slot="activator",
               fab,
               dark,
@@ -87,9 +87,9 @@
             span {{ $t('common.addWidget') }}
           v-tooltip(left)
             v-btn(
-              data-test="addTabButton",
-              v-if="hasUpdateAccess",
               slot="activator",
+              v-if="hasUpdateAccess",
+              data-test="addTabButton",
               fab,
               dark,
               small,

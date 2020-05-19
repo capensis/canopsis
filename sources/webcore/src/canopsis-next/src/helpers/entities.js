@@ -44,8 +44,9 @@ export function generateWidgetByType(type) {
       acc[size] = {
         x: 0,
         y: 0,
-        h: 0,
+        h: 20,
         w: 12, // TODO: use values from constants
+        fixedHeight: true,
       };
 
       return acc;

@@ -55,12 +55,13 @@ export default {
         gridRowStart: parameters.y + 1,
         gridRowEnd: parameters.fixedHeight
           ? parameters.y + parameters.h
-          : parameters.y + 2,
+          : parameters.y + 100,
       };
     },
 
     getGridByWindowSize(gridParameters = {}) {
       return {
+        xl: gridParameters.desktop, // TODO: change that to vuetify breakpoints
         l: gridParameters.desktop,
         t: gridParameters.tablet,
         m: gridParameters.mobile,
@@ -74,7 +75,7 @@ export default {
   .gird-overview {
     display: grid;
     grid-gap: 10px;
-    grid-template-columns: repeat(12, calc(80% / 12));
+    grid-template-columns: repeat(12, [col-start] 1fr);
   }
   .grid-item {
     overflow: auto;

@@ -55,6 +55,33 @@ export default {
           ...this.prepareWidgetSettings(),
         };
 
+        const { tabs } = this.activeView;
+        const tabIndex = tabs.findIndex(tab => tab._id === this.config.tabId);
+        const { widgets } = tabs[tabIndex];
+        const widgetIndex = widgets.findIndex(widget => widget._id === newWidget._id);
+
+        if (widgetIndex === -1) {
+          const newGridParameters = tabs[tabIndex].widgets.reduce((acc, { gridParameters }) => {
+            if (gridParameters.mobile.y >= acc.mobile) {
+              acc.mobile = gridParameters.mobile.y + gridParameters.mobile.h + 1;
+            }
+
+            if (gridParameters.tablet.y >= acc.tablet) {
+              acc.tablet = gridParameters.tablet.y + gridParameters.mobile.h + 1;
+            }
+
+            if (gridParameters.desktop.y >= acc.desktop) {
+              acc.desktop = gridParameters.desktop.y + gridParameters.mobile.h + 1;
+            }
+
+            return acc;
+          }, { mobile: 0, tablet: 0, desktop: 0 });
+
+          newWidget.gridParameters.mobile.y = newGridParameters.mobile;
+          newWidget.gridParameters.tablet.y = newGridParameters.tablet;
+          newWidget.gridParameters.desktop.y = newGridParameters.desktop;
+        }
+
         const userPreference = {
           ...this.userPreference,
 
@@ -64,11 +91,7 @@ export default {
           },
         };
 
-        const { tabs } = this.activeView;
-        const tabIndex = tabs.findIndex(tab => tab._id === this.config.tabId);
-        const { widgets } = tabs[tabIndex];
-        const widgetIndex = widgets.findIndex(widget => widget._id === newWidget._id);
-
+        // const viewData = setField(this.activeView, ['tabs', tabIndex, 'widgets'], []);
         const viewData = widgetIndex === -1 ?
           addTo(this.activeView, ['tabs', tabIndex, 'widgets'], newWidget) :
           setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], newWidget);
