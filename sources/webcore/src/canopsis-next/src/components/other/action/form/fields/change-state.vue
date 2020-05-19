@@ -9,7 +9,7 @@
       v-textarea(
         v-field="value.output",
         :label="label || $t('modals.createAction.fields.output')",
-        v-validate="outputRules",
+        v-validate="'required'",
         :error-messages="errors.collect('output')",
         name="output"
       )
@@ -47,12 +47,6 @@ export default {
   computed: {
     availableStateValues() {
       return this.allowChangeSeverityToInfo ? ENTITIES_STATES : omit(ENTITIES_STATES, ['ok']);
-    },
-
-    outputRules() {
-      return {
-        required: true,
-      };
     },
   },
 };
