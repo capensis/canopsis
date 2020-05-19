@@ -1,4 +1,4 @@
-import { setField } from '@/helpers/immutable';
+import { addTo, setField } from '@/helpers/immutable';
 
 import queryMixin from '@/mixins/query';
 import sideBarMixins from '@/mixins/side-bar/side-bar';
@@ -50,10 +50,37 @@ export default {
       const isFormValid = await this.isFormValid();
 
       if (isFormValid) {
-        const widget = {
+        const newWidget = {
           ...this.settings.widget,
           ...this.prepareWidgetSettings(),
         };
+
+        const { tabs } = this.activeView;
+        const tabIndex = tabs.findIndex(tab => tab._id === this.config.tabId);
+        const { widgets } = tabs[tabIndex];
+        const widgetIndex = widgets.findIndex(widget => widget._id === newWidget._id);
+
+        if (widgetIndex === -1) {
+          const newGridParameters = tabs[tabIndex].widgets.reduce((acc, { gridParameters }) => {
+            if (gridParameters.mobile.y >= acc.mobile) {
+              acc.mobile = gridParameters.mobile.y + gridParameters.mobile.h + 1;
+            }
+
+            if (gridParameters.tablet.y >= acc.tablet) {
+              acc.tablet = gridParameters.tablet.y + gridParameters.mobile.h + 1;
+            }
+
+            if (gridParameters.desktop.y >= acc.desktop) {
+              acc.desktop = gridParameters.desktop.y + gridParameters.mobile.h + 1;
+            }
+
+            return acc;
+          }, { mobile: 0, tablet: 0, desktop: 0 });
+
+          newWidget.gridParameters.mobile.y = newGridParameters.mobile;
+          newWidget.gridParameters.tablet.y = newGridParameters.tablet;
+          newWidget.gridParameters.desktop.y = newGridParameters.desktop;
+        }
 
         const userPreference = {
           ...this.userPreference,
@@ -64,7 +91,10 @@ export default {
           },
         };
 
-        const viewData = setField(this.activeView, ['tabs', this.config.tabId, widget._id], widget);
+        // const viewData = setField(this.activeView, ['tabs', tabIndex, 'widgets'], []);
+        const viewData = widgetIndex === -1 ?
+          addTo(this.activeView, ['tabs', tabIndex, 'widgets'], newWidget) :
+          setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], newWidget);
 
         await Promise.all([
           this.createUserPreference({ userPreference }),
@@ -72,10 +102,10 @@ export default {
         ]);
 
         const oldQuery = this.getQueryById(this.widget._id);
-        const newQuery = prepareQuery(widget, userPreference);
+        const newQuery = prepareQuery(newWidget, userPreference);
 
         this.updateQuery({
-          id: widget._id,
+          id: newWidget._id,
           query: this.prepareWidgetQuery(newQuery, oldQuery),
         });
 

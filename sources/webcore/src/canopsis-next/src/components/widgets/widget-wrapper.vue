@@ -39,7 +39,7 @@ import { WIDGET_TYPES, WIDGET_TYPES_RULES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } f
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 import { generateWidgetByType } from '@/helpers/entities';
-import { unsetField } from '@/helpers/immutable';
+import { removeFrom } from '@/helpers/immutable';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
@@ -135,7 +135,9 @@ export default {
   },
   methods: {
     deleteWidgetFromTab(widgetId) {
-      return unsetField(this.tab, ['widgets', widgetId]);
+      const widgetIndex = this.tab.widgets.findIndex(widget => widget._id === widgetId);
+
+      return removeFrom(this.tab, 'widgets', widgetIndex);
     },
 
     /**

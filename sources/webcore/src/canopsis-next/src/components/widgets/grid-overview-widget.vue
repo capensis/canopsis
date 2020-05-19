@@ -64,6 +64,7 @@ export default {
   .gird-overview {
     display: grid;
     grid-gap: 10px;
+    grid-template-columns: repeat(12, [col-start] 1fr);
   }
   .grid-item {
     overflow: auto;

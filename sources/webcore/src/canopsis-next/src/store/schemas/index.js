@@ -82,7 +82,7 @@ export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
               x: prevEnd[size],
               y: rowIndex,
               w: widget.size[GRID_SIZES_MAP[size]],
-              h: 0,
+              h: 100,
               fixedHeight: false,
             };
 

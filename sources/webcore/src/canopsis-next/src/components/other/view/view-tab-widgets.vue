@@ -1,22 +1,28 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
-    grid-overview-widget(
-      v-if="!isEditingMode",
+    keep-alive
+      grid-overview-widget(
+        v-if="!isEditingMode",
+        :tab="tab",
+        :updateTabMethod="updateTabMethod"
+      )
+    grid-edit-widgets(
+      v-if="isEditingMode",
       :tab="tab",
       :updateTabMethod="updateTabMethod"
     )
 </template>
 
 <script>
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
+import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
   components: {
     GridOverviewWidget,
-    WidgetWrapper,
+    GridEditWidgets,
   },
   mixins: [
     sideBarMixin,
