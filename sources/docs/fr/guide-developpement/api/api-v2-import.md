@@ -235,62 +235,58 @@ Différents exemples de retour des routes `PUT /api/contextgraph/import` et `GET
 **Exemple de corps de requête** :
 
 ```json
-{
-    "json":{
-        "cis":[
-            {
-                "name":"capitals",
-                "enabled":true,
-                "action":"create",
-                "infos":{
-                    "info1":{
-                        "name":"info1",
-                        "value":"Paris",
-                        "description":"Capitale de la France"
-                    },
-                    "info2":{
-                        "name":"info2",
-                        "value":"Londres",
-                        "description":"Capitale de la Grande-Bretagne"
-                    }
+json={
+    "cis":[
+        {
+            "name":"capitals",
+            "enabled":true,
+            "action":"create",
+            "infos":{
+                "info1":{
+                    "name":"info1",
+                    "value":"Paris",
+                    "description":"Capitale de la France"
                 },
-                "_id":"capitals",
-                "type":"component"
-            }
-        ],
-        "links":[]
-    }
+                "info2":{
+                    "name":"info2",
+                    "value":"Londres",
+                    "description":"Capitale de la Grande-Bretagne"
+                }
+            },
+            "_id":"capitals",
+            "type":"component"
+        }
+    ],
+    "links":[]
 }
 ```
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
 ```sh
-curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
-    "json":{
-        "cis":[
-            {
-                "name":"capitals",
-                "enabled":true,
-                "action":"create",
-                "infos":{
-                    "info1":{
-                        "name":"info1",
-                        "value":"Paris",
-                        "description":"Capitale de la France"
-                    },
-                    "info2":{
-                        "name":"info2",
-                        "value":"Londres",
-                        "description":"Capitale de la Grande-Bretagne"
-                    }
+curl -X PUT -u root:root -H "Content-type: application/x-www-form-urlencoded" -d 'json={
+    "cis":[
+        {
+            "name":"capitals",
+            "enabled":true,
+            "action":"create",
+            "infos":{
+                "info1":{
+                    "name":"info1",
+                    "value":"Paris",
+                    "description":"Capitale de la France"
                 },
-                "_id":"capitals",
-                "type":"component"
-            }
-        ],
-        "links":[]
-    }
+                "info2":{
+                    "name":"info2",
+                    "value":"Londres",
+                    "description":"Capitale de la Grande-Bretagne"
+                }
+            },
+            "_id":"capitals",
+            "type":"component"
+        }
+    ],
+    "links":[]
 }' 'http://<Canopsis_URL>/api/contextgraph/import'
 ```
 
