@@ -43,10 +43,6 @@ export default {
       type: String,
       required: false,
     },
-    required: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     availableStateValues() {
@@ -55,7 +51,7 @@ export default {
 
     outputRules() {
       return {
-        required: this.required,
+        required: true,
       };
     },
   },

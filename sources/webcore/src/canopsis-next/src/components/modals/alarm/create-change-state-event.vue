@@ -7,8 +7,7 @@
         v-container
           change-state-field(
             v-model="form",
-            :label="$t('modals.createChangeStateEvent.fields.output')",
-            required
+            :label="$t('modals.createChangeStateEvent.fields.output')"
           )
       template(slot="actions")
         v-btn(
