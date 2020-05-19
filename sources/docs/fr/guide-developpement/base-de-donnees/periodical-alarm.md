@@ -52,7 +52,7 @@ Voici la structure d'une [alarme](../../guide-utilisation/vocabulaire/index.md#a
 ```
 Complément d'information :
 
-`last_update_date`: Correspond à l'horodatage de la dernière modification de l'alarme (changement d'état, pose d'un ack...).
+`last_update_date`: Correspond à l'horodatage de la dernière modification de l'alarme (changement de sévérité, pose d'un acquittement...).
 
 `last_event_date`: Correspond à l'horodatage du dernier événement reçu pour cette alarme même si cela n'a pas généré de changement.
 
