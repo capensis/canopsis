@@ -58,7 +58,7 @@ Complément d'information :
 
 Par défaut, la valeur de `last_update_date` est égale à la valeur de `last_event_date`.
 
-Pour activer la dissociation des deux variables, il est nécessaire de configurer l'option `EnableLastEventDate = true` dans le fichier `/opt/canopsis/etc/default_configuration.toml`.
+Pour activer la dissociation des deux variables, il est nécessaire de configurer l'option `EnableLastEventDate = true` dans le fichier `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker).
 
 ## Collection MongoDB
 
