@@ -41,8 +41,8 @@ Voici la structure d'une [alarme](../../guide-utilisation/vocabulaire/index.md#a
     "long_output_history" : [   // history of values for the long output
         ...
     ],
-    "last_update_date" :        // latest date as a UNIX timestamp
-    "last_event_date" :         // latest date as a UNIX timestamp
+    "last_update_date" :        // latest update date as a UNIX timestamp
+    "last_event_date" :         // latest event date as a UNIX timestamp
     "tags" : [],
     "total_state_changes" :     // number of times the alarm state changed
     "extra" : {},               // extra datas added with external scripts, e.g `activation_date`
@@ -50,6 +50,15 @@ Voici la structure d'une [alarme](../../guide-utilisation/vocabulaire/index.md#a
 }
 }
 ```
+Complément d'information :
+
+`last_update_date`: Correspond à l'horodatage de la dernière modification de l'alarme (changement de sévérité, pose d'un acquittement...).
+
+`last_event_date`: Correspond à l'horodatage du dernier événement reçu pour cette alarme même si cela n'a pas généré de changement.
+
+Par défaut, la valeur de `last_update_date` est égale à la valeur de `last_event_date`.
+
+Pour activer la dissociation des deux variables, il est nécessaire de configurer l'option `EnableLastEventDate = true` dans le fichier `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker).
 
 ## Collection MongoDB
 
