@@ -73,6 +73,7 @@ export default {
 
 <style lang="scss" scoped>
   .gird-overview {
+    padding: 10px;
     display: grid;
     grid-gap: 10px;
     grid-template-columns: repeat(12, [col-start] 1fr);

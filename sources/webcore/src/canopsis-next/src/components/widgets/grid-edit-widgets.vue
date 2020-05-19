@@ -1,44 +1,34 @@
 <template lang="pug">
-  grid-layout(
-    :layout.sync="layout",
-    :col-num="12",
-    :row-height="20",
-    is-draggable,
-    is-resizable,
-    vertical-compact
-  )
-    grid-item(
-      v-for="item in layout",
-      :key="item.i._id",
-      :x="item.x",
-      :y="item.y",
-      :w="item.w",
-      :h="item.h",
-      :i="item.i",
-      dragAllowFrom=".drag-handler",
-      @resized="resized"
+  dashboard(id="tab", ref="dashboard")
+    dash-layout(
+      v-bind="layout",
+      :debug="true",
+      :key="layout.breakpoint"
     )
-      div.wrapper
-        div.drag-handler
-        v-btn-toggle.lock-icon
-          v-btn(small, :value="true")
-            v-icon lock
-        widget-wrapper(
-          :widget="item.widget",
-          :tab="tab",
-          :updateTabMethod="updateTabMethod"
-        )
+      dash-item(
+        v-for="item in layout.items",
+        v-bind.sync="item",
+        :key="item.id"
+      )
+        div.wrapper
+          widget-wrapper(
+            :widget="item.widget",
+            :tab="tab",
+            :updateTabMethod="updateTabMethod"
+          )
 </template>
 
 <script>
 import { omit } from 'lodash';
-import { GridLayout, GridItem } from 'vue-grid-layout';
+import { Dashboard, DashLayout, DashItem } from 'vue-responsive-dash';
 
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import { setSeveralFields } from '@/helpers/immutable';
 
 export default {
-  components: { GridLayout, GridItem, WidgetWrapper },
+  components: {
+    Dashboard, DashLayout, DashItem, WidgetWrapper,
+  },
   props: {
     tab: {
       type: Object,
@@ -50,22 +40,40 @@ export default {
     },
   },
   data() {
-    const layout = this.tab.widgets.map(widget => ({
+    const items = this.tab.widgets.map(widget => ({
       ...widget.gridParameters.desktop,
+      width: widget.gridParameters.desktop.w,
+      height: widget.gridParameters.desktop.h,
 
-      i: widget._id,
+      id: widget._id,
       widget,
     }));
 
     return {
-      layout,
+      layout: {
+        breakpoint: 'xl',
+        numberOfCols: 12,
+        rowHeight: 20,
+        useCssTransforms: true,
+        colWidth: (this.$parent.$el.offsetWidth - 130) / 12,
+        items,
+      },
     };
+  },
+  created() {
+    // this.$nextTick(() => this.$refs.dashboard.onResize({ detail: { width: this.$parent.$el.offsetWidth } }));
+  },
+  mounted() {
+    this.layout.colWidth = null;
   },
   beforeDestroy() {
     const fields = this.tab.widgets.reduce((acc, { gridParameters }, index) => {
       acc[`widgets.${index}.gridParameters.desktop`] = {
         ...gridParameters.desktop,
-        ...omit(this.layout[index], ['i', 'widget']),
+        ...omit(this.layout.items[index], ['i', 'widget', 'width', 'height']),
+
+        w: this.layout.items[index].width,
+        h: this.layout.items[index].height,
       };
 
       return acc;
@@ -85,11 +93,11 @@ export default {
   .grid-layout-wrapper {
     padding-bottom: 500px;
   }
-  .grid-wrapper {
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: repeat(12, calc(80% / 12));
+
+  #tab {
+    position: relative;
   }
+
   .vue-grid-item {
     overflow: hidden;
 
