@@ -32,7 +32,9 @@
 
 <script>
 import { omit } from 'lodash';
-import { GridLayout, GridItem } from 'vue-grid-layout';
+
+import GridItem from '@/components/other/grid/grid-item.vue';
+import GridLayout from '@/components/other/grid/grid-layout.vue';
 
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import { setSeveralFields } from '@/helpers/immutable';
