@@ -8,7 +8,10 @@
     v-layout.mt-4(row)
       v-textarea(
         v-field="value.output",
-        :label="$t('modals.createAction.fields.output')"
+        :label="label || $t('modals.createAction.fields.output')",
+        v-validate="outputRules",
+        :error-messages="errors.collect('output')",
+        name="output"
       )
 </template>
 
@@ -36,10 +39,24 @@ export default {
       type: Object,
       required: true,
     },
+    label: {
+      type: String,
+      required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     availableStateValues() {
       return this.allowChangeSeverityToInfo ? ENTITIES_STATES : omit(ENTITIES_STATES, ['ok']);
+    },
+
+    outputRules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };
