@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -27,8 +29,10 @@ export default {
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
+    const { value } = this.modal.config;
+
     return {
-      newVal: {},
+      newVal: value ? cloneDeep(value) : {},
       error: false,
     };
   },
