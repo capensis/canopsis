@@ -132,7 +132,7 @@ resource.trim=left
 output=MAIL_BODY.line(6).word(3).untilword()
 long_output=MAIL_BODY.line(7).after(le).untilword()
 state=MAIL_SUBJECT.line(0).word(1)
-state.converter=Mineur>1,Majeur>2,Critique>3,Alarme~2,?>0
+state.converter=Mineur>1,Majeur>2,Critique>3,Fin>0
 timestamp=MAIL_DATE
 timestamp.output=timestamp
 ```
@@ -146,15 +146,34 @@ Les actions peuvent être les suivantes :
 
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
-    * À partir de la `3.40.0` on peut utiliser le symbole `~` pour que la chaîne de caractères soit relatif. Dans l’exemple ci-dessus la chaine `Alarme 3` sera remplacé par 2.
-    * À partir de la `3.40.0` on peut définir une valeur par défaut avec `?>`. Dans l’exemple ci-dessus, tout élément de `state` ne correspondant à aucun des motifs de conversion donnés sera remplacé par `0`.
 
+A partir de la `3.40.0` *converter* utilise des regex pour effectuer le remplacement.
 
-À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :
+Exemple :
+```
+    state=MAIL_SUBJECT
+    state.converter=Mineur /?>1,^Majeur$>2,Critique>3,.*>0
+```
+
+On sélectionne donc le sujet du mail pour définir le state de l’alarme.  
+
+- Les mails qui ont dans leur sujet `Mineur ?` auront un state de 1. Le char `?` est un symbole utilisé dans l’écriture des regex, comme `*,{,} etc...`. Il faut donc le protégé avec un `\`.
+- Les mails dont le sujet est strictement `Majeur` auront un state de 2. Le char  `^` définir le debut de la selection et `$` la fin. On aurait donc pu définir comme regex `^Mineur` Pour selectioné les mails dont le sujet commence par `Mineur`. Et inversement `Mineur$` pour la selection des mails dont le sujet fini par `Mineur`.
+- Les mails qui contient `Critique` auront un state de 3
+- L'utilisation de la regex `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront un state par défaut  de 0.
+
+À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :  
 
 - `resource.trim=left` donnera "deux mots␣" avec l'espace à gauche supprimé
 - `resource.trim=right` donnera "␣deux mots" avec l'espace à droite supprimé
 - `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
+
+!!! info
+    A partir de la `3.40.0` l'option `trim` deviens des opérateurs :  
+    
+    - `trim_left`  
+    - `trim_right`  
+    - `trim_both`  
 
 À partir de la `3.39.0`, l'option `print` assigne directement une valeur au champ à partir du template.
 
@@ -178,8 +197,8 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
 - `line(a).replace(e,f)`  remplace la chaine de caractères e par la chaine f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (À partir de la `3.40.0`)
 - `line(a).remove(e)` supprime la chaine de caractères e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (À partir de la `3.40.0`)
-- `line(a).LOWER_CASE` passe la sélection (ici une ligne entière numéro a) en minuscules. (À partir de la `3.40.0`)
-- `line(a).UPPER_CASE` passe la sélection (ici une ligne entière numéro a) en majuscules. (À partir de la `3.40.0`)
+- `line(a).lowercase` passe la sélection (ici une ligne entière numéro a) en minuscules. (À partir de la `3.40.0`)
+- `line(a).uppercase` passe la sélection (ici une ligne entière numéro a) en majuscules. (À partir de la `3.40.0`)
 - `and` permet d'effectuer une concaténation entre deux opérations.(A partir de la `3.39.0`)
 - `print(word)` permet d'assigner la valeur word dans le champ. (A partir de la `3.39.0`)
 
