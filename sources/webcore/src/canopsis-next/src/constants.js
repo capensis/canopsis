@@ -752,7 +752,7 @@ export const USERS_RIGHTS = {
       actions: {
         entityAck: 'serviceweather_entityAck',
         entityAssocTicket: 'serviceweather_entityAssocTicket',
-        entityComment: 'serviceweather_entityСomment',
+        entityComment: 'serviceweather_entityComment',
         entityValidate: 'serviceweather_entityValidate',
         entityInvalidate: 'serviceweather_entityInvalidate',
         entityPause: 'serviceweather_entityPause',
