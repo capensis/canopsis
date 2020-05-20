@@ -32,6 +32,27 @@ export default {
         this.eventBus.$emit('resizeEvent', 'resizeend', this.i, this.innerX, this.innerY, pos.h, this.innerW);
       }
     },
+
+    calcPosition(x, y, w, h) {
+      const [marginX, marginY] = this.margin;
+      const colWidth = this.calcColWidth();
+
+      const result = {
+        top: Math.round((this.rowHeight * y) + marginY),
+        width: w === Infinity ? w : Math.round((colWidth * w) + (Math.max(0, w - 1) * marginX)),
+        height: h === Infinity ? h : Math.round(this.rowHeight * h),
+      };
+
+      const horizontal = Math.round((colWidth * x) + ((x + 1) * marginX));
+
+      if (this.renderRtl) {
+        result.right = horizontal;
+      } else {
+        result.left = horizontal;
+      }
+
+      return result;
+    },
   },
 };
 </script>

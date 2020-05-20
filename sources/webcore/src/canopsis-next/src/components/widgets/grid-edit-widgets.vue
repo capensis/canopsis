@@ -1,6 +1,7 @@
 <template lang="pug">
   grid-layout(
     :layout.sync="layout",
+    :margin="[0, 0]",
     :col-num="12",
     :row-height="20",
     is-draggable,
