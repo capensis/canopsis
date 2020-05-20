@@ -113,8 +113,13 @@ export default {
   methods: {
     getPlaylistRoute({ _id }) {
       const { href } = this.$router.resolve({ name: 'playlist', params: { id: _id }, query: { autoplay: true } });
+      let host = window.location.origin;
 
-      return `${window.location.origin}${href}`;
+      if (this.$router.mode === 'hash') {
+        host += window.location.pathname;
+      }
+
+      return `${host}${href}`;
     },
 
     onSuccessCopied() {
