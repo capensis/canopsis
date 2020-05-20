@@ -137,4 +137,4 @@ class IdleRuleManager(object):
                 'deletedCount': response['n']
             }
 
-        return _check_response(self.collection.remove({"_id": id}))
+        return _check_response(self.collection.remove({"_id": rule_id}))

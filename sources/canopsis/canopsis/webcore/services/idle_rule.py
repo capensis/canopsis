@@ -124,7 +124,15 @@ def exports(ws):
 
     @ws.application.get('/api/v2/idle-rule/<rule_id>')
     def read(rule_id=None):
-        return gen_json(rh_idle_rule.read(rule_id))
+        result = rh_idle_rule.read(rule_id)
+        if result is None:
+            return gen_json_error(
+                {
+                    'name': rule_id,
+                    'description': 'Rule not found',
+                },
+                HTTP_NOT_FOUND)
+        return gen_json(result)
 
     @ws.application.get('/api/v2/idle-rule')
     def read_all():
