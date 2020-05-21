@@ -33,14 +33,46 @@ export default {
       }
     },
 
+    countAboveCard(currentCardX, currentCardY, currentCardWidth) {
+      const { layout } = this.$parent;
+
+      const { count } = layout
+        .filter(({ y }) => y < currentCardY)
+        .sort((a, b) => b.y - a.y)
+        .reduce((acc, { y, x, w }) => {
+          const range = (acc.x + acc.w) - (x + w);
+
+          const isInteraction = range > 0 ? range < acc.w : Math.abs(range) < w;
+
+          if (y < acc.y && isInteraction) {
+            acc.count += 1;
+            acc.x = x;
+            acc.y = y;
+            acc.w = w;
+          }
+
+          return acc;
+        }, {
+          count: 0,
+          x: currentCardX,
+          y: currentCardY,
+          w: currentCardWidth,
+        });
+
+      return count;
+    },
+
     calcPosition(x, y, w, h) {
       const [marginX, marginY] = this.margin;
       const colWidth = this.calcColWidth();
+      const height = Math.round(this.rowHeight * h);
+
+      const marginCount = this.countAboveCard(x, y, w);
 
       const result = {
-        top: Math.round((this.rowHeight * y) + marginY),
+        top: Math.round((this.rowHeight * y) + (marginY * marginCount) + marginY),
         width: w === Infinity ? w : Math.round((colWidth * w) + (Math.max(0, w - 1) * marginX)),
-        height: h === Infinity ? h : Math.round(this.rowHeight * h),
+        height: h === Infinity ? h : height,
       };
 
       const horizontal = Math.round((colWidth * x) + ((x + 1) * marginX));
@@ -52,6 +84,32 @@ export default {
       }
 
       return result;
+    },
+
+    calcWH(height, width) {
+      const [marginX] = this.margin;
+      const colWidth = this.calcColWidth();
+
+      let w = Math.round((width + marginX) / (colWidth + marginX));
+      let h = Math.round((height) / this.rowHeight);
+
+      w = Math.max(Math.min(w, this.cols - this.innerX), 0);
+      h = Math.max(Math.min(h, this.maxRows - this.innerY), 0);
+
+      return { w, h };
+    },
+
+    calcXY(top, left) {
+      const [marginX] = this.margin;
+      const colWidth = this.calcColWidth();
+
+      let x = Math.round((left - marginX) / (colWidth + marginX));
+      let y = Math.round(top / this.rowHeight);
+
+      x = Math.max(Math.min(x, this.cols - this.innerW), 0);
+      y = Math.max(Math.min(y, this.maxRows - this.innerH), 0);
+
+      return { x, y };
     },
   },
 };

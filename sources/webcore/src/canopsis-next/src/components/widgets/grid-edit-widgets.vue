@@ -1,7 +1,7 @@
 <template lang="pug">
   grid-layout(
     :layout.sync="layout",
-    :margin="[0, 0]",
+    :margin="[20, 20]",
     :col-num="12",
     :row-height="20",
     is-draggable,
@@ -24,11 +24,7 @@
         v-btn-toggle.lock-icon
           v-btn(small, :value="true")
             v-icon lock
-        widget-wrapper(
-          :widget="item.widget",
-          :tab="tab",
-          :updateTabMethod="updateTabMethod"
-        )
+        slot(:widget="item.widget")
 </template>
 
 <script>
@@ -37,11 +33,10 @@ import { omit } from 'lodash';
 import GridItem from '@/components/other/grid/grid-item.vue';
 import GridLayout from '@/components/other/grid/grid-layout.vue';
 
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import { setSeveralFields } from '@/helpers/immutable';
 
 export default {
-  components: { GridLayout, GridItem, WidgetWrapper },
+  components: { GridLayout, GridItem },
   props: {
     tab: {
       type: Object,
