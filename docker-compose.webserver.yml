@@ -217,3 +217,14 @@ services:
       - rabbitmq
       - influxdb
     restart: unless-stopped
+  uiv3:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.canopsis-next-develop
+    env_file:
+      - compose.env
+    ports:
+      - 9090:8080
+    restart: unless-stopped
+    environment:
+      - VUE_APP_API_HOST=http://webserver:8082 

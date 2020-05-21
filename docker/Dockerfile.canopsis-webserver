@@ -104,16 +104,14 @@ RUN \
     smitools \
     sudo \
     tmux \
-    vim && \
-    \
+    vim \
+    && \
     apt-get clean
 
-COPY docker/files/etc ./etc
-COPY sources/canopsis/etc ./etc
+COPY docker/files/etc/ sources/canopsis/etc/ ./etc/
 
-RUN chmod +x /opt/canopsis/.bash_profile
-
-RUN \
+RUN \ 
+    chmod +x /opt/canopsis/.bash_profile && \
     mkdir -p ./etc/init.d var/log/engines var/cache/canopsis tmp && \
     groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER} && \
     chmod +x /entrypoint.sh && \
@@ -126,8 +124,10 @@ RUN \
     \
     . ${CPS_HOME}/bin/activate && \
     pip --no-cache-dir install -U setuptools pip && \
-    pip --no-cache-dir install -r ${CPS_HOME}/requirements.txt
+    pip --no-cache-dir install -r ${CPS_HOME}/requirements.txt && \
+    rm -rf /var/cache/apt/*
 
+COPY sources/canopsis/scripts/canopsis* ${CPS_HOME}/bin/
 ADD sources/canopsis/canopsis ./lib/python2.7/site-packages/canopsis
 ADD sources/canopsis/test ./lib/python2.7/site-packages/canopsis_test
 
