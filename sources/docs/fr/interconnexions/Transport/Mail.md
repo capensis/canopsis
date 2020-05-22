@@ -169,7 +169,7 @@ Les actions peuvent être les suivantes :
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
 
-A partir de la `3.40.0` *converter* utilise des  expression régulière pour effectuer le remplacement.
+A partir de la `3.40.0` *converter* utilise des expressions régulière pour effectuer le remplacement.
 
 Exemple :
 ```
@@ -177,12 +177,12 @@ Exemple :
     state.converter=Mineur \?>1,^Majeur$>2,Critique>3,.*>0
 ```
 
-On sélectionne donc le sujet du mail pour définir le sévérité de l’alarme.  
+On sélectionne dans cette exemple le sujet du mail pour définir la sévérité de l’alarme.  
 
-- Les mails qui ont dans leur sujet `Mineur ?` auront un sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des  expression régulière, comme `*,{,} etc...`. Il faut donc le protéger avec un `\`.
-- Les mails dont le sujet est strictement `Majeur` auront un sévérité de 2. Le caractère  `^` définir le debut de la selection et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` Pour selectioné les mails dont le sujet commence par `Mineur`. Et inversement `Mineur$` pour la selection des mails dont le sujet fini par `Mineur`.
-- Les mails qui contient `Critique` auront un sévérité de 3
-- L'utilisation de la  expression régulière `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront un sévérité par défaut  de 0.
+- Les mails qui ont dans leur sujet `Mineur ?` auront une sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des  expressions régulière, comme `*,{,} etc...`. Il faut donc le protéger avec un `\`.
+- Les mails dont le sujet est strictement `Majeur` auront une sévérité de 2. Le caractère `^` définir le debut de la selection et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la selection des mails dont le sujet fini par `Mineur`.
+- Les mails  dont le sujet contient `Critique` auront un sévérité de 3.
+- L'utilisation de  l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront un sévérité par défaut  de 0.
 
 À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :  
 
