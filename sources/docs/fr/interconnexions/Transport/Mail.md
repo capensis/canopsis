@@ -63,7 +63,7 @@ state.constant=2
 [template]
 # Expéditeur des emails à traiter
 template1.sender=sender@mail.net
-# Vous pouvez définir une regex pour lier des expéditeurs génériques à un template (3.39.0+)
+# Vous pouvez définir une  expression régulière pour lier des expéditeurs génériques à un template (3.39.0+)
 template1.regex=sender\d*@mail.net
 # Template à appliquer sur ces emails
 template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
@@ -99,7 +99,7 @@ On peut définir les champs `component`, `resource` et `output` de manière dyna
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une regex définie, depuis Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
+Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une  expression régulière définie, depuis Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
@@ -107,13 +107,35 @@ Ici, pour
 [template]
 # Expéditeur des emails à traiter
 template1.sender=sender@mail.net
-# Vous pouvez définir une regex pour lier des expéditeurs génériques à un template (3.39.0+)
+# Vous pouvez définir une  expression régulière pour lier des expéditeurs génériques à un template (3.39.0+)
 template1.regex=sender\d*@mail.net
 # Template à appliquer sur ces emails
 template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 ```
 
 Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit correspondre au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
+
+A partir de la `3.40.0` On peux assigner plusieur template a un expediteur en fonction du sujet du mail. Pour cela il faut définir une expression reguliére pour assigner un sujet a son template.
+
+Exemple :
+
+```ini
+[template]
+# Expéditeur des emails à traiter
+template1.sender=sender@mail.net
+# Template à appliquer sur ces emails
+template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
+
+# Expéditeur des emails à traiter
+template2.sender=sender@mail.net
+# Vous pouvez définir une  expression régulière pour lier un sujet de mail a un template (3.40.0+)
+template2.subject=.*Datacenter.*
+# Template à appliquer sur ces emails
+template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
+```
+
+Dans cet exemple tous les mails de `sender@mail.net` qui a dans son sujet de mail aura le therme `Datacenter` sera lié au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
+
 
 ### Configuration du template d'email
 
@@ -147,20 +169,20 @@ Les actions peuvent être les suivantes :
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
 
-A partir de la `3.40.0` *converter* utilise des regex pour effectuer le remplacement.
+A partir de la `3.40.0` *converter* utilise des  expression régulière pour effectuer le remplacement.
 
 Exemple :
 ```
     state=MAIL_SUBJECT
-    state.converter=Mineur /?>1,^Majeur$>2,Critique>3,.*>0
+    state.converter=Mineur \?>1,^Majeur$>2,Critique>3,.*>0
 ```
 
-On sélectionne donc le sujet du mail pour définir le state de l’alarme.  
+On sélectionne donc le sujet du mail pour définir le sévérité de l’alarme.  
 
-- Les mails qui ont dans leur sujet `Mineur ?` auront un state de 1. Le char `?` est un symbole utilisé dans l’écriture des regex, comme `*,{,} etc...`. Il faut donc le protégé avec un `\`.
-- Les mails dont le sujet est strictement `Majeur` auront un state de 2. Le char  `^` définir le debut de la selection et `$` la fin. On aurait donc pu définir comme regex `^Mineur` Pour selectioné les mails dont le sujet commence par `Mineur`. Et inversement `Mineur$` pour la selection des mails dont le sujet fini par `Mineur`.
-- Les mails qui contient `Critique` auront un state de 3
-- L'utilisation de la regex `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront un state par défaut  de 0.
+- Les mails qui ont dans leur sujet `Mineur ?` auront un sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des  expression régulière, comme `*,{,} etc...`. Il faut donc le protéger avec un `\`.
+- Les mails dont le sujet est strictement `Majeur` auront un sévérité de 2. Le caractère  `^` définir le debut de la selection et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` Pour selectioné les mails dont le sujet commence par `Mineur`. Et inversement `Mineur$` pour la selection des mails dont le sujet fini par `Mineur`.
+- Les mails qui contient `Critique` auront un sévérité de 3
+- L'utilisation de la  expression régulière `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront un sévérité par défaut  de 0.
 
 À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :  
 
@@ -233,4 +255,4 @@ Pour appliquer un changement (modification de la configuration, ajout de templat
 
 En cas d'erreur de connexion au serveur mail, le connecteur envoie un événement à Canopsis. Vous pouvez paramétrer cette alerte avec la section `[event_error]` du fichier de configuration.  
 
-En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec un state de 0. Cela permet de fermer d'éventuelles alarmes.
+En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec un sévérité de 0. Cela permet de fermer d'éventuelles alarmes.
