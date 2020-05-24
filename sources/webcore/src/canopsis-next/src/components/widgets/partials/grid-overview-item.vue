@@ -42,6 +42,5 @@ export default {
   .grid-item {
     overflow: auto;
     margin: 10px;
-    outline: 1px solid red;
   }
 </style>

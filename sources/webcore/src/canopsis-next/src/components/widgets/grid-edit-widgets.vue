@@ -1,30 +1,39 @@
 <template lang="pug">
   grid-layout(
     :layout.sync="layout",
-    :margin="[20, 20]",
+    :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
     :col-num="12",
-    :row-height="20",
+    :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
     is-draggable,
     is-resizable,
     vertical-compact
   )
     grid-item(
-      v-for="item in layout",
-      :key="item.i._id",
+      v-for="(item, index) in layout",
+      :key="item.i",
       :x="item.x",
       :y="item.y",
       :w="item.w",
       :h="item.h",
+      :fixedHeight="item.fixedHeight",
       :i="item.i",
       dragAllowFrom=".drag-handler",
-      @resized="resized"
+      @resized="resized",
+      :ref="item.i"
     )
       div.wrapper
         div.drag-handler
-        v-btn-toggle.lock-icon
+        v-btn-toggle.lock-icon(
+          :value="item.i.fixedHeight",
+          @change="changeFixedHeight($event, item.i, index)"
+        )
           v-btn(small, :value="true")
             v-icon lock
-        slot(:widget="item.widget")
+        widget-wrapper(
+          :widget="item.widget",
+          :tab="tab",
+          :updateTabMethod="updateTabMethod"
+        )
 </template>
 
 <script>
@@ -32,11 +41,12 @@ import { omit } from 'lodash';
 
 import GridItem from '@/components/other/grid/grid-item.vue';
 import GridLayout from '@/components/other/grid/grid-layout.vue';
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
 export default {
-  components: { GridLayout, GridItem },
+  components: { GridLayout, WidgetWrapper, GridItem },
   props: {
     tab: {
       type: Object,
@@ -74,7 +84,27 @@ export default {
     this.updateTabMethod(newTab);
   },
   methods: {
-    resized() {},
+    resized(id, h, previousW, height, width, autoSize) {
+      const [widgetLayout] = this.$refs[id];
+
+      if (!autoSize && !widgetLayout.fixedHeight) {
+        this.autoSizeWidgetHeight(id);
+      }
+    },
+
+    changeFixedHeight(value, id, index) {
+      if (!value) {
+        this.autoSizeWidgetHeight(id);
+      }
+
+      this.layout[index].fixedHeight = value;
+    },
+
+    autoSizeWidgetHeight(id) {
+      const [widgetLayout] = this.$refs[id];
+
+      this.$nextTick(() => widgetLayout.autoSizeHeight());
+    },
   },
 };
 </script>

@@ -1334,3 +1334,5 @@ export const WIDGET_GRID_SIZES_KEYS = {
   tablet: 'tablet',
   desktop: 'desktop',
 };
+
+export const WIDGET_GRID_ROW_HEIGHT = 20;

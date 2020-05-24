@@ -3,13 +3,29 @@ import { GridItem } from 'vue-grid-layout';
 
 export default {
   extends: GridItem,
+  props: {
+    fixedHeight: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  mounted() {
+    if (!this.fixedHeight) {
+      this.autoSizeHeight();
+    }
+  },
   methods: {
     autoSizeHeight() {
       // ok here we want to calculate if a resize is needed
       this.previousW = this.innerW;
       this.previousH = this.innerH;
+      const defaultSlots = this.$slots.default;
 
-      const newSize = this.$slots.default[0].elm.getBoundingClientRect();
+      if (!defaultSlots) {
+        return;
+      }
+
+      const newSize = defaultSlots[0].elm.getBoundingClientRect();
       const pos = this.calcWH(newSize.height, newSize.width);
 
       if (pos.h < this.minH) {
