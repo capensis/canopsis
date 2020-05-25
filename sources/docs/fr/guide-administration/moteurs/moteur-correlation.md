@@ -49,6 +49,10 @@ Ces groupements d'alarmes permettent de visualiser rapidement les corrélations 
 
 ### Activation de la corrélation
 
+!!! Warning
+    Le moteur engine-correlation n'est pas activé par défaut sur Canopsis pour le moment. Il le sera dans une prochaine version.
+    Reportez vous aux [notes de version adéquates](../../notes-de-version/3.41.0.md) pour activer le moteur
+
 Passez votre bac à alarmes en mode édition (`CTRL + E`) pour accéder aux paramètres avancés et activez la corrélation.
 
 ![Activation de la corrélation](img/correlation_activer.png)
