@@ -5,16 +5,24 @@
       :tab="tab",
       :updateTabMethod="updateTabMethod"
     )
+      widget-wrapper(
+        slot-scope="props",
+        :widget="props.widget",
+        :tab="tab",
+        :updateTabMethod="updateTabMethod"
+      )
 </template>
 
 <script>
 import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
 import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 
 export default {
   components: {
+    WidgetWrapper,
     GridOverviewWidget,
     GridEditWidgets,
   },

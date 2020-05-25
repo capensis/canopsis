@@ -5,23 +5,17 @@
       :widget="widget",
       :key="widget._id"
     )
-      widget-wrapper(
-        :widget="widget",
-        :tab="tab",
-        :updateTabMethod="updateTabMethod"
-      )
+      slot(:widget="widget")
 </template>
 
 <script>
 import GridOverviewItem from '@/components/widgets/partials/grid-overview-item.vue';
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
 import { WIDGET_GRID_ROW_HEIGHT } from '@/constants';
 
 export default {
   components: {
-    WidgetWrapper,
     GridOverviewItem,
   },
   mixins: [
@@ -32,14 +26,11 @@ export default {
       type: Object,
       required: true,
     },
-    updateTabMethod: {
-      type: Function,
-      required: true,
-    },
   },
   computed: {
     gridWrapperStyle() {
       return {
+        // TODO fix 1000
         gridTemplateRows: `repeat(${1000}, ${WIDGET_GRID_ROW_HEIGHT}px)`,
       };
     },

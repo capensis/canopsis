@@ -29,11 +29,7 @@
         )
           v-btn(small, :value="true")
             v-icon lock
-        widget-wrapper(
-          :widget="item.widget",
-          :tab="tab",
-          :updateTabMethod="updateTabMethod"
-        )
+        slot(:widget="item.widget")
 </template>
 
 <script>
@@ -41,12 +37,11 @@ import { omit } from 'lodash';
 
 import GridItem from '@/components/other/grid/grid-item.vue';
 import GridLayout from '@/components/other/grid/grid-layout.vue';
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
 export default {
-  components: { GridLayout, WidgetWrapper, GridItem },
+  components: { GridLayout, GridItem },
   props: {
     tab: {
       type: Object,
