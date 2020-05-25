@@ -163,7 +163,8 @@ Modifie une idle rule à partir du corps de la requête.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut envoyer le JSON ci-dessus pour modifier l'Idle rule dont l'`_id` vaut `idltest` :
 ```sh
 curl -v -H "Content-Type: application/json" -u root:root -X PUT -d '{
-  "name" : "close 3m after last event","_id":"idltest",
+  "name" : "close 3m after last event",
+  "_id":"idltest",
   "type": "last_event",
   "duration": "150m",
   "operation": {
@@ -243,6 +244,28 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
 
 **Condition** : La suppression de l'Idle rule a réussi.
 
+**Exemple du corps de la réponse** :
+```json
+{
+  "deletedCount": 1,
+  "acknowledged": true
+}
+```
+
+##### Réponse en cas d'erreur
+
+**Condition** : Aucune Idle rule correspondant à l'`id` n'est trouvée.
+
+**Code** : `404 NOT FOUND`
+
+**Exemple du corps de la réponse** :
+
+```json
+{
+  "name": "",
+  "description": "no idle rule with id e6d5add2-8e02-4c8a-bc0d-d1d2bf36b755"
+}
+```
 
 ### Récupération des Idle rules
 
@@ -308,8 +331,8 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
 
 ```json
 {
-    "name": "",
-    "description": "failed to get idle-rule"
+  "name": "idltest",
+  "description": "Rule not found"
 }
 ```
 
