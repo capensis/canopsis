@@ -21,6 +21,7 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 * [Météo des services](api/api-v2-weather.md)
 * [Webhooks](api/api-v2-webhooks.md)
 * [Message d'information](api/api-v2-broadcast-message.md)
+* [Meta-alarm-rule](api/api-v2-meta-alarm-rule.md)
 
 # [Base de données](base-de-donnees/index.md)
 
