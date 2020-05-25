@@ -1,5 +1,5 @@
 # API Idle Rule
-L'API Idle Rule permet de consulter, créer, modifier et supprimer des règles d'attente sur les alarmes.
+L'API Idle Rule permet de consulter, créer, modifier et supprimer des règles de détection d'inactivité sur les alarmes.
 
 ### Création d'Idle rules
 **URL** : `/api/v2/idle-rule`
