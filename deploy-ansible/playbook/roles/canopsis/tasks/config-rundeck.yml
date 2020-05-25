@@ -1,4 +1,19 @@
 ---
+- name: "[Debian] Install Rundeck"
+  package:
+    name: rundeck=3.2.6.20200427-1
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: "[Centos] Install Rundeck"
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - rundeck-3.2.6.20200427-1
+    - java
+  when: ansible_facts['os_family'] == 'RedHat'
+
 - name: Configure Rundeck properties
   lineinfile:
     dest: "/etc/rundeck/rundeck-config.properties"

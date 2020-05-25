@@ -57,7 +57,9 @@
 - import_tasks: init-postgres.yml
   tags:
     - cps_postgres
+  when: canopsis_edition == "cat"
 
 - import_tasks: config-rundeck.yml
   tags:
     - cps_rundeck
+  when: canopsis_edition == "cat"
