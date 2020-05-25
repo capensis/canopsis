@@ -134,7 +134,7 @@ Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, on
 
 ### Processus de création d'une méta alarme
 
-En reprenant l'exemple d'un groupement par relation parent-enfant la création d'une méta alarme se déroule de la façon suivante.
+En reprenant l'exemple d'un groupement par relation parent-enfant, la création d'une méta alarme se déroule de la façon suivante.
 
 Une erreur se produit sur un composant `component_meta` qui envoie un évènement à Canopsis.
 
@@ -147,7 +147,6 @@ Une erreur se produit sur un composant `component_meta` qui envoie un évènemen
   "source_type": "component",
   "author": "Canopsis",
   "state": 3,
-  "debug": true,
   "output": "Exemple de création méta alarmes - component"
 }
 ```
@@ -168,7 +167,6 @@ Comme le composant est en erreur, ses ressources envoient probablement elles aus
   "source_type": "resource",
   "author": "Canopsis",
   "state": 3,
-  "debug": true,
   "output": "Exemple de création méta alarmes - ressource X"
 }
 ```
@@ -183,7 +181,7 @@ Au passage de la souris sur l'icône de la colonne `Extra Details` une info-bull
 
 Le détail des alarmes liées peut-être consulté en déroulant le détail de la méta alarme et en affichant l'onglet `Alarmes Liées`.
 
-Dans le cas ci-dessus (groupement par relation parent-enfant) c'est l'alarme parent qui devient la méta alarme. Ses valeurs de `connector`, `connector_name` et `component` sont alors conservées. Pour les autres types de groupement une méta alarme est générée par Canopsis, celle-ci aura toujours les valeurs suivantes :
+Dans le cas ci-dessus (groupement par relation parent-enfant), c'est l'alarme parent qui devient la méta alarme. Ses valeurs de `connector`, `connector_name` et `component` sont alors conservées. Pour les autres types de groupement, une méta alarme est générée par Canopsis. Celle-ci aura toujours les valeurs suivantes :
 
 - connector : `engine`
 - connector_name : `correlation`
@@ -234,10 +232,6 @@ La règle à utiliser dans ce cas sera la suivante :
   }
 }
 ```
-
-### Cas d'usage
-
-Pour d'autres exemples d'utilisation de la corrélation vous pouvez consulter la [cette page](../../guide-utilisation/cas-d-usage/groupement-alarmes.md).
 
 ## Collection MongoDB associée
 
