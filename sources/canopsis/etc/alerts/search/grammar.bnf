@@ -11,11 +11,11 @@
 true::true = "TRUE" ;
 false::false = "FALSE" ;
 digits::digits = value:/[0-9]+/ ;
-characters::characters = value:/([^']|(?<=\\)')+/ ;
+characters::characters = value:/([^\"']|(?<=\\)[\"|'])+/ ;
 
 sign::sign = value:( "+" | "-" ) ;
 
-string::forward_value = "'" value:characters "'" ;
+string::forward_value = "'" value:characters "'" | '"' value:characters '"' ;
 integer::integer = [ sign:sign ] value:digits ;
 floating::floating = [ sign:sign ] intpart:digits "." floatpart:digits ;
 boolean::forward_value = value:( true | false ) ;
