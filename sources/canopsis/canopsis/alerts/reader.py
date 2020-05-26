@@ -364,7 +364,7 @@ class AlertsReader(object):
             return ('this', {})
         t, q = interpret(search, grammar_file=self.grammar)
         if q:
-            q = json.loads(json.dumps(q).replace("\\\\'", "'"))
+            q = json.loads(json.dumps(q).replace("\\\\'", "'").decode("string_escape"))
         return t, q
 
     def _lookup(self, alarms, lookups):
