@@ -10,8 +10,8 @@
     name: "{{ item }}"
     state: present
   loop:
-    - rundeck-3.2.6.20200427-1
     - java
+    - rundeck-3.2.6.20200427-1
   when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Configure Rundeck properties
@@ -112,6 +112,7 @@
       config: {"project.label": "Canopsis jobs"}
     headers:
       Cookie: "{{ login.set_cookie }}"
+    status_code: 201
   when: "{{project.status}} != 200"
 
 - name: Import Rundeck jobs

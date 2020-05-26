@@ -1,8 +1,14 @@
 ---
+- name: Test if postgres is already installed
+  stat:
+    path: "/var/lib/pgsql/data/pg_hba.conf"
+  register: pgsql
+
 - name: Init script of postgres
   command: "initdb --auth-host=md5 --locale=en_US.UTF-8 -D /var/lib/pgsql/data" 
   become: yes
   become_user: postgres
+  when: pgsql.stat.exists == False
 
 # Module error in the venv, using lineinfile instead of postgresql_pg_hba
 
