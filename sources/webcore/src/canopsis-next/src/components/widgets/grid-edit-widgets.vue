@@ -18,7 +18,6 @@
       :fixedHeight="item.fixedHeight",
       :i="item.i",
       dragAllowFrom=".drag-handler",
-      @resized="resized",
       :ref="item.i"
     )
       div.wrapper
@@ -79,26 +78,8 @@ export default {
     this.updateTabMethod(newTab);
   },
   methods: {
-    resized(id, h, previousW, height, width, autoSize) {
-      const [widgetLayout] = this.$refs[id];
-
-      if (!autoSize && !widgetLayout.fixedHeight) {
-        this.autoSizeWidgetHeight(id);
-      }
-    },
-
     changeFixedHeight(value, id, index) {
-      if (!value) {
-        this.autoSizeWidgetHeight(id);
-      }
-
       this.layout[index].fixedHeight = value;
-    },
-
-    autoSizeWidgetHeight(id) {
-      const [widgetLayout] = this.$refs[id];
-
-      this.$nextTick(() => widgetLayout.autoSizeHeight());
     },
   },
 };

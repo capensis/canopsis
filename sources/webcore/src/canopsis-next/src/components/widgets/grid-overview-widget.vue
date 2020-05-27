@@ -1,7 +1,7 @@
 <template lang="pug">
   div.gird-overview(:style="gridWrapperStyle")
     grid-overview-item(
-      v-for="widget in tab.widgets",
+      v-for="widget in widgets",
       :widget="widget",
       :key="widget._id"
     )
@@ -12,7 +12,6 @@
 import GridOverviewItem from '@/components/widgets/partials/grid-overview-item.vue';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
-import { WIDGET_GRID_ROW_HEIGHT } from '@/constants';
 
 export default {
   components: {
@@ -28,11 +27,20 @@ export default {
     },
   },
   computed: {
-    gridWrapperStyle() {
+    widgets() {
+      return this.tab.widgets;
+    },
+  },
+  methods: {
+    gridParameters(widget) {
+      const { gridParameters } = widget;
+
       return {
-        // TODO fix 1000
-        gridTemplateRows: `repeat(${1000}, ${WIDGET_GRID_ROW_HEIGHT}px)`,
-      };
+        xl: gridParameters.desktop,
+        l: gridParameters.desktop,
+        t: gridParameters.tablet,
+        m: gridParameters.mobile,
+      }[this.$mq];
     },
   },
 };
@@ -40,8 +48,9 @@ export default {
 
 <style lang="scss" scoped>
   .gird-overview {
-    padding: 10px;
+    padding: 20px;
     display: grid;
+    column-gap: 20px;
     grid-template-columns: repeat(12, [col-start] 1fr);
   }
 </style>

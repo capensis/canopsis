@@ -1,5 +1,6 @@
 <script>
 import { GridItem } from 'vue-grid-layout';
+import { createCoreData, getControlPosition } from 'vue-grid-layout/src/helpers/draggableUtils';
 
 export default {
   extends: GridItem,
@@ -9,9 +10,19 @@ export default {
       default: false,
     },
   },
+  watch: {
+    fixedHeight: {
+      handler(value) {
+        if (!value) {
+          this.$nextTick(this.autoSizeHeight);
+        }
+      },
+      immediate: true,
+    },
+  },
   mounted() {
     if (!this.fixedHeight) {
-      this.autoSizeHeight();
+      this.$nextTick(this.autoSizeHeight);
     }
   },
   methods: {
@@ -25,7 +36,13 @@ export default {
         return;
       }
 
-      const newSize = defaultSlots[0].elm.getBoundingClientRect();
+      const [{ elm: element }] = defaultSlots;
+
+      if (!element) {
+        return;
+      }
+
+      const newSize = element.getBoundingClientRect();
       const pos = this.calcWH(newSize.height, newSize.width);
 
       if (pos.h < this.minH) {
@@ -47,6 +64,96 @@ export default {
         this.$emit('resized', this.i, pos.h, this.previousW, newSize.height, newSize.width, true);
         this.eventBus.$emit('resizeEvent', 'resizeend', this.i, this.innerX, this.innerY, pos.h, this.innerW);
       }
+    },
+
+    handleResize(event) {
+      if (this.static) {
+        return;
+      }
+
+      const position = getControlPosition(event);
+
+      if (!position) {
+        return;
+      }
+
+      const { x, y } = position;
+
+      const newSize = { width: 0, height: 0 };
+      let pos;
+      switch (event.type) {
+        case 'resizestart':
+          this.previousW = this.innerW;
+          this.previousH = this.innerH;
+
+          pos = this.calcPosition(this.innerX, this.innerY, this.innerW, this.innerH);
+
+          newSize.width = pos.width;
+          newSize.height = pos.height;
+
+          this.resizing = newSize;
+          this.isResizing = true;
+
+          break;
+        case 'resizemove': {
+          const coreEvent = createCoreData(this.lastW, this.lastH, x, y);
+
+          if (this.renderRtl) {
+            newSize.width = this.resizing.width - coreEvent.deltaX;
+          } else {
+            newSize.width = this.resizing.width + coreEvent.deltaX;
+          }
+          newSize.height = this.fixedHeight
+            ? this.resizing.height + coreEvent.deltaY
+            : this.resizing.height;
+
+          this.resizing = newSize;
+          break;
+        }
+        case 'resizeend': {
+          pos = this.calcPosition(this.innerX, this.innerY, this.innerW, this.innerH);
+
+          newSize.width = pos.width;
+          newSize.height = pos.height;
+
+          this.resizing = null;
+          this.isResizing = false;
+          break;
+        }
+      }
+
+      // Get new WH
+      pos = this.calcWH(newSize.height, newSize.width);
+      if (pos.w < this.minW) {
+        pos.w = this.minW;
+      }
+      if (pos.w > this.maxW) {
+        pos.w = this.maxW;
+      }
+      if (pos.h < this.minH) {
+        pos.h = this.minH;
+      }
+      if (pos.h > this.maxH) {
+        pos.h = this.maxH;
+      }
+
+      if (pos.h < 1) {
+        pos.h = 1;
+      }
+      if (pos.w < 1) {
+        pos.w = 1;
+      }
+
+      this.lastW = x;
+      this.lastH = y;
+
+      if (this.innerW !== pos.w || this.innerH !== pos.h) {
+        this.$emit('resize', this.i, pos.h, pos.w, newSize.height, newSize.width);
+      }
+      if (event.type === 'resizeend' && (this.previousW !== this.innerW || this.previousH !== this.innerH)) {
+        this.$emit('resized', this.i, pos.h, pos.w, newSize.height, newSize.width);
+      }
+      this.eventBus.$emit('resizeEvent', event.type, this.i, this.innerX, this.innerY, pos.h, pos.w);
     },
 
     countAboveCard(currentCardX, currentCardY, currentCardWidth) {
