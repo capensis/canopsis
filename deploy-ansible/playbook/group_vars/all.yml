@@ -50,7 +50,7 @@ rundeck_xms: 257
 rundeck_maxmetaspacesize: 129
 rundeck_config:
   - parameter: "server.address"
-    value: "{{ ansible_fqdn }}"
+    value: "0.0.0.0"
   - parameter: "grails.serverURL"
     value: "http://{{ ansible_fqdn }}:4440"
   - parameter: "rundeck.api.tokens.duration.max"

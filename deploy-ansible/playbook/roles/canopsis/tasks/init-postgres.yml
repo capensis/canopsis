@@ -1,14 +1,28 @@
 ---
+- set_fact:
+    pg_data_path: "/var/lib/postgresql/9.6/main/"
+    pg_conf_path: "/etc/postgresql/9.6/main/"
+    pg_service: "postgresql"
+  when: ansible_facts['os_family'] == 'Debian'
+
+- set_fact:
+    pg_data_path: "/var/opt/rh/rh-postgresql96/lib/pgsql/data/"
+    pg_conf_path: "/var/opt/rh/rh-postgresql96/lib/pgsql/data/"
+    pg_service: "rh-postgresql96-postgresql"
+  when: ansible_facts['os_family'] == 'RedHat'
+
 - name: Test if postgres is already installed
   stat:
-    path: "/var/lib/pgsql/data/pg_hba.conf"
+    path: "{{pg_conf_path}}/pg_hba.conf"
   register: pgsql
 
 - name: Init script of postgres
-  command: "initdb --auth-host=md5 --locale=en_US.UTF-8 -D /var/lib/pgsql/data" 
+  command: "/opt/rh/rh-postgresql96/root/usr/bin/initdb --auth-host=md5 --locale=en_US.UTF-8 -D {{pg_data_path}}"
   become: yes
   become_user: postgres
-  when: pgsql.stat.exists == False
+  when:
+    - pgsql.stat.isdir is not defined # and pgsql.stat.isdir
+    - ansible_facts['os_family'] == 'RedHat'
 
 # Module error in the venv, using lineinfile instead of postgresql_pg_hba
 
@@ -25,20 +39,20 @@
 
 - name: Edit pg_hba.conf
   lineinfile:
-    path: /var/lib/pgsql/data/pg_hba.conf
+    path: "{{pg_conf_path}}pg_hba.conf"
     regexp: '^host.*127\.0\.0\.1'
     line: "host    all             all             all            md5"
 
 - name: Edit postgresql.conf
   lineinfile:
-    path: /var/lib/pgsql/data/postgresql.conf
+    path: "{{ pg_conf_path }}postgresql.conf"
     regexp: '^listen_addresses'
     line: "listen_addresses = '*'"
     insertbefore: '^#listen_addresses'
 
 - name: Start and enable postgres
   service:
-      name: "postgresql"
+      name: "{{ pg_service }}"
       state: restarted
       enabled: yes
 
