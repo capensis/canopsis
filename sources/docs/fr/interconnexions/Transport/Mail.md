@@ -115,7 +115,7 @@ template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 
 Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit correspondre au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
 
-A partir de la `3.40.0` On peux assigner plusieur template a un expediteur en fonction du sujet du mail. Pour cela il faut définir une expression reguliére pour assigner un sujet a son template.
+A partir de la `3.40.0` On peut assigner plusieur template a un expediteur en fonction du sujet du mail. Pour cela il faut définir une expression reguliére pour assigner un sujet a son template.
 
 Exemple :
 
@@ -134,9 +134,9 @@ template2.subject=.*Datacenter.*
 template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
 ```
 
-Dans cet exemple tous les mails de `sender@mail.net` qui a dans son sujet de mail aura le therme `Datacenter` sera lié au template `/opt/canopsis_connectors/email2canopsis/etc/template_2.conf`.
+Dans cet exemple tous les mails de `sender@mail.net` qui a dans son sujet de mail aura le terme `Datacenter` sera lié au template `/opt/canopsis_connectors/email2canopsis/etc/template_2.conf`.
 
-L'utilisation du subject peut être utiliser avec les deux type de déclaration d'expéditeurs (`sender` ou `regexe`).
+L'utilisation du subject peut être utilisé  avec les deux type de déclaration d'expéditeurs (`sender` ou `regex`).
 
 
 ### Configuration du template d'email
@@ -171,7 +171,7 @@ Les actions peuvent être les suivantes :
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
 
-A partir de la `3.40.0` *converter* utilise des expressions régulière pour effectuer le remplacement.
+A partir de la `3.40.0` *converter* utilise des expressions régulières pour effectuer le remplacement.
 
 Exemple :
 ```
@@ -179,12 +179,12 @@ Exemple :
     state.converter=Mineur \?>1,^Majeur$>2,Critique>3,.*>0
 ```
 
-On sélectionne dans cette exemple le sujet du mail pour définir la sévérité de l’alarme.  
+On sélectionne dans cet exemple le sujet du mail pour définir la sévérité de l’alarme.  
 
 - Les mails qui ont dans leur sujet `Mineur ?` auront une sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des  expressions régulière, comme `*,{,} etc...`. Il faut donc le protéger avec un `\`.
-- Les mails dont le sujet est strictement `Majeur` auront une sévérité de 2. Le caractère `^` définir le debut de la selection et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la selection des mails dont le sujet fini par `Mineur`.
-- Les mails  dont le sujet contient `Critique` auront un sévérité de 3.
-- L'utilisation de  l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront un sévérité par défaut  de 0.
+- Les mails dont le sujet est strictement `Majeur` auront une sévérité de 2. Le caractère `^` définir le début de la sélection et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la sélection des mails dont le sujet fini par `Mineur`.
+- Les mails  dont le sujet contient `Critique` auront une sévérité de 3.
+- L'utilisation de  l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront une sévérité par défaut  de 0.
 
 À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :  
 
@@ -257,4 +257,4 @@ Pour appliquer un changement (modification de la configuration, ajout de templat
 
 En cas d'erreur de connexion au serveur mail, le connecteur envoie un événement à Canopsis. Vous pouvez paramétrer cette alerte avec la section `[event_error]` du fichier de configuration.  
 
-En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec un sévérité de 0. Cela permet de fermer d'éventuelles alarmes.
+En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec une sévérité de 0. Cela permet de fermer d'éventuelles alarmes.
