@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.grid-item(:style="overviewItemStyles")
+  v-card.grid-item(:style="overviewItemStyles")
     slot
 </template>
 
@@ -40,6 +40,5 @@ export default {
   .grid-item {
     overflow: auto;
     margin: 10px 0;
-    outline: 1px solid red;
   }
 </style>

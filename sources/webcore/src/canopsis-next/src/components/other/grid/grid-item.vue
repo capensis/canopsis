@@ -20,11 +20,6 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
-    if (!this.fixedHeight) {
-      this.$nextTick(this.autoSizeHeight);
-    }
-  },
   methods: {
     autoSizeHeight() {
       // ok here we want to calculate if a resize is needed
@@ -162,7 +157,13 @@ export default {
       const { count } = layout
         .filter(({ y }) => y < currentCardY)
         .sort((a, b) => b.y - a.y)
-        .reduce((acc, { y, x, w }) => {
+        .reduce((acc, {
+          y, x, w, h,
+        }) => {
+          if (acc.y !== y + h) {
+            return acc;
+          }
+
           const range = (acc.x + acc.w) - (x + w);
 
           const isInteraction = range > 0 ? range < acc.w : Math.abs(range) < w;

@@ -22,12 +22,18 @@
     )
       div.wrapper
         div.drag-handler
-        v-btn-toggle.lock-icon(
-          :value="item.i.fixedHeight",
-          @change="changeFixedHeight($event, item.i, index)"
-        )
-          v-btn(small, :value="true")
-            v-icon lock
+          v-layout.controls
+            v-btn-toggle(
+              :value="item.fixedHeight",
+              @change="changeFixedHeight($event, item.i, index)"
+            )
+              v-btn(small, :value="true")
+                v-icon lock
+            widget-wrapper-menu(
+              :widget="item.widget",
+              :tab="tab",
+              :updateTabMethod="updateTabMethod"
+            )
         slot(:widget="item.widget")
 </template>
 
@@ -36,11 +42,12 @@ import { omit } from 'lodash';
 
 import GridItem from '@/components/other/grid/grid-item.vue';
 import GridLayout from '@/components/other/grid/grid-layout.vue';
+import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
 
 import { setSeveralFields } from '@/helpers/immutable';
 
 export default {
-  components: { GridLayout, GridItem },
+  components: { WidgetWrapperMenu, GridLayout, GridItem },
   props: {
     tab: {
       type: Object,
@@ -52,16 +59,16 @@ export default {
     },
   },
   data() {
-    const layout = this.tab.widgets.map(widget => ({
-      ...widget.gridParameters.desktop,
-
-      i: widget._id,
-      widget,
-    }));
+    const layout = this.getLayout();
 
     return {
       layout,
     };
+  },
+  watch: {
+    'tab.widgets': function setLayout() {
+      this.layout = this.getLayout();
+    },
   },
   beforeDestroy() {
     const fields = this.tab.widgets.reduce((acc, { gridParameters }, index) => {
@@ -80,6 +87,14 @@ export default {
   methods: {
     changeFixedHeight(value, id, index) {
       this.layout[index].fixedHeight = value;
+    },
+    getLayout() {
+      return this.tab.widgets.map(widget => ({
+        ...widget.gridParameters.desktop,
+
+        i: widget._id,
+        widget,
+      }));
     },
   },
 };
@@ -117,7 +132,7 @@ export default {
     position: relative;
     overflow-y: auto;
 
-    .lock-icon {
+    .controls {
       position: absolute;
       right: 3px;
       top: 3px;
@@ -130,19 +145,18 @@ export default {
 
     .drag-handler {
       content: '';
-      background-color: #BBB;
+      background-color: rgba(187, 187, 187, 0.4);
       position: absolute;
       left: 0;
       top: 0;
       width: 100%;
       height: 36px;
-      opacity: .4;
       transition: .2s ease-out;
       cursor: move;
       z-index: 2;
 
       &:hover {
-        opacity: .2;
+        background-color: rgba(187, 187, 187, 0.2);
       }
     }
 

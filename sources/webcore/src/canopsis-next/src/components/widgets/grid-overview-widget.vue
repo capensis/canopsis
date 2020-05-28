@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.gird-overview(:style="gridWrapperStyle")
+  div.gird-overview
     grid-overview-item(
       v-for="widget in widgets",
       :widget="widget",
@@ -51,6 +51,6 @@ export default {
     padding: 20px;
     display: grid;
     column-gap: 20px;
-    grid-template-columns: repeat(12, [col-start] 1fr);
+    grid-template-columns: repeat(12, 1fr);
   }
 </style>

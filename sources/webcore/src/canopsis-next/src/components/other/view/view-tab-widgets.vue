@@ -3,6 +3,7 @@
     component(
       :is="layoutComponent",
       :tab="tab",
+      :isEditingMode="isEditingMode",
       :updateTabMethod="updateTabMethod"
     )
       widget-wrapper(
