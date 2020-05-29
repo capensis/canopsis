@@ -74,7 +74,7 @@ class ImportKey:
     F_UPDATED = "updated"
 
     # import file pattern
-    IMPORT_FILE = "/opt/canopsis/tmp/import_{0}.json"
+    IMPORT_FILE = root_path + "/tmp/import_{0}.json"
 
     EVT_IMPORT_UUID = "jobs_uuid"
     EVT_JOBID = "jobid"
