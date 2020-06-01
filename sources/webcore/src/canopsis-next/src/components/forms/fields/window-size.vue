@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-btn-toggle.window-size.transparent(v-field="size", mandatory, light, dense)
+  v-btn-toggle.window-size.transparent(v-field="value", mandatory, light, dense)
     v-btn(
       v-for="size in availableSizes",
       :ripple="false",
@@ -15,11 +15,11 @@ import { WIDGET_GRID_SIZES_STYLES, WIDGET_GRID_SIZES_KEYS } from '@/constants';
 
 export default {
   model: {
-    prop: 'size',
+    prop: 'value',
     event: 'input',
   },
   props: {
-    size: {
+    value: {
       type: String,
       default: WIDGET_GRID_SIZES_KEYS.desktop,
     },
