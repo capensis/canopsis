@@ -15,18 +15,8 @@
 import { GridLayout } from 'vue-grid-layout';
 import { uniq } from 'lodash';
 
+import { bottom } from '../helpers/bottom';
 import GridItem from './grid-item.vue';
-
-export function bottom(layout) {
-  let max = 0;
-  let bottomY;
-
-  for (let i = 0, len = layout.length; i < len; i += 1) {
-    bottomY = layout[i].y + layout[i].h;
-    if (bottomY > max) max = bottomY;
-  }
-  return max;
-}
 
 export default {
   components: { GridItem },

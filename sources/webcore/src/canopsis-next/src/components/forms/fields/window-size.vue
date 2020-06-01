@@ -5,9 +5,11 @@
       :ripple="false",
       :key="size.value",
       :value="size.value",
+      :dark="dark",
+      :light="light",
       icon
     )
-      v-icon {{ size.icon }}
+      v-icon(:color="color") {{ size.icon }}
 </template>
 
 <script>
@@ -22,6 +24,18 @@ export default {
     value: {
       type: String,
       default: WIDGET_GRID_SIZES_KEYS.desktop,
+    },
+    dark: {
+      type: Boolean,
+      required: false,
+    },
+    light: {
+      type: Boolean,
+      required: false,
+    },
+    color: {
+      type: String,
+      required: false,
     },
   },
   computed: {

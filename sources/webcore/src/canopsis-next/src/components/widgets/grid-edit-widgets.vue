@@ -21,13 +21,12 @@
         :h="item.h",
         :fixedHeight="item.fixedHeight",
         :i="item.i",
-        dragAllowFrom=".drag-handler",
-        :ref="item.i"
+        dragAllowFrom=".drag-handler"
       )
         div.wrapper
           div.drag-handler
             v-layout.controls
-              v-btn-toggle(
+              v-btn-toggle.mr-2(
                 :value="item.fixedHeight",
                 @change="changeFixedHeight($event, item.i, index)"
               )
@@ -44,8 +43,6 @@
 <script>
 import { omit } from 'lodash';
 
-import GridItem from '@/components/other/grid/grid-item.vue';
-import GridLayout from '@/components/other/grid/grid-layout.vue';
 import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
 import WindowSizeField from '@/components/forms/fields/window-size.vue';
 
@@ -57,8 +54,6 @@ export default {
   components: {
     WindowSizeField,
     WidgetWrapperMenu,
-    GridLayout,
-    GridItem,
   },
   props: {
     tab: {
