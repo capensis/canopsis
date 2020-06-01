@@ -34,6 +34,15 @@ export default {
 
       return `${(bottom(this.layout) * this.rowHeight) + (marginY * this.getRowCount())}px`;
     },
+
+    onWindowResize() {
+      if (this.$refs !== null && this.$refs.item !== null && this.$refs.item !== undefined) {
+        this.width = this.$refs.item.offsetWidth;
+      }
+
+      this.eventBus.$emit('resizeEvent');
+      this.eventBus.$emit('resizeWindowEvent');
+    },
   },
 };
 </script>

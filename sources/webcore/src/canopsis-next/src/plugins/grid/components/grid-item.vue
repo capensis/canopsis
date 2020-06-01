@@ -15,10 +15,16 @@ export default {
       handler(value) {
         if (!value) {
           this.$nextTick(this.autoSizeHeight);
+          this.eventBus.$on('resizeWindowEvent', this.autoSizeHeight);
+        } else {
+          this.eventBus.$off('resizeWindowEvent', this.autoSizeHeight);
         }
       },
       immediate: true,
     },
+  },
+  beforeDestroy() {
+    this.eventBus.$off('resizeWindowEvent', this.autoSizeHeight);
   },
   methods: {
     autoSizeHeight() {
@@ -66,16 +72,19 @@ export default {
         return;
       }
 
+      const defaultSlots = this.$slots.default;
       const position = getControlPosition(event);
 
-      if (!position) {
+      if (!position || !defaultSlots) {
         return;
       }
 
+      const [{ elm: element }] = defaultSlots;
       const { x, y } = position;
-
       const newSize = { width: 0, height: 0 };
+
       let pos;
+
       switch (event.type) {
         case 'resizestart':
           this.previousW = this.innerW;
@@ -91,6 +100,7 @@ export default {
 
           break;
         case 'resizemove': {
+          const newElementSize = element.getBoundingClientRect();
           const coreEvent = createCoreData(this.lastW, this.lastH, x, y);
 
           if (this.renderRtl) {
@@ -100,7 +110,7 @@ export default {
           }
           newSize.height = this.fixedHeight
             ? this.resizing.height + coreEvent.deltaY
-            : this.resizing.height;
+            : newElementSize.height;
 
           this.resizing = newSize;
           break;
@@ -148,6 +158,7 @@ export default {
       if (event.type === 'resizeend' && (this.previousW !== this.innerW || this.previousH !== this.innerH)) {
         this.$emit('resized', this.i, pos.h, pos.w, newSize.height, newSize.width);
       }
+
       this.eventBus.$emit('resizeEvent', event.type, this.i, this.innerX, this.innerY, pos.h, pos.w);
     },
 
