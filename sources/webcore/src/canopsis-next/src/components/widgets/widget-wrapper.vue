@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    template(v-show="widget.title")
+    template(v-if="widget.title")
       v-card-title.lighten-1.pa-1
         v-layout(justify-space-between, align-center)
           v-flex
