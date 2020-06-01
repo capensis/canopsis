@@ -7,7 +7,7 @@
       :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
       :col-num="12",
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
-      :style="windowSizeStyles",
+      :style="layoutStyles",
       is-draggable,
       is-resizable,
       vertical-compact
@@ -79,16 +79,17 @@ export default {
     };
   },
   computed: {
-    windowSizeStyles() {
+    layoutStyles() {
       return {
-        maxWidth: `${this.windowMaxWidth}px`,
+        maxWidth: this.layoutMaxWidth,
       };
     },
-    windowMaxWidth() {
+
+    layoutMaxWidth() {
       return {
-        [WIDGET_GRID_SIZES_KEYS.desktop]: MEDIA_QUERIES_BREAKPOINTS.l,
-        [WIDGET_GRID_SIZES_KEYS.tablet]: MEDIA_QUERIES_BREAKPOINTS.t,
-        [WIDGET_GRID_SIZES_KEYS.mobile]: MEDIA_QUERIES_BREAKPOINTS.m,
+        [WIDGET_GRID_SIZES_KEYS.desktop]: '100%',
+        [WIDGET_GRID_SIZES_KEYS.tablet]: `${MEDIA_QUERIES_BREAKPOINTS.t}px`,
+        [WIDGET_GRID_SIZES_KEYS.mobile]: `${MEDIA_QUERIES_BREAKPOINTS.m}px`,
       }[this.size];
     },
   },
@@ -96,16 +97,15 @@ export default {
     'tab.widgets': function setLayout() {
       this.layout = this.getLayout(this.size);
     },
-    size(size, oldSize) {
+    size(size) {
       this.layout = this.getLayout(size);
-      this.saveTabWidgets(oldSize);
     },
     $mq() {
       this.size = this.getGridSizeByMediaQuery();
     },
   },
   beforeDestroy() {
-    this.saveTabWidgets();
+    this.saveTabWidgets(this.size);
   },
   methods: {
     saveTabWidgets(size = WIDGET_GRID_SIZES_KEYS.desktop) {
