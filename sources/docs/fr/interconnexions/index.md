@@ -41,7 +41,6 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | [Datametrie](Supervision/datametrie.md) | [Datametrie](https://www.ip-label.fr/produits/datametrie-global-experience/) | CAT | Non | Outil client | Toutes versions |
 | Canopsis | Toute données provenant d’un autre Canopsis | CAT | Oui | Outil de marché | Toutes versions |
 | [Nokia NSP](Supervision/NokiaNSP.md) | [Version 19.3](https://www.nokia.com/networks/products/network-services-platform/) | CAT | Non | Outil client | Version ≥ 3  |
-| [Cisco IoT FND](Supervision/Ciscoiotfnd.md) | [Version North Bound](https://www.cisco.com/c/en/us/products/cloud-systems-management/iot-field-network-director/index.html) API Release 3.0 | CAT | Non | Outil client | Version ≥ 3 |
 
 ## Drivers
 
