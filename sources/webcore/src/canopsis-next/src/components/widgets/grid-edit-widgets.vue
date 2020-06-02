@@ -1,9 +1,10 @@
 <template lang="pug">
   div
     portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
-      window-size-field(v-model="size")
+      window-size-field(v-model="size", color="white", light)
     grid-layout(
-      :layout.sync="layout",
+      ref="gridLayout",
+      :layout.sync="layouts[size]",
       :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
       :col-num="12",
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
@@ -13,14 +14,14 @@
       vertical-compact
     )
       grid-item(
-        v-for="(item, index) in layout",
+        v-for="(item, index) in layouts[size]",
         :key="item.i",
         :x="item.x",
         :y="item.y",
         :w="item.w",
         :h="item.h",
-        :fixedHeight="item.fixedHeight",
         :i="item.i",
+        :fixedHeight="item.fixedHeight",
         dragAllowFrom=".drag-handler"
       )
         div.wrapper
@@ -66,10 +67,8 @@ export default {
     },
   },
   data() {
-    const layout = this.getLayout();
-
     return {
-      layout,
+      layouts: this.getLayouts(),
       size: WIDGET_GRID_SIZES_KEYS.desktop,
     };
   },
@@ -90,28 +89,26 @@ export default {
   },
   watch: {
     'tab.widgets': function setLayout() {
-      this.layout = this.getLayout(this.size);
-    },
-    size(size) {
-      this.layout = this.getLayout(size);
+      this.layouts = this.getLayouts(this.size);
     },
     $mq() {
       this.size = this.getGridSizeByMediaQuery();
     },
   },
   beforeDestroy() {
-    this.saveTabWidgets(this.size);
+    this.saveTabWidgets();
   },
   methods: {
-    saveTabWidgets(size = WIDGET_GRID_SIZES_KEYS.desktop) {
+    saveTabWidgets() {
       const fields = this.tab.widgets.reduce((acc, { gridParameters }, index) => {
-        const params = this.layout[index];
-        const gridSettings = gridParameters[size];
+        Object.entries(gridParameters).forEach(([size, gridSettings]) => {
+          const params = this.layouts[size][index];
 
-        acc[`widgets.${index}.gridParameters.${size}`] = {
-          ...gridSettings,
-          ...omit(params, ['i', 'widget']),
-        };
+          acc[`widgets.${index}.gridParameters.${size}`] = {
+            ...gridSettings,
+            ...omit(params, ['i', 'widget']),
+          };
+        });
 
         return acc;
       }, {});
@@ -132,6 +129,14 @@ export default {
         i: widget._id,
         widget,
       }));
+    },
+
+    getLayouts() {
+      return Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+        acc[size] = this.getLayout(size);
+
+        return acc;
+      }, {});
     },
 
     getGridSizeByMediaQuery() {

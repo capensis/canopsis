@@ -14,19 +14,29 @@ export default {
     fixedHeight: {
       handler(value) {
         if (!value) {
-          this.$nextTick(this.autoSizeHeight);
-          this.eventBus.$on('resizeWindowEvent', this.autoSizeHeight);
+          this.handleWindowResize();
+          this.eventBus.$on('resizeWindowEvent', this.handleWindowResize);
         } else {
-          this.eventBus.$off('resizeWindowEvent', this.autoSizeHeight);
+          this.eventBus.$off('resizeWindowEvent', this.handleWindowResize);
         }
       },
       immediate: true,
     },
   },
+  mounted() {
+    if (!this.fixedHeight) {
+      this.handleWindowResize();
+    }
+  },
   beforeDestroy() {
-    this.eventBus.$off('resizeWindowEvent', this.autoSizeHeight);
+    this.eventBus.$off('resizeWindowEvent', this.handleWindowResize);
   },
   methods: {
+    handleWindowResize() {
+      setTimeout(() => {
+        this.autoSizeHeight();
+      }, 0);
+    },
     autoSizeHeight() {
       // ok here we want to calculate if a resize is needed
       this.previousW = this.innerW;
