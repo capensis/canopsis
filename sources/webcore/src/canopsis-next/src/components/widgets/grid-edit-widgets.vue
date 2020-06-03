@@ -108,7 +108,7 @@ export default {
 
           acc[`widgets.${index}.gridParameters.${size}`] = {
             ...gridSettings,
-            ...omit(params, ['i', 'widget']),
+            ...omit(params, ['i', 'widget', 'moved']),
           };
         });
 
@@ -165,6 +165,7 @@ export default {
 
   .vue-grid-item {
     overflow: hidden;
+    transition: none !important;
 
     &:after {
       content: '';
@@ -185,7 +186,7 @@ export default {
 
   .wrapper {
     position: relative;
-    overflow-y: auto;
+    overflow: hidden;
 
     .controls {
       position: absolute;

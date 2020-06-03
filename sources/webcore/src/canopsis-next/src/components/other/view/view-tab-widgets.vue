@@ -1,7 +1,7 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
-    component(
-      :is="layoutComponent",
+    grid-overview-widget(
+      v-show="!isEditingMode",
       :tab="tab",
       :isEditingMode="isEditingMode",
       :updateTabMethod="updateTabMethod"
@@ -10,6 +10,19 @@
         slot-scope="props",
         :widget="props.widget",
         :tab="tab",
+        :updateTabMethod="updateTabMethod"
+      )
+    grid-edit-widgets(
+      v-if="isEditingMode",
+      :tab="tab",
+      :isEditingMode="isEditingMode",
+      :updateTabMethod="updateTabMethod"
+    )
+      widget-wrapper(
+        slot-scope="props",
+        :widget="props.widget",
+        :tab="tab",
+        :isEditingMode="isEditingMode",
         :updateTabMethod="updateTabMethod"
       )
 </template>

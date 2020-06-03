@@ -41,7 +41,7 @@ export default {
       }
 
       this.eventBus.$emit('resizeEvent');
-      this.eventBus.$emit('resizeWindowEvent');
+      this.eventBus.$emit('windowResizeEvent');
     },
   },
 };

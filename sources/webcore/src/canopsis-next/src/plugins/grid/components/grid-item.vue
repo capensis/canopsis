@@ -15,37 +15,65 @@ export default {
     fixedHeight(value) {
       if (!value) {
         this.handleWindowResize();
-        this.eventBus.$on('resizeWindowEvent', this.handleWindowResize);
+        this.eventBus.$on('windowResizeEvent', this.handleWindowResize);
+        this.observeDefaultSlot();
       } else {
-        this.eventBus.$off('resizeWindowEvent', this.handleWindowResize);
+        this.eventBus.$off('windowResizeEvent', this.handleWindowResize);
+        this.$_mutationObserver.disconnect();
       }
     },
+  },
+  created() {
+    this.$_mutationObserver = new MutationObserver(this.handleWindowResize);
   },
   mounted() {
     if (!this.fixedHeight) {
       this.handleWindowResize();
+      this.observeDefaultSlot();
     }
   },
   beforeDestroy() {
-    this.eventBus.$off('resizeWindowEvent', this.handleWindowResize);
+    this.eventBus.$off('windowResizeEvent', this.handleWindowResize);
+    this.$_mutationObserver.disconnect();
   },
   methods: {
+    getDefaultSlotElement() {
+      const defaultSlots = this.$slots.default;
+
+      if (!defaultSlots) {
+        return null;
+      }
+
+      const [{ elm: element }] = defaultSlots;
+
+      return element || null;
+    },
+
+    observeDefaultSlot() {
+      const element = this.getDefaultSlotElement();
+
+      if (!element) {
+        return;
+      }
+
+      this.$_mutationObserver.observe(element, {
+        attributes: false,
+        childList: true,
+        subtree: true,
+      });
+    },
+
     handleWindowResize: debounce(function handleWindowResize() {
       setTimeout(() => {
         this.autoSizeHeight();
       }, 0);
     }, 100),
+
     autoSizeHeight() {
       // ok here we want to calculate if a resize is needed
       this.previousW = this.innerW;
       this.previousH = this.innerH;
-      const defaultSlots = this.$slots.default;
-
-      if (!defaultSlots) {
-        return;
-      }
-
-      const [{ elm: element }] = defaultSlots;
+      const element = this.getDefaultSlotElement();
 
       if (!element) {
         return;
@@ -70,7 +98,7 @@ export default {
       }
 
       if (this.previousH !== pos.h) {
-        this.$emit('resized', this.i, pos.h, this.previousW, newSize.height, newSize.width, true);
+        this.$emit('resized', this.i, pos.h, this.previousW, newSize.height, newSize.width);
         this.eventBus.$emit('resizeEvent', 'resizeend', this.i, this.innerX, this.innerY, pos.h, this.innerW);
       }
     },
@@ -80,14 +108,13 @@ export default {
         return;
       }
 
-      const defaultSlots = this.$slots.default;
+      const element = this.getDefaultSlotElement();
       const position = getControlPosition(event);
 
-      if (!position || !defaultSlots) {
+      if (!position || !element) {
         return;
       }
 
-      const [{ elm: element }] = defaultSlots;
       const { x, y } = position;
       const newSize = { width: 0, height: 0 };
 
@@ -110,18 +137,11 @@ export default {
         case 'resizemove': {
           const newElementSize = element.getBoundingClientRect();
           const coreEvent = createCoreData(this.lastW, this.lastH, x, y);
-          const [marginX = 0] = (this.margin || []);
-          const maxWidth = this.containerWidth - (2 * marginX);
-          const maxX = this.containerWidth - marginX;
 
-          if (x <= maxX) {
-            if (this.renderRtl) {
-              newSize.width = this.resizing.width - coreEvent.deltaX;
-            } else {
-              newSize.width = this.resizing.width + coreEvent.deltaX;
-            }
+          if (this.renderRtl) {
+            newSize.width = this.resizing.width - coreEvent.deltaX;
           } else {
-            newSize.width = maxWidth;
+            newSize.width = this.resizing.width + coreEvent.deltaX;
           }
 
           newSize.height = this.fixedHeight
@@ -173,6 +193,10 @@ export default {
       }
       if (event.type === 'resizeend' && (this.previousW !== this.innerW || this.previousH !== this.innerH)) {
         this.$emit('resized', this.i, pos.h, pos.w, newSize.height, newSize.width);
+
+        if (!this.fixedHeight) {
+          this.handleWindowResize();
+        }
       }
 
       this.eventBus.$emit('resizeEvent', event.type, this.i, this.innerX, this.innerY, pos.h, pos.w);

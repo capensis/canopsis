@@ -1,7 +1,7 @@
 <template lang="pug">
   div
-    template(v-if="widget.title")
-      v-card-title.white.pa-2
+    template(v-if="widget.title || isEditingMode")
+      v-card-title.widget-title.white.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
             h4.ml-2.font-weight-regular(:data-test="`widgetTitle-${widget._id}`") {{ widget.title }}
@@ -14,7 +14,7 @@
         :tabId="tab._id",
         :isEditingMode="isEditingMode"
       )
-    copy-widget-id(v-show="isEditingMode", :widgetId="widget._id")
+    copy-widget-id.copy-widget-id(v-show="isEditingMode", :widgetId="widget._id")
 </template>
 
 <script>
@@ -115,3 +115,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .widget-title {
+    height: 37px;
+  }
+
+  .copy-widget-id {
+    z-index: 2;
+    position: relative;
+  }
+</style>
