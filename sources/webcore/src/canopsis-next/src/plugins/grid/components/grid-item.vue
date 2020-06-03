@@ -1,4 +1,5 @@
 <script>
+import { debounce } from 'lodash';
 import { GridItem } from 'vue-grid-layout';
 import { createCoreData, getControlPosition } from 'vue-grid-layout/src/helpers/draggableUtils';
 
@@ -11,16 +12,13 @@ export default {
     },
   },
   watch: {
-    fixedHeight: {
-      handler(value) {
-        if (!value) {
-          this.handleWindowResize();
-          this.eventBus.$on('resizeWindowEvent', this.handleWindowResize);
-        } else {
-          this.eventBus.$off('resizeWindowEvent', this.handleWindowResize);
-        }
-      },
-      immediate: true,
+    fixedHeight(value) {
+      if (!value) {
+        this.handleWindowResize();
+        this.eventBus.$on('resizeWindowEvent', this.handleWindowResize);
+      } else {
+        this.eventBus.$off('resizeWindowEvent', this.handleWindowResize);
+      }
     },
   },
   mounted() {
@@ -32,11 +30,11 @@ export default {
     this.eventBus.$off('resizeWindowEvent', this.handleWindowResize);
   },
   methods: {
-    handleWindowResize() {
+    handleWindowResize: debounce(function handleWindowResize() {
       setTimeout(() => {
         this.autoSizeHeight();
       }, 0);
-    },
+    }, 100),
     autoSizeHeight() {
       // ok here we want to calculate if a resize is needed
       this.previousW = this.innerW;
@@ -112,12 +110,20 @@ export default {
         case 'resizemove': {
           const newElementSize = element.getBoundingClientRect();
           const coreEvent = createCoreData(this.lastW, this.lastH, x, y);
+          const [marginX = 0] = (this.margin || []);
+          const maxWidth = this.containerWidth - (2 * marginX);
+          const maxX = this.containerWidth - marginX;
 
-          if (this.renderRtl) {
-            newSize.width = this.resizing.width - coreEvent.deltaX;
+          if (x <= maxX) {
+            if (this.renderRtl) {
+              newSize.width = this.resizing.width - coreEvent.deltaX;
+            } else {
+              newSize.width = this.resizing.width + coreEvent.deltaX;
+            }
           } else {
-            newSize.width = this.resizing.width + coreEvent.deltaX;
+            newSize.width = maxWidth;
           }
+
           newSize.height = this.fixedHeight
             ? this.resizing.height + coreEvent.deltaY
             : newElementSize.height;

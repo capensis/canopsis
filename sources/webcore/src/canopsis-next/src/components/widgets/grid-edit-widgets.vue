@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.grid-layout-wrapper
     portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
       window-size-field(v-model="size", color="white", light)
     grid-layout(
@@ -29,7 +29,7 @@
             v-layout.controls
               v-btn-toggle.mr-2(
                 :value="item.fixedHeight",
-                @change="changeFixedHeight($event, item.i, index)"
+                @change="changeFixedHeight($event, index)"
               )
                 v-btn(small, :value="true")
                   v-icon lock
@@ -67,8 +67,10 @@ export default {
     },
   },
   data() {
+    const layouts = this.getLayouts();
+
     return {
-      layouts: this.getLayouts(),
+      layouts,
       size: WIDGET_GRID_SIZES_KEYS.desktop,
     };
   },
@@ -89,7 +91,7 @@ export default {
   },
   watch: {
     'tab.widgets': function setLayout() {
-      this.layouts = this.getLayouts(this.size);
+      this.layouts = this.getLayouts();
     },
     $mq() {
       this.size = this.getGridSizeByMediaQuery();
@@ -118,8 +120,8 @@ export default {
       this.updateTabMethod(newTab);
     },
 
-    changeFixedHeight(value, id, index) {
-      this.layout[index].fixedHeight = value;
+    changeFixedHeight(value, index) {
+      this.$set(this.layouts[this.size][index], 'fixedHeight', value || false);
     },
 
     getLayout(size = WIDGET_GRID_SIZES_KEYS.desktop) {
@@ -154,12 +156,13 @@ export default {
 <style lang="scss">
   .grid-layout-wrapper {
     padding-bottom: 500px;
+
+    .vue-grid-layout {
+      margin: auto;
+      background-color: rgba(60, 60, 60, .05);
+    }
   }
-  .grid-wrapper {
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: repeat(12, calc(80% / 12));
-  }
+
   .vue-grid-item {
     overflow: hidden;
 
@@ -172,6 +175,7 @@ export default {
       width: 100%;
       height: 100%;
       opacity: .4;
+      z-index: 1;
     }
 
     & > .vue-resizable-handle {
@@ -195,8 +199,8 @@ export default {
     }
 
     .drag-handler {
-      content: '';
-      background-color: rgba(187, 187, 187, 0.4);
+      position: absolute;
+      background-color: rgba(0, 0, 0, .12);
       width: 100%;
       height: 36px;
       transition: .2s ease-out;
@@ -204,7 +208,7 @@ export default {
       z-index: 2;
 
       &:hover {
-        background-color: rgba(187, 187, 187, 0.2);
+        background-color: rgba(0, 0, 0, .15);
       }
     }
 

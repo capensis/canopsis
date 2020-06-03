@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     template(v-if="widget.title")
-      v-card-title.lighten-1.pa-1
+      v-card-title.white.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
             h4.ml-2.font-weight-regular(:data-test="`widgetTitle-${widget._id}`") {{ widget.title }}

@@ -32,7 +32,7 @@ export default {
       }
       const [, marginY] = this.margin;
 
-      return `${(bottom(this.layout) * this.rowHeight) + (marginY * this.getRowCount())}px`;
+      return `${(bottom(this.layout) * this.rowHeight) + (marginY * this.getRowCount()) + marginY}px`;
     },
 
     onWindowResize() {

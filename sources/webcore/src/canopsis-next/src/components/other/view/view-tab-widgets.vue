@@ -20,6 +20,7 @@ import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
+import queryMixin from '@/mixins/query';
 
 export default {
   components: {
@@ -29,6 +30,7 @@ export default {
   },
   mixins: [
     sideBarMixin,
+    queryMixin,
   ],
   props: {
     tab: {
@@ -48,6 +50,11 @@ export default {
     layoutComponent() {
       return this.isEditingMode ? 'grid-edit-widgets' : 'grid-overview-widget';
     },
+  },
+  destroyed() {
+    this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({
+      id,
+    }));
   },
 };
 </script>
