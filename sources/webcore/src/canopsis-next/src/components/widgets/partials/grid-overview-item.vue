@@ -4,6 +4,8 @@
 </template>
 
 <script>
+import { MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP } from '@/constants';
+
 export default {
   props: {
     widget: {
@@ -13,14 +15,9 @@ export default {
   },
   computed: {
     gridParameters() {
-      const { gridParameters } = this.widget;
+      const key = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
 
-      return {
-        xl: gridParameters.desktop,
-        l: gridParameters.desktop,
-        t: gridParameters.tablet,
-        m: gridParameters.mobile,
-      }[this.$mq];
+      return this.widget.gridParameters[key];
     },
 
     overviewItemStyles() {

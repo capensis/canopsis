@@ -1,11 +1,12 @@
 import { addTo, setField } from '@/helpers/immutable';
 
 import queryMixin from '@/mixins/query';
-import sideBarMixins from '@/mixins/side-bar/side-bar';
+import sideBarMixin from '@/mixins/side-bar/side-bar';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 
 import { prepareQuery } from '@/helpers/query';
+import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
 
 export default {
   props: {
@@ -16,7 +17,7 @@ export default {
   },
   mixins: [
     queryMixin,
-    sideBarMixins,
+    sideBarMixin,
     entitiesViewMixin,
     entitiesUserPreferenceMixin,
   ],
@@ -28,8 +29,17 @@ export default {
     widget() {
       return this.config.widget;
     },
+
+    preparedWidget() {
+
+    },
   },
   methods: {
+    /**
+     * Validate settings form
+     *
+     * @returns {boolean|Promise<boolean>}
+     */
     isFormValid() {
       if (this.$validator) {
         return this.$validator.validateAll();
@@ -38,73 +48,93 @@ export default {
       return true;
     },
 
+    /**
+     * We can customize widgets preparation by replacing the methods in the component
+     *
+     * @returns {Object}
+     */
     prepareWidgetSettings() {
       return this.settings.widget;
     },
 
+    /**
+     * We can customize widget query for updating after saving by replacing the methods in the component
+     *
+     * @param {Object} newQuery
+     * @returns {Object}
+     */
     prepareWidgetQuery(newQuery) {
       return newQuery;
     },
 
+    /**
+     * Get prepared userPreferences for request sending
+     *
+     * @returns {Object}
+     */
+    getPreparedUserPreferences() {
+      return setField(this.userPreference, 'widget_preferences', value => ({
+        ...value,
+        ...this.settings.widget_preferences,
+      }));
+    },
+
+    /**
+     * Get prepared view and widgets objects for request sending
+     *
+     * @returns {{view: Object, widget: Object}}
+     */
+    getPreparedViewAndWidget() {
+      const preparedWidget = {
+        ...this.settings.widget,
+        ...this.prepareWidgetSettings(),
+      };
+
+      const { tabs } = this.activeView;
+      const tabIndex = tabs.findIndex(tab => tab._id === this.config.tabId);
+      const { widgets } = tabs[tabIndex];
+      const widgetIndex = widgets.findIndex(widget => widget._id === preparedWidget._id);
+
+      if (widgetIndex === -1) {
+        const newGridParametersY = getNewWidgetGridParametersY(tabs[tabIndex].widgets);
+
+        preparedWidget.gridParameters.mobile.y = newGridParametersY.mobile;
+        preparedWidget.gridParameters.tablet.y = newGridParametersY.tablet;
+        preparedWidget.gridParameters.desktop.y = newGridParametersY.desktop;
+      }
+
+      const preparedView = widgetIndex === -1
+        ? addTo(this.activeView, ['tabs', tabIndex, 'widgets'], preparedWidget)
+        : setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], preparedWidget);
+
+      return {
+        view: preparedView,
+        widget: preparedWidget,
+      };
+    },
+
+    /**
+     * Submit settings form
+     *
+     * @returns {Promise<void>}
+     */
     async submit() {
       const isFormValid = await this.isFormValid();
 
       if (isFormValid) {
-        const newWidget = {
-          ...this.settings.widget,
-          ...this.prepareWidgetSettings(),
-        };
-
-        const { tabs } = this.activeView;
-        const tabIndex = tabs.findIndex(tab => tab._id === this.config.tabId);
-        const { widgets } = tabs[tabIndex];
-        const widgetIndex = widgets.findIndex(widget => widget._id === newWidget._id);
-
-        if (widgetIndex === -1) {
-          const newGridParameters = tabs[tabIndex].widgets.reduce((acc, { gridParameters }) => {
-            if (gridParameters.mobile.y >= acc.mobile) {
-              acc.mobile = gridParameters.mobile.y + gridParameters.mobile.h + 1;
-            }
-
-            if (gridParameters.tablet.y >= acc.tablet) {
-              acc.tablet = gridParameters.tablet.y + gridParameters.mobile.h + 1;
-            }
-
-            if (gridParameters.desktop.y >= acc.desktop) {
-              acc.desktop = gridParameters.desktop.y + gridParameters.mobile.h + 1;
-            }
-
-            return acc;
-          }, { mobile: 0, tablet: 0, desktop: 0 });
-
-          newWidget.gridParameters.mobile.y = newGridParameters.mobile;
-          newWidget.gridParameters.tablet.y = newGridParameters.tablet;
-          newWidget.gridParameters.desktop.y = newGridParameters.desktop;
-        }
-
-        const userPreference = {
-          ...this.userPreference,
-
-          widget_preferences: {
-            ...this.userPreference.widget_preferences,
-            ...this.settings.widget_preferences,
-          },
-        };
-
-        const viewData = widgetIndex === -1
-          ? addTo(this.activeView, ['tabs', tabIndex, 'widgets'], newWidget)
-          : setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], newWidget);
+        const userPreference = this.getPreparedUserPreferences();
+        const { view, widget } = this.getPreparedViewAndWidget();
 
         await Promise.all([
           this.createUserPreference({ userPreference }),
-          this.updateView({ id: this.activeView._id, data: viewData }),
+          this.updateView({ id: this.activeView._id, data: view }),
         ]);
 
-        const oldQuery = this.getQueryById(this.widget._id);
-        const newQuery = prepareQuery(newWidget, userPreference);
+        const oldQuery = this.getQueryById(widget._id);
+        const newQuery = prepareQuery(widget, userPreference);
 
         this.updateQuery({
-          id: newWidget._id,
+          id: widget._id,
           query: this.prepareWidgetQuery(newQuery, oldQuery),
         });
 

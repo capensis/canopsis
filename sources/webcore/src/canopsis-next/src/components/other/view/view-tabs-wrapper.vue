@@ -23,7 +23,7 @@
       :isTabsChanged="isTabsChanged",
       :isEditingMode="isEditingMode",
       :hasUpdateAccess="hasUpdateAccess",
-      :updateViewMethod="data => updateViewMethod(data)"
+      :updateViewMethod="updateViewMethod"
     )
       view-tab-widgets(
         slot-scope="props",

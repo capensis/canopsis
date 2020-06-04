@@ -22,6 +22,24 @@ export function getWidgetsLayoutBySize(widgets, oldLayout = [], size = WIDGET_GR
   });
 }
 
+export function getNewWidgetGridParametersY(widgets) {
+  return widgets.reduce((acc, { gridParameters }) => {
+    if (gridParameters.mobile.y >= acc.mobile) {
+      acc.mobile = gridParameters.mobile.y + gridParameters.mobile.h + 1;
+    }
+
+    if (gridParameters.tablet.y >= acc.tablet) {
+      acc.tablet = gridParameters.tablet.y + gridParameters.mobile.h + 1;
+    }
+
+    if (gridParameters.desktop.y >= acc.desktop) {
+      acc.desktop = gridParameters.desktop.y + gridParameters.mobile.h + 1;
+    }
+
+    return acc;
+  }, { mobile: 0, tablet: 0, desktop: 0 });
+}
+
 export default {
   getWidgetsLayoutBySize,
 };

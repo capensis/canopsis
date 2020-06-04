@@ -1,5 +1,5 @@
 import { schema } from 'normalizr';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
 import { WIDGET_GRID_SIZES_KEYS } from '@/constants';
@@ -97,26 +97,26 @@ export function viewTabProcessStrategy(entity, parent, key) {
       };
 
       widgets.forEach((widget) => {
-        const gridParameters = Object.values(WIDGET_GRID_SIZES_KEYS).reduce((secondAcc, size) => {
+        const newWidget = omit(widget, 'size');
+
+        newWidget.gridParameters = Object.values(WIDGET_GRID_SIZES_KEYS).reduce((secondAcc, size) => {
+          const width = widget.size[GRID_SIZES_MAP[size]];
+
           // eslint-disable-next-line no-param-reassign
           secondAcc[size] = {
             x: prevEnd[size],
             y: rowIndex,
-            w: widget.size[GRID_SIZES_MAP[size]],
+            w: width,
             h: 0,
             fixedHeight: false,
           };
 
-          prevEnd[size] += widget.size[GRID_SIZES_MAP[size]];
+          prevEnd[size] += width;
 
           return secondAcc;
         }, {});
 
-        acc.push({
-          ...widget,
-
-          gridParameters,
-        });
+        acc.push(newWidget);
       });
 
       return acc;

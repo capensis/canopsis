@@ -6,7 +6,7 @@
         :view="view",
         :isEditingMode="isEditingMode",
         :hasUpdateAccess="hasUpdateAccess",
-        :updateViewMethod="data => updateView({ id, data })",
+        :updateViewMethod="updateViewMethod",
         @update:tab="updateTab"
       )
     .fab
@@ -62,9 +62,9 @@
             span alt + enter / command + enter
           v-tooltip(v-if="hasUpdateAccess", left)
             v-btn(
-              v-model="isEditingMode",
-              data-test="editViewButton",
               slot="activator",
+              :input-value="isEditingMode",
+              data-test="editViewButton",
               fab,
               dark,
               small,
@@ -75,9 +75,9 @@
             span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
           v-tooltip(left)
             v-btn(
+              slot="activator",
               v-if="hasUpdateAccess",
               data-test="addWidgetButton",
-              slot="activator",
               fab,
               dark,
               small,
@@ -145,7 +145,7 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
-      updatedTabsMap: {},
+      updatedTabsByIds: {},
     };
   },
   computed: {
@@ -193,6 +193,10 @@ export default {
   },
 
   methods: {
+    updateViewMethod(data) {
+      return this.updateView({ id: this.id, data });
+    },
+
     async refreshView() {
       await this.fetchView({ id: this.id });
 
@@ -267,30 +271,30 @@ export default {
           action: (title) => {
             const oldTabs = this.view.tabs || [];
             const newTab = { ...generateViewTab(), title };
-            const newView = {
+            const view = {
               ...this.view,
               tabs: [...oldTabs, newTab],
             };
 
-            return this.updateView({ id: this.id, data: newView });
+            return this.updateView({ id: this.id, data: view });
           },
         },
       });
     },
 
     updateTab(tab) {
-      this.updatedTabsMap[tab._id] = tab;
+      this.updatedTabsByIds[tab._id] = tab;
     },
 
     async toggleViewEditingMode() {
       if (this.isEditingMode) {
-        const newView = {
+        const view = {
           ...this.view,
 
-          tabs: this.view.tabs.map(tab => this.updatedTabsMap[tab._id] || tab),
+          tabs: this.view.tabs.map(tab => this.updatedTabsByIds[tab._id] || tab),
         };
 
-        await this.updateView({ id: this.id, data: newView });
+        await this.updateView({ id: this.id, data: view });
       }
 
       this.isEditingMode = !this.isEditingMode;

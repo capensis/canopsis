@@ -1,7 +1,7 @@
 <template lang="pug">
   div.grid-overview
     grid-overview-item(
-      v-for="widget in widgets",
+      v-for="widget in tab.widgets",
       :widget="widget",
       :key="widget._id"
     )
@@ -11,24 +11,14 @@
 <script>
 import GridOverviewItem from '@/components/widgets/partials/grid-overview-item.vue';
 
-import sideBarMixin from '@/mixins/side-bar/side-bar';
-
 export default {
   components: {
     GridOverviewItem,
   },
-  mixins: [
-    sideBarMixin,
-  ],
   props: {
     tab: {
       type: Object,
       required: true,
-    },
-  },
-  computed: {
-    widgets() {
-      return this.tab.widgets;
     },
   },
 };
