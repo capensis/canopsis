@@ -7,6 +7,13 @@
         div {{ $t('common.edit') }}
       v-list-tile(@click="showSelectViewTabModal")
         div {{ $t('common.duplicate') }}
+      v-list-tile(
+        v-clipboard:copy="widget._id",
+        v-clipboard:success="addWidgetIdCopiedSuccessPopup",
+        v-clipboard:error="addWidgetIdCopiedErrorPopup",
+        @click=""
+      )
+        div {{ $t('view.copyWidgetId') }}
       v-list-tile(@click="showDeleteWidgetModal")
         v-list-tile-title.error--text {{ $t('common.delete') }}
 </template>
@@ -36,6 +43,11 @@ export default {
     },
   },
   methods: {
+    /**
+     * Delete widget from tab
+     *
+     * @param {string} widgetId
+     */
     deleteWidgetFromTab(widgetId) {
       const widgetIndex = this.tab.widgets.findIndex(widget => widget._id === widgetId);
 
@@ -65,7 +77,6 @@ export default {
     cloneWidget({ viewId, tabId }) {
       const { _id: newWidgetId } = generateWidgetByType(this.widget.type);
 
-      // Copy widget parameters,
       const newWidget = { ...this.widget, _id: newWidgetId };
 
       this.redirectToSelectedViewAndTab({ tabId, viewId });
@@ -73,10 +84,17 @@ export default {
       this.showSettings({ viewId, tabId, widget: newWidget });
     },
 
+    /**
+     * Show widget settings side bar
+     *
+     * @param {string} viewId
+     * @param {string} tabId
+     * @param {Object} widget
+     */
     showSettings({
       viewId,
-      widget,
       tabId,
+      widget,
     }) {
       this.showSideBar({
         name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
@@ -88,6 +106,9 @@ export default {
       });
     },
 
+    /**
+     * Show select view tab modal window
+     */
     showSelectViewTabModal() {
       this.$modals.show({
         name: MODALS.selectViewTab,
@@ -97,6 +118,9 @@ export default {
       });
     },
 
+    /**
+     * Show delete widget modal window
+     */
     showDeleteWidgetModal() {
       this.$modals.show({
         name: MODALS.confirmation,
@@ -108,6 +132,20 @@ export default {
           },
         },
       });
+    },
+
+    /**
+     * Add success popup for widgetId copying
+     */
+    addWidgetIdCopiedSuccessPopup() {
+      this.$popups.success({ text: this.$t('success.widgetIdCopied') });
+    },
+
+    /**
+     * Add error popup for widgetId copying
+     */
+    addWidgetIdCopiedErrorPopup() {
+      this.$popups.error({ text: this.$t('errors.default') });
     },
   },
 };

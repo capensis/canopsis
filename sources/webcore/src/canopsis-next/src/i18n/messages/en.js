@@ -1464,6 +1464,7 @@ export default {
     deleteWidget: 'Delete widget',
     fullScreen: 'Full screen',
     fullScreenShortcut: 'Alt + Enter / Command + Enter',
+    copyWidgetId: 'Copy widget ID',
   },
   patternsList: {
     noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
