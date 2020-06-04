@@ -9,6 +9,12 @@ import { prepareQuery } from '@/helpers/query';
  */
 export default {
   mixins: [queryWidgetMixin, entitiesUserPreferenceMixin],
+  props: {
+    isEditingMode: {
+      type: Boolean,
+      default: false,
+    },
+  },
   watch: {
     query(value, oldValue) {
       if (!isEqual(value, oldValue) && !isEmpty(value)) {
@@ -22,8 +28,10 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
+    if (!this.isEditingMode) {
+      await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
 
-    this.query = prepareQuery(this.widget, this.userPreference);
+      this.query = prepareQuery(this.widget, this.userPreference);
+    }
   },
 };

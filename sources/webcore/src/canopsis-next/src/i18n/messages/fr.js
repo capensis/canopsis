@@ -1381,6 +1381,7 @@ export default {
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+    copyWidgetId: 'Copier l\'ID du widget',
   },
   patternsList: {
     noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',

@@ -19,7 +19,6 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  viewRow: 'viewRow',
   viewTab: 'viewTab',
   widget: 'widget',
   stat: 'stat',
@@ -1334,3 +1333,20 @@ export const WIDGET_GRID_SIZES_KEYS = {
   tablet: 'tablet',
   desktop: 'desktop',
 };
+
+export const WIDGET_GRID_SIZES_STYLES = {
+  [WIDGET_GRID_SIZES_KEYS.mobile]: {
+    value: WIDGET_GRID_SIZES_KEYS.mobile,
+    icon: 'stay_primary_portrait',
+  },
+  [WIDGET_GRID_SIZES_KEYS.tablet]: {
+    value: WIDGET_GRID_SIZES_KEYS.tablet,
+    icon: 'tablet_mac',
+  },
+  [WIDGET_GRID_SIZES_KEYS.desktop]: {
+    value: WIDGET_GRID_SIZES_KEYS.desktop,
+    icon: 'desktop_windows',
+  },
+};
+
+export const WIDGET_GRID_ROW_HEIGHT = 20;

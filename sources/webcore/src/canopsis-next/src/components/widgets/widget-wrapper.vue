@@ -1,25 +1,11 @@
 <template lang="pug">
-  v-card
-    template(v-show="widget.title || isEditingMode")
-      v-card-title.lighten-1.pa-1
+  div
+    template(v-if="widget.title || isEditingMode")
+      v-card-title.widget-title.white.pa-2
         v-layout(justify-space-between, align-center)
           v-flex
             h4.ml-2.font-weight-regular(:data-test="`widgetTitle-${widget._id}`") {{ widget.title }}
           v-spacer
-          v-layout(justify-end, v-if="isEditingMode")
-            v-menu(:data-test="`widgetEditingMenu-${widget._id}`", offset-y)
-              v-btn.ma-0(icon, small, slot="activator")
-                v-icon(small) more_horiz
-              v-list(dense)
-                v-list-tile(
-                  @click="showSettings({ tabId: tab._id, widget })",
-                  :data-test="`editWidgetButton-${widget._id}`"
-                )
-                  div {{ $t('common.edit') }}
-                v-list-tile(@click="showSelectViewTabModal", :data-test="`copyWidgetButton-${widget._id}`")
-                  div {{ $t('common.duplicate') }}
-                v-list-tile(@click="showDeleteWidgetModal", :data-test="`deleteWidgetButton-${widget._id}`")
-                  v-list-tile-title.error--text {{ $t('common.delete') }}
       v-divider
     v-card-text.pa-0
       component(
@@ -28,18 +14,12 @@
         :tabId="tab._id",
         :isEditingMode="isEditingMode"
       )
-    copy-widget-id(v-show="isEditingMode", :widgetId="widget._id")
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { WIDGET_TYPES, WIDGET_TYPES_RULES, MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
-
-import sideBarMixin from '@/mixins/side-bar/side-bar';
-
-import { generateWidgetByType } from '@/helpers/entities';
-import { removeFrom } from '@/helpers/immutable';
+import { WIDGET_TYPES, WIDGET_TYPES_RULES } from '@/constants';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
@@ -53,13 +33,11 @@ import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue'
 import TextWidget from '@/components/other/text/text.vue';
 import CounterWidget from '@/components/other/counter/counter.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
-import CopyWidgetId from '@/components/side-bars/settings/widgets/fields/common/copy-widget-id.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   components: {
-    CopyWidgetId,
     AlarmsListWidget,
     EntitiesListWidget,
     WeatherWidget,
@@ -73,7 +51,6 @@ export default {
     CounterWidget,
     AlertOverlay,
   },
-  mixins: [sideBarMixin],
   props: {
     widget: {
       type: Object,
@@ -133,80 +110,16 @@ export default {
       };
     },
   },
-  methods: {
-    deleteWidgetFromTab(widgetId) {
-      const widgetIndex = this.tab.widgets.findIndex(widget => widget._id === widgetId);
-
-      return removeFrom(this.tab, 'widgets', widgetIndex);
-    },
-
-    /**
-     * Redirect to selected view and tab, if it's different then the view/tab we're actually on
-     */
-    async redirectToSelectedViewAndTab({ tabId, viewId }) {
-      await new Promise((resolve, reject) => {
-        if (this.tab._id === tabId) {
-          resolve();
-        } else {
-          this.$router.push({
-            name: 'view',
-            params: { id: viewId },
-            query: { tabId },
-          }, resolve, reject);
-        }
-      });
-    },
-
-    /**
-     * Copy a widget's parameters, and open corresponding settings panel
-     */
-    cloneWidget({ viewId, tabId }) {
-      const { _id: newWidgetId } = generateWidgetByType(this.widget.type);
-
-      // Copy widget parameters,
-      const newWidget = { ...this.widget, _id: newWidgetId };
-
-      this.redirectToSelectedViewAndTab({ tabId, viewId });
-
-      this.showSettings({ viewId, tabId, widget: newWidget });
-    },
-
-    showSettings({
-      viewId,
-      widget,
-      tabId,
-    }) {
-      this.showSideBar({
-        name: SIDE_BARS_BY_WIDGET_TYPES[widget.type],
-        config: {
-          viewId,
-          tabId,
-          widget,
-        },
-      });
-    },
-
-    showSelectViewTabModal() {
-      this.$modals.show({
-        name: MODALS.selectViewTab,
-        config: {
-          action: ({ tabId, viewId }) => this.cloneWidget({ tabId, viewId }),
-        },
-      });
-    },
-
-    showDeleteWidgetModal() {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: () => {
-            const updatedTab = this.deleteWidgetFromTab(this.widget._id);
-
-            return this.updateTabMethod(updatedTab);
-          },
-        },
-      });
-    },
-  },
 };
 </script>
+
+<style lang="scss" scoped>
+  .widget-title {
+    height: 37px;
+  }
+
+  .copy-widget-id {
+    z-index: 2;
+    position: relative;
+  }
+</style>

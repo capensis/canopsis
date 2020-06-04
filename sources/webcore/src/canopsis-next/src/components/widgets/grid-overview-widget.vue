@@ -1,19 +1,14 @@
 <template lang="pug">
   div.gird-overview
     grid-overview-item(
-      v-for="widget in tab.widgets",
+      v-for="widget in widgets",
       :widget="widget",
       :key="widget._id"
     )
-      widget-wrapper(
-        :widget="widget",
-        :tab="tab",
-        :updateTabMethod="updateTabMethod"
-      )
+      slot(:widget="widget")
 </template>
 
 <script>
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import GridOverviewItem from '@/components/widgets/partials/grid-overview-item.vue';
 
 import sideBarMixin from '@/mixins/side-bar/side-bar';
@@ -21,7 +16,6 @@ import sideBarMixin from '@/mixins/side-bar/side-bar';
 export default {
   components: {
     GridOverviewItem,
-    WidgetWrapper,
   },
   mixins: [
     sideBarMixin,
@@ -31,9 +25,22 @@ export default {
       type: Object,
       required: true,
     },
-    updateTabMethod: {
-      type: Function,
-      required: true,
+  },
+  computed: {
+    widgets() {
+      return this.tab.widgets;
+    },
+  },
+  methods: {
+    gridParameters(widget) {
+      const { gridParameters } = widget;
+
+      return {
+        xl: gridParameters.desktop,
+        l: gridParameters.desktop,
+        t: gridParameters.tablet,
+        m: gridParameters.mobile,
+      }[this.$mq];
     },
   },
 };
@@ -41,9 +48,9 @@ export default {
 
 <style lang="scss" scoped>
   .gird-overview {
-    padding: 10px;
+    padding: 20px;
     display: grid;
-    grid-gap: 10px;
-    grid-template-columns: repeat(12, [col-start] 1fr);
+    column-gap: 20px;
+    grid-template-columns: repeat(12, 1fr);
   }
 </style>
