@@ -91,10 +91,9 @@ export default {
           },
         };
 
-        // const viewData = setField(this.activeView, ['tabs', tabIndex, 'widgets'], []);
-        const viewData = widgetIndex === -1 ?
-          addTo(this.activeView, ['tabs', tabIndex, 'widgets'], newWidget) :
-          setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], newWidget);
+        const viewData = widgetIndex === -1
+          ? addTo(this.activeView, ['tabs', tabIndex, 'widgets'], newWidget)
+          : setField(this.activeView, ['tabs', tabIndex, 'widgets', widgetIndex], newWidget);
 
         await Promise.all([
           this.createUserPreference({ userPreference }),

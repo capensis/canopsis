@@ -267,12 +267,12 @@ export default {
           action: (title) => {
             const oldTabs = this.view.tabs || [];
             const newTab = { ...generateViewTab(), title };
-            const view = {
+            const newView = {
               ...this.view,
               tabs: [...oldTabs, newTab],
             };
 
-            return this.updateView({ id: this.id, data: view });
+            return this.updateView({ id: this.id, data: newView });
           },
         },
       });
@@ -284,12 +284,13 @@ export default {
 
     async toggleViewEditingMode() {
       if (this.isEditingMode) {
-        const view = {
+        const newView = {
           ...this.view,
-          tabs: this.view.tabs.map(tab => (this.updatedTabsMap[tab._id] ? this.updatedTabsMap[tab._id] : tab)),
+
+          tabs: this.view.tabs.map(tab => this.updatedTabsMap[tab._id] || tab),
         };
 
-        await this.updateView({ id: this.id, data: view });
+        await this.updateView({ id: this.id, data: newView });
       }
 
       this.isEditingMode = !this.isEditingMode;

@@ -1,4 +1,5 @@
-import { COLORS } from '@/config';
+import { COLORS, MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+
 import featuresService from '@/services/features';
 
 export const CRUD_ACTIONS = {
@@ -1334,6 +1335,19 @@ export const WIDGET_GRID_SIZES_KEYS = {
   desktop: 'desktop',
 };
 
+export const MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP = {
+  m: WIDGET_GRID_SIZES_KEYS.mobile,
+  t: WIDGET_GRID_SIZES_KEYS.tablet,
+  l: WIDGET_GRID_SIZES_KEYS.desktop,
+  xl: WIDGET_GRID_SIZES_KEYS.desktop,
+};
+
+export const WIDGET_LAYOUT_MAX_WIDTHS = {
+  [WIDGET_GRID_SIZES_KEYS.desktop]: '100%',
+  [WIDGET_GRID_SIZES_KEYS.tablet]: `${MEDIA_QUERIES_BREAKPOINTS.t}px`,
+  [WIDGET_GRID_SIZES_KEYS.mobile]: `${MEDIA_QUERIES_BREAKPOINTS.m}px`,
+};
+
 export const WIDGET_GRID_SIZES_STYLES = {
   [WIDGET_GRID_SIZES_KEYS.mobile]: {
     value: WIDGET_GRID_SIZES_KEYS.mobile,
@@ -1350,3 +1364,5 @@ export const WIDGET_GRID_SIZES_STYLES = {
 };
 
 export const WIDGET_GRID_ROW_HEIGHT = 20;
+
+export const WIDGET_GRID_COLUMNS_COUNT = 12;

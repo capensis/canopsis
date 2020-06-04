@@ -33,7 +33,6 @@ import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
 import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
-import sideBarMixin from '@/mixins/side-bar/side-bar';
 import queryMixin from '@/mixins/query';
 
 export default {
@@ -43,7 +42,6 @@ export default {
     GridEditWidgets,
   },
   mixins: [
-    sideBarMixin,
     queryMixin,
   ],
   props: {
@@ -60,15 +58,18 @@ export default {
       default: () => () => {},
     },
   },
-  computed: {
-    layoutComponent() {
-      return this.isEditingMode ? 'grid-edit-widgets' : 'grid-overview-widget';
-    },
-  },
   destroyed() {
-    this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({
-      id,
-    }));
+    this.removeWidgetsQueries();
+  },
+  methods: {
+    /**
+     * Remove queries which was created for all widgets
+     */
+    removeWidgetsQueries() {
+      this.tab.widgets.forEach(({ _id: id }) => this.removeQuery({
+        id,
+      }));
+    },
   },
 };
 </script>

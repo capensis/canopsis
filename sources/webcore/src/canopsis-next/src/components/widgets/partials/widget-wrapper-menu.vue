@@ -1,6 +1,6 @@
 <template lang="pug">
   v-menu(offset-y)
-    v-btn.ma-0(icon, small, slot="activator")
+    v-btn.ma-0(slot="activator", icon, small)
       v-icon(small) more_horiz
     v-list(dense)
       v-list-tile(@click="showSettings({ tabId: tab._id, widget })")
@@ -87,7 +87,7 @@ export default {
     /**
      * Show widget settings side bar
      *
-     * @param {string} viewId
+     * @param {string} [viewId]
      * @param {string} tabId
      * @param {Object} widget
      */

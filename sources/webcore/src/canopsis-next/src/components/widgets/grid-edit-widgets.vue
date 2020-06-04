@@ -6,7 +6,7 @@
       ref="gridLayout",
       :layout.sync="layouts[size]",
       :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
-      :col-num="12",
+      :col-num="$constants.WIDGET_GRID_COLUMNS_COUNT",
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
       :style="layoutStyles",
       is-draggable,
@@ -15,42 +15,47 @@
       @layout-updated="updatedLayout"
     )
       grid-item(
-        v-for="(item, index) in layouts[size]",
-        :key="item.i",
-        :x="item.x",
-        :y="item.y",
-        :w="item.w",
-        :h="item.h",
-        :i="item.i",
-        :fixedHeight="item.fixedHeight",
+        v-for="(layoutItem, index) in layouts[size]",
+        :key="layoutItem.i",
+        :x="layoutItem.x",
+        :y="layoutItem.y",
+        :w="layoutItem.w",
+        :h="layoutItem.h",
+        :i="layoutItem.i",
+        :fixedHeight="layoutItem.fixedHeight",
         dragAllowFrom=".drag-handler"
       )
         div.wrapper
           div.drag-handler
             v-layout.controls
               v-btn-toggle.mr-2(
-                :value="item.fixedHeight",
-                @change="changeFixedHeight($event, index)"
+                :value="layoutItem.fixedHeight",
+                @change="changeFixedHeight(index, $event)"
               )
                 v-btn(small, :value="true")
                   v-icon lock
               widget-wrapper-menu(
-                :widget="item.widget",
+                :widget="layoutItem.widget",
                 :tab="tab",
                 :updateTabMethod="updateTabMethod"
               )
-          slot(:widget="item.widget")
+          slot(:widget="layoutItem.widget")
 </template>
 
 <script>
 import { get, omit } from 'lodash';
 
-import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
-import WindowSizeField from '@/components/forms/fields/window-size.vue';
+import {
+  WIDGET_GRID_SIZES_KEYS,
+  WIDGET_LAYOUT_MAX_WIDTHS,
+  MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
+} from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
-import { WIDGET_GRID_SIZES_KEYS } from '@/constants';
-import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+import { getWidgetsLayoutBySize } from '@/helpers/grid-layout';
+
+import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
+import WindowSizeField from '@/components/forms/fields/window-size.vue';
 
 export default {
   components: {
@@ -68,7 +73,7 @@ export default {
     },
   },
   data() {
-    const layouts = this.getLayouts(this.tab.widgets);
+    const layouts = this.getLayoutsForAllSizes(this.tab.widgets);
 
     return {
       layouts,
@@ -78,36 +83,57 @@ export default {
   computed: {
     layoutStyles() {
       return {
-        maxWidth: this.layoutMaxWidth,
+        maxWidth: WIDGET_LAYOUT_MAX_WIDTHS[this.size],
       };
-    },
-
-    layoutMaxWidth() {
-      return {
-        [WIDGET_GRID_SIZES_KEYS.desktop]: '100%',
-        [WIDGET_GRID_SIZES_KEYS.tablet]: `${MEDIA_QUERIES_BREAKPOINTS.t}px`,
-        [WIDGET_GRID_SIZES_KEYS.mobile]: `${MEDIA_QUERIES_BREAKPOINTS.m}px`,
-      }[this.size];
     },
   },
   watch: {
-    'tab.widgets': function updateLayouts(widgets) {
-      this.layouts = this.getLayouts(widgets, true);
+    'tab.widgets': function tabWidgets(widgets) {
+      this.layouts = this.getLayoutsForAllSizes(widgets);
     },
 
-    $mq() {
-      this.size = this.getGridSizeByMediaQuery();
+    $mq(mq) {
+      this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq];
     },
   },
   methods: {
+    /**
+     * Change fixed height for special layout item
+     *
+     * @param {boolean} value
+     * @param {number} index
+     */
+    changeFixedHeight(index, value = false) {
+      this.$set(this.layouts[this.size][index], 'fixedHeight', value);
+    },
+
+    /**
+     * Get layouts for all sizes
+     *
+     * @param {Array} widgets
+     * @return {Array}
+     */
+    getLayoutsForAllSizes(widgets) {
+      return Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+        const oldLayout = get(this, ['layout', size], []);
+
+        acc[size] = getWidgetsLayoutBySize(widgets, oldLayout, size);
+
+        return acc;
+      }, {});
+    },
+
+    /**
+     * Emit 'update:tab' event when layout will be updated
+     */
     updatedLayout() {
       const fields = this.tab.widgets.reduce((acc, { gridParameters }, index) => {
         Object.entries(gridParameters).forEach(([size, gridSettings]) => {
-          const params = this.layouts[size][index];
+          const layoutItem = this.layouts[size][index];
 
           acc[`widgets.${index}.gridParameters.${size}`] = {
             ...gridSettings,
-            ...omit(params, ['i', 'widget', 'moved']),
+            ...omit(layoutItem, ['i', 'widget', 'moved']),
           };
         });
 
@@ -118,75 +144,38 @@ export default {
 
       this.$emit('update:tab', newTab);
     },
-
-    changeFixedHeight(value, index) {
-      this.$set(this.layouts[this.size][index], 'fixedHeight', value || false);
-    },
-
-    getLayout(widgets, size = WIDGET_GRID_SIZES_KEYS.desktop, updating = false) {
-      return widgets.map((widget) => {
-        const oldLayout = updating &&
-          get(this, ['layouts', size], []).find(({ i }) => i === widget._id);
-
-        const layout = oldLayout ?
-          omit(oldLayout, ['i', 'widget']) :
-          { ...widget.gridParameters[size] };
-
-        layout.i = widget._id;
-        layout.widget = widget;
-
-        return layout;
-      });
-    },
-
-    getLayouts(widgets, updating = false) {
-      return Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
-        acc[size] = this.getLayout(widgets, size, updating);
-
-        return acc;
-      }, {});
-    },
-
-    getGridSizeByMediaQuery() {
-      return {
-        xl: WIDGET_GRID_SIZES_KEYS.desktop,
-        l: WIDGET_GRID_SIZES_KEYS.desktop,
-        t: WIDGET_GRID_SIZES_KEYS.tablet,
-        m: WIDGET_GRID_SIZES_KEYS.mobile,
-      }[this.$mq];
-    },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .grid-layout-wrapper {
     padding-bottom: 500px;
 
-    .vue-grid-layout {
+    & /deep/ .vue-grid-layout {
       margin: auto;
       background-color: rgba(60, 60, 60, .05);
     }
-  }
 
-  .vue-grid-item {
-    overflow: hidden;
-    transition: none !important;
+    & /deep/ .vue-grid-item {
+      overflow: hidden;
+      transition: none !important;
 
-    &:after {
-      content: '';
-      background-color: #888;
-      position: absolute;
-      left: 0;
-      top: 36px;
-      width: 100%;
-      height: 100%;
-      opacity: .4;
-      z-index: 1;
-    }
+      &:after {
+        content: '';
+        background-color: #888;
+        position: absolute;
+        left: 0;
+        top: 36px;
+        width: 100%;
+        height: 100%;
+        opacity: .4;
+        z-index: 1;
+      }
 
-    & > .vue-resizable-handle {
-      z-index: 2;
+      & > .vue-resizable-handle {
+        z-index: 2;
+      }
     }
   }
 

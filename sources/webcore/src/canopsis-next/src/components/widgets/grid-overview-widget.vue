@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.gird-overview
+  div.grid-overview
     grid-overview-item(
       v-for="widget in widgets",
       :widget="widget",
@@ -31,23 +31,11 @@ export default {
       return this.tab.widgets;
     },
   },
-  methods: {
-    gridParameters(widget) {
-      const { gridParameters } = widget;
-
-      return {
-        xl: gridParameters.desktop,
-        l: gridParameters.desktop,
-        t: gridParameters.tablet,
-        m: gridParameters.mobile,
-      }[this.$mq];
-    },
-  },
 };
 </script>
 
 <style lang="scss" scoped>
-  .gird-overview {
+  .grid-overview {
     padding: 20px;
     display: grid;
     column-gap: 20px;
