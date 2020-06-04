@@ -16,7 +16,8 @@
       v-if="isEditingMode",
       :tab="tab",
       :isEditingMode="isEditingMode",
-      :updateTabMethod="updateTabMethod"
+      :updateTabMethod="updateTabMethod",
+      @update:tab="$emit('update:tab', $event)"
     )
       widget-wrapper(
         slot-scope="props",

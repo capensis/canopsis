@@ -6,7 +6,8 @@
         :view="view",
         :isEditingMode="isEditingMode",
         :hasUpdateAccess="hasUpdateAccess",
-        :updateViewMethod="data => updateView({ id, data })"
+        :updateViewMethod="data => updateView({ id, data })",
+        @update:tab="updateTab"
       )
     .fab
       v-layout(data-test="controlViewLayout", row)
@@ -144,6 +145,7 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
+      updatedTabsMap: {},
     };
   },
   computed: {
@@ -276,7 +278,20 @@ export default {
       });
     },
 
-    toggleViewEditingMode() {
+    updateTab(tab) {
+      this.updatedTabsMap[tab._id] = tab;
+    },
+
+    async toggleViewEditingMode() {
+      if (this.isEditingMode) {
+        const view = {
+          ...this.view,
+          tabs: this.view.tabs.map(tab => (this.updatedTabsMap[tab._id] ? this.updatedTabsMap[tab._id] : tab)),
+        };
+
+        await this.updateView({ id: this.id, data: view });
+      }
+
       this.isEditingMode = !this.isEditingMode;
     },
   },

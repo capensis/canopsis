@@ -11,7 +11,8 @@
       :style="layoutStyles",
       is-draggable,
       is-resizable,
-      vertical-compact
+      vertical-compact,
+      @layout-updated="updatedLayout"
     )
       grid-item(
         v-for="(item, index) in layouts[size]",
@@ -42,7 +43,7 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { get, omit } from 'lodash';
 
 import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
 import WindowSizeField from '@/components/forms/fields/window-size.vue';
@@ -67,7 +68,7 @@ export default {
     },
   },
   data() {
-    const layouts = this.getLayouts();
+    const layouts = this.getLayouts(this.tab.widgets);
 
     return {
       layouts,
@@ -90,18 +91,16 @@ export default {
     },
   },
   watch: {
-    'tab.widgets': function setLayout() {
-      this.layouts = this.getLayouts();
+    'tab.widgets': function updateLayouts(widgets) {
+      this.layouts = this.getLayouts(widgets, true);
     },
+
     $mq() {
       this.size = this.getGridSizeByMediaQuery();
     },
   },
-  beforeDestroy() {
-    this.saveTabWidgets();
-  },
   methods: {
-    saveTabWidgets() {
+    updatedLayout() {
       const fields = this.tab.widgets.reduce((acc, { gridParameters }, index) => {
         Object.entries(gridParameters).forEach(([size, gridSettings]) => {
           const params = this.layouts[size][index];
@@ -117,25 +116,32 @@ export default {
 
       const newTab = setSeveralFields(this.tab, fields);
 
-      this.updateTabMethod(newTab);
+      this.$emit('update:tab', newTab);
     },
 
     changeFixedHeight(value, index) {
       this.$set(this.layouts[this.size][index], 'fixedHeight', value || false);
     },
 
-    getLayout(size = WIDGET_GRID_SIZES_KEYS.desktop) {
-      return this.tab.widgets.map(widget => ({
-        ...widget.gridParameters[size],
+    getLayout(widgets, size = WIDGET_GRID_SIZES_KEYS.desktop, updating = false) {
+      return widgets.map((widget) => {
+        const oldLayout = updating &&
+          get(this, ['layouts', size], []).find(({ i }) => i === widget._id);
 
-        i: widget._id,
-        widget,
-      }));
+        const layout = oldLayout ?
+          omit(oldLayout, ['i', 'widget']) :
+          { ...widget.gridParameters[size] };
+
+        layout.i = widget._id;
+        layout.widget = widget;
+
+        return layout;
+      });
     },
 
-    getLayouts() {
+    getLayouts(widgets, updating = false) {
       return Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
-        acc[size] = this.getLayout(size);
+        acc[size] = this.getLayout(widgets, size, updating);
 
         return acc;
       }, {});
