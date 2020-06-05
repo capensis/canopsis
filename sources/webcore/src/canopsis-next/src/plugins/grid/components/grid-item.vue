@@ -20,7 +20,7 @@ export default {
       }
     },
   },
-  created() {
+  beforeCreate() {
     /**
      * Method which wrap autoSizeHeight method into setTimeout and debounce
      * We are using debounce here for pauses between calls
