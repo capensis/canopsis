@@ -21,6 +21,18 @@ export default {
     },
   },
   created() {
+    /**
+     * Method which wrap autoSizeHeight method into setTimeout and debounce
+     * We are using debounce here for pauses between calls
+     * And setTimeout instead of $nextTick for correct call after rerender
+     * We are declared that not in the methods because we need one method for every instance, not for all
+     */
+    this.callAutoSizeHeight = debounce(() => {
+      setTimeout(() => {
+        this.autoSizeHeight();
+      }, 0);
+    }, 100);
+
     this.$_mutationObserver = new MutationObserver(this.callAutoSizeHeight);
   },
   mounted() {
@@ -32,17 +44,6 @@ export default {
     this.unsubscribeFromAllChangesForAutoSizeHeight();
   },
   methods: {
-    /**
-     * Method which wrap autoSizeHeight method into setTimeout and debounce
-     * We are using debounce here for pauses between calls
-     * And setTimeout instead of $nextTick for correct call after rerender
-     */
-    callAutoSizeHeight: debounce(function callAutoSizeHeight() {
-      setTimeout(() => {
-        this.autoSizeHeight();
-      }, 0);
-    }, 100),
-
     /**
      * Get defaultSlot element
      *
