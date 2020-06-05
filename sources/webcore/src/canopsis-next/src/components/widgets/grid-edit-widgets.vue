@@ -32,13 +32,13 @@
                 span {{ $t('view.autoHeightButton') }}
                 v-btn.ma-0.mr-1(
                   slot="activator",
-                  :color="layoutItem.autoHeight ? '#bbb' : 'transparent'",
+                  :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
                   icon,
                   small,
                   @click="toggleAutoHeight(index)"
                 )
                   v-icon(
-                    :color="layoutItem.autoHeight ? 'black' : '#888'",
+                    :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
                     small
                   ) lock
               widget-wrapper-menu(
@@ -191,8 +191,8 @@ export default {
 
     .controls {
       position: absolute;
-      right: 3px;
-      top: 3px;
+      right: 4px;
+      top: 4px;
       z-index: 2;
     }
 
