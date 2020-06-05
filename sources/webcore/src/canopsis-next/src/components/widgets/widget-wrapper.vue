@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(:style="widgetWrapperStyles")
     template(v-if="widget.title || isEditingMode")
       v-card-title.widget-title.white.pa-2
         v-layout(justify-space-between, align-center)
@@ -19,7 +19,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { WIDGET_TYPES, WIDGET_TYPES_RULES } from '@/constants';
+import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 import EntitiesListWidget from '@/components/other/context/entities-list.vue';
@@ -71,6 +71,15 @@ export default {
   },
   computed: {
     ...mapGetters(['edition']),
+
+    /**
+     * Height is multiplying on 2 for loader correct displaying
+     *
+     * @returns {{minHeight: string}}
+     */
+    widgetWrapperStyles() {
+      return { minHeight: `${WIDGET_GRID_ROW_HEIGHT * 2}px` };
+    },
 
     widgetsComponentsMap() {
       return (widgetType) => {

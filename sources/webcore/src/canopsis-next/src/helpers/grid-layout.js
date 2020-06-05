@@ -30,16 +30,20 @@ export function getWidgetsLayoutBySize(widgets, oldLayout = [], size = WIDGET_GR
  */
 export function getNewWidgetGridParametersY(widgets) {
   return widgets.reduce((acc, { gridParameters }) => {
-    if (gridParameters.mobile.y >= acc.mobile) {
-      acc.mobile = gridParameters.mobile.y + gridParameters.mobile.h + 1;
+    const newMobileYPosition = gridParameters.mobile.y + gridParameters.mobile.h;
+    const newTabletYPosition = gridParameters.tablet.y + gridParameters.tablet.h;
+    const newDesktopYPosition = gridParameters.desktop.y + gridParameters.desktop.h;
+
+    if (newMobileYPosition > acc.mobile) {
+      acc.mobile = newMobileYPosition;
     }
 
-    if (gridParameters.tablet.y >= acc.tablet) {
-      acc.tablet = gridParameters.tablet.y + gridParameters.mobile.h + 1;
+    if (newTabletYPosition > acc.tablet) {
+      acc.tablet = newTabletYPosition;
     }
 
-    if (gridParameters.desktop.y >= acc.desktop) {
-      acc.desktop = gridParameters.desktop.y + gridParameters.mobile.h + 1;
+    if (newDesktopYPosition > acc.desktop) {
+      acc.desktop = newDesktopYPosition;
     }
 
     return acc;

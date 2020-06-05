@@ -2,9 +2,7 @@
   div.view(:id="`view-tab-${tab._id}`")
     grid-overview-widget(
       v-show="!isEditingMode",
-      :tab="tab",
-      :isEditingMode="isEditingMode",
-      :updateTabMethod="updateTabMethod"
+      :tab="tab"
     )
       widget-wrapper(
         slot-scope="props",
@@ -15,7 +13,6 @@
     grid-edit-widgets(
       v-if="isEditingMode",
       :tab="tab",
-      :isEditingMode="isEditingMode",
       :updateTabMethod="updateTabMethod",
       @update:tab="$emit('update:tab', $event)"
     )

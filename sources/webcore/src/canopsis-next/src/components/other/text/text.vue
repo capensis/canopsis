@@ -48,7 +48,7 @@ export default {
   },
   data() {
     return {
-      pending: true,
+      pending: false,
       stats: {},
     };
   },

@@ -115,7 +115,7 @@ export default {
      */
     getLayoutsForAllSizes(widgets) {
       return Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
-        const oldLayout = get(this, ['layout', size], []);
+        const oldLayout = get(this, ['layouts', size], []);
 
         acc[size] = getWidgetsLayoutBySize(widgets, oldLayout, size);
 
