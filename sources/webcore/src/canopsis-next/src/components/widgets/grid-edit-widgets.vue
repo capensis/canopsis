@@ -22,15 +22,15 @@
         :w="layoutItem.w",
         :h="layoutItem.h",
         :i="layoutItem.i",
-        :fixedHeight="layoutItem.fixedHeight",
+        :autoHeight="layoutItem.autoHeight",
         dragAllowFrom=".drag-handler"
       )
         div.wrapper
           div.drag-handler
             v-layout.controls
               v-btn-toggle.mr-2(
-                :value="layoutItem.fixedHeight",
-                @change="changeFixedHeight(index, $event)"
+                :value="layoutItem.autoHeight",
+                @change="changeAutoHeight(index, $event)"
               )
                 v-btn(small, :value="true")
                   v-icon lock
@@ -98,13 +98,13 @@ export default {
   },
   methods: {
     /**
-     * Change fixed height for special layout item
+     * Change auto height flag for special layout item
      *
      * @param {boolean} value
      * @param {number} index
      */
-    changeFixedHeight(index, value = false) {
-      this.$set(this.layouts[this.size][index], 'fixedHeight', value);
+    changeAutoHeight(index, value = false) {
+      this.$set(this.layouts[this.size][index], 'autoHeight', value);
     },
 
     /**
@@ -188,10 +188,6 @@ export default {
       right: 3px;
       top: 3px;
       z-index: 2;
-    }
-
-    &.fixed-height {
-      height: 100%;
     }
 
     .drag-handler {

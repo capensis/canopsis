@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.grid-overview
+  div.grid-overview(:style="overviewLayoutStyles")
     grid-overview-item(
       v-for="widget in tab.widgets",
       :widget="widget",
@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { WIDGET_GRID_ROW_HEIGHT, WIDGET_GRID_COLUMNS_COUNT } from '@/constants';
+
 import GridOverviewItem from '@/components/widgets/partials/grid-overview-item.vue';
 
 export default {
@@ -21,14 +23,22 @@ export default {
       required: true,
     },
   },
+  computed: {
+    overviewLayoutStyles() {
+      const rowHeightInPixels = `${WIDGET_GRID_ROW_HEIGHT}px`;
+
+      return {
+        padding: rowHeightInPixels,
+        columnGap: rowHeightInPixels,
+        gridTemplateColumns: `repeat(${WIDGET_GRID_COLUMNS_COUNT}, 1fr)`,
+      };
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
   .grid-overview {
-    padding: 20px;
     display: grid;
-    column-gap: 20px;
-    grid-template-columns: repeat(12, 1fr);
   }
 </style>

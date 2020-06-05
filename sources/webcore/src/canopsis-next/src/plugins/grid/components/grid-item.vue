@@ -6,39 +6,50 @@ import { createCoreData, getControlPosition } from 'vue-grid-layout/src/helpers/
 export default {
   extends: GridItem,
   props: {
-    fixedHeight: {
+    autoHeight: {
       type: Boolean,
       default: false,
     },
   },
   watch: {
-    fixedHeight(value) {
-      if (!value) {
-        this.handleWindowResize();
-        this.eventBus.$on('windowResizeEvent', this.handleWindowResize);
-        this.observeDefaultSlot();
+    autoHeight(value) {
+      if (value) {
+        this.subscribeToAllChangesForAutoSizeHeight();
       } else {
-        this.eventBus.$off('windowResizeEvent', this.handleWindowResize);
-        this.$_mutationObserver.disconnect();
+        this.unsubscribeFromAllChangesForAutoSizeHeight();
       }
     },
   },
   created() {
-    this.$_mutationObserver = new MutationObserver(this.handleWindowResize);
+    this.$_mutationObserver = new MutationObserver(this.callAutoSizeHeight);
   },
   mounted() {
-    if (!this.fixedHeight) {
-      this.handleWindowResize();
-      this.observeDefaultSlot();
+    if (this.autoHeight) {
+      this.subscribeToAllChangesForAutoSizeHeight();
     }
   },
   beforeDestroy() {
-    this.eventBus.$off('windowResizeEvent', this.handleWindowResize);
-    this.$_mutationObserver.disconnect();
+    this.unsubscribeFromAllChangesForAutoSizeHeight();
   },
   methods: {
+    /**
+     * Method which wrap autoSizeHeight method into setTimeout and debounce
+     * We are using debounce here for pauses between calls
+     * And setTimeout instead of $nextTick for correct call after rerender
+     */
+    callAutoSizeHeight: debounce(function callAutoSizeHeight() {
+      setTimeout(() => {
+        this.autoSizeHeight();
+      }, 0);
+    }, 100),
+
+    /**
+     * Get defaultSlot element
+     *
+     * @returns {null|HTMLElement}
+     */
     getDefaultSlotElement() {
-      const defaultSlots = this.$slots.default;
+      const { default: defaultSlots } = this.$slots;
 
       if (!defaultSlots) {
         return null;
@@ -49,28 +60,43 @@ export default {
       return element || null;
     },
 
-    observeDefaultSlot() {
-      const element = this.getDefaultSlotElement();
+    /**
+     * Call callAutoSizeHeight method and subscribe to 'windowResizeEvent' and observe defaultSlot element
+     * For callAutoSizeHeight method calling
+     */
+    subscribeToAllChangesForAutoSizeHeight() {
+      this.callAutoSizeHeight();
+      this.eventBus.$on('windowResizeEvent', this.callAutoSizeHeight);
 
-      if (!element) {
-        return;
-      }
+      /**
+       * We are observe on the mutationObserver after render
+       */
+      this.$nextTick(() => {
+        const element = this.getDefaultSlotElement();
 
-      this.$_mutationObserver.observe(element, {
-        attributes: false,
-        childList: true,
-        subtree: true,
+        if (!element) {
+          return;
+        }
+
+        this.$_mutationObserver.observe(element, {
+          childList: true,
+          subtree: true,
+        });
       });
     },
 
-    handleWindowResize: debounce(function handleWindowResize() {
-      setTimeout(() => {
-        this.autoSizeHeight();
-      }, 0);
-    }, 100),
+    /**
+     * Unsubscribe from 'windowResizeEvent' and disconnect from defaultSlot element observing
+     */
+    unsubscribeFromAllChangesForAutoSizeHeight() {
+      this.eventBus.$off('windowResizeEvent', this.callAutoSizeHeight);
+      this.$_mutationObserver.disconnect();
+    },
 
+    /**
+     * Calculate grid-item height size by defaultSlot element height size
+     */
     autoSizeHeight() {
-      // ok here we want to calculate if a resize is needed
       this.previousW = this.innerW;
       this.previousH = this.innerH;
       const element = this.getDefaultSlotElement();
@@ -103,6 +129,11 @@ export default {
       }
     },
 
+    /**
+     * Handle resize grid-item method
+     *
+     * @param {Event} event
+     */
     handleResize(event) {
       if (this.static) {
         return;
@@ -144,9 +175,9 @@ export default {
             newSize.width = this.resizing.width + coreEvent.deltaX;
           }
 
-          newSize.height = this.fixedHeight
-            ? this.resizing.height + coreEvent.deltaY
-            : newElementSize.height;
+          newSize.height = this.autoHeight
+            ? newElementSize.height
+            : this.resizing.height + coreEvent.deltaY;
 
           this.resizing = newSize;
           break;
@@ -194,14 +225,22 @@ export default {
       if (event.type === 'resizeend' && (this.previousW !== this.innerW || this.previousH !== this.innerH)) {
         this.$emit('resized', this.i, pos.h, pos.w, newSize.height, newSize.width);
 
-        if (!this.fixedHeight) {
-          this.handleWindowResize();
+        if (this.autoHeight) {
+          this.callAutoSizeHeight();
         }
       }
 
       this.eventBus.$emit('resizeEvent', event.type, this.i, this.innerX, this.innerY, pos.h, pos.w);
     },
 
+    /**
+     * Get count above grid-item
+     *
+     * @param {number} currentCardX
+     * @param {number} currentCardY
+     * @param {number} currentCardWidth
+     * @returns {number}
+     */
     countAboveCard(currentCardX, currentCardY, currentCardWidth) {
       const { layout } = this.$parent;
 
@@ -237,6 +276,15 @@ export default {
       return count;
     },
 
+    /**
+     * Calculate grid-item position
+     *
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
+     * @returns {Object}
+     */
     calcPosition(x, y, w, h) {
       const [marginX, marginY] = this.margin;
       const colWidth = this.calcColWidth();
@@ -261,6 +309,13 @@ export default {
       return result;
     },
 
+    /**
+     * Calculate width and height in grid parameters
+     *
+     * @param {number} height
+     * @param {number} width
+     * @returns {{w: number, h: number}}
+     */
     calcWH(height, width) {
       const [marginX] = this.margin;
       const colWidth = this.calcColWidth();
@@ -274,6 +329,13 @@ export default {
       return { w, h };
     },
 
+    /**
+     * Calculate x and y positions in grid parameters
+     *
+     * @param {number} top
+     * @param {number} left
+     * @returns {{x: number, y: number}}
+     */
     calcXY(top, left) {
       const [marginX] = this.margin;
       const colWidth = this.calcColWidth();

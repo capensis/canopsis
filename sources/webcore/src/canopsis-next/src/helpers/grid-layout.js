@@ -22,6 +22,12 @@ export function getWidgetsLayoutBySize(widgets, oldLayout = [], size = WIDGET_GR
   });
 }
 
+/**
+ * Get y positions for every sizes for new widget
+ *
+ * @param {Array} widgets
+ * @returns {{ mobile: number, tablet: number, desktop: number }}
+ */
 export function getNewWidgetGridParametersY(widgets) {
   return widgets.reduce((acc, { gridParameters }) => {
     if (gridParameters.mobile.y >= acc.mobile) {
@@ -42,4 +48,5 @@ export function getNewWidgetGridParametersY(widgets) {
 
 export default {
   getWidgetsLayoutBySize,
+  getNewWidgetGridParametersY,
 };

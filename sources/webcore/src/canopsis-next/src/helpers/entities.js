@@ -23,7 +23,6 @@ import {
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
-  WIDGET_GRID_ROW_HEIGHT,
   WIDGET_GRID_COLUMNS_COUNT,
 } from '@/constants';
 
@@ -46,9 +45,9 @@ export function generateWidgetByType(type) {
       acc[size] = {
         x: 0,
         y: 0,
-        h: WIDGET_GRID_ROW_HEIGHT,
+        h: 0,
         w: WIDGET_GRID_COLUMNS_COUNT,
-        fixedHeight: true,
+        autoHeight: true,
       };
 
       return acc;
