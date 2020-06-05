@@ -72,7 +72,9 @@
             )
               v-icon edit
               v-icon done
-            span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
+            div
+              div {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
+              div.font-italic {{ $t('common.toggleEditViewSubtitle') }}
           v-tooltip(left)
             v-btn(
               slot="activator",
@@ -286,15 +288,19 @@ export default {
       this.updatedTabsByIds[tab._id] = tab;
     },
 
+    updateTabs() {
+      const view = {
+        ...this.view,
+
+        tabs: this.view.tabs.map(tab => this.updatedTabsByIds[tab._id] || tab),
+      };
+
+      return this.updateView({ id: this.id, data: view });
+    },
+
     async toggleViewEditingMode() {
       if (this.isEditingMode) {
-        const view = {
-          ...this.view,
-
-          tabs: this.view.tabs.map(tab => this.updatedTabsByIds[tab._id] || tab),
-        };
-
-        await this.updateView({ id: this.id, data: view });
+        await this.updateTabs();
       }
 
       this.isEditingMode = !this.isEditingMode;

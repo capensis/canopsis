@@ -28,12 +28,19 @@
         div.wrapper
           div.drag-handler
             v-layout.controls
-              v-btn-toggle.mr-2(
-                :value="layoutItem.autoHeight",
-                @change="changeAutoHeight(index, $event)"
-              )
-                v-btn(small, :value="true")
-                  v-icon lock
+              v-tooltip(bottom)
+                span {{ $t('view.autoHeightButton') }}
+                v-btn.ma-0.mr-1(
+                  slot="activator",
+                  :color="layoutItem.autoHeight ? '#bbb' : 'transparent'",
+                  icon,
+                  small,
+                  @click="toggleAutoHeight(index)"
+                )
+                  v-icon(
+                    :color="layoutItem.autoHeight ? 'black' : '#888'",
+                    small
+                  ) lock
               widget-wrapper-menu(
                 :widget="layoutItem.widget",
                 :tab="tab",
@@ -98,13 +105,12 @@ export default {
   },
   methods: {
     /**
-     * Change auto height flag for special layout item
+     * Toggle auto height flag for special layout item
      *
-     * @param {boolean} value
      * @param {number} index
      */
-    changeAutoHeight(index, value = false) {
-      this.$set(this.layouts[this.size][index], 'autoHeight', value);
+    toggleAutoHeight(index) {
+      this.$set(this.layouts[this.size][index], 'autoHeight', !this.layouts[this.size][index].autoHeight);
     },
 
     /**
