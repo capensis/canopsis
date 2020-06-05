@@ -108,7 +108,7 @@ export function viewTabProcessStrategy(entity, parent, key) {
             y: rowIndex,
             w: width,
             h: 0,
-            autoHeight: false,
+            autoHeight: true,
           };
 
           prevEnd[size] += width;
