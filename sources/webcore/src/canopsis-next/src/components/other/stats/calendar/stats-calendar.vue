@@ -47,7 +47,7 @@ import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
-import DsCalendar from './day-span/calendar.vue';
+import DsCalendar from '@/plugins/dayspan/components/calendar.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 

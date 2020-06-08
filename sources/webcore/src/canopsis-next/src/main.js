@@ -10,7 +10,6 @@ import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
-import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
@@ -37,9 +36,7 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
-
-import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
-import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
+import DaySpanVuetify from '@/plugins/dayspan';
 
 import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
@@ -109,9 +106,6 @@ Vue.use(DaySpanVuetify, {
     },
   },
 });
-
-Vue.component('dsCalendarEvent', DsCalendarEvent);
-Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.component('alarm-chips', AlarmChips);
 
