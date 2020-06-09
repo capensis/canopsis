@@ -13,6 +13,7 @@ import {
   exdatesToPbehaviorExdates,
 } from '@/helpers/forms/pbehavior';
 import { convertDurationToIntervalObject } from '@/helpers/date';
+import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
 /**
  * If action's type is "snooze", get snooze parameters
@@ -157,15 +158,17 @@ export function formToAction({
   generalParameters = {},
   ...form
 }) {
-  let data = { ...generalParameters };
-
-  const patternsCondition = value => !value || !value.length;
   const hasValue = v => !v;
 
+  let data = { ...generalParameters };
+
   data = unsetSeveralFieldsWithConditions(data, {
-    'hook.event_patterns': patternsCondition,
-    'hook.alarm_patterns': patternsCondition,
-    'hook.entity_patterns': patternsCondition,
+    ...getConditionsForRemovingEmptyPatterns([
+      'hook.entity_patterns',
+      'hook.alarm_patterns',
+      'hook.event_patterns',
+    ]),
+
     'delay.unit': hasValue,
     'delay.value': hasValue,
   });

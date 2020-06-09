@@ -2,9 +2,11 @@ import { get, omit } from 'lodash';
 
 import { setSeveralFields, unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
+import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
 /**
  * Get webhook form field's values (or customizer function)
+ *
  * @param {Object} webhook
  * @returns {Object}
  */
@@ -32,6 +34,7 @@ export function webhookToForm(webhook) {
 
 /**
  * Tranform webhook declare ticket field to object (editable in the UI)
+ *
  * @returns {Function}
  */
 function getWebhookDeclareTicketField() {
@@ -42,6 +45,7 @@ function getWebhookDeclareTicketField() {
 
 /**
  * Get webhook's auth fields values
+ *
  * @param {Object} form
  * @returns {Object}
  */
@@ -54,6 +58,7 @@ function getWebhookAuthField(form) {
 
 /**
  * Create a webhook object that is valid to the API
+ *
  * @param {Object} form
  * @returns {Object}
  */
@@ -77,34 +82,20 @@ function createWebhookObject(form) {
 }
 
 /**
- * Remove empty "patterns" (alarmpattern, entitypattern and eventpattern) fields from webhook
- * @param {Object} webhook
- * @returns {Object}
- */
-function removeEmptyPatternsFromWebhook(webhook) {
-  const patternsCondition = value => !value || !value.length;
-
-  return unsetSeveralFieldsWithConditions(webhook, {
-    'hook.event_patterns': patternsCondition,
-    'hook.alarm_patterns': patternsCondition,
-    'hook.entity_patterns': patternsCondition,
-  });
-}
-
-/**
  * Transform webhook "form" object to valid webhook to the API
+ *
  * @param {Object} form
  * @returns {Object}
  */
 export function formToWebhook(form) {
   const hasValue = v => !v;
 
-  const webhook = unsetSeveralFieldsWithConditions(createWebhookObject(form), {
+  return unsetSeveralFieldsWithConditions(createWebhookObject(form), {
+    ...getConditionsForRemovingEmptyPatterns(),
+
     'retry.count': hasValue,
     'retry.unit': hasValue,
     'retry.delay': hasValue,
   });
-
-  return removeEmptyPatternsFromWebhook(webhook);
 }
 

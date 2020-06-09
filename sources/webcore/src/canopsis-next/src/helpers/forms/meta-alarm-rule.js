@@ -1,8 +1,12 @@
 import { cloneDeep, omit, pick, isNumber } from 'lodash';
 import moment from 'moment';
 
-import { convertDurationToIntervalObject } from '@/helpers/date';
 import { DEFAULT_TIME_INTERVAL, META_ALARMS_RULE_TYPES, META_ALARMS_THRESHOLD_TYPES } from '@/constants';
+
+import { convertDurationToIntervalObject } from '@/helpers/date';
+import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
+
+import { getConditionsForRemovingEmptyPatterns } from './shared/patterns';
 
 /**
  * Convert meta alarm rule to form
@@ -44,7 +48,7 @@ export function formToMetaAlarmRule(form = {}) {
 
   switch (form.type) {
     case META_ALARMS_RULE_TYPES.attribute:
-      metaAlarmRule.config = pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']);
+      metaAlarmRule.config = unsetSeveralFieldsWithConditions(form.config, getConditionsForRemovingEmptyPatterns());
       break;
     case META_ALARMS_RULE_TYPES.complex:
       metaAlarmRule.config = omit(form.config, [
