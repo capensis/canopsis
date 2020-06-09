@@ -95,7 +95,7 @@
 
       slot(name="menuRight")
 
-    v-content.ds-expand
+    .ds-expand
       v-container.ds-calendar-container(fluid, fill-height)
         ds-gestures(
           @swipeleft="next",
@@ -187,7 +187,16 @@ import { DsCalendarApp } from 'dayspan-vuetify/src/components';
 export default {
   extends: DsCalendarApp,
   methods: {
-    handleResize() {},
+    handleResize(resizeEvent) {
+      const { calendarEvent, placeholder } = resizeEvent;
+
+      calendarEvent.resize(placeholder.time);
+
+      this.eventsRefresh();
+      resizeEvent.clearPlaceholder();
+
+      this.$emit('event-update', calendarEvent.event);
+    },
   },
 };
 </script>

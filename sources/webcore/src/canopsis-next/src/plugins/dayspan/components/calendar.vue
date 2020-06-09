@@ -70,6 +70,7 @@ export default {
     startResize(event, calendarEvent) {
       this.resizing = true;
       this.resizingEvent = event;
+      this.resizingCalendarEvent = calendarEvent;
       this.resizingBelow = true;
       this.placeholder = this.getPlaceholderEventForResize(calendarEvent);
     },
@@ -77,6 +78,7 @@ export default {
     endResize() {
       this.resizing = false;
       this.resizingEvent = null;
+      this.resizingCalendarEvent = null;
       this.resizingBelow = true;
       this.placeholder = null;
     },
@@ -86,6 +88,7 @@ export default {
         mouseEvent,
         placeholder: this.placeholder,
         span: this.placeholder.time,
+        calendarEvent: this.resizingCalendarEvent,
       });
 
       this.$emit('resized', event);
