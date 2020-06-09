@@ -25,11 +25,7 @@
             span.ds-ev-description {{ details.description }}
         span(v-else)
           slot(name="eventTimeEmpty", v-bind="{ calendarEvent, details }")
-      .ds-calendar-event-resize(
-        @mousedown="resizeStartHandler",
-        @mouseup="resizeEndHandler",
-        @click="resizeClickHandler"
-      )
+      .ds-calendar-event-resize(v-show="calendarEvent.ending", @mousedown="resizeStartHandler")
     slot(name="eventPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
@@ -52,23 +48,20 @@ export default {
   },
   methods: {
     resizeStartHandler(event) {
-      this.$emit('mouse-start-resize', event, this.calendarEvent);
-    },
-    resizeEndHandler(event) {
-      this.$emit('mouse-end-resize', event);
-    },
-    resizeClickHandler(event) {
       event.stopPropagation();
+      this.$emit('mouse-start-resize', event, this.calendarEvent);
+      document.addEventListener('mouseup', this.resizeEndHandler);
+    },
+    resizeEndHandler() {
+      document.removeEventListener('mouseup', this.resizeEndHandler);
     },
   },
 };
 </script>
 
 <style lang="scss">
-  .ds-calendar-event {
-    pointer-events: initial !important;
-  }
   .ds-calendar-event-resize {
+    pointer-events: auto;
     content: '';
     width: 100%;
     cursor: n-resize;
