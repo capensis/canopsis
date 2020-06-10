@@ -48,7 +48,10 @@ export function formToMetaAlarmRule(form = {}) {
 
   switch (form.type) {
     case META_ALARMS_RULE_TYPES.attribute:
-      metaAlarmRule.config = unsetSeveralFieldsWithConditions(form.config, getConditionsForRemovingEmptyPatterns());
+      metaAlarmRule.config = unsetSeveralFieldsWithConditions(
+        pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']),
+        getConditionsForRemovingEmptyPatterns(),
+      );
       break;
     case META_ALARMS_RULE_TYPES.complex:
       metaAlarmRule.config = omit(form.config, [

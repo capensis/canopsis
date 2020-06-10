@@ -91,7 +91,11 @@ export function formToWebhook(form) {
   const hasValue = v => !v;
 
   return unsetSeveralFieldsWithConditions(createWebhookObject(form), {
-    ...getConditionsForRemovingEmptyPatterns(),
+    ...getConditionsForRemovingEmptyPatterns([
+      'hook.alarm_patterns',
+      'hook.entity_patterns',
+      'hook.event_patterns',
+    ]),
 
     'retry.count': hasValue,
     'retry.unit': hasValue,

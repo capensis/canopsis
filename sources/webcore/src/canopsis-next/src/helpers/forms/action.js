@@ -160,9 +160,7 @@ export function formToAction({
 }) {
   const hasValue = v => !v;
 
-  let data = { ...generalParameters };
-
-  data = unsetSeveralFieldsWithConditions(data, {
+  const data = unsetSeveralFieldsWithConditions(generalParameters, {
     ...getConditionsForRemovingEmptyPatterns([
       'hook.entity_patterns',
       'hook.alarm_patterns',
