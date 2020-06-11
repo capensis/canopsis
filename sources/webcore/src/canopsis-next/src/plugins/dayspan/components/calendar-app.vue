@@ -1,202 +1,328 @@
 <template lang="pug">
   .ds-expand.ds-calendar-app
-    v-navigation-drawer(
-      v-model="drawer",
-      fixed,
-      app,
-      :clipped="$vuetify.breakpoint.lgAndUp"
-    )
-      slot(name="drawerTop")
-      slot(name="drawerPicker", :calendar="calendar", :picked="rebuild")
-        .pa-3(v-if="calendar")
-          ds-day-picker(:span="calendar.span", @picked="rebuild")
-      slot(name="drawerBottom")
-
-    v-toolbar.ds-app-calendar-toolbar(
-      app,
-      flat,
-      fixed,
-      color="white",
-      :clipped-left="$vuetify.breakpoint.lgAndUp"
-    )
-      v-toolbar-title.ml-0(:style="toolbarStyle")
-        v-toolbar-side-icon(@click.stop="drawer = !drawer")
-        span.hidden-sm-and-down
-        slot(name="title", :calendar="calendar")
+    v-layout.pa-3.white
       slot(
         name="today",
-        :setToday="setToday",
-        :todayDate="todayDate",
-        :calendar="calendar"
+        v-bind="{ setToday, todayDate, calendar }"
       )
-        v-tooltip(bottom)
-          v-btn.ds-skinny-button(
-            slot="activator",
-            depressed,
-            :icon="$vuetify.breakpoint.smAndDown",
-            @click="setToday"
-          )
-            span(v-if="$vuetify.breakpoint.mdAndUp") {{ labels.today }}
-            v-icon(v-else) {{ labels.todayIcon }}
-          span {{ todayDate }}
-
+        v-flex
+          v-tooltip(bottom)
+            v-btn.ds-skinny-button(
+              slot="activator",
+              :icon="$vuetify.breakpoint.smAndDown",
+              depressed,
+              @click="setToday"
+            )
+              span(v-if="$vuetify.breakpoint.mdAndUp") {{ labels.today }}
+              v-icon(v-else) {{ labels.todayIcon }}
+            span {{ todayDate }}
       slot(
-        name="prev",
-        :prev="prev",
-        :prevLabel="prevLabel",
-        :calendar="calendar"
+        name="pagination",
+        v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }"
       )
-        v-tooltip(bottom)
-          v-btn.ds-light-forecolor.ds-skinny-button(
-            slot="activator",
-            icon,
-            depressed,
-            @click="prev"
-          )
-            v-icon keyboard_arrow_left
-          span {{ prevLabel }}
-
-      slot(
-        name="next",
-        :next="next",
-        :nextLabel="nextLabel",
-        :calendar="calendar"
-      )
-        v-tooltip(bottom)
-          v-btn.ds-light-forecolor.ds-skinny-button(slot="activator", icon, depressed, @click="next")
-            v-icon keyboard_arrow_right
-          span {{ nextLabel }}
-
-      slot(
-        name="summary",
-        :summary="summary",
-        :calendar="calendar"
-      )
-        h1.title.ds-light-forecolor {{ summary }}
-      v-spacer
-
+        v-flex.text-sm-center
+          v-tooltip.mx-2(bottom)
+            v-btn.ds-light-forecolor.ds-skinny-button(
+              slot="activator",
+              icon,
+              depressed,
+              @click="prev"
+            )
+              v-icon keyboard_arrow_left
+            span {{ prevLabel }}
+          span.subheading {{ summary }}
+          v-tooltip.mx-2(bottom)
+            v-btn.ds-light-forecolor.ds-skinny-button(
+              slot="activator",
+              icon,
+              depressed,
+              @click="next"
+            )
+              v-icon keyboard_arrow_right
+            span {{ nextLabel }}
       slot(
         name="view",
-        :currentType="currentType",
-        :types="types"
+        v-bind="{ currentType, types }"
       )
-        v-menu
-          v-btn(flat, slot="activator") {{ currentType.label }}
-            v-icon arrow_drop_down
-          v-list
-            v-list-tile(
-              v-for="type in types",
-              :key="type.id",
-              @click="currentType = type"
-            )
-              v-list-tile-content
-                v-list-tile-title {{ type.label }}
-              v-list-tile-action {{ type.shortcut }}
-
+        v-flex.text-sm-right
+          v-menu
+            v-btn(flat, slot="activator") {{ currentType.label }}
+              v-icon arrow_drop_down
+            v-list
+              v-list-tile(
+                v-for="type in types",
+                :key="type.id",
+                @click="currentType = type"
+              )
+                v-list-tile-content
+                  v-list-tile-title {{ type.label }}
       slot(name="menuRight")
-
-    .ds-expand
-      v-container.ds-calendar-container(fluid, fill-height)
+    div.ds-expand
+      v-container.ds-calendar-container(
+        :fluid="fluid",
+        :fill-height="fillHeight"
+      )
         ds-gestures(
           @swipeleft="next",
           @swiperight="prev"
         )
           div.ds-expand(v-if="currentType.schedule")
-            slot(name="calendarAppAgenda", v-bind="{ $scopedSlots, $listeners, calendar, add, edit, viewDay }")
+            slot(name="calendarAppAgenda", v-bind="{ $scopedSlots, $listeners, calendar, viewDay }")
               ds-agenda(
                 v-bind="{ $scopedSlots }",
                 v-on="$listeners",
                 :calendar="calendar",
-                @add="add",
-                @edit="edit",
+                :read-only="readOnly",
                 @view-day="viewDay"
               )
           div.ds-expand(v-else)
             slot(
               name="calendarAppCalendar",
-              v-bind="{ $scopedSlots, $listeners, calendar, add, addAt, edit, viewDay, handleAdd, handleMove }"
+              v-bind="{ $scopedSlots, $listeners, calendar, viewDay }"
             )
               ds-calendar(
                 ref="calendar",
                 v-bind="{ $scopedSlots }",
                 v-on="$listeners",
                 :calendar="calendar",
-                @add="add",
-                @add-at="addAt",
-                @edit="edit",
-                @view-day="viewDay",
-                @added="handleAdd",
-                @moved="handleMove",
-                @resized="handleResize"
+                :read-only="readOnly",
+                @view-day="viewDay"
               )
 
         slot(name="calendarAppEventDialog", v-bind="{ $scopedSlots, $listeners, calendar, eventFinish }")
-          ds-event-dialog(
-            ref="eventDialog",
-            v-bind="{ $scopedSlots }",
-            v-on="$listeners",
-            :calendar="calendar",
-            @saved="eventFinish",
-            @actioned="eventFinish"
-          )
-
         slot(name="calendarAppOptions", v-bind="{ optionsVisible, optionsDialog, options, chooseOption }")
-          v-dialog(
-            ref="optionsDialog",
-            v-model="optionsVisible",
-            v-bind="optionsDialog",
-            :fullscreen="$dayspan.fullscreenDialogs"
-          )
-            v-list
-              template(v-for="option in options")
-                v-list-tile(:key="option.text", @click="chooseOption(option)") {{ option.text }}
-
         slot(name="calendarAppPrompt", v-bind="{ promptVisible, promptDialog, promptQuestion, choosePrompt }")
-          v-dialog(
-            ref="promptDialog",
-            v-model="promptVisible",
-            v-bind="promptDialog"
-          )
-            v-card
-              v-card-title {{ promptQuestion }}
-              v-card-actions
-                v-btn(color="primary", flat, @click="choosePrompt(true)") {{ labels.promptConfirm }}
-                v-spacer
-                v-btn(color="secondary", flat, @click="choosePrompt(false)") {{ labels.promptCancel }}
-
-        slot(name="calendarAppAdd", v-bind="{ allowsAddToday, addToday }")
-          v-fab-transition
-            v-btn(
-              class="ds-add-event-today",
-              color="primary",
-              fixed,
-              bottom,
-              right,
-              fab,
-              v-model="allowsAddToday",
-              @click="addToday"
-            )
-              v-icon add
-
         slot(name="containerInside", v-bind="{ events, calendar }")
 </template>
 
 <script>
-import { DsCalendarApp } from 'dayspan-vuetify/src/components';
+import { Calendar, Sorts } from 'dayspan';
 
 export default {
-  extends: DsCalendarApp,
+  props: {
+    events: {
+      type: Array,
+      default: () => [],
+    },
+    calendar: {
+      type: Calendar,
+      default: () => Calendar.months(),
+    },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+    types: {
+      type: Array,
+      default() {
+        return this.$dsDefaults().types.filter(({ id }) => ['M', 'W', 'D'].includes(id));
+      },
+    },
+    formats: {
+      validate(x) {
+        return this.$dsValidate(x, 'formats');
+      },
+      default() {
+        return this.$dsDefaults().formats;
+      },
+    },
+    labels: {
+      validate(x) {
+        return this.$dsValidate(x, 'labels');
+      },
+      default() {
+        return this.$dsDefaults().labels;
+      },
+    },
+    optionsDialog: {
+      validate(x) {
+        return this.$dsValidate(x, 'optionsDialog');
+      },
+      default() {
+        return this.$dsDefaults().optionsDialog;
+      },
+    },
+    promptDialog: {
+      validate(x) {
+        return this.$dsValidate(x, 'promptDialog');
+      },
+      default() {
+        return this.$dsDefaults().promptDialog;
+      },
+    },
+    fluid: {
+      type: Boolean,
+      default: false,
+    },
+    fillHeight: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      drawer: null,
+      optionsVisible: false,
+      options: [],
+      promptVisible: false,
+      promptQuestion: '',
+      promptCallback: null,
+    };
+  },
+  computed: {
+    currentType: {
+      get() {
+        return this.types.find(type =>
+          type.type === this.calendar.type &&
+            type.size === this.calendar.size) || this.types[0];
+      },
+      set(type) {
+        this.rebuild(undefined, true, type);
+      },
+    },
+
+    summary() {
+      const small = this.$vuetify.breakpoint.xs;
+
+      if (small) {
+        return this.calendar.start.format(this.formats.xs);
+      }
+
+      const large = this.$vuetify.breakpoint.mdAndUp;
+
+      return this.calendar.summary(false, !large, false, !large);
+    },
+
+    todayDate() {
+      return this.$dayspan.today.format(this.formats.today);
+    },
+
+    nextLabel() {
+      return this.labels.next(this.currentType);
+    },
+
+    prevLabel() {
+      return this.labels.prev(this.currentType);
+    },
+  },
+
+  watch: {
+    events: 'applyEvents',
+    calendar: 'applyEvents',
+  },
+
+  mounted() {
+    if (!this.$dayspan.promptOpen) {
+      this.$dayspan.promptOpen = (question, callback) => {
+        this.promptVisible = false;
+        this.promptQuestion = question;
+        this.promptCallback = callback;
+        this.promptVisible = true;
+      };
+    }
+  },
   methods: {
-    handleResize(resizeEvent) {
-      const { calendarEvent, placeholder } = resizeEvent;
+    setState(state) {
+      state.eventSorter = state.listTimes
+        ? Sorts.List([Sorts.FullDay, Sorts.Start])
+        : Sorts.Start;
 
-      calendarEvent.resize(placeholder.time);
+      this.calendar.set(state);
 
-      this.eventsRefresh();
-      resizeEvent.clearPlaceholder();
+      this.triggerChange();
+    },
 
-      this.$emit('event-update', calendarEvent.event);
+    applyEvents() {
+      if (this.events) {
+        this.calendar.removeEvents();
+        this.calendar.addEvents(this.events);
+      }
+    },
+
+    isType(type, aroundDay) {
+      const cal = this.calendar;
+
+      return (cal.type === type.type && cal.size === type.size &&
+          (!aroundDay || cal.span.matchesDay(aroundDay)));
+    },
+
+    rebuild(aroundDay, force, forceType) {
+      const type = forceType || this.currentType || this.types[2];
+
+      if (this.isType(type, aroundDay) && !force) {
+        return;
+      }
+
+      const input = {
+        type: type.type,
+        size: type.size,
+        around: aroundDay,
+        eventsOutside: true,
+        preferToday: false,
+        listTimes: type.listTimes,
+        updateRows: type.updateRows,
+        updateColumns: type.listTimes,
+        fill: !type.listTimes,
+        otherwiseFocus: type.focus,
+        repeatCovers: type.repeat,
+      };
+
+      this.setState(input);
+    },
+
+    next() {
+      this.calendar.unselect().next();
+
+      this.triggerChange();
+    },
+
+    prev() {
+      this.calendar.unselect().prev();
+
+      this.triggerChange();
+    },
+
+    setToday() {
+      this.rebuild(this.$dayspan.today);
+    },
+
+    viewDay(day) {
+      this.rebuild(day, false, this.types[0]);
+    },
+
+    chooseOption(option) {
+      if (option) {
+        option.callback();
+      }
+
+      this.optionsVisible = false;
+    },
+
+    choosePrompt(yes) {
+      this.promptCallback(yes);
+      this.promptVisible = false;
+    },
+
+    eventFinish() {
+      this.triggerChange();
+    },
+
+    triggerChange() {
+      this.$emit('change', {
+        calendar: this.calendar,
+      });
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .ds-week-view {
+    min-height: 80vh;
+  }
+
+  .ds-day {
+    min-height: 10em;
+  }
+</style>

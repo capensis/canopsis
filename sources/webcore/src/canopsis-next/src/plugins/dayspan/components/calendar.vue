@@ -12,6 +12,7 @@
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
         @mouse-down-event="mouseDownEvent",
+        @mouse-start-resize="startResize",
         @clear-placeholder="clearPlaceholder"
       )
 
@@ -27,6 +28,7 @@
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
         @mouse-down-event="mouseDownEvent",
+        @mouse-start-resize="startResize",
         @clear-placeholder="clearPlaceholder"
       )
 
@@ -46,7 +48,6 @@
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
         @mouse-start-resize="startResize",
-        @mouse-end-resize="endResize",
         @clear-placeholder="clearPlaceholder"
       )
 </template>
@@ -54,15 +55,25 @@
 
 <script>
 import { DsCalendar } from 'dayspan-vuetify/src/components';
-import { CalendarEvent, DaySpan, Schedule } from 'dayspan';
+import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 export default {
   extends: DsCalendar,
   methods: {
-    getPlaceholderEventForResize(calendarEvent) {
+    createEventFromCalendar(calendarEvent) {
+      return {
+        data: calendarEvent.data,
+        schedule: calendarEvent.schedule,
+        id: calendarEvent.event.id,
+      };
+    },
+
+    copyCalendarEvent(calendarEvent) {
       const details = { ...calendarEvent.data };
-      const event = this.$dayspan.createEvent(details, calendarEvent.schedule, true);
       const span = new DaySpan(calendarEvent.start, calendarEvent.end);
+      const schedule = Schedule.forSpan(span);
+      const event = this.$dayspan.createEvent(details, schedule);
+      event.id = calendarEvent.event.id;
 
       return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
     },
@@ -70,32 +81,58 @@ export default {
     startResize(event, calendarEvent) {
       this.resizing = true;
       this.resizingEvent = event;
-      this.resizingCalendarEvent = calendarEvent;
       this.resizingBelow = true;
-      this.placeholder = this.getPlaceholderEventForResize(calendarEvent);
+      this.placeholder = this.copyCalendarEvent(calendarEvent);
     },
 
     endResize() {
       this.resizing = false;
       this.resizingEvent = null;
-      this.resizingCalendarEvent = null;
       this.resizingBelow = true;
-      this.placeholder = null;
+    },
+
+    finishAdd(mouseEvent) {
+      const event = this.getEvent('added', {
+        mouseEvent,
+        calendarEvent: this.placeholder,
+        span: this.placeholder.time,
+      });
+
+      this.$emit('added', event);
+
+      this.endAdd();
+    },
+
+    finishMove(mouseEvent) {
+      const target = this.placeholder.time;
+      const source = this.movingEvent.calendarEvent.time;
+      const sameTime = target.start.sameMinute(source.start);
+      const sameDay = target.start.sameDay(source.start);
+      const isDay = mouseEvent.type === 'mouse-up-day';
+
+      if ((isDay && !sameDay) || (!isDay && !sameTime)) {
+        const calendarEvent = this.copyCalendarEvent(this.placeholder);
+
+        const event = this.getEvent('moved', {
+          mouseEvent,
+          calendarEvent: this.createEventFromCalendar(calendarEvent),
+        });
+
+        this.$emit('moved', event);
+      }
+
+      this.endMove();
     },
 
     finishResize(mouseEvent) {
+      const calendarEvent = this.copyCalendarEvent(this.placeholder);
+
       const event = this.getEvent('resized', {
         mouseEvent,
-        placeholder: this.placeholder,
-        span: this.placeholder.time,
-        calendarEvent: this.resizingCalendarEvent,
+        calendarEvent: this.createEventFromCalendar(calendarEvent),
       });
 
       this.$emit('resized', event);
-
-      if (!event.handled) {
-        event.clearPlaceholder();
-      }
 
       this.endResize();
     },
@@ -145,6 +182,54 @@ export default {
       }
     },
 
+    changeAddDayPlaceholder(mouseEvent) {
+      this.addEnd = mouseEvent.day;
+
+      const min = this.addStart.min(this.addEnd);
+      const max = this.addStart.max(this.addEnd);
+
+      this.placeholder.day = min.start();
+      this.placeholder.time.start = min;
+      this.placeholder.time.end = max.end();
+      this.placeholder.event.schedule = Schedule.forDay(
+        this.placeholder.start,
+        this.placeholder.time.days(Op.UP),
+      );
+
+      this.updatePlaceholderRow(this.placeholder);
+    },
+
+    changeMoveDayPlaceholder(mouseEvent) {
+      const { day } = mouseEvent;
+
+      this.placeholder.day = day;
+      this.placeholder.time.start = day;
+      this.placeholder.time.end = day.next(this.placeholder.schedule.durationInDays).end();
+
+      this.updatePlaceholderRow(this.placeholder);
+    },
+
+    changeResizeDayPlaceholder(mouseEvent) {
+      const { day } = mouseEvent;
+      const { start, end } = this.placeholder.time;
+
+      if (this.resizingBelow && start.time > day.time) {
+        this.resizingBelow = false;
+        this.placeholder.time.end = start;
+      }
+
+      if (!this.resizingBelow && end.time < day.time) {
+        this.resizingBelow = true;
+        this.placeholder.time.start = end;
+      }
+
+      if (this.resizingBelow) {
+        this.placeholder.time.end = day;
+      } else {
+        this.placeholder.time.start = day;
+      }
+    },
+
     mouseMove(mouseEvent) {
       if (this.adding && mouseEvent.left) {
         this.changeAddPlaceholder(mouseEvent);
@@ -158,6 +243,22 @@ export default {
 
       if (this.resizing) {
         this.changeResizePlaceholder(mouseEvent);
+      }
+    },
+
+    mouseMoveDay(mouseEvent) {
+      if (this.adding && mouseEvent.left) {
+        this.changeAddDayPlaceholder(mouseEvent);
+      }
+
+      this.mouseMoveCheckReady();
+      if (this.moving) {
+        this.changeMoveDayPlaceholder(mouseEvent);
+      }
+      this.mouseMoveCheckEnd(mouseEvent);
+
+      if (this.resizing) {
+        this.changeResizeDayPlaceholder(mouseEvent);
       }
     },
 

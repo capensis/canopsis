@@ -17,7 +17,7 @@
     "chart.js": "^2.7.2",
     "chartjs-plugin-annotation": "^0.5.7",
     "dayspan": "^0.12.4",
-    "dayspan-vuetify": "^0.2.6",
+    "dayspan-vuetify": "0.4.0",
     "deep-freeze": "^0.0.1",
     "escape-string-regexp": "^2.0.0",
     "file-saver": "^2.0.2",

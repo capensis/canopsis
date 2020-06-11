@@ -1,24 +1,59 @@
 <template lang="pug">
-  ds-calendar-app
-    ds-calendar-event-create-popover(
-      slot="eventCreatePopover",
-      slot-scope="{ placeholder, calendar, close }",
-      :calendar-event="placeholder",
-      :calendar="calendar",
-      :close="close"
-    )
+  ds-calendar-app.example-calendar(
+    :events="events",
+    @moved="moveHandler",
+    @resized="resizeHandler",
+    @added="addHandler"
+  )
 </template>
 
 <script>
+import Vue from 'vue';
 import DsCalendar from '@/plugins/dayspan/components/calendar.vue';
+import uuid from '@/helpers/uuid';
 
 export default {
   components: { DsCalendar },
   data() {
     return {
-      events: [],
+      eventsById: {},
     };
   },
-  methods: {},
+  computed: {
+    events() {
+      return Object.values(this.eventsById);
+    },
+  },
+  methods: {
+    moveHandler(event) {
+      this.saveEvent(event.calendarEvent);
+      event.clearPlaceholder();
+    },
+    resizeHandler(event) {
+      this.saveEvent(event.calendarEvent);
+      event.clearPlaceholder();
+    },
+    addHandler(event) {
+      this.saveEvent(event.calendarEvent);
+      event.clearPlaceholder();
+    },
+    saveEvent({ id = uuid(), data, schedule }) {
+      Vue.set(this.eventsById, [id], {
+        id,
+        data,
+        schedule,
+      });
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+  .example-calendar {
+    /deep/ .ds-calendar-container {
+      margin: 0;
+      max-width: 100%;
+      height: 800px;
+    }
+  }
+</style>

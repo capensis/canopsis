@@ -25,7 +25,7 @@
             span.ds-ev-description {{ details.description }}
         span(v-else)
           slot(name="eventTimeEmpty", v-bind="{ calendarEvent, details }")
-      .ds-calendar-event-resize(v-show="calendarEvent.ending", @mousedown="resizeStartHandler")
+      .ds-calendar-event-time-resize(v-show="calendarEvent.ending", @mousedown="resizeStartHandler")
     slot(name="eventPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
@@ -60,7 +60,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .ds-calendar-event-resize {
+  .ds-calendar-event-time-resize {
     pointer-events: auto;
     content: '';
     width: 100%;
