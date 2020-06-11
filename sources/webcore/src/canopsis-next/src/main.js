@@ -15,6 +15,7 @@ import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
 import PortalVue from 'portal-vue';
 import sanitizeHTML from 'sanitize-html';
+import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
 
 import 'vue-tour/dist/vue-tour.css';
 import 'vuetify/dist/vuetify.min.css';
@@ -46,6 +47,7 @@ import BullhornIcon from '@/components/icons/bullhorn.vue';
 import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
 
 import * as modalsComponents from '@/components/modals';
+
 /* eslint-enable import/first */
 
 Vue.use(VueAsyncComputed);
@@ -73,19 +75,10 @@ Vue.use(Vuetify, {
 
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
-  methods: {
-    getPrefix: () => '',
-    getStyleColor(details, calendarEvent, past, cancelled) {
-      let { color } = details;
-
-      if (!past && !cancelled) {
-        color = this.blend(color, this.inactiveBlendAmount, this.inactiveBlendTarget);
-      }
-
-      return color;
-    },
-  },
   data: {
+    locales: {
+      fr: frDaySpanVuetifyMessages,
+    },
     defaults: {
       dsWeeksView: {
         // dayspan-vuetify doesn't not supported first day in weekend, because return weekdays without locale sort.
@@ -103,6 +96,18 @@ Vue.use(DaySpanVuetify, {
           openOnHover: true,
         },
       },
+    },
+  },
+  methods: {
+    getPrefix: () => '',
+    getStyleColor(details, calendarEvent, past, cancelled) {
+      let { color } = details;
+
+      if (!past && !cancelled) {
+        color = this.blend(color, this.inactiveBlendAmount, this.inactiveBlendTarget);
+      }
+
+      return color;
     },
   },
 });

@@ -42,7 +42,7 @@ import { Units, Sorts, Calendar } from 'dayspan';
 import dsDefaults from 'dayspan-vuetify/src/defaults';
 
 /**
- * Dayspan Vuetify calendar wrapper
+ * DaySpan Vuetify calendar wrapper
  *
  * @see https://github.com/ClickerMonkey/dayspan-vuetify/tree/master/docs
  *

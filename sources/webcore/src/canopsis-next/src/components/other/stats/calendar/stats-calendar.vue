@@ -6,9 +6,11 @@
         :value="hasError",
         :message="serverErrorMessage"
       )
-      ds-calendar(
-        :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
+      ds-calendar-app.stats-calendar-app(
+        :class="{ single: !hasMultipleFilters }",
         :events="events",
+        fluid,
+        read-only,
         @change="changeCalendar",
         @edit="editEvent"
       )
@@ -23,7 +25,7 @@
               v-flex(xs12)
                 div.ds-calendar-event(
                   :style="{ backgroundColor: getStyleColor(details, event) }",
-                  @click="editEvent(event)"
+                  @click="editEvent($event, event)"
                 )
                   strong {{ event.data.title }}
                   p {{ event.data.description }}
@@ -43,16 +45,13 @@ import { generateWidgetByType } from '@/helpers/entities';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 
-
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
-
-import DsCalendar from '@/plugins/dayspan/components/calendar.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { ProgressOverlay, DsCalendar, AlertOverlay },
+  components: { ProgressOverlay, AlertOverlay },
   mixins: [widgetFetchQueryMixin, widgetStatsWrapperMixin],
   props: {
     widget: {
@@ -237,51 +236,53 @@ export default {
       font-size: 14px;
     }
 
-    .single {
-      & /deep/ .ds-calendar-event-menu {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100% !important;
-        padding: 4px;
-
-        .v-menu__activator {
+    & /deep/ .ds-calendar-app.stats-calendar-app {
+      &.single {
+        .ds-calendar-event-menu {
+          position: absolute;
+          left: 0;
+          top: 0;
           width: 100%;
-          height: 100%;
-        }
+          height: 100% !important;
+          padding: 4px;
 
-        .ds-calendar-event {
-          padding-left: 0;
-          display: flex;
-          height: 100%;
-          width: 100%;
-
-          & > span {
-            margin: auto;
-            text-align: center;
+          .v-menu__activator {
+            width: 100%;
+            height: 100%;
           }
 
+          .ds-calendar-event {
+            padding-left: 0;
+            display: flex;
+            height: 100%;
+            width: 100%;
+
+            & > span {
+              margin: auto;
+              text-align: center;
+            }
+
+            .ds-ev-description {
+              display: none;
+            }
+          }
+        }
+
+        .ds-week {
           .ds-ev-description {
             display: none;
           }
         }
       }
 
-      & /deep/ .ds-week {
-        .ds-ev-description {
-          display: none;
-        }
-      }
-    }
+      &:not(.single) {
+        & /deep/ .ds-calendar-event-menu {
+          position: relative;
+          height: 20px;
 
-    .multiple {
-      & /deep/ .ds-calendar-event-menu {
-        position: relative;
-        height: 20px;
-
-        .ds-ev-title {
-          margin-right: 10px;
+          .ds-ev-title {
+            margin-right: 10px;
+          }
         }
       }
     }
