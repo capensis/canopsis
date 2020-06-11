@@ -44,6 +44,8 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
+import json
+
 
 rconn = RedisStore.get_default()
 
@@ -360,8 +362,10 @@ class AlertsReader(object):
 
         if not search:
             return ('this', {})
-
-        return interpret(search, grammar_file=self.grammar)
+        t, q = interpret(search, grammar_file=self.grammar)
+        if q:
+            q = json.loads(json.dumps(q).replace("\\\\'", "'").decode("string_escape"))
+        return t, q
 
     def _lookup(self, alarms, lookups):
         """
