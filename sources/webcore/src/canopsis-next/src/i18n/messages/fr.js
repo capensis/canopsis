@@ -1383,7 +1383,7 @@ export default {
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
     copyWidgetId: 'Copier l\'ID du widget',
-    autoHeightButton: 'Si le bouton sélectionne la hauteur sera calculée automatiquement',
+    autoHeightButton: 'Si ce bouton est sélectionné, la hauteur sera calculée automatiquement.',
   },
   patternsList: {
     noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',

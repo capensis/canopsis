@@ -1466,7 +1466,7 @@ export default {
     fullScreen: 'Full screen',
     fullScreenShortcut: 'Alt + Enter / Command + Enter',
     copyWidgetId: 'Copy widget ID',
-    autoHeightButton: 'If the button is selecting height will calculate automatically',
+    autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
   patternsList: {
     noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
