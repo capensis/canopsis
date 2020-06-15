@@ -23,7 +23,7 @@
               wrap
             )
               v-flex(xs12)
-                div.ds-calendar-event(
+                div.ds-calendar-event-popover-item(
                   :style="{ backgroundColor: getStyleColor(details, event) }",
                   @click="editEvent(event)"
                 )
@@ -280,6 +280,10 @@ export default {
           position: relative;
           height: 20px;
 
+          .ds-calendar-event {
+            top: 0 !important;
+          }
+
           .ds-ev-title {
             margin-right: 10px;
           }
@@ -311,10 +315,14 @@ export default {
       .ds-day-header {
         z-index: 10;
       }
+
+      .ds-calendar-event > .v-menu__activator {
+        height: 100%;
+      }
     }
   }
 
-  .ds-calendar-event {
+  .ds-calendar-event-popover-item {
     color: white;
     margin: 1px;
     overflow: hidden;
