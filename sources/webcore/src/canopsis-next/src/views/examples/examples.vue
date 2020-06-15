@@ -10,10 +10,7 @@
 </template>
 
 <script>
-import DsCalendar from '@/plugins/dayspan/components/calendar.vue';
-
 export default {
-  components: { DsCalendar },
   data() {
     return {
       events: [],

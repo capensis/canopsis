@@ -25,7 +25,7 @@
               v-flex(xs12)
                 div.ds-calendar-event(
                   :style="{ backgroundColor: getStyleColor(details, event) }",
-                  @click="editEvent($event, event)"
+                  @click="editEvent(event)"
                 )
                   strong {{ event.data.title }}
                   p {{ event.data.description }}

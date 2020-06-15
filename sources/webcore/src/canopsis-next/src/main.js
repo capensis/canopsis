@@ -37,7 +37,7 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
-import DaySpanVuetify from '@/plugins/dayspan';
+import DaySpanVuetify from '@/plugins/dayspan-vuetify';
 
 import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';

@@ -1,4 +1,5 @@
 import DaySpanVuetify from 'dayspan-vuetify/src/plugin';
+
 import DsCalendar from './components/calendar.vue';
 import DsCalendarApp from './components/calendar-app.vue';
 import DsCalendarEvent from './components/calendar-event.vue';
