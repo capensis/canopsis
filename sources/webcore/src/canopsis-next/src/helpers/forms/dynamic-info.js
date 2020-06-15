@@ -1,7 +1,10 @@
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 
+import { getConditionsForRemovingEmptyPatterns } from './shared/patterns';
+
 /**
  * Convert a dynamic information's object to a dynamic information's form object
+ *
  * @param {Object} dynamicInfo
  * @returns {Object}
  */
@@ -21,32 +24,24 @@ export function dynamicInfoToForm(dynamicInfo = {}) {
 }
 
 /**
- * Remove empty "patterns" (alarm_pattern, entity_pattern) fields from dynamic info
- * @param {Object} dynamicInfo
- * @returns {Object}
- */
-function removeEmptyPatternsAndIdFromDynamicInfo(dynamicInfo) {
-  const idCondition = value => value === '';
-  const patternsCondition = value => !value || !value.length;
-
-  return unsetSeveralFieldsWithConditions(dynamicInfo, {
-    _id: idCondition,
-    alarm_patterns: patternsCondition,
-    entity_patterns: patternsCondition,
-  });
-}
-
-/**
  * Convert a dynamic information's form object to a API compatible dynamic info object
+ *
  * @param {Object} form
  * @returns {Object}
  */
 export function formToDynamicInfo(form) {
+  const idCondition = value => value === '';
+
   const dynamicInfo = {
     ...form.general,
     ...form.patterns,
+
     infos: form.infos,
   };
 
-  return removeEmptyPatternsAndIdFromDynamicInfo(dynamicInfo);
+  return unsetSeveralFieldsWithConditions(dynamicInfo, {
+    ...getConditionsForRemovingEmptyPatterns(['alarm_patterns', 'entity_patterns']),
+
+    _id: idCondition,
+  });
 }
