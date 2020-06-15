@@ -46,9 +46,11 @@ export default {
   },
   methods: {
     resizeStartHandler(event) {
-      event.stopPropagation();
-      this.$emit('mouse-start-resize', event, this.calendarEvent);
-      document.addEventListener('mouseup', this.resizeEndHandler);
+      if (event.button === 0) {
+        event.stopPropagation();
+        this.$emit('mouse-start-resize', event, this.calendarEvent);
+        document.addEventListener('mouseup', this.resizeEndHandler);
+      }
     },
     resizeEndHandler() {
       document.removeEventListener('mouseup', this.resizeEndHandler);

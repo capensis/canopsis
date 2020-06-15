@@ -175,7 +175,7 @@ export default {
       get() {
         return this.types.find(type =>
           type.type === this.calendar.type &&
-              type.size === this.calendar.size) || this.types[0];
+          type.size === this.calendar.size) || this.types[0];
       },
       set(type) {
         this.rebuild(undefined, true, type);
@@ -208,8 +208,15 @@ export default {
   },
 
   watch: {
-    events: 'applyEvents',
     calendar: 'applyEvents',
+    events: {
+      immediate: true,
+      handler: 'applyEvents',
+    },
+    readOnly: {
+      immediate: true,
+      handler: 'applyReadOnly',
+    },
   },
 
   mounted() {
@@ -237,7 +244,12 @@ export default {
       if (this.events) {
         this.calendar.removeEvents();
         this.calendar.addEvents(this.events);
+        this.rebuild(undefined, true);
       }
+    },
+
+    applyReadOnly(value) {
+      this.$dayspan.readOnly = value;
     },
 
     isType(type, aroundDay) {
