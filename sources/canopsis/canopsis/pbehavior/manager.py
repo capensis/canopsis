@@ -235,6 +235,8 @@ class PBehaviorManager(object):
             elif isinstance(element, dict):
                 prop = element.get('property', '')
                 direction = element.get('direction', 'ASC')
+                if prop == 'type':
+                    prop = 'type_'
                 if prop in PBehavior._FIELDS and direction in ('ASC', 'DESC'):
                     db_sort[prop] = self.SORT_ORDER[direction]
         if db_sort:
