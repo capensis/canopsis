@@ -18,11 +18,9 @@
 
 <script>
 import Vue from 'vue';
-import DsCalendar from '@/plugins/dayspan/components/calendar.vue';
 import uuid from '@/helpers/uuid';
 
 export default {
-  components: { DsCalendar },
   data() {
     return {
       readOnly: false,
