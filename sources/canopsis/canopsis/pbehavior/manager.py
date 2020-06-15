@@ -290,14 +290,14 @@ class PBehaviorManager(object):
                 "The aggregate returned unexpected data about total_count")
             return {"total_count": 0, "count": 0, "data": []}
 
+        if sort is not None:
+            pipeline.extend(self._resolve_sort(sort))
+
         if _id is None:
             if skip is not None:
                 pipeline.append({"$skip": skip})
             if limit is not None:
                 pipeline.append({"$limit": limit})
-
-        if sort is not None:
-            pipeline.extend(self._resolve_sort(sort))
 
         pbhs = list(self.collection.aggregate(pipeline))
 
