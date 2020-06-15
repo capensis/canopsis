@@ -176,6 +176,11 @@ class PBehaviorManager(object):
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
 
+    SORT_ORDER = {
+        'DESC': -1,
+        'ASC': 1
+    }
+
     @classmethod
     def provide_default_basics(cls):
         """
@@ -219,7 +224,26 @@ class PBehaviorManager(object):
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), self.logger)
 
-    def get(self, _id, search=None, limit=None, skip=None):
+    def _resolve_sort(self, sort):
+        db_sort = {}
+        if not isinstance(sort, list):
+            return []
+
+        for element in sort:
+            if isinstance(element, str) and element in PBehavior._FIELDS:
+                db_sort[element] = 1  # default ASC sorting
+            elif isinstance(element, dict):
+                prop = element.get('property', '')
+                direction = element.get('direction', 'ASC')
+                if prop == 'type':
+                    prop = 'type_'
+                if prop in PBehavior._FIELDS and direction in ('ASC', 'DESC'):
+                    db_sort[prop] = self.SORT_ORDER[direction]
+        if db_sort:
+            return [{"$sort": db_sort}]
+        return []
+
+    def get(self, _id, search=None, limit=None, skip=None, sort=None):
         """Get pbehavior by id.
 
         When _id is None, all the pbehaviors are returned. This behavior
@@ -265,6 +289,9 @@ class PBehaviorManager(object):
             self.logger.error(
                 "The aggregate returned unexpected data about total_count")
             return {"total_count": 0, "count": 0, "data": []}
+
+        if sort is not None:
+            pipeline.extend(self._resolve_sort(sort))
 
         if _id is None:
             if skip is not None:
@@ -453,11 +480,11 @@ class PBehaviorManager(object):
 
         return pbehaviors
 
-    def read(self, _id=None, search=None, limit=None, skip=None):
+    def read(self, _id=None, search=None, limit=None, skip=None, sort=None):
         """Get pbehavior or list pbehaviors.
         :param str _id: pbehavior id, _id may be equal to None
         """
-        result = self.get(_id, search=search, limit=limit, skip=skip)
+        result = self.get(_id, search=search, limit=limit, skip=skip, sort=sort)
 
         return result
 
