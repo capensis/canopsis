@@ -229,6 +229,10 @@ export default {
       const { day } = mouseEvent;
       const { start, end } = this.placeholder.time;
 
+      if (start.time === day.time || end.time === day.time) {
+        return;
+      }
+
       if (this.resizingBelow && start.time > day.time) {
         this.resizingBelow = false;
         this.placeholder.time.end = start.end();
