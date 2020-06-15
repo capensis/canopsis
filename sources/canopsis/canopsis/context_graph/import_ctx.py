@@ -14,6 +14,10 @@ from canopsis.confng import Configuration, Ini
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.common.middleware import Middleware
 from canopsis.common import root_path
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_conn
+from canopsis.event import forger
 
 # FIXME : move the check of the element in the superficial check method
 
@@ -102,6 +106,7 @@ class Manager():
         section = self.config.get(self.CONFIG_CAT, self.DEFAULT_CONFIG)
         self.storage = Middleware.get_middleware_by_uri(
             section[self.STORAGE_URI])
+
 
     def get_next_uuid(self):
         """Retreive the uuid of the next import to process using his creation
@@ -317,6 +322,8 @@ class ContextGraphImport(ContextGraph):
         self.update = {}
 
         self.delete = []
+        self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), self.logger)
+
 
     @classmethod
     def check_element(cls, element, type_):
@@ -812,6 +819,9 @@ class ContextGraphImport(ContextGraph):
                           "_update {1}.".format(uuid,
                                                 execution_time(end - start)))
 
+        # create/update watcher tracker
+        watcher_tracker = set()
+
         # Process cis list
         start = time.time()
         for ci in ijson.items(fd, "{0}.item".format(self.K_CIS)):
@@ -819,8 +829,12 @@ class ContextGraphImport(ContextGraph):
             if ci[self.K_ACTION] == self.A_DELETE:
                 self.__a_delete_entity(ci)
             elif ci[self.K_ACTION] == self.A_CREATE:
+                if ci.get(self.K_TYPE, '') == 'watcher':
+                    watcher_tracker.add(ci.get(self.K_ID))
                 self.__a_create_entity(ci)
             elif ci[self.K_ACTION] == self.A_UPDATE:
+                if ci.get(self.K_TYPE, '') == 'watcher':
+                    watcher_tracker.add(ci.get(self.K_ID))
                 self.__a_update_entity(ci)
             elif ci[self.K_ACTION] == self.A_SET:
                 self.__a_set_entity(ci)
@@ -873,6 +887,17 @@ class ContextGraphImport(ContextGraph):
 
         start = time.time()
         self._put_entities(self.update.values())
+
+        # send updatewatcher event
+        for _id in watcher_tracker:
+            event = forger(
+                connector="watcher",
+                connector_name="watcher",
+                event_type="updatewatcher",
+                source_type="component",
+                component=_id)
+            self.amqp_pub.canopsis_event(event)
+
         end = time.time()
         self.logger.debug("Import {0} : push updated"
                           " entities {1}.".format(uuid,
