@@ -47,6 +47,9 @@ export default {
       return !this.$dayspan.readOnly;
     },
   },
+  beforeDestroy() {
+    this.resizeEndHandler();
+  },
   methods: {
     resizeStartHandler(event) {
       if (event.button === 0) {
@@ -55,6 +58,7 @@ export default {
         document.addEventListener('mouseup', this.resizeEndHandler);
       }
     },
+
     resizeEndHandler() {
       document.removeEventListener('mouseup', this.resizeEndHandler);
     },

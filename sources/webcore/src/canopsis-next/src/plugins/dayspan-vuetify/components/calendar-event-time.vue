@@ -44,6 +44,9 @@ export default {
       return !this.$dayspan.readOnly;
     },
   },
+  beforeDestroy() {
+    this.resizeEndHandler();
+  },
   methods: {
     resizeStartHandler(event) {
       if (event.button === 0) {
