@@ -210,6 +210,10 @@ export default {
   watch: {
     events: 'applyEvents',
     calendar: 'applyEvents',
+    readOnly: {
+      immediate: true,
+      handler: 'applyReadOnly',
+    },
   },
 
   mounted() {
@@ -237,7 +241,12 @@ export default {
       if (this.events) {
         this.calendar.removeEvents();
         this.calendar.addEvents(this.events);
+        this.rebuild(undefined, true);
       }
+    },
+
+    applyReadOnly(value) {
+      this.$dayspan.readOnly = value;
     },
 
     isType(type, aroundDay) {

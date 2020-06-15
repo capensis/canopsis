@@ -1,10 +1,19 @@
 <template lang="pug">
-  ds-calendar-app.example-calendar(
-    :events="events",
-    @moved="moveHandler",
-    @resized="resizeHandler",
-    @added="addHandler"
-  )
+  div
+    v-layout
+      v-checkbox(
+        v-model="readOnly",
+        label="Read only",
+        color="primary"
+      )
+    v-layout
+      ds-calendar-app.example-calendar(
+        :events="events",
+        :readOnly="readOnly",
+        @moved="moveHandler",
+        @resized="resizeHandler",
+        @added="addHandler"
+      )
 </template>
 
 <script>
@@ -16,6 +25,7 @@ export default {
   components: { DsCalendar },
   data() {
     return {
+      readOnly: false,
       eventsById: {},
     };
   },
@@ -53,7 +63,7 @@ export default {
     /deep/ .ds-calendar-container {
       margin: 0;
       max-width: 100%;
-      height: 800px;
+      height: 700px;
     }
   }
 </style>

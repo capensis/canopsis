@@ -28,7 +28,7 @@
 
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
-      .ds-calendar-event-resize(v-show="calendarEvent.ending", @mousedown="resizeStartHandler")
+      .ds-calendar-event-resize(v-show="calendarEvent.ending && canResize", @mousedown="resizeStartHandler")
     slot(name="eventPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
@@ -41,6 +41,10 @@ export default {
   computed: {
     hasPopover() {
       return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.meta.hasPopover');
+    },
+
+    canResize() {
+      return !this.$dayspan.readOnly;
     },
   },
   methods: {
@@ -68,7 +72,7 @@ export default {
   }
 
   .ds-calendar-event {
-    box-sizing: initial;
+    box-sizing: border-box;
   }
 
   .ds-calendar-event-resize {

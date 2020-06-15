@@ -59,6 +59,11 @@ import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 export default {
   extends: DsCalendar,
+  computed: {
+    canResize() {
+      return !this.readOnly && !this.$dayspan.readOnly;
+    },
+  },
   methods: {
     createEventFromCalendar(calendarEvent) {
       return {
@@ -71,7 +76,12 @@ export default {
     copyCalendarEvent(calendarEvent) {
       const details = { ...calendarEvent.data };
       const span = new DaySpan(calendarEvent.start, calendarEvent.end);
-      const schedule = Schedule.forSpan(span);
+      const schedule = calendarEvent.fullDay
+        ? Schedule.forDay(
+          calendarEvent.start,
+          calendarEvent.time.days(Op.UP),
+        )
+        : Schedule.forSpan(span);
       const event = this.$dayspan.createEvent(details, schedule);
       event.id = calendarEvent.event.id;
 
@@ -79,10 +89,12 @@ export default {
     },
 
     startResize(event, calendarEvent) {
-      this.resizing = true;
-      this.resizingEvent = event;
-      this.resizingBelow = true;
-      this.placeholder = this.copyCalendarEvent(calendarEvent);
+      if (this.canResize) {
+        this.resizing = true;
+        this.resizingEvent = event;
+        this.resizingBelow = true;
+        this.placeholder = this.copyCalendarEvent(calendarEvent);
+      }
     },
 
     endResize() {
@@ -94,7 +106,7 @@ export default {
     finishAdd(mouseEvent) {
       const event = this.getEvent('added', {
         mouseEvent,
-        calendarEvent: this.placeholder,
+        calendarEvent: this.createEventFromCalendar(this.placeholder),
         span: this.placeholder.time,
       });
 
@@ -165,6 +177,10 @@ export default {
       time = this.$dayspan.roundTime(time, this.$dayspan.rounding.drag);
       const { start, end } = this.placeholder.time;
 
+      if (start.time === time.time || end.time === time.time) {
+        return;
+      }
+
       if (this.resizingBelow && start.time > time.time) {
         this.resizingBelow = false;
         this.placeholder.time.end = start;
@@ -215,7 +231,7 @@ export default {
 
       if (this.resizingBelow && start.time > day.time) {
         this.resizingBelow = false;
-        this.placeholder.time.end = start;
+        this.placeholder.time.end = start.end();
       }
 
       if (!this.resizingBelow && end.time < day.time) {
@@ -224,10 +240,12 @@ export default {
       }
 
       if (this.resizingBelow) {
-        this.placeholder.time.end = day;
+        this.placeholder.time.end = day.end();
       } else {
         this.placeholder.time.start = day;
       }
+
+      this.updatePlaceholderRow(this.placeholder);
     },
 
     mouseMove(mouseEvent) {
