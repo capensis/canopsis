@@ -204,7 +204,7 @@ class TestReader(BaseTest):
             {
                 'tstart': 13,
                 'tstop': None,
-                'expected': {'v.resolved': None, 't': {'$lte': 13}}
+                'expected': {'v.resolved': None, 't': {'$gte': 13}}
             },
             {
                 'tstart': 13,
@@ -231,7 +231,8 @@ class TestReader(BaseTest):
                 'tstart': 13,
                 'tstop': None,
                 'expected': {
-                    'v.resolved': {'$ne': None, '$gte': 13}
+                    'v.resolved': {'$ne': None},
+                    't': {'$gte': 13}
                 }
             },
             {
