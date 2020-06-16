@@ -18,25 +18,32 @@
       name="name"
     )
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
-    v-text-field(v-if="isValueGroupType", v-field="form.value_path", label="Value path")
-    meta-alarm-rule-threshhold-form(v-if="isComplexType", v-field="form.config")
-    meta-alarm-rule-timebased-form(v-if="isComplexType || isTimeBasedType", v-field="form.config")
-    meta-alarm-rule-patterns-form(v-if="isComplexType || isPatternsType", v-field="form.config")
+    v-text-field(
+      v-if="isValueGroupType",
+      v-field="form.config.value_path",
+      v-validate="'required'",
+      :label="$t('metaAlarmRule.fields.valuePath')",
+      :error-messages="errors.collect('valuePath')",
+      name="valuePath"
+    )
+    meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
+    meta-alarm-rule-time-based-form(v-if="isTimeBasedFormShown", v-field="form.config")
+    meta-alarm-rule-patterns-form(v-if="isPatternsFormShown", v-field="form.config")
 </template>
 
 <script>
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
-import MetaAlarmRuleThreshholdForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-threshhold-form.vue';
+import MetaAlarmRuleThresholdForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-threshold-form.vue';
 import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
-import MetaAlarmRuleTimebasedForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-timebased-form.vue';
+import MetaAlarmRuleTimeBasedForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-time-based-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    MetaAlarmRuleTimebasedForm,
+    MetaAlarmRuleTimeBasedForm,
     MetaAlarmRulePatternsForm,
-    MetaAlarmRuleThreshholdForm,
+    MetaAlarmRuleThresholdForm,
   },
   model: {
     prop: 'form',
@@ -56,17 +63,39 @@ export default {
     ruleTypes() {
       return Object.values(META_ALARMS_RULE_TYPES);
     },
+
+    /**
+     * Conditions for forms showing
+     */
+    isThresholdFormShown() {
+      return this.isComplexType || this.isValueGroupType;
+    },
+
+    isTimeBasedFormShown() {
+      return this.isComplexType || this.isValueGroupType || this.isTimeBasedType;
+    },
+
+    isPatternsFormShown() {
+      return this.isComplexType || this.isValueGroupType || this.isPatternsType;
+    },
+
+    /**
+     * Rule types
+     */
     isPatternsType() {
       return this.form.type === META_ALARMS_RULE_TYPES.attribute;
     },
+
+    isTimeBasedType() {
+      return this.form.type === META_ALARMS_RULE_TYPES.timebased;
+    },
+
     isComplexType() {
       return this.form.type === META_ALARMS_RULE_TYPES.complex;
     },
+
     isValueGroupType() {
       return this.form.type === META_ALARMS_RULE_TYPES.valuegroup;
-    },
-    isTimeBasedType() {
-      return this.form.type === META_ALARMS_RULE_TYPES.timebased;
     },
   },
 };

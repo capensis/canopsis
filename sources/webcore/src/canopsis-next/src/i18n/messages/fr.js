@@ -1326,6 +1326,7 @@ export default {
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',
       timeInterval: 'Intervalle de temps',
+      valuePath: 'Chemin de valeur',
     },
   },
   snmpRules: {

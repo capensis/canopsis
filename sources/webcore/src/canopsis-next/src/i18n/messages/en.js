@@ -1408,6 +1408,7 @@ export default {
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
       timeInterval: 'Time interval',
+      valuePath: 'Value path',
     },
   },
   snmpRules: {
