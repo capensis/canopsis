@@ -18,8 +18,9 @@
       name="name"
     )
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
+    v-text-field(v-if="isValueGroupType", v-field="form.value_path", label="Value path")
     meta-alarm-rule-threshhold-form(v-if="isComplexType", v-field="form.config")
-    meta-alarm-rule-timebased-form(v-if="isComplexType || isTimebasedType", v-field="form.config")
+    meta-alarm-rule-timebased-form(v-if="isComplexType || isTimeBasedType", v-field="form.config")
     meta-alarm-rule-patterns-form(v-if="isComplexType || isPatternsType", v-field="form.config")
 </template>
 
@@ -61,7 +62,10 @@ export default {
     isComplexType() {
       return this.form.type === META_ALARMS_RULE_TYPES.complex;
     },
-    isTimebasedType() {
+    isValueGroupType() {
+      return this.form.type === META_ALARMS_RULE_TYPES.valuegroup;
+    },
+    isTimeBasedType() {
       return this.form.type === META_ALARMS_RULE_TYPES.timebased;
     },
   },
