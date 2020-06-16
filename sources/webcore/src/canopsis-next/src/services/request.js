@@ -1,6 +1,40 @@
 import axios from 'axios';
 
 /**
+ * Active asiox sources
+ *
+ * @type {{}}
+ */
+const activeSources = {};
+
+/**
+ * Hook for cancelling of the requests by axios source
+ *
+ * @param {Function} action
+ * @param {string} key
+ * @return {Promise<void>}
+ */
+export async function useRequestCancelling(action, key) {
+  try {
+    const source = axios.CancelToken.source();
+
+    if (activeSources[key]) {
+      activeSources[key].cancel();
+    }
+
+    activeSources[key] = source;
+
+    await action(source);
+
+    delete activeSources[key];
+  } catch (err) {
+    if (!axios.isCancel(err)) {
+      throw err;
+    }
+  }
+}
+
+/**
  * Check error field inside successful response and reject them
  *
  * @param {Object} response
