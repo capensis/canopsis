@@ -58,7 +58,7 @@ export default {
           }, { root: true });
 
           commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
-        }, id);
+        }, `view-${id}`);
       } catch (err) {
         console.error(err);
 

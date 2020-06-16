@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 /**
- * Active asiox sources
+ * Active axios sources
  *
  * @type {{}}
  */
@@ -44,6 +44,7 @@ function successResponseHandler(response) {
   if (response.data.errors && response.data.errors.length) {
     return Promise.reject(response.data.errors);
   }
+
   return response.data;
 }
 
@@ -57,6 +58,7 @@ function errorResponseHandler(responseWithError) {
   if (responseWithError.response && responseWithError.response.status === 401) {
     window.location.reload();
   }
+
   if (responseWithError.response && responseWithError.response.data) {
     if (responseWithError.response.data.errors) {
       return Promise.reject(responseWithError.response.data.errors);
