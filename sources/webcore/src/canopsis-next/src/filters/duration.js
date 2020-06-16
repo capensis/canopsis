@@ -1,22 +1,15 @@
-import i18n from '@/i18n';
 import moment from 'moment';
 import 'moment-duration-format';
-import momentDurationFrLocale from '@/i18n/moment-duration-fr';
-
-import { DEFAULT_LOCALE } from '@/config';
-
-moment.updateLocale('fr', momentDurationFrLocale);
 
 /**
+ * Duration filter
  *
  * @param {Number} value - Numeric value to format
  * @param {String} format - Duration format
- *
  * @returns {String}
  */
-export default function (value = 0, locale = i18n.locale || DEFAULT_LOCALE, format = 'D __ H _ m _ s _') {
+export default function (value = 0, format = 'D __ H _ m _ s _') {
   const durationValue = value.value ? value.value : value;
 
-  moment.locale(locale);
   return moment.duration(durationValue, 'seconds').format(format, { trim: 'both final' }) || '0s';
 }
