@@ -202,7 +202,7 @@ class AlertsReader(object):
 
         return tkey, tdir
 
-    def _get_open_resolved_time_filter(self, opened, resolved, tstart, tstop):
+    def _get_opened_resolved_time_filter(self, opened, resolved, tstart, tstop):
         """
         Transform opened, resolved, tstart and tstop parameters into a mongo
         filter. This filter is specific to alarms collection.
@@ -933,7 +933,7 @@ class AlertsReader(object):
         if active_columns is None:
             active_columns = self.DEFAULT_ACTIVE_COLUMNS
 
-        time_filter = self._get_open_resolved_time_filter(
+        time_filter = self._get_opened_resolved_time_filter(
             opened=opened, resolved=resolved,
             tstart=tstart, tstop=tstop
         )
