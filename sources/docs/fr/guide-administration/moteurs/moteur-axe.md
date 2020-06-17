@@ -74,7 +74,7 @@ Pour l'activer, passez le paramètre `EnableLastEventDate` du fichier de configu
 
 Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, elle prend le statut annulée et reste pendant 1h dans le bac des alarmes en cours. Passé le délai d'une heure, elle change de statut pour passer en résolue et bascule dans le bac des alarmes résolues tout en gardant le dernier niveau de criticité connu.
 
-Vous pouvez agir sur ce délai en modifiant le paramètre CancelAutosolveDelay.
+Vous pouvez agir sur ce délai en modifiant le paramètre `CancelAutosolveDelay`.
 
 ## Fonctionnement du moteur
 
