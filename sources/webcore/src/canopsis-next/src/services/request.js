@@ -29,6 +29,8 @@ export async function useRequestCancelling(action, key) {
     delete activeSources[key];
   } catch (err) {
     if (!axios.isCancel(err)) {
+      delete activeSources[key];
+
       throw err;
     }
   }
