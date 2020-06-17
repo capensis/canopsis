@@ -79,8 +79,8 @@ export default {
             allIds: normalizedData.result,
             meta: {
               total,
-              first: data.data[0].first,
-              last: data.data[0].last,
+              first: meta.first,
+              last: meta.last,
             },
           });
         }, `alarms-list-${widgetId}`);
