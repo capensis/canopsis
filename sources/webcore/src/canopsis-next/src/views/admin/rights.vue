@@ -14,8 +14,8 @@
                 table.table
                   thead
                     tr
-                      th
-                      th(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
+                      th.table-header.white
+                      th.table-header.white(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
                   tbody
                     tr(v-for="right in rights", :key="`right-title-${right._id}`")
                       td {{ right.desc }}
@@ -367,8 +367,17 @@ export default {
 
 <style lang="scss" scoped>
   .admin-rights {
-    & /deep/ .v-expansion-panel__body {
-      overflow: auto;
+    & /deep/ {
+      .v-expansion-panel__body {
+        overflow: auto;
+      }
+
+      .v-window__container--is-active {
+        .table-header {
+          position: relative;
+          top: 0;
+        }
+      }
     }
   }
 
@@ -409,5 +418,11 @@ export default {
 
   .progress-wrapper {
     position: relative;
+  }
+
+  .table-header {
+    position: sticky;
+    top: 48px;
+    z-index: 1;
   }
 </style>
