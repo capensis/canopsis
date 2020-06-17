@@ -363,7 +363,7 @@ class AlertsReader(object):
         if not search:
             return ('this', {})
         t, q = interpret(search, grammar_file=self.grammar)
-        if q:
+        if q and type(q) is str:
             q = json.loads(json.dumps(q).replace("\\\\'", "'").decode("string_escape"))
         return t, q
 
