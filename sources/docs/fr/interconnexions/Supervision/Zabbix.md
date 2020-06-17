@@ -9,7 +9,7 @@ Convertit des alertes issues de triggers Zabbix en évènements Canopsis.
 
 ## Introduction
 
-Le connecteur Zabbix est un [script python](#mise-en-place-du-script-zabbix2filebeatsh) configuré comme `media type` et déclenché par une `action` permettant de tracer dans un fichier de log les changements de criticité des `triggers` configurés dans Zabbix. Le fichier de log est ensuite lu par Filebeat qui transfère le contenu à Logstash.
+Le connecteur Zabbix est un [script python](#mise-en-place-du-script-zabbix2filebeatpy) configuré comme `media type` et déclenché par une `action` permettant de tracer dans un fichier de log les changements de criticité des `triggers` configurés dans Zabbix. Le fichier de log est ensuite lu par Filebeat qui transfère le contenu à Logstash.
 
 ## Mapping
 
