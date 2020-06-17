@@ -7,7 +7,7 @@
         color="primary"
       )
     v-layout
-      ds-calendar-app.example-calendar(
+      ds-calendar-app(
         :events="events",
         :readOnly="readOnly",
         fluid,
