@@ -4,11 +4,12 @@ Convertit des alertes issues de triggers Zabbix en évènements Canopsis.
 
 ## Prérequis
 
-- Zabbix 4.2.6
+- Zabbix 4.2.6 ou plus récent.
+- Python 3.6.
 
 ## Introduction
 
-Le connecteur Zabbix est un [script shell](#mise-en-place-du-script-zabbix2filebeatsh) configuré comme `media type` et déclenché par une `action` permettant de tracer dans un fichier de log les changements de criticité des `triggers` configurés dans Zabbix. Le fichier de log est ensuite lu par Filebeat qui transfère le contenu à Logstash.
+Le connecteur Zabbix est un [script python](#mise-en-place-du-script-zabbix2filebeatsh) configuré comme `media type` et déclenché par une `action` permettant de tracer dans un fichier de log les changements de criticité des `triggers` configurés dans Zabbix. Le fichier de log est ensuite lu par Filebeat qui transfère le contenu à Logstash.
 
 ## Mapping
 
@@ -27,7 +28,7 @@ Du fait de ces différences le mapping suivant a été décidé :
 | 4 - High           | 2 - Majeur   |
 | 5  - Disaster      | 3 - Critical |
 
-## Préparation à la mise en place de "zabbix2filebeat.sh"
+## Préparation à la mise en place de "zabbix2filebeat.py"
 
 Cette préparation est réalisée dans l'interface web de Zabbix.
 
@@ -39,7 +40,7 @@ Renseignez ensuite les informations ci-dessous :
 
 * Name : `zabbix2filebeat`
 * Type : `Script`
-* Script name : `zabbix2filebeat.sh`
+* Script name : `zabbix2filebeat.py`
 * Script parameters : `{ALERT.MESSAGE}`
 * Enabled : `X`
 
@@ -385,101 +386,19 @@ Dans l'onglet Configuration, cliquez sur "Actions" puis "Create action" et rense
         - Send only to : `zabbix2filebeat`
         - Default message : `X`
 
-### Mise en place du script "zabbix2filebeat.sh"
+### Mise en place du script "zabbix2filebeat.py"
 
-#### Création du script
+#### Récupération du script
 
 ```bash
-cat > /usr/lib/zabbix/alertscripts/zabbix2filebeat.sh << EOF
-#!/bin/bash
-LOG_PATH=/var/log/zabbix/notifications.log
-ALERT_MESSAGE="${@%Q}"
-OLD_IFS=${IFS}
-MSG=''
-IS_RECOVERY=0
-STATE=0
-
-# Parse alert_message as key value
-######
-
-while IFS=$'\n' read args;do
-	IFS="${OLD_IFS}"
-	set -- $(echo ${args%Q} | sed 's/=/ /;s/\r//g')
-	key="${1//./_}"
-	shift
-	value="${@//\\/\\\\\\}"
-	value="${value//\"/\\\\\"}"
-	value="${value//\'/\\\'}"
-	eval "${key%Q}=$'${value%Q}'"
-done < <(echo "${ALERT_MESSAGE%Q}")
-
-###################
-# Translate/Create some values
-###################
-
-# test if we are in recovery
-if [[ "${EVENT_RECOVERY_VALUE}" != '{EVENT.RECOVERY.VALUE}' ]];then
-	IS_RECOVERY=1
-fi
-
-# declare TIMESTAMP depending of recovery or not
-if [[ "${IS_RECOVERY}" -eq 1 ]];then
-	TIMESTAMP="$(date --date="${EVENT_RECOVERY_DATE//.//} ${EVENT_RECOVERY_TIME}" +"%s")"
-else
-	TIMESTAMP="$(date --date="${EVENT_DATE//.//} ${EVENT_TIME}" +"%s")"
-	case ${TRIGGER_NSEVERITY} in
-		0|1)
-			STATE=0
-			;;
-		2|3)
-			STATE=1
-			;;
-		4)
-			STATE=2
-			;;
-		5)
-			STATE=3
-			;;
-	esac
-fi
-
-CONNECTOR_NAME=$(cat /etc/hostname)
-
-##################
-# Create JSON message
-##################
-
-MSG+='{'
-# Canopsis
-MSG+=$'"timestamp":"'${TIMESTAMP}'"'
-MSG+=$',"connector":"zabbix"'
-MSG+=$',"connector_name":"'${CONNECTOR_NAME}'"'
-MSG+=$',"event_type":"check"'
-MSG+=$',"source_type":"resource"'
-MSG+=$',"component":"'${HOST_CONN}'"'
-MSG+=$',"resource":"'${TRIGGER_NAME_ORIG}'"'
-MSG+=$',"output":"'${TRIGGER_NAME}'"'
-MSG+=$',"state":"'${STATE}'"'
-# Original zabbix values asked by the final customer
-MSG+=$',"ITEM.ID":"'${ITEM_ID}'"'
-MSG+=$',"ITEM.DESCRIPTION":"'${ITEM_DESCRIPTION}'"'
-MSG+=$',"ITEM.NAME":"'${ITEM_NAME}'"'
-MSG+=$',"ITEM.VALUE":"'${ITEM_VALUE}'"'
-MSG+=$',"HOST.DNS":"'${HOST_DNS}'"'
-MSG+=$',"HOST.HOST":"'${HOST_HOST}'"'
-MSG+=$',"EVENT.ACK.STATUS":"'${EVENT_ACK_STATUS}'"'
-MSG+=$',"EVENT.STATUS":"'${EVENT_STATUS}'"'
-MSG+=$'}'
-
-# Print message
-echo "${MSG%Q}" >> ${LOG_PATH}
-EOF
+cd /usr/lib/zabbix/alertscripts/
+wget https://git.canopsis.net/canopsis-connectors/connector-zabbix2canopsis/-/raw/master/zabbix2canopsis.py
 ```
 
 #### Rendre exécutable le script
 
 ```shell
-chmod +x /usr/lib/zabbix/alertscripts/zabbix2filebeat.sh
+chmod +x /usr/lib/zabbix/alertscripts/zabbix2filebeat.py
 ```
 
 #### Rotation du log via logrotate
