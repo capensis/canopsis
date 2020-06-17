@@ -133,7 +133,7 @@ export default {
 
     showAddPbehaviorModal() {
       this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
+        name: MODALS.createPbehavior,
         config: {
           pbehavior: {
             filter: {
