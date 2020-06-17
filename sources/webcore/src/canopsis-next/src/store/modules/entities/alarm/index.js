@@ -71,7 +71,8 @@ export default {
             dataPreparer: d => d.data[0].alarms,
           }, { root: true });
 
-          const total = data.data[0].total ? data.data[0].total : normalizedData.result.length;
+          const [meta] = data.data;
+          const total = meta.total ? meta.total : normalizedData.result.length;
 
           commit(types.FETCH_LIST_COMPLETED, {
             widgetId,
