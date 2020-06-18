@@ -244,7 +244,6 @@ export default {
       if (this.events) {
         this.calendar.removeEvents();
         this.calendar.addEvents(this.events);
-        this.rebuild(undefined, true);
       }
     },
 
