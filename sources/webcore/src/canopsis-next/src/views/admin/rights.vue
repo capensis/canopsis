@@ -20,15 +20,35 @@
                 )
                   template(slot="items", slot-scope="props")
                     tr(@click="props.expanded = !props.expanded")
-                      td {{ $t(`right.${props.item.key}`) }}
+                      td {{ $t(`rights.${props.item.key}`) }}
                       td(v-for="role in roles", :key="`role-right-${role._id}`")
-                        v-checkbox-functional(
+                        v-checkbox(
                           :disabled="!hasUpdateAnyActionAccess",
+                          :input-value="true",
+                          color="primary",
+                          indeterminate,
                           hideDetails
                         )
                   template(slot="expand", slot-scope="{ item }")
-                    tr
-                      h1 OLOLO
+                    v-data-table(
+                      :items="item.rights",
+                      :headers="headers",
+                      item-key="_id",
+                      expand,
+                      hide-actions
+                    )
+                      template(slot="items", slot-scope="{ item }")
+                        tr
+                          td {{ item.desc }}
+                          td(v-for="role in roles", :key="`role-right-${role._id}`")
+                            v-checkbox-functional(
+                              v-for="(checkbox, index) in getCheckboxes(role, item)",
+                              v-bind="checkbox.bind",
+                              v-on="checkbox.on",
+                              :key="`role-${role._id}-right-${item._id}-checkbox-${index}`",
+                              :disabled="!hasUpdateAnyActionAccess",
+                              hideDetails
+                            )
     v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
@@ -378,16 +398,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  $firstTdWidth: 350px;
+
   .admin-rights {
     & /deep/ {
       .v-table__overflow {
         overflow: visible;
+        td:first-child {
+          width: $firstTdWidth;
+        }
 
         th {
+          transition: none;
           position: sticky;
           top: 48px;
           background: white;
           z-index: 1;
+        }
+
+        .v-datatable__expand-content .v-table {
+          background: #f3f3f3;
         }
       }
 
@@ -395,35 +425,9 @@ export default {
         overflow: auto;
       }
 
-      .v-window__container--is-active {
-        .table-header-cell {
-          position: relative;
-          top: 0;
-        }
-      }
-    }
-  }
-
-  .table {
-    background-color: white;
-    width: 100%;
-
-    tr {
-      &:hover {
-        background: #eee;
-      }
-
-      td, th {
-        border-bottom: 1px solid #eee;
-
-        vertical-align: middle;
-        padding: 5px;
-      }
-    }
-
-    & /deep/ {
-      .v-input {
-        margin: 0;
+      .v-window__container--is-active th {
+        position: relative;
+        top: 0;
       }
     }
   }
@@ -447,11 +451,5 @@ export default {
 
   .progress-wrapper {
     position: relative;
-  }
-
-  .table-header-cell {
-    position: sticky;
-    top: 48px;
-    z-index: 1;
   }
 </style>
