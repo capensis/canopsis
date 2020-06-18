@@ -684,6 +684,20 @@ export const USERS_RIGHTS_TYPES = {
   rw: 'RW',
 };
 
+export const USERS_RIGHTS_TYPES_TO_MASKS = {
+  [USERS_RIGHTS_TYPES.crud]: [
+    USERS_RIGHTS_MASKS.create,
+    USERS_RIGHTS_MASKS.read,
+    USERS_RIGHTS_MASKS.update,
+    USERS_RIGHTS_MASKS.delete,
+  ],
+  [USERS_RIGHTS_TYPES.rw]: [
+    USERS_RIGHTS_MASKS.read,
+    USERS_RIGHTS_MASKS.update,
+    USERS_RIGHTS_MASKS.delete,
+  ],
+};
+
 export const USERS_RIGHTS = {
   technical: {
     view: 'models_userview',

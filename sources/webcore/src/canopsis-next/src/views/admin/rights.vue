@@ -11,44 +11,12 @@
           v-tab-item(:key="`tab-item-${groupKey}`")
             v-card(v-if="hasReadAnyRoleAccess")
               v-card-text
-                v-data-table(
-                  :items="rights",
-                  :headers="headers",
-                  item-key="key",
-                  expand,
-                  hide-actions
+                rights-groups-table(
+                  :groups="rights",
+                  :roles="roles",
+                  :changedRoles="changedRoles",
+                  @change="changeCheckboxValue"
                 )
-                  template(slot="items", slot-scope="props")
-                    tr(@click="props.expanded = !props.expanded")
-                      td {{ $t(`rights.${props.item.key}`) }}
-                      td(v-for="role in roles", :key="`role-right-${role._id}`")
-                        v-checkbox(
-                          :disabled="!hasUpdateAnyActionAccess",
-                          :input-value="true",
-                          color="primary",
-                          indeterminate,
-                          hideDetails
-                        )
-                  template(slot="expand", slot-scope="{ item }")
-                    v-data-table.expand-rights-table(
-                      :items="item.rights",
-                      :headers="headers",
-                      item-key="_id",
-                      expand,
-                      hide-actions
-                    )
-                      template(slot="items", slot-scope="{ item }")
-                        tr
-                          td {{ item.desc }}
-                          td(v-for="role in roles", :key="`role-right-${role._id}`")
-                            v-checkbox-functional(
-                              v-for="(checkbox, index) in getCheckboxes(role, item)",
-                              v-bind="checkbox.bind",
-                              v-on="checkbox.on",
-                              :key="`role-${role._id}-right-${item._id}-checkbox-${index}`",
-                              :disabled="!hasUpdateAnyActionAccess",
-                              hideDetails
-                            )
     v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
@@ -78,14 +46,12 @@
 </template>
 
 <script>
-import { get, omit, isEmpty, isUndefined, transform } from 'lodash';
+import { get, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
 import {
   MODALS,
   USERS_RIGHTS,
-  USERS_RIGHTS_MASKS,
-  USERS_RIGHTS_TYPES,
   NOT_COMPLETED_USER_RIGHTS_KEYS,
 } from '@/constants';
 import {
@@ -103,10 +69,12 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
+import RightsGroupsTable from '@/components/other/right/admin/rights-groups-table.vue';
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 
 export default {
   components: {
+    RightsGroupsTable,
     RefreshBtn,
   },
   mixins: [
@@ -129,64 +97,8 @@ export default {
     };
   },
   computed: {
-    headers() {
-      return [{ text: '', sortable: false }, ...this.roles.map(role => ({ text: role._id, sortable: false }))];
-    },
     hasChanges() {
       return !isEmpty(this.changedRoles);
-    },
-
-    getCheckboxValue() {
-      return (role, right, rightMask = 1) => {
-        const checkSum = get(role, ['rights', right._id, 'checksum'], 0);
-        const changedCheckSum = get(this.changedRoles, [role._id, right._id]);
-
-        const currentCheckSum = isUndefined(changedCheckSum) ? checkSum : changedCheckSum;
-        const rightType = currentCheckSum & rightMask;
-
-        return rightType === rightMask;
-      };
-    },
-
-    getCheckboxes() {
-      return (role, right) => {
-        if (right.type) {
-          let masks = [];
-
-          if (right.type === USERS_RIGHTS_TYPES.crud) {
-            masks = ['create', 'read', 'update', 'delete'];
-          }
-
-          if (right.type === USERS_RIGHTS_TYPES.rw) {
-            masks = ['read', 'update', 'delete'];
-          }
-
-          return masks.map((userRightMaskKey) => {
-            const userRightMask = USERS_RIGHTS_MASKS[userRightMaskKey];
-
-            return {
-              bind: {
-                inputValue: this.getCheckboxValue(role, right, userRightMask),
-                label: userRightMaskKey,
-              },
-              on: {
-                change: value => this.changeCheckboxValue(value, role, right, userRightMask),
-              },
-            };
-          });
-        }
-
-        return [
-          {
-            bind: {
-              inputValue: this.getCheckboxValue(role, right),
-            },
-            on: {
-              change: value => this.changeCheckboxValue(value, role, right),
-            },
-          },
-        ];
-      };
     },
   },
   mounted() {
@@ -391,7 +303,7 @@ export default {
       groupedRights.business = Object.entries(groupedRights.business).map(([key, value]) => ({ key, rights: value }));
       groupedRights.view = [...groupedRights.view, ...groupedRights.playlist];
 
-      this.groupedRights = omit(groupedRights, ['playlist']);
+      this.groupedRights = { business: groupedRights.business };
     },
   },
 };
@@ -404,8 +316,12 @@ export default {
     & /deep/ {
       .v-table__overflow {
         overflow: visible;
-        td:first-child {
-          width: $firstTdWidth;
+        td {
+          padding: 0 20px;
+
+          &:first-child {
+            width: $firstTdWidth;
+          }
         }
 
         th {
@@ -429,6 +345,19 @@ export default {
         position: relative;
         top: 0;
       }
+
+      .expand-rights-table {
+        .v-table__overflow thead tr {
+          height: 0;
+          visibility: hidden;
+
+          th {
+            position: relative;
+            height: 0;
+            line-height: 0;
+          }
+        }
+      }
     }
   }
 
@@ -451,21 +380,5 @@ export default {
 
   .progress-wrapper {
     position: relative;
-  }
-
-  .expand-rights-table {
-    & /deep/ {
-      .v-table__overflow {
-        & thead tr {
-          height: 0;
-          visibility: hidden;
-        }
-
-        & thead th {
-          height: 0;
-          line-height: 0;
-        }
-      }
-    }
   }
 </style>
