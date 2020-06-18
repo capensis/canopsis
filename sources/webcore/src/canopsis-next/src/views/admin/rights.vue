@@ -11,22 +11,24 @@
           v-tab-item(:key="`tab-item-${groupKey}`")
             v-card(v-if="hasReadAnyRoleAccess")
               v-card-text
-                table.table
-                  thead
-                    tr
-                      th.table-header.white
-                      th.table-header.white(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
-                  tbody
-                    tr(v-for="right in rights", :key="`right-title-${right._id}`")
-                      td {{ right.desc }}
+                v-data-table(
+                  :items="rights",
+                  :headers="headers",
+                  item-key="key",
+                  expand,
+                  hide-actions
+                )
+                  template(slot="items", slot-scope="props")
+                    tr(@click="props.expanded = !props.expanded")
+                      td {{ $t(`right.${props.item.key}`) }}
                       td(v-for="role in roles", :key="`role-right-${role._id}`")
                         v-checkbox-functional(
-                          v-for="(checkbox, index) in getCheckboxes(role, right)",
-                          :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
-                          v-bind="checkbox.bind",
-                          v-on="checkbox.on",
-                          :disabled="!hasUpdateAnyActionAccess"
+                          :disabled="!hasUpdateAnyActionAccess",
+                          hideDetails
                         )
+                  template(slot="expand", slot-scope="{ item }")
+                    tr
+                      h1 OLOLO
     v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
       v-btn.primary(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
@@ -107,6 +109,9 @@ export default {
     };
   },
   computed: {
+    headers() {
+      return [{ text: '', sortable: false }, ...this.roles.map(role => ({ text: role._id, sortable: false }))];
+    },
     hasChanges() {
       return !isEmpty(this.changedRoles);
     },
@@ -346,17 +351,24 @@ export default {
           Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
           NOT_COMPLETED_USER_RIGHTS_KEYS.some(userRightKey => rightId.startsWith(allRightsIds[userRightKey]))
         ) {
-          acc.business.push(right);
+          const [parentKey] = right._id.split('_');
+
+          if (!acc.business[parentKey]) {
+            acc.business[parentKey] = [right];
+          } else {
+            acc.business[parentKey].push(right);
+          }
         }
 
         return acc;
       }, {
-        business: [],
+        business: {},
         view: [],
         playlist: [],
         technical: [],
       });
 
+      groupedRights.business = Object.entries(groupedRights.business).map(([key, value]) => ({ key, rights: value }));
       groupedRights.view = [...groupedRights.view, ...groupedRights.playlist];
 
       this.groupedRights = omit(groupedRights, ['playlist']);
@@ -368,12 +380,23 @@ export default {
 <style lang="scss" scoped>
   .admin-rights {
     & /deep/ {
+      .v-table__overflow {
+        overflow: visible;
+
+        th {
+          position: sticky;
+          top: 48px;
+          background: white;
+          z-index: 1;
+        }
+      }
+
       .v-expansion-panel__body {
         overflow: auto;
       }
 
       .v-window__container--is-active {
-        .table-header {
+        .table-header-cell {
           position: relative;
           top: 0;
         }
@@ -386,8 +409,14 @@ export default {
     width: 100%;
 
     tr {
+      &:hover {
+        background: #eee;
+      }
+
       td, th {
-        vertical-align: top;
+        border-bottom: 1px solid #eee;
+
+        vertical-align: middle;
         padding: 5px;
       }
     }
@@ -420,7 +449,7 @@ export default {
     position: relative;
   }
 
-  .table-header {
+  .table-header-cell {
     position: sticky;
     top: 48px;
     z-index: 1;
