@@ -120,6 +120,7 @@ class ResultKey(FastEnum):
     ALRM_LAST_UPDATE = AlarmField.last_update_date.value
     ALRM_COMPONENT = "component"
     ALRM_RESOURCE = "resource"
+    ALRM_OUTPUT = "output"
     ENT = "watched_entities"
     ENT_ID = Entity._ID
 
@@ -171,6 +172,7 @@ class __TileData(object):
             self.last_update_date = alarm[ResultKey.ALRM_LAST_UPDATE]
             self.component = alarm[ResultKey.ALRM_COMPONENT]
             self.resource = alarm.get(ResultKey.ALRM_RESOURCE, None)
+            self.output = alarm.get(ResultKey.ALRM_OUTPUT, None)
 
         # properties of the tile
         self.isActionRequired = self.__is_action_required(watcher)

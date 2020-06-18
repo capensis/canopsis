@@ -164,23 +164,14 @@ Voici sa description :
 
 **Suppression**
 
-Pour supprimer une alarme en base, 2 étapes sont nécessaires.
-
 Supprimer l'élément de la base MongoDB :
 ```js
 db.periodical_alarm.remove({"v.component" : "NOM_MACHINE", "v.resource" : "Traffic - eth0"})
 ```
 
-Supprimer une alarme qui a été annulée
+Supprimer une alarme qui a été annulée :
 ```js
 db.periodical_alarm.remove({"v.component" : "XXXX", "v.resource" : "Ping", "v.resolved" : null, "v.status.val" : 4})
-```
-
-Vider le cache :
-
-```sh
-redis-cli
-> FLUSHALL
 ```
 
 ## État des services

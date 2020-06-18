@@ -1,7 +1,8 @@
 import { normalize } from 'normalizr';
+
 import i18n from '@/i18n';
 
-import request from '@/services/request';
+import request, { useRequestCancelling } from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 import { viewSchema } from '@/store/schemas';
@@ -47,14 +48,17 @@ export default {
   actions: {
     async fetchItem({ commit, dispatch }, { id }) {
       try {
-        commit(types.FETCH_ITEM, id);
+        await useRequestCancelling(async (source) => {
+          commit(types.FETCH_ITEM, id);
 
-        const { normalizedData } = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.view}/${id}`,
-          schema: viewSchema,
-        }, { root: true });
+          const { normalizedData } = await dispatch('entities/fetch', {
+            route: `${API_ROUTES.view}/${id}`,
+            schema: viewSchema,
+            cancelToken: source.token,
+          }, { root: true });
 
-        commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
+          commit(types.FETCH_ITEM_COMPLETED, normalizedData.result);
+        }, 'activeView');
       } catch (err) {
         console.error(err);
 

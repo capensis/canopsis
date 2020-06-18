@@ -44,6 +44,8 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
+import json
+
 
 rconn = RedisStore.get_default()
 
@@ -200,7 +202,7 @@ class AlertsReader(object):
 
         return tkey, tdir
 
-    def _get_time_filter(self, opened, resolved, tstart, tstop):
+    def _get_opened_resolved_time_filter(self, opened, resolved, tstart, tstop):
         """
         Transform opened, resolved, tstart and tstop parameters into a mongo
         filter. This filter is specific to alarms collection.
@@ -237,7 +239,7 @@ class AlertsReader(object):
         return None
 
     @staticmethod
-    def _get_opened_time_filter(tstart, tstop):
+    def _get_time_filter(resolved, tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -246,32 +248,21 @@ class AlertsReader(object):
         :type tstart: int or None
         :type tstop: int or None
 
-        :return: Mongo filter
+        :return: Specific mongo filter
         :rtype: dict
         """
-
-        if tstop is not None and tstart is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstop, "$gte": tstart}
-            }
-
+        cond = {'v.resolved': resolved, 't': dict()}
+        if tstart is not None:
+            cond['t']['$gte'] = tstart
         if tstop is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstop}
-            }
+            cond['t']['$lte'] = tstop
 
-        elif tstart is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstart}
-            }
+        if not cond['t']:
+            del cond['t']
 
-        return {'v.resolved': None}
+        return cond
 
-    @staticmethod
-    def _get_resolved_time_filter(tstart, tstop):
+    def _get_opened_time_filter(self, tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -284,22 +275,22 @@ class AlertsReader(object):
         :rtype: dict
         """
 
-        if tstart is not None and tstop is not None:
-            return {
-                'v.resolved': {'$ne': None},
-                't': {'$gte': tstart, '$lte': tstop}
-            }
+        return self._get_time_filter(None, tstart, tstop)
 
-        elif tstart is not None:
-            return {'v.resolved': {'$ne': None, '$gte': tstart}}
+    def _get_resolved_time_filter(self, tstart, tstop):
+        """
+        Get a specific mongo filter.
 
-        elif tstop is not None:
-            return {
-                'v.resolved': {'$ne': None},
-                't': {'$lte': tstop}
-            }
+        :param tstart: Timestamp
+        :param tstop: Timestamp
+        :type tstart: int or None
+        :type tstop: int or None
 
-        return {'v.resolved': {'$ne': None}}
+        :return: Specific mongo filter
+        :rtype: dict
+        """
+
+        return self._get_time_filter({'$ne': None}, tstart, tstop)
 
     @classmethod
     def __convert_to_bool(cls, value):
@@ -360,8 +351,10 @@ class AlertsReader(object):
 
         if not search:
             return ('this', {})
-
-        return interpret(search, grammar_file=self.grammar)
+        t, q = interpret(search, grammar_file=self.grammar)
+        if q and type(q) is str:
+            q = json.loads(json.dumps(q).replace("\\\\'", "'").decode("string_escape"))
+        return t, q
 
     def _lookup(self, alarms, lookups):
         """
@@ -940,7 +933,7 @@ class AlertsReader(object):
         if active_columns is None:
             active_columns = self.DEFAULT_ACTIVE_COLUMNS
 
-        time_filter = self._get_time_filter(
+        time_filter = self._get_opened_resolved_time_filter(
             opened=opened, resolved=resolved,
             tstart=tstart, tstop=tstop
         )
