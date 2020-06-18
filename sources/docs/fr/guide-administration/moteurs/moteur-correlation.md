@@ -112,9 +112,9 @@ Exemple :
 }
 ```
 
-#### Groupement complexe
+#### Groupement complexe avec seuil de déclenchement
 
-C'est une combinaison de groupement par attribut et de groupement par intervalle de temps, il possède aussi une notion de seuil de déclenchement. Par exemple on pourra l'utiliser pour regrouper toutes les alarmes créées pour une même entité durant un intervalle de temps donné, seulement si le nombre d'alarmes créées dépasse un certain seuil.
+C'est une combinaison de groupement par attribut et de groupement par intervalle de temps, il possède aussi une notion de seuil de déclenchement. Par exemple, on pourra l'utiliser pour regrouper toutes les alarmes créées pour une même entité durant un intervalle de temps donné, seulement si le nombre d'alarmes créées dépasse un certain seuil.
 
 Exemple :
 ```json
@@ -135,6 +135,31 @@ Exemple :
 }
 ```
 Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, ont été créées durant un intervalle de temps de 60 secondes.
+
+#### Groupement complexe avec taux de déclenchement
+
+Comme le précédent il s'agit d'un groupement par attribut et par intervalle de temps. Mais celui-ci calcule le taux d'entités en erreur par rapport à un groupe donné. Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes.
+
+Exemple :
+```json
+{
+  "name": "Groupement dysfonctionnement global site Wasquehal",
+  "type": "complex",
+  "config": {
+    "time_interval": 300,
+    "threshold_rate": 0.80,
+    "entity_patterns": [
+      {
+        "infos": {
+            "site": {
+                "value": "Wasquehal"
+            }
+        }
+      }
+    ]
+  }
+}
+```
 
 ### Processus de création d'une méta alarme
 
