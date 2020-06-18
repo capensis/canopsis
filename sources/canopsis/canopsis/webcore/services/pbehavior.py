@@ -262,9 +262,9 @@ class RouteHandlerPBehavior(object):
             raise ValueError("_id should be str, a list, None (null) not {}"
                              .format(type(_id)))
         pbehaviors = self.pb_manager.read(_id, search, limit, skip, sort)
-        return self._get_active_only(pbehaviors, current_active_pbh, sort)
+        return self._get_active_only(pbehaviors, current_active_pbh, sort, limit, skip)
 
-    def _get_active_only(self, pbehaviors_data, current_active_pbh=False, sorting=None):
+    def _get_active_only(self, pbehaviors_data, current_active_pbh=False, sorting=None, limit=None, skip=None):
         active_ones = []
         now = int(time.time())
         for pb in pbehaviors_data.get("data", []):
@@ -302,8 +302,14 @@ class RouteHandlerPBehavior(object):
                 if direction == 'DESC':
                     reverse = True
                 data.sort(reverse=reverse, key=sort_func)
+                try:
+                    if skip is not None:
+                        data = data[skip:]
+                    if limit is not None:
+                        data = data[:limit]
+                except:
+                    pass
                 pbehaviors_data["data"] = data
-
         return pbehaviors_data
 
     def update(self, _id, **kwargs):
