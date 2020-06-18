@@ -100,7 +100,7 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 L'alarme prend alors le statut `cancel` et reste pendant 1h dans le bac des alarmes en cours. Ce délai de 1h passé, elle change de statut pour passer en `resolved` et bascule dans le bac des alarmes résolues.
 
-**note:** Toute alarme annulée garde son dernier niveau de criticité connu.
+**Note :** Toute alarme annulée garde son dernier niveau de criticité connu.
 
 ### Annuler l'acquittement
 
