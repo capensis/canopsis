@@ -243,6 +243,12 @@ class PBehaviorManager(object):
             return [{"$sort": db_sort}]
         return []
 
+    def _is_sort_on_status(self, sort):
+        try:
+            return sort[0] == 'is_currently_active' or sort[0]['property'] == 'is_currently_active'
+        except:
+            return False
+
     def get(self, _id, search=None, limit=None, skip=None, sort=None):
         """Get pbehavior by id.
 
@@ -290,10 +296,12 @@ class PBehaviorManager(object):
                 "The aggregate returned unexpected data about total_count")
             return {"total_count": 0, "count": 0, "data": []}
 
-        if sort is not None:
-            pipeline.extend(self._resolve_sort(sort))
+        status_sort = self._is_sort_on_status(sort)
+        if not status_sort:
+            if sort is not None:
+                pipeline.extend(self._resolve_sort(sort))
 
-        if _id is None:
+        if _id is None and not status_sort:
             if skip is not None:
                 pipeline.append({"$skip": skip})
             if limit is not None:
