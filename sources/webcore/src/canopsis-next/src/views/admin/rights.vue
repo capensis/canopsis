@@ -30,7 +30,7 @@
                           hideDetails
                         )
                   template(slot="expand", slot-scope="{ item }")
-                    v-data-table(
+                    v-data-table.expand-rights-table(
                       :items="item.rights",
                       :headers="headers",
                       item-key="_id",
@@ -451,5 +451,21 @@ export default {
 
   .progress-wrapper {
     position: relative;
+  }
+
+  .expand-rights-table {
+    & /deep/ {
+      .v-table__overflow {
+        & thead tr {
+          height: 0;
+          visibility: hidden;
+        }
+
+        & thead th {
+          height: 0;
+          line-height: 0;
+        }
+      }
+    }
   }
 </style>
