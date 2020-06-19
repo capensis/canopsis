@@ -17,6 +17,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
 ### Dernières versions
 
+*  [Canopsis 3.42.0](notes-de-version/3.42.0.md), publié le 19 juin 2020
 *  [Canopsis 3.41.0](notes-de-version/3.41.0.md), publié le 25 mai 2020
 *  [Canopsis 3.40.0](notes-de-version/3.40.0.md), publié le 4 mai 2020
 *  [Canopsis 3.39.1](notes-de-version/3.39.1.md), publié le 14 avril 2020
