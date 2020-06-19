@@ -187,6 +187,20 @@ export default {
     this.fetchAlarmColumnFilters();
   },
   methods: {
+    updateRecordsPerPage(limit) {
+      this.updateWidgetPreferencesInUserPreference({
+        ...this.userPreference.widget_preferences,
+
+        itemsPerPage: limit,
+      });
+
+      this.query = {
+        ...this.query,
+
+        limit,
+      };
+    },
+
     expandFirstAlarm() {
       if (this.alarms[0] && !this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
