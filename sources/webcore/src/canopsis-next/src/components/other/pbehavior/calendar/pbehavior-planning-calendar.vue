@@ -8,10 +8,19 @@
     @resized="resizeHandler",
     @added="addHandler"
   )
+    ds-calendar-event-popover(
+      slot="eventCreatePopover",
+      slot-scope="props",
+      v-bind="props"
+    )
+      pbehavior-create-event(slot-scope="{ close }", :close="close")
 </template>
 
 <script>
+import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
+
 export default {
+  components: { PbehaviorCreateEvent },
   props: {
     pbehaviors: {
       type: Array,

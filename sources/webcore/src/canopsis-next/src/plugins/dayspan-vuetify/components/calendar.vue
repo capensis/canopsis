@@ -11,9 +11,10 @@
         @mouse-down-day="mouseDownDay",
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
-        @mouse-down-event="mouseDownEvent",
+        @mouse-down-event="startMove",
         @mouse-start-resize="startResize",
-        @clear-placeholder="clearPlaceholder"
+        @clear-placeholder="clearPlaceholder",
+        @handle-added="handleAdded"
       )
 
     .ds-month-view(v-if="isMonth")
@@ -27,7 +28,7 @@
         @mouse-down-day="mouseDownDay",
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
-        @mouse-down-event="mouseDownEvent",
+        @mouse-down-event="startMove",
         @mouse-start-resize="startResize",
         @clear-placeholder="clearPlaceholder"
       )
@@ -42,7 +43,7 @@
         @mouse-move="mouseMove",
         @mouse-down="mouseDown",
         @mouse-up="mouseUp",
-        @mouse-down-event="mouseDownEvent",
+        @mouse-down-event="startMove",
         @mouse-move-day="mouseMoveDay",
         @mouse-down-day="mouseDownDay",
         @mouse-up-day="mouseUp",
@@ -63,12 +64,16 @@ export default {
     canResize() {
       return !this.readOnly && !this.$dayspan.readOnly;
     },
+
+    hasCreatePopover() {
+      return !!this.$scopedSlots.eventCreatePopover;
+    },
   },
   methods: {
     createEventFromCalendar(calendarEvent) {
       return {
         data: calendarEvent.data,
-        schedule: calendarEvent.schedule,
+        schedule: calendarEvent.schedule.toInput(),
         id: calendarEvent.event.id,
       };
     },
@@ -88,11 +93,22 @@ export default {
       return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
     },
 
+    startMove(mouseEvent) {
+      if (this.canMove && mouseEvent.left) {
+        this.movingEvent = mouseEvent;
+        this.moving = true;
+        this.movingDuration = mouseEvent.calendarEvent.time.millis();
+        this.placeholderForCreate = false;
+        this.placeholder = this.copyCalendarEvent(mouseEvent.calendarEvent);
+      }
+    },
+
     startResize(event, calendarEvent) {
       if (this.canResize) {
         this.resizing = true;
         this.resizingEvent = event;
         this.resizingBelow = true;
+        this.placeholderForCreate = false;
         this.placeholder = this.copyCalendarEvent(calendarEvent);
       }
     },
@@ -104,6 +120,14 @@ export default {
     },
 
     finishAdd(mouseEvent) {
+      if (!this.hasCreatePopover) {
+        this.handleAdded(mouseEvent);
+      } else {
+        this.placeholderForCreate = true;
+      }
+    },
+
+    handleAdded(mouseEvent) {
       const event = this.getEvent('added', {
         mouseEvent,
         calendarEvent: this.createEventFromCalendar(this.placeholder),
@@ -253,15 +277,17 @@ export default {
     },
 
     mouseMove(mouseEvent) {
-      if (this.adding && mouseEvent.left) {
+      if (!mouseEvent.left) {
+        return;
+      }
+
+      if (this.adding) {
         this.changeAddPlaceholder(mouseEvent);
       }
 
-      this.mouseMoveCheckReady();
       if (this.moving) {
         this.changeMovePlaceholder(mouseEvent);
       }
-      this.mouseMoveCheckEnd(mouseEvent);
 
       if (this.resizing) {
         this.changeResizePlaceholder(mouseEvent);
@@ -269,15 +295,17 @@ export default {
     },
 
     mouseMoveDay(mouseEvent) {
-      if (this.adding && mouseEvent.left) {
+      if (!mouseEvent.left) {
+        return;
+      }
+
+      if (this.adding) {
         this.changeAddDayPlaceholder(mouseEvent);
       }
 
-      this.mouseMoveCheckReady();
       if (this.moving) {
         this.changeMoveDayPlaceholder(mouseEvent);
       }
-      this.mouseMoveCheckEnd(mouseEvent);
 
       if (this.resizing) {
         this.changeResizeDayPlaceholder(mouseEvent);
@@ -296,8 +324,11 @@ export default {
       if (this.resizing) {
         this.finishResize(mouseEvent);
       }
+    },
 
-      this.readyToMove = false;
+    clearPlaceholder() {
+      this.placeholder = null;
+      this.placeholderForCreate = false;
     },
   },
 };

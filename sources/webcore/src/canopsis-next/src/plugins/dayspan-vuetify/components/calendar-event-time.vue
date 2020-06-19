@@ -36,6 +36,26 @@ import { DsCalendarEventTime } from 'dayspan-vuetify/src/components';
 export default {
   extends: DsCalendarEventTime,
   computed: {
+    fullStyles() {
+      return this.$dayspan.getStyleTimed(this.details, this.calendarEvent);
+    },
+
+    placeholderFullStyles() {
+      const stateColor = this.$dayspan.getStyleColor(this.details, this.calendarEvent);
+      const styles = this.$dayspan.getStylePlaceholderTimed(
+        this.details,
+        this.calendarEvent,
+        this.isPlaceholderWithDay,
+      );
+      styles.backgroundColor = this.$dayspan.blend(stateColor, 1.1, this.$dayspan.placeholderBlendTarget);
+
+      return styles;
+    },
+
+    style() {
+      return this.isPlaceholderWithDay ? this.placeholderFullStyles : this.fullStyles;
+    },
+
     hasPopover() {
       return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.meta.hasPopover');
     },
@@ -55,8 +75,17 @@ export default {
         document.addEventListener('mouseup', this.resizeEndHandler);
       }
     },
+
     resizeEndHandler() {
       document.removeEventListener('mouseup', this.resizeEndHandler);
+    },
+
+    handlesEvents($event) {
+      if ($event) {
+        $event.stopPropagation();
+      }
+
+      return !!$event;
     },
   },
 };

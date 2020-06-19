@@ -21,10 +21,14 @@
 
 <script>
 import Vue from 'vue';
+
 import uuid from '@/helpers/uuid';
 import { MODALS } from '@/constants';
 
+import PbehaviorCreateEvent from '@/components/other/pbehavior/calendar/partials/pbehavior-create-event.vue';
+
 export default {
+  components: { PbehaviorCreateEvent },
   data() {
     return {
       readOnly: false,
