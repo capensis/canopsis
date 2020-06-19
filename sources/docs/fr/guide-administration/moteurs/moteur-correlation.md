@@ -5,10 +5,9 @@
 
 Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`. Ces règles peuvent être ajoutées via l'[API méta alarmes](../../guide-developpement/api/api-v2-meta-alarm-rule.md).
 
-Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la partie [Exemples](#exemples).
+Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la partie [types de groupements](#types-de-groupements).
 
 ## Utilisation
-
 
 ### Options du moteur
 
@@ -59,13 +58,29 @@ Passez votre bac à alarmes en mode édition (`CTRL + E`) pour accéder aux para
 
 Sauvegardez les changements et désactivez le mode édition.
 
+### Définition d'un groupement
+
+Un groupement d'alarmes se caractérise par les informations suivantes.
+
+| Champ | Type | Description |
+|-------|------|-------------|
+| `_id`   | string  | Identifiant unique du groupement, généré par MongoDB lui-même.  |
+| `name`  | string  | Nom donné au groupement, il apparaîtra sur les méta alarmes dans le bac.  |
+| `type`  | string  | Type de groupement : `relation`, `timebased`, `attribute` ou `complex`.  |
+| `time_interval`  | int  | Intervalle de temps en secondes.  |
+| `threshold_count`  | int  | Le `seuil de déclenchement` exprime un nombre d'alarmes au delà duquel le groupement sera effectué.  |
+| `threshold_rate`  | float  | Le `taux de déclenchement` exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
+
+Dans un groupement de type `complex`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
+
 ### Types de groupements
 
 Il existe plusieurs types de groupements pour corréler vos alarmes.
 
 #### Groupement par relation parent-enfant
 
-Il permet de regrouper les alarmes qui ont un lien de parenté. Par exemple, si un composant a provoqué une alarme, toutes les alarmes des ressources ayant le même composant seront regroupées dans une même méta alarme.
+Il permet de regrouper les alarmes qui ont un lien de parenté.  
+Par exemple, si un composant a provoqué une alarme, toutes les alarmes des ressources ayant le même composant seront regroupées dans une même méta alarme.
 
 Exemple :
 ```json
@@ -78,7 +93,8 @@ Cette règle s'applique à toutes les entités.
 
 #### Groupement par intervalle de temps
 
-Ce type de méta alarme regroupe toutes les alarmes survenues dans un intervalle de temps donné. Par exemple toutes les alarmes apparues au cours de la même minute (à partir de la création de la première alarme) seront regroupées sous une même méta alarme.
+Ce type de méta alarme regroupe toutes les alarmes survenues dans un intervalle de temps donné.  
+Par exemple toutes les alarmes apparues au cours de la même minute (à partir de la création de la première alarme) seront regroupées sous une même méta alarme.
 
 Exemple :
 ```json
@@ -93,7 +109,8 @@ Exemple :
 
 #### Groupement par attribut
 
-Ce type de groupement utilise les mêmes [patterns](moteur-che-event_filter.md#patterns) que les autres moteurs pour identifier un attribut dans l'évènement, dans l'entité ou dans l'alarme. Par exemple si on utilise un `event_pattern` qui vaut `component = srv001`, toutes les alarmes créées à partir d'un évènement dont le composant est égal à srv001 seront regroupées dans une méta alarme.
+Ce type de groupement utilise les mêmes [patterns](moteur-che-event_filter.md#patterns) que les autres moteurs pour identifier un attribut dans l'évènement, dans l'entité ou dans l'alarme.  
+Par exemple si on utilise un `event_pattern` qui vaut `component = srv001`, toutes les alarmes créées à partir d'un évènement dont le composant est égal à srv001 seront regroupées dans une méta alarme.
 
 Exemple :
 ```json
@@ -114,7 +131,8 @@ Exemple :
 
 #### Groupement complexe avec seuil de déclenchement
 
-C'est une combinaison de groupement par attribut et de groupement par intervalle de temps, il possède aussi une notion de seuil de déclenchement. Par exemple, on pourra l'utiliser pour regrouper toutes les alarmes créées pour une même entité durant un intervalle de temps donné, seulement si le nombre d'alarmes créées dépasse un certain seuil.
+C'est une combinaison de groupement par attribut et de groupement par intervalle de temps, il possède aussi une notion de seuil de déclenchement.  
+Par exemple, on pourra l'utiliser pour regrouper toutes les alarmes créées pour une même entité durant un intervalle de temps donné, seulement si le nombre d'alarmes créées dépasse un certain seuil.
 
 Exemple :
 ```json
@@ -138,7 +156,8 @@ Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, on
 
 #### Groupement complexe avec taux de déclenchement
 
-Comme le précédent il s'agit d'un groupement par attribut et par intervalle de temps. Mais celui-ci calcule le taux d'entités en erreur par rapport à un groupe donné. Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes.
+Comme le précédent il s'agit d'un groupement par attribut et par intervalle de temps. Mais celui-ci calcule le taux d'entités en erreur par rapport à un groupe donné, défini par un [pattern](moteur-che-event_filter.md#patterns).  
+Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes. Au préalable vous aurez pris soin d'enrichir les entités concernées avec `infos.site.value = Wasquehal`.
 
 Exemple :
 ```json
@@ -233,34 +252,6 @@ La méta alarme a été enrichie avec de nouvelles variables.
 - `v.children` : embarque les `id` des entités liées.
 
 - `v.parents` : est présent dans les variables mais ne sera renseigné que pour les alarmes liées à la méta alarme.
-
-### Exemples
-
-Vous avez 5 composants sur le site de Wasquehal et vous souhaitez que les alarmes soient groupées si au moins 4 d'entre eux présentent un dysfonctionnement sur une période de 10 minutes.
-
-Au préalable vous aurez pris soin de renseigner le site dans les `infos` des composants concernés.
-
-La règle à utiliser dans ce cas sera la suivante :
-
-```json
-{
-  "name": "Groupement dysfonctionnement global site Wasquehal",
-  "type": "complex",
-  "config": {
-    "time_interval": 600,
-    "threshold_count": 4,
-    "entity_patterns": [
-      {
-        "infos": {
-            "site": {
-                "value": "Wasquehal"
-            }
-        }
-      }
-    ]
-  }
-}
-```
 
 ## Collection MongoDB associée
 
