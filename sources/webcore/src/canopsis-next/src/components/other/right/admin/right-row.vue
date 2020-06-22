@@ -1,14 +1,15 @@
 <template lang="pug">
   tr
     td {{ right.desc }}
-    td(v-for="role in roles", :key="`role-right-${role._id}`")
-      right-row-cell(
-        :right="right",
-        :role="role",
-        :changedRole="changedRoles[role._id]",
-        :disabled="disabled",
-        @change="change"
-      )
+    right-row-cell(
+      v-for="role in roles",
+      :key="`role-right-${role._id}`",
+      :right="right",
+      :role="role",
+      :changedRole="changedRoles[role._id]",
+      :disabled="disabled",
+      @change="change"
+    )
 </template>
 
 <script>

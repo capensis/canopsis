@@ -1,14 +1,15 @@
 <template lang="pug">
   tr
     td(@click="$emit('click')") {{ $t(`rights.${group.key}`) }}
-    td(v-for="role in roles", :key="`role-right-${role._id}`")
-      right-group-row-cell(
-        :group="group",
-        :role="role",
-        :changedRole="changedRoles[role._id]",
-        :disabled="disabled",
-        @change="change"
-      )
+    right-group-row-cell(
+      v-for="role in roles",
+      :key="`role-right-${role._id}`",
+      :group="group",
+      :role="role",
+      :changedRole="changedRoles[role._id]",
+      :disabled="disabled",
+      @change="change"
+    )
 </template>
 
 <script>

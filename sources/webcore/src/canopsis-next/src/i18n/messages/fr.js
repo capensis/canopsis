@@ -1550,5 +1550,13 @@ export default {
     },
   },
 
+  rights: {
+    listalarm: 'Droits pour Alarms List',
+    serviceweather: 'Droits pour Service Weather',
+    crudcontext: 'Droits pour Context Explorer',
+    counter: 'Droits pour Counter',
+    common: 'Droits communs',
+  },
+
   ...featureService.get('i18n.fr'),
 };

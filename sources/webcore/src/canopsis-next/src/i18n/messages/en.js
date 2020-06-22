@@ -1639,6 +1639,13 @@ export default {
       },
     },
   },
+  rights: {
+    listalarm: 'Rights for Alarms List',
+    serviceweather: 'Rights for Service Weather',
+    crudcontext: 'Rights for Context Explorer',
+    counter: 'Rights for Counter',
+    common: 'Rights for common',
+  },
 
   ...featureService.get('i18n.en'),
 };

@@ -8,17 +8,24 @@
       v-tabs(fixed-tabs, slider-color="primary")
         template(v-for="(rights, groupKey) in groupedRights")
           v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
-          v-tab-item(:key="`tab-item-${groupKey}`")
-            v-card(v-if="hasReadAnyRoleAccess")
-              v-card-text
-                rights-groups-table(
-                  :groups="rights",
-                  :roles="roles",
-                  :changedRoles="changedRoles",
-                  @change="changeCheckboxValue"
-                )
-    v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+          v-tab-item.white(:key="`tab-item-${groupKey}`")
+            div.pa-3(v-if="hasReadAnyRoleAccess")
+              rights-groups-table(
+                v-if="groupKey === 'business'",
+                :groups="rights",
+                :roles="roles",
+                :changedRoles="changedRoles",
+                @change="changeCheckboxValue"
+              )
+              rights-table(
+                v-else,
+                :rights="rights",
+                :roles="roles",
+                :changedRoles="changedRoles",
+                @change="changeCheckboxValue"
+              )
+    v-layout.submit-button.mt-3(v-show="hasUpdateAnyActionAccess && hasChanges")
+      v-btn.primary.ml-3(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
     .fab(v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess")
       v-layout(column)
@@ -46,7 +53,7 @@
 </template>
 
 <script>
-import { get, isEmpty, isUndefined, transform } from 'lodash';
+import { get, omit, isEmpty, isUndefined, transform } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -70,11 +77,13 @@ import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
 import RightsGroupsTable from '@/components/other/right/admin/rights-groups-table.vue';
+import RightsTable from '@/components/other/right/admin/rights-table.vue';
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 
 export default {
   components: {
     RightsGroupsTable,
+    RightsTable,
     RefreshBtn,
   },
   mixins: [
@@ -303,7 +312,7 @@ export default {
       groupedRights.business = Object.entries(groupedRights.business).map(([key, value]) => ({ key, rights: value }));
       groupedRights.view = [...groupedRights.view, ...groupedRights.playlist];
 
-      this.groupedRights = { business: groupedRights.business };
+      this.groupedRights = omit(groupedRights, ['playlist']);
     },
   },
 };
@@ -312,12 +321,17 @@ export default {
 <style lang="scss" scoped>
   $firstTdWidth: 350px;
 
+  .submit-button {
+    position: sticky;
+    bottom: 10px;
+  }
+
   .admin-rights {
     & /deep/ {
       .v-table__overflow {
         overflow: visible;
         td {
-          padding: 0 20px;
+          padding: 8px 24px;
 
           &:first-child {
             width: $firstTdWidth;

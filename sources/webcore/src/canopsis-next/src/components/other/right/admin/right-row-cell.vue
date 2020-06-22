@@ -42,15 +42,20 @@ export default {
       const masks = USERS_RIGHTS_TYPES_TO_MASKS[this.right.type];
 
       if (masks) {
-        return masks.map(mask => ({
-          bind: {
-            inputValue: this.getCheckboxValue(mask),
-            label: mask,
-          },
-          on: {
-            change: value => this.changeCheckboxValue(value, mask),
-          },
-        }));
+        return masks.map((mask) => {
+          const [label] = Object.entries(USERS_RIGHTS_MASKS)
+            .find(([key, value]) => key !== 'default' && value === mask) || [''];
+
+          return {
+            bind: {
+              inputValue: this.getCheckboxValue(mask),
+              label,
+            },
+            on: {
+              change: value => this.changeCheckboxValue(value, mask),
+            },
+          };
+        });
       }
 
       return [
