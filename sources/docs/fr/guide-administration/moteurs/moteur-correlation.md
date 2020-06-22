@@ -3,6 +3,10 @@
 !!! note
     Ce moteur est disponible à partir de Canopsis 3.40.0.
 
+!!! note
+    Le type `valuegroup` est disponible à partir de Canopsis 3.43.0.
+
+
 Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`. Ces règles peuvent être ajoutées via l'[API méta alarmes](../../guide-developpement/api/api-v2-meta-alarm-rule.md).
 
 Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la partie [types de groupements](#types-de-groupements).
@@ -28,9 +32,9 @@ La commande `engine-correlation -help` liste toutes les options acceptées par l
 ### Multi-instanciation
 
 !!! note
-    Cette fonctionnalité sera disponible à partir de Canopsis 3.42.0. Elle ne doit pas être utilisée sur les versions antérieures.
+    Cette fonctionnalité sera disponible à partir de Canopsis 3.43.0. Elle ne doit pas être utilisée sur les versions antérieures.
 
-Il est possible, à partir de **Canopsis 3.42.0**, de lancer plusieurs instances du moteur `engine-correlation`, afin d'améliorer sa performance de traitement et sa résilience.
+Il est possible, à partir de **Canopsis 3.43.0**, de lancer plusieurs instances du moteur `engine-correlation`, afin d'améliorer sa performance de traitement et sa résilience.
 
 En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale correlation=2` pour que le moteur `engine-correlation` soit lancé avec 2 instances.
 
@@ -66,12 +70,13 @@ Un groupement d'alarmes se caractérise par les informations suivantes.
 |-------|------|-------------|
 | `_id`   | string  | Identifiant unique du groupement, généré par MongoDB lui-même.  |
 | `name`  | string  | Nom donné au groupement, il apparaîtra sur les méta alarmes dans le bac.  |
-| `type`  | string  | Type de groupement : `relation`, `timebased`, `attribute` ou `complex`.  |
+| `type`  | string  | Type de groupement : `relation`, `timebased`, `attribute`, `complex`, ou `valuegroup`.  |
 | `time_interval`  | int  | Intervalle de temps en secondes.  |
 | `threshold_count`  | int  | Le `seuil de déclenchement` exprime un nombre d'alarmes au delà duquel le groupement sera effectué.  |
 | `threshold_rate`  | float  | Le `taux de déclenchement` exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
+| `value_path`  | string  | Le `chemin du groupe de valeurs` désigne l'adresse de l'attribut à partir duquel le groupement va opérer. |
 
-Dans un groupement de type `complex`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
+Dans un groupement de type `complex` ou `valuegroup`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
 
 ### Types de groupements
 
@@ -179,6 +184,35 @@ Exemple :
   }
 }
 ```
+#### Groupement `groupe de valeurs`
+
+Ce type de règle possède les mêmes attributs que le type `complex` avec la notion de `chemin de valeur (value_path)` en plus.  
+Ce **chemin de valeur** est utilisé pour grouper les valeurs de manière unique.
+
+Exemple :
+```json
+{
+    "name": "Groupe de valeurs",
+    "type": "valuegroup",
+    "config": {
+        "time_interval": 3600,
+        "threshold_count": 5,
+        "value_path": "entity.infos.site.value",
+        "entity_patterns": [
+            {
+                "infos": {
+                    "site": {
+                        "value": {
+                            "regex_match": ".+"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}
+```
+Cette règle s'applique si 5 alarmes ou plus concernant le même chemin de valeur (**entity.infos.site.value**), ont été créées durant un intervalle de temps de 3600 secondes.
 
 ### Processus de création d'une méta alarme
 
