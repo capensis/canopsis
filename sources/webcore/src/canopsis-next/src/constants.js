@@ -927,6 +927,7 @@ export const META_ALARMS_RULE_TYPES = {
   timebased: 'timebased',
   attribute: 'attribute',
   complex: 'complex',
+  valuegroup: 'valuegroup',
 };
 
 export const META_ALARMS_THRESHOLD_TYPES = {

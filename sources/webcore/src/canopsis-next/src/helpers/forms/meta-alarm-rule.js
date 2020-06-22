@@ -22,6 +22,7 @@ export function metaAlarmRuleToForm(rule = {}) {
     type: rule.type || META_ALARMS_RULE_TYPES.attribute,
     name: rule.name || '',
     config: {
+      value_path: config.value_path || '',
       alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
       entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
@@ -38,7 +39,7 @@ export function metaAlarmRuleToForm(rule = {}) {
 }
 
 /**
- * Convert form to meta alarm rul
+ * Convert form to meta alarm rule
  *
  * @param {Object} [form={}]
  * @returns {Object}
@@ -56,13 +57,19 @@ export function formToMetaAlarmRule(form = {}) {
       );
       break;
     }
-    case META_ALARMS_RULE_TYPES.complex: {
-      const config = omit(form.config, [
-        'threshold_type',
-        form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
-          ? 'threshold_rate'
-          : 'threshold_count',
-      ]);
+    case META_ALARMS_RULE_TYPES.complex:
+    case META_ALARMS_RULE_TYPES.valuegroup: {
+      const thresholdField = form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
+        ? 'threshold_rate'
+        : 'threshold_count';
+
+      const fields = ['threshold_type', thresholdField];
+
+      if (form.type === META_ALARMS_RULE_TYPES.complex) {
+        fields.push('value_path');
+      }
+
+      const config = omit(form.config, fields);
 
       metaAlarmRule.config = unsetSeveralFieldsWithConditions(
         config,
