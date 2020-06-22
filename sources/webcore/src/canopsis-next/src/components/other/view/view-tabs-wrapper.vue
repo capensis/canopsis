@@ -23,11 +23,12 @@
       :isTabsChanged="isTabsChanged",
       :isEditingMode="isEditingMode",
       :hasUpdateAccess="hasUpdateAccess",
-      :updateViewMethod="data => updateViewMethod(data)"
+      :updateViewMethod="updateViewMethod"
     )
-      view-tab-rows(
+      view-tab-widgets(
         slot-scope="props",
-        v-bind="props"
+        v-bind="props",
+        @update:tab="$emit('update:tab', $event)"
       )
 </template>
 
@@ -35,12 +36,12 @@
 import { isEqual } from 'lodash';
 
 import ViewTabs from './view-tabs.vue';
-import ViewTabRows from './view-tab-rows.vue';
+import ViewTabWidgets from './view-tab-widgets.vue';
 
 export default {
   components: {
     ViewTabs,
-    ViewTabRows,
+    ViewTabWidgets,
   },
   props: {
     view: {

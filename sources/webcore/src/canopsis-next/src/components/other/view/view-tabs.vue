@@ -43,18 +43,18 @@
           :updateViewMethod="updateViewMethod"
         )
     template(v-if="$scopedSlots.default")
-      v-tab-item(
-        v-for="tab in tabs",
-        :key="tab._id",
-        :value="getTabHrefById(tab._id)",
-        lazy
-      )
-        slot(
-          :tab="tab",
-          :isEditingMode="isEditingMode",
-          :hasUpdateAccess="hasUpdateAccess",
-          :updateTabMethod="updateTab"
+      v-tabs-items(touchless)
+        v-tab-item(
+          v-for="tab in tabs",
+          :key="tab._id",
+          :value="getTabHrefById(tab._id)",
+          lazy
         )
+          slot(
+            :tab="tab",
+            :isEditingMode="isEditingMode",
+            :updateTabMethod="updateTab"
+          )
 </template>
 
 <script>

@@ -24,6 +24,7 @@ export default {
     addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
+    toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
     name: 'Name',
     description: 'Description',
     author: 'Author',
@@ -1501,6 +1502,8 @@ export default {
     deleteWidget: 'Delete widget',
     fullScreen: 'Full screen',
     fullScreenShortcut: 'Alt + Enter / Command + Enter',
+    copyWidgetId: 'Copy widget ID',
+    autoHeightButton: 'If the button is selecting height will calculate automatically',
   },
   patternsList: {
     noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',

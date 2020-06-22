@@ -1,4 +1,5 @@
-import { COLORS } from '@/config';
+import { COLORS, MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+
 import featuresService from '@/services/features';
 
 export const CRUD_ACTIONS = {
@@ -19,7 +20,6 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  viewRow: 'viewRow',
   viewTab: 'viewTab',
   widget: 'widget',
   stat: 'stat',
@@ -1343,3 +1343,41 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
 export const PORTALS_NAMES = {
   additionalTopBarItems: 'additional-top-bar-items',
 };
+
+export const WIDGET_GRID_SIZES_KEYS = {
+  mobile: 'mobile',
+  tablet: 'tablet',
+  desktop: 'desktop',
+};
+
+export const MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP = {
+  m: WIDGET_GRID_SIZES_KEYS.mobile,
+  t: WIDGET_GRID_SIZES_KEYS.tablet,
+  l: WIDGET_GRID_SIZES_KEYS.desktop,
+  xl: WIDGET_GRID_SIZES_KEYS.desktop,
+};
+
+export const WIDGET_LAYOUT_MAX_WIDTHS = {
+  [WIDGET_GRID_SIZES_KEYS.desktop]: '100%',
+  [WIDGET_GRID_SIZES_KEYS.tablet]: `${MEDIA_QUERIES_BREAKPOINTS.t}px`,
+  [WIDGET_GRID_SIZES_KEYS.mobile]: `${MEDIA_QUERIES_BREAKPOINTS.m}px`,
+};
+
+export const WIDGET_GRID_SIZES_STYLES = {
+  [WIDGET_GRID_SIZES_KEYS.mobile]: {
+    value: WIDGET_GRID_SIZES_KEYS.mobile,
+    icon: 'stay_primary_portrait',
+  },
+  [WIDGET_GRID_SIZES_KEYS.tablet]: {
+    value: WIDGET_GRID_SIZES_KEYS.tablet,
+    icon: 'tablet_mac',
+  },
+  [WIDGET_GRID_SIZES_KEYS.desktop]: {
+    value: WIDGET_GRID_SIZES_KEYS.desktop,
+    icon: 'desktop_windows',
+  },
+};
+
+export const WIDGET_GRID_ROW_HEIGHT = 20;
+
+export const WIDGET_GRID_COLUMNS_COUNT = 12;

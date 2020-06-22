@@ -25,7 +25,7 @@
             v-btn.play-button(color="primary", large, @click="play")
               v-icon(large) play_arrow
           v-fade-transition(mode="out-in")
-            view-tab-rows(:tab="activeTab", :key="activeTab._id")
+            view-tab-widgets(:tab="activeTab", :key="activeTab._id")
 </template>
 
 <script>
@@ -36,13 +36,13 @@ import { getSecondsByUnit } from '@/helpers/time';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
 
-import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
+import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 const { mapActions } = createNamespacedHelpers('playlist');
 
 export default {
-  components: { ViewTabRows, ProgressOverlay },
+  components: { ViewTabWidgets, ProgressOverlay },
   mixins: [entitiesViewGroupMixin, rightsEntitiesPlaylistTabMixin],
   props: {
     id: {

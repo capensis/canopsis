@@ -49,11 +49,6 @@ export default {
       return this.getQueryNonceById(this.tabId);
     },
   },
-  destroyed() {
-    this.removeQuery({
-      id: this.queryId,
-    });
-  },
   methods: {
     getQuery() {
       const query = omit(this.query, [

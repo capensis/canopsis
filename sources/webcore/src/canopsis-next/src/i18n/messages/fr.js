@@ -23,6 +23,7 @@ export default {
     addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
+    toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode d\'édition pour cela',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
@@ -1418,6 +1419,8 @@ export default {
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+    copyWidgetId: 'Copier l\'ID du widget',
+    autoHeightButton: 'Si le bouton sélectionne la hauteur sera calculée automatiquement',
   },
   patternsList: {
     noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',
