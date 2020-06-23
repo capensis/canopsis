@@ -11,6 +11,7 @@
         :group="props.item",
         :roles="roles",
         :changedRoles="changedRoles",
+        :disabled="disabled",
         @change="change",
         @click="props.expanded = !props.expanded"
       )
@@ -19,6 +20,7 @@
         :rights="item.rights",
         :roles="roles",
         :changedRoles="changedRoles",
+        :disabled="disabled",
         @change="change"
       )
 </template>
@@ -45,6 +47,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     headers() {
@@ -62,3 +68,28 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  $titleLeftPadding: 36px;
+
+  .expand-rights-table /deep/ .v-table__overflow {
+    tr td {
+      &:first-child {
+        padding-left: $titleLeftPadding;
+      }
+    }
+
+    thead tr {
+      height: 0;
+      visibility: hidden;
+
+      th {
+        position: relative;
+        height: 0;
+        line-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    }
+  }
+</style>

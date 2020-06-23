@@ -1,6 +1,6 @@
 <template lang="pug">
   tr
-    td(@click="$emit('click')") {{ $t(`rights.${group.key}`) }}
+    td.cursor-pointer(@click="$emit('click')") {{ $t(group.key) }}
     right-group-row-cell(
       v-for="role in roles",
       :key="`role-right-${role._id}`",

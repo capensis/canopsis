@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import { get, isUndefined } from 'lodash';
-import { USERS_RIGHTS_MASKS } from '@/constants';
+import { getRightMasks, getCheckboxValue } from '@/helpers/right';
 
 export default {
   model: {
@@ -39,18 +38,32 @@ export default {
   computed: {
     checkbox() {
       const bind = this.group.rights.reduce((acc, right, index) => {
-        const checkboxValue = this.getCheckboxValue(right);
-        if (!acc.indeterminate && checkboxValue !== acc.inputValue && index !== 0) {
-          acc.indeterminate = true;
-        }
+        const masks = getRightMasks(right);
 
-        acc.inputValue = acc.inputValue || checkboxValue;
+        masks.forEach((mask, maskIndex) => {
+          const checkboxValue = getCheckboxValue(right, this.role, this.changedRole, mask);
+
+          if (!acc.indeterminate && checkboxValue !== acc.inputValue && !(index === 0 && maskIndex === 0)) {
+            acc.indeterminate = true;
+          }
+
+          acc.inputValue = acc.inputValue || checkboxValue;
+        });
 
         return acc;
-      }, { inputValue: false, indeterminate: false });
+      }, {
+        inputValue: false,
+        indeterminate: false,
+      });
 
       const on = {
-        change: value => this.group.rights.forEach(right => this.changeCheckboxValue(value, right)),
+        change: value => this.group.rights.forEach((right) => {
+          const masks = getRightMasks(right);
+
+          masks.forEach(mask =>
+            getCheckboxValue(right, this.role, this.changedRole, mask) !== value
+            && this.changeCheckboxValue(value, right, mask));
+        }),
       };
 
       return {
@@ -60,18 +73,6 @@ export default {
     },
   },
   methods: {
-    getCheckboxValue(right, rightMask = USERS_RIGHTS_MASKS.default) {
-      const { role, changedRole } = this;
-
-      const checkSum = get(role, ['rights', right._id, 'checksum'], 0);
-
-      const changedCheckSum = get(changedRole, [right._id]);
-      const currentCheckSum = isUndefined(changedCheckSum) ? checkSum : changedCheckSum;
-      const rightType = currentCheckSum & rightMask;
-
-      return rightType === rightMask;
-    },
-
     /**
      * Change checkbox value
      *

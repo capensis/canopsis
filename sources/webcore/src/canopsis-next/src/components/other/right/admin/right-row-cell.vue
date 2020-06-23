@@ -11,8 +11,9 @@
 </template>
 
 <script>
-import { get, isUndefined } from 'lodash';
 import { USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES_TO_MASKS } from '@/constants';
+
+import { getCheckboxValue } from '@/helpers/right';
 
 export default {
   model: {
@@ -48,8 +49,9 @@ export default {
 
           return {
             bind: {
-              inputValue: this.getCheckboxValue(mask),
               label,
+
+              inputValue: getCheckboxValue(this.right, this.role, this.changedRole, mask),
             },
             on: {
               change: value => this.changeCheckboxValue(value, mask),
@@ -60,9 +62,8 @@ export default {
 
       return [
         {
-          key: 'right',
           bind: {
-            inputValue: this.getCheckboxValue(),
+            inputValue: getCheckboxValue(this.right, this.role, this.changedRole),
           },
           on: {
             change: value => this.changeCheckboxValue(value),
@@ -72,24 +73,13 @@ export default {
     },
   },
   methods: {
-    getCheckboxValue(rightMask = USERS_RIGHTS_MASKS.default) {
-      const { right, role, changedRole } = this;
-
-      const checkSum = get(role, ['rights', right._id, 'checksum'], 0);
-      const changedCheckSum = get(changedRole, [right._id]);
-      const currentCheckSum = isUndefined(changedCheckSum) ? checkSum : changedCheckSum;
-      const rightType = currentCheckSum & rightMask;
-
-      return rightType === rightMask;
-    },
-
     /**
      * Change checkbox value
      *
      * @param {boolean} value
      * @param {number} mask
      */
-    changeCheckboxValue(value, mask) {
+    changeCheckboxValue(value, mask = USERS_RIGHTS_MASKS.default) {
       this.$emit('change', value, this.role, this.right, mask);
     },
   },

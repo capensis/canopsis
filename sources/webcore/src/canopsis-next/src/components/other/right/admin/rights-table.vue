@@ -11,6 +11,7 @@
         :right="item",
         :roles="roles",
         :changedRoles="changedRoles",
+        :disabled="disabled",
         @change="change"
       )
 </template>
@@ -34,6 +35,10 @@ export default {
     changedRoles: {
       type: Object,
       default: () => ({}),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
