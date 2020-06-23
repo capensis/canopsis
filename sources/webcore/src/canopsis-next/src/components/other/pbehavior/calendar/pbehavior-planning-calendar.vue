@@ -33,7 +33,45 @@ export default {
   },
   computed: {
     events() {
-      return this.pbehaviors;
+      return [{
+        id: 'e3b23564-71d7-4d59-8105-5ece80032100',
+        data: {
+          title: 'Meeting',
+          description: '',
+          location: '',
+          color: '#F44336',
+          forecolor: '#ffffff',
+          calendar: '',
+          busy: true,
+          icon: '',
+        },
+        schedule: {
+          dayOfMonth: [16],
+          duration: 270,
+          durationUnit: 'minutes',
+          month: [5],
+          times: ['16:15'],
+          year: [2020],
+        },
+      }, {
+        id: '7c5db84d-cd0a-4af6-b4fd-c590cba585bb',
+        data: {
+          title: 'Vocation',
+          description: '',
+          location: '',
+          color: '#FFC107',
+          forecolor: '#ffffff',
+          calendar: '',
+          busy: true,
+          icon: '',
+        },
+        schedule: {
+          dayOfMonth: [7],
+          duration: 7,
+          month: [5],
+          year: [2020],
+        },
+      }];
     },
   },
   methods: {

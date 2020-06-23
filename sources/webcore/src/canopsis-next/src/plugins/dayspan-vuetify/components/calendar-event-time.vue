@@ -25,16 +25,18 @@
             span.ds-ev-description {{ details.description }}
         span(v-else)
           slot(name="eventTimeEmpty", v-bind="{ calendarEvent, details }")
-      .ds-calendar-event-time-resize(v-show="calendarEvent.ending && canResize", @mousedown="resizeStartHandler")
+      .ds-calendar-event-time-resize(v-show="canResize", @mousedown="resizeStartHandler")
     slot(name="eventPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
 <script>
-import { get } from 'lodash';
 import { DsCalendarEventTime } from 'dayspan-vuetify/src/components';
+
+import eventMixin from '../mixins/event';
 
 export default {
   extends: DsCalendarEventTime,
+  mixins: [eventMixin],
   computed: {
     fullStyles() {
       return this.$dayspan.getStyleTimed(this.details, this.calendarEvent);
@@ -54,38 +56,6 @@ export default {
 
     style() {
       return this.isPlaceholderWithDay ? this.placeholderFullStyles : this.fullStyles;
-    },
-
-    hasPopover() {
-      return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.meta.hasPopover');
-    },
-
-    canResize() {
-      return !this.$dayspan.readOnly;
-    },
-  },
-  beforeDestroy() {
-    this.resizeEndHandler();
-  },
-  methods: {
-    resizeStartHandler(event) {
-      if (event.button === 0) {
-        event.stopPropagation();
-        this.$emit('mouse-start-resize', event, this.calendarEvent);
-        document.addEventListener('mouseup', this.resizeEndHandler);
-      }
-    },
-
-    resizeEndHandler() {
-      document.removeEventListener('mouseup', this.resizeEndHandler);
-    },
-
-    handlesEvents($event) {
-      if ($event) {
-        $event.stopPropagation();
-      }
-
-      return !!$event;
     },
   },
 };

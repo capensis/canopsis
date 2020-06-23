@@ -32,6 +32,9 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.$emit('clear-placeholder');
+    },
     triggerClearPlaceholder() { },
   },
 };
