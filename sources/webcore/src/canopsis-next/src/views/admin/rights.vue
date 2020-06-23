@@ -11,7 +11,7 @@
           v-tab-item.white(:key="`tab-item-${groupKey}`")
             div.pa-3(v-if="hasReadAnyRoleAccess")
               rights-groups-table(
-                v-if="groupKey === 'business'",
+                v-if="groupKey === 'business' || groupKey === 'technical'",
                 :groups="rights",
                 :roles="roles",
                 :changedRoles="changedRoles",
@@ -266,11 +266,13 @@ export default {
 
       const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
       const allRightsIds = flatten(USERS_RIGHTS);
-      const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
       const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
+      const { exploitation: exploitationTechnicalRights, ...adminTechnicalRights } = USERS_RIGHTS.technical;
+      const adminTechnicalRightsValues = Object.values(adminTechnicalRights);
+      const exploitationTechnicalRightsValues = Object.values(exploitationTechnicalRights);
 
       const groupedRights = rights.reduce((acc, right) => {
-        const rightId = String(right._id);
+        const rightId = String(right._id, '\'');
         const view = allViews.find(({ _id }) => _id === rightId);
         const playlist = this.playlists.find(({ _id }) => _id === rightId);
 
@@ -286,8 +288,10 @@ export default {
 
             desc: right.desc.replace(playlist._id, playlist.name),
           });
-        } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
-          acc.technical.push(right);
+        } else if (adminTechnicalRightsValues.indexOf(rightId) !== -1) {
+          acc.technical.admin.push(right);
+        } else if (exploitationTechnicalRightsValues.indexOf(rightId) !== -1) {
+          acc.technical.exploitation.push(right);
         } else if (
           Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
           NOT_COMPLETED_USER_RIGHTS_KEYS.some(userRightKey => rightId.startsWith(allRightsIds[userRightKey]))
@@ -306,10 +310,14 @@ export default {
         business: {},
         view: [],
         playlist: [],
-        technical: [],
+        technical: {
+          admin: [],
+          exploitation: [],
+        },
       });
 
       groupedRights.business = Object.entries(groupedRights.business).map(([key, value]) => ({ key, rights: value }));
+      groupedRights.technical = Object.entries(groupedRights.technical).map(([key, value]) => ({ key, rights: value }));
       groupedRights.view = [...groupedRights.view, ...groupedRights.playlist];
 
       this.groupedRights = omit(groupedRights, ['playlist']);
@@ -331,7 +339,7 @@ export default {
       .v-table__overflow {
         overflow: visible;
         td {
-          padding: 8px 24px;
+          padding: 8px 10px;
 
           &:first-child {
             width: $firstTdWidth;
@@ -361,14 +369,23 @@ export default {
       }
 
       .expand-rights-table {
-        .v-table__overflow thead tr {
-          height: 0;
-          visibility: hidden;
+        .v-table__overflow {
+          tr td {
+            &:first-child {
+              padding-left: 36px;
+            }
+          }
 
-          th {
-            position: relative;
+          thead tr {
             height: 0;
-            line-height: 0;
+            visibility: hidden;
+
+            th {
+              position: relative;
+              height: 0;
+              line-height: 0;
+              padding: 0 24px;
+            }
           }
         }
       }
