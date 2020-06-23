@@ -77,7 +77,7 @@ export default {
      * Change checkbox value
      *
      * @param {boolean} value
-     * @param {number} mask
+     * @param {number} [mask = USERS_RIGHTS_MASKS.default]
      */
     changeCheckboxValue(value, mask = USERS_RIGHTS_MASKS.default) {
       this.$emit('change', value, this.role, this.right, mask);

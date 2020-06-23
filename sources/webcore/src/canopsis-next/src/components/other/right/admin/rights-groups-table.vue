@@ -12,7 +12,7 @@
         :roles="roles",
         :changedRoles="changedRoles",
         :disabled="disabled",
-        @change="change",
+        @change="$listeners.change",
         @click="props.expanded = !props.expanded"
       )
     template(slot="expand", slot-scope="{ item }")
@@ -21,7 +21,7 @@
         :roles="roles",
         :changedRoles="changedRoles",
         :disabled="disabled",
-        @change="change"
+        @change="$listeners.change"
       )
 </template>
 
@@ -59,11 +59,6 @@ export default {
 
         ...this.roles.map(role => ({ text: role._id, sortable: false })),
       ];
-    },
-  },
-  methods: {
-    change(...args) {
-      this.$emit('change', ...args);
     },
   },
 };

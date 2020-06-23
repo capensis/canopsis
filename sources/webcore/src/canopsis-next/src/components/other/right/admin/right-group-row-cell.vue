@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import { USERS_RIGHTS_MASKS } from '@/constants';
+
 import { getRightMasks, getCheckboxValue } from '@/helpers/right';
 
 export default {
@@ -78,9 +80,9 @@ export default {
      *
      * @param {boolean} value
      * @param {Object} right
-     * @param {number} mask
+     * @param {number} [mask = USERS_RIGHTS_MASKS.default]
      */
-    changeCheckboxValue(value, right, mask) {
+    changeCheckboxValue(value, right, mask = USERS_RIGHTS_MASKS.default) {
       this.$emit('change', value, this.role, right, mask);
     },
   },

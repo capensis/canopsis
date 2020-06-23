@@ -1,4 +1,4 @@
-<template lang="pug">
+<template lang="pug" functional>
   tr
     td {{ right.desc }}
     right-row-cell(
@@ -8,7 +8,7 @@
       :role="role",
       :changedRole="changedRoles[role._id]",
       :disabled="disabled",
-      @change="change"
+      @change="$listeners.change"
     )
 </template>
 
@@ -33,11 +33,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-    },
-  },
-  methods: {
-    change(...args) {
-      this.$emit('change', ...args);
     },
   },
 };

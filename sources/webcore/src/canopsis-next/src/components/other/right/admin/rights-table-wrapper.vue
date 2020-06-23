@@ -6,7 +6,7 @@
       :roles="roles",
       :changedRoles="changedRoles",
       :disabled="disabled",
-      @change="changeCheckboxValue"
+      @change="$listeners.change"
     )
     rights-table(
       v-else,
@@ -14,7 +14,7 @@
       :roles="roles",
       :changedRoles="changedRoles",
       :disabled="disabled",
-      @change="changeCheckboxValue"
+      @change="$listeners.change"
     )
 </template>
 
@@ -48,11 +48,6 @@ export default {
   computed: {
     isGroup() {
       return this.rights.length && this.rights[0].rights;
-    },
-  },
-  methods: {
-    changeCheckboxValue(...args) {
-      this.$emit('change', ...args);
     },
   },
 };
