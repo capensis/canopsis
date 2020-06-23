@@ -7,6 +7,8 @@
         :calendar="calendar",
         :placeholder="placeholder",
         :placeholder-for-create="placeholderForCreate",
+        @edit="editHandler",
+        @add="addHandler",
         @mouse-move-day="mouseMoveDay",
         @mouse-down-day="startAdd",
         @mouse-up-day="mouseUp",
@@ -24,6 +26,8 @@
         :calendar="calendar",
         :placeholder="placeholder",
         :placeholder-for-create="placeholderForCreate",
+        @edit="editHandler",
+        @add="addHandler",
         @mouse-move-day="mouseMoveDay",
         @mouse-down-day="startAdd",
         @mouse-up-day="mouseUp",
@@ -40,6 +44,8 @@
         :calendar="calendar",
         :placeholder="placeholder",
         :placeholder-for-create="placeholderForCreate",
+        @edit="editHandler",
+        @add="addHandler",
         @mouse-move="mouseMove",
         @mouse-down="mouseDown",
         @mouse-up="mouseUp",
@@ -96,6 +102,22 @@ export default {
       event.id = calendarEvent.event.id;
 
       return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
+    },
+
+    editHandler(calendarEvent) {
+      const event = this.getEvent('changed', {
+        calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+      });
+
+      this.$emit('changed', event);
+    },
+
+    addHandler(calendarEvent) {
+      const event = this.getEvent('added', {
+        calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+      });
+
+      this.$emit('added', event);
     },
 
     startAdd(mouseEvent) {
@@ -199,12 +221,12 @@ export default {
       if ((isDay && !sameDay) || (!isDay && !sameTime)) {
         const calendarEvent = this.copyCalendarEvent(this.placeholder);
 
-        const event = this.getEvent('moved', {
+        const event = this.getEvent('changed', {
           mouseEvent,
           calendarEvent: this.createEventFromCalendar(calendarEvent),
         });
 
-        this.$emit('moved', event);
+        this.$emit('changed', event);
       } else {
         this.clearPlaceholder();
       }
@@ -213,12 +235,12 @@ export default {
     handleResized(mouseEvent) {
       const calendarEvent = this.copyCalendarEvent(this.placeholder);
 
-      const event = this.getEvent('resized', {
+      const event = this.getEvent('changed', {
         mouseEvent,
         calendarEvent: this.createEventFromCalendar(calendarEvent),
       });
 
-      this.$emit('resized', event);
+      this.$emit('changed', event);
     },
 
     endAdd() {
@@ -377,11 +399,13 @@ export default {
       if (this.resizing) {
         this.changeResizeDayPlaceholder(mouseEvent);
       }
-
-      this.mouseMoveCheckEnd(mouseEvent);
     },
 
     mouseUp(mouseEvent) {
+      if (this.readyToMove) {
+        this.endMove();
+      }
+
       if (this.addEnd) {
         this.finishAdd(mouseEvent);
       }

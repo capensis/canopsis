@@ -93,7 +93,6 @@ Vue.use(DaySpanVuetify, {
           offsetOverflow: true,
           offsetX: true,
           maxWidth: 500,
-          openOnHover: true,
         },
       },
     },

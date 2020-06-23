@@ -1,6 +1,9 @@
 <template lang="pug">
   v-card.pa-2.ds-calendar-event-popover-card
-    slot(v-if="calendar", v-bind="slotData")
+    slot(
+      v-if="calendar",
+      v-bind="{ placeholder: placeholder || calendarEvent, calendar, edit, add, close, readOnly }"
+    )
 </template>
 
 <script>
@@ -25,20 +28,11 @@ export default {
     edit: {
       type: Function,
     },
-    close: {
+    add: {
       type: Function,
     },
-  },
-  computed: {
-    slotData() {
-      return {
-        placeholder: this.placeholder || this.calendarEvent,
-        calendar: this.calendar,
-        edit: this.edit,
-        close: this.close,
-        details: this.details,
-        readOnly: this.readOnly,
-      };
+    close: {
+      type: Function,
     },
   },
 };

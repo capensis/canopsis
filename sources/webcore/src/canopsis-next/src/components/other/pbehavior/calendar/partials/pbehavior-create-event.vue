@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  v-form(@submit.prevent="$emit('submit', form)")
     v-layout(row, wrap)
       v-text-field(
         v-model="form.title",
@@ -23,7 +23,7 @@
       v-btn.mr-0.mb-0(
         depressed,
         flat,
-        @click="close"
+        @click="$emit('close')"
       ) {{ $t('common.cancel') }}
       v-btn.mr-0.mb-0.primary.white--text(type="submit") {{ $t('common.submit') }}
 </template>
@@ -42,10 +42,6 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
-    },
-    close: {
-      type: Function,
-      required: true,
     },
   },
 };

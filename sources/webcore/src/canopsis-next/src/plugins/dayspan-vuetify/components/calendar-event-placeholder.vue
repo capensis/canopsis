@@ -14,7 +14,7 @@
       :calendar="calendar",
       :index="index"
     )
-    slot(v-if="isStart", name="eventCreatePopover", v-bind="slotData")
+    slot(v-if="isStart", name="eventCreatePopover", v-bind="{ placeholder, calendar, day, index, add, close }")
 </template>
 
 <script>
@@ -22,21 +22,17 @@ import { DsCalendarEventPlaceholder } from 'dayspan-vuetify/src/components';
 
 export default {
   extends: DsCalendarEventPlaceholder,
-  computed: {
-    slotData() {
-      return {
-        placeholder: this.placeholder,
-        calendar: this.calendar,
-        day: this.day,
-        index: this.index,
-        close: this.close,
-      };
-    },
-  },
   methods: {
     close() {
       this.$emit('clear-placeholder');
+      this.menu = false;
     },
+
+    add(calendarEvent) {
+      this.$emit('add', calendarEvent);
+      this.menu = false;
+    },
+
     triggerClearPlaceholder() { },
   },
 };

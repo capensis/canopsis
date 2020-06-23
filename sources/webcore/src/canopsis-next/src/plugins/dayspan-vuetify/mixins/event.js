@@ -49,6 +49,11 @@ export default {
       }
     },
 
+    edit(calendarEvent) {
+      this.$emit('edit', calendarEvent);
+      this.menu = false;
+    },
+
     editCheck(event) {
       if (this.handlesEvents(event)) {
         this.menu = !this.menu;
