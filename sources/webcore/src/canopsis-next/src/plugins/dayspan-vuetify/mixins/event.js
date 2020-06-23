@@ -3,7 +3,7 @@ import { get } from 'lodash';
 export default {
   computed: {
     hasPopover() {
-      return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.meta.hasPopover');
+      return get(this.calendarEvent, 'data.meta.hasPopover', !!this.$scopedSlots.eventPopover && !this.isPlaceholderWithDay);
     },
 
     ending() {
@@ -43,15 +43,19 @@ export default {
       document.removeEventListener('mouseup', this.resizeEndHandler);
     },
 
-    mouseDownEvent($event) {
-      if (this.handlesEvents($event)) {
-        this.$emit('mouse-down-event', this.getEvent('mouse-down-event', $event));
+    mouseDownEvent(event) {
+      if (this.handlesEvents(event)) {
+        this.$emit('mouse-down-event', this.getEvent('mouse-down-event', event));
       }
     },
 
-    editCheck($event) {
-      if (this.handlesEvents($event)) {
+    editCheck(event) {
+      if (this.handlesEvents(event)) {
         this.menu = !this.menu;
+
+        if (!this.isPlaceholderWithDay) {
+          this.$emit('clear-placeholder');
+        }
       }
     },
   },

@@ -68,6 +68,14 @@ export default {
     hasCreatePopover() {
       return !!this.$scopedSlots.eventCreatePopover;
     },
+
+    hasEditPopover() {
+      return !!this.$scopedSlots.eventPopover;
+    },
+
+    openPopover() {
+      return (!this.placeholder.event.id && this.hasCreatePopover) || this.hasEditPopover;
+    },
   },
   methods: {
     createEventFromCalendar(calendarEvent) {
@@ -111,16 +119,23 @@ export default {
 
     startMove(mouseEvent) {
       if (this.canMove && mouseEvent.left) {
-        const { time, schedule } = mouseEvent.calendarEvent;
-
+        this.readyToMove = true;
         this.movingEvent = mouseEvent;
+      }
+    },
+
+    mouseMoveCheck() {
+      if (this.readyToMove) {
+        const { time, schedule } = this.movingEvent.calendarEvent;
+
         this.moving = true;
         this.movingDuration = time.millis();
         this.placeholderForCreate = false;
-        this.placeholder = this.copyCalendarEvent(mouseEvent.calendarEvent);
+        this.placeholder = this.copyCalendarEvent(this.movingEvent.calendarEvent);
         this.placeholder.time.end = this.placeholder.fullDay
           ? time.start.next(schedule.durationInDays).end()
           : time.start.relative(this.movingDuration);
+        this.readyToMove = false;
       }
     },
 
@@ -135,7 +150,7 @@ export default {
     },
 
     finishAdd(mouseEvent) {
-      if (!this.hasCreatePopover) {
+      if (!this.openPopover) {
         this.handleAdded(mouseEvent);
       } else {
         this.placeholderForCreate = true;
@@ -145,7 +160,7 @@ export default {
     },
 
     finishMove(mouseEvent) {
-      if (!this.hasCreatePopover) {
+      if (!this.openPopover) {
         this.handleMoved(mouseEvent);
       } else {
         this.placeholderForCreate = true;
@@ -155,7 +170,7 @@ export default {
     },
 
     finishResize(mouseEvent) {
-      if (!this.hasCreatePopover) {
+      if (!this.openPopover) {
         this.handleResized(mouseEvent);
       } else {
         this.placeholderForCreate = true;
@@ -190,6 +205,8 @@ export default {
         });
 
         this.$emit('moved', event);
+      } else {
+        this.clearPlaceholder();
       }
     },
 
@@ -210,6 +227,7 @@ export default {
     },
 
     endMove() {
+      this.readyToMove = false;
       this.moving = false;
       this.movingEvent = null;
     },
@@ -327,6 +345,7 @@ export default {
       if (!mouseEvent.left) {
         return;
       }
+      this.mouseMoveCheck(mouseEvent);
 
       if (this.adding) {
         this.changeAddPlaceholder(mouseEvent);
@@ -345,6 +364,7 @@ export default {
       if (!mouseEvent.left) {
         return;
       }
+      this.mouseMoveCheckReady();
 
       if (this.adding) {
         this.changeAddDayPlaceholder(mouseEvent);
@@ -357,6 +377,8 @@ export default {
       if (this.resizing) {
         this.changeResizeDayPlaceholder(mouseEvent);
       }
+
+      this.mouseMoveCheckEnd(mouseEvent);
     },
 
     mouseUp(mouseEvent) {

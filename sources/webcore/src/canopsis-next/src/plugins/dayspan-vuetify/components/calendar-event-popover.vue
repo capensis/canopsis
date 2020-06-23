@@ -9,7 +9,9 @@ import { Calendar, CalendarEvent } from 'dayspan';
 export default {
   props: {
     placeholder: {
-      required: true,
+      type: CalendarEvent,
+    },
+    calendarEvent: {
       type: CalendarEvent,
     },
     calendar: {
@@ -30,7 +32,7 @@ export default {
   computed: {
     slotData() {
       return {
-        placeholder: this.placeholder,
+        placeholder: this.placeholder || this.calendarEvent,
         calendar: this.calendar,
         edit: this.edit,
         close: this.close,

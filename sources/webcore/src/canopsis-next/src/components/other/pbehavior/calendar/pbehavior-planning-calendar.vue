@@ -9,6 +9,12 @@
     @added="addHandler"
   )
     ds-calendar-event-popover(
+      slot="eventPopover",
+      slot-scope="props",
+      v-bind="props"
+    )
+      pbehavior-create-event(slot-scope="{ close }", :close="close")
+    ds-calendar-event-popover(
       slot="eventCreatePopover",
       slot-scope="props",
       v-bind="props"
