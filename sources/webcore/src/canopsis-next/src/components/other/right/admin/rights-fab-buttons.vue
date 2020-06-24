@@ -15,7 +15,7 @@
             v-icon people
           span {{ $t('modals.createUser.title') }}
         v-tooltip(v-if="hasCreateAnyRoleAccess", top)
-          v-btn(slot="activator", fab, dark, small, color="deep-purple ", @click.stop="showCreateRoleModal")
+          v-btn(slot="activator", fab, dark, small, color="deep-purple", @click.stop="showCreateRoleModal")
             v-icon supervised_user_circle
           span {{ $t('modals.createRole.title') }}
         v-tooltip(v-if="hasCreateAnyActionAccess", top)
