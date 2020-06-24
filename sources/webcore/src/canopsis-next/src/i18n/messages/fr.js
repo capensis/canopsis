@@ -929,7 +929,7 @@ export default {
         title: 'Éditer l\'onglet',
       },
       duplicate: {
-        title: 'Onglet en double',
+        title: 'Dupliquer l\'onglet',
       },
       fields: {
         title: 'Titre',
