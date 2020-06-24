@@ -6,6 +6,7 @@ import {
   USERS_RIGHTS,
   USERS_RIGHTS_MASKS,
   USERS_RIGHTS_TYPES_TO_MASKS,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 /**
@@ -95,16 +96,20 @@ export function getGroupedRights(rights, views = [], playlists = []) {
     ) {
       const [parentKey] = right._id.split('_');
 
-      if (!acc.business[parentKey]) {
-        acc.business[parentKey] = [right];
-      } else {
+      if (acc.business[parentKey]) {
         acc.business[parentKey].push(right);
       }
     }
 
     return acc;
   }, {
-    business: {},
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: [],
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: [],
+      [USER_RIGHTS_PREFIXES.business.context]: [],
+      [USER_RIGHTS_PREFIXES.business.weather]: [],
+      [USER_RIGHTS_PREFIXES.business.counter]: [],
+    },
     view: [],
     playlist: [],
     technical: {
@@ -113,9 +118,16 @@ export function getGroupedRights(rights, views = [], playlists = []) {
     },
   });
 
+  /**
+   * We are using order which one we've defined on the reduce accumulator initial value.
+   * For not `number`/`number string` object keys ordering is staying like we define
+   */
   groupedRights.business = Object.entries(groupedRights.business)
     .map(([key, groupRights]) => ({ key: `rights.business.${key}`, rights: sortBy(groupRights, ['desc']) }));
 
+  /**
+   * Ordering behavior have the same behavior as for `business`
+   */
   groupedRights.technical = Object.entries(groupedRights.technical)
     .map(([key, groupRights]) => ({ key: `rights.technical.${key}`, rights: sortBy(groupRights, ['desc']) }));
 

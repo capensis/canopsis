@@ -6,7 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES,
+  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1645,11 +1645,11 @@ export default {
       exploitation: 'Exploitation rights',
     },
     business: {
-      listalarm: 'Rights for Alarms List',
-      serviceweather: 'Rights for Service Weather',
-      crudcontext: 'Rights for Context Explorer',
-      counter: 'Rights for Counter',
-      common: 'Rights for common',
+      [USER_RIGHTS_PREFIXES.business.common]: 'Rights for common',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Rights for Alarms List',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
     },
   },
 
