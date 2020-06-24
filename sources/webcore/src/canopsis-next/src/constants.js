@@ -409,6 +409,8 @@ export const FILTER_MONGO_OPERATORS = {
   regex: '$regex',
 };
 
+export const FILTER_EMPTINESS_INPUT = ['', null];
+
 export const FILTER_INPUT_TYPES = {
   string: 'string',
   number: 'number',

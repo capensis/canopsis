@@ -1,6 +1,12 @@
-import { isEmpty, isObject, cloneDeep, isNull } from 'lodash';
+import { isEmpty, isObject, cloneDeep, isNull, isEqual } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
+import {
+  FILTER_OPERATORS,
+  FILTER_DEFAULT_VALUES,
+  FILTER_MONGO_OPERATORS,
+  FILTER_EMPTINESS_INPUT,
+} from '@/constants';
+
 import uid from '@/helpers/uid';
 
 /**
@@ -57,12 +63,24 @@ function ruleOperatorAndInput(rule) {
       }
       case FILTER_MONGO_OPERATORS.in: {
         const [inputArray] = Object.values(ruleValue);
+
+        if (isEqual(inputArray, FILTER_EMPTINESS_INPUT)) {
+          parsedRule.operator = FILTER_OPERATORS.isEmpty;
+          break;
+        }
+
         parsedRule.input = (inputArray || []).map(value => ({ value, key: uid() }));
         parsedRule.operator = FILTER_OPERATORS.in;
         break;
       }
       case FILTER_MONGO_OPERATORS.notIn: {
         const [inputArray] = Object.values(ruleValue);
+
+        if (isEqual(inputArray, FILTER_EMPTINESS_INPUT)) {
+          parsedRule.operator = FILTER_OPERATORS.isNotEmpty;
+          break;
+        }
+
         parsedRule.input = (inputArray || []).map(value => ({ value, key: uid() }));
         parsedRule.operator = FILTER_OPERATORS.notIn;
         break;

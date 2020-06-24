@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 
-import { FILTER_OPERATORS, FILTER_MONGO_OPERATORS } from '@/constants';
+import { FILTER_OPERATORS, FILTER_MONGO_OPERATORS, FILTER_EMPTINESS_INPUT } from '@/constants';
 
 function parseFilterRuleToRequest(rule) {
   const parsedRule = {};
@@ -73,12 +73,14 @@ function parseFilterRuleToRequest(rule) {
       break;
     }
     case FILTER_OPERATORS.isEmpty: {
-      parsedRule[rule.field] = '';
+      parsedRule[rule.field] = {
+        [FILTER_MONGO_OPERATORS.in]: [...FILTER_EMPTINESS_INPUT],
+      };
       break;
     }
     case FILTER_OPERATORS.isNotEmpty: {
       parsedRule[rule.field] = {
-        [FILTER_MONGO_OPERATORS.notEqual]: '',
+        [FILTER_MONGO_OPERATORS.notIn]: [...FILTER_EMPTINESS_INPUT],
       };
       break;
     }
