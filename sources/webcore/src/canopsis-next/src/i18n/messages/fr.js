@@ -1000,7 +1000,7 @@ export default {
           title: 'Nom du connecteur',
         },
         state: {
-          title: 'Sévérité',
+          title: 'Criticité',
           labels: {
             toCustom: 'Pour personnaliser',
             defineVar: 'Définir la var snmp correspondante',
