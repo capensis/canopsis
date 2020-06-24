@@ -1003,7 +1003,7 @@ export default {
           title: 'Criticité',
           labels: {
             toCustom: 'Pour personnaliser',
-            defineVar: 'Définir la var snmp correspondante',
+            defineVar: 'Définir la variable snmp correspondante',
             writeTemplate: 'Écrire un modèle',
           },
         },
