@@ -136,7 +136,7 @@ export default {
         this.placeholder.event.schedule = Schedule.forDay(day);
         this.placeholder.fullDay = true;
 
-        this.updatePlaceholderRow(this.placeholder);
+        this.updatePlaceholderRow();
       }
     },
 
@@ -159,6 +159,8 @@ export default {
           ? time.start.next(schedule.durationInDays).end()
           : time.start.relative(this.movingDuration);
         this.readyToMove = false;
+
+        this.updatePlaceholderRow();
       }
     },
 
@@ -169,6 +171,8 @@ export default {
         this.resizingBelow = true;
         this.placeholderForCreate = false;
         this.placeholder = this.copyCalendarEvent(calendarEvent);
+
+        this.updatePlaceholderRow();
       }
     },
 
@@ -320,11 +324,11 @@ export default {
       this.placeholder.time.start = min;
       this.placeholder.time.end = max.end();
       this.placeholder.event.schedule = Schedule.forDay(
-        this.placeholder.start,
+        this.placeholder.time.start,
         this.placeholder.time.days(Op.UP),
       );
 
-      this.updatePlaceholderRow(this.placeholder);
+      this.updatePlaceholderRow();
     },
 
     changeMoveDayPlaceholder(mouseEvent) {
@@ -332,9 +336,9 @@ export default {
 
       this.placeholder.day = day;
       this.placeholder.time.start = day;
-      this.placeholder.time.end = day.next(this.placeholder.schedule.durationInDays).end();
+      this.placeholder.time.end = day.next(this.placeholder.event.schedule.durationInDays).end();
 
-      this.updatePlaceholderRow(this.placeholder);
+      this.updatePlaceholderRow();
     },
 
     changeResizeDayPlaceholder(mouseEvent) {
@@ -361,7 +365,28 @@ export default {
         this.placeholder.time.start = day;
       }
 
-      this.updatePlaceholderRow(this.placeholder);
+      this.placeholder.event.schedule = Schedule.forDay(
+        this.placeholder.time.start,
+        this.placeholder.time.days(Op.UP),
+      );
+
+      this.updatePlaceholderRow();
+    },
+
+    updatePlaceholderRow() {
+      let row = 0;
+
+      this.calendar.iterateDays().iterate((day) => {
+        if (this.placeholder.time.matchesDay(day)) {
+          row = day.iterateEvents().reduce(
+            row,
+            (calendarEvent, maxRow) => Math.max(calendarEvent.row + 1, maxRow),
+            calendarEvent => calendarEvent.event.id !== this.placeholder.event.id,
+          );
+        }
+      });
+
+      this.placeholder.row = row;
     },
 
     mouseMove(mouseEvent) {
