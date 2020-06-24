@@ -54,7 +54,7 @@ def exports(ws):
         return gen_json(document)
 
     @ws.application.get(
-        '/api/v2/webhook/<webhook_id>'
+        '/api/v2/webhook/<webhook_id:re:.+>'
     )
     def get_webhook_by_id(webhook_id):
         """
@@ -116,7 +116,7 @@ def exports(ws):
             )
 
     @ws.application.put(
-        '/api/v2/webhook/<webhook_id>'
+        '/api/v2/webhook/<webhook_id:re:.+>'
     )
     def update_webhook_by_id(webhook_id):
         """
@@ -156,7 +156,7 @@ def exports(ws):
         return gen_json({})
 
     @ws.application.delete(
-        '/api/v2/webhook/<webhook_id>'
+        '/api/v2/webhook/<webhook_id:re:.+>'
     )
     def delete_webhook_by_id(webhook_id):
         """
