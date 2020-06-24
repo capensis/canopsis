@@ -101,7 +101,6 @@ export default {
 
     return {
       menu: false,
-      state: this.entity.state.val,
       actionsClicked: [],
       actionsMap: {
         ack: {
@@ -161,7 +160,7 @@ export default {
         return WATCHER_STATES_COLORS.pause;
       }
 
-      return ENTITIES_STATES_STYLES[this.state].color;
+      return ENTITIES_STATES_STYLES[this.entity.state.val].color;
     },
 
     mainIcons() {

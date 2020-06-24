@@ -9,13 +9,11 @@
         div(v-show="!watcherEntitiesPending")
           watcher-template(
             :watcher="watcher",
-            :watcherEntities="watchers",
-            :watchersMeta="metaData",
+            :watcherEntities="watcherEntities",
             :modalTemplate="config.modalTemplate",
             :entityTemplate="config.entityTemplate",
-            @add:event="addEventToQueue",
-            @change:page="changePage",
-            @change:limit="changeLimit"
+            :itemsPerPage="config.itemsPerPage",
+            @add:event="addEventToQueue"
           )
       v-fade-transition
         v-layout(v-show="watcherEntitiesPending", column)
@@ -29,7 +27,7 @@
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-tooltip.mx-2(top)
-        v-btn.secondary(slot="activator", @click="refresh")
+        v-btn.secondary(slot="activator", @click="fetchWatchersList")
           v-icon refresh
         span {{ $t('modals.watcher.refreshEntities') }}
       v-btn.primary(
@@ -44,11 +42,11 @@ import { pick, mapValues } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
-import watcherQueryMixin from '@/mixins/watcher/query';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -59,10 +57,10 @@ export default {
   components: { WatcherTemplate, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    watcherQueryMixin,
-    submittableMixin(),
     eventActionsMixin,
     entitiesPbehaviorMixin,
+    entitiesWatcherEntityMixin,
+    submittableMixin(),
   ],
   data() {
     return {
@@ -79,6 +77,8 @@ export default {
     },
   },
   mounted() {
+    this.fetchWatchersList();
+
     const infoAttributes = mapValues(pick(this.watcher.infos, [
       'application_crit_label',
       'product_line',
@@ -94,12 +94,12 @@ export default {
     };
   },
   methods: {
-    addEventToQueue(event) {
-      this.eventsQueue.push(event);
+    fetchWatchersList() {
+      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
     },
 
-    refresh() {
-      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
+    addEventToQueue(event) {
+      this.eventsQueue.push(event);
     },
 
     async submit() {
