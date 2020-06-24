@@ -1,4 +1,7 @@
+import { orderBy } from 'lodash';
+
 import { PAGINATION_LIMIT } from '@/config';
+
 import queryMixin from '@/mixins/query';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
@@ -27,10 +30,13 @@ export default {
         total: this.watcherEntities.length,
       };
     },
+    orderedWatcherEntities() {
+      return orderBy(this.watcherEntities, ['state.val'], ['desc']);
+    },
     watchers() {
       const { first, last } = this.metaData;
 
-      return this.watcherEntities.slice(first, last);
+      return this.orderedWatcherEntities.slice(first, last);
     },
   },
   mounted() {
