@@ -13,6 +13,7 @@ import featureService from '@/services/features';
 
 export default {
   common: {
+    ok: 'Ok',
     undefined: 'Non défini',
     entity: 'Entité',
     watcher: 'Observateur',
@@ -51,6 +52,7 @@ export default {
     recursive: 'Récursif',
     select: 'Sélectionner',
     states: 'Сriticités',
+    state: 'Sévérité',
     sla: 'Sla',
     authors: 'Auteurs',
     stat: 'Statistique',
@@ -94,9 +96,17 @@ export default {
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Accès refusé',
+    notFound: 'Pas trouvé',
     search: 'Recherche',
+    filters: 'Filtres',
+    filter: 'Filtre',
     webhooks: 'Webhooks',
+    emptyObject: 'Objet vide',
+    startDate: 'Date de début',
+    endDate: 'Date de fin',
     links: 'Liens',
+    stack: 'Pile',
+    edition: 'Edition',
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
     fullscreen: 'Plein écran',
@@ -139,6 +149,7 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
     moreInfos: {
+      infos: 'Les informations',
       type: 'Type',
       enabled: 'Activé',
       disabled: 'Désactivé',
@@ -291,6 +302,11 @@ export default {
     reason: 'Raison',
     rrule: 'Récurrence',
     status: 'Statut',
+    tabs: {
+      filter: 'Filtre',
+      eids: 'Entités',
+      comments: 'Commentaires',
+    },
   },
   settings: {
     titles: {
@@ -335,6 +351,7 @@ export default {
     statsSelect: {
       title: 'Sélecteur de statistique',
       required: 'Veuillez sélectionner au moins une statistique',
+      draggable: 'Essayez de faire glisser un élément',
     },
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Sélectionner un filtre',
@@ -350,7 +367,11 @@ export default {
     },
     statsDateInterval: {
       monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
+      fields: {
+        quickRanges: 'Gammes rapides',
+      },
       quickRanges: {
+        [STATS_QUICK_RANGES.custom.value]: 'Personnalisé',
         [STATS_QUICK_RANGES.last2Days.value]: '2 derniers jours',
         [STATS_QUICK_RANGES.last7Days.value]: '7 derniers jours',
         [STATS_QUICK_RANGES.last30Days.value]: '30 derniers jours',
@@ -453,7 +474,12 @@ export default {
       fields: {
         moreInfo: 'Plus d\'infos',
         alarmList: 'Bac à alarmes',
+        both: 'Les deux',
       },
+    },
+    templateEditor: 'Modèle',
+    columns: {
+      isHtml: 'Est-ce du HTML?',
     },
     liveReporting: {
       title: 'Suivi personnalisé',
@@ -501,6 +527,7 @@ export default {
       editTitle: 'Éditer un observateur',
       duplicateTitle: 'Dupliquer un observateur',
       displayName: 'Nom',
+      outputTemplate: 'Modèle de sortie',
       success: {
         create: 'Observateur créé avec succès !',
         edit: 'Observateur édité avec succès !',
@@ -604,7 +631,6 @@ export default {
       duplicate: {
         title: 'Dupliquer un comportement périodique',
       },
-      title: 'Ajouter un comportement périodique',
       steps: {
         general: {
           title: 'Paramètres généraux',
@@ -665,6 +691,9 @@ export default {
       title: 'Associer un numéro de ticket',
       fields: {
         ticket: 'Numéro du ticket',
+      },
+      alerts: {
+        noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement Ack pour l\'article sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements Ack pour les articles seront envoyés avant.',
       },
     },
     liveReporting: {
@@ -844,6 +873,9 @@ export default {
         title: 'Éditer une règle',
         success: 'Règle éditée avec succès !',
       },
+      remove: {
+        success: 'La règle a bien été supprimée!',
+      },
       priority: 'Priorité',
       editPattern: 'Éditer le pattern',
       advanced: 'Avancée',
@@ -896,6 +928,9 @@ export default {
       edit: {
         title: 'Éditer l\'onglet',
       },
+      duplicate: {
+        title: 'Onglet en double',
+      },
       fields: {
         title: 'Titre',
       },
@@ -918,11 +953,69 @@ export default {
       fields: {
         id: 'ID',
         retryDelay: 'Intervalle',
+        retryUnit: 'Unit',
         retryCount: 'Nombre d\'essais après échec',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
       },
+    },
+    statsDateInterval: {
+      title: 'Stats - Interval de dates',
+      fields: {
+        periodValue: 'Période',
+        periodUnit: 'Unité',
+      },
+      errors: {
+        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
+      },
+      info: {
+        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
+      },
+    },
+    createSnmpRule: {
+      create: {
+        title: 'Créer une règle SNMP',
+      },
+      edit: {
+        title: 'Modifier la règle SNMP',
+      },
+      fields: {
+        oid: {
+          title: 'OID',
+          labels: {
+            module: 'Sélectionnez un module mib',
+          },
+        },
+        output: {
+          title: 'Message',
+        },
+        resource: {
+          title: 'Ressource',
+        },
+        component: {
+          title: 'Composant',
+        },
+        connectorName: {
+          title: 'Nom du connecteur',
+        },
+        state: {
+          title: 'Sévérité',
+          labels: {
+            toCustom: 'Pour personnaliser',
+            defineVar: 'Définir la var snmp correspondante',
+            writeTemplate: 'Écrire un modèle',
+          },
+        },
+        moduleMibObjects: {
+          vars: 'Champ de match vars snmp',
+          regex: 'Regex',
+          formatter: 'Format (groupe de capture avec \\x)',
+        },
+      },
+    },
+    selectViewTab: {
+      title: 'Sélectionnez l\'onglet',
     },
     createAction: {
       create: {
@@ -946,19 +1039,6 @@ export default {
         ticket: 'Numéro du ticket',
         delay: 'Intervalle',
         delayUnit: 'Unité',
-      },
-    },
-    statsDateInterval: {
-      title: 'Stats - Interval de dates',
-      fields: {
-        periodValue: 'Période',
-        periodUnit: 'Unité',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
-      },
-      info: {
-        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
       },
     },
     createHeartbeat: {
@@ -1238,6 +1318,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
     pathCopied: 'Chemin copié dans le presse-papier',
+    authKeyCopied: 'Clé d\'authentification copiée dans le presse-papiers',
     widgetIdCopied: 'Widget id copié dans le presse-papier',
   },
   filterEditor: {
@@ -1266,6 +1347,7 @@ export default {
       },
     },
     errors: {
+      cantParseToVisualEditor: 'Nous ne pouvons pas analyser ce filtre dans Visual Editor',
       invalidJSON: 'JSON non valide',
       required: 'Merci d\'ajouter au moins une règle valide',
     },
@@ -1338,10 +1420,10 @@ export default {
   actions: {
     title: 'Actions',
     addAction: 'Ajouter une action',
-    delay: 'Intervalle',
     table: {
       id: 'Id',
       type: 'Type',
+      delay: 'Délai',
       expand: {
         tabs: {
           general: 'Général',
@@ -1374,6 +1456,7 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
+      activeSessions: 'Sessions actives',
       ordering: {
         popups: {
           success: 'Les groupes ont été réorganisés',
@@ -1436,7 +1519,6 @@ export default {
         requestMethod: 'Requête: Méthode',
         requestUrl: 'Requête: URL',
         retryDelay: 'Intervalle',
-        retryUnit: 'Unité',
         retryCount: 'Nombre d\'essais',
         enabled: 'Activé',
       },
@@ -1481,6 +1563,9 @@ export default {
       tstop: {
         after: 'La date de fin doit être postérieure à {1}',
       },
+      logo: {
+        size: 'La taille {0} doit être inférieure à {1} KB.',
+      },
     },
   },
   home: {
@@ -1504,7 +1589,6 @@ export default {
       },
     },
   },
-
   dynamicInfo: {
     title: 'Informations dynamiques',
     table: {
@@ -1519,11 +1603,12 @@ export default {
       informations: 'Informations',
     },
   },
-
+  contextGeneralTable: {
+    addSelection: 'Ajouter une sélection',
+  },
   liveReporting: {
     button: 'Définir un intervalle de dates',
   },
-
   tours: {
     [TOURS.alarmsExpandPanel]: {
       step1: 'Détails',
@@ -1531,7 +1616,6 @@ export default {
       step3: 'Onglet chronologie',
     },
   },
-
   handlebars: {
     requestHelper: {
       errors: {
@@ -1541,11 +1625,9 @@ export default {
       },
     },
   },
-
   importExportViews: {
     selectAll: 'Sélectionnez tous les groupes et vues',
   },
-
   playlist: {
     player: {
       tooltips: {
