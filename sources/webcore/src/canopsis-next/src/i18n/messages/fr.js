@@ -96,7 +96,7 @@ export default {
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Accès refusé',
-    notFound: 'Pas trouvé',
+    notFound: 'Introuvable',
     search: 'Recherche',
     filters: 'Filtres',
     filter: 'Filtre',
