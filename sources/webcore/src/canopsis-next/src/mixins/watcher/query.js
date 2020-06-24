@@ -31,7 +31,7 @@ export default {
       };
     },
     orderedWatcherEntities() {
-      return orderBy(this.watcherEntities, ['state.val'], ['desc']);
+      return orderBy(this.watcherEntities, ['state.val', 'name'], ['desc', 'asc']);
     },
     watchers() {
       const { first, last } = this.metaData;
