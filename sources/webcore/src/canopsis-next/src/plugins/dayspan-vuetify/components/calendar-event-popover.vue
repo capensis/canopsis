@@ -51,8 +51,8 @@ export default {
 
     eventToForm(calendarEvent) {
       return {
-        start: calendarEvent.start.format('DD-MM-YYYY'),
-        end: calendarEvent.end.format('DD-MM-YYYY'),
+        start: calendarEvent.start.format('DD-MM-YYYY:hh-mm'),
+        end: calendarEvent.end.format('DD-MM-YYYY:hh-mm'),
         ...calendarEvent.data,
       };
     },
