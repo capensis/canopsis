@@ -693,7 +693,7 @@ export default {
         ticket: 'Numéro du ticket',
       },
       alerts: {
-        noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement Ack pour l\'article sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements Ack pour les articles seront envoyés avant.',
+        noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement Ack pour l\'élément sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements Ack pour les éléments seront envoyés avant.',
       },
     },
     liveReporting: {
