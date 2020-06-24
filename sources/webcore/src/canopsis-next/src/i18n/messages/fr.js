@@ -961,7 +961,7 @@ export default {
       },
     },
     statsDateInterval: {
-      title: 'Stats - Interval de dates',
+      title: 'Stats - Intervalle de dates',
       fields: {
         periodValue: 'Période',
         periodUnit: 'Unité',
