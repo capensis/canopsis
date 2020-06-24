@@ -74,7 +74,7 @@ Un groupement d'alarmes se caractérise par les informations suivantes.
 | `time_interval`  | int  | Intervalle de temps en secondes.  |
 | `threshold_count`  | int  | Le `seuil de déclenchement` exprime un nombre d'alarmes au delà duquel le groupement sera effectué.  |
 | `threshold_rate`  | float  | Le `taux de déclenchement` exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
-| `value_path`  | string  | Le `chemin du groupe de valeurs` désigne l'adresse de l'attribut à partir duquel le groupement va opérer. |
+| `value_path`  | string  | Le `chemin de valeurs` désigne l'adresse de l'attribut à partir duquel le groupement va opérer. |
 
 Dans un groupement de type `complex` ou `valuegroup`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
 
