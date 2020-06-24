@@ -7,16 +7,15 @@
         :calendar="calendar",
         :placeholder="placeholder",
         :placeholder-for-create="placeholderForCreate",
-        @edit="editHandler",
-        @add="addHandler",
+        @edit-event="editHandler",
+        @add-event="addHandler",
         @mouse-move-day="mouseMoveDay",
         @mouse-down-day="startAdd",
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
         @mouse-down-event="startMove",
         @mouse-start-resize="startResize",
-        @clear-placeholder="clearPlaceholder",
-        @handle-added="handleAdded"
+        @clear-placeholder="clearPlaceholder"
       )
 
     .ds-month-view(v-if="isMonth")
@@ -26,8 +25,8 @@
         :calendar="calendar",
         :placeholder="placeholder",
         :placeholder-for-create="placeholderForCreate",
-        @edit="editHandler",
-        @add="addHandler",
+        @edit-event="editHandler",
+        @add-event="addHandler",
         @mouse-move-day="mouseMoveDay",
         @mouse-down-day="startAdd",
         @mouse-up-day="mouseUp",
@@ -44,8 +43,8 @@
         :calendar="calendar",
         :placeholder="placeholder",
         :placeholder-for-create="placeholderForCreate",
-        @edit="editHandler",
-        @add="addHandler",
+        @edit-event="editHandler",
+        @add-event="addHandler",
         @mouse-move="mouseMove",
         @mouse-down="mouseDown",
         @mouse-up="mouseUp",
@@ -136,6 +135,8 @@ export default {
         this.placeholder = this.$dayspan.getPlaceholderEventForAdd(day);
         this.placeholder.event.schedule = Schedule.forDay(day);
         this.placeholder.fullDay = true;
+
+        this.updatePlaceholderRow(this.placeholder);
       }
     },
 

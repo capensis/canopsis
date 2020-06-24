@@ -50,7 +50,7 @@ export default {
     },
 
     edit(calendarEvent) {
-      this.$emit('edit', calendarEvent);
+      this.$emit('edit-event', calendarEvent);
       this.menu = false;
     },
 

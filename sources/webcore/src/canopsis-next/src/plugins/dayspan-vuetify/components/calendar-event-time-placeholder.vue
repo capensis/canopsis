@@ -28,7 +28,7 @@ export default {
     },
 
     add(calendarEvent) {
-      this.$emit('add', calendarEvent);
+      this.$emit('add-event', calendarEvent);
       this.menu = false;
     },
 

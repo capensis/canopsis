@@ -4,20 +4,23 @@
       v-text-field(
         v-model="form.title",
         :label="$t('common.title')",
-        name="title"
+        name="title",
+        disabled
       )
     v-layout(row, wrap)
       v-flex(xs6)
-        date-time-picker-text-field(
-          v-model="form.startDate",
+        v-text-field(
+          v-model="form.start",
           :label="$t('common.startDate')",
-          name="startDate"
+          name="startDate",
+          disabled
         )
       v-flex(xs6)
-        date-time-picker-text-field(
-          v-model="form.endDate",
+        v-text-field(
+          v-model="form.end",
           :label="$t('common.endDate')",
-          name="endDate"
+          name="endDate",
+          disabled
         )
     v-layout(row, justify-end)
       v-btn.mr-0.mb-0(
@@ -29,10 +32,7 @@
 </template>
 
 <script>
-import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
-
 export default {
-  components: { DateTimePickerTextField },
   inject: ['$validator'],
   model: {
     prop: 'form',

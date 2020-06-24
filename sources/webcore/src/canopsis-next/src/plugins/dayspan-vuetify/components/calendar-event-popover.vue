@@ -2,7 +2,7 @@
   v-card.pa-2.ds-calendar-event-popover-card
     slot(
       v-if="calendar",
-      v-bind="{ placeholder: placeholder || calendarEvent, calendar, edit, add, close, readOnly }"
+      v-bind="{ placeholder: calendarEventForm, calendar, edit: editHandler, add: addHandler, close, readOnly }"
     )
 </template>
 
@@ -33,6 +33,33 @@ export default {
     },
     close: {
       type: Function,
+    },
+  },
+  data() {
+    return {
+      calendarEventForm: this.eventToForm(this.placeholder || this.calendarEvent),
+    };
+  },
+  methods: {
+    addHandler() {
+      this.add(this.formToEvent(this.calendarEventForm));
+    },
+
+    editHandler() {
+      this.edit(this.formToEvent(this.calendarEventForm));
+    },
+
+    eventToForm(calendarEvent) {
+      return {
+        start: calendarEvent.start.format('DD-MM-YYYY'),
+        end: calendarEvent.end.format('DD-MM-YYYY'),
+        ...calendarEvent.data,
+      };
+    },
+
+    formToEvent() {
+      // TODO prepare form to calendar event logic should be added
+      return this.placeholder || this.calendarEvent;
     },
   },
 };
