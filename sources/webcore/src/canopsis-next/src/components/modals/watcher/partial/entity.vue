@@ -97,12 +97,15 @@ export default {
     },
   },
   data() {
-    const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
     return {
-      menu: false,
       actionsClicked: [],
-      actionsMap: {
+    };
+  },
+  computed: {
+    actionsMap() {
+      const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
+      return {
         ack: {
           type: weatherActionsTypes.entityAck,
           eventType: EVENT_ENTITY_TYPES.ack,
@@ -151,10 +154,8 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
           action: this.prepareCommentAction,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
     color() {
       if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
         return WATCHER_STATES_COLORS.pause;
