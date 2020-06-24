@@ -93,6 +93,7 @@ export const MODALS = {
   createDynamicInfoTemplate: 'create-dynamic-info-template',
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
+  pbehaviorPlanning: 'pbehavior-planning',
 };
 
 export const EVENT_ENTITY_TYPES = {

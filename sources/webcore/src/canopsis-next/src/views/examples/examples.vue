@@ -6,8 +6,9 @@
         label="Read only",
         color="primary"
       )
+      v-btn(@click="showPlanningModal") Show pbehavior planning
     v-layout
-      ds-calendar-app.example-calendar(
+      ds-calendar-app(
         :events="events",
         :readOnly="readOnly",
         fluid,
@@ -21,6 +22,7 @@
 <script>
 import Vue from 'vue';
 import uuid from '@/helpers/uuid';
+import { MODALS } from '@/constants';
 
 export default {
   data() {
@@ -93,6 +95,15 @@ export default {
         id,
         data,
         schedule,
+      });
+    },
+
+    showPlanningModal() {
+      this.$modals.show({
+        name: MODALS.pbehaviorPlanning,
+        config: {
+          readOnly: this.readOnly,
+        },
       });
     },
   },
