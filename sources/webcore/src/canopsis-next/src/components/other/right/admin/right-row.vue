@@ -1,4 +1,4 @@
-<template lang="pug" functional>
+<template lang="pug">
   tr
     td {{ right.desc }}
     right-row-cell(

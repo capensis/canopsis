@@ -49,10 +49,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    indeterminate: {
-      type: Boolean,
-      default: false,
-    },
   },
 };
 </script>
