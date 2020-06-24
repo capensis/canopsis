@@ -1,106 +1,62 @@
 <template lang="pug">
   v-container.admin-rights
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.rights') }}
-    div.progress-wrapper
+    div.position-relative
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
-      v-tabs(fixed-tabs, slider-color="primary")
+      v-tabs(v-if="hasReadAnyRoleAccess", fixed-tabs, slider-color="primary")
         template(v-for="(rights, groupKey) in groupedRights")
           v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
-          v-tab-item(:key="`tab-item-${groupKey}`")
-            v-card(v-if="hasReadAnyRoleAccess")
-              v-card-text
-                table.table
-                  thead
-                    tr
-                      th.table-header.white
-                      th.table-header.white(v-for="role in roles", :key="`role-header-${role._id}`") {{ role._id }}
-                  tbody
-                    tr(v-for="right in rights", :key="`right-title-${right._id}`")
-                      td {{ right.desc }}
-                      td(v-for="role in roles", :key="`role-right-${role._id}`")
-                        v-checkbox-functional(
-                          v-for="(checkbox, index) in getCheckboxes(role, right)",
-                          :key="`role-${role._id}-right-${right._id}-checkbox-${index}`",
-                          v-bind="checkbox.bind",
-                          v-on="checkbox.on",
-                          :disabled="!hasUpdateAnyActionAccess"
-                        )
-    v-layout(v-show="hasUpdateAnyActionAccess && hasChanges")
-      v-btn.primary(@click="submit") {{ $t('common.submit') }}
+          v-tab-item.white(:key="`tab-item-${groupKey}`")
+            rights-table-wrapper(
+              :rights="rights",
+              :roles="roles",
+              :changedRoles="changedRoles",
+              :disabled="!hasUpdateAnyActionAccess",
+              @change="changeCheckboxValue"
+            )
+    v-layout.submit-button.mt-3(v-show="hasChanges")
+      v-btn.primary.ml-3(@click="submit") {{ $t('common.submit') }}
       v-btn(@click="cancel") {{ $t('common.cancel') }}
-    .fab(v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess")
-      v-layout(column)
-        refresh-btn(@click="fetchRightsList")
-        v-speed-dial(
-          v-model="fab",
-          direction="left",
-          transition="slide-y-reverse-transition"
-        )
-          v-btn(slot="activator", color="primary", fab, v-model="fab")
-            v-icon add
-            v-icon close
-          v-tooltip(v-if="hasCreateAnyUserAccess", top)
-            v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateUserModal")
-              v-icon people
-            span {{ $t('modals.createUser.title') }}
-          v-tooltip(v-if="hasCreateAnyRoleAccess", top)
-            v-btn(slot="activator", fab, dark, small, color="deep-purple ", @click.stop="showCreateRoleModal")
-              v-icon supervised_user_circle
-            span {{ $t('modals.createRole.title') }}
-          v-tooltip(v-if="hasCreateAnyActionAccess", top)
-            v-btn(slot="activator", fab, dark, small, color="teal", @click.stop="showCreateRightModal")
-              v-icon verified_user
-            span {{ $t('modals.createRight.title') }}
+    rights-fab-buttons(@refresh="fetchList")
 </template>
 
 <script>
-import { get, omit, isEmpty, isUndefined, transform } from 'lodash';
-import flatten from 'flat';
+import { get, isEmpty, isUndefined, transform } from 'lodash';
 
-import {
-  MODALS,
-  USERS_RIGHTS,
-  USERS_RIGHTS_MASKS,
-  USERS_RIGHTS_TYPES,
-  NOT_COMPLETED_USER_RIGHTS_KEYS,
-} from '@/constants';
-import {
-  prepareUserByData,
-  generateRoleRightByChecksum,
-} from '@/helpers/entities';
+import { MODALS } from '@/constants';
+
+import { getGroupedRights } from '@/helpers/right';
+import { generateRoleRightByChecksum } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import entitiesRightMixin from '@/mixins/entities/right';
 import entitiesRoleMixin from '@/mixins/entities/role';
-import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import entitiesPlaylistMixin from '@/mixins/entities/playlist';
-import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
-import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
+import RightsTableWrapper from '@/components/other/right/admin/rights-table-wrapper.vue';
+import RightsFabButtons from '@/components/other/right/admin/rights-fab-buttons.vue';
 
 export default {
   components: {
-    RefreshBtn,
+    RightsTableWrapper,
+    RightsFabButtons,
   },
   mixins: [
     authMixin,
     entitiesRightMixin,
     entitiesRoleMixin,
-    entitiesUserMixin,
     entitiesViewGroupMixin,
     entitiesPlaylistMixin,
-    rightsTechnicalUserMixin,
     rightsTechnicalRoleMixin,
     rightsTechnicalActionMixin,
   ],
   data() {
     return {
-      fab: false,
       pending: false,
       groupedRights: { business: [], view: [], technical: [] },
       changedRoles: {},
@@ -110,100 +66,25 @@ export default {
     hasChanges() {
       return !isEmpty(this.changedRoles);
     },
-
-    getCheckboxValue() {
-      return (role, right, rightMask = 1) => {
-        const checkSum = get(role, ['rights', right._id, 'checksum'], 0);
-        const changedCheckSum = get(this.changedRoles, [role._id, right._id]);
-
-        const currentCheckSum = isUndefined(changedCheckSum) ? checkSum : changedCheckSum;
-        const rightType = currentCheckSum & rightMask;
-
-        return rightType === rightMask;
-      };
-    },
-
-    getCheckboxes() {
-      return (role, right) => {
-        if (right.type) {
-          let masks = [];
-
-          if (right.type === USERS_RIGHTS_TYPES.crud) {
-            masks = ['create', 'read', 'update', 'delete'];
-          }
-
-          if (right.type === USERS_RIGHTS_TYPES.rw) {
-            masks = ['read', 'update', 'delete'];
-          }
-
-          return masks.map((userRightMaskKey) => {
-            const userRightMask = USERS_RIGHTS_MASKS[userRightMaskKey];
-
-            return {
-              bind: {
-                inputValue: this.getCheckboxValue(role, right, userRightMask),
-                label: userRightMaskKey,
-              },
-              on: {
-                change: value => this.changeCheckboxValue(value, role, right, userRightMask),
-              },
-            };
-          });
-        }
-
-        return [
-          {
-            bind: {
-              inputValue: this.getCheckboxValue(role, right),
-            },
-            on: {
-              change: value => this.changeCheckboxValue(value, role, right),
-            },
-          },
-        ];
-      };
-    },
   },
   mounted() {
-    this.fetchRightsList();
+    this.fetchList();
   },
   methods: {
-    async fetchRightsList() {
-      this.pending = true;
-
-      await this.fetchList();
-
-      this.pending = false;
-    },
-
-    showCreateUserModal() {
-      this.$modals.show({
-        name: MODALS.createUser,
-        config: {
-          action: data => this.createUser({ data: prepareUserByData(data) }),
-        },
-      });
-    },
-
-    showCreateRoleModal() {
-      this.$modals.show({
-        name: MODALS.createRole,
-      });
-    },
-
-    showCreateRightModal() {
-      this.$modals.show({
-        name: MODALS.createRight,
-        config: {
-          action: this.fetchRightsList,
-        },
-      });
-    },
-
+    /**
+     * Clear changed roles
+     *
+     * @returns void
+     */
     clearChangedRoles() {
       this.changedRoles = {};
     },
 
+    /**
+     * Show the confirmation modal window for clearing a changedRoles
+     *
+     * @returns void
+     */
     cancel() {
       this.$modals.show({
         name: MODALS.confirmation,
@@ -213,6 +94,11 @@ export default {
       });
     },
 
+    /**
+     * Show the confirmation modal window for submitting a changedRoles
+     *
+     * @returns void
+     */
     submit() {
       this.$modals.show({
         name: MODALS.confirmation,
@@ -222,6 +108,11 @@ export default {
       });
     },
 
+    /**
+     * Send request for update changedRoles and fetchCurrentUser if it needed
+     *
+     * @returns void
+     */
     async updateRoles() {
       try {
         this.pending = true;
@@ -260,9 +151,10 @@ export default {
      * @param {boolean} value
      * @param {Object} role
      * @param {Object} right
-     * @param {number} rightType
+     * @param {number} mask
+     * @returns void
      */
-    changeCheckboxValue(value, role, right, rightType) {
+    changeCheckboxValue(value, role, right, mask) {
       const currentCheckSum = get(role, ['rights', right._id, 'checksum'], 0);
       const factor = value ? 1 : -1;
 
@@ -270,8 +162,8 @@ export default {
        * If we don't have changes for role
        */
       if (!this.changedRoles[role._id]) {
-        const nextCheckSum = !rightType ?
-          Number(value) : currentCheckSum + (factor * rightType);
+        const nextCheckSum = !mask ?
+          Number(value) : currentCheckSum + (factor * mask);
 
         this.$set(this.changedRoles, role._id, { [right._id]: nextCheckSum });
 
@@ -279,8 +171,8 @@ export default {
          * If we have changes for role but we don't have changes for right
          */
       } else if (isUndefined(this.changedRoles[role._id][right._id])) {
-        const nextCheckSum = !rightType ?
-          Number(value) : currentCheckSum + (factor * rightType);
+        const nextCheckSum = !mask ?
+          Number(value) : currentCheckSum + (factor * mask);
 
         this.$set(this.changedRoles[role._id], right._id, nextCheckSum);
 
@@ -288,8 +180,8 @@ export default {
          * If we have changes for role and for right
          */
       } else {
-        const nextCheckSum = !rightType ?
-          Number(value) : this.changedRoles[role._id][right._id] + (factor * rightType);
+        const nextCheckSum = !mask ?
+          Number(value) : this.changedRoles[role._id][right._id] + (factor * mask);
 
         if (currentCheckSum === nextCheckSum) {
           if (Object.keys(this.changedRoles[role._id]).length === 1) {
@@ -313,89 +205,32 @@ export default {
      * @returns void
      */
     async fetchList() {
+      this.pending = true;
+
       const [{ data: rights }] = await Promise.all([
         this.fetchRightsListWithoutStore({ params: { limit: 10000 } }),
         this.fetchRolesList({ params: { limit: 10000 } }),
       ]);
 
       const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
-      const allRightsIds = flatten(USERS_RIGHTS);
-      const allTechnicalRightsIds = flatten(USERS_RIGHTS.technical);
-      const allBusinessRightsIds = flatten(USERS_RIGHTS.business);
 
-      const groupedRights = rights.reduce((acc, right) => {
-        const rightId = String(right._id);
-        const view = allViews.find(({ _id }) => _id === rightId);
-        const playlist = this.playlists.find(({ _id }) => _id === rightId);
-
-        if (view) {
-          acc.view.push({
-            ...right,
-
-            desc: right.desc.replace(view._id, view.name),
-          });
-        } else if (playlist) {
-          acc.playlist.push({
-            ...right,
-
-            desc: right.desc.replace(playlist._id, playlist.name),
-          });
-        } else if (Object.values(allTechnicalRightsIds).indexOf(rightId) !== -1) {
-          acc.technical.push(right);
-        } else if (
-          Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
-          NOT_COMPLETED_USER_RIGHTS_KEYS.some(userRightKey => rightId.startsWith(allRightsIds[userRightKey]))
-        ) {
-          acc.business.push(right);
-        }
-
-        return acc;
-      }, {
-        business: [],
-        view: [],
-        playlist: [],
-        technical: [],
-      });
-
-      groupedRights.view = [...groupedRights.view, ...groupedRights.playlist];
-
-      this.groupedRights = omit(groupedRights, ['playlist']);
+      this.groupedRights = getGroupedRights(rights, allViews, this.playlists);
+      this.pending = false;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .admin-rights {
-    & /deep/ {
-      .v-expansion-panel__body {
-        overflow: auto;
-      }
-
-      .v-window__container--is-active {
-        .table-header {
-          position: relative;
-          top: 0;
-        }
-      }
-    }
+  .submit-button {
+    position: sticky;
+    bottom: 10px;
   }
 
-  .table {
-    background-color: white;
-    width: 100%;
-
-    tr {
-      td, th {
-        vertical-align: top;
-        padding: 5px;
-      }
-    }
-
-    & /deep/ {
-      .v-input {
-        margin: 0;
-      }
+  .admin-rights /deep/ {
+    .v-window__container--is-active th {
+      position: relative;
+      top: 0;
     }
   }
 
@@ -414,15 +249,5 @@ export default {
       margin-top: -16px;
       margin-left: -16px;
     }
-  }
-
-  .progress-wrapper {
-    position: relative;
-  }
-
-  .table-header {
-    position: sticky;
-    top: 48px;
-    z-index: 1;
   }
 </style>

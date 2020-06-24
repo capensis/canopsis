@@ -7,6 +7,7 @@ import {
   STATS_QUICK_RANGES,
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1551,6 +1552,20 @@ export default {
       tooltips: {
         fullscreen: 'Les actions sont désactivées en mode plein écran',
       },
+    },
+  },
+
+  rights: {
+    technical: {
+      admin: 'Droits d\'administration',
+      exploitation: 'Droits d\'exploitation',
+    },
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: 'Droits communs',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Droits pour le widget Bac à alarmes',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Droits pour le widget Explorateur de contexte',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
     },
   },
 

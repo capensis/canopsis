@@ -19,7 +19,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 import submittableMixin from '@/mixins/submittable';
 
-import RightForm from '@/components/other/right/right-form.vue';
+import RightForm from '@/components/other/right/form/right-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

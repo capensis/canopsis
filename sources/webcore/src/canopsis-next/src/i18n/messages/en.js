@@ -6,7 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES,
+  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1641,6 +1641,19 @@ export default {
       tooltips: {
         fullscreen: 'Actions are disabled in full screen mode',
       },
+    },
+  },
+  rights: {
+    technical: {
+      admin: 'Admin rights',
+      exploitation: 'Exploitation rights',
+    },
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: 'Rights for common',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Rights for Alarms List',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
     },
   },
 
