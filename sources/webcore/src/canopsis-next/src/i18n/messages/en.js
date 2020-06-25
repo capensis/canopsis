@@ -6,7 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES,
+  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -24,6 +24,7 @@ export default {
     addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
+    toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
     name: 'Name',
     description: 'Description',
     author: 'Author',
@@ -1408,6 +1409,7 @@ export default {
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
       timeInterval: 'Time interval',
+      valuePath: 'Value path',
     },
   },
   snmpRules: {
@@ -1501,6 +1503,8 @@ export default {
     deleteWidget: 'Delete widget',
     fullScreen: 'Full screen',
     fullScreenShortcut: 'Alt + Enter / Command + Enter',
+    copyWidgetId: 'Copy widget ID',
+    autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
   patternsList: {
     noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
@@ -1637,6 +1641,19 @@ export default {
       tooltips: {
         fullscreen: 'Actions are disabled in full screen mode',
       },
+    },
+  },
+  rights: {
+    technical: {
+      admin: 'Admin rights',
+      exploitation: 'Exploitation rights',
+    },
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: 'Rights for common',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Rights for Alarms List',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
     },
   },
 
