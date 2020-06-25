@@ -334,8 +334,14 @@ export default {
 </script>
 
 <style lang="scss">
+  .ds-week-view-container {
+    max-height: 75vh;
+  }
+
   .ds-week-view {
-    min-height: 80vh;
+    position: relative !important;
+    overflow: hidden;
+    max-height: 75vh;
   }
 
   .ds-day {

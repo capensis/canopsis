@@ -54,3 +54,4 @@ export { default as CreateMetaAlarmRule } from './meta-alarm-rule/create-meta-al
 export { default as CreateCommentEvent } from './common/create-comment-event.vue';
 export { default as CreatePlaylist } from './admin/create-playlist.vue';
 export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue';
+export { default as PbehaviorPlanning } from './pbehavior/pbehavior-planning.vue';

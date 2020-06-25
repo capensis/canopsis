@@ -1088,6 +1088,9 @@ export default {
       result: 'Résultat',
       manageTabs: 'Gérer les onglet',
     },
+    pbehaviorPlanning: {
+      title: 'Comportement périodiques',
+    },
   },
   tables: {
     noData: 'Aucune donnée',

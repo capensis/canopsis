@@ -1167,6 +1167,9 @@ export default {
       result: 'Result',
       manageTabs: 'Manage tabs',
     },
+    pbehaviorPlanning: {
+      title: 'Periodical behaviors',
+    },
   },
   tables: {
     noData: 'No data',
