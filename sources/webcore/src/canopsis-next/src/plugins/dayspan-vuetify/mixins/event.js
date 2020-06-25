@@ -6,13 +6,18 @@ export default {
       return get(this.calendarEvent, 'data.meta.hasPopover', !!this.$scopedSlots.eventPopover && !this.isPlaceholderWithDay);
     },
 
+    isPlaceholderSameDay() {
+      return this.isPlaceholderWithDay.sameDay(this.calendarEvent.end);
+    },
+
+    isCalendarSameDay() {
+      return this.calendar && this.calendar.filled.end.sameDay(this.calendarEvent.end);
+    },
+
     ending() {
       return this.isPlaceholderWithDay
-        ? this.isPlaceholderWithDay.sameDay(this.calendarEvent.end)
-        : this.calendarEvent.ending || (
-          this.calendar &&
-        this.calendar.filled.end.sameDay(this.calendarEvent.end)
-        );
+        ? this.isPlaceholderSameDay
+        : this.calendarEvent.ending || this.isCalendarSameDay;
     },
 
     canResize() {
