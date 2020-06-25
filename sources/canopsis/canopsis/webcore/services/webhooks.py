@@ -104,6 +104,8 @@ def exports(ws):
 
         if '_id' not in webhook:
             webhook['_id'] = str(uuid.uuid4())
+        else:
+            webhook['_id'] = webhook['_id'].strip()
 
         try:
             _id = webhook_manager.create_webhook(webhook)
