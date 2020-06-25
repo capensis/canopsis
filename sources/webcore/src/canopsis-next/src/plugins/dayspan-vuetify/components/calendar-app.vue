@@ -334,7 +334,6 @@ export default {
 </script>
 
 <style lang="scss">
-  // TODO: fix that
   .ds-week-view-container {
     max-height: 75vh;
   }

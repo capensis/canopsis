@@ -28,45 +28,38 @@
 
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
-      .ds-calendar-event-resize(v-show="calendarEvent.ending && canResize", @mousedown="resizeStartHandler")
+      .ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
     slot(name="eventPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
 <script>
-import { get } from 'lodash';
 import { DsCalendarEvent } from 'dayspan-vuetify/src/components';
+
+import eventMixin from '../mixins/event';
 
 export default {
   extends: DsCalendarEvent,
+  mixins: [eventMixin],
   computed: {
-    hasPopover() {
-      return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.meta.hasPopover');
+    fullStyles() {
+      return this.$dayspan.getStyleFull(this.details, this.calendarEvent, this.index);
     },
 
-    canResize() {
-      return !this.$dayspan.readOnly;
-    },
-  },
-  beforeDestroy() {
-    this.resizeEndHandler();
-  },
-  methods: {
-    resizeStartHandler(event) {
-      if (event.button === 0) {
-        event.stopPropagation();
-        this.$emit('mouse-start-resize', event, this.calendarEvent);
-        document.addEventListener('mouseup', this.resizeEndHandler);
-      }
+    placeholderFullStyles() {
+      const stateColor = this.$dayspan.getStyleColor(this.details, this.calendarEvent);
+      const styles = this.$dayspan.getStylePlaceholderFull(
+        this.details,
+        this.calendarEvent,
+        this.index,
+        this.isPlaceholderWithDay,
+      );
+      styles.backgroundColor = this.$dayspan.blend(stateColor, 1.1, this.$dayspan.placeholderBlendTarget);
+
+      return styles;
     },
 
-    resizeEndHandler() {
-      document.removeEventListener('mouseup', this.resizeEndHandler);
-    },
-
-    mouseDownEvent($event) {
-      if (this.handlesEvents($event)) {
-        this.$emit('mouse-down-event', this.getEvent('mouse-down-event', $event));
-      }
+    style() {
+      return this.isPlaceholderWithDay ? this.placeholderFullStyles : this.fullStyles;
     },
   },
 };
