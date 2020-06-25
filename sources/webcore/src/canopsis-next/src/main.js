@@ -95,6 +95,7 @@ Vue.use(DaySpanVuetifyPlugin, {
           offsetOverflow: true,
           offsetX: true,
           maxWidth: 500,
+          openOnHover: true,
         },
       },
     },
