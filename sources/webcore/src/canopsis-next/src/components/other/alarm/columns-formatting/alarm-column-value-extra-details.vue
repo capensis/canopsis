@@ -11,7 +11,7 @@
           strong {{ $t('alarmList.actions.iconsTitles.ack') }}
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
-          div(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
+          div.message(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
     div(v-if="alarm.v.lastComment")
       v-tooltip(top)
         v-icon.badge.white--text.purple.lighten-2(
@@ -22,7 +22,7 @@
           strong {{ $t('alarmList.actions.iconsTitles.comment') }}
           div {{ $t('common.by') }} : {{ alarm.v.lastComment.a }}
           div {{ $t('common.date') }} : {{ alarm.v.lastComment.t | date('long') }}
-          div(v-if="alarm.v.lastComment.m") {{ $tc('common.comment') }} : {{ alarm.v.lastComment.m }}
+          div.message(v-if="alarm.v.lastComment.m") {{ $tc('common.comment') }} : {{ alarm.v.lastComment.m }}
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
         v-icon.badge.blue.white--text(
@@ -48,7 +48,7 @@
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
           div {{ $t('common.by') }} : {{ alarm.v.canceled.a }}
           div {{ $t('common.date') }} : {{ alarm.v.canceled.t | date('long') }}
-          div(v-if="alarm.v.canceled.m") {{ $tc('common.comment') }} : {{ alarm.v.canceled.m }}
+          div.message(v-if="alarm.v.canceled.m") {{ $tc('common.comment') }} : {{ alarm.v.canceled.m }}
     div(v-if="alarm.v.snooze")
       v-tooltip(top)
         v-icon.badge.pink.white--text(
@@ -159,5 +159,9 @@ export default {
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: 10px;
+  }
+  .message {
+    max-width: 600px;
+    white-space: pre-line;
   }
 </style>

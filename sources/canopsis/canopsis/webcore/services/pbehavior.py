@@ -241,7 +241,7 @@ class RouteHandlerPBehavior(object):
     def get_by_eid(self, eid):
         return self.pb_manager.get_pbehaviors_by_eid(eid)
 
-    def read(self, _id, search=None, limit=None, skip=None, current_active_pbh=False):
+    def read(self, _id, search=None, limit=None, skip=None, current_active_pbh=False, sort=None):
         """
         Read a pbehavior.
 
@@ -261,10 +261,10 @@ class RouteHandlerPBehavior(object):
         if not is_ok:
             raise ValueError("_id should be str, a list, None (null) not {}"
                              .format(type(_id)))
-        pbehaviors = self.pb_manager.read(_id, search, limit, skip)
-        return self._get_active_only(pbehaviors, current_active_pbh)
+        pbehaviors = self.pb_manager.read(_id, search, limit, skip, sort)
+        return self._get_active_only(pbehaviors, current_active_pbh, sort, limit, skip)
 
-    def _get_active_only(self, pbehaviors_data, current_active_pbh=False):
+    def _get_active_only(self, pbehaviors_data, current_active_pbh=False, sorting=None, limit=None, skip=None):
         active_ones = []
         now = int(time.time())
         for pb in pbehaviors_data.get("data", []):
@@ -279,6 +279,37 @@ class RouteHandlerPBehavior(object):
             pbehaviors_data["data"] = active_ones
             pbehaviors_data["total_count"] = len(active_ones)
             pbehaviors_data["count"] = len(active_ones)
+
+        # sort by is_currently_active field
+        if sorting:
+            direction = 'ASC'
+            is_sort = False
+            try:
+                if sorting[0] == 'is_currently_active':
+                    is_sort = True
+                elif sorting[0]['property'] == 'is_currently_active':
+                    is_sort = True
+                    direction = sorting[0].get('direction', 'ASC')
+            except:
+                pass
+
+            if is_sort:
+                data = pbehaviors_data["data"]
+                reverse = False
+
+                def sort_func(p):
+                    return p['is_currently_active']
+                if direction == 'DESC':
+                    reverse = True
+                data.sort(reverse=reverse, key=sort_func)
+                try:
+                    if skip is not None:
+                        data = data[skip:]
+                    if limit is not None:
+                        data = data[:limit]
+                except:
+                    pass
+                pbehaviors_data["data"] = data
         return pbehaviors_data
 
     def update(self, _id, **kwargs):
@@ -498,13 +529,13 @@ def exports(ws):
     @route(
         ws.application.get,
         name='pbehavior/read',
-        payload=['_id', 'search', 'limit', 'skip', 'current_active_pbh']
+        payload=['_id', 'search', 'limit', 'skip', 'current_active_pbh', 'sort']
     )
-    def read(_id=None, search=None, limit=None, skip=None, current_active_pbh=False):
+    def read(_id=None, search=None, limit=None, skip=None, current_active_pbh=False, sort=None):
         """
         Get a pbehavior.
         """
-        return rhpb.read(_id, search=search, limit=limit, skip=skip, current_active_pbh=current_active_pbh)
+        return rhpb.read(_id, search=search, limit=limit, skip=skip, current_active_pbh=current_active_pbh, sort=sort)
 
     @route(
         ws.application.put,

@@ -149,6 +149,7 @@ export default {
   }
 
   p {
+    white-space: pre-line;
     overflow-wrap: break-word;
     text-overflow: ellipsis;
     width: 90%;

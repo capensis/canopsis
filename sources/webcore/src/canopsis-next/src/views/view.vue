@@ -6,7 +6,8 @@
         :view="view",
         :isEditingMode="isEditingMode",
         :hasUpdateAccess="hasUpdateAccess",
-        :updateViewMethod="data => updateView({ id, data })"
+        :updateViewMethod="updateViewMethod",
+        @update:tab="updateTab"
       )
     .fab
       v-layout(data-test="controlViewLayout", row)
@@ -38,9 +39,9 @@
           transition="slide-y-reverse-transition"
         )
           v-btn(
-            data-test="menuViewButton",
             slot="activator",
             :input-value="isVSpeedDialOpen",
+            data-test="menuViewButton",
             color="primary",
             dark,
             fab
@@ -61,22 +62,24 @@
             span alt + enter / command + enter
           v-tooltip(v-if="hasUpdateAccess", left)
             v-btn(
-              data-test="editViewButton",
               slot="activator",
+              :input-value="isEditingMode",
+              data-test="editViewButton",
               fab,
               dark,
               small,
-              @click.stop="toggleViewEditingMode",
-              v-model="isEditingMode"
+              @click.stop="toggleViewEditingMode"
             )
               v-icon edit
               v-icon done
-            span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
+            div
+              div {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
+              div.font-italic {{ $t('common.toggleEditViewSubtitle') }}
           v-tooltip(left)
             v-btn(
-              data-test="addWidgetButton",
-              v-if="hasUpdateAccess",
               slot="activator",
+              v-if="hasUpdateAccess",
+              data-test="addWidgetButton",
               fab,
               dark,
               small,
@@ -87,9 +90,9 @@
             span {{ $t('common.addWidget') }}
           v-tooltip(left)
             v-btn(
-              data-test="addTabButton",
-              v-if="hasUpdateAccess",
               slot="activator",
+              v-if="hasUpdateAccess",
+              data-test="addTabButton",
               fab,
               dark,
               small,
@@ -116,7 +119,6 @@
 import { MODALS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
 
-import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
@@ -126,7 +128,6 @@ import periodicRefreshMixin from '@/mixins/view/periodic-refresh';
 
 export default {
   components: {
-    ViewTabRows,
     ViewTabsWrapper,
   },
   mixins: [
@@ -146,6 +147,7 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
+      updatedTabsByIds: {},
     };
   },
   computed: {
@@ -193,6 +195,10 @@ export default {
   },
 
   methods: {
+    updateViewMethod(data) {
+      return this.updateView({ id: this.id, data });
+    },
+
     async refreshView() {
       await this.fetchView({ id: this.id });
 
@@ -278,7 +284,25 @@ export default {
       });
     },
 
-    toggleViewEditingMode() {
+    updateTab(tab) {
+      this.updatedTabsByIds[tab._id] = tab;
+    },
+
+    updateTabs() {
+      const view = {
+        ...this.view,
+
+        tabs: this.view.tabs.map(tab => this.updatedTabsByIds[tab._id] || tab),
+      };
+
+      return this.updateView({ id: this.id, data: view });
+    },
+
+    async toggleViewEditingMode() {
+      if (this.isEditingMode) {
+        await this.updateTabs();
+      }
+
       this.isEditingMode = !this.isEditingMode;
     },
   },

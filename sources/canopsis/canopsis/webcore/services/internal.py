@@ -218,9 +218,8 @@ def exports(ws):
                 if key not in ['app_title', 'logo', 'language', 'popup_timeout', 'allow_change_severity_to_info']:
                     user_interface.pop(key)
             cservices.update(user_interface)
-        ws.logger.error(get_version())
         cservices.update(get_version())
-        ws.logger.warning(cservices)
+        ws.logger.debug(cservices)
 
         return gen_json(cservices)
 
