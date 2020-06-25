@@ -218,7 +218,12 @@ export default {
       handler: 'applyReadOnly',
     },
   },
-
+  created() {
+    /**
+     * We've added that for 'eventSorter' field initialization on the calendar
+     */
+    this.rebuild(undefined, true);
+  },
   mounted() {
     if (!this.$dayspan.promptOpen) {
       this.$dayspan.promptOpen = (question, callback) => {
@@ -244,7 +249,6 @@ export default {
       if (this.events) {
         this.calendar.removeEvents();
         this.calendar.addEvents(this.events);
-        this.rebuild(undefined, true);
       }
     },
 
@@ -329,7 +333,8 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+  // TODO: fix that
   .ds-week-view-container {
     max-height: 75vh;
   }
@@ -342,5 +347,9 @@ export default {
 
   .ds-day {
     min-height: 10em;
+
+    .ds-month & {
+      padding-bottom: 22px;
+    }
   }
 </style>
