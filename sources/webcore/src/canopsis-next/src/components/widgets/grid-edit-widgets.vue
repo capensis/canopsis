@@ -58,7 +58,6 @@ import {
   MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
 } from '@/constants';
 
-import { setSeveralFields } from '@/helpers/immutable';
 import { getWidgetsLayoutBySize } from '@/helpers/grid-layout';
 
 import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
@@ -133,22 +132,21 @@ export default {
      * Emit 'update:tab' event when layout will be updated
      */
     updatedLayout() {
-      const fields = this.tab.widgets.reduce((acc, { gridParameters }, index) => {
-        Object.entries(gridParameters).forEach(([size, gridSettings]) => {
-          const layoutItem = this.layouts[size][index];
+      const widgetsFields = Object.entries(this.layouts).reduce((acc, [size, layout]) => {
+        layout.forEach((layoutItem) => {
+          if (!acc[layoutItem.i]) {
+            acc[layoutItem.i] = {};
+          }
 
-          acc[`widgets.${index}.gridParameters.${size}`] = {
-            ...gridSettings,
+          acc[layoutItem.i][`gridParameters.${size}`] = value => ({
+            ...value,
             ...omit(layoutItem, ['i', 'widget', 'moved']),
-          };
+          });
         });
-
         return acc;
       }, {});
 
-      const newTab = setSeveralFields(this.tab, fields);
-
-      this.$emit('update:tab', newTab);
+      this.$emit('update:widgetsFields', widgetsFields);
     },
   },
 };

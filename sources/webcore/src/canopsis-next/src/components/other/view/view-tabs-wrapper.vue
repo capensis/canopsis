@@ -28,7 +28,7 @@
       view-tab-widgets(
         slot-scope="props",
         v-bind="props",
-        @update:tab="$emit('update:tab', $event)"
+        @update:widgetsFields="$emit('update:widgetsFields', $event)"
       )
 </template>
 

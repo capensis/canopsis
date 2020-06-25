@@ -10,41 +10,25 @@
         v-icon(small) edit
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
-    .float-clear
-    v-layout.white(v-if="watchersMeta.total", align-center)
-      v-flex(xs10)
-        pagination(
-          :page="watchersMeta.page",
-          :limit="watchersMeta.limit",
-          :total="watchersMeta.total",
-          @input="updateQueryPage"
-        )
-      v-spacer
-      v-flex(xs2)
-        records-per-page(:value="watchersMeta.limit", @input="updateRecordsPerPage")
 </template>
 
 <script>
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
+import { PAGINATION_LIMIT } from '@/config';
 import { CRUD_ACTIONS, MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 
-import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
-
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
-import WatcherEntity from './entity.vue';
+import WatcherEntitiesWrapper from './entities-wrapper.vue';
 
 export default {
   components: {
     VRuntimeTemplate,
-    WatcherEntity,
-    RecordsPerPage,
-    Pagination,
+    WatcherEntitiesWrapper,
   },
   mixins: [authMixin],
   props: {
@@ -56,10 +40,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    watchersMeta: {
-      type: Object,
-      required: true,
-    },
     modalTemplate: {
       type: String,
       default: '',
@@ -67,6 +47,10 @@ export default {
     entityTemplate: {
       type: String,
       default: '',
+    },
+    itemsPerPage: {
+      type: Number,
+      default: PAGINATION_LIMIT,
     },
   },
   asyncComputed: {
@@ -89,16 +73,14 @@ export default {
       const entityNameField = hash.name || 'entity.name';
 
       return new Handlebars.SafeString(`
-        <div class="mt-2" v-for="watcherEntity in watcherEntities" :key="watcherEntity._id">
-          <watcher-entity
-            :watcher-id="watcher.entity_id"
-            :is-watcher-on-pbehavior="watcher.active_pb_watcher"
-            :entity="watcherEntity"
+        <watcher-entities-wrapper
+            :watcher="watcher"
+            :watcher-entities="watcherEntities"
             :template="entityTemplate"
+            :items-per-page="itemsPerPage"
             entity-name-field="${entityNameField}"
             @add:event="addEventToQueue"
-          ></watcher-entity>
-        </div>
+          ></watcher-entities-wrapper>
       `);
     });
   },
@@ -119,12 +101,6 @@ export default {
           availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
-    },
-    updateQueryPage(page) {
-      this.$emit('change:page', page);
-    },
-    updateRecordsPerPage(limit) {
-      this.$emit('change:limit', limit);
     },
   },
 };
