@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card.pa-2.ds-calendar-event-popover-card
+  v-card.ds-calendar-event-popover-card
     slot(
       v-if="calendar",
       v-bind="{ placeholder: calendarEventForm, calendar, edit: editHandler, add: addHandler, close, readOnly }"

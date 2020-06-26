@@ -1,27 +1,6 @@
 <template lang="pug">
-  v-form(@submit.prevent="$emit('submit', form)")
-    v-layout(row, wrap)
-      v-text-field(
-        v-model="form.title",
-        :label="$t('common.title')",
-        name="title",
-        disabled
-      )
-    v-layout(row, wrap)
-      v-flex(xs6)
-        v-text-field(
-          v-model="form.start",
-          :label="$t('common.startDate')",
-          name="startDate",
-          disabled
-        )
-      v-flex(xs6)
-        v-text-field(
-          v-model="form.end",
-          :label="$t('common.endDate')",
-          name="endDate",
-          disabled
-        )
+  v-form.pa-3.pbehavior-form(@submit.prevent="$emit('submit', form)")
+    pbehavior-form(v-model="form")
     v-layout(row, justify-end)
       v-btn.mr-0.mb-0(
         depressed,
@@ -32,17 +11,35 @@
 </template>
 
 <script>
+import { pbehaviorToComments, pbehaviorToExdates, pbehaviorToForm } from '@/helpers/forms/pbehavior';
+
+import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+
 export default {
+  components: { PbehaviorForm },
   inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
-    form: {
+    calendarEvent: {
       type: Object,
-      default: () => ({}),
+      required: false,
     },
+  },
+  data() {
+    return {
+      form: {
+        general: pbehaviorToForm(this.calendarEvent),
+        exdate: pbehaviorToExdates(this.calendarEvent),
+        comments: pbehaviorToComments(this.calendarEvent),
+      },
+    };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .pbehavior-form {
+    overflow: auto;
+    width: 500px;
+    max-height: 600px;
+  }
+</style>

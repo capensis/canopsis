@@ -98,6 +98,16 @@ Vue.use(DaySpanVuetifyPlugin, {
           openOnHover: true,
         },
       },
+      dsCalendarEvent: {
+        popoverProps: {
+          offsetY: true,
+        },
+      },
+      dsCalendarEventPlaceholder: {
+        popoverProps: {
+          offsetY: true,
+        },
+      },
     },
   },
   methods: {
