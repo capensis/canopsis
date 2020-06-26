@@ -223,6 +223,7 @@ export default {
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour meta alarmes',
+        group: 'Créer une meta alarme',
         comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
@@ -582,6 +583,9 @@ export default {
     },
     createGroupRequestEvent: {
       title: 'Proposition de regroupement pour meta alarmes',
+    },
+    createGroupEvent: {
+      title: 'Créer une meta alarme',
     },
     createChangeStateEvent: {
       title: 'Changer la сriticité',

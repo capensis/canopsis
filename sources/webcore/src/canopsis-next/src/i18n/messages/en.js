@@ -233,6 +233,7 @@ export default {
         variablesHelp: 'List of available variables',
         history: 'History',
         groupRequest: 'Suggest group request for meta alarm',
+        group: 'Create meta alarm',
         comment: 'Comment',
       },
       iconsTitles: {
@@ -608,6 +609,9 @@ export default {
     },
     createGroupRequestEvent: {
       title: 'Suggest group request for meta alarm',
+    },
+    createGroupEvent: {
+      title: 'Create meta alarm',
     },
     createChangeStateEvent: {
       title: 'Change severity',
