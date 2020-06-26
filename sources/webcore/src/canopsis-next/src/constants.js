@@ -113,6 +113,7 @@ export const EVENT_ENTITY_TYPES = {
   pause: 'pause',
   play: 'play',
   groupRequest: 'groupRequest',
+  group: 'group',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
   comment: 'comment',
@@ -353,6 +354,9 @@ export const EVENT_ENTITY_STYLE = {
   },
   [EVENT_ENTITY_TYPES.groupRequest]: {
     icon: 'note_add',
+  },
+  [EVENT_ENTITY_TYPES.group]: {
+    icon: 'center_focus_strong',
   },
   [EVENT_ENTITY_TYPES.pbhenter]: {
     color: COLORS.entitiesEvents.pbhenter,
@@ -747,6 +751,7 @@ export const USERS_RIGHTS = {
         changeState: `${USER_RIGHTS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_RIGHTS_PREFIXES.business.alarmsList}_history`,
         groupRequest: `${USER_RIGHTS_PREFIXES.business.alarmsList}_groupRequest`,
+        group: `${USER_RIGHTS_PREFIXES.business.alarmsList}_group`,
         comment: `${USER_RIGHTS_PREFIXES.business.alarmsList}_comment`,
 
         listFilters: `${USER_RIGHTS_PREFIXES.business.alarmsList}_listFilters`,
@@ -829,6 +834,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     variablesHelp: 'variablesHelp',
     history: 'history',
     groupRequest: 'groupRequest',
+    group: 'group',
     comment: 'comment',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
