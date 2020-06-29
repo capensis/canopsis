@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form.pa-3.pbehavior-form(@submit.prevent="$emit('submit', form)")
+  v-form.pa-3.pbehavior-form(@submit.prevent="submitHandler")
     pbehavior-form(v-model="form")
     v-layout(row, justify-end)
       v-btn.mr-0.mb-0(
@@ -11,12 +11,18 @@
 </template>
 
 <script>
-import { pbehaviorToComments, pbehaviorToExdates, pbehaviorToForm } from '@/helpers/forms/pbehavior';
+import {
+  formToPbehaviorCalendarEvent,
+  pbehaviorCalendarEventToForm,
+} from '@/helpers/forms/pbehavior';
+
+import authMixin from '@/mixins/auth';
 
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
 export default {
   components: { PbehaviorForm },
+  mixins: [authMixin],
   inject: ['$validator'],
   props: {
     calendarEvent: {
@@ -26,12 +32,21 @@ export default {
   },
   data() {
     return {
-      form: {
-        general: pbehaviorToForm(this.calendarEvent),
-        exdate: pbehaviorToExdates(this.calendarEvent),
-        comments: pbehaviorToComments(this.calendarEvent),
-      },
+      form: pbehaviorCalendarEventToForm(this.calendarEvent),
     };
+  },
+  methods: {
+    async submitHandler() {
+      const isValid = await this.$validator.validateAll();
+
+      if (isValid) {
+        const pbehavior = formToPbehaviorCalendarEvent(this.form);
+
+        pbehavior.author = this.currentUser._id;
+
+        this.$emit('submit', pbehavior);
+      }
+    },
   },
 };
 </script>

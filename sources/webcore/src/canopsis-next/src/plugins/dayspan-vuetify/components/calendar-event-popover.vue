@@ -7,7 +7,8 @@
 </template>
 
 <script>
-import { Calendar, CalendarEvent } from 'dayspan';
+import moment from 'moment';
+import { Calendar, CalendarEvent, DaySpan, Op, Schedule, Day } from 'dayspan';
 
 export default {
   props: {
@@ -35,31 +36,40 @@ export default {
       type: Function,
     },
   },
-  data() {
-    return {
-      calendarEventForm: this.eventToForm(this.placeholder || this.calendarEvent),
-    };
-  },
-  methods: {
-    addHandler() {
-      this.add(this.formToEvent(this.calendarEventForm));
-    },
+  computed: {
+    calendarEventForm() {
+      const calendarEvent = this.placeholder || this.calendarEvent;
 
-    editHandler() {
-      this.edit(this.formToEvent(this.calendarEventForm));
-    },
-
-    eventToForm(calendarEvent) {
       return {
-        start: calendarEvent.start.format('DD-MM-YYYY:hh-mm'),
-        end: calendarEvent.end.format('DD-MM-YYYY:hh-mm'),
+        start: calendarEvent.start.toDate(),
+        end: calendarEvent.end.toDate(),
         ...calendarEvent.data,
       };
     },
+  },
+  methods: {
+    addHandler(form) {
+      this.add(this.formToEvent(form));
+    },
 
-    formToEvent() {
-      // TODO prepare form to calendar event logic should be added
-      return this.placeholder || this.calendarEvent;
+    editHandler(form) {
+      this.edit(this.formToEvent(form));
+    },
+
+    formToEvent(form) {
+      const { end, start, ...details } = form;
+      const calendarEvent = this.placeholder || this.calendarEvent;
+      const span = new DaySpan(
+        Day.fromMoment(moment(start)),
+        Day.fromMoment(moment(end)),
+      );
+      const schedule = calendarEvent.fullDay
+        ? Schedule.forDay(span.start, span.days(Op.UP))
+        : Schedule.forSpan(span);
+      const event = this.$dayspan.createEvent(details, schedule, true);
+      event.id = calendarEvent.event.id;
+
+      return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
     },
   },
 };

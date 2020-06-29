@@ -29,7 +29,7 @@
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
       .ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
-    slot(name="eventPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
+    slot(name="eventPopover", v-if="menu", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
 <script>

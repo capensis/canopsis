@@ -63,3 +63,40 @@ export function pbehaviorToExdates(pbehavior = {}) {
 export function exdatesToPbehaviorExdates(exdate) {
   return exdate.filter(({ value }) => value).map(({ value }) => moment(value).unix());
 }
+
+export function pbehaviorCalendarEventToForm(pbehavior = {}) {
+  let rrule = pbehavior.rrule || null;
+
+  if (pbehavior.rrule && isObject(pbehavior.rrule)) {
+    ({ rrule } = pbehavior.rrule);
+  }
+
+  return {
+    rrule,
+
+    color: pbehavior.color,
+    enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
+    author: pbehavior.author || '',
+    name: pbehavior.title || '',
+    tstart: pbehavior.start ? pbehavior.start : new Date(),
+    tstop: pbehavior.end ? pbehavior.end : new Date(),
+    type_: pbehavior.type_ || '',
+    reason: pbehavior.reason || '',
+    timezone: pbehavior.timezone || 'Europe/Paris',
+    filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
+    exdate: pbehaviorToExdates(pbehavior),
+    comments: pbehaviorToComments(pbehavior),
+  };
+}
+
+export function formToPbehaviorCalendarEvent(form) {
+  return {
+    ...form,
+
+    title: form.name,
+    comments: commentsToPbehaviorComments(form.comments),
+    exdate: exdatesToPbehaviorExdates(form.exdate),
+    start: new Date(form.tstart),
+    end: new Date(form.tstop),
+  };
+}

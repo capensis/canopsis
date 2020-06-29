@@ -2,17 +2,17 @@
   div
     v-layout(align-center)
       v-text-field(
-        v-field="form.general.name",
+        v-field="form.name",
         v-validate="'required'",
         :label="$t('modals.createPbehavior.steps.general.fields.name')",
         :error-messages="errors.collect('name')",
         name="name",
         data-test="pbehaviorFormName"
       )
-      color-picker-field.ma-2(v-model="form.general.color")
+      color-picker-field.ma-2(v-model="form.color")
     v-layout
       v-switch(
-        v-field="form.general.enabled",
+        v-field="form.enabled",
         :label="$t('modals.createPbehavior.steps.general.fields.enabled')",
         color="primary",
         hide-details
@@ -23,7 +23,7 @@
           v-flex(data-test="startDateTimePicker", xs4)
             date-time-picker-field(
               v-validate="tstartRules",
-              :value="form.general.tstart",
+              :value="form.tstart",
               :label="$t('modals.createPbehavior.steps.general.fields.start')",
               name="tstart",
               @input="updateField('tstart', $event)"
@@ -31,7 +31,7 @@
           v-flex(data-test="stopDateTimePicker", xs4)
             date-time-picker-field(
               v-validate="tstopRules",
-              :value="form.general.tstop",
+              :value="form.tstop",
               :label="$t('modals.createPbehavior.steps.general.fields.stop')",
               name="tstop",
               @input="updateField('tstop', $event)"
@@ -44,13 +44,18 @@
               :label="$t('modals.createPbehavior.steps.general.fields.timezone')",
               name="timezone"
             )
-    v-tabs(fixed-tabs, slider-color="primary")
+    v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
       v-tab {{ $t('modals.createPbehavior.steps.general.title') }}
       v-tab {{ $t('modals.createPbehavior.steps.filter.title') }}
       v-tab {{ $t('modals.createPbehavior.steps.rrule.title') }}
       v-tab-item
-        pbehavior-general-form(v-model="form.general")
-        pbehavior-comments-form(v-model="form.comments")
+        pbehavior-general-form(v-field="form")
+        pbehavior-comments-form(v-field="form.comments")
+      v-tab-item
+        filter-editor(v-field="form.filter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
+      v-tab-item
+        r-rule-form(v-field="form.rrule")
+        pbehavior-exdates-form(v-if="form.rrule", v-field="form.exdate")
 </template>
 
 <script>
@@ -59,21 +64,28 @@ import moment from 'moment-timezone';
 import { DATETIME_FORMATS } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import formMixin from '@/mixins/form/object';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 import ColorPickerField from '@/components/forms/fields/color-picker.vue';
+import RRuleForm from '@/components/forms/rrule.vue';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
+import PbehaviorExdatesForm from './pbehavior-exdates-form.vue';
 
 export default {
   components: {
+    RRuleForm,
+    FilterEditor,
     ColorPickerField,
-    PbehaviorCommentsForm,
     DateTimePickerField,
     PbehaviorGeneralForm,
+    PbehaviorCommentsForm,
+    PbehaviorExdatesForm,
   },
-  mixins: [formValidationHeaderMixin],
+  mixins: [formValidationHeaderMixin, formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -93,7 +105,7 @@ export default {
   },
   data() {
     return {
-      stepper: 1,
+      activeTab: 0,
       hasGeneralFormAnyError: false,
     };
   },
