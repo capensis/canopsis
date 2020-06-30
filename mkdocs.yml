@@ -2,6 +2,7 @@ site_name: Documentation Canopsis
 site_url: https://doc.canopsis.net
 
 repo_url: https://git.canopsis.net/canopsis/canopsis
+repo_name: 'git.canopsis.net'
 
 docs_dir: 
    sources/docs/fr
@@ -31,4 +32,5 @@ markdown_extensions:
 plugins:
     - search
     - git-revision-date-localized:
+        locale: fr
         type: iso_date
