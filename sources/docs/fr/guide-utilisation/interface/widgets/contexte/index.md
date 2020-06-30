@@ -65,7 +65,7 @@ Une fois l'opérateur sélectionné, il ne vous reste plus qu'à sélectionner l
 
 Depuis l'explorateur de contexte, il vous est possible de créer des entités et des observateurs.
 
-Pour accéder aux fenêtre de création, survoler le bouton ![Icône Création Entité / Observateur](./img/add-entity-button.png "Icône Création Entité / Observateur").
+Pour accéder aux fenêtres de création, survoler le bouton ![Icône Création Entité / Observateur](./img/add-entity-button.png "Icône Création Entité / Observateur").
 Au survol de ce bouton, un menu s'ouvre avec deux boutons disponibles.
 
 ![Icônes Création Entité / Observateur](./img/add-entity-button-hover.png "Icônes Création Entité / Observateur").
@@ -84,7 +84,7 @@ Le 1er onglet, 'Formulaire', vous demande de renseigner les informations princip
 - Description
 - Activé(e) : Définit si l'entité est activée, ou non.
 - Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
-- Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces liste, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
+- Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces listes, effectuer une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
 
 Le 2ème onglet permet de gérer les infos contenues dans le champ 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
 Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
@@ -127,7 +127,7 @@ Depuis l'explorateur de contexte, il est possible d'ajouter un comportement pér
 
 Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
 
-Pour ajouter un comportement périodique sur un entité, cliquez sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
+Pour ajouter un comportement périodique sur une entité, cliquez sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
 
 Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. La première icône permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"). Une fenêtre de création de comportement périodique apparaît alors.
 
@@ -182,7 +182,7 @@ Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
 Un champ de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*).
 
-Une sélecteur vous permet ensuite de définir le sens de tri :
+Un sélecteur vous permet ensuite de définir l'ordre de tri :
 
 *  "ASC" = Ascendant
 *  "DESC" = Descendant
