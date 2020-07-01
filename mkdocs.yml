@@ -11,26 +11,25 @@ copyright: Documentation © Capensis 2018–2020 / CC BY-SA 3.0 FR (https://crea
 theme:
   name: material
   language: fr
+  # Still using the old syntax here, because our icon isn't in SVG
   logo: 'img/canopsis-mkdocs.png'
   palette:
-    primary: 'green'
-    accent: 'green'
-  feature:
-    tabs: true
-
-extra:
-  search:
-    language: 'en'
+    primary: green
+    accent: green
+  features:
+    - tabs
 
 markdown_extensions:
     - admonition
     - codehilite:
         guess_lang: false
     - toc:
-        permalink: True
+        permalink: true
 
 plugins:
-    - search
+    - search:
+        lang:
+          - en
     - git-revision-date-localized:
         locale: fr
         type: iso_date
