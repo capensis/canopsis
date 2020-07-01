@@ -60,8 +60,8 @@
 
 
 <script>
-import { DsCalendar } from 'dayspan-vuetify/src/components';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
+import { DsCalendar } from 'dayspan-vuetify/src/components';
 
 export default {
   extends: DsCalendar,
@@ -149,10 +149,12 @@ export default {
 
     mouseMoveCheck() {
       if (this.readyToMove) {
+        const { day } = this.movingEvent;
         const { time, schedule } = this.movingEvent.calendarEvent;
 
         this.moving = true;
         this.movingDuration = time.millis();
+        this.movingStartDay = day;
         this.placeholderForCreate = false;
         this.placeholder = this.copyCalendarEvent(this.movingEvent.calendarEvent);
         this.placeholder.time.end = this.placeholder.fullDay
@@ -278,13 +280,23 @@ export default {
     },
 
     changeMovePlaceholder(mouseEvent) {
-      let { time } = mouseEvent;
-      time = time.relative(-this.movingEvent.offset);
-      time = this.$dayspan.roundTime(time, this.$dayspan.rounding.drag);
+      const { time } = mouseEvent;
+      const { calendarEvent } = this.movingEvent;
+      let { offset = 0 } = this.movingEvent;
+      let newTime = time;
 
-      this.placeholder.day = time.start();
-      this.placeholder.time.start = time;
-      this.placeholder.time.end = time.relative(this.movingDuration);
+      if (this.movingStartDay) {
+        if (!calendarEvent.start.sameDay(this.movingStartDay)) {
+          offset -= calendarEvent.start.date.diff(this.movingStartDay.date, 'milliseconds');
+        }
+      }
+
+      newTime = newTime.relative(-offset);
+      newTime = this.$dayspan.roundTime(newTime, this.$dayspan.rounding.drag);
+
+      this.placeholder.day = newTime.start();
+      this.placeholder.time.start = newTime;
+      this.placeholder.time.end = newTime.relative(this.movingDuration);
     },
 
     changeResizePlaceholder(mouseEvent) {
@@ -332,11 +344,19 @@ export default {
     },
 
     changeMoveDayPlaceholder(mouseEvent) {
+      const { calendarEvent } = this.movingEvent;
       const { day } = mouseEvent;
+      let newDay = day;
 
-      this.placeholder.day = day;
-      this.placeholder.time.start = day;
-      this.placeholder.time.end = day.next(this.placeholder.event.schedule.durationInDays).end();
+      if (this.movingStartDay) {
+        const diff = calendarEvent.start.date.diff(this.movingStartDay.date, 'days');
+
+        newDay = newDay.next(diff);
+      }
+
+      this.placeholder.day = newDay;
+      this.placeholder.time.start = newDay;
+      this.placeholder.time.end = newDay.next(this.placeholder.event.schedule.durationInDays).end();
 
       this.updatePlaceholderRow();
     },
@@ -405,6 +425,30 @@ export default {
 
       if (this.resizing) {
         this.changeResizePlaceholder(mouseEvent);
+      }
+    },
+
+    mouseMoveCheckReady() {
+      if (this.readyToMove) {
+        const { calendarEvent, day } = this.movingEvent;
+
+        const ev = this.getEvent('moving', {
+          calendarEvent,
+          moveEvent: this.movingEvent,
+          placeholder: this.$dayspan.getPlaceholderEventForMove(calendarEvent),
+        });
+
+        this.$emit('moving', ev);
+
+        if (!ev.handled && ev.placeholder) {
+          this.moving = true;
+          this.movingDuration = calendarEvent.time.millis();
+          this.movingStartDay = day;
+          this.placeholderForCreate = false;
+          this.placeholder = ev.placeholder;
+        }
+
+        this.readyToMove = false;
       }
     },
 

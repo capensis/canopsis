@@ -25,7 +25,7 @@ export default {
   mixins: [modalInnerMixin, submittableMixin()],
   computed: {
     pbehaviors() {
-      return this.config.pbehaviors || [];
+      return this.config.pbehaviors;
     },
 
     readOnly() {

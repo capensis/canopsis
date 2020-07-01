@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { Functions as fn } from 'dayspan';
 import { DsCalendarEventTime } from 'dayspan-vuetify/src/components';
 
 import eventMixin from '../mixins/event';
@@ -58,19 +59,44 @@ export default {
       return this.isPlaceholderWithDay ? this.placeholderFullStyles : this.fullStyles;
     },
   },
+  methods: {
+    getEvent(type, $event, extra = {}) {
+      return fn.extend({
+        type,
+        $event,
+        calendarEvent: this.calendarEvent,
+        calendar: this.calendar,
+        details: this.details,
+        day: this.isPlaceholderWithDay,
+        offset: this.getRelativeTimeAt($event),
+        left: $event.button === 0,
+        right: $event.button === 1,
+        handled: false,
+        $vm: this,
+        $element: this.$el,
+
+      }, extra);
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-  .ds-calendar-event-time-resize {
-    pointer-events: auto;
-    content: '';
-    width: 100%;
-    cursor: n-resize;
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 10px;
-    bottom: 0;
+  .ds-calendar-event {
+    & > .v-menu__activator {
+      height: 100%;
+    }
+
+    .ds-calendar-event-time-resize {
+      pointer-events: auto;
+      content: '';
+      width: 100%;
+      cursor: ns-resize;
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 10px;
+      bottom: 0;
+    }
   }
 </style>

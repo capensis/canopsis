@@ -1,23 +1,28 @@
 <template lang="pug">
-  v-form(@submit.prevent="$emit('submit', form)")
+  v-form(@submit.prevent="submit")
     v-layout(row, wrap)
       v-text-field(
         v-model="form.title",
         :label="$t('common.title')",
-        name="title",
-        disabled
+        name="title"
+      )
+    v-layout(row, wrap)
+      v-text-field(
+        v-model="form.rrule",
+        :label="$t('common.rrule')",
+        name="title"
       )
     v-layout(row, wrap)
       v-flex(xs6)
         v-text-field(
-          v-model="form.start",
+          v-model="form.start_at",
           :label="$t('common.startDate')",
           name="startDate",
           disabled
         )
       v-flex(xs6)
         v-text-field(
-          v-model="form.end",
+          v-model="form.end_at",
           :label="$t('common.endDate')",
           name="endDate",
           disabled
@@ -34,14 +39,27 @@
 <script>
 export default {
   inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
-    form: {
+    placeholder: {
       type: Object,
-      default: () => ({}),
+      required: true,
+    },
+  },
+  data() {
+    const { placeholder } = this;
+
+    return {
+      form: {
+        title: placeholder.title,
+        rrule: placeholder.pbehavior ? placeholder.pbehavior.rrule : '',
+        start_at: placeholder.start.toDate(),
+        end_at: placeholder.end.toDate(),
+      },
+    };
+  },
+  methods: {
+    submit() {
+      this.$emit('submit', this.placeholder);
     },
   },
 };

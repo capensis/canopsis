@@ -1,11 +1,13 @@
 <template lang="pug">
   ds-calendar-app(
+    :calendar="calendar",
     :events="events",
     :readOnly="readOnly",
     fluid,
     fillHeight,
-    @changed="changeHandler",
-    @added="addHandler"
+    @change="changeCalendarHandler",
+    @changed="changedEventHandler",
+    @added="addedEventHandler"
   )
     ds-calendar-event-popover(
       slot="eventPopover",
@@ -14,7 +16,7 @@
     )
       pbehavior-create-event(
         slot-scope="{ placeholder, close, edit }",
-        v-model="placeholder",
+        :placeholder="placeholder",
         @close="close",
         @submit="edit"
       )
@@ -25,18 +27,22 @@
     )
       pbehavior-create-event(
         slot-scope="{ placeholder, close, add }",
-        v-model="placeholder",
+        :placeholder="placeholder",
         @close="close",
         @submit="add"
       )
 </template>
 
 <script>
-import Vue from 'vue';
+import moment from 'moment';
+import { createNamespacedHelpers } from 'vuex';
+import { Calendar, Schedule, Day, DaySpan } from 'dayspan';
 
 import uuid from '@/helpers/uuid';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
+
+const { mapActions } = createNamespacedHelpers('pbehaviorTimespan');
 
 export default {
   components: { PbehaviorCreateEvent },
@@ -52,11 +58,51 @@ export default {
   },
   data() {
     return {
-      eventsById: {
-        'e3b23564-71d7-4d59-8105-5ece80032100': {
-          id: 'e3b23564-71d7-4d59-8105-5ece80032100',
+      pending: false,
+      calendar: Calendar.months(),
+      events: [],
+      changedPbehaviors: {},
+      createdPbehaviors: {},
+    };
+  },
+  mounted() {
+    this.fetchEvents();
+  },
+  methods: {
+    ...mapActions({
+      fetchTimespans: 'fetchItems',
+    }),
+
+    async fetchEvents() {
+      this.pending = true;
+
+      const promises = this.pbehaviors.map(pbehavior => this.fetchEventsForPbehavior(pbehavior));
+
+      await Promise.all(promises);
+
+      this.pending = false;
+    },
+
+    async fetchEventsForPbehavior(pbehavior) {
+      const timespans = await this.fetchTimespans({
+        data: {
+          rrule: pbehavior.rrule,
+          start_at: pbehavior.start_at,
+          end_at: pbehavior.end_at,
+          view_from: this.calendar.start.date.unix(),
+          view_to: this.calendar.end.date.unix(),
+        },
+      });
+
+      const events = timespans.map((timespan) => {
+        const startDay = new Day(moment.unix(timespan.from));
+        const endDay = new Day(moment.unix(timespan.to));
+        const daySpan = new DaySpan(startDay, endDay);
+
+        return {
+          id: uuid('event'),
           data: {
-            title: 'Meeting',
+            title: pbehavior.title,
             description: '',
             location: '',
             color: '#F44336',
@@ -64,58 +110,35 @@ export default {
             calendar: '',
             busy: true,
             icon: '',
+            meta: {
+              pbehavior,
+            },
           },
-          schedule: {
-            dayOfMonth: [16],
-            duration: 270,
-            durationUnit: 'minutes',
-            month: [5],
-            times: ['16:15'],
-            year: [2020],
-          },
-        },
-        '7c5db84d-cd0a-4af6-b4fd-c590cba585bb': {
-          id: '7c5db84d-cd0a-4af6-b4fd-c590cba585bb',
-          data: {
-            title: 'Vocation',
-            description: '',
-            location: '',
-            color: '#FFC107',
-            forecolor: '#ffffff',
-            calendar: '',
-            busy: true,
-            icon: '',
-          },
-          schedule: {
-            dayOfMonth: [7],
-            duration: 7,
-            month: [5],
-            year: [2020],
-          },
-        },
-      },
-    };
-  },
-  computed: {
-    events() {
-      return Object.values(this.eventsById);
-    },
-  },
-  methods: {
-    changeHandler(event) {
-      this.saveEvent(event.calendarEvent);
-      event.clearPlaceholder();
-    },
-    addHandler(event) {
-      this.saveEvent(event.calendarEvent);
-      event.clearPlaceholder();
-    },
-    saveEvent({ id = uuid(), data, schedule }) {
-      Vue.set(this.eventsById, [id], {
-        id,
-        data,
-        schedule,
+          schedule: Schedule.forSpan(daySpan),
+        };
       });
+
+      this.events = [
+        ...this.events.filter(event => event.meta.pbehavior._id !== pbehavior._id),
+        ...events,
+      ];
+    },
+
+    changeCalendarHandler() {
+      this.fetchEvents();
+    },
+
+    changedEventHandler(event) {
+      this.changedPbehaviors[event.pbehavior._id] = event.pbehavior;
+      this.fetchEventsForPbehavior(event.pbehavior);
+
+      event.clearPlaceholder();
+    },
+    addedEventHandler(event) {
+      this.createdPbehaviors[event.pbehavior._id] = event.pbehavior;
+      this.fetchEventsForPbehavior(event.pbehavior);
+
+      event.clearPlaceholder();
     },
   },
 };
