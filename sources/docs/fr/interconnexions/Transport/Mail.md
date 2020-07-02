@@ -219,13 +219,13 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).before(e)` sélectionne tous les mots avant e
 - `line(a).before_incl(e)` sélectionne tous les mots avant e, e inclus
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
-- `line(a).replace(e,f)` remplace la chaîne de caractères e par la chaîne f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (à partir de la `3.40.0`)
-- `line(a).remove(e)` supprime la chaîne de caractères e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (à partir de la `3.40.0`)
-- `line(a).lowercase` passe la sélection (ici une ligne entière numéro a) en minuscules. (à partir de la `3.40.0`)
-- `line(a).uppercase` passe la sélection (ici une ligne entière numéro a) en majuscules. (à partir de la `3.40.0`)
-- `line(a).trim_left` supprime l'espace à gauche de la sélection (à partir de la `3.40.0`)
-- `line(a).trim_right` supprime l'espace à droite de la sélection (à partir de la `3.40.0`)
-- `line(a).trim_both` supprime les espaces à gauche et à droite de la sélection (à partir de la `3.40.0`)
+- `line(a).replace(e,f)` remplace la chaîne de caractères e par la chaîne f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (à partir de la `3.40.0`).
+- `line(a).remove(e)` supprime la chaîne de caractères e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (à partir de la `3.40.0`).
+- `line(a).lowercase` passe la sélection (ici une ligne entière numéro a) en minuscules. (à partir de la `3.40.0`).
+- `line(a).uppercase` passe la sélection (ici une ligne entière numéro a) en majuscules. (à partir de la `3.40.0`).
+- `line(a).trim_left` supprime l'espace à gauche de la sélection (à partir de la `3.40.0`).
+- `line(a).trim_right` supprime l'espace à droite de la sélection (à partir de la `3.40.0`).
+- `line(a).trim_both` supprime les espaces à gauche et à droite de la sélection (à partir de la `3.40.0`).
 - `and` permet d'effectuer une concaténation entre deux opérations (à partir de la `3.39.0`).
 - `print(word)` permet d'assigner la valeur word dans le champ (à partir de la `3.39.0`).
 
