@@ -14,7 +14,7 @@
         )
       v-flex(xs6)
         v-select.ml-3(
-          v-field="form.type_",
+          v-field="form.type",
           v-validate="'required'",
           :label="$t('modals.createPbehavior.steps.general.fields.type')",
           :items="types",

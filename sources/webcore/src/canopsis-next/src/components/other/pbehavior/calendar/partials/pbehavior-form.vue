@@ -9,7 +9,6 @@
         name="name",
         data-test="pbehaviorFormName"
       )
-      color-picker-field.ma-2(v-model="form.color")
     v-layout
       v-switch(
         v-field="form.enabled",
@@ -20,7 +19,7 @@
     v-layout.mt-3(wrap)
       v-flex(xs12)
         v-layout(wrap, justify-space-between)
-          v-flex(data-test="startDateTimePicker", xs4)
+          v-flex(data-test="startDateTimePicker", xs6)
             date-time-picker-field(
               v-validate="tstartRules",
               :value="form.tstart",
@@ -28,7 +27,7 @@
               name="tstart",
               @input="updateField('tstart', $event)"
             )
-          v-flex(data-test="stopDateTimePicker", xs4)
+          v-flex(data-test="stopDateTimePicker", xs6)
             date-time-picker-field(
               v-validate="tstopRules",
               :value="form.tstop",
@@ -36,23 +35,11 @@
               name="tstop",
               @input="updateField('tstop', $event)"
             )
-          v-flex(xs3)
-            v-autocomplete(
-              v-field="form.timezone",
-              v-validate="'required'",
-              :items="timezones",
-              :label="$t('modals.createPbehavior.steps.general.fields.timezone')",
-              name="timezone"
-            )
     v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
       v-tab {{ $t('modals.createPbehavior.steps.general.title') }}
-      v-tab {{ $t('modals.createPbehavior.steps.filter.title') }}
       v-tab {{ $t('modals.createPbehavior.steps.rrule.title') }}
       v-tab-item
         pbehavior-general-form(v-field="form")
-        pbehavior-comments-form(v-field="form.comments")
-      v-tab-item
-        filter-editor(v-field="form.filter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
       v-tab-item
         r-rule-form(v-field="form.rrule")
         pbehavior-exdates-form(v-if="form.rrule", v-field="form.exdate")
@@ -68,7 +55,6 @@ import formMixin from '@/mixins/form/object';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
-import ColorPickerField from '@/components/forms/fields/color-picker.vue';
 import RRuleForm from '@/components/forms/rrule.vue';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
@@ -79,7 +65,6 @@ export default {
   components: {
     RRuleForm,
     FilterEditor,
-    ColorPickerField,
     DateTimePickerField,
     PbehaviorGeneralForm,
     PbehaviorCommentsForm,
@@ -130,10 +115,6 @@ export default {
       }
 
       return rules;
-    },
-
-    timezones() {
-      return moment.tz.names();
     },
   },
 };

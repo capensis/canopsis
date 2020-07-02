@@ -12,9 +12,9 @@
 
 <script>
 import {
-  formToPbehaviorCalendarEvent,
-  pbehaviorCalendarEventToForm,
-} from '@/helpers/forms/pbehavior';
+  calendarEventToPbehaviorForm,
+  formToCalendarEvent,
+} from '@/helpers/forms/planning-pbehavior';
 
 import authMixin from '@/mixins/auth';
 
@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      form: pbehaviorCalendarEventToForm(this.calendarEvent),
+      form: calendarEventToPbehaviorForm(this.calendarEvent),
     };
   },
   methods: {
@@ -40,11 +40,11 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        const pbehavior = formToPbehaviorCalendarEvent(this.form);
+        this.form.author = this.currentUser._id;
 
-        pbehavior.author = this.currentUser._id;
+        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent);
 
-        this.$emit('submit', pbehavior);
+        this.$emit('submit', calendarEvent);
       }
     },
   },
