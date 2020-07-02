@@ -99,7 +99,7 @@ On peut définir les champs `component`, `resource` et `output` de manière dyna
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une  expression régulière définie, depuis Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
+Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une expression régulière définie, à partir de Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
