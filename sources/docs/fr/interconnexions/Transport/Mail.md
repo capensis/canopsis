@@ -63,7 +63,7 @@ state.constant=2
 [template]
 # Expéditeur des emails à traiter
 template1.sender=sender@mail.net
-# Vous pouvez définir une  expression régulière pour lier des expéditeurs génériques à un template (3.39.0+)
+# Vous pouvez définir une expression régulière pour lier des expéditeurs génériques à un template (à partir de la version 3.39.0)
 template1.regex=sender\d*@mail.net
 # Template à appliquer sur ces emails
 template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
