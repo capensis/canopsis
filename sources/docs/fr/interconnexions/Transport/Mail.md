@@ -193,7 +193,7 @@ On sélectionne dans cet exemple le sujet du mail pour définir la sévérité d
 - `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
 
 !!! info
-    A partir de la `3.40.0` l'option `trim` deviens des opérateurs :  
+    A partir de la `3.40.0` les options de `trim` deviennent des opérateurs :  
     
     - `trim_left`  
     - `trim_right`  
