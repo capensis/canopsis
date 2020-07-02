@@ -181,7 +181,7 @@ Exemple :
 
 On sélectionne dans cet exemple le sujet du mail pour définir la sévérité de l’alarme.  
 
-- Les mails qui ont dans leur sujet `Mineur ?` auront une sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des  expressions régulière, comme `*,{,} etc...`. Il faut donc le protéger avec un `\`.
+- Les mails dont le sujet contient `Mineur ?` auront une sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des expressions régulières, comme `*, {, }` etc. Il faut donc le protéger avec un `\`.
 - Les mails dont le sujet est strictement `Majeur` auront une sévérité de 2. Le caractère `^` définir le début de la sélection et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la sélection des mails dont le sujet fini par `Mineur`.
 - Les mails  dont le sujet contient `Critique` auront une sévérité de 3.
 - L'utilisation de  l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui n’ont pas matché sur les cas précèdent auront une sévérité par défaut  de 0.
