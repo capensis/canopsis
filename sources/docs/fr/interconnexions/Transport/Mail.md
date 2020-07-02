@@ -223,7 +223,7 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).remove(e)` supprime la chaîne de caractères e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (à partir de la `3.40.0`)
 - `line(a).lowercase` passe la sélection (ici une ligne entière numéro a) en minuscules. (à partir de la `3.40.0`)
 - `line(a).uppercase` passe la sélection (ici une ligne entière numéro a) en majuscules. (à partir de la `3.40.0`)
-- `line(a).trim_left` supprime l'espace à gauche de la sélection (À partir de la `3.40.0`)
+- `line(a).trim_left` supprime l'espace à gauche de la sélection (à partir de la `3.40.0`)
 - `line(a).trim_right` supprime l'espace à droite de la sélection (À partir de la `3.40.0`)
 - `line(a).trim_both` supprime l'espace à gauche et a droite  de la sélection (À partir de la `3.40.0`)
 - `and` permet d'effectuer une concaténation entre deux opérations.(A partir de la `3.39.0`)
