@@ -134,7 +134,7 @@ template2.subject=.*Datacenter.*
 template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
 ```
 
-Dans cet exemple tous les mails de `sender@mail.net` qui a dans son sujet de mail aura le terme `Datacenter` sera lié au template `/opt/canopsis_connectors/email2canopsis/etc/template_2.conf`.
+Dans cet exemple tous les mails de `sender@mail.net` qui ont dans le sujet le mot `Datacenter` seront liés au template `/opt/canopsis_connectors/email2canopsis/etc/template_2.conf`.
 
 L'utilisation du subject peut être utilisé  avec les deux type de déclaration d'expéditeurs (`sender` ou `regex`).
 
