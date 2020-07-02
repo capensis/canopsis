@@ -115,7 +115,7 @@ template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 
 Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit correspondre au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
 
-A partir de la `3.40.0` On peut assigner plusieur template a un expediteur en fonction du sujet du mail. Pour cela il faut définir une expression reguliére pour assigner un sujet a son template.
+A partir de la `3.40.0` On peut assigner plusieurs templates à un expéditeur en fonction du sujet du mail. Pour cela il faut définir une expression régulière pour assigner un sujet a son template.
 
 Exemple :
 
