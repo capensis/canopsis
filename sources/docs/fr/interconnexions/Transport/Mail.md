@@ -227,7 +227,7 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).trim_right` supprime l'espace à droite de la sélection (à partir de la `3.40.0`)
 - `line(a).trim_both` supprime les espaces à gauche et à droite de la sélection (à partir de la `3.40.0`)
 - `and` permet d'effectuer une concaténation entre deux opérations (à partir de la `3.39.0`).
-- `print(word)` permet d'assigner la valeur word dans le champ. (A partir de la `3.39.0`)
+- `print(word)` permet d'assigner la valeur word dans le champ (à partir de la `3.39.0`).
 
 
 MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une action 'dateformat' dessus.
