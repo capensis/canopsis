@@ -14,7 +14,11 @@
       :calendar="calendar",
       :index="index"
     )
-    slot(v-if="isStart", name="eventCreatePopover", v-bind="{ placeholder, calendar, day, index, add, close }")
+    slot(
+      name="eventCreatePopover",
+      v-if="isStart && menu",
+      v-bind="{ placeholder, calendar, day, index, add, close }"
+    )
 </template>
 
 <script>

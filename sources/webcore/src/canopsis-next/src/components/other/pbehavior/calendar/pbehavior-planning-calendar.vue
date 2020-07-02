@@ -16,7 +16,7 @@
     )
       pbehavior-create-event(
         slot-scope="{ placeholder, close, edit }",
-        :placeholder="placeholder",
+        :calendarEvent="placeholder",
         @close="close",
         @submit="edit"
       )
@@ -27,7 +27,7 @@
     )
       pbehavior-create-event(
         slot-scope="{ placeholder, close, add }",
-        :placeholder="placeholder",
+        :calendarEvent="placeholder",
         @close="close",
         @submit="add"
       )

@@ -1,32 +1,6 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
-    v-layout(row, wrap)
-      v-text-field(
-        v-model="form.title",
-        :label="$t('common.title')",
-        name="title"
-      )
-    v-layout(row, wrap)
-      v-text-field(
-        v-model="form.rrule",
-        :label="$t('common.rrule')",
-        name="title"
-      )
-    v-layout(row, wrap)
-      v-flex(xs6)
-        v-text-field(
-          v-model="form.start_at",
-          :label="$t('common.startDate')",
-          name="startDate",
-          disabled
-        )
-      v-flex(xs6)
-        v-text-field(
-          v-model="form.end_at",
-          :label="$t('common.endDate')",
-          name="endDate",
-          disabled
-        )
+  v-form.pa-3.pbehavior-form(@submit.prevent="submitHandler")
+    pbehavior-form(v-model="form")
     v-layout(row, justify-end)
       v-btn.mr-0.mb-0(
         depressed,
@@ -37,30 +11,50 @@
 </template>
 
 <script>
+import {
+  calendarEventToPbehaviorForm,
+  formToCalendarEvent,
+} from '@/helpers/forms/planning-pbehavior';
+
+import authMixin from '@/mixins/auth';
+
+import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+
 export default {
+  components: { PbehaviorForm },
+  mixins: [authMixin],
   inject: ['$validator'],
   props: {
-    placeholder: {
+    calendarEvent: {
       type: Object,
-      required: true,
+      required: false,
     },
   },
   data() {
-    const { placeholder } = this;
-
     return {
-      form: {
-        title: placeholder.title,
-        rrule: placeholder.pbehavior ? placeholder.pbehavior.rrule : '',
-        start_at: placeholder.start.toDate(),
-        end_at: placeholder.end.toDate(),
-      },
+      form: calendarEventToPbehaviorForm(this.calendarEvent),
     };
   },
   methods: {
-    submit() {
-      this.$emit('submit', this.placeholder);
+    async submitHandler() {
+      const isValid = await this.$validator.validateAll();
+
+      if (isValid) {
+        this.form.author = this.currentUser._id;
+
+        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent);
+
+        this.$emit('submit', calendarEvent);
+      }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .pbehavior-form {
+    overflow: auto;
+    width: 500px;
+    max-height: 600px;
+  }
+</style>

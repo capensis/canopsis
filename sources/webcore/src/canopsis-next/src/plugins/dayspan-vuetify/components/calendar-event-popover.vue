@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-card.pa-2.ds-calendar-event-popover-card
+  v-card.ds-calendar-event-popover-card
     slot(
       v-if="calendar",
-      v-bind="{ placeholder: calendarEventForm, calendar, edit: editHandler, add: addHandler, close, readOnly }"
+      v-bind="{ placeholder: calendarEventForSlot, calendar, edit, add, close, readOnly }"
     )
 </template>
 
@@ -35,31 +35,8 @@ export default {
       type: Function,
     },
   },
-  data() {
-    return {
-      calendarEventForm: this.eventToForm(this.placeholder || this.calendarEvent),
-    };
-  },
-  methods: {
-    addHandler() {
-      this.add(this.formToEvent(this.calendarEventForm));
-    },
-
-    editHandler() {
-      this.edit(this.formToEvent(this.calendarEventForm));
-    },
-
-    eventToForm(calendarEvent) {
-      return {
-        meta: calendarEvent.meta,
-        start: calendarEvent.start,
-        end: calendarEvent.end,
-        ...calendarEvent.data,
-      };
-    },
-
-    formToEvent() {
-      // TODO prepare form to calendar event logic should be added
+  computed: {
+    calendarEventForSlot() {
       return this.placeholder || this.calendarEvent;
     },
   },
