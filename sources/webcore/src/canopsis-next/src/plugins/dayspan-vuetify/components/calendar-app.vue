@@ -1,5 +1,5 @@
 <template lang="pug">
-  .ds-expand.ds-calendar-app
+  div.ds-expand.ds-calendar-app
     v-layout.pa-3.white
       slot(
         name="today",

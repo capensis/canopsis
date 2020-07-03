@@ -123,7 +123,7 @@ export const API_ROUTES = {
    * TODO: rename to pbehavior
    */
   planning: {
-    timespan: '/api/v2/planning/timespans',
+    timespan: '/api/v4/pbehavior-timespans',
   },
 };
 

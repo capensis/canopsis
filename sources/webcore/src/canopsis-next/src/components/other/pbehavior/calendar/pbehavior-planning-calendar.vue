@@ -7,7 +7,7 @@
     fillHeight,
     @change="changeCalendarHandler",
     @changed="changedEventHandler",
-    @added="addedEventHandler"
+    @added="changedEventHandler"
   )
     ds-calendar-event-popover(
       slot="eventPopover",
@@ -15,8 +15,8 @@
       v-bind="props"
     )
       pbehavior-create-event(
-        slot-scope="{ placeholder, close, edit }",
-        :calendarEvent="placeholder",
+        slot-scope="{ calendarEvent, close, edit }",
+        :calendarEvent="calendarEvent",
         @close="close",
         @submit="edit"
       )
@@ -26,14 +26,15 @@
       v-bind="props"
     )
       pbehavior-create-event(
-        slot-scope="{ placeholder, close, add }",
-        :calendarEvent="placeholder",
+        slot-scope="{ calendarEvent, close, add }",
+        :calendarEvent="calendarEvent",
         @close="close",
         @submit="add"
       )
 </template>
 
 <script>
+import { get } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Schedule, Day, DaySpan } from 'dayspan';
@@ -61,9 +62,26 @@ export default {
       pending: false,
       calendar: Calendar.months(),
       events: [],
-      changedPbehaviors: {},
-      createdPbehaviors: {},
+      changedPbehaviorsById: {},
+      addedPbehaviorsById: {},
     };
+  },
+  computed: {
+    pbehaviorsById() {
+      return this.pbehaviors.reduce((acc, pbehavior) => {
+        acc[pbehavior._id] = pbehavior;
+
+        return acc;
+      }, {});
+    },
+
+    allPbehaviors() {
+      return Object.values({
+        ...this.pbehaviorsById,
+        ...this.changedPbehaviorsById,
+        ...this.addedPbehaviorsById,
+      });
+    },
   },
   mounted() {
     this.fetchEvents();
@@ -76,21 +94,21 @@ export default {
     async fetchEvents() {
       this.pending = true;
 
-      const promises = this.pbehaviors.map(pbehavior => this.fetchEventsForPbehavior(pbehavior));
+      const promises = this.allPbehaviors.map(pbehavior => this.fetchEventsForPbehavior(pbehavior));
 
       await Promise.all(promises);
 
       this.pending = false;
     },
 
-    async fetchEventsForPbehavior(pbehavior) {
+    async fetchEventsForPbehavior(pbehavior, color = '#F44336') {
       const timespans = await this.fetchTimespans({
         data: {
           rrule: pbehavior.rrule,
-          start_at: pbehavior.start_at,
-          end_at: pbehavior.end_at,
-          view_from: this.calendar.start.date.unix(),
-          view_to: this.calendar.end.date.unix(),
+          start_at: pbehavior.tstart,
+          end_at: pbehavior.tstop,
+          view_from: this.calendar.filled.start.date.unix(),
+          view_to: this.calendar.filled.end.date.unix(),
         },
       });
 
@@ -102,24 +120,23 @@ export default {
         return {
           id: uuid('event'),
           data: {
-            title: pbehavior.title,
+            color,
+            pbehavior,
+
+            title: pbehavior.name,
             description: '',
             location: '',
-            color: '#F44336',
             forecolor: '#ffffff',
             calendar: '',
             busy: true,
             icon: '',
-            meta: {
-              pbehavior,
-            },
           },
           schedule: Schedule.forSpan(daySpan),
         };
       });
 
       this.events = [
-        ...this.events.filter(event => event.meta.pbehavior._id !== pbehavior._id),
+        ...this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id),
         ...events,
       ];
     },
@@ -128,15 +145,18 @@ export default {
       this.fetchEvents();
     },
 
-    changedEventHandler(event) {
-      this.changedPbehaviors[event.pbehavior._id] = event.pbehavior;
-      this.fetchEventsForPbehavior(event.pbehavior);
+    async changedEventHandler(event) {
+      const { pbehavior, color } = event.calendarEvent.data;
 
-      event.clearPlaceholder();
-    },
-    addedEventHandler(event) {
-      this.createdPbehaviors[event.pbehavior._id] = event.pbehavior;
-      this.fetchEventsForPbehavior(event.pbehavior);
+      if (pbehavior) {
+        if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
+          this.$set(this.changedPbehaviorsById, pbehavior._id, pbehavior);
+        } else {
+          this.$set(this.addedPbehaviorsById, pbehavior._id, pbehavior);
+        }
+
+        await this.fetchEventsForPbehavior(pbehavior, color);
+      }
 
       event.clearPlaceholder();
     },

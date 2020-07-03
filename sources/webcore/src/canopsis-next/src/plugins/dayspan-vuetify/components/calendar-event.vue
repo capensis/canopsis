@@ -6,7 +6,7 @@
     v-model="menu",
     v-bind="popoverProps"
   )
-    .ds-calendar-event(
+    div.ds-calendar-event(
       slot="activator",
       :style="style",
       @click.stop="editCheck",
@@ -28,7 +28,7 @@
 
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
-      .ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
+      div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
     slot(name="eventPopover", v-if="menu", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
@@ -71,7 +71,7 @@ export default {
         calendarEvent: this.calendarEvent,
         calendar: this.calendar,
         details: this.details,
-        day: this.isPlaceholderWithDay,
+        day: this.isPlaceholderWithDay || this.$parent.day,
         left: $event.button === 0,
         right: $event.button === 1,
         handled: false,

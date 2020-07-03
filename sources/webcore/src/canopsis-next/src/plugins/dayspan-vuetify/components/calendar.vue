@@ -1,6 +1,6 @@
 <template lang="pug">
-  .ds-calendar
-    .ds-month-view.ds-year-view(v-if="isYear")
+  div.ds-calendar
+    div.ds-month-view.ds-year-view(v-if="isYear")
       ds-weeks-view.ds-expand(
         v-bind="{ $scopedSlots }",
         v-on="$listeners",
@@ -18,7 +18,7 @@
         @clear-placeholder="clearPlaceholder"
       )
 
-    .ds-month-view(v-if="isMonth")
+    div.ds-month-view(v-if="isMonth")
       ds-weeks-view.ds-expand(
         v-bind="{ $scopedSlots }",
         v-on="$listeners",
@@ -36,7 +36,7 @@
         @clear-placeholder="clearPlaceholder"
       )
 
-    .ds-week-view(v-if="isWeek || isDay")
+    div.ds-week-view(v-if="isWeek || isDay")
       ds-days-view(
         v-bind="{ $scopedSlots }",
         v-on="$listeners",

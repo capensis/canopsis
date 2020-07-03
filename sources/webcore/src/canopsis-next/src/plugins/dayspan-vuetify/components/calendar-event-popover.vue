@@ -2,7 +2,7 @@
   v-card.ds-calendar-event-popover-card
     slot(
       v-if="calendar",
-      v-bind="{ placeholder: calendarEventForSlot, calendar, edit, add, close, readOnly }"
+      v-bind="{ calendarEvent: calendarEventForSlot, calendar, edit, add, close, readOnly }"
     )
 </template>
 

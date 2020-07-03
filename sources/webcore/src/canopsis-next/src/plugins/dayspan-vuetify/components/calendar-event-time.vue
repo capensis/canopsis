@@ -67,7 +67,7 @@ export default {
         calendarEvent: this.calendarEvent,
         calendar: this.calendar,
         details: this.details,
-        day: this.isPlaceholderWithDay,
+        day: this.isPlaceholderWithDay || this.$parent.day,
         offset: this.getRelativeTimeAt($event),
         left: $event.button === 0,
         right: $event.button === 1,
