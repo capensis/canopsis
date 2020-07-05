@@ -40,7 +40,7 @@ class RouteHandlerMetaAlarmRule(object):
             raise ValueError("rule type invalid value {}".format(rule_type))
         if name is not None and not isinstance(name, string_types):
             raise ValueError("name has invalid value: {}".format(name))
-        if ma_rule_id is not None and not isinstance(ma_rule_id, string_types):
+        if ma_rule_id is not None and (not isinstance(ma_rule_id, string_types) or ma_rule_id.startswith("zgrp-")):
             raise ValueError("_id has invalid value: {}".format(ma_rule_id))
         if isinstance(patterns, string_types):
             try:
@@ -188,5 +188,9 @@ def exports(ws):
         :rtype: dict
         """
         ws.logger.info('Delete meta-alarm rule: {}'.format(rule_id))
-
+        if rule_id.startswith("zgrp-"):
+            return gen_json_error(
+                {'description': '{}'.format("Can not delete rule with prefix 'zgrp-'")},
+                HTTP_ERROR
+            )
         return gen_json(rh_ma_rule.delete(rule_id))
