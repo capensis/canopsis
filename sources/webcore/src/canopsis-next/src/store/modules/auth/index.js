@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 import qs from 'qs';
 
+import router from '@/router';
 import request from '@/services/request';
 import { API_ROUTES, COOKIE_SESSION_KEY, DEFAULT_LOCALE } from '@/config';
 
@@ -85,11 +86,18 @@ export default {
         throw err;
       }
     },
-    async logout({ commit }) {
+    async logout({ commit }, { redirectTo }) {
       try {
         commit(types.LOGOUT);
         Cookies.remove(COOKIE_SESSION_KEY);
 
+        if (redirectTo) {
+          router.replace(redirectTo);
+        }
+
+        /**
+         * And we've added location.reload for refreshing every js objects (store, components states and etc.)
+         */
         window.location.reload();
       } catch (err) {
         console.error(err);
