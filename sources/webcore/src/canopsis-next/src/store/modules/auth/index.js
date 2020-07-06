@@ -3,7 +3,12 @@ import qs from 'qs';
 
 import router from '@/router';
 import request from '@/services/request';
-import { API_ROUTES, COOKIE_SESSION_KEY, DEFAULT_LOCALE } from '@/config';
+import {
+  API_ROUTES,
+  COOKIE_SESSION_KEY,
+  DEFAULT_LOCALE,
+  VUETIFY_ANIMATION_DELAY,
+} from '@/config';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -96,9 +101,10 @@ export default {
         }
 
         /**
+         * We've added timeout for the correct layout padding displaying with transition.
          * And we've added location.reload for refreshing every js objects (store, components states and etc.)
          */
-        window.location.reload();
+        setTimeout(() => window.location.reload(), VUETIFY_ANIMATION_DELAY);
       } catch (err) {
         console.error(err);
       }
