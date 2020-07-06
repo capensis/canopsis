@@ -9,6 +9,7 @@
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('username')",
         name="username",
+        browser-autocomplete="new-password",
         data-test="username"
       )
     v-layout(row)
@@ -33,6 +34,7 @@
         :disabled="onlyUserPrefs",
         :error-messages="errors.collect('email')",
         name="email",
+        browser-autocomplete="new-password",
         data-test="email"
       )
     v-layout(row)
@@ -44,6 +46,7 @@
         :error-messages="errors.collect('password')",
         type="password",
         name="password",
+        browser-autocomplete="new-password",
         data-test="password"
       )
     v-layout(data-test="roleLayout", row)
