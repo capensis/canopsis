@@ -92,7 +92,7 @@ export default {
         Cookies.remove(COOKIE_SESSION_KEY);
 
         if (redirectTo) {
-          router.replace(redirectTo);
+          await router.replaceAsync(redirectTo);
         }
 
         /**

@@ -301,4 +301,14 @@ router.afterEach((to, from) => {
   }
 });
 
+/**
+ * Promisified router replace method
+ *
+ * @param {Object} route
+ * @returns {Promise<unknown>}
+ */
+router.replaceAsync = route => new Promise((resolve, reject) => {
+  router.replace(route, resolve, reject);
+});
+
 export default router;
