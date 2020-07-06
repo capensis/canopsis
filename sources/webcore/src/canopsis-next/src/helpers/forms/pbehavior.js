@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { omit, isObject, isString, cloneDeep } from 'lodash';
+import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
 
 import uid from '@/helpers/uid';
 import convertTimestampToMoment from '@/helpers/date';
@@ -14,7 +14,7 @@ export function pbehaviorToForm(pbehavior = {}) {
   return {
     rrule,
 
-    enabled: typeof pbehavior.enabled === 'undefined' ? true : pbehavior.enabled,
+    enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
     tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
