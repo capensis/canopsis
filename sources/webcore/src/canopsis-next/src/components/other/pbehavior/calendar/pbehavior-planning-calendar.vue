@@ -64,6 +64,7 @@ export default {
       events: [],
       changedPbehaviorsById: {},
       addedPbehaviorsById: {},
+      colorsToPbehaviors: {},
     };
   },
   computed: {
@@ -91,24 +92,36 @@ export default {
       fetchTimespans: 'fetchItems',
     }),
 
+    getColorForPbehavior(pbehavior = {}, color = this.$dayspan.getDefaultEventColor()) {
+      if (!this.colorsToPbehaviors[pbehavior._id]) {
+        this.colorsToPbehaviors[pbehavior._id] = color;
+      }
+
+      return this.colorsToPbehaviors[pbehavior._id];
+    },
+
     async fetchEvents() {
       this.pending = true;
 
-      const promises = this.allPbehaviors.map(pbehavior => this.fetchEventsForPbehavior(pbehavior));
+      const promises = this.allPbehaviors.map(pbehavior =>
+        this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior)));
 
       await Promise.all(promises);
 
       this.pending = false;
     },
 
-    async fetchEventsForPbehavior(pbehavior, color = '#F44336') {
+    async fetchEventsForPbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
+      const viewFrom = this.calendar.filled.start.date.unix();
+      const viewTo = this.calendar.filled.end.date.unix();
+
       const timespans = await this.fetchTimespans({
         data: {
           rrule: pbehavior.rrule,
           start_at: pbehavior.tstart,
           end_at: pbehavior.tstop,
-          view_from: this.calendar.filled.start.date.unix(),
-          view_to: this.calendar.filled.end.date.unix(),
+          view_from: pbehavior.tstart < viewFrom ? pbehavior.tstart : viewFrom,
+          view_to: pbehavior.tstop > viewTo ? pbehavior.tstop : viewTo,
         },
       });
 
@@ -155,7 +168,7 @@ export default {
           this.$set(this.addedPbehaviorsById, pbehavior._id, pbehavior);
         }
 
-        await this.fetchEventsForPbehavior(pbehavior, color);
+        await this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior, color));
       }
 
       event.clearPlaceholder();

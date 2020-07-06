@@ -31,8 +31,6 @@ export default {
       this.$emit('add-event', calendarEvent);
       this.menu = false;
     },
-
-    triggerClearPlaceholder() { },
   },
 };
 </script>

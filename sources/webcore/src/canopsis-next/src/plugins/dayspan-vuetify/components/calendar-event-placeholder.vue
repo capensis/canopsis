@@ -26,6 +26,19 @@ import { DsCalendarEventPlaceholder } from 'dayspan-vuetify/src/components';
 
 export default {
   extends: DsCalendarEventPlaceholder,
+  computed: {
+    /**
+     * We've refactored isStart for resize event. If we will decrease size of event we will not see popover
+     *
+     * @returns {boolean | string}
+     */
+    isStart() {
+      const { day, start, end } = this.placeholder;
+      const placeholderDay = day.isAfter(end) || day.isBefore(start) ? start : day;
+
+      return placeholderDay.sameDay(this.day);
+    },
+  },
   methods: {
     close() {
       this.$emit('clear-placeholder');
@@ -36,8 +49,6 @@ export default {
       this.$emit('add-event', calendarEvent);
       this.menu = false;
     },
-
-    triggerClearPlaceholder() { },
   },
 };
 </script>

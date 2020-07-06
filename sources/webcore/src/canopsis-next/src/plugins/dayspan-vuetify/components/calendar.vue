@@ -195,6 +195,10 @@ export default {
         this.placeholderForCreate = true;
       }
 
+      if (this.placeholder.start.isBefore(this.calendar.filled.start)) {
+        this.calendar.prev();
+      }
+
       this.endMove();
     },
 
@@ -486,8 +490,10 @@ export default {
     },
 
     clearPlaceholder() {
-      this.placeholder = null;
-      this.placeholderForCreate = false;
+      if (!this.moving && !this.resizing) {
+        this.placeholder = null;
+        this.placeholderForCreate = false;
+      }
     },
   },
 };
