@@ -1,8 +1,14 @@
 import Cookies from 'js-cookie';
 import qs from 'qs';
 
+import router from '@/router';
 import request from '@/services/request';
-import { API_ROUTES, COOKIE_SESSION_KEY, DEFAULT_LOCALE } from '@/config';
+import {
+  API_ROUTES,
+  COOKIE_SESSION_KEY,
+  DEFAULT_LOCALE,
+  VUETIFY_ANIMATION_DELAY,
+} from '@/config';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -85,12 +91,20 @@ export default {
         throw err;
       }
     },
-    async logout({ commit }) {
+    async logout({ commit }, { redirectTo }) {
       try {
         commit(types.LOGOUT);
         Cookies.remove(COOKIE_SESSION_KEY);
 
-        window.location.reload();
+        if (redirectTo) {
+          await router.replaceAsync(redirectTo);
+        }
+
+        /**
+         * We've added timeout for the correct layout padding displaying with transition.
+         * And we've added location.reload for refreshing every js objects (store, components states and etc.)
+         */
+        setTimeout(() => window.location.reload(), VUETIFY_ANIMATION_DELAY);
       } catch (err) {
         console.error(err);
       }
