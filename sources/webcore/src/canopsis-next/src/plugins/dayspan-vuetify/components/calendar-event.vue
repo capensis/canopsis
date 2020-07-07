@@ -6,7 +6,7 @@
     v-model="menu",
     v-bind="popoverProps"
   )
-    .ds-calendar-event(
+    div.ds-calendar-event(
       slot="activator",
       :style="style",
       @click.stop="editCheck",
@@ -28,11 +28,12 @@
 
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
-      .ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
-    slot(name="eventPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
+      div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
+    slot(name="eventPopover", v-if="menu", v-bind="{ calendarEvent, calendar, edit, details, close }")
 </template>
 
 <script>
+import { Functions as fn } from 'dayspan';
 import { DsCalendarEvent } from 'dayspan-vuetify/src/components';
 
 import eventMixin from '../mixins/event';
@@ -62,6 +63,23 @@ export default {
       return this.isPlaceholderWithDay ? this.placeholderFullStyles : this.fullStyles;
     },
   },
+  methods: {
+    getEvent(type, $event, extra = {}) {
+      return fn.extend({
+        $event,
+        type,
+        calendarEvent: this.calendarEvent,
+        calendar: this.calendar,
+        details: this.details,
+        day: this.isPlaceholderWithDay || this.$parent.day,
+        left: $event.button === 0,
+        right: $event.button === 1,
+        handled: false,
+        $vm: this,
+        $element: this.$el,
+      }, extra);
+    },
+  },
 };
 </script>
 
@@ -79,7 +97,7 @@ export default {
     pointer-events: auto;
     content: '';
     height: 100%;
-    cursor: e-resize;
+    cursor: ew-resize;
     position: absolute;
     right: 0;
     width: 10px;

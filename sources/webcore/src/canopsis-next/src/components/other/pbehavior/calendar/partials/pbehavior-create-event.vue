@@ -1,27 +1,6 @@
 <template lang="pug">
-  v-form(@submit.prevent="$emit('submit', form)")
-    v-layout(row, wrap)
-      v-text-field(
-        v-model="form.title",
-        :label="$t('common.title')",
-        name="title",
-        disabled
-      )
-    v-layout(row, wrap)
-      v-flex(xs6)
-        v-text-field(
-          v-model="form.start",
-          :label="$t('common.startDate')",
-          name="startDate",
-          disabled
-        )
-      v-flex(xs6)
-        v-text-field(
-          v-model="form.end",
-          :label="$t('common.endDate')",
-          name="endDate",
-          disabled
-        )
+  v-form.pa-3.pbehavior-form(@submit.prevent="submitHandler")
+    pbehavior-form(v-model="form")
     v-layout(row, justify-end)
       v-btn.mr-0.mb-0(
         depressed,
@@ -32,17 +11,50 @@
 </template>
 
 <script>
+import {
+  calendarEventToPbehaviorForm,
+  formToCalendarEvent,
+} from '@/helpers/forms/planning-pbehavior';
+
+import authMixin from '@/mixins/auth';
+
+import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+
 export default {
+  components: { PbehaviorForm },
+  mixins: [authMixin],
   inject: ['$validator'],
-  model: {
-    prop: 'form',
-    event: 'input',
-  },
   props: {
-    form: {
+    calendarEvent: {
       type: Object,
-      default: () => ({}),
+      required: false,
+    },
+  },
+  data() {
+    return {
+      form: calendarEventToPbehaviorForm(this.calendarEvent),
+    };
+  },
+  methods: {
+    async submitHandler() {
+      const isValid = await this.$validator.validateAll();
+
+      if (isValid) {
+        this.form.author = this.currentUser._id;
+
+        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent);
+
+        this.$emit('submit', calendarEvent);
+      }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .pbehavior-form {
+    overflow: auto;
+    width: 500px;
+    max-height: 600px;
+  }
+</style>

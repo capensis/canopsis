@@ -119,6 +119,12 @@ export const API_ROUTES = {
   },
   counter: '/alerts/get-counters',
   playlist: '/api/v2/playlist',
+  /**
+   * TODO: rename to pbehavior
+   */
+  planning: {
+    timespan: '/api/v4/pbehavior-timespans',
+  },
 };
 
 export const COLORS = {
