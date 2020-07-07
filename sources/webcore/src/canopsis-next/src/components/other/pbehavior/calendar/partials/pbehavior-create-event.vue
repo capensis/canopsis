@@ -21,9 +21,11 @@ import authMixin from '@/mixins/auth';
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: { PbehaviorForm },
   mixins: [authMixin],
-  inject: ['$validator'],
   props: {
     calendarEvent: {
       type: Object,

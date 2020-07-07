@@ -37,9 +37,12 @@
             )
     v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
       v-tab {{ $t('modals.createPbehavior.steps.general.title') }}
+      v-tab {{ $t('modals.createPbehavior.steps.filter.title') }}
       v-tab {{ $t('modals.createPbehavior.steps.rrule.title') }}
       v-tab-item
-        pbehavior-general-form(v-field="form")
+        pbehavior-general-form(ref="pbehaviorGeneralForm", v-field="form")
+      v-tab-item
+        filter-editor(v-field="form.filter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
       v-tab-item
         r-rule-form(v-field="form.rrule")
         pbehavior-exdates-form(v-if="form.rrule", v-field="form.exdate")
@@ -116,6 +119,11 @@ export default {
 
       return rules;
     },
+  },
+  mounted() {
+    this.$watch(() => this.$refs.pbehaviorGeneralForm.hasAnyError, (value) => {
+      this.hasGeneralFormAnyError = value;
+    });
   },
 };
 </script>
