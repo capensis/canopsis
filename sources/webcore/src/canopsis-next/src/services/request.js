@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-// import store from '@/store';
-
 /**
  * Active axios sources
  *
