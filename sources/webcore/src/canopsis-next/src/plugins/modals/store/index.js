@@ -20,11 +20,14 @@ export default {
     hasModals: state => Boolean(state.allIds.length),
   },
   mutations: {
-    [types.SHOW](state, { id, name, config = {} }) {
+    [types.SHOW](state, {
+      id, name, config = {}, dialogProps = {},
+    }) {
       Vue.set(state.byId, id, {
         id,
         name,
         config,
+        dialogProps,
         hidden: false,
       });
 
@@ -45,11 +48,16 @@ export default {
      *
      * @param {function} commit
      * @param {string} name
-     * @param {Object} [config={}]
-     * @param {string} [id=uid()]
+     * @param {Object} [config = {}]
+     * @param {Object} [dialogProps = {}]
+     * @param {string} [id = uid()]
      */
-    show({ commit }, { name, config = {}, id = uid('modal') } = {}) {
-      commit(types.SHOW, { id, name, config });
+    show({ commit }, {
+      name, config = {}, dialogProps = {}, id = uid('modal'),
+    } = {}) {
+      commit(types.SHOW, {
+        id, name, config, dialogProps,
+      });
     },
     /**
      * Hide modal by id

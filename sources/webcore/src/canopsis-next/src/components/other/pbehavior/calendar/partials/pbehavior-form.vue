@@ -35,23 +35,22 @@
               name="tstop",
               @input="updateField('tstop', $event)"
             )
-    v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
-      v-tab {{ $t('modals.createPbehavior.steps.general.title') }}
-      v-tab {{ $t('modals.createPbehavior.steps.filter.title') }}
-      v-tab {{ $t('modals.createPbehavior.steps.rrule.title') }}
-      v-tab-item
-        pbehavior-general-form(ref="pbehaviorGeneralForm", v-field="form")
-      v-tab-item
-        filter-editor(v-field="form.filter", required, :entitiesType="$constants.ENTITIES_TYPES.entity")
-      v-tab-item
-        r-rule-form(v-field="form.rrule")
-        pbehavior-exdates-form(v-if="form.rrule", v-field="form.exdate")
+      pbehavior-general-form(v-field="form")
+      v-flex(xs12)
+        v-btn.ml-0.btn-filter(
+          :color="errors.has('filter') ? 'error' : 'primary'",
+          @click="showCreateFilterModal"
+        ) Edit filter
+        v-alert(:value="errors.has('filter')", type="error") {{ errors.first('filter') }}
+      v-flex(xs12)
+        v-btn.ml-0(color="primary", @click="showCreateRRuleModal") Edit RRule
 </template>
 
 <script>
 import moment from 'moment-timezone';
+import { isEmpty } from 'lodash';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, MODALS } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import formMixin from '@/mixins/form/object';
@@ -91,17 +90,7 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      activeTab: 0,
-      hasGeneralFormAnyError: false,
-    };
-  },
   computed: {
-    hasFilterEditorAnyError() {
-      return this.errors.has('filter');
-    },
-
     tstartRules() {
       return {
         required: true,
@@ -120,10 +109,68 @@ export default {
       return rules;
     },
   },
-  mounted() {
-    this.$watch(() => this.$refs.pbehaviorGeneralForm.hasAnyError, (value) => {
-      this.hasGeneralFormAnyError = value;
+  created() {
+    this.$validator.attach({
+      name: 'filter',
+      rules: 'required:true',
+      getter: () => !isEmpty(this.form.filter),
+      context: () => this,
+      vm: this,
     });
+  },
+  methods: {
+    showCreateFilterModal() {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        dialogProps: {
+          zIndex: 300,
+        },
+        config: {
+          filter: this.form.filter,
+          hiddenFields: ['title'],
+          action: (filter) => {
+            this.$emit('input', { ...this.form, filter });
+            this.$nextTick(() => this.$validator.validate('filter'));
+          },
+        },
+      });
+    },
+    showCreateRRuleModal() {
+      this.$modals.show({
+        name: MODALS.createRRule,
+        dialogProps: {
+          zIndex: 300,
+        },
+        config: {
+          rrule: this.form.rrule,
+          action: rrule => this.$emit('input', { ...this.form, rrule }),
+        },
+      });
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .btn-filter.error {
+    animation: shake .6s cubic-bezier(.25,.8,.5,1);
+  }
+
+  @keyframes shake {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+
+    30%, 50%, 70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+
+    40%, 60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+</style>

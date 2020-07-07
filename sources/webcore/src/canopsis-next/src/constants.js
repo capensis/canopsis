@@ -94,6 +94,7 @@ export const MODALS = {
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
+  createRRule: 'create-r-rule',
 };
 
 export const EVENT_ENTITY_TYPES = {

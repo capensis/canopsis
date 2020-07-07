@@ -3,7 +3,8 @@
     :content-class="contentClass",
     :disabled="!hasPopover",
     v-model="menu",
-    v-bind="popoverProps"
+    v-bind="popoverProps",
+    ignore-click-outside
   )
     ds-calendar-event(
       slot="activator",
