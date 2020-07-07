@@ -91,7 +91,7 @@ export default {
         throw err;
       }
     },
-    async logout({ commit }, { redirectTo }) {
+    async logout({ commit }, { redirectTo } = {}) {
       try {
         commit(types.LOGOUT);
         Cookies.remove(COOKIE_SESSION_KEY);

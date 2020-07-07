@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+// import store from '@/store';
+
 /**
  * Active axios sources
  *
@@ -57,16 +59,18 @@ function successResponseHandler(response) {
  * @returns {Object}
  */
 function errorResponseHandler(responseWithError) {
-  if (responseWithError.response && responseWithError.response.status === 401) {
-    window.location.reload();
-  }
-
-  if (responseWithError.response && responseWithError.response.data) {
-    if (responseWithError.response.data.errors) {
-      return Promise.reject(responseWithError.response.data.errors);
+  if (responseWithError.response) {
+    if (responseWithError.response.status === 401) {
+      window.location.reload();
     }
 
-    return Promise.reject(responseWithError.response.data);
+    if (responseWithError.response.data) {
+      if (responseWithError.response.data.errors) {
+        return Promise.reject(responseWithError.response.data.errors);
+      }
+
+      return Promise.reject(responseWithError.response.data);
+    }
   }
 
   return Promise.reject(responseWithError);
