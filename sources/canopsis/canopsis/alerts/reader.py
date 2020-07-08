@@ -667,7 +667,8 @@ class AlertsReader(object):
             "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
             "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
         }})
-        pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {"v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+        pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {
+                        "v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
 
 
     def _search_aggregate(self,
@@ -847,7 +848,7 @@ class AlertsReader(object):
         Create map with mataalarms children IDs as key and list of rule names as value
         """
         pipeline = [
-            {"$match": {"$and": [{"v.meta": {"$exists": True}}, {"v.meta": {"$ne": ""}}]}}, 
+            {"$match": {"v.meta": {"$nin": ["", None]}}}, 
             {"$project": {"children": "$v.children", "rule": "$v.meta"}}, {"$unwind": "$children"},
             {"$group": {"_id": {"children": "$children"}, "rule": {"$addToSet": "$rule"}}}, 
             {"$project": {"_id": "$_id.children", "rule": "$rule"}}

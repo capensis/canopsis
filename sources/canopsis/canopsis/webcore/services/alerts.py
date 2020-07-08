@@ -253,6 +253,7 @@ def exports(ws):
             if with_consequences and isinstance(alarm.get('consequences'), dict) and alarm_children['total'] > 0:
                 map(lambda al_ch: al_ch.update({'causes': {'rules': [alarm['rule']], 'total': 1}}),  alarm_children['alarms'])
                 alarm['consequences']['data'] = alarm_children['alarms']
+                alarm['consequences']['total'] = alarm_children['total']
 
             list_alarm.append(alarm)
 
