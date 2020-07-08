@@ -22,13 +22,12 @@
                   @input="changeRRuleOption"
                 )
               div(data-test="pbehaviorByWeekDay")
-                v-select(
+                v-chip-group(
                   v-model="form.rRuleOptions.byweekday",
-                  :label="$t('rRule.fields.byweekday')",
                   :items="weekDays",
+                  :label="$t('rRule.fields.byweekday')",
                   multiple,
-                  chips,
-                  @input="changeRRuleOption"
+                  @change="changeRRuleOption"
                 )
               div
                 v-text-field(
