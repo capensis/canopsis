@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import tinycolor from 'tinycolor2';
 import { Chrome, Compact } from 'vue-color';
 
 import { MODALS } from '@/constants';
@@ -43,25 +44,34 @@ export default {
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { config } = this.modal;
-    const data = { color: {} };
+    const color = {};
 
     if (config.color) {
-      data.color = { hex: config.color };
+      const colorObject = tinycolor(config.color);
+
+      if (colorObject.isValid()) {
+        color.hex = colorObject.toHexString();
+      }
     }
 
-    return data;
+    return {
+      color,
+    };
   },
   computed: {
     title() {
       return this.config.title || this.$t('modals.colorPicker.title');
     },
+    isHexType() {
+      return this.config.type === 'hex';
+    },
   },
   methods: {
     async submit() {
-      const { rgba, hex } = this.color;
-
       if (this.config.action) {
-        const result = this.config.type === 'hex' ? hex : `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+        const { hex } = this.color;
+        const colorObject = tinycolor(hex);
+        const result = this.isHexType ? hex : colorObject.toRgbString();
 
         await this.config.action(result);
       }
