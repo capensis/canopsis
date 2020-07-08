@@ -244,6 +244,9 @@ const routes = [
     path: '/examples',
     name: 'examples',
     component: Examples,
+    meta: {
+      requiresLogin: true,
+    },
   },
   {
     path: '*',
