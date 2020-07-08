@@ -62,16 +62,16 @@ export default {
     title() {
       return this.config.title || this.$t('modals.colorPicker.title');
     },
-    type() {
-      return this.config.type || 'rgba';
+    isHexType() {
+      return this.config.type === 'hex';
     },
   },
   methods: {
     async submit() {
-      const { rgba, hex } = this.color;
-
       if (this.config.action) {
-        const result = this.type === 'hex' ? hex : `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+        const { hex } = this.color;
+        const colorObject = tinycolor(hex);
+        const result = this.isHexType ? hex : colorObject.toRgbString();
 
         await this.config.action(result);
       }
