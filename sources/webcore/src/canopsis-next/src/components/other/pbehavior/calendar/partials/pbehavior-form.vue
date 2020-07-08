@@ -40,10 +40,21 @@
         v-btn.ml-0.btn-filter(
           :color="errors.has('filter') ? 'error' : 'primary'",
           @click="showCreateFilterModal"
-        ) Edit filter
+        ) {{ hasFilter ? 'Edit filter' : 'Add filter' }}
+        v-tooltip(v-show="hasFilter", fixed, top)
+          v-btn(slot="activator", icon)
+            v-icon(color="grey darken-1") info
+          span.pre {{ form.filter.filter | json }}
         v-alert(:value="errors.has('filter')", type="error") {{ errors.first('filter') }}
       v-flex(xs12)
-        v-btn.ml-0(color="primary", @click="showCreateRRuleModal") Edit RRule
+        v-btn.ml-0(
+          color="primary",
+          @click="showCreateRRuleModal"
+        )  {{ hasRRule ? 'Edit RRule' : 'Add RRule' }}
+        v-tooltip(v-show="hasRRule", fixed, top)
+          v-btn(slot="activator", icon)
+            v-icon(color="grey darken-1") info
+          span {{ form.rrule }}
 </template>
 
 <script>
@@ -108,6 +119,12 @@ export default {
 
       return rules;
     },
+    hasFilter() {
+      return this.form.filter && !isEmpty(this.form.filter.filter);
+    },
+    hasRRule() {
+      return !isEmpty(this.form.rrule);
+    },
   },
   created() {
     this.$validator.attach({
@@ -152,6 +169,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .pre {
+    white-space: pre;
+  }
+
   .btn-filter.error {
     animation: shake .6s cubic-bezier(.25,.8,.5,1);
   }
