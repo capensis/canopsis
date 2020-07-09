@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
@@ -178,10 +178,10 @@ export default {
 
     async fetchList() {
       try {
-        const query = {
-          tstart: this.calendar.start.date.unix(),
-          tstop: this.calendar.end.date.unix(),
-        };
+        const query = omit(this.query, ['filters', 'considerPbehaviors']);
+
+        query.tstart = this.calendar.start.date.unix();
+        query.tstop = this.calendar.end.date.unix();
 
         this.pending = true;
         this.serverErrorMessage = null;
