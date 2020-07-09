@@ -7,6 +7,7 @@
         :message="serverErrorMessage"
       )
       ds-calendar(
+        :calendar="calendar",
         :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
         :events="events",
         @change="changeCalendar",
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { get, omit, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
@@ -62,7 +63,7 @@ export default {
   },
   data() {
     return {
-      pending: true,
+      pending: false,
       alarms: [],
       alarmsCollections: [],
       calendar: Calendar.months(),
@@ -171,18 +172,16 @@ export default {
       });
     },
 
-    changeCalendar({ calendar }) {
-      this.calendar = calendar;
-      this.query = {
-        ...this.query,
-        tstart: calendar.start.date.unix(),
-        tstop: calendar.end.date.unix(),
-      };
+    changeCalendar() {
+      this.fetchList();
     },
 
     async fetchList() {
       try {
-        const query = omit(this.query, ['filters', 'considerPbehaviors']);
+        const query = {
+          tstart: this.calendar.start.date.unix(),
+          tstop: this.calendar.end.date.unix(),
+        };
 
         this.pending = true;
         this.serverErrorMessage = null;
