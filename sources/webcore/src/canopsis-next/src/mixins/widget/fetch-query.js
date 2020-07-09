@@ -31,10 +31,7 @@ export default {
     if (!this.isEditingMode) {
       await this.fetchUserPreferenceByWidgetId({ widgetId: this.widget._id });
 
-      this.query = {
-        ...this.query,
-        ...prepareQuery(this.widget, this.userPreference),
-      };
+      this.query = prepareQuery(this.widget, this.userPreference);
     }
   },
 };

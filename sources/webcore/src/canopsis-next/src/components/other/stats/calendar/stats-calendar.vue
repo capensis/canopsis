@@ -146,6 +146,10 @@ export default {
         ...this.widget.parameters.alarmsList,
 
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        liveReporting: {
+          tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
+          tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
+        },
       };
 
       if (!isEmpty(event.data.meta.filter)) {
@@ -156,10 +160,6 @@ export default {
       this.$modals.show({
         name: MODALS.alarmsList,
         config: {
-          query: {
-            tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
-            tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
-          },
           widget: {
             ...widget,
 
