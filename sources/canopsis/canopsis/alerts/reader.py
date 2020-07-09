@@ -626,7 +626,7 @@ class AlertsReader(object):
         # into v.lastComment
         pipeline.insert(0, {"$project": {"lastComment": False}})
         pipeline.insert(0, {'$addFields': {"v.lastComment": "$lastComment"}})
-        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "lastComment": {
+        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "infos_array": 1, "lastComment": {
             "$cond": {
                 "if": {"$eq": [{}, "$lastComment"]},
                 "then": None,
