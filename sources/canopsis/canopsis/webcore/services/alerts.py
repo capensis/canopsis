@@ -172,8 +172,8 @@ def exports(ws):
             alarm_children = ar.get(
                 tstart=tstart,
                 tstop=tstop,
-                opened=opened,
-                resolved=resolved,
+                opened=True,
+                resolved=True,
                 lookups=lookups,
                 filter_={'d': {'$in': consequences_children}},
                 sort_key=sort_key,
