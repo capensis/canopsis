@@ -55,7 +55,7 @@ CLAPI doit être disponible sur l'hôte Centreon.  Vous devez donc vous en assur
 
 ### Ajout d'un job « ACK Centreon » dans Canopsis
 
-Danos Canopsis, vous devez créer un job avec les paramètres `type: notification` et `xtype: ack_centreon` dans Canopsis.
+Dans Canopsis, vous devez créer un job avec les paramètres `type: notification` et `xtype: ack_centreon` dans Canopsis.
 
 Renseignez ensuite les informations demandées :
 
