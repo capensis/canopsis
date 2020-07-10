@@ -5,20 +5,29 @@ import { getSlotType } from 'vuetify/lib/util/helpers';
 export default {
   extends: VTooltip,
   methods: {
-    genActivator: function genActivator() {
-      const listeners = this.disabled ? {} : {
-        mouseenter: (e) => {
-          this.getActivator(e);
-          this.runDelay('open');
-        },
-        mouseleave: (e) => {
-          if (e.toElement && this.$refs.content.contains(e.toElement)) {
-            return;
-          }
+    mouseEnterHandler(e) {
+      this.getActivator(e);
+      this.runDelay('open');
+    },
 
-          this.getActivator(e);
-          this.runDelay('close');
-        },
+    /**
+     * We've updated here point is user will mouse leave from activator to default slot we will not hide the tooltip
+     *
+     * @param {MouseEvent} e
+     */
+    mouseLeaveHandler(e) {
+      if (this.$refs.activator.contains(e.relatedTarget) || this.$refs.content.contains(e.relatedTarget)) {
+        return;
+      }
+
+      this.getActivator(e);
+      this.runDelay('close');
+    },
+
+    genActivator() {
+      const listeners = this.disabled ? {} : {
+        mouseenter: this.mouseEnterHandler,
+        mouseleave: this.mouseLeaveHandler,
       };
 
       if (getSlotType(this, 'activator') === 'scoped') {
@@ -32,16 +41,16 @@ export default {
       }, this.$slots.activator);
     },
   },
+
+  /**
+   * We've added mouseleave listener for tooltip default slot for resolving the problem which was described above
+   *
+   * @param {Function} h
+   * @returns {*}
+   */
   render: function render(h) {
     const listeners = {
-      mouseleave: (e) => {
-        if (e.toElement && this.$refs.activator.contains(e.toElement)) {
-          return;
-        }
-
-        this.getActivator(e);
-        this.runDelay('close');
-      },
+      mouseleave: this.mouseLeaveHandler,
     };
 
     const tooltip = h('div', this.setBackgroundColor(this.color, {
