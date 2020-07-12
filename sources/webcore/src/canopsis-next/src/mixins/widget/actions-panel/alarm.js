@@ -192,6 +192,18 @@ export default {
       });
     },
 
+    showManualMetaAlarmUngroupModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          ...this.modalConfig,
+          title: this.$t('modals.createAckRemove.manualMetaAlarmUngroup'),
+          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
+          parentsIds: [get(this.parentAlarm, 'entity._id')],
+        },
+      });
+    },
+
     actionsAccessFilterHandler({ type }) {
       const right = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[type];
 

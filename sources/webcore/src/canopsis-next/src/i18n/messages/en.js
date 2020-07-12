@@ -1171,6 +1171,9 @@ export default {
       result: 'Result',
       manageTabs: 'Manage tabs',
     },
+    createMetaAlarm: {
+      noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
+    },
   },
   tables: {
     noData: 'No data',

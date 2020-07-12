@@ -33,7 +33,8 @@
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :isResolvedAlarm="isResolvedAlarm"
+        :isResolvedAlarm="isResolvedAlarm",
+        :parentAlarm="parentAlarm"
       )
 </template>
 
@@ -91,6 +92,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
   },
   computed: {
     alarm() {
@@ -98,6 +103,9 @@ export default {
     },
     isResolvedAlarm() {
       return isResolvedAlarm(this.alarm);
+    },
+    isConsequence() {
+      return this.alarm.causes;
     },
     expandButtonClass() {
       if (this.isTourEnabled) {

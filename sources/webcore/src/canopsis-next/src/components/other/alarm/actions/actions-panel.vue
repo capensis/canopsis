@@ -14,6 +14,8 @@ import {
   WIDGETS_ACTIONS_TYPES,
 } from '@/constants';
 
+import { isManualMetaAlarm } from '@/helpers/entities';
+
 import authMixin from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
@@ -47,6 +49,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    parentAlarm: {
+      type: Object,
+      default: null,
     },
     isResolvedAlarm: {
       type: Boolean,
@@ -136,10 +142,19 @@ export default {
           title: this.$t('alarmList.actions.titles.comment'),
           method: this.showCreateCommentModal,
         },
+        manualMetaAlarmUngroup: {
+          type: alarmsListActionsTypes.manualMetaAlarmUngroup,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmUngroup].icon,
+          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
+          method: this.showManualMetaAlarmUngroupModal,
+        },
       },
     };
   },
   computed: {
+    isParentAlarmManualMetaAlarm() {
+      return isManualMetaAlarm(this.parentAlarm);
+    },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
@@ -170,6 +185,10 @@ export default {
       }
 
       actions.push(filteredActionsMap.variablesHelp);
+
+      if (this.isParentAlarmManualMetaAlarm) {
+        actions.push(filteredActionsMap.manualMetaAlarmUngroup);
+      }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {

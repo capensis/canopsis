@@ -161,12 +161,11 @@ export default {
 
     showCreateGroupEventModal() {
       this.$modals.show({
-        name: MODALS.createEvent,
+        name: MODALS.createManualMetaAlarm,
         config: {
           ...this.modalConfig,
 
-          title: this.$t('modals.createGroupEvent.title'),
-          eventType: EVENT_ENTITY_TYPES.group,
+          title: this.$t('modals.createManualMetaAlarm.title'),
         },
       });
     },
