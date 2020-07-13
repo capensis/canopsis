@@ -93,9 +93,9 @@ export default {
           method: this.showCreateGroupRequestEventModal,
         },
         {
-          type: alarmsListActionsTypes.group,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.group].icon,
-          title: this.$t('alarmList.actions.titles.group'),
+          type: alarmsListActionsTypes.manualMetaAlarmGroup,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
+          title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
           method: this.showCreateGroupEventModal,
         },
       ];

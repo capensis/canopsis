@@ -213,7 +213,7 @@
             "checksum": 1,
             "desc": ""
         },
-        "listalarm_group": {
+        "listalarm_manualMetaAlarmGroup": {
             "checksum": 1,
             "desc": ""
         },

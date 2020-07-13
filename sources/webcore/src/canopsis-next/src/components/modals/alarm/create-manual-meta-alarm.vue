@@ -109,7 +109,7 @@ export default {
     async fetchMetaAlarms() {
       this.pending = true;
 
-      const { data: [{ alarms }] } = await this.fetchAlarmsListWithoutStore({
+      const { alarms = [] } = await this.fetchAlarmsListWithoutStore({
         params: { filter: MANUAL_META_ALARMS_REQUEST_FILTER },
       });
 

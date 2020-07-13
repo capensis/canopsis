@@ -359,9 +359,6 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.groupRequest]: {
     icon: 'note_add',
   },
-  [EVENT_ENTITY_TYPES.group]: {
-    icon: 'center_focus_strong',
-  },
   [EVENT_ENTITY_TYPES.pbhenter]: {
     color: COLORS.entitiesEvents.pbhenter,
     icon: 'pause',
@@ -379,6 +376,9 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.comment]: {
     color: COLORS.entitiesEvents.comment,
     icon: 'comment',
+  },
+  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: {
+    icon: 'center_focus_strong',
   },
   [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
     icon: 'link_off',
@@ -758,10 +758,7 @@ export const USERS_RIGHTS = {
         changeState: `${USER_RIGHTS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_RIGHTS_PREFIXES.business.alarmsList}_history`,
         groupRequest: `${USER_RIGHTS_PREFIXES.business.alarmsList}_groupRequest`,
-        group: `${USER_RIGHTS_PREFIXES.business.alarmsList}_group`,
         manualMetaAlarmGroup: `${USER_RIGHTS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
-        manualMetaAlarmUngroup: `${USER_RIGHTS_PREFIXES.business.alarmsList}_manualMetaAlarmUngroup`,
-        manualMetaAlarmUpdate: `${USER_RIGHTS_PREFIXES.business.alarmsList}_manualMetaAlarmUpdate`,
         comment: `${USER_RIGHTS_PREFIXES.business.alarmsList}_comment`,
 
         listFilters: `${USER_RIGHTS_PREFIXES.business.alarmsList}_listFilters`,
@@ -910,13 +907,12 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp]: USERS_RIGHTS.business.alarmsList.actions.variablesHelp,
     [WIDGETS_ACTIONS_TYPES.alarmsList.comment]: USERS_RIGHTS.business.alarmsList.actions.comment,
     [WIDGETS_ACTIONS_TYPES.alarmsList.groupRequest]: USERS_RIGHTS.business.alarmsList.actions.groupRequest,
-    [WIDGETS_ACTIONS_TYPES.alarmsList.group]: USERS_RIGHTS.business.alarmsList.actions.group,
     [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmGroup]:
       USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
     [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmUngroup]:
-      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmUngroup,
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
     [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmUpdate]:
-      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmUpdate,
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -1445,7 +1441,7 @@ export const MANUAL_META_ALARM_REGEX = {
 };
 
 export const MANUAL_META_ALARMS_REQUEST_FILTER = {
-  [FILTER_MONGO_OPERATORS.$and]: Object.entries(MANUAL_META_ALARM_REGEX).map(([key, regex]) => ({
+  [FILTER_MONGO_OPERATORS.and]: Object.entries(MANUAL_META_ALARM_REGEX).map(([key, regex]) => ({
     [key]: { [FILTER_MONGO_OPERATORS.regex]: regex },
   })),
 };
