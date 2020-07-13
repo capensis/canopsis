@@ -177,7 +177,8 @@ class __TileData(object):
         # properties of the tile
         self.isActionRequired = self.__is_action_required(watcher)
         self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
-        self.isWatcherPaused = len(watcher[ResultKey.PBEHAVIORS]) != 0
+        self.isWatcherPaused = bool([pbh for pbh in watcher[
+            ResultKey.PBEHAVIORS].items() if pbh["canonical_type"] == "pause"])
         self.tileColor = self.__get_tile_color(watcher)
         self.tileIcon = self.__get_tile_icon(watcher)
         self.tileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
@@ -199,7 +200,7 @@ class __TileData(object):
         if watcher_alarm is None:
             return False
 
-        if len(watcher[ResultKey.PBEHAVIORS]) != 0:
+        if bool(watcher[ResultKey.PBEHAVIORS]):
             return False
 
         for entity in watcher[ResultKey.ENT]:
@@ -207,8 +208,7 @@ class __TileData(object):
                 continue
 
             alarm_value = entity[ResultKey.ALARM][ResultKey.ALRM_VALUE]
-            if alarm_value.get(ResultKey.ALRM_ACK, None) is None:
-                if len(entity[ResultKey.PBEHAVIORS]) == 0:
+            if alarm_value.get(ResultKey.ALRM_ACK, None) is None and not entity[ResultKey.PBEHAVIORS]:
                     return True
 
         return False
@@ -296,36 +296,36 @@ class __TileData(object):
         watched_ent_paused = 0
 
         for ent in watcher[ResultKey.ENT]:
-            if len(ent[ResultKey.PBEHAVIORS]) > 0:
+            if ent[ResultKey.PBEHAVIORS]:
                 watched_ent_paused += 1
 
-        if watched_ent_paused == len(watcher[ResultKey.ENT]) and\
-           len(watcher[ResultKey.PBEHAVIORS]) == 0:
+        if watched_ent_paused == len(watcher[ResultKey.ENT]) and \
+           not watcher[ResultKey.PBEHAVIORS]:
 
             for ent in watcher[ResultKey.ENT]:
                 for pbh in ent[ResultKey.PBEHAVIORS]:
-                    if pbh["type_"] == "Hors plage horaire de surveillance":
-                        has_out_of_surveillance = True
-                    elif pbh["type_"] == "Maintenance":
+                    if pbh["canonical_type"] == "maintenance":
                         has_maintenance = True
-                    elif pbh["type_"] in ["pause", "Pause"]:
+                    if pbh["canonical_type"] == "pause":
                         has_pause = True
+                    if has_maintenance and has_pause:
+                        break
+                if has_maintenance and has_pause:
+                    break
 
         else:
             for pbh in watcher[ResultKey.PBEHAVIORS]:
-                if pbh["type_"] == "Hors plage horaire de surveillance":
-                    has_out_of_surveillance = True
-                elif pbh["type_"] == "Maintenance":
+                if pbh["canonical_type"] == "maintenance":
                     has_maintenance = True
-                elif pbh["type_"] in ["pause", "Pause"]:
+                if pbh["canonical_type"] == "pause":
                     has_pause = True
+                if has_maintenance and has_pause:
+                    break
 
         if has_maintenance:
             return TileIcon.MAINTENANCE
         if has_pause:
             return TileIcon.PAUSE
-        if has_out_of_surveillance:
-            return TileIcon.UNMONITORED
 
         watcher_state = 0
         if len(watcher[ResultKey.ALARM]) > 0:
@@ -530,28 +530,12 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
                "as": "alarm",
                "maxDepth": 0}}
 
-    # Retrieve every pbehaviors on the watcher
-    pbehaviors = {"$lookup":
-                  {"from": "default_pbehavior",
-                   "localField": "_id",
-                   "foreignField": "eids",
-                   "as": "pbehaviors"}}
-
     # Retrieve watched entities
     entities = {"$lookup":
                 {"from": "default_entities",
                  "localField": "depends",
                  "foreignField": "_id",
                  "as": "watched_entities"}}
-
-    # Retrieve every pbehaviors on the watched entities
-    pbehaviors_watched_ent = {"$graphLookup":
-                              {"from": "default_pbehavior",
-                               "startWith": "$watched_entities._id",
-                               "connectFromField": "watched_entities._id",
-                               "connectToField": "eids",
-                               "maxDepth": 0,
-                               "as": "watched_entities_pbehaviors"}}
 
     # Retrieve every opened alarm on the watched entities
     # I use the `$graphLookup` stage in order to retrieve only the opened
@@ -573,17 +557,15 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
     pipeline = [select_watcher_stage,
                 skip,
                 alarms,
-                pbehaviors,
                 entities,
-                pbehaviors_watched_ent,
                 alarm_watched_ent,
                 hide_fields]
 
-    # Insert optionnal stage limit
+    # Insert optional stage limit
     if limit is not None:
         pipeline.insert(2, {"$limit": limit})
 
-    # Insert optionnal stage orderby
+    # Insert optional stage orderby
     if orderby is not None:
         direction = _parse_direction(direction)
         pipeline.insert(1, {"$sort": {orderby: direction}})
@@ -622,12 +604,6 @@ def _rework_watcher_pipeline_element(watcher, logger):
             and alarms
     }
     """
-    # remove the inactive pbehaviors from the pipeline result
-    pbhs = watcher[ResultKey.PBEHAVIORS]
-    watcher[ResultKey.PBEHAVIORS] = _remove_inactive_pbh(pbhs)
-    pbhs = watcher[ResultKey.WATCHED_ENT_PBH]
-    watcher[ResultKey.WATCHED_ENT_PBH] = _remove_inactive_pbh(pbhs)
-
     # assign watched entities pbehaviors to the correct entities
     entities = {}
     for entity in watcher[ResultKey.ENT]:
@@ -635,21 +611,22 @@ def _rework_watcher_pipeline_element(watcher, logger):
         entity[ResultKey.ALARM] = None
         entities[entity[ResultKey.ENT_ID]] = entity
 
-    for pbh in watcher[ResultKey.WATCHED_ENT_PBH]:
-        for ent_id in pbh["eids"]:
-            try:
-                entities[ent_id][ResultKey.PBEHAVIORS].append(pbh)
-            except KeyError:
-                logger.error("Can not find entities {} in the"
-                             "pipeline result".format(ent_id))
+    for alarm in watcher[ResultKey.ALARM]:
+        try:
+            if isinstance(alarm["pbehavior_info"], dict) and alarm["pbehavior_info"]["canonical_type"] in (
+                    "pause", "maintenance"):
+                entities[alarm["d"]][ResultKey.PBEHAVIORS].append(
+                    alarm["pbehavior_info"])
+        except KeyError:
+            logger.error(
+                "Can not find entities {} in the pipeline result".format(alarm["d"]))
 
     # assign watched entities alarms to the correct entities
     for alarm in watcher[ResultKey.WATCHED_ENT_ALRM]:
         try:
             entities[alarm["d"]][ResultKey.ALARM] = alarm
         except KeyError:
-            logger.error("Can not find entities {} in the"
-                         "pipeline result".format(alarm["d"]))
+            logger.error("Can not find entities {} in the pipeline result".format(alarm["d"]))
 
     watcher[ResultKey.ENT] = entities.values()
     del watcher[ResultKey.WATCHED_ENT_PBH]
