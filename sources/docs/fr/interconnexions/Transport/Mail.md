@@ -63,7 +63,7 @@ state.constant=2
 [template]
 # Expéditeur des emails à traiter
 template1.sender=sender@mail.net
-# Vous pouvez définir une regex pour lier des expéditeurs génériques à un template (3.39.0+)
+# Vous pouvez définir une expression régulière pour lier des expéditeurs génériques à un template (à partir de la version 3.39.0)
 template1.regex=sender\d*@mail.net
 # Template à appliquer sur ces emails
 template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
@@ -99,7 +99,7 @@ On peut définir les champs `component`, `resource` et `output` de manière dyna
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une regex définie, depuis Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
+Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une expression régulière définie, à partir de Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
@@ -107,13 +107,37 @@ Ici, pour
 [template]
 # Expéditeur des emails à traiter
 template1.sender=sender@mail.net
-# Vous pouvez définir une regex pour lier des expéditeurs génériques à un template (3.39.0+)
+# Vous pouvez définir une expression régulière pour lier des expéditeurs génériques à un template (à partir de la version 3.39.0)
 template1.regex=sender\d*@mail.net
 # Template à appliquer sur ces emails
 template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 ```
 
 Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit correspondre au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
+
+A partir de la `3.40.0` On peut assigner plusieurs templates à un expéditeur en fonction du sujet du mail. Pour cela il faut définir une expression régulière pour assigner un sujet a son template.
+
+Exemple :
+
+```ini
+[template]
+# Expéditeur des emails à traiter
+template1.sender=sender@mail.net
+# Template à appliquer sur ces emails
+template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
+
+# Expéditeur des emails à traiter
+template2.sender=sender@mail.net
+# Vous pouvez définir une  expression régulière pour lier un sujet de mail a un template (3.40.0+)
+template2.subject=.*Datacenter.*
+# Template à appliquer sur ces emails
+template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
+```
+
+Dans cet exemple tous les mails de `sender@mail.net` qui ont dans le sujet le mot `Datacenter` seront liés au template `/opt/canopsis_connectors/email2canopsis/etc/template_2.conf`.
+
+Le `subject` peut être utilisé avec les deux types de déclarations d'expéditeurs (`sender` ou `regex`).
+
 
 ### Configuration du template d'email
 
@@ -132,7 +156,7 @@ resource.trim=left
 output=MAIL_BODY.line(6).word(3).untilword()
 long_output=MAIL_BODY.line(7).after(le).untilword()
 state=MAIL_SUBJECT.line(0).word(1)
-state.converter=Mineur>1,Majeur>2,Critique>3
+state.converter=Mineur>1,Majeur>2,Critique>3,Fin>0
 timestamp=MAIL_DATE
 timestamp.output=timestamp
 ```
@@ -147,17 +171,39 @@ Les actions peuvent être les suivantes :
 * *selector* (utilisé par défaut ; implicite) : applique simplement le template à droite et copie la valeur traduite dans l'événement.
 * *converter* : remplace une chaîne de caractères par une autre (insensiblement à la casse), les deux étant séparés par le symbole '>'. Plusieurs conversions sont applicables à la suite en les séparant par des virgules. Dans l'exemple ci-dessus, 'Mineur' sera remplacé par 1, 'Majeur' par 2…
 
-À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :
+A partir de la `3.40.0` *converter* utilise des expressions régulières pour effectuer le remplacement.
+
+Exemple :
+```
+    state=MAIL_SUBJECT
+    state.converter=Mineur \?>1,^Majeur$>2,Critique>3,.*>0
+```
+
+On sélectionne dans cet exemple le sujet du mail pour définir la sévérité de l’alarme.  
+
+- Les mails dont le sujet contient `Mineur ?` auront une sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des expressions régulières, comme `*, {, }` etc. Il faut donc le protéger avec un `\`.
+- Les mails dont le sujet est strictement `Majeur` auront une sévérité de 2. Le caractère `^` défini le début de la chaîne de caractères et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la sélection des mails dont le sujet se termine par `Mineur`.
+- Les mails dont le sujet contient `Critique` auront une sévérité de 3.
+- L'utilisation de l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui ne correspondent pas aux cas précédents auront donc une sévérité par défaut de 0.
+
+À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :  
 
 - `resource.trim=left` donnera "deux mots␣" avec l'espace à gauche supprimé
 - `resource.trim=right` donnera "␣deux mots" avec l'espace à droite supprimé
 - `resource.trim=both` donnera "deux mots" avec les espaces à gauche et à droite supprimés
 
+!!! info
+    A partir de la `3.40.0` les options de `trim` deviennent des opérateurs :  
+    
+    - `trim_left`  
+    - `trim_right`  
+    - `trim_both`  
+
 À partir de la `3.39.0`, l'option `print` assigne directement une valeur au champ à partir du template.
 
 - `resource.print=Valeur`
 
-La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e des chaînes de caractères) :
+La partie droite décrit les règles de transformations (où a, b et c sont des entiers, et d, e, f des chaînes de caractères) :
 
 - `MAIL_BODY`, `MAIL_DATE`, `MAIL_ID`, `MAIL_SENDER`, et `MAIL_SUBJECT` sont les différentes parties de l'email
 - `line(a)` sélectionne une ligne entière numéro a
@@ -173,8 +219,16 @@ La partie droite décrit les règles de transformations (où a, b et c sont des 
 - `line(a).before(e)` sélectionne tous les mots avant e
 - `line(a).before_incl(e)` sélectionne tous les mots avant e, e inclus
 - `line(a).before(e).word(c)` sélectionne tous les mots avant e, mais en commençant au c-ième
-- `and` permet d'effectuer une concaténation entre deux opérations.
-- `print(word)` permet d'assigner la valeur word dans le champ
+- `line(a).replace(e,f)` remplace la chaîne de caractères e par la chaîne f dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (à partir de la `3.40.0`).
+- `line(a).remove(e)` supprime la chaîne de caractères e dans la sélection (ici une ligne entière numéro a). Cette opération peut être répétée. (à partir de la `3.40.0`).
+- `line(a).lowercase` passe la sélection (ici une ligne entière numéro a) en minuscules. (à partir de la `3.40.0`).
+- `line(a).uppercase` passe la sélection (ici une ligne entière numéro a) en majuscules. (à partir de la `3.40.0`).
+- `line(a).trim_left` supprime l'espace à gauche de la sélection (à partir de la `3.40.0`).
+- `line(a).trim_right` supprime l'espace à droite de la sélection (à partir de la `3.40.0`).
+- `line(a).trim_both` supprime les espaces à gauche et à droite de la sélection (à partir de la `3.40.0`).
+- `and` permet d'effectuer une concaténation entre deux opérations (à partir de la `3.39.0`).
+- `print(word)` permet d'assigner la valeur word dans le champ (à partir de la `3.39.0`).
+
 
 MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une action 'dateformat' dessus.
 
@@ -203,4 +257,4 @@ Pour appliquer un changement (modification de la configuration, ajout de templat
 
 En cas d'erreur de connexion au serveur mail, le connecteur envoie un événement à Canopsis. Vous pouvez paramétrer cette alerte avec la section `[event_error]` du fichier de configuration.  
 
-En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec un state de 0. Cela permet de fermer d'éventuelles alarmes.
+En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec une sévérité de 0. Cela permet de fermer d'éventuelles alarmes.

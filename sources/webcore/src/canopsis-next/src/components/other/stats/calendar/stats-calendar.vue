@@ -7,6 +7,7 @@
         :message="serverErrorMessage"
       )
       ds-calendar(
+        :calendar="calendar",
         :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
         :events="events",
         @change="changeCalendar",
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { get, omit, isEmpty } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
@@ -62,7 +63,7 @@ export default {
   },
   data() {
     return {
-      pending: true,
+      pending: false,
       alarms: [],
       alarmsCollections: [],
       calendar: Calendar.months(),
@@ -145,6 +146,10 @@ export default {
         ...this.widget.parameters.alarmsList,
 
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        liveReporting: {
+          tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
+          tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
+        },
       };
 
       if (!isEmpty(event.data.meta.filter)) {
@@ -155,10 +160,6 @@ export default {
       this.$modals.show({
         name: MODALS.alarmsList,
         config: {
-          query: {
-            tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
-            tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
-          },
           widget: {
             ...widget,
 
@@ -171,18 +172,16 @@ export default {
       });
     },
 
-    changeCalendar({ calendar }) {
-      this.calendar = calendar;
-      this.query = {
-        ...this.query,
-        tstart: calendar.start.date.unix(),
-        tstop: calendar.end.date.unix(),
-      };
+    changeCalendar() {
+      this.fetchList();
     },
 
     async fetchList() {
       try {
         const query = omit(this.query, ['filters', 'considerPbehaviors']);
+
+        query.tstart = this.calendar.start.date.unix();
+        query.tstop = this.calendar.end.date.unix();
 
         this.pending = true;
         this.serverErrorMessage = null;

@@ -186,7 +186,7 @@ Exemple de configuration OneLogin :
 
 **Travaillez dans un dossier temporaire accessible par l’utilisateur `canopsis`, par exemple `/opt/canopsis/tmp/saml2_setup`.**
 
-Vous pouvez suivre cette documentation : https://github.com/onelogin/python-saml#knowing-the-toolkit
+Vous pouvez suivre cette documentation : <https://github.com/onelogin/python-saml#knowing-the-toolkit>.
 
 En particulier la génération des clefs et des paramètres :
 

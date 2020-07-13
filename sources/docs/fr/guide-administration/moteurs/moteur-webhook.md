@@ -41,8 +41,9 @@ Pour cela, il est nécessaire de lancer le moteur `engine-dynamic-infos` avec l'
 
 À l'arrivée dans sa file, le moteur va vérifier si l'événement correspond à un ou plusieurs de ces Webhooks.
 
-Si oui, il va alors appliquer le ou les Webhooks correspondant.  
-En cas d'échec, il existe un mécanisme de réémission du webhook.  
+Si oui, il va alors immédiatement appliquer les Webhooks correspondant (il n'y a pas de *beat*).
+
+En cas d'échec, il existe un mécanisme de réémission du webhook.
 
 Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dans le guide d'utilisation](../../guide-utilisation/cas-d-usage/notifications.md).
 

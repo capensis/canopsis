@@ -14,7 +14,6 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import queryMixin from '@/mixins/query';
 
 import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
 
@@ -23,12 +22,6 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.alarmsList,
   components: { AlarmsListWidget, ModalWrapper },
-  mixins: [modalInnerMixin, queryMixin],
-  mounted() {
-    this.mergeQuery({
-      id: this.config.widget._id,
-      query: this.config.query,
-    });
-  },
+  mixins: [modalInnerMixin],
 };
 </script>

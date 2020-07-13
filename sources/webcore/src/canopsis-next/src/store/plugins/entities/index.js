@@ -254,6 +254,7 @@ export const entitiesModule = {
         route,
         schema,
         body,
+        cancelToken,
         method = 'GET',
         headers = {},
         params = {},
@@ -263,18 +264,20 @@ export const entitiesModule = {
     ) {
       let data;
 
-      switch (method) {
+      const config = { params, headers, cancelToken };
+
+      switch (method.toUpperCase()) {
         case 'GET':
-          data = await request.get(route, { params, headers });
+          data = await request.get(route, config);
           break;
         case 'POST':
-          data = await request.post(route, body, { params, headers });
+          data = await request.post(route, body, config);
           break;
         case 'PUT':
-          data = await request.put(route, body, { params, headers });
+          data = await request.put(route, body, config);
           break;
         case 'DELETE':
-          data = await request.delete(route, { params, headers });
+          data = await request.delete(route, config);
           break;
         default:
           throw new Error(`Invalid method: ${method}`);

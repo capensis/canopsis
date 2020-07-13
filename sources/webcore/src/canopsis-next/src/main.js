@@ -37,6 +37,7 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
+import GridPlugin from '@/plugins/grid';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
@@ -74,6 +75,7 @@ Vue.use(Vuetify, {
   },
 });
 
+Vue.use(GridPlugin);
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {

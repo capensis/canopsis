@@ -7,6 +7,7 @@ import {
   STATS_QUICK_RANGES,
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -23,6 +24,7 @@ export default {
     addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
+    toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode d\'édition pour cela',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
@@ -1326,6 +1328,7 @@ export default {
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',
       timeInterval: 'Intervalle de temps',
+      valuePath: 'Chemin de valeur',
     },
   },
   snmpRules: {
@@ -1418,6 +1421,8 @@ export default {
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+    copyWidgetId: 'Copier l\'ID du widget',
+    autoHeightButton: 'Si ce bouton est sélectionné, la hauteur sera calculée automatiquement.',
   },
   patternsList: {
     noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',
@@ -1547,6 +1552,20 @@ export default {
       tooltips: {
         fullscreen: 'Les actions sont désactivées en mode plein écran',
       },
+    },
+  },
+
+  rights: {
+    technical: {
+      admin: 'Droits d\'administration',
+      exploitation: 'Droits d\'exploitation',
+    },
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: 'Droits communs',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Droits pour le widget Bac à alarmes',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Droits pour le widget Explorateur de contexte',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
     },
   },
 

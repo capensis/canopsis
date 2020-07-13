@@ -596,6 +596,11 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@interactjs/types@1.9.17":
+  version "1.9.17"
+  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.9.17.tgz#a6b2ae0939075b42d6a99a4e5a706d927179c892"
+  integrity sha512-yrfNj4kJHsTxb2gJrihznNSDkg7thSC04CWIF+aDZm6K7+6wiAzxJf4PyznR23Am0FPxeP8a8uM6md89BlIXHw==
+
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@intervolga/optimize-cssnano-plugin/-/optimize-cssnano-plugin-1.0.6.tgz#be7c7846128b88f6a9b1d1261a0ad06eb5c0fdf8"
@@ -1593,6 +1598,11 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
+
+batch-processor@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
+  integrity sha1-dclcMrdI4IUNEMKxaPa9vpiRrOg=
 
 batch@0.6.1:
   version "0.6.1"
@@ -3220,6 +3230,13 @@ elegant-spinner@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
 
+element-resize-detector@^1.1.15:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/element-resize-detector/-/element-resize-detector-1.2.1.tgz#b0305194447a4863155e58f13323a0aef30851d1"
+  integrity sha512-BdFsPepnQr9fznNPF9nF4vQ457U/ZJXQDSNF1zBe7yaga8v9AdZf3/NElYxFdUh7SitSGt040QygiTo6dtatIw==
+  dependencies:
+    batch-processor "1.0.0"
+
 elliptic@^6.0.0:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.4.1.tgz#c2d0b7776911b86722c632c3c06c60f2f819939a"
@@ -4742,6 +4759,13 @@ inquirer@^3.0.6:
     string-width "^2.1.0"
     strip-ansi "^4.0.0"
     through "^2.3.6"
+
+interactjs@^1.6.3:
+  version "1.9.17"
+  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.9.17.tgz#4147171e3b212d6cc7dc38acebfd7c80e85398bd"
+  integrity sha512-FBWOju1kD0sMwRxKCkz1RNCoiXluef8AApgpR05QSkAMX3ix0W8ZJzUPjuFK8BRh7HOIXlJJJ+Dy7W3fQ1Byzg==
+  dependencies:
+    "@interactjs/types" "1.9.17"
 
 internal-ip@^3.0.1:
   version "3.0.1"
@@ -10021,6 +10045,14 @@ vue-eslint-parser@^2.0.3:
 vue-fullscreen@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/vue-fullscreen/-/vue-fullscreen-2.1.3.tgz#831f6c2f89771e80f7189b1c8b863d4d66677fcf"
+
+vue-grid-layout@^2.3.7:
+  version "2.3.7"
+  resolved "https://registry.yarnpkg.com/vue-grid-layout/-/vue-grid-layout-2.3.7.tgz#d148f013ef2ca9dc1cb5d5298e7966aa50f54431"
+  integrity sha512-q3FMiuog0hPsK/IUKtlg2A/lwPo86YlLaX9+wEiCTjUU++GabM2o9hDhRVruDJZLUah55iTg8LRttBxrxPv0WQ==
+  dependencies:
+    element-resize-detector "^1.1.15"
+    interactjs "^1.6.3"
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.1"

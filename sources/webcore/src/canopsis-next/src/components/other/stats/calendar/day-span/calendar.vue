@@ -144,17 +144,19 @@ export default {
     calendar: 'applyEvents',
   },
   created() {
-    this.rebuild(undefined, true);
+    this.rebuild(undefined, true, this.currentType, true);
   },
   methods: {
-    setState(state) {
+    setState(state, ignoreTriggerChange) {
       state.eventSorter = state.listTimes
         ? Sorts.List([Sorts.FullDay, Sorts.Start])
         : Sorts.Start;
 
       this.calendar.set(state);
 
-      this.triggerChange();
+      if (!ignoreTriggerChange) {
+        this.triggerChange();
+      }
     },
 
     applyEvents() {
@@ -171,7 +173,7 @@ export default {
         (!aroundDay || cal.span.matchesDay(aroundDay)));
     },
 
-    rebuild(aroundDay, force, forceType) {
+    rebuild(aroundDay, force, forceType, ignoreTriggerChange) {
       const type = forceType || this.currentType || this.types[0];
 
       if (this.isType(type, aroundDay) && !force) {
@@ -192,7 +194,7 @@ export default {
         repeatCovers: type.repeat,
       };
 
-      this.setState(input);
+      this.setState(input, ignoreTriggerChange);
     },
 
     next() {
