@@ -4,26 +4,26 @@
       date-time-picker-field(
         v-field="value.begin",
         v-validate="'required'",
-        :error-messages="errors.collect('begin')",
+        :error-messages="errors.collect(beginName)",
         label="Begin",
-        name="begin"
+        :name="beginName"
       )
     v-flex
       date-time-picker-field(
         v-field="value.end",
         v-validate="'required'",
-        :error-messages="errors.collect('end')",
+        :error-messages="errors.collect(endName)",
         label="End",
-        name="end"
+        :name="endName"
       )
     v-flex
       v-select(
         v-field="value.type",
         v-validate="'required'",
         :items="types",
-        :error-messages="errors.collect('type')",
+        :error-messages="errors.collect(typeName)",
         label="Type",
-        name="type"
+        :name="typeName"
       )
 </template>
 
@@ -48,10 +48,23 @@ export default {
         };
       },
     },
+    key: {
+      type: String,
+      default: undefined,
+    },
   },
   computed: {
     types() {
       return ['a', 'b', 'c'];
+    },
+    beginName() {
+      return `${this.key || this.value.key || ''}begin`;
+    },
+    endName() {
+      return `${this.key || this.value.key || ''}end`;
+    },
+    typeName() {
+      return `${this.key || this.value.key || ''}type`;
     },
   },
 };
