@@ -25,11 +25,12 @@
         label="Type",
         :name="typeName"
       )
+    v-flex
+      v-btn(color="error", icon, @click="$emit('delete')")
+        v-icon delete
 </template>
 
 <script>
-import moment from 'moment';
-
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 
 export default {
@@ -38,33 +39,24 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => {
-        const now = moment().startOf('day');
-
-        return {
-          start: now.toDate(),
-          end: now.toDate(),
-          type: '',
-        };
-      },
-    },
-    key: {
-      type: String,
-      default: undefined,
+      required: true,
     },
   },
   computed: {
     types() {
       return ['a', 'b', 'c'];
     },
+    nameSuffix() {
+      return this.value.key ? `-${this.value.key}` : '';
+    },
     beginName() {
-      return `${this.key || this.value.key || ''}begin`;
+      return `begin${this.nameSuffix}`;
     },
     endName() {
-      return `${this.key || this.value.key || ''}end`;
+      return `end${this.nameSuffix}`;
     },
     typeName() {
-      return `${this.key || this.value.key || ''}type`;
+      return `type${this.nameSuffix}`;
     },
   },
 };

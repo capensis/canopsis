@@ -94,6 +94,7 @@ export const MODALS = {
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
+  selectExceptionsDatesLists: 'select-exceptions-dates-lists',
 };
 
 export const EVENT_ENTITY_TYPES = {
