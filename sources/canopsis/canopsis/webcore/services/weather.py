@@ -178,7 +178,7 @@ class __TileData(object):
         self.isActionRequired = self.__is_action_required(watcher)
         self.isAllEntitiesPaused = self.__is_all_entities_paused(watcher)
         self.isWatcherPaused = bool([pbh for pbh in watcher[
-            ResultKey.PBEHAVIORS].items() if pbh["canonical_type"] == "pause"])
+            ResultKey.PBEHAVIORS] if pbh["canonical_type"] == "pause"])
         self.tileColor = self.__get_tile_color(watcher)
         self.tileIcon = self.__get_tile_icon(watcher)
         self.tileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
@@ -306,26 +306,27 @@ class __TileData(object):
                 for pbh in ent[ResultKey.PBEHAVIORS]:
                     if pbh["canonical_type"] == "maintenance":
                         has_maintenance = True
-                    if pbh["canonical_type"] == "pause":
+                    elif pbh["canonical_type"] == "pause":
                         has_pause = True
-                    if has_maintenance and has_pause:
-                        break
-                if has_maintenance and has_pause:
-                    break
+                    elif pbh["canonical_type"] == "inactive":
+                        has_out_of_surveillance = True
 
         else:
             for pbh in watcher[ResultKey.PBEHAVIORS]:
                 if pbh["canonical_type"] == "maintenance":
                     has_maintenance = True
-                if pbh["canonical_type"] == "pause":
+                elif pbh["canonical_type"] == "pause":
                     has_pause = True
-                if has_maintenance and has_pause:
-                    break
+                elif pbh["canonical_type"] == "inactive":
+                    has_out_of_surveillance = True
+
 
         if has_maintenance:
             return TileIcon.MAINTENANCE
         if has_pause:
             return TileIcon.PAUSE
+        if has_out_of_surveillance:
+            return TileIcon.UNMONITORED
 
         watcher_state = 0
         if len(watcher[ResultKey.ALARM]) > 0:
@@ -370,15 +371,15 @@ class __TileData(object):
         for ent in watcher[ResultKey.ENT]:
             if not ent["enabled"]:
                 continue
-            if len(ent[ResultKey.PBEHAVIORS]) > 0:
+            if ent[ResultKey.PBEHAVIORS]:
                 paused_watched_ent += 1
             for pbh in ent[ResultKey.PBEHAVIORS]:
-                if pbh["type_"] == "Hors plage horaire de surveillance":
-                    has_out_of_surveillance = True
-                elif pbh["type_"] == "Maintenance":
+                if pbh["canonical_type"] == "maintenance":
                     has_maintenance = True
-                elif pbh["type_"] in ["pause", "Pause"]:
+                elif pbh["canonical_type"] == "pause":
                     has_pause = True
+                elif pbh["canonical_type"] == "inactive":
+                    has_out_of_surveillance = True
 
         if paused_watched_ent == len(watcher[ResultKey.ENT]):
             return None
@@ -438,7 +439,7 @@ def _pbehavior_types(watcher):
         pbehaviors += ent[ResultKey.PBEHAVIORS]
 
     for pbh in pbehaviors:
-        pb_type = pbh.get('type_', None)
+        pb_type = pbh.get('canonical_type', None)
         if pb_type is not None:
             pb_types.add(pb_type)
 
@@ -450,7 +451,7 @@ def _watcher_status(watcher):
     ent_with_active_pbh = set()
 
     for ent in watcher[ResultKey.ENT]:
-        ent_with_active_pbh.add(len(ent[ResultKey.PBEHAVIORS]) > 0)
+        ent_with_active_pbh.add(bool(ent[ResultKey.PBEHAVIORS]))
 
     at_least_one = True in ent_with_active_pbh
     if at_least_one and False in ent_with_active_pbh:
@@ -492,11 +493,10 @@ def _parse_direction(direction):
     """
     if direction == "ASC":
         return 1
-    elif direction == "DESC":
+    if direction == "DESC":
         return -1
-    else:
-        raise ValueError("Direction must be 'ASC' or 'DESC' not {}.".format(
-            direction))
+    raise ValueError("Direction must be 'ASC' or 'DESC' not {}.".format(
+        direction))
 
 
 def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
@@ -530,6 +530,14 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
                "as": "alarm",
                "maxDepth": 0}}
 
+    # Retrieve pbehavior types connected with alarms
+    alarm_pbehaviortypes = {"$lookup": {"from": "pbehavior_type",
+                                        "localField": "alarm.pbehavior_info.type",
+                                        "foreignField": "_id", "as": "pbehaviors"}}
+    # Hide all but icon_name
+    hide_alarm_pbehaviortypes_fields = {"$project": {"pbehaviors.name": 0, "pbehaviors.type": 0,
+                                                     "pbehaviors.description": 0, "pbehaviors.priority": 0}}
+
     # Retrieve watched entities
     entities = {"$lookup":
                 {"from": "default_entities",
@@ -549,16 +557,27 @@ def _generate_tile_pipeline(watcher_filter, limit, start, orderby, direction):
                           "restrictSearchWithMatch": {'v.resolved': None},
                           "maxDepth": 0}}
 
+    # Retrieve pbehavior types connected with watched_entities_alarm
+    watched_ent_alarm_pbehaviortypes = {"$lookup": {"from": "pbehavior_type",
+                                                    "localField": "watched_entities_alarm.pbehavior_info.type",
+                                                    "foreignField": "_id", "as": "watched_entities_pbehaviors"}}
+
     # Hide watched_entities fields to fit document into 16M limit
     hide_fields = {"$project": {"watched_entities.impact": 0,
-                                "watched_entities.depends": 0, "watched_entities.infos": 0}}
+                                "watched_entities.depends": 0, "watched_entities.infos": 0,
+                                "watched_entities_pbehaviors.name": 0, "watched_entities_pbehaviors.type": 0,
+                                "watched_entities_pbehaviors.description": 0,
+                                "watched_entities_pbehaviors.priority": 0}}
 
     # Genenate the pipeline
     pipeline = [select_watcher_stage,
                 skip,
                 alarms,
+                alarm_pbehaviortypes,
+                hide_alarm_pbehaviortypes_fields,
                 entities,
                 alarm_watched_ent,
+                watched_ent_alarm_pbehaviortypes,
                 hide_fields]
 
     # Insert optional stage limit
@@ -629,7 +648,7 @@ def _rework_watcher_pipeline_element(watcher, logger):
             logger.error("Can not find entities {} in the pipeline result".format(alarm["d"]))
 
     watcher[ResultKey.ENT] = entities.values()
-    del watcher[ResultKey.WATCHED_ENT_PBH]
+    # del watcher[ResultKey.WATCHED_ENT_PBH]
     del watcher[ResultKey.WATCHED_ENT_ALRM]
 
     return watcher
@@ -682,6 +701,7 @@ def exports(ws):
             return gen_json_error({"name": "Can not parse sort direction.",
                                    "description": str(error)}, 400)
 
+        # ws.logger.info("pipeline {}".format(pipeline))
         try:
             pipeline_result = mongo_collection.aggregate(pipeline)
         except Exception as error:
@@ -700,21 +720,22 @@ def exports(ws):
                     return gen_json_error({"name": "Query error",
                                         "description": str(error)}, 500)
 
+                # ws.logger.info("reworked watcher {}".format(watcher))
                 # This part should not exist and must be considered deprecated.
                 # This filter has to be done inside the aggregation pipeline but
                 # currently it is impossible as there is no way to check if a
                 # pbehavior is active directly inside the database.
 
-                some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
-                    watcher
-                )
+                # some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
+                #     watcher
+                # )
 
-                if wf.match(all_watched_ent_paused,
-                            some_watched_ent_paused,
-                            len(watcher[ResultKey.PBEHAVIORS]) > 0,
-                            _pbehavior_types(watcher)):
-                    tileData = __TileData(watcher)
-                    result.append(vars(tileData))
+                # if wf.match(all_watched_ent_paused,
+                #             some_watched_ent_paused,
+                #             len(watcher[ResultKey.PBEHAVIORS]) > 0,
+                #             _pbehavior_types(watcher)):
+                tileData = __TileData(watcher)
+                result.append(vars(tileData))
 
         except PyMongoError as error:
             ws.logger.warning('get_watcher {} {} {}'.format(pipeline, type(error).__name__, str(error)))
