@@ -632,8 +632,8 @@ def _rework_watcher_pipeline_element(watcher, logger):
 
     for alarm in watcher[ResultKey.ALARM]:
         try:
-            if isinstance(alarm["pbehavior_info"], dict) and alarm["pbehavior_info"]["canonical_type"] in (
-                    "pause", "maintenance"):
+            if "pbehavior_info" in alarm and isinstance(alarm["pbehavior_info"], dict) and \
+                    alarm["pbehavior_info"]["canonical_type"] in ("pause", "maintenance"):
                 entities[alarm["d"]][ResultKey.PBEHAVIORS].append(
                     alarm["pbehavior_info"])
         except KeyError:
@@ -721,19 +721,6 @@ def exports(ws):
                                         "description": str(error)}, 500)
 
                 # ws.logger.info("reworked watcher {}".format(watcher))
-                # This part should not exist and must be considered deprecated.
-                # This filter has to be done inside the aggregation pipeline but
-                # currently it is impossible as there is no way to check if a
-                # pbehavior is active directly inside the database.
-
-                # some_watched_ent_paused, all_watched_ent_paused = _watcher_status(
-                #     watcher
-                # )
-
-                # if wf.match(all_watched_ent_paused,
-                #             some_watched_ent_paused,
-                #             len(watcher[ResultKey.PBEHAVIORS]) > 0,
-                #             _pbehavior_types(watcher)):
                 tileData = __TileData(watcher)
                 result.append(vars(tileData))
 

@@ -34,9 +34,10 @@ class StatManager(object):
     :param InfluxDBClient influxdb_client:
     :param PBehaviorManager pbehavior_manager:
     """
-    def __init__(self, influxdb_client, pbehavior_manager):
+    def __init__(self, influxdb_client, pbehavior_manager, logger):
         self.influxdb_client = influxdb_client
         self.pbehavior_manager = pbehavior_manager
+        self.logger = logger
 
     @staticmethod
     def provide_default_basics(logger):
@@ -49,7 +50,7 @@ class StatManager(object):
         influxdb_client = InfluxDBClient.from_configuration(logger)
         pbehavior_manager = PBehaviorManager(
             *PBehaviorManager.provide_default_basics())
-        return (influxdb_client, pbehavior_manager)
+        return (influxdb_client, pbehavior_manager, logger)
 
     def get_stats(self, entity_id):
         """
@@ -58,8 +59,11 @@ class StatManager(object):
         :param str entity_id: The entity's id.
         :return Stats: A Stat object containing the entity's statistics.
         """
-        last_pbehavior_end = self.pbehavior_manager.get_ok_ko_timestamp(
-            entity_id)
+        try:
+            last_pbehavior_end = self.pbehavior_manager.get_ok_ko_timestamp(
+                entity_id)
+        except Exception as ex:
+            self.logger.excception("get_ok_ko_timestamp error {}".format(ex))
 
         ok_count, ko_count = self._get_counts(entity_id, last_pbehavior_end)
         last_ok = self._get_last_ok(entity_id)
@@ -91,8 +95,14 @@ class StatManager(object):
             .where_equal('eid', entity_id)
             .after(after)
             .build())
-        result_set = self.influxdb_client.query(counts_query, epoch='s')
-        row = next(result_set.get_points(), None)
+
+        row = None
+        try:
+            result_set = self.influxdb_client.query(counts_query, epoch='s')
+            row = next(result_set.get_points(), None)
+        except Exception as ex:
+            self.logger.exception("_get_counts error {}".format(ex))
+
         if row is None:
             return 0, 0
 
@@ -112,8 +122,14 @@ class StatManager(object):
             .select('ko', function='last', alias='last_ko')
             .where_equal('eid', entity_id)
             .build())
-        result_set = self.influxdb_client.query(last_ko_query, epoch='s')
-        row = next(result_set.get_points(), None)
+
+        row = None
+        try:
+            result_set = self.influxdb_client.query(last_ko_query, epoch='s')
+            row = next(result_set.get_points(), None)
+        except Exception as ex:
+            self.logger.exception("_get_last_ko error {}".format(ex))
+
         if row is None:
             return None
 
@@ -133,8 +149,14 @@ class StatManager(object):
             .select('ok', function='last', alias='last_ok')
             .where_equal('eid', entity_id)
             .build())
-        result_set = self.influxdb_client.query(last_ok_query, epoch='s')
-        row = next(result_set.get_points(), None)
+
+        row = None
+        try:
+            result_set = self.influxdb_client.query(last_ok_query, epoch='s')
+            row = next(result_set.get_points(), None)
+        except Exception as ex:
+            self.logger.exception("_get_last_ok error {}".format(ex))
+
         if row is None:
             return None
 
