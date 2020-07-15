@@ -96,16 +96,19 @@ Vue.use(DaySpanVuetifyPlugin, {
           offsetX: true,
           maxWidth: 500,
           openOnHover: false,
+          ignoreClickUpperOutside: true,
         },
       },
       dsCalendarEvent: {
         popoverProps: {
           offsetY: true,
+          ignoreClickUpperOutside: true,
         },
       },
       dsCalendarEventPlaceholder: {
         popoverProps: {
           offsetY: true,
+          ignoreClickUpperOutside: true,
         },
       },
     },

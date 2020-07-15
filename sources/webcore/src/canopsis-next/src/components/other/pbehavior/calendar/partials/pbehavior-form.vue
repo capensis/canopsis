@@ -35,6 +35,7 @@
               name="tstop",
               @input="updateField('tstop', $event)"
             )
+      v-btn(@click="showModal") SHOW MODAL
     v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
       v-tab {{ $t('modals.createPbehavior.steps.general.title') }}
       v-tab {{ $t('modals.createPbehavior.steps.rrule.title') }}
@@ -115,6 +116,13 @@ export default {
       }
 
       return rules;
+    },
+  },
+  methods: {
+    showModal() {
+      this.$modals.show({
+        name: 'confirmation',
+      });
     },
   },
 };
