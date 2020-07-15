@@ -4,32 +4,33 @@
       date-time-picker-field(
         v-field="value.begin",
         v-validate="'required'",
-        :error-messages="errors.collect('begin')",
+        :error-messages="errors.collect(beginName)",
         label="Begin",
-        name="begin"
+        :name="beginName"
       )
     v-flex
       date-time-picker-field(
         v-field="value.end",
         v-validate="'required'",
-        :error-messages="errors.collect('end')",
+        :error-messages="errors.collect(endName)",
         label="End",
-        name="end"
+        :name="endName"
       )
     v-flex
       v-select(
         v-field="value.type",
         v-validate="'required'",
         :items="types",
-        :error-messages="errors.collect('type')",
+        :error-messages="errors.collect(typeName)",
         label="Type",
-        name="type"
+        :name="typeName"
       )
+    v-flex
+      v-btn(color="error", icon, @click="$emit('delete')")
+        v-icon delete
 </template>
 
 <script>
-import moment from 'moment';
-
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 
 export default {
@@ -38,20 +39,24 @@ export default {
   props: {
     value: {
       type: Object,
-      default: () => {
-        const now = moment().startOf('day');
-
-        return {
-          start: now.toDate(),
-          end: now.toDate(),
-          type: '',
-        };
-      },
+      required: true,
     },
   },
   computed: {
     types() {
       return ['a', 'b', 'c'];
+    },
+    nameSuffix() {
+      return this.value.key ? `-${this.value.key}` : '';
+    },
+    beginName() {
+      return `begin${this.nameSuffix}`;
+    },
+    endName() {
+      return `end${this.nameSuffix}`;
+    },
+    typeName() {
+      return `type${this.nameSuffix}`;
     },
   },
 };
