@@ -24,7 +24,6 @@ import {
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
   WIDGET_GRID_COLUMNS_COUNT,
-  MANUAL_META_ALARM_REGEX,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -657,14 +656,4 @@ export function getDefaultPlaylist() {
     },
     tabs_list: [],
   };
-}
-
-/**
- * Check if meta alarm is manual
- *
- * @param {Object} alarm
- * @returns {*}
- */
-export function isManualMetaAlarm(alarm) {
-  return alarm && Object.entries(MANUAL_META_ALARM_REGEX).every(([key, regex]) => regex.test(get(alarm, key)));
 }

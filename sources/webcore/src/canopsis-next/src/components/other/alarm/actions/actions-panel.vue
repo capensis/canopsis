@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { pickBy, compact } from 'lodash';
+import { get, pickBy, compact } from 'lodash';
 
 import {
   MODALS,
@@ -12,9 +12,8 @@ import {
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
   WIDGETS_ACTIONS_TYPES,
+  META_ALARMS_RULE_TYPES,
 } from '@/constants';
-
-import { isManualMetaAlarm } from '@/helpers/entities';
 
 import authMixin from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
@@ -153,7 +152,7 @@ export default {
   },
   computed: {
     isParentAlarmManualMetaAlarm() {
-      return isManualMetaAlarm(this.parentAlarm);
+      return get(this.parentAlarm, 'rule.type') === META_ALARMS_RULE_TYPES.manualgroup;
     },
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);

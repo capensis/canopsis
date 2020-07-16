@@ -197,9 +197,9 @@ export default {
         name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
-          title: this.$t('modals.createAckRemove.manualMetaAlarmUngroup'),
+          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
-          parentsIds: [get(this.parentAlarm, 'entity._id')],
+          parentsIds: [get(this.parentAlarm, 'd')],
         },
       });
     },

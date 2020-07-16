@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ config.title }}
+        span {{ $t('modals.createManualMetaAlarm.title') }}
       template(slot="text")
         v-container
           v-layout(row)
@@ -14,20 +14,25 @@
             v-combobox(
               v-model="form.metaAlarm",
               v-validate="'required'",
-              :items="metaAlarms",
-              label="Meta alarm",
-              :error-messages="errors.collect('metaAlarm')",
+              :items="manualMetaAlarms",
+              :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')",
+              :error-messages="errors.collect('manualMetaAlarm')",
               :loading="pending",
-              item-value="id",
-              item-text="title",
-              name="metaAlarm",
+              item-value="d",
+              item-text="v.display_name",
+              name="manualMetaAlarm",
               return-object,
               blur-on-create
             )
               template(slot="no-data")
                 v-list-tile
                   v-list-tile-content
-                    v-list-tile-title(v-html="$t('modals.createMetaAlarm.noData')")
+                    v-list-tile-title(v-html="$t('modals.createManualMetaAlarm.noData')")
+          v-layout(row)
+            v-text-field(
+              v-model="form.output",
+              :label="$t('modals.createManualMetaAlarm.fields.output')"
+            )
       template(slot="actions")
         v-btn(
           depressed,
@@ -42,10 +47,15 @@
 </template>
 
 <script>
-import { isString } from 'lodash';
+import { isObject } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, MANUAL_META_ALARMS_REQUEST_FILTER } from '@/constants';
+import {
+  MODALS,
+  EVENT_ENTITY_TYPES,
+  MANUAL_META_ALARMS_REQUEST_FILTER,
+  META_ALARM_EVENT_DEFAULT_FIELDS,
+} from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
@@ -70,14 +80,22 @@ export default {
   data() {
     return {
       pending: false,
-      metaAlarms: [],
+      manualMetaAlarms: [],
       form: {
-        metaAlarm: null,
+        manualMetaAlarm: null,
+        output: '',
       },
     };
   },
+  computed: {
+    eventType() {
+      return isObject(this.form.metaAlarm)
+        ? EVENT_ENTITY_TYPES.manualMetaAlarmUpdate
+        : EVENT_ENTITY_TYPES.manualMetaAlarmGroup;
+    },
+  },
   mounted() {
-    this.fetchMetaAlarms();
+    this.fetchManualMetaAlarms();
   },
   methods: {
     ...mapActions({
@@ -94,26 +112,21 @@ export default {
      */
     prepareData(type, items, data = {}) {
       return [{
-        connector: 'conn',
-        connector_name: 'conname',
-        source_type: 'resource',
         event_type: type,
-        component: 'test-01',
-        resource: 'rew1',
-        state: 1,
-        output: data.output,
         ma_children: items.map(({ entity }) => entity._id),
+
+        ...data,
       }];
     },
 
-    async fetchMetaAlarms() {
+    async fetchManualMetaAlarms() {
       this.pending = true;
 
       const { alarms = [] } = await this.fetchAlarmsListWithoutStore({
         params: { filter: MANUAL_META_ALARMS_REQUEST_FILTER },
       });
 
-      this.metaAlarms = alarms;
+      this.manualMetaAlarms = alarms;
       this.pending = false;
     },
 
@@ -121,15 +134,21 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        if (isString(this.form.metaAlarm)) {
-          // TODO: create a new one meta alarm
+        const data = {
+          ...META_ALARM_EVENT_DEFAULT_FIELDS,
+
+          output: this.form.output,
+        };
+
+        if (this.eventType === EVENT_ENTITY_TYPES.manualMetaAlarmUpdate) {
+          data.ma_parents = [this.form.metaAlarm.d];
         } else {
-          // TODO: add alarms to meta alarm
+          data.display_name = this.form.metaAlarm;
         }
 
-        // await this.createEvent(this.config.eventType, this.items, data);
+        await this.createEvent(this.eventType, this.items, data);
 
-        // this.$modals.hide();
+        this.$modals.hide();
       }
     },
   },

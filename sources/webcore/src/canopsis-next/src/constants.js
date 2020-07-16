@@ -980,6 +980,12 @@ export const META_ALARMS_RULE_TYPES = {
   attribute: 'attribute',
   complex: 'complex',
   valuegroup: 'valuegroup',
+
+  /**
+   * Manual group type doesn't using in the form
+   * We are using it only inside alarms list widget
+   */
+  manualgroup: 'manualgroup',
 };
 
 export const META_ALARMS_THRESHOLD_TYPES = {
@@ -1444,4 +1450,11 @@ export const MANUAL_META_ALARMS_REQUEST_FILTER = {
   [FILTER_MONGO_OPERATORS.and]: Object.entries(MANUAL_META_ALARM_REGEX).map(([key, regex]) => ({
     [key]: { [FILTER_MONGO_OPERATORS.regex]: regex },
   })),
+};
+
+export const META_ALARM_EVENT_DEFAULT_FIELDS = {
+  component: 'metaalarm',
+  connector: 'engine',
+  connector_name: 'correlation',
+  source_type: 'metaalarm',
 };

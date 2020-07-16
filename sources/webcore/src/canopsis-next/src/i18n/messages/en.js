@@ -233,7 +233,8 @@ export default {
         variablesHelp: 'List of available variables',
         history: 'History',
         groupRequest: 'Suggest group request for meta alarm',
-        group: 'Create meta alarm',
+        manualMetaAlarmGroup: 'Manual meta alarm management',
+        manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
       },
       iconsTitles: {
@@ -1171,8 +1172,13 @@ export default {
       result: 'Result',
       manageTabs: 'Manage tabs',
     },
-    createMetaAlarm: {
+    createManualMetaAlarm: {
+      title: 'Manual meta alarm management',
       noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
+      fields: {
+        metaAlarm: 'Manual meta alarm',
+        output: 'Note',
+      },
     },
   },
   tables: {
