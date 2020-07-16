@@ -7,29 +7,56 @@ import overlayableMixin from '../../mixins/overlayable';
 export default {
   extends: VDialog,
   mixins: [overlayableMixin],
-  props: {
-    zIndex: {
-      type: Number,
-      default: null,
-    },
-  },
   computed: {
     activeZIndex() {
-      if (typeof window === 'undefined') return 0;
+      if (typeof window === 'undefined') {
+        return 0;
+      }
 
       const content = this.stackElement || this.$refs.content;
-      // Return current zindex if not active
+
+      /**
+       * Return current zindex if not active
+       *
+       * We've changed factor from 2 to 12 for better overlay animation
+       */
       const index = !this.isActive
         ? getZIndex(content)
-        : this.zIndex || this.getMaxZIndex(this.stackExclude || [content]) + 2;
+        : this.getMaxZIndex(this.stackExclude || [content]) + 12;
 
       if (index == null) {
         return index;
       }
 
-      // Return max current z-index (excluding self) + 2
-      // (2 to leave room for an overlay below, if needed)
       return parseInt(index, 10);
+    },
+  },
+  methods: {
+    getMaxZIndex(exclude = []) {
+      const base = this.$el;
+      // Start with lowest allowed z-index or z-index of
+      // base component's element, whichever is greater
+      const zis = [this.stackMinZIndex, getZIndex(base)];
+      // Convert the NodeList to an array to
+      // prevent an Edge bug with Symbol.iterator
+      // https://github.com/vuetifyjs/vuetify/issues/2146
+      const activeElements = [
+        ...document.getElementsByClassName(this.stackClass),
+
+        /**
+         * We've added it here for correct zIndex calculation
+         */
+        ...document.getElementsByClassName('menuable__content__active v-menu__ignore-click-upper-outside'),
+      ];
+
+      // Get z-index for all active dialogs
+      for (let index = 0; index < activeElements.length; index += 1) {
+        if (!exclude.includes(activeElements[index])) {
+          zis.push(getZIndex(activeElements[index]));
+        }
+      }
+
+      return Math.max(...zis);
     },
   },
 };
