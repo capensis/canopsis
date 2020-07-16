@@ -104,9 +104,6 @@ export default {
     isResolvedAlarm() {
       return isResolvedAlarm(this.alarm);
     },
-    isConsequence() {
-      return this.alarm.causes;
-    },
     expandButtonClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 1);

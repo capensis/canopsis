@@ -68,7 +68,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 const { mapActions } = createNamespacedHelpers('alarm');
 
 /**
- * Modal to cancel an alarm
+ * Modal to manage alarms in meta alarm
  */
 export default {
   name: MODALS.createManualMetaAlarm,
