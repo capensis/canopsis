@@ -34,6 +34,7 @@ export const ENTITIES_TYPES = {
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
+  pbehaviorException: 'pbehaviorException',
 };
 
 export const MODALS = {
