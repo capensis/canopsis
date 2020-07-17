@@ -1,7 +1,7 @@
 <template lang="pug">
   v-toolbar.white(dense, flat)
     v-text-field(
-      :value="value",
+      :value="localValue",
       :label="$t('common.search')",
       data-test="searchingTextField",
       hide-details,
@@ -50,6 +50,8 @@ export default {
       this.$emit('input', value);
     },
     clear() {
+      this.localValue = '';
+
       this.$emit('input', '');
       this.$emit('clear');
     },

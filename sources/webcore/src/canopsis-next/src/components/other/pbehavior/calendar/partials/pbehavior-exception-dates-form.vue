@@ -45,6 +45,18 @@ export default {
     showSelectExceptionDatesModal() {
       this.$modals.show({
         name: MODALS.selectExceptionsDatesLists,
+        config: {
+          action: (exceptions) => {
+            const preparedExceptionDates = exceptions.reduce((acc, { exdates }) => {
+              acc.push(...exdates);
+
+              return acc;
+            }, []);
+            preparedExceptionDates.push(...this.dates);
+
+            this.$emit('input', preparedExceptionDates);
+          },
+        },
       });
     },
     addExceptionDate() {
