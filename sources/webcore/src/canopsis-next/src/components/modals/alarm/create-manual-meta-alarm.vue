@@ -11,28 +11,8 @@
           v-layout(row)
             v-divider.my-3
           v-layout(row)
-            v-combobox(
-              v-model="form.metaAlarm",
-              v-validate="'required'",
-              :items="manualMetaAlarms",
-              :label="$t('modals.createManualMetaAlarm.fields.metaAlarm')",
-              :error-messages="errors.collect('manualMetaAlarm')",
-              :loading="pending",
-              item-value="d",
-              item-text="v.display_name",
-              name="manualMetaAlarm",
-              return-object,
-              blur-on-create
-            )
-              template(slot="no-data")
-                v-list-tile
-                  v-list-tile-content
-                    v-list-tile-title(v-html="$t('modals.createManualMetaAlarm.noData')")
-          v-layout(row)
-            v-text-field(
-              v-model="form.output",
-              :label="$t('modals.createManualMetaAlarm.fields.output')"
-            )
+            v-flex(xs12)
+              manual-meta-alarm-form(v-model="form")
       template(slot="actions")
         v-btn(
           depressed,
@@ -48,12 +28,10 @@
 
 <script>
 import { isObject } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import {
   MODALS,
   EVENT_ENTITY_TYPES,
-  MANUAL_META_ALARMS_REQUEST_FILTER,
   META_ALARM_EVENT_DEFAULT_FIELDS,
 } from '@/constants';
 
@@ -62,10 +40,9 @@ import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
+import ManualMetaAlarmForm from '@/components/other/alarm/forms/manual-meta-alarm-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
-
-const { mapActions } = createNamespacedHelpers('alarm');
 
 /**
  * Modal to manage alarms in meta alarm
@@ -75,12 +52,14 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AlarmGeneralTable, ModalWrapper },
+  components: {
+    AlarmGeneralTable,
+    ManualMetaAlarmForm,
+    ModalWrapper,
+  },
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
-      pending: false,
-      manualMetaAlarms: [],
       form: {
         manualMetaAlarm: null,
         output: '',
@@ -94,14 +73,7 @@ export default {
         : EVENT_ENTITY_TYPES.manualMetaAlarmGroup;
     },
   },
-  mounted() {
-    this.fetchManualMetaAlarms();
-  },
   methods: {
-    ...mapActions({
-      fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
-    }),
-
     /**
      * Function for data preparation
      *
@@ -117,17 +89,6 @@ export default {
 
         ...data,
       }];
-    },
-
-    async fetchManualMetaAlarms() {
-      this.pending = true;
-
-      const { alarms = [] } = await this.fetchAlarmsListWithoutStore({
-        params: { filter: MANUAL_META_ALARMS_REQUEST_FILTER },
-      });
-
-      this.manualMetaAlarms = alarms;
-      this.pending = false;
     },
 
     async submit() {
