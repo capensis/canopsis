@@ -172,7 +172,7 @@ class MongoStorage(MongoDataBase, Storage):
     def get_elements(
             self,
             ids=None, query=None, limit=0, skip=0, sort=None, with_count=False,
-            hint=None, projection=None, tags=None,
+            hint=None, projection=None, tags=None, with_name=False,
             *args, **kwargs
     ):
 
@@ -214,6 +214,35 @@ class MongoStorage(MongoDataBase, Storage):
 
         if one_element:
             result = result[0] if result else None
+
+        if with_name:
+            id_set = []
+            result = list(result)
+
+            def aggregate_id(ent1, ent2):
+                if ent1:
+                    id_set.extend(ent1.get('impact', []))
+                    id_set.extend(ent1.get('depends', []))
+                if ent2:
+                    id_set.extend(ent2.get('impact', []))
+                    id_set.extend(ent2.get('depends', []))
+
+            if not one_element:
+                reduce(aggregate_id, result)
+            else:
+                reduce(aggregate_id, list(result))
+
+            id_set = list(set(id_set))
+            name_list = self._find({"_id": {"$in": id_set}}, {"name": 1})
+            name_map = {}
+            for mapping in name_list:
+                name_map[mapping['_id']] = mapping['name']
+
+            for doc in result:
+                doc['impact_name'] = []
+                doc['depends_name'] = []
+                map(lambda x: doc['impact_name'].append(name_map.get(x, None)), doc['impact'])
+                map(lambda x: doc['depends_name'].append(name_map.get(x, None)), doc['depends'])
 
         # if with_count, add count to the result
         if with_count:
