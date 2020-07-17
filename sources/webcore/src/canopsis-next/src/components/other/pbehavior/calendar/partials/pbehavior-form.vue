@@ -1,41 +1,8 @@
 <template lang="pug">
   div
-    v-layout(align-center)
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('modals.createPbehavior.steps.general.fields.name')",
-        :error-messages="errors.collect('name')",
-        name="name",
-        data-test="pbehaviorFormName"
-      )
-    v-layout
-      v-switch(
-        v-field="form.enabled",
-        :label="$t('modals.createPbehavior.steps.general.fields.enabled')",
-        color="primary",
-        hide-details
-      )
-    v-layout.mt-3(wrap)
+    v-layout(wrap)
       v-flex(xs12)
-        v-layout(wrap, justify-space-between)
-          v-flex(data-test="startDateTimePicker", xs6)
-            date-time-picker-field(
-              v-validate="tstartRules",
-              :value="form.tstart",
-              :label="$t('modals.createPbehavior.steps.general.fields.start')",
-              name="tstart",
-              @input="updateField('tstart', $event)"
-            )
-          v-flex(data-test="stopDateTimePicker", xs6)
-            date-time-picker-field(
-              v-validate="tstopRules",
-              :value="form.tstop",
-              :label="$t('modals.createPbehavior.steps.general.fields.stop')",
-              name="tstop",
-              @input="updateField('tstop', $event)"
-            )
-      pbehavior-general-form(v-field="form")
+        pbehavior-general-form(v-field="form")
       v-flex(xs12)
         pbehavior-comments-form(v-field="form.comments")
       v-flex(xs12)
@@ -60,32 +27,21 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
 import { isEmpty } from 'lodash';
 
-import { DATETIME_FORMATS, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import formMixin from '@/mixins/form/object';
-
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
-import RRuleForm from '@/components/forms/rrule.vue';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
-import PbehaviorExdatesForm from './pbehavior-exdates-form.vue';
 
 export default {
   components: {
-    RRuleForm,
-    FilterEditor,
-    DateTimePickerField,
     PbehaviorGeneralForm,
     PbehaviorCommentsForm,
-    PbehaviorExdatesForm,
   },
-  mixins: [formValidationHeaderMixin, formMixin],
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -94,9 +50,7 @@ export default {
   props: {
     form: {
       type: Object,
-      default: () => ({
-        general: {},
-      }),
+      required: true,
     },
     noFilter: {
       type: Boolean,
@@ -104,23 +58,6 @@ export default {
     },
   },
   computed: {
-    tstartRules() {
-      return {
-        required: true,
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
-
-    tstopRules() {
-      const rules = { required: true };
-
-      if (this.form.tstart) {
-        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
-        rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
-      }
-
-      return rules;
-    },
     hasFilter() {
       return this.form.filter && !isEmpty(this.form.filter.filter);
     },
@@ -148,7 +85,7 @@ export default {
           filter: this.form.filter,
           hiddenFields: ['title'],
           action: (filter) => {
-            this.$emit('input', { ...this.form, filter });
+            this.updateField('filter', filter);
             this.$nextTick(() => this.$validator.validate('filter'));
           },
         },
@@ -162,7 +99,7 @@ export default {
         },
         config: {
           rrule: this.form.rrule,
-          action: rrule => this.$emit('input', { ...this.form, rrule }),
+          action: rrule => this.updateField('rrule', rrule),
         },
       });
     },
