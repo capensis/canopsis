@@ -2,6 +2,10 @@
   v-form.pa-3.pbehavior-form(@submit.prevent="submitHandler")
     pbehavior-form(v-model="form")
     v-layout(row, justify-end)
+      v-btn.error(
+        v-show="pbehavior",
+        @click="remove"
+      ) Delete
       v-btn.mr-0.mb-0(
         depressed,
         flat,
@@ -11,6 +15,8 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import {
   calendarEventToPbehaviorForm,
   formToCalendarEvent,
@@ -37,6 +43,11 @@ export default {
       form: calendarEventToPbehaviorForm(this.calendarEvent),
     };
   },
+  computed: {
+    pbehavior() {
+      return get(this.calendarEvent, 'data.pbehavior');
+    },
+  },
   methods: {
     async submitHandler() {
       const isValid = await this.$validator.validateAll();
@@ -48,6 +59,11 @@ export default {
 
         this.$emit('submit', calendarEvent);
       }
+    },
+
+    remove() {
+      this.$emit('close');
+      this.$emit('remove', this.pbehavior);
     },
   },
 };
