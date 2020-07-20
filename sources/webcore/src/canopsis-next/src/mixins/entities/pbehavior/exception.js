@@ -9,10 +9,7 @@ export default {
   data() {
     return {
       pbehaviorExceptionsPending: false,
-      pbehaviorExceptions: [
-        { id: 1, name: 'root' },
-        { id: 2, name: 'canopsis' },
-      ],
+      pbehaviorExceptions: [],
       pbehaviorExceptionsMeta: {},
     };
   },

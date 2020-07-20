@@ -6,7 +6,7 @@ export default {
   namespaced: true,
   actions: {
     fetchItems(context, { data }) {
-      return request.get(API_ROUTES.planning.timespan, data);
+      return request.post(API_ROUTES.planning.timespan, data);
     },
   },
 };
