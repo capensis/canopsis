@@ -1091,6 +1091,9 @@ export default {
     pbehaviorPlanning: {
       title: 'Comportement périodiques',
     },
+    selectExceptionsDatesLists: {
+      title: 'Choisissez la liste des exceptions',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1570,6 +1573,12 @@ export default {
       [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
     },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Útsûnderingsdatums',
+    create: 'Foegje in útsûnderingsdatum ta',
+    choose: 'Choisissez la liste des útsûnderingen',
   },
 
   ...featureService.get('i18n.fr'),

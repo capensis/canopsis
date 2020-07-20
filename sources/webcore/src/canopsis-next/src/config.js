@@ -124,6 +124,7 @@ export const API_ROUTES = {
    */
   planning: {
     timespan: '/api/v4/pbehavior-timespans',
+    exceptions: '/api/v4/pbehavior-exceptions',
   },
 };
 

@@ -43,7 +43,7 @@
         pbehavior-general-form(v-field="form")
       v-tab-item
         r-rule-form(v-field="form.rrule")
-        pbehavior-exdates-form(v-if="form.rrule", v-field="form.exdate")
+        pbehavior-exception-dates-form(v-if="form.rrule", v-field="form.exdate")
 </template>
 
 <script>
@@ -60,7 +60,7 @@ import RRuleForm from '@/components/forms/rrule.vue';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
-import PbehaviorExdatesForm from './pbehavior-exdates-form.vue';
+import PbehaviorExceptionDatesForm from './pbehavior-exception-dates-form.vue';
 
 export default {
   components: {
@@ -69,7 +69,7 @@ export default {
     DateTimePickerField,
     PbehaviorGeneralForm,
     PbehaviorCommentsForm,
-    PbehaviorExdatesForm,
+    PbehaviorExceptionDatesForm,
   },
   mixins: [formValidationHeaderMixin, formMixin],
   model: {
