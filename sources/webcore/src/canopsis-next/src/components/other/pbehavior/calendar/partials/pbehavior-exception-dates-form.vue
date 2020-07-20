@@ -47,7 +47,7 @@ export default {
         name: MODALS.selectExceptionsDatesLists,
         config: {
           action: (exceptions) => {
-            const preparedExceptionDates = exceptions.reduce((acc, { exdates }) => {
+            const preparedExceptionDates = exceptions.reduce((acc, { exdates = [] }) => {
               acc.push(...exdates);
 
               return acc;

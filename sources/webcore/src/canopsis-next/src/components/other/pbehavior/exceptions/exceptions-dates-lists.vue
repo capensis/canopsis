@@ -7,7 +7,7 @@
       :headers="headers",
       :items="pbehaviorExceptions",
       :loading="pbehaviorExceptionsPending",
-      :total-items="1",
+      :total-items="pbehaviorExceptionsMeta.total_count",
       :pagination.sync="query",
       item-key="id",
       select-all
@@ -42,11 +42,6 @@ export default {
       type: Array,
       default: () => [],
     },
-  },
-  data() {
-    return {
-      selected: [],
-    };
   },
   computed: {
     headers() {

@@ -28,7 +28,7 @@ export default {
       const result = await this.fetchPbehaviorExceptionsListWithoutStore({ params: this.getQuery() });
 
       if (result) {
-        this.pbehaviorExceptions = result.data;
+        // this.pbehaviorExceptions = result.data;
         this.pbehaviorExceptionsMeta = result.meta;
       }
 
