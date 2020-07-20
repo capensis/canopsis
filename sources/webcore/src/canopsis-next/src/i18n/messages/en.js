@@ -1173,6 +1173,9 @@ export default {
     selectExceptionsDatesLists: {
       title: 'Choose list of exceptions',
     },
+    createRRule: {
+      title: 'Create RRule',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1660,6 +1663,15 @@ export default {
       [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
       [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
+    },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Add filter',
+      editFilter: 'Edit filter',
+      addRRule: 'Add RRule',
+      editRrule: 'Edit RRule',
     },
   },
 

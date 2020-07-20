@@ -5,7 +5,7 @@
       v-btn.error(
         v-show="pbehavior",
         @click="remove"
-      ) Delete
+      ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(
         depressed,
         flat,

@@ -91,7 +91,10 @@ export default {
     }
 
     .v-item-group .v-chip {
+      z-index: inherit;
+
       &, & .v-chip__content {
+        z-index: inherit;
         cursor: pointer;
       }
 

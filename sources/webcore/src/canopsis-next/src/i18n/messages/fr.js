@@ -1094,6 +1094,9 @@ export default {
     selectExceptionsDatesLists: {
       title: 'Choisissez la liste des exceptions',
     },
+    createRRule: {
+      title: 'Créer un récurrence',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1572,6 +1575,15 @@ export default {
       [USER_RIGHTS_PREFIXES.business.context]: 'Droits pour le widget Explorateur de contexte',
       [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
+    },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Créer un filtre',
+      editFilter: 'Éditer un filtre',
+      addRRule: 'Créer un récurrence',
+      editRrule: 'Éditer un récurrence',
     },
   },
 

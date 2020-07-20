@@ -9,7 +9,7 @@
         v-btn.ml-0.btn-filter(
           :color="errors.has('filter') ? 'error' : 'primary'",
           @click="showCreateFilterModal"
-        ) {{ hasFilter ? 'Edit filter' : 'Add filter' }}
+        ) {{ hasFilter ? $t('pbehavior.buttons.editFilter') : $t('pbehavior.buttons.addFilter') }}
         v-tooltip(v-show="hasFilter", fixed, top)
           v-btn(slot="activator", icon)
             v-icon(color="grey darken-1") info
@@ -19,7 +19,7 @@
         v-btn.ml-0(
           color="primary",
           @click="showCreateRRuleModal"
-        )  {{ hasRRule ? 'Edit RRule' : 'Add RRule' }}
+        )  {{ hasRRule ? $t('pbehavior.buttons.editRrule') : $t('pbehavior.buttons.addRRule') }}
         v-tooltip(v-show="hasRRule", fixed, top)
           v-btn(slot="activator", icon)
             v-icon(color="grey darken-1") info
@@ -101,7 +101,10 @@ export default {
         },
         config: {
           rrule: this.form.rrule,
-          action: rrule => this.updateField('rrule', rrule),
+          exdate: this.form.exdate,
+          action: ({ rrule, exdate }) => {
+            this.updateModel({ ...this.form, rrule, exdate });
+          },
         },
       });
     },
