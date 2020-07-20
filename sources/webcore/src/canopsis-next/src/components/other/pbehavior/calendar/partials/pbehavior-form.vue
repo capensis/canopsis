@@ -35,11 +35,13 @@ import formMixin from '@/mixins/form/object';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
+import PbehaviorExceptionDatesForm from './pbehavior-exception-dates-form.vue';
 
 export default {
   components: {
     PbehaviorGeneralForm,
     PbehaviorCommentsForm,
+    PbehaviorExceptionDatesForm,
   },
   mixins: [formMixin],
   model: {

@@ -55,4 +55,5 @@ export { default as CreateCommentEvent } from './common/create-comment-event.vue
 export { default as CreatePlaylist } from './admin/create-playlist.vue';
 export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue';
 export { default as PbehaviorPlanning } from './pbehavior/pbehavior-planning.vue';
+export { default as SelectExceptionsDatesLists } from './pbehavior/select-exceptions-dates-lists.vue';
 export { default as CreateRRule } from './pbehavior/create-r-rule.vue';

@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="pbehaviorListModal")
+  modal-wrapper
     template(slot="title")
       span {{ $t('modals.pbehaviorPlanning.title') }}
     template(slot="text")

@@ -1,3 +1,4 @@
+import VChipGroup from './components/v-chip-group/v-chip-group.vue';
 import VDialog from './components/v-dialog/v-dialog.vue';
 import VCheckboxFunctional from './components/v-checkbox-functional/v-checkbox-functional.vue';
 import VExpansionPanelContent from './components/v-expansion-panel-content/v-expansion-panel-content.vue';
@@ -6,6 +7,7 @@ import VMenu from './components/v-menu/v-menu.vue';
 
 export default {
   install(Vue) {
+    Vue.component('v-chip-group', VChipGroup);
     Vue.component('v-dialog', VDialog);
     Vue.component('v-checkbox-functional', VCheckboxFunctional);
     Vue.component('v-expansion-panel-content', VExpansionPanelContent);

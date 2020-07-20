@@ -1170,6 +1170,9 @@ export default {
     pbehaviorPlanning: {
       title: 'Periodical behaviors',
     },
+    selectExceptionsDatesLists: {
+      title: 'Choose list of exceptions',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1658,6 +1661,12 @@ export default {
       [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
     },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Exception dates',
+    create: 'Add an exception date',
+    choose: 'Choose list of exceptions',
   },
 
   ...featureService.get('i18n.en'),
