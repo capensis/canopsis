@@ -123,8 +123,8 @@ export const API_ROUTES = {
    * TODO: rename to pbehavior
    */
   planning: {
-    timespan: '/api/v4/pbehavior-timespans/',
-    exceptions: '/api/v4/pbehavior-exceptions/',
+    timespan: '/api/v4/pbehavior-timespans',
+    exceptions: '/api/v4/pbehavior-exceptions',
   },
 };
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    h3.my-3.grey--text Exception dates
+    h3.my-3.grey--text {{ $t('pbehaviorExceptions.title') }}
     v-divider
     v-layout.mt-3(row)
       v-flex(xs12)
@@ -12,9 +12,9 @@
         )
     v-layout(row)
       v-flex
-        v-btn.ml-0(outline, @click="addExceptionDate") Add an exception date
+        v-btn.ml-0(outline, @click="addExceptionDate") {{ $t('pbehaviorExceptions.create') }}
       v-flex
-        v-btn.mr-0(outline, @click="showSelectExceptionDatesModal") Chose list of exceptions
+        v-btn.mr-0(outline, @click="showSelectExceptionDatesModal") {{ $t('pbehaviorExceptions.choose') }}
 </template>
 
 <script>

@@ -61,10 +61,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.fetchList();
-  },
-
   methods: {
     async fetchList() {
       this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
