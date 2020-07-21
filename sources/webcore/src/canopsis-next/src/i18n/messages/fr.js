@@ -1094,7 +1094,7 @@ export default {
     selectExceptionsDatesLists: {
       title: 'Choisissez la liste des exceptions',
     },
-    createRRule: {
+    createRrule: {
       title: 'Créer un récurrence',
     },
   },

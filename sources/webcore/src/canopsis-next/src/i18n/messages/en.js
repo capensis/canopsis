@@ -662,7 +662,7 @@ export default {
         comments: {
           title: 'Comments',
           buttons: {
-            addComment: 'Add a new comment',
+            addComment: 'Add comment',
           },
           fields: {
             message: 'Message',
@@ -1173,7 +1173,7 @@ export default {
     selectExceptionsDatesLists: {
       title: 'Choose list of exceptions',
     },
-    createRRule: {
+    createRrule: {
       title: 'Create RRule',
     },
   },
