@@ -442,6 +442,7 @@ class PBehaviorManager(object):
                         except:
                             sleep(0.5)
                             pass
+                    pb_kwargs[PBehavior.ENABLED] = False
                     expired_data = PBehavior(**pb_kwargs)
                     self.collection.insert(expired_data.to_dict())
                     result = self.collection.insert(data.to_dict())
