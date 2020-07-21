@@ -18,7 +18,8 @@
         slot-scope="{ calendarEvent, close, edit }",
         :calendarEvent="calendarEvent",
         @close="close",
-        @submit="edit"
+        @submit="edit",
+        @remove="removePbehavior"
       )
     ds-calendar-event-popover(
       slot="eventCreatePopover",
@@ -29,7 +30,8 @@
         slot-scope="{ calendarEvent, close, add }",
         :calendarEvent="calendarEvent",
         @close="close",
-        @submit="add"
+        @submit="add",
+        @remove="removePbehavior"
       )
 </template>
 
@@ -62,6 +64,7 @@ export default {
       pending: false,
       calendar: Calendar.months(),
       events: [],
+      removedPbehaviorsById: {},
       changedPbehaviorsById: {},
       addedPbehaviorsById: {},
       colorsToPbehaviors: {},
@@ -81,7 +84,7 @@ export default {
         ...this.pbehaviorsById,
         ...this.changedPbehaviorsById,
         ...this.addedPbehaviorsById,
-      });
+      }).filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
     },
   },
   mounted() {
@@ -156,6 +159,20 @@ export default {
 
     changeCalendarHandler() {
       this.fetchEvents();
+    },
+
+    removePbehavior(pbehavior) {
+      if (this.addedPbehaviorsById[pbehavior._id]) {
+        this.$delete(this.addedPbehaviorsById, pbehavior._id);
+      } else {
+        this.$set(this.removedPbehaviorsById, pbehavior._id, pbehavior);
+
+        if (this.changedPbehaviorsById[pbehavior._id]) {
+          this.$delete(this.changedPbehaviorsById, pbehavior._id);
+        }
+      }
+
+      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
     },
 
     async changedEventHandler(event) {

@@ -2,6 +2,10 @@
   v-form.pa-3.pbehavior-form(@submit.prevent="submitHandler")
     pbehavior-form(v-model="form")
     v-layout(row, justify-end)
+      v-btn.error(
+        v-show="pbehavior",
+        @click="remove"
+      ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(
         depressed,
         flat,
@@ -11,6 +15,8 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import {
   calendarEventToPbehaviorForm,
   formToCalendarEvent,
@@ -21,9 +27,11 @@ import authMixin from '@/mixins/auth';
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: { PbehaviorForm },
   mixins: [authMixin],
-  inject: ['$validator'],
   props: {
     calendarEvent: {
       type: Object,
@@ -34,6 +42,11 @@ export default {
     return {
       form: calendarEventToPbehaviorForm(this.calendarEvent),
     };
+  },
+  computed: {
+    pbehavior() {
+      return get(this.calendarEvent, 'data.pbehavior');
+    },
   },
   methods: {
     async submitHandler() {
@@ -47,6 +60,11 @@ export default {
         this.$emit('submit', calendarEvent);
       }
     },
+
+    remove() {
+      this.$emit('close');
+      this.$emit('remove', this.pbehavior);
+    },
   },
 };
 </script>
@@ -55,6 +73,6 @@ export default {
   .pbehavior-form {
     overflow: auto;
     width: 500px;
-    max-height: 600px;
+    max-height: 555px; // For validation errors
   }
 </style>

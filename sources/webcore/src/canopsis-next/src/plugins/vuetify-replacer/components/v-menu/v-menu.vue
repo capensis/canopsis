@@ -15,12 +15,11 @@ export default {
       const targetZIndex = getZIndex(e.target);
       const contentZIndex = getZIndex(this.$refs.content);
 
-      return (this.ignoreClickUpperOutside && targetZIndex < contentZIndex)
-        || (!this.ignoreClickUpperOutside
-          && this.isActive
+      return this.ignoreClickUpperOutside
+        ? targetZIndex < contentZIndex
+        : this.isActive
           && this.closeOnClick
-          && !this.$refs.content.contains(e.target)
-        );
+          && !this.$refs.content.contains(e.target);
     },
 
     genContent() {
