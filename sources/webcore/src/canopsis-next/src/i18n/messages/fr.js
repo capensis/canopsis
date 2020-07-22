@@ -1008,7 +1008,7 @@ export default {
           },
         },
         moduleMibObjects: {
-          vars: 'Champ de match vars snmp',
+          vars: 'Champ de match vars SNMP',
           regex: 'Regex',
           formatter: 'Format (groupe de capture avec \\x)',
         },
