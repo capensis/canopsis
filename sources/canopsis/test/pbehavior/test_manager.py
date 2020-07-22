@@ -676,8 +676,10 @@ class TestManager(BaseTest):
         alarm_coll = self.pbm.alarmAdapter.collection
         alarm_coll.remove()
 
+        entity_id = 'é'
+
         self.pbm.context._put_entities([{
-            '_id': 1,
+            '_id': entity_id,
             'name': 'pbehavior-engine-test1',
             'depends': ["connector/connector_name"],
             'type': 'pbehavior-metric-test',
@@ -706,7 +708,7 @@ class TestManager(BaseTest):
             "rrule": 'invalid rrule ff',
             "tstart": 1546942445,
             "tstop": 2147483647,
-            "eids": [1]
+            "eids": [entity_id]
         })
         self.pbm.collection.remove()
         self.pbm.collection.insert([pbehavior1])
@@ -734,13 +736,13 @@ class TestManager(BaseTest):
             "rrule": '',
             "tstart": 1546942445,
             "tstop": 2147483647,
-            "eids": [1]
+            "eids": [entity_id]
             }
         )
 
         alarm_coll.insert({
             "_id": "alarm_2",
-            "d": 1,
+            "d": entity_id,
             "v": {
                 "state": {
                     "_t": 'stateinc',
@@ -770,7 +772,7 @@ class TestManager(BaseTest):
 
         pbehavior1.update({
             'name': 'hourly test',
-            'eids': [1],
+            'eids': [entity_id],
             'rrule': 'FREQ=HOURLY',
             'tstart': tstart1,
             'tstop': tstop1
@@ -800,7 +802,7 @@ class TestManager(BaseTest):
         # modify rrule
         pbehavior1.update({
             'name': 'minutely test',
-            'eids': [1],
+            'eids': [entity_id],
             'rrule': 'FREQ=MINUTELY;INTERVAL=15',
         })
         self.pbm.collection.update({'_id': pbehavior1['_id']}, {"$set": pbehavior1})
