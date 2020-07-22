@@ -1,6 +1,7 @@
 amqp==2.4.2
 Beaker<1.6.0
-bottle==0.10.9
+bottle==0.12.18
+bottle-swagger-2==2.0.9
 chardet<3.1
 configparser<3.6.0
 coverage<4.6.0

@@ -1,0 +1,124 @@
+swagger: '2.0'
+info: {title: bottle-swagger, version: 1.0.0}
+produces: [application/json]
+consumes: [application/json]
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
+
+definitions:
+  RuleConfig:
+    properties:
+      time_interval: {type: integer}
+      threshold_count: {type: integer}
+      value_path: {type: string}
+      alarm_patterns:
+        type: array
+        items: 
+          type: object
+    type: object
+    x-nullable: true 
+  Rule:
+    properties:
+      _id: {type: string}
+      name: {type: string}
+      type: {type: string}
+      patterns: 
+        type: object
+        x-nullable: true 
+      config: 
+        $ref: "#/definitions/RuleConfig"
+    required:
+      - type
+      - name
+    type: object
+paths:
+  /api/v2/metaalarmrule:
+    get:
+      summary: Get rules list
+      responses:
+        '200':
+          description: List of meta alarm rules
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Rule"
+
+    post:
+      summary: Create rule
+      parameters:
+        - in: body
+          name: rule
+          schema:
+            $ref: "#/definitions/Rule"
+      responses:
+        '200':
+          description: Rule has been created    
+        '400':
+          description: Rule create error
+          schema:
+            properties:
+              description:
+                type: string
+  /api/v2/metaalarmrule/{rule_id}:
+    get:
+      summary: Returns a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to return
+      responses:
+        '200':
+            description: A Rule object
+            schema:
+              $ref: "#/definitions/Rule"
+        '404':
+          description: Rule not found
+          schema:
+            properties:
+              description:
+                type: string
+    put:
+      summary: Update a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to update
+      responses:
+        '200':
+          description: Rule has been updated
+          schema:
+            properties:
+              is_success:
+                type: boolean
+        '400':
+          description: Rule update error
+          schema:
+            properties:
+              description:
+                type: string
+    delete:
+      summary: Delete a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to delete
+      responses:
+        '200':
+          description: Rule has been deleted
+          schema:
+            properties:
+              acknowledged:
+                description: True for success
+                type: boolean
+              deletedCount:
+                description: 1 when document deleted
+                type: integer
