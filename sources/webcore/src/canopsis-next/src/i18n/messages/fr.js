@@ -53,7 +53,7 @@ export default {
     select: 'Sélectionner',
     states: 'Sévérités',
     state: 'Sévérité',
-    sla: 'Sla',
+    sla: 'SLA',
     authors: 'Auteurs',
     stat: 'Statistique',
     trend: 'Tendance',
