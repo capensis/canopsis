@@ -1529,7 +1529,8 @@ class PBehaviorManager(object):
         for eid in eids:
             alarms = self.alarmAdapter.find_unresolved_alarms([eid])
             for al in alarms:
-                average_time = round((time() - start_time), 5)
+                now = time()
+                average_time = round((now - start_time), 5)
                 event = forger(
                     connector=al.identity.connector,
                     connector_name=al.identity.connector_name,
@@ -1544,7 +1545,7 @@ class PBehaviorManager(object):
                         "value": average_time
                     }],
                     display_name=pb[PBehavior.NAME],
-                    timestamp=self._to_timestamp(action_time)
+                    timestamp=int(now)
                 )
                 events.append(event)
         return events
