@@ -984,7 +984,7 @@ export default {
         oid: {
           title: 'OID',
           labels: {
-            module: 'Sélectionnez un module mib',
+            module: 'Sélectionnez un module MIB',
           },
         },
         output: {
