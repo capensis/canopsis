@@ -51,7 +51,7 @@ export default {
     preview: 'Aperçu',
     recursive: 'Récursif',
     select: 'Sélectionner',
-    states: 'Сriticités',
+    states: 'Sévérités',
     state: 'Sévérité',
     sla: 'Sla',
     authors: 'Auteurs',
