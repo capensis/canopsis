@@ -453,7 +453,7 @@ class PBehaviorManager(object):
 
         return result
 
-    def get_pbehaviors_by_eid(self, id_):
+    def get_pbehaviors_by_eid(self, id_, enabled_filter=None):
         """Retreive from database every pbehavior that contains
         the given id_ in the PBehavior.EIDS field.
 
@@ -474,6 +474,9 @@ class PBehaviorManager(object):
             id_ = [id_]
 
         cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}})
+
+        if enabled_filter is not None:
+            cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}, "enabled": enabled_filter})
 
         pbehaviors = []
 
@@ -1364,6 +1367,8 @@ class PBehaviorManager(object):
 
         for pb in ret_val:
             try:
+                if not pb[PBehavior.ENABLED]:
+                    continue
                 if self.check_active_pbehavior(timestamp, pb):
                     results.append(pb)
             except ValueError:
