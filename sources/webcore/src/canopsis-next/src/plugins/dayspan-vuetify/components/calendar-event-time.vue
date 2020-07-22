@@ -4,7 +4,8 @@
     :disabled="!hasPopover",
     :style="style",
     v-model="menu",
-    v-bind="popoverProps"
+    v-bind="popoverProps",
+    ignore-click-outside
   )
     template(slot="activator")
       .ds-calendar-event-span(

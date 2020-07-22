@@ -120,9 +120,10 @@ export default {
     },
 
     startAdd(mouseEvent) {
-      if (this.placeholderForCreate) {
-        this.clearPlaceholder();
+      if (this.placeholder) {
         this.endAdd();
+        this.endMove();
+        this.endResize();
         return;
       }
 

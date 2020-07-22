@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form.pa-3.pbehavior-form(@submit.prevent="submitHandler")
+  v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
     pbehavior-form(v-model="form")
     v-layout(row, justify-end)
       v-btn.error(
@@ -9,20 +9,24 @@
       v-btn.mr-0.mb-0(
         depressed,
         flat,
-        @click="$emit('close')"
+        @click="cancel"
       ) {{ $t('common.cancel') }}
       v-btn.mr-0.mb-0.primary.white--text(type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import { get } from 'lodash';
+import dependentMixin from 'vuetify/es5/mixins/dependent';
 
 import {
   calendarEventToPbehaviorForm,
   formToCalendarEvent,
 } from '@/helpers/forms/planning-pbehavior';
 
+import { MODALS } from '@/constants';
+
 import authMixin from '@/mixins/auth';
+import { isOmitEqual } from '@/helpers/is-omit-equal';
 
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
@@ -31,7 +35,7 @@ export default {
     validator: 'new',
   },
   components: { PbehaviorForm },
-  mixins: [authMixin],
+  mixins: [authMixin, dependentMixin],
   props: {
     calendarEvent: {
       type: Object,
@@ -47,6 +51,13 @@ export default {
     pbehavior() {
       return get(this.calendarEvent, 'data.pbehavior');
     },
+
+    clickOutsideDirective() {
+      return {
+        handler: this.cancel,
+        include: () => [this.$el, ...this.getOpenDependentElements()],
+      };
+    },
   },
   methods: {
     async submitHandler() {
@@ -59,6 +70,21 @@ export default {
 
         this.$emit('submit', calendarEvent);
       }
+    },
+
+    cancel() {
+      const oldPbehaviorForm = calendarEventToPbehaviorForm(this.calendarEvent);
+
+      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id'])) {
+        return this.$emit('close');
+      }
+
+      return this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.$emit('close'),
+        },
+      });
     },
 
     remove() {
