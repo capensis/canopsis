@@ -874,7 +874,7 @@ export default {
         success: 'Règle éditée avec succès !',
       },
       remove: {
-        success: 'La règle a bien été supprimée!',
+        success: 'La règle a bien été supprimée !',
       },
       priority: 'Priorité',
       editPattern: 'Éditer le pattern',
