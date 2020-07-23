@@ -5,6 +5,6 @@ import { DEFAULT_APP_TITLE } from '@/config';
  *
  * @param {String} title
  */
-export const setTabTitle = (title = DEFAULT_APP_TITLE) => {
-  document.title = title;
+export const setTabTitle = (title) => {
+  document.title = title || DEFAULT_APP_TITLE;
 };
