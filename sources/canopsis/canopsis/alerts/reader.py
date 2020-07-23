@@ -444,7 +444,7 @@ class AlertsReader(object):
             final_filter['$and'].append(bnf_search_filter)
 
         else:
-            escaped_search = re.escape(str(search))
+            escaped_search = re.escape(str(search).decode('utf-8'))
             column_filter = {'$or': []}
             for column in active_columns:
                 # filter is used in mongo
