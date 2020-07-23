@@ -179,6 +179,7 @@ export default {
           await this.updateUserInterface({ data });
           await this.fetchAllInfos();
 
+          this.setTitle();
           this.setPopupTimeout();
 
           this.$popups.success({ text: this.$t('success.default') });
