@@ -347,11 +347,20 @@ class TestReader(BaseTest):
                 }
             ]
         }
-        print("filter_'s pattern is {}".format(filter_["$and"][0]["d"]["$not"].pattern))
-        import bson
-        self.assertEqual(bson.BSON.encode(ref_filter), bson.BSON.encode(filter_))
-        print("bson equals asserion passed")
-        self.assertEqual(ref_filter, filter_)
+
+        # compiled regex resluted diffrent objects, that makes mismatched ref_filter and filter_
+        # first assert equality of patterns of these values 
+        # then assert equality for rest of conditions without compiled pattern objects
+        _get_regex_condition = lambda x: x["$and"][0]["d"]["$not"]
+        _get_pattern = lambda x: _get_regex_condition(x).pattern
+        def _del_pattern(x):
+            del x["$and"][0]["d"]["$not"]
+            return x
+        ref_pattern, filter_pattern = _get_pattern(ref_filter), _get_pattern(filter_)
+        self.assertEqual(ref_pattern, filter_pattern)
+        print("representation of matched paterns: {} {}, compiled regex {} {}".format(
+            ref_pattern, filter_pattern, _get_regex_condition(ref_filter), _get_regex_condition(filter_)))
+        self.assertEqual(_del_pattern(ref_filter), _del_pattern(filter_))
 
     def test__get_final_filter_natural_numonly(self):
         view_filter = {}
