@@ -348,6 +348,9 @@ class TestReader(BaseTest):
             ]
         }
         print("filter_'s pattern is {}".format(filter_["$and"][0]["d"]["$not"].pattern))
+        import bson
+        self.assertEqual(bson.BSON.encode(ref_filter), bson.BSON.encode(filter_))
+        print("bson equals asserion passed")
         self.assertEqual(ref_filter, filter_)
 
     def test__get_final_filter_natural_numonly(self):
