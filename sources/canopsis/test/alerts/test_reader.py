@@ -347,6 +347,7 @@ class TestReader(BaseTest):
                 }
             ]
         }
+        print("filter_ is {}".format(filter_))
         self.assertEqual(ref_filter, filter_)
 
     def test__get_final_filter_natural_numonly(self):
