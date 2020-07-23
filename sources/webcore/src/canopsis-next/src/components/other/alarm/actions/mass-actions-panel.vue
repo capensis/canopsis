@@ -102,7 +102,7 @@ export default {
     },
 
     filteredActions() {
-      return this.actions.filter(this.actionsAccessFilterHandler);
+      return this.actions;
     },
 
     items() {

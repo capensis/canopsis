@@ -7,7 +7,7 @@
         v-container
           v-layout(row)
             v-flex.text-xs-center
-              alarm-general-table(:items="items")
+              alarm-general-table(:items="alarms")
           v-layout(row)
             v-divider.my-3
           v-layout(row)
@@ -34,6 +34,7 @@ import {
   EVENT_ENTITY_TYPES,
   META_ALARM_EVENT_DEFAULT_FIELDS,
 } from '@/constants';
+import { isWarningAlarmState } from '@/helpers/entities';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
@@ -67,6 +68,9 @@ export default {
     };
   },
   computed: {
+    alarms() {
+      return this.items.filter(isWarningAlarmState);
+    },
     eventType() {
       return isObject(this.form.metaAlarm)
         ? EVENT_ENTITY_TYPES.manualMetaAlarmUpdate
@@ -107,7 +111,7 @@ export default {
           data.display_name = this.form.metaAlarm;
         }
 
-        await this.createEvent(this.eventType, this.items, data);
+        await this.createEvent(this.eventType, this.alarms, data);
 
         this.$modals.hide();
       }
