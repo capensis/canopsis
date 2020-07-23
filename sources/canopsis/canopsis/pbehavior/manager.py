@@ -1535,7 +1535,7 @@ class PBehaviorManager(object):
                     connector=al.identity.connector,
                     connector_name=al.identity.connector_name,
                     event_type=pb_event_type,
-                    component=str(eid),
+                    component=eid,
                     output="Pbehavior {}. Type: {}. Reason: {}".format(pb[PBehavior.NAME].encode('utf-8'),
                                                                        pb[PBehavior.TYPE].encode('utf-8'),
                                                                        pb[PBehavior.REASON].encode('utf-8')),#"{}. Name: {}. Type:{}".format(message, pb[PBehavior.NAME], pb[PBehavior.TYPE]),
