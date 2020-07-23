@@ -347,7 +347,7 @@ class TestReader(BaseTest):
                 }
             ]
         }
-        print("filter_ is {}".format(filter_))
+        print("filter_'s pattern is {}".format(filter_["$and"][0]["d"]["$not"].pattern))
         self.assertEqual(ref_filter, filter_)
 
     def test__get_final_filter_natural_numonly(self):
