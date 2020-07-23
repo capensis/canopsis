@@ -238,8 +238,8 @@ class RouteHandlerPBehavior(object):
 
         return result
 
-    def get_by_eid(self, eid):
-        return self.pb_manager.get_pbehaviors_by_eid(eid)
+    def get_by_eid(self, eid, enabled_filter=None):
+        return self.pb_manager.get_pbehaviors_by_eid(eid, enabled_filter)
 
     def read(self, _id, search=None, limit=None, skip=None, current_active_pbh=False, sort=None):
         """
@@ -610,7 +610,20 @@ def exports(ws):
         """
         Return pbehaviors that apply on entity entity_id.
         """
-        return gen_json(rhpb.get_by_eid(entity_id))
+        enabled_filter = None
+        try:
+            enabled_filter = int(request.params['enabled'])
+        except:
+            pass
+
+        if enabled_filter == 1:
+            enabled_filter = True
+        elif enabled_filter == 0:
+            enabled_filter = False
+        else:
+            enabled_filter = None
+
+        return gen_json(rhpb.get_by_eid(entity_id, enabled_filter))
 
     @route(
         ws.application.post,
