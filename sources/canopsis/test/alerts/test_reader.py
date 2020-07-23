@@ -338,11 +338,11 @@ class TestReader(BaseTest):
                 {
                     '$or': [
                         {'resource': {
-                            '$regex': '.*turret.*', '$options': 'i'}},
+                            '$regex': u'.*turret.*', '$options': 'i'}},
                         {'component': {
-                            '$regex': '.*turret.*', '$options': 'i'}},
+                            '$regex': u'.*turret.*', '$options': 'i'}},
                         {'d': {
-                            '$regex': '.*turret.*', '$options': 'i'}}
+                            '$regex': u'.*turret.*', '$options': 'i'}}
                     ]
                 }
             ]
