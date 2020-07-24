@@ -29,13 +29,6 @@ Une fois Docker CE installé, vous devez ensuite [installer Docker Compose](http
 
 Les images Docker officielles de Canopsis sont hébergées sur Docker Hub : <https://hub.docker.com/u/canopsis/>.
 
-Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis) contient des fichiers Docker Compose d'exemple :
-```sh
-git clone https://git.canopsis.net/canopsis/canopsis.git && cd canopsis
-```
-
-Si nécessaire, ajustez la variable `CANOPSIS_IMAGE_TAG` du fichier `.env` situé à la racine du dépôt Canopsis.
-
 Lancez ensuite la commande suivante, afin de lever un environnement Canopsis open-core complet avec Docker :
 ```sh
 docker-compose up -d
@@ -75,7 +68,7 @@ Les services doivent être en état `Up` ou `Exit 0`.
 
 Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
 
-## Arrêt de l'environnement Docker Compose 
+## Arrêt de l'environnement Docker Compose
 
 ```sh
 docker-compose down
