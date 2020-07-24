@@ -66,7 +66,7 @@ COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
-COPY sources/canopsis/webcore/services/swagger ./lib/python2.7/site-packages/canopsis/webcore/services
+COPY sources/canopsis/canopsis/webcore/services/swagger ./lib/python2.7/site-packages/canopsis/webcore/services
 
 RUN chmod +x /opt/canopsis/.bash_profile
 
