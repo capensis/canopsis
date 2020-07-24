@@ -56,6 +56,7 @@ export default {
 
     edit(calendarEvent) {
       this.$emit('edit-event', calendarEvent);
+      this.$emit('mouse-end-edit');
       this.menu = false;
     },
 
@@ -63,10 +64,16 @@ export default {
       if (this.handlesEvents(event)) {
         this.menu = !this.menu;
 
+        this.$emit('mouse-start-edit', this.getEvent('mouse-start-edit', event));
         if (!this.isPlaceholderWithDay) {
           this.$emit('clear-placeholder');
         }
       }
+    },
+
+    close() {
+      this.menu = false;
+      this.$emit('mouse-end-edit');
     },
   },
 };

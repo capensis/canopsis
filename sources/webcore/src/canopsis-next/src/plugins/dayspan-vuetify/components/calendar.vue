@@ -10,11 +10,13 @@
         @edit-event="editHandler",
         @add-event="addHandler",
         @mouse-move-day="mouseMoveDay",
-        @mouse-down-day="startAdd",
+        @mouse-down-day="startAddDay",
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
         @mouse-down-event="startMove",
         @mouse-start-resize="startResize",
+        @mouse-start-edit="startEditing",
+        @mouse-end-edit="endEditing",
         @clear-placeholder="clearPlaceholder"
       )
 
@@ -28,11 +30,13 @@
         @edit-event="editHandler",
         @add-event="addHandler",
         @mouse-move-day="mouseMoveDay",
-        @mouse-down-day="startAdd",
+        @mouse-down-day="startAddDay",
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
         @mouse-down-event="startMove",
         @mouse-start-resize="startResize",
+        @mouse-start-edit="startEditing",
+        @mouse-end-edit="endEditing",
         @clear-placeholder="clearPlaceholder"
       )
 
@@ -46,14 +50,16 @@
         @edit-event="editHandler",
         @add-event="addHandler",
         @mouse-move="mouseMove",
-        @mouse-down="mouseDown",
+        @mouse-down="startAdd",
         @mouse-up="mouseUp",
         @mouse-down-event="startMove",
         @mouse-move-day="mouseMoveDay",
-        @mouse-down-day="startAdd",
+        @mouse-down-day="startAddDay",
         @mouse-up-day="mouseUp",
         @mouse-up-event="mouseUp",
         @mouse-start-resize="startResize",
+        @mouse-start-edit="startEditing",
+        @mouse-end-edit="endEditing",
         @clear-placeholder="clearPlaceholder"
       )
 </template>
@@ -119,10 +125,11 @@ export default {
       this.$emit('added', event);
     },
 
-    startAdd(mouseEvent) {
-      if (this.placeholderForCreate) {
-        this.clearPlaceholder();
+    startAddDay(mouseEvent) {
+      if (this.placeholder || this.editing) {
         this.endAdd();
+        this.endMove();
+        this.endResize();
         return;
       }
 
@@ -140,11 +147,34 @@ export default {
       }
     },
 
+    startAdd(mouseEvent) {
+      if (this.placeholder || this.editing) {
+        this.endAdd();
+        this.endMove();
+        this.endResize();
+        return;
+      }
+
+      if (this.canAdd && mouseEvent.left) {
+        const { time } = mouseEvent;
+
+        this.addStart = time;
+        this.placeholderForCreate = false;
+        this.placeholder = this.$dayspan.getPlaceholderEventForAdd(time);
+        this.placeholder.event.schedule = Schedule.forTime(time, time.asTime());
+        this.placeholder.fullDay = false;
+      }
+    },
+
     startMove(mouseEvent) {
       if (this.canMove && mouseEvent.left) {
         this.readyToMove = true;
         this.movingEvent = mouseEvent;
       }
+    },
+
+    startEditing() {
+      this.editing = true;
     },
 
     mouseMoveCheck() {
@@ -269,6 +299,10 @@ export default {
       this.resizing = false;
       this.resizingEvent = null;
       this.resizingBelow = true;
+    },
+
+    endEditing() {
+      this.editing = false;
     },
 
     changeAddPlaceholder(mouseEvent) {

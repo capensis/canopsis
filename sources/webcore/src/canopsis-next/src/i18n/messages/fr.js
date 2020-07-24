@@ -1580,17 +1580,17 @@ export default {
 
   pbehavior: {
     buttons: {
-      addFilter: 'Créer un filtre',
-      editFilter: 'Éditer un filtre',
-      addRRule: 'Créer un récurrence',
-      editRrule: 'Éditer un récurrence',
+      addFilter: 'Ajouter un filtre',
+      editFilter: 'Modifier le filtre',
+      addRRule: 'Ajouter RRule',
+      editRrule: 'Modifier RRule',
     },
   },
 
   pbehaviorExceptions: {
-    title: 'Útsûnderingsdatums',
-    create: 'Foegje in útsûnderingsdatum ta',
-    choose: 'Choisissez la liste des útsûnderingen',
+    title: 'Dates d\'exception',
+    create: 'Ajouter une date d\'exception',
+    choose: 'Sélectionnez la liste d\'exclusion',
   },
 
   ...featureService.get('i18n.fr'),

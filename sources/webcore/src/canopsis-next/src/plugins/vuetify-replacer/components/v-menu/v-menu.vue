@@ -9,11 +9,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    ignoreClickOutside: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     closeConditional(e) {
       const targetZIndex = getZIndex(e.target);
       const contentZIndex = getZIndex(this.$refs.content);
+
+      if (this.ignoreClickOutside) {
+        return false;
+      }
 
       return this.ignoreClickUpperOutside
         ? targetZIndex < contentZIndex
