@@ -21,3 +21,6 @@ beat_processing = canopsis.pbehavior.process.beat_processing
 [engine:snmp]
 routing_keys = #
 exchange_name = canopsis.snmp
+
+[engine:kpi]
+beat_interval = 3600

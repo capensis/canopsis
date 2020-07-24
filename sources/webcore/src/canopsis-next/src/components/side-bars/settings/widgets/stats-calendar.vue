@@ -61,15 +61,6 @@ export default {
 
       return this.prepareWidgetWithAlarmParametersSettings(widget);
     },
-
-    prepareWidgetQuery(newQuery, oldQuery) {
-      return {
-        tstart: oldQuery.tstart,
-        tstop: oldQuery.tstop,
-
-        ...newQuery,
-      };
-    },
   },
 };
 </script>

@@ -444,7 +444,7 @@ class AlertsReader(object):
             final_filter['$and'].append(bnf_search_filter)
 
         else:
-            escaped_search = re.escape(str(search))
+            escaped_search = re.escape(str(search).decode('utf-8'))
             column_filter = {'$or': []}
             for column in active_columns:
                 # filter is used in mongo
@@ -626,7 +626,7 @@ class AlertsReader(object):
         # into v.lastComment
         pipeline.insert(0, {"$project": {"lastComment": False}})
         pipeline.insert(0, {'$addFields': {"v.lastComment": "$lastComment"}})
-        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "lastComment": {
+        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "infos_array": 1, "lastComment": {
             "$cond": {
                 "if": {"$eq": [{}, "$lastComment"]},
                 "then": None,
@@ -841,6 +841,7 @@ class AlertsReader(object):
                     self.logger.exception("Unable to check if pbehavior {} is active".format(pbehavior.get('_id')))
 
                 pbehavior['isActive'] = active
+                del pbehavior['eids']
 
     def _metaalarm_children_rules(self):
         """

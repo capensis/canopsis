@@ -59,13 +59,15 @@ export function formToMetaAlarmRule(form = {}) {
     }
     case META_ALARMS_RULE_TYPES.complex:
     case META_ALARMS_RULE_TYPES.valuegroup: {
-      const thresholdField = form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
+      const isComplex = form.type === META_ALARMS_RULE_TYPES.complex;
+
+      const thresholdField = form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount || !isComplex
         ? 'threshold_rate'
         : 'threshold_count';
 
       const fields = ['threshold_type', thresholdField];
 
-      if (form.type === META_ALARMS_RULE_TYPES.complex) {
+      if (isComplex) {
         fields.push('value_path');
       }
 

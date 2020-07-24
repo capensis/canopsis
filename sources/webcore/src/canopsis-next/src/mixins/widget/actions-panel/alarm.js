@@ -112,7 +112,7 @@ export default {
     showVariablesHelperModal() {
       const variables = [];
 
-      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity']), 'alarm');
+      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity', 'infos']), 'alarm');
 
       variables.push(alarmFields);
 
