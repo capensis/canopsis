@@ -722,7 +722,7 @@ class PBehaviorManager(object):
         Compute all filters and update eids attributes.
         """
         pbehaviors = self.collection.find(
-            {PBehavior.FILTER: {'$exists': True}})
+            {PBehavior.FILTER: {'$exists': True}, PBehavior.ENABLED: True})
 
         for pbehavior in pbehaviors:
 
