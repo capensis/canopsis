@@ -841,6 +841,7 @@ class AlertsReader(object):
                     self.logger.exception("Unable to check if pbehavior {} is active".format(pbehavior.get('_id')))
 
                 pbehavior['isActive'] = active
+                del pbehavior['eids']
 
     def _metaalarm_children_rules(self):
         """
