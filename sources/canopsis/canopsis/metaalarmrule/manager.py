@@ -183,4 +183,4 @@ class MetaAlarmRuleManager(object):
         if ids:
             query["_id"] = {"$in": ids}
 
-        return dict(((rule[MetaAlarmRule.ID], rule[MetaAlarmRule.NAME]) for rule in self.collection.find(query)))
+        return dict(((rule[MetaAlarmRule.ID], rule.get(MetaAlarmRule.NAME)) for rule in self.collection.find(query)))
