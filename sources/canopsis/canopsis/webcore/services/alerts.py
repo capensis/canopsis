@@ -355,20 +355,27 @@ def exports(ws):
                     if eid in entity_id:
                         enabled_pbh_entity_dict.add(eid)
 
+        pbehavior_active_snooze = 0
+
         for alarm in alarms['alarms']:
             v = alarm.get('v')
+            snoozed = False
             if isinstance(v, dict):
                 if v.get('ack', {}).get('_t') == 'ack':
                     counters['ack'] += 1
-                if v.get('snooze', {}).get('_t') == 'snooze':
+                snoozed = v.get('snooze', {}).get('_t') == 'snooze'
+                if snoozed:
                     counters['snooze'] += 1
                 if v.get('ticket', {}).get('_t') in ['declareticket', 'assocticket']:
                     counters['ticket'] += 1
             d = alarm.get('d')
             if d in enabled_pbh_entity_dict:
                 counters['pbehavior_active'] += 1
+                if snoozed:
+                    pbehavior_active_snooze += 1
 
-        counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze']
+        counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze'] + \
+            pbehavior_active_snooze
         return counters
 
     @route(
