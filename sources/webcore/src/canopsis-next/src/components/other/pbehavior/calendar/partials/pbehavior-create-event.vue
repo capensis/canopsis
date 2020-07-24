@@ -75,7 +75,7 @@ export default {
     cancel() {
       const oldPbehaviorForm = calendarEventToPbehaviorForm(this.calendarEvent);
 
-      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id'])) {
+      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id']) && this.pbehavior) {
         return this.$emit('close');
       }
 

@@ -64,8 +64,8 @@ export default {
       if (this.handlesEvents(event)) {
         this.menu = !this.menu;
 
-        this.$emit('mouse-start-edit', this.getEvent('mouse-start-edit', event));
         if (!this.isPlaceholderWithDay) {
+          this.$emit('mouse-start-edit', this.getEvent('mouse-start-edit', event));
           this.$emit('clear-placeholder');
         }
       }
