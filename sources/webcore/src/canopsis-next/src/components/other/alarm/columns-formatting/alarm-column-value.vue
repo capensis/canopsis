@@ -1,46 +1,46 @@
 <template lang="pug">
-  div(
-    :data-test="`alarmValue-${column.text}`",
-    :style="stateStyle",
-    :class="{ 'state-column-wrapper': column.isState }"
-  )
-    v-menu(
-      v-if="popupData",
-      v-model="isInfoPopupOpen",
-      :close-on-content-click="false",
-      :open-on-click="false",
-      offset-x,
-      lazy
-    )
-      div(slot="activator")
-        v-layout(align-center)
-          div(v-if="column.isHtml", v-html="sanitizedValue")
-          div(v-else, v-bind="component.bind", v-on="component.on")
-          v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
-            v-icon(small) info
-      v-card(:data-test="`alarmInfoPopup-${alarm._id}-column-${column.text}`", dark)
-        v-card-title.primary.pa-2.white--text
-          v-layout(justify-space-between, align-center)
-            h4 {{ $t('alarmList.infoPopup') }}
-            v-btn.ma-0.ml-3(
-              data-test="alarmInfoPopupCloseButton",
-              icon,
-              small,
-              @click="hideInfoPopup",
-              color="white"
-            )
-              v-icon(small, color="error") close
-        v-fade-transition
-          v-card-text.pa-2(v-if="isInfoPopupOpen", data-test="alarmInfoPopupContent")
-            v-runtime-template(:template="popupTextContent")
-    div(v-else-if="column.isHtml", v-html="sanitizedValue")
-    div(v-else, v-bind="component.bind", v-on="component.on")
+  div(:data-test="`alarmValue-${column.text}`")
+    v-tooltip(right, :disabled="!column.isState || isStateField")
+      span(slot="activator", :style="stateStyle", :class="{ 'state-column-wrapper': column.isState }")
+        v-menu(
+          v-if="popupData",
+          v-model="isInfoPopupOpen",
+          :close-on-content-click="false",
+          :open-on-click="false",
+          offset-x,
+          lazy
+        )
+          div.alarm-column-value(slot="activator")
+            v-layout(align-center)
+              div(v-if="column.isHtml", v-html="sanitizedValue")
+              div(v-else, v-bind="component.bind", v-on="component.on")
+              v-btn.ma-0(data-test="alarmInfoPopupOpenButton", icon, small, @click.stop="showInfoPopup")
+                v-icon(small) info
+          v-card(:data-test="`alarmInfoPopup-${alarm._id}-column-${column.text}`", dark)
+            v-card-title.primary.pa-2.white--text
+              v-layout(justify-space-between, align-center)
+                h4 {{ $t('alarmList.infoPopup') }}
+                v-btn.ma-0.ml-3(
+                  data-test="alarmInfoPopupCloseButton",
+                  icon,
+                  small,
+                  @click="hideInfoPopup",
+                  color="white"
+                )
+                  v-icon(small, color="error") close
+            v-fade-transition
+              v-card-text.pa-2(v-if="isInfoPopupOpen", data-test="alarmInfoPopupContent")
+                v-runtime-template(:template="popupTextContent")
+        div.alarm-column-value(v-else-if="column.isHtml", v-html="sanitizedValue")
+        div.alarm-column-value(v-else, v-bind="component.bind", v-on="component.on")
+      span {{ stateData.text }}
 </template>
 
 <script>
 import { get } from 'lodash';
 import VRuntimeTemplate from 'v-runtime-template';
 
+import { ALARM_ENTITY_FIELDS } from '@/constants';
 import { compile } from '@/helpers/handlebars';
 import { formatState } from '@/helpers/state-and-status-formatting';
 
@@ -110,9 +110,17 @@ export default {
     },
   },
   computed: {
+    isStateField() {
+      return this.column.value === ALARM_ENTITY_FIELDS.state;
+    },
+
+    stateData() {
+      return formatState(this.alarm.v.state.val);
+    },
+
     stateStyle() {
-      return this.column.isState
-        ? { backgroundColor: formatState(this.alarm.v.state.val).color }
+      return this.column.isState && !this.isStateField
+        ? { backgroundColor: this.stateData.color }
         : {};
     },
 
@@ -166,7 +174,7 @@ export default {
 
     component() {
       const PROPERTIES_COMPONENTS_MAP = {
-        'v.state.val': {
+        [ALARM_ENTITY_FIELDS.state]: {
           bind: {
             is: 'alarm-column-value-state',
             alarm: this.alarm,
@@ -227,6 +235,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .alarm-column-value {
+    display: inline-block;
+  }
+
   .state-column-wrapper {
     border-radius: 10px;
     padding: 3px 7px;
