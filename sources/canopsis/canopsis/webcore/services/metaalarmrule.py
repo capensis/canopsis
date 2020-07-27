@@ -57,7 +57,7 @@ class RouteHandlerMetaAlarmRule(object):
         if ma_rule_id is not None and not isinstance(ma_rule_id, string_types):
             raise ValueError("_id has invalid value: {}".format(ma_rule_id))
 
-        if isinstance(auto_resolve, bool):
+        if not isinstance(auto_resolve, bool):
             raise ValueError("invalid auto_resolve value type {}".format(auto_resolve))
 
         if isinstance(patterns, string_types):
