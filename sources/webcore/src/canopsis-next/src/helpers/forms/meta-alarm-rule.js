@@ -48,12 +48,6 @@ export function metaAlarmRuleToForm(rule = {}) {
 export function formToMetaAlarmRule(form = {}) {
   const metaAlarmRule = omit(form, ['config']);
 
-  metaAlarmRule.auto_resolve = [
-    META_ALARMS_RULE_TYPES.timebased,
-    META_ALARMS_RULE_TYPES.complex,
-    META_ALARMS_RULE_TYPES.valuegroup,
-  ].includes(metaAlarmRule.type) && !!metaAlarmRule.auto_resolve;
-
   switch (form.type) {
     case META_ALARMS_RULE_TYPES.attribute: {
       const config = pick(form.config, ['alarm_patterns', 'entity_patterns', 'event_patterns']);

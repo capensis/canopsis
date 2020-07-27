@@ -17,6 +17,11 @@
       :label="$t('common.name')",
       name="name"
     )
+    v-switch(
+      v-field="form.auto_resolve",
+      :label="$t('metaAlarmRule.fields.autoResolve')",
+      color="primary"
+    )
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
     v-text-field(
       v-if="isValueGroupType",
@@ -25,12 +30,6 @@
       :label="$t('metaAlarmRule.fields.valuePath')",
       :error-messages="errors.collect('valuePath')",
       name="valuePath"
-    )
-    v-switch(
-      v-if="isTimeBasedType || isComplexType || isValueGroupType",
-      v-field="form.auto_resolve",
-      :label="$t('metaAlarmRule.fields.autoResolve')",
-      color="primary"
     )
     meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
     meta-alarm-rule-threshold-count-form(v-if="isThresholdCountFormShown", v-field="form.config")
