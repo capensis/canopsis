@@ -1,6 +1,13 @@
 import { get } from 'lodash';
 
+import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
+
 export default {
+  data() {
+    return {
+      isShownPopover: false,
+    };
+  },
   computed: {
     hasPopover() {
       return get(this.calendarEvent, 'data.meta.hasPopover', !!this.$scopedSlots.eventPopover && !this.isPlaceholderWithDay);
@@ -22,6 +29,19 @@ export default {
 
     canResize() {
       return !this.$dayspan.readOnly && this.ending;
+    },
+
+    classWithKey() {
+      return getMenuClassByCalendarEvent(this.calendarEvent);
+    },
+  },
+  watch: {
+    menu(menu) {
+      if (menu) {
+        this.isShownPopover = true;
+      } else {
+        setTimeout(() => this.isShownPopover = false, 300);
+      }
     },
   },
   beforeDestroy() {
@@ -56,13 +76,11 @@ export default {
 
     edit(calendarEvent) {
       this.$emit('edit-event', calendarEvent);
-      this.$emit('mouse-end-edit');
-      this.menu = false;
     },
 
     editCheck(event) {
-      if (this.handlesEvents(event)) {
-        this.menu = !this.menu;
+      if (this.handlesEvents(event) && get(this.calendarEvent, 'data.pbehavior') && !this.menu) {
+        this.menu = true;
 
         if (!this.isPlaceholderWithDay) {
           this.$emit('mouse-start-edit', this.getEvent('mouse-start-edit', event));

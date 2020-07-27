@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { get, cloneDeep } from 'lodash';
 import dependentMixin from 'vuetify/es5/mixins/dependent';
 
 import {
@@ -25,8 +25,10 @@ import {
 
 import { MODALS } from '@/constants';
 
-import authMixin from '@/mixins/auth';
 import { isOmitEqual } from '@/helpers/is-omit-equal';
+import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
+
+import authMixin from '@/mixins/auth';
 
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
@@ -44,7 +46,10 @@ export default {
   },
   data() {
     return {
-      form: calendarEventToPbehaviorForm(this.calendarEvent),
+      form: this.calendarEvent.data.form
+        ? cloneDeep(this.calendarEvent.data.form)
+        : calendarEventToPbehaviorForm(this.calendarEvent),
+      manualClose: false,
     };
   },
   computed: {
@@ -53,11 +58,26 @@ export default {
     },
 
     clickOutsideDirective() {
+      const selectorsForInclude = [
+        '.ds-calendar-app-action',
+        `.${getMenuClassByCalendarEvent(this.calendarEvent)}`,
+      ];
+
       return {
         handler: this.cancel,
-        include: () => [this.$el, ...this.getOpenDependentElements()],
+        include: () => [
+          ...this.getOpenDependentElements(),
+          ...document.querySelectorAll(selectorsForInclude.join(',')),
+        ],
       };
     },
+  },
+  beforeDestroy() {
+    if (this.manualClose) {
+      delete this.calendarEvent.data.form;
+    } else {
+      this.calendarEvent.data.form = cloneDeep(this.form);
+    }
   },
   methods: {
     async submitHandler() {
@@ -75,14 +95,14 @@ export default {
     cancel() {
       const oldPbehaviorForm = calendarEventToPbehaviorForm(this.calendarEvent);
 
-      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id']) && this.pbehavior) {
-        return this.$emit('close');
+      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id'])) {
+        return this.close(true);
       }
 
       return this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.$emit('close'),
+          action: () => this.close(true),
         },
       });
     },
@@ -90,6 +110,12 @@ export default {
     remove() {
       this.$emit('close');
       this.$emit('remove', this.pbehavior);
+    },
+
+    close(manualClose = false) {
+      this.manualClose = manualClose;
+
+      this.$emit('close');
     },
   },
 };

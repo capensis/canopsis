@@ -17,7 +17,7 @@
     )
     slot(
       name="eventCreatePopover",
-      v-if="isStart && menu",
+      v-if="isStart",
       v-bind="{ placeholder, calendar, day, index, add, close }"
     )
 </template>
@@ -43,12 +43,10 @@ export default {
   methods: {
     close() {
       this.$emit('clear-placeholder');
-      this.menu = false;
     },
 
     add(calendarEvent) {
       this.$emit('add-event', calendarEvent);
-      this.menu = false;
     },
   },
 };

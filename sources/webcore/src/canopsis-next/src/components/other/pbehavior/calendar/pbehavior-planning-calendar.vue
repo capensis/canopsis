@@ -41,8 +41,6 @@ import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Schedule, Day, DaySpan } from 'dayspan';
 
-import uuid from '@/helpers/uuid';
-
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
 const { mapActions } = createNamespacedHelpers('pbehaviorTimespan');
@@ -128,24 +126,19 @@ export default {
         },
       });
 
-      const events = timespans.map((timespan) => {
+      const events = timespans.map((timespan, index) => {
         const startDay = new Day(moment.unix(timespan.from));
         const endDay = new Day(moment.unix(timespan.to));
         const daySpan = new DaySpan(startDay, endDay);
 
         return {
-          id: uuid('event'),
+          id: `${pbehavior._id}-${index}`,
           data: {
+            ...this.$dayspan.getDefaultEventDetails(),
+
             color,
             pbehavior,
-
             title: pbehavior.name,
-            description: '',
-            location: '',
-            forecolor: '#ffffff',
-            calendar: '',
-            busy: true,
-            icon: '',
           },
           schedule: Schedule.forSpan(daySpan),
         };

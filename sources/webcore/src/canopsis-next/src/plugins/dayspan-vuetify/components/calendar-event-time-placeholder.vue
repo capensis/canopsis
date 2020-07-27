@@ -14,7 +14,7 @@
       :calendar-event="placeholder",
       :calendar="calendar"
     )
-    slot(name="eventCreatePopover", v-if="isStart && menu", v-bind="{ placeholder, calendar, day, add, close }")
+    slot(name="eventCreatePopover", v-if="isStart", v-bind="{ placeholder, calendar, day, add, close }")
 </template>
 
 <script>
@@ -25,12 +25,10 @@ export default {
   methods: {
     close() {
       this.$emit('clear-placeholder');
-      this.menu = false;
     },
 
     add(calendarEvent) {
       this.$emit('add-event', calendarEvent);
-      this.menu = false;
     },
   },
 };

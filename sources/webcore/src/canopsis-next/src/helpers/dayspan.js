@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { groupBy } from 'lodash';
+import { get, groupBy } from 'lodash';
 import { Day, Schedule } from 'dayspan';
 
 /**
@@ -80,4 +80,14 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
 
     return groupedEvent[0];
   });
+}
+
+/**
+ * Get class for calendar event menu by calendar event data key
+ *
+ * @param {CalendarEvent} calendarEvent
+ * @return {string}
+ */
+export function getMenuClassByCalendarEvent(calendarEvent) {
+  return `ds-calendar-event-menu_${get(calendarEvent, 'data.key')}`;
 }

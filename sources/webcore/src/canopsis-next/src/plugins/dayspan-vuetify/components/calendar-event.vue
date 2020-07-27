@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-menu(
-    class="ds-calendar-event-menu",
+  v-menu.ds-calendar-event-menu.as(
+    :class="classWithKey",
     :content-class="contentClass",
     :disabled="!hasPopover",
     v-model="menu",
@@ -30,7 +30,11 @@
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
       div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
-    slot(name="eventPopover", v-if="menu", v-bind="{ calendarEvent, calendar, edit, details, close }")
+    slot(
+      name="eventPopover",
+      v-if="isShownPopover",
+      v-bind="{ calendarEvent, calendar, edit, details, close }"
+    )
 </template>
 
 <script>
