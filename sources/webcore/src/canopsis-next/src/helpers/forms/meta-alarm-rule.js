@@ -21,9 +21,9 @@ export function metaAlarmRuleToForm(rule = {}) {
     _id: rule._id || '',
     type: rule.type || META_ALARMS_RULE_TYPES.attribute,
     name: rule.name || '',
+    auto_resolve: !!rule.auto_resolve,
     config: {
       value_path: config.value_path || '',
-      auto_resolve: !!config.auto_resolve,
       alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
       entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
@@ -47,6 +47,12 @@ export function metaAlarmRuleToForm(rule = {}) {
  */
 export function formToMetaAlarmRule(form = {}) {
   const metaAlarmRule = omit(form, ['config']);
+
+  metaAlarmRule.auto_resolve = [
+    META_ALARMS_RULE_TYPES.timebased,
+    META_ALARMS_RULE_TYPES.complex,
+    META_ALARMS_RULE_TYPES.valuegroup,
+  ].includes(metaAlarmRule.type) && !!metaAlarmRule.auto_resolve;
 
   switch (form.type) {
     case META_ALARMS_RULE_TYPES.attribute: {
@@ -81,7 +87,7 @@ export function formToMetaAlarmRule(form = {}) {
       break;
     }
     case META_ALARMS_RULE_TYPES.timebased:
-      metaAlarmRule.config = pick(form.config, ['time_interval', 'auto_resolve']);
+      metaAlarmRule.config = pick(form.config, ['time_interval']);
       break;
   }
 

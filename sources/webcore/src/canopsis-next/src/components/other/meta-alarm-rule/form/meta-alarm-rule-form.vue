@@ -28,7 +28,7 @@
     )
     v-switch(
       v-if="isTimeBasedType || isComplexType || isValueGroupType",
-      v-field="form.config.auto_resolve",
+      v-field="form.auto_resolve",
       :label="$t('metaAlarmRule.fields.autoResolve')",
       color="primary"
     )
