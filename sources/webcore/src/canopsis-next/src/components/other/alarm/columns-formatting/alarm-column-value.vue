@@ -1,5 +1,9 @@
 <template lang="pug">
-  div(:data-test="`alarmValue-${column.text}`")
+  div(
+    :data-test="`alarmValue-${column.text}`",
+    :style="stateStyle",
+    :class="{ 'state-column-wrapper': column.isState }"
+  )
     v-menu(
       v-if="popupData",
       v-model="isInfoPopupOpen",
@@ -38,6 +42,7 @@ import { get } from 'lodash';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import { compile } from '@/helpers/handlebars';
+import { formatState } from '@/helpers/state-and-status-formatting';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
@@ -105,6 +110,12 @@ export default {
     },
   },
   computed: {
+    stateStyle() {
+      return this.column.isState
+        ? { backgroundColor: formatState(this.alarm.v.state.val).color }
+        : {};
+    },
+
     value() {
       return this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '');
     },
@@ -214,3 +225,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .state-column-wrapper {
+    border-radius: 10px;
+    padding: 3px 7px;
+  }
+</style>

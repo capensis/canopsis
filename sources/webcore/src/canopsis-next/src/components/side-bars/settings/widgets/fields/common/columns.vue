@@ -62,6 +62,13 @@
               @change="updateFieldInArrayItem(index, 'isHtml', $event)",
               color="primary"
             )
+          v-flex(xs11)
+            v-switch(
+              :label="$t('settings.columns.isState')",
+              :input-value="column.isState",
+              @change="updateFieldInArrayItem(index, 'isState', $event)",
+              color="primary"
+            )
       v-btn(
         data-test="columnNameAddButton",
         color="primary",
