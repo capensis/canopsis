@@ -12,7 +12,7 @@ from canopsis.metaalarmrule.manager import MetaAlarmRuleManager
 from canopsis.webcore.utils import HTTP_ERROR, HTTP_NOT_FOUND
 
 VALID_PARAMS = [
-    '_id', 'name', 'type', 'patterns', 'config',
+    '_id', 'name', 'type', 'patterns', 'config', 'auto_resolve'
 ]
 
 VALID_CONFIG_PARAMS = {
@@ -49,13 +49,17 @@ class RouteHandlerMetaAlarmRule(object):
     def __init__(self, ma_rule_manager):
         self.ma_rule_manager = ma_rule_manager
 
-    def _sanitize(self, name, rule_type, patterns, config, ma_rule_id):
+    def _sanitize(self, name, rule_type, patterns, config, ma_rule_id, auto_resolve=False):
         if rule_type not in VALID_RULE_TYPES:
             raise ValueError("rule type invalid value {}".format(rule_type))
         if name is not None and not isinstance(name, string_types):
             raise ValueError("name has invalid value: {}".format(name))
         if ma_rule_id is not None and not isinstance(ma_rule_id, string_types):
             raise ValueError("_id has invalid value: {}".format(ma_rule_id))
+
+        if not isinstance(auto_resolve, bool):
+            raise ValueError("invalid auto_resolve value type {}".format(auto_resolve))
+
         if isinstance(patterns, string_types):
             try:
                 patterns = loads(patterns)
@@ -79,13 +83,13 @@ class RouteHandlerMetaAlarmRule(object):
             raise ValueError("invalid config value type {}".format(config))
         return name, rule_type, patterns, config, ma_rule_id
 
-    def create(self, name, rule_type, patterns, config, ma_rule_id=None):
-        name, rule_type, patterns, config, ma_rule_id = self._sanitize(name, rule_type, patterns, config, ma_rule_id)
+    def create(self, name, rule_type, patterns, config, ma_rule_id=None, auto_resolve=False):
+        name, rule_type, patterns, config, ma_rule_id = self._sanitize(name, rule_type, patterns, config, ma_rule_id, auto_resolve)
         result = self.ma_rule_manager.create(name, rule_type, patterns, config, ma_rule_id=ma_rule_id)
         return result
 
-    def update(self, _id, name, rule_type, patterns, config):
-        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id)
+    def update(self, _id, name, rule_type, patterns, config, auto_resolve=False):
+        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id, False)
         result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config)
         return result
 
@@ -141,7 +145,7 @@ def exports(ws):
         try:
             return rh_ma_rule.create(
                 elements["name"], elements["type"], elements.get("patterns"), elements.get("config"), 
-                ma_rule_id=ma_rule_id)
+                ma_rule_id=ma_rule_id, auto_resolve=elements.get("auto_resolve", False))
         except (TypeError, KeyError):
             _set_status(HTTP_ERROR)
             return {'description': 'The fields \'name\' and \'type\' are required.'}
@@ -171,7 +175,7 @@ def exports(ws):
 
         try:
             success = rh_ma_rule.update(rule_id, elements["name"], elements["type"], elements.get("patterns"),
-                                     elements.get("config"))
+                                     elements.get("config"), auto_resolve=elements.get("auto_resolve", False))
         except Exception as exc:
             _set_status(HTTP_ERROR)
             return {'description': '{}'.format(exc)}
