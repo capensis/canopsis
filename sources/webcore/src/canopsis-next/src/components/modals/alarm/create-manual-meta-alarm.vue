@@ -32,7 +32,8 @@ import { isObject } from 'lodash';
 import {
   MODALS,
   EVENT_ENTITY_TYPES,
-  META_ALARM_EVENT_DEFAULT_FIELDS, ENTITIES_STATES,
+  META_ALARM_EVENT_DEFAULT_FIELDS,
+  ENTITIES_STATES,
 } from '@/constants';
 import { isWarningAlarmState } from '@/helpers/entities';
 
