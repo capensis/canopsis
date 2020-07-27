@@ -5,12 +5,10 @@ export default {
   namespaced: true,
   actions: {
     create(context, { data, pbehaviorId }) {
-      return request.post(API_ROUTES.pbehavior.comment.create, {}, {
-        params: {
-          ...data,
+      return request.post(API_ROUTES.pbehavior.comment.create, {
+        ...data,
 
-          pbehavior_id: pbehaviorId,
-        },
+        pbehavior_id: pbehaviorId,
       });
     },
 
