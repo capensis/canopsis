@@ -32,7 +32,7 @@ import { isObject } from 'lodash';
 import {
   MODALS,
   EVENT_ENTITY_TYPES,
-  META_ALARM_EVENT_DEFAULT_FIELDS,
+  META_ALARM_EVENT_DEFAULT_FIELDS, ENTITIES_STATES,
 } from '@/constants';
 import { isWarningAlarmState } from '@/helpers/entities';
 
@@ -103,6 +103,7 @@ export default {
           ...META_ALARM_EVENT_DEFAULT_FIELDS,
 
           output: this.form.output,
+          state: ENTITIES_STATES.minor,
         };
 
         if (this.eventType === EVENT_ENTITY_TYPES.manualMetaAlarmUpdate) {
