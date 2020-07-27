@@ -30,7 +30,6 @@
       v-if="isTimeBasedType || isComplexType || isValueGroupType",
       v-field="form.config.auto_resolve",
       :label="$t('metaAlarmRule.fields.autoResolve')",
-      data-test="pbehaviorRuleSwitcher",
       color="primary"
     )
     meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
