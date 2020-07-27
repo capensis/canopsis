@@ -1,11 +1,12 @@
 # amqp2engines.conf for a CAT Go stack
 
 [engine:event_filter]
-next = axe,metric,pbehavior
+next = metric,pbehavior
 
 [engine:pbehavior]
 event_processing = canopsis.pbehavior.process.event_processing
 beat_processing = canopsis.pbehavior.process.beat_processing
+next = axe
 
 [engine:metric]
 
