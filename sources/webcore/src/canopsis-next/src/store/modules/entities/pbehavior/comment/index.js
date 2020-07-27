@@ -15,13 +15,11 @@ export default {
     },
 
     update(context, { data, pbehaviorId, commentId }) {
-      return request.put(API_ROUTES.pbehavior.comment.update, {}, {
-        params: {
-          ...data,
+      return request.put(API_ROUTES.pbehavior.comment.update, {
+        ...data,
 
-          _id: commentId,
-          pbehavior_id: pbehaviorId,
-        },
+        _id: commentId,
+        pbehavior_id: pbehaviorId,
       });
     },
 
