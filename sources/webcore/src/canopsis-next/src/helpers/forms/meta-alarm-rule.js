@@ -23,6 +23,7 @@ export function metaAlarmRuleToForm(rule = {}) {
     name: rule.name || '',
     config: {
       value_path: config.value_path || '',
+      auto_resolve: !!config.auto_resolve,
       alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
       entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
@@ -80,7 +81,7 @@ export function formToMetaAlarmRule(form = {}) {
       break;
     }
     case META_ALARMS_RULE_TYPES.timebased:
-      metaAlarmRule.config = pick(form.config, ['time_interval']);
+      metaAlarmRule.config = pick(form.config, ['time_interval', 'auto_resolve']);
       break;
   }
 

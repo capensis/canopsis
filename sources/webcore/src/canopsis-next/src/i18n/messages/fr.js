@@ -1411,6 +1411,7 @@ export default {
       thresholdCount: 'Seuil de déclenchement',
       timeInterval: 'Intervalle de temps',
       valuePath: 'Chemin de valeur',
+      autoResolve: 'Résolution automatique',
     },
   },
   snmpRules: {
