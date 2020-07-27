@@ -480,7 +480,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
-      isState: 'Is it State?',
+      isState: 'Display as severity ?',
     },
     liveReporting: {
       title: 'Live reporting',

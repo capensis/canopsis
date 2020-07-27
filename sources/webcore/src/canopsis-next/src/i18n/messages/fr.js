@@ -481,7 +481,7 @@ export default {
     templateEditor: 'Modèle',
     columns: {
       isHtml: 'Est-ce du HTML?',
-      isState: 'Est-ce du State?',
+      isState: 'Affiché comme une sévérité ?',
     },
     liveReporting: {
       title: 'Suivi personnalisé',

@@ -1,7 +1,7 @@
 <template lang="pug">
   div(:data-test="`alarmValue-${column.text}`")
     v-tooltip(right, :disabled="!column.isState || isStateField")
-      span(slot="activator", :style="stateStyle", :class="{ 'state-column-wrapper': column.isState }")
+      div(slot="activator", :style="stateStyle", :class="{ 'state-column-wrapper': column.isState }")
         v-menu(
           v-if="popupData",
           v-model="isInfoPopupOpen",
@@ -240,6 +240,7 @@ export default {
   }
 
   .state-column-wrapper {
+    display: inline-block;
     border-radius: 10px;
     padding: 3px 7px;
   }
