@@ -1,3 +1,5 @@
+import qs from 'qs';
+
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 
@@ -5,23 +7,23 @@ export default {
   namespaced: true,
   actions: {
     create(context, { data, pbehaviorId }) {
-      return request.post(API_ROUTES.pbehavior.comment.create, {}, {
-        params: {
-          ...data,
+      return request.post(API_ROUTES.pbehavior.comment.create, qs.stringify({
+        ...data,
 
-          pbehavior_id: pbehaviorId,
-        },
+        pbehavior_id: pbehaviorId,
+      }), {
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
       });
     },
 
     update(context, { data, pbehaviorId, commentId }) {
-      return request.put(API_ROUTES.pbehavior.comment.update, {}, {
-        params: {
-          ...data,
+      return request.put(API_ROUTES.pbehavior.comment.update, qs.stringify({
+        ...data,
 
-          _id: commentId,
-          pbehavior_id: pbehaviorId,
-        },
+        _id: commentId,
+        pbehavior_id: pbehaviorId,
+      }), {
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
       });
     },
 
