@@ -4,8 +4,7 @@
     :content-class="contentClass",
     :disabled="!hasPopover",
     v-model="menu",
-    v-bind="popoverProps",
-    ignore-click-outside
+    v-bind="popoverProps"
   )
     div.ds-calendar-event(
       slot="activator",
@@ -42,10 +41,11 @@ import { Functions as fn } from 'dayspan';
 import { DsCalendarEvent } from 'dayspan-vuetify/src/components';
 
 import eventMixin from '../mixins/event';
+import popoverMixin from '../mixins/popover';
 
 export default {
   extends: DsCalendarEvent,
-  mixins: [eventMixin],
+  mixins: [eventMixin, popoverMixin],
   computed: {
     fullStyles() {
       return this.$dayspan.getStyleFull(this.details, this.calendarEvent, this.index);

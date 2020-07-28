@@ -46,10 +46,8 @@ export default {
   },
   data() {
     return {
-      form: this.calendarEvent.data.form
-        ? cloneDeep(this.calendarEvent.data.form)
-        : calendarEventToPbehaviorForm(this.calendarEvent),
       manualClose: false,
+      form: calendarEventToPbehaviorForm(this.calendarEvent),
     };
   },
   computed: {
@@ -74,9 +72,9 @@ export default {
   },
   beforeDestroy() {
     if (this.manualClose) {
-      delete this.calendarEvent.data.form;
+      delete this.calendarEvent.data.cachedForm;
     } else {
-      this.calendarEvent.data.form = cloneDeep(this.form);
+      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
     }
   },
   methods: {
@@ -108,8 +106,8 @@ export default {
     },
 
     remove() {
-      this.$emit('close');
       this.$emit('remove', this.pbehavior);
+      this.close();
     },
 
     close(manualClose = false) {

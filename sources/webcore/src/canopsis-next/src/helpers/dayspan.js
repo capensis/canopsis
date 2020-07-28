@@ -83,11 +83,11 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
 }
 
 /**
- * Get class for calendar event menu by calendar event data key
+ * Get class for calendar event menu by calendar event id
  *
  * @param {CalendarEvent} calendarEvent
  * @return {string}
  */
 export function getMenuClassByCalendarEvent(calendarEvent) {
-  return `ds-calendar-event-menu_${get(calendarEvent, 'data.key')}`;
+  return `ds-calendar-event-menu_${get(calendarEvent, 'event.id', 'placeholder')}`;
 }

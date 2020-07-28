@@ -31,8 +31,6 @@ import filters from '@/filters';
 
 import featuresService from '@/services/features';
 
-import uid from '@/helpers/uid';
-
 import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
 import SetSeveralPlugin from '@/plugins/set-several';
@@ -99,6 +97,7 @@ Vue.use(DaySpanVuetifyPlugin, {
           offsetX: true,
           maxWidth: 500,
           openOnHover: false,
+          ignoreClickOutside: true,
           ignoreClickUpperOutside: true,
         },
       },
@@ -106,6 +105,7 @@ Vue.use(DaySpanVuetifyPlugin, {
         popoverProps: {
           offsetY: true,
           transition: 'fade-transition',
+          ignoreClickOutside: true,
           ignoreClickUpperOutside: true,
         },
       },
@@ -113,12 +113,15 @@ Vue.use(DaySpanVuetifyPlugin, {
         popoverProps: {
           offsetY: true,
           transition: 'fade-transition',
+          ignoreClickOutside: true,
           ignoreClickUpperOutside: true,
         },
       },
       dsCalendarEventTimePlaceholder: {
         popoverProps: {
           transition: 'fade-transition',
+          ignoreClickOutside: true,
+          ignoreClickUpperOutside: true,
         },
       },
     },
@@ -133,19 +136,6 @@ Vue.use(DaySpanVuetifyPlugin, {
       }
 
       return color;
-    },
-    getDefaultEventDetails() {
-      return {
-        title: '',
-        description: '',
-        location: '',
-        color: this.getDefaultEventColor(),
-        forecolor: '#ffffff',
-        calendar: '',
-        busy: true,
-        icon: '',
-        key: uid('calendar-event'),
-      };
     },
   },
 });

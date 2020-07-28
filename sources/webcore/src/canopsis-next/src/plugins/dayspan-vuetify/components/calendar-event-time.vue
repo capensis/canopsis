@@ -5,8 +5,7 @@
     :disabled="!hasPopover",
     :style="style",
     v-model="menu",
-    v-bind="popoverProps",
-    ignore-click-outside
+    v-bind="popoverProps"
   )
     template(slot="activator")
       .ds-calendar-event-span(
@@ -28,7 +27,11 @@
         span(v-else)
           slot(name="eventTimeEmpty", v-bind="{ calendarEvent, details }")
       .ds-calendar-event-time-resize(v-show="canResize", @mousedown="resizeStartHandler")
-    slot(name="eventPopover", v-if="isShownPopover", v-bind="{ calendarEvent, calendar, edit, details, close }")
+    slot(
+      name="eventPopover",
+      v-if="isShownPopover",
+      v-bind="{ calendarEvent, calendar, edit, details, close }"
+    )
 </template>
 
 <script>
@@ -36,10 +39,11 @@ import { Functions as fn } from 'dayspan';
 import { DsCalendarEventTime } from 'dayspan-vuetify/src/components';
 
 import eventMixin from '../mixins/event';
+import popoverMixin from '../mixins/popover';
 
 export default {
   extends: DsCalendarEventTime,
-  mixins: [eventMixin],
+  mixins: [eventMixin, popoverMixin],
   computed: {
     fullStyles() {
       return this.$dayspan.getStyleTimed(this.details, this.calendarEvent);

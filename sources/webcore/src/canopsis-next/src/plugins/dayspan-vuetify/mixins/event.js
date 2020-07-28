@@ -3,14 +3,13 @@ import { get } from 'lodash';
 import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
 
 export default {
-  data() {
-    return {
-      isShownPopover: false,
-    };
-  },
   computed: {
     hasPopover() {
-      return get(this.calendarEvent, 'data.meta.hasPopover', !!this.$scopedSlots.eventPopover && !this.isPlaceholderWithDay);
+      return get(
+        this.calendarEvent,
+        'data.meta.hasPopover',
+        !!this.$scopedSlots.eventPopover && !this.isPlaceholderWithDay,
+      );
     },
 
     isPlaceholderSameDay() {
@@ -33,15 +32,6 @@ export default {
 
     classWithKey() {
       return getMenuClassByCalendarEvent(this.calendarEvent);
-    },
-  },
-  watch: {
-    menu(menu) {
-      if (menu) {
-        this.isShownPopover = true;
-      } else {
-        setTimeout(() => this.isShownPopover = false, 300);
-      }
     },
   },
   beforeDestroy() {

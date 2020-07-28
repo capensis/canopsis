@@ -3,8 +3,7 @@
     :content-class="contentClass",
     :disabled="!hasPopover",
     v-model="menu",
-    v-bind="popoverProps",
-    ignore-click-outside
+    v-bind="popoverProps"
   )
     ds-calendar-event-time(
       slot="activator",
@@ -14,14 +13,21 @@
       :calendar-event="placeholder",
       :calendar="calendar"
     )
-    slot(name="eventCreatePopover", v-if="isStart", v-bind="{ placeholder, calendar, day, add, close }")
+    slot(
+      name="eventCreatePopover",
+      v-if="isStart && isShownPopover",
+      v-bind="{ placeholder, calendar, day, add, close }"
+    )
 </template>
 
 <script>
 import { DsCalendarEventTimePlaceholder } from 'dayspan-vuetify/src/components';
 
+import popoverMixin from '../mixins/popover';
+
 export default {
   extends: DsCalendarEventTimePlaceholder,
+  mixins: [popoverMixin],
   methods: {
     close() {
       this.$emit('clear-placeholder');
