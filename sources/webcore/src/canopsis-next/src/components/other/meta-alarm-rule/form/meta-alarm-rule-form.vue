@@ -17,6 +17,11 @@
       :label="$t('common.name')",
       name="name"
     )
+    v-switch(
+      v-field="form.auto_resolve",
+      :label="$t('metaAlarmRule.fields.autoResolve')",
+      color="primary"
+    )
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
     v-text-field(
       v-if="isValueGroupType",

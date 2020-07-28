@@ -1410,6 +1410,7 @@ export default {
       thresholdCount: 'Threshold count',
       timeInterval: 'Time interval',
       valuePath: 'Value path',
+      autoResolve: 'Auto resolve',
     },
   },
   snmpRules: {
