@@ -23,6 +23,7 @@ definitions:
   Rule:
     properties:
       _id: {type: string}
+      auto_resolve: {type: boolean}
       name: {type: string}
       type: {type: string}
       patterns: 

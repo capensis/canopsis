@@ -85,12 +85,12 @@ class RouteHandlerMetaAlarmRule(object):
 
     def create(self, name, rule_type, patterns, config, ma_rule_id=None, auto_resolve=False):
         name, rule_type, patterns, config, ma_rule_id = self._sanitize(name, rule_type, patterns, config, ma_rule_id, auto_resolve)
-        result = self.ma_rule_manager.create(name, rule_type, patterns, config, ma_rule_id=ma_rule_id)
+        result = self.ma_rule_manager.create(name, rule_type, patterns, config, ma_rule_id=ma_rule_id, auto_resolve=auto_resolve)
         return result
 
     def update(self, _id, name, rule_type, patterns, config, auto_resolve=False):
-        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id, False)
-        result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config)
+        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id, auto_resolve)
+        result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config, auto_resolve)
         return result
 
     def read(self, rule_id):
