@@ -62,7 +62,7 @@
               @change="updateFieldInArrayItem(index, 'isHtml', $event)",
               color="primary"
             )
-          v-flex(xs11)
+          v-flex(v-if="withState", xs11)
             v-switch(
               :label="$t('settings.columns.isState')",
               :input-value="column.isState",
@@ -96,6 +96,10 @@ export default {
       default: () => [],
     },
     withHtml: {
+      type: Boolean,
+      default: false,
+    },
+    withState: {
       type: Boolean,
       default: false,
     },
