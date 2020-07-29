@@ -61,7 +61,7 @@ export default {
   },
   data() {
     return {
-      pending: true,
+      pending: false,
       alarms: [],
       alarmsCollections: [],
       calendar: Calendar.months(),

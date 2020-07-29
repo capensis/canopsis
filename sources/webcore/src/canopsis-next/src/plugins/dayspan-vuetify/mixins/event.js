@@ -2,7 +2,10 @@ import { get } from 'lodash';
 
 import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
 
+import popoverMixin from './popover';
+
 export default {
+  mixins: [popoverMixin],
   computed: {
     hasPopover() {
       return get(
@@ -65,11 +68,11 @@ export default {
     },
 
     edit(calendarEvent) {
-      this.$emit('edit-event', calendarEvent);
+      this.$emit('edit-event', this.getEvent('mouse-down-event', {}, { calendarEvent }));
     },
 
     editCheck(event) {
-      if (this.handlesEvents(event) && get(this.calendarEvent, 'data.pbehavior') && !this.menu) {
+      if (this.handlesEvents(event) && !this.menu) {
         this.menu = true;
 
         if (!this.isPlaceholderWithDay) {
@@ -79,7 +82,7 @@ export default {
       }
     },
 
-    close() {
+    closePopover() {
       this.menu = false;
       this.$emit('mouse-end-edit');
     },

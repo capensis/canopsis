@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu.ds-calendar-event-menu.as(
+  v-menu.ds-calendar-event-menu(
     :class="classWithKey",
     :content-class="contentClass",
     :disabled="!hasPopover",
@@ -32,7 +32,7 @@
     slot(
       name="eventPopover",
       v-if="isShownPopover",
-      v-bind="{ calendarEvent, calendar, edit, details, close }"
+      v-bind="{ calendarEvent, calendar, edit, details, close: closePopover  }"
     )
 </template>
 
@@ -41,11 +41,10 @@ import { Functions as fn } from 'dayspan';
 import { DsCalendarEvent } from 'dayspan-vuetify/src/components';
 
 import eventMixin from '../mixins/event';
-import popoverMixin from '../mixins/popover';
 
 export default {
   extends: DsCalendarEvent,
-  mixins: [eventMixin, popoverMixin],
+  mixins: [eventMixin],
   computed: {
     fullStyles() {
       return this.$dayspan.getStyleFull(this.details, this.calendarEvent, this.index);
@@ -74,6 +73,8 @@ export default {
         $event,
         type,
         calendarEvent: this.calendarEvent,
+        closePopover: this.closePopover,
+        openPopover: this.openPopover,
         calendar: this.calendar,
         details: this.details,
         day: this.isPlaceholderWithDay || this.$parent.day,

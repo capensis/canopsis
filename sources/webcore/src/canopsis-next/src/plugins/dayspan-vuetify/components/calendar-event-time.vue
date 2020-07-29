@@ -30,7 +30,7 @@
     slot(
       name="eventPopover",
       v-if="isShownPopover",
-      v-bind="{ calendarEvent, calendar, edit, details, close }"
+      v-bind="{ calendarEvent, calendar, edit, details, close: closePopover }"
     )
 </template>
 
@@ -39,11 +39,10 @@ import { Functions as fn } from 'dayspan';
 import { DsCalendarEventTime } from 'dayspan-vuetify/src/components';
 
 import eventMixin from '../mixins/event';
-import popoverMixin from '../mixins/popover';
 
 export default {
   extends: DsCalendarEventTime,
-  mixins: [eventMixin, popoverMixin],
+  mixins: [eventMixin],
   computed: {
     fullStyles() {
       return this.$dayspan.getStyleTimed(this.details, this.calendarEvent);
@@ -71,6 +70,8 @@ export default {
         type,
         $event,
         calendarEvent: this.calendarEvent,
+        closePopover: this.closePopover,
+        openPopover: this.openPopover,
         calendar: this.calendar,
         details: this.details,
         day: this.isPlaceholderWithDay || this.$parent.day,

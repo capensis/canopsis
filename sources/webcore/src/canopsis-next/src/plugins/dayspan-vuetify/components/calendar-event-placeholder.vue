@@ -17,11 +17,13 @@
     slot(
       name="eventCreatePopover",
       v-if="isStart && isShownPopover",
-      v-bind="{ placeholder, calendar, day, index, add, close }"
+      v-bind="{ placeholder, calendar, day, index, add, close: closePopover  }"
     )
 </template>
 
 <script>
+import { Functions as fn } from 'dayspan';
+
 import { DsCalendarEventPlaceholder } from 'dayspan-vuetify/src/components';
 
 import popoverMixin from '../mixins/popover';
@@ -43,12 +45,20 @@ export default {
     },
   },
   methods: {
-    close() {
-      this.$emit('clear-placeholder');
+    add(calendarEvent) {
+      this.$emit('add-event', this.getEvent('add-event', { calendarEvent }));
     },
 
-    add(calendarEvent) {
-      this.$emit('add-event', calendarEvent);
+    getEvent(type, extra = {}) {
+      return fn.extend({
+        type,
+        calendarEvent: this.calendarEvent,
+        closePopover: this.closePopover,
+        openPopover: this.openPopover,
+        calendar: this.calendar,
+        $vm: this,
+        $element: this.$el,
+      }, extra);
     },
   },
 };

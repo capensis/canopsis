@@ -22,4 +22,21 @@ export default {
       }
     },
   },
+  methods: {
+    openPopover() {
+      if (this.isStart) {
+        this.menu = true;
+      }
+    },
+
+    closePopover() {
+      this.menu = false;
+    },
+
+    triggerClearPlaceholder(menu) {
+      if (!menu) {
+        setTimeout(() => this.$emit('clear-placeholder'), VUETIFY_ANIMATION_DELAY / 2);
+      }
+    },
+  },
 };

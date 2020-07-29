@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { get, cloneDeep } from 'lodash';
+import { get, cloneDeep, omit } from 'lodash';
 import dependentMixin from 'vuetify/es5/mixins/dependent';
 
 import {
@@ -91,7 +91,7 @@ export default {
     },
 
     cancel() {
-      const oldPbehaviorForm = calendarEventToPbehaviorForm(this.calendarEvent);
+      const oldPbehaviorForm = calendarEventToPbehaviorForm(omit(this.calendarEvent, 'data.cachedForm'));
 
       if (isOmitEqual(oldPbehaviorForm, this.form, ['_id'])) {
         return this.close(true);

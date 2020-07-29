@@ -171,6 +171,10 @@ export default {
     async changedEventHandler(event) {
       const { pbehavior, color } = event.calendarEvent.data;
 
+      if (event.closePopover) {
+        event.closePopover();
+      }
+
       if (pbehavior) {
         if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
           this.$set(this.changedPbehaviorsById, pbehavior._id, pbehavior);
