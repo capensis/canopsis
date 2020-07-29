@@ -616,7 +616,7 @@ class AlertsReader(object):
                 }
             }
         ]
-        if correlation and not consequences_children:
+        if correlation and not consequences_children and self._can_add_metaalarm_filter(filter_, with_consequences):
             self._add_metaalarm_filter(pipeline, 3, with_consequences)
 
         if not with_steps:
@@ -640,6 +640,11 @@ class AlertsReader(object):
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
         return pipeline
+
+    def _can_add_metaalarm_filter(self, filter_, with_consequences):
+        not_by_id = lambda x: "u'_id':" not in str(x)
+        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and not_by_id(filter_)) or \
+            (isinstance(filter_, list) and filter_ != [] and not_by_id(filter_))) or with_consequences
 
     def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
         """
