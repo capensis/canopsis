@@ -10,6 +10,7 @@
         :class="{ single: !hasMultipleFilters }",
         :calendar="calendar",
         :events="events",
+        :config="calendarConfig",
         fluid,
         read-only,
         @change="changeCalendar",
@@ -69,6 +70,15 @@ export default {
     };
   },
   computed: {
+    calendarConfig() {
+      return {
+        dsCalendarEventTime: {
+          popoverProps: {
+            openOnHover: true,
+          },
+        },
+      };
+    },
     getStyleColor() {
       return (details, calendarEvent) => {
         const past = calendarEvent.schedule.end.isBefore(new Date());

@@ -3,8 +3,7 @@
     :content-class="contentClass",
     :disabled="!hasPopover",
     v-model="menu",
-    v-bind="popoverProps",
-    ignore-click-outside
+    v-bind="popoverProps"
   )
     ds-calendar-event(
       slot="activator",
@@ -17,16 +16,21 @@
     )
     slot(
       name="eventCreatePopover",
-      v-if="isStart && menu",
-      v-bind="{ placeholder, calendar, day, index, add, close }"
+      v-if="isStart && isShownPopover",
+      v-bind="{ placeholder, calendar, day, index, add, close: closePopover  }"
     )
 </template>
 
 <script>
+import { Functions as fn } from 'dayspan';
+
 import { DsCalendarEventPlaceholder } from 'dayspan-vuetify/src/components';
+
+import popoverMixin from '../mixins/popover';
 
 export default {
   extends: DsCalendarEventPlaceholder,
+  mixins: [popoverMixin],
   computed: {
     /**
      * We've refactored isStart for resize event. If we will decrease size of event we will not see popover
@@ -41,14 +45,20 @@ export default {
     },
   },
   methods: {
-    close() {
-      this.$emit('clear-placeholder');
-      this.menu = false;
+    add(calendarEvent) {
+      this.$emit('add-event', this.getEvent('add-event', { calendarEvent }));
     },
 
-    add(calendarEvent) {
-      this.$emit('add-event', calendarEvent);
-      this.menu = false;
+    getEvent(type, extra = {}) {
+      return fn.extend({
+        type,
+        calendarEvent: this.calendarEvent,
+        closePopover: this.closePopover,
+        openPopover: this.openPopover,
+        calendar: this.calendar,
+        $vm: this,
+        $element: this.$el,
+      }, extra);
     },
   },
 };

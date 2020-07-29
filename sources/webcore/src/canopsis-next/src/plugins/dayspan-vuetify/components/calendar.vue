@@ -109,17 +109,19 @@ export default {
       return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
     },
 
-    editHandler(calendarEvent) {
+    editHandler({ calendarEvent, closePopover }) {
       const event = this.getEvent('changed', {
         calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+        closePopover,
       });
 
       this.$emit('changed', event);
     },
 
-    addHandler(calendarEvent) {
+    addHandler({ calendarEvent, closePopover }) {
       const event = this.getEvent('added', {
         calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+        closePopover,
       });
 
       this.$emit('added', event);

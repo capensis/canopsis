@@ -92,31 +92,36 @@ Vue.use(DaySpanVuetifyPlugin, {
         popoverProps: {
           nudgeWidth: 200,
           closeOnContentClick: false,
-          transition: 'scale-transition',
+          transition: 'fade-transition',
           offsetOverflow: true,
           offsetX: true,
           maxWidth: 500,
           openOnHover: false,
+          ignoreClickOutside: true,
           ignoreClickUpperOutside: true,
         },
       },
       dsCalendarEvent: {
         popoverProps: {
           offsetY: true,
-          transition: 'scale-transition',
+          transition: 'fade-transition',
+          ignoreClickOutside: true,
           ignoreClickUpperOutside: true,
         },
       },
       dsCalendarEventPlaceholder: {
         popoverProps: {
           offsetY: true,
-          transition: 'scale-transition',
+          transition: 'fade-transition',
+          ignoreClickOutside: true,
           ignoreClickUpperOutside: true,
         },
       },
       dsCalendarEventTimePlaceholder: {
         popoverProps: {
-          transition: 'scale-transition',
+          transition: 'fade-transition',
+          ignoreClickOutside: true,
+          ignoreClickUpperOutside: true,
         },
       },
     },

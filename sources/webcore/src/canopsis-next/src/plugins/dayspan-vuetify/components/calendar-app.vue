@@ -7,7 +7,7 @@
       )
         v-flex
           v-tooltip(bottom)
-            v-btn.ds-skinny-button(
+            v-btn.ds-skinny-button.ds-calendar-app-action(
               slot="activator",
               :icon="$vuetify.breakpoint.smAndDown",
               depressed,
@@ -22,7 +22,7 @@
       )
         v-flex.text-sm-center
           v-tooltip.mx-2(bottom)
-            v-btn.ds-light-forecolor.ds-skinny-button(
+            v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
               slot="activator",
               icon,
               depressed,
@@ -32,7 +32,7 @@
             span {{ prevLabel }}
           span.subheading {{ summary }}
           v-tooltip.mx-2(bottom)
-            v-btn.ds-light-forecolor.ds-skinny-button(
+            v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
               slot="activator",
               icon,
               depressed,
@@ -46,7 +46,7 @@
       )
         v-flex.text-sm-right
           v-menu
-            v-btn(flat, slot="activator") {{ currentType.label }}
+            v-btn.ds-calendar-app-action(flat, slot="activator") {{ currentType.label }}
               v-icon arrow_drop_down
             v-list
               v-list-tile(
@@ -98,7 +98,10 @@
 <script>
 import { Calendar, Sorts } from 'dayspan';
 
+import calendarOptionsMixin from '../mixins/calendar-options';
+
 export default {
+  mixins: [calendarOptionsMixin],
   props: {
     events: {
       type: Array,

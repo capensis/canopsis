@@ -29,7 +29,7 @@ export default {
     getQuery() {
       const query = {};
 
-      const { page, rowsPerPage = PAGINATION_LIMIT, search } = this.query;
+      const { page, search, rowsPerPage = PAGINATION_LIMIT } = this.query;
 
       query.limit = rowsPerPage;
       query.page = page;
