@@ -35,7 +35,7 @@ L'API Idle Rule permet de consulter, créer, modifier et supprimer des règles d
 ```
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 ```sh
-curl -H "Content-Type: application/json" -u root:root -X POST -d '{
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
   "name" : "close 3m after last event",
   "type": "last_event",
   "duration": "3m",
@@ -54,7 +54,7 @@ curl -H "Content-Type: application/json" -u root:root -X POST -d '{
       }
     }
    ]
-}' 'http://localhost:8082/api/v2/idle-rule'
+}' 'http://<Canopsis_URL>/api/v2/idle-rule'
 ```
 
 #### Réponse en cas de réussite
@@ -162,7 +162,7 @@ Modifie une idle rule à partir du corps de la requête.
 ```
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut envoyer le JSON ci-dessus pour modifier l'Idle rule dont l'`_id` vaut `idltest` :
 ```sh
-curl -v -H "Content-Type: application/json" -u root:root -X PUT -d '{
+curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
   "name" : "close 3m after last event",
   "_id":"idltest",
   "type": "last_event",
@@ -182,7 +182,7 @@ curl -v -H "Content-Type: application/json" -u root:root -X PUT -d '{
       }
     }
    ]
-}' 'http://localhost:8082/api/v2/idle-rule/idltest'
+}' 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
 ```
 
 #### Réponse en cas de réussite
@@ -192,7 +192,7 @@ curl -v -H "Content-Type: application/json" -u root:root -X PUT -d '{
 **Code** : `200 OK`
 
 **Exemple du corps de la réponse** :
-```json 
+```json
 {
   "description": "",
   "alarm_patterns": [

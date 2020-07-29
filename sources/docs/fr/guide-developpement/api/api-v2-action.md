@@ -40,7 +40,7 @@ Crée une nouvelle Action à partir du corps de la requête.
         "author": "System",
         "type": "Pause",
         "rrule": "",
-        "reason": "Problème d\'habilitation",
+        "reason": "Problème d"'"habilitation",
         "tstart": 0,
         "tstop": 253402297199
     }
@@ -51,7 +51,7 @@ Crée une nouvelle Action à partir du corps de la requête.
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
-    "_id": "action_id_pbehavior",
+    "_id": "<Canopsis_URL>_pbehavior",
     "type": "pbehavior",
     "hook": {
         "event_patterns": [
@@ -72,7 +72,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
         "author": "System",
         "type": "Pause",
         "rrule": "",
-        "reason": "Problème d\'habilitation",
+        "reason": "Problème d'"'"'habilitation",
         "tstart": 0,
         "tstop": 4170912120
     }
@@ -89,7 +89,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ```json
 {
-	"_id": "action_id_pbehavior"
+	"_id": "_pbehavior"
 }
 ```
 
@@ -153,7 +153,7 @@ Modifie une action à partir du corps de la requête.
 **Exemple de corps de requête** :
 ```json
 {
-    "_id": "action_id",
+    "_id": "action_id_pbehavior",
     "type": "pbehavior",
     "hook": {
         "event_patterns": [
@@ -185,7 +185,7 @@ Modifie une action à partir du corps de la requête.
 
 ```sh
 curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
-    "_id": "action_id",
+    "_id": "action_id_pbehavior",
     "type": "pbehavior",
     "hook": {
         "event_patterns": [
