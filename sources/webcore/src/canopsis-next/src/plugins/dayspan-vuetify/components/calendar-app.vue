@@ -98,7 +98,10 @@
 <script>
 import { Calendar, Sorts } from 'dayspan';
 
+import calendarOptionsMixin from '../mixins/calendar-options';
+
 export default {
+  mixins: [calendarOptionsMixin],
   props: {
     events: {
       type: Array,

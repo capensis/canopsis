@@ -72,6 +72,11 @@ export default {
     },
 
     editCheck(event) {
+      if (!this.hasPopover) {
+        this.$emit('edit', this.calendarEvent);
+        return;
+      }
+
       if (this.handlesEvents(event) && !this.menu) {
         this.menu = true;
 
