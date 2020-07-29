@@ -12,6 +12,7 @@ server {
 
 	# Work around issue canopsis#1858
 	client_max_body_size 7m;
+	large_client_header_buffers 4 20k;
 
 	gzip on;
 	gzip_comp_level 4;
@@ -50,6 +51,7 @@ server {
 			add_header 'Access-Control-Allow-Headers' 'Authorization,Cache-Control,Content-Type';
 		}
 
+		#rewrite ^/$ /en/static/canopsis-next/dist/index.html redirect;
 		proxy_pass {{ TARGET }};
 		proxy_set_header X-Forwarded-Host $host;
 		proxy_set_header X-Forwarded-Server $host;

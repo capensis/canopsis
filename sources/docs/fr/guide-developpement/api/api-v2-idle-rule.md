@@ -340,7 +340,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
 
 Récupère toutes les Idle rules stockées en base.
 
-**URL** : `/api/v2/idle-rules`
+**URL** : `/api/v2/idle-rule`
 
 **Méthode** : `GET`
 
@@ -351,7 +351,7 @@ Récupère toutes les Idle rules stockées en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer toutes les Idle rules :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/idle-rules'
+curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule'
 ```
 
 ##### Réponse en cas de réussite
