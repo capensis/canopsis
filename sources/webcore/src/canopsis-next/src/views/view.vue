@@ -7,7 +7,7 @@
         :isEditingMode="isEditingMode",
         :hasUpdateAccess="hasUpdateAccess",
         :updateViewMethod="updateViewMethod",
-        @update:tab="updateTab"
+        @update:widgetsFields="updateWidgetsFieldsForUpdateById"
       )
     .fab
       v-layout(data-test="controlViewLayout", row)
@@ -116,8 +116,11 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
 import { MODALS } from '@/constants';
 import { generateViewTab } from '@/helpers/entities';
+import { setSeveralFields } from '@/helpers/immutable';
 
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
@@ -147,7 +150,7 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
-      updatedTabsByIds: {},
+      widgetsFieldsForUpdateById: {},
     };
   },
   computed: {
@@ -284,22 +287,37 @@ export default {
       });
     },
 
-    updateTab(tab) {
-      this.updatedTabsByIds[tab._id] = tab;
+    updateWidgetsFieldsForUpdateById(widgetsFieldsForUpdateById) {
+      this.widgetsFieldsForUpdateById = {
+        ...this.widgetsFieldsForUpdateById,
+        ...widgetsFieldsForUpdateById,
+      };
     },
 
     updateTabs() {
       const view = {
         ...this.view,
 
-        tabs: this.view.tabs.map(tab => this.updatedTabsByIds[tab._id] || tab),
+        tabs: this.view.tabs.map(tab => ({
+          ...tab,
+
+          widgets: tab.widgets.map((widget) => {
+            const fields = this.widgetsFieldsForUpdateById[widget._id];
+
+            if (fields) {
+              return setSeveralFields(widget, fields);
+            }
+
+            return widget;
+          }),
+        })),
       };
 
       return this.updateView({ id: this.id, data: view });
     },
 
     async toggleViewEditingMode() {
-      if (this.isEditingMode) {
+      if (this.isEditingMode && !isEmpty(this.widgetsFieldsForUpdateById)) {
         await this.updateTabs();
       }
 

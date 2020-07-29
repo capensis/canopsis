@@ -442,6 +442,7 @@ class PBehaviorManager(object):
                         except:
                             sleep(0.5)
                             pass
+                    pb_kwargs[PBehavior.ENABLED] = False
                     expired_data = PBehavior(**pb_kwargs)
                     self.collection.insert(expired_data.to_dict())
                     result = self.collection.insert(data.to_dict())
@@ -452,7 +453,7 @@ class PBehaviorManager(object):
 
         return result
 
-    def get_pbehaviors_by_eid(self, id_):
+    def get_pbehaviors_by_eid(self, id_, enabled_filter=None):
         """Retreive from database every pbehavior that contains
         the given id_ in the PBehavior.EIDS field.
 
@@ -473,6 +474,9 @@ class PBehaviorManager(object):
             id_ = [id_]
 
         cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}})
+
+        if enabled_filter is not None:
+            cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}, "enabled": enabled_filter})
 
         pbehaviors = []
 
@@ -718,7 +722,7 @@ class PBehaviorManager(object):
         Compute all filters and update eids attributes.
         """
         pbehaviors = self.collection.find(
-            {PBehavior.FILTER: {'$exists': True}})
+            {PBehavior.FILTER: {'$exists': True}, PBehavior.ENABLED: True})
 
         for pbehavior in pbehaviors:
 
@@ -1363,6 +1367,8 @@ class PBehaviorManager(object):
 
         for pb in ret_val:
             try:
+                if not pb[PBehavior.ENABLED]:
+                    continue
                 if self.check_active_pbehavior(timestamp, pb):
                     results.append(pb)
             except ValueError:
@@ -1445,7 +1451,7 @@ class PBehaviorManager(object):
                     events = chain(events, self._make_pbenter_event(
                         now,
                         self.pbehavior_event_sent_flag[active_pb].pbehavior,
-                        self.pbehavior_event_sent_flag[active_pb].pbleave_time,
+                        self.pbehavior_event_sent_flag[active_pb].pbenter_time,
                         list(current_eids.difference(old_eids))))
             else:
                 events = chain(events, self._make_pbenter_event(
@@ -1529,12 +1535,13 @@ class PBehaviorManager(object):
         for eid in eids:
             alarms = self.alarmAdapter.find_unresolved_alarms([eid])
             for al in alarms:
-                average_time = round((time() - start_time), 5)
+                now = time()
+                average_time = round((now - start_time), 5)
                 event = forger(
                     connector=al.identity.connector,
                     connector_name=al.identity.connector_name,
                     event_type=pb_event_type,
-                    component=str(eid),
+                    component=eid,
                     output="Pbehavior {}. Type: {}. Reason: {}".format(pb[PBehavior.NAME].encode('utf-8'),
                                                                        pb[PBehavior.TYPE].encode('utf-8'),
                                                                        pb[PBehavior.REASON].encode('utf-8')),#"{}. Name: {}. Type:{}".format(message, pb[PBehavior.NAME], pb[PBehavior.TYPE]),
@@ -1544,7 +1551,7 @@ class PBehaviorManager(object):
                         "value": average_time
                     }],
                     display_name=pb[PBehavior.NAME],
-                    timestamp=self._to_timestamp(action_time)
+                    timestamp=int(now)
                 )
                 events.append(event)
         return events
