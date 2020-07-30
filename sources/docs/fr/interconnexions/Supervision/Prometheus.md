@@ -44,7 +44,10 @@ sont disponibles dans le dépôt
 Deux méthodes d'installation ou d'exécution sont proposées :
 
 - Installation en tant que service sur un système de production
-- Exécution en tant que conteneur *Docker* avec une image fournie
+- Exécution en tant que conteneur *Docker* avec l'image fournie :  
+[canopsis/canopsis-connector-prometheus2canopsis][dockerhub-image]
+
+[dockerhub-image]: https://hub.docker.com/r/canopsis/canopsis-connector-prometheus2canopsis
 
 ### Configuration connecteur
 
