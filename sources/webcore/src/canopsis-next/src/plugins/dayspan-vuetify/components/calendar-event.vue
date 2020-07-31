@@ -31,7 +31,7 @@
     slot(
       name="eventPopover",
       v-if="isShownPopover",
-      v-bind="{ calendarEvent, calendar, edit, details, close: closePopover  }"
+      v-bind="{ calendarEvent, calendar, edit, details, close: closePopover }"
     )
 </template>
 

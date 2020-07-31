@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu.ds-calendar-event.sa(
+  v-menu.ds-calendar-event(
     :class="classWithKey",
     :content-class="contentClass",
     :disabled="!hasPopover || popoverProps.disabled",

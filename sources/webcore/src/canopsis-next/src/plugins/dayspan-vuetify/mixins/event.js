@@ -62,6 +62,11 @@ export default {
     },
 
     editCheck(event) {
+      if (this.isPlaceholderWithDay) {
+        this.handlesEvents(event);
+        return;
+      }
+
       if (!this.hasPopover) {
         this.$emit('edit', this.getEvent('edit', event));
         return;

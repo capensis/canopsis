@@ -140,6 +140,7 @@ export default {
       }
 
       if (this.canAdd && mouseEvent.left) {
+        this.endEditing();
         const { day } = mouseEvent;
 
         this.addStart = day;
@@ -162,6 +163,7 @@ export default {
       }
 
       if (this.canAdd && mouseEvent.left) {
+        this.endEditing();
         const { time } = mouseEvent;
 
         this.addStart = time;
@@ -185,6 +187,8 @@ export default {
 
     mouseMoveCheck() {
       if (this.readyToMove) {
+        this.endEditing();
+
         const { day } = this.movingEvent;
         const { time, schedule } = this.movingEvent.calendarEvent;
 
@@ -213,6 +217,7 @@ export default {
         this.placeholder.data.resizing = true;
 
         this.updatePlaceholderRow();
+        this.endEditing();
       }
     },
 

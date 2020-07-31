@@ -5,7 +5,7 @@
         v-field="value.begin",
         v-validate="'required'",
         :error-messages="errors.collect(beginName)",
-        label="Begin",
+        :label="$t('common.begin')",
         :name="beginName"
       )
     v-flex
@@ -13,7 +13,7 @@
         v-field="value.end",
         v-validate="'required'",
         :error-messages="errors.collect(endName)",
-        label="End",
+        :label="$t('common.end')",
         :name="endName"
       )
     v-flex
@@ -22,7 +22,7 @@
         v-validate="'required'",
         :items="types",
         :error-messages="errors.collect(typeName)",
-        label="Type",
+        :label="$t('common.type')",
         :name="typeName"
       )
     v-flex

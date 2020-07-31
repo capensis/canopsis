@@ -114,6 +114,7 @@ export default {
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
+    begin: 'Commencer',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
