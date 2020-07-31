@@ -18,31 +18,38 @@ export default {
       },
     },
   },
+  computed: {
+    menuDisabled() {
+      return !this.hasPopover || this.placeholder.data.resizing || this.placeholder.data.moving;
+    },
+  },
   data() {
     return {
+      menu: false,
       isShownPopover: false,
-      timer: null,
+      openTimer: null,
+      closeTimer: null,
     };
   },
   watch: {
     menu(menu) {
-      if (this.timer) {
-        clearTimeout(this.timer);
+      if (this.openTimer) {
+        clearTimeout(this.openTimer);
 
-        this.timer = null;
+        this.openTimer = null;
       }
 
       if (menu) {
         this.isShownPopover = true;
       } else {
-        this.timer = setTimeout(() => this.isShownPopover = false, VUETIFY_ANIMATION_DELAY);
+        this.openTimer = setTimeout(() => this.isShownPopover = false, VUETIFY_ANIMATION_DELAY);
       }
     },
   },
   methods: {
-    openPopover() {
+    openPopover(menu = true) {
       if (this.isStart) {
-        this.menu = true;
+        this.menu = menu;
       }
     },
 
@@ -51,8 +58,14 @@ export default {
     },
 
     triggerClearPlaceholder(menu) {
+      if (this.closeTimer) {
+        clearTimeout(this.closeTimer);
+
+        this.closeTimer = null;
+      }
+
       if (!menu) {
-        setTimeout(() => this.$emit('clear-placeholder'), VUETIFY_ANIMATION_DELAY / 2);
+        this.closeTimer = setTimeout(() => this.$emit('clear-placeholder'), VUETIFY_ANIMATION_DELAY / 2);
       }
     },
   },

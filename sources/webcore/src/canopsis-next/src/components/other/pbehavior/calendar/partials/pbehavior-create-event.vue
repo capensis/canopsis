@@ -58,6 +58,8 @@ export default {
     clickOutsideDirective() {
       const selectorsForInclude = [
         '.ds-calendar-app-action',
+        '.ds-calendar-event-resize',
+        '.ds-calendar-even-time-resize',
         `.${getMenuClassByCalendarEvent(this.calendarEvent)}`,
       ];
 

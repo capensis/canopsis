@@ -98,7 +98,11 @@ export default {
     },
 
     copyCalendarEvent(calendarEvent) {
-      const details = { ...calendarEvent.data };
+      const details = {
+        ...calendarEvent.data,
+        resizing: false,
+        moving: false,
+      };
       const span = new DaySpan(calendarEvent.start, calendarEvent.end);
       const schedule = calendarEvent.fullDay
         ? Schedule.forDay(span.start, span.days(Op.UP))
@@ -189,6 +193,7 @@ export default {
         this.movingStartDay = day;
         this.placeholderForCreate = false;
         this.placeholder = this.copyCalendarEvent(this.movingEvent.calendarEvent);
+        this.placeholder.data.moving = true;
         this.placeholder.time.end = this.placeholder.fullDay
           ? time.start.next(schedule.durationInDays).end()
           : time.start.relative(this.movingDuration);
@@ -205,6 +210,7 @@ export default {
         this.resizingBelow = true;
         this.placeholderForCreate = false;
         this.placeholder = this.copyCalendarEvent(calendarEvent);
+        this.placeholder.data.resizing = true;
 
         this.updatePlaceholderRow();
       }
@@ -221,6 +227,8 @@ export default {
     },
 
     finishMove(mouseEvent) {
+      this.placeholder.data.moving = false;
+
       if (!this.openPopover) {
         this.handleMoved(mouseEvent);
       } else {
@@ -235,6 +243,8 @@ export default {
     },
 
     finishResize(mouseEvent) {
+      this.placeholder.data.resizing = false;
+
       if (!this.openPopover) {
         this.handleResized(mouseEvent);
       } else {
@@ -364,6 +374,8 @@ export default {
       } else {
         this.placeholder.time.start = time;
       }
+
+      this.placeholder.day = this.placeholder.time.start;
     },
 
     changeAddDayPlaceholder(mouseEvent) {
@@ -426,6 +438,8 @@ export default {
         this.placeholder.time.days(Op.UP),
       );
 
+      this.placeholder.day = this.placeholder.time.start;
+
       this.updatePlaceholderRow();
     },
 
@@ -468,21 +482,12 @@ export default {
       if (this.readyToMove) {
         const { calendarEvent, day } = this.movingEvent;
 
-        const ev = this.getEvent('moving', {
-          calendarEvent,
-          moveEvent: this.movingEvent,
-          placeholder: this.$dayspan.getPlaceholderEventForMove(calendarEvent),
-        });
-
-        this.$emit('moving', ev);
-
-        if (!ev.handled && ev.placeholder) {
-          this.moving = true;
-          this.movingDuration = calendarEvent.time.millis();
-          this.movingStartDay = day;
-          this.placeholderForCreate = false;
-          this.placeholder = ev.placeholder;
-        }
+        this.moving = true;
+        this.movingDuration = calendarEvent.time.millis();
+        this.movingStartDay = day;
+        this.placeholderForCreate = false;
+        this.placeholder = this.copyCalendarEvent(calendarEvent);
+        this.placeholder.data.moving = true;
 
         this.readyToMove = false;
       }
