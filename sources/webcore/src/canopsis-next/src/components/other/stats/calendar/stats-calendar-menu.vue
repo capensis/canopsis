@@ -34,12 +34,12 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 export default {
   props: {
-    calendarEvent: {
-      type: Object,
+    activator: {
+      type: HTMLElement,
       required: true,
     },
-    activator: {
-      type: HTMLDivElement,
+    calendarEvent: {
+      type: Object,
       required: true,
     },
   },
@@ -67,11 +67,7 @@ export default {
       }
     },
   },
-  mounted() {
-    // this.menu = true;
-  },
   methods: {
-
     getStyleColor(event) {
       const past = event.schedule.end.isBefore(new Date());
 
