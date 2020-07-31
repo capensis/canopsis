@@ -1,6 +1,7 @@
 <template lang="pug">
   ds-calendar-app(
     :calendar="calendar",
+    :config="calendarConfig",
     :events="events",
     :readOnly="readOnly",
     fluid,
@@ -69,6 +70,39 @@ export default {
     };
   },
   computed: {
+    calendarConfig() {
+      return {
+        dsCalendarEventTime: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+        dsCalendarEvent: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+        dsCalendarEventPlaceholder: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+        dsCalendarEventTimePlaceholder: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+      };
+    },
+
     pbehaviorsById() {
       return this.pbehaviors.reduce((acc, pbehavior) => {
         acc[pbehavior._id] = pbehavior;

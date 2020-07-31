@@ -2,7 +2,7 @@
   v-menu.ds-calendar-event.sa(
     :class="classWithKey",
     :content-class="contentClass",
-    :disabled="!hasPopover",
+    :disabled="!hasPopover || popoverProps.disabled",
     :style="style",
     v-model="menu",
     v-bind="popoverProps"

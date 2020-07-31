@@ -2,7 +2,7 @@
   v-menu.ds-calendar-event-menu(
     :class="classWithKey",
     :content-class="contentClass",
-    :disabled="!hasPopover",
+    :disabled="!hasPopover || popoverProps.disabled",
     v-model="menu",
     v-bind="popoverProps"
   )
@@ -25,7 +25,6 @@
           span(v-if="hasPrefix") {{ getPrefix }}
           strong.ds-ev-title {{ details.title }}
           span.ds-ev-description {{ details.description }}
-
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
       div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
