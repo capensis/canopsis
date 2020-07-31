@@ -17,17 +17,16 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
 ### Dernières versions
 
+*  [Canopsis 3.43.1](notes-de-version/3.43.1.md), publié le 10 juillet 2020
 *  [Canopsis 3.42.0](notes-de-version/3.42.0.md), publié le 19 juin 2020
 *  [Canopsis 3.41.0](notes-de-version/3.41.0.md), publié le 25 mai 2020
 *  [Canopsis 3.40.0](notes-de-version/3.40.0.md), publié le 4 mai 2020
-*  [Canopsis 3.39.1](notes-de-version/3.39.1.md), publié le 14 avril 2020
-*  [Canopsis 3.39.0](notes-de-version/3.39.0.md), publié le 10 avril 2020
-*  [Canopsis 3.38.0](notes-de-version/3.38.0.md), publié le 19 mars 2020
 
 ### Anciennes versions
 
 | | | | | | |
 |-:|-|-|-|-|-|
+| *mars-avril 2020* | [3.39.1](notes-de-version/3.39.1.md) | [3.39.0](notes-de-version/3.39.0.md) | [3.38.0](notes-de-version/3.38.0.md) | | |
 | *janvier–février 2020* | [3.37.0](notes-de-version/3.37.0.md) | [3.36.0](notes-de-version/3.36.0.md) | [3.35.0](notes-de-version/3.35.0.md) | | |
 | *octobre–décembre 2019* | [3.34.0](notes-de-version/3.34.0.md) | [3.33.0](notes-de-version/3.33.0.md) | [3.32.0](notes-de-version/3.32.0.md) | [3.31.0](notes-de-version/3.31.0.md) | [3.30.0](notes-de-version/3.30.0.md) |
 | *août–septembre 2019* | [3.29.0](notes-de-version/3.29.0.md) | [3.28.0](notes-de-version/3.28.0.md) | [3.27.0](notes-de-version/3.27.0.md) | [3.26.0](notes-de-version/3.26.0.md) | [3.25.0](notes-de-version/3.25.0.md) |

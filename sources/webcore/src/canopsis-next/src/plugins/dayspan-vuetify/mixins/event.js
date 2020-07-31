@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
 
 import popoverMixin from './popover';
@@ -7,14 +5,6 @@ import popoverMixin from './popover';
 export default {
   mixins: [popoverMixin],
   computed: {
-    hasPopover() {
-      return get(
-        this.calendarEvent,
-        'data.meta.hasPopover',
-        !!this.$scopedSlots.eventPopover && !this.isPlaceholderWithDay,
-      );
-    },
-
     isPlaceholderSameDay() {
       return this.isPlaceholderWithDay.sameDay(this.calendarEvent.end);
     },
@@ -73,7 +63,7 @@ export default {
 
     editCheck(event) {
       if (!this.hasPopover) {
-        this.$emit('edit', this.calendarEvent);
+        this.$emit('edit', this.getEvent('edit', event));
         return;
       }
 

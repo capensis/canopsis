@@ -8,32 +8,24 @@
       )
       ds-calendar-app.stats-calendar-app(
         :class="{ single: !hasMultipleFilters }",
+        :calendar="calendar",
         :events="events",
-        :config="calendarConfig",
         fluid,
         read-only,
         @change="changeCalendar",
-        @edit="editEvent"
+        @edit="eventClick"
       )
-        v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
-          v-card-text(v-if="calendarEvent.data.meta")
-            v-layout(
-              v-for="(event, index) in calendarEvent.data.meta.events",
-              :key="`popover-event-${index}`",
-              row,
-              wrap
-            )
-              v-flex(xs12)
-                div.ds-calendar-event-popover-item(
-                  :style="{ backgroundColor: getStyleColor(details, event) }",
-                  @click="editEvent(event)"
-                )
-                  strong {{ event.data.title }}
-                  p {{ event.data.description }}
+      stats-calendar-menu(
+        v-if="hasMenu",
+        :activator="menuActivator",
+        :calendarEvent="menuCalendarEvent",
+        @event-click="menuEventClick",
+        @closed="closedMenu"
+      )
 </template>
 
 <script>
-import { get, omit, isEmpty } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
@@ -49,10 +41,16 @@ import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
+import StatsCalendarMenu from './stats-calendar-menu.vue';
+
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { ProgressOverlay, AlertOverlay },
+  components: {
+    ProgressOverlay,
+    AlertOverlay,
+    StatsCalendarMenu,
+  },
   mixins: [widgetFetchQueryMixin, widgetStatsWrapperMixin],
   props: {
     widget: {
@@ -62,6 +60,8 @@ export default {
   },
   data() {
     return {
+      menuActivator: null,
+      menuCalendarEvent: null,
       pending: false,
       alarms: [],
       alarmsCollections: [],
@@ -69,21 +69,8 @@ export default {
     };
   },
   computed: {
-    calendarConfig() {
-      return {
-        dsCalendarEventTime: {
-          popoverProps: {
-            openOnHover: true,
-          },
-        },
-      };
-    },
-    getStyleColor() {
-      return (details, calendarEvent) => {
-        const past = calendarEvent.schedule.end.isBefore(new Date());
-
-        return this.$dayspan.getStyleColor(details, calendarEvent, past);
-      };
+    hasMenu() {
+      return this.menuActivator && this.menuCalendarEvent;
     },
 
     getCalendarEventColor() {
@@ -147,16 +134,43 @@ export default {
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    editEvent(event) {
-      const { meta } = event.data;
+    closedMenu() {
+      this.menuActivator = null;
+      this.menuCalendarEvent = null;
+    },
+
+    menuEventClick(calendarEvent) {
+      const meta = get(calendarEvent, 'data.meta', {});
+
+      this.showAlarmsListModal(meta);
+    },
+
+    eventClick({ $element, calendarEvent }) {
+      const meta = get(calendarEvent, 'data.meta', {});
+
+      if ($element && meta.events) {
+        this.menuActivator = $element;
+        this.menuCalendarEvent = calendarEvent;
+
+        return;
+      }
+
+      this.showAlarmsListModal(meta);
+    },
+
+    showAlarmsListModal(meta) {
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const widgetParameters = {
         ...this.widget.parameters.alarmsList,
 
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        liveReporting: {
+          tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
+          tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
+        },
       };
 
-      if (!isEmpty(event.data.meta.filter)) {
+      if (!isEmpty(meta.filter)) {
         widgetParameters.viewFilters = [meta.filter];
         widgetParameters.mainFilter = meta.filter;
       }
@@ -164,10 +178,6 @@ export default {
       this.$modals.show({
         name: MODALS.alarmsList,
         config: {
-          query: {
-            tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
-            tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
-          },
           widget: {
             ...widget,
 
@@ -180,18 +190,16 @@ export default {
       });
     },
 
-    changeCalendar({ calendar }) {
-      this.calendar = calendar;
-      this.query = {
-        ...this.query,
-        tstart: calendar.start.date.unix(),
-        tstop: calendar.end.date.unix(),
-      };
+    changeCalendar() {
+      this.fetchList();
     },
 
     async fetchList() {
       try {
         const query = omit(this.query, ['filters', 'considerPbehaviors']);
+
+        query.tstart = this.calendar.start.date.unix();
+        query.tstop = this.calendar.end.date.unix();
 
         this.pending = true;
         this.serverErrorMessage = null;
@@ -330,16 +338,5 @@ export default {
         height: 100%;
       }
     }
-  }
-
-  .ds-calendar-event-popover-item {
-    color: white;
-    margin: 1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-left: 0.5em;
-    cursor: pointer;
-    border-radius: 2px;
   }
 </style>

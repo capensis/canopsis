@@ -71,7 +71,6 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
           color: getColor(sum),
           meta: {
             sum,
-            hasPopover: true,
             events: groupedEvent,
           },
         },
