@@ -1,7 +1,7 @@
 <template lang="pug">
   v-menu.ds-calendar-event-menu(
     :content-class="contentClass",
-    :disabled="!hasPopover",
+    :disabled="menuDisabled",
     v-model="menu",
     v-bind="popoverProps"
   )
@@ -17,7 +17,7 @@
     slot(
       name="eventCreatePopover",
       v-if="isStart && isShownPopover",
-      v-bind="{ placeholder, calendar, day, index, add, close: closePopover  }"
+      v-bind="{ placeholder, calendar, day, index, add, close: closePopover }"
     )
 </template>
 
