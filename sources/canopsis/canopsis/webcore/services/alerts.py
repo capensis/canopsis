@@ -155,6 +155,7 @@ def exports(ws):
 
         alarms_ids, consequences_children = [], []
         alarm_children = {'alarms': [], 'total': 0}
+        alarms_dict = {}
         for alarm in alarms['alarms']:
             if with_consequences:
                 consequences_children.extend(alarm.get('consequences', {}).get('data', []))
@@ -163,7 +164,9 @@ def exports(ws):
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
-        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
+                alarms_dict[tmp_id] = []
+        entities = context_manager.get_entities_by_id(alarms_ids, with_links=False)
+
         entity_dict = {}
         for entity in entities:
             entity_dict[entity.get('_id')] = entity
@@ -237,7 +240,7 @@ def exports(ws):
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
-                alarm['links'] = entity_dict[alarm['d']]['links']
+                alarm['links'] = context_manager.enrich_links_to_entity_with_alarm(entity_dict[alarm['d']], alarm)
 
                 # TODO: 'infos' is already present in entity.
                 # Remove this one if unused.
