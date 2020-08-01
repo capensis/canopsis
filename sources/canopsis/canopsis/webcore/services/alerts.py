@@ -155,7 +155,6 @@ def exports(ws):
 
         alarms_ids, consequences_children = [], []
         alarm_children = {'alarms': [], 'total': 0}
-        alarms_dict = {}
         for alarm in alarms['alarms']:
             if with_consequences:
                 consequences_children.extend(alarm.get('consequences', {}).get('data', []))
@@ -164,7 +163,6 @@ def exports(ws):
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
-                alarms_dict[tmp_id] = []
         entities = context_manager.get_entities_by_id(alarms_ids, with_links=False)
 
         entity_dict = {}
