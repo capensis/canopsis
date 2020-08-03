@@ -233,15 +233,29 @@ export default {
 
     finishMove(mouseEvent) {
       this.placeholder.data.moving = false;
+      const target = this.placeholder.time;
+      const source = this.movingEvent.calendarEvent.time;
+      const sameTime = target.start.sameMinute(source.start);
+      const sameDay = target.start.sameDay(source.start);
+      const isDay = mouseEvent.type === 'mouse-up-day';
 
-      if (!this.openPopover) {
-        this.handleMoved(mouseEvent);
+      if ((isDay && !sameDay) || (!isDay && !sameTime)) {
+        const ev = this.getEvent('moved', {
+          mouseEvent,
+          movingEvent: this.movingEvent,
+          calendarEvent: this.movingEvent.calendarEvent,
+          target: this.placeholder.time,
+          openPopover: () => this.placeholderForCreate = true,
+          closePopover: () => this.clearPlaceholder(),
+        });
+
+        this.$emit('moved', ev);
+
+        if (!ev.handled) {
+          ev.clearPlaceholder();
+        }
       } else {
-        this.placeholderForCreate = true;
-      }
-
-      if (this.placeholder.start.isBefore(this.calendar.filled.start)) {
-        this.calendar.prev();
+        this.clearPlaceholder();
       }
 
       this.endMove();

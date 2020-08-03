@@ -97,6 +97,7 @@ export const MODALS = {
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
+  eventChangingConfirmation: 'event-changing-confirmation',
 };
 
 export const EVENT_ENTITY_TYPES = {

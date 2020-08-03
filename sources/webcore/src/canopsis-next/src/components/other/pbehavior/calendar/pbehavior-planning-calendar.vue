@@ -8,7 +8,8 @@
     fillHeight,
     @change="changeCalendarHandler",
     @changed="changedEventHandler",
-    @added="changedEventHandler"
+    @added="changedEventHandler",
+    @moved="movedEventHandler"
   )
     ds-calendar-event-popover(
       slot="eventPopover",
@@ -41,6 +42,8 @@ import { get } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Schedule, Day, DaySpan } from 'dayspan';
+
+import { MODALS } from '@/constants';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
@@ -220,6 +223,24 @@ export default {
       }
 
       event.clearPlaceholder();
+    },
+
+    movedEventHandler(event) {
+      this.$modals.show({
+        name: MODALS.eventChangingConfirmation,
+        config: {
+          action: () => {
+            if (!event.calendarEvent.data.pbehavior) {
+              event.openPopover();
+            } else {
+              event.clearPlaceholder();
+            }
+          },
+          cancelAction: () => {
+            event.clearPlaceholder();
+          },
+        },
+      });
     },
   },
 };
