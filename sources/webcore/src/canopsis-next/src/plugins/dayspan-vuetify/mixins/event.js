@@ -1,11 +1,10 @@
-import { get } from 'lodash';
+import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
+
+import popoverMixin from './popover';
 
 export default {
+  mixins: [popoverMixin],
   computed: {
-    hasPopover() {
-      return get(this.calendarEvent, 'data.meta.hasPopover', !!this.$scopedSlots.eventPopover && !this.isPlaceholderWithDay);
-    },
-
     isPlaceholderSameDay() {
       return this.isPlaceholderWithDay.sameDay(this.calendarEvent.end);
     },
@@ -22,6 +21,10 @@ export default {
 
     canResize() {
       return !this.$dayspan.readOnly && this.ending;
+    },
+
+    classWithKey() {
+      return getMenuClassByCalendarEvent(this.calendarEvent);
     },
   },
   beforeDestroy() {
@@ -55,18 +58,33 @@ export default {
     },
 
     edit(calendarEvent) {
-      this.$emit('edit-event', calendarEvent);
-      this.menu = false;
+      this.$emit('edit-event', this.getEvent('mouse-down-event', {}, { calendarEvent }));
     },
 
     editCheck(event) {
-      if (this.handlesEvents(event)) {
-        this.menu = !this.menu;
+      if (this.isPlaceholderWithDay) {
+        this.handlesEvents(event);
+        return;
+      }
+
+      if (!this.hasPopover) {
+        this.$emit('edit', this.getEvent('edit', event));
+        return;
+      }
+
+      if (this.handlesEvents(event) && !this.menu) {
+        this.menu = true;
 
         if (!this.isPlaceholderWithDay) {
+          this.$emit('mouse-start-edit', this.getEvent('mouse-start-edit', event));
           this.$emit('clear-placeholder');
         }
       }
+    },
+
+    closePopover() {
+      this.menu = false;
+      this.$emit('mouse-end-edit');
     },
   },
 };

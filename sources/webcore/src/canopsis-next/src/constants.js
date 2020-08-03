@@ -34,6 +34,7 @@ export const ENTITIES_TYPES = {
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
+  pbehaviorException: 'pbehaviorException',
 };
 
 export const MODALS = {
@@ -94,6 +95,8 @@ export const MODALS = {
   createPlaylist: 'create-playlist',
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
+  createRRule: 'create-r-rule',
+  selectExceptionsDatesLists: 'select-exceptions-dates-lists',
 };
 
 export const EVENT_ENTITY_TYPES = {

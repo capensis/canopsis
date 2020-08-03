@@ -25,6 +25,7 @@ export function pbehaviorToForm(pbehavior = {}) {
     type: pbehavior.type || '',
     reason: pbehavior.reason || '',
     filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
+    comments: cloneDeep(pbehavior.comments || []),
   };
 }
 
@@ -39,9 +40,12 @@ export function formToPbehavior(form) {
 }
 
 export function calendarEventToPbehaviorForm(calendarEvent) {
-  const { pbehavior } = calendarEvent.data || {};
+  const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
-  const form = pbehaviorToForm(pbehavior);
+  const form = {
+    ...pbehaviorToForm(pbehavior),
+    ...cachedForm,
+  };
 
   form.tstart = calendarEvent.start.date.toDate();
   form.tstop = calendarEvent.end.date.toDate();

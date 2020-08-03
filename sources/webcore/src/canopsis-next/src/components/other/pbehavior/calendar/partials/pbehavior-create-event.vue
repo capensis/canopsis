@@ -1,29 +1,43 @@
 <template lang="pug">
-  v-form.pa-3.pbehavior-form(@submit.prevent="submitHandler")
+  v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
     pbehavior-form(v-model="form")
     v-layout(row, justify-end)
+      v-btn.error(
+        v-show="pbehavior",
+        @click="remove"
+      ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(
         depressed,
         flat,
-        @click="$emit('close')"
+        @click="cancel"
       ) {{ $t('common.cancel') }}
       v-btn.mr-0.mb-0.primary.white--text(type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
+import { get, cloneDeep, omit } from 'lodash';
+import dependentMixin from 'vuetify/es5/mixins/dependent';
+
 import {
   calendarEventToPbehaviorForm,
   formToCalendarEvent,
 } from '@/helpers/forms/planning-pbehavior';
+
+import { MODALS } from '@/constants';
+
+import { isOmitEqual } from '@/helpers/is-omit-equal';
+import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
 
 import authMixin from '@/mixins/auth';
 
 import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: { PbehaviorForm },
-  mixins: [authMixin],
-  inject: ['$validator'],
+  mixins: [authMixin, dependentMixin],
   props: {
     calendarEvent: {
       type: Object,
@@ -32,8 +46,36 @@ export default {
   },
   data() {
     return {
+      manualClose: false,
       form: calendarEventToPbehaviorForm(this.calendarEvent),
     };
+  },
+  computed: {
+    pbehavior() {
+      return get(this.calendarEvent, 'data.pbehavior');
+    },
+
+    clickOutsideDirective() {
+      const selectorsForInclude = [
+        '.ds-calendar-app-action',
+        `.${getMenuClassByCalendarEvent(this.calendarEvent)}`,
+      ];
+
+      return {
+        handler: this.cancel,
+        include: () => [
+          ...this.getOpenDependentElements(),
+          ...document.querySelectorAll(selectorsForInclude.join(',')),
+        ],
+      };
+    },
+  },
+  beforeDestroy() {
+    if (this.manualClose) {
+      delete this.calendarEvent.data.cachedForm;
+    } else {
+      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+    }
   },
   methods: {
     async submitHandler() {
@@ -47,6 +89,32 @@ export default {
         this.$emit('submit', calendarEvent);
       }
     },
+
+    cancel() {
+      const oldPbehaviorForm = calendarEventToPbehaviorForm(omit(this.calendarEvent, 'data.cachedForm'));
+
+      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id'])) {
+        return this.close(true);
+      }
+
+      return this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.close(true),
+        },
+      });
+    },
+
+    remove() {
+      this.$emit('remove', this.pbehavior);
+      this.close();
+    },
+
+    close(manualClose = false) {
+      this.manualClose = manualClose;
+
+      this.$emit('close');
+    },
   },
 };
 </script>
@@ -55,6 +123,6 @@ export default {
   .pbehavior-form {
     overflow: auto;
     width: 500px;
-    max-height: 600px;
+    max-height: 555px; // For validation errors
   }
 </style>

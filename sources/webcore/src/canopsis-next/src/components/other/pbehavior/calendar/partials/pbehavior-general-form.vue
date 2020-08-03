@@ -1,7 +1,40 @@
 <template lang="pug">
   div
-    v-layout(data-test="pbehaviorTypeLayout", row)
-      v-flex(xs6)
+    v-layout(wrap)
+      v-flex(xs12)
+        v-text-field(
+          v-field="form.name",
+          v-validate="'required'",
+          :label="$t('modals.createPbehavior.steps.general.fields.name')",
+          :error-messages="errors.collect('name')",
+          name="name"
+        )
+      v-flex(xs12)
+        v-switch(
+          v-field="form.enabled",
+          :label="$t('modals.createPbehavior.steps.general.fields.enabled')",
+          color="primary",
+          hide-details
+        )
+      v-flex.mt-3(xs12)
+        v-layout(wrap, justify-space-between)
+          v-flex(xs6)
+            date-time-picker-field(
+              v-validate="tstartRules",
+              :value="form.tstart",
+              :label="$t('modals.createPbehavior.steps.general.fields.start')",
+              name="tstart",
+              @input="updateField('tstart', $event)"
+            )
+          v-flex(xs6)
+            date-time-picker-field(
+              v-validate="tstopRules",
+              :value="form.tstop",
+              :label="$t('modals.createPbehavior.steps.general.fields.stop')",
+              name="tstop",
+              @input="updateField('tstop', $event)"
+            )
+      v-flex(xs12)
         v-combobox(
           v-field="form.reason",
           v-validate="'required'",
@@ -9,11 +42,10 @@
           :loading="pbehaviorReasonsPending",
           :items="reasons",
           :error-messages="errors.collect('reason')",
-          name="reason",
-          data-test="pbehaviorReason"
+          name="reason"
         )
-      v-flex(xs6)
-        v-select.ml-3(
+      v-flex(xs12)
+        v-select(
           v-field="form.type",
           v-validate="'required'",
           :label="$t('modals.createPbehavior.steps.general.fields.type')",
@@ -24,13 +56,18 @@
 </template>
 
 <script>
-import { PBEHAVIOR_TYPES, PAUSE_REASONS } from '@/constants';
+import moment from 'moment-timezone';
 
-import formValidationHeaderMixin from '@/mixins/form/validation-header';
+import { PBEHAVIOR_TYPES, PAUSE_REASONS, DATETIME_FORMATS } from '@/constants';
+
 import formMixin from '@/mixins/form';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
 
+import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+
 export default {
+  components: { DateTimePickerField },
   mixins: [formMixin, formValidationHeaderMixin, pbehaviorReasonsMixin],
   model: {
     prop: 'form',
@@ -44,6 +81,24 @@ export default {
     },
   },
   computed: {
+    tstartRules() {
+      return {
+        required: true,
+        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
+      };
+    },
+
+    tstopRules() {
+      const rules = { required: true };
+
+      if (this.form.tstart) {
+        rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
+        rules.date_format = DATETIME_FORMATS.veeValidateDateTimeFormat;
+      }
+
+      return rules;
+    },
+
     reasons() {
       return this.pbehaviorReasons.length ? this.pbehaviorReasons : Object.values(PAUSE_REASONS);
     },

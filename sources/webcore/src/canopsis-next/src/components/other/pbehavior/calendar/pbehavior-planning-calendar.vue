@@ -1,6 +1,7 @@
 <template lang="pug">
   ds-calendar-app(
     :calendar="calendar",
+    :config="calendarConfig",
     :events="events",
     :readOnly="readOnly",
     fluid,
@@ -18,7 +19,8 @@
         slot-scope="{ calendarEvent, close, edit }",
         :calendarEvent="calendarEvent",
         @close="close",
-        @submit="edit"
+        @submit="edit",
+        @remove="removePbehavior"
       )
     ds-calendar-event-popover(
       slot="eventCreatePopover",
@@ -29,7 +31,8 @@
         slot-scope="{ calendarEvent, close, add }",
         :calendarEvent="calendarEvent",
         @close="close",
-        @submit="add"
+        @submit="add",
+        @remove="removePbehavior"
       )
 </template>
 
@@ -38,8 +41,6 @@ import { get } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Schedule, Day, DaySpan } from 'dayspan';
-
-import uuid from '@/helpers/uuid';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
@@ -62,12 +63,46 @@ export default {
       pending: false,
       calendar: Calendar.months(),
       events: [],
+      removedPbehaviorsById: {},
       changedPbehaviorsById: {},
       addedPbehaviorsById: {},
       colorsToPbehaviors: {},
     };
   },
   computed: {
+    calendarConfig() {
+      return {
+        dsCalendarEventTime: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+        dsCalendarEvent: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+        dsCalendarEventPlaceholder: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+        dsCalendarEventTimePlaceholder: {
+          popoverProps: {
+            openOnHover: false,
+            ignoreClickOutside: true,
+            ignoreClickUpperOutside: true,
+          },
+        },
+      };
+    },
+
     pbehaviorsById() {
       return this.pbehaviors.reduce((acc, pbehavior) => {
         acc[pbehavior._id] = pbehavior;
@@ -81,7 +116,7 @@ export default {
         ...this.pbehaviorsById,
         ...this.changedPbehaviorsById,
         ...this.addedPbehaviorsById,
-      });
+      }).filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
     },
   },
   mounted() {
@@ -125,24 +160,19 @@ export default {
         },
       });
 
-      const events = timespans.map((timespan) => {
+      const events = timespans.map((timespan, index) => {
         const startDay = new Day(moment.unix(timespan.from));
         const endDay = new Day(moment.unix(timespan.to));
         const daySpan = new DaySpan(startDay, endDay);
 
         return {
-          id: uuid('event'),
+          id: `${pbehavior._id}-${index}`,
           data: {
+            ...this.$dayspan.getDefaultEventDetails(),
+
             color,
             pbehavior,
-
             title: pbehavior.name,
-            description: '',
-            location: '',
-            forecolor: '#ffffff',
-            calendar: '',
-            busy: true,
-            icon: '',
           },
           schedule: Schedule.forSpan(daySpan),
         };
@@ -158,8 +188,26 @@ export default {
       this.fetchEvents();
     },
 
+    removePbehavior(pbehavior) {
+      if (this.addedPbehaviorsById[pbehavior._id]) {
+        this.$delete(this.addedPbehaviorsById, pbehavior._id);
+      } else {
+        this.$set(this.removedPbehaviorsById, pbehavior._id, pbehavior);
+
+        if (this.changedPbehaviorsById[pbehavior._id]) {
+          this.$delete(this.changedPbehaviorsById, pbehavior._id);
+        }
+      }
+
+      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
+    },
+
     async changedEventHandler(event) {
       const { pbehavior, color } = event.calendarEvent.data;
+
+      if (event.closePopover) {
+        event.closePopover();
+      }
 
       if (pbehavior) {
         if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {

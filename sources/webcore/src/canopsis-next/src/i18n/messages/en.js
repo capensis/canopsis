@@ -113,6 +113,7 @@ export default {
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    begin: 'Begin',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -663,7 +664,7 @@ export default {
         comments: {
           title: 'Comments',
           buttons: {
-            addComment: 'Add a new comment',
+            addComment: 'Add comment',
           },
           fields: {
             message: 'Message',
@@ -1171,6 +1172,12 @@ export default {
     pbehaviorPlanning: {
       title: 'Periodical behaviors',
     },
+    selectExceptionsDatesLists: {
+      title: 'Choose list of exceptions',
+    },
+    createRrule: {
+      title: 'Create RRule',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1652,6 +1659,21 @@ export default {
       [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
     },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Add filter',
+      editFilter: 'Edit filter',
+      addRRule: 'Add RRule',
+      editRrule: 'Edit RRule',
+    },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Exception dates',
+    create: 'Add an exception date',
+    choose: 'Choose list of exceptions',
   },
 
   ...featureService.get('i18n.en'),

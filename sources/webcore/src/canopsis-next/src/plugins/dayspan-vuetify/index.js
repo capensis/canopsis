@@ -1,6 +1,7 @@
 import DaySpanVuetify from 'dayspan-vuetify/src/plugin';
 
 import DsDay from './components/day.vue';
+import DsDayTimes from './components/day-times.vue';
 import DsCalendar from './components/calendar.vue';
 import DsCalendarApp from './components/calendar-app.vue';
 import DsCalendarEvent from './components/calendar-event.vue';
@@ -13,6 +14,7 @@ export default {
   install(Vue, options = {}) {
     Vue.use(DaySpanVuetify, options);
     Vue.component('dsDay', DsDay);
+    Vue.component('dsDayTimes', DsDayTimes);
     Vue.component('dsCalendar', DsCalendar);
     Vue.component('dsCalendarApp', DsCalendarApp);
     Vue.component('dsCalendarEvent', DsCalendarEvent);

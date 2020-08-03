@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-menu(
-    class="ds-calendar-event-menu",
+  v-menu.ds-calendar-event-menu(
+    :class="classWithKey",
     :content-class="contentClass",
-    :disabled="!hasPopover",
+    :disabled="!hasPopover || popoverProps.disabled",
     v-model="menu",
     v-bind="popoverProps"
   )
@@ -25,11 +25,14 @@
           span(v-if="hasPrefix") {{ getPrefix }}
           strong.ds-ev-title {{ details.title }}
           span.ds-ev-description {{ details.description }}
-
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
       div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
-    slot(name="eventPopover", v-if="menu", v-bind="{ calendarEvent, calendar, edit, details, close }")
+    slot(
+      name="eventPopover",
+      v-if="isShownPopover",
+      v-bind="{ calendarEvent, calendar, edit, details, close: closePopover }"
+    )
 </template>
 
 <script>
@@ -69,6 +72,8 @@ export default {
         $event,
         type,
         calendarEvent: this.calendarEvent,
+        closePopover: this.closePopover,
+        openPopover: this.openPopover,
         calendar: this.calendar,
         details: this.details,
         day: this.isPlaceholderWithDay || this.$parent.day,

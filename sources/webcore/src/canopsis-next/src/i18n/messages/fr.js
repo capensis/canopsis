@@ -114,6 +114,7 @@ export default {
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
+    begin: 'Commencer',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1172,6 +1173,12 @@ export default {
     pbehaviorPlanning: {
       title: 'Comportement périodiques',
     },
+    selectExceptionsDatesLists: {
+      title: 'Choisissez la liste des exceptions',
+    },
+    createRrule: {
+      title: 'Créer un récurrence',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1654,6 +1661,21 @@ export default {
       [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
     },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Ajouter un filtre',
+      editFilter: 'Modifier le filtre',
+      addRRule: 'Ajouter RRule',
+      editRrule: 'Modifier RRule',
+    },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Dates d\'exception',
+    create: 'Ajouter une date d\'exception',
+    choose: 'Sélectionnez la liste d\'exclusion',
   },
 
   ...featureService.get('i18n.fr'),
