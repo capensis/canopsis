@@ -21,12 +21,9 @@
 </template>
 
 <script>
-import rightsTechnicalPlanningAdministrationMixin from '@/mixins/rights/technical/planning-administration';
-
 import PlanningAdministrationFabButtons from '@/components/other/planning-administration/admin/planning-administration-fab-buttons.vue';
 
 export default {
   components: { PlanningAdministrationFabButtons },
-  mixins: [rightsTechnicalPlanningAdministrationMixin],
 };
 </script>
