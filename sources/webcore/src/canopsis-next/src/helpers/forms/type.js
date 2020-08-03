@@ -1,12 +1,12 @@
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 /**
- * Convert type data to type form
+ * Convert planning type data to type form
  *
  * @param {Object} type
  * @return {Object}
  */
-export function typeToForm(type = {}) {
+export function planningTypeToForm(type = {}) {
   return {
     name: type.name || '',
     description: type.description || '',
@@ -17,12 +17,12 @@ export function typeToForm(type = {}) {
 }
 
 /**
- * Convert type form to type data
+ * Convert type form to planning type data
  *
  * @param {Object} typeForm
  * @return {Object}
  */
-export function formToType(typeForm = {}) {
+export function formToPlanningType(typeForm = {}) {
   const { iconName, ...form } = typeForm;
 
   return {

@@ -14,10 +14,9 @@
 import { has } from 'lodash';
 
 import { MODALS } from '@/constants';
-import { typeToForm, formToType } from '@/helpers/forms/type';
+import { planningTypeToForm, formToPlanningType } from '@/helpers/forms/type';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import ExceptionsDatesLists from '@/components/other/pbehavior/exceptions/exceptions-dates-lists.vue';
 import CreateTypeForm from '@/components/other/planning-administration/form/create-pbehavior-type-form.vue';
 
 
@@ -30,13 +29,12 @@ export default {
   },
   components: {
     CreateTypeForm,
-    ExceptionsDatesLists,
     ModalWrapper,
   },
   mixins: [modalInnerMixin],
   data() {
     return {
-      form: typeToForm(this.modal.config.type),
+      form: planningTypeToForm(this.modal.config.type),
     };
   },
   methods: {
@@ -54,7 +52,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            await this.config.action(formToType(this.form));
+            await this.config.action(formToPlanningType(this.form));
           }
 
           this.$modals.hide();

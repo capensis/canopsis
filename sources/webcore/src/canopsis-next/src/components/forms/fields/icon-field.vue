@@ -3,7 +3,7 @@
     v-field="value",
     :label="label",
     :hint="hint",
-    :items="iconNames",
+    :items="availableIconNames",
     :name="name",
     :error-messages="errors.collect(name)",
     persistent-hint
@@ -54,7 +54,7 @@ export default {
     },
   },
   computed: {
-    iconNames() {
+    availableIconNames() {
       return Object.keys(materialIconNameByCode);
     },
   },

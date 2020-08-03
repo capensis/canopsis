@@ -5,7 +5,7 @@
       v-flex(xs12)
         v-card.ma-2
           v-tabs(fixed-tabs, slider-color="primary")
-            template(v-if="hasReadAnyTypeAccess")
+            template(v-if="hasReadAnyPbehaviorTypeAccess")
               v-tab {{ $t('planningAdministration.tabs.type') }}
               v-tab-item
                 v-card-text

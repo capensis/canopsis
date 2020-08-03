@@ -1,6 +1,6 @@
 <template lang="pug">
   fab-expand-buttons(@refresh="$emit('refresh')")
-    v-tooltip(v-if="hasCreateAnyTypeAccess", top)
+    v-tooltip(v-if="hasCreateAnyPbehaviorTypeAccess", top)
       v-btn(slot="activator", fab, dark, small, color="indigo", @click.stop="showCreateTypeModal")
         v-icon list
       span {{ $t('modals.createPbehaviorType.title') }}
