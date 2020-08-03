@@ -203,7 +203,8 @@ def exports(ws):
             alarms['rules'] = dict()
 
         for alarm in alarms['alarms']:
-            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm and alarm.get('parents') else None
+            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm and 'v' in alarm and \
+                alarm['v'].get('parents') else None
             if rules:
                 if with_causes:
                     alarm['causes'] = {
