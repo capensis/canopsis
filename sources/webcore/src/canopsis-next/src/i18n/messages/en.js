@@ -1179,6 +1179,20 @@ export default {
     createRrule: {
       title: 'Create RRule',
     },
+    createPbehaviorType: {
+      title: 'Create type',
+      iconNameHint: 'Enter a name of an icon from material.io',
+      errors: {
+        iconName: 'The name is invalid',
+      },
+      fields: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priority',
+        iconName: 'Icon name',
+      },
+    },
   },
   tables: {
     noData: 'No data',

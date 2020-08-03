@@ -5,10 +5,11 @@
       v-flex(xs12)
         v-card.ma-2
           v-tabs(fixed-tabs, slider-color="primary")
-            v-tab {{ $t('planningAdministration.tabs.type') }}
-            v-tab-item
-              v-card-text
-                | Type
+            template(v-if="hasReadAnyTypeAccess")
+              v-tab {{ $t('planningAdministration.tabs.type') }}
+              v-tab-item
+                v-card-text
+                  | Type
             v-tab {{ $t('planningAdministration.tabs.reason') }}
             v-tab-item
               v-card-text
@@ -21,9 +22,12 @@
 </template>
 
 <script>
+import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
+
 import PlanningAdministrationFabButtons from '@/components/other/planning-administration/admin/planning-administration-fab-buttons.vue';
 
 export default {
   components: { PlanningAdministrationFabButtons },
+  mixins: [rightsTechnicalPbehaviorTypesMixin],
 };
 </script>

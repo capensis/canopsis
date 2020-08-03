@@ -1180,6 +1180,20 @@ export default {
     createRrule: {
       title: 'Créer un récurrence',
     },
+    createPbehaviorType: {
+      title: 'Créer un type',
+      iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+      errors: {
+        iconName: 'Le nom est invalide',
+      },
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priorité',
+        iconName: 'Nom de l\'icône',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
