@@ -282,6 +282,14 @@
         "crecord_type" : "action",
         "desc": "Playlists",
         "type": "CRUD"
+      },
+    {
+      "_id" : "models_planningAdministration",
+      "loader_id" : "models_planningAdministration",
+      "crecord_name": "models_planningAdministration",
+      "crecord_type" : "action",
+      "desc": "Planning administration",
+      "type": "CRUD"
     },
     {
         "_id" : "models_serie",

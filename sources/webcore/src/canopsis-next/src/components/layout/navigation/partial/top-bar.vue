@@ -182,6 +182,12 @@ export default {
           icon: 'playlist_play',
           right: USERS_RIGHTS.technical.playlist,
         },
+        {
+          route: { name: 'planning-administration' },
+          text: this.$t('common.planningAdministration'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.planningAdministration,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));

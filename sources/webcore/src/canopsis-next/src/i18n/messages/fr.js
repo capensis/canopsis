@@ -110,6 +110,7 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
+    planningAdministration: 'Administration de la planification',
     fullscreen: 'Plein écran',
     interval: 'Période',
     status: 'Statut',
@@ -1676,6 +1677,14 @@ export default {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
+  },
+
+  planningAdministration: {
+    tabs: {
+      type: 'Type',
+      reason: 'Raison',
+      datesOfExceptions: 'Dates d\'exception',
+    },
   },
 
   ...featureService.get('i18n.fr'),

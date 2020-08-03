@@ -17,6 +17,7 @@ import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
 import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import AdminPlaylists from '@/views/admin/playlists.vue';
+import AdminPlanningAdministration from '@/views/admin/planning-administration.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
@@ -136,6 +137,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.playlist,
+      },
+    },
+  },
+  {
+    path: '/planning-administration',
+    name: 'planning-administration',
+    component: AdminPlanningAdministration,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.planningAdministration,
       },
     },
   },

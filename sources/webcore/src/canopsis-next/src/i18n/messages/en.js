@@ -109,6 +109,7 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
+    planningAdministration: 'Planning Administration',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
@@ -1674,6 +1675,14 @@ export default {
     title: 'Exception dates',
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
+  },
+
+  planningAdministration: {
+    tabs: {
+      type: 'Type',
+      reason: 'Reason',
+      datesOfExceptions: 'Dates of exceptions',
+    },
   },
 
   ...featureService.get('i18n.en'),
