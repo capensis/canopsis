@@ -48,6 +48,7 @@ export default {
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
 
+      this.setTitle();
       this.setPopupTimeout();
 
       this.startKeepalive();
