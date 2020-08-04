@@ -110,6 +110,8 @@ export default {
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
     planningAdministration: 'Planning Administration',
+    icon: 'Icon',
+    priority: 'Priority',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
@@ -1691,7 +1693,7 @@ export default {
     choose: 'Choose list of exceptions',
   },
 
-  planningAdministration: {
+  planning: {
     tabs: {
       type: 'Type',
       reason: 'Reason',

@@ -284,20 +284,20 @@
         "type": "CRUD"
     },
     {
-      "_id" : "models_planningAdministration",
-      "loader_id" : "models_planningAdministration",
-      "crecord_name": "models_planningAdministration",
-      "crecord_type" : "action",
-      "desc": "Planning administration",
-      "type": "CRUD"
+        "_id" : "models_planning",
+        "loader_id" : "models_planning",
+        "crecord_name": "models_planning",
+        "crecord_type" : "action",
+        "desc": "Planning administration",
+        "type": "CRUD"
     },
     {
-      "_id" : "models_type",
-      "loader_id" : "models_type",
-      "crecord_name": "models_type",
-      "crecord_type" : "action",
-      "desc": "Type",
-      "type": "CRUD"
+        "_id" : "models_planningType",
+        "loader_id" : "models_planningType",
+        "crecord_name": "models_planningType",
+        "crecord_type" : "action",
+        "desc": "Planning type",
+        "type": "CRUD"
     },
     {
         "_id" : "models_serie",

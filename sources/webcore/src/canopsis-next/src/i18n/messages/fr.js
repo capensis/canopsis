@@ -111,6 +111,8 @@ export default {
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
     planningAdministration: 'Administration de la planification',
+    icon: 'Icône',
+    priority: 'Priorité',
     fullscreen: 'Plein écran',
     interval: 'Période',
     status: 'Statut',
@@ -1693,7 +1695,7 @@ export default {
     choose: 'Sélectionnez la liste d\'exclusion',
   },
 
-  planningAdministration: {
+  planning: {
     tabs: {
       type: 'Type',
       reason: 'Raison',

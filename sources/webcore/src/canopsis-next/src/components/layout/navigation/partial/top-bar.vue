@@ -186,7 +186,7 @@ export default {
           route: { name: 'planning-administration' },
           text: this.$t('common.planningAdministration'),
           icon: 'assignment',
-          right: USERS_RIGHTS.technical.planningAdministration,
+          right: USERS_RIGHTS.technical.planning,
         },
       ];
 

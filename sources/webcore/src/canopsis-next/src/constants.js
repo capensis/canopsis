@@ -727,8 +727,8 @@ export const USERS_RIGHTS = {
     parameters: `${USER_RIGHTS_PREFIXES.technical.admin}_parameters`,
     broadcastMessage: `${USER_RIGHTS_PREFIXES.technical.admin}_broadcastMessage`,
     playlist: `${USER_RIGHTS_PREFIXES.technical.admin}_playlist`,
-    planningAdministration: `${USER_RIGHTS_PREFIXES.technical.admin}_planningAdministration`,
-    type: `${USER_RIGHTS_PREFIXES.technical.admin}_type`,
+    planning: `${USER_RIGHTS_PREFIXES.technical.admin}_planning`,
+    type: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,

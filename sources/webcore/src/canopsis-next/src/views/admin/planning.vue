@@ -6,28 +6,29 @@
         v-card.ma-2
           v-tabs(fixed-tabs, slider-color="primary")
             template(v-if="hasReadAnyPbehaviorTypeAccess")
-              v-tab {{ $t('planningAdministration.tabs.type') }}
+              v-tab {{ $t('planning.tabs.type') }}
               v-tab-item
                 v-card-text
-                  | Type
-            v-tab {{ $t('planningAdministration.tabs.reason') }}
+                  planning-types-list
+            v-tab {{ $t('planning.tabs.reason') }}
             v-tab-item
               v-card-text
                 | Reason
-            v-tab {{ $t('planningAdministration.tabs.datesOfExceptions') }}
+            v-tab {{ $t('planning.tabs.datesOfExceptions') }}
             v-tab-item
               v-card-text
                 | Dates of exceptions
-    planning-administration-fab-buttons
+    planning-fab-buttons
 </template>
 
 <script>
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
-import PlanningAdministrationFabButtons from '@/components/other/planning-administration/admin/planning-administration-fab-buttons.vue';
+import PlanningFabButtons from '@/components/other/planning/admin/planning-fab-buttons.vue';
+import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
 
 export default {
-  components: { PlanningAdministrationFabButtons },
+  components: { PlanningTypesList, PlanningFabButtons },
   mixins: [rightsTechnicalPbehaviorTypesMixin],
 };
 </script>

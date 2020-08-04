@@ -381,11 +381,11 @@
             "checksum": 15,
             "desc": ""
         },
-        "models_planningAdministration": {
+        "models_planning": {
           "checksum": 15,
           "desc": ""
         },
-        "models_type": {
+        "models_planningType": {
           "checksum": 15,
           "desc": ""
         },

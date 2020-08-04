@@ -14,10 +14,10 @@
 import { has } from 'lodash';
 
 import { MODALS } from '@/constants';
-import { planningTypeToForm, formToPlanningType } from '@/helpers/forms/type';
+import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import CreateTypeForm from '@/components/other/planning-administration/form/create-pbehavior-type-form.vue';
+import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
 
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -34,7 +34,7 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
-      form: planningTypeToForm(this.modal.config.type),
+      form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
     };
   },
   methods: {
@@ -52,7 +52,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            await this.config.action(formToPlanningType(this.form));
+            await this.config.action(formToPbehaviorType(this.form));
           }
 
           this.$modals.hide();
