@@ -41,9 +41,11 @@
 import { get } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Schedule, Day, DaySpan } from 'dayspan';
+import { Calendar, Schedule, Day, DaySpan, Op } from 'dayspan';
 
-import { MODALS } from '@/constants';
+import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
+
+import uid from '@/helpers/uid';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
@@ -213,34 +215,68 @@ export default {
       }
 
       if (pbehavior) {
-        if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
-          this.$set(this.changedPbehaviorsById, pbehavior._id, pbehavior);
-        } else {
-          this.$set(this.addedPbehaviorsById, pbehavior._id, pbehavior);
-        }
-
-        await this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior, color));
+        await this.updatePbehavior(pbehavior, color);
       }
 
       event.clearPlaceholder();
     },
 
     movedEventHandler(event) {
-      this.$modals.show({
-        name: MODALS.eventChangingConfirmation,
-        config: {
-          action: () => {
-            if (!event.calendarEvent.data.pbehavior) {
-              event.openPopover();
-            } else {
+      const pbehavior = get(event.calendarEvent, 'data.pbehavior');
+
+      if (pbehavior) {
+        this.$modals.show({
+          name: MODALS.planningEventChangingConfirmation,
+          config: {
+            action: async (type) => {
+              if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
+                const tstart = event.target.start.unix();
+                const tstop = event.target.end.unix();
+
+                const newPbehavior = {
+                  ...pbehavior,
+
+                  _id: uid('pbehavior'),
+                  tstart,
+                  tstop,
+                };
+
+                await this.updatePbehavior(newPbehavior);
+              } else {
+                const startDiff = event.target.start.millisBetween(event.calendarEvent.start, Op.NONE, false);
+                const endDiff = event.target.end.millisBetween(event.calendarEvent.end, Op.NONE, false);
+
+                const tstart = moment.unix(pbehavior.tstart).add(startDiff, 'millisecond').unix();
+                const tstop = moment.unix(pbehavior.tstop).add(endDiff, 'millisecond').unix();
+
+                const newPbehavior = {
+                  ...pbehavior,
+
+                  tstart,
+                  tstop,
+                };
+
+                await this.updatePbehavior(newPbehavior, event.calendarEvent.data.color);
+              }
+
               event.clearPlaceholder();
-            }
+            },
+            cancelAction: event.clearPlaceholder,
           },
-          cancelAction: () => {
-            event.clearPlaceholder();
-          },
-        },
-      });
+        });
+      } else {
+        event.openPopover();
+      }
+    },
+
+    updatePbehavior(pbehavior, color) {
+      if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
+        this.$set(this.changedPbehaviorsById, pbehavior._id, pbehavior);
+      } else {
+        this.$set(this.addedPbehaviorsById, pbehavior._id, pbehavior);
+      }
+
+      return this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior, color));
     },
   },
 };

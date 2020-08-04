@@ -5,17 +5,17 @@
         span Modify
       template(slot="text")
         v-radio-group(
-          v-model="value",
+          v-model="type",
           hide-details,
           mandatory
         )
           v-radio(
-            :value="0",
+            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected",
             label="Only selected period",
             color="primary"
           )
           v-radio(
-            :value="1",
+            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.all",
             label="All the periods",
             color="primary"
           )
@@ -25,23 +25,21 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import ExceptionsDatesLists from '@/components/other/pbehavior/exceptions/exceptions-dates-lists.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.selectExceptionsDatesLists,
+  name: MODALS.planningEventChangingConfirmation,
   components: {
-    ExceptionsDatesLists,
     ModalWrapper,
   },
   mixins: [modalInnerMixin],
   data() {
     return {
-      value: 0,
+      type: PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected,
     };
   },
   methods: {
