@@ -175,7 +175,7 @@ def exports(ws):
                 opened=True,
                 resolved=True,
                 lookups=lookups,
-                filter_={'d': {'$in': consequences_children}},
+                filter_={'v.resolved': None, 'd': {'$in': consequences_children}},
                 sort_key=sort_key,
                 sort_dir=sort_dir,
                 skip=skip,

@@ -381,20 +381,27 @@ class AlertsReader(object):
 
         return alarms
 
-    def _filter_meta_alarm_parents(self, filter_):
+    def _filter_meta_alarm_parents(self, filter_, resolved=False):
         """
-        Adds condition to filter_ for finding meta-alarm parents for alarms with enabled entities that matches filter_
+        Adds condition to filter_ for finding meta-alarm parents for alarms that matches filter_
+
+        It searches for alarms matched filter_ and with v.parents has some reference to meta-alarms,
+        then groups meta-alarms Entity IDs as set.
+        If meta-alamrs found its Entity IDs added as 'd $in <Entity IDs>' filter's condition
         """
         if isinstance(filter_, dict) and '$or' in filter_:
+            resolved_filter = {'v.resolved': {
+                '$ne': None} if resolved else None}
+
             filter_children_pipeline = [
-                {"$lookup": {"foreignField": "_id", "as": "entity", "from": "default_entities", "localField": "d"}}, {
-                    "$unwind": {"path": "$entity", "preserveNullAndEmptyArrays": True}},
-                {"$match": {"$or": [{"entity.enabled": True}, {
-                    "entity": {"$exists": False}}]}},
-                {"$match": {"$or": [{"v.parents": {"$nin": [None, []]}}, {
-                    "v.meta": {"$in": [None, ""]}}]}},
+                {'$lookup': {'foreignField': '_id', 'as': 'entity',
+                             'from': 'default_entities', 'localField': 'd'}},
+                {'$unwind': {'path': '$entity', 'preserveNullAndEmptyArrays': True}},
+                {'$match': {'$or': [{'entity.enabled': True}, {
+                    'entity': {'$exists': False}}]}},
+                {"$match": {"v.parents": {"$nin": [None, []]}}},
                 {"$match": {
-                    "$and": [{"v.resolved": None}, filter_]}},
+                    "$and": [resolved_filter, filter_]}},
                 {"$project": {"parent": "$v.parents"}},
                 {"$unwind": "$parent"},
                 {"$group": {"_id": None, "parents": {"$addToSet": "$parent"}}}
@@ -402,6 +409,8 @@ class AlertsReader(object):
             meta_alarms = list(self.alarm_collection.aggregate(filter_children_pipeline,
                                                                allowDiskUse=True,
                                                                cursor={}))
+            self.logger.info("filter_children_pipeline {}".format(
+                filter_children_pipeline))
             if meta_alarms and meta_alarms[0]:
                 filter_['$or'].append({
                     'd': {
@@ -409,10 +418,9 @@ class AlertsReader(object):
                     }
                 })
 
-
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns,
-            correlation=False
+            correlation=False, resolved=False, consequences_children=False,
     ):
         """
         Computes the real filter:
@@ -457,6 +465,12 @@ class AlertsReader(object):
         t_view_filter = self._translate_filter(view_filter)
         # add the view filter if not empty
         if view_filter not in [None, {}]:
+            if correlation and not consequences_children and self.not_by_id(t_view_filter):
+                correlation_view_filter = {'$or': [t_view_filter]}
+                self._filter_meta_alarm_parents(correlation_view_filter, resolved=resolved)
+                self.logger.info("correlation_view_filter {}".format(correlation_view_filter))
+                t_view_filter = correlation_view_filter
+
             final_filter['$and'].append(t_view_filter)
 
         if time_filter not in [None, {}]:
@@ -470,8 +484,8 @@ class AlertsReader(object):
             bnf_search_filter = None
 
         if bnf_search_filter is not None:
-            if correlation:
-                self._filter_meta_alarm_parents(bnf_search_filter)
+            if correlation and not consequences_children:
+                self._filter_meta_alarm_parents(bnf_search_filter, resolved=resolved)
 
             final_filter['$and'].append(bnf_search_filter)
 
@@ -500,8 +514,8 @@ class AlertsReader(object):
                     }
                 }
             )
-            if correlation:
-                self._filter_meta_alarm_parents(column_filter)
+            if correlation and not consequences_children:
+                self._filter_meta_alarm_parents(column_filter, resolved=resolved)
 
             final_filter['$and'].append(column_filter)
 
@@ -676,10 +690,13 @@ class AlertsReader(object):
         self.logger.info("pipeline {}".format(pipeline))
         return pipeline
 
+    @staticmethod
+    def not_by_id(x):
+        return "u'_id':" not in str(x)
+
     def _can_add_metaalarm_filter(self, with_consequences, filter_):
-        not_by_id = lambda x: "u'_id':" not in str(x)
-        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and not_by_id(filter_)) or \
-            (isinstance(filter_, list) and filter_ != [] and not_by_id(filter_))) or with_consequences
+        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and self.not_by_id(filter_)) or \
+            (isinstance(filter_, list) and filter_ != [] and self.not_by_id(filter_))) or with_consequences
 
     def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences, filter_):
         """
@@ -986,9 +1003,9 @@ class AlertsReader(object):
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         final_filter = self._get_final_filter(
-            filter_, time_filter, search, active_columns, correlation=correlation
+            filter_, time_filter, search, active_columns, correlation=correlation, resolved=resolved,
+            consequences_children=consequences_children
         )
-
 
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
