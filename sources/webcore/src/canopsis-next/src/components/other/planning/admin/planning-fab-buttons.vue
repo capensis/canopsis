@@ -26,7 +26,10 @@ export default {
       this.$modals.show({
         name: MODALS.createPbehaviorType,
         config: {
-          action: data => this.createPbehaviorType({ data }),
+          action: async (data) => {
+            await this.createPbehaviorType({ data });
+            this.$emit('refresh');
+          },
         },
       });
     },

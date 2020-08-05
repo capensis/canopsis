@@ -22,7 +22,8 @@
             v-checkbox-functional(v-model="props.selected", primary, hide-details)
           td {{ props.item.name }}
           td
-            v-icon {{ props.item.icon_name }}
+            span.pbehavior-type-icon
+              v-icon(color="white", size="18") {{ props.item.icon_name }}
           td {{ props.item.priority }}
           td
             v-layout
@@ -109,6 +110,14 @@ export default {
       this.fetchPbehaviorTypesList({ params: this.getQuery() });
     },
 
+    async tryRemovePbehaviorType(pbehaviorTypeId) {
+      try {
+        await this.removePbehaviorType({ id: pbehaviorTypeId });
+      } catch (err) {
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
+    },
+
     showEditPbehaviorTypeModal(pbehaviorType) {
       this.$modals.show({
         name: MODALS.createPbehaviorType,
@@ -130,12 +139,8 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            try {
-              await this.removePbehaviorType({ id: pbehaviorTypeId });
-              await this.fetchList();
-            } catch (err) {
-              this.$popups.error({ text: err.error || this.$t('errors.default') });
-            }
+            await this.tryRemovePbehaviorType(pbehaviorTypeId);
+            await this.fetchList();
           },
         },
       });
@@ -146,7 +151,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(this.selected.map(({ _id: id }) => this.removePbehaviorType({ id })));
+            await Promise.all(this.selected.map(({ _id: id }) => this.tryRemovePbehaviorType(id)));
 
             await this.fetchList();
             this.selected = [];
@@ -157,3 +162,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .pbehavior-type-icon {
+    display: inline-flex;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: #17ffff;
+  }
+  .item-checkbox {
+    display: inline-block;
+  }
+</style>
