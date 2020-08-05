@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
 
+import { DEFAULT_TIMEZONE } from '@/constants';
 import uid from '@/helpers/uid';
 import convertTimestampToMoment from '@/helpers/date';
 
@@ -21,7 +22,7 @@ export function pbehaviorToForm(pbehavior = {}) {
     tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
     type_: pbehavior.type_ || '',
     reason: pbehavior.reason || '',
-    timezone: pbehavior.timezone || 'Europe/Paris',
+    timezone: pbehavior.timezone || DEFAULT_TIMEZONE,
     filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
   };
 }

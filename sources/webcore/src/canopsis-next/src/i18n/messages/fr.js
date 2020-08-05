@@ -115,6 +115,7 @@ export default {
     status: 'Statut',
     unit: 'Unité',
     begin: 'Commencer',
+    timezone: 'Fuseau horaire',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -646,7 +647,6 @@ export default {
             type: 'Type',
             start: 'Début',
             stop: 'Fin',
-            timezone: 'Fuseau horaire',
           },
         },
         filter: {

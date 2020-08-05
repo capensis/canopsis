@@ -6,7 +6,8 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
+  BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -114,6 +115,7 @@ export default {
     status: 'Status',
     unit: 'Unit',
     begin: 'Begin',
+    timezone: 'Timezone',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -645,7 +647,6 @@ export default {
             type: 'Type',
             start: 'Start',
             stop: 'End',
-            timezone: 'Timezone',
           },
         },
         filter: {
