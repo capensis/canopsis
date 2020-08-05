@@ -61,7 +61,7 @@
               @input="updateField('tstop', $event)"
             )
           v-flex(xs3)
-            timezone-field(v-field="form.timezone")
+            timezone-field(v-field="form.timezone", v-validate="'required'")
 </template>
 
 <script>
