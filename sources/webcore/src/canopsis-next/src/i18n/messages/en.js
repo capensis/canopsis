@@ -99,12 +99,12 @@ export default {
     notFound: 'Not found',
     search: 'Search',
     filters: 'Filters',
+    filter: 'Filter',
     webhooks: 'Webhooks',
     emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
-    filter: 'Filter',
     stack: 'Stack',
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
@@ -480,6 +480,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      isState: 'Displayed as severity ?',
     },
     liveReporting: {
       title: 'Live reporting',
@@ -1410,6 +1411,7 @@ export default {
       thresholdCount: 'Threshold count',
       timeInterval: 'Time interval',
       valuePath: 'Value path',
+      autoResolve: 'Auto resolve',
     },
   },
   snmpRules: {
@@ -1580,7 +1582,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
-
   heartbeat: {
     title: 'Heartbeats',
     table: {
@@ -1590,7 +1591,6 @@ export default {
       },
     },
   },
-
   dynamicInfo: {
     title: 'Dynamic informations',
     table: {
@@ -1605,15 +1605,12 @@ export default {
       informations: 'Informations',
     },
   },
-
   contextGeneralTable: {
     addSelection: 'Add selection',
   },
-
   liveReporting: {
     button: 'Set a custom date range',
   },
-
   tours: {
     [TOURS.alarmsExpandPanel]: {
       step1: 'Details',
@@ -1621,7 +1618,6 @@ export default {
       step3: 'Timeline tab',
     },
   },
-
   handlebars: {
     requestHelper: {
       errors: {
@@ -1631,11 +1627,9 @@ export default {
       },
     },
   },
-
   importExportViews: {
     selectAll: 'Select all groups and views',
   },
-
   playlist: {
     player: {
       tooltips: {

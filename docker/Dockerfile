@@ -60,12 +60,13 @@ WORKDIR ${CPS_HOME}
 
 
 COPY sources/canopsis/etc ./etc
-COPY sources/canopsis/etc/amqp2engines-python-core.conf.example ./etc/amqp2engines.conf
+COPY sources/canopsis/etc/amqp2engines-go-core.conf.example ./etc/amqp2engines.conf
 COPY sources/db-conf/opt ./opt
 COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
+COPY sources/canopsis/canopsis/webcore/services/swagger/ ./lib/python2.7/site-packages/canopsis/webcore/services/swagger/
 
 RUN chmod +x /opt/canopsis/.bash_profile
 
