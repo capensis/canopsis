@@ -41,7 +41,7 @@
 import { get } from 'lodash';
 import moment from 'moment';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Schedule, Day, DaySpan, Op } from 'dayspan';
+import { Calendar, Schedule, Day, DaySpan, Op, Units } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
 
@@ -154,6 +154,7 @@ export default {
     async fetchEventsForPbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
       const viewFrom = this.calendar.filled.start.date.unix();
       const viewTo = this.calendar.filled.end.date.unix();
+      const byDate = [Units.MONTH, Units.YEAR].includes(this.calendar.type);
 
       const timespans = await this.fetchTimespans({
         data: {
@@ -162,12 +163,20 @@ export default {
           end_at: pbehavior.tstop,
           view_from: pbehavior.tstart < viewFrom ? pbehavior.tstart : viewFrom,
           view_to: pbehavior.tstop > viewTo ? pbehavior.tstop : viewTo,
+          by_date: byDate,
         },
       });
 
       const events = timespans.map((timespan, index) => {
-        const startDay = new Day(moment.unix(timespan.from));
-        const endDay = new Day(moment.unix(timespan.to));
+        const startMoment = moment.utc(timespan.from, 'X');
+        const endMoment = moment.utc(timespan.to, 'X');
+
+        if (byDate) {
+          endMoment.endOf('day');
+        }
+
+        const startDay = new Day(startMoment);
+        const endDay = new Day(endMoment);
         const daySpan = new DaySpan(startDay, endDay);
 
         return {
