@@ -9,7 +9,7 @@
               v-tab {{ $t('planning.tabs.type') }}
               v-tab-item
                 v-card-text
-                  planning-types-list
+                  planning-types
             v-tab {{ $t('planning.tabs.reason') }}
             v-tab-item
               v-card-text
@@ -18,17 +18,15 @@
             v-tab-item
               v-card-text
                 | Dates of exceptions
-    planning-fab-buttons
 </template>
 
 <script>
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
-import PlanningFabButtons from '@/components/other/planning/admin/planning-fab-buttons.vue';
-import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
+import PlanningTypes from '@/views/admin/planning-types.vue';
 
 export default {
-  components: { PlanningTypesList, PlanningFabButtons },
+  components: { PlanningTypes },
   mixins: [rightsTechnicalPbehaviorTypesMixin],
 };
 </script>

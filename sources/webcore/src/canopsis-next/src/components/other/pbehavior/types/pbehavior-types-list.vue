@@ -2,20 +2,21 @@
   div.white
     v-layout(row, wrap)
       v-flex(xs4)
-        search-field(@submit="handleSearch", @clear="handleSearchClear")
+        search-field(@submit="updateSearchHandler")
       v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selected.length", xs4)
-        v-btn(@click="showRemoveSelectedPbehaviorTypeModal", icon)
+        v-btn(@click="$emit('remove-selected', selected)", icon)
           v-icon delete
     v-data-table(
       v-model="selected",
       :headers="headers",
       :items="pbehaviorTypes",
-      :loading="pbehaviorTypesPending",
-      :total-items="pbehaviorTypesMeta.total_count",
-      :pagination.sync="pagination",
+      :loading="pending",
+      :total-items="totalItems",
+      :pagination="pagination",
       item-key="_id",
       select-all,
-      expand
+      expand,
+      @update:pagination="$emit('update:pagination', $event)"
     )
       template(slot="items", slot-scope="props")
         tr(@click="props.expanded = !props.expanded")
@@ -32,14 +33,14 @@
                 v-if="hasUpdateAnyPbehaviorTypeAccess",
                 icon,
                 small,
-                @click.stop="showEditPbehaviorTypeModal(props.item)"
+                @click.stop="$emit('edit', props.item)"
               )
                 v-icon edit
               v-btn.mx-0(
                 v-if="hasDeleteAnyPbehaviorTypeAccess",
                 icon,
                 small,
-                @click.stop="showRemovePbehaviorTypeModal(props.item._id)"
+                @click.stop="$emit('remove', props.item._id)"
               )
                 v-icon(color="error") delete
       template(slot="expand", slot-scope="props")
@@ -47,14 +48,7 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
-
-import { MODALS } from '@/constants';
-
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
-import pbehaviorTypesQueryMixin from '@/mixins/pbehavior/types/query';
-
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
@@ -64,11 +58,25 @@ export default {
     SearchField,
     PbehaviorTypesListExpandPanel,
   },
-  mixins: [
-    entitiesPbehaviorTypesMixin,
-    rightsTechnicalPbehaviorTypesMixin,
-    pbehaviorTypesQueryMixin,
-  ],
+  mixins: [rightsTechnicalPbehaviorTypesMixin],
+  props: {
+    pbehaviorTypes: {
+      type: Array,
+      required: true,
+    },
+    pending: {
+      type: Boolean,
+      default: false,
+    },
+    totalItems: {
+      type: Number,
+      required: false,
+    },
+    pagination: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       selected: [],
@@ -84,6 +92,7 @@ export default {
         {
           text: this.$t('common.icon'),
           value: 'icon_name',
+          sortable: false,
         },
         {
           text: this.$t('common.priority'),
@@ -96,69 +105,9 @@ export default {
       ];
     },
   },
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
-    },
-  },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
-    fetchList() {
-      this.fetchPbehaviorTypesList({ params: this.getQuery() });
-    },
-
-    async tryRemovePbehaviorType(pbehaviorTypeId) {
-      try {
-        await this.removePbehaviorType({ id: pbehaviorTypeId });
-      } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
-    },
-
-    showEditPbehaviorTypeModal(pbehaviorType) {
-      this.$modals.show({
-        name: MODALS.createPbehaviorType,
-        config: {
-          pbehaviorType,
-          action: async (newPbehaviorType) => {
-            await this.updatePbehaviorType({
-              data: newPbehaviorType,
-              id: pbehaviorType._id,
-            });
-            await this.fetchList();
-          },
-        },
-      });
-    },
-
-    showRemovePbehaviorTypeModal(pbehaviorTypeId) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.tryRemovePbehaviorType(pbehaviorTypeId);
-            await this.fetchList();
-          },
-        },
-      });
-    },
-
-    showRemoveSelectedPbehaviorTypeModal() {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await Promise.all(this.selected.map(({ _id: id }) => this.tryRemovePbehaviorType(id)));
-
-            await this.fetchList();
-            this.selected = [];
-          },
-        },
-      });
+    updateSearchHandler(search) {
+      this.$emit('update:search', search);
     },
   },
 };
