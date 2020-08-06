@@ -181,7 +181,6 @@ export default {
             login_page_description: this.form.description,
             popup_timeout: this.form.popupTimeout,
             allow_change_severity_to_info: this.form.allowChangeSeverityToInfo,
-            timezone: this.form.timezone,
           };
 
           if (this.logoFile) {
