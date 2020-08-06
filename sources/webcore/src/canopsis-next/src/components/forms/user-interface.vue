@@ -34,7 +34,7 @@
         )
     v-layout(row)
       v-flex
-        timezone-field(v-model="form.timezone")
+        timezone-field(v-model="form.timezone", disabled)
     v-layout(row)
       v-switch(
         v-model="form.allowChangeSeverityToInfo",

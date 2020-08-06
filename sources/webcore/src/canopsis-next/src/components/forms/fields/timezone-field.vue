@@ -3,6 +3,7 @@
     v-field="value",
     :items="timezones",
     :label="fieldLabel",
+    :disabled="disabled",
     :name="name"
   )
 </template>
@@ -35,6 +36,10 @@ export default {
     label: {
       type: String,
       required: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     name: {
       type: String,
