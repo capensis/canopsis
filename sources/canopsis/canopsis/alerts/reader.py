@@ -104,6 +104,7 @@ class AlertsReader(object):
 
         self.grammar = join(root_path, self.GRAMMAR_FILE)
         self.has_active_pbh = None
+        self.filtered_children = set()
 
     @classmethod
     def provide_default_basics(cls):
@@ -404,12 +405,13 @@ class AlertsReader(object):
                     "$and": [resolved_filter, filter_]}},
                 {"$project": {"parent": "$v.parents"}},
                 {"$unwind": "$parent"},
-                {"$group": {"_id": None, "parents": {"$addToSet": "$parent"}}}
+                {"$group": {"_id": None, "parents": {"$addToSet": "$parent"},
+                            "children": {"$addToSet": "$_id"}}}
             ]
             meta_alarms = list(self.alarm_collection.aggregate(filter_children_pipeline,
                                                                allowDiskUse=True,
                                                                cursor={}))
-            self.logger.debug("filter_children_pipeline {}".format(
+            self.logger.info("filter_children_pipeline {}".format(
                 filter_children_pipeline))
             if meta_alarms and meta_alarms[0]:
                 filter_['$or'].append({
@@ -417,6 +419,9 @@ class AlertsReader(object):
                         '$in': meta_alarms[0]["parents"]
                     }
                 })
+                return meta_alarms[0]["children"]
+
+        return None
 
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns,
@@ -459,6 +464,7 @@ class AlertsReader(object):
         :param bool correlation: True to return meta-alarms instead of alarms list that was grouped 
         """
         final_filter = {'$and': []}
+        self.filtered_children = set()
 
         if not correlation:
             final_filter['$and'].append({"d": {"$not": re.compile("^meta-alarm-entity-.+")}})
@@ -467,8 +473,10 @@ class AlertsReader(object):
         if view_filter not in [None, {}]:
             if correlation and not consequences_children and self.not_by_id(t_view_filter):
                 correlation_view_filter = {'$or': [t_view_filter]}
-                self._filter_meta_alarm_parents(correlation_view_filter, resolved=resolved)
-                self.logger.debug("correlation_view_filter {}".format(correlation_view_filter))
+                ch = self._filter_meta_alarm_parents(correlation_view_filter, resolved=resolved)
+                if ch:
+                    self.filtered_children.update(ch)
+                self.logger.info("correlation_view_filter {}".format(correlation_view_filter))
                 t_view_filter = correlation_view_filter
 
             final_filter['$and'].append(t_view_filter)
@@ -485,7 +493,12 @@ class AlertsReader(object):
 
         if bnf_search_filter is not None:
             if correlation and not consequences_children:
-                self._filter_meta_alarm_parents(bnf_search_filter, resolved=resolved)
+                ch = self._filter_meta_alarm_parents(bnf_search_filter, resolved=resolved)
+                if ch:
+                    if self.filtered_children:
+                        self.filtered_children = self.filtered_children.intersection(set(ch))
+                    else:
+                        self.filtered_children = set(ch)
 
             final_filter['$and'].append(bnf_search_filter)
 
@@ -515,7 +528,12 @@ class AlertsReader(object):
                 }
             )
             if correlation and not consequences_children:
-                self._filter_meta_alarm_parents(column_filter, resolved=resolved)
+                ch = self._filter_meta_alarm_parents(column_filter, resolved=resolved)
+                if ch:
+                    if self.filtered_children:
+                        self.filtered_children = self.filtered_children.intersection(set(ch))
+                    else:
+                        self.filtered_children = set(ch)
 
             final_filter['$and'].append(column_filter)
 
@@ -687,7 +705,7 @@ class AlertsReader(object):
         if has_wildcard_dynamic_filter:
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
-        self.logger.debug("pipeline {}".format(pipeline))
+        self.logger.info("pipeline {}".format(pipeline))
         return pipeline
 
     @staticmethod
@@ -876,6 +894,9 @@ class AlertsReader(object):
 
         self._add_is_active_field(results['alarms'])
 
+        if self.filtered_children:
+            results['filtered'] = list(self.filtered_children)
+
         return results
 
     def _add_is_active_field(self, alarms):
@@ -1054,7 +1075,7 @@ class AlertsReader(object):
                                       sort_key, sort_dir,
                                       api_limit, rules, pipeline)
 
-        self.logger.debug("result {}".format(result))
+        self.logger.info("result {}".format(result))
         return result
 
     @staticmethod
