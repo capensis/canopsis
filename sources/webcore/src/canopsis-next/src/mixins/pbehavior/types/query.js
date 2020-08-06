@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit, pick } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
@@ -10,8 +10,31 @@ export default {
         page: 1,
         rowsPerPage: PAGINATION_LIMIT,
         search: '',
+        sortKey: '',
+        sortDir: SORT_ORDERS.asc,
       },
     };
+  },
+
+  computed: {
+    pagination: {
+      set(value) {
+        this.query = {
+          ...this.query,
+          page: value.page,
+          rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
+          sortKey: value.sortBy,
+          sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
+        };
+      },
+      get() {
+        return {
+          ...pick(this.query, ['page', 'rowsPerPage']),
+          sortBy: this.query.sortKey,
+          descending: this.query.sortDir === SORT_ORDERS.desc,
+        };
+      },
+    },
   },
 
   methods: {
@@ -28,7 +51,7 @@ export default {
     },
 
     getQuery({
-      page, search, rowsPerPage = PAGINATION_LIMIT, sortBy, descending,
+      page, search, rowsPerPage, sortBy, sortDir,
     } = this.query) {
       const query = {};
 
@@ -37,7 +60,7 @@ export default {
 
       if (sortBy) {
         query.sort_key = sortBy;
-        query.sort_dir = descending ? SORT_ORDERS.desc : SORT_ORDERS.asc;
+        query.sort_dir = sortDir;
       }
 
       if (search) {

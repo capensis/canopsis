@@ -11,7 +11,8 @@
       :headers="headers",
       :items="pbehaviorTypes",
       :loading="pbehaviorTypesPending",
-      :pagination.sync="query",
+      :total-items="pbehaviorTypesMeta.total_count",
+      :pagination.sync="pagination",
       item-key="_id",
       select-all,
       expand
