@@ -409,7 +409,7 @@ class AlertsReader(object):
             meta_alarms = list(self.alarm_collection.aggregate(filter_children_pipeline,
                                                                allowDiskUse=True,
                                                                cursor={}))
-            self.logger.info("filter_children_pipeline {}".format(
+            self.logger.debug("filter_children_pipeline {}".format(
                 filter_children_pipeline))
             if meta_alarms and meta_alarms[0]:
                 filter_['$or'].append({
@@ -468,7 +468,7 @@ class AlertsReader(object):
             if correlation and not consequences_children and self.not_by_id(t_view_filter):
                 correlation_view_filter = {'$or': [t_view_filter]}
                 self._filter_meta_alarm_parents(correlation_view_filter, resolved=resolved)
-                self.logger.info("correlation_view_filter {}".format(correlation_view_filter))
+                self.logger.debug("correlation_view_filter {}".format(correlation_view_filter))
                 t_view_filter = correlation_view_filter
 
             final_filter['$and'].append(t_view_filter)
@@ -687,7 +687,7 @@ class AlertsReader(object):
         if has_wildcard_dynamic_filter:
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
-        self.logger.info("pipeline {}".format(pipeline))
+        self.logger.debug("pipeline {}".format(pipeline))
         return pipeline
 
     @staticmethod
@@ -1054,7 +1054,7 @@ class AlertsReader(object):
                                       sort_key, sort_dir,
                                       api_limit, rules, pipeline)
 
-        self.logger.info("result {}".format(result))
+        self.logger.debug("result {}".format(result))
         return result
 
     @staticmethod
