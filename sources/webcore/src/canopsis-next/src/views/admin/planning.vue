@@ -23,7 +23,7 @@
 <script>
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
-import PlanningTypes from '@/views/admin/planning-types.vue';
+import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 
 export default {
   components: { PlanningTypes },

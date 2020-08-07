@@ -16,7 +16,6 @@
 
 <script>
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
-import { MODALS } from '@/constants';
 
 export default {
   mixins: [entitiesPbehaviorTypesMixin],
@@ -24,35 +23,6 @@ export default {
     pbehaviorType: {
       type: Object,
       default: () => ({}),
-    },
-  },
-  methods: {
-    showEditPbehaviorTypeModal(pbehaviorType) {
-      this.$modals.show({
-        name: MODALS.createPbehaviorType,
-        config: {
-          pbehaviorType,
-          action: async (newPbehaviorType) => {
-            await this.updatePbehaviorType({
-              data: newPbehaviorType,
-              id: pbehaviorType._id,
-            });
-            this.$emit('refresh');
-          },
-        },
-      });
-    },
-
-    showRemovePbehaviorTypeModal(pbehaviorTypeId) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removePbehaviorType({ id: pbehaviorTypeId });
-            this.$emit('refresh');
-          },
-        },
-      });
     },
   },
 };

@@ -46,8 +46,9 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+import formMixin from '@/mixins/form';
 
 import IconField from '@/components/forms/fields/icon-field.vue';
 
