@@ -45,7 +45,7 @@ export default {
   methods: {
     submit() {
       if (this.config.action) {
-        this.config.action(this.value);
+        this.config.action(this.type);
       }
 
       this.$modals.hide();

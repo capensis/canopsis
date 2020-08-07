@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, Day, DaySpan, Op, Schedule } from 'dayspan';
 
@@ -34,8 +34,8 @@ export function formToPbehavior(form) {
     ...form,
 
     comments: [],
-    tstart: moment(form.tstart).unix(),
-    tstop: moment(form.tstop).unix(),
+    tstart: moment(form.tstart).tz('Europe/Paris', true).unix(),
+    tstop: moment(form.tstop).tz('Europe/Paris', true).unix(),
   };
 }
 
@@ -48,7 +48,9 @@ export function calendarEventToPbehaviorForm(calendarEvent) {
   };
 
   form.tstart = calendarEvent.start.date.toDate();
-  form.tstop = calendarEvent.end.date.toDate();
+  form.tstop = calendarEvent.schedule.durationUnit === 'days'
+    ? moment(calendarEvent.end.date).subtract(1, 'second').toDate()
+    : calendarEvent.end.date.toDate();
 
   return form;
 }

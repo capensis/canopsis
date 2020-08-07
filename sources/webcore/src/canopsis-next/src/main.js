@@ -2,7 +2,7 @@ import './bootstrap';
 
 /* eslint-disable import/first */
 import Vue from 'vue';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import deepFreeze from 'deep-freeze';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
