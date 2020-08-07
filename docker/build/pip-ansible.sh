@@ -18,8 +18,7 @@ pip install -U setuptools "pip==20.1.1"
 # influxdb is required for the modified ansible role influxdb
 # pyopenssl is required to fix compatibility between systems
 # NEVER, NEVER, NEVER ⚠️⚠️⚠️ UPGRADE ANSIBLE, OR BE PREPARED FOR PAIN.
-# Fix pip version for issue #2512. 
-pip install -U wheel jmespath "pymongo==3.5.0" "influxdb==5.1.0" "pyOpenSSL" "ansible==2.8.7"
+pip install -U wheel "jmespath==0.10.0" "pymongo==3.5.0" "influxdb==5.1.0" "pyOpenSSL==19.1.0" "ansible==2.8.7"
 
 rm -rf /tmp/pipbuild
 rm -rf ~/.cache
