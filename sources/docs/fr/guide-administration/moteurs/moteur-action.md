@@ -1,8 +1,8 @@
-* * * * # Moteur `engine-action` (Go, Core)
+# Moteur `engine-action` (Go, Core)
 
 Le moteur `engine-action` permet de déclencher conditionnellement des actions sur des alarmes.
 
-Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
+Les actions sont définies dans la [collection MongoDB](#collection-mongodb-associée) `default_action` et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
 
 ## Utilisation
 
@@ -29,7 +29,7 @@ En édition CAT, la file du moteur est placée juste après le moteur [`engine-w
 Les types d'actions disponibles sont :
 
 * `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille la criticité de l'alarme jusqu'à sa résolution.
-* `pbehavior`, met en place un [comportement périodique](moteur-pbehavior.md)
+* `pbehavior`, met en place un [comportement périodique](moteur-pbehavior.md).
 * `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose une mise en veille automatique sur l'alarme.
 * `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme.
 * `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme.
@@ -43,7 +43,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 * `_id` : optionnel. Identifiant de l'action. S'il n'est pas fourni par l'utilisateur il sera généré automatiquement. Le champ est de type `string`.
 * `type` : obligatoire. Type d'action (voir [section précédente](#types-daction)). Ce champ est de type `string`.
-* `parameters` : obligatoire. [Paramétrage spécifique](#parametres-specifiques) à chaque type d'action.
+* `parameters` : obligatoire. [Paramétrage spécifique](#paramètres-spécifiques) à chaque type d'action.
 * `delay` : optionnel. Délai avant l'exécution de l'action. Les unités acceptées sont celles utilisées par le langage [Golang](https://golang.org/pkg/time/#ParseDuration) soit `s`, `m`, `h` pour secondes, minutes et heures respectivement. Le champ est de type `string`.
 * `hook` : obligatoire. Il est composé des paramètres suivants :
   - [`patterns`](moteur-che-event_filter.md#patterns) : optionnel. Conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée.
@@ -56,7 +56,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 #### Changestate
 
-* `state` : obligatoire. Criticité dans laquelle sera verrouillée l'alarme (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL). Le champ est de type `integer`.
+* `state` : obligatoire. Criticité dans laquelle sera verrouillée l'alarme (0 : Info, 1 : Minor, 2 : Major, 3 : Critical). Le champ est de type `integer`.
 * `output` : optionel. Commentaire du changestate. Le champ est de type `string`.
 * `author` : optionel. Auteur du changestate. Le champ est de type `string`.
 
