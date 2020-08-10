@@ -105,7 +105,6 @@ class AlertsReader(object):
 
         self.grammar = join(root_path, self.GRAMMAR_FILE)
         self.has_active_pbh = None
-        self.filtered_children = set()
 
     @classmethod
     def provide_default_basics(cls):
@@ -467,7 +466,6 @@ class AlertsReader(object):
         :param bool correlation: True to return meta-alarms instead of alarms list that was grouped 
         """
         final_filter = {'$and': []}
-        self.filtered_children = set()
 
         if not correlation:
             final_filter['$and'].append({"d": {"$not": re.compile("^meta-alarm-entity-.+")}})
@@ -742,7 +740,7 @@ class AlertsReader(object):
                 "else": "$consequences"
                 }
             },
-            'metaalarm': 1 }})
+            'metaalarm': 1, 'filtered': '$children._id' }})
         pipeline.insert(start_pos+1, {"$addFields": {
             "rule": "$v.meta", 
             "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
@@ -910,9 +908,6 @@ class AlertsReader(object):
         results['last'] = results['first']-1+len(results['alarms'])
 
         self._add_is_active_field(results['alarms'])
-
-        if self.filtered_children:
-            results['filtered'] = list(self.filtered_children)
 
         return results
 
