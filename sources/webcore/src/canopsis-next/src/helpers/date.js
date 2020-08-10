@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { TIME_UNITS } from '@/constants';
 
 export default function convertTimestampToMoment(timestamp) {
@@ -38,4 +38,22 @@ export const convertDurationToIntervalObject = (duration) => {
     interval: moment.duration(duration, 'seconds').as(durationType),
     unit: durationType,
   };
+};
+
+/**
+ * Convert timestamp from source timezone to local timezone with time keeping
+ *
+ * @param {number} timestamp
+ * @param {string} sourceTimezone
+ * @param {string} [localTimezone = moment.tz.guess()]
+ * @returns {Object}
+ */
+export const convertTimestampToMomentByTimezone = (timestamp, sourceTimezone, localTimezone = moment.tz.guess()) => {
+  const dateObject = convertTimestampToMoment(timestamp);
+
+  if (sourceTimezone === localTimezone) {
+    return dateObject;
+  }
+
+  return dateObject.tz(sourceTimezone).tz(localTimezone, true);
 };

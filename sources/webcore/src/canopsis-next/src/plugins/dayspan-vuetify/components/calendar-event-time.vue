@@ -81,7 +81,6 @@ export default {
         handled: false,
         $vm: this,
         $element: this.$el,
-
       }, extra);
     },
   },

@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { get, groupBy } from 'lodash';
-import { Day, Schedule } from 'dayspan';
+import { Day, Schedule, Constants, Op } from 'dayspan';
+
 
 /**
  * Convert alarms to calendar events
@@ -79,6 +80,28 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
 
     return groupedEvent[0];
   });
+}
+
+/**
+ * Get Schedule instance for a span
+ *
+ * @param {DaySpan} span
+ * @returns {Schedule<unknown>}
+ */
+export function getScheduleForSpan(span) {
+  const { start } = span;
+  const minutes = span.minutes();
+  const isDay = (minutes % Constants.MINUTES_IN_DAY === 0) || ((minutes + 1) % Constants.MINUTES_IN_DAY === 0);
+
+  if (isDay) {
+    return Schedule.forDay(start, span.days(Op.UP));
+  }
+
+  const isHour = minutes % Constants.MINUTES_IN_HOUR === 0;
+  const duration = isHour ? minutes / Constants.MINUTES_IN_HOUR : minutes;
+  const durationUnit = isHour ? 'hours' : 'minutes';
+
+  return Schedule.forTime(start, start.asTime(), duration, durationUnit);
 }
 
 /**

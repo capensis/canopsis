@@ -8,8 +8,9 @@
     fillHeight,
     @change="changeCalendarHandler",
     @changed="changedEventHandler",
-    @added="changedEventHandler",
-    @moved="movedEventHandler"
+    @added="applyEventChangingHandler",
+    @moved="changedEventHandler",
+    @resized="changedEventHandler"
   )
     ds-calendar-event-popover(
       slot="eventPopover",
@@ -41,25 +42,17 @@
 import { get } from 'lodash';
 import moment from 'moment-timezone';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Schedule, Day, DaySpan, Op, Units, Constants } from 'dayspan';
+import { Calendar, Day, DaySpan, Op, Units } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
+import { getScheduleForSpan } from '@/helpers/dayspan';
+import { convertTimestampToMomentByTimezone } from '@/helpers/date';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
 const { mapActions } = createNamespacedHelpers('pbehaviorTimespan');
-
-function momentFromTimestampByTimezone(timestamp, sourceTimezone, localTimezone = moment.tz.guess()) {
-  const result = moment.unix(timestamp);
-
-  if (sourceTimezone === localTimezone) {
-    return result;
-  }
-
-  return result.tz(sourceTimezone).tz(localTimezone, true);
-}
 
 export default {
   components: { PbehaviorCreateEvent },
@@ -141,6 +134,10 @@ export default {
         ...this.addedPbehaviorsById,
       }).filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
     },
+
+    isCalendarTypeWeek() {
+      return [Units.MONTH, Units.YEAR].includes(this.calendar.type);
+    },
   },
   mounted() {
     this.fetchEvents();
@@ -150,6 +147,13 @@ export default {
       fetchTimespans: 'fetchItems',
     }),
 
+    /**
+     * Get color for pbehavior and save that into data for correct displaying
+     *
+     * @param {Object} [pbehavior = {}]
+     * @param {string} [color = this.$dayspan.getDefaultEventColor()]
+     * @returns {string}
+     */
     getColorForPbehavior(pbehavior = {}, color = this.$dayspan.getDefaultEventColor()) {
       if (!this.colorsToPbehaviors[pbehavior._id]) {
         this.colorsToPbehaviors[pbehavior._id] = color;
@@ -158,6 +162,11 @@ export default {
       return this.colorsToPbehaviors[pbehavior._id];
     },
 
+    /**
+     * Fetch timespans and convert that into events for every pbehavior from data
+     *
+     * @returns {Promise<void>}
+     */
     async fetchEvents() {
       this.pending = true;
 
@@ -169,12 +178,17 @@ export default {
       this.pending = false;
     },
 
-    async fetchEventsForPbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
+    /**
+     * Fetch timespans for a pbehavior
+     *
+     * @param {Object} pbehavior
+     * @returns {AxiosPromise<any>}
+     */
+    fetchTimespansForPbehavior(pbehavior) {
       const viewFrom = moment(this.calendar.filled.start.date).tz('Europe/Paris', true).unix();
       const viewTo = moment(this.calendar.filled.end.date).tz('Europe/Paris', true).unix();
-      const byDate = [Units.MONTH, Units.YEAR].includes(this.calendar.type);
 
-      const timespans = await this.fetchTimespans({
+      return this.fetchTimespans({
         data: {
           rrule: pbehavior.rrule,
           start_at: pbehavior.tstart,
@@ -183,37 +197,35 @@ export default {
           view_to: (pbehavior.tstop > viewTo && pbehavior.tstart < viewTo) ? pbehavior.tstop : viewTo,
           exdates: pbehavior.exdates,
           exceptions: pbehavior.exceptions,
-          by_date: byDate,
+          by_date: this.isCalendarTypeWeek,
         },
       });
+    },
 
-      const events = timespans.map((timespan, index) => {
-        const startMoment = momentFromTimestampByTimezone(timespan.from, 'Europe/Paris');
-        const endMoment = momentFromTimestampByTimezone(timespan.to, 'Europe/Paris');
-        if (byDate) {
+    /**
+     * Convert pbehavior timespans to events
+     *
+     * @param {Object} pbehavior
+     * @param {Object[]} timespans
+     * @param {string} color
+     * @returns {Object[]}
+     */
+    convertTimespansToEvents({
+      pbehavior,
+      timespans,
+      color,
+    }) {
+      return timespans.map((timespan, index) => {
+        const startMoment = convertTimestampToMomentByTimezone(timespan.from, 'Europe/Paris');
+        const endMoment = convertTimestampToMomentByTimezone(timespan.to, 'Europe/Paris');
+
+        if (this.isCalendarTypeWeek) {
           endMoment.endOf('day');
         }
+
         const startDay = new Day(startMoment);
         const endDay = new Day(endMoment);
         const daySpan = new DaySpan(startDay, endDay);
-
-        function getSchedule(span) {
-          const { start } = span;
-          const minutes = span.minutes();
-          const isDay = (minutes % Constants.MINUTES_IN_DAY === 0) || ((minutes + 1) % Constants.MINUTES_IN_DAY === 0);
-
-          if (isDay) {
-            const duration = Math.ceil(minutes / Constants.MINUTES_IN_DAY);
-
-            return Schedule.forDay(start, duration);
-          }
-
-          const isHour = minutes % Constants.MINUTES_IN_HOUR === 0;
-          const duration = isHour ? minutes / Constants.MINUTES_IN_HOUR : minutes;
-          const durationUnit = isHour ? 'hours' : 'minutes';
-
-          return Schedule.forTime(start, start.asTime(), duration, durationUnit);
-        }
 
         return {
           id: `${pbehavior._id}-${index}`,
@@ -224,8 +236,24 @@ export default {
             pbehavior,
             title: pbehavior.name,
           },
-          schedule: getSchedule(daySpan),
+          schedule: getScheduleForSpan(daySpan),
         };
+      });
+    },
+
+    /**
+     *
+     * @param {Object} pbehavior
+     * @param {string} color
+     * @returns {Promise<void>}
+     */
+    async fetchEventsForPbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
+      const timespans = await this.fetchTimespansForPbehavior(pbehavior);
+
+      const events = this.convertTimespansToEvents({
+        pbehavior,
+        timespans,
+        color,
       });
 
       this.events = [
@@ -234,13 +262,18 @@ export default {
       ];
     },
 
+    /**
+     * Calendar change handler
+     */
     changeCalendarHandler() {
-      this.query = {
-        start: moment(this.calendar.filled.start.date).tz('Europe/Paris', true).unix(),
-        end: moment(this.calendar.filled.end.date).tz('Europe/Paris', true).unix(),
-      };
+      this.fetchEvents();
     },
 
+    /**
+     * Remove pbehavior from events
+     *
+     * @param {Object} pbehavior
+     */
     removePbehavior(pbehavior) {
       if (this.addedPbehaviorsById[pbehavior._id]) {
         this.$delete(this.addedPbehaviorsById, pbehavior._id);
@@ -255,21 +288,115 @@ export default {
       this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
     },
 
-    async changedEventHandler(event) {
+    /**
+     * Apply changes for the pbehavior
+     *
+     * @param {Object} event
+     */
+    async applyEventChangingHandler(event) {
       const { pbehavior, color } = event.calendarEvent.data;
-
-      if (event.closePopover) {
-        event.closePopover();
-      }
 
       if (pbehavior) {
         await this.updatePbehavior(pbehavior, color);
       }
 
+      if (event.closePopover) {
+        event.closePopover();
+      }
+
       event.clearPlaceholder();
     },
 
-    async movedEventHandler(event) {
+    /**
+     * Apply changes for selected event only (on pbehavior)
+     *
+     * @param {Object} event
+     */
+    applyEventChangingForSelectedHandler(event) {
+      const pbehavior = get(event.calendarEvent, 'data.pbehavior');
+      const target = event.target || event.calendarEvent.span;
+      const tstart = moment(target.start.date).tz('Europe/Paris', true).unix();
+      const tstop = moment(target.end.date).tz('Europe/Paris', true).unix();
+
+      const newPbehavior = {
+        ...pbehavior,
+
+        _id: uid('pbehavior'),
+        rrule: '',
+        tstart,
+        tstop,
+      };
+
+      const mainPbehavior = {
+        ...pbehavior,
+
+        exdates: [
+          ...(pbehavior.exdates || []),
+          {
+            begin: moment(event.calendarEvent.start.date).tz('Europe/Paris', true).unix(),
+            end: moment(event.calendarEvent.end.date).tz('Europe/Paris', true).unix(),
+          },
+        ],
+      };
+
+      return Promise.all([
+        this.updatePbehavior(mainPbehavior, event.calendarEvent.data.color),
+        this.updatePbehavior(newPbehavior),
+      ]);
+    },
+
+    /**
+     * Apply event changes for all events (on pbehavior)
+     *
+     * @param {Object} event
+     * @returns {Promise<void>}
+     */
+    applyEventChangingForAllHandler(event) {
+      const pbehavior = get(event.calendarEvent, 'data.pbehavior');
+      const startDiff = event.target.start.secondsBetween(event.calendarEvent.start, Op.FLOOR, false);
+      const endDiff = event.target.end.secondsBetween(event.calendarEvent.end, Op.FLOOR, false);
+      const tstart = pbehavior.tstart + startDiff;
+      const tstop = pbehavior.tstop + endDiff;
+      const newPbehavior = {
+        ...pbehavior,
+
+        tstart,
+        tstop,
+      };
+
+      return this.updatePbehavior(newPbehavior, event.calendarEvent.data.color);
+    },
+
+    /**
+     * Show planning event changes confirmation modal window
+     *
+     * @param {Object} event
+     */
+    showPlanningEventChangingConfirmationModal(event) {
+      this.$modals.show({
+        name: MODALS.planningEventChangingConfirmation,
+        config: {
+          action: async (type) => {
+            if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
+              await this.applyEventChangingForSelectedHandler(event);
+            } else {
+              await this.applyEventChangingForAllHandler(event);
+            }
+
+            event.clearPlaceholder();
+          },
+          cancelAction: event.clearPlaceholder,
+        },
+      });
+    },
+
+    /**
+     * Changed event handler
+     *
+     * @param {Object} event
+     * @returns {Promise<void>}
+     */
+    async changedEventHandler(event) {
       const pbehavior = get(event.calendarEvent, 'data.pbehavior');
 
       if (!pbehavior) {
@@ -290,65 +417,21 @@ export default {
         }, event.calendarEvent.data.color);
 
         event.clearPlaceholder();
+
         return;
       }
 
-      this.$modals.show({
-        name: MODALS.planningEventChangingConfirmation,
-        config: {
-          action: async (type) => {
-            if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
-              const tstart = moment(event.target.start.date).tz('Europe/Paris', true).unix();
-              const tstop = moment(event.target.end.date).tz('Europe/Paris', true).unix();
-
-              const newPbehavior = {
-                ...pbehavior,
-
-                _id: uid('pbehavior'),
-                rrule: '',
-                tstart,
-                tstop,
-              };
-
-              const mainPbehavior = {
-                ...pbehavior,
-
-                exdates: [
-                  ...(pbehavior.exdates || []),
-                  {
-                    begin: moment(event.calendarEvent.start.date).tz('Europe/Paris', true).unix(),
-                    end: moment(event.calendarEvent.end.date).tz('Europe/Paris', true).unix(),
-                  },
-                ],
-              };
-
-              await Promise.all([
-                this.updatePbehavior(mainPbehavior, event.calendarEvent.data.color),
-                this.updatePbehavior(newPbehavior),
-              ]);
-            } else {
-              const startDiff = event.target.start.minutesBetween(event.calendarEvent.start, Op.FLOOR, false);
-              const endDiff = event.target.end.minutesBetween(event.calendarEvent.end, Op.FLOOR, false);
-              const tstart = pbehavior.tstart + (startDiff * 60);
-              const tstop = pbehavior.tstop + (endDiff * 60);
-              const newPbehavior = {
-                ...pbehavior,
-
-                tstart,
-                tstop,
-              };
-
-              await this.updatePbehavior(newPbehavior, event.calendarEvent.data.color);
-            }
-
-            event.clearPlaceholder();
-          },
-          cancelAction: event.clearPlaceholder,
-        },
-      });
+      this.showPlanningEventChangingConfirmationModal(event);
     },
 
-    updatePbehavior(pbehavior, color) {
+    /**
+     * Update pbehavior in the data and fetch timespans for that
+     *
+     * @param {Object} pbehavior
+     * @param {string} [color = this.$dayspan.getDefaultEventColor()]
+     * @returns {Promise<void>}
+     */
+    updatePbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
       if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
         this.$set(this.changedPbehaviorsById, pbehavior._id, pbehavior);
       } else {
