@@ -280,7 +280,8 @@ def exports(ws):
             'with_steps',
             'natural_search',
             'active_columns',
-            'hide_resources'
+            'hide_resources',
+            'consider_pbehaviors'
         ]
     )
     def get_counters(
@@ -298,7 +299,8 @@ def exports(ws):
         with_steps=False,
         natural_search=False,
         active_columns=None,
-        hide_resources=False
+        hide_resources=False,
+        consider_pbehaviors=False
     ):
 
         if isinstance(search, int):
@@ -321,7 +323,8 @@ def exports(ws):
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
-                add_pbh_filter=False
+                add_pbh_filter=False,
+                consider_pbehaviors=consider_pbehaviors
             )
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)

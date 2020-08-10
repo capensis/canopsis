@@ -577,7 +577,8 @@ class AlertsReader(object):
                                   add_pbh_filter=True,
                                   has_wildcard_dynamic_filter=False,
                                   correlation=False,
-                                  consequences_children=False):
+                                  consequences_children=False,
+                                  consider_pbehaviors=False):
         """
         :param dict final_filter: the filter sent by the front page
         :param str sort_key: Name of the column to sort. If the value ends with
@@ -635,7 +636,8 @@ class AlertsReader(object):
         }}})
         pipeline.insert(0, self._last_comment_aggregation())
 
-        self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
+        if not consider_pbehaviors:
+            self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
         if has_wildcard_dynamic_filter:
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
@@ -833,7 +835,7 @@ class AlertsReader(object):
         now = time()
 
         for alarm in alarms:
-            for pbehavior in alarm.get('pbehaviors'):
+            for pbehavior in alarm.get('pbehaviors', []):
                 active = False
                 try:
                     active = self.pbehavior_manager.check_active_pbehavior(
@@ -876,7 +878,8 @@ class AlertsReader(object):
             with_consequences=False,
             add_pbh_filter=True,
             correlation=False,
-            consequences_children=False
+            consequences_children=False,
+            consider_pbehaviors=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -956,7 +959,8 @@ class AlertsReader(object):
         pipeline = self._build_aggregate_pipeline(
             final_filter, sort_key, sort_dir, with_steps, with_consequences, filter_,
             add_pbh_filter=add_pbh_filter, has_wildcard_dynamic_filter=has_wildcard_dynamic_filter,
-            correlation=correlation, consequences_children=consequences_children)
+            correlation=correlation, consequences_children=consequences_children,
+            consider_pbehaviors=consider_pbehaviors)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"
