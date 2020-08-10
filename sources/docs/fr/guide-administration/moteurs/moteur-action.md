@@ -28,29 +28,26 @@ En édition CAT, la file du moteur est placée juste après le moteur [`engine-w
 
 Les types d'actions disponibles sont :
 
-* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille la criticité de l'alarme jusqu'à sa résolution
-* `pbehavior` : met en place un [comportement périodique](moteur-pbehavior.md)
-* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose une mise en veille automatique sur l'alarme
-* `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme
-* `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme
-* `assocticket`, qui correspond à un événement [`assocticket`](../../guide-developpement/struct-event.md#event-assocticket-structure) : associe un ticket à l'alarme
-* `declareticket`, qui correspond à un événement [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : déclarer un ticket pour l'alarme
-* `cancel`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-cancel-structure) : annule l'alarme
+* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille la criticité de l'alarme jusqu'à sa résolution.
+* `pbehavior`, met en place un [comportement périodique](moteur-pbehavior.md)
+* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose une mise en veille automatique sur l'alarme.
+* `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme.
+* `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme.
+* `assocticket`, qui correspond à un événement [`assocticket`](../../guide-developpement/struct-event.md#event-assocticket-structure) : associe un ticket à l'alarme.
+* `declareticket`, qui correspond à un événement [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : déclarer un ticket pour l'alarme.
+* `cancel`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-cancel-structure) : annule l'alarme.
 
 ### Paramètres généraux
 
 Une action est composée d'un JSON contenant les paramètres suivants :
 
-```javascript
-{
-"_id"        // identifiant de l'action , optionnel, s'il n'est pas fourni par l'utilisateur il sera généré automatiquement - le champ est de type `string`
-"type"       // type d'action (`changestate`, `pbehavior` ou `snooze`), obligatoire - le champ est de type `string`
-"hook"       // conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée, optionnel
-"triggers"   // conditions de déclenchement sur la vie de l'alarme, si plusieurs triggers sont indiqués, au moins un de ces triggers doit avoir eu lieu pour que l'action soit appelée
-"parameters" // paramétrage spécifique à chaque type d'action.
-"delay"	    // délai avant l'exécution de l'action
-}
-```
+* `_id` : identifiant de l'action. Ce champ est optionnel. S'il n'est pas fourni par l'utilisateur il sera généré automatiquement. Le champ est de type `string`.
+* `type` : type d'action (`changestate`, `pbehavior` ou `snooze`). Ce champ est obligatoire et de type `string`.
+* `parameters` : paramétrage spécifique à chaque type d'action.
+* `delay` : délai avant l'exécution de l'action. Les unités acceptées sont celles utilisées par le langage [Golang](https://golang.org/pkg/time/#ParseDuration) soit `s`, `m`, `h` pour secondes, minutes et heures respectivement.
+* `hook` : il est composé des paramètres suivants :
+  - [`patterns`](moteur-che-event_filter.md#patterns) : conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée. Ce champ est optionnel.
+  - [`triggers`](../architecture-interne/triggers.md) : ils servent comme point de déclenchement pour les actions automatisées. Ils sont généralement déclenchés par évènements.
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
