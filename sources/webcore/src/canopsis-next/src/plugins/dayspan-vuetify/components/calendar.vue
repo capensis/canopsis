@@ -371,10 +371,10 @@ export default {
     },
 
     changeResizePlaceholder(mouseEvent) {
-      let { time } = mouseEvent;
-      time = time.relative(-this.resizingEvent.offset);
-      time = this.$dayspan.roundTime(time, this.$dayspan.rounding.drag);
       const { start, end } = this.placeholder.time;
+      let { time } = mouseEvent;
+
+      time = this.$dayspan.roundTime(time, this.$dayspan.rounding.drag, true);
 
       if (start.time === time.time || end.time === time.time) {
         return;
