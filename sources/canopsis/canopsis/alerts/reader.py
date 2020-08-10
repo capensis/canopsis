@@ -382,49 +382,6 @@ class AlertsReader(object):
 
         return alarms
 
-    def _filter_meta_alarm_parents(self, filter_, resolved=False):
-        """
-        Adds condition to filter_ for finding meta-alarm parents for alarms that matches filter_
-
-        It searches for alarms matched filter_ and with v.parents has some reference to meta-alarms,
-        then groups meta-alarms Entity IDs as set.
-        If meta-alamrs found its Entity IDs added as 'd $in <Entity IDs>' filter's condition
-        """
-        if isinstance(filter_, list) and len(filter_) > 0:
-            resolved_filter = {'v.resolved': {
-                '$ne': None} if resolved else None}
-            match_cond = [resolved_filter]
-            match_cond.extend(filter_)
-
-            filter_children_pipeline = [
-                {'$lookup': {'foreignField': '_id', 'as': 'entity',
-                             'from': 'default_entities', 'localField': 'd'}},
-                {'$unwind': {'path': '$entity', 'preserveNullAndEmptyArrays': True}},
-                {'$match': {'$or': [{'entity.enabled': True}, {
-                    'entity': {'$exists': False}}]}},
-                {"$match": {"v.parents": {"$nin": [None, []]}}},
-                {"$match": {
-                    "$and": match_cond}},
-                {"$project": {"parent": "$v.parents"}},
-                {"$unwind": "$parent"},
-                {"$group": {"_id": None, "parents": {"$addToSet": "$parent"},
-                            "children": {"$addToSet": "$_id"}}}
-            ]
-            meta_alarms = list(self.alarm_collection.aggregate(filter_children_pipeline,
-                                                               allowDiskUse=True,
-                                                               cursor={}))
-            if meta_alarms and meta_alarms[0]:
-                meta_alarms_filter = {
-                        'd': {
-                            '$in': meta_alarms[0]["parents"]
-                        }
-                    }
-                filter_.insert(0, {'$or': [{'$and': filter_[:]}, meta_alarms_filter]})
-                del filter_[1:]
-                return meta_alarms[0]["children"]
-
-        return None
-
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns,
             correlation=False, resolved=False, consequences_children=False,
@@ -684,7 +641,6 @@ class AlertsReader(object):
         if has_wildcard_dynamic_filter:
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
-        self.logger.info("pipeline {}".format(pipeline))
         return pipeline
 
     @staticmethod
@@ -751,7 +707,6 @@ class AlertsReader(object):
             lookup_children_pipeline = [
                 {'$match': {'$expr': {"$in": ['$$eid', '$v.parents']}}},
                 {'$match': old_final_filter}]
-            self.logger.info('final_filter {}'.format(old_final_filter))
             pipeline.insert(start_pos, {'$lookup': {
                 'from': 'periodical_alarm',
                 'let':  {'eid': '$d'},
