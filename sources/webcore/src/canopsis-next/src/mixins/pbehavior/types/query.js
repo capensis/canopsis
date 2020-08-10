@@ -1,4 +1,4 @@
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
@@ -22,6 +22,7 @@ export default {
         this.query = {
           ...this.query,
           page: value.page,
+          search: value.search,
           rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
           sortKey: value.sortBy,
           sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
@@ -38,18 +39,6 @@ export default {
   },
 
   methods: {
-    handleSearch(search) {
-      this.query = {
-        ...this.query,
-
-        search,
-      };
-    },
-
-    handleSearchClear() {
-      this.query = omit(this.query, ['search']);
-    },
-
     getQuery({
       page, search, rowsPerPage, sortBy, sortDir,
     } = this.query) {

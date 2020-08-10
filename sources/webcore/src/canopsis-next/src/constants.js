@@ -1427,3 +1427,9 @@ export const WIDGET_GRID_SIZES_STYLES = {
 export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
+
+export const PLANNING_TABS_INDEXES = {
+  types: 0,
+  resons: 1,
+  datesOfExceptions: 2,
+};

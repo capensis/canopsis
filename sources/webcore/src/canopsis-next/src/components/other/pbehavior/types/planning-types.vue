@@ -5,12 +5,11 @@
       :pending="pbehaviorTypesPending",
       :totalItems="pbehaviorTypesMeta.total_count",
       :pagination.sync="pagination",
+      :search.sync="pagination",
       @remove-selected="showRemoveSelectedPbehaviorTypeModal",
       @remove="showRemovePbehaviorTypeModal",
       @edit="showEditPbehaviorTypeModal"
     )
-    fab-buttons(@create="showCreateTypeModal", @refresh="fetchList")
-      span {{ $t('modals.createPbehaviorType.title') }}
 </template>
 
 <script>
@@ -22,41 +21,36 @@ import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehav
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 import pbehaviorTypesQueryMixin from '@/mixins/pbehavior/types/query';
 
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
 
 export default {
-  components: { FabButtons, PlanningTypesList },
+  components: { PlanningTypesList },
   mixins: [
     rightsTechnicalPbehaviorTypesMixin,
     entitiesPbehaviorTypesMixin,
     pbehaviorTypesQueryMixin,
   ],
+  props: {
+    params: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   watch: {
     query(query, oldQuery) {
       if (!isEqual(query, oldQuery)) {
         this.fetchList();
+        this.$emit('update:params', this.getQuery());
       }
     },
   },
   mounted() {
     this.fetchList();
+    this.$emit('update:params', this.getQuery());
   },
   methods: {
     fetchList() {
       this.fetchPbehaviorTypesList({ params: this.getQuery() });
-    },
-
-    showCreateTypeModal() {
-      this.$modals.show({
-        name: MODALS.createPbehaviorType,
-        config: {
-          action: async (data) => {
-            await this.createPbehaviorType({ data });
-            await this.fetchList();
-          },
-        },
-      });
     },
 
     async tryRemovePbehaviorType(pbehaviorTypeId) {

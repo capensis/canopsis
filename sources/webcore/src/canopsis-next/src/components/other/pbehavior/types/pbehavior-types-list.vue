@@ -107,7 +107,10 @@ export default {
   },
   methods: {
     updateSearchHandler(search) {
-      this.$emit('update:search', search);
+      this.$emit('update:pagination', {
+        ...this.pagination,
+        search,
+      });
     },
   },
 };
