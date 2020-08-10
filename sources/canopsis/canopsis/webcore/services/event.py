@@ -85,10 +85,12 @@ def transform_event(ws, am, event):
         if new_event.get('resource'): 
             eid = "{}/{}".format(new_event['resource'], eid)
     alarm = am.get_last_alarm_by_connector_eid(new_event['connector'], eid)
-    if isinstance(alarm, dict) and 'v' in alarm:
-        if 'children' in alarm['v']:
+    if isinstance(alarm, dict) and 'v' in alarm and isinstance(alarm['v'], dict):
+        def alarmvalue_has_list(
+            x): return x in alarm['v'] and isinstance(alarm['v'][x], list)
+        if alarmvalue_has_list('children'):
             new_event['ma_children'] = list(alarm['v']['children'])
-        if 'parents' in alarm['v']:
+        if alarmvalue_has_list('parents'):
             new_event['ma_parents'] = list(alarm['v']['parents'])
 
     return new_event
