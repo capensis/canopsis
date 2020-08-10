@@ -45,6 +45,7 @@ from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
 import json
+import copy
 
 
 rconn = RedisStore.get_default()
@@ -516,13 +517,6 @@ class AlertsReader(object):
 
             final_filter['$and'].append(column_filter)
 
-        if final_filter['$and'] and correlation and not consequences_children and \
-                (t_view_filter is None or self.not_by_id(t_view_filter)):
-            ch = self._filter_meta_alarm_parents(
-                final_filter['$and'], resolved=resolved)
-            if ch:
-                self.filtered_children = set(ch)
-
         return final_filter
 
     def contains_wildcard_dynamic_filter(self, query, has_dynamic_filter=[False]):
@@ -669,7 +663,8 @@ class AlertsReader(object):
             }
         ]
         if correlation and not consequences_children:
-            self._add_metaalarm_filter(pipeline, 3, with_consequences, filter_)
+            self._add_metaalarm_filter(pipeline, 3, with_consequences, filter_, final_filter)
+
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
@@ -691,6 +686,7 @@ class AlertsReader(object):
         if has_wildcard_dynamic_filter:
             pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
             pipeline.append({"$project": {"infos_array": 0}})
+        self.logger.info("pipeline {}".format(pipeline))
         return pipeline
 
     @staticmethod
@@ -701,7 +697,32 @@ class AlertsReader(object):
         return (isinstance(filter_, dict) and (filter_ == {} or filter_ and self.not_by_id(filter_)) or \
             (isinstance(filter_, list) and filter_ != [] and self.not_by_id(filter_))) or with_consequences
 
-    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences, filter_):
+    def ff_ref_children(self, final_filter):
+        ff_copy = copy.deepcopy(final_filter)
+        if isinstance(final_filter, dict):
+            children_reference = {'children': {'$ne': []}}
+            if '$and' in final_filter:
+                if final_filter['$and'] > 1:
+                    conditions, resolved = [], None
+                    for ff_item in final_filter['$and']:
+                        if isinstance(ff_item, dict) and 'v.resolved' in ff_item:
+                            resolved = ff_item
+                        elif ff_item:
+                            conditions.append(ff_item)
+                    if conditions:
+                        # update $and conditions followed by 'v.resolved'
+                        conditions.append(children_reference)
+                        final_filter['$and'] = [{
+                            '$or': conditions}]
+                        if resolved:
+                            final_filter['$and'].append(resolved)
+                elif final_filter['$and'] == 1:
+                    final_filter['$and'].append(children_reference)
+            elif '$or' in final_filter and final_filter['$or']:
+                final_filter['$or'].append(children_reference)
+        return ff_copy
+
+    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences, filter_, final_filter):
         """
         Method adds filter to find metaalarms
 
@@ -728,8 +749,19 @@ class AlertsReader(object):
             "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
         }})
         if self._can_add_metaalarm_filter(with_consequences, filter_):
-            pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {
-                            "v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+            old_final_filter = self.ff_ref_children(final_filter)
+            lookup_children_pipeline = [
+                {'$match': {'$expr': {"$in": ['$$eid', '$v.parents']}}},
+                {'$match': old_final_filter}]
+            self.logger.info('final_filter {}'.format(old_final_filter))
+            pipeline.insert(start_pos, {'$lookup': {
+                'from': 'periodical_alarm',
+                'let':  {'eid': '$d'},
+                'pipeline': lookup_children_pipeline,
+                'as': 'children',
+            }})
+            pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$in": [None, []]}}, {
+                            "v.children": {"$nin": [None, []]}}]}})
 
 
     def _search_aggregate(self,
