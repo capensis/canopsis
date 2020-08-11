@@ -6,16 +6,16 @@
         v-card.ma-2
           v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
             template(v-if="hasReadAnyPbehaviorTypeAccess")
-              v-tab {{ $t('planning.tabs.type') }}
-              v-tab-item
+              v-tab(href="#types") {{ $t('planning.tabs.type') }}
+              v-tab-item(value="types")
                 v-card-text
                   planning-types(:params.sync="typesParams")
-            v-tab {{ $t('planning.tabs.reason') }}
-            v-tab-item
+            v-tab(href="#reason") {{ $t('planning.tabs.reason') }}
+            v-tab-item(value="reason")
               v-card-text
                 | Reason
-            v-tab {{ $t('planning.tabs.datesOfExceptions') }}
-            v-tab-item
+            v-tab(href="#datesOfExceptions") {{ $t('planning.tabs.datesOfExceptions') }}
+            v-tab-item(value="datesOfExceptions")
               v-card-text
                 | Dates of exceptions
     fab-buttons(@create="create", @refresh="refresh")
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { MODALS, PLANNING_TABS_INDEXES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
@@ -31,21 +31,27 @@ import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
+export const PLANNING_TABS = {
+  types: 'types',
+  resons: 'resons',
+  datesOfExceptions: 'datesOfExceptions',
+};
+
 export default {
   components: { FabButtons, PlanningTypes },
   mixins: [rightsTechnicalPbehaviorTypesMixin, entitiesPbehaviorTypesMixin],
   data() {
     return {
-      activeTab: PLANNING_TABS_INDEXES.types,
+      activeTab: PLANNING_TABS.types,
       typesParams: {},
     };
   },
   computed: {
     tooltipText() {
       return {
-        [PLANNING_TABS_INDEXES.types]: this.$t('modals.createPbehaviorType.title'),
-        [PLANNING_TABS_INDEXES.resons]: this.$t('modals.createPbehaviorReason.title'),
-        [PLANNING_TABS_INDEXES.datesOfExceptions]: this.$t('modals.createPbehaviorException.title'),
+        [PLANNING_TABS.types]: this.$t('modals.createPbehaviorType.title'),
+        [PLANNING_TABS.resons]: this.$t('modals.createPbehaviorReason.title'),
+        [PLANNING_TABS.datesOfExceptions]: this.$t('modals.createPbehaviorException.title'),
       }[this.activeTab];
     },
   },
@@ -55,21 +61,21 @@ export default {
   methods: {
     refresh() {
       switch (this.activeTab) {
-        case PLANNING_TABS_INDEXES.types:
+        case PLANNING_TABS.types:
           this.fetchTypesList();
           break;
-        case PLANNING_TABS_INDEXES.resons:
-        case PLANNING_TABS_INDEXES.datesOfExceptions:
+        case PLANNING_TABS.resons:
+        case PLANNING_TABS.datesOfExceptions:
       }
     },
 
     create() {
       switch (this.activeTab) {
-        case PLANNING_TABS_INDEXES.types:
+        case PLANNING_TABS.types:
           this.showCreateTypeModal();
           break;
-        case PLANNING_TABS_INDEXES.resons:
-        case PLANNING_TABS_INDEXES.datesOfExceptions:
+        case PLANNING_TABS.resons:
+        case PLANNING_TABS.datesOfExceptions:
       }
     },
 
