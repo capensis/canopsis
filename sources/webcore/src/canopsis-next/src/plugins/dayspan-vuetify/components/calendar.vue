@@ -115,7 +115,7 @@ export default {
 
     editHandler({ calendarEvent, closePopover }) {
       const event = this.getEvent('changed', {
-        calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+        calendarEvent: this.copyCalendarEvent(calendarEvent),
         closePopover,
       });
 
@@ -124,7 +124,7 @@ export default {
 
     addHandler({ calendarEvent, closePopover }) {
       const event = this.getEvent('added', {
-        calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+        calendarEvent: this.copyCalendarEvent(calendarEvent),
         closePopover,
       });
 

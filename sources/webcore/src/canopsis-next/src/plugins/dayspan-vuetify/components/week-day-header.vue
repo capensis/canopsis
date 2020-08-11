@@ -5,6 +5,10 @@ export default {
   extends: DsWeekDayHeader,
   methods: {
     isVisible(calendarEvent) {
+      if (!calendarEvent.fullDay) {
+        return false;
+      }
+
       return !(
         this.$dayspan.features.hideOnMove &&
         this.placeholder &&

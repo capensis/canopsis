@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { get, groupBy } from 'lodash';
-import { Day, Schedule, Constants, Op } from 'dayspan';
+import { Day, Schedule, Constants, Op, DaySpan } from 'dayspan';
+
+import { convertTimestampToMomentByTimezone } from './date';
 
 
 /**
@@ -90,10 +92,10 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
  */
 export function getScheduleForSpan(span) {
   const { start } = span;
-  const minutes = span.minutes();
-  const isDay = (minutes % Constants.MINUTES_IN_DAY === 0) || ((minutes + 1) % Constants.MINUTES_IN_DAY === 0);
+  const minutes = span.minutes(Op.UP);
+  const isDay = minutes % Constants.MINUTES_IN_DAY === 0;
 
-  if (isDay) {
+  if (isDay && span.start.isStart()) {
     return Schedule.forDay(start, span.days(Op.UP));
   }
 
@@ -102,6 +104,34 @@ export function getScheduleForSpan(span) {
   const durationUnit = isHour ? 'hours' : 'minutes';
 
   return Schedule.forTime(start, start.asTime(), duration, durationUnit);
+}
+
+/**
+ * Get DaySpan instance for timestamps with timezone conversion
+ *
+ * @param {number} start
+ * @param {number} end
+ * @param {string} timezone
+ * @param {boolean} [isDate = false] - It means that start and end are startOf('day') values
+ * @returns {DaySpan}
+ */
+export function getSpanForTimestamps({
+  start,
+  end,
+  timezone,
+  isDate = false,
+}) {
+  const startMoment = convertTimestampToMomentByTimezone(start, timezone);
+  const endMoment = convertTimestampToMomentByTimezone(end, timezone);
+
+  if (isDate) {
+    endMoment.endOf('day');
+  }
+
+  const startDay = new Day(startMoment);
+  const endDay = new Day(endMoment);
+
+  return new DaySpan(startDay, endDay);
 }
 
 /**

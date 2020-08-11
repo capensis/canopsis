@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import moment from 'moment-timezone';
 import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
-import { CalendarEvent, Day, DaySpan, Op, Schedule } from 'dayspan';
+import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
 import convertTimestampToMoment from '@/helpers/date';
@@ -56,17 +56,14 @@ export function calendarEventToPbehaviorForm(calendarEvent) {
 }
 
 export function formToCalendarEvent(form, calendarEvent) {
-  const span = new DaySpan(
-    Day.fromMoment(moment(form.tstart)),
-    Day.fromMoment(moment(form.tstop)),
-  );
+  const span = new DaySpan(calendarEvent.start, calendarEvent.end);
 
   const schedule = calendarEvent.fullDay
     ? Schedule.forDay(span.start, span.days(Op.UP))
     : Schedule.forSpan(span);
 
   const details = { ...calendarEvent.data, pbehavior: formToPbehavior(form) };
-  const event = Vue.$dayspan.createEvent(details, schedule, true);
+  const event = Vue.$dayspan.createEvent(details, schedule);
 
   event.id = calendarEvent.event.id;
 

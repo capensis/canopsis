@@ -8,7 +8,7 @@
     fillHeight,
     @change="changeCalendarHandler",
     @changed="changedEventHandler",
-    @added="applyEventChangingHandler",
+    @added="applyEventChangesHandler",
     @moved="changedEventHandler",
     @resized="changedEventHandler"
   )
@@ -42,13 +42,12 @@
 import { get } from 'lodash';
 import moment from 'moment-timezone';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Day, DaySpan, Op, Units } from 'dayspan';
+import { Calendar, Op, Units } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getScheduleForSpan } from '@/helpers/dayspan';
-import { convertTimestampToMomentByTimezone } from '@/helpers/date';
+import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
@@ -216,16 +215,12 @@ export default {
       color,
     }) {
       return timespans.map((timespan, index) => {
-        const startMoment = convertTimestampToMomentByTimezone(timespan.from, 'Europe/Paris');
-        const endMoment = convertTimestampToMomentByTimezone(timespan.to, 'Europe/Paris');
-
-        if (this.isCalendarTypeWeek) {
-          endMoment.endOf('day');
-        }
-
-        const startDay = new Day(startMoment);
-        const endDay = new Day(endMoment);
-        const daySpan = new DaySpan(startDay, endDay);
+        const daySpan = getSpanForTimestamps({
+          start: timespan.from,
+          end: timespan.to,
+          timezone: 'Europe/Paris',
+          isDate: this.isCalendarTypeWeek,
+        });
 
         return {
           id: `${pbehavior._id}-${index}`,
@@ -293,7 +288,7 @@ export default {
      *
      * @param {Object} event
      */
-    async applyEventChangingHandler(event) {
+    async applyEventChangesHandler(event) {
       const { pbehavior, color } = event.calendarEvent.data;
 
       if (pbehavior) {
@@ -312,11 +307,23 @@ export default {
      *
      * @param {Object} event
      */
-    applyEventChangingForSelectedHandler(event) {
-      const pbehavior = get(event.calendarEvent, 'data.pbehavior');
-      const target = event.target || event.calendarEvent.span;
+    applyEventChangesForSelectedHandler({ target, calendarEvent }) {
+      const pbehavior = get(calendarEvent, 'data.pbehavior');
       const tstart = moment(target.start.date).tz('Europe/Paris', true).unix();
       const tstop = moment(target.end.date).tz('Europe/Paris', true).unix();
+      const exdate = {
+        begin: moment(calendarEvent.start.date).tz('Europe/Paris', true).unix(),
+        end: moment(calendarEvent.end.date).tz('Europe/Paris', true).unix(),
+      };
+
+      const mainPbehavior = {
+        ...pbehavior,
+
+        exdates: [
+          ...(pbehavior.exdates || []),
+          exdate,
+        ],
+      };
 
       const newPbehavior = {
         ...pbehavior,
@@ -327,20 +334,8 @@ export default {
         tstop,
       };
 
-      const mainPbehavior = {
-        ...pbehavior,
-
-        exdates: [
-          ...(pbehavior.exdates || []),
-          {
-            begin: moment(event.calendarEvent.start.date).tz('Europe/Paris', true).unix(),
-            end: moment(event.calendarEvent.end.date).tz('Europe/Paris', true).unix(),
-          },
-        ],
-      };
-
       return Promise.all([
-        this.updatePbehavior(mainPbehavior, event.calendarEvent.data.color),
+        this.updatePbehavior(mainPbehavior, calendarEvent.data.color),
         this.updatePbehavior(newPbehavior),
       ]);
     },
@@ -351,10 +346,10 @@ export default {
      * @param {Object} event
      * @returns {Promise<void>}
      */
-    applyEventChangingForAllHandler(event) {
-      const pbehavior = get(event.calendarEvent, 'data.pbehavior');
-      const startDiff = event.target.start.secondsBetween(event.calendarEvent.start, Op.FLOOR, false);
-      const endDiff = event.target.end.secondsBetween(event.calendarEvent.end, Op.FLOOR, false);
+    applyEventChangesForAllHandler({ target, calendarEvent }) {
+      const pbehavior = get(calendarEvent, 'data.pbehavior');
+      const startDiff = target.start.secondsBetween(calendarEvent.start, Op.FLOOR, false);
+      const endDiff = target.end.secondsBetween(calendarEvent.end, Op.FLOOR, false);
       const tstart = pbehavior.tstart + startDiff;
       const tstop = pbehavior.tstop + endDiff;
       const newPbehavior = {
@@ -364,7 +359,7 @@ export default {
         tstop,
       };
 
-      return this.updatePbehavior(newPbehavior, event.calendarEvent.data.color);
+      return this.updatePbehavior(newPbehavior, calendarEvent.data.color);
     },
 
     /**
@@ -372,15 +367,15 @@ export default {
      *
      * @param {Object} event
      */
-    showPlanningEventChangingConfirmationModal(event) {
+    showPlanningEventChangesConfirmationModal(event) {
       this.$modals.show({
         name: MODALS.planningEventChangingConfirmation,
         config: {
           action: async (type) => {
             if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
-              await this.applyEventChangingForSelectedHandler(event);
+              await this.applyEventChangesForSelectedHandler(event);
             } else {
-              await this.applyEventChangingForAllHandler(event);
+              await this.applyEventChangesForAllHandler(event);
             }
 
             event.clearPlaceholder();
@@ -398,6 +393,13 @@ export default {
      */
     async changedEventHandler(event) {
       const pbehavior = get(event.calendarEvent, 'data.pbehavior');
+      const {
+        target = getSpanForTimestamps({
+          start: pbehavior.tstart,
+          end: pbehavior.tstop,
+          timezone: 'Europe/Paris',
+        }),
+      } = event;
 
       if (!pbehavior) {
         event.openPopover();
@@ -406,8 +408,8 @@ export default {
       }
 
       if (!pbehavior.rrule) {
-        const tstart = moment(event.target.start.date).tz('Europe/Paris', true).unix();
-        const tstop = moment(event.target.end.date).tz('Europe/Paris', true).unix();
+        const tstart = moment(target.start.date).tz('Europe/Paris', true).unix();
+        const tstop = moment(target.end.date).tz('Europe/Paris', true).unix();
 
         await this.updatePbehavior({
           ...pbehavior,
@@ -421,7 +423,7 @@ export default {
         return;
       }
 
-      this.showPlanningEventChangingConfirmationModal(event);
+      this.showPlanningEventChangesConfirmationModal({ ...event, target });
     },
 
     /**
