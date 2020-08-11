@@ -40,7 +40,6 @@
 
 <script>
 import { get } from 'lodash';
-import moment from 'moment-timezone';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
 
@@ -48,13 +47,19 @@ import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
+import { convertDateToTimestampByTimezone } from '@/helpers/date';
+
+import entitiesInfoMixin from '@/mixins/entities/info';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
-const { mapActions } = createNamespacedHelpers('pbehaviorTimespan');
+const { mapActions: pbehaviorTimespanMapActions } = createNamespacedHelpers('pbehaviorTimespan');
+const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
+const { mapGetters: infoMapGetters } = createNamespacedHelpers('info');
 
 export default {
   components: { PbehaviorCreateEvent },
+  mixins: [entitiesInfoMixin],
   props: {
     pbehaviors: {
       type: Array,
@@ -82,9 +87,14 @@ export default {
         },
       },
       colorsToPbehaviors: {},
+      defaultTypes: [],
     };
   },
   computed: {
+    ...infoMapGetters({
+      timezone: 'timezone',
+    }),
+
     calendarConfig() {
       return {
         dsCalendarEventTime: {
@@ -140,10 +150,15 @@ export default {
   },
   mounted() {
     this.fetchEvents();
+    this.fetchDefaultTypes();
   },
   methods: {
-    ...mapActions({
+    ...pbehaviorTimespanMapActions({
       fetchTimespans: 'fetchItems',
+    }),
+
+    ...pbehaviorTypesMapActions({
+      fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
     }),
 
     /**
@@ -184,8 +199,8 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
-      const viewFrom = moment(this.calendar.filled.start.date).tz('Europe/Paris', true).unix();
-      const viewTo = moment(this.calendar.filled.end.date).tz('Europe/Paris', true).unix();
+      const viewFrom = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.timezone);
+      const viewTo = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.timezone);
 
       return this.fetchTimespans({
         data: {
@@ -218,7 +233,7 @@ export default {
         const daySpan = getSpanForTimestamps({
           start: timespan.from,
           end: timespan.to,
-          timezone: 'Europe/Paris',
+          timezone: this.timezone,
           isDate: this.isCalendarTypeWeek,
         });
 
@@ -309,11 +324,11 @@ export default {
      */
     applyEventChangesForSelectedHandler({ target, calendarEvent }) {
       const pbehavior = get(calendarEvent, 'data.pbehavior');
-      const tstart = moment(target.start.date).tz('Europe/Paris', true).unix();
-      const tstop = moment(target.end.date).tz('Europe/Paris', true).unix();
+      const tstart = convertDateToTimestampByTimezone(target.start.date, this.timezone);
+      const tstop = convertDateToTimestampByTimezone(target.end.date, this.timezone);
       const exdate = {
-        begin: moment(calendarEvent.start.date).tz('Europe/Paris', true).unix(),
-        end: moment(calendarEvent.end.date).tz('Europe/Paris', true).unix(),
+        begin: convertDateToTimestampByTimezone(calendarEvent.start.date, this.timezone),
+        end: convertDateToTimestampByTimezone(calendarEvent.end.date, this.timezone),
       };
 
       const mainPbehavior = {
@@ -397,7 +412,7 @@ export default {
         target = getSpanForTimestamps({
           start: pbehavior.tstart,
           end: pbehavior.tstop,
-          timezone: 'Europe/Paris',
+          timezone: this.timezone,
         }),
       } = event;
 
@@ -408,8 +423,8 @@ export default {
       }
 
       if (!pbehavior.rrule) {
-        const tstart = moment(target.start.date).tz('Europe/Paris', true).unix();
-        const tstop = moment(target.end.date).tz('Europe/Paris', true).unix();
+        const tstart = convertDateToTimestampByTimezone(target.start.date, this.timezone);
+        const tstop = convertDateToTimestampByTimezone(target.end.date, this.timezone);
 
         await this.updatePbehavior({
           ...pbehavior,
@@ -441,6 +456,12 @@ export default {
       }
 
       return this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior, color));
+    },
+
+    async fetchDefaultTypes() {
+      this.defaultTypes = await this.fetchPbehaviorTypesListWithoutStore({
+        params: { default: true },
+      });
     },
   },
 };

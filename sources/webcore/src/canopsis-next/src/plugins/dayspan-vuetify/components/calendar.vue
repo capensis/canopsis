@@ -239,7 +239,6 @@ export default {
     },
 
     finishMove(mouseEvent) {
-      this.moving = false;
       this.placeholder.data.moving = false;
 
       this.handleMoved(mouseEvent);
@@ -247,7 +246,6 @@ export default {
     },
 
     finishResize(mouseEvent) {
-      this.resizing = false;
       this.placeholder.data.resizing = false;
 
       this.handleResized(mouseEvent);
@@ -270,8 +268,9 @@ export default {
       const isDay = mouseEvent.type === 'mouse-up-day';
 
       if (
-        (isDay && !target.start.sameDay(source.start))
-        || (!isDay && !target.start.sameMinute(source.start))
+        isDay
+          ? !target.start.sameDay(source.start)
+          : !target.start.sameMinute(source.start)
       ) {
         const event = this.getEvent('moved', {
           mouseEvent,
@@ -288,7 +287,7 @@ export default {
           event.clearPlaceholder();
         }
       } else {
-        this.clearPlaceholder();
+        this.$nextTick(() => this.clearPlaceholder());
       }
     },
 
@@ -298,8 +297,9 @@ export default {
       const isDay = mouseEvent.type === 'mouse-up-day';
 
       if (
-        (isDay && !(target.start.sameDay(source.start) && target.end.sameDay(source.end)))
-        || (!isDay && !(target.start.sameMinute(source.start) && target.end.sameMinute(source.end)))
+        isDay
+          ? !(target.start.sameDay(source.start) && target.end.sameDay(source.end))
+          : !(target.start.sameMinute(source.start) && target.end.sameMinute(source.end))
       ) {
         const event = this.getEvent('resized', {
           mouseEvent,
@@ -316,7 +316,7 @@ export default {
           event.clearPlaceholder();
         }
       } else {
-        this.clearPlaceholder();
+        this.$nextTick(() => this.clearPlaceholder());
       }
     },
 

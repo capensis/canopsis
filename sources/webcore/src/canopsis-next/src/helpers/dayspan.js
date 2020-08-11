@@ -88,12 +88,12 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
  * Get Schedule instance for a span
  *
  * @param {DaySpan} span
- * @returns {Schedule<unknown>}
+ * @returns {Schedule}
  */
 export function getScheduleForSpan(span) {
   const { start } = span;
   const minutes = span.minutes(Op.UP);
-  const isDay = minutes % Constants.MINUTES_IN_DAY === 0;
+  const isDay = (minutes % Constants.MINUTES_IN_DAY) === 0;
 
   if (isDay && span.start.isStart()) {
     return Schedule.forDay(start, span.days(Op.UP));

@@ -57,3 +57,13 @@ export const convertTimestampToMomentByTimezone = (timestamp, sourceTimezone, lo
 
   return dateObject.tz(sourceTimezone).tz(localTimezone, true);
 };
+
+/**
+ * Convert date to timestamp with keep time
+ *
+ * @param {Date|moment.Moment} date
+ * @param {string} timestamp
+ * @returns {number}
+ */
+export const convertDateToTimestampByTimezone = (date, timestamp) =>
+  moment(date).tz(timestamp, true).unix();

@@ -4,9 +4,9 @@ import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
-import convertTimestampToMoment from '@/helpers/date';
+import convertTimestampToMoment, { convertDateToTimestampByTimezone } from '@/helpers/date';
 
-export function pbehaviorToForm(pbehavior = {}) {
+export function pbehaviorToForm(pbehavior = {}) { // TODO: add timezone
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
@@ -30,13 +30,13 @@ export function pbehaviorToForm(pbehavior = {}) {
   };
 }
 
-export function formToPbehavior(form) {
+export function formToPbehavior(form, timezone) {
   return {
     ...form,
 
     comments: [],
-    tstart: moment(form.tstart).tz('Europe/Paris', true).unix(),
-    tstop: moment(form.tstop).tz('Europe/Paris', true).unix(),
+    tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
+    tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
   };
 }
 
