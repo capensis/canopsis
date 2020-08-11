@@ -10,8 +10,8 @@
               v-tab-item(value="types")
                 v-card-text
                   planning-types(:params.sync="typesParams")
-            v-tab(href="#reason") {{ $t('planning.tabs.reason') }}
-            v-tab-item(value="reason")
+            v-tab(href="#resons") {{ $t('planning.tabs.reason') }}
+            v-tab-item(value="resons")
               v-card-text
                 | Reason
             v-tab(href="#datesOfExceptions") {{ $t('planning.tabs.datesOfExceptions') }}
