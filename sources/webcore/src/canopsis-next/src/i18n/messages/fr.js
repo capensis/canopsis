@@ -110,6 +110,9 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
+    planningAdministration: 'Administration de la planification',
+    icon: 'Icône',
+    priority: 'Priorité',
     fullscreen: 'Plein écran',
     interval: 'Période',
     status: 'Statut',
@@ -1179,6 +1182,20 @@ export default {
     createRrule: {
       title: 'Créer un récurrence',
     },
+    createPbehaviorType: {
+      title: 'Créer un type',
+      iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+      errors: {
+        iconName: 'Le nom est invalide',
+      },
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priorité',
+        iconName: 'Nom de l\'icône',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1676,6 +1693,19 @@ export default {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Le type utilise, car ne peut pas être supprimé',
+    defaultType: 'Le type est par défaut, car ne peut pas être modifié',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Raison',
+      datesOfExceptions: 'Dates d\'exception',
+    },
   },
 
   ...featureService.get('i18n.fr'),

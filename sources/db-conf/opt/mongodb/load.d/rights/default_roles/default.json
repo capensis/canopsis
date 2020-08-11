@@ -381,6 +381,14 @@
             "checksum": 15,
             "desc": ""
         },
+        "models_planning": {
+          "checksum": 15,
+          "desc": ""
+        },
+        "models_planningType": {
+          "checksum": 15,
+          "desc": ""
+        },
         "common_variablesHelp": {
             "checksum": 1,
             "desc": ""

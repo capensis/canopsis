@@ -103,6 +103,8 @@ export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {
   tabs: [viewTabSchema],
 }, { idAttribute: '_id' });
 
+export const pbehaviorTypesSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorTypes, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -125,4 +127,5 @@ export default {
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
   [ENTITIES_TYPES.playlist]: playlistSchema,
   [ENTITIES_TYPES.metaAlarmRule]: metaAlarmRuleSchema,
+  [ENTITIES_TYPES.pbehaviorTypes]: pbehaviorTypesSchema,
 };
