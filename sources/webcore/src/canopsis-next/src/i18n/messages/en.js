@@ -1693,6 +1693,11 @@ export default {
     choose: 'Choose list of exceptions',
   },
 
+  pbehaviorTypes: {
+    usingType: 'Type is using, because cannot be deleted',
+    defaultType: 'Type is default, because cannot be edited',
+  },
+
   planning: {
     tabs: {
       type: 'Type',

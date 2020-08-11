@@ -22,7 +22,7 @@ export default {
         this.query = {
           ...this.query,
           page: value.page,
-          search: value.search,
+          search: value.search || '',
           rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
           sortKey: value.sortBy,
           sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,

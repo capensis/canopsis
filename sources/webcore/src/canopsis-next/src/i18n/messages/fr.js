@@ -1695,6 +1695,11 @@ export default {
     choose: 'Sélectionnez la liste d\'exclusion',
   },
 
+  pbehaviorTypes: {
+    usingType: 'Le type utilise, car ne peut pas être supprimé',
+    defaultType: 'Le type est par défaut, car ne peut pas être modifié',
+  },
+
   planning: {
     tabs: {
       type: 'Type',

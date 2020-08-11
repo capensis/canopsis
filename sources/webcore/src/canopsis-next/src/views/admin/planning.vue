@@ -55,9 +55,6 @@ export default {
       }[this.activeTab];
     },
   },
-  mounted() {
-    this.fetchTypesList();
-  },
   methods: {
     refresh() {
       switch (this.activeTab) {

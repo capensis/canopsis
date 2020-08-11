@@ -29,20 +29,28 @@
           td {{ props.item.priority }}
           td
             v-layout
-              v-btn.mx-0(
-                v-if="hasUpdateAnyPbehaviorTypeAccess",
-                icon,
-                small,
-                @click.stop="$emit('edit', props.item)"
-              )
-                v-icon edit
-              v-btn.mx-0(
-                v-if="hasDeleteAnyPbehaviorTypeAccess",
-                icon,
-                small,
-                @click.stop="$emit('remove', props.item._id)"
-              )
-                v-icon(color="error") delete
+              v-tooltip(bottom, :disabled="props.item.deletable")
+                v-btn.mx-0(
+                  slot="activator",
+                  v-if="hasUpdateAnyPbehaviorTypeAccess",
+                  :disabled="!props.item.deletable",
+                  icon,
+                  small,
+                  @click.stop="$emit('edit', props.item)"
+                )
+                  v-icon edit
+                span {{ $t('pbehaviorTypes.usingType') }}
+              v-tooltip(bottom, :disabled="props.item.editable")
+                v-btn.mx-0(
+                  slot="activator",
+                  v-if="hasDeleteAnyPbehaviorTypeAccess",
+                  :disabled="!props.item.editable",
+                  icon,
+                  small,
+                  @click.stop="$emit('remove', props.item._id)"
+                )
+                  v-icon(color="error") delete
+                span {{ $t('pbehaviorTypes.defaultType') }}
       template(slot="expand", slot-scope="props")
         pbehavior-types-list-expand-panel(:pbehaviorType="props.item")
 </template>
