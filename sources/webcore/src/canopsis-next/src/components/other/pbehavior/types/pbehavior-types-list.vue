@@ -39,7 +39,7 @@
                   @click.stop="$emit('edit', props.item)"
                 )
                   v-icon edit
-                span {{ $t('pbehaviorTypes.usingType') }}
+                span {{ $t('pbehaviorTypes.defaultType') }}
               v-tooltip(bottom, :disabled="props.item.editable")
                 v-btn.mx-0(
                   slot="activator",
@@ -50,7 +50,7 @@
                   @click.stop="$emit('remove', props.item._id)"
                 )
                   v-icon(color="error") delete
-                span {{ $t('pbehaviorTypes.defaultType') }}
+                span {{ $t('pbehaviorTypes.usingType') }}
       template(slot="expand", slot-scope="props")
         pbehavior-types-list-expand-panel(:pbehaviorType="props.item")
 </template>
