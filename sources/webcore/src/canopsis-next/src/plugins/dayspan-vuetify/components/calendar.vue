@@ -239,12 +239,15 @@ export default {
     },
 
     finishMove(mouseEvent) {
+      this.moving = false;
       this.placeholder.data.moving = false;
+
       this.handleMoved(mouseEvent);
       this.endMove();
     },
 
     finishResize(mouseEvent) {
+      this.resizing = false;
       this.placeholder.data.resizing = false;
 
       this.handleResized(mouseEvent);

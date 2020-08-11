@@ -5,9 +5,9 @@
     v-layout.mt-3(row)
       v-flex(xs12)
         pbehavior-exception-date-field(
-          v-for="(date, index) in dates",
-          v-field="dates[index]",
-          :key="date.key",
+          v-for="(exdate, index) in exdates",
+          v-field="exdates[index]",
+          :key="exdate.key",
           @delete="removeItemFromArray(index)"
         )
     v-layout(row)
@@ -32,11 +32,11 @@ export default {
   components: { PbehaviorExceptionDateField },
   mixins: [formArrayMixin],
   model: {
-    prop: 'dates',
+    prop: 'exdates',
     event: 'input',
   },
   props: {
-    dates: {
+    exdates: {
       type: Array,
       default: () => [],
     },

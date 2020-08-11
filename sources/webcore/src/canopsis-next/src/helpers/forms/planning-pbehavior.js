@@ -25,7 +25,8 @@ export function pbehaviorToForm(pbehavior = {}) {
     type: pbehavior.type || '',
     reason: pbehavior.reason || '',
     filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
-    comments: cloneDeep(pbehavior.comments || []),
+    comments: cloneDeep(pbehavior.comments || []), // TODO: add key
+    exdates: cloneDeep(pbehavior.exdates || []), // TODO: add key
   };
 }
 
