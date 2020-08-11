@@ -61,13 +61,7 @@
               @input="updateField('tstop', $event)"
             )
           v-flex(xs3)
-            v-autocomplete(
-              v-field="form.timezone",
-              v-validate="'required'",
-              :items="timezones",
-              :label="$t('modals.createPbehavior.steps.general.fields.timezone')",
-              name="timezone"
-            )
+            timezone-field(v-field="form.timezone", v-validate="'required'")
 </template>
 
 <script>
@@ -80,9 +74,11 @@ import formMixin from '@/mixins/form';
 import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import TimezoneField from '@/components/forms/fields/timezone-field.vue';
 
 export default {
   components: {
+    TimezoneField,
     DateTimePickerField,
   },
   mixins: [formMixin, formValidationHeaderMixin, pbehaviorReasonsMixin],
@@ -122,10 +118,6 @@ export default {
       }
 
       return rules;
-    },
-
-    timezones() {
-      return moment.tz.names();
     },
   },
   mounted() {

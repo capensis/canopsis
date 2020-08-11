@@ -58,3 +58,4 @@ export { default as PbehaviorPlanning } from './pbehavior/pbehavior-planning.vue
 export { default as SelectExceptionsDatesLists } from './pbehavior/select-exceptions-dates-lists.vue';
 export { default as CreateRRule } from './pbehavior/create-r-rule.vue';
 export { default as PlanningEventChangingConfirmation } from './pbehavior/planning-event-changing-confirmation.vue';
+export { default as CreatePbehaviorType } from './pbehavior/create-pbehavior-type.vue';

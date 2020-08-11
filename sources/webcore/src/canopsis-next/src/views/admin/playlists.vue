@@ -7,19 +7,12 @@
       @delete="showRemovePlaylistModal",
       @duplicate="showDuplicatePlaylistModal"
     )
-    .fab(v-if="hasCreateAnyPlaylistAccess")
-      v-layout(column)
-        refresh-btn(@click="fetchList")
-        v-tooltip(left)
-          v-btn(
-            slot="activator",
-            color="primary",
-            data-test="addButton",
-            fab,
-            @click.stop="showCreatePlaylistModal"
-          )
-            v-icon add
-          span {{ $t('modals.createPlaylist.create.title') }}
+    fab-buttons(
+      v-if="hasCreateAnyPlaylistAccess",
+      @refresh="fetchList",
+      @create="showCreatePlaylistModal"
+    )
+      span {{ $t('modals.createPlaylist.create.title') }}
 </template>
 
 <script>
@@ -33,12 +26,12 @@ import entitiesPlaylistMixin from '@/mixins/entities/playlist';
 import entitiesPlaylistRightMixin from '@/mixins/entities/playlist/right';
 
 import PlaylistsList from '@/components/other/playlists/admin/playlists-list.vue';
-import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
+import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
   components: {
+    FabButtons,
     PlaylistsList,
-    RefreshBtn,
   },
   mixins: [
     authMixin,
