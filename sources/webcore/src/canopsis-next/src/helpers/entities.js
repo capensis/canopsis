@@ -27,7 +27,7 @@ import {
 } from '@/constants';
 
 import uuid from './uuid';
-import { pbehaviorToForm } from './forms/pbehavior';
+import { pbehaviorToForm } from './forms/planning-pbehavior';
 
 /**
  * Generate widget by type
@@ -517,9 +517,7 @@ export function generateAction() {
 
   // Default 'pbehavior' action parameters
   const pbehaviorParameters = {
-    general: { ...pbehaviorToForm() },
-    comments: [],
-    exdate: [],
+    ...pbehaviorToForm(),
   };
 
   // Default 'changestate' action parameters

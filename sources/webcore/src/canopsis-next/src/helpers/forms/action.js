@@ -4,14 +4,7 @@ import { ACTION_TYPES, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/c
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
-import {
-  pbehaviorToForm,
-  pbehaviorToComments,
-  pbehaviorToExdates,
-  formToPbehavior,
-  commentsToPbehaviorComments,
-  exdatesToPbehaviorExdates,
-} from '@/helpers/forms/pbehavior';
+import { pbehaviorToForm, formToPbehavior } from '@/helpers/forms/planning-pbehavior';
 import { convertDurationToIntervalObject } from '@/helpers/date';
 import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
@@ -50,14 +43,6 @@ function actionPbehaviorParametersToForm(parameters = {}) {
   const data = {};
 
   data.general = omit(pbehaviorToForm(parameters), ['filter']);
-
-  if (parameters.comments) {
-    data.comments = pbehaviorToComments(parameters);
-  }
-
-  if (parameters.exdate) {
-    data.exdate = pbehaviorToExdates(parameters);
-  }
 
   return data;
 }
@@ -130,13 +115,7 @@ export function prepareSnoozeParameters({ snoozeParameters = {} }) {
  * @returns {{ tstart: number, exdate: Array, comments: Array, tstop: number }}
  */
 export function preparePbehaviorParameters({ pbehaviorParameters = {} }) {
-  const pbehavior = formToPbehavior(pbehaviorParameters.general);
-
-  return {
-    ...pbehavior,
-    comments: commentsToPbehaviorComments(pbehaviorParameters.comments),
-    exdate: exdatesToPbehaviorExdates(pbehaviorParameters.exdate),
-  };
+  return formToPbehavior(pbehaviorParameters);
 }
 
 /**

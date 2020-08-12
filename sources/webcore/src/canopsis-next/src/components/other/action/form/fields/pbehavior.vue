@@ -1,13 +1,13 @@
 <template lang="pug">
-  v-btn.primary(@click="showPbehaviorPlanningModal") {{ $t('modals.pbehaviorPlanning.title') }}
+  pbehavior-form(v-field="value", noFilter)
 </template>
 
 <script>
-
-import { MODALS } from '@/constants';
+import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
 
 export default {
   inject: ['$validator'],
+  components: { PbehaviorForm },
   model: {
     prop: 'value',
     event: 'input',
@@ -16,17 +16,6 @@ export default {
     value: {
       type: Object,
       required: true,
-    },
-  },
-  methods: {
-    showPbehaviorPlanningModal() {
-      this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
-        config: {
-          pbehavior: this.value,
-          action: pbehavior => this.updateModel(pbehavior),
-        },
-      });
     },
   },
 };
