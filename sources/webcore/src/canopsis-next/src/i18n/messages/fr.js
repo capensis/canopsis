@@ -1700,6 +1700,11 @@ export default {
     defaultType: 'Le type est par défaut, car ne peut pas être modifié',
   },
 
+  pbehaviorReasons: {
+    usingType: 'La raison utilise, car ne peut pas être supprimée',
+    defaultType: 'La raison est la valeur par défaut, car elle ne peut pas être modifiée',
+  },
+
   planning: {
     tabs: {
       type: 'Type',

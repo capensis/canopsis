@@ -105,6 +105,8 @@ export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {
 
 export const pbehaviorTypesSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorTypes, {}, { idAttribute: '_id' });
 
+export const pbehaviorReasonsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorReasons, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -128,4 +130,5 @@ export default {
   [ENTITIES_TYPES.playlist]: playlistSchema,
   [ENTITIES_TYPES.metaAlarmRule]: metaAlarmRuleSchema,
   [ENTITIES_TYPES.pbehaviorTypes]: pbehaviorTypesSchema,
+  [ENTITIES_TYPES.pbehaviorReasons]: pbehaviorReasonsSchema,
 };

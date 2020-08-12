@@ -1,19 +1,13 @@
 <template lang="pug">
-  pbehavior-form(
-    v-field="value",
-    :author="$constants.ACTION_AUTHOR",
-    noFilter
-  )
+  v-btn.primary(@click="showPbehaviorPlanningModal") {{ $t('modals.pbehaviorPlanning.title') }}
 </template>
 
 <script>
-import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
+
+import { MODALS } from '@/constants';
 
 export default {
   inject: ['$validator'],
-  components: {
-    PbehaviorForm,
-  },
   model: {
     prop: 'value',
     event: 'input',
@@ -22,6 +16,17 @@ export default {
     value: {
       type: Object,
       required: true,
+    },
+  },
+  methods: {
+    showPbehaviorPlanningModal() {
+      this.$modals.show({
+        name: MODALS.pbehaviorPlanning,
+        config: {
+          pbehavior: this.value,
+          action: pbehavior => this.updateField(pbehavior),
+        },
+      });
     },
   },
 };

@@ -18,7 +18,7 @@ import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
-import pbehaviorTypesQueryMixin from '@/mixins/pbehavior/types/query';
+import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
 import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
 
@@ -27,7 +27,7 @@ export default {
   mixins: [
     rightsTechnicalPbehaviorTypesMixin,
     entitiesPbehaviorTypesMixin,
-    pbehaviorTypesQueryMixin,
+    pbehaviorQueryMixin,
   ],
   props: {
     params: {

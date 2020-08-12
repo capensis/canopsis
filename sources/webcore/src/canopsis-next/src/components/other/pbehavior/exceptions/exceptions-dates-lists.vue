@@ -23,7 +23,7 @@
 import { isEqual } from 'lodash';
 
 import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exception';
-import exceptionQueryMixin from '@/mixins/pbehavior/exception/query';
+import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 
@@ -31,7 +31,7 @@ export default {
   components: { SearchField },
   mixins: [
     entitiesPbehaviorExceptionMixin,
-    exceptionQueryMixin,
+    pbehaviorQueryMixin,
   ],
   model: {
     prop: 'exceptions',

@@ -40,15 +40,15 @@ export default {
 
   methods: {
     getQuery({
-      page, search, rowsPerPage, sortBy, sortDir,
+      page, search, rowsPerPage, sortKey, sortDir,
     } = this.query) {
       const query = {};
 
       query.limit = rowsPerPage;
       query.page = page;
 
-      if (sortBy) {
-        query.sort_key = sortBy;
+      if (sortKey) {
+        query.sort_key = sortKey;
         query.sort_dir = sortDir;
       }
 

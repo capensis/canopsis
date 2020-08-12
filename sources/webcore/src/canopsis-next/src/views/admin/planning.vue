@@ -10,10 +10,11 @@
               v-tab-item(value="types")
                 v-card-text
                   planning-types(:params.sync="typesParams")
-            v-tab(href="#resons") {{ $t('planning.tabs.reason') }}
-            v-tab-item(value="resons")
-              v-card-text
-                | Reason
+            template(v-if="hasReadAnyPbehaviorReasonAccess")
+              v-tab(href="#resons") {{ $t('planning.tabs.reason') }}
+              v-tab-item(value="resons")
+                v-card-text
+                  planning-reasons(:params.sync="reasonsParams")
             v-tab(href="#datesOfExceptions") {{ $t('planning.tabs.datesOfExceptions') }}
             v-tab-item(value="datesOfExceptions")
               v-card-text
@@ -26,9 +27,11 @@
 import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
+import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
+import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export const PLANNING_TABS = {
@@ -38,12 +41,21 @@ export const PLANNING_TABS = {
 };
 
 export default {
-  components: { FabButtons, PlanningTypes },
-  mixins: [rightsTechnicalPbehaviorTypesMixin, entitiesPbehaviorTypesMixin],
+  components: {
+    FabButtons,
+    PlanningTypes,
+    PlanningReasons,
+  },
+  mixins: [
+    rightsTechnicalPbehaviorTypesMixin,
+    rightsTechnicalPbehaviorReasonsMixin,
+    entitiesPbehaviorTypesMixin,
+  ],
   data() {
     return {
       activeTab: PLANNING_TABS.types,
       typesParams: {},
+      reasonsParams: {},
     };
   },
   computed: {

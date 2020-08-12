@@ -1699,6 +1699,11 @@ export default {
     defaultType: 'Type is default, because cannot be edited',
   },
 
+  pbehaviorReasons: {
+    usingType: 'Reason is using, because cannot be deleted',
+    defaultType: 'Reason is default, because cannot be edited',
+  },
+
   planning: {
     tabs: {
       type: 'Type',
