@@ -29,7 +29,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=canopsis
       - RABBITMQ_DEFAULT_VHOST=canopsis
   mongodb:
-    image: mongo:${MONGO_TAG}
+    image: mongo:${MONGODB_TAG}
     env_file: compose.mongo.env
     ports:
       - "27027:27017"
