@@ -11,10 +11,6 @@ volumes:
     driver: local
   dumpdata:
     driver: local
-  axedata:
-    driver: local
-  statsngdata:
-    driver: local
 
 services:
   rabbitmq:
@@ -119,8 +115,6 @@ services:
       - compose.env
     restart: unless-stopped
     command: /engine-axe
-    volumes:
-      - axedata:/testdata/
   che:
     image: canopsis/engine-che:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -144,19 +138,6 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-# ConfigParser.NoSectionError: No section: 'engine:task_mail'
-#  task_mail:
-#    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-#    env_file:
-#      - compose.env
-#    depends_on:
-#      - "mongodb"
-#    environment:
-#      - ENGINE_NAME=task_mail
-#      - ENGINE_MODULE=canopsis.engines.task_mail
-#    restart: unless-stopped
-#    mem_limit: 200m
-#    mem_reservation: 200m
   task_importctx:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
