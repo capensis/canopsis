@@ -11,6 +11,10 @@ volumes:
     driver: local
   dumpdata:
     driver: local
+  axedata:
+    driver: local
+  statsngdata:
+    driver: local
 
 services:
   rabbitmq:
@@ -29,14 +33,14 @@ services:
       - RABBITMQ_DEFAULT_PASS=canopsis
       - RABBITMQ_DEFAULT_VHOST=canopsis
   mongodb:
-    image: mongo:${MONGODB_TAG}
+    image: mongo:${MONGO_TAG}
     env_file: compose.mongo.env
     ports:
       - "27027:27017"
     volumes:
       - mongodbdata:/data/db
       - dumpdata:/dump/dumpdata
-      - "./docker/mongo/:/docker-entrypoint-initdb.d"
+      - "./files/mongo/:/docker-entrypoint-initdb.d"
     restart: unless-stopped
     mem_limit: 3g
     mem_reservation: 3g
@@ -49,8 +53,8 @@ services:
       - "4444:4444/udp"
       - "8083:8083"
     restart: unless-stopped
-    mem_limit: 1g
-    mem_reservation: 1g
+    mem_limit: 3g
+    mem_reservation: 3g
     oom_score_adj: -1000
     environment:
       - INFLUXDB_DB=canopsis
@@ -65,40 +69,26 @@ services:
     restart: unless-stopped
     ports:
       - 6379:6379
+  nginx:
+    image: canopsis/nginx:${CANOPSIS_IMAGE_TAG}
+    ports:
+      - "80:80"
+    env_file:
+      - compose.env
+    environment:
+      - TARGET=http://webserver:8082
+    depends_on:
+      - "webserver"
+    restart: unless-stopped
   provisionning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     environment:
-      - CPS_EDITION=core
-      - CPS_STACK=python
+      - CPS_STACK=go
     env_file:
       - compose.env
     depends_on:
       - "mongodb"
     restart: "no"
-  cleaner_events:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=cleaner_events
-      - ENGINE_MODULE=canopsis.engines.cleaner
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
-  event_filter:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=event_filter
-      - ENGINE_MODULE=canopsis.engines.event_filter
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   pbehavior:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -111,42 +101,37 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  eventstore:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+  action:
+    image: canopsis/engine-action:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=eventstore
-      - ENGINE_MODULE=canopsis.engines.eventstore
     restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
-  context-graph:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    command: /engine-action
+  heartbeat:
+    image: canopsis/engine-heartbeat:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=context-graph
-      - ENGINE_MODULE=canopsis.engines.dynamic
     restart: unless-stopped
-    mem_limit: 2g
-    mem_reservation: 2g
-  alerts:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    command: /engine-heartbeat
+  axe:
+    image: canopsis/engine-axe:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=alerts
-      - ENGINE_MODULE=canopsis.engines.dynamic
     restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
+    command: /engine-axe
+    volumes:
+      - axedata:/testdata/
+  che:
+    image: canopsis/engine-che:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    restart: unless-stopped
+    command: /engine-che -d -publishQueue Engine_axe
+  watcher:
+    image: canopsis/engine-watcher:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    restart: unless-stopped
   scheduler:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -159,18 +144,19 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  task_mail:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=task_mail
-      - ENGINE_MODULE=canopsis.engines.task_mail
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
+# ConfigParser.NoSectionError: No section: 'engine:task_mail'
+#  task_mail:
+#    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+#    env_file:
+#      - compose.env
+#    depends_on:
+#      - "mongodb"
+#    environment:
+#      - ENGINE_NAME=task_mail
+#      - ENGINE_MODULE=canopsis.engines.task_mail
+#    restart: unless-stopped
+#    mem_limit: 200m
+#    mem_reservation: 200m
   task_importctx:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -199,6 +185,9 @@ services:
     mem_reservation: 200m
   webserver:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
       - compose.env
     environment:
@@ -206,7 +195,7 @@ services:
     depends_on:
       - "mongodb"
     ports:
-      - 28082:8082
+      - 8082:8082
     volumes:
       - importctxdata:/opt/canopsis/tmp
       - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
@@ -215,3 +204,10 @@ services:
       - rabbitmq
       - influxdb
     restart: unless-stopped
+  init:
+    image: canopsis/init:${CANOPSIS_IMAGE_TAG}
+    depends_on:
+      - "rabbitmq"
+      - "mongodb"
+    env_file:
+      - compose.env
