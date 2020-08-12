@@ -24,7 +24,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           pbehavior: this.value,
-          action: pbehavior => this.updateField(pbehavior),
+          action: pbehavior => this.updateModel(pbehavior),
         },
       });
     },
