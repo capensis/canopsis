@@ -44,9 +44,8 @@ export function calendarEventToPbehaviorForm(calendarEvent, timezone) {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
   const form = {
-    ...pbehaviorToForm(pbehavior),
+    ...pbehaviorToForm(pbehavior, timezone),
     ...cachedForm,
-    timezone,
   };
 
   form.tstart = calendarEvent.start.date.toDate();
@@ -57,14 +56,14 @@ export function calendarEventToPbehaviorForm(calendarEvent, timezone) {
   return form;
 }
 
-export function formToCalendarEvent(form, calendarEvent) {
+export function formToCalendarEvent(form, calendarEvent, timezone) {
   const span = new DaySpan(calendarEvent.start, calendarEvent.end);
 
   const schedule = calendarEvent.fullDay
     ? Schedule.forDay(span.start, span.days(Op.UP))
     : Schedule.forSpan(span);
 
-  const details = { ...calendarEvent.data, pbehavior: formToPbehavior(form) };
+  const details = { ...calendarEvent.data, pbehavior: formToPbehavior(form, timezone) };
   const event = Vue.$dayspan.createEvent(details, schedule);
 
   event.id = calendarEvent.event.id;
