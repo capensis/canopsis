@@ -39,12 +39,13 @@ export function formToPbehavior(form) {
   };
 }
 
-export function calendarEventToPbehaviorForm(calendarEvent) {
+export function calendarEventToPbehaviorForm(calendarEvent, timezone) {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
   const form = {
     ...pbehaviorToForm(pbehavior),
     ...cachedForm,
+    timezone,
   };
 
   form.tstart = calendarEvent.start.date.toDate();

@@ -28,12 +28,23 @@ export default {
     ActiveBroadcastMessage,
   },
   mixins: [authMixin, entitiesInfoMixin, keepaliveMixin],
+  provide() {
+    return {
+      $system: this.system,
+    };
+  },
   data() {
     return {
       pending: true,
     };
   },
   computed: {
+    system() {
+      return {
+        timezone: this.timezone,
+      };
+    },
+
     routeViewKey() {
       if (this.$route.name === 'view') {
         return this.$route.path;
