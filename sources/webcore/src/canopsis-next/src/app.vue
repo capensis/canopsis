@@ -16,6 +16,7 @@ import SideBars from '@/components/side-bars/index.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import authMixin from '@/mixins/auth';
+import systemMixin from '@/mixins/system';
 import entitiesInfoMixin from '@/mixins/entities/info';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
@@ -27,24 +28,13 @@ export default {
     SideBars,
     ActiveBroadcastMessage,
   },
-  mixins: [authMixin, entitiesInfoMixin, keepaliveMixin],
-  provide() {
-    return {
-      $system: this.system,
-    };
-  },
+  mixins: [authMixin, systemMixin, entitiesInfoMixin, keepaliveMixin],
   data() {
     return {
       pending: true,
     };
   },
   computed: {
-    system() {
-      return {
-        timezone: this.timezone,
-      };
-    },
-
     routeViewKey() {
       if (this.$route.name === 'view') {
         return this.$route.path;
@@ -58,6 +48,7 @@ export default {
 
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
+      this.setSystemData({ timezone: this.timezone });
 
       this.setTitle();
       this.setPopupTimeout();
