@@ -57,7 +57,7 @@ Si l'événement est de type [`check`](../../guide-developpement/struct-event.md
 
 La fonctionnalité d'[event-filter](moteur-che-event_filter.md) peut utiliser des sources de données externes (à l'exception de `entity`) afin d'enrichir les évènements, à l'aide de *plugins*. Des plugins `datasource` sont disponibles pour cela, dans Canopsis CAT.
 
-Si vous bénéficiez d'une souscription à Canopsis CAT, la procédure suivante vous permet d'activer ces plugins d'enrichissement externe.
+Si vous bénéficiez d'une souscription à Canopsis CAT, la procédure suivante vous permet d'activer ces plugins d'enrichissement externe. Il est néanmoins conseillé de n'appliquer cette procédure qu'en cas de réel besoin des fonctionnalités `datasource`.
 
 === "En installation Docker"
 
