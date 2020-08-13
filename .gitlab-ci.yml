@@ -26,7 +26,7 @@ stage_test:
 
   artifacts:
     paths:
-      - tests_report
+      #- tests_report
 
 build_next:
    stage: test
