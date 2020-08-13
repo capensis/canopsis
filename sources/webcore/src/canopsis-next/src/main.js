@@ -178,7 +178,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true },
-    [MODALS.eventChangingConfirmation]: { maxWidth: 400, persistent: true },
+    [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

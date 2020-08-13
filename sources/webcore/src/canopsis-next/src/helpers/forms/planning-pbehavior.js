@@ -4,9 +4,9 @@ import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
-import convertTimestampToMoment, { convertDateToTimestampByTimezone } from '@/helpers/date';
+import { convertDateToTimestampByTimezone } from '@/helpers/date';
 
-export function pbehaviorToForm(pbehavior = {}) { // TODO: add timezone
+export function pbehaviorToForm(pbehavior = {}) {
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
@@ -20,8 +20,6 @@ export function pbehaviorToForm(pbehavior = {}) { // TODO: add timezone
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
     type: pbehavior.type || '',
     reason: pbehavior.reason || '',
     filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),

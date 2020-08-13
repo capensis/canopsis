@@ -77,15 +77,7 @@ export default {
       events: [],
       removedPbehaviorsById: {},
       changedPbehaviorsById: {},
-      addedPbehaviorsById: {
-        '123s': {
-          _id: '123s',
-          tstart: 1595887200,
-          tstop: 1596059999,
-          name: 'asd',
-          rrule: 'FREQ=WEEKLY;COUNT=12',
-        },
-      },
+      addedPbehaviorsById: {},
       colorsToPbehaviors: {},
       defaultTypes: [],
     };
