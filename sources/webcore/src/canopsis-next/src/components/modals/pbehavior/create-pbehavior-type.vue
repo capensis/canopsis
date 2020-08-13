@@ -12,6 +12,7 @@
 
 <script>
 import { MODALS } from '@/constants';
+
 import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type-pbehavior';
 
 import modalInnerMixin from '@/mixins/modal/inner';

@@ -14,7 +14,6 @@
 <script>
 import { MODALS } from '@/constants';
 
-
 export default {
   props: {
     value: {
