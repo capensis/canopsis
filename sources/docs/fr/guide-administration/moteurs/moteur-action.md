@@ -2,7 +2,7 @@
 
 Le moteur `engine-action` permet de déclencher conditionnellement des actions sur des alarmes.
 
-Les actions sont définies dans la [collection MongoDB](#collection-mongodb-associée) `default_action` et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
+Les actions sont définies dans la [collection MongoDB](#collection-mongodb-associee) `default_action` et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
 
 ## Utilisation
 
@@ -43,7 +43,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 * `_id` : optionnel. Identifiant de l'action. S'il n'est pas fourni par l'utilisateur il sera généré automatiquement. Le champ est de type `string`.
 * `type` : obligatoire. Type d'action (voir [section précédente](#types-daction)). Ce champ est de type `string`.
-* `parameters` : obligatoire. [Paramétrage spécifique](#paramètres-spécifiques) à chaque type d'action.
+* `parameters` : obligatoire. [Paramétrage spécifique](#parametres-specifiques) à chaque type d'action.
 * `delay` : optionnel. Délai avant l'exécution de l'action. Les unités acceptées sont celles utilisées par le langage [Golang](https://golang.org/pkg/time/#ParseDuration) soit `s`, `m`, `h` pour secondes, minutes et heures respectivement. Le champ est de type `string`.
 * `hook` : obligatoire. Il est composé des paramètres suivants :
   - [`patterns`](moteur-che-event_filter.md#patterns) : optionnel. Conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée.
@@ -79,7 +79,7 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 #### Snooze
 
 * `message` : optionnel. Commentaire de la mise en veille. Le champ est de type `string`.
-* `duration` : optionnel. Durée de la mise en veille en secondes. Le champ est de type `number`.
+* `duration` : optionnel. Durée de la mise en veille en secondes. Le champ est de type `integer`.
 * `author`: optionnel. Auteur de la mise en veille. Le champ est de type `string`.
 
 #### Ack
