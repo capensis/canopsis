@@ -59,8 +59,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `context-graph` | `engine-che` |
 | `engine-stat` (Go) | `statsng` ⇒ n/a |
 | `eventstore` | n/a |
-| `metric` | n/a |
-| `perfdata` | `metric` ⇒ n/a |
+| `perfdata` | `metric` |
 | `statsng` | n/a |
 | `task_dataclean` | n/a |
 | `task_linklist` | Utilisation du [linkbuilder](../linkbuilder/index.md) |
