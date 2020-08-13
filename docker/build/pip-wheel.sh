@@ -7,7 +7,7 @@ virtualenv /root/wheelbuild
 export PS1="$ "
 source /root/wheelbuild/bin/activate
 
-pip install -U setuptools pip wheel
+pip install -U setuptools "pip==20.1.1" wheel
 
 source /etc/os-release
 repver="${ID}-${VERSION_ID}"
