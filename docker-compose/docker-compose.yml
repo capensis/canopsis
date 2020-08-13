@@ -9,8 +9,6 @@ volumes:
     driver: local
   importctxdata:
     driver: local
-  dumpdata:
-    driver: local
 
 services:
   rabbitmq:
@@ -35,7 +33,6 @@ services:
       - "27027:27017"
     volumes:
       - mongodbdata:/data/db
-      - dumpdata:/dump/dumpdata
       - "./files/mongo/:/docker-entrypoint-initdb.d"
     restart: unless-stopped
     mem_limit: 3g
@@ -121,6 +118,12 @@ services:
       - compose.env
     restart: unless-stopped
     command: /engine-che -d -publishQueue Engine_axe
+  fifo:
+    image: canopsis/engine-fifo:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    restart: unless-stopped
+    command: /engine-fifo
   watcher:
     image: canopsis/engine-watcher:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -179,7 +182,7 @@ services:
       - 8082:8082
     volumes:
       - importctxdata:/opt/canopsis/tmp
-      - dumpdata:/opt/canopsis/var/www/src/canopsis/dumpdata
+      - "./files/webcore/webserver.conf:/opt/canopsis/etc/webserver.conf"
     links:
       - mongodb
       - rabbitmq
