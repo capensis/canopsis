@@ -71,7 +71,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 
 L'organisation de [l'enchaînement des moteurs Canopsis](schema-enchainement-moteurs.md) est décrite dans un document dédié.
 
-## Option des moteurs
+## Options génériques des moteurs
 
 L'ensemble des moteurs Go se trouvent dans `/opt/canopsis/bin/` lors d'une installation paquets, ou à la racine du conteneur de ce moteur, lors d'une installation Docker.
 
