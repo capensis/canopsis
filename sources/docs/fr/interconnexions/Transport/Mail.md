@@ -179,12 +179,12 @@ Exemple :
     state.converter=Mineur \?>1,^Majeur$>2,Critique>3,.*>0
 ```
 
-On sélectionne dans cet exemple le sujet du mail pour définir la sévérité de l’alarme.  
+On sélectionne dans cet exemple le sujet du mail pour définir la criticité de l’alarme.
 
-- Les mails dont le sujet contient `Mineur ?` auront une sévérité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des expressions régulières, comme `*, {, }` etc. Il faut donc le protéger avec un `\`.
-- Les mails dont le sujet est strictement `Majeur` auront une sévérité de 2. Le caractère `^` défini le début de la chaîne de caractères et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la sélection des mails dont le sujet se termine par `Mineur`.
-- Les mails dont le sujet contient `Critique` auront une sévérité de 3.
-- L'utilisation de l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui ne correspondent pas aux cas précédents auront donc une sévérité par défaut de 0.
+- Les mails dont le sujet contient `Mineur ?` auront une criticité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des expressions régulières, comme `*, {, }` etc. Il faut donc le protéger avec un `\`.
+- Les mails dont le sujet est strictement `Majeur` auront une criticité de 2. Le caractère `^` défini le début de la chaîne de caractères et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la sélection des mails dont le sujet se termine par `Mineur`.
+- Les mails dont le sujet contient `Critique` auront une criticité de 3.
+- L'utilisation de l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui ne correspondent pas aux cas précédents auront donc une criticité par défaut de 0.
 
 À partir de la `3.11.0`, l'option `trim` retire les espaces à gauche, à droite ou des 2 côtés du bloc de mots. Elle peut être appliquée à n'importe quelle *racine*. Par exemple, si la ressource dans le mail vaut "␣deux mots␣" avec un espace avant et après :  
 
@@ -255,6 +255,6 @@ Pour appliquer un changement (modification de la configuration, ajout de templat
 
 #### Gestion d'erreur dans la connexion POP3
 
-En cas d'erreur de connexion au serveur mail, le connecteur envoie un événement à Canopsis. Vous pouvez paramétrer cette alerte avec la section `[event_error]` du fichier de configuration.  
+En cas d'erreur de connexion au serveur mail, le connecteur envoie un événement à Canopsis. Vous pouvez paramétrer cette alerte avec la section `[event_error]` du fichier de configuration.
 
-En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec une sévérité de 0. Cela permet de fermer d'éventuelles alarmes.
+En cas de connexion normale du connecteur au serveur mail, le connecteur envoie l'événement avec une criticité de 0. Cela permet de fermer d'éventuelles alarmes.

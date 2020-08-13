@@ -215,6 +215,10 @@ class route(object):
                 except (ValueError, TypeError):
                     pass
                 else:
+                    # with bottle 0.12 route received whole request body as one of kwargs key
+                    if body in params:
+                        params.pop(body, None)
+                        kwargs.pop(body, None)
                     for lb in loaded_body:
                         value = loaded_body[lb]
                         params[lb] = value
