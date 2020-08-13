@@ -4,8 +4,7 @@ set -o pipefail
 set -u
 
 git submodule update --init
-cd ..
-./build-docker.sh
+../build-docker.sh
 
 # override .env default variable
 export CANOPSIS_IMAGE_TAG=${CANOPSIS_DISTRIBUTION}-ci-test
