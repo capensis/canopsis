@@ -42,7 +42,7 @@ build_next:
     changes:
       - sources/webcore/src/canopsis-next/**/*
     refs:
-      - various-improvements-for-build
+      - develop
    after_script:
      - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next kill
      - sleep 10
