@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span Modify
+        span {{ $t('modals.pbehaviorRecurrentChangesConfirmation.title') }}
       template(slot="text")
         v-radio-group(
           v-model="type",
@@ -11,12 +11,12 @@
         )
           v-radio(
             :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected",
-            label="Only selected period",
+            :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.selected')",
             color="primary"
           )
           v-radio(
             :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.all",
-            label="All the periods",
+            :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.all')",
             color="primary"
           )
       template(slot="actions")
@@ -32,7 +32,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.planningEventChangingConfirmation,
+  name: MODALS.pbehaviorRecurrentChangesConfirmation,
   components: {
     ModalWrapper,
   },
@@ -51,8 +51,8 @@ export default {
       this.$modals.hide();
     },
     cancel() {
-      if (this.config.cancelAction) {
-        this.config.cancelAction();
+      if (this.config.cancel) {
+        this.config.cancel();
       }
 
       this.$modals.hide();

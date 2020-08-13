@@ -98,7 +98,7 @@ export const MODALS = {
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
-  planningEventChangingConfirmation: 'planning-event-changing-confirmation',
+  pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
 };
 

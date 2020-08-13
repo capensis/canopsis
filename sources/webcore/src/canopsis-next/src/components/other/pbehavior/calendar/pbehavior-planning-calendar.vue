@@ -378,13 +378,13 @@ export default {
     },
 
     /**
-     * Show planning event changes confirmation modal window
+     * Show modal window for recurrent changes confirmation
      *
      * @param {Object} event
      */
-    showPlanningEventChangesConfirmationModal(event) {
+    showPbehaviorRecurrentChangesConfirmationModal(event) {
       this.$modals.show({
-        name: MODALS.planningEventChangingConfirmation,
+        name: MODALS.pbehaviorRecurrentChangesConfirmation,
         config: {
           action: async (type) => {
             if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
@@ -395,7 +395,7 @@ export default {
 
             event.clearPlaceholder();
           },
-          cancelAction: event.clearPlaceholder,
+          cancel: event.clearPlaceholder,
         },
       });
     },
@@ -438,7 +438,7 @@ export default {
         return;
       }
 
-      this.showPlanningEventChangesConfirmationModal({ ...event, target });
+      this.showPbehaviorRecurrentChangesConfirmationModal({ ...event, target });
     },
 
     /**
