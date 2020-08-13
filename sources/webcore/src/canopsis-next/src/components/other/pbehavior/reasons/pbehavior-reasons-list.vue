@@ -2,7 +2,7 @@
   div.white
     v-layout(row, wrap)
       v-flex(xs4)
-        search-field(@submit="updateSearchHandler")
+        search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
       v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && selected.length", xs4)
         v-btn(@click="$emit('remove-selected', selected)", icon)
           v-icon delete
@@ -21,37 +21,36 @@
       template(slot="items", slot-scope="props")
         tr(@click="props.expanded = !props.expanded")
           td(@click.stop="")
-            v-checkbox-functional(v-model="props.selected", primary, hide-details)
+            v-checkbox-functional(v-model="props.selected", :disabled="!props.item.deletable", primary, hide-details)
           td {{ props.item.name }}
           td
             v-layout
+              v-btn.mx-0(
+                slot="activator",
+                v-if="hasUpdateAnyPbehaviorReasonAccess",
+                icon,
+                small,
+                @click.stop="$emit('edit', props.item)"
+              )
+                v-icon edit
               v-tooltip(bottom, :disabled="props.item.deletable")
                 v-btn.mx-0(
                   slot="activator",
-                  v-if="hasUpdateAnyPbehaviorReasonAccess",
-                  :disabled="!props.item.deletable",
-                  icon,
-                  small,
-                  @click.stop="$emit('edit', props.item)"
-                )
-                  v-icon edit
-                span {{ $t('pbehaviorReasons.defaultType') }}
-              v-tooltip(bottom, :disabled="props.item.editable")
-                v-btn.mx-0(
-                  slot="activator",
                   v-if="hasDeleteAnyPbehaviorReasonAccess",
-                  :disabled="!props.item.editable",
+                  :disabled="!props.item.deletable",
                   icon,
                   small,
                   @click.stop="$emit('remove', props.item._id)"
                 )
                   v-icon(color="error") delete
-                span {{ $t('pbehaviorReasons.usingType') }}
+                span {{ $t('pbehaviorReasons.usingReason') }}
       template(slot="expand", slot-scope="props")
         pbehavior-reasons-list-expand-panel(:pbehaviorReason="props.item")
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 import SearchField from '@/components/forms/fields/search-field.vue';
 
@@ -106,6 +105,10 @@ export default {
         ...this.pagination,
         search,
       });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
   },
 };

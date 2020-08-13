@@ -60,7 +60,21 @@ export default {
       }
     },
 
-    showEditPbehaviorReasonModal() {},
+    showEditPbehaviorReasonModal(pbehaviorReason) {
+      this.$modals.show({
+        name: MODALS.createPbehaviorReason,
+        config: {
+          pbehaviorReason,
+          action: async (newPbehaviorType) => {
+            await this.updatePbehaviorReason({
+              data: newPbehaviorType,
+              id: pbehaviorReason._id,
+            });
+            await this.fetchList();
+          },
+        },
+      });
+    },
 
     showRemovePbehaviorReasonModal(pbehaviorReasonId) {
       this.$modals.show({
