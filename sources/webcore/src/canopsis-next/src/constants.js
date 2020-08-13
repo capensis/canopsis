@@ -99,6 +99,7 @@ export const MODALS = {
   createRRule: 'create-r-rule',
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
   createPbehaviorType: 'create-pbehavior-type',
+  createPbehaviorReason: 'create-pbehavior-reason',
 };
 
 export const EVENT_ENTITY_TYPES = {

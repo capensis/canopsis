@@ -29,6 +29,7 @@ import { MODALS } from '@/constants';
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
@@ -50,6 +51,7 @@ export default {
     rightsTechnicalPbehaviorTypesMixin,
     rightsTechnicalPbehaviorReasonsMixin,
     entitiesPbehaviorTypesMixin,
+    entitiesPbehaviorReasonsMixin,
   ],
   data() {
     return {
@@ -74,6 +76,8 @@ export default {
           this.fetchTypesList();
           break;
         case PLANNING_TABS.resons:
+          this.fetchReasonsList();
+          break;
         case PLANNING_TABS.datesOfExceptions:
       }
     },
@@ -84,12 +88,18 @@ export default {
           this.showCreateTypeModal();
           break;
         case PLANNING_TABS.resons:
+          this.showCreateReasonModal();
+          break;
         case PLANNING_TABS.datesOfExceptions:
       }
     },
 
     fetchTypesList() {
       this.fetchPbehaviorTypesList({ params: this.typesParams });
+    },
+
+    fetchReasonsList() {
+      this.fetchPbehaviorReasonsList({ params: this.reasonsParams });
     },
 
     showCreateTypeModal() {
@@ -99,6 +109,18 @@ export default {
           action: async (data) => {
             await this.createPbehaviorType({ data });
             await this.fetchTypesList();
+          },
+        },
+      });
+    },
+
+    showCreateReasonModal() {
+      this.$modals.show({
+        name: MODALS.createPbehaviorReason,
+        config: {
+          action: async (data) => {
+            await this.createPbehaviorReason({ data });
+            await this.fetchReasonsList();
           },
         },
       });

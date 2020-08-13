@@ -1196,6 +1196,13 @@ export default {
         iconName: 'Nom de l\'icône',
       },
     },
+    createPbehaviorReason: {
+      title: 'Créer un reason',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1701,8 +1708,7 @@ export default {
   },
 
   pbehaviorReasons: {
-    usingType: 'La raison utilise, car ne peut pas être supprimée',
-    defaultType: 'La raison est la valeur par défaut, car elle ne peut pas être modifiée',
+    usingReason: 'La raison utilise, car ne peut pas être supprimée',
   },
 
   planning: {

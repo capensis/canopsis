@@ -2,7 +2,7 @@
   div.white
     v-layout(row, wrap)
       v-flex(xs4)
-        search-field(@submit="updateSearchHandler")
+        search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
       v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selected.length", xs4)
         v-btn(@click="$emit('remove-selected', selected)", icon)
           v-icon delete
@@ -21,7 +21,7 @@
       template(slot="items", slot-scope="props")
         tr(@click="props.expanded = !props.expanded")
           td(@click.stop="")
-            v-checkbox-functional(v-model="props.selected", primary, hide-details)
+            v-checkbox-functional(v-model="props.selected", :disabled="!props.item.deletable", primary, hide-details)
           td {{ props.item.name }}
           td
             span.pbehavior-type-icon
@@ -29,22 +29,22 @@
           td {{ props.item.priority }}
           td
             v-layout
-              v-tooltip(bottom, :disabled="props.item.deletable")
+              v-tooltip(bottom, :disabled="props.item.editable")
                 v-btn.mx-0(
                   slot="activator",
                   v-if="hasUpdateAnyPbehaviorTypeAccess",
-                  :disabled="!props.item.deletable",
+                  :disabled="!props.item.editable",
                   icon,
                   small,
                   @click.stop="$emit('edit', props.item)"
                 )
                   v-icon edit
                 span {{ $t('pbehaviorTypes.defaultType') }}
-              v-tooltip(bottom, :disabled="props.item.editable")
+              v-tooltip(bottom, :disabled="props.item.deletable")
                 v-btn.mx-0(
                   slot="activator",
                   v-if="hasDeleteAnyPbehaviorTypeAccess",
-                  :disabled="!props.item.editable",
+                  :disabled="!props.item.deletable",
                   icon,
                   small,
                   @click.stop="$emit('remove', props.item._id)"
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import SearchField from '@/components/forms/fields/search-field.vue';
 
@@ -119,6 +121,10 @@ export default {
         ...this.pagination,
         search,
       });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
   },
 };
