@@ -51,7 +51,50 @@ Cette fonctionnalité sera aussi disponible en installation par paquets lors d'u
 
 À l'arrivée dans sa file, le moteur `engine-che` va leur appliquer les règles d'enrichissement de son [`event-filter`](moteur-che-event_filter.md).
 
-Si l'événement est de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) ou [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : au prochain battement (beat) du moteur, il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
+Si l'événement est de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) ou [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : au prochain battement (*beat*) du moteur, il va ensuite créer, enrichir ou mettre à jour les entités, puis il va mettre à jour le context-graph qui gère les liens entre les entités.
+
+## Activation des plugins d'enrichissement externe (`datasource`)
+
+La fonctionnalité d'[event-filter](moteur-che-event_filter.md) peut utiliser des sources de données externes (à l'exception de `entity`) afin d'enrichir les évènements, à l'aide de *plugins*. Des plugins `datasource` sont disponibles pour cela, dans Canopsis CAT.
+
+Si vous bénéficiez d'une souscription à Canopsis CAT, la procédure suivante vous permet d'activer ces plugins d'enrichissement externe.
+
+=== "En installation Docker"
+
+    Le conteneur `che` doit être modifié pour utiliser l'image `canopsis/engine-che-cat` à la place de l'image `canopsis/engine-che` proposée par défaut. L'accès à l'image `canopsis/engine-che-cat` nécessite une souscription CAT.
+
+    Si vous utilisez Docker Compose, adaptez votre section `che` à l'exemple suivant :
+
+    ``` yaml hl_lines="2 6"
+      che:
+        image: canopsis/engine-che-cat:${CANOPSIS_IMAGE_TAG}
+        env_file:
+          - compose.env
+        restart: unless-stopped
+        command: /engine-che -dataSourceDirectory /plugins/datasource
+    ```
+
+=== "En installation paquets"
+
+    Vous devez tout d'abord avoir installé le paquet système `canopsis-engines-go-cat`, qui est uniquement disponible lors d'une souscription à Canopsis CAT.
+
+    Le moteur `engine-che` doit ensuite être lancé avec l'option `-dataSourceDirectory /opt/canopsis/lib/go/plugins/datasource`, afin que le plugin `datasource` soit chargé.
+
+    Vous pouvez, pour cela, exécuter les commandes suivantes :
+
+    ``` sh
+    mkdir -p /etc/systemd/system/canopsis-engine-go@engine-che.service.d
+    cat > /etc/systemd/system/canopsis-engine-go@engine-che.service.d/datasource.conf << EOF
+    [Service]
+    ExecStart=
+    ExecStart=/usr/bin/env /opt/canopsis/bin/%i -dataSourceDirectory /opt/canopsis/lib/go/plugins/datasource
+    EOF
+
+    systemctl daemon-reload
+    systemctl restart canopsis-engine-go@engine-che
+    ```
+
+Voyez ensuite [la documentation de l'event-filter du moteur `engine-che`](moteur-che-event_filter.md#donnees-externes) afin d'en savoir plus sur l'utilisation de cette fonctionnalité.
 
 ## Collection MongoDB associée
 
