@@ -51,7 +51,7 @@ Crée une nouvelle Action à partir du corps de la requête.
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
-    "_id": "<Canopsis_URL>_pbehavior",
+    "_id": "action_id_pbehavior",
     "type": "pbehavior",
     "hook": {
         "event_patterns": [
@@ -89,7 +89,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ```json
 {
-	"_id": "_pbehavior"
+	"_id": "action_id_pbehavior"
 }
 ```
 
