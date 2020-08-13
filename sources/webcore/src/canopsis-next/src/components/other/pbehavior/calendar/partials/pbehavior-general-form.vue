@@ -49,9 +49,13 @@
           v-field="form.type",
           v-validate="'required'",
           :label="$t('modals.createPbehavior.steps.general.fields.type')",
-          :items="types",
+          :loading="pbehaviorTypesPending",
+          :items="pbehaviorTypes",
           :error-messages="errors.collect('type')",
-          name="type"
+          item-text="name",
+          item-value="_id",
+          name="type",
+          return-object
         )
 </template>
 
@@ -62,13 +66,19 @@ import { PBEHAVIOR_TYPES, PAUSE_REASONS, DATETIME_FORMATS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
-import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
+import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
+import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 
 export default {
   components: { DateTimePickerField },
-  mixins: [formMixin, formValidationHeaderMixin, pbehaviorReasonsMixin],
+  mixins: [
+    formMixin,
+    formValidationHeaderMixin,
+    entitiesPbehaviorReasonsMixin,
+    entitiesPbehaviorTypesMixin,
+  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -109,6 +119,7 @@ export default {
   },
   mounted() {
     this.fetchPbehaviorReasons();
+    this.fetchPbehaviorTypesList();
   },
 };
 </script>

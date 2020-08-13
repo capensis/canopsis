@@ -43,7 +43,7 @@ import { get } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
 
-import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
+import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
@@ -55,9 +55,9 @@ import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
 const { mapActions: pbehaviorTimespanMapActions } = createNamespacedHelpers('pbehaviorTimespan');
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
-const { mapGetters: infoMapGetters } = createNamespacedHelpers('info');
 
 export default {
+  inject: ['$system'],
   components: { PbehaviorCreateEvent },
   mixins: [entitiesInfoMixin],
   props: {
@@ -91,10 +91,6 @@ export default {
     };
   },
   computed: {
-    ...infoMapGetters({
-      timezone: 'timezone',
-    }),
-
     calendarConfig() {
       return {
         dsCalendarEventTime: {
@@ -136,12 +132,17 @@ export default {
       }, {});
     },
 
-    allPbehaviors() {
-      return Object.values({
+    allPbehaviorsById() {
+      return {
         ...this.pbehaviorsById,
-        ...this.changedPbehaviorsById,
         ...this.addedPbehaviorsById,
-      }).filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
+        ...this.changedPbehaviorsById,
+      };
+    },
+
+    allPbehaviorsAvailable() {
+      return Object.values(this.allPbehaviorsById)
+        .filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
     },
 
     isCalendarTypeWeek() {
@@ -184,7 +185,7 @@ export default {
     async fetchEvents() {
       this.pending = true;
 
-      const promises = this.allPbehaviors.map(pbehavior =>
+      const promises = this.allPbehaviorsAvailable.map(pbehavior =>
         this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior)));
 
       await Promise.all(promises);
@@ -199,8 +200,8 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
-      const viewFrom = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.timezone);
-      const viewTo = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.timezone);
+      const viewFrom = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
+      const viewTo = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
 
       return this.fetchTimespans({
         data: {
@@ -233,7 +234,7 @@ export default {
         const daySpan = getSpanForTimestamps({
           start: timespan.from,
           end: timespan.to,
-          timezone: this.timezone,
+          timezone: this.$system.timezone,
           isDate: this.isCalendarTypeWeek,
         });
 
@@ -324,18 +325,20 @@ export default {
      */
     applyEventChangesForSelectedHandler({ target, calendarEvent }) {
       const pbehavior = get(calendarEvent, 'data.pbehavior');
-      const tstart = convertDateToTimestampByTimezone(target.start.date, this.timezone);
-      const tstop = convertDateToTimestampByTimezone(target.end.date, this.timezone);
+      const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
+      const tstart = convertDateToTimestampByTimezone(target.start.date, this.$system.timezone);
+      const tstop = convertDateToTimestampByTimezone(target.end.date, this.$system.timezone);
       const exdate = {
-        begin: convertDateToTimestampByTimezone(calendarEvent.start.date, this.timezone),
-        end: convertDateToTimestampByTimezone(calendarEvent.end.date, this.timezone),
+        begin: convertDateToTimestampByTimezone(calendarEvent.start.date, this.$system.timezone),
+        end: convertDateToTimestampByTimezone(calendarEvent.end.date, this.$system.timezone),
+        type: this.getOppositePbehaviorType(pbehavior.type),
       };
 
       const mainPbehavior = {
-        ...pbehavior,
+        ...originalPbehavior,
 
         exdates: [
-          ...(pbehavior.exdates || []),
+          ...(originalPbehavior.exdates || []),
           exdate,
         ],
       };
@@ -412,7 +415,7 @@ export default {
         target = getSpanForTimestamps({
           start: pbehavior.tstart,
           end: pbehavior.tstop,
-          timezone: this.timezone,
+          timezone: this.$system.timezone,
         }),
       } = event;
 
@@ -423,8 +426,8 @@ export default {
       }
 
       if (!pbehavior.rrule) {
-        const tstart = convertDateToTimestampByTimezone(target.start.date, this.timezone);
-        const tstop = convertDateToTimestampByTimezone(target.end.date, this.timezone);
+        const tstart = convertDateToTimestampByTimezone(target.start.date, this.$system.timezone);
+        const tstop = convertDateToTimestampByTimezone(target.end.date, this.$system.timezone);
 
         await this.updatePbehavior({
           ...pbehavior,
@@ -458,10 +461,35 @@ export default {
       return this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior, color));
     },
 
+    /**
+     * Fetch default pbehavior types
+     *
+     * @return {Promise<void>}
+     */
     async fetchDefaultTypes() {
-      this.defaultTypes = await this.fetchPbehaviorTypesListWithoutStore({
+      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
         params: { default: true },
       });
+
+      this.defaultTypes = data;
+    },
+
+    /**
+     * Get opposite pbehavior type for default exdate
+     *
+     * @param {Object} [pbehaviorType = {}]
+     * @return {Object|undefined}
+     */
+    getOppositePbehaviorType(pbehaviorType = {}) {
+      const TYPES_MAP = {
+        [PBEHAVIOR_TYPE_TYPES.activeState]: PBEHAVIOR_TYPE_TYPES.pause,
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: PBEHAVIOR_TYPE_TYPES.activeState,
+        [PBEHAVIOR_TYPE_TYPES.pause]: PBEHAVIOR_TYPE_TYPES.activeState,
+      };
+
+      const targetType = TYPES_MAP[pbehaviorType.type];
+
+      return this.defaultTypes.find(defaultType => defaultType.type === targetType);
     },
   },
 };
