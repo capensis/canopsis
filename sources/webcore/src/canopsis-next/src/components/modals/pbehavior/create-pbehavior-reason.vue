@@ -21,7 +21,6 @@ import validationErrorsMixin from '@/mixins/form/validation-errors';
 import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
 import CreatePbehaviorReasonForm from '@/components/other/pbehavior/reasons/form/create-pbehavior-reason-form.vue';
 
-
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
@@ -34,7 +33,10 @@ export default {
     CreateTypeForm,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin, validationErrorsMixin()],
+  mixins: [
+    modalInnerMixin,
+    validationErrorsMixin(),
+  ],
   data() {
     return {
       form: pbehaviorReasonToForm(this.modal.config.pbehaviorReason),

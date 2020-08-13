@@ -31,7 +31,10 @@ export default {
     CreateTypeForm,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin, validationErrorsMixin()],
+  mixins: [
+    modalInnerMixin,
+    validationErrorsMixin(),
+  ],
   data() {
     return {
       form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
