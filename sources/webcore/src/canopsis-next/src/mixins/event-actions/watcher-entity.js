@@ -110,7 +110,7 @@ export default {
           message: comment,
         }],
         filter: {
-          _id: entity.entity_id,
+          _id: entity._id,
         },
         name: 'downtime',
         reason,

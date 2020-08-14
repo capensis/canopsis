@@ -2,7 +2,7 @@
   div
     div.mt-2(v-for="watcherEntity in slicedWatcherEntities", :key="watcherEntity._id")
       watcher-entity(
-        :watcherId="watcher.entity_id",
+        :watcherId="watcher._id",
         :isWatcherOnPbehavior="watcher.active_pb_watcher",
         :entity="watcherEntity",
         :template="entityTemplate",
@@ -82,7 +82,7 @@ export default {
     orderedWatcherEntities() {
       const preparedEntityNameField = this.entityNameField.replace(/^entity\./, '');
 
-      return orderBy(this.watcherEntities, ['state.val', preparedEntityNameField], ['desc', 'asc']);
+      return orderBy(this.watcherEntities, ['state', preparedEntityNameField], ['desc', 'asc']);
     },
     slicedWatcherEntities() {
       const { first, last } = this.pagination;

@@ -58,7 +58,7 @@ export const API_ROUTES = {
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   watcherng: '/api/v2/watcherng',
-  weatherWatcher: '/api/v2/weather/watchers',
+  weatherWatcher: '/api/v4/weather-watchers',
   pbehavior: {
     pbehavior: '/api/v2/pbehavior',
     list: '/pbehavior/read',
