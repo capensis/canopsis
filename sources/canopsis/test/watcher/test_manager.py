@@ -288,10 +288,55 @@ class ComputeState(BaseTest):
         res = self.manager.get_watcher(watcher_id)
         self.assertEqual(res['state'], self.state)
 
+        # modify tested alarm as pbehavior engine moved ou from python
+
+        mongo = MongoStore.get_default()
+        collection = mongo.get_collection("periodical_testalarm")
+        collection.update({
+            'connector': self.type_,
+            'connector_name': 'connector_name',
+            'component': self.name,
+        }, {
+            '$set': {
+                'v.pbehavior_info': {
+                    'canonical_type': 'maintenance',
+                }
+            }
+        })
+
         self.manager.compute_watchers()
 
         res = self.manager.get_watcher(watcher_id)
         self.assertEqual(res['state'], 0)
+
+        collection.update({
+            'connector': self.type_,
+            'connector_name': 'connector_name',
+            'component': self.name,
+        }, {
+            '$set': {
+                'v.pbehavior_info': {
+                    'canonical_type': 'active',
+                }
+            }
+        })
+
+        sleep(3)
+        self.pbm.compute_pbehaviors_filters()
+        self.manager.compute_watchers()
+
+        res = self.manager.get_watcher(watcher_id)
+        self.assertEqual(res['state'], self.state)
+
+        collection.update({
+            'connector': self.type_,
+            'connector_name': 'connector_name',
+            'component': self.name,
+        }, {
+            '$unset': {
+                'v.pbehavior_info': ''
+            }
+        })
 
         sleep(3)
         self.pbm.compute_pbehaviors_filters()
