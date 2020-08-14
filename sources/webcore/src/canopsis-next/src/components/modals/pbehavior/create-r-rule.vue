@@ -5,7 +5,7 @@
         span {{ $t('modals.createRrule.title') }}
       template(slot="text")
         r-rule-form(v-model="form.rrule")
-        pbehavior-exception-dates-form(v-if="form.rrule", v-model="form.exdate")
+        pbehavior-exception-dates-form(v-if="form.rrule", v-model="form.exdates")
       template(slot="actions")
         v-btn(
           depressed,
@@ -37,7 +37,7 @@ export default {
     return {
       form: {
         rrule: this.modal.config.rrule || '',
-        exdate: this.modal.config.exdate || [],
+        exdates: this.modal.config.exdates || [],
       },
     };
   },

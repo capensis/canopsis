@@ -98,6 +98,7 @@ export const MODALS = {
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
+  pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
 };
 
@@ -1427,3 +1428,8 @@ export const WIDGET_GRID_SIZES_STYLES = {
 export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
+
+export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
+  selected: 0,
+  all: 1,
+};

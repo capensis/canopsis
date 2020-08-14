@@ -2,7 +2,7 @@ import './bootstrap';
 
 /* eslint-disable import/first */
 import Vue from 'vue';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import deepFreeze from 'deep-freeze';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
@@ -178,6 +178,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true },
+    [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

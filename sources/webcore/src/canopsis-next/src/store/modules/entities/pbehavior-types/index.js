@@ -3,6 +3,7 @@ import { ENTITIES_TYPES } from '@/constants';
 import { pbehaviorTypesSchema } from '@/store/schemas';
 
 import { createEntityModule } from '@/store/plugins/entities';
+import request from '@/services/request';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -51,6 +52,9 @@ export default createEntityModule({
 
         throw err;
       }
+    },
+    fetchListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.planning.types, { params });
     },
   },
 });

@@ -36,8 +36,8 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PbehaviorForm },
   inject: ['$system'],
+  components: { PbehaviorForm },
   mixins: [authMixin, dependentMixin],
   props: {
     calendarEvent: {
@@ -85,7 +85,7 @@ export default {
       if (isValid) {
         this.form.author = this.currentUser._id;
 
-        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent);
+        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent, this.$system.timezone);
 
         this.$emit('submit', calendarEvent);
       }

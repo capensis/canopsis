@@ -1196,6 +1196,13 @@ export default {
         iconName: 'Icon name',
       },
     },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modify',
+      fields: {
+        selected: 'Only selected period',
+        all: 'All the periods',
+      },
+    },
   },
   tables: {
     noData: 'No data',
