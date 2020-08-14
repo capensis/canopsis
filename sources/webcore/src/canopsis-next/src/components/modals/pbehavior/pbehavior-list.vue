@@ -5,11 +5,14 @@
     template(slot="text")
       v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
         template(slot="items", slot-scope="props")
-          td(v-for="key in fields", :key="key")
-            span(
-              v-if="key === 'tstart' || key === 'tstop'",
-            ) {{ props.item[key] | date('long') }}
-            span(v-else) {{ props.item[key] }}
+          td {{ props.item.name }}
+          td {{ props.item.author }}
+          td
+            enabled-column(:value="props.item.enabled")
+          td {{ props.item.tstart | date('long', true) }}
+          td {{ props.item.tstop | date('long', true) }}
+          td {{ props.item.type.name }}
+          td {{ props.item.reason.name }}
           td
             v-btn.mx-0(
               v-for="action in availableActions",
@@ -40,36 +43,29 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
+import EnabledColumn from '@/components/tables/enabled-column.vue';
+
 import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
-  name: MODALS.pbehaviorList,
-  components: { ModalWrapper },
+  components: { EnabledColumn, ModalWrapper },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin, entitiesPbehaviorCommentMixin],
-  data() {
-    const fields = [
-      'name',
-      'author',
-      'enabled',
-      'tstart',
-      'tstop',
-      'type_',
-      'reason',
-    ];
-
-    const headers = fields.map(v => ({ sortable: false, text: this.$t(`tables.pbehaviorList.${v}`) }));
-
-    headers.push({ sortable: false, text: this.$t('common.actionsLabel') });
-
-    return {
-      fields,
-      headers,
-    };
-  },
   computed: {
+    headers() {
+      return [
+        { sortable: false, text: this.$t('tables.pbehaviorList.name'), value: 'name' },
+        { sortable: false, text: this.$t('tables.pbehaviorList.author'), value: 'author' },
+        { sortable: false, text: this.$t('tables.pbehaviorList.enabled'), value: 'enabled' },
+        { sortable: false, text: this.$t('tables.pbehaviorList.tstart'), value: 'tstart' },
+        { sortable: false, text: this.$t('tables.pbehaviorList.tstop'), value: 'tstop' },
+        { sortable: false, text: this.$t('tables.pbehaviorList.type'), value: 'type' },
+        { sortable: false, text: this.$t('tables.pbehaviorList.reason'), value: 'reason' },
+        { sortable: false, text: this.$t('common.actionsLabel') },
+      ];
+    },
     availableActions() {
       const availableActions = this.modal.config.availableActions || [];
 
@@ -95,7 +91,7 @@ export default {
     },
     filteredPbehaviors() {
       if (this.modal.config.onlyActive) {
-        return this.pbehaviors.filter(value => value.isActive);
+        return this.pbehaviors.filter(value => value.enabled);
       }
 
       return this.pbehaviors;
@@ -119,32 +115,22 @@ export default {
 
     showCreatePbehaviorModal() {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: [this.modal.config.entityId] },
-            },
+          filter: {
+            _id: { $in: [this.modal.config.entityId] },
           },
-          action: data => this.createPbehavior({ data }),
         },
       });
     },
 
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior,
+          pbehaviors: [pbehavior],
 
-          action: async (data) => {
-            const { comments, ...preparedData } = data;
-
-            await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
-            await this.updateSeveralPbehaviorComments({ pbehavior, comments });
-
-            await this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId });
-          },
+          afterSubmit: () => this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId }),
         },
       });
     },

@@ -48,7 +48,6 @@ export const MODALS = {
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
   variablesHelp: 'variables-help',
-  createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',

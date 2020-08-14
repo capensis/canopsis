@@ -32,6 +32,7 @@
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, add }",
         :calendarEvent="calendarEvent",
+        :filter="filter",
         @close="close",
         @submit="add",
         @remove="removePbehavior"
@@ -64,6 +65,10 @@ export default {
     pbehaviors: {
       type: Array,
       default: () => [],
+    },
+    filter: {
+      type: Object,
+      required: false,
     },
     readOnly: {
       type: Boolean,

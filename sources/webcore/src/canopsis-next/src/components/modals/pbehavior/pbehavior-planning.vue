@@ -3,7 +3,7 @@
     template(slot="title")
       span {{ $t('modals.pbehaviorPlanning.title') }}
     template(slot="text")
-      pbehavior-planning-calendar(:pbehaviors="pbehaviors", :readOnly="readOnly")
+      pbehavior-planning-calendar(:pbehaviors="pbehaviors", :readOnly="readOnly", :filter="filter")
     template(slot="actions")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(type="submit") {{ $t('common.submit') }}
@@ -31,11 +31,15 @@ export default {
     readOnly() {
       return !!this.config.readOnly;
     },
+
+    filter() {
+      return this.config.filter;
+    },
   },
   methods: {
     async submit() {
-      if (this.config.action) {
-        await this.config.action();
+      if (this.config.afterSubmit) {
+        await this.config.afterSubmit();
       }
 
       this.$modals.hide();

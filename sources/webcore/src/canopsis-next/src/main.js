@@ -45,7 +45,6 @@ import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
-import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
 
 import * as modalsComponents from '@/components/modals';
 
@@ -67,9 +66,6 @@ Vue.use(Vuetify, {
     },
     bullhorn: {
       component: BullhornIcon,
-    },
-    settings_sync: {
-      component: SettingsSyncIcon,
     },
   },
 });
@@ -167,7 +163,6 @@ Vue.use(ModalsPlugin, {
   },
 
   dialogPropsMap: {
-    [MODALS.createPbehavior]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
     [MODALS.alarmsList]: { fullscreen: true, lazy: true },

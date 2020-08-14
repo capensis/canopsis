@@ -5,7 +5,7 @@
         pbehavior-general-form(v-field="form")
       v-flex(xs12)
         pbehavior-comments-form(v-field="form.comments")
-      v-flex(xs12)
+      v-flex(v-if="noFilter", xs12)
         v-btn.ml-0.btn-filter(
           :color="errors.has('filter') ? 'error' : 'primary'",
           @click="showCreateFilterModal"

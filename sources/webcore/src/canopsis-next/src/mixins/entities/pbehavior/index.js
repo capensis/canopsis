@@ -22,5 +22,17 @@ export default {
       removePbehavior: 'remove',
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',
     }),
+
+    createPbehaviors(pbehaviors, options = {}) {
+      return Promise.all(pbehaviors.map(data => this.createPbehavior({ data, ...options })));
+    },
+
+    removePbehaviors(ids) {
+      return Promise.all(ids.map(id => this.removePbehavior({ id })));
+    },
+
+    updatePbehaviors(pbehaviors) {
+      return Promise.all(pbehaviors.map(data => this.updatePbehavior({ data, id: data._id })));
+    },
   },
 };

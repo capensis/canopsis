@@ -5,14 +5,12 @@
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
-          td {{ props.item.connector }}
-          td {{ props.item.connector_name }}
           td
             enabled-column(:value="props.item.enabled")
           td {{ props.item.tstart | date('long') }}
           td {{ props.item.tstop | date('long') }}
-          td {{ props.item.type_ }}
-          td {{ props.item.reason }}
+          td {{ props.item.type.name }}
+          td {{ props.item.reason.name }}
           td {{ props.item.rrule }}
           td
             template(v-if="hasAccessToDeletePbehavior")
@@ -76,14 +74,6 @@ export default {
           value: 'author',
         },
         {
-          text: this.$t('pbehaviors.connector'),
-          value: 'connector',
-        },
-        {
-          text: this.$t('pbehaviors.connectorName'),
-          value: 'connector_name',
-        },
-        {
           text: this.$t('pbehaviors.isEnabled'),
           value: 'isEnabled',
         },
@@ -96,11 +86,11 @@ export default {
           value: 'tstop',
         },
         {
-          text: this.$t('pbehaviors.type'),
+          text: this.$t('pbehaviors.type.name'),
           value: 'type_',
         },
         {
-          text: this.$t('pbehaviors.reason'),
+          text: this.$t('pbehaviors.reason.name'),
           value: 'reason',
         },
         {
@@ -132,19 +122,10 @@ export default {
   methods: {
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior,
-
-          action: async (data) => {
-            const { comments, ...preparedData } = data;
-
-            await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
-            await this.updateSeveralPbehaviorComments({ pbehavior, comments });
-
-            this.fetchList();
-            this.$popups.success({ text: this.$t('success.default') });
-          },
+          pbehaviors: [pbehavior],
+          afterSubmit: () => this.fetchList(),
         },
       });
     },

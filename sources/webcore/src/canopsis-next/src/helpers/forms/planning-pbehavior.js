@@ -6,23 +6,25 @@ import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 import uid from '@/helpers/uid';
 import { convertDateToTimestampByTimezone } from '@/helpers/date';
 
-export function pbehaviorToForm(pbehavior = {}) {
+export function pbehaviorToForm(pbehavior = {}, timezone, filter) {
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
     ({ rrule } = pbehavior.rrule);
   }
 
+  const resultFilter = filter || pbehavior.filter || {};
+
   return {
     rrule,
-
+    timezone,
     _id: pbehavior._id || uid('pbehavior'),
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
     type: pbehavior.type || '',
     reason: pbehavior.reason || '',
-    filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
+    filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     comments: cloneDeep(pbehavior.comments || []), // TODO: add key
     exdates: cloneDeep(pbehavior.exdates || []), // TODO: add key
   };
@@ -38,11 +40,11 @@ export function formToPbehavior(form, timezone) {
   };
 }
 
-export function calendarEventToPbehaviorForm(calendarEvent, timezone) {
+export function calendarEventToPbehaviorForm(calendarEvent, timezone, filter) {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
   const form = {
-    ...pbehaviorToForm(pbehavior, timezone),
+    ...pbehaviorToForm(pbehavior, timezone, filter),
     ...cachedForm,
   };
 

@@ -310,7 +310,6 @@ export default {
     status: 'Statut',
     tabs: {
       filter: 'Filtre',
-      eids: 'Entités',
       comments: 'Commentaires',
     },
   },
@@ -1238,7 +1237,7 @@ export default {
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finit',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Raison',
       rrule: 'Récurrence',
     },
