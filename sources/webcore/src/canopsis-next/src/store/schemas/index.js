@@ -40,11 +40,9 @@ export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   processStrategy: parentProcessStrategy,
 });
 
-export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
+export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: '_id' });
 
-export const watcherEntitySchema = new schema.Entity(ENTITIES_TYPES.watcherEntity, {}, {
-  idAttribute: 'entity_id',
-});
+export const watcherEntitySchema = new schema.Entity(ENTITIES_TYPES.watcherEntity, {}, { idAttribute: '_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
