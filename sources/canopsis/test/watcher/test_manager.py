@@ -309,7 +309,7 @@ class ComputeState(BaseTest):
         res = self.manager.get_watcher(watcher_id)
         self.assertEqual(res['state'], 0)
 
-        collection.update({
+        result = collection.update_many({
             'connector': self.type_,
             'connector_name': 'connector_name',
             'component': self.name,
@@ -320,6 +320,8 @@ class ComputeState(BaseTest):
                 }
             }
         })
+        self.assertEqual(result.matched_count, 1)
+        self.assertEqual(result.modified_count, 1)
 
         sleep(3)
         self.pbm.compute_pbehaviors_filters()
@@ -328,7 +330,7 @@ class ComputeState(BaseTest):
         res = self.manager.get_watcher(watcher_id)
         self.assertEqual(res['state'], self.state)
 
-        collection.update({
+        collection.update_many({
             'connector': self.type_,
             'connector_name': 'connector_name',
             'component': self.name,
@@ -337,6 +339,8 @@ class ComputeState(BaseTest):
                 'v.pbehavior_info': ''
             }
         })
+        self.assertEqual(result.matched_count, 1)
+        self.assertEqual(result.modified_count, 1)
 
         sleep(3)
         self.pbm.compute_pbehaviors_filters()

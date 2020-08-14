@@ -225,6 +225,7 @@ class Watcher:
         states = []
 
         for alarm in alarm_list:
+            print('alarm: {}\n'.format(alarm))
             pbehavior_info = alarm.get('pbehavior_info')
             has_pbehavior_info = pbehavior_info and isinstance(
                 pbehavior_info, dict)
