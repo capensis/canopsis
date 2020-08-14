@@ -225,12 +225,10 @@ class Watcher:
         states = []
 
         for alarm in alarm_list:
-            print('alarm: {}\n'.format(alarm))
-            pbehavior_info = alarm.get('pbehavior_info')
+            pbehavior_info = alarm['v'].get('pbehavior_info')
             has_pbehavior_info = pbehavior_info and isinstance(
                 pbehavior_info, dict)
-            if has_pbehavior_info and pbehavior_info.get('canonical_type') == 'active' \
-                    or not has_pbehavior_info:
+            if not has_pbehavior_info or (has_pbehavior_info and pbehavior_info.get('canonical_type') == 'active'):
                 states.append(alarm['v']['state']['val'])
 
         nb_entities = len(entities)
