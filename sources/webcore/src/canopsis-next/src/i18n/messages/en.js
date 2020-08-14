@@ -6,7 +6,8 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
+  BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -109,11 +110,15 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
+    planningAdministration: 'Planning Administration',
+    icon: 'Icon',
+    priority: 'Priority',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
     begin: 'Begin',
+    timezone: 'Timezone',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -645,7 +650,6 @@ export default {
             type: 'Type',
             start: 'Start',
             stop: 'End',
-            timezone: 'Timezone',
           },
         },
         filter: {
@@ -1178,6 +1182,20 @@ export default {
     createRrule: {
       title: 'Create RRule',
     },
+    createPbehaviorType: {
+      title: 'Create type',
+      iconNameHint: 'Enter a name of an icon from material.io',
+      errors: {
+        iconName: 'The name is invalid',
+      },
+      fields: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priority',
+        iconName: 'Icon name',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1674,6 +1692,19 @@ export default {
     title: 'Exception dates',
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Type is using, because cannot be deleted',
+    defaultType: 'Type is default, because cannot be edited',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Reason',
+      datesOfExceptions: 'Dates of exceptions',
+    },
   },
 
   ...featureService.get('i18n.en'),

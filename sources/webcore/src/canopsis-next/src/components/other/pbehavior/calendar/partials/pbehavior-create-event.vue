@@ -37,6 +37,7 @@ export default {
     validator: 'new',
   },
   components: { PbehaviorForm },
+  inject: ['$system'],
   mixins: [authMixin, dependentMixin],
   props: {
     calendarEvent: {
@@ -47,7 +48,7 @@ export default {
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent),
+      form: calendarEventToPbehaviorForm(this.calendarEvent, this.$system.timezone),
     };
   },
   computed: {
