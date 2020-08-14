@@ -78,7 +78,6 @@
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
             div(
-              v-if="pbehavior.comments && pbehavior.comments.length",
               v-for="comment in pbehavior.comments",
               :key="comment._id"
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
