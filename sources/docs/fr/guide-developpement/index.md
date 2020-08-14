@@ -30,10 +30,6 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 
 # [Structure d'un évènement](struct-event.md)
 
-# Plugins pour les moteurs
-
-* [Moteur Che : plugin pour les sources de données externes](plugins/event-filter-data-source.md)
-
 # Process de développement
 ## Organisation des dépôts
 ## Process de release

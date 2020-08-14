@@ -444,7 +444,7 @@ class AlertsReader(object):
             final_filter['$and'].append(bnf_search_filter)
 
         else:
-            escaped_search = re.escape(str(search))
+            escaped_search = re.escape(str(search).decode('utf-8'))
             column_filter = {'$or': []}
             for column in active_columns:
                 # filter is used in mongo
@@ -626,7 +626,7 @@ class AlertsReader(object):
         # into v.lastComment
         pipeline.insert(0, {"$project": {"lastComment": False}})
         pipeline.insert(0, {'$addFields': {"v.lastComment": "$lastComment"}})
-        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "lastComment": {
+        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "infos_array": 1, "lastComment": {
             "$cond": {
                 "if": {"$eq": [{}, "$lastComment"]},
                 "then": None,
@@ -667,7 +667,8 @@ class AlertsReader(object):
             "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
             "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
         }})
-        pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {"v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+        pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {
+                        "v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
 
 
     def _search_aggregate(self,
@@ -841,13 +842,14 @@ class AlertsReader(object):
                     self.logger.exception("Unable to check if pbehavior {} is active".format(pbehavior.get('_id')))
 
                 pbehavior['isActive'] = active
+                del pbehavior['eids']
 
     def _metaalarm_children_rules(self):
         """
         Create map with mataalarms children IDs as key and list of rule names as value
         """
         pipeline = [
-            {"$match": {"$and": [{"v.meta": {"$exists": True}}, {"v.meta": {"$ne": ""}}]}}, 
+            {"$match": {"v.meta": {"$nin": ["", None]}}}, 
             {"$project": {"children": "$v.children", "rule": "$v.meta"}}, {"$unwind": "$children"},
             {"$group": {"_id": {"children": "$children"}, "rule": {"$addToSet": "$rule"}}}, 
             {"$project": {"_id": "$_id.children", "rule": "$rule"}}

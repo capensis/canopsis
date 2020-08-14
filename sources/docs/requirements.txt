@@ -1,3 +1,4 @@
 mkdocs==1.1.2 ; python_version >= '3.5'
 mkdocs-material==5.4.0
 mkdocs-git-revision-date-localized-plugin==0.5.2
+pymdown-extensions==7.1
