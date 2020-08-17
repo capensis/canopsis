@@ -183,6 +183,7 @@ services:
     volumes:
       - importctxdata:/opt/canopsis/tmp
       - "./files/webcore/webserver.conf:/opt/canopsis/etc/webserver.conf"
+      - "../docker/files/entrypoint.sh:/entrypoint.sh"
     links:
       - mongodb
       - rabbitmq
