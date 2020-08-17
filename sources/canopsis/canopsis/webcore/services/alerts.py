@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 import json
 from bottle import request
 from pymongo.errors import OperationFailure
+from datetime import datetime
+import pytz
 from time import time
 
 from canopsis.alerts.filter import AlarmFilter
@@ -281,7 +283,9 @@ def exports(ws):
             'natural_search',
             'active_columns',
             'hide_resources',
-            'consider_pbehaviors'
+            'consider_pbehaviors',
+            'grouping',
+            'local_timezone'
         ]
     )
     def get_counters(
@@ -300,7 +304,9 @@ def exports(ws):
         natural_search=False,
         active_columns=None,
         hide_resources=False,
-        consider_pbehaviors=False
+        consider_pbehaviors=False,
+        grouping=None,
+        local_timezone=None
     ):
 
         if isinstance(search, int):
@@ -330,6 +336,12 @@ def exports(ws):
             message = 'Operation failure on get-alarms: {}'.format(of_err)
             raise WebServiceError(message)
 
+        local_tz = None
+        if grouping not in ['day', 'hour']:
+            grouping = None
+        if grouping and local_timezone:
+            local_tz = pytz.timezone(local_timezone)
+
         counters = {
             "total": len(alarms['alarms']),
             "total_active": 0,
@@ -338,6 +350,8 @@ def exports(ws):
             "ticket": 0,
             "pbehavior_active": 0
         }
+        if local_tz:
+            counters['group'] = dict()
 
         alarms_ids = []
         for alarm in alarms['alarms']:
@@ -364,19 +378,47 @@ def exports(ws):
         for alarm in alarms['alarms']:
             v = alarm.get('v')
             snoozed = False
+
+            if local_tz:
+                time_start = get_start_timestamp(alarm['t'], local_tz, grouping == 'hour')
+                if time_start not in counters['group']:
+                    counters['group'][time_start] = {
+                        "total": 0,
+                        "total_active": 0,
+                        "snooze": 0,
+                        "ack": 0,
+                        "ticket": 0,
+                        "pbehavior_active": 0,
+                        "pbehavior_active_snooze": 0
+                    }
+                counters['group'][time_start]['total'] += 1
             if isinstance(v, dict):
                 if v.get('ack', {}).get('_t') == 'ack':
                     counters['ack'] += 1
+                    if local_tz:
+                        counters['group'][time_start]['ack'] += 1
                 snoozed = v.get('snooze', {}).get('_t') == 'snooze'
                 if snoozed:
                     counters['snooze'] += 1
+                    if local_tz:
+                        counters['group'][time_start]['snooze'] += 1
                 if v.get('ticket', {}).get('_t') in ['declareticket', 'assocticket']:
                     counters['ticket'] += 1
+                    if local_tz:
+                        counters['group'][time_start]['ticket'] += 1
             d = alarm.get('d')
             if d in enabled_pbh_entity_dict:
                 counters['pbehavior_active'] += 1
+                if local_tz:
+                    counters['group'][time_start]['pbehavior_active'] += 1
                 if snoozed:
                     pbehavior_active_snooze += 1
+                    if local_tz:
+                        counters['group'][time_start]['pbehavior_active_snooze'] += 1
+            if local_tz:
+                counters['group'][time_start]['total_active'] = counters['group'][time_start]['total'] - \
+                    counters['group'][time_start]['pbehavior_active'] - counters['group'][time_start]['snooze'] + \
+                    counters['group'][time_start]['pbehavior_active_snooze']
 
         counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze'] + \
             pbehavior_active_snooze
@@ -589,3 +631,16 @@ def exports(ws):
             entity_id=entity_id
         )
         return gen_json(retour)
+
+
+def get_start_timestamp(ts, local_tz, hourly):
+    """
+    Get timestamp for start of the day or hour in ts (UTC) according to local_tz timezone
+
+    """
+    utc_dt = datetime.utcfromtimestamp(ts).replace(tzinfo=pytz.utc)
+    local_dt = local_tz.normalize(utc_dt.astimezone(local_tz))
+    dt = local_dt.replace(minute=0, second=0, microsecond=0) if hourly else local_dt.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    utc_naive = dt.replace(tzinfo=None) - dt.utcoffset()
+    return int((utc_naive - datetime(1970, 1, 1)).total_seconds())
