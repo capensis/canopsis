@@ -1,3 +1,8 @@
+# Note: use the following command to get the right mkdocs version
+# python3 -m pip install -r ./sources/docs/requirements.txt
+#
+# See sources/docs/README.md for more information.
+
 site_name: Documentation Canopsis
 site_url: https://doc.canopsis.net
 
