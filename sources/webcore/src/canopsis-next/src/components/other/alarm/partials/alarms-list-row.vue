@@ -39,8 +39,6 @@
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import { TOURS } from '@/constants';
 
 import { isResolvedAlarm } from '@/helpers/entities';
@@ -117,7 +115,9 @@ export default {
     },
 
     isNotFiltered() {
-      return this.parentAlarm && !get(this.parentAlarm, 'filtered', []).includes(this.alarm._id);
+      return this.parentAlarm
+        && this.parentAlarm.filtered
+        && !this.parentAlarm.filtered.includes(this.alarm._id);
     },
   },
   methods: {
