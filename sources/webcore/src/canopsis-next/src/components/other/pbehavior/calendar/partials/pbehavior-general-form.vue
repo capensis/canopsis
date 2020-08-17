@@ -45,39 +45,27 @@
           name="reason"
         )
       v-flex(xs12)
-        v-select(
-          v-field="form.type",
-          v-validate="'required'",
-          :label="$t('modals.createPbehavior.steps.general.fields.type')",
-          :loading="pbehaviorTypesPending",
-          :items="pbehaviorTypes",
-          :error-messages="errors.collect('type')",
-          item-text="name",
-          item-value="_id",
-          name="type",
-          return-object
-        )
+        pbehavior-type-field(v-field="form.type")
 </template>
 
 <script>
 import moment from 'moment-timezone';
 
-import { PBEHAVIOR_TYPES, PAUSE_REASONS, DATETIME_FORMATS } from '@/constants';
+import { PAUSE_REASONS, DATETIME_FORMATS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 
 export default {
-  components: { DateTimePickerField },
+  components: { PbehaviorTypeField, DateTimePickerField },
   mixins: [
     formMixin,
     formValidationHeaderMixin,
     entitiesPbehaviorReasonsMixin,
-    entitiesPbehaviorTypesMixin,
   ],
   model: {
     prop: 'form',
@@ -112,14 +100,9 @@ export default {
     reasons() {
       return this.pbehaviorReasons.length ? this.pbehaviorReasons : Object.values(PAUSE_REASONS);
     },
-
-    types() {
-      return Object.values(PBEHAVIOR_TYPES);
-    },
   },
   mounted() {
     this.fetchPbehaviorReasons();
-    this.fetchPbehaviorTypesList();
   },
 };
 </script>
