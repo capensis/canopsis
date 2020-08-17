@@ -47,6 +47,11 @@ export default {
       return this.fetchAlarmItem({
         id: alarm._id,
         params: { ...defaultParams, ...params },
+        dataPreparer: d => (
+          alarm.filtered && d.data[0].alarms[0]
+            ? [{ ...d.data[0].alarms[0], filtered: alarm.filtered }]
+            : d.data[0].alarms
+        ),
       });
     },
   },

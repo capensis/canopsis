@@ -50,6 +50,7 @@
 
 <script>
 import { isResolvedAlarm } from '@/helpers/entities';
+
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
