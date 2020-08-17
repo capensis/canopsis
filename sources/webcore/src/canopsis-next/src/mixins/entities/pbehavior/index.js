@@ -27,8 +27,8 @@ export default {
       return Promise.all(pbehaviors.map(data => this.createPbehavior({ data, ...options })));
     },
 
-    removePbehaviors(ids) {
-      return Promise.all(ids.map(id => this.removePbehavior({ id })));
+    removePbehaviors(pbehaviors) {
+      return Promise.all(pbehaviors.map(({ _id }) => this.removePbehavior({ id: _id })));
     },
 
     updatePbehaviors(pbehaviors) {

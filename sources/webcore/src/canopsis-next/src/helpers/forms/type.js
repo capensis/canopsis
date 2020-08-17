@@ -10,7 +10,7 @@ export function pbehaviorTypeToForm(type = {}) {
   return {
     name: type.name || '',
     description: type.description || '',
-    type: type.type || PBEHAVIOR_TYPE_TYPES.activeState,
+    type: type.type || PBEHAVIOR_TYPE_TYPES.active,
     priority: type.priority || '',
     iconName: type.icon_name || '',
   };

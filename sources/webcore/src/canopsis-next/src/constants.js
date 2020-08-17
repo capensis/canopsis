@@ -981,7 +981,8 @@ export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
 };
 
 export const PBEHAVIOR_TYPE_TYPES = {
-  activeState: 'Active State',
+  active: 'active',
+  inactive: 'inactive',
   maintenance: 'maintenance',
   pause: 'pause',
 };

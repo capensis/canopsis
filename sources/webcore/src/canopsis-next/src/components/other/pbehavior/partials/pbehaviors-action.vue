@@ -33,7 +33,6 @@ export default {
           filter: {
             _id: { $in: [this.entityId] },
           },
-          afterSubmit: () => this.fetchPbehaviorsByEntityId({ id: this.entityId }),
         },
       });
     },

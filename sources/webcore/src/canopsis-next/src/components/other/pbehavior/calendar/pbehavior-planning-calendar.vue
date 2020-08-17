@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { get, keyBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
 
@@ -61,10 +61,19 @@ export default {
   inject: ['$system'],
   components: { PbehaviorCreateEvent },
   mixins: [entitiesInfoMixin],
+  model: {
+    prop: 'pbehaviors',
+    event: 'input',
+  },
   props: {
     pbehaviors: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({
+        list: [],
+        changed: [],
+        added: [],
+        removed: [],
+      }),
     },
     filter: {
       type: Object,
@@ -80,9 +89,6 @@ export default {
       pending: false,
       calendar: Calendar.months(),
       events: [],
-      removedPbehaviorsById: {},
-      changedPbehaviorsById: {},
-      addedPbehaviorsById: {},
       colorsToPbehaviors: {},
       defaultTypes: [],
     };
@@ -122,11 +128,19 @@ export default {
     },
 
     pbehaviorsById() {
-      return this.pbehaviors.reduce((acc, pbehavior) => {
-        acc[pbehavior._id] = pbehavior;
+      return keyBy(this.pbehaviors.list, '_id');
+    },
 
-        return acc;
-      }, {});
+    addedPbehaviorsById() {
+      return keyBy(this.pbehaviors.added, '_id');
+    },
+
+    removedPbehaviorsById() {
+      return keyBy(this.pbehaviors.removed, '_id');
+    },
+
+    changedPbehaviorsById() {
+      return keyBy(this.pbehaviors.changed, '_id');
     },
 
     allPbehaviorsById() {
@@ -282,18 +296,23 @@ export default {
      *
      * @param {Object} pbehavior
      */
-    removePbehavior(pbehavior) {
-      if (this.addedPbehaviorsById[pbehavior._id]) {
-        this.$delete(this.addedPbehaviorsById, pbehavior._id);
+    removePbehavior(removablePbehavior) {
+      if (this.addedPbehaviorsById[removablePbehavior._id]) {
+        this.$emit('input', {
+          ...this.pbehaviors,
+          added: this.pbehaviors.added.filter(pbehavior => pbehavior._id !== removablePbehavior._id),
+        });
       } else {
-        this.$set(this.removedPbehaviorsById, pbehavior._id, pbehavior);
-
-        if (this.changedPbehaviorsById[pbehavior._id]) {
-          this.$delete(this.changedPbehaviorsById, pbehavior._id);
-        }
+        this.$emit('input', {
+          ...this.pbehaviors,
+          removed: [...this.pbehaviors.removed, removablePbehavior],
+          changed: this.changedPbehaviorsById[removablePbehavior._id]
+            ? this.pbehaviors.changed.filter(pbehavior => pbehavior._id !== removablePbehavior._id)
+            : this.pbehaviors.changed,
+        });
       }
 
-      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
+      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== removablePbehavior._id);
     },
 
     /**
@@ -450,9 +469,15 @@ export default {
      */
     updatePbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
       if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
-        this.$set(this.changedPbehaviorsById, pbehavior._id, pbehavior);
+        this.$emit('input', {
+          ...this.pbehaviors,
+          changed: [...Object.values(this.changedPbehaviorsById), pbehavior],
+        });
       } else {
-        this.$set(this.addedPbehaviorsById, pbehavior._id, pbehavior);
+        this.$emit('input', {
+          ...this.pbehaviors,
+          added: [...Object.values(this.addedPbehaviorsById), pbehavior],
+        });
       }
 
       return this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior, color));
@@ -479,9 +504,10 @@ export default {
      */
     getOppositePbehaviorType(pbehaviorType = {}) {
       const TYPES_MAP = {
-        [PBEHAVIOR_TYPE_TYPES.activeState]: PBEHAVIOR_TYPE_TYPES.pause,
-        [PBEHAVIOR_TYPE_TYPES.maintenance]: PBEHAVIOR_TYPE_TYPES.activeState,
-        [PBEHAVIOR_TYPE_TYPES.pause]: PBEHAVIOR_TYPE_TYPES.activeState,
+        [PBEHAVIOR_TYPE_TYPES.active]: PBEHAVIOR_TYPE_TYPES.inactive,
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: PBEHAVIOR_TYPE_TYPES.pause,
+        [PBEHAVIOR_TYPE_TYPES.pause]: PBEHAVIOR_TYPE_TYPES.maintenance,
+        [PBEHAVIOR_TYPE_TYPES.inactive]: PBEHAVIOR_TYPE_TYPES.active,
       };
 
       const targetType = TYPES_MAP[pbehaviorType.type];

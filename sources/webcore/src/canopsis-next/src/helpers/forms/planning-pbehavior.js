@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import moment from 'moment-timezone';
-import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
+import { isObject, isString, cloneDeep, isUndefined, omit } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
@@ -25,8 +25,14 @@ export function pbehaviorToForm(pbehavior = {}, timezone, filter) {
     type: pbehavior.type || '',
     reason: pbehavior.reason || '',
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
-    comments: cloneDeep(pbehavior.comments || []), // TODO: add key
-    exdates: cloneDeep(pbehavior.exdates || []), // TODO: add key
+    comments: cloneDeep(pbehavior.comments || []).map(comment => ({
+      ...comment,
+      key: uid(),
+    })),
+    exdates: cloneDeep(pbehavior.exdates || []).map(comment => ({
+      ...comment,
+      key: uid(),
+    })),
   };
 }
 
@@ -34,7 +40,10 @@ export function formToPbehavior(form, timezone) {
   return {
     ...form,
 
-    comments: [],
+    reason: '8a48507a-7eba-463f-953f-41b93fce9745', // TODO should be replaced in version 6
+    type: form.type._id,
+    comments: form.comments.map(exdate => omit(exdate, 'key')),
+    exdates: form.exdates.map(exdate => omit(exdate, 'key')),
     tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
     tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
   };
