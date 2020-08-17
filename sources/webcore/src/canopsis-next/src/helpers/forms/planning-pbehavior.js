@@ -4,9 +4,9 @@ import { isObject, isString, cloneDeep, isUndefined, omit } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
-import { convertDateToTimestampByTimezone } from '@/helpers/date';
+import { convertDateToTimestampByTimezone, convertTimestampToMoment } from '@/helpers/date';
 
-export function pbehaviorToForm(pbehavior = {}, timezone, filter) {
+export function pbehaviorToForm(pbehavior = {}, filter = null) {
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
@@ -17,13 +17,14 @@ export function pbehaviorToForm(pbehavior = {}, timezone, filter) {
 
   return {
     rrule,
-    timezone,
     _id: pbehavior._id || uid('pbehavior'),
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
     type: pbehavior.type,
     reason: pbehavior.reason,
+    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
+    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     comments: cloneDeep(pbehavior.comments || []).map(comment => ({
       ...comment,
@@ -49,11 +50,11 @@ export function formToPbehavior(form, timezone) {
   };
 }
 
-export function calendarEventToPbehaviorForm(calendarEvent, timezone, filter) {
+export function calendarEventToPbehaviorForm(calendarEvent, filter) {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
   const form = {
-    ...pbehaviorToForm(pbehavior, timezone, filter),
+    ...pbehaviorToForm(pbehavior, filter),
     ...cachedForm,
   };
 

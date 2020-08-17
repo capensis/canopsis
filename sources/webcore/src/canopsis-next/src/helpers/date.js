@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import { TIME_UNITS } from '@/constants';
 
-export default function convertTimestampToMoment(timestamp) {
+export function convertTimestampToMoment(timestamp) {
   let dateObject;
 
   // If it's unix timestamp in seconds
@@ -67,3 +67,5 @@ export const convertTimestampToMomentByTimezone = (timestamp, sourceTimezone, lo
  */
 export const convertDateToTimestampByTimezone = (date, timestamp) =>
   moment(date).tz(timestamp, true).unix();
+
+export default convertTimestampToMoment;

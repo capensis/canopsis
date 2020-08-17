@@ -40,11 +40,7 @@ function actionSnoozeParametersToForm(parameters = {}) {
  * @returns {Object}
  */
 function actionPbehaviorParametersToForm(parameters = {}) {
-  const data = {};
-
-  data.general = omit(pbehaviorToForm(parameters), ['filter']);
-
-  return data;
+  return omit(pbehaviorToForm(parameters), ['filter']);
 }
 
 /**
@@ -111,11 +107,12 @@ export function prepareSnoozeParameters({ snoozeParameters = {} }) {
 /**
  * Prepare pbehavior parameters from form
  *
- * @param pbehaviorParameters
+ * @param {Object} pbehaviorParameters
+ * @param {String} timezone
  * @returns {{ tstart: number, exdate: Array, comments: Array, tstop: number }}
  */
-export function preparePbehaviorParameters({ pbehaviorParameters = {} }) {
-  return formToPbehavior(pbehaviorParameters);
+export function preparePbehaviorParameters({ pbehaviorParameters = {}, timezone }) {
+  return formToPbehavior(pbehaviorParameters, timezone);
 }
 
 /**

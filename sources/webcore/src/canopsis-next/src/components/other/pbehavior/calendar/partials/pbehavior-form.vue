@@ -5,7 +5,7 @@
         pbehavior-general-form(v-field="form")
       v-flex(xs12)
         pbehavior-comments-form(v-field="form.comments")
-      v-flex(v-if="noFilter", xs12)
+      v-flex(v-if="!noFilter", xs12)
         v-btn.ml-0.btn-filter(
           :color="errors.has('filter') ? 'error' : 'primary'",
           @click="showCreateFilterModal"
@@ -68,13 +68,15 @@ export default {
     },
   },
   created() {
-    this.$validator.attach({
-      name: 'filter',
-      rules: 'required:true',
-      getter: () => !isEmpty(this.form.filter),
-      context: () => this,
-      vm: this,
-    });
+    if (!this.noFilter) {
+      this.$validator.attach({
+        name: 'filter',
+        rules: 'required:true',
+        getter: () => !isEmpty(this.form.filter),
+        context: () => this,
+        vm: this,
+      });
+    }
   },
   methods: {
     showCreateFilterModal() {
@@ -93,6 +95,7 @@ export default {
         },
       });
     },
+
     showCreateRRuleModal() {
       this.$modals.show({
         name: MODALS.createRRule,
