@@ -125,7 +125,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           pbehaviors: [pbehavior],
-          afterSubmit: () => this.fetchList(),
+          afterSubmit: this.fetchList,
         },
       });
     },

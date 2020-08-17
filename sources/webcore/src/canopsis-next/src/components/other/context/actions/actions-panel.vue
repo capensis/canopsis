@@ -169,7 +169,6 @@ export default {
           filter: {
             _id: { $in: [this.item._id] },
           },
-          action: async ({ added }) => this.createPbehaviors(added),
         },
       });
     },

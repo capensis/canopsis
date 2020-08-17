@@ -88,7 +88,6 @@ export default {
 
       if (isValid) {
         this.form.author = this.currentUser._id;
-        this.form.filter = this.filter || this.form.filter;
 
         const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent, this.$system.timezone);
 

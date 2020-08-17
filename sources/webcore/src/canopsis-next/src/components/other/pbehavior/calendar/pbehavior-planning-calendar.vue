@@ -468,10 +468,12 @@ export default {
      * @returns {Promise<void>}
      */
     updatePbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
-      if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
+      const hasPbehaviorInList = this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id];
+
+      if (hasPbehaviorInList) {
         this.$emit('input', {
           ...this.pbehaviors,
-          changed: [...Object.values(this.changedPbehaviorsById), pbehavior],
+          changed: Object.values({ ...this.changedPbehaviorsById, [pbehavior._id]: pbehavior }),
         });
       } else {
         this.$emit('input', {

@@ -22,8 +22,8 @@ export function pbehaviorToForm(pbehavior = {}, timezone, filter) {
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    type: pbehavior.type || '',
-    reason: pbehavior.reason || '',
+    type: pbehavior.type,
+    reason: pbehavior.reason,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     comments: cloneDeep(pbehavior.comments || []).map(comment => ({
       ...comment,
