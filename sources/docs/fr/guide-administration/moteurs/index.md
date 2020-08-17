@@ -38,8 +38,8 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 | `metric` | Stocke les données de métrologie des évènements | |
 | `scheduler` | Coordonne le travail destiné aux différents moteurs `task_*` | |
 | [`snmp`](moteur-snmp.md) | Gère les traps SNMP | ✅ |
-| `task_importctx` | Gestionnaire des imports de données en masse | |
 | [`task_ackcentreon`](moteur-task_ackcentreon.md) | Envoi d'ACK de Canopsis vers Centreon | ✅ |
+| `task_importctx` | Gestionnaire des imports de données en masse | |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
 En installation par paquets, les moteurs Python se trouvent dans le namespace systemd `canopsis-engine@` ou `canopsis-engine-cat@`. Les moteurs `datametrie` et `snmp` n'ont pas de namespace.
@@ -66,6 +66,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `task_mail` | Utilisation d'un [Webhook](moteur-webhook.md) (CAT) vers un service d'envoi d'e-mails |
 | `ticket` | ? |
 | `watcher` | `engine-watcher` | 
+<!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
 ## Enchaînement des moteurs
 
