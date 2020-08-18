@@ -10,10 +10,6 @@
     src: systemd/watcher.j2
     dest: "/etc/systemd/system/canopsis-engine-go@engine-watcher.service.d/watcher.conf"
 
-- name: Reload systemd
-  systemd:
-    daemon-reload: yes
-
 - name: Make sure that engine-axe systemd directory directory exists (CAT)
   file:
     path: "/etc/systemd/system/canopsis-engine-go@engine-axe.service.d"
