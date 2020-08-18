@@ -143,7 +143,7 @@ export default {
   },
   computed: {
     pbehaviors() {
-      return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
+      return this.alarm.pbehaviors.filter(pbehavior => pbehavior.enabled);
     },
     causesRules() {
       return get(this.alarm.causes, 'rules', []);

@@ -310,7 +310,6 @@ export default {
     status: 'Status',
     tabs: {
       filter: 'Filter',
-      eids: 'Eids',
       comments: 'Comments',
     },
   },
@@ -1238,7 +1237,7 @@ export default {
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Reason',
       rrule: 'Rrule',
     },

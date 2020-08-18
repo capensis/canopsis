@@ -7,7 +7,7 @@ export default {
   namespaced: true,
   actions: {
     create(context, { data, pbehaviorId }) {
-      return request.post(API_ROUTES.pbehavior.comment.create, qs.stringify({
+      return request.post(API_ROUTES.planning.pbehaviorComments, qs.stringify({
         ...data,
 
         pbehavior_id: pbehaviorId,
@@ -17,7 +17,7 @@ export default {
     },
 
     update(context, { data, pbehaviorId, commentId }) {
-      return request.put(API_ROUTES.pbehavior.comment.update, qs.stringify({
+      return request.put(API_ROUTES.planning.pbehaviorComments, qs.stringify({
         ...data,
 
         _id: commentId,
@@ -28,7 +28,7 @@ export default {
     },
 
     remove(context, { id, pbehaviorId }) {
-      return request.delete(API_ROUTES.pbehavior.comment.delete, {
+      return request.delete(API_ROUTES.planning.pbehaviorComments, {
         params: {
           _id: id,
           pbehavior_id: pbehaviorId,

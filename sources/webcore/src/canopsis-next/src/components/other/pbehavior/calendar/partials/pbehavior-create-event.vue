@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form")
+    pbehavior-form(v-model="form", :noFilter="filter")
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",
@@ -44,11 +44,15 @@ export default {
       type: Object,
       required: false,
     },
+    filter: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent, this.$system.timezone),
+      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter),
     };
   },
   computed: {
@@ -71,14 +75,21 @@ export default {
       };
     },
   },
+  mounted() {
+    this.cacheForm();
+  },
   beforeDestroy() {
     if (this.manualClose) {
       delete this.calendarEvent.data.cachedForm;
     } else {
-      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+      this.cacheForm();
     }
   },
   methods: {
+    cacheForm() {
+      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+    },
+
     async submitHandler() {
       const isValid = await this.$validator.validateAll();
 

@@ -59,15 +59,6 @@ export const API_ROUTES = {
   watcher: '/api/v2/watchers',
   watcherng: '/api/v2/watcherng',
   weatherWatcher: '/api/v4/weather-watchers',
-  pbehavior: {
-    pbehavior: '/api/v2/pbehavior',
-    list: '/pbehavior/read',
-    comment: {
-      create: '/pbehavior/comment/create',
-      update: '/pbehavior/comment/update',
-      delete: '/pbehavior/comment/delete',
-    },
-  },
   pbehaviorById: '/api/v2/pbehavior_byeid',
   actions: '/api/v2/actions',
   event: '/event',
@@ -126,6 +117,9 @@ export const API_ROUTES = {
     timespan: '/api/v4/pbehavior-timespans',
     exceptions: '/api/v4/pbehavior-exceptions',
     types: '/api/v4/pbehavior-types',
+    pbehaviors: '/api/v4/pbehaviors',
+    pbehaviorComments: '/api/v4/pbehavior-comments',
+    pbehaviorById: '/api/v4/entities/pbehaviors',
   },
 };
 

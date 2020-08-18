@@ -32,6 +32,7 @@
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, add }",
         :calendarEvent="calendarEvent",
+        :filter="filter",
         @close="close",
         @submit="add",
         @remove="removePbehavior"
@@ -39,7 +40,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
 
@@ -60,10 +61,30 @@ export default {
   inject: ['$system'],
   components: { PbehaviorCreateEvent },
   mixins: [entitiesInfoMixin],
+  model: {
+    prop: 'pbehaviors',
+    event: 'input',
+  },
   props: {
-    pbehaviors: {
-      type: Array,
-      default: () => [],
+    pbehaviorsById: {
+      type: Object,
+      required: true,
+    },
+    addedPbehaviorsById: {
+      type: Object,
+      required: true,
+    },
+    removedPbehaviorsById: {
+      type: Object,
+      required: true,
+    },
+    changedPbehaviorsById: {
+      type: Object,
+      required: true,
+    },
+    filter: {
+      type: Object,
+      required: false,
     },
     readOnly: {
       type: Boolean,
@@ -75,9 +96,6 @@ export default {
       pending: false,
       calendar: Calendar.months(),
       events: [],
-      removedPbehaviorsById: {},
-      changedPbehaviorsById: {},
-      addedPbehaviorsById: {},
       colorsToPbehaviors: {},
       defaultTypes: [],
     };
@@ -114,14 +132,6 @@ export default {
           },
         },
       };
-    },
-
-    pbehaviorsById() {
-      return this.pbehaviors.reduce((acc, pbehavior) => {
-        acc[pbehavior._id] = pbehavior;
-
-        return acc;
-      }, {});
     },
 
     allPbehaviorsById() {
@@ -277,18 +287,21 @@ export default {
      *
      * @param {Object} pbehavior
      */
-    removePbehavior(pbehavior) {
-      if (this.addedPbehaviorsById[pbehavior._id]) {
-        this.$delete(this.addedPbehaviorsById, pbehavior._id);
+    removePbehavior(removablePbehavior) {
+      if (this.addedPbehaviorsById[removablePbehavior._id]) {
+        this.$emit('update:addedPbehaviorsById', omit(this.addedPbehaviorsById, [removablePbehavior._id]));
       } else {
-        this.$set(this.removedPbehaviorsById, pbehavior._id, pbehavior);
+        this.$emit('update:removedPbehaviorsById', {
+          ...this.removedPbehaviorsById,
+          [removablePbehavior._id]: removablePbehavior,
+        });
 
-        if (this.changedPbehaviorsById[pbehavior._id]) {
-          this.$delete(this.changedPbehaviorsById, pbehavior._id);
+        if (this.changedPbehaviorsById[removablePbehavior._id]) {
+          this.$emit('update:changedPbehaviorsById', omit(this.changedPbehaviorsById, [removablePbehavior._id]));
         }
       }
 
-      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
+      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== removablePbehavior._id);
     },
 
     /**
@@ -430,6 +443,10 @@ export default {
 
         event.clearPlaceholder();
 
+        if (event.closePopover) {
+          event.closePopover();
+        }
+
         return;
       }
 
@@ -444,10 +461,15 @@ export default {
      * @returns {Promise<void>}
      */
     updatePbehavior(pbehavior, color = this.$dayspan.getDefaultEventColor()) {
-      if (this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id]) {
-        this.$set(this.changedPbehaviorsById, pbehavior._id, pbehavior);
+      const hasPbehaviorInList = this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id];
+
+      if (hasPbehaviorInList) {
+        this.$emit('update:changedPbehaviorsById', { ...this.changedPbehaviorsById, [pbehavior._id]: pbehavior });
       } else {
-        this.$set(this.addedPbehaviorsById, pbehavior._id, pbehavior);
+        this.$emit('update:addedPbehaviorsById', {
+          ...this.addedPbehaviorsById,
+          [pbehavior._id]: pbehavior,
+        });
       }
 
       return this.fetchEventsForPbehavior(pbehavior, this.getColorForPbehavior(pbehavior, color));
@@ -474,9 +496,10 @@ export default {
      */
     getOppositePbehaviorType(pbehaviorType = {}) {
       const TYPES_MAP = {
-        [PBEHAVIOR_TYPE_TYPES.activeState]: PBEHAVIOR_TYPE_TYPES.pause,
-        [PBEHAVIOR_TYPE_TYPES.maintenance]: PBEHAVIOR_TYPE_TYPES.activeState,
-        [PBEHAVIOR_TYPE_TYPES.pause]: PBEHAVIOR_TYPE_TYPES.activeState,
+        [PBEHAVIOR_TYPE_TYPES.active]: PBEHAVIOR_TYPE_TYPES.inactive,
+        [PBEHAVIOR_TYPE_TYPES.maintenance]: PBEHAVIOR_TYPE_TYPES.active,
+        [PBEHAVIOR_TYPE_TYPES.pause]: PBEHAVIOR_TYPE_TYPES.active,
+        [PBEHAVIOR_TYPE_TYPES.inactive]: PBEHAVIOR_TYPE_TYPES.active,
       };
 
       const targetType = TYPES_MAP[pbehaviorType.type];

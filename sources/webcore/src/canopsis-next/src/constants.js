@@ -48,7 +48,6 @@ export const MODALS = {
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
   variablesHelp: 'variables-help',
-  createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',
@@ -982,7 +981,8 @@ export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
 };
 
 export const PBEHAVIOR_TYPE_TYPES = {
-  activeState: 'Active State',
+  active: 'active',
+  inactive: 'inactive',
   maintenance: 'maintenance',
   pause: 'pause',
 };
@@ -1433,3 +1433,5 @@ export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
   selected: 0,
   all: 1,
 };
+
+export const DEFAULT_TIMEZONE = 'Europe/Paris';

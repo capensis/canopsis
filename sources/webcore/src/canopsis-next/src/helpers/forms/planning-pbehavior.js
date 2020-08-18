@@ -4,27 +4,31 @@ import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
-import { convertDateToTimestampByTimezone } from '@/helpers/date';
+import { convertDateToTimestampByTimezone, convertTimestampToMoment } from '@/helpers/date';
+import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
 
-export function pbehaviorToForm(pbehavior = {}) {
+export function pbehaviorToForm(pbehavior = {}, filter = null) {
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
     ({ rrule } = pbehavior.rrule);
   }
 
+  const resultFilter = filter || pbehavior.filter || {};
+
   return {
     rrule,
-
     _id: pbehavior._id || uid('pbehavior'),
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    type: pbehavior.type || '',
-    reason: pbehavior.reason || '',
-    filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
-    comments: cloneDeep(pbehavior.comments || []), // TODO: add key
-    exdates: cloneDeep(pbehavior.exdates || []), // TODO: add key
+    type: pbehavior.type,
+    reason: pbehavior.reason,
+    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
+    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
+    filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
+    comments: addKeyInEntity(cloneDeep(pbehavior.comments || [])),
+    exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])),
   };
 }
 
@@ -32,17 +36,20 @@ export function formToPbehavior(form, timezone) {
   return {
     ...form,
 
-    comments: [],
+    reason: '8a48507a-7eba-463f-953f-41b93fce9745', // TODO should be replaced in version 6
+    type: form.type._id,
+    comments: removeKeyFromEntity(form.comments),
+    exdates: removeKeyFromEntity(form.exdates),
     tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
     tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
   };
 }
 
-export function calendarEventToPbehaviorForm(calendarEvent, timezone) {
+export function calendarEventToPbehaviorForm(calendarEvent, filter) {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
   const form = {
-    ...pbehaviorToForm(pbehavior, timezone),
+    ...pbehaviorToForm(pbehavior, filter),
     ...cachedForm,
   };
 
