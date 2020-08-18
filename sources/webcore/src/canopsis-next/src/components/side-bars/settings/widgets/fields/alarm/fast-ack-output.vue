@@ -3,12 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.fastAckOutput') }}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
-      v-switch(
-        v-field="value.enabled",
-        data-test="fastAckOutputSwitch",
-        color="primary",
-        :label="$t('common.enabled')"
-      )
+      enabled-field(v-field="value.enabled", data-test="fastAckOutputSwitch", color="primary")
       v-text-field(
         v-field="value.value",
         data-test="fastAckOutputField",
@@ -18,6 +13,7 @@
 </template>
 
 <script>
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 /**
  * Component to set fast-ack output
@@ -25,6 +21,7 @@
  * @prop {Object} [value] - Value
  */
 export default {
+  components: { EnabledField },
   props: {
     value: {
       type: Object,

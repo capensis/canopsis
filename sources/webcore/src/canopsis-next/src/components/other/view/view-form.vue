@@ -24,11 +24,7 @@
           name="description",
           data-test="viewFieldDescription"
         )
-        v-switch(
-          v-field="form.enabled",
-          :label="$t('common.enabled')",
-          data-test="viewFieldEnabled"
-        )
+        enabled-field(v-field="form.enabled", data-test="viewFieldEnabled")
         periodic-refresh-field(v-model="form.periodicRefresh", :label="$t('modals.view.fields.periodicRefresh')")
     v-layout(wrap, justify-center)
       v-flex(xs11)
@@ -64,9 +60,10 @@
 import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
 
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 export default {
-  components: { PeriodicRefreshField },
+  components: { EnabledField, PeriodicRefreshField },
   inject: ['$validator'],
   mixins: [vuetifyComboboxMixin],
   model: {
