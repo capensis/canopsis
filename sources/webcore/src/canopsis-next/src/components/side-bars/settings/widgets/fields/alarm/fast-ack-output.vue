@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.fastAckOutput') }}
       .font-italic.caption.ml-1 ({{ $t('common.optional') }})
     v-container
-      enabled-field(v-field="value.enabled", data-test="fastAckOutputSwitch", color="primary")
+      enabled-field(v-field="value.enabled", data-test="fastAckOutputSwitch")
       v-text-field(
         v-field="value.value",
         data-test="fastAckOutputField",

@@ -19,8 +19,8 @@ export function webhookToForm(webhook = {}) {
     request: {
       method: get(webhook, 'request.method', ''),
       url: get(webhook, 'request.url', ''),
-      headers: webhook.request && webhook.headers
-        ? objectToTextPairs(webhook.headers)
+      headers: webhook.request && webhook.request.headers
+        ? objectToTextPairs(webhook.request.headers)
         : [],
       payload: webhook.payload || '{}',
     },

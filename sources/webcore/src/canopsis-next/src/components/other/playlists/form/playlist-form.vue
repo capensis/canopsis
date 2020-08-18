@@ -10,7 +10,7 @@
       )
     time-interval-field(v-field="form.interval")
     v-layout(row)
-      enabled-field(v-field="form.enabled", color="primary")
+      enabled-field(v-field="form.enabled")
       v-switch(
         v-field="form.fullscreen",
         :label="$t('common.fullscreen')",

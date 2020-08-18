@@ -17,7 +17,7 @@
           name="description"
         )
       v-layout(row)
-        enabled-field(v-field="form.enabled", color="primary")
+        enabled-field(v-field="form.enabled")
         v-select(
           v-field="form.type",
           v-validate="'required'",

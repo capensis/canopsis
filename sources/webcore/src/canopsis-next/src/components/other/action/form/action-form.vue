@@ -18,11 +18,7 @@
       name="actionType",
       @change="errors.clear()"
     )
-    enabled-field.mb-3(
-      v-field="form.generalParameters.enabled",
-      color="primary",
-      hide-details
-    )
+    enabled-field.mb-3(v-field="form.generalParameters.enabled", hide-details)
     v-tabs(fixed-tabs, slider-color="primary")
       v-tab
         .validation-header(
