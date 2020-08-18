@@ -75,6 +75,9 @@ export default {
       };
     },
   },
+  mounted() {
+    this.cacheForm();
+  },
   beforeDestroy() {
     if (this.manualClose) {
       delete this.calendarEvent.data.cachedForm;
@@ -100,9 +103,9 @@ export default {
     },
 
     cancel() {
-      const oldPbehaviorForm = calendarEventToPbehaviorForm(omit(this.calendarEvent, 'data.cachedForm'));
+      const { cachedForm } = this.calendarEvent.data;
 
-      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id'])) {
+      if (isOmitEqual(cachedForm, this.form, ['_id'])) {
         return this.close(true);
       }
 

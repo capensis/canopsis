@@ -26,6 +26,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
+import { pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -59,9 +61,9 @@ export default {
   },
   methods: {
     async submit() {
-      await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById));
+      await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById).map(pbehaviorToRequest));
+      await this.updatePbehaviors(Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest));
       await this.removePbehaviors(Object.values(this.form.removedPbehaviorsById));
-      await this.updatePbehaviors(Object.values(this.form.changedPbehaviorsById));
 
       if (this.config.afterSubmit) {
         await this.config.afterSubmit();

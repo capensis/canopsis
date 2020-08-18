@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import moment from 'moment-timezone';
-import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
+import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
@@ -74,4 +74,22 @@ export function formToCalendarEvent(form, calendarEvent, timezone) {
   event.id = calendarEvent.event.id;
 
   return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
+}
+
+export function pbehaviorToRequest(pbehavior) {
+  const result = omit(pbehavior, ['_id', 'type', 'reason', 'exdates']);
+
+  result.type = isObject(pbehavior.type) ? pbehavior.type._id : pbehavior.type;
+  result.reason = isObject(pbehavior.reason) ? pbehavior.reason._id : pbehavior.reason;
+
+  if (!pbehavior._id.includes('pbehavior')) { // TODO: fix that
+    result._id = pbehavior._id;
+  }
+
+  if (pbehavior.exdates) {
+    result.exdates = pbehavior.exdates
+      .map(exdate => ({ ...exdate, type: isObject(exdate.type) ? exdate.type._id : exdate.type }));
+  }
+
+  return result;
 }

@@ -387,6 +387,21 @@ export default {
     },
 
     /**
+     * Close popover and clear placeholder for event
+     *
+     * @param {Object} [event = {}]
+     */
+    closePopoverForEvent(event = {}) { // TODO: move that
+      if (event.clearPlaceholder) {
+        event.clearPlaceholder();
+      }
+
+      if (event.closePopover) {
+        event.closePopover();
+      }
+    },
+
+    /**
      * Show modal window for recurrent changes confirmation
      *
      * @param {Object} event
@@ -402,9 +417,9 @@ export default {
               await this.applyEventChangesForAllHandler(event);
             }
 
-            event.clearPlaceholder();
+            this.closePopoverForEvent(event);
           },
-          cancel: event.clearPlaceholder,
+          cancel: () => this.closePopoverForEvent(event),
         },
       });
     },
@@ -442,11 +457,7 @@ export default {
           tstop,
         }, event.calendarEvent.data.color);
 
-        event.clearPlaceholder();
-
-        if (event.closePopover) {
-          event.closePopover();
-        }
+        this.closePopoverForEvent(event);
 
         return;
       }

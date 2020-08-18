@@ -5,10 +5,10 @@
     :label="$t('modals.createPbehavior.steps.general.fields.type')",
     :loading="pbehaviorTypesPending",
     :items="pbehaviorTypes",
-    :error-messages="errors.collect('type')",
+    :error-messages="errors.collect(name)",
+    :name="name",
     item-text="name",
     item-value="_id",
-    name="type",
     return-object
   )
 </template>
@@ -27,6 +27,10 @@ export default {
     value: {
       type: [Object, String],
       required: false,
+    },
+    name: {
+      type: String,
+      default: 'type',
     },
   },
   mounted() {
