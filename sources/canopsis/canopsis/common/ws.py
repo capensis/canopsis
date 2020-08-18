@@ -202,12 +202,18 @@ class route(object):
                 params = parse_qs(body)
 
             else:
-                params = request.params  # request params
+                if request.content_type.endswith('/json'):
+                    params = request.query
+                else:
+                    params = request.params  # request params
                 body = request.body.readline()
 
             if self.raw_body:
                 kwargs['body'] = body
 
+            elif request.json:
+                for k in request.json:
+                    params[k] = request.json[k]
             else:
                 # params are request params
                 try:
