@@ -16,11 +16,11 @@ export default {
   props: {
     value: {
       type: Boolean,
-      required: false,
+      default: true,
     },
     label: {
       type: String,
-      required: false,
+      default: '',
     },
     color: {
       type: String,
