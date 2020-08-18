@@ -51,9 +51,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          this.form.timezone = this.$system.timezone;
-
-          const data = formToAction(this.form);
+          const data = formToAction(this.form, this.$system.timezone);
 
           await this.config.action(data);
         }

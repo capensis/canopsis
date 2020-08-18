@@ -53,6 +53,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   components: { EnabledColumn, ModalWrapper },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin, entitiesPbehaviorCommentMixin],
+  inject: ['$system'],
   computed: {
     headers() {
       return [

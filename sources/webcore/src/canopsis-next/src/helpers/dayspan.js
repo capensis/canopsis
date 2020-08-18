@@ -99,7 +99,7 @@ export function getScheduleForSpan(span) {
     return Schedule.forDay(start, span.days(Op.UP));
   }
 
-  const isHour = minutes % Constants.MINUTES_IN_HOUR === 0;
+  const isHour = (minutes % Constants.MINUTES_IN_HOUR) === 0;
   const duration = isHour ? minutes / Constants.MINUTES_IN_HOUR : minutes;
   const durationUnit = isHour ? 'hours' : 'minutes';
 

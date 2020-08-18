@@ -119,6 +119,7 @@ export default {
     unit: 'Unité',
     begin: 'Commencer',
     timezone: 'Fuseau horaire',
+    reason: 'Raison',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

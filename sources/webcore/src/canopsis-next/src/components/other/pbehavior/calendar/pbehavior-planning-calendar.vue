@@ -255,6 +255,7 @@ export default {
     },
 
     /**
+     * Fetch calendar event for pbehavior
      *
      * @param {Object} pbehavior
      * @param {string} color

@@ -23,7 +23,6 @@ export default {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

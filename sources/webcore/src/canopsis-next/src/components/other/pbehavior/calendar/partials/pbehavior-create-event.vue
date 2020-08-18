@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form", :noFilter="filter")
+    pbehavior-form(v-model="form", :noFilter="!!filter")
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",
@@ -74,9 +74,6 @@ export default {
         ],
       };
     },
-  },
-  mounted() {
-    this.cacheForm();
   },
   beforeDestroy() {
     if (this.manualClose) {

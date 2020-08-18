@@ -7,8 +7,8 @@
           td {{ props.item.author }}
           td
             enabled-column(:value="props.item.enabled")
-          td {{ props.item.tstart | date('long') }}
-          td {{ props.item.tstop | date('long') }}
+          td {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
+          td {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
           td {{ props.item.type.name }}
           td {{ props.item.reason.name }}
           td {{ props.item.rrule }}
@@ -42,6 +42,7 @@ export default {
   components: {
     EnabledColumn,
   },
+  inject: ['$system'],
   mixins: [
     authMixin,
     queryMixin,
@@ -125,7 +126,12 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           pbehaviors: [pbehavior],
-          afterSubmit: this.fetchList,
+          afterSubmit: () => {
+            this.fetchList();
+            this.$popups.success({
+              text: this.$t('success.default'),
+            });
+          },
         },
       });
     },

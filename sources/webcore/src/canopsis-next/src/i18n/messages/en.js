@@ -119,6 +119,7 @@ export default {
     unit: 'Unit',
     begin: 'Begin',
     timezone: 'Timezone',
+    reason: 'Reason',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

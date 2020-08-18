@@ -208,7 +208,7 @@ export default {
         return false;
       }
 
-      return this.entity.pbehaviors.some(({ isActive }) => isActive);
+      return this.entity.pbehaviors.some(pbehavior => pbehavior.enabled);
     },
 
     isPaused() {

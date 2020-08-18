@@ -61,8 +61,8 @@
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
           div {{ $t('common.date') }} : {{ alarm.v.snooze.t | date('long') }}
           div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}
-    div(v-if="pbehaviors.length")
-      v-tooltip(top, v-for="pbehavior in pbehaviors", :key="pbehavior._id")
+    div(v-if="pbehaviors.length", v-for="pbehavior in pbehaviors", :key="pbehavior._id")
+      v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(
           small,
           data-test="extraDetailsOpenButton-pbehaviors",

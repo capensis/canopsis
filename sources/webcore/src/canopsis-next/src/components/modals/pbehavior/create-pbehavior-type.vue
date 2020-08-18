@@ -17,8 +17,8 @@ import { MODALS } from '@/constants';
 import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
 
+import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

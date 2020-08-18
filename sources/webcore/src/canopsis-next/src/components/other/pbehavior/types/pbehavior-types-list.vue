@@ -29,22 +29,22 @@
           td {{ props.item.priority }}
           td
             v-layout
-              v-tooltip(bottom, :disabled="props.item.deletable")
+              v-tooltip(bottom, :disabled="props.item.editable")
                 v-btn.mx-0(
                   slot="activator",
                   v-if="hasUpdateAnyPbehaviorTypeAccess",
-                  :disabled="!props.item.deletable",
+                  :disabled="!props.item.editable",
                   icon,
                   small,
                   @click.stop="$emit('edit', props.item)"
                 )
                   v-icon edit
                 span {{ $t('pbehaviorTypes.defaultType') }}
-              v-tooltip(bottom, :disabled="props.item.editable")
+              v-tooltip(bottom, :disabled="props.item.deletable")
                 v-btn.mx-0(
                   slot="activator",
                   v-if="hasDeleteAnyPbehaviorTypeAccess",
-                  :disabled="!props.item.editable",
+                  :disabled="!props.item.deletable",
                   icon,
                   small,
                   @click.stop="$emit('remove', props.item._id)"
@@ -57,6 +57,7 @@
 
 <script>
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
+
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
