@@ -202,7 +202,7 @@ class route(object):
                 params = parse_qs(body)
 
             else:
-                if request.content_type.endswith('/json'):
+                if request.content_type.lower().split(';')[0] == 'application/json':
                     params = request.query
                 else:
                     params = request.params  # request params
