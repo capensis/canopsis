@@ -39,15 +39,10 @@ export default {
     showCreateRRuleModal() {
       this.$modals.show({
         name: MODALS.createRRule,
-        dialogProps: {
-          zIndex: 300,
-        },
         config: {
           rrule: this.form.rrule,
           exdates: this.form.exdates,
-          action: ({ rrule, exdates }) => {
-            this.updateModel({ ...this.form, rrule, exdates });
-          },
+          action: ({ rrule, exdates }) => this.updateModel({ ...this.form, rrule, exdates }),
         },
       });
     },
