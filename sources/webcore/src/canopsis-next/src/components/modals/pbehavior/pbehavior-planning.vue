@@ -4,13 +4,22 @@
       template(slot="title")
         span {{ $t('modals.pbehaviorPlanning.title') }}
       template(slot="text")
-        pbehavior-planning-calendar(v-model="form", :readOnly="readOnly", :filter="filter")
+        pbehavior-planning-calendar(
+          :pbehaviorsById.sync="form.pbehaviorsById",
+          :addedPbehaviorsById.sync="form.addedPbehaviorsById",
+          :changedPbehaviorsById.sync="form.changedPbehaviorsById",
+          :removedPbehaviorsById.sync="form.removedPbehaviorsById",
+          :readOnly="readOnly",
+          :filter="filter"
+        )
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
+import { keyBy } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -28,10 +37,10 @@ export default {
   data() {
     return {
       form: {
-        list: this.modal.config.pbehaviors || [],
-        added: [],
-        changed: [],
-        removed: [],
+        pbehaviorsById: keyBy(this.modal.config.pbehaviors, '_id'),
+        addedPbehaviorsById: {},
+        changedPbehaviorsById: {},
+        removedPbehaviorsById: {},
       },
     };
   },
@@ -50,9 +59,9 @@ export default {
   },
   methods: {
     async submit() {
-      await this.createPbehaviors(this.form.added);
-      await this.removePbehaviors(this.form.removed);
-      await this.updatePbehaviors(this.form.changed);
+      await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById));
+      await this.removePbehaviors(Object.values(this.form.removedPbehaviorsById));
+      await this.updatePbehaviors(Object.values(this.form.changedPbehaviorsById));
 
       if (this.config.afterSubmit) {
         await this.config.afterSubmit();

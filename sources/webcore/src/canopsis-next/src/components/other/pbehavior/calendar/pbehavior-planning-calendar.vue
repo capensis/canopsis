@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { get, keyBy } from 'lodash';
+import { get, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
 
@@ -66,14 +66,21 @@ export default {
     event: 'input',
   },
   props: {
-    pbehaviors: {
+    pbehaviorsById: {
       type: Object,
-      default: () => ({
-        list: [],
-        changed: [],
-        added: [],
-        removed: [],
-      }),
+      required: true,
+    },
+    addedPbehaviorsById: {
+      type: Object,
+      required: true,
+    },
+    removedPbehaviorsById: {
+      type: Object,
+      required: true,
+    },
+    changedPbehaviorsById: {
+      type: Object,
+      required: true,
     },
     filter: {
       type: Object,
@@ -125,22 +132,6 @@ export default {
           },
         },
       };
-    },
-
-    pbehaviorsById() {
-      return keyBy(this.pbehaviors.list, '_id');
-    },
-
-    addedPbehaviorsById() {
-      return keyBy(this.pbehaviors.added, '_id');
-    },
-
-    removedPbehaviorsById() {
-      return keyBy(this.pbehaviors.removed, '_id');
-    },
-
-    changedPbehaviorsById() {
-      return keyBy(this.pbehaviors.changed, '_id');
     },
 
     allPbehaviorsById() {
@@ -298,18 +289,16 @@ export default {
      */
     removePbehavior(removablePbehavior) {
       if (this.addedPbehaviorsById[removablePbehavior._id]) {
-        this.$emit('input', {
-          ...this.pbehaviors,
-          added: this.pbehaviors.added.filter(pbehavior => pbehavior._id !== removablePbehavior._id),
-        });
+        this.$emit('update:addedPbehaviorsById', omit(this.addedPbehaviorsById, [removablePbehavior._id]));
       } else {
-        this.$emit('input', {
-          ...this.pbehaviors,
-          removed: [...this.pbehaviors.removed, removablePbehavior],
-          changed: this.changedPbehaviorsById[removablePbehavior._id]
-            ? this.pbehaviors.changed.filter(pbehavior => pbehavior._id !== removablePbehavior._id)
-            : this.pbehaviors.changed,
+        this.$emit('update:removedPbehaviorsById', {
+          ...this.removedPbehaviorsById,
+          [removablePbehavior._id]: removablePbehavior,
         });
+
+        if (this.changedPbehaviorsById[removablePbehavior._id]) {
+          this.$emit('update:changedPbehaviorsById', omit(this.changedPbehaviorsById, [removablePbehavior._id]));
+        }
       }
 
       this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== removablePbehavior._id);
@@ -454,6 +443,10 @@ export default {
 
         event.clearPlaceholder();
 
+        if (event.closePopover) {
+          event.closePopover();
+        }
+
         return;
       }
 
@@ -471,14 +464,11 @@ export default {
       const hasPbehaviorInList = this.pbehaviorsById[pbehavior._id] || this.changedPbehaviorsById[pbehavior._id];
 
       if (hasPbehaviorInList) {
-        this.$emit('input', {
-          ...this.pbehaviors,
-          changed: Object.values({ ...this.changedPbehaviorsById, [pbehavior._id]: pbehavior }),
-        });
+        this.$emit('update:changedPbehaviorsById', { ...this.changedPbehaviorsById, [pbehavior._id]: pbehavior });
       } else {
-        this.$emit('input', {
-          ...this.pbehaviors,
-          added: [...Object.values(this.addedPbehaviorsById), pbehavior],
+        this.$emit('update:addedPbehaviorsById', {
+          ...this.addedPbehaviorsById,
+          [pbehavior._id]: pbehavior,
         });
       }
 

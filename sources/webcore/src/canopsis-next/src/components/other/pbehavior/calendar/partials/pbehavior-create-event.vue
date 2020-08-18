@@ -75,14 +75,21 @@ export default {
       };
     },
   },
+  mounted() {
+    this.cacheForm();
+  },
   beforeDestroy() {
     if (this.manualClose) {
       delete this.calendarEvent.data.cachedForm;
     } else {
-      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+      this.cacheForm();
     }
   },
   methods: {
+    cacheForm() {
+      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+    },
+
     async submitHandler() {
       const isValid = await this.$validator.validateAll();
 

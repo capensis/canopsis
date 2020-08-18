@@ -86,11 +86,11 @@ export default {
           value: 'tstop',
         },
         {
-          text: this.$t('pbehaviors.type.name'),
+          text: this.$t('pbehaviors.type'),
           value: 'type_',
         },
         {
-          text: this.$t('pbehaviors.reason.name'),
+          text: this.$t('pbehaviors.reason'),
           value: 'reason',
         },
         {

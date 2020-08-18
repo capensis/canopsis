@@ -27,6 +27,7 @@ import {
 } from '@/constants';
 
 import uuid from './uuid';
+import uid from './uid';
 import { pbehaviorToForm } from './forms/planning-pbehavior';
 
 /**
@@ -653,3 +654,22 @@ export function getDefaultPlaylist() {
     tabs_list: [],
   };
 }
+
+/**
+ * Add uniq key field in each entity.
+ *
+ * @param {Array} entities
+ * @return {Array}
+ */
+export const addKeyInEntity = entities => entities.map(entity => ({
+  ...entity,
+  key: uid(),
+}));
+
+/**
+ * Remove key field from each entity.
+ *
+ * @param {Array} entities
+ * @return {Array}
+ */
+export const removeKeyFromEntity = entities => entities.map(entity => omit(entity, ['key']));

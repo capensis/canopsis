@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import moment from 'moment-timezone';
-import { isObject, isString, cloneDeep, isUndefined, omit } from 'lodash';
+import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
 import { convertDateToTimestampByTimezone, convertTimestampToMoment } from '@/helpers/date';
+import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
 
 export function pbehaviorToForm(pbehavior = {}, filter = null) {
   let rrule = pbehavior.rrule || null;
@@ -26,14 +27,8 @@ export function pbehaviorToForm(pbehavior = {}, filter = null) {
     tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
     tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
-    comments: cloneDeep(pbehavior.comments || []).map(comment => ({
-      ...comment,
-      key: uid(),
-    })),
-    exdates: cloneDeep(pbehavior.exdates || []).map(comment => ({
-      ...comment,
-      key: uid(),
-    })),
+    comments: addKeyInEntity(cloneDeep(pbehavior.comments || [])),
+    exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])),
   };
 }
 
@@ -43,8 +38,8 @@ export function formToPbehavior(form, timezone) {
 
     reason: '8a48507a-7eba-463f-953f-41b93fce9745', // TODO should be replaced in version 6
     type: form.type._id,
-    comments: form.comments.map(exdate => omit(exdate, 'key')),
-    exdates: form.exdates.map(exdate => omit(exdate, 'key')),
+    comments: removeKeyFromEntity(form.comments),
+    exdates: removeKeyFromEntity(form.exdates),
     tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
     tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
   };

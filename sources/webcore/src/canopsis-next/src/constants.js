@@ -1433,3 +1433,5 @@ export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
   selected: 0,
   all: 1,
 };
+
+export const DEFAULT_TIMEZONE = 'Europe/Paris';
