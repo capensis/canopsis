@@ -14,14 +14,8 @@
             v-icon(slot="activator") help_outline
             span {{ $t('modals.createWebhook.tooltips.id') }}
         retry-field(v-model="form.retry")
-        v-switch(
-          v-model="form.enabled",
-          :label="$t('common.enabled')"
-        )
-        v-switch(
-          v-model="form.disable_if_active_pbehavior",
-          :label="$t('webhook.disableIfActivePbehavior')"
-        )
+        enabled-field(v-model="form.enabled")
+        disable-during-periods-field(v-model="form.disable_during_periods")
         webhook-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
@@ -44,8 +38,10 @@ import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
+import DisableDuringPeriodsField from '@/components/forms/fields/disable-during-periods.vue';
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
 import RetryField from '@/components/forms/fields/retry.vue';
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -57,34 +53,21 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { WebhookForm, ModalWrapper, RetryField },
+  components: {
+    EnabledField,
+    DisableDuringPeriodsField,
+    WebhookForm,
+    ModalWrapper,
+    RetryField,
+  },
   mixins: [authMixin, modalInnerMixin, submittableMixin()],
   data() {
-    const { webhook, isDuplicating } = this.modal.config;
-    const defaultForm = {
-      retry: {},
-      hook: {
-        triggers: [],
-        event_patterns: [],
-        alarm_patterns: [],
-        entity_patterns: [],
-      },
-      request: {
-        method: '',
-        url: '',
-        headers: [],
-        payload: '{}',
-      },
-      declare_ticket: [],
-      disable_if_active_pbehavior: false,
-      emptyResponse: false,
-      enabled: true,
-    };
-
-    const preparedWebhook = isDuplicating ? omit(webhook, ['_id']) : webhook;
+    const preparedWebhook = this.modal.config.isDuplicating
+      ? omit(this.modal.config.webhook, ['_id'])
+      : this.modal.config.webhook;
 
     return {
-      form: webhook ? webhookToForm(preparedWebhook) : defaultForm,
+      form: webhookToForm(preparedWebhook),
     };
   },
   computed: {
