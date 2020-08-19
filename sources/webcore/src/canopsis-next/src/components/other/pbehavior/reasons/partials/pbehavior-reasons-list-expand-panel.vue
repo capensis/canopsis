@@ -3,7 +3,7 @@
     v-tab {{ $t('common.description') }}
     v-tab-item
       v-layout.pa-3.secondary.lighten-2(column)
-        v-flex(xs12, sm10, offset-sm1)
+        v-flex(xs12)
           v-card
             v-card-text
               pre {{ pbehaviorReason.description }}
