@@ -77,16 +77,10 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: this.itemsIds },
-            },
+          filter: {
+            _id: { $in: this.itemsIds },
           },
-          action: async (data) => {
-            await this.createPbehavior({ data });
-
-            this.$popups.success({ text: this.$t('success.default') });
-          },
+          afterSubmit: () => this.$popups.success({ text: this.$t('success.default') }),
         },
       });
     },

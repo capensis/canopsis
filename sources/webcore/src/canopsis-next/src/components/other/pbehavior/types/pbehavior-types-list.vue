@@ -59,6 +59,7 @@
 import { omit } from 'lodash';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
+
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';

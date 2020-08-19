@@ -40,11 +40,7 @@ function actionSnoozeParametersToForm(parameters = {}) {
  * @returns {Object}
  */
 function actionPbehaviorParametersToForm(parameters = {}) {
-  const data = {};
-
-  data.general = omit(pbehaviorToForm(parameters), ['filter']);
-
-  return data;
+  return omit(pbehaviorToForm(parameters), ['filter']);
 }
 
 /**
@@ -109,16 +105,6 @@ export function prepareSnoozeParameters({ snoozeParameters = {} }) {
 }
 
 /**
- * Prepare pbehavior parameters from form
- *
- * @param pbehaviorParameters
- * @returns {{ tstart: number, exdate: Array, comments: Array, tstop: number }}
- */
-export function preparePbehaviorParameters({ pbehaviorParameters = {} }) {
-  return formToPbehavior(pbehaviorParameters);
-}
-
-/**
  * Prepare action object by form object
  *
  * @param [generalParameters]
@@ -136,7 +122,7 @@ export function preparePbehaviorParameters({ pbehaviorParameters = {} }) {
 export function formToAction({
   generalParameters = {},
   ...form
-}) {
+}, timezone) {
   const hasValue = v => !v;
 
   const data = unsetSeveralFieldsWithConditions(generalParameters, {
@@ -158,7 +144,7 @@ export function formToAction({
 
   const formToActionPrepareMap = {
     [ACTION_TYPES.snooze]: prepareSnoozeParameters,
-    [ACTION_TYPES.pbehavior]: preparePbehaviorParameters,
+    [ACTION_TYPES.pbehavior]: ({ pbehaviorParameters = {} }) => formToPbehavior(pbehaviorParameters, timezone),
   };
 
   const prepareField = formToActionPrepareMap[generalParameters.type];

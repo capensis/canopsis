@@ -95,8 +95,8 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
-          pbehaviors: this.watcher.watcher_pbehavior,
-          entityId: this.watcher.entity_id,
+          pbehaviors: this.watcher.pbehaviors,
+          entityId: this.watcher._id,
           onlyActive: true,
           availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },

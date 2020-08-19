@@ -1,5 +1,7 @@
 import Vue from 'vue';
 
+import { DEFAULT_TIMEZONE } from '@/constants';
+
 export default {
   provide() {
     return {
@@ -9,7 +11,7 @@ export default {
   data() {
     return {
       system: {
-        timezone: this.timezone,
+        timezone: this.timezone || DEFAULT_TIMEZONE,
       },
     };
   },

@@ -3,6 +3,7 @@
     v-layout(column)
       refresh-btn(@click="$emit('refresh')")
       v-speed-dial(
+        v-if="hasAccess",
         v-model="fab",
         direction="left",
         :transition="transition"
@@ -24,6 +25,10 @@ export default {
     transition: {
       type: String,
       default: 'slide-y-reverse-transition',
+    },
+    hasAccess: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {

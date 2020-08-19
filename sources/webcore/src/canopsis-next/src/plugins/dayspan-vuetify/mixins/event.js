@@ -34,7 +34,9 @@ export default {
     resizeStartHandler(event) {
       if (event.button === 0) {
         event.stopPropagation();
-        this.$emit('mouse-start-resize', event, this.calendarEvent);
+        this.$emit('mouse-start-resize', this.getEvent('mouse-start-resize', event, {
+          calendarEvent: this.calendarEvent,
+        }));
         document.addEventListener('mouseup', this.resizeEndHandler);
       }
     },

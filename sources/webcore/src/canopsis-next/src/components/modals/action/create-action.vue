@@ -28,6 +28,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { ActionForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
@@ -50,7 +51,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const data = formToAction(this.form);
+          const data = formToAction(this.form, this.$system.timezone);
 
           await this.config.action(data);
         }

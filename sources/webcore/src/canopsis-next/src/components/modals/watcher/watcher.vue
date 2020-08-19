@@ -3,7 +3,7 @@
     template(slot="fullTitle")
       v-card-title.white--text(:style="{ backgroundColor: color }")
         v-layout(justify-space-between, align-center)
-          span.headline {{ watcher.display_name }}
+          span.headline {{ watcher.name }}
     template(slot="text")
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     fetchWatchersList() {
-      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
+      this.fetchWatcherEntitiesList({ watcherId: this.watcher._id });
     },
 
     addEventToQueue(event) {

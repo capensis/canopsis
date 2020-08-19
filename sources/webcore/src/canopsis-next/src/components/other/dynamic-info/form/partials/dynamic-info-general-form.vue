@@ -15,6 +15,8 @@
         name="name"
       )
     v-layout
+      disable-during-periods-field(v-field="form.disable_during_periods")
+    v-layout
       v-textarea(
         v-field="form.description",
         :label="$t('modals.createDynamicInfo.steps.general.fields.description')",
@@ -26,7 +28,10 @@
 <script>
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
+import DisableDuringPeriodsField from '@/components/forms/fields/disable-during-periods.vue';
+
 export default {
+  components: { DisableDuringPeriodsField },
   mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',

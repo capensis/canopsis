@@ -119,6 +119,7 @@ export default {
     unit: 'Unit',
     begin: 'Begin',
     timezone: 'Timezone',
+    reason: 'Reason',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -310,7 +311,6 @@ export default {
     status: 'Status',
     tabs: {
       filter: 'Filter',
-      eids: 'Eids',
       comments: 'Comments',
     },
   },
@@ -1196,6 +1196,13 @@ export default {
         iconName: 'Icon name',
       },
     },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modify',
+      fields: {
+        selected: 'Only selected period',
+        all: 'All the periods',
+      },
+    },
     createPbehaviorReason: {
       title: 'Create reason',
       fields: {
@@ -1238,7 +1245,7 @@ export default {
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Reason',
       rrule: 'Rrule',
     },
@@ -1549,7 +1556,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Disable if a pbehavior is active',
+    disableDuringPeriods: 'Disable during periods',
     table: {
       headers: {
         id: 'ID',

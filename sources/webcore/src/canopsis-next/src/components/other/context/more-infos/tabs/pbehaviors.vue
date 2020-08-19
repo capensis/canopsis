@@ -5,14 +5,12 @@
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
-          td {{ props.item.connector }}
-          td {{ props.item.connector_name }}
           td
             enabled-column(:value="props.item.enabled")
-          td {{ props.item.tstart | date('long') }}
-          td {{ props.item.tstop | date('long') }}
-          td {{ props.item.type_ }}
-          td {{ props.item.reason }}
+          td {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
+          td {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
+          td {{ props.item.type.name }}
+          td {{ props.item.reason.name }}
           td {{ props.item.rrule }}
           td
             template(v-if="hasAccessToDeletePbehavior")
@@ -44,6 +42,7 @@ export default {
   components: {
     EnabledColumn,
   },
+  inject: ['$system'],
   mixins: [
     authMixin,
     queryMixin,
@@ -74,14 +73,6 @@ export default {
         {
           text: this.$t('common.author'),
           value: 'author',
-        },
-        {
-          text: this.$t('pbehaviors.connector'),
-          value: 'connector',
-        },
-        {
-          text: this.$t('pbehaviors.connectorName'),
-          value: 'connector_name',
         },
         {
           text: this.$t('pbehaviors.isEnabled'),
@@ -132,18 +123,14 @@ export default {
   methods: {
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior,
-
-          action: async (data) => {
-            const { comments, ...preparedData } = data;
-
-            await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
-            await this.updateSeveralPbehaviorComments({ pbehavior, comments });
-
+          pbehaviors: [pbehavior],
+          afterSubmit: () => {
             this.fetchList();
-            this.$popups.success({ text: this.$t('success.default') });
+            this.$popups.success({
+              text: this.$t('success.default'),
+            });
           },
         },
       });

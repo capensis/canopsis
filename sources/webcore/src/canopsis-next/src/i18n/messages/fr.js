@@ -119,6 +119,7 @@ export default {
     unit: 'Unité',
     begin: 'Commencer',
     timezone: 'Fuseau horaire',
+    reason: 'Raison',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -310,7 +311,6 @@ export default {
     status: 'Statut',
     tabs: {
       filter: 'Filtre',
-      eids: 'Entités',
       comments: 'Commentaires',
     },
   },
@@ -1196,6 +1196,13 @@ export default {
         iconName: 'Nom de l\'icône',
       },
     },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modifier',
+      fields: {
+        selected: 'Seulement période sélectionnée',
+        all: 'Toutes les périodes',
+      },
+    },
     createPbehaviorReason: {
       title: 'Créer un reason',
       fields: {
@@ -1238,7 +1245,7 @@ export default {
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finit',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Raison',
       rrule: 'Récurrence',
     },
@@ -1549,7 +1556,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Désactivé si un pbehavior est actif',
+    disableDuringPeriods: 'Désactiver pendant les règles',
     table: {
       headers: {
         id: 'ID',

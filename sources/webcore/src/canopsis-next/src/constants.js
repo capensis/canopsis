@@ -98,6 +98,7 @@ export const MODALS = {
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
+  pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
 };
@@ -983,9 +984,10 @@ export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
 };
 
 export const PBEHAVIOR_TYPE_TYPES = {
-  activeState: 'Active State',
-  maintenance: 'Maintenance',
-  pause: 'Pause',
+  active: 'active',
+  inactive: 'inactive',
+  maintenance: 'maintenance',
+  pause: 'pause',
 };
 
 export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
@@ -1429,3 +1431,10 @@ export const WIDGET_GRID_SIZES_STYLES = {
 export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
+
+export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
+  selected: 0,
+  all: 1,
+};
+
+export const DEFAULT_TIMEZONE = 'Europe/Paris';
