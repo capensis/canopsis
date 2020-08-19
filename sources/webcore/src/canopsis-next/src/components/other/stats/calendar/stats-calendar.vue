@@ -6,17 +6,17 @@
         :value="hasError",
         :message="serverErrorMessage"
       )
-      ds-calendar(
+      ds-calendar.stats-calendar-app(
         :calendar="calendar",
-        :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
+        :class="{ multiple: hasMultipleFilters }",
         :events="events",
         @change="changeCalendar",
         @edit="editEvent"
       )
         v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
-          v-card-text(v-if="calendarEvent.data.meta")
+          v-card-text(v-if="calendarEvent.data.events")
             v-layout(
-              v-for="(event, index) in calendarEvent.data.meta.events",
+              v-for="(event, index) in calendarEvent.data.events",
               :key="`popover-event-${index}`",
               row,
               wrap
@@ -32,18 +32,17 @@
 
 <script>
 import { get, isEmpty, omit } from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Units } from 'dayspan';
+import { Calendar, Day, Units, DaySpan } from 'dayspan';
 
-import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
+import { DATETIME_FORMATS, MODALS, WIDGET_TYPES, COUNTER_GROUPING_TYPES } from '@/constants';
 
-import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
+import { getScheduleForSpan } from '@/helpers/dayspan';
 
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
-
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
@@ -51,6 +50,7 @@ import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 import DsCalendar from './day-span/calendar.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
+const { mapActions: counterMapActions } = createNamespacedHelpers('counter');
 
 export default {
   components: { ProgressOverlay, DsCalendar, AlertOverlay },
@@ -66,39 +66,17 @@ export default {
       pending: false,
       alarms: [],
       alarmsCollections: [],
+      groups: [],
+      events: [],
       calendar: Calendar.months(),
     };
   },
   computed: {
-    getStyleColor() {
-      return (details, calendarEvent) => {
-        const past = calendarEvent.schedule.end.isBefore(new Date());
-
-        return this.$dayspan.getStyleColor(details, calendarEvent, past);
-      };
+    grouping() {
+      return this.calendar.type === Units.MONTH ? COUNTER_GROUPING_TYPES.day : COUNTER_GROUPING_TYPES.hour;
     },
 
-    getCalendarEventColor() {
-      return (count) => {
-        const { criticityLevels, criticityLevelsColors } = this.widget.parameters;
-
-        if (count >= criticityLevels.critical) {
-          return criticityLevelsColors.critical;
-        }
-
-        if (count >= criticityLevels.major) {
-          return criticityLevelsColors.major;
-        }
-
-        if (count >= criticityLevels.minor) {
-          return criticityLevelsColors.minor;
-        }
-
-        return criticityLevelsColors.ok;
-      };
-    },
-
-    events() {
+    /*    events() {
       const groupByValue = this.calendar.type === Units.MONTH ? 'day' : 'hour';
 
       if (!this.hasFilters) {
@@ -124,7 +102,7 @@ export default {
       }
 
       return events;
-    },
+    }, */
 
     hasMultipleFilters() {
       return get(this.query, 'filters.length', 0) > 1;
@@ -139,22 +117,52 @@ export default {
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
+    ...counterMapActions({
+      fetchCountersListWithoutStore: 'fetchListWithoutStore',
+    }),
+
+    getStyleColor(details, calendarEvent) {
+      const past = calendarEvent.schedule.end.isBefore(new Date());
+
+      return this.$dayspan.getStyleColor(details, calendarEvent, past);
+    },
+
+    getCalendarEventColor(count) {
+      const { criticityLevels, criticityLevelsColors } = this.widget.parameters;
+
+      if (count >= criticityLevels.critical) {
+        return criticityLevelsColors.critical;
+      }
+
+      if (count >= criticityLevels.major) {
+        return criticityLevelsColors.major;
+      }
+
+      if (count >= criticityLevels.minor) {
+        return criticityLevelsColors.minor;
+      }
+
+      return criticityLevelsColors.ok;
+    },
+
     editEvent(event) {
-      const { meta } = event.data;
+      const { filter, start, end } = event.data;
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const widgetParameters = {
         ...this.widget.parameters.alarmsList,
 
         alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
         liveReporting: {
-          tstart: moment.unix(meta.tstart).format(DATETIME_FORMATS.dateTimePicker),
-          tstop: moment.unix(meta.tstop).format(DATETIME_FORMATS.dateTimePicker),
+          tstart: start.date.format(DATETIME_FORMATS.dateTimePicker),
+          tstop: end.date.clone()
+            .subtract(1, 'seconds')
+            .format(DATETIME_FORMATS.dateTimePicker),
         },
       };
 
       if (!isEmpty(event.data.meta.filter)) {
-        widgetParameters.viewFilters = [meta.filter];
-        widgetParameters.mainFilter = meta.filter;
+        widgetParameters.viewFilters = [filter];
+        widgetParameters.mainFilter = filter;
       }
 
       this.$modals.show({
@@ -182,41 +190,52 @@ export default {
 
         query.tstart = this.calendar.start.date.unix();
         query.tstop = this.calendar.end.date.unix();
+        query.consider_pbehaviors = this.query.considerPbehaviors;
+        query.grouping = this.grouping;
+        query.local_timezone = moment.tz.guess();
 
         this.pending = true;
         this.serverErrorMessage = null;
 
         if (isEmpty(this.query.filters)) {
-          let { alarms } = await this.fetchAlarmsListWithoutStore({
-            withoutCatch: true,
-            params: query,
-          });
-
-          if (this.query.considerPbehaviors) {
-            alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
-          }
-
-          this.alarms = alarms;
-          this.alarmsCollections = [];
+          // const { data: [counter] } = await this.fetchCountersListWithoutStore({
+          //   params: query,
+          // });
         } else {
-          const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
-            withoutCatch: true,
+          const results2 = await Promise.all(this.query.filters.map(({ filter }) => this.fetchCountersListWithoutStore({
             params: {
               ...query,
               filter,
             },
           })));
 
+          this.events = results2.reduce((acc, { data: [counter] }, index) => {
+            const filter = this.query.filters[index];
+            const filterEvents = Object.entries(counter.group).map(([timestamp, { total }]) => {
+              const startMoment = moment.unix(Number(timestamp));
+              const endMoment = startMoment.clone().endOf(this.grouping);
+              const startDay = new Day(startMoment);
+              const endDay = new Day(endMoment);
+              const daySpan = new DaySpan(startDay, endDay);
 
-          this.alarmsCollections = results.map(({ alarms }) => {
-            if (this.query.considerPbehaviors) {
-              return alarms.filter(alarm => isEmpty(alarm.pbehaviors));
-            }
+              return {
+                data: {
+                  ...this.$dayspan.getDefaultEventDetails(),
 
-            return alarms;
-          });
+                  color: this.getCalendarEventColor(total),
+                  title: total,
+                  description: filter.title,
+                  filter,
+                  total,
+                },
+                schedule: getScheduleForSpan(daySpan),
+              };
+            });
 
-          this.alarms = [];
+            acc.push(...filterEvents);
+
+            return acc;
+          }, []);
         }
       } catch (err) {
         this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');
@@ -236,51 +255,53 @@ export default {
       font-size: 14px;
     }
 
-    .single {
-      & /deep/ .ds-calendar-event-menu {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100% !important;
-        padding: 4px;
-
-        .v-menu__activator {
+    .stats-calendar-app {
+      &:not(.multiple) {
+        & /deep/ .ds-calendar-event-menu {
+          position: absolute;
+          left: 0;
+          top: 0;
           width: 100%;
-          height: 100%;
-        }
+          height: 100% !important;
+          padding: 4px;
 
-        .ds-calendar-event {
-          padding-left: 0;
-          display: flex;
-          height: 100%;
-          width: 100%;
-
-          & > span {
-            margin: auto;
-            text-align: center;
+          .v-menu__activator {
+            width: 100%;
+            height: 100%;
           }
 
+          .ds-calendar-event {
+            padding-left: 0;
+            display: flex;
+            height: 100%;
+            width: 100%;
+
+            & > span {
+              margin: auto;
+              text-align: center;
+            }
+
+            .ds-ev-description {
+              display: none;
+            }
+          }
+        }
+
+        & /deep/ .ds-week {
           .ds-ev-description {
             display: none;
           }
         }
       }
 
-      & /deep/ .ds-week {
-        .ds-ev-description {
-          display: none;
-        }
-      }
-    }
+      &.multiple {
+        & /deep/ .ds-calendar-event-menu {
+          position: relative;
+          height: 20px;
 
-    .multiple {
-      & /deep/ .ds-calendar-event-menu {
-        position: relative;
-        height: 20px;
-
-        .ds-ev-title {
-          margin-right: 10px;
+          .ds-ev-title {
+            margin-right: 10px;
+          }
         }
       }
     }

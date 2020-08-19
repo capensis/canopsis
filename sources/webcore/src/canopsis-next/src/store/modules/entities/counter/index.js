@@ -59,5 +59,9 @@ export default {
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
       }
     },
+
+    fetchListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.counter, { params });
+    },
   },
 };

@@ -1413,3 +1413,8 @@ export const WIDGET_GRID_SIZES_STYLES = {
 export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
+
+export const COUNTER_GROUPING_TYPES = {
+  day: 'day',
+  hour: 'hour',
+};
