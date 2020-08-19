@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import convertTimestampToMoment from '@/helpers/date';
+import { convertTimestampToMoment } from '@/helpers/date';
 
 import DateTimePicker from './date-time-picker.vue';
 

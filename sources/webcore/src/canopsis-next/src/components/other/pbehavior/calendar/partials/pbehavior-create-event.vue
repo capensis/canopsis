@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { get, cloneDeep, omit } from 'lodash';
+import { get, cloneDeep } from 'lodash';
 import dependentMixin from 'vuetify/es5/mixins/dependent';
 
 import {

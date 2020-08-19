@@ -1,7 +1,13 @@
 import moment from 'moment-timezone';
 import { TIME_UNITS } from '@/constants';
 
-export function convertTimestampToMoment(timestamp) {
+/**
+ * Convert timestamps/Date to moment
+ *
+ * @param {Date|number|moment.Moment} timestamp
+ * @returns {moment.Moment}
+ */
+export const convertTimestampToMoment = (timestamp) => {
   let dateObject;
 
   // If it's unix timestamp in seconds
@@ -12,7 +18,7 @@ export function convertTimestampToMoment(timestamp) {
   }
 
   return dateObject;
-}
+};
 
 /**
  * Convert duration to interval object

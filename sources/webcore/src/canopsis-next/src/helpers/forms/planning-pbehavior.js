@@ -28,7 +28,7 @@ export function pbehaviorToForm(pbehavior = {}, filter = null) {
     tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     comments: addKeyInEntity(cloneDeep(pbehavior.comments || [])),
-    exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])),
+    exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])), // TODO: convert timestamp to Date
   };
 }
 
