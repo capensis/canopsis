@@ -7,7 +7,7 @@
     v-tooltip(v-show="hasFilter", fixed, top)
       v-btn(slot="activator", icon)
         v-icon(color="grey darken-1") info
-      span.pre {{ form.filter.filter | json }}
+      span.pre {{ form.filter | json }}
     v-alert(:value="errors.has('filter')", type="error") {{ errors.first('filter') }}
 </template>
 
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     hasFilter() {
-      return this.form.filter && !isEmpty(this.form.filter.filter);
+      return this.form.filter && !isEmpty(this.form.filter);
     },
   },
   created() {
@@ -53,9 +53,9 @@ export default {
           zIndex: 300,
         },
         config: {
-          filter: this.form.filter,
+          filter: { filter: this.form.filter },
           hiddenFields: ['title'],
-          action: (filter) => {
+          action: ({ filter }) => {
             this.updateField('filter', filter);
             this.$nextTick(() => this.$validator.validate('filter'));
           },

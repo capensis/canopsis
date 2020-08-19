@@ -3,11 +3,10 @@
     v-tab {{ $t('common.description') }}
     v-tab-item
       v-layout.pa-3.secondary.lighten-2(column)
-        v-layout(row)
-          v-text-field.theme--dark(
-            :value="pbehaviorReason.description",
-            disabled
-          )
+        v-flex(xs12, sm10, offset-sm1)
+          v-card
+            v-card-text
+              pre {{ pbehaviorReason.description }}
 </template>
 
 <script>

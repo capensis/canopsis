@@ -20,6 +20,7 @@
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, edit }",
         :calendarEvent="calendarEvent",
+        :filter="filter",
         @close="close",
         @submit="edit",
         @remove="removePbehavior"

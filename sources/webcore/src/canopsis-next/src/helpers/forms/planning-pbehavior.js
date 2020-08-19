@@ -36,7 +36,7 @@ export function formToPbehavior(form, timezone) {
   return {
     ...form,
 
-    reason: '8a48507a-7eba-463f-953f-41b93fce9745', // TODO should be replaced in version 6
+    reason: form.reason._id,
     type: form.type._id,
     comments: removeKeyFromEntity(form.comments),
     exdates: removeKeyFromEntity(form.exdates),

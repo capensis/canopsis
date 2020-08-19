@@ -6,7 +6,7 @@
     :loading="pbehaviorReasonsPending",
     :items="pbehaviorReasons",
     :error-messages="errors.collect('reason')",
-    :return-object="false",
+    return-object,
     name="reason",
     item-text="name",
     item-value="_id"
@@ -25,8 +25,8 @@ export default {
   inject: ['$validator'],
   props: {
     reason: {
-      type: String,
-      required: true,
+      type: [Object, String],
+      default: '',
     },
   },
 };
