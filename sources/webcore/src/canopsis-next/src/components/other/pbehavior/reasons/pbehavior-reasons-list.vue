@@ -52,6 +52,7 @@
 import { omit } from 'lodash';
 
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
+
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 import PbehaviorReasonsListExpandPanel from './partials/pbehavior-reasons-list-expand-panel.vue';
