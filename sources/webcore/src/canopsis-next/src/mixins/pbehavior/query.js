@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { omit, pick } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
@@ -57,6 +57,17 @@ export default {
       }
 
       return query;
+    },
+
+    updateSearchHandler(search) {
+      this.$emit('update:pagination', {
+        ...this.pagination,
+        search,
+      });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
   },
 };

@@ -11,15 +11,16 @@
                 v-card-text
                   planning-types(:params.sync="typesParams")
             template(v-if="hasReadAnyPbehaviorReasonAccess")
-              v-tab(href="#resons") {{ $t('planning.tabs.reason') }}
-              v-tab-item(value="resons")
+              v-tab(href="#reasons") {{ $t('planning.tabs.reason') }}
+              v-tab-item(value="reasons")
                 v-card-text
                   planning-reasons(:params.sync="reasonsParams")
-            v-tab(href="#datesOfExceptions") {{ $t('planning.tabs.datesOfExceptions') }}
-            v-tab-item(value="datesOfExceptions")
-              v-card-text
-                | Dates of exceptions
-    fab-buttons(@create="create", @refresh="refresh")
+            template(v-if="hasReadAnyPbehaviorDateExceptionAccess")
+              v-tab(href="#datesExceptions") {{ $t('planning.tabs.datesExceptions') }}
+              v-tab-item(value="datesExceptions")
+                v-card-text
+                  planning-dates-exceptions(:params.sync="datesExceptionsParams")
+    fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
       span {{ tooltipText }}
 </template>
 
@@ -28,21 +29,25 @@ import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
+import rightsTechnicalPbehaviorDatesExceptionsMixin from '@/mixins/rights/technical/pbehavior-dates-exceptions';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
+import entitiesPbehaviorDatesExceptionsMixin from '@/mixins/entities/pbehavior/dates-exceptions';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
+import PlanningDatesExceptions from '@/components/other/pbehavior/dates-exceptions/planning-dates-exceptions.vue';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export const PLANNING_TABS = {
   types: 'types',
-  resons: 'resons',
-  datesOfExceptions: 'datesOfExceptions',
+  reasons: 'reasons',
+  datesExceptions: 'datesExceptions',
 };
 
 export default {
   components: {
+    PlanningDatesExceptions,
     FabButtons,
     PlanningTypes,
     PlanningReasons,
@@ -50,22 +55,33 @@ export default {
   mixins: [
     rightsTechnicalPbehaviorTypesMixin,
     rightsTechnicalPbehaviorReasonsMixin,
+    rightsTechnicalPbehaviorDatesExceptionsMixin,
     entitiesPbehaviorTypesMixin,
     entitiesPbehaviorReasonsMixin,
+    entitiesPbehaviorDatesExceptionsMixin,
   ],
   data() {
     return {
       activeTab: PLANNING_TABS.types,
       typesParams: {},
       reasonsParams: {},
+      datesExceptionsParams: {},
     };
   },
   computed: {
     tooltipText() {
       return {
         [PLANNING_TABS.types]: this.$t('modals.createPbehaviorType.title'),
-        [PLANNING_TABS.resons]: this.$t('modals.createPbehaviorReason.title'),
-        [PLANNING_TABS.datesOfExceptions]: this.$t('modals.createPbehaviorException.title'),
+        [PLANNING_TABS.reasons]: this.$t('modals.createPbehaviorReason.title'),
+        [PLANNING_TABS.datesExceptions]: this.$t('modals.createPbehaviorDateException.title'),
+      }[this.activeTab];
+    },
+
+    hasAccess() {
+      return {
+        [PLANNING_TABS.types]: this.hasCreateAnyPbehaviorTypeAccess,
+        [PLANNING_TABS.reasons]: this.hasCreateAnyPbehaviorReasonAccess,
+        [PLANNING_TABS.datesExceptions]: this.hasCreateAnyPbehaviorDateExceptionAccess,
       }[this.activeTab];
     },
   },
@@ -75,10 +91,12 @@ export default {
         case PLANNING_TABS.types:
           this.fetchTypesList();
           break;
-        case PLANNING_TABS.resons:
+        case PLANNING_TABS.reasons:
           this.fetchReasonsList();
           break;
-        case PLANNING_TABS.datesOfExceptions:
+        case PLANNING_TABS.datesExceptions:
+          this.fetchDatesExceptionsList();
+          break;
       }
     },
 
@@ -87,10 +105,12 @@ export default {
         case PLANNING_TABS.types:
           this.showCreateTypeModal();
           break;
-        case PLANNING_TABS.resons:
+        case PLANNING_TABS.reasons:
           this.showCreateReasonModal();
           break;
-        case PLANNING_TABS.datesOfExceptions:
+        case PLANNING_TABS.datesExceptions:
+          this.showCreateDateExceptionModal();
+          break;
       }
     },
 
@@ -100,6 +120,10 @@ export default {
 
     fetchReasonsList() {
       this.fetchPbehaviorReasonsList({ params: this.reasonsParams });
+    },
+
+    fetchDatesExceptionsList() {
+      this.fetchPbehaviorDatesExceptionsList({ params: this.datesExceptionsParams });
     },
 
     showCreateTypeModal() {
@@ -121,6 +145,18 @@ export default {
           action: async (data) => {
             await this.createPbehaviorReason({ data });
             await this.fetchReasonsList();
+          },
+        },
+      });
+    },
+
+    showCreateDateExceptionModal() {
+      this.$modals.show({
+        name: MODALS.createPbehaviorDateException,
+        config: {
+          action: async (data) => {
+            await this.createPbehaviorDateException({ data });
+            await this.fetchDatesExceptionsList();
           },
         },
       });

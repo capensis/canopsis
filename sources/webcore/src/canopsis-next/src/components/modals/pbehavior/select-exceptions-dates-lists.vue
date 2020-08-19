@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ $t('modals.selectExceptionsDatesLists.title') }}
       template(slot="text")
-        exceptions-dates-lists(v-model="exceptionDates")
+        choose-exceptions-dates-lists(v-model="exceptionDates")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
@@ -14,20 +14,21 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import ExceptionsDatesLists from '@/components/other/pbehavior/exceptions/exceptions-dates-lists.vue';
+
+import ChooseExceptionsDatesLists from '@/components/other/pbehavior/dates-exceptions/partials/choose-exceptions-dates-lists.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.selectExceptionsDatesLists,
   components: {
-    ExceptionsDatesLists,
+    ChooseExceptionsDatesLists,
     ModalWrapper,
   },
   mixins: [modalInnerMixin],
   data() {
     return {
-      exceptionDates: [],
+      exceptionDates: this.modal.config.exceptions,
     };
   },
   methods: {

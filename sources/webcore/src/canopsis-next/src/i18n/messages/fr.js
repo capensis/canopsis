@@ -1210,6 +1210,14 @@ export default {
         description: 'Description',
       },
     },
+    createPbehaviorDateException: {
+      title: 'Créer une liste d\'exceptions',
+      addDate: 'Ajouter une date',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1703,7 +1711,7 @@ export default {
     },
   },
 
-  pbehaviorExceptions: {
+  pbehaviorDatesExceptions: {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
@@ -1722,7 +1730,7 @@ export default {
     tabs: {
       type: 'Type',
       reason: 'Raison',
-      datesOfExceptions: 'Dates d\'exception',
+      datesExceptions: 'Dates d\'exception',
     },
   },
 
