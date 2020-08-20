@@ -23,7 +23,7 @@
             )
               v-flex(xs12)
                 div.ds-calendar-event(
-                  :style="{ backgroundColor: getStyleColor(details, event) }",
+                  :style="{ backgroundColor: getCalendarEventColor(event.data.total) }",
                   @click="editEvent(event)"
                 )
                   strong {{ event.data.title }}
@@ -34,12 +34,12 @@
 import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment-timezone';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Day, Units, DaySpan } from 'dayspan';
+import { Calendar, Units } from 'dayspan';
 
 import { DATETIME_FORMATS, MODALS, WIDGET_TYPES, COUNTER_GROUPING_TYPES } from '@/constants';
 
 import { generateWidgetByType } from '@/helpers/entities';
-import { getScheduleForSpan } from '@/helpers/dayspan';
+import { convertCounterGroupToEvent, convertEventsToGroupedEvents } from '@/helpers/dayspan';
 
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
@@ -64,10 +64,7 @@ export default {
   data() {
     return {
       pending: false,
-      alarms: [],
-      alarmsCollections: [],
-      groups: [],
-      events: [],
+      counters: [],
       calendar: Calendar.months(),
     };
   },
@@ -76,23 +73,22 @@ export default {
       return this.calendar.type === Units.MONTH ? COUNTER_GROUPING_TYPES.day : COUNTER_GROUPING_TYPES.hour;
     },
 
-    /*    events() {
-      const groupByValue = this.calendar.type === Units.MONTH ? 'day' : 'hour';
+    events() {
+      const events = this.counters.reduce((acc, counter, index) => {
+        const filter = this.query.filters[index] || {};
+        const filterEvents = Object.entries(counter.group)
+          .map(([timestamp, counterGroup]) => convertCounterGroupToEvent({
+            timestamp,
+            counterGroup,
+            filter,
+            grouping: this.grouping,
+            getColor: this.getCalendarEventColor,
+          }));
 
-      if (!this.hasFilters) {
-        return convertAlarmsToEvents({
-          groupByValue,
-          alarms: this.alarms,
-          getColor: this.getCalendarEventColor,
-        });
-      }
+        acc.push(...filterEvents);
 
-      const events = this.alarmsCollections.reduce((acc, alarms, index) => acc.concat(convertAlarmsToEvents({
-        alarms,
-        groupByValue,
-        filter: this.query.filters[index],
-        getColor: this.getCalendarEventColor,
-      })), []);
+        return acc;
+      }, []);
 
       if (this.calendar.type !== Units.MONTH) {
         return convertEventsToGroupedEvents({
@@ -102,14 +98,10 @@ export default {
       }
 
       return events;
-    }, */
+    },
 
     hasMultipleFilters() {
       return get(this.query, 'filters.length', 0) > 1;
-    },
-
-    hasFilters() {
-      return get(this.query, 'filters.length') > 0;
     },
   },
   methods: {
@@ -120,12 +112,6 @@ export default {
     ...counterMapActions({
       fetchCountersListWithoutStore: 'fetchListWithoutStore',
     }),
-
-    getStyleColor(details, calendarEvent) {
-      const past = calendarEvent.schedule.end.isBefore(new Date());
-
-      return this.$dayspan.getStyleColor(details, calendarEvent, past);
-    },
 
     getCalendarEventColor(count) {
       const { criticityLevels, criticityLevelsColors } = this.widget.parameters;
@@ -146,7 +132,9 @@ export default {
     },
 
     editEvent(event) {
-      const { filter, start, end } = event.data;
+      const { data, schedule } = event;
+      const { filter } = data;
+      const { start, end } = schedule;
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const widgetParameters = {
         ...this.widget.parameters.alarmsList,
@@ -160,7 +148,7 @@ export default {
         },
       };
 
-      if (!isEmpty(event.data.meta.filter)) {
+      if (!isEmpty(filter)) {
         widgetParameters.viewFilters = [filter];
         widgetParameters.mainFilter = filter;
       }
@@ -184,58 +172,39 @@ export default {
       this.fetchList();
     },
 
+    getQuery() {
+      const query = omit(this.query, ['filters']);
+
+      query.tstart = this.calendar.filled.start.date.unix();
+      query.tstop = this.calendar.filled.end.date.unix();
+      query.grouping = this.grouping;
+      query.local_timezone = moment.tz.guess();
+
+      return query;
+    },
+
     async fetchList() {
       try {
-        const query = omit(this.query, ['filters', 'considerPbehaviors']);
-
-        query.tstart = this.calendar.start.date.unix();
-        query.tstop = this.calendar.end.date.unix();
-        query.consider_pbehaviors = this.query.considerPbehaviors;
-        query.grouping = this.grouping;
-        query.local_timezone = moment.tz.guess();
+        const query = this.getQuery();
 
         this.pending = true;
         this.serverErrorMessage = null;
 
         if (isEmpty(this.query.filters)) {
-          // const { data: [counter] } = await this.fetchCountersListWithoutStore({
-          //   params: query,
-          // });
+          const { data: [counter] } = await this.fetchCountersListWithoutStore({
+            params: query,
+          });
+
+          this.counters = [counter];
         } else {
-          const results2 = await Promise.all(this.query.filters.map(({ filter }) => this.fetchCountersListWithoutStore({
+          const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchCountersListWithoutStore({
             params: {
               ...query,
               filter,
             },
           })));
 
-          this.events = results2.reduce((acc, { data: [counter] }, index) => {
-            const filter = this.query.filters[index];
-            const filterEvents = Object.entries(counter.group).map(([timestamp, { total }]) => {
-              const startMoment = moment.unix(Number(timestamp));
-              const endMoment = startMoment.clone().endOf(this.grouping);
-              const startDay = new Day(startMoment);
-              const endDay = new Day(endMoment);
-              const daySpan = new DaySpan(startDay, endDay);
-
-              return {
-                data: {
-                  ...this.$dayspan.getDefaultEventDetails(),
-
-                  color: this.getCalendarEventColor(total),
-                  title: total,
-                  description: filter.title,
-                  filter,
-                  total,
-                },
-                schedule: getScheduleForSpan(daySpan),
-              };
-            });
-
-            acc.push(...filterEvents);
-
-            return acc;
-          }, []);
+          this.counters = results.map(({ data: [counter] }) => counter);
         }
       } catch (err) {
         this.serverErrorMessage = err.description || this.$t('errors.statsRequestProblem');

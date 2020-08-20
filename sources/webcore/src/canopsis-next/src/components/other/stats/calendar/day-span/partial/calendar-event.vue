@@ -6,7 +6,7 @@ export default {
   extends: DsCalendarEvent,
   computed: {
     hasPopover() {
-      return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.meta.hasPopover');
+      return !!this.$scopedSlots.eventPopover && get(this.calendarEvent, 'data.hasPopover');
     },
   },
 };

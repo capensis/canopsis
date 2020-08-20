@@ -1,86 +1,9 @@
+import Vue from 'vue';
 import moment from 'moment';
 import { groupBy } from 'lodash';
-import { Day, Schedule, Constants, Op } from 'dayspan';
+import { Day, Schedule, Constants, Op, DaySpan } from 'dayspan';
 
-/**
- * Convert alarms to calendar events
- *
- * @param {Array} alarms
- * @param {string} groupByValue
- * @param {Object} [filter={}]
- * @param {Function} [getColor=() => {}]
- * @returns []
- */
-export function convertAlarmsToEvents({
-  alarms,
-  groupByValue,
-  filter = {},
-  getColor = () => '#fff',
-}) {
-  const groupedAlarms = groupBy(alarms, alarm => moment.unix(alarm.t).startOf(groupByValue).format());
-
-  return Object.keys(groupedAlarms).map((dateString) => {
-    const dateObject = moment(dateString);
-    const startDay = new Day(dateObject);
-    const sum = groupedAlarms[dateString].length;
-
-    return {
-      data: {
-        title: sum,
-        description: filter.title,
-        color: getColor(sum),
-        meta: {
-          sum,
-          filter,
-          tstart: dateObject.unix(),
-          tstop: dateObject.clone().endOf(groupByValue).unix(),
-        },
-      },
-      schedule: new Schedule({
-        on: startDay,
-        times: [startDay.asTime()],
-        duration: 1,
-        durationUnit: 'hours',
-      }),
-    };
-  });
-}
-
-/**
- * Convert calendar events to grouped calendar events
- *
- * @param {Array} alarms
- * @param {string} [groupByValue='hour']
- * @param {Function} [getColor=() => {}]
- * @returns []
- */
-export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', getColor = () => '#fff' }) {
-  const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf(groupByValue).format());
-
-  return Object.keys(groupedEvents).map((dateString) => {
-    const groupedEvent = groupedEvents[dateString];
-
-    if (groupedEvent.length > 1) {
-      const sum = groupedEvent.reduce((acc, event) => acc + event.data.meta.sum, 0);
-
-      return {
-        ...groupedEvent[0],
-
-        data: {
-          title: sum,
-          color: getColor(sum),
-          meta: {
-            sum,
-            hasPopover: true,
-            events: groupedEvent,
-          },
-        },
-      };
-    }
-
-    return groupedEvent[0];
-  });
-}
+import { COUNTER_GROUPING_TYPES } from '@/constants';
 
 /**
  * Get Schedule instance for a span
@@ -102,4 +25,81 @@ export function getScheduleForSpan(span) {
   const durationUnit = isHour ? 'hours' : 'minutes';
 
   return Schedule.forTime(start, start.asTime(), duration, durationUnit);
+}
+
+/**
+ * Convert calendar events to grouped calendar events
+ *
+ * @param {Array} alarms
+ * @param {string} [groupByValue='hour']
+ * @param {Function} [getColor=() => {}]
+ * @returns []
+ */
+export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', getColor = () => '#fff' }) {
+  const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf(groupByValue).format());
+
+  return Object.keys(groupedEvents).map((dateString) => {
+    const groupedEvent = groupedEvents[dateString];
+
+    if (groupedEvent.length > 1) {
+      const total = groupedEvent.reduce((acc, event) => acc + event.data.total, 0);
+
+      return {
+        ...groupedEvent[0],
+
+        data: {
+          total,
+
+          title: total,
+          color: getColor(total),
+          hasPopover: true,
+          events: groupedEvent,
+        },
+      };
+    }
+
+    return groupedEvent[0];
+  });
+}
+
+/**
+ * Convert counter group item to dayspan Event item
+ *
+ * @param {number} timestamp
+ * @param {Object} counterGroup
+ * @param {Object} filter
+ * @param {string} [grouping = COUNTER_GROUPING_TYPES.hour]
+ * @param {Function} [getColor = () => '#fff']
+ * @returns {Event}
+ */
+export function convertCounterGroupToEvent({
+  timestamp,
+  counterGroup,
+  filter,
+  grouping = COUNTER_GROUPING_TYPES.hour,
+  getColor = () => '#fff',
+}) {
+  const { total } = counterGroup;
+  const startMoment = moment.unix(Number(timestamp));
+  const endMoment = startMoment.clone().endOf(grouping);
+  const startDay = new Day(startMoment);
+  const endDay = new Day(endMoment);
+  const daySpan = new DaySpan(startDay, endDay);
+  const schedule = getScheduleForSpan(daySpan);
+
+  schedule.adjustDefinedSpan(true);
+
+  return {
+    schedule,
+
+    data: {
+      ...Vue.$dayspan.getDefaultEventDetails(),
+
+      color: getColor(total),
+      title: total,
+      description: filter.title,
+      filter,
+      total,
+    },
+  };
 }

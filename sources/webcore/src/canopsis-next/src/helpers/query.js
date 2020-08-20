@@ -162,7 +162,7 @@ export function convertStatsCalendarWidgetToQuery(widget) {
   } = widget.parameters;
 
   const query = {
-    considerPbehaviors,
+    consider_pbehaviors: considerPbehaviors,
     filters: filters || [],
   };
 
