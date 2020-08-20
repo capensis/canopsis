@@ -112,6 +112,7 @@ export default {
       return this.$modals.show({
         name: MODALS.confirmation,
         config: {
+          text: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
           action: () => this.close(true),
         },
       });
