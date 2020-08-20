@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
 import entitiesPbehaviorDatesExceptionMixin from '@/mixins/entities/pbehavior/dates-exceptions';
 import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
@@ -59,6 +59,14 @@ export default {
   methods: {
     async fetchList() {
       this.fetchPbehaviorDatesExceptionsList({ params: this.getQuery() });
+    },
+
+    updateSearchHandler(search) {
+      this.$emit('update:pagination', { ...this.pagination, search });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
   },
 };

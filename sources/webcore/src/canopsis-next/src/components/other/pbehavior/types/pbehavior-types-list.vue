@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
@@ -112,6 +114,15 @@ export default {
           sortable: false,
         },
       ];
+    },
+  },
+  methods: {
+    updateSearchHandler(search) {
+      this.$emit('update:pagination', { ...this.pagination, search });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
   },
 };

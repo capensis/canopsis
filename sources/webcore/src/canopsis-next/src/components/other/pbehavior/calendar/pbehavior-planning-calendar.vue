@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { get, omit } from 'lodash';
+import { get, omit, isObject } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
 
@@ -50,6 +50,7 @@ import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES }
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
 import { convertDateToTimestampByTimezone } from '@/helpers/date';
+import { exdatesToRequest } from '@/helpers/forms/planning-pbehavior';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -213,8 +214,8 @@ export default {
           end_at: pbehavior.tstop,
           view_from: (pbehavior.tstart < viewFrom && pbehavior.tstop > viewFrom) ? pbehavior.tstart : viewFrom,
           view_to: (pbehavior.tstop > viewTo && pbehavior.tstart < viewTo) ? pbehavior.tstop : viewTo,
-          exdates: pbehavior.exdates,
-          exceptions: pbehavior.exceptions,
+          exdates: exdatesToRequest(pbehavior.exdates),
+          exceptions: pbehavior.exceptions.map(exception => (isObject(exception) ? exception._id : exception)),
           by_date: this.isCalendarTypeWeek,
         },
       });
