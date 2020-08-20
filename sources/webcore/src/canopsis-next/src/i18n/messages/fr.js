@@ -419,7 +419,7 @@ export default {
     expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modale',
-    entityTemplate: 'Template - Entitées',
+    entityTemplate: 'Template - Entités',
     blockTemplate: 'Template - Tuiles',
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
