@@ -1,5 +1,5 @@
 import sha1 from 'sha1';
-import { get, omit, cloneDeep } from 'lodash';
+import { get, omit, cloneDeep, isObject } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
@@ -673,3 +673,14 @@ export const addKeyInEntity = entities => entities.map(entity => ({
  * @return {Array}
  */
 export const removeKeyFromEntity = entities => entities.map(entity => omit(entity, ['key']));
+
+/**
+ * Get id from entity
+ *
+ * @param {Object} entity
+ * @param {String} entity._id
+ * @param {String} idField
+ * @return {String}
+ */
+export const getIdFromEntity = (entity, idField = '_id') =>
+  (isObject(entity) ? entity[idField] : entity);

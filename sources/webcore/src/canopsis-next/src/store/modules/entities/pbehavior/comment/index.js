@@ -1,5 +1,3 @@
-import qs from 'qs';
-
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 
@@ -7,33 +5,22 @@ export default {
   namespaced: true,
   actions: {
     create(context, { data, pbehaviorId }) {
-      return request.post(API_ROUTES.planning.pbehaviorComments, qs.stringify({
+      return request.post(API_ROUTES.planning.pbehaviorComments, {
         ...data,
-
-        pbehavior_id: pbehaviorId,
-      }), {
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        pbehavior: pbehaviorId,
       });
     },
 
     update(context, { data, pbehaviorId, commentId }) {
-      return request.put(API_ROUTES.planning.pbehaviorComments, qs.stringify({
+      return request.put(API_ROUTES.planning.pbehaviorComments, {
         ...data,
-
         _id: commentId,
-        pbehavior_id: pbehaviorId,
-      }), {
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        pbehavior: pbehaviorId,
       });
     },
 
-    remove(context, { id, pbehaviorId }) {
-      return request.delete(API_ROUTES.planning.pbehaviorComments, {
-        params: {
-          _id: id,
-          pbehavior_id: pbehaviorId,
-        },
-      });
+    remove(context, { id }) {
+      return request.delete(`${API_ROUTES.planning.pbehaviorComments}/${id}`);
     },
   },
 };

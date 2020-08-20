@@ -5,16 +5,35 @@ import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
 import { convertDateToTimestampByTimezone, convertTimestampToMoment } from '@/helpers/date';
-import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
+import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/entities';
 
-const preparePbehaviorType = type => (isObject(type) ? type._id : type);
-
-export const exdatesToRequest = exdates => removeKeyFromEntity(exdates).map(({ type, begin, end }) => ({
-  type: preparePbehaviorType(type),
+/**
+ * Clear exdate entity and convert to request.
+ *
+ * @param {Array} exdates
+ * @return {{end: Number, type: String, begin: Number }[]}
+ */
+export const exdatesToRequest = exdates => exdates.map(({ type, begin, end }) => ({
+  type: getIdFromEntity(type),
   begin: moment(begin).unix(),
   end: moment(end).unix(),
 }));
 
+/**
+ * Convert exceptions to exceptions id array.
+ *
+ * @param {Array} exceptions
+ * @return {String[]}
+ */
+export const exceptionsToRequest = exceptions => exceptions.map(exception => getIdFromEntity(exception));
+
+/**
+ * Convert pbehavior entity to form data.
+ *
+ * @param {Object} pbehavior
+ * @param {String|Object} filter
+ * @return {Object}
+ */
 export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
   let rrule = pbehavior.rrule || null;
 
@@ -41,6 +60,13 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
   };
 };
 
+/**
+ * Convert form to pbehavior entity.
+ *
+ * @param {Object} form
+ * @param {String} timezone
+ * @return {Object}
+ */
 export const formToPbehavior = (form, timezone) => ({
   ...form,
 
@@ -53,6 +79,13 @@ export const formToPbehavior = (form, timezone) => ({
   tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
 });
 
+/**
+ * Convert calendar event to pbehavior form data
+ *
+ * @param {CalendarEvent} calendarEvent
+ * @param {String|Object} filter
+ * @return {Object}
+ */
 export const calendarEventToPbehaviorForm = (calendarEvent, filter) => {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
@@ -66,6 +99,14 @@ export const calendarEventToPbehaviorForm = (calendarEvent, filter) => {
   };
 };
 
+/**
+ * Convert form to calendar event.
+ *
+ * @param {Object} form
+ * @param {CalendarEvent} calendarEvent
+ * @param {String} timezone
+ * @return {CalendarEvent}
+ */
 export const formToCalendarEvent = (form, calendarEvent, timezone) => {
   const span = new DaySpan(calendarEvent.start, calendarEvent.end);
 
@@ -81,11 +122,17 @@ export const formToCalendarEvent = (form, calendarEvent, timezone) => {
   return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
 };
 
+/**
+ * Convert pbehavior to request data.
+ *
+ * @param {Object} pbehavior
+ * @return {Object}
+ */
 export const pbehaviorToRequest = (pbehavior) => {
   const result = omit(pbehavior, ['type', 'reason', 'exdates']);
 
-  result.type = preparePbehaviorType(pbehavior.type);
-  result.reason = isObject(pbehavior.reason) ? pbehavior.reason._id : pbehavior.reason;
+  result.type = getIdFromEntity(pbehavior.type);
+  result.reason = getIdFromEntity(pbehavior.reason);
 
   if (pbehavior.exdates) {
     result.exdates = exdatesToRequest(pbehavior.exdates);

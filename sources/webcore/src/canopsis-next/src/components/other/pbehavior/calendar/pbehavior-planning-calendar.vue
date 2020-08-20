@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { get, omit, isObject } from 'lodash';
+import { get, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
 
@@ -49,8 +49,8 @@ import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES }
 
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
+import { pbehaviorToTimespan } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone } from '@/helpers/date';
-import { exdatesToRequest } from '@/helpers/forms/planning-pbehavior';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -204,21 +204,14 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
-      const viewFrom = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
-      const viewTo = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
-
-      return this.fetchTimespans({
-        data: {
-          rrule: pbehavior.rrule,
-          start_at: pbehavior.tstart,
-          end_at: pbehavior.tstop,
-          view_from: (pbehavior.tstart < viewFrom && pbehavior.tstop > viewFrom) ? pbehavior.tstart : viewFrom,
-          view_to: (pbehavior.tstop > viewTo && pbehavior.tstart < viewTo) ? pbehavior.tstop : viewTo,
-          exdates: exdatesToRequest(pbehavior.exdates),
-          exceptions: pbehavior.exceptions.map(exception => (isObject(exception) ? exception._id : exception)),
-          by_date: this.isCalendarTypeWeek,
-        },
+      const timespan = pbehaviorToTimespan({
+        pbehavior,
+        viewFrom: convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone),
+        viewTo: convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone),
+        byDate: this.isCalendarTypeWeek,
       });
+
+      return this.fetchTimespans({ data: timespan });
     },
 
     /**
