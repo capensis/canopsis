@@ -22,10 +22,10 @@ export function pbehaviorToForm(pbehavior = {}, filter = null) {
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    type: pbehavior.type,
-    reason: pbehavior.reason,
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
+    type: pbehavior.type, // TODO: add cloneDeep
+    reason: pbehavior.reason, // TODO: add cloneDeep
+    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : null,
+    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : null,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     comments: addKeyInEntity(cloneDeep(pbehavior.comments || [])),
     exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])), // TODO: convert timestamp to Date
@@ -37,11 +37,10 @@ export function formToPbehavior(form, timezone) {
     ...form,
 
     reason: '8a48507a-7eba-463f-953f-41b93fce9745', // TODO should be replaced in version 6
-    type: form.type._id,
     comments: removeKeyFromEntity(form.comments),
     exdates: removeKeyFromEntity(form.exdates),
     tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
-    tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
+    tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
   };
 }
 
@@ -54,9 +53,12 @@ export function calendarEventToPbehaviorForm(calendarEvent, filter) {
   };
 
   form.tstart = calendarEvent.start.date.toDate();
-  form.tstop = calendarEvent.schedule.durationUnit === 'days'
-    ? moment(calendarEvent.end.date).subtract(1, 'second').toDate()
-    : calendarEvent.end.date.toDate();
+
+  if (!pbehavior || (pbehavior.tstop)) {
+    form.tstop = calendarEvent.schedule.durationUnit === 'days'
+      ? moment(calendarEvent.end.date).subtract(1, 'second').toDate()
+      : calendarEvent.end.date.toDate();
+  }
 
   return form;
 }
@@ -68,7 +70,12 @@ export function formToCalendarEvent(form, calendarEvent, timezone) {
     ? Schedule.forDay(span.start, span.days(Op.UP))
     : Schedule.forSpan(span);
 
-  const details = { ...calendarEvent.data, pbehavior: formToPbehavior(form, timezone) };
+  const details = {
+    ...calendarEvent.data,
+
+    pbehavior: formToPbehavior(form, timezone),
+  };
+
   const event = Vue.$dayspan.createEvent(details, schedule);
 
   event.id = calendarEvent.event.id;

@@ -31,6 +31,7 @@
               v-validate="tstopRules",
               :value="form.tstop",
               :label="$t('modals.createPbehavior.steps.general.fields.stop')",
+              :clearable="hasPauseType",
               name="tstop",
               @input="updateField('tstop', $event)"
             )
@@ -49,9 +50,10 @@
 </template>
 
 <script>
+import { get } from 'lodash';
 import moment from 'moment-timezone';
 
-import { PAUSE_REASONS, DATETIME_FORMATS } from '@/constants';
+import { PAUSE_REASONS, DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
@@ -79,6 +81,10 @@ export default {
     },
   },
   computed: {
+    hasPauseType() {
+      return get(this.form.type, 'type') === PBEHAVIOR_TYPE_TYPES.pause;
+    },
+
     tstartRules() {
       return {
         required: true,
@@ -87,7 +93,7 @@ export default {
     },
 
     tstopRules() {
-      const rules = { required: true };
+      const rules = { required: !this.hasPauseType };
 
       if (this.form.tstart) {
         rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
