@@ -169,9 +169,6 @@ services:
     mem_reservation: 200m
   webserver:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    build:
-      context: .
-      dockerfile: Dockerfile
     env_file:
       - compose.env
     environment:
