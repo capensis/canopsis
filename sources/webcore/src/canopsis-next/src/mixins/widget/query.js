@@ -60,7 +60,6 @@ export default {
       ]);
 
       const {
-        page,
         tstart,
         tstop,
         limit = PAGINATION_LIMIT,
@@ -80,11 +79,10 @@ export default {
 
       if (this.query.sortKey) {
         query.sort_key = this.query.sortKey;
-        query.sort_dir = this.query.sortDir;
+        query.sort_dir = this.query.sortDir.toLowerCase();
       }
 
       query.limit = limit;
-      query.skip = ((page - 1) * limit) || 0;
 
       return query;
     },

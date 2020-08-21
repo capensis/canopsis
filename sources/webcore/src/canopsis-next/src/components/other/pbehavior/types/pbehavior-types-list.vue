@@ -24,7 +24,7 @@
             v-checkbox-functional(v-model="props.selected", :disabled="!props.item.deletable", primary, hide-details)
           td {{ props.item.name }}
           td
-            span.pbehavior-type-icon
+            span.pbehavior-type-icon(v-if="props.item.icon_name")
               v-icon(color="white", size="18") {{ props.item.icon_name }}
           td {{ props.item.priority }}
           td

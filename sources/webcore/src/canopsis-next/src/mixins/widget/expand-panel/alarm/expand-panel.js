@@ -36,7 +36,7 @@ export default {
     fetchAlarmItemWithParams(alarm, params) {
       const defaultParams = {
         sort_key: 't',
-        sort_dir: 'DESC',
+        sort_dir: 'desc',
         limit: 1,
       };
 

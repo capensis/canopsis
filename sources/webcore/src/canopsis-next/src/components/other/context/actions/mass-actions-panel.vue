@@ -80,7 +80,6 @@ export default {
           filter: {
             _id: { $in: this.itemsIds },
           },
-          afterSubmit: () => this.$popups.success({ text: this.$t('success.default') }),
         },
       });
     },

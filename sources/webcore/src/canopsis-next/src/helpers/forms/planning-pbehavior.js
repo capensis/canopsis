@@ -49,8 +49,8 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    type: pbehavior.type,
-    reason: pbehavior.reason,
+    type: cloneDeep(pbehavior.type),
+    reason: cloneDeep(pbehavior.reason),
     tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
     tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
@@ -70,11 +70,11 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
 export const formToPbehavior = (form, timezone) => ({
   ...form,
 
-  reason: form.reason._id,
-  type: form.type._id,
+  reason: getIdFromEntity(form.reason),
+  type: getIdFromEntity(form.type),
   comments: removeKeyFromEntity(form.comments),
   exdates: exdatesToRequest(form.exdates),
-  exceptions: removeKeyFromEntity(form.exceptions).map(({ _id }) => _id),
+  exceptions: removeKeyFromEntity(form.exceptions).map(getIdFromEntity),
   tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
   tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
 });

@@ -53,13 +53,12 @@ export const API_ROUTES = {
   auth: '/auth',
   currentUser: '/account/me',
   version: '/api/v2/version',
-  alarmList: '/alerts/get-alarms',
+  alarmList: '/api/v4/alarms',
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   watcherng: '/api/v2/watcherng',
   weatherWatcher: '/api/v4/weather-watchers',
-  pbehaviorById: '/api/v2/pbehavior_byeid',
   actions: '/api/v2/actions',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
@@ -107,7 +106,7 @@ export const API_ROUTES = {
     list: '/api/v2/broadcast-message',
     activeList: '/api/v2/broadcast-message/active',
   },
-  counter: '/alerts/get-counters',
+  counter: '/api/v4/alarm-counters',
   playlist: '/api/v2/playlist',
   /**
    * TODO: rename to pbehavior

@@ -74,7 +74,7 @@ export default {
         },
         {
           text: this.$t('pbehaviors.isEnabled'),
-          value: 'isEnabled',
+          value: 'enabled',
         },
         {
           text: this.$t('pbehaviors.begins'),
@@ -86,11 +86,11 @@ export default {
         },
         {
           text: this.$t('pbehaviors.type'),
-          value: 'type_',
+          value: 'type.type',
         },
         {
           text: this.$t('pbehaviors.reason'),
-          value: 'reason',
+          value: 'reason.name',
         },
         {
           text: this.$t('pbehaviors.rrule'),
@@ -124,12 +124,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           pbehaviors: [pbehavior],
-          afterSubmit: () => {
-            this.fetchList();
-            this.$popups.success({
-              text: this.$t('success.default'),
-            });
-          },
+          afterSubmit: this.fetchList,
         },
       });
     },

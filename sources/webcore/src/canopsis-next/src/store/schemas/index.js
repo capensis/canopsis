@@ -16,7 +16,7 @@ export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
 });
 
 export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
-  pbehaviors: [pbehaviorSchema],
+  pbehavior: pbehaviorSchema,
 }, {
   idAttribute: '_id',
   processStrategy: parentProcessStrategy,

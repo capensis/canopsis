@@ -40,7 +40,9 @@
 <script>
 import { pick, mapValues } from 'lodash';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+import { formToPbehavior } from '@/helpers/forms/planning-pbehavior';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -105,20 +107,17 @@ export default {
     async submit() {
       const requests = this.eventsQueue.reduce((acc, event) => {
         if (event.type === EVENT_ENTITY_TYPES.pause) {
-          acc.push(this.createPbehavior({
-            data: event.data,
-            parents: [event.entity],
-            parentsType: ENTITIES_TYPES.entity,
-          }));
+          acc.push(this.createPbehavior({ data: event.data }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
-            if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
-              const data = {
-                ...pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']),
-                tstop: Math.round(Date.now() / 1000),
-              };
-
-              accSecond.push(this.updatePbehavior({ data, id: pbehavior._id }));
+            if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
+              accSecond.push(this.updatePbehavior({
+                data: {
+                  ...formToPbehavior(pbehavior),
+                  tstop: Math.round(Date.now() / 1000),
+                },
+                id: pbehavior._id,
+              }));
             }
 
             return accSecond;
