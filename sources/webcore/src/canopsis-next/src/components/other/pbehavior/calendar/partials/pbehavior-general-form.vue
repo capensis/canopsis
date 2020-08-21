@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { get } from 'lodash';
 import moment from 'moment-timezone';
 
 import { PAUSE_REASONS, DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
@@ -81,7 +82,7 @@ export default {
   },
   computed: {
     hasPauseType() {
-      return this.form.type && this.form.type.type === PBEHAVIOR_TYPE_TYPES.pause;
+      return get(this.form.type, 'type') === PBEHAVIOR_TYPE_TYPES.pause;
     },
 
     tstartRules() {
