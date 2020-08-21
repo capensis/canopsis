@@ -74,7 +74,6 @@ export function formToCalendarEvent(form, calendarEvent, timezone) {
     ...calendarEvent.data,
 
     pbehavior: formToPbehavior(form, timezone),
-    resizable: !!form.tstop, // TODO: see it
   };
 
   const event = Vue.$dayspan.createEvent(details, schedule);

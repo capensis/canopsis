@@ -20,7 +20,7 @@ export default {
     },
 
     canResize() {
-      return !this.$dayspan.readOnly && this.ending;
+      return !this.$dayspan.readOnly && this.ending && !this.calendarEvent.data.withoutResize;
     },
 
     classWithKey() {

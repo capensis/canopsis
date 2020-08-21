@@ -27,7 +27,7 @@
           span.ds-ev-description {{ details.description }}
       span(v-else)
         slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
-      div.ds-calendar-event-resize(v-show="resizable", @mousedown="resizeStartHandler")
+      div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
     slot(
       name="eventPopover",
       v-if="isShownPopover",
@@ -64,10 +64,6 @@ export default {
 
     style() {
       return this.isPlaceholderWithDay ? this.placeholderFullStyles : this.fullStyles;
-    },
-
-    resizable() {
-      return this.canResize && this.calendarEvent.data.resizable !== false;
     },
   },
   methods: {

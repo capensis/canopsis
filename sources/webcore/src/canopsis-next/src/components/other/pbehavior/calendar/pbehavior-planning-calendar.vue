@@ -257,7 +257,7 @@ export default {
             color,
             pbehavior,
             title: pbehavior.name,
-            resizable: !!pbehavior.tstop, // TODO: see it
+            withoutResize: !pbehavior.tstop,
           },
           schedule: getScheduleForSpan(daySpan),
         };
