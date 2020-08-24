@@ -7,20 +7,14 @@
       :error-messages="errors.collect('comment')",
       name="comment"
     )
-    v-select(
-      v-field="form.reason",
-      v-validate="'required'",
-      :label="$t('modals.createPause.reason')",
-      :items="reasons",
-      :error-messages="errors.collect('reason')",
-      name="reason"
-    )
+    pbehavior-reasons-field(v-field="form.reason")
 </template>
 
 <script>
-import { PAUSE_REASONS } from '@/constants';
+import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
 
 export default {
+  components: { PbehaviorReasonsField },
   inject: ['$validator'],
   model: {
     prop: 'form',
@@ -30,11 +24,6 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
-    },
-  },
-  computed: {
-    reasons() {
-      return Object.values(PAUSE_REASONS);
     },
   },
 };

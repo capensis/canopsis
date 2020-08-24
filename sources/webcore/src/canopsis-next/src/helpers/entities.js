@@ -661,7 +661,7 @@ export function getDefaultPlaylist() {
  * @param {Array} entities
  * @return {Array}
  */
-export const addKeyInEntity = entities => entities.map(entity => ({
+export const addKeyInEntity = (entities = []) => entities.map(entity => ({
   ...entity,
   key: uid(),
 }));
@@ -672,7 +672,7 @@ export const addKeyInEntity = entities => entities.map(entity => ({
  * @param {Array} entities
  * @return {Array}
  */
-export const removeKeyFromEntity = entities => entities.map(entity => omit(entity, ['key']));
+export const removeKeyFromEntity = (entities = []) => entities.map(entity => omit(entity, ['key']));
 
 /**
  * Get id from entity

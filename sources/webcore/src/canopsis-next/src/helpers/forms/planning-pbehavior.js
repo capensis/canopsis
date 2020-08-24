@@ -13,7 +13,7 @@ import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/
  * @param {Array} exdates
  * @return {{end: Number, type: String, begin: Number }[]}
  */
-export const exdatesToRequest = exdates => exdates.map(({ type, begin, end }) => ({
+export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
   type: getIdFromEntity(type),
   begin: moment(begin).unix(),
   end: moment(end).unix(),
@@ -25,7 +25,7 @@ export const exdatesToRequest = exdates => exdates.map(({ type, begin, end }) =>
  * @param {Array} exceptions
  * @return {String[]}
  */
-export const exceptionsToRequest = exceptions => exceptions.map(exception => getIdFromEntity(exception));
+export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
 
 /**
  * Convert pbehavior entity to form data.
@@ -70,8 +70,9 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
 export const formToPbehavior = (form, timezone) => ({
   ...form,
 
-  reason: getIdFromEntity(form.reason),
-  type: getIdFromEntity(form.type),
+  enabled: isUndefined(form.enabled) ? true : form.enabled,
+  reason: form.reason,
+  type: form.type,
   comments: removeKeyFromEntity(form.comments),
   exdates: exdatesToRequest(form.exdates),
   exceptions: removeKeyFromEntity(form.exceptions).map(getIdFromEntity),

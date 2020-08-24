@@ -42,7 +42,7 @@ import { pick, mapValues } from 'lodash';
 
 import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import { formToPbehavior } from '@/helpers/forms/planning-pbehavior';
+import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -57,6 +57,7 @@ import WatcherTemplate from './partial/watcher-template.vue';
 export default {
   name: MODALS.watcher,
   components: { WatcherTemplate, ModalWrapper },
+  inject: ['$system'],
   mixins: [
     modalInnerMixin,
     eventActionsMixin,
@@ -107,15 +108,17 @@ export default {
     async submit() {
       const requests = this.eventsQueue.reduce((acc, event) => {
         if (event.type === EVENT_ENTITY_TYPES.pause) {
-          acc.push(this.createPbehavior({ data: event.data }));
+          const pbehavior = pbehaviorToRequest(formToPbehavior(event.data, this.$system.timezone));
+
+          acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
             if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
               accSecond.push(this.updatePbehavior({
-                data: {
-                  ...formToPbehavior(pbehavior),
+                data: pbehaviorToRequest({
+                  ...formToPbehavior(pbehavior, this.$system.timezone),
                   tstop: Math.round(Date.now() / 1000),
-                },
+                }),
                 id: pbehavior._id,
               }));
             }
