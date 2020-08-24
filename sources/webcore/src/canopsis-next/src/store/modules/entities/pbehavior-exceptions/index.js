@@ -4,7 +4,7 @@ import { ENTITIES_TYPES } from '@/constants';
 import request from '@/services/request';
 
 import { createEntityModule } from '@/store/plugins/entities';
-import { pbehaviorDatesExceptionsSchema } from '@/store/schemas';
+import { pbehaviorExceptionsSchema } from '@/store/schemas';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -14,8 +14,8 @@ export const types = {
 
 export default createEntityModule({
   types,
-  route: API_ROUTES.planning.datesExceptions,
-  entityType: ENTITIES_TYPES.pbehaviorDatesExceptions,
+  route: API_ROUTES.planning.exceptions,
+  entityType: ENTITIES_TYPES.pbehaviorExceptions,
   withFetchingParams: true,
 }, {
   state: {
@@ -38,8 +38,8 @@ export default createEntityModule({
 
         const { normalizedData, data } = await dispatch('entities/fetch', {
           params,
-          route: API_ROUTES.planning.datesExceptions,
-          schema: [pbehaviorDatesExceptionsSchema],
+          route: API_ROUTES.planning.exceptions,
+          schema: [pbehaviorExceptionsSchema],
           dataPreparer: d => d.data,
         }, { root: true });
 
@@ -56,7 +56,7 @@ export default createEntityModule({
     },
 
     fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.planning.datesExceptions, { params });
+      return request.get(API_ROUTES.planning.exceptions, { params });
     },
   },
 });

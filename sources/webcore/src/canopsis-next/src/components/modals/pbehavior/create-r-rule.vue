@@ -5,7 +5,7 @@
         span {{ $t('modals.createRrule.title') }}
       template(slot="text")
         r-rule-form(v-model="form.rrule")
-        pbehavior-exception-dates-form(v-if="form.rrule", v-model="form.exdates", :exceptions.sync="form.exceptions")
+        pbehavior-exception-form(v-if="form.rrule", v-model="form.exdates", :exceptions.sync="form.exceptions")
       template(slot="actions")
         v-btn(
           depressed,
@@ -23,7 +23,7 @@
 import { MODALS } from '@/constants';
 
 import RRuleForm from '@/components/forms/rrule.vue';
-import PbehaviorExceptionDatesForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-dates-form.vue';
+import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -36,7 +36,7 @@ export default {
     validator: 'new',
   },
   components: {
-    PbehaviorExceptionDatesForm,
+    PbehaviorExceptionForm,
     RRuleForm,
     ModalWrapper,
   },

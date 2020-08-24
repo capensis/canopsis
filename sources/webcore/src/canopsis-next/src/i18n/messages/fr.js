@@ -1177,7 +1177,7 @@ export default {
     pbehaviorPlanning: {
       title: 'Comportement périodiques',
     },
-    selectExceptionsDatesLists: {
+    selectExceptionsLists: {
       title: 'Choisissez la liste des exceptions',
     },
     createRrule: {
@@ -1211,7 +1211,7 @@ export default {
         description: 'Description',
       },
     },
-    createPbehaviorDateException: {
+    createPbehaviorException: {
       title: 'Créer une liste d\'exceptions',
       addDate: 'Ajouter une date',
       fields: {
@@ -1712,7 +1712,7 @@ export default {
     },
   },
 
-  pbehaviorDatesExceptions: {
+  pbehaviorExceptions: {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
@@ -1731,7 +1731,7 @@ export default {
     tabs: {
       type: 'Type',
       reason: 'Raison',
-      datesExceptions: 'Dates d\'exception',
+      exceptions: 'Dates d\'exception',
     },
   },
 

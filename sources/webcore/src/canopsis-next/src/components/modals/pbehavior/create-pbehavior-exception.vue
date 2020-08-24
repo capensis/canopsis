@@ -2,9 +2,9 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ $t('modals.createPbehaviorDateException.title') }}
+        span {{ $t('modals.createPbehaviorException.title') }}
       template(slot="text")
-        create-pbehavior-date-exception-form(v-model="form")
+        create-pbehavior-exception-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
@@ -13,22 +13,22 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToPbehaviorDateException, pbehaviorDateExceptionToForm } from '@/helpers/forms/dates-exceptions-pbehavior';
+import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 
-import CreatePbehaviorDateExceptionForm from '@/components/other/pbehavior/dates-exceptions/form/create-pbehavior-date-exception-form.vue';
+import CreatePbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/create-pbehavior-exception-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createPbehaviorDateException,
+  name: MODALS.createPbehaviorException,
   $_veeValidate: {
     validator: 'new',
   },
   components: {
-    CreatePbehaviorDateExceptionForm,
+    CreatePbehaviorExceptionForm,
     ModalWrapper,
   },
   mixins: [
@@ -37,7 +37,7 @@ export default {
   ],
   data() {
     return {
-      form: pbehaviorDateExceptionToForm(this.modal.config.pbehaviorDateException),
+      form: pbehaviorExceptionToForm(this.modal.config.pbehaviorException),
     };
   },
   methods: {
@@ -47,7 +47,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            await this.config.action(formToPbehaviorDateException(this.form));
+            await this.config.action(formToPbehaviorException(this.form));
           }
 
           this.$modals.hide();

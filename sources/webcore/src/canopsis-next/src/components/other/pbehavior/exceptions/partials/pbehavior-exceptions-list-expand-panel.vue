@@ -6,13 +6,13 @@
         v-flex(xs12)
           v-card
             v-card-text
-              pre {{ pbehaviorDateException.description }}
+              pre {{ pbehaviorException.description }}
 </template>
 
 <script>
 export default {
   props: {
-    pbehaviorDateException: {
+    pbehaviorException: {
       type: Object,
       default: () => ({}),
     },

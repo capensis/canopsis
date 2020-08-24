@@ -34,7 +34,7 @@ export const ENTITIES_TYPES = {
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
-  pbehaviorDatesExceptions: 'pbehaviorDatesExceptions',
+  pbehaviorExceptions: 'pbehaviorExceptions',
   pbehaviorTypes: 'pbehaviorTypes',
   pbehaviorReasons: 'pbehaviorReasons',
 };
@@ -97,11 +97,11 @@ export const MODALS = {
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
-  selectExceptionsDatesLists: 'select-exceptions-dates-lists',
+  selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
-  createPbehaviorDateException: 'create-pbehavior-date-exception',
+  createPbehaviorException: 'create-pbehavior-exception',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -733,7 +733,7 @@ export const USERS_RIGHTS = {
     planning: `${USER_RIGHTS_PREFIXES.technical.admin}_planning`,
     planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
-    datesExceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningDatesExceptions`,
+    exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,

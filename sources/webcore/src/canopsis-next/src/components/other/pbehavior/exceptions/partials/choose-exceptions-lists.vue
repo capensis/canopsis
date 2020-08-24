@@ -5,9 +5,9 @@
     v-data-table(
       v-field="exceptions",
       :headers="headers",
-      :items="pbehaviorDatesExceptions",
-      :loading="pbehaviorDatesExceptionsPending",
-      :total-items="pbehaviorDatesExceptionsMeta.total_count",
+      :items="pbehaviorExceptions",
+      :loading="pbehaviorExceptionsPending",
+      :total-items="pbehaviorExceptionsMeta.total_count",
       :pagination.sync="query",
       item-key="_id",
       select-all
@@ -22,7 +22,7 @@
 <script>
 import { isEqual, omit } from 'lodash';
 
-import entitiesPbehaviorDatesExceptionMixin from '@/mixins/entities/pbehavior/dates-exceptions';
+import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exceptions';
 import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
@@ -30,7 +30,7 @@ import SearchField from '@/components/forms/fields/search-field.vue';
 export default {
   components: { SearchField },
   mixins: [
-    entitiesPbehaviorDatesExceptionMixin,
+    entitiesPbehaviorExceptionMixin,
     pbehaviorQueryMixin,
   ],
   model: {
@@ -58,7 +58,7 @@ export default {
 
   methods: {
     async fetchList() {
-      this.fetchPbehaviorDatesExceptionsList({ params: this.getQuery() });
+      this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
     },
 
     updateSearchHandler(search) {
