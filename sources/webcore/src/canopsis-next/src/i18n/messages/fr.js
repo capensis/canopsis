@@ -681,6 +681,7 @@ export default {
       success: {
         create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
       },
+      cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
     },
     createPause: {
       title: 'Mettre en pause',

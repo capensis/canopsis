@@ -112,6 +112,7 @@ export default {
       return this.$modals.show({
         name: MODALS.confirmation,
         config: {
+          text: this.$t('modals.createPbehavior.cancelConfirmation'),
           action: () => this.close(true),
         },
       });

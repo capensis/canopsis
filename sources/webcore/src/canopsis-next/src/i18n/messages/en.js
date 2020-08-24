@@ -681,6 +681,7 @@ export default {
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
+      cancelConfirmation: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
     },
     createPause: {
       title: 'Create Pause event',
