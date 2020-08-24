@@ -214,8 +214,4 @@ export default {
   .blinking {
     animation: blink 2s linear infinite;
   }
-
-  .watcherName {
-    width: 100%;
-  }
 </style>
