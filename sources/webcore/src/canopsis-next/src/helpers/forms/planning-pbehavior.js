@@ -76,7 +76,7 @@ export const formToPbehavior = (form, timezone) => ({
   exdates: exdatesToRequest(form.exdates),
   exceptions: removeKeyFromEntity(form.exceptions).map(getIdFromEntity),
   tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
-  tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
+  tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
 });
 
 /**
@@ -89,14 +89,26 @@ export const formToPbehavior = (form, timezone) => ({
 export const calendarEventToPbehaviorForm = (calendarEvent, filter) => {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
-  return {
+  const form = {
     ...pbehaviorToForm(pbehavior, filter),
     ...cachedForm,
-    tstart: calendarEvent.start.date.toDate(),
-    tstop: calendarEvent.schedule.durationUnit === 'days'
-      ? moment(calendarEvent.end.date).subtract(1, 'second').toDate()
-      : calendarEvent.end.date.toDate(),
   };
+
+  form.tstart = calendarEvent.start.date.toDate();
+
+  if (!pbehavior || pbehavior.tstop) {
+    if (calendarEvent.schedule.durationUnit === 'days') {
+      if (calendarEvent.end.date.diff(calendarEvent.start.date, 'days') <= 0) {
+        form.tstop = calendarEvent.start.date.clone().endOf('day').toDate();
+      } else {
+        form.tstop = calendarEvent.end.date.clone().subtract(1, 'second').toDate();
+      }
+    } else {
+      form.tstop = calendarEvent.end.date.toDate();
+    }
+  }
+
+  return form;
 };
 
 /**
@@ -114,7 +126,12 @@ export const formToCalendarEvent = (form, calendarEvent, timezone) => {
     ? Schedule.forDay(span.start, span.days(Op.UP))
     : Schedule.forSpan(span);
 
-  const details = { ...calendarEvent.data, pbehavior: formToPbehavior(form, timezone) };
+  const details = {
+    ...calendarEvent.data,
+
+    pbehavior: formToPbehavior(form, timezone),
+  };
+
   const event = Vue.$dayspan.createEvent(details, schedule);
 
   event.id = calendarEvent.event.id;

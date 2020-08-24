@@ -204,10 +204,22 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
+      const calendarStart = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
+      const calendarEnd = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
+
+      const tstartBeforeCalendarStart = pbehavior.tstart < calendarStart;
+      const tstopAfterCalendarStart = !pbehavior.tstop || (pbehavior.tstop > calendarStart);
+
+      const tstartBeforeCalendarEnd = pbehavior.tstart < calendarEnd;
+      const tstopAfterCalendarEnd = pbehavior.tstop && (pbehavior.tstop > calendarEnd);
+
+      const viewFrom = (tstartBeforeCalendarStart && tstopAfterCalendarStart) ? pbehavior.tstart : calendarStart;
+      const viewTo = (tstartBeforeCalendarEnd && tstopAfterCalendarEnd) ? pbehavior.tstop : calendarEnd;
+
       const timespan = pbehaviorToTimespan({
         pbehavior,
-        viewFrom: convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone),
-        viewTo: convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone),
+        viewFrom,
+        viewTo,
         byDate: this.isCalendarTypeWeek,
       });
 
@@ -243,6 +255,7 @@ export default {
             color,
             pbehavior,
             title: pbehavior.name,
+            withoutResize: !pbehavior.tstop,
           },
           schedule: getScheduleForSpan(daySpan),
         };
@@ -443,7 +456,9 @@ export default {
 
       if (!pbehavior.rrule) {
         const tstart = convertDateToTimestampByTimezone(target.start.date, this.$system.timezone);
-        const tstop = convertDateToTimestampByTimezone(target.end.date, this.$system.timezone);
+        const tstop = pbehavior.tstop
+          ? convertDateToTimestampByTimezone(target.end.date, this.$system.timezone)
+          : null;
 
         await this.updatePbehavior({
           ...pbehavior,
