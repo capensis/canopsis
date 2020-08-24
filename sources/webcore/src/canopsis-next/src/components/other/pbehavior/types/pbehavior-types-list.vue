@@ -4,7 +4,7 @@
       v-flex(xs4)
         search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
       v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', selected)", icon)
+        v-btn(@click="deleteSelectedTypes", icon)
           v-icon delete
     v-data-table(
       v-model="selected",
@@ -21,7 +21,13 @@
       template(slot="items", slot-scope="props")
         tr(@click="props.expanded = !props.expanded")
           td(@click.stop="")
-            v-checkbox-functional(v-model="props.selected", :disabled="!props.item.deletable", primary, hide-details)
+            v-checkbox-functional(
+              v-if="props.item.deletable",
+              v-model="props.selected",
+              primary,
+              hide-details
+            )
+            v-checkbox-functional(v-else, disabled, primary, hide-details)
           td {{ props.item.name }}
           td
             span.pbehavior-type-icon(v-if="props.item.icon_name")
@@ -123,6 +129,10 @@ export default {
 
     clearSearchHandler() {
       this.$emit('update:pagination', omit(this.pagination, ['search']));
+    },
+
+    deleteSelectedTypes() {
+      this.$emit('remove-selected', this.selected.filter(({ deletable }) => deletable));
     },
   },
 };

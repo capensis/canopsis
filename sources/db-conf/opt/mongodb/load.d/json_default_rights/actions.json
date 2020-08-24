@@ -300,6 +300,14 @@
         "type": "CRUD"
     },
     {
+      "_id" : "models_planningReason",
+      "loader_id" : "models_planningReason",
+      "crecord_name": "models_planningReason",
+      "crecord_type" : "action",
+      "desc": "Planning reason",
+      "type": "CRUD"
+    },
+    {
       "_id" : "models_planningDatesExceptions",
       "loader_id" : "models_planningDatesExceptions",
       "crecord_name": "models_planningDatesExceptions",
