@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import moment from 'moment-timezone';
 import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
@@ -22,10 +21,10 @@ export function pbehaviorToForm(pbehavior = {}, filter = null) {
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    type: pbehavior.type,
-    reason: pbehavior.reason,
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
+    type: pbehavior.type, // TODO: add cloneDeep
+    reason: pbehavior.reason, // TODO: add cloneDeep
+    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : null,
+    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : null,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     comments: addKeyInEntity(cloneDeep(pbehavior.comments || [])),
     exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])), // TODO: convert timestamp to Date
@@ -41,7 +40,7 @@ export function formToPbehavior(form, timezone) {
     comments: removeKeyFromEntity(form.comments),
     exdates: removeKeyFromEntity(form.exdates),
     tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
-    tstop: convertDateToTimestampByTimezone(form.tstop, timezone),
+    tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
   };
 }
 
@@ -54,9 +53,18 @@ export function calendarEventToPbehaviorForm(calendarEvent, filter) {
   };
 
   form.tstart = calendarEvent.start.date.toDate();
-  form.tstop = calendarEvent.schedule.durationUnit === 'days'
-    ? moment(calendarEvent.end.date).subtract(1, 'second').toDate()
-    : calendarEvent.end.date.toDate();
+
+  if (!pbehavior || pbehavior.tstop) {
+    if (calendarEvent.schedule.durationUnit === 'days') {
+      if (calendarEvent.end.date.diff(calendarEvent.start.date, 'days') <= 0) {
+        form.tstop = calendarEvent.start.date.clone().endOf('day').toDate();
+      } else {
+        form.tstop = calendarEvent.end.date.clone().subtract(1, 'second').toDate();
+      }
+    } else {
+      form.tstop = calendarEvent.end.date.toDate();
+    }
+  }
 
   return form;
 }
@@ -68,7 +76,12 @@ export function formToCalendarEvent(form, calendarEvent, timezone) {
     ? Schedule.forDay(span.start, span.days(Op.UP))
     : Schedule.forSpan(span);
 
-  const details = { ...calendarEvent.data, pbehavior: formToPbehavior(form, timezone) };
+  const details = {
+    ...calendarEvent.data,
+
+    pbehavior: formToPbehavior(form, timezone),
+  };
+
   const event = Vue.$dayspan.createEvent(details, schedule);
 
   event.id = calendarEvent.event.id;

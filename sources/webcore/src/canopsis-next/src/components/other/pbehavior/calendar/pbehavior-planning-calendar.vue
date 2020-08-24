@@ -203,16 +203,25 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
-      const viewFrom = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
-      const viewTo = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
+      const calendarStart = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
+      const calendarEnd = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
+
+      const tstartBeforeCalendarStart = pbehavior.tstart < calendarStart;
+      const tstopAfterCalendarStart = !pbehavior.tstop || (pbehavior.tstop > calendarStart);
+
+      const tstartBeforeCalendarEnd = pbehavior.tstart < calendarEnd;
+      const tstopAfterCalendarEnd = pbehavior.tstop && (pbehavior.tstop > calendarEnd);
+
+      const viewFrom = (tstartBeforeCalendarStart && tstopAfterCalendarStart) ? pbehavior.tstart : calendarStart;
+      const viewTo = (tstartBeforeCalendarEnd && tstopAfterCalendarEnd) ? pbehavior.tstop : calendarEnd;
 
       return this.fetchTimespans({
         data: {
           rrule: pbehavior.rrule,
           start_at: pbehavior.tstart,
           end_at: pbehavior.tstop,
-          view_from: (pbehavior.tstart < viewFrom && pbehavior.tstop > viewFrom) ? pbehavior.tstart : viewFrom,
-          view_to: (pbehavior.tstop > viewTo && pbehavior.tstart < viewTo) ? pbehavior.tstop : viewTo,
+          view_from: viewFrom,
+          view_to: viewTo,
           exdates: pbehavior.exdates,
           exceptions: pbehavior.exceptions,
           by_date: this.isCalendarTypeWeek,
@@ -249,6 +258,7 @@ export default {
             color,
             pbehavior,
             title: pbehavior.name,
+            withoutResize: !pbehavior.tstop,
           },
           schedule: getScheduleForSpan(daySpan),
         };
@@ -449,7 +459,9 @@ export default {
 
       if (!pbehavior.rrule) {
         const tstart = convertDateToTimestampByTimezone(target.start.date, this.$system.timezone);
-        const tstop = convertDateToTimestampByTimezone(target.end.date, this.$system.timezone);
+        const tstop = pbehavior.tstop
+          ? convertDateToTimestampByTimezone(target.end.date, this.$system.timezone)
+          : null;
 
         await this.updatePbehavior({
           ...pbehavior,
