@@ -101,7 +101,6 @@ export const API_ROUTES = {
   sessionTracePath: '/api/v2/session_tracepath',
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
-  pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
   dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
   broadcastMessage: {
@@ -120,6 +119,7 @@ export const API_ROUTES = {
     pbehaviors: '/api/v4/pbehaviors',
     pbehaviorComments: '/api/v4/pbehavior-comments',
     pbehaviorById: '/api/v4/entities/pbehaviors',
+    reasons: '/api/v4/pbehavior-reasons',
   },
 };
 

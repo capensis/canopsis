@@ -1,13 +1,13 @@
 <template lang="pug">
   v-card-text
-    planning-types-list(
-      :pbehavior-types="pbehaviorTypes",
-      :pending="pbehaviorTypesPending",
-      :totalItems="pbehaviorTypesMeta.total_count",
+    planning-reasons-list(
+      :pbehavior-reasons="pbehaviorReasons",
+      :pending="pbehaviorReasonsPending",
+      :totalItems="pbehaviorReasonsMeta.total_count",
       :pagination.sync="pagination",
-      @remove-selected="showRemoveSelectedPbehaviorTypeModal",
-      @remove="showRemovePbehaviorTypeModal",
-      @edit="showEditPbehaviorTypeModal"
+      @remove-selected="showRemoveSelectedPbehaviorReasonModal",
+      @remove="showRemovePbehaviorReasonModal",
+      @edit="showEditPbehaviorReasonModal"
     )
 </template>
 
@@ -16,17 +16,17 @@ import { isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
-import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
+import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
+import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
-import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
+import PlanningReasonsList from './pbehavior-reasons-list.vue';
 
 export default {
-  components: { PlanningTypesList },
+  components: { PlanningReasonsList },
   mixins: [
-    rightsTechnicalPbehaviorTypesMixin,
-    entitiesPbehaviorTypesMixin,
+    rightsTechnicalPbehaviorReasonsMixin,
+    entitiesPbehaviorReasonsMixin,
     pbehaviorQueryMixin,
   ],
   props: {
@@ -49,26 +49,26 @@ export default {
   },
   methods: {
     fetchList() {
-      this.fetchPbehaviorTypesList({ params: this.getQuery() });
+      this.fetchPbehaviorReasonsList({ params: this.getQuery() });
     },
 
-    async tryRemovePbehaviorType(pbehaviorTypeId) {
+    async tryRemovePbehaviorReason(pbehavioReasonId) {
       try {
-        await this.removePbehaviorType({ id: pbehaviorTypeId });
+        await this.removePbehaviorReason({ id: pbehavioReasonId });
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },
 
-    showEditPbehaviorTypeModal(pbehaviorType) {
+    showEditPbehaviorReasonModal(pbehaviorReason) {
       this.$modals.show({
-        name: MODALS.createPbehaviorType,
+        name: MODALS.createPbehaviorReason,
         config: {
-          pbehaviorType,
+          pbehaviorReason,
           action: async (newPbehaviorType) => {
-            await this.updatePbehaviorType({
+            await this.updatePbehaviorReason({
               data: newPbehaviorType,
-              id: pbehaviorType._id,
+              id: pbehaviorReason._id,
             });
             await this.fetchList();
           },
@@ -76,24 +76,24 @@ export default {
       });
     },
 
-    showRemovePbehaviorTypeModal(pbehaviorTypeId) {
+    showRemovePbehaviorReasonModal(pbehaviorReasonId) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await this.tryRemovePbehaviorType(pbehaviorTypeId);
+            await this.tryRemovePbehaviorReason(pbehaviorReasonId);
             await this.fetchList();
           },
         },
       });
     },
 
-    showRemoveSelectedPbehaviorTypeModal(selected) {
+    showRemoveSelectedPbehaviorReasonModal(selected) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorType(id)));
+            await Promise.all(selected.map(({ _id: id }) => this.tryRemovePbehaviorReason(id)));
 
             await this.fetchList();
             this.selected = [];

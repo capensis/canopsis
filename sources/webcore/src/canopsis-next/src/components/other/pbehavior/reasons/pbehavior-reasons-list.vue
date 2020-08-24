@@ -3,13 +3,13 @@
     v-layout(row, wrap)
       v-flex(xs4)
         search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
-      v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selected.length", xs4)
-        v-btn(@click="deleteSelectedTypes", icon)
+      v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && selected.length", xs4)
+        v-btn(@click="deleteSelectedResons", icon)
           v-icon delete
     v-data-table(
       v-model="selected",
       :headers="headers",
-      :items="pbehaviorTypes",
+      :items="pbehaviorReasons",
       :loading="pending",
       :total-items="totalItems",
       :pagination="pagination",
@@ -30,54 +30,47 @@
             v-checkbox-functional(v-else, disabled, primary, hide-details)
           td {{ props.item.name }}
           td
-            span.pbehavior-type-icon
-              v-icon(color="white", size="18") {{ props.item.icon_name }}
-          td {{ props.item.priority }}
-          td
             v-layout
-              v-tooltip(bottom, :disabled="props.item.editable")
-                v-btn.mx-0(
-                  slot="activator",
-                  v-if="hasUpdateAnyPbehaviorTypeAccess",
-                  :disabled="!props.item.editable",
-                  icon,
-                  small,
-                  @click.stop="$emit('edit', props.item)"
-                )
-                  v-icon edit
-                span {{ $t('pbehaviorTypes.defaultType') }}
+              v-btn.mx-0(
+                slot="activator",
+                v-if="hasUpdateAnyPbehaviorReasonAccess",
+                icon,
+                small,
+                @click.stop="$emit('edit', props.item)"
+              )
+                v-icon edit
               v-tooltip(bottom, :disabled="props.item.deletable")
                 v-btn.mx-0(
                   slot="activator",
-                  v-if="hasDeleteAnyPbehaviorTypeAccess",
+                  v-if="hasDeleteAnyPbehaviorReasonAccess",
                   :disabled="!props.item.deletable",
                   icon,
                   small,
                   @click.stop="$emit('remove', props.item._id)"
                 )
                   v-icon(color="error") delete
-                span {{ $t('pbehaviorTypes.usingType') }}
+                span {{ $t('pbehaviorReasons.usingReason') }}
       template(slot="expand", slot-scope="props")
-        pbehavior-types-list-expand-panel(:pbehaviorType="props.item")
+        pbehavior-reasons-list-expand-panel(:pbehaviorReason="props.item")
 </template>
 
 <script>
 import { omit } from 'lodash';
 
-import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
+import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 
-import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
+import PbehaviorReasonsListExpandPanel from './partials/pbehavior-reasons-list-expand-panel.vue';
 
 export default {
   components: {
     SearchField,
-    PbehaviorTypesListExpandPanel,
+    PbehaviorReasonsListExpandPanel,
   },
-  mixins: [rightsTechnicalPbehaviorTypesMixin],
+  mixins: [rightsTechnicalPbehaviorReasonsMixin],
   props: {
-    pbehaviorTypes: {
+    pbehaviorReasons: {
       type: Array,
       required: true,
     },
@@ -107,15 +100,6 @@ export default {
           value: 'name',
         },
         {
-          text: this.$t('common.icon'),
-          value: 'icon_name',
-          sortable: false,
-        },
-        {
-          text: this.$t('common.priority'),
-          value: 'priority',
-        },
-        {
           text: this.$t('common.actionsLabel'),
           sortable: false,
         },
@@ -134,7 +118,7 @@ export default {
       this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
 
-    deleteSelectedTypes() {
+    deleteSelectedResons() {
       this.$emit('remove-selected', this.selected.filter(({ deletable }) => deletable));
     },
   },
@@ -142,12 +126,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .pbehavior-type-icon {
-    display: inline-flex;
-    padding: 2px 10px;
-    border-radius: 10px;
-    background: #17ffff;
-  }
   .item-checkbox {
     display: inline-block;
   }

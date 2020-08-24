@@ -36,6 +36,7 @@ export const ENTITIES_TYPES = {
   playlist: 'playlist',
   pbehaviorException: 'pbehaviorException',
   pbehaviorTypes: 'pbehaviorTypes',
+  pbehaviorReasons: 'pbehaviorReasons',
 };
 
 export const MODALS = {
@@ -99,6 +100,7 @@ export const MODALS = {
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
+  createPbehaviorReason: 'create-pbehavior-reason',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -728,7 +730,8 @@ export const USERS_RIGHTS = {
     broadcastMessage: `${USER_RIGHTS_PREFIXES.technical.admin}_broadcastMessage`,
     playlist: `${USER_RIGHTS_PREFIXES.technical.admin}_playlist`,
     planning: `${USER_RIGHTS_PREFIXES.technical.admin}_planning`,
-    type: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
+    planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
+    planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,

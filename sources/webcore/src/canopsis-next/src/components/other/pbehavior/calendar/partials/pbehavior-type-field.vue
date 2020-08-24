@@ -26,7 +26,7 @@ export default {
   props: {
     value: {
       type: [Object, String],
-      required: false,
+      default: '',
     },
     name: {
       type: String,

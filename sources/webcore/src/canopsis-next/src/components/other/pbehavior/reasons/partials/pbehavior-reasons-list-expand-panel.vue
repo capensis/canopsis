@@ -6,20 +6,13 @@
         v-flex(xs12)
           v-card
             v-card-text
-              pre {{ pbehaviorType.description }}
-    v-tab {{ $t('common.type') }}
-    v-tab-item
-      v-layout.pa-3.secondary.lighten-2(column)
-        v-flex(xs12)
-          v-card
-            v-card-text
-              pre {{ pbehaviorType.type }}
+              pre {{ pbehaviorReason.description }}
 </template>
 
 <script>
 export default {
   props: {
-    pbehaviorType: {
+    pbehaviorReason: {
       type: Object,
       default: () => ({}),
     },

@@ -2,9 +2,9 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ $t('modals.createPbehaviorType.title') }}
+        span {{ $t('modals.createPbehaviorReason.title') }}
       template(slot="text")
-        create-type-form(v-model="form")
+        create-pbehavior-reason-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
@@ -13,22 +13,22 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type-pbehavior';
+import { pbehaviorReasonToForm } from '@/helpers/forms/reason-pbehavior';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 
-import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
+import CreatePbehaviorReasonForm from '@/components/other/pbehavior/reasons/form/create-pbehavior-reason-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createPbehaviorType,
+  name: MODALS.createPbehaviorReason,
   $_veeValidate: {
     validator: 'new',
   },
   components: {
-    CreateTypeForm,
+    CreatePbehaviorReasonForm,
     ModalWrapper,
   },
   mixins: [
@@ -37,7 +37,7 @@ export default {
   ],
   data() {
     return {
-      form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
+      form: pbehaviorReasonToForm(this.modal.config.pbehaviorReason),
     };
   },
   methods: {
@@ -47,7 +47,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            await this.config.action(formToPbehaviorType(this.form));
+            await this.config.action(this.form);
           }
 
           this.$modals.hide();

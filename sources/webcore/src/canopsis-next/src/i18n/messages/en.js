@@ -1204,6 +1204,13 @@ export default {
         all: 'All the periods',
       },
     },
+    createPbehaviorReason: {
+      title: 'Create reason',
+      fields: {
+        name: 'Name',
+        description: 'Description',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1705,6 +1712,10 @@ export default {
   pbehaviorTypes: {
     usingType: 'Type is using, because cannot be deleted',
     defaultType: 'Type is default, because cannot be edited',
+  },
+
+  pbehaviorReasons: {
+    usingReason: 'Reason is using, because cannot be deleted',
   },
 
   planning: {

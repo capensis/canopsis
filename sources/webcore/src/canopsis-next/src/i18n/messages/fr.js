@@ -1204,6 +1204,13 @@ export default {
         all: 'Toutes les périodes',
       },
     },
+    createPbehaviorReason: {
+      title: 'Créer un reason',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1706,6 +1713,10 @@ export default {
   pbehaviorTypes: {
     usingType: 'Le type utilise, car ne peut pas être supprimé',
     defaultType: 'Le type est par défaut, car ne peut pas être modifié',
+  },
+
+  pbehaviorReasons: {
+    usingReason: 'La raison utilise, car ne peut pas être supprimée',
   },
 
   planning: {
