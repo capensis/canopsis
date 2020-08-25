@@ -7,7 +7,7 @@
         dark,
         @click="showPbehaviorsListModal"
       )
-        v-icon(small) edit
+        v-icon(small) list
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
 </template>
