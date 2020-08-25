@@ -1,4 +1,4 @@
-import { get, isFunction, isNumber, isObject, unescape } from 'lodash';
+import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
@@ -305,4 +305,72 @@ export function divideHelper(a, b) {
   }
 
   return a / b;
+}
+
+/**
+ * Capitalize the first word in a string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function capitalizeHelper(str) {
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Capitalize all words in a string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function capitalizeAllHelper(str) {
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.replace(/\w\S*/g, capitalizeHelper);
+}
+
+/**
+ * Lowercase all of characters in a string
+ *
+ * Example: {{lowercase 'test'}}
+ *
+ * @param {string|Object} str
+ * @returns {string}
+ */
+export function lowercaseHelper(str) {
+  if (isObject(str) && str.fn) {
+    return str.fn(this).toLowerCase();
+  }
+
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.toLowerCase();
+}
+
+/**
+ * Uppercase all of characters in a string
+ *
+ * Example: {{uppercase 'test'}}
+ *
+ * @param {string|Object} str
+ * @returns {string}
+ */
+export function uppercaseHelper(str) {
+  if (isObject(str) && str.fn) {
+    return str.fn(this).toUpperCase();
+  }
+
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.toUpperCase();
 }
