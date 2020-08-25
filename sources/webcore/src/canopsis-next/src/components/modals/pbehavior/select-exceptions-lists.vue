@@ -30,7 +30,7 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
-      exceptions: cloneDeep(this.modal.config.exceptions),
+      exceptions: this.modal.config.exceptions ? cloneDeep(this.modal.config.exceptions) : [],
     };
   },
   methods: {
