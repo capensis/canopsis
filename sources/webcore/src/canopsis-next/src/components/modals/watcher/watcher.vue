@@ -13,7 +13,6 @@
             :modalTemplate="config.modalTemplate",
             :entityTemplate="config.entityTemplate",
             :itemsPerPage="config.itemsPerPage",
-            :pagination.sync="pagination",
             @add:event="addEventToQueue"
           )
       v-fade-transition
@@ -50,7 +49,6 @@ import submittableMixin from '@/mixins/submittable';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
-import queryWatcherEntityMixin from '@/mixins/watcher/query';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -64,7 +62,6 @@ export default {
     modalInnerMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
-    queryWatcherEntityMixin,
     entitiesWatcherEntityMixin,
     submittableMixin(),
   ],

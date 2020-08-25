@@ -17,6 +17,7 @@ import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import { PAGINATION_LIMIT } from '@/config';
+
 import { CRUD_ACTIONS, MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -49,10 +50,6 @@ export default {
       default: '',
     },
     itemsPerPage: {
-      type: Number,
-      default: PAGINATION_LIMIT,
-    },
-    pagination: {
       type: Number,
       default: PAGINATION_LIMIT,
     },
@@ -95,6 +92,7 @@ export default {
     addEventToQueue(event) {
       this.$emit('add:event', event);
     },
+
     showPbehaviorsListModal() {
       this.$modals.show({
         name: MODALS.pbehaviorList,
