@@ -63,7 +63,7 @@ def exports(ws):
 
         return result
 
-    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter', 'search', 'active_columns'])
+    @route(ws.application.post, payload=['limit', 'start', 'sort', '_filter', 'search', 'active_columns', 'with_name'])
     def context(context=None,
                 _filter=None,
                 search='',
@@ -71,7 +71,8 @@ def exports(ws):
                 limit=0,
                 start=0,
                 sort=None,
-                active_columns=None):
+                active_columns=None,
+                with_name=False):
         query = {}
         if _filter is not None:
             query.update(_filter)
@@ -110,7 +111,8 @@ def exports(ws):
             limit=limit,
             start=start,
             sort=sort,
-            with_count=True
+            with_count=True,
+            with_name=with_name
         )
 
         return data, count

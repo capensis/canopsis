@@ -701,7 +701,8 @@ class ContextGraph(object):
                      start=0,
                      sort=False,
                      with_count=False,
-                     with_links=False):
+                     with_links=False,
+                     with_name=False):
         """
         Retreives entities matching the query and the projection.
 
@@ -714,6 +715,7 @@ class ContextGraph(object):
         :param bool with_count: If True (False by default), add count to
             the result
         :param bool with_links: If True (False by default), add builded links
+        :param bool with_name: iF True(False by default), add impact/depends name
 
         :return: a list of entities
         :rtype: list of dict elements
@@ -730,7 +732,8 @@ class ContextGraph(object):
             skip=start,
             sort=sort,
             projection=projection,
-            with_count=with_count
+            with_count=with_count,
+            with_name=with_name
         )
 
         if with_count:
