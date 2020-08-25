@@ -412,11 +412,11 @@ Utiliser la concaténation dans le helper [request](#helper-request) pour bâtir
 {{lowercase "chaine1"}}
 ```
 
-Ce helper attend en paramètre une chaîne de caractères et la renvoie en minuscule
+Ce helper attend en paramètre une chaîne de caractères et la renvoie en minuscule.
 
 #### Exemple d'utilisation du helper `lowercase`
 
-Afficher la chaîne "CHAINE" en minuscule
+Afficher la chaîne "CHAINE" en minuscule :
 
 ```handlebars
 {{lowercase "CHAINE"}}
@@ -428,11 +428,11 @@ Afficher la chaîne "CHAINE" en minuscule
 {{uppercase "chaine1"}}
 ```
 
-Ce helper attend en paramètre une chaîne de caractères et la renvoie en majuscule
+Ce helper attend en paramètre une chaîne de caractères et la renvoie en majuscule.
 
 #### Exemple d'utilisation du helper `uppercase`
 
-Afficher la chaîne "chaine" en majuscule
+Afficher la chaîne "chaine" en majuscule :
 
 ```handlebars
 {{uppercase "chaine"}}
@@ -444,11 +444,11 @@ Afficher la chaîne "chaine" en majuscule
 {{capitalize "chaine1"}}
 ```
 
-Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre en majuscule
+Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre en majuscule.
 
 #### Exemple d'utilisation du helper `capitalize`
 
-Ajouter une majuscule sur la première lettre de la chaîne "chaine"
+Ajouter une majuscule sur la première lettre de la chaîne "chaine" :
 
 ```handlebars
 {{capitalize "chaine"}}
@@ -460,14 +460,14 @@ Ajouter une majuscule sur la première lettre de la chaîne "chaine"
 {{capitalize-all "chaine1 chaine2 chaine3"}}
 ```
 
-Ce helper attend en paramètre une chaîne de caractères et tranforme la première lettre de chaque mot en majuscule
+Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre de chaque mot en majuscule.
 
 #### Exemple d'utilisation du helper `capitalize-all`
 
-Ajouter une majuscule sur la première lettre de chaque mot de la chaîne "chaine1 chaine2 chaine3"
+Ajouter une majuscule sur la première lettre de chaque mot de la chaîne "mot1 mot2 mot3" :
 
 ```handlebars
-{{capitalize-all "chaine1 chaine2 chaine3"}}
+{{capitalize-all "mot1 mot2 mot3"}}
 ```
 
 
