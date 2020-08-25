@@ -95,7 +95,7 @@ export default {
 
       if (isValid) {
         this.form.author = this.currentUser._id;
-
+        console.log(this.form, this.calendarEvent, this.$system.timezone);
         const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent, this.$system.timezone);
 
         this.$emit('submit', calendarEvent);
