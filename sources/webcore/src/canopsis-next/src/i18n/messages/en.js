@@ -219,6 +219,7 @@ export default {
     loginWithCAS: 'Login with CAS',
     documentation: 'Documentation',
     forum: 'Forum',
+    website: 'Canopsis.com',
     connectionProtocols: 'Connection protocols',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
