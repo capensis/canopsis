@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -28,7 +30,7 @@ export default {
   mixins: [modalInnerMixin],
   data() {
     return {
-      exceptionDates: this.modal.config.exceptions,
+      exceptionDates: this.modal.config.exceptions ? cloneDeep(this.modal.config.exceptions) : [],
     };
   },
   methods: {
