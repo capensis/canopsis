@@ -52,6 +52,10 @@ export default {
       type: Number,
       default: PAGINATION_LIMIT,
     },
+    pagination: {
+      type: Number,
+      default: PAGINATION_LIMIT,
+    },
   },
   asyncComputed: {
     compiledTemplate: {
@@ -74,13 +78,13 @@ export default {
 
       return new Handlebars.SafeString(`
         <watcher-entities-wrapper
-            :watcher="watcher"
-            :watcher-entities="watcherEntities"
-            :template="entityTemplate"
-            :items-per-page="itemsPerPage"
-            entity-name-field="${entityNameField}"
-            @add:event="addEventToQueue"
-          ></watcher-entities-wrapper>
+          :watcher="watcher"
+          :watcher-entities="watcherEntities"
+          :template="entityTemplate"
+          :items-per-page="itemsPerPage"
+          entity-name-field="${entityNameField}"
+          @add:event="addEventToQueue"
+        ></watcher-entities-wrapper>
       `);
     });
   },
