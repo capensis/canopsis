@@ -1,15 +1,15 @@
 <template lang="pug">
   div
     v-layout(row)
-      search-field(@submit="handleSearch", @clear="handleSearchClear")
+      search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
     v-data-table(
       v-field="exceptions",
       :headers="headers",
-      :items="pbehaviorExceptions",
-      :loading="pbehaviorExceptionsPending",
-      :total-items="pbehaviorExceptionsMeta.total_count",
+      :items="pbehaviorDatesExceptions",
+      :loading="pbehaviorDatesExceptionsPending",
+      :total-items="pbehaviorDatesExceptionsMeta.total_count",
       :pagination.sync="query",
-      item-key="id",
+      item-key="_id",
       select-all
     )
       template(slot="items", slot-scope="props")
@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
-import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exception';
+import entitiesPbehaviorDatesExceptionMixin from '@/mixins/entities/pbehavior/dates-exceptions';
 import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
@@ -30,7 +30,7 @@ import SearchField from '@/components/forms/fields/search-field.vue';
 export default {
   components: { SearchField },
   mixins: [
-    entitiesPbehaviorExceptionMixin,
+    entitiesPbehaviorDatesExceptionMixin,
     pbehaviorQueryMixin,
   ],
   model: {
@@ -58,7 +58,15 @@ export default {
 
   methods: {
     async fetchList() {
-      this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
+      this.fetchPbehaviorDatesExceptionsList({ params: this.getQuery() });
+    },
+
+    updateSearchHandler(search) {
+      this.$emit('update:pagination', { ...this.pagination, search });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
   },
 };

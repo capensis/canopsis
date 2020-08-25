@@ -308,6 +308,14 @@
       "type": "CRUD"
     },
     {
+      "_id" : "models_planningDatesExceptions",
+      "loader_id" : "models_planningDatesExceptions",
+      "crecord_name": "models_planningDatesExceptions",
+      "crecord_type" : "action",
+      "desc": "Planning dates exceptions",
+      "type": "CRUD"
+    },
+    {
         "_id" : "models_serie",
         "loader_id" : "models_serie",
         "crecord_name": "models_serie",

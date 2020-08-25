@@ -1,7 +1,5 @@
 <template lang="pug">
   div
-    h3.my-3.grey--text {{ $t('pbehaviorDatesExceptions.title') }}
-    v-divider
     v-layout.mt-3(row)
       v-flex(xs12)
         pbehavior-exception-date-field(
@@ -12,25 +10,23 @@
         )
     v-layout(row)
       v-flex
-        v-btn.ml-0(outline, @click="addExceptionDate") {{ $t('pbehaviorDatesExceptions.create') }}
-      v-flex
-        v-btn.mr-0(outline, @click="showSelectExceptionDatesModal") {{ $t('pbehaviorDatesExceptions.choose') }}
+        v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorDateException.addDate') }}
+    v-alert(:value="errors.has('exdates')", type="error") {{ errors.first('exdates') }}
 </template>
 
 <script>
 import moment from 'moment';
 
-import { MODALS } from '@/constants';
-
 import uid from '@/helpers/uid';
 
 import formArrayMixin from '@/mixins/form/array';
 
-import PbehaviorExceptionDateField from './pbehavior-exception-date-field.vue';
+import PbehaviorExceptionDateField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-date-field.vue';
 
 export default {
   components: { PbehaviorExceptionDateField },
   mixins: [formArrayMixin],
+  inject: ['$validator'],
   model: {
     prop: 'exdates',
     event: 'input',
@@ -40,21 +36,17 @@ export default {
       type: Array,
       default: () => [],
     },
-    exceptions: {
-      type: Array,
-      default: () => [],
-    },
+  },
+  created() {
+    this.$validator.attach({
+      name: 'exdates',
+      rules: 'required:true',
+      getter: () => !!this.exdates.length,
+      context: () => this,
+      vm: this,
+    });
   },
   methods: {
-    showSelectExceptionDatesModal() {
-      this.$modals.show({
-        name: MODALS.selectExceptionsDatesLists,
-        config: {
-          exceptions: this.exceptions,
-          action: exceptions => this.$emit('update:exceptions', exceptions),
-        },
-      });
-    },
     addExceptionDate() {
       const startOfTodayMoment = moment().startOf('day');
 
@@ -64,6 +56,7 @@ export default {
         end: startOfTodayMoment.toDate(),
         type: '',
       });
+      this.$nextTick(() => this.$validator.validate('exdates'));
     },
   },
 };

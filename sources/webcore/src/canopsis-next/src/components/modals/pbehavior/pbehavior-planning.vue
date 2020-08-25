@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { keyBy } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -61,7 +61,8 @@ export default {
   },
   methods: {
     async submit() {
-      await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById).map(pbehaviorToRequest));
+      await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById)
+        .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id']))));
       await this.updatePbehaviors(Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest));
       await this.removePbehaviors(Object.values(this.form.removedPbehaviorsById));
 

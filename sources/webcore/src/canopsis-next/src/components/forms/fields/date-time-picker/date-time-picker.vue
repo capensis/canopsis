@@ -200,11 +200,19 @@ export default {
       position: relative;
       width: 290px;
       height: 312px;
+      z-index: inherit;
 
       .v-picker {
         position: absolute;
         top: 0;
         left: 0;
+      }
+
+      .v-picker__body,
+      .v-time-picker-clock__item,
+      .v-time-picker-clock__item span,
+      .v-time-picker-clock__hand {
+        z-index: inherit;
       }
     }
 

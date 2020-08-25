@@ -65,9 +65,9 @@ export default {
         name: MODALS.createPbehaviorReason,
         config: {
           pbehaviorReason,
-          action: async (newPbehaviorType) => {
+          action: async (newPbehaviorReason) => {
             await this.updatePbehaviorReason({
-              data: newPbehaviorType,
+              data: newPbehaviorReason,
               id: pbehaviorReason._id,
             });
             await this.fetchList();

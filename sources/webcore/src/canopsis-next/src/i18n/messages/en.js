@@ -1211,6 +1211,14 @@ export default {
         description: 'Description',
       },
     },
+    createPbehaviorDateException: {
+      title: 'Create reason',
+      addDate: 'Add date',
+      fields: {
+        name: 'Name',
+        description: 'Description',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1703,10 +1711,11 @@ export default {
     },
   },
 
-  pbehaviorExceptions: {
+  pbehaviorDatesExceptions: {
     title: 'Exception dates',
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
+    usingDateException: 'Date exception is using, because cannot be deleted',
   },
 
   pbehaviorTypes: {
@@ -1722,7 +1731,7 @@ export default {
     tabs: {
       type: 'Type',
       reason: 'Reason',
-      datesOfExceptions: 'Dates of exceptions',
+      datesExceptions: 'Dates of exceptions',
     },
   },
 

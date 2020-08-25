@@ -27,6 +27,8 @@ export default {
     allIds: state => state.allIds,
     items: (state, getters, rootState, rootGetters) =>
       rootGetters['entities/getList'](ENTITIES_TYPES.pbehavior, state.allIds),
+    getItem: (state, getters, rootState, rootGetters) => id =>
+      rootGetters['entities/getItem'](ENTITIES_TYPES.pbehavior, id),
     pending: state => state.pending,
     meta: state => state.meta,
   },
@@ -93,9 +95,11 @@ export default {
 
     async create({ dispatch }, { data }) {
       try {
-        await request.post(API_ROUTES.planning.pbehaviors, data);
+        const pbehavior = await request.post(API_ROUTES.planning.pbehaviors, data);
 
         await dispatch('popups/success', { text: i18n.t('modals.createPbehavior.success.create') }, { root: true });
+
+        return pbehavior;
       } catch (err) {
         console.error(err);
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });

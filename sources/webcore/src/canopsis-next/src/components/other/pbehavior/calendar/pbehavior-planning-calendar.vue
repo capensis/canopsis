@@ -49,6 +49,7 @@ import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES }
 
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
+import { pbehaviorToTimespan } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone } from '@/helpers/date';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
@@ -215,18 +216,14 @@ export default {
       const viewFrom = (tstartBeforeCalendarStart && tstopAfterCalendarStart) ? pbehavior.tstart : calendarStart;
       const viewTo = (tstartBeforeCalendarEnd && tstopAfterCalendarEnd) ? pbehavior.tstop : calendarEnd;
 
-      return this.fetchTimespans({
-        data: {
-          rrule: pbehavior.rrule,
-          start_at: pbehavior.tstart,
-          end_at: pbehavior.tstop,
-          view_from: viewFrom,
-          view_to: viewTo,
-          exdates: pbehavior.exdates,
-          exceptions: pbehavior.exceptions,
-          by_date: this.isCalendarTypeWeek,
-        },
+      const timespan = pbehaviorToTimespan({
+        pbehavior,
+        viewFrom,
+        viewTo,
+        byDate: this.isCalendarTypeWeek,
       });
+
+      return this.fetchTimespans({ data: timespan });
     },
 
     /**

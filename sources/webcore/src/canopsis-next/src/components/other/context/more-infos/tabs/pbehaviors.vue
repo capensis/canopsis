@@ -36,7 +36,6 @@ import EnabledColumn from '@/components/tables/enabled-column.vue';
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
   components: {
@@ -47,7 +46,6 @@ export default {
     authMixin,
     queryMixin,
     entitiesPbehaviorMixin,
-    entitiesPbehaviorCommentMixin,
   ],
   props: {
     itemId: {

@@ -41,7 +41,6 @@ import { MODALS, CRUD_ACTIONS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
@@ -52,7 +51,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   components: { EnabledColumn, ModalWrapper },
-  mixins: [modalInnerMixin, entitiesPbehaviorMixin, entitiesPbehaviorCommentMixin],
+  mixins: [modalInnerMixin, entitiesPbehaviorMixin],
   inject: ['$system'],
   computed: {
     headers() {

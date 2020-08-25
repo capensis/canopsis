@@ -5,7 +5,7 @@
         span {{ $t('modals.createRrule.title') }}
       template(slot="text")
         r-rule-form(v-model="form.rrule")
-        pbehavior-exception-dates-form(v-if="form.rrule", v-model="form.exdates")
+        pbehavior-exception-dates-form(v-if="form.rrule", v-model="form.exdates", :exceptions.sync="form.exceptions")
       template(slot="actions")
         v-btn(
           depressed,
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import RRuleForm from '@/components/forms/rrule.vue';
@@ -45,7 +47,8 @@ export default {
     return {
       form: {
         rrule: this.modal.config.rrule || '',
-        exdates: this.modal.config.exdates || [],
+        exdates: this.modal.config.exdates ? cloneDeep(this.modal.config.exdates) : [],
+        exceptions: this.modal.config.exceptions ? cloneDeep(this.modal.config.exceptions) : [],
       },
     };
   },

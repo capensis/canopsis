@@ -41,7 +41,13 @@ export default {
         config: {
           rrule: this.form.rrule,
           exdates: this.form.exdates,
-          action: ({ rrule, exdates }) => this.updateModel({ ...this.form, rrule, exdates }),
+          exceptions: this.form.exceptions,
+          action: ({ rrule, exdates, exceptions }) => this.updateModel({
+            ...this.form,
+            rrule,
+            exdates,
+            exceptions,
+          }),
         },
       });
     },

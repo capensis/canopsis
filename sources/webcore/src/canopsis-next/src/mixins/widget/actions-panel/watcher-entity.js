@@ -9,14 +9,12 @@ import {
 import authMixin from '@/mixins/auth';
 import eventActionsWatcherEntityMixin from '@/mixins/event-actions/watcher-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
   mixins: [
     authMixin,
     eventActionsWatcherEntityMixin,
     entitiesPbehaviorMixin,
-    entitiesPbehaviorCommentMixin,
   ],
   methods: {
     /**
