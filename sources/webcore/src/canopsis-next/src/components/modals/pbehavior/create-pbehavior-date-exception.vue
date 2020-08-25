@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ $t('modals.createPbehaviorDateException.title') }}
       template(slot="text")
-        create-pbehavior-date-exception-form(v-model="form")
+        pbehavior-date-exception-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
@@ -18,7 +18,7 @@ import { formToPbehaviorDateException, pbehaviorDateExceptionToForm } from '@/he
 import modalInnerMixin from '@/mixins/modal/inner';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 
-import CreatePbehaviorDateExceptionForm from '@/components/other/pbehavior/dates-exceptions/form/create-pbehavior-date-exception-form.vue';
+import PbehaviorDateExceptionForm from '@/components/other/pbehavior/dates-exceptions/form/pbehavior-date-exception-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -28,7 +28,7 @@ export default {
     validator: 'new',
   },
   components: {
-    CreatePbehaviorDateExceptionForm,
+    PbehaviorDateExceptionForm,
     ModalWrapper,
   },
   mixins: [
