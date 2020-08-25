@@ -603,6 +603,10 @@ export function prepareUserByData(data, user = generateUser()) {
     result.shadowpasswd = sha1(data.password);
   }
 
+  if (data._id) {
+    result.crecord_name = data._id;
+  }
+
   return result;
 }
 

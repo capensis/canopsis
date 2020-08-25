@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ $t('modals.createPbehaviorException.title') }}
       template(slot="text")
-        create-pbehavior-exception-form(v-model="form")
+        pbehavior-exception-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
@@ -18,7 +18,7 @@ import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/fo
 import modalInnerMixin from '@/mixins/modal/inner';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 
-import CreatePbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/create-pbehavior-exception-form.vue';
+import PbehaviorExceptionForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -28,7 +28,7 @@ export default {
     validator: 'new',
   },
   components: {
-    CreatePbehaviorExceptionForm,
+    PbehaviorExceptionForm,
     ModalWrapper,
   },
   mixins: [
