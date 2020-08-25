@@ -10,7 +10,7 @@
         @add:event="$emit('add:event', $event)"
       )
     .float-clear
-    v-layout.white(v-if="pagination.total", align-center)
+    v-layout.white(align-center)
       v-flex(xs10)
         pagination(
           :page="pagination.page",

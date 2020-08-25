@@ -5,18 +5,17 @@
         v-layout(justify-space-between, align-center)
           span.headline {{ watcher.name }}
     template(slot="text")
-      v-fade-transition
-        div(v-show="!watcherEntitiesPending")
-          watcher-template(
-            :watcher="watcher",
-            :watcherEntities="watcherEntitiesWitKey",
-            :modalTemplate="config.modalTemplate",
-            :entityTemplate="config.entityTemplate",
-            :itemsPerPage="config.itemsPerPage",
-            @add:event="addEventToQueue"
-          )
-      v-fade-transition
-        v-layout(v-show="watcherEntitiesPending", column)
+      v-fade-transition(mode="out-in")
+        watcher-template(
+          v-if="!watcherEntitiesPending",
+          :watcher="watcher",
+          :watcherEntities="watcherEntitiesWithKey",
+          :modalTemplate="config.modalTemplate",
+          :entityTemplate="config.entityTemplate",
+          :itemsPerPage="config.itemsPerPage",
+          @add:event="addEventToQueue"
+        )
+        v-layout(v-else, column)
           v-flex(xs12)
             v-layout(justify-center)
               v-progress-circular(indeterminate, color="primary")
@@ -81,7 +80,7 @@ export default {
       return this.config.color;
     },
 
-    watcherEntitiesWitKey() {
+    watcherEntitiesWithKey() {
       return addKeyInEntity(this.watcherEntities);
     },
   },
