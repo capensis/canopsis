@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 
@@ -38,7 +40,7 @@ export default {
     isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
     isCASAuthEnabled: state => state.isCASAuthEnabled,
     casConfig: state => state.casConfig,
-    timezone: state => state.timezone,
+    timezone: state => state.timezone || moment.tz.guess(),
   },
   mutations: {
     [types.FETCH_LOGIN_INFOS](state, {
