@@ -457,7 +457,7 @@ Ajouter une majuscule sur la première lettre de la chaîne "chaine" :
 ### Helper `capitalize-all`
 
 ```handlebars
-{{capitalize-all "chaine1 chaine2 chaine3"}}
+{{capitalize-all "mot1 mot2 mot3"}}
 ```
 
 Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre de chaque mot en majuscule.
