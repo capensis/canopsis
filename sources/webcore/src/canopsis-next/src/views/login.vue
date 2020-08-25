@@ -107,7 +107,9 @@ export default {
     },
   },
   async mounted() {
-    this.fetchLoginInfos();
+    await this.fetchLoginInfos();
+
+    this.setTitle();
   },
   methods: {
     async submit() {

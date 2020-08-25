@@ -320,7 +320,11 @@ curl -X PUT -u root:root -H "Content-type: application/x-www-form-urlencoded" -d
 
 **Permissions requises** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut connaître le statut de la task `c3090ed6-5b17-4c75-ad23-82238cffa62f` : `curl -u root:root http://<Canopsis_URL>/api/contextgraph/import/status/c3090ed6-5b17-4c75-ad23-82238cffa62f`
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut connaître le statut de la task `c3090ed6-5b17-4c75-ad23-82238cffa62f` :
+
+```
+curl -u root:root http://<Canopsis_URL>/api/contextgraph/import/status/c3090ed6-5b17-4c75-ad23-82238cffa62f
+```
 
 #### Import en attente
 

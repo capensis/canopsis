@@ -23,6 +23,8 @@ markdown_extensions:
     - admonition
     - codehilite:
         guess_lang: false
+    - pymdownx.tabbed
+    - pymdownx.superfences
     - toc:
         permalink: true
 
