@@ -9,7 +9,7 @@
         div(v-show="!watcherEntitiesPending")
           watcher-template(
             :watcher="watcher",
-            :watcherEntities="watcherEntities",
+            :watcherEntities="watcherEntitiesWitKey",
             :modalTemplate="config.modalTemplate",
             :entityTemplate="config.entityTemplate",
             :itemsPerPage="config.itemsPerPage",
@@ -43,6 +43,7 @@ import { pick, mapValues } from 'lodash';
 import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { addKeyInEntity } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -78,6 +79,10 @@ export default {
 
     color() {
       return this.config.color;
+    },
+
+    watcherEntitiesWitKey() {
+      return addKeyInEntity(this.watcherEntities);
     },
   },
   mounted() {
