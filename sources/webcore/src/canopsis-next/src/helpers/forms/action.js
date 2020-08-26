@@ -75,7 +75,7 @@ export function actionToForm(action) {
     return data;
   }
 
-  data.generalParameters = pick(action, ['_id', 'type', 'hook']);
+  data.generalParameters = pick(action, ['_id', 'type', 'hook', 'priority']);
   data.generalParameters.enabled = action.enabled !== false;
 
   if (action.delay) {
