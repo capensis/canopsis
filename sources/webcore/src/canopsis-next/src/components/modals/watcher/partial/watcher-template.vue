@@ -9,7 +9,7 @@
       )
         v-icon(small) edit
       span {{ $t('modals.watcher.editPbehaviors') }}
-    v-runtime-template(:template="compiledTemplate")
+    v-runtime-template(v-if="compiledTemplate", :template="compiledTemplate")
 </template>
 
 <script>
