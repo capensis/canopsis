@@ -22,6 +22,8 @@
 <script>
 import { isEqual, omit } from 'lodash';
 
+import { PLANNING_TABS } from '@/constants';
+
 import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exceptions';
 import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
@@ -42,6 +44,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    queryId: {
+      type: String,
+      default: PLANNING_TABS.exceptions,
+    },
   },
   computed: {
     headers() {
@@ -58,7 +64,7 @@ export default {
 
   methods: {
     async fetchList() {
-      this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
+      this.fetchPbehaviorExceptionsList({ params: this.query });
     },
 
     updateSearchHandler(search) {

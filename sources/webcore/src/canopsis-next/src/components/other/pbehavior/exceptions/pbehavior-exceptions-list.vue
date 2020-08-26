@@ -45,7 +45,7 @@
                   v-icon(color="error") delete
                 span {{ $t('pbehaviorExceptions.usingException') }}
       template(slot="expand", slot-scope="props")
-        pbehavior-exceptions-list-expand-panel(:pbehavior-exception="props.item")
+        pbehavior-exceptions-list-expand-panel(:pbehaviorException="props.item")
 </template>
 
 <script>

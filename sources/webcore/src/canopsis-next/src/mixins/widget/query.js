@@ -52,7 +52,6 @@ export default {
   methods: {
     getQuery() {
       const query = omit(this.query, [
-        'page',
         'sortKey',
         'sortDir',
         'tstart',

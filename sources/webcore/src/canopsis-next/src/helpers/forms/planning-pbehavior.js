@@ -74,8 +74,8 @@ export const formToPbehavior = (form, timezone) => ({
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntity(form.comments),
-  exdates: exdatesToRequest(form.exdates),
-  exceptions: exceptionsToRequest(removeKeyFromEntity(form.exceptions)),
+  exdates: removeKeyFromEntity(form.exdates),
+  exceptions: removeKeyFromEntity(form.exceptions),
   tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
 });
@@ -154,6 +154,10 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   if (pbehavior.exdates) {
     result.exdates = exdatesToRequest(pbehavior.exdates);
+  }
+
+  if (pbehavior.exceptions) {
+    result.exceptions = exceptionsToRequest(pbehavior.exceptions);
   }
 
   return result;

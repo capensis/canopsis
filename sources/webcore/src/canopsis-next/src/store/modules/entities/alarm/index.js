@@ -75,11 +75,6 @@ export default {
             widgetId,
             allIds: normalizedData.result,
             meta: data.meta,
-            // meta: {
-            //   total,
-            //   first: meta.first,
-            //   last: meta.last,
-            // },
           });
         }, `alarms-list-${widgetId}`);
       } catch (err) {

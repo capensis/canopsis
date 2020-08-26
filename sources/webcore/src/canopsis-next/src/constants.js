@@ -194,20 +194,6 @@ export const WATCHER_STATES_COLORS = {
   [WATCHER_STATES.pause]: COLORS.state.pause,
 };
 
-export const PBEHAVIOR_TYPES = {
-  maintenance: 'Maintenance',
-  unmonitored: 'Hors plage horaire de surveillance',
-  pause: 'pause',
-};
-
-export const PAUSE_REASONS = {
-  authorisationProblem: 'Problème d\'habilitation',
-  robotProblem: 'Problème Robot',
-  scenarioProblem: 'Problème Scénario',
-  flashFunctionnalProblem: 'Problème Flash Fonctionnel',
-  other: 'Autre',
-};
-
 export const COUNTER_STATES_ICONS = {
   [ENTITIES_STATES_KEYS.ok]: 'wb_sunny',
   [ENTITIES_STATES_KEYS.minor]: 'person',
@@ -1440,3 +1426,9 @@ export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
 };
 
 export const DEFAULT_TIMEZONE = 'Europe/Paris';
+
+export const PLANNING_TABS = {
+  types: 'types',
+  reasons: 'reasons',
+  exceptions: 'exceptions',
+};

@@ -121,11 +121,11 @@ export default {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
             if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
               accSecond.push(this.updatePbehavior({
+                id: pbehavior._id,
                 data: pbehaviorToRequest({
                   ...formToPbehavior(pbehavior, this.$system.timezone),
                   tstop: Math.round(Date.now() / 1000),
                 }),
-                id: pbehavior._id,
               }));
             }
 

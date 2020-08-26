@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card-text
     planning-exceptions-list(
-      :pbehavior-exceptions="pbehaviorExceptions",
+      :pbehaviorExceptions="pbehaviorExceptions",
       :pending="pbehaviorExceptionsPending",
       :totalItems="pbehaviorExceptionsMeta.total_count",
       :pagination.sync="pagination",
@@ -14,7 +14,7 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, PLANNING_TABS } from '@/constants';
 
 import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
 import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
@@ -30,26 +30,24 @@ export default {
     pbehaviorQueryMixin,
   ],
   props: {
-    params: {
-      type: Object,
-      default: () => ({}),
+    queryId: {
+      type: String,
+      default: PLANNING_TABS.exceptions,
     },
   },
   watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
+    pagination(pagination, oldPagination) {
+      if (!isEqual(pagination, oldPagination)) {
         this.fetchList();
-        this.$emit('update:params', this.getQuery());
       }
     },
   },
   mounted() {
     this.fetchList();
-    this.$emit('update:params', this.getQuery());
   },
   methods: {
     fetchList() {
-      this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
+      this.fetchPbehaviorExceptionsList({ params: this.query });
     },
 
     async tryRemovePbehaviorException(pbehavioExceptionId) {

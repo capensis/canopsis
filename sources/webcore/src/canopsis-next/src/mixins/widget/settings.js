@@ -29,10 +29,6 @@ export default {
     widget() {
       return this.config.widget;
     },
-
-    preparedWidget() {
-
-    },
   },
   methods: {
     /**

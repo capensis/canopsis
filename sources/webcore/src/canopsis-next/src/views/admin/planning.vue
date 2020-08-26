@@ -9,23 +9,23 @@
               v-tab(href="#types") {{ $t('planning.tabs.type') }}
               v-tab-item(value="types")
                 v-card-text
-                  planning-types(:params.sync="typesParams")
+                  planning-types
             template(v-if="hasReadAnyPbehaviorReasonAccess")
               v-tab(href="#reasons") {{ $t('planning.tabs.reason') }}
               v-tab-item(value="reasons")
                 v-card-text
-                  planning-reasons(:params.sync="reasonsParams")
+                  planning-reasons
             template(v-if="hasReadAnyPbehaviorExceptionAccess")
               v-tab(href="#exceptions") {{ $t('planning.tabs.exceptions') }}
               v-tab-item(value="exceptions")
                 v-card-text
-                  planning-exceptions(:params.sync="exceptionsParams")
+                  planning-exceptions
     fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
       span {{ tooltipText }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, PLANNING_TABS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
@@ -33,17 +33,12 @@ import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/p
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
+import queryMixin from '@/mixins/query';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
 import PlanningExceptions from '@/components/other/pbehavior/exceptions/planning-exceptions.vue';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
-
-export const PLANNING_TABS = {
-  types: 'types',
-  reasons: 'reasons',
-  exceptions: 'exceptions',
-};
 
 export default {
   components: {
@@ -59,13 +54,11 @@ export default {
     entitiesPbehaviorTypesMixin,
     entitiesPbehaviorReasonsMixin,
     entitiesPbehaviorExceptionsMixin,
+    queryMixin,
   ],
   data() {
     return {
       activeTab: PLANNING_TABS.types,
-      typesParams: {},
-      reasonsParams: {},
-      exceptionsParams: {},
     };
   },
   computed: {
@@ -115,15 +108,15 @@ export default {
     },
 
     fetchTypesList() {
-      this.fetchPbehaviorTypesList({ params: this.typesParams });
+      this.fetchPbehaviorTypesList({ params: this.getQueryById(PLANNING_TABS.types) });
     },
 
     fetchReasonsList() {
-      this.fetchPbehaviorReasonsList({ params: this.reasonsParams });
+      this.fetchPbehaviorReasonsList({ params: this.getQueryById(PLANNING_TABS.reasons) });
     },
 
     fetchExceptionsList() {
-      this.fetchPbehaviorExceptionsList({ params: this.exceptionsParams });
+      this.fetchPbehaviorExceptionsList({ params: this.getQueryById(PLANNING_TABS.exceptions) });
     },
 
     showCreateTypeModal() {

@@ -14,7 +14,7 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, PLANNING_TABS } from '@/constants';
 
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
@@ -34,22 +34,24 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    queryId: {
+      type: String,
+      default: PLANNING_TABS.reasons,
+    },
   },
   watch: {
     query(query, oldQuery) {
       if (!isEqual(query, oldQuery)) {
         this.fetchList();
-        this.$emit('update:params', this.getQuery());
       }
     },
   },
   mounted() {
     this.fetchList();
-    this.$emit('update:params', this.getQuery());
   },
   methods: {
     fetchList() {
-      this.fetchPbehaviorReasonsList({ params: this.getQuery() });
+      this.fetchPbehaviorReasonsList({ params: this.query });
     },
 
     async tryRemovePbehaviorReason(pbehavioReasonId) {
