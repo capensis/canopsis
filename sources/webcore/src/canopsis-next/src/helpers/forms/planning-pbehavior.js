@@ -20,6 +20,18 @@ export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, en
 }));
 
 /**
+ * Convert exdate timestamp to Date.
+ *
+ * @param {Array} exdates
+ * @return {{end: Date, type: Object, begin: Date }[]}
+ */
+export const exdatesToForm = (exdates = []) => exdates.map(({ type, begin, end }) => ({
+  type,
+  begin: new Date(begin),
+  end: new Date(end),
+}));
+
+/**
  * Convert exceptions to exceptions id array.
  *
  * @param {Array} exceptions
@@ -56,7 +68,7 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     exceptions: pbehavior.exceptions ? addKeyInEntity(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntity(cloneDeep(pbehavior.comments)) : [],
-    exdates: pbehavior.exdates ? addKeyInEntity(cloneDeep(pbehavior.exdates)) : [], // TODO: convert timestamp to Date
+    exdates: pbehavior.exdates ? addKeyInEntity(exdatesToForm(pbehavior.exdates)) : [],
   };
 };
 
