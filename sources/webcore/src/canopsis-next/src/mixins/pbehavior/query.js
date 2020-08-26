@@ -1,47 +1,66 @@
-import { pick } from 'lodash';
-
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
 
+import queryMixin from '@/mixins/query';
+
 export default {
-  data() {
-    return {
+  mixins: [queryMixin],
+
+  props: {
+    queryId: {
+      type: [Number, String],
+      required: true,
+    },
+  },
+
+  created() {
+    this.updateQuery({
+      id: this.queryId,
       query: {
         page: 1,
-        rowsPerPage: PAGINATION_LIMIT,
-        search: '',
-        sortKey: '',
-        sortDir: SORT_ORDERS.asc,
+        limit: PAGINATION_LIMIT,
       },
-    };
+    });
+  },
+
+  beforeDestroy() {
+    this.removeQuery({ id: this.queryId });
   },
 
   computed: {
+    query: {
+      set(query) {
+        this.updateQuery({ id: this.queryId, query: this.prepareQuery(query) });
+      },
+      get() {
+        return this.getQueryById(this.queryId);
+      },
+    },
+
     pagination: {
       set(value) {
-        this.query = {
-          ...this.query,
-          page: value.page,
-          search: value.search || '',
-          rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
-          sortKey: value.sortBy,
-          sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-        };
+        this.query = value;
       },
       get() {
         return {
-          ...pick(this.query, ['page', 'rowsPerPage']),
-          sortBy: this.query.sortKey,
-          descending: this.query.sortDir === SORT_ORDERS.desc,
+          page: this.query.page || 1,
+          rowsPerPage: this.query.limit || PAGINATION_LIMIT,
+          search: this.query.search || '',
+          sortBy: this.query.sort_key || '',
+          descending: this.query.sort_dir === SORT_ORDERS.desc,
         };
       },
     },
   },
 
   methods: {
-    getQuery({
-      page, search, rowsPerPage, sortKey, sortDir,
-    } = this.query) {
+    prepareQuery({
+      page,
+      search,
+      rowsPerPage,
+      sortKey,
+      sortDir,
+    }) {
       const query = {};
 
       query.limit = rowsPerPage;

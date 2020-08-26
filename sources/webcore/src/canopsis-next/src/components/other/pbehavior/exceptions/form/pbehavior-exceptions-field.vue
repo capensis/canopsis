@@ -2,7 +2,7 @@
   div
     v-layout.mt-3(row)
       v-flex(xs12)
-        pbehavior-exception-date-field(
+        pbehavior-exception-field(
           v-for="(exdate, index) in exdates",
           v-field="exdates[index]",
           :key="exdate.key",
@@ -10,7 +10,7 @@
         )
     v-layout(row)
       v-flex
-        v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorDateException.addDate') }}
+        v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorException.addDate') }}
     v-alert(:value="errors.has('exdates')", type="error") {{ errors.first('exdates') }}
 </template>
 
@@ -21,10 +21,10 @@ import uid from '@/helpers/uid';
 
 import formArrayMixin from '@/mixins/form/array';
 
-import PbehaviorExceptionDateField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-date-field.vue';
+import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
 
 export default {
-  components: { PbehaviorExceptionDateField },
+  components: { PbehaviorExceptionField },
   mixins: [formArrayMixin],
   inject: ['$validator'],
   model: {

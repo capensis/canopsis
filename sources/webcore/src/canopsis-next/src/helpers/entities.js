@@ -603,6 +603,10 @@ export function prepareUserByData(data, user = generateUser()) {
     result.shadowpasswd = sha1(data.password);
   }
 
+  if (data._id) {
+    result.crecord_name = data._id;
+  }
+
   return result;
 }
 
@@ -661,7 +665,7 @@ export function getDefaultPlaylist() {
  * @param {Array} entities
  * @return {Array}
  */
-export const addKeyInEntity = entities => entities.map(entity => ({
+export const addKeyInEntity = (entities = []) => entities.map(entity => ({
   ...entity,
   key: uid(),
 }));
@@ -672,7 +676,7 @@ export const addKeyInEntity = entities => entities.map(entity => ({
  * @param {Array} entities
  * @return {Array}
  */
-export const removeKeyFromEntity = entities => entities.map(entity => omit(entity, ['key']));
+export const removeKeyFromEntity = (entities = []) => entities.map(entity => omit(entity, ['key']));
 
 /**
  * Get id from entity

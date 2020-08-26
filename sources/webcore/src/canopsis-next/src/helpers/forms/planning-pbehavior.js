@@ -13,10 +13,22 @@ import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/
  * @param {Array} exdates
  * @return {{end: Number, type: String, begin: Number }[]}
  */
-export const exdatesToRequest = exdates => exdates.map(({ type, begin, end }) => ({
+export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
   type: getIdFromEntity(type),
   begin: moment(begin).unix(),
   end: moment(end).unix(),
+}));
+
+/**
+ * Convert exdate timestamp to Date.
+ *
+ * @param {Array} exdates
+ * @return {{end: Date, type: Object, begin: Date }[]}
+ */
+export const exdatesToForm = (exdates = []) => exdates.map(({ type, begin, end }) => ({
+  type,
+  begin: new Date(begin),
+  end: new Date(end),
 }));
 
 /**
@@ -25,7 +37,7 @@ export const exdatesToRequest = exdates => exdates.map(({ type, begin, end }) =>
  * @param {Array} exceptions
  * @return {String[]}
  */
-export const exceptionsToRequest = exceptions => exceptions.map(exception => getIdFromEntity(exception));
+export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
 
 /**
  * Convert pbehavior entity to form data.
@@ -49,14 +61,14 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    type: pbehavior.type, // TODO: add cloneDeep
-    reason: pbehavior.reason, // TODO: add cloneDeep
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : null,
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : null,
+    type: cloneDeep(pbehavior.type),
+    reason: cloneDeep(pbehavior.reason),
+    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
+    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     exceptions: pbehavior.exceptions ? addKeyInEntity(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntity(cloneDeep(pbehavior.comments)) : [],
-    exdates: pbehavior.exdates ? addKeyInEntity(cloneDeep(pbehavior.exdates)) : [], // TODO: convert timestamp to Date
+    exdates: pbehavior.exdates ? addKeyInEntity(exdatesToForm(pbehavior.exdates)) : [],
   };
 };
 
@@ -70,11 +82,12 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
 export const formToPbehavior = (form, timezone) => ({
   ...form,
 
-  reason: form.reason._id,
-  type: form.type._id,
+  enabled: isUndefined(form.enabled) ? true : form.enabled,
+  reason: form.reason,
+  type: form.type,
   comments: removeKeyFromEntity(form.comments),
-  exdates: exdatesToRequest(form.exdates),
-  exceptions: removeKeyFromEntity(form.exceptions).map(({ _id }) => _id),
+  exdates: removeKeyFromEntity(form.exdates),
+  exceptions: removeKeyFromEntity(form.exceptions),
   tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
 });
@@ -153,6 +166,10 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   if (pbehavior.exdates) {
     result.exdates = exdatesToRequest(pbehavior.exdates);
+  }
+
+  if (pbehavior.exceptions) {
+    result.exceptions = exceptionsToRequest(pbehavior.exceptions);
   }
 
   return result;

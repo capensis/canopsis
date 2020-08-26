@@ -34,7 +34,7 @@ export const ENTITIES_TYPES = {
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
-  pbehaviorDatesExceptions: 'pbehaviorDatesExceptions',
+  pbehaviorExceptions: 'pbehaviorExceptions',
   pbehaviorTypes: 'pbehaviorTypes',
   pbehaviorReasons: 'pbehaviorReasons',
 };
@@ -97,11 +97,11 @@ export const MODALS = {
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
-  selectExceptionsDatesLists: 'select-exceptions-dates-lists',
+  selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
-  createPbehaviorDateException: 'create-pbehavior-date-exception',
+  createPbehaviorException: 'create-pbehavior-exception',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -192,20 +192,6 @@ export const WATCHER_STATES_COLORS = {
   [WATCHER_STATES.major]: ENTITIES_STATES_STYLES[ENTITIES_STATES.major].color,
   [WATCHER_STATES.critical]: ENTITIES_STATES_STYLES[ENTITIES_STATES.critical].color,
   [WATCHER_STATES.pause]: COLORS.state.pause,
-};
-
-export const PBEHAVIOR_TYPES = {
-  maintenance: 'Maintenance',
-  unmonitored: 'Hors plage horaire de surveillance',
-  pause: 'pause',
-};
-
-export const PAUSE_REASONS = {
-  authorisationProblem: 'Problème d\'habilitation',
-  robotProblem: 'Problème Robot',
-  scenarioProblem: 'Problème Scénario',
-  flashFunctionnalProblem: 'Problème Flash Fonctionnel',
-  other: 'Autre',
 };
 
 export const COUNTER_STATES_ICONS = {
@@ -733,7 +719,7 @@ export const USERS_RIGHTS = {
     planning: `${USER_RIGHTS_PREFIXES.technical.admin}_planning`,
     planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
-    datesExceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningDatesExceptions`,
+    exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -1440,3 +1426,9 @@ export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
 };
 
 export const DEFAULT_TIMEZONE = 'Europe/Paris';
+
+export const PLANNING_TABS = {
+  types: 'types',
+  reasons: 'reasons',
+  exceptions: 'exceptions',
+};

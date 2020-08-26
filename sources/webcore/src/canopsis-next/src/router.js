@@ -27,7 +27,6 @@ import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
 import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
 import Playlist from '@/views/playlist.vue';
 import ExploitationMetaAlarmRule from '@/views/exploitation/meta-alarm-rule.vue';
-import Examples from '@/views/examples/examples.vue';
 
 Vue.use(Router);
 
@@ -250,14 +249,6 @@ const routes = [
       requiresRight: {
         id: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
       },
-    },
-  },
-  {
-    path: '/examples',
-    name: 'examples',
-    component: Examples,
-    meta: {
-      requiresLogin: true,
     },
   },
   {

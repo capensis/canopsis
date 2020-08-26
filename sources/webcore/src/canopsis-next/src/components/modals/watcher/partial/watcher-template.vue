@@ -17,6 +17,7 @@ import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import { PAGINATION_LIMIT } from '@/config';
+
 import { CRUD_ACTIONS, MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -74,13 +75,13 @@ export default {
 
       return new Handlebars.SafeString(`
         <watcher-entities-wrapper
-            :watcher="watcher"
-            :watcher-entities="watcherEntities"
-            :template="entityTemplate"
-            :items-per-page="itemsPerPage"
-            entity-name-field="${entityNameField}"
-            @add:event="addEventToQueue"
-          ></watcher-entities-wrapper>
+          :watcher="watcher"
+          :watcher-entities="watcherEntities"
+          :template="entityTemplate"
+          :items-per-page="itemsPerPage"
+          entity-name-field="${entityNameField}"
+          @add:event="addEventToQueue"
+        ></watcher-entities-wrapper>
       `);
     });
   },
@@ -91,6 +92,7 @@ export default {
     addEventToQueue(event) {
       this.$emit('add:event', event);
     },
+
     showPbehaviorsListModal() {
       this.$modals.show({
         name: MODALS.pbehaviorList,

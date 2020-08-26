@@ -1,10 +1,10 @@
 <template lang="pug">
   div
-    h3.my-3.grey--text {{ $t('pbehaviorDatesExceptions.title') }}
+    h3.my-3.grey--text {{ $t('pbehaviorExceptions.title') }}
     v-divider
     v-layout.mt-3(row)
       v-flex(xs12)
-        pbehavior-exception-date-field(
+        pbehavior-exception-field(
           v-for="(exdate, index) in exdates",
           v-field="exdates[index]",
           :key="exdate.key",
@@ -12,9 +12,9 @@
         )
     v-layout(row)
       v-flex
-        v-btn.ml-0(outline, @click="addExceptionDate") {{ $t('pbehaviorDatesExceptions.create') }}
+        v-btn.ml-0(outline, @click="addException") {{ $t('pbehaviorExceptions.create') }}
       v-flex
-        v-btn.mr-0(outline, @click="showSelectExceptionDatesModal") {{ $t('pbehaviorDatesExceptions.choose') }}
+        v-btn.mr-0(outline, @click="showSelectExceptionModal") {{ $t('pbehaviorExceptions.choose') }}
 </template>
 
 <script>
@@ -26,10 +26,10 @@ import uid from '@/helpers/uid';
 
 import formArrayMixin from '@/mixins/form/array';
 
-import PbehaviorExceptionDateField from './pbehavior-exception-date-field.vue';
+import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
 
 export default {
-  components: { PbehaviorExceptionDateField },
+  components: { PbehaviorExceptionField },
   mixins: [formArrayMixin],
   model: {
     prop: 'exdates',
@@ -46,16 +46,17 @@ export default {
     },
   },
   methods: {
-    showSelectExceptionDatesModal() {
+    showSelectExceptionModal() {
       this.$modals.show({
-        name: MODALS.selectExceptionsDatesLists,
+        name: MODALS.selectExceptionsLists,
         config: {
           exceptions: this.exceptions,
           action: exceptions => this.$emit('update:exceptions', exceptions),
         },
       });
     },
-    addExceptionDate() {
+
+    addException() {
       const startOfTodayMoment = moment().startOf('day');
 
       this.addItemIntoArray({

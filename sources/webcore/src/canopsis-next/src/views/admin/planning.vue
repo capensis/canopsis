@@ -9,45 +9,40 @@
               v-tab(href="#types") {{ $t('planning.tabs.type') }}
               v-tab-item(value="types")
                 v-card-text
-                  planning-types(:params.sync="typesParams")
+                  planning-types
             template(v-if="hasReadAnyPbehaviorReasonAccess")
               v-tab(href="#reasons") {{ $t('planning.tabs.reason') }}
               v-tab-item(value="reasons")
                 v-card-text
-                  planning-reasons(:params.sync="reasonsParams")
-            template(v-if="hasReadAnyPbehaviorDateExceptionAccess")
-              v-tab(href="#datesExceptions") {{ $t('planning.tabs.datesExceptions') }}
-              v-tab-item(value="datesExceptions")
+                  planning-reasons
+            template(v-if="hasReadAnyPbehaviorExceptionAccess")
+              v-tab(href="#exceptions") {{ $t('planning.tabs.exceptions') }}
+              v-tab-item(value="exceptions")
                 v-card-text
-                  planning-dates-exceptions(:params.sync="datesExceptionsParams")
+                  planning-exceptions
     fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
       span {{ tooltipText }}
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, PLANNING_TABS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
-import rightsTechnicalPbehaviorDatesExceptionsMixin from '@/mixins/rights/technical/pbehavior-dates-exceptions';
+import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
-import entitiesPbehaviorDatesExceptionsMixin from '@/mixins/entities/pbehavior/dates-exceptions';
+import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
+import queryMixin from '@/mixins/query';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
-import PlanningDatesExceptions from '@/components/other/pbehavior/dates-exceptions/planning-dates-exceptions.vue';
+import PlanningExceptions from '@/components/other/pbehavior/exceptions/planning-exceptions.vue';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
-
-export const PLANNING_TABS = {
-  types: 'types',
-  reasons: 'reasons',
-  datesExceptions: 'datesExceptions',
-};
 
 export default {
   components: {
-    PlanningDatesExceptions,
+    PlanningExceptions,
     FabButtons,
     PlanningTypes,
     PlanningReasons,
@@ -55,17 +50,15 @@ export default {
   mixins: [
     rightsTechnicalPbehaviorTypesMixin,
     rightsTechnicalPbehaviorReasonsMixin,
-    rightsTechnicalPbehaviorDatesExceptionsMixin,
+    rightsTechnicalPbehaviorExceptionsMixin,
     entitiesPbehaviorTypesMixin,
     entitiesPbehaviorReasonsMixin,
-    entitiesPbehaviorDatesExceptionsMixin,
+    entitiesPbehaviorExceptionsMixin,
+    queryMixin,
   ],
   data() {
     return {
       activeTab: PLANNING_TABS.types,
-      typesParams: {},
-      reasonsParams: {},
-      datesExceptionsParams: {},
     };
   },
   computed: {
@@ -73,7 +66,7 @@ export default {
       return {
         [PLANNING_TABS.types]: this.$t('modals.createPbehaviorType.title'),
         [PLANNING_TABS.reasons]: this.$t('modals.createPbehaviorReason.title'),
-        [PLANNING_TABS.datesExceptions]: this.$t('modals.createPbehaviorDateException.title'),
+        [PLANNING_TABS.exceptions]: this.$t('modals.createPbehaviorException.title'),
       }[this.activeTab];
     },
 
@@ -81,7 +74,7 @@ export default {
       return {
         [PLANNING_TABS.types]: this.hasCreateAnyPbehaviorTypeAccess,
         [PLANNING_TABS.reasons]: this.hasCreateAnyPbehaviorReasonAccess,
-        [PLANNING_TABS.datesExceptions]: this.hasCreateAnyPbehaviorDateExceptionAccess,
+        [PLANNING_TABS.exceptions]: this.hasCreateAnyPbehaviorExceptionAccess,
       }[this.activeTab];
     },
   },
@@ -94,8 +87,8 @@ export default {
         case PLANNING_TABS.reasons:
           this.fetchReasonsList();
           break;
-        case PLANNING_TABS.datesExceptions:
-          this.fetchDatesExceptionsList();
+        case PLANNING_TABS.exceptions:
+          this.fetchExceptionsList();
           break;
       }
     },
@@ -108,22 +101,22 @@ export default {
         case PLANNING_TABS.reasons:
           this.showCreateReasonModal();
           break;
-        case PLANNING_TABS.datesExceptions:
-          this.showCreateDateExceptionModal();
+        case PLANNING_TABS.exceptions:
+          this.showCreateExceptionModal();
           break;
       }
     },
 
     fetchTypesList() {
-      this.fetchPbehaviorTypesList({ params: this.typesParams });
+      this.fetchPbehaviorTypesList({ params: this.getQueryById(PLANNING_TABS.types) });
     },
 
     fetchReasonsList() {
-      this.fetchPbehaviorReasonsList({ params: this.reasonsParams });
+      this.fetchPbehaviorReasonsList({ params: this.getQueryById(PLANNING_TABS.reasons) });
     },
 
-    fetchDatesExceptionsList() {
-      this.fetchPbehaviorDatesExceptionsList({ params: this.datesExceptionsParams });
+    fetchExceptionsList() {
+      this.fetchPbehaviorExceptionsList({ params: this.getQueryById(PLANNING_TABS.exceptions) });
     },
 
     showCreateTypeModal() {
@@ -150,13 +143,13 @@ export default {
       });
     },
 
-    showCreateDateExceptionModal() {
+    showCreateExceptionModal() {
       this.$modals.show({
-        name: MODALS.createPbehaviorDateException,
+        name: MODALS.createPbehaviorException,
         config: {
           action: async (data) => {
-            await this.createPbehaviorDateException({ data });
-            await this.fetchDatesExceptionsList();
+            await this.createPbehaviorException({ data });
+            await this.fetchExceptionsList();
           },
         },
       });

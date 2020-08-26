@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { get, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
@@ -153,6 +154,14 @@ export default {
       return [Units.MONTH, Units.YEAR].includes(this.calendar.type);
     },
   },
+  watch: {
+    pbehaviorsById: {
+      immediate: true,
+      handler() {
+        this.setCalendarView();
+      },
+    },
+  },
   mounted() {
     this.fetchEvents();
     this.fetchDefaultTypes();
@@ -165,6 +174,20 @@ export default {
     ...pbehaviorTypesMapActions({
       fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
     }),
+
+    /**
+     * Set calendar view to min event date
+     */
+    setCalendarView() {
+      const startTimestamps = Object.values(this.pbehaviorsById).map(({ tstart }) => tstart);
+
+      if (startTimestamps.length) {
+        const startTimestamp = Math.min.apply(null, startTimestamps);
+        const calendarStart = moment.unix(startTimestamp);
+
+        this.calendar.set({ around: calendarStart });
+      }
+    },
 
     /**
      * Get color for pbehavior and save that into data for correct displaying
@@ -296,21 +319,21 @@ export default {
      *
      * @param {Object} pbehavior
      */
-    removePbehavior(removablePbehavior) {
-      if (this.addedPbehaviorsById[removablePbehavior._id]) {
-        this.$emit('update:addedPbehaviorsById', omit(this.addedPbehaviorsById, [removablePbehavior._id]));
+    removePbehavior(pbehavior) {
+      if (this.addedPbehaviorsById[pbehavior._id]) {
+        this.$emit('update:addedPbehaviorsById', omit(this.addedPbehaviorsById, [pbehavior._id]));
       } else {
         this.$emit('update:removedPbehaviorsById', {
           ...this.removedPbehaviorsById,
-          [removablePbehavior._id]: removablePbehavior,
+          [pbehavior._id]: pbehavior,
         });
 
-        if (this.changedPbehaviorsById[removablePbehavior._id]) {
-          this.$emit('update:changedPbehaviorsById', omit(this.changedPbehaviorsById, [removablePbehavior._id]));
+        if (this.changedPbehaviorsById[pbehavior._id]) {
+          this.$emit('update:changedPbehaviorsById', omit(this.changedPbehaviorsById, [pbehavior._id]));
         }
       }
 
-      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== removablePbehavior._id);
+      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
     },
 
     /**

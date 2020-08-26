@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+import { SORT_ORDERS } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
@@ -36,7 +37,7 @@ export default {
     fetchAlarmItemWithParams(alarm, params) {
       const defaultParams = {
         sort_key: 't',
-        sort_dir: 'DESC',
+        sort_dir: SORT_ORDERS.desc.toLowerCase(),
         limit: 1,
       };
 

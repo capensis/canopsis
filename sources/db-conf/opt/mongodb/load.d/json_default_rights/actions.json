@@ -308,11 +308,11 @@
       "type": "CRUD"
     },
     {
-      "_id" : "models_planningDatesExceptions",
-      "loader_id" : "models_planningDatesExceptions",
-      "crecord_name": "models_planningDatesExceptions",
+      "_id" : "models_planningExceptions",
+      "loader_id" : "models_planningExceptions",
+      "crecord_name": "models_planningExceptions",
       "crecord_type" : "action",
-      "desc": "Planning dates exceptions",
+      "desc": "Planning dates of exceptions",
       "type": "CRUD"
     },
     {

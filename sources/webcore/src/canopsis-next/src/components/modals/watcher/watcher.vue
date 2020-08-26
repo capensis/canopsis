@@ -9,7 +9,7 @@
         div(v-show="!watcherEntitiesPending")
           watcher-template(
             :watcher="watcher",
-            :watcherEntities="watcherEntities",
+            :watcherEntities="watcherEntitiesWitKey",
             :modalTemplate="config.modalTemplate",
             :entityTemplate="config.entityTemplate",
             :itemsPerPage="config.itemsPerPage",
@@ -40,7 +40,10 @@
 <script>
 import { pick, mapValues } from 'lodash';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { addKeyInEntity } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -55,6 +58,7 @@ import WatcherTemplate from './partial/watcher-template.vue';
 export default {
   name: MODALS.watcher,
   components: { WatcherTemplate, ModalWrapper },
+  inject: ['$system'],
   mixins: [
     modalInnerMixin,
     eventActionsMixin,
@@ -72,8 +76,13 @@ export default {
     watcher() {
       return this.config.watcher;
     },
+
     color() {
       return this.config.color;
+    },
+
+    watcherEntitiesWitKey() {
+      return addKeyInEntity(this.watcherEntities);
     },
   },
   mounted() {
@@ -105,20 +114,19 @@ export default {
     async submit() {
       const requests = this.eventsQueue.reduce((acc, event) => {
         if (event.type === EVENT_ENTITY_TYPES.pause) {
-          acc.push(this.createPbehavior({
-            data: event.data,
-            parents: [event.entity],
-            parentsType: ENTITIES_TYPES.entity,
-          }));
+          const pbehavior = pbehaviorToRequest(formToPbehavior(event.data, this.$system.timezone));
+
+          acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
-            if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
-              const data = {
-                ...pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']),
-                tstop: Math.round(Date.now() / 1000),
-              };
-
-              accSecond.push(this.updatePbehavior({ data, id: pbehavior._id }));
+            if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
+              accSecond.push(this.updatePbehavior({
+                id: pbehavior._id,
+                data: pbehaviorToRequest({
+                  ...formToPbehavior(pbehavior, this.$system.timezone),
+                  tstop: Math.round(Date.now() / 1000),
+                }),
+              }));
             }
 
             return accSecond;

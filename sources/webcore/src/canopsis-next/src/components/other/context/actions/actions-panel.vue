@@ -167,7 +167,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           filter: {
-            _id: { $in: [this.item._id] },
+            _id: { $in: [this.item.entity._id] },
           },
         },
       });

@@ -100,8 +100,5 @@ export default {
       return rules;
     },
   },
-  mounted() {
-    this.fetchPbehaviorReasonsList();
-  },
 };
 </script>

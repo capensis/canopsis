@@ -3,13 +3,13 @@
     v-layout(row, wrap)
       v-flex(xs4)
         search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
-      v-flex(v-show="hasDeleteAnyPbehaviorDateExceptionAccess && selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', selected)", icon)
+      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selected.length", xs4)
+        v-btn(@click="deleteSelectedExceptions", icon)
           v-icon delete
     v-data-table(
       v-model="selected",
       :headers="headers",
-      :items="pbehaviorDatesExceptions",
+      :items="pbehaviorExceptions",
       :loading="pending",
       :total-items="totalItems",
       :pagination="pagination",
@@ -27,7 +27,7 @@
             v-layout
               v-btn.mx-0(
                 slot="activator",
-                v-if="hasUpdateAnyPbehaviorDateExceptionAccess",
+                v-if="hasUpdateAnyPbehaviorExceptionAccess",
                 icon,
                 small,
                 @click.stop="$emit('edit', props.item)"
@@ -36,35 +36,35 @@
               v-tooltip(bottom, :disabled="props.item.deletable")
                 v-btn.mx-0(
                   slot="activator",
-                  v-if="hasDeleteAnyPbehaviorDateExceptionAccess",
+                  v-if="hasDeleteAnyPbehaviorExceptionAccess",
                   :disabled="!props.item.deletable",
                   icon,
                   small,
                   @click.stop="$emit('remove', props.item._id)"
                 )
                   v-icon(color="error") delete
-                span {{ $t('pbehaviorDatesExceptions.usingDateException') }}
+                span {{ $t('pbehaviorExceptions.usingException') }}
       template(slot="expand", slot-scope="props")
-        pbehavior-dates-exceptions-list-expand-panel(:pbehaviorDateException="props.item")
+        pbehavior-exceptions-list-expand-panel(:pbehaviorException="props.item")
 </template>
 
 <script>
 import { omit } from 'lodash';
 
-import rightsTechnicalPbehaviorDatesExceptionsMixin from '@/mixins/rights/technical/pbehavior-dates-exceptions';
+import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 
-import PbehaviorDatesExceptionsListExpandPanel from './partials/pbehavior-dates-exceptions-list-expand-panel.vue';
+import PbehaviorExceptionsListExpandPanel from './partials/pbehavior-exceptions-list-expand-panel.vue';
 
 export default {
   components: {
-    PbehaviorDatesExceptionsListExpandPanel,
+    PbehaviorExceptionsListExpandPanel,
     SearchField,
   },
-  mixins: [rightsTechnicalPbehaviorDatesExceptionsMixin],
+  mixins: [rightsTechnicalPbehaviorExceptionsMixin],
   props: {
-    pbehaviorDatesExceptions: {
+    pbehaviorExceptions: {
       type: Array,
       required: true,
     },
@@ -107,6 +107,10 @@ export default {
 
     clearSearchHandler() {
       this.$emit('update:pagination', omit(this.pagination, ['search']));
+    },
+
+    deleteSelectedExceptions() {
+      this.$emit('remove-selected', this.selected);
     },
   },
 };

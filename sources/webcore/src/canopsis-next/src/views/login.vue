@@ -92,8 +92,10 @@ export default {
   },
   computed: {
     casHref() {
+      const { href } = this.$router.resolve({ name: 'home' });
+
       if (this.casConfig) {
-        return `${this.casConfig.server}/login?service=${this.casConfig.service}/logged_in`;
+        return `${this.casConfig.server}/login?service=${this.casConfig.service}/logged_in&redirect=${href}`;
       }
 
       return null;
