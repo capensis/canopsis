@@ -14,7 +14,6 @@ export default {
     appTitle: '',
     footer: '',
     edition: '',
-    timezone: '',
     stack: '',
     description: '',
     language: '',
@@ -23,6 +22,7 @@ export default {
     allowChangeSeverityToInfo: false,
     casConfig: {},
     popupTimeout: undefined,
+    timezone: undefined,
   },
   getters: {
     version: state => state.version,

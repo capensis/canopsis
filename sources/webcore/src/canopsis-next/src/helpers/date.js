@@ -55,7 +55,11 @@ export const convertDurationToIntervalObject = (duration) => {
  * @param {string} [localTimezone = moment.tz.guess()]
  * @returns {Object}
  */
-export const convertTimestampToMomentByTimezone = (timestamp, sourceTimezone, localTimezone = moment.tz.guess()) => {
+export const convertTimestampToMomentByTimezone = (
+  timestamp,
+  sourceTimezone = moment.tz.guess(),
+  localTimezone = moment.tz.guess(),
+) => {
   const dateObject = convertTimestampToMoment(timestamp);
 
   if (sourceTimezone === localTimezone) {
@@ -69,10 +73,10 @@ export const convertTimestampToMomentByTimezone = (timestamp, sourceTimezone, lo
  * Convert date to timestamp with keep time
  *
  * @param {Date|moment.Moment} date
- * @param {string} timestamp
+ * @param {string} timezone
  * @returns {number}
  */
-export const convertDateToTimestampByTimezone = (date, timestamp) =>
-  moment(date).tz(timestamp, true).unix();
+export const convertDateToTimestampByTimezone = (date, timezone = moment.tz.guess()) =>
+  moment(date).tz(timezone, true).unix();
 
 export default convertTimestampToMoment;
