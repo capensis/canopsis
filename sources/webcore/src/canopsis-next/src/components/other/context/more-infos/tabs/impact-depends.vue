@@ -33,11 +33,11 @@ export default {
   props: {
     impact: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     depends: {
       type: Array,
-      required: true,
+      default: () => [],
     },
   },
 };

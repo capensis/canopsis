@@ -4,7 +4,7 @@
     v-tab-item
       pbehaviors-list(:itemId="item._id", :tabId="tabId")
     v-tab-item
-      impact-depends(:impact="item.impact", :depends="item.depends")
+      impact-depends(:impact="item.impact_name", :depends="item.depends_name")
     v-tab-item
       infos(:infos="item.infos")
 </template>

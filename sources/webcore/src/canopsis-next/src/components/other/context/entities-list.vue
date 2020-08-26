@@ -194,6 +194,7 @@ export default {
         'typesFilter',
       ]);
 
+      query.with_name = true;
       query.start = ((this.query.page - 1) * this.query.limit) || 0;
 
       if (this.query.sortKey) {
