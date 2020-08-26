@@ -3,8 +3,8 @@
     v-layout(row, wrap)
       v-flex(xs4)
         search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
-      v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && selected.length", xs4)
-        v-btn(@click="deleteSelectedResons", icon)
+      v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && selectedReasons.length", xs4)
+        v-btn(@click="deleteSelectedReasons", icon)
           v-icon delete
     v-data-table(
       v-model="selected",
@@ -105,6 +105,10 @@ export default {
         },
       ];
     },
+
+    selectedReasons() {
+      return this.selected.filter(({ deletable }) => deletable);
+    },
   },
   methods: {
     updateSearchHandler(search) {
@@ -115,8 +119,8 @@ export default {
       this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
 
-    deleteSelectedResons() {
-      this.$emit('remove-selected', this.selected.filter(({ deletable }) => deletable));
+    deleteSelectedReasons() {
+      this.$emit('remove-selected', this.selectedReasons);
     },
   },
 };

@@ -4,7 +4,7 @@
       v-flex(xs4)
         search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
       v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', selected)", icon)
+        v-btn(@click="deleteSelectedExceptions", icon)
           v-icon delete
     v-data-table(
       v-model="selected",
@@ -107,6 +107,10 @@ export default {
 
     clearSearchHandler() {
       this.$emit('update:pagination', omit(this.pagination, ['search']));
+    },
+
+    deleteSelectedExceptions() {
+      this.$emit('remove-selected', this.selected);
     },
   },
 };

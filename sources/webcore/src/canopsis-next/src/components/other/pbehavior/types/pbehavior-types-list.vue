@@ -3,7 +3,7 @@
     v-layout(row, wrap)
       v-flex(xs4)
         search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
-      v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selected.length", xs4)
+      v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selectedTypes.length", xs4)
         v-btn(@click="deleteSelectedTypes", icon)
           v-icon delete
     v-data-table(
@@ -121,6 +121,10 @@ export default {
         },
       ];
     },
+
+    selectedTypes() {
+      return this.selected.filter(({ deletable }) => deletable);
+    },
   },
   methods: {
     updateSearchHandler(search) {
@@ -132,7 +136,7 @@ export default {
     },
 
     deleteSelectedTypes() {
-      this.$emit('remove-selected', this.selected.filter(({ deletable }) => deletable));
+      this.$emit('remove-selected', this.selectedTypes);
     },
   },
 };
