@@ -5,6 +5,7 @@ import pbehaviorModule from './pbehavior';
 import pbehaviorReasonsModule from './pbehavior-reasons';
 import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionModule from './pbehavior-exception';
+import pbehaviorTypesModule from './pbehavior-types';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -37,6 +38,7 @@ export default {
   pbehaviorReasons: pbehaviorReasonsModule,
   pbehaviorTimespan: pbehaviorTimespanModule,
   pbehaviorException: pbehaviorExceptionModule,
+  pbehaviorTypes: pbehaviorTypesModule,
   userPreference: userPreferenceModule,
   view: viewModule,
   stats: statsModule,

@@ -35,6 +35,7 @@ export const ENTITIES_TYPES = {
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
   pbehaviorException: 'pbehaviorException',
+  pbehaviorTypes: 'pbehaviorTypes',
 };
 
 export const MODALS = {
@@ -47,7 +48,6 @@ export const MODALS = {
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
   variablesHelp: 'variables-help',
-  createPbehavior: 'create-pbehavior',
   createEntity: 'create-entity',
   createWatcher: 'create-watcher',
   addEntityInfo: 'add-entity-info',
@@ -97,6 +97,8 @@ export const MODALS = {
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
+  pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
+  createPbehaviorType: 'create-pbehavior-type',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -725,6 +727,8 @@ export const USERS_RIGHTS = {
     parameters: `${USER_RIGHTS_PREFIXES.technical.admin}_parameters`,
     broadcastMessage: `${USER_RIGHTS_PREFIXES.technical.admin}_broadcastMessage`,
     playlist: `${USER_RIGHTS_PREFIXES.technical.admin}_playlist`,
+    planning: `${USER_RIGHTS_PREFIXES.technical.admin}_planning`,
+    type: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -974,6 +978,13 @@ export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
   pass: 'pass',
   break: 'break',
   drop: 'drop',
+};
+
+export const PBEHAVIOR_TYPE_TYPES = {
+  active: 'active',
+  inactive: 'inactive',
+  maintenance: 'maintenance',
+  pause: 'pause',
 };
 
 export const EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES = {
@@ -1417,3 +1428,10 @@ export const WIDGET_GRID_SIZES_STYLES = {
 export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
+
+export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
+  selected: 0,
+  all: 1,
+};
+
+export const DEFAULT_TIMEZONE = 'Europe/Paris';

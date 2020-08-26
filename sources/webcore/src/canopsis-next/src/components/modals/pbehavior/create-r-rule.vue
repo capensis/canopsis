@@ -5,14 +5,18 @@
         span {{ $t('modals.createRrule.title') }}
       template(slot="text")
         r-rule-form(v-model="form.rrule")
-        pbehavior-exception-dates-form(v-if="form.rrule", v-model="form.exdate")
+        pbehavior-exception-dates-form(v-if="form.rrule", v-model="form.exdates")
       template(slot="actions")
         v-btn(
           depressed,
           flat,
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
-        v-btn.primary(type="submit") {{ $t('common.actions.saveChanges') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -22,32 +26,40 @@ import RRuleForm from '@/components/forms/rrule.vue';
 import PbehaviorExceptionDatesForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-dates-form.vue';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createRRule,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
     PbehaviorExceptionDatesForm,
     RRuleForm,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin],
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     return {
       form: {
         rrule: this.modal.config.rrule || '',
-        exdate: this.modal.config.exdate || [],
+        exdates: this.modal.config.exdates || [],
       },
     };
   },
   methods: {
-    submit() {
-      if (this.config.action) {
-        this.config.action(this.form);
-      }
+    async submit() {
+      const isValid = await this.$validator.validateAll();
 
-      this.$modals.hide();
+      if (isValid) {
+        if (this.config.action) {
+          this.config.action(this.form);
+        }
+
+        this.$modals.hide();
+      }
     },
   },
 };

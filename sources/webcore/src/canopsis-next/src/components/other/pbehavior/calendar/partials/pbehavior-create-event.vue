@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form")
+    pbehavior-form(v-model="form", :noFilter="!!filter")
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { get, cloneDeep, omit } from 'lodash';
+import { get, cloneDeep } from 'lodash';
 import dependentMixin from 'vuetify/es5/mixins/dependent';
 
 import {
@@ -36,6 +36,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { PbehaviorForm },
   mixins: [authMixin, dependentMixin],
   props: {
@@ -43,11 +44,15 @@ export default {
       type: Object,
       required: false,
     },
+    filter: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent),
+      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter),
     };
   },
   computed: {
@@ -70,36 +75,44 @@ export default {
       };
     },
   },
+  mounted() {
+    this.cacheForm();
+  },
   beforeDestroy() {
     if (this.manualClose) {
       delete this.calendarEvent.data.cachedForm;
     } else {
-      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+      this.cacheForm();
     }
   },
   methods: {
+    cacheForm() {
+      this.calendarEvent.data.cachedForm = cloneDeep(this.form);
+    },
+
     async submitHandler() {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
         this.form.author = this.currentUser._id;
 
-        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent);
+        const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent, this.$system.timezone);
 
         this.$emit('submit', calendarEvent);
       }
     },
 
     cancel() {
-      const oldPbehaviorForm = calendarEventToPbehaviorForm(omit(this.calendarEvent, 'data.cachedForm'));
+      const { cachedForm } = this.calendarEvent.data;
 
-      if (isOmitEqual(oldPbehaviorForm, this.form, ['_id'])) {
+      if (isOmitEqual(cachedForm, this.form, ['_id'])) {
         return this.close(true);
       }
 
       return this.$modals.show({
         name: MODALS.confirmation,
         config: {
+          text: this.$t('modals.createPbehavior.cancelConfirmation'),
           action: () => this.close(true),
         },
       });

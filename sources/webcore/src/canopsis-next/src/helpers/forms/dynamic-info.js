@@ -14,6 +14,7 @@ export function dynamicInfoToForm(dynamicInfo = {}) {
       _id: dynamicInfo._id || '',
       name: dynamicInfo.name || '',
       description: dynamicInfo.description || '',
+      disable_during_periods: dynamicInfo.disable_during_periods || [],
     },
     infos: dynamicInfo.infos ? [...dynamicInfo.infos] : [],
     patterns: {

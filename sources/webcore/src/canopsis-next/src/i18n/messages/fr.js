@@ -110,11 +110,16 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
+    planningAdministration: 'Administration de la planification',
+    icon: 'Icône',
+    priority: 'Priorité',
     fullscreen: 'Plein écran',
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
     begin: 'Commencer',
+    timezone: 'Fuseau horaire',
+    reason: 'Raison',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -306,7 +311,6 @@ export default {
     status: 'Statut',
     tabs: {
       filter: 'Filtre',
-      eids: 'Entités',
       comments: 'Commentaires',
     },
   },
@@ -646,7 +650,6 @@ export default {
             type: 'Type',
             start: 'Début',
             stop: 'Fin',
-            timezone: 'Fuseau horaire',
           },
         },
         filter: {
@@ -678,6 +681,7 @@ export default {
       success: {
         create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
       },
+      cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
     },
     createPause: {
       title: 'Mettre en pause',
@@ -1179,6 +1183,27 @@ export default {
     createRrule: {
       title: 'Créer un récurrence',
     },
+    createPbehaviorType: {
+      title: 'Créer un type',
+      iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+      errors: {
+        iconName: 'Le nom est invalide',
+      },
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priorité',
+        iconName: 'Nom de l\'icône',
+      },
+    },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modifier',
+      fields: {
+        selected: 'Seulement période sélectionnée',
+        all: 'Toutes les périodes',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1214,7 +1239,7 @@ export default {
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finit',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Raison',
       rrule: 'Récurrence',
     },
@@ -1525,7 +1550,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Désactivé si un pbehavior est actif',
+    disableDuringPeriods: 'Désactiver pendant les règles',
     table: {
       headers: {
         id: 'ID',
@@ -1676,6 +1701,19 @@ export default {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Le type utilise, car ne peut pas être supprimé',
+    defaultType: 'Le type est par défaut, car ne peut pas être modifié',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Raison',
+      datesOfExceptions: 'Dates d\'exception',
+    },
   },
 
   ...featureService.get('i18n.fr'),

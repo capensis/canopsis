@@ -31,6 +31,7 @@
               v-validate="tstopRules",
               :value="form.tstop",
               :label="$t('modals.createPbehavior.steps.general.fields.stop')",
+              :clearable="hasPauseType",
               name="tstop",
               @input="updateField('tstop', $event)"
             )
@@ -45,30 +46,29 @@
           name="reason"
         )
       v-flex(xs12)
-        v-select(
-          v-field="form.type",
-          v-validate="'required'",
-          :label="$t('modals.createPbehavior.steps.general.fields.type')",
-          :items="types",
-          :error-messages="errors.collect('type')",
-          name="type"
-        )
+        pbehavior-type-field(v-field="form.type")
 </template>
 
 <script>
+import { get } from 'lodash';
 import moment from 'moment-timezone';
 
-import { PBEHAVIOR_TYPES, PAUSE_REASONS, DATETIME_FORMATS } from '@/constants';
+import { PAUSE_REASONS, DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
-import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
+import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 
 export default {
-  components: { DateTimePickerField },
-  mixins: [formMixin, formValidationHeaderMixin, pbehaviorReasonsMixin],
+  components: { PbehaviorTypeField, DateTimePickerField },
+  mixins: [
+    formMixin,
+    formValidationHeaderMixin,
+    entitiesPbehaviorReasonsMixin,
+  ],
   model: {
     prop: 'form',
     event: 'input',
@@ -81,6 +81,10 @@ export default {
     },
   },
   computed: {
+    hasPauseType() {
+      return get(this.form.type, 'type') === PBEHAVIOR_TYPE_TYPES.pause;
+    },
+
     tstartRules() {
       return {
         required: true,
@@ -89,7 +93,7 @@ export default {
     },
 
     tstopRules() {
-      const rules = { required: true };
+      const rules = { required: !this.hasPauseType };
 
       if (this.form.tstart) {
         rules.after = [moment(this.form.tstart).format(DATETIME_FORMATS.dateTimePicker)];
@@ -101,10 +105,6 @@ export default {
 
     reasons() {
       return this.pbehaviorReasons.length ? this.pbehaviorReasons : Object.values(PAUSE_REASONS);
-    },
-
-    types() {
-      return Object.values(PBEHAVIOR_TYPES);
     },
   },
   mounted() {

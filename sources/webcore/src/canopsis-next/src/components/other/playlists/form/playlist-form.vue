@@ -10,11 +10,7 @@
       )
     time-interval-field(v-field="form.interval")
     v-layout(row)
-      v-switch(
-        v-field="form.enabled",
-        :label="$t('common.enabled')",
-        color="primary"
-      )
+      enabled-field(v-field="form.enabled")
       v-switch(
         v-field="form.fullscreen",
         :label="$t('common.fullscreen')",
@@ -35,6 +31,7 @@ import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/g
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
 import DraggablePlaylistTabs from '@/components/other/playlists/form/partials/draggable-playlist-tabs.vue';
 import TimeIntervalField from '@/components/forms/fields/time-interval.vue';
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 import { MODALS } from '@/constants';
 
@@ -45,6 +42,7 @@ import TabPanelContent from './partials/tab-panel-content.vue';
 export default {
   inject: ['$validator'],
   components: {
+    EnabledField,
     DraggablePlaylistTabs,
     TimeIntervalField,
     TabPanelContent,

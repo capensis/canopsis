@@ -59,17 +59,15 @@ export default {
         commit(types.FETCH_LIST);
 
         const { data, normalizedData } = await dispatch('entities/fetch', {
-          route: API_ROUTES.pbehavior.list,
+          route: API_ROUTES.planning.pbehaviors,
           schema: [schemas.pbehavior],
           params,
-          dataPreparer: d => d.data[0].data,
+          dataPreparer: d => d.data,
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
           allIds: normalizedData.result,
-          meta: {
-            total: data.data[0].total_count,
-          },
+          meta: data.meta,
         });
       } catch (err) {
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
@@ -80,8 +78,9 @@ export default {
     async fetchListByEntityId({ commit, dispatch }, { id }) {
       try {
         const { normalizedData } = await dispatch('entities/fetch', {
-          route: `${API_ROUTES.pbehaviorById}/${id}`,
+          route: API_ROUTES.planning.pbehaviorById,
           schema: [schemas.pbehavior],
+          params: { id },
         }, { root: true });
 
         commit(types.FETCH_BY_ID_COMPLETED, { allIds: normalizedData.result });
@@ -94,7 +93,7 @@ export default {
 
     async create({ dispatch }, { data }) {
       try {
-        await request.post(API_ROUTES.pbehavior.pbehavior, data);
+        await request.post(API_ROUTES.planning.pbehaviors, data);
 
         await dispatch('popups/success', { text: i18n.t('modals.createPbehavior.success.create') }, { root: true });
       } catch (err) {
@@ -107,7 +106,7 @@ export default {
 
     async update({ dispatch }, { data, id }) {
       await dispatch('entities/update', {
-        route: `${API_ROUTES.pbehavior.pbehavior}/${id}`,
+        route: `${API_ROUTES.planning.pbehaviors}/${id}`,
         schema: schemas.pbehavior,
         body: data,
       }, { root: true });
@@ -115,7 +114,7 @@ export default {
 
     async remove({ dispatch }, { id }) {
       try {
-        await request.delete(`${API_ROUTES.pbehavior.pbehavior}/${id}`);
+        await request.delete(`${API_ROUTES.planning.pbehaviors}/${id}`);
         await dispatch('entities/removeFromStore', {
           id,
           type: ENTITIES_TYPES.pbehavior,

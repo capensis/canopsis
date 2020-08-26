@@ -6,7 +6,8 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
+  BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -109,11 +110,16 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
+    planningAdministration: 'Planning Administration',
+    icon: 'Icon',
+    priority: 'Priority',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
     begin: 'Begin',
+    timezone: 'Timezone',
+    reason: 'Reason',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -305,7 +311,6 @@ export default {
     status: 'Status',
     tabs: {
       filter: 'Filter',
-      eids: 'Eids',
       comments: 'Comments',
     },
   },
@@ -645,7 +650,6 @@ export default {
             type: 'Type',
             start: 'Start',
             stop: 'End',
-            timezone: 'Timezone',
           },
         },
         filter: {
@@ -677,6 +681,7 @@ export default {
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
+      cancelConfirmation: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
     },
     createPause: {
       title: 'Create Pause event',
@@ -1178,6 +1183,27 @@ export default {
     createRrule: {
       title: 'Create RRule',
     },
+    createPbehaviorType: {
+      title: 'Create type',
+      iconNameHint: 'Enter a name of an icon from material.io',
+      errors: {
+        iconName: 'The name is invalid',
+      },
+      fields: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priority',
+        iconName: 'Icon name',
+      },
+    },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modify',
+      fields: {
+        selected: 'Only selected period',
+        all: 'All the periods',
+      },
+    },
   },
   tables: {
     noData: 'No data',
@@ -1213,7 +1239,7 @@ export default {
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Reason',
       rrule: 'Rrule',
     },
@@ -1524,7 +1550,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Disable if a pbehavior is active',
+    disableDuringPeriods: 'Disable during periods',
     table: {
       headers: {
         id: 'ID',
@@ -1674,6 +1700,19 @@ export default {
     title: 'Exception dates',
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Type is using, because cannot be deleted',
+    defaultType: 'Type is default, because cannot be edited',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Reason',
+      datesOfExceptions: 'Dates of exceptions',
+    },
   },
 
   ...featureService.get('i18n.en'),

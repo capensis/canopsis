@@ -86,15 +86,15 @@ export default {
     },
 
     color() {
-      return WATCHER_STATES_COLORS[this.watcher.tileColor];
+      return WATCHER_STATES_COLORS[this.watcher.color];
     },
 
     icon() {
-      return WEATHER_ICONS[this.watcher.tileIcon];
+      return WEATHER_ICONS[this.watcher.icon];
     },
 
     secondaryIcon() {
-      return WEATHER_ICONS[this.watcher.tileSecondaryIcon];
+      return WEATHER_ICONS[this.watcher.secondary_icon];
     },
 
     itemClasses() {
@@ -117,7 +117,7 @@ export default {
     },
 
     isBlinking() {
-      return this.watcher.isActionRequired;
+      return this.watcher.is_action_required;
     },
 
     isBothModalType() {
@@ -156,10 +156,10 @@ export default {
       try {
         const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
 
-        const filter = { $and: [{ 'entity.impact': this.watcher.entity_id }] };
+        const filter = { $and: [{ 'entity.impact': this.watcher._id }] };
 
         const watcherFilter = {
-          title: this.watcher.display_name,
+          title: this.watcher.name,
           filter,
         };
 

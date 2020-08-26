@@ -1,72 +1,107 @@
 import Vue from 'vue';
-import moment from 'moment';
-import { isObject, isString, cloneDeep, isUndefined } from 'lodash';
-import { CalendarEvent, Day, DaySpan, Op, Schedule } from 'dayspan';
+import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
+import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
-import convertTimestampToMoment from '@/helpers/date';
+import { convertDateToTimestampByTimezone, convertTimestampToMoment } from '@/helpers/date';
+import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
 
-export function pbehaviorToForm(pbehavior = {}) {
+export function pbehaviorToForm(pbehavior = {}, filter = null) {
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
     ({ rrule } = pbehavior.rrule);
   }
 
+  const resultFilter = filter || pbehavior.filter || {};
+
   return {
     rrule,
-
     _id: pbehavior._id || uid('pbehavior'),
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
-    type: pbehavior.type || '',
-    reason: pbehavior.reason || '',
-    filter: isString(pbehavior.filter) ? JSON.parse(pbehavior.filter) : cloneDeep(pbehavior.filter || {}),
-    comments: cloneDeep(pbehavior.comments || []),
+    type: pbehavior.type, // TODO: add cloneDeep
+    reason: pbehavior.reason, // TODO: add cloneDeep
+    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : null,
+    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : null,
+    filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
+    comments: addKeyInEntity(cloneDeep(pbehavior.comments || [])),
+    exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])), // TODO: convert timestamp to Date
   };
 }
 
-export function formToPbehavior(form) {
+export function formToPbehavior(form, timezone) {
   return {
     ...form,
 
-    comments: [],
-    tstart: moment(form.tstart).unix(),
-    tstop: moment(form.tstop).unix(),
+    reason: '8a48507a-7eba-463f-953f-41b93fce9745', // TODO should be replaced in version 6
+    comments: removeKeyFromEntity(form.comments),
+    exdates: removeKeyFromEntity(form.exdates),
+    tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
+    tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
   };
 }
 
-export function calendarEventToPbehaviorForm(calendarEvent) {
+export function calendarEventToPbehaviorForm(calendarEvent, filter) {
   const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
 
   const form = {
-    ...pbehaviorToForm(pbehavior),
+    ...pbehaviorToForm(pbehavior, filter),
     ...cachedForm,
   };
 
   form.tstart = calendarEvent.start.date.toDate();
-  form.tstop = calendarEvent.end.date.toDate();
+
+  if (!pbehavior || pbehavior.tstop) {
+    if (calendarEvent.schedule.durationUnit === 'days') {
+      if (calendarEvent.end.date.diff(calendarEvent.start.date, 'days') <= 0) {
+        form.tstop = calendarEvent.start.date.clone().endOf('day').toDate();
+      } else {
+        form.tstop = calendarEvent.end.date.clone().subtract(1, 'second').toDate();
+      }
+    } else {
+      form.tstop = calendarEvent.end.date.toDate();
+    }
+  }
 
   return form;
 }
 
-export function formToCalendarEvent(form, calendarEvent) {
-  const span = new DaySpan(
-    Day.fromMoment(moment(form.tstart)),
-    Day.fromMoment(moment(form.tstop)),
-  );
+export function formToCalendarEvent(form, calendarEvent, timezone) {
+  const span = new DaySpan(calendarEvent.start, calendarEvent.end);
 
   const schedule = calendarEvent.fullDay
     ? Schedule.forDay(span.start, span.days(Op.UP))
     : Schedule.forSpan(span);
 
-  const details = { ...calendarEvent.data, pbehavior: formToPbehavior(form) };
-  const event = Vue.$dayspan.createEvent(details, schedule, true);
+  const details = {
+    ...calendarEvent.data,
+
+    pbehavior: formToPbehavior(form, timezone),
+  };
+
+  const event = Vue.$dayspan.createEvent(details, schedule);
 
   event.id = calendarEvent.event.id;
 
   return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
+}
+
+export function pbehaviorToRequest(pbehavior) {
+  const result = omit(pbehavior, ['_id', 'type', 'reason', 'exdates']);
+
+  result.type = isObject(pbehavior.type) ? pbehavior.type._id : pbehavior.type;
+  result.reason = isObject(pbehavior.reason) ? pbehavior.reason._id : pbehavior.reason;
+
+  if (!pbehavior._id.includes('pbehavior')) { // TODO: fix that
+    result._id = pbehavior._id;
+  }
+
+  if (pbehavior.exdates) {
+    result.exdates = pbehavior.exdates
+      .map(exdate => ({ ...exdate, type: isObject(exdate.type) ? exdate.type._id : exdate.type }));
+  }
+
+  return result;
 }

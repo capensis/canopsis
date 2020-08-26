@@ -2,7 +2,6 @@ import { get, omit, cloneDeep } from 'lodash';
 
 import {
   MODALS,
-  ENTITIES_TYPES,
   EVENT_ENTITY_TYPES,
   BUSINESS_USER_RIGHTS_ACTIONS_MAP,
   CRUD_ACTIONS,
@@ -133,18 +132,11 @@ export default {
 
     showAddPbehaviorModal() {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: [this.item.d] },
-            },
+          filter: {
+            _id: { $in: [this.item.d] },
           },
-          action: data => this.createPbehavior({
-            data,
-            parents: [this.item],
-            parentsType: ENTITIES_TYPES.alarm,
-          }),
         },
       });
     },

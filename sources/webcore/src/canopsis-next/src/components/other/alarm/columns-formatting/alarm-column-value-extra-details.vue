@@ -61,23 +61,23 @@
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
           div {{ $t('common.date') }} : {{ alarm.v.snooze.t | date('long') }}
           div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}
-    div(v-if="pbehaviors.length")
+    div(v-if="pbehaviors.length", v-for="pbehavior in pbehaviors", :key="pbehavior._id")
       v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(
           small,
           data-test="extraDetailsOpenButton-pbehaviors",
           slot="activator"
-        ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.pbehaviorAdd].icon }}
+        ) {{ pbehavior.type.icon_name }}
         div(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
-          div(v-for="pbehavior in pbehaviors")
+          div
             div.mt-2.font-weight-bold {{ pbehavior.name }}
             div {{ $t('common.author') }}: {{ pbehavior.author }}
-            div {{ $t('common.type') }}: {{ pbehavior.type_ }}
+            div {{ $t('common.type') }}: {{ pbehavior.type.name }}
+            div {{ $t('common.reason') }}: {{ pbehavior.reason.name }}
             div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
             div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
             div(
-              v-show="pbehavior.comments && pbehavior.comments.length",
               v-for="comment in pbehavior.comments",
               :key="comment._id"
             ) {{ $tc('common.comment', pbehavior.comments.length) }}:
@@ -143,7 +143,7 @@ export default {
   },
   computed: {
     pbehaviors() {
-      return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
+      return this.alarm.pbehaviors.filter(pbehavior => pbehavior.enabled);
     },
     causesRules() {
       return get(this.alarm.causes, 'rules', []);

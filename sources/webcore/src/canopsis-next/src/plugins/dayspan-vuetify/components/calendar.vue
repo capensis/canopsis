@@ -115,7 +115,7 @@ export default {
 
     editHandler({ calendarEvent, closePopover }) {
       const event = this.getEvent('changed', {
-        calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+        calendarEvent: this.copyCalendarEvent(calendarEvent),
         closePopover,
       });
 
@@ -124,7 +124,7 @@ export default {
 
     addHandler({ calendarEvent, closePopover }) {
       const event = this.getEvent('added', {
-        calendarEvent: this.createEventFromCalendar(this.copyCalendarEvent(calendarEvent)),
+        calendarEvent: this.copyCalendarEvent(calendarEvent),
         closePopover,
       });
 
@@ -207,14 +207,21 @@ export default {
       }
     },
 
-    startResize(event, calendarEvent) {
+    startResize(event) {
+      const { calendarEvent } = event;
+
       if (this.canResize) {
+        const { time, schedule } = calendarEvent;
+
         this.resizing = true;
         this.resizingEvent = event;
         this.resizingBelow = true;
         this.placeholderForCreate = false;
         this.placeholder = this.copyCalendarEvent(calendarEvent);
         this.placeholder.data.resizing = true;
+        this.placeholder.time.end = this.placeholder.fullDay
+          ? time.start.next(schedule.durationInDays).end()
+          : time.end;
 
         this.updatePlaceholderRow();
         this.endEditing();
@@ -234,28 +241,14 @@ export default {
     finishMove(mouseEvent) {
       this.placeholder.data.moving = false;
 
-      if (!this.openPopover) {
-        this.handleMoved(mouseEvent);
-      } else {
-        this.placeholderForCreate = true;
-      }
-
-      if (this.placeholder.start.isBefore(this.calendar.filled.start)) {
-        this.calendar.prev();
-      }
-
+      this.handleMoved(mouseEvent);
       this.endMove();
     },
 
     finishResize(mouseEvent) {
       this.placeholder.data.resizing = false;
 
-      if (!this.openPopover) {
-        this.handleResized(mouseEvent);
-      } else {
-        this.placeholderForCreate = true;
-      }
-
+      this.handleResized(mouseEvent);
       this.endResize();
     },
 
@@ -272,33 +265,59 @@ export default {
     handleMoved(mouseEvent) {
       const target = this.placeholder.time;
       const source = this.movingEvent.calendarEvent.time;
-      const sameTime = target.start.sameMinute(source.start);
-      const sameDay = target.start.sameDay(source.start);
       const isDay = mouseEvent.type === 'mouse-up-day';
 
-      if ((isDay && !sameDay) || (!isDay && !sameTime)) {
-        const calendarEvent = this.copyCalendarEvent(this.placeholder);
-
-        const event = this.getEvent('changed', {
+      if (
+        isDay
+          ? !target.start.sameDay(source.start)
+          : !target.start.sameMinute(source.start)
+      ) {
+        const event = this.getEvent('moved', {
           mouseEvent,
-          calendarEvent: this.createEventFromCalendar(calendarEvent),
+          movingEvent: this.movingEvent,
+          calendarEvent: this.movingEvent.calendarEvent,
+          target: this.placeholder.time,
+          openPopover: () => this.placeholderForCreate = true,
+          closePopover: () => this.clearPlaceholder(),
         });
 
-        this.$emit('changed', event);
+        this.$emit('moved', event);
+
+        if (!event.handled) {
+          event.clearPlaceholder();
+        }
       } else {
-        this.clearPlaceholder();
+        this.$nextTick(() => this.clearPlaceholder());
       }
     },
 
     handleResized(mouseEvent) {
-      const calendarEvent = this.copyCalendarEvent(this.placeholder);
+      const target = this.placeholder.time;
+      const source = this.resizingEvent.calendarEvent.time;
+      const isDay = mouseEvent.type === 'mouse-up-day';
 
-      const event = this.getEvent('changed', {
-        mouseEvent,
-        calendarEvent: this.createEventFromCalendar(calendarEvent),
-      });
+      if (
+        isDay
+          ? !(target.start.sameDay(source.start) && target.end.sameDay(source.end))
+          : !(target.start.sameMinute(source.start) && target.end.sameMinute(source.end))
+      ) {
+        const event = this.getEvent('resized', {
+          mouseEvent,
+          resizingEvent: this.resizingEvent,
+          calendarEvent: this.resizingEvent.calendarEvent,
+          target: this.placeholder.time,
+          openPopover: () => this.placeholderForCreate = true,
+          closePopover: () => this.clearPlaceholder(),
+        });
 
-      this.$emit('changed', event);
+        this.$emit('resized', event);
+
+        if (!event.handled) {
+          event.clearPlaceholder();
+        }
+      } else {
+        this.$nextTick(() => this.clearPlaceholder());
+      }
     },
 
     endAdd() {
@@ -355,10 +374,10 @@ export default {
     },
 
     changeResizePlaceholder(mouseEvent) {
-      let { time } = mouseEvent;
-      time = time.relative(-this.resizingEvent.offset);
-      time = this.$dayspan.roundTime(time, this.$dayspan.rounding.drag);
       const { start, end } = this.placeholder.time;
+      let { time } = mouseEvent;
+
+      time = this.$dayspan.roundTime(time, this.$dayspan.rounding.drag, true);
 
       if (start.time === time.time || end.time === time.time) {
         return;
