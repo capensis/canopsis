@@ -74,6 +74,8 @@ export default {
       if (search) {
         query.search = search;
       }
+
+      return query;
     },
   },
 };
