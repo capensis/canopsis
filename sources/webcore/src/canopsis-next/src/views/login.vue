@@ -3,7 +3,7 @@
     div.description
       div(v-html="description")
     div.loginContainer
-      standard-login
+      base-login
       cas-login.mt-2(v-show="isCASAuthEnabled")
     login-footer
 </template>
@@ -12,15 +12,15 @@
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
+import BaseLogin from '@/components/other/login/base-login.vue';
 import CasLogin from '@/components/other/login/cas-login.vue';
 import LoginFooter from '@/components/other/login/login-footer.vue';
-import StandardLogin from '@/components/other/login/standard-login.vue';
 
 export default {
   components: {
-    StandardLogin,
-    LoginFooter,
+    BaseLogin,
     CasLogin,
+    LoginFooter,
   },
   mixins: [authMixin, entitiesInfoMixin],
   async mounted() {

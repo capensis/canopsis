@@ -214,7 +214,7 @@ export default {
     entities: 'Entities',
   },
   login: {
-    standard: 'Standard',
+    base: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Login with CAS',
     documentation: 'Documentation',

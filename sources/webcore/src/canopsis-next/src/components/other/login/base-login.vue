@@ -26,14 +26,17 @@
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import LoginForm from '@/components/other/login/form/login-form.vue';
 import LdapLoginInformation from '@/components/other/login/ldap-login-information.vue';
+import LoginForm from '@/components/other/login/form/login-form.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { LoginForm, LdapLoginInformation },
+  components: {
+    LdapLoginInformation,
+    LoginForm,
+  },
   mixins: [authMixin, entitiesInfoMixin],
   data() {
     return {
