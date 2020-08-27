@@ -3,7 +3,7 @@
     v-layout(row, wrap)
       v-flex(xs4)
         search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
-      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selected.length", xs4)
+      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selectedExceptions.length", xs4)
         v-btn(@click="deleteSelectedExceptions", icon)
           v-icon delete
     v-data-table(
@@ -99,6 +99,10 @@ export default {
         },
       ];
     },
+
+    selectedExceptions() {
+      return this.selected.filter(({ deletable }) => deletable);
+    },
   },
   methods: {
     updateSearchHandler(search) {
@@ -110,7 +114,7 @@ export default {
     },
 
     deleteSelectedExceptions() {
-      this.$emit('remove-selected', this.selected);
+      this.$emit('remove-selected', this.selectedExceptions);
     },
   },
 };

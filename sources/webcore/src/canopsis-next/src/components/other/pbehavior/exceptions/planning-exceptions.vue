@@ -36,8 +36,8 @@ export default {
     },
   },
   watch: {
-    pagination(pagination, oldPagination) {
-      if (!isEqual(pagination, oldPagination)) {
+    query(query, oldQuery) {
+      if (!isEqual(query, oldQuery)) {
         this.fetchList();
       }
     },

@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import moment from 'moment-timezone';
 import { pick, mapValues } from 'lodash';
 
 import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
@@ -123,7 +124,7 @@ export default {
                 id: pbehavior._id,
                 data: pbehaviorToRequest({
                   ...formToPbehavior(pbehavior, this.$system.timezone),
-                  tstop: Math.round(Date.now() / 1000),
+                  tstop: moment().tz(this.$system.timezone, true).unix(),
                 }),
               }));
             }
