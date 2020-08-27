@@ -15,7 +15,7 @@ Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la
 
 ### Options du moteur
 
-La commande `engine-correlation -help` liste toutes les options acceptées par le moteur.
+La commande `engine-correlation --help` liste toutes les options acceptées par le moteur.
 
 ```
   -consumeQueue string
