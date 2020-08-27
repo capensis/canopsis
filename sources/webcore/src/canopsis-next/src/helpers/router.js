@@ -1,6 +1,8 @@
 import { isEmpty, isFunction, isMatch } from 'lodash';
 
+import { BASE_URL } from '@/config';
 import { USERS_RIGHTS_MASKS, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES, POPUP_TYPES } from '@/constants';
+
 import store from '@/store';
 import i18n from '@/i18n';
 
@@ -110,3 +112,10 @@ export function getKeepalivePathByRoute({ path, query } = {}) {
 
   return [path];
 }
+
+/**
+ * Get application host address.
+ *
+ * @return {string}
+ */
+export const getApplicationHost = () => window.location.origin + BASE_URL;
