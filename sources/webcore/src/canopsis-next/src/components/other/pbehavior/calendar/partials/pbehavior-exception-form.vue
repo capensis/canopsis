@@ -2,6 +2,7 @@
   div
     h3.my-3.grey--text {{ $t('pbehaviorExceptions.title') }}
     v-divider
+    pbehavior-exception-list(:exceptions="exceptions")
     v-layout.mt-3(row)
       v-flex(xs12)
         pbehavior-exception-field(
@@ -27,9 +28,10 @@ import uid from '@/helpers/uid';
 import formArrayMixin from '@/mixins/form/array';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
+import PbehaviorExceptionList from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-list.vue';
 
 export default {
-  components: { PbehaviorExceptionField },
+  components: { PbehaviorExceptionList, PbehaviorExceptionField },
   mixins: [formArrayMixin],
   model: {
     prop: 'exdates',
