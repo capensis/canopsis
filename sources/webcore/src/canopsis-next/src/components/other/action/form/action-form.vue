@@ -20,7 +20,11 @@
     )
     v-text-field(
       v-field.number="form.generalParameters.priority",
-      :label="$t('common.priority')"
+      v-validate="'numeric'",
+      :label="$t('common.priority')",
+      :error-messages="errors.collect('priority')",
+      type="number",
+      name="priority"
     )
     v-switch.mb-3(
       v-field="form.generalParameters.enabled",
