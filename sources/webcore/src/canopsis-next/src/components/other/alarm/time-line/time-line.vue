@@ -3,7 +3,7 @@
     ul(v-for="(steps, day) in groupedSteps", :key="day")
       li(v-for="(step, index) in steps", :key="`step-${index}`")
         .timeline-item(v-show="index === 0")
-          .date {{ day | date('short', true) }}
+          .date {{ day }}
         .timeline-item
           .time {{ step.t | date('time', true) }}
           time-line-flag.flag(:step="step")
@@ -12,7 +12,9 @@
 
 <script>
 import moment from 'moment';
-import { orderBy, groupBy } from 'lodash';
+import { groupBy } from 'lodash';
+
+import { DATETIME_FORMATS } from '@/constants';
 
 import TimeLineFlag from '@/components/other/alarm/time-line/time-line-flag.vue';
 import TimeLineCard from '@/components/other/alarm/time-line/time-line-card.vue';
@@ -55,9 +57,9 @@ export default {
   },
   methods: {
     groupSteps(steps) {
-      const orderedSteps = orderBy(steps, ['t'], 'desc');
+      const orderedSteps = steps.reverse();
 
-      return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
+      return groupBy(orderedSteps, step => moment.unix(step.t).format(DATETIME_FORMATS.short));
     },
   },
 };
