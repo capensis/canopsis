@@ -8,7 +8,7 @@
       :items="pbehaviorExceptions",
       :loading="pbehaviorExceptionsPending",
       :total-items="pbehaviorExceptionsMeta.total_count",
-      :pagination.sync="query",
+      :pagination.sync="pagination",
       item-key="_id",
       select-all
     )
