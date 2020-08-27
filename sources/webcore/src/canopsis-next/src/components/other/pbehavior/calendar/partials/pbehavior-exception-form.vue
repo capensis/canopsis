@@ -2,7 +2,7 @@
   div
     h3.my-3.grey--text {{ $t('pbehaviorExceptions.title') }}
     v-divider
-    pbehavior-exception-list(:exceptions="exceptions")
+    pbehavior-exception-list(v-if="exceptions.length", :exceptions="exceptions")
     v-layout.mt-3(row)
       v-flex(xs12)
         pbehavior-exception-field(
