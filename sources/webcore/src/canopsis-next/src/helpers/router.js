@@ -110,3 +110,19 @@ export function getKeepalivePathByRoute({ path, query } = {}) {
 
   return [path];
 }
+
+/**
+ * Get application host address.
+ *
+ * @param {String} routerMode
+ * @return {string}
+ */
+export const getApplicationHost = (routerMode) => {
+  let host = window.location.origin;
+
+  if (routerMode === 'hash') {
+    host += window.location.pathname;
+  }
+
+  return host;
+};

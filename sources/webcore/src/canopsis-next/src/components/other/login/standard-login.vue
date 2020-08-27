@@ -26,7 +26,6 @@
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import CasLogin from '@/components/other/login/cas-login.vue';
 import LoginForm from '@/components/other/login/form/login-form.vue';
 import LdapLoginInformation from '@/components/other/login/ldap-login-information.vue';
 
@@ -34,7 +33,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { LoginForm, CasLogin, LdapLoginInformation },
+  components: { LoginForm, LdapLoginInformation },
   mixins: [authMixin, entitiesInfoMixin],
   data() {
     return {

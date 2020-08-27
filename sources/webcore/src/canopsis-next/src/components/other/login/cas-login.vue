@@ -7,7 +7,10 @@
 </template>
 
 <script>
+import qs from 'qs';
 import { get } from 'lodash';
+
+import { getApplicationHost } from '@/helpers/router';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -23,16 +26,13 @@ export default {
         return null;
       }
 
-      const { href: redirect } = this.$router.resolve({ name: 'home' });
-      const { href } = this.$router.resolve({
-        path: 'login',
-        query: {
-          service: `${this.casConfig.service}/logged_in`,
-          redirect,
-        },
+      const { href } = this.$router.resolve({ name: 'home' });
+      const { redirect = href } = this.$route.query;
+      const query = qs.stringify({
+        redirect: `${getApplicationHost(this.$router.mode)}${redirect}`,
       });
 
-      return `${this.casConfig.server}${href}`;
+      return `${this.casConfig.server}?${query}`;
     },
   },
 };
