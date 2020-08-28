@@ -74,7 +74,7 @@ docker-compose_watcher_1         /bin/sh -c /${_BINARY_NAME}      Up
 docker-compose_webserver_1       /bin/sh -c /entrypoint.sh        Up       0.0.0.0:8082->8082/tcp
 ```
 
-Les services doivent être en état `Up` ou `Exit 0`. En fonction des ressources de votre machine, il peut être nécessaire d'attendre quelques minute avant que l'ensemble des moteurs puissent passer en état `Up`.
+Les services doivent être en état `Up` ou `Exit 0`. En fonction des ressources de votre machine, il peut être nécessaire d'attendre quelques minutes avant que l'ensemble des moteurs puissent passer en état `Up`.
 
 Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
 
