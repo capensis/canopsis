@@ -27,6 +27,11 @@ markdown_extensions:
     - pymdownx.superfences
     - toc:
         permalink: true
+    - pymdownx.superfences:
+        custom_fences:
+          - name: mermaid
+            class: mermaid
+            format: !!python/name:pymdownx.superfences.fence_div_format
 
 plugins:
     - search:
@@ -35,3 +40,6 @@ plugins:
     - git-revision-date-localized:
         locale: fr
         type: iso_date
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.7.0/dist/mermaid.min.js
