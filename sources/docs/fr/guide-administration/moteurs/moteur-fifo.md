@@ -35,7 +35,7 @@ A l'arrivée d'un événement le moteur `engine-fifo` en extrait l'entité. Il y
 Dans ce cas, le moteur `engine-fifo` transmet l'événement directement au moteur `engine-che`.  
 
 **2. Il existe déjà un événement pour cette même entité.**  
-Dans ce cas, le moteur créé une file d'attente temporaire dans Redis et stocke l'événement dans cette file. A la fin de la chaîne de traitement les autres moteurs déposent un acquittement dans un `ack manager` géré par le moteur `engine-fifo`. Si cet acquittement concerne l'entité de l'événement stocké dans la file temporaire, celui-ci est libéré et transmis au moteur `engine-che`.
+Dans ce cas, le moteur créé une file d'attente temporaire dans RabbitMQ et stocke l'événement dans cette file. A la fin de la chaîne de traitement les autres moteurs déposent un acquittement dans un `ack manager` géré par le moteur `engine-fifo`. Si cet acquittement concerne l'entité de l'événement stocké dans la file temporaire, celui-ci est libéré et transmis au moteur `engine-che`.
 
 Dans les 2 cas, le moteur créé un verrou concernant l'entité en cours de traitement et le stocke dans Redis. C'est ce verrou qui lui permettra de savoir si un événement existe déjà pour cette entité. Le verrou est supprimé lors de la réception d'un acquittement ou après un certain délai. Ce délai est de 10 secondes par défaut et peut être configuré au moyen de l'option `-lockTtl` du moteur.
 
