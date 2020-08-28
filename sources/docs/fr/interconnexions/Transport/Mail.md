@@ -247,7 +247,7 @@ MAIL\_DATE est automatiquement converti en objet date, inutile d'appliquer une a
 
 Exemple : La séquence à la 1° ligne située entre les 5° et le 18° mots sont donc sélectionnables avec la ligne `line(0).word(4).untilword(17)`.
 
-Depuis la `3.44.0` il y a la possibilité de faire des template pour des mails sous forme HTML sans prendre en compte le balisage. Il faut ajouter un `action_template=convert_html2text` au template.
+Depuis la `3.44.0` il y a la possibilité de faire des templates pour des mails sous forme HTML sans prendre en compte le balisage. Il faut ajouter un `action_template=convert_html2text` au template.
 
 ## Dépannage
 
