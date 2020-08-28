@@ -28,11 +28,13 @@ export default {
 
       const { href } = this.$router.resolve({ name: 'home' });
       const { redirect = href } = this.$route.query;
+      const appUrl = getApplicationHost();
       const query = qs.stringify({
-        redirect: `${getApplicationHost(this.$router.mode)}${redirect}`,
+        redirect: `${appUrl}${redirect}`,
+        service: `${appUrl}api/cas/loggedin`,
       });
 
-      return `${this.casConfig.server}?${query}`;
+      return `${appUrl}api/cas/login?${query}`;
     },
   },
 };

@@ -116,7 +116,7 @@ export default {
     getPlaylistRoute({ _id }) {
       const { href } = this.$router.resolve({ name: 'playlist', params: { id: _id }, query: { autoplay: true } });
 
-      return `${getApplicationHost(this.$router.mode)}${href}`;
+      return `${getApplicationHost()}${href}`;
     },
 
     onSuccessCopied() {
