@@ -8,9 +8,7 @@ L'ensemble des procédures décrites doivent être réalisées avec l'utilisateu
 
 ### Version minimum du noyau Linux
 
-Votre système hôte pour Docker doit disposer d'un noyau Linux suffisamment récent. Canopsis nécessite l'utilisation **d'un noyau Linux 4.4 minimum**.
-
-Le noyau installé par défaut sur CentOS 7 n'est donc **pas suffisant** pour héberger un environnement Docker Canopsis.
+Votre système hôte pour Docker doit disposer d'un noyau Linux suffisamment récent. Canopsis nécessite l'utilisation **d'un noyau Linux 4.4 minimum**. Le noyau installé par défaut sur CentOS 7 n'est donc pas suffisant pour héberger un environnement Docker Canopsis.
 
 Vérifier votre version du noyau à l'aide de la commande suivante :
 ```sh
@@ -34,9 +32,9 @@ Le [dépôt Git de Canopsis](https://git.canopsis.net/canopsis/canopsis/-/tree/d
 git clone -b develop https://git.canopsis.net/canopsis/canopsis.git && cd canopsis/docker-compose
 ```
 
-La variable `CANOPSIS_IMAGE_TAG` du fichier `.env` a pour valeur par défaut `nightly`. Ce qui correspond à la version la plus récente des images disponibles sur Docker Hub. Notez que cela englobe également les versions intermédiaires destinées au développement et aux tests. Aussi, le tag `nigthly` ne doit **pas** être utilisé pour un environnement de production.
+La variable `CANOPSIS_IMAGE_TAG` du fichier `.env` a pour valeur par défaut `nightly`, ce qui correspond à la version la plus récente des images disponibles sur Docker Hub. Notez que cela englobe également les versions intermédiaires destinées au développement et aux tests. Aussi, le tag `nigthly` ne doit **pas** être utilisé pour un environnement de production.
 
-Lancez ensuite la commande suivante, afin de lever un environnement Canopsis open-core complet avec Docker :
+Lancez ensuite la commande suivante :
 ```sh
 docker-compose up -d
 ```
@@ -48,30 +46,35 @@ La vérification va passer par la commande `docker-compose ps` :
 ```sh
 docker-compose ps
 
-          Name                         Command               State                          Ports                      
------------------------------------------------------------------------------------------------------------------------
-canopsis_alerts_1           /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_cleaner_events_1   /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_context-graph_1    /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_event_filter_1     /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_eventstore_1       /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_influxdb_1         /entrypoint.sh influxd           Up       0.0.0.0:4444->4444/udp, 0.0.0.0:8083->8083/tcp,  
-                                                                      0.0.0.0:8086->8086/tcp                           
-canopsis_metric_1           /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_mongodb_1          docker-entrypoint.sh --wir ...   Up       0.0.0.0:27027->27017/tcp                         
-canopsis_pbehavior_1        /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_provisionning_1    /bin/sh -c /entrypoint-prov.sh   Exit 0                                                    
-canopsis_rabbitmq_1         docker-entrypoint.sh rabbi ...   Up       15671/tcp, 0.0.0.0:15672->15672/tcp, 25672/tcp,  
-                                                                      4369/tcp, 5671/tcp, 0.0.0.0:5672->5672/tcp       
-canopsis_redis_1            docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp                           
-canopsis_scheduler_1        /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_task_importctx_1   /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_task_mail_1        /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_ticket_1           /bin/sh -c /entrypoint.sh        Up       8082/tcp                                         
-canopsis_webserver_1        /bin/sh -c /entrypoint.sh        Up       0.0.0.0:28082->8082/tcp   
+             Name                           Command               State                Ports
+--------------------------------------------------------------------------------------------------------
+docker-compose_action_1          /engine-action                   Up
+docker-compose_axe_1             /engine-axe                      Up
+docker-compose_che_1             /engine-che -d -publishQue ...   Up
+docker-compose_fifo_1            /engine-fifo                     Up
+docker-compose_heartbeat_1       /engine-heartbeat                Up
+docker-compose_influxdb_1        /entrypoint.sh influxd           Up       0.0.0.0:4444->4444/udp,
+                                                                           0.0.0.0:8083->8083/tcp,
+                                                                           0.0.0.0:8086->8086/tcp
+docker-compose_init_1            /bin/sh -c /${_BINARY_NAME}      Exit 0
+docker-compose_metric_1          /bin/sh -c /entrypoint.sh        Up       8082/tcp
+docker-compose_mongodb_1         docker-entrypoint.sh --wir ...   Up       0.0.0.0:27027->27017/tcp
+docker-compose_nginx_1           /bin/sh -c /entrypoint.sh        Up       0.0.0.0:80->80/tcp
+docker-compose_pbehavior_1       /bin/sh -c /entrypoint.sh        Up       8082/tcp
+docker-compose_provisionning_1   /bin/sh -c /entrypoint-prov.sh   Exit 0
+docker-compose_rabbitmq_1        docker-entrypoint.sh rabbi ...   Up       15671/tcp,
+                                                                           0.0.0.0:15672->15672/tcp,
+                                                                           25672/tcp, 4369/tcp,
+                                                                           5671/tcp,
+                                                                           0.0.0.0:5672->5672/tcp
+docker-compose_redis_1           docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp
+docker-compose_scheduler_1       /bin/sh -c /entrypoint.sh        Up       8082/tcp
+docker-compose_task_importctx_1  /bin/sh -c /entrypoint.sh        Up       8082/tcp
+docker-compose_watcher_1         /bin/sh -c /${_BINARY_NAME}      Up
+docker-compose_webserver_1       /bin/sh -c /entrypoint.sh        Up       0.0.0.0:8082->8082/tcp
 ```
 
-Les services doivent être en état `Up` ou `Exit 0`.
+Les services doivent être en état `Up` ou `Exit 0`. En fonction des ressources de votre machine, il peut être nécessaire d'attendre quelques minute avant que l'ensemble des moteurs puissent passer en état `Up`.
 
 Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
 
@@ -80,40 +83,41 @@ Vous pouvez alors procéder à votre [première connexion à l'interface Canopsi
 ```sh
 docker-compose down
 
-Stopping canopsis_webserver_1      ... done
-Stopping canopsis_metric_1         ... done
-Stopping canopsis_event_filter_1   ... done
-Stopping canopsis_task_importctx_1 ... done
-Stopping canopsis_eventstore_1     ... done
-Stopping canopsis_alerts_1         ... done
-Stopping canopsis_scheduler_1      ... done
-Stopping canopsis_pbehavior_1      ... done
-Stopping canopsis_context-graph_1  ... done
-Stopping canopsis_cleaner_events_1 ... done
-Stopping canopsis_ticket_1         ... done
-Stopping canopsis_task_mail_1      ... done
-Stopping canopsis_rabbitmq_1       ... done
-Stopping canopsis_influxdb_1       ... done
-Stopping canopsis_mongodb_1        ... done
-Stopping canopsis_redis_1          ... done
-Removing canopsis_webserver_1      ... done
-Removing canopsis_metric_1         ... done
-Removing canopsis_event_filter_1   ... done
-Removing canopsis_task_importctx_1 ... done
-Removing canopsis_eventstore_1     ... done
-Removing canopsis_alerts_1         ... done
-Removing canopsis_provisionning_1  ... done
-Removing canopsis_scheduler_1      ... done
-Removing canopsis_pbehavior_1      ... done
-Removing canopsis_context-graph_1  ... done
-Removing canopsis_cleaner_events_1 ... done
-Removing canopsis_ticket_1         ... done
-Removing canopsis_task_mail_1      ... done
-Removing canopsis_rabbitmq_1       ... done
-Removing canopsis_influxdb_1       ... done
-Removing canopsis_mongodb_1        ... done
-Removing canopsis_redis_1          ... done
-Removing network canopsis_default
+Stopping docker-compose_nginx_1          ... done
+Stopping docker-compose_webserver_1      ... done
+Stopping docker-compose_metric_1         ... done
+Stopping docker-compose_task_importctx_1 ... done
+Stopping docker-compose_scheduler_1      ... done
+Stopping docker-compose_pbehavior_1      ... done
+Stopping docker-compose_mongodb_1        ... done
+Stopping docker-compose_fifo_1           ... done
+Stopping docker-compose_action_1         ... done
+Stopping docker-compose_axe_1            ... done
+Stopping docker-compose_redis_1          ... done
+Stopping docker-compose_che_1            ... done
+Stopping docker-compose_influxdb_1       ... done
+Stopping docker-compose_heartbeat_1      ... done
+Stopping docker-compose_rabbitmq_1       ... done
+Stopping docker-compose_watcher_1        ... done
+Removing docker-compose_nginx_1          ... done
+Removing docker-compose_webserver_1      ... done
+Removing docker-compose_metric_1         ... done
+Removing docker-compose_provisionning_1  ... done
+Removing docker-compose_task_importctx_1 ... done
+Removing docker-compose_scheduler_1      ... done
+Removing docker-compose_pbehavior_1      ... done
+Removing docker-compose_init_1           ... done
+Removing docker-compose_mongodb_1        ... done
+Removing docker-compose_fifo_1           ... done
+Removing docker-compose_action_1         ... done
+Removing docker-compose_axe_1            ... done
+Removing docker-compose_redis_1          ... done
+Removing docker-compose_che_1            ... done
+Removing docker-compose_influxdb_1       ... done
+Removing docker-compose_heartbeat_1      ... done
+Removing docker-compose_rabbitmq_1       ... done
+Removing docker-compose_watcher_1        ... done
+Removing network docker-compose_default
 ```
 
 ## Rétention des logs
