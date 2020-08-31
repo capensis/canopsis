@@ -9,7 +9,7 @@ La possibilité de pouvoir démarrer plusieurs instances des moteurs [`engine-ch
 
 ### Options du moteur
 
-La commande `engine-fifo --help` liste toutes les options acceptées par le moteur.
+La commande `engine-fifo -help` liste toutes les options acceptées par le moteur.
 
 ```
   -consumeQueue string
