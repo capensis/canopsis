@@ -2,21 +2,20 @@
 
 ## Objectif
 
-L'objectif des linkbuilders est de mettre à disposition des liens hypertextes sur l'interface graphique Canopsis.  
-Ces liens peuvent être visibles sur un bac à alarmes, une météo de services notamment.
+L'objectif du `linkbuilder` est de mettre à disposition des liens hypertextes sur l'interface graphique Canopsis.  
+Ces liens peuvent être visibles sur un bac à alarmes et une météo de services notamment.
 
 Sur un bac à alarmes, les liens sont visibles de cette manière :
 
-![baa](img/baa.png)
+![Exemple d'affichage des liens dans le bac à alarmes](img/affichage-link-bac.png)
 
 Sur une météo de services, les liens sont visibles de cette manière :
 
-![meteo](img/meteo.png)
-
+![Exemple d'affichage des liens dans la météo](img/affichage-link-meteo.png)
 
 ### Basic alarm link builder
 
-La classe `basic_alarm_link_builder` permet de générer des liens avec des paramètres qui peuvent provenir soit :
+La classe `basic_alarm_link_builder` permet de générer un lien avec des paramètres qui peuvent provenir soit :
 
 * de l'alarme
 * de l'entité sur laquelle porte l'alarme
@@ -37,7 +36,7 @@ L'URL pourrait être de la forme :
 
 Pour aboutir à ce résultat, une configuration doit être insérée via l'API *associativetable*.
 
-Voici la configuration adéquate pour l'exemple précédent.
+Voici la configuration qui correspond aux captures d'écran visibles au début de cette documentation.
 
 ```json
 {
@@ -50,11 +49,14 @@ Voici la configuration adéquate pour l'exemple précédent.
 ```
 
 * L'attribut **base_url** contient l'URL avec les variables souhaitées.  
-* L'attribut **category** va permettre de regrouper des URL entre elles
+* L'attribut **category** va permettre de regrouper des URL entre elles.
 * L'attribut **label** permet de donner un nom au lien généré.
 
-!!! Info
-    Cette configuration est stockée dans la collection **default_associativetable**
+!!! Attention
+    La classe `basic_alarm_link_builder`, dans sa version livrée par défaut avec Canopsis, ne permet de créer qu'un seul lien.
+    Pour pouvoir créer plusieurs liens et les regrouper par catégories il est nécessaire d'étendre la classe `BasicAlarmLinkBuilder` qui se trouve dans le fichier `basic_alarm_link_builder.py` du `webserver`.  
+    Vous pouvez voir ci-dessous un exemple de liens multiples regroupés par catégories :  
+    ![Liens multiples par catégories](img/baa.png)
 
 ### Mise en œuvre backend
 
@@ -62,18 +64,24 @@ La configuration préalablement établie doit être postée sur l'API de Canopsi
 
 **Envoi de la configuration :**
 
-Considérons que la configuration précédente soit positionnée dans un fichier *basic_link_builder.json*.
-
 ```sh
-curl -H "Content-Type: application/json" -X POST -u root:root -d @basic_link_builder.json http://IP_CANOPSIS:8082/api/v2/associativetable/link_builders_settings
+curl -H "Content-Type: application/json" -X POST -u root:root -d'{
+    "basic_alarm_link_builder" : {
+        "base_url" : "http://uneurl.local/?composant={alarm.v.component}&environnement={infos.env.value}",
+        "category" : "Consignes",
+        "label" : "Procédure"
+    }
+}' 'http://IP_CANOPSIS:8082/api/v2/associativetable/link_builders_settings'
 ```
 
 Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
 
-Notez qu'un redémarrage du moteur `webserver` est nécessaire.
+!!! Attention
+    1. Notez qu'un redémarrage du moteur `webserver` est nécessaire.
+    2. Les liens sont générés à la volée et ne sont en aucun cas stockés.
 
-!!! Warning
-    Les liens sont générés à la volée et ne sont en aucun cas stockés.
+!!! Info
+    Cette configuration est stockée dans la collection **default_associativetable**.
 
 ## Visualisation frontend
 
@@ -86,15 +94,17 @@ Dans les paramètres du widget, vous devez ajouter une colonne *links*.
 
 ![baa_parametres](img/baa_parametres.png)
 
-Le fait d'utiliser *links* affichera l'ensemble des liens disponibles, regroupés par catégorie.  
+Le fait d'utiliser *links* affichera l'ensemble des liens disponibles, regroupés par catégorie (**uniquement si vous avez étendu la classe de base comme indiqué précédemment**).  
 
 ![baa](img/baa.png)
 
 Vous pouvez également ne demander l'affichage que d'une catégorie en la nommant.  
 
+Paramétrage :
+
 ![baa_parametres_cat](img/baa_parametres_cat.png)
 
-Le résultat :
+Résultat :
 
 ![baa](img/baa_cat.png)
 
@@ -105,7 +115,9 @@ Voici un exemple pour le template d'entité.
 
 ![meteo_parametres](img/meteo_parametres.png)
 
-Le fait d'utiliser *links* affichera l'ensemble des liens disponibles, regroupés par catégorie.  
+Le fait d'utiliser *links* affichera l'ensemble des liens disponibles, regroupés par catégorie (**uniquement si vous avez étendu la classe de base comme indiqué précédemment**).  
+
+Paramétrage :
 
 ![meteo](img/meteo.png)
 
@@ -113,7 +125,7 @@ Vous pouvez également ne demander l'affichage que d'une catégorie en la nomman
 
 ![meteo_parametres_cat](img/meteo_parametres_cat.png)
 
-Le résultat :
+Résultat :
 
 ![baa](img/meteo_cat.png)
 
