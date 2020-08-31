@@ -13,42 +13,39 @@ La commande `engine-fifo -help` liste toutes les options acceptées par le moteu
 
 ```
   -consumeQueue string
-    	Consume events from this queue. (default "Engine_fifo")
-  -d	debug
+    Consume events from this queue. (default "Engine_fifo")
+  -ddebug
   -enableMetaAlarmProcessing
-    	Enable meta-alarm processing (default true)
+    Enable meta-alarm processing (default true)
   -lockTtl int
-    	Redis lock ttl time in seconds (default 10)
+    Redis lock ttl time in seconds (default 10)
   -printEventOnError
-    	Print event on processing error
+    Print event on processing error
   -publishQueue string
-    	Publish event to this queue. (default "Engine_che")
+    Publish event to this queue. (default "Engine_che")
   -version
-    	version infos
+    version infos
 ```
 
 ## Fonctionnement
 
 A l'arrivée d'un événement le moteur `engine-fifo` en extrait l'entité. Il y a ensuite 2 cas de figure possibles :
 
-**1. Il n'existe pas d'événement concernant cette même entité.**  
+**1. Il n'existe pas de traitement en cours (changement d'état, exécution d'une action, exécution d'un webhook...) sur cette  entité.**  
 Dans ce cas, le moteur `engine-fifo` transmet l'événement directement au moteur `engine-che`.  
 
-**2. Il existe déjà un événement pour cette même entité.**  
-Dans ce cas, le moteur créé une file d'attente temporaire dans RabbitMQ et stocke l'événement dans cette file. A la fin de la chaîne de traitement les autres moteurs déposent un acquittement dans un `ack manager` géré par le moteur `engine-fifo`. Si cet acquittement concerne l'entité de l'événement stocké dans la file temporaire, celui-ci est libéré et transmis au moteur `engine-che`.
+**2. Il existe déjà un traitement en cours sur cette  entité.**  
+Dans ce cas, le moteur créé une file d'attente temporaire dans Redis et stocke l'événement dans cette file. A la fin de la chaîne de traitement les autres moteurs déposent un acquittement dans un `ack manager` géré par le moteur `engine-fifo`. Si cet acquittement concerne l'entité de l'événement stocké dans la file temporaire, celui-ci est libéré et transmis au moteur `engine-che`.
 
-Dans les 2 cas, le moteur créé un verrou concernant l'entité en cours de traitement et le stocke dans son `persistent manager` dans Redis. C'est ce verrou qui lui permettra de savoir si un événement existe déjà pour cette entité. Le verrou est supprimé lors de la réception d'un acquittement ou après un certain délai. Ce délai est de 10 secondes par défaut et peut être configuré au moyen de l'option `-lockTtl` du moteur.
-
-Pour garantir un fonctionnement optimal de ce moteur, il est nécessaire d'appliquer [la configuration avancées de Redis](../guide-administration/administration-avancee/configuration-services/serveur-cache-redis.md).
+Dans les 2 cas, le moteur créé un verrou concernant l'entité en cours de traitement et le stocke dans Redis. C'est ce verrou qui lui permettra de savoir si un événement existe déjà pour cette entité. Le verrou est supprimé lors de la réception d'un acquittement ou après un certain délai. Ce délai est de 10 secondes par défaut et peut être configuré au moyen de l'option `-lockTtl` du moteur.
 
 ## Haute-disponibilité
 
-Étant donné que ce moteur est le premier dans chaîne de traitement des événements il est nécessaire de pouvoir s'assurer qu'il est toujours disponible. Il est donc possible de démarrer 2 instances en parallèle. La première instance stocke un jeton dans Redis et effectue les tâches décrites ci-dessus. Le moteur [`engine-heartbeat`](moteur-heartbeat.md) vérifie périodiquement la présence du jeton dans Redis. Si celui-ci est absent la deuxième instance du moteur prend le relai.
+Étant donné que ce moteur est le premier dans chaîne de traitement des événements il est nécessaire de pouvoir s'assurer qu'il est toujours disponible. Il est donc possible de démarrer 2 instances en parallèle. La première instance stocke un jeton dans Redis et effectue les tâches décrites ci-dessus. Le moteur `engine-fifo` vérifie périodiquement la présence du jeton dans Redis. Si celui-ci est absent la deuxième instance prend le relai.
 
 Si vous souhaitez obtenir des informations plus techniques sur le fonctionnement de ce moteur vous pouvez consulter la section ci-dessous.
 
 ## Fonctionnement détaillé
-
 Cette animation illustre le fonctionnement global du moteur `engine-fifo` avec les queues temporaires, le `persistent manager` et l'`ack manager` dont le fonctionnement est décrit dans la première partie de cette documentation.
 
 ![](img/amqprocess4.gif)
