@@ -4,7 +4,7 @@
     v-tab-item
       pbehaviors-list(:itemId="item._id", :tabId="tabId")
     v-tab-item
-      impact-depends(:impact="item.impact_name", :depends="item.depends_name")
+      impact-depends(:impact="impact", :depends="depends")
     v-tab-item
       infos(:infos="item.infos")
 </template>
@@ -39,6 +39,14 @@ export default {
         this.$t('context.moreInfos.tabs.infos'),
       ],
     };
+  },
+  computed: {
+    impact() {
+      return this.item.impact.map((id, index) => ({ name: this.item.impact_name[index], id }));
+    },
+    depends() {
+      return this.item.depends.map((id, index) => ({ name: this.item.depends_name[index], id }));
+    },
   },
 };
 </script>

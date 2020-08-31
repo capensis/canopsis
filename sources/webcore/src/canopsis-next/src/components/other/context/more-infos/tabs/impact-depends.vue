@@ -7,29 +7,20 @@
           v-container
             v-card
               v-card-text
-                v-data-iterator(:items="impact")
-                  v-flex(slot="item", slot-scope="props")
-                    v-card
-                      v-card-title {{ props.item }}
-                  v-flex(slot="no-data")
-                    v-card
-                      v-card-title {{ $t('tables.noData') }}
+                entities-iterator(:entities="impact")
         v-flex(xs6)
           h3.headline.text-xs-center.my-1 {{ $t('context.dependencies') }}
           v-container
             v-card
               v-card-text
-                v-data-iterator(:items="depends")
-                  v-flex(slot="item", slot-scope="props")
-                    v-card
-                      v-card-title {{ props.item }}
-                  v-flex(slot="no-data")
-                    v-card
-                      v-card-title {{ $t('tables.noData') }}
+                entities-iterator(:entities="depends")
 </template>
 
 <script>
+import EntitiesIterator from '@/components/other/context/partials/entities-iterator.vue';
+
 export default {
+  components: { EntitiesIterator },
   props: {
     impact: {
       type: Array,
