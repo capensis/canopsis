@@ -15,8 +15,8 @@ import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/
  */
 export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
   type: getIdFromEntity(type),
-  begin: moment(begin).unix(),
-  end: moment(end).unix(),
+  begin,
+  end,
 }));
 
 /**
@@ -27,8 +27,8 @@ export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, en
  */
 export const exdatesToForm = (exdates = []) => exdates.map(({ type, begin, end }) => ({
   type,
-  begin: new Date(begin),
-  end: new Date(end),
+  begin: moment.unix(begin).toDate(),
+  end: moment.unix(end).toDate(),
 }));
 
 /**
@@ -86,7 +86,11 @@ export const formToPbehavior = (form, timezone) => ({
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntity(form.comments),
-  exdates: removeKeyFromEntity(form.exdates),
+  exdates: removeKeyFromEntity(form.exdates).map(({ type, begin, end }) => ({
+    type,
+    begin: moment(begin).unix(),
+    end: moment(end).unix(),
+  })),
   exceptions: removeKeyFromEntity(form.exceptions),
   tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
