@@ -11,8 +11,8 @@
             enabled-column(:value="props.item.enabled")
           td {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
           td {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
-          td {{ props.item.type.name }}
-          td {{ props.item.reason.name }}
+          td {{ props.item.type | get('name', null, '') }}
+          td {{ props.item.reason | get('name', null, '') }}
           td
             v-btn.mx-0(
               v-for="action in availableActions",
