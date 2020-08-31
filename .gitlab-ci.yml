@@ -22,7 +22,6 @@ stage_test:
   script:
     - set
     #- ./CI/ci-gitlab.sh
-    - git submodule update --init
     - ./build-docker.sh
 
 
