@@ -2,7 +2,7 @@
 
 Le serveur de cache [Redis](https://redis.io) permet un accès rapide aux données les plus utilisées dans la modélisation interne que Canopsis construit afin de représenter votre périmètre de surveillance. Il est essentiel pour la performance de Canopsis.
 
-À partir de Canopsis 3.39.0, la bonne configuration de ce composant devient indispensable avec l'ajout du moteur [`engine-fifo`](../../moteurs/moteur-fifo.md).
+À partir de Canopsis 3.39.0, la bonne configuration de ce composant devient indispensable.
 
 !!! note
     Les informations suivantes s'appliquent à Canopsis 3.39.0 et versions ultérieures, où Redis doit obligatoirement avoir été mis à jour vers Redis 5.
@@ -22,7 +22,7 @@ Assurez-vous tout d'abord que l'instance hébergeant Redis dispose bien des ress
 Vous devez ensuite ajuster la valeur suivante du fichier `/etc/redis.conf` :
 
 ```python
-maxmemory "512mb"
+maxmemory "512mb" 
 ```
 
 La valeur par défaut est de 512 Mio. Vous devez ajuster cette valeur de façon raisonnable, en fonction de votre environnement. Une augmentation de plusieurs Gio peut être nécessaire, sur les plus larges périmètres.
