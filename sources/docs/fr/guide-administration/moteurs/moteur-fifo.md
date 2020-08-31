@@ -48,12 +48,12 @@ Si vous souhaitez obtenir des informations plus techniques sur le fonctionnement
 ## Fonctionnement détaillé
 Cette animation illustre le fonctionnement global du moteur `engine-fifo` avec les queues temporaires, le `persistent manager` et l'`ack manager` dont le fonctionnement est décrit dans la première partie de cette documentation.
 
-![](img/amqprocess4.gif)
+![Fonctionnement global engine-fifo](img/fonctionnement_fifo.gif)
 
 Le diagramme ci-dessous représente le comportement du moteur lors de la réception d'un événement.
 
-![](img/amq_block_scheme.png)
+![Organigramme réception d'un événement](img/new_event_schema.png)
 
 Cet organigramme décrit le fonctionnement de l'`ack manager` du moteur.
 
-![](img/ack_manager_schema.png)
+![Fonctionnement de l'ack manager](img/ack_manager_schema.png)
