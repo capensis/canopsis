@@ -12,7 +12,7 @@
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
           div.message(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
-    div(v-if="alarm.v.lastComment")
+    div(v-if="alarm.v.lastComment && alarm.v.lastComment.m")
       v-tooltip(top)
         v-icon.badge.white--text.purple.lighten-2(
           small,
