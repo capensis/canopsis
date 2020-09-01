@@ -179,7 +179,6 @@ services:
       - 8082:8082
     volumes:
       - importctxdata:/opt/canopsis/tmp
-      - "../docker/files/entrypoint.sh:/entrypoint.sh"
     links:
       - mongodb
       - rabbitmq
