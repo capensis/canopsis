@@ -36,6 +36,11 @@ git clone -b develop https://git.canopsis.net/canopsis/canopsis.git && cd canops
 
 La variable `CANOPSIS_IMAGE_TAG` du fichier `.env` a pour valeur par défaut `nightly`. Ce qui correspond à la version la plus récente des images disponibles sur Docker Hub. Notez que cela englobe également les versions intermédiaires destinées au développement et aux tests. Aussi, le tag `nigthly` ne doit **pas** être utilisé pour un environnement de production.
 
+Récupérez les dernières images disponibles :
+```sh
+docker-compose pull
+```
+
 Lancez ensuite la commande suivante, afin de lever un environnement Canopsis open-core complet avec Docker :
 ```sh
 docker-compose up -d
