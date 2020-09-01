@@ -58,3 +58,7 @@ registerHelper('sum', helpers.sumHelper);
 registerHelper('minus', helpers.minusHelper);
 registerHelper('mul', helpers.mulHelper);
 registerHelper('divide', helpers.divideHelper);
+registerHelper('capitalize', helpers.capitalizeHelper);
+registerHelper('capitalize-all', helpers.capitalizeAllHelper);
+registerHelper('lowercase', helpers.lowercaseHelper);
+registerHelper('uppercase', helpers.uppercaseHelper);

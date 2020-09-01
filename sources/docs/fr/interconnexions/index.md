@@ -12,6 +12,8 @@ En complément, Canopsis embarque des [API](#exploitation-par-les-api) que l'on 
 
 Un connecteur permet d’envoyer à Canopsis des évènements à partir de sources d'informations extérieures.
 
+Veuillez noter que les valeurs des champs d'un événement doivent être encodés en **UTF-8**. De plus la concaténation de ces différents champs ne doit pas excéder 255 caractères. Pour plus d'information à ce sujet reportez vous à [cette page](../guide-developpement/api/api-v2-event.md) ou encore [celle-ci](../guide-de-depannage/shortstringtoolong.md).
+
 ### Base de données
 
 | **Nom** | **Source(s)** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
