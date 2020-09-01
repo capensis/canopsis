@@ -68,6 +68,12 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `watcher` | `engine-watcher` | 
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
+## Variables d'environnement liées aux moteurs
+
+Certains comportements des moteurs de Canopsis peuvent être ajustés à l'aide de variables.
+
+Consultez la [liste des variables d'environnement de Canopsis](../administration-avancee/variables-environnement.md) pour en savoir plus.
+
 ## Enchaînement des moteurs
 
 L'organisation de [l'enchaînement des moteurs Canopsis](schema-enchainement-moteurs.md) est décrite dans un document dédié.
