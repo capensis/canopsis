@@ -37,9 +37,12 @@ $ docker-compose up -d
 
 ## Access to Web Interface
 
-Browse url http://localhost:8082
+Browse url http://localhost:8082 or http://localhost (:warning: be sure that no other service is running on the `TCP/80` port to avoid port conflict )
 
+With credentials: 
 
+* user: `root`
+* password: `root`
 
 ## Stop Canopsis Stack
 
