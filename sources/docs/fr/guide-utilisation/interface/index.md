@@ -2,9 +2,7 @@
 
 L'interface web de Canopsis est basée sur [VueJS](https://vuejs.org) et [Material Design](https://material.io).
 
-Cette interface est compatible avec les navigateurs tels que Mozilla Firefox et Google Chrome.
-
-Microsoft Edge en version inférieure à 80, ainsi qu'Internet Explorer, ne sont pas pris en charge.
+Elle n'est officiellement compatible qu'avec une version raisonnablement récente des navigateurs Mozilla Firefox et Google Chrome. Voyez le document décrivant les [limitations de compatibilité avec les anciens navigateurs](../limitations/index.md) pour plus de détails.
 
 ## Les vues
 
