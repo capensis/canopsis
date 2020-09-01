@@ -36,7 +36,7 @@ canoctl status
 
 ## Gestion avancées des services
 
-[Arrêt et relance des services](../gestion-services/arret-relance-services.md)
+[Arrêt et relance des services](../guide-administration/gestion-services/arret-relance-services.md)
 
 ## À venir
 

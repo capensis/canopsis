@@ -8,5 +8,5 @@ Il comporte les sections suivantes :
 - [HealthCheck](etat-des-services.md)  
 - [UI RabbitMQ](rabbitmq-webui.md)  
 - [Analyse temps réel des flux issus des connecteurs ou des relais AMQP](amqp2tty.md)  
-- [Valider l'envoi d'un événement](guide-de-depannage-evenement.md)
+- [Valider l'envoi d'un événement](troubleshooting-evenement.md)
 - [Erreur ShortStringTooLong](shortstringtoolong.md)

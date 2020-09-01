@@ -54,4 +54,4 @@ Veuillez noter qu'un redémarrage du service n'occasionnera pas une purge du cac
 
 ## Aller plus loin 
 
-Pour connaître l'état de votre service, [rendez-vous ici](../guide-de-depannage/etat-des-services.md).
+Pour connaître l'état de votre service, [rendez-vous ici](../../guide-de-depannage/etat-des-services.md).
