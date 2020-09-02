@@ -14,7 +14,7 @@ La commande `engine-fifo -help` liste toutes les options acceptées par le moteu
 ```
   -consumeQueue string
     Consume events from this queue. (default "Engine_fifo")
-  -ddebug
+  -d debug
   -enableMetaAlarmProcessing
     Enable meta-alarm processing (default true)
   -lockTtl int
