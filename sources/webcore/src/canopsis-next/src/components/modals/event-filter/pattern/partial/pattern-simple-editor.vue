@@ -20,6 +20,8 @@
                     v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
                       p.body-1.font-italic {{ fieldKey }}
                       p.body-1.font-italic.text-field {{ field }}
+            v-layout(v-if="!item.isFirst", row, justify-center)
+              operator-field.operator.pa-0.ma-0(:value="item.operator", @input="handleOperator(item.path)")
           template(slot="append", slot-scope="{ item }")
             v-layout(row)
               v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
@@ -31,11 +33,14 @@
 <script>
 import { isObject, isString, isNull, dropRight, has } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { FILTER_MONGO_OPERATORS, MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
+import OperatorField from '@/components/forms/fields/operator-field.vue';
+
 export default {
+  components: { OperatorField },
   filters: {
     treeViewValue(value) {
       if (isString(value)) {
@@ -114,47 +119,42 @@ export default {
       ];
     },
 
-    getActionsForItem() {
-      const { actionsMap } = this;
-
-      return (treeViewItem) => {
-        if (has(treeViewItem, 'value')) {
-          return [
-            actionsMap.editValueRuleField,
-            actionsMap.removeRuleField,
-          ];
-        }
-
-        return [
-          actionsMap.addValueRuleField,
-          actionsMap.addObjectRuleField,
-          actionsMap.editObjectRuleField,
-          actionsMap.removeRuleField,
-        ];
-      };
-    },
-
     treeViewItems() {
       return this.parsePatternToTreeview(this.pattern);
     },
-
-    isSimpleValueRule() {
-      return rule => !isObject(rule);
-    },
-
-    isValueRule() {
-      return (rule) => {
-        if (isObject(rule)) {
-          const items = Object.entries(rule);
-
-          return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
-        }
-
-        return true;
-      };
-    },
   },
   methods: {
+    isValueRule(rule) {
+      if (!isObject(rule)) {
+        return true;
+      }
+
+      const items = Object.entries(rule);
+
+      return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
+    },
+
+    isSimpleValueRule(rule) {
+      return !isObject(rule);
+    },
+
+    getActionsForItem(treeViewItem) {
+      const { actionsMap } = this;
+
+      if (has(treeViewItem, 'value')) {
+        return [
+          actionsMap.editValueRuleField,
+          actionsMap.removeRuleField,
+        ];
+      }
+
+      return [
+        actionsMap.addValueRuleField,
+        actionsMap.addObjectRuleField,
+        actionsMap.editObjectRuleField,
+        actionsMap.removeRuleField,
+      ];
+    },
     /**
      * Parse pattern object to treeview items
      *
@@ -162,12 +162,14 @@ export default {
      * @param {Array} prevPath
      */
     parsePatternToTreeview(source, prevPath = []) {
-      return Object.entries(source).map(([key, value]) => {
+      return Object.entries(source).map(([key, value], index) => {
         const path = [...prevPath, key];
         const item = {
           path,
           name: key,
           id: path.join('.'),
+          operator: FILTER_MONGO_OPERATORS.and,
+          isFirst: index === 0,
           isValueRule: this.isValueRule(value),
         };
 
@@ -180,6 +182,8 @@ export default {
         return item;
       }, []);
     },
+
+    handleOperator() {},
 
     /**
      * Open treeview item
@@ -300,6 +304,10 @@ export default {
 <style lang="scss" scoped>
   .pattern-simple-editor {
     & /deep/ {
+      .v-treeview-node {
+        margin-bottom: 35px;
+        position: relative;
+      }
       .v-treeview-node__content, .v-treeview-node__label {
         flex-shrink: 8;
       }
@@ -310,6 +318,12 @@ export default {
         word-break: break-all;
         margin-bottom: 0;
       }
+    }
+
+    .operator {
+      position: absolute;
+      top: -30px;
+      justify-content: center;
     }
   }
 </style>

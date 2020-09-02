@@ -113,6 +113,8 @@ export default {
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    or: 'Or',
+    and: 'And',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
