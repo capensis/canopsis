@@ -61,27 +61,23 @@
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
           div {{ $t('common.date') }} : {{ alarm.v.snooze.t | date('long') }}
           div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}
-    div(v-if="alarm.pbehavior")
+    div(v-if="alarm.v.pbehavior_info")
       v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(
           small,
           data-test="extraDetailsOpenButton-pbehaviors",
           slot="activator"
-        ) {{ alarm.pbehavior.type.icon_name }}
+        ) {{ alarm.v.pbehavior_info.canonical_type }}
         div(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
           div
-            div.mt-2.font-weight-bold {{ alarm.pbehavior.name }}
-            div {{ $t('common.author') }}: {{ alarm.pbehavior.author }}
-            div(v-if="alarm.pbehavior.type") {{ $t('common.type') }}: {{ alarm.pbehavior.type.name }}
-            div(v-if="alarm.pbehavior.reason") {{ $t('common.reason') }}: {{ alarm.pbehavior.reason.name }}
-            div {{ alarm.pbehavior.tstart | date('long') }} - {{ alarm.pbehavior.tstop | date('long') }}
-            div(v-if="alarm.pbehavior.rrule") {{ alarm.pbehavior.rrule }}
-            div(
-              v-for="comment in alarm.pbehavior.comments",
-              :key="comment._id"
-            ) {{ $tc('common.comment', alarm.pbehavior.comments.length) }}:
-              div.ml-2 - {{ comment.author }}: {{ comment.message }}
+            div.mt-2.font-weight-bold {{ alarm.v.pbehavior_info.name }}
+            div {{ $t('common.type') }}: {{ alarm.v.pbehavior_info.type_name }}
+            div {{ $t('common.reason') }}: {{ alarm.v.pbehavior_info.reason }}
+            div(v-if="pbehavior_info.tstart") {{ alarm.v.pbehavior_info.tstart | date('long') }}
+              template(v-if="alarm.v.pbehavior_info.tstop")
+                | -
+                | {{ alarm.v.pbehavior_info.tstop | date('long') }}
             v-divider
     div(v-if="alarm.causes")
       v-tooltip(top)
