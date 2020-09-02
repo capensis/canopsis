@@ -41,7 +41,7 @@ Dans les 2 cas, le moteur créé un verrou concernant l'entité en cours de trai
 
 ## Haute-disponibilité
 
-Étant donné que ce moteur est le premier dans chaîne de traitement des événements il est nécessaire de pouvoir s'assurer qu'il est toujours disponible. Il est donc possible de démarrer 2 instances en parallèle. La première instance stocke un jeton dans Redis et effectue les tâches décrites ci-dessus. Le moteur `engine-fifo` vérifie périodiquement la présence du jeton dans Redis. Si celui-ci est absent la deuxième instance prend le relai.
+Étant donné que ce moteur est le premier dans la chaîne de traitement des événements, il est nécessaire de pouvoir s'assurer qu'il est toujours disponible. Il est donc possible de démarrer 2 instances en parallèle. La première instance stocke un jeton dans Redis et effectue les tâches décrites ci-dessus. Le moteur `engine-fifo` vérifie périodiquement la présence du jeton dans Redis. Si celui-ci est absent, la deuxième instance prend le relai.
 
 Si vous souhaitez obtenir des informations plus techniques sur le fonctionnement de ce moteur vous pouvez consulter la section ci-dessous.
 
