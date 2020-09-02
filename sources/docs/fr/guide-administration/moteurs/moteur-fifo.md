@@ -46,6 +46,7 @@ Dans les 2 cas, le moteur créé un verrou concernant l'entité en cours de trai
 Si vous souhaitez obtenir des informations plus techniques sur le fonctionnement de ce moteur vous pouvez consulter la section ci-dessous.
 
 ## Fonctionnement détaillé
+
 Cette animation illustre le fonctionnement global du moteur `engine-fifo` avec les queues temporaires, le `persistent manager` et l'`ack manager` dont le fonctionnement est décrit dans la première partie de cette documentation.
 
 ![Fonctionnement global engine-fifo](img/fonctionnement_fifo.gif)
