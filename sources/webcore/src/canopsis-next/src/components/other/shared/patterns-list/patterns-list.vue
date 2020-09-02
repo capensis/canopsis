@@ -20,6 +20,10 @@
           readonly,
           disabled
         )
+        v-layout.text-uppercase(
+          v-if="index !== patterns.length - 1",
+          justify-center
+        ) {{ $t('common.or') }}
       v-flex.text-xs-center(v-if="!disabled", xs1)
         div
           v-btn(icon, @click="showEditPatternModal(index)")

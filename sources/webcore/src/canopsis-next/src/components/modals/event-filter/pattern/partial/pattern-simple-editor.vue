@@ -20,8 +20,8 @@
                     v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
                       p.body-1.font-italic {{ fieldKey }}
                       p.body-1.font-italic.text-field {{ field }}
-            v-layout(v-if="!item.isFirst", row, justify-center)
-              operator-field.operator.pa-0.ma-0(:value="item.operator", @input="handleOperator(item.path)")
+            v-layout(v-if="!item.isFirst", row)
+              div.operator.text-uppercase {{ $t('common.and') }}
           template(slot="append", slot-scope="{ item }")
             v-layout(row)
               v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
@@ -33,7 +33,7 @@
 <script>
 import { isObject, isString, isNull, dropRight, has } from 'lodash';
 
-import { FILTER_MONGO_OPERATORS, MODALS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
@@ -168,7 +168,6 @@ export default {
           path,
           name: key,
           id: path.join('.'),
-          operator: FILTER_MONGO_OPERATORS.and,
           isFirst: index === 0,
           isValueRule: this.isValueRule(value),
         };
@@ -182,8 +181,6 @@ export default {
         return item;
       }, []);
     },
-
-    handleOperator() {},
 
     /**
      * Open treeview item
@@ -307,6 +304,20 @@ export default {
       .v-treeview-node {
         margin-bottom: 35px;
         position: relative;
+
+        .operator {
+          position: absolute;
+          top: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        &--leaf {
+          .operator {
+            /* TODO 12px - half of margin for node without children */
+            transform: translateX(calc(-50% - 12px));
+          }
+        }
       }
       .v-treeview-node__content, .v-treeview-node__label {
         flex-shrink: 8;
@@ -318,12 +329,6 @@ export default {
         word-break: break-all;
         margin-bottom: 0;
       }
-    }
-
-    .operator {
-      position: absolute;
-      top: -30px;
-      justify-content: center;
     }
   }
 </style>
