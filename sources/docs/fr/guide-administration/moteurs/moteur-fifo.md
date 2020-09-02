@@ -47,7 +47,7 @@ Si vous souhaitez obtenir des informations plus techniques sur le fonctionnement
 
 ## Fonctionnement détaillé
 
-Cette animation illustre le fonctionnement global du moteur `engine-fifo` avec les queues temporaires, le `persistent manager` et l'`ack manager` dont le fonctionnement est décrit dans la première partie de cette documentation.
+Cette animation illustre le fonctionnement global du moteur `engine-fifo` avec les files temporaires, le `persistent manager` et l'`ack manager` dont le fonctionnement est décrit dans la première partie de cette documentation.
 
 ![Fonctionnement global engine-fifo](img/fonctionnement_fifo.gif)
 
