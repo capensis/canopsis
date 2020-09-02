@@ -20,7 +20,7 @@ Par défaut, ces moteurs sont open-source. Les moteurs marqués « CAT » ne so
 | [`engine-che-cat`](moteur-che.md#activation-des-plugins-denrichissement-externe-datasource) | Variante d'`engine-che`, ajoutant des plugins d'enrichissement externe | ✅ |
 | [`engine-correlation`](moteur-correlation.md) | Applique et gère les règles de corrélation | ✅ |
 | [`engine-dynamic-infos`](moteur-dynamic-infos.md)| Enrichit les alarmes | ✅ |
-| `engine-fifo` | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
+| [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
 | [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille des entités, et lève des alarmes en cas d'absence d'information | |
 | [`engine-watcher`](moteur-watcher.md)| Calcule les états des observateurs | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
@@ -65,7 +65,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `task_linklist` | Utilisation du [linkbuilder](../linkbuilder/index.md) |
 | `task_mail` | Utilisation d'un [Webhook](moteur-webhook.md) (CAT) vers un service d'envoi d'e-mails |
 | `ticket` | ? |
-| `watcher` | `engine-watcher` | 
+| `watcher` | `engine-watcher` |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
 ## Enchaînement des moteurs
