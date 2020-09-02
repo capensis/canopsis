@@ -3,7 +3,6 @@ set -e
 set -o pipefail
 set -u
 
-git submodule update --init
 ../build-docker.sh
 
 # override .env default variable

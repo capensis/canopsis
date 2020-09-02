@@ -20,6 +20,7 @@
 
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
+import re
 
 
 class WebhookManager(object):
@@ -100,3 +101,51 @@ class WebhookManager(object):
         """
         resp = self.__collection.remove({'_id': wid})
         return self.__collection.is_successfull(resp)
+
+    def read(self, _id, search, limit, skip):
+        """
+        Retrieve webhook by search phrase
+        :param _id:
+        :param search:
+        :param limit:
+        :param skip:
+        :return:
+        """
+        pipeline = []
+        if _id is None:
+            if search is not None:
+                regex_search = re.compile(str(search), re.IGNORECASE)
+                or_query = [
+                    {"_id": regex_search},
+                    {"request.url": regex_search},
+                    {"request.payload": regex_search},
+                    {"author": regex_search}
+                ]
+                pipeline.append({"$match": {"$or": or_query}})
+            else:
+                pipeline.append({"$match": {}})
+        else:
+            pipeline.append({"$match": {"_id": _id}})
+
+        total_count_data = list(self.__collection.aggregate(
+            pipeline + [{'$count': 'total_count'}]))
+
+        if len(total_count_data) == 1:
+            try:
+                total_count = total_count_data[0]["total_count"]
+            except (IndexError, KeyError):
+                return {"total_count": 0, "count": 0, "data": []}
+        else:
+            return {"total_count": 0, "count": 0, "data": []}
+
+        if _id is None:
+            if skip is not None:
+                pipeline.append({"$skip": skip})
+            if limit is not None:
+                pipeline.append({"$limit": limit})
+
+        webhooks = list(self.__collection.aggregate(pipeline))
+
+        return {"total_count": total_count,
+                "count": len(webhooks),
+                "data": webhooks}

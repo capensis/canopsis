@@ -1,3 +1,5 @@
+export const { BASE_URL } = process.env;
+
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
