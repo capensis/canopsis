@@ -24,6 +24,8 @@ Dans le fichier `amqp2engines.conf` il y a `event.processing` et `beat.processin
 
 ## Représentation de l'enchaînement des moteurs
 
+*Vous pouvez cliquer sur le nom des moteurs pour être redirigé vers la page de documentation dédiée.*
+
 ```mermaid
 graph TD
 linkStyle default interpolate basis
@@ -70,7 +72,7 @@ class exch.snmp,exch.events rabbit-orange
 Légende :
 ```mermaid
 graph TD
-leg-rabbit{Exchange RabbitMQ}
+leg-rabbit{Exchange<br />RabbitMQ}
 leg-core(Moteur Core)
 leg-cat(Moteur CAT)
 
