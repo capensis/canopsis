@@ -12,7 +12,10 @@ En complément, Canopsis embarque des [API](#exploitation-par-les-api) que l'on 
 
 Un connecteur permet d’envoyer à Canopsis des évènements à partir de sources d'informations extérieures.
 
-Veuillez noter que les alarmes générées par vos connecteurs ont une limitation de 256 caractères, sur certains champs. Si cette limite est dépassée sur ces champs, les évènements générés par vos connecteurs ne pourront pas être traités par Canopsis. Consultez la [documentation des limitations des évènements Canopsis](../guide-utilisation/limitations/index.md#limitations-des-evenements) pour en savoir plus.
+!!! note
+    Veuillez noter que les alarmes générées par vos connecteurs ont une limitation de 256 caractères, sur certains champs. Si cette limite est dépassée sur ces champs, les évènements générés par vos connecteurs ne pourront pas être traités par Canopsis.
+
+    Consultez la [documentation des limitations des évènements Canopsis](../guide-utilisation/limitations/index.md#limitations-des-evenements) pour en savoir plus.
 
 ### Base de données
 
