@@ -74,7 +74,7 @@
             div.mt-2.font-weight-bold {{ alarm.v.pbehavior_info.name }}
             div {{ $t('common.type') }}: {{ alarm.v.pbehavior_info.type_name }}
             div {{ $t('common.reason') }}: {{ alarm.v.pbehavior_info.reason }}
-            div(v-if="pbehavior_info.tstart") {{ alarm.v.pbehavior_info.tstart | date('long') }}
+            div(v-if="alarm.v.pbehavior_info.tstart") {{ alarm.v.pbehavior_info.tstart | date('long') }}
               template(v-if="alarm.v.pbehavior_info.tstop")
                 | -
                 | {{ alarm.v.pbehavior_info.tstop | date('long') }}
