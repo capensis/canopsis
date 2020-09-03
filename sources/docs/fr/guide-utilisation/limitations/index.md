@@ -40,7 +40,7 @@ Vous devez donc soit concevoir vos filtres de Bac à alarmes de manière à ce q
 
 Les évènements envoyés à Canospis ne peuvent être encodés qu'en UTF-8 (ou en ASCII).
 
-Les autres encodages, tels qu'ISO-8859-1, CP1252 ou UTF-16, ne sont pas acceptés.
+Les autres encodages, tels qu'ISO-8859-1, CP1252 ou UTF-16, ne sont pas gérés : les évènements en question peuvent être ignorés ou causer des problèmes d'affichage.
 
 Vous devez donc vous assurer que vos appels à l'API et que vos connecteurs ne génèrent que de l'UTF-8 en sortie.
 
