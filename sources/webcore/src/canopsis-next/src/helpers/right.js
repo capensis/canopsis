@@ -1,4 +1,4 @@
-import { get, isUndefined, omit, sortBy } from 'lodash';
+import { get, isUndefined, omit, sortBy, keyBy } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -68,11 +68,14 @@ export function getGroupedRights(rights, views = [], playlists = []) {
   const { exploitation: exploitationTechnicalRights, ...adminTechnicalRights } = USERS_RIGHTS.technical;
   const adminTechnicalRightsValues = Object.values(adminTechnicalRights);
   const exploitationTechnicalRightsValues = Object.values(exploitationTechnicalRights);
+  const apiRightsValues = Object.values(USERS_RIGHTS.api);
+  const viewsById = keyBy(views, '_id');
+  const playlistsById = keyBy(playlists, '_id');
 
   const groupedRights = rights.reduce((acc, right) => {
     const rightId = String(right._id, '\'');
-    const view = views.find(({ _id }) => _id === rightId);
-    const playlist = playlists.find(({ _id }) => _id === rightId);
+    const view = viewsById[rightId];
+    const playlist = playlistsById[rightId];
 
     if (view) {
       acc.view.push({
@@ -86,12 +89,12 @@ export function getGroupedRights(rights, views = [], playlists = []) {
 
         desc: right.desc.replace(playlist._id, playlist.name),
       });
-    } else if (adminTechnicalRightsValues.indexOf(rightId) !== -1) {
+    } else if (adminTechnicalRightsValues.includes(rightId)) {
       acc.technical.admin.push(right);
-    } else if (exploitationTechnicalRightsValues.indexOf(rightId) !== -1) {
+    } else if (exploitationTechnicalRightsValues.includes(rightId)) {
       acc.technical.exploitation.push(right);
     } else if (
-      Object.values(allBusinessRightsIds).indexOf(rightId) !== -1 ||
+      Object.values(allBusinessRightsIds).includes(rightId) ||
       NOT_COMPLETED_USER_RIGHTS.some(id => rightId.startsWith(id))
     ) {
       const [parentKey] = right._id.split('_');
@@ -99,6 +102,8 @@ export function getGroupedRights(rights, views = [], playlists = []) {
       if (acc.business[parentKey]) {
         acc.business[parentKey].push(right);
       }
+    } else if (apiRightsValues.includes(rightId)) {
+      acc.api.push(right);
     }
 
     return acc;
@@ -116,6 +121,7 @@ export function getGroupedRights(rights, views = [], playlists = []) {
       admin: [],
       exploitation: [],
     },
+    api: [],
   });
 
   /**
