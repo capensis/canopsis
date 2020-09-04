@@ -308,14 +308,13 @@ export default {
         .operator {
           position: absolute;
           top: -33px;
-          left: 50%;
-          transform: translateX(-50%);
+          /* TODO 24px - margin for node without children */
+          left: 24px;
         }
 
         &--leaf {
           .operator {
-            /* TODO 12px - half of margin for node without children */
-            transform: translateX(calc(-50% - 12px));
+            left: 0;
           }
         }
       }
