@@ -11,9 +11,6 @@ export CANOPSIS_DOCKER_MODE=${CANOPSIS_DOCKER_MODE:=regular}
 export CANOPSIS_ENV_RECAP=${CANOPSIS_ENV_RECAP:=1}
 export CANOPSIS_ENV_CONFIRM=${CANOPSIS_ENV_CONFIRM:=1}
 
-# which version of uiv2 bricks to pull
-export CANOPSIS_UIV2_BRICKS_TAG=${CANOPSIS_UIV2_BRICKS_TAG:="${CANOPSIS_TAG}"}
-
 # override package version/tag and release if it must be different from the
 # regular CANOPSIS_TAG variable
 export CANOPSIS_PACKAGE_TAG=${CANOPSIS_PACKAGE_TAG:="${CANOPSIS_TAG}"}
@@ -34,7 +31,6 @@ export https_proxy=${https_proxy:=""}
 
 function env_recap() {
     echo "CANOPSIS_TAG: ${CANOPSIS_TAG}"
-    echo "CANOPSIS_UIV2_BRICKS_TAG: ${CANOPSIS_UIV2_BRICKS_TAG}"
     echo "CANOPSIS_DISTRIBUTION: ${CANOPSIS_DISTRIBUTION}"
     echo "CANOPSIS_PACKAGE_TAG: ${CANOPSIS_PACKAGE_TAG}"
     echo "CANOPSIS_PACKAGE_REL: ${CANOPSIS_PACKAGE_REL}"
@@ -58,11 +54,6 @@ function ensure_env() {
     if [ "${CANOPSIS_TAG}" = "" ]; then
         echo "\$CANOPSIS_TAG is not initialised: provide TAG for release"
         exit 3
-    fi
-
-    if [ "${CANOPSIS_UIV2_BRICKS_TAG}" = "" ]; then
-        echo "\$CANOPSIS_UIV2_BRICKS_TAG is not initialised: provide uiv2 bricks version"
-        exit 4
     fi
 
     if [ "${CANOPSIS_DOCKER_MODE}" = "" ]; then

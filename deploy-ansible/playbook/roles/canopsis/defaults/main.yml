@@ -93,6 +93,8 @@ canopsis_cat_go_additional_engines:
     name: engine-dynamic-infos
   -
     name: engine-webhook
+  -
+    name: engine-correlation
 
 # When choosing canopsis_edition: "cat"
 canopsis_cat_common_additional_engines:

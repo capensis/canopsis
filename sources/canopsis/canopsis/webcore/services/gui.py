@@ -20,7 +20,7 @@
 
 from __future__ import unicode_literals
 from bottle import static_file, request, redirect, response
-import os
+import os.path
 
 from canopsis.common.template import Template
 
@@ -31,113 +31,36 @@ from canopsis.webcore.services import session as session_module
 def exports(ws):
     skip_login = ws.skip_login
 
-    @ws.application.get('/:lang/static/canopsis/index.html', skip=skip_login)
-    @ws.application.get('/static/canopsis/index.html', skip=skip_login)
+    @ws.application.get('/:lang/static/canopsis-next/index.html', skip=skip_login)
+    @ws.application.get('/:lang/static/canopsis-next/dist/index.html', skip=skip_login)
+    @ws.application.get('/static/canopsis-next/index.html', skip=skip_login)
+    @ws.application.get('/static/canopsis-next/dist/index.html', skip=skip_login)
     def index(lang='en'):
-        # Redirect user if not logged in
-        if not session_module.get_user():
-            redirect('/')
+        return static_file('canopsis-next/dist/index.html', root=ws.root_directory)
 
-        return static_file('canopsis/index.html', root=ws.root_directory)
-
-    @ws.application.get('/:lang/static/<filename:path>', skip=skip_login)
-    @ws.application.get('/static/<filename:path>', skip=skip_login)
+    @ws.application.get('/:lang/static/canopsis-next/<filename:path>', skip=skip_login)
+    @ws.application.get('/static/canopsis-next/<filename:path>', skip=skip_login)
     def server_static(filename, lang='en'):
-        key = request.params.get('authkey', default=None)
+        response.set_header("Access-Control-Allow-Origin", "*")
 
-        if key:
-            auth_module.autoLogin(key)
-
-        if 'listalarm' in filename or 'timeline' in filename:
-            response.set_header("Cache-Control", "public, no-cache")
-
+        filename = os.path.join('canopsis-next', filename)
         return static_file(filename, root=ws.root_directory)
 
+    @ws.application.get('/:lang/static/canopsis-next/dist/favicon.ico', skip=skip_login)
+    @ws.application.get('/static/canopsis-next/dist/favicon.ico', skip=skip_login)
     @ws.application.get('/favicon.ico', skip=skip_login)
-    def favicon():
+    def favicon(**kwargs):
         return
 
+    @ws.application.get('/:lang/static/canopsis/index.html', skip=skip_login)
+    @ws.application.get('/static/canopsis/index.html', skip=skip_login)
+    @ws.application.get('/:lang/static/<filename:path>', skip=skip_login)
+    @ws.application.get('/static/<filename:path>', skip=skip_login)
     @ws.application.get('/', skip=skip_login)
     @ws.application.get('/index.html', skip=skip_login)
     @ws.application.get('/:lang/', skip=skip_login)
     @ws.application.get('/:lang/index.html', skip=skip_login)
     @ws.application.get('/:lang/:key/', skip=skip_login)
     @ws.application.get('/:lang/:key/index.html', skip=skip_login)
-    def loginpage(lang='en', key=None):
-        session = request.environ.get('beaker.session')
-
-        # Try to authenticate user
-        key = key or request.params.get('authkey', default=None)
-        logerror = request.params.get('logerror', default=None)
-
-        if logerror in [None, '1', '2', '3']:
-            logmessage = {
-                None: '',
-                '1': 'Wrong login or password',
-                '2': 'Account disabled',
-                '3': 'Plain authentication required'
-            }[logerror]
-        else:
-            logmessage = None
-
-        if key:
-            auth_module.autoLogin(key)
-
-        ticket = request.params.get('ticket', default=None)
-
-        footer = ws.db.find_one(
-            {'_id': 'cservice.frontend'},
-            {'login_footer': 1}
-        )
-        if footer is not None and 'login_footer' in footer:
-            footer = footer['login_footer']
-        else:
-            footer = None
-
-        if not ticket and not session.get('auth_on', False):
-            # Build cservice dict for login page templating
-            cservices = {
-                'webserver': {provider: 1 for provider in ws.providers},
-                'logmessage': logmessage,
-                'login_footer': footer
-            }
-
-            records = ws.db.find(
-                {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
-                namespace='object'
-            )
-
-            ws.logger.info(u'found {} cservices'.format(len(records)))
-
-            for cservice in records:
-                cservice = cservice.dump()
-                cname = cservice['crecord_name']
-                cservices[cname] = cservice
-
-                ws.logger.info(u'found cservices type {}'.format(cname))
-
-                if cname == 'casconfig':
-                    cservice['server'] = cservice['server'].rstrip('/')
-                    cservice['service'] = cservice['service'].rstrip('/')
-                    ws.logger.info(u'cas config : server {}, service {}'.format(
-                        cservice['server'],
-                        cservice['service'],
-                    ))
-
-            if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
-                result = ws.db.find({'_id': "canopsis"},
-                                    namespace='default_saml2'
-                )
-
-                cservices["saml2config"] = {"url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
-
-            # Compile template
-            login_page = os.path.join(ws.root_directory, 'login', 'index.html')
-            with open(login_page) as src:
-                tmplsrc = src.read()
-
-            tmpl = Template(tmplsrc)
-            return tmpl(cservices)
-
-        else:
-            redirect('/{0}/static/canopsis/index.html'.format(lang))
+    def uiv2(lang='en', **kwargs):
+        redirect('/{}{}'.format(lang, ws.config.get('ui', {}).get('url', '')))

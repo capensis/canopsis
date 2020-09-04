@@ -12,7 +12,7 @@ Vous trouverez ici toute la documentation nécessaire au développement sur Cano
 * [Alarm-filter](api/api-v2-alarm-filter.md)
 * [Information dynamiques](api/api-v2-dynamic-infos.md)
 * [Event-filter](api/api-v2-event-filter.md)
-* [Event-filter](api/api-v2-event.md)
+* [Event](api/api-v2-event.md)
 * [Healthcheck](api/api-v2-healthcheck.md)
 * [Heartbeat](api/api-v2-heartbeat.md)
 * [Import](api/api-v2-import.md)

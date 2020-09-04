@@ -13,5 +13,6 @@ export default createEntityModule({
   types,
   route: API_ROUTES.webhook,
   entityType: ENTITIES_TYPES.webhook,
+  dataPreparer: d => d.data,
   withFetchingParams: true,
 });
