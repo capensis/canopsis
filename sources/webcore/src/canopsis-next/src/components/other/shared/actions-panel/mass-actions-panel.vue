@@ -4,7 +4,8 @@
       actions-panel-item(
         v-for="(action, index) in actions",
         v-bind="action",
-        :key="`multiple-${index}`"
+        :key="`multiple-${index}`",
+        @click="action.method"
       )
     mq-layout(mq="t")
       v-menu(bottom, left, @click.native.stop)
@@ -14,8 +15,9 @@
           actions-panel-item(
             v-for="(action, index) in actions",
             v-bind="action",
+            :key="`mobile-multiple-${index}`",
             isDropDown,
-            :key="`mobile-multiple-${index}`"
+            @click="action.method"
           )
 </template>
 

@@ -5,7 +5,9 @@
         actions-panel-item(
           v-for="(action, index) in actions",
           v-bind="action",
-          :key="`main-${index}`"
+          :key="`main-${index}`",
+          @click="action.method",
+          @action="$emit('action', $event)"
         )
         v-menu(v-show="dropDownActions && dropDownActions.length", bottom, left, @click.native.stop)
           v-btn(data-test="dropDownActionsButton", icon, slot="activator")
@@ -14,8 +16,10 @@
             actions-panel-item(
               v-for="(action, index) in dropDownActions",
               v-bind="action",
+              :key="`drop-down-${index}`",
               isDropDown,
-              :key="`drop-down-${index}`"
+              @click="action.method",
+              @action="$emit('action', $event)"
             )
     mq-layout(mq="l")
       v-layout
@@ -31,14 +35,18 @@
             actions-panel-item(
               v-for="(action, index) in actions",
               v-bind="action",
+              :key="`mobile-main-${index}`",
               isDropDown,
-              :key="`mobile-main-${index}`"
+              @click="action.method",
+              @action="$emit('action', $event)"
             )
             actions-panel-item(
               v-for="(action, index) in dropDownActions",
               v-bind="action",
+              :key="`mobile-drop-down-${index}`",
               isDropDown,
-              :key="`mobile-drop-down-${index}`"
+              @click="action.method",
+              @action="$emit('action', $event)"
             )
 </template>
 

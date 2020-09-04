@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions")
+  shared-actions-panel(:actions="actions", @action="$emit('action', $event)")
 </template>
 
 <script>
@@ -44,11 +44,11 @@ export default {
       default: false,
     },
   },
-  data() {
-    const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  computed: {
+    actionsMap() {
+      const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-    return {
-      actionsMap: {
+      return {
         editEntity: {
           type: contextActionsTypes.editEntity,
           icon: 'edit',
@@ -81,10 +81,9 @@ export default {
           title: this.$t('context.actions.titles.variablesHelp'),
           method: this.showVariablesHelpModal,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
+
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },

@@ -37,11 +37,14 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  computed: {
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
+    actions() {
+      const { context: contextActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-    return {
-      actions: [
+      return [
         {
           type: contextActionsTypes.deleteEntity,
           icon: 'delete',
@@ -55,13 +58,8 @@ export default {
           title: this.$t('context.actions.titles.pbehavior'),
           method: this.showAddPbehaviorsModal,
         },
-      ],
-    };
-  },
-  computed: {
-    ...entitiesMapGetters({
-      getEntitiesList: 'getList',
-    }),
+      ];
+    },
   },
   methods: {
     showDeleteEntitiesModal() {

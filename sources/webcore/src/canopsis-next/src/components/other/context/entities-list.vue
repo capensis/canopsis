@@ -54,21 +54,7 @@
         template(slot="headerCell", slot-scope="props")
           span {{ props.header.text }}
         template(slot="items", slot-scope="props")
-          td
-            v-checkbox(primary, hide-details, v-model="props.selected")
-          td(
-            v-for="column in columns",
-            @click="props.expanded = !props.expanded"
-          )
-            div(v-if="column.value === 'enabled'")
-              enabled-column(:value="props.item.enabled")
-            ellipsis(
-              v-else,
-              :text="props.item | get(column.value, null, '')",
-              :maxLetters="column.maxLetters"
-            )
-          td
-            actions-panel(:item="props.item", :isEditingMode="isEditingMode")
+          entities-list-row(:row="props", :is-editing-mode="isEditingMode", :columns="columns")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item", :tabId="tabId")
       v-layout.white(align-center)
@@ -107,6 +93,7 @@ import MoreInfos from './more-infos/more-infos.vue';
 import ContextFab from './actions/context-fab.vue';
 import ActionsPanel from './actions/actions-panel.vue';
 import MassActionsPanel from './actions/mass-actions-panel.vue';
+import EntitiesListRow from './partials/entities-list-row.vue';
 
 /**
  * Entities list
@@ -120,6 +107,7 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
  */
 export default {
   components: {
+    EntitiesListRow,
     Ellipsis,
     RecordsPerPage,
     NoColumnsTable,

@@ -830,6 +830,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     history: 'history',
     groupRequest: 'groupRequest',
     comment: 'comment',
+    group: 'group',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
