@@ -53,11 +53,11 @@ export default {
       default: false,
     },
   },
-  data() {
-    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  computed: {
+    actionsMap() {
+      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-    return {
-      actionsMap: {
+      return {
         ack: {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
@@ -136,13 +136,13 @@ export default {
           title: this.$t('alarmList.actions.titles.comment'),
           method: this.showCreateCommentModal,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
+
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
+
     modalConfig() {
       return {
         itemsType: ENTITIES_TYPES.alarm,
@@ -150,11 +150,13 @@ export default {
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
     },
+
     resolvedActions() {
       const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
 
       return [pbehaviorList, variablesHelp];
     },
+
     unresolvedActions() {
       const { filteredActionsMap } = this;
 
@@ -194,6 +196,7 @@ export default {
 
       return actions;
     },
+
     actions() {
       let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
 

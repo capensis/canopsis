@@ -35,11 +35,15 @@ export default {
       required: true,
     },
   },
-  data() {
-    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  computed: {
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
 
-    return {
-      actions: [
+    actions() {
+      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
+      return [
         {
           type: alarmsListActionsTypes.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
@@ -88,13 +92,8 @@ export default {
           title: this.$t('alarmList.actions.titles.groupRequest'),
           method: this.showCreateGroupRequestEventModal,
         },
-      ],
-    };
-  },
-  computed: {
-    ...entitiesMapGetters({
-      getEntitiesList: 'getList',
-    }),
+      ];
+    },
 
     filteredActions() {
       return this.actions.filter(this.actionsAccessFilterHandler);
