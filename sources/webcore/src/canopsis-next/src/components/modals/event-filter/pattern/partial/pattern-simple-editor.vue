@@ -6,6 +6,10 @@
           v-icon(:class="action.iconClass") {{ action.icon }}
         span {{ action.tooltip }}
     v-layout(row)
+      v-flex(v-if="treeViewItems.length > 1", row)
+        v-layout.operator(row, align-center)
+          div.text-uppercase.operator-chip.bg-gray.mr-4 {{ $t('common.and') }}
+          div.bracket
       v-flex(xs12)
         v-treeview(:items="treeViewItems", :open.sync="opened", open-all)
           template(slot="label", slot-scope="{ item }")
@@ -20,8 +24,6 @@
                     v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
                       p.body-1.font-italic {{ fieldKey }}
                       p.body-1.font-italic.text-field {{ field }}
-            v-layout(v-if="!item.isFirst", row)
-              div.operator.text-uppercase.operator-chip.bg-gray {{ $t('common.and') }}
           template(slot="append", slot-scope="{ item }")
             v-layout(row)
               v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
@@ -162,13 +164,12 @@ export default {
      * @param {Array} prevPath
      */
     parsePatternToTreeview(source, prevPath = []) {
-      return Object.entries(source).map(([key, value], index) => {
+      return Object.entries(source).map(([key, value]) => {
         const path = [...prevPath, key];
         const item = {
           path,
           name: key,
           id: path.join('.'),
-          isFirst: index === 0,
           isValueRule: this.isValueRule(value),
         };
 
@@ -301,23 +302,6 @@ export default {
 <style lang="scss" scoped>
   .pattern-simple-editor {
     & /deep/ {
-      .v-treeview-node {
-        margin-bottom: 35px;
-        position: relative;
-
-        .operator {
-          position: absolute;
-          top: -33px;
-          /* TODO 24px - margin for node without children */
-          left: 24px;
-        }
-
-        &--leaf {
-          .operator {
-            left: 0;
-          }
-        }
-      }
       .v-treeview-node__content, .v-treeview-node__label {
         flex-shrink: 8;
       }
@@ -328,6 +312,22 @@ export default {
         word-break: break-all;
         margin-bottom: 0;
       }
+    }
+
+    .operator {
+      height: 100%;
+      position: relative;
+    }
+
+    .bracket {
+      position: absolute;
+      width: 15px;
+      border-radius: 100% 0 0 100% / 50% 50% 50% 50%;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      border: 4px #a6a6a6 solid;
+      border-right: none;
     }
   }
 </style>
