@@ -113,6 +113,8 @@ export default {
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    or: 'Or',
+    and: 'And',
     priority: 'Priority',
     actions: {
       close: 'Close',

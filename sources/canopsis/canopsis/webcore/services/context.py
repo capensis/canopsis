@@ -91,18 +91,17 @@ def exports(ws):
         if bnf_search_filter is not None:
             final_filter['$and'].append(bnf_search_filter)
         else:
-            escaped_search = re.escape(str(search))
+            escaped_search = re.escape(str(search).decode('utf-8'))
             column_filter = {'$or': []}
             for column in active_columns:
                 column_filter['$or'].append(
                     {
                         column: {
-                            '$regex': '.*{}.*'.format(escaped_search),
+                            '$regex': u'.*{}.*'.format(escaped_search),
                             '$options': 'i'
                         }
                     }
                 )
-
             final_filter['$and'].append(column_filter)
 
         data, count = manager.get_entities(

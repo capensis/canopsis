@@ -114,6 +114,8 @@ export default {
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
+    or: 'OU',
+    and: 'ET',
     priority: 'Priorité',
     actions: {
       close: 'Fermer',
