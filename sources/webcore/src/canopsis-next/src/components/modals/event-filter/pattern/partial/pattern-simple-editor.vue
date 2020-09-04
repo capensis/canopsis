@@ -21,7 +21,7 @@
                       p.body-1.font-italic {{ fieldKey }}
                       p.body-1.font-italic.text-field {{ field }}
             v-layout(v-if="!item.isFirst", row)
-              div.operator.text-uppercase {{ $t('common.and') }}
+              div.operator.text-uppercase.operator-chip.bg-gray {{ $t('common.and') }}
           template(slot="append", slot-scope="{ item }")
             v-layout(row)
               v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
@@ -307,7 +307,7 @@ export default {
 
         .operator {
           position: absolute;
-          top: -30px;
+          top: -33px;
           left: 50%;
           transform: translateX(-50%);
         }
