@@ -6,10 +6,7 @@
           v-icon(:class="action.iconClass") {{ action.icon }}
         span {{ action.tooltip }}
     v-layout(row)
-      v-flex(v-if="treeViewItems.length > 1", row)
-        v-layout.operator(row, align-center)
-          div.text-uppercase.operator-chip.bg-gray.mr-4 {{ $t('common.and') }}
-          div.bracket
+      pattern-information(v-if="treeViewItems.length > 1") {{ $t('common.and') }}
       v-flex(xs12)
         v-treeview(:items="treeViewItems", :open.sync="opened", open-all)
           template(slot="label", slot-scope="{ item }")
@@ -39,10 +36,10 @@ import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
-import OperatorField from '@/components/forms/fields/operator-field.vue';
+import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 export default {
-  components: { OperatorField },
+  components: { PatternInformation },
   filters: {
     treeViewValue(value) {
       if (isString(value)) {
