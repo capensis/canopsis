@@ -15,7 +15,11 @@
             hide-details
           )
         v-layout.ml-2(v-if="expandable", align-center)
-          expand-button(:class="expandButtonClass", :expanded="row.expanded", @expand="showExpandPanel")
+          expand-button(
+            :class="expandButtonClass",
+            :expanded="row.expanded",
+            @expand="showExpandPanel"
+          )
     td(v-for="column in columns")
       alarm-column-value(
         :alarm="alarm",
