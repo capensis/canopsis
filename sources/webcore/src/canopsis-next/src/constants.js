@@ -705,6 +705,7 @@ export const USER_RIGHTS_PREFIXES = {
     weather: 'serviceweather',
     counter: 'counter',
   },
+  api: 'api',
 };
 
 export const USERS_RIGHTS = {
@@ -804,6 +805,27 @@ export const USERS_RIGHTS = {
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
       },
     },
+  },
+  api: {
+    alarmUpdate: `${USER_RIGHTS_PREFIXES.api}_alarm_update`,
+    alarmDelete: `${USER_RIGHTS_PREFIXES.api}_alarm_delete`,
+    alarmFilter: `${USER_RIGHTS_PREFIXES.api}_alarmfilter`,
+    idleRule: `${USER_RIGHTS_PREFIXES.api}_idlerule`,
+    eventFilter: `${USER_RIGHTS_PREFIXES.api}_eventfilter`,
+    action: `${USER_RIGHTS_PREFIXES.api}_action`,
+    webhook: `${USER_RIGHTS_PREFIXES.api}_webhook`,
+    metaalarmrule: `${USER_RIGHTS_PREFIXES.api}_metaalarmrule`,
+    playlist: `${USER_RIGHTS_PREFIXES.api}_playlist`,
+    dynamicinfos: `${USER_RIGHTS_PREFIXES.api}_dynamicinfos`,
+    heartbeat: `${USER_RIGHTS_PREFIXES.api}_heartbeat`,
+    watcher: `${USER_RIGHTS_PREFIXES.api}_watcher`,
+    viewgroup: `${USER_RIGHTS_PREFIXES.api}_viewgroup`,
+    view: `${USER_RIGHTS_PREFIXES.api}_view`,
+    pbehavior: `${USER_RIGHTS_PREFIXES.api}_pbehavior`,
+    pbehaviorType: `${USER_RIGHTS_PREFIXES.api}_pbehaviortype`,
+    pbehaviorReason: `${USER_RIGHTS_PREFIXES.api}_pbehaviorreason`,
+    pbehaviorException: `${USER_RIGHTS_PREFIXES.api}_pbehaviorexception`,
+    event: `${USER_RIGHTS_PREFIXES.api}_event`,
   },
 };
 
