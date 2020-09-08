@@ -1,7 +1,7 @@
 <template lang="pug">
   tr
     td
-      v-checkbox(primary, hide-details, v-model="row.selected")
+      v-checkbox(v-model="row.selected", primary, hide-details)
     td(v-for="column in columns", @click="toggleExpandPanel")
       div(v-if="column.value === 'enabled'")
         enabled-column(:value="row.item.enabled")
