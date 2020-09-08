@@ -23,4 +23,4 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 *  [Gestion des services](gestion-services/index.md)
 *  [Administration avancée de Canopsis](administration-avancee/index.md)
-*  [Troubleshooting](guide-de-depannage/index.md)
+*  [Troubleshooting](../guide-de-depannage/index.md)

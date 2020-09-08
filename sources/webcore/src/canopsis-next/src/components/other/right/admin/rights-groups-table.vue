@@ -1,8 +1,8 @@
 <template lang="pug">
   v-data-table(
-    :items="groups",
+    :items="sortedGroups",
     :headers="headers",
-    item-key="key",
+    item-key="name",
     expand,
     hide-actions
   )
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { sortBy } from 'lodash';
+
 import RightsTable from './rights-table.vue';
 import RightGroupRow from './right-group-row.vue';
 
@@ -59,6 +61,14 @@ export default {
 
         ...this.roles.map(role => ({ text: role._id, sortable: false })),
       ];
+    },
+
+    groupsWithName() {
+      return this.groups.map(({ key, rights }) => ({ rights, name: this.$t(key) }));
+    },
+
+    sortedGroups() {
+      return sortBy(this.groupsWithName, ['name']);
     },
   },
 };

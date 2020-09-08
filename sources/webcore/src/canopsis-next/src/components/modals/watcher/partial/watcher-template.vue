@@ -76,7 +76,7 @@ export default {
         <watcher-entities-wrapper
             :watcher="watcher"
             :watcher-entities="watcherEntities"
-            :template="entityTemplate"
+            :entity-template="entityTemplate"
             :items-per-page="itemsPerPage"
             entity-name-field="${entityNameField}"
             @add:event="addEventToQueue"
