@@ -8,12 +8,13 @@
   )
     template(slot="items", slot-scope="props")
       right-group-row(
+        :expanded="props.expanded",
         :group="props.item",
         :roles="roles",
         :changedRoles="changedRoles",
         :disabled="disabled",
         @change="$listeners.change",
-        @click="props.expanded = !props.expanded"
+        @expand="props.expanded = !props.expanded"
       )
     template(slot="expand", slot-scope="{ item }")
       rights-table.expand-rights-table(
