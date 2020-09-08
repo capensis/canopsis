@@ -125,6 +125,39 @@ definitions:
       parameters:
         $ref: "#/definitions/idle.Parameters"
     type: object
+  link.Parameter:
+    type: array
+    items: 
+      type: object
+      properties:
+        entity: {type: string}
+        alarm: {type: string}
+      required:
+        - "entity"
+  link.Parameters:
+    properties:
+      entities:
+        items: 
+          $ref: '#/definitions/link.Parameter'
+        type: array
+  link.Links:
+    type: array
+    items: 
+      type: object
+      properties: 
+        alarm: {type: string}
+        entity: {type: string}
+        links: {type: object}
+      required:
+        - entity
+        - links
+    uniqueItems: true
+  link.LinksData:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/link.Links'
+        type: array
 
 paths:
   /api/v2/metaalarmrule:
@@ -330,3 +363,28 @@ paths:
                 type: string
       tags:
       - idle-rule
+  /api/v2/links:
+    post:
+      consumes:
+      - application/json
+      summary: Returns links for alarms or entities list
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/link.Parameters'
+      responses:
+        '200':
+            description: List of links
+            schema:
+              $ref: "#/definitions/link.LinksData"
+        '400':
+          description: Wrong entities payload
+          schema:
+            properties:
+              description:
+                type: string
+      tags:
+      - links
