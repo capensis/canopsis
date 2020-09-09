@@ -2,10 +2,10 @@
   v-select(
     v-field="value",
     v-validate="'required'",
-    :label="$t('modals.createPbehavior.steps.general.fields.type')",
+    :label="$t('common.type')",
     :loading="pbehaviorTypesPending",
     :items="pbehaviorTypes",
-    :error-messages="errors.collect(name)",
+    :error-messages="errorMessages",
     :name="name",
     item-text="name",
     item-value="_id",
@@ -31,6 +31,11 @@ export default {
     name: {
       type: String,
       default: 'type',
+    },
+  },
+  computed: {
+    errorMessages() {
+      return this.errors.collect(this.name).map(error => error.replace(this.name, this.$t('common.type')));
     },
   },
   mounted() {
