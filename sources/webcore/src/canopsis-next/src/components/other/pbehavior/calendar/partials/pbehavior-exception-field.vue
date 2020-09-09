@@ -4,7 +4,6 @@
       date-time-picker-field(
         v-field="value.begin",
         v-validate="beginRules",
-        :error-messages="errors.collect(beginName)",
         :label="$t('common.begin')",
         :name="beginName"
       )
@@ -12,7 +11,6 @@
       date-time-picker-field(
         v-field="value.end",
         v-validate="endRules",
-        :error-messages="errors.collect(endName)",
         :label="$t('common.end')",
         :name="endName"
       )
@@ -70,6 +68,7 @@ export default {
     endName() {
       return `end${this.nameSuffix}`;
     },
+
     typeName() {
       return `type${this.nameSuffix}`;
     },

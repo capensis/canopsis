@@ -99,7 +99,7 @@ export default {
   computed: {
     errorMessages() {
       if (this.$validator && this.errors && this.name) {
-        return this.errors.collect(this.name);
+        return this.errors.collect(this.name).map(error => error.replace(this.name, this.label));
       }
 
       return [];
