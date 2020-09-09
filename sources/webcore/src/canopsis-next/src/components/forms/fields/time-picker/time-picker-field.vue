@@ -1,11 +1,10 @@
 <template lang="pug">
   v-menu(
-    ref="menu",
     v-model="opened",
+    :close-on-content-click="false",
     content-class="time-picker",
     transition="slide-y-transition",
     max-width="290px",
-    :close-on-content-click="false",
     right,
     lazy
   )
