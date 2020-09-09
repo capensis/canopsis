@@ -95,7 +95,7 @@ def get_login_config(ws):
     }
 
     records = ws.db.find(
-        {'crecord_name': {'$in': ['casconfig', 'ldapconfig']}},
+        {'crecord_name': {'$in': ['casconfig']}},
         namespace='object'
     )
 
