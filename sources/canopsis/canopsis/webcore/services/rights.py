@@ -105,7 +105,7 @@ def save_role(ws, role):
 
 
 def save_user(ws, record):
-    uid = record.pop('_id')
+    uid = record.pop('_id') if '_id' in record else record.get('crecord_name')
     urole = record.pop('role')
     ucontact = record.pop('contact', None)
     urights = record.pop('rights', None)

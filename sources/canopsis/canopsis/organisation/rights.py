@@ -573,7 +573,7 @@ class Rights(Middleware):
 
         # retrieve the profile
         if role:
-            s_user = self.get_user(u_name)
+            s_user = dict(self.get_user(u_name))
             s_user['role'] = r_name
             self._storage.put_element(_id=u_name, element=s_user)
 
