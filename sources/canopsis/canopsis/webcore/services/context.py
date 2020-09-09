@@ -80,7 +80,8 @@ def exports(ws):
         # try grammar search
         try:
             _, bnf_search_filter = alr.interpret_search(search)
-        except ValueError:
+        except ValueError as e:
+            ws.logger.exception(e)
             bnf_search_filter = None
 
         if request.json:
@@ -103,7 +104,6 @@ def exports(ws):
                     }
                 )
             final_filter['$and'].append(column_filter)
-
         data, count = manager.get_entities(
             query=final_filter,
             limit=limit,
