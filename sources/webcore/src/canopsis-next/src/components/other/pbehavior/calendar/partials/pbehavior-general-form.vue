@@ -17,24 +17,43 @@
           hide-details
         )
       v-flex.mt-3(xs12)
-        v-layout(wrap, justify-space-between)
-          v-flex(xs6)
-            date-time-picker-field(
+        v-layout(row)
+          v-flex.pr-1(xs5)
+            pbehavior-date-time-field(
               v-validate="tstartRules",
               :value="form.tstart",
+              :fullDay="fullDay",
               :label="$t('modals.createPbehavior.steps.general.fields.start')",
               name="tstart",
               @input="updateField('tstart', $event)"
             )
-          v-flex(xs6)
-            date-time-picker-field(
+          v-flex.pr-1(v-if="!noEnding", xs2)
+            div.time-dash –
+          v-flex(v-if="!noEnding", xs5)
+            pbehavior-date-time-field(
               v-validate="tstopRules",
               :value="form.tstop",
+              :fullDay="fullDay",
               :label="$t('modals.createPbehavior.steps.general.fields.stop')",
-              :clearable="hasPauseType",
               name="tstop",
+              reverse,
               @input="updateField('tstop', $event)"
             )
+        v-layout(wrap)
+          v-checkbox.mt-0(
+            v-model="fullDay",
+            label="Whole day",
+            color="primary",
+            hide-details
+          )
+        v-layout(wrap)
+          v-checkbox.mt-0.mb-2(
+            v-if="hasPauseType",
+            v-model="noEnding",
+            label="No ending",
+            color="primary",
+            hide-details
+          )
       v-flex(xs12)
         pbehavior-reasons-field(v-field="form.reason")
       v-flex(xs12)
@@ -47,19 +66,28 @@ import moment from 'moment-timezone';
 
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
+import { isStartOfDay, isEndOfDay } from '@/helpers/date';
+
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
+import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
+
+import PbehaviorDateTimeField from './pbehavior-date-time-field.vue';
 
 export default {
   components: {
     PbehaviorReasonsField,
+    DatePickerField,
+    TimePickerField,
     DateTimePickerField,
     PbehaviorTypeField,
+    PbehaviorDateTimeField,
   },
   mixins: [
     formMixin,
@@ -76,6 +104,15 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    const noEnding = !this.form.tstop;
+
+    return {
+      noEnding,
+
+      fullDay: isStartOfDay(this.form.tstart) && (noEnding || isEndOfDay(this.form.tstop)),
+    };
   },
   computed: {
     hasPauseType() {
@@ -100,5 +137,45 @@ export default {
       return rules;
     },
   },
+  watch: {
+    noEnding(value) {
+      if (value) {
+        this.updateField('tstop', null);
+      } else {
+        const unit = this.fullDay ? 'day' : 'hour';
+        const tstopMoment = moment(this.form.tstart).add(1, unit);
+
+        if (this.fullDay) {
+          tstopMoment.endOf(unit);
+        }
+
+        this.updateField('tstop', tstopMoment.toDate());
+      }
+    },
+    fullDay() {
+      const tstartMoment = moment(this.form.tstart).startOf('day');
+
+      this.updateField('tstart', tstartMoment.toDate());
+
+      if (!this.noEnding) {
+        const tstopMoment = moment(this.form.tstop).endOf('day');
+
+        this.updateField('tstop', tstopMoment.toDate());
+      }
+    },
+    hasPauseType(value) {
+      if (!value) {
+        this.noEnding = false;
+      }
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.time-dash {
+  line-height: 68px;
+  padding: 0 8px;
+  text-align: center;
+}
+</style>

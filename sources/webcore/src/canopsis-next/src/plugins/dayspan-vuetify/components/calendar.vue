@@ -294,13 +294,8 @@ export default {
     handleResized(mouseEvent) {
       const target = this.placeholder.time;
       const source = this.resizingEvent.calendarEvent.time;
-      const isDay = mouseEvent.type === 'mouse-up-day';
 
-      if (
-        isDay
-          ? !(target.start.sameDay(source.start) && target.end.sameDay(source.end))
-          : !(target.start.sameMinute(source.start) && target.end.sameMinute(source.end))
-      ) {
+      if (!(target.start.sameMinute(source.start) && target.end.sameMinute(source.end))) {
         const event = this.getEvent('resized', {
           mouseEvent,
           resizingEvent: this.resizingEvent,

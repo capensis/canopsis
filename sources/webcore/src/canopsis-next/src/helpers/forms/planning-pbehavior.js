@@ -63,8 +63,8 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
     name: pbehavior.name || '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : new Date(),
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : new Date(),
+    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : null,
+    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : null,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     exceptions: pbehavior.exceptions ? addKeyInEntity(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntity(cloneDeep(pbehavior.comments)) : [],
@@ -104,24 +104,29 @@ export const formToPbehavior = (form, timezone) => ({
  * @return {Object}
  */
 export const calendarEventToPbehaviorForm = (calendarEvent, filter) => {
-  const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
+  const {
+    start,
+    end,
+    schedule,
+    data: { pbehavior, cachedForm = {} },
+  } = calendarEvent;
 
   const form = {
     ...pbehaviorToForm(pbehavior, filter),
     ...cachedForm,
   };
 
-  form.tstart = calendarEvent.start.date.toDate();
+  form.tstart = start.date.toDate();
 
   if (!pbehavior || pbehavior.tstop) {
-    if (calendarEvent.schedule.durationUnit === 'days') {
-      if (calendarEvent.end.date.diff(calendarEvent.start.date, 'days') <= 0) {
-        form.tstop = calendarEvent.start.date.clone().endOf('day').toDate();
+    if (schedule.durationUnit === 'days') {
+      if (end.date.diff(start.date, 'hours') <= 24) {
+        form.tstop = start.date.clone().endOf('day').toDate();
       } else {
-        form.tstop = calendarEvent.end.date.clone().subtract(1, 'second').toDate();
+        form.tstop = calendarEvent.end.date.clone().subtract(1, 'millisecond').toDate();
       }
     } else {
-      form.tstop = calendarEvent.end.date.toDate();
+      form.tstop = end.date.toDate();
     }
   }
 
