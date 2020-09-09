@@ -2,7 +2,7 @@
   v-menu(
     ref="menu",
     v-model="opened",
-    content-class="date-time-picker",
+    content-class="date-picker",
     transition="slide-y-transition",
     max-width="290px",
     :close-on-content-click="false",
@@ -36,16 +36,6 @@ import formBaseMixin from '@/mixins/form/base';
 
 /**
  * Date picker field component
- *
- * @warning If you want to use validation on the field you shouldn't use `v-field`
- *
- * @prop {Date} [value=null] - Date value
- * @prop {Boolean} [clearable=false] - if it is true input field will be have cross button with clear event on click
- * @prop {string} [label=''] - Label of the input field
- * @prop {string} [name=null] - Name property in the validation object
- * @prop {Boolean} [roundHours=false] - Deny to change minutes it will be only 0
- *
- * @event value#input
  */
 export default {
   $_veeValidate: {

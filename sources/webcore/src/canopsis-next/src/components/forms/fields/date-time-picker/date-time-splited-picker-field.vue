@@ -27,13 +27,16 @@
     div.v-text-field__details.mt-2
       div.v-messages.theme--light.error--text
         div.v-messages__wrapper
-          div.v-messages__message {{ errors.first(name) }}
+          div.v-messages__message(
+            v-for="error in errors.collect(name)",
+            :key="error"
+          ) {{ error }}
 </template>
 
 <script>
 import { convertTimestampToMoment } from '@/helpers/date';
 
-import dateTimePickerMixin from '@/mixins/pickers/date-time-picker';
+import dateTimePickerMixin from '@/mixins/vuetify/date-time-picker';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';

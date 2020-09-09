@@ -651,6 +651,8 @@ export default {
             type: 'Type',
             start: 'Start',
             stop: 'End',
+            fullDay: 'Whole day',
+            noEnding: 'No ending',
           },
         },
         filter: {
