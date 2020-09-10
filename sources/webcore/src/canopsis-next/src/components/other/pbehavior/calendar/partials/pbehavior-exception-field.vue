@@ -1,13 +1,16 @@
 <template lang="pug">
   v-layout(row, wrap)
     v-flex(xs6)
-      date-time-range-picker-field(
-        v-model="dateField",
+      date-time-splitted-range-picker-field(
+        :start="value.begin",
+        :end="value.end",
         :startLabel="$t('common.begin')",
         :endLabel="$t('common.end')",
         :startRules="beginRules",
         :endRules="endRules",
-        :fullDay="fullDay"
+        :fullDay="fullDay",
+        @update:start="updateField('begin', $event)",
+        @update:end="updateField('end', $event)"
       )
     v-flex.pl-2(xs5)
       pbehavior-type-field(
@@ -35,11 +38,11 @@ import { isEndOfDay, isStartOfDay } from '@/helpers/date';
 import formMixin from '@/mixins/form';
 
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
-import DateTimeRangePickerField from '@/components/forms/fields/date-time-range-picker-field.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimeRangePickerField, PbehaviorTypeField },
+  components: { DateTimeSplittedRangePickerField, PbehaviorTypeField },
   mixins: [formMixin],
   model: {
     prop: 'value',
@@ -57,23 +60,6 @@ export default {
     };
   },
   computed: {
-    dateField: {
-      set({ tstart, tstop }) {
-        this.updateModel({
-          ...this.value,
-
-          begin: tstart,
-          end: tstop,
-        });
-      },
-      get() {
-        return {
-          tstart: this.value.begin,
-          tstop: this.value.end,
-        };
-      },
-    },
-
     beginRules() {
       return {
         required: true,
@@ -91,14 +77,6 @@ export default {
 
     nameSuffix() {
       return this.value.key ? `-${this.value.key}` : '';
-    },
-
-    beginName() {
-      return `begin${this.nameSuffix}`;
-    },
-
-    endName() {
-      return `end${this.nameSuffix}`;
     },
 
     typeName() {

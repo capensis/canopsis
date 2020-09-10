@@ -1,48 +1,45 @@
 <template lang="pug">
   v-layout
     v-flex.pr-1(xs5)
-      date-time-splited-picker-field(
+      date-time-splitted-picker-field(
         v-validate="startRules",
-        :value="value.tstart",
+        :value="start",
         :fullDay="fullDay",
         :label="startLabel",
-        name="tstart",
-        @input="updateField('tstart', $event)"
+        name="start",
+        @input="$emit('update:start', $event)"
       )
     template(v-if="!noEnding")
       v-flex.pr-1(xs2)
         div.time-dash –
       v-flex(xs5)
-        date-time-splited-picker-field(
+        date-time-splitted-picker-field(
           v-validate="endRules",
-          :value="value.tstop",
+          :value="end",
           :fullDay="fullDay",
           :label="endLabel",
-          name="tstop",
+          name="end",
           reverse,
-          @input="updateField('tstop', $event)"
+          @input="$emit('update:end', $event)"
         )
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-
-import DateTimeSplitedPickerField from '@/components/forms/fields/date-time-picker/date-time-splited-picker-field.vue';
+import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
 
 export default {
   components: {
-    DateTimeSplitedPickerField,
-  },
-  mixins: [formMixin],
-  model: {
-    prop: 'value',
-    event: 'input',
+    DateTimeSplittedPickerField,
   },
   inject: ['$validator'],
   props: {
-    value: {
-      type: Object,
-      required: true,
+    start: {
+      type: Date,
+      default: null,
+    },
+    end: {
+      type: Date,
+      default: null,
     },
     endRules: {
       type: Object,

@@ -13,14 +13,17 @@
         enabled-field(v-field="form.enabled", hide-details)
       v-flex.mt-3(xs12)
         v-layout(row)
-          date-time-range-picker-field(
-            v-field="form",
+          date-time-splitted-range-picker-field(
+            :start="form.tstart",
+            :end="form.tstop",
             :startLabel="$t('modals.createPbehavior.steps.general.fields.start')",
             :endLabel="$t('modals.createPbehavior.steps.general.fields.stop')",
             :startRules="tstartRules",
             :endRules="tstopRules",
             :noEnding="noEnding",
-            :fullDay="fullDay"
+            :fullDay="fullDay",
+            @update:start="updateField('tstart', $event)",
+            @update:end="updateField('tstop', $event)"
           )
         v-layout(wrap)
           v-checkbox.mt-0(
@@ -57,13 +60,13 @@ import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
-import DateTimeRangePickerField from '@/components/forms/fields/date-time-range-picker-field.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 export default {
   components: {
     EnabledField,
-    DateTimeRangePickerField,
+    DateTimeSplittedRangePickerField,
     PbehaviorReasonsField,
     PbehaviorTypeField,
   },
