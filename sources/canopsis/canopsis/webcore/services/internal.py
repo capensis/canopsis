@@ -109,12 +109,19 @@ def get_login_config(ws):
             u'found cservices type {}'.format(login_service_name))
 
         if login_service_name == 'casconfig':
-            login_service['server'] = login_service['server'].rstrip('/')
-            login_service['service'] = login_service['service'].rstrip('/')
-            ws.logger.info(u'cas config : server {}, service {}'.format(
-                login_service['server'],
-                login_service['service'],
-            ))
+            if 'server' in login_service:
+                login_service['server'] = login_service['server'].rstrip('/')
+            if 'service' in login_service:
+                login_service['service'] = login_service['service'].rstrip('/')
+            if 'login_url' in login_service:
+                ws.logger.info(u'cas config : login_url {}'.format(
+                    login_service['login_url'],
+                ))
+            else:
+                ws.logger.info(u'cas config : server {}, service {}'.format(
+                    login_service['server'],
+                    login_service['service'],
+                ))
 
     if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
         result = ws.db.find({'_id': "canopsis"}, namespace='default_saml2')
