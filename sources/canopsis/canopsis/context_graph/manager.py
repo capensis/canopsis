@@ -752,6 +752,12 @@ class ContextGraph(object):
         else:
             return result
 
+    def enrich_links_to_entity_with_alarm(self, entity, alarm):
+        if hasattr(self, 'hlb_manager'):
+            links = self.hlb_manager.links_for_entity(entity, options={'alarm': alarm})
+            return links
+        return {}
+
     def get_entities_by_id(self, _id, with_links=False):
         """
         Retreive the entity identified by an id. If id is a list of id,

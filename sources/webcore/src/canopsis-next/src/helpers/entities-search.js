@@ -19,6 +19,10 @@ export function getUsersSearchByText(text) {
     $or: [
       { _id: getRule(text) },
       { role: getRule(text) },
+      { username: getRule(text) },
+      { firstname: getRule(text) },
+      { lastname: getRule(text) },
+      { mail: getRule(text) },
       { enable: getRule(text) },
       { external: getRule(text) },
     ],

@@ -218,6 +218,15 @@ class AlarmAdapter(object):
         return alarm
 
 
+def get_attr_strlist(alarm_data, attr_name):
+    l = []
+    if alarm_data.get(attr_name) is not None:
+        for val in alarm_data[attr_name]:
+            if isinstance(val, basestring):
+                l.append(val)
+    return l
+
+
 def make_alarm_from_mongo(alarm_dict):
     """
     Build an alarm object from a mongo dict.
@@ -261,6 +270,9 @@ def make_alarm_from_mongo(alarm_dict):
     if ald.get('ticket') is not None:
         ticket = make_alarm_step_from_mongo(ald['ticket'])
 
+    parents = get_attr_strlist(ald, 'parents')
+    children = get_attr_strlist(ald, 'children')
+
     return Alarm(
         _id=alarm_dict['_id'],
         identity=identity,
@@ -281,8 +293,8 @@ def make_alarm_from_mongo(alarm_dict):
         alarm_filter=ald.get('alarm_filter'),
         done=done,
         extra=ald.get('extra'),
-        parents=ald.get('parents'),
-        children=ald.get('children')
+        parents=parents,
+        children=children
     )
 
 

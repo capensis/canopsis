@@ -9,7 +9,7 @@ Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement e
 
 Depuis la `3.37.0`, la fonction de répétition est disponible.
 
-Depuis la `3.39.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
+Depuis la `3.39.0`, le webhook peut être activé ou désactivé avec l'attribut `enabled`.
 
 Depuis la `3.41.0`, les valeurs des champs `declare_ticket` peuvent être définies sous forme d'expressions régulières.
 

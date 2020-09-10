@@ -18,6 +18,14 @@
       name="actionType",
       @change="errors.clear()"
     )
+    v-text-field(
+      v-field.number="form.generalParameters.priority",
+      v-validate="'numeric'",
+      :label="$t('common.priority')",
+      :error-messages="errors.collect('priority')",
+      type="number",
+      name="priority"
+    )
     enabled-field.mb-3(v-field="form.generalParameters.enabled", hide-details)
     v-tabs(fixed-tabs, slider-color="primary")
       v-tab
