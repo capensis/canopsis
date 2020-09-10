@@ -45,19 +45,19 @@ watcher --> action
 info --> webh(engine-webhook)
 webh --> action(engine-action)
 
-click snmp "http://doc.canopsis.net/guide-administration/moteurs/moteur-snmp/"
-click heart "http://doc.canopsis.net/guide-administration/moteurs/moteur-heartbeat/"
-click fifo "http://doc.canopsis.net/guide-administration/moteurs/moteur-fifo/"
-click che "http://doc.canopsis.net/guide-administration/moteurs/moteur-che/"
-click filter "http://doc.canopsis.net/guide-administration/moteurs/moteur-che-event_filter/"
-click metric "http://doc.canopsis.net/guide-administration/moteurs/moteur-metric/"
-click pbh "http://doc.canopsis.net/guide-administration/moteurs/moteur-pbehavior/"
-click axe "http://doc.canopsis.net/guide-administration/moteurs/moteur-axe/"
-click correl "http://doc.canopsis.net/guide-administration/moteurs/moteur-correlation/"
-click watcher "http://doc.canopsis.net/guide-administration/moteurs/moteur-watcher/"
-click info "http://doc.canopsis.net/guide-administration/moteurs/moteur-dynamic-infos/"
-click webh "http://doc.canopsis.net/guide-administration/moteurs/moteur-webhook/"
-click action "http://doc.canopsis.net/guide-administration/moteurs/moteur-action/"
+click snmp "https://doc.canopsis.net/guide-administration/moteurs/moteur-snmp/"
+click heart "https://doc.canopsis.net/guide-administration/moteurs/moteur-heartbeat/"
+click fifo "https://doc.canopsis.net/guide-administration/moteurs/moteur-fifo/"
+click che "https://doc.canopsis.net/guide-administration/moteurs/moteur-che/"
+click filter "https://doc.canopsis.net/guide-administration/moteurs/moteur-che-event_filter/"
+click metric "https://doc.canopsis.net/guide-administration/moteurs/moteur-metric/"
+click pbh "https://doc.canopsis.net/guide-administration/moteurs/moteur-pbehavior/"
+click axe "https://doc.canopsis.net/guide-administration/moteurs/moteur-axe/"
+click correl "https://doc.canopsis.net/guide-administration/moteurs/moteur-correlation/"
+click watcher "https://doc.canopsis.net/guide-administration/moteurs/moteur-watcher/"
+click info "https://doc.canopsis.net/guide-administration/moteurs/moteur-dynamic-infos/"
+click webh "https://doc.canopsis.net/guide-administration/moteurs/moteur-webhook/"
+click action "https://doc.canopsis.net/guide-administration/moteurs/moteur-action/"
 
 classDef grey font-weight:normal,font-size:12pt,color:#fff,fill:#878787,stroke:#222,stroke-width:3px;
 classDef core-green font-weight:normal,font-size:12pt,color:#fff,fill:#2fab63,color:#fff,stroke:#222,stroke-width:3px;
