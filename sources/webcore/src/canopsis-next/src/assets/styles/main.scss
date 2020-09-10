@@ -100,7 +100,7 @@ $mobileBreakpoint: 450px;
   }
 
   .watcherName {
-    max-width: 100%;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
@@ -118,6 +118,14 @@ $mobileBreakpoint: 450px;
   }
 }
 
+.pre {
+  white-space: pre;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
 .v-tooltip__content {
   max-width: 60%;
 
@@ -126,6 +134,9 @@ $mobileBreakpoint: 450px;
   }
 }
 
-.pre {
-  white-space: pre;
+.operator-chip {
+  background: #a6a6a6;
+  padding: 3px 8px;
+  color: white;
+  border-radius: 5px;
 }

@@ -121,9 +121,14 @@ export default {
     async showAlarmListModal() {
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
 
-      widget.parameters.alarmsStateFilter = this.widget.parameters.alarmsStateFilter;
-      widget.parameters.mainFilter = this.counter.filter;
-      widget.parameters.viewFilters = [this.counter.filter];
+      widget.parameters = {
+        ...widget.parameters,
+        ...this.widget.parameters.alarmsList,
+
+        alarmsStateFilter: this.widget.parameters.alarmsStateFilter,
+        mainFilter: this.counter.filter,
+        viewFilters: [this.counter.filter],
+      };
 
       this.$modals.show({
         name: MODALS.alarmsList,

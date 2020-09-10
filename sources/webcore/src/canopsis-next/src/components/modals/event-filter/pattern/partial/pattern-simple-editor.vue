@@ -6,6 +6,7 @@
           v-icon(:class="action.iconClass") {{ action.icon }}
         span {{ action.tooltip }}
     v-layout(row)
+      pattern-information(v-if="treeViewItems.length > 1") {{ $t('common.and') }}
       v-flex(xs12)
         v-treeview(:items="treeViewItems", :open.sync="opened", open-all)
           template(slot="label", slot-scope="{ item }")
@@ -35,7 +36,10 @@ import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
+import PatternInformation from '@/components/other/pattern/pattern-information.vue';
+
 export default {
+  components: { PatternInformation },
   filters: {
     treeViewValue(value) {
       if (isString(value)) {
@@ -114,47 +118,42 @@ export default {
       ];
     },
 
-    getActionsForItem() {
-      const { actionsMap } = this;
-
-      return (treeViewItem) => {
-        if (has(treeViewItem, 'value')) {
-          return [
-            actionsMap.editValueRuleField,
-            actionsMap.removeRuleField,
-          ];
-        }
-
-        return [
-          actionsMap.addValueRuleField,
-          actionsMap.addObjectRuleField,
-          actionsMap.editObjectRuleField,
-          actionsMap.removeRuleField,
-        ];
-      };
-    },
-
     treeViewItems() {
       return this.parsePatternToTreeview(this.pattern);
     },
-
-    isSimpleValueRule() {
-      return rule => !isObject(rule);
-    },
-
-    isValueRule() {
-      return (rule) => {
-        if (isObject(rule)) {
-          const items = Object.entries(rule);
-
-          return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
-        }
-
-        return true;
-      };
-    },
   },
   methods: {
+    isValueRule(rule) {
+      if (!isObject(rule)) {
+        return true;
+      }
+
+      const items = Object.entries(rule);
+
+      return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
+    },
+
+    isSimpleValueRule(rule) {
+      return !isObject(rule);
+    },
+
+    getActionsForItem(treeViewItem) {
+      const { actionsMap } = this;
+
+      if (has(treeViewItem, 'value')) {
+        return [
+          actionsMap.editValueRuleField,
+          actionsMap.removeRuleField,
+        ];
+      }
+
+      return [
+        actionsMap.addValueRuleField,
+        actionsMap.addObjectRuleField,
+        actionsMap.editObjectRuleField,
+        actionsMap.removeRuleField,
+      ];
+    },
     /**
      * Parse pattern object to treeview items
      *
@@ -310,6 +309,22 @@ export default {
         word-break: break-all;
         margin-bottom: 0;
       }
+    }
+
+    .operator {
+      height: 100%;
+      position: relative;
+    }
+
+    .bracket {
+      position: absolute;
+      width: 15px;
+      border-radius: 100% 0 0 100% / 50% 50% 50% 50%;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      border: 4px #a6a6a6 solid;
+      border-right: none;
     }
   }
 </style>

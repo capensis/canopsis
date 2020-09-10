@@ -9,7 +9,7 @@
     )
       span.ml-1(slot="activator", small, depressed, @click.stop="openFullTextMenu") ...
       v-card(dark)
-        v-card-title {{ text }}
+        v-card-title.pre-wrap {{ text }}
 </template>
 
 <script>

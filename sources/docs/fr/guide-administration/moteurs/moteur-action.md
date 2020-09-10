@@ -2,7 +2,7 @@
 
 Le moteur `engine-action` permet de déclencher conditionnellement des actions sur des alarmes.
 
-Les actions sont définies dans la collection MongoDB `default_action`, et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
+Les actions sont définies dans la [collection MongoDB](#collection-mongodb-associee) `default_action` et peuvent être ajoutées et modifiées avec l'[API Action](../../guide-developpement/api/api-v2-action.md).
 
 ## Utilisation
 
@@ -28,29 +28,26 @@ En édition CAT, la file du moteur est placée juste après le moteur [`engine-w
 
 Les types d'actions disponibles sont :
 
-* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille la criticité de l'alarme jusqu'à sa résolution
-* `pbehavior` : met en place un [comportement périodique](moteur-pbehavior.md)
-* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose une mise en veille automatique sur l'alarme
-* `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme
-* `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme
-* `assocticket`, qui correspond à un événement [`assocticket`](../../guide-developpement/struct-event.md#event-assocticket-structure) : associe un ticket à l'alarme
-* `declareticket`, qui correspond à un événement [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : déclarer un ticket pour l'alarme
-* `cancel`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-cancel-structure) : annule l'alarme
+* `changestate`, qui correspond à un évènement [`changestate`](../../guide-developpement/struct-event.md#event-changestate-structure) : change et verrouille la criticité de l'alarme jusqu'à sa résolution.
+* `pbehavior`, met en place un [comportement périodique](moteur-pbehavior.md).
+* `snooze`, qui correspond à un évènement [`snooze`](../../guide-developpement/struct-event.md#event-snooze-structure) : pose une mise en veille automatique sur l'alarme.
+* `ack`, qui correspond à un événement [`ack`](../../guide-developpement/struct-event.md#event-acknowledgment-structure) : pose un acquittement sur l'alarme.
+* `ackremove`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-ackremove-structure) : supprime l'acquittement sur l'alarme.
+* `assocticket`, qui correspond à un événement [`assocticket`](../../guide-developpement/struct-event.md#event-assocticket-structure) : associe un ticket à l'alarme.
+* `declareticket`, qui correspond à un événement [`declareticket`](../../guide-developpement/struct-event.md#event-declareticket-structure) : déclarer un ticket pour l'alarme.
+* `cancel`, qui correspond à un événement [`ackremove`](../../guide-developpement/struct-event.md#event-cancel-structure) : annule l'alarme.
 
 ### Paramètres généraux
 
 Une action est composée d'un JSON contenant les paramètres suivants :
 
-```javascript
-{
-"_id"        // identifiant de l'action , optionnel, s'il n'est pas fourni par l'utilisateur il sera généré automatiquement - le champ est de type `string`
-"type"       // type d'action (`changestate`, `pbehavior` ou `snooze`), obligatoire - le champ est de type `string`
-"hook"       // conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée, optionnel
-"triggers"   // conditions de déclenchement sur la vie de l'alarme, si plusieurs triggers sont indiqués, au moins un de ces triggers doit avoir eu lieu pour que l'action soit appelée
-"parameters" // paramétrage spécifique à chaque type d'action.
-"delay"	    // délai avant l'exécution de l'action
-}
-```
+* `_id` : optionnel. Identifiant de l'action. S'il n'est pas fourni par l'utilisateur il sera généré automatiquement. Le champ est de type `string`.
+* `type` : obligatoire. Type d'action (voir [section précédente](#types-daction)). Ce champ est de type `string`.
+* `parameters` : obligatoire. [Paramétrage spécifique](#parametres-specifiques) à chaque type d'action.
+* `delay` : optionnel. Délai avant l'exécution de l'action. Les unités acceptées sont celles utilisées par le langage [Golang](https://golang.org/pkg/time/#ParseDuration) soit `s`, `m`, `h` pour secondes, minutes et heures respectivement. Le champ est de type `string`.
+* `hook` : obligatoire. Il est composé des paramètres suivants :
+  - [`patterns`](moteur-che-event_filter.md#patterns) : optionnel. Conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée.
+  - [`triggers`](../architecture-interne/triggers.md) : obligatoire. Ils servent comme point de déclenchement pour les actions automatisées, en général lors de la réception d'un évènement.
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
@@ -59,90 +56,56 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 
 #### Changestate
 
-```javascript
-{
-"state":   // criticité dans laquelle sera verrouillée l'alarme (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), le champ est de type `integer`
-"output":  // commentaire du changestate, optionnel - le champ est de type `string`
-"author":  // auteur du changestate, optionnel - le champ est de type `string`
-}
-```
+* `state` : obligatoire. Criticité dans laquelle sera verrouillée l'alarme (0 : Info, 1 : Minor, 2 : Major, 3 : Critical). Le champ est de type `integer`.
+* `output` : optionel. Commentaire du changestate. Le champ est de type `string`.
+* `author` : optionel. Auteur du changestate. Le champ est de type `string`.
 
 #### PBehavior
 
-```javascript
-{
-"rrule":     // règle de récurrence pour le pbehavior, optionnel - le champ est de type `string`
-"enabled":   // détermine si le pbehavior est actif ou non, obligatoire - le champ est de type `boolean`
-"author":    // auteur du pbehavior, obligatoire - le champ est de type `string`
-"name":      // nom du pbehavior, obligatoire - le champ est de type `string`
-"tstart":    // date de début du pbehavior, obligatoire - le champ est de type `integer` en UNIX timestamp
-"tstop":     // date de fin du pbehavior, obligatoire - le champ est de type `integer` en UNIX timestamp
-"type_":     // type du pbehavior, obligatoire - le champ est de type `string`
-"reason":    // raison du pbehavior, obligatoire - le champ est de type `string`
-"timezone":  // timezone du pbehavior, optionnel - le champ est de type `string`
-"comments":  // commentaire du pbehavior, optionnel - le champ est de type `array`
-[{           // début de l'array du commentaire
-"author":  // auteur du commentaire, optionnel - le champ est de type `string`
-"message": // commentaire du pbehavior, optionnel - le champ est de type `string`
-}],
-"exdate": []   // date d'expiration, peut être composé de plusieurs valeurs, optionnel - le champ est de type integer` en UNIX timestamp
-}
-```
+* `rrule` : optionnel. Règle de récurrence pour le pbehavior. Le champ est de type `string`.
+* `enabled` : obligatoire. Détermine si le pbehavior est actif ou non. Le champ est de type `boolean`.
+* `author` : obligatoire. Auteur du pbehavior. Le champ est de type `string`.
+* `name` : obligatoire. Nom du pbehavior. Le champ est de type `string`.
+* `tstart` : obligatoire. Date de début du pbehavior. Le champ est de type `integer` en UNIX timestamp.
+* `tstop` : obligatoire. Date de fin du pbehavior. Le champ est de type `integer` en UNIX timestamp.
+* `type_` : obligatoire. Type du pbehavior. Le champ est de type `string`.
+* `reason` : obligatoire. Raison du pbehavior. Le champ est de type `string`.
+* `timezone` : optionnel. Timezone du pbehavior. Le champ est de type `string`.
+* `comments` : optionnel. Commentaire du pbehavior. Le champ est de type `array`.
+* `author` : optionnel. Auteur du commentaire. Le champ est de type `string`.
+* `message` : optionnel. Commentaire du pbehavior. Le champ est de type `string`.
+* `exdate` : optionnel. Date d'expiration, peut être composée de plusieurs valeurs. Le champ est de type `integer` en UNIX timestamp.
 
 #### Snooze
 
-```javascript
-{
-"message":   // commentaire de la mise en veille, optionnel - le champ est de type `string`
-"duration":  // durée de la mise en veille en secondes, optionnel - le champ est de type `number`
-"author":    // auteur de la mise en veille, optionnel - le champ est de type `string`
-}
-```
+* `message` : optionnel. Commentaire de la mise en veille. Le champ est de type `string`.
+* `duration` : optionnel. Durée de la mise en veille en secondes. Le champ est de type `integer`.
+* `author`: optionnel. Auteur de la mise en veille. Le champ est de type `string`.
 
 #### Ack
 
-```javascript
-{
-"output":   // commentaire de l'acquittement, optionnel - le champ est de type `string`
-"author":    // auteur de l'acquittement, optionnel - le champ est de type `string`
-}
-```
+* `output`: optionnel. Commentaire de l'acquittement. Le champ est de type `string`.
+* `author`: optionnel. Auteur de l'acquittement. Le champ est de type `string`.
 
 #### Ackremove
 
-```javascript
-{
-"output":   // commentaire de la suppression de l'acquittement, optionnel - le champ est de type `string`
-"author":    // auteur de la suppression de l'acquittement, optionnel - le champ est de type `string`
-}
-```
+* `output`: optionnel. Commentaire de l'acquittement. Le champ est de type `string`.
+* `author`: optionnel. Auteur de l'acquittement. Le champ est de type `string`.
 
 #### Assocticket
 
-```javascript
-{
-"output":   // commentaire de l'association de ticket, optionnel - le champ est de type `string`
-"author":    // auteur de l'association de ticket, optionnel - le champ est de type `string`
-}
-```
+* `output`: optionnel. Commentaire de l'acquittement. Le champ est de type `string`.
+* `author`: optionnel. Auteur de l'acquittement. Le champ est de type `string`.
 
 #### Declareticket
 
-```javascript
-{
-"output":   // commentaire de la déclaration de ticket, optionnel - le champ est de type `string`
-"author":    // auteur de la déclaration de ticket, optionnel - le champ est de type `string`
-}
-```
+* `output`: optionnel. Commentaire de l'acquittement. Le champ est de type `string`.
+* `author`: optionnel. Auteur de l'acquittement. Le champ est de type `string`.
 
 #### Cancel
 
-```javascript
-{
-"output":   // commentaire de l'annulation de l'alarme, optionnel - le champ est de type `string`
-"author":    // auteur de l'annulation de l'alarme, optionnel - le champ est de type `string`
-}
-```
+* `output`: optionnel. Commentaire de l'acquittement. Le champ est de type `string`.
+* `author`: optionnel. Auteur de l'acquittement. Le champ est de type `string`.
 
 ## Collection MongoDB associée
 

@@ -112,7 +112,6 @@ export default {
     playlists: 'Playlists',
     planningAdministration: 'Planning Administration',
     icon: 'Icon',
-    priority: 'Priority',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
@@ -120,6 +119,9 @@ export default {
     begin: 'Begin',
     timezone: 'Timezone',
     reason: 'Reason',
+    or: 'Or',
+    and: 'And',
+    priority: 'Priority',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1718,16 +1720,16 @@ export default {
     title: 'Exception dates',
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
-    usingException: 'Date exception is using, because cannot be deleted',
+    usingException: 'Cannot be deleted since it is in use',
   },
 
   pbehaviorTypes: {
-    usingType: 'Type is using, because cannot be deleted',
+    usingType: 'Cannot be deleted since it is in use',
     defaultType: 'Type is default, because cannot be edited',
   },
 
   pbehaviorReasons: {
-    usingReason: 'Reason is using, because cannot be deleted',
+    usingReason: 'Cannot be deleted since it is in use',
   },
 
   planning: {

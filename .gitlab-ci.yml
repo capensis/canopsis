@@ -11,7 +11,6 @@ variables:
   COMPOSE_PROJECT_NAME: "test${CI_JOB_ID}"
   CANOPSIS_DISTRIBUTION: "debian-9"
   CANOPSIS_TAG: "ci"
-  CANOPSIS_UIV2_BRICKS_TAG: "develop"
   CANOPSIS_DOCKER_MODE: "test-ci"
   CANOPSIS_ENV_CONFIRM: "0"
   CANOPSIS_SKIP_GO: "1"
@@ -22,18 +21,20 @@ stage_test:
   tags: ["canopsis"]
   script:
     - set
-    - ./ci-gitlab.sh
+    #- ./CI/ci-gitlab.sh
+    - ./build-docker.sh
+
 
   artifacts:
     paths:
-      - tests_report
+      #- tests_report
 
 build_next:
    stage: test
    tags: ["canopsis"]
    script:
      - docker build -t canopsis/uiv3:develop -f docker/Dockerfile.canopsis-next-develop .
-     - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next up -d
+     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next up -d
      - docker push canopsis/uiv3:develop
    only:
     changes:
@@ -41,14 +42,14 @@ build_next:
     refs:
       - develop
    after_script:
-     - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next kill
+     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next kill
      - sleep 10
-     - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next rm -sf
-     - docker-compose -f docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next down
+     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next rm -sf
+     - docker-compose --project-directory CI/ -f CI/docker-compose_next.yml -p ${COMPOSE_PROJECT_NAME}-next down
 
 after_script:
-  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
+  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} kill
   - sleep 10
-  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
-  - docker-compose -f docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
+  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} rm -sf
+  - docker-compose --project-directory CI/ -f CI/docker-compose.ci.yml -p ${COMPOSE_PROJECT_NAME} down
   - docker volume prune -f

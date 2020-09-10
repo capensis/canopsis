@@ -21,3 +21,4 @@ Cette section vous accompagne dans l'adminsitration avancée des services liés 
 
 - [Configuration avancée du serveur de cache Redis](configuration-services/serveur-cache-redis.md)
 - [Configuration avancée du reverse proxy HTTP Nginx](configuration-services/reverse-proxy-nginx.md)
+- [Liste des variables d'environnement liées à Canopsis](variables-environnement.md)
