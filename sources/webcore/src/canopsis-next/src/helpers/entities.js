@@ -505,6 +505,7 @@ export function generateAction() {
     enabled: true,
     delay: {},
     hook: defaultHook,
+    priority: 0,
   };
 
   // Default 'snooze' action parameters

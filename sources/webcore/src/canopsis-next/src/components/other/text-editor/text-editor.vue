@@ -12,6 +12,8 @@ import { Jodit } from 'jodit';
 
 import 'jodit/build/jodit.min.css';
 
+import { BASE_URL } from '@/config';
+
 export default {
   props: {
     value: {
@@ -51,6 +53,13 @@ export default {
         uploader: {
           insertImageAsBase64URI: true,
         },
+        sourceEditorCDNUrlsJS: [
+          `${BASE_URL}scripts/libs/ace/1.3.3/ace.js`,
+        ],
+        beautifyHTMLCDNUrlsJS: [
+          `${BASE_URL}scripts/libs/js-beautify/1.7.5/beautify.min.js`,
+          `${BASE_URL}scripts/libs/js-beautify/1.7.5/beautify-html.min.js`,
+        ],
 
         ...this.config,
       };

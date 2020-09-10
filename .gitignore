@@ -2,8 +2,6 @@ _build/
 doc/logs
 log
 doc/locale
-/sources/packages/ssl-conf/blacklist
-build_messages.txt
 .idea
 .cache
 .coverage
@@ -14,8 +12,6 @@ build_messages.txt
 Vagrantfile
 *.vagrant
 requirements_control
-docker/files/bricks/brick-*
-docker/bricks
 .DS_Store
 .Spotlight-V100
 .Trashes

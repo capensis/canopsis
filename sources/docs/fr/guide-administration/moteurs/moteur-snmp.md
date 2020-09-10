@@ -17,12 +17,12 @@ Pour rappel, le résultat de la traduction doit se concrétiser par la générat
 
 Ce message doit comporter à minima les informations suivantes :
 
-*  connector
-*  connector\_name
-*  component
-*  resource
-*  state
-*  output
+*  `connector`
+*  `connector_name`
+*  `component`
+*  `resource`
+*  `state`
+*  `output`
 
 Le principal objectif est donc de déduire ces attributs à partir du tableau `snmp_vars` présent dans les traps bruts.
 
@@ -35,6 +35,20 @@ Sur le nœud des moteurs Canopsis :
 ```sh
 systemctl enable canopsis-engine-cat@snmp
 systemctl start canopsis-engine-cat@snmp
+```
+
+### Activation du service SNMP dans l'interface web
+
+À la fin du fichier `/opt/canopsis/etc/webserver.conf` (ou équivalent Docker), ajouter la ligne suivante :
+
+```ini
+canopsis_cat.webcore.services.snmprule = 1
+```
+
+et redémarrer le serveur web Canopsis :
+
+```sh
+systemctl restart canopsis-webserver
 ```
 
 ### Traduction des traps

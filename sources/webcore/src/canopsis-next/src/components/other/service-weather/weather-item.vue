@@ -15,7 +15,7 @@
     div(:class="{ blinking: isBlinking }")
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
-        v-runtime-template.watcherName.pt-3(:template="compiledTemplate")
+        v-runtime-template.watcherName.pt-3.pr-5(:template="compiledTemplate")
         v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
         v-btn.see-alarms-btn(
