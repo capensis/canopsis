@@ -3,8 +3,9 @@
 L'API event permet d'envoyer un [événement](../struct-event.md#structure-basique-dun-evenement) sur l'exchange de Canopsis dans le [bus AMQP](../../struct-event/#focus-amqp).
 
 !!! note
-    Le bus AMQP se base sur une clé de routage pour acheminer les événements. Cette clé est constituée de la façon suivante :  `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]`   
-    Pour des raisons techniques, cette clé de routage ne peut pas dépasser 255 caractères. Vous devez donc être vigilant vis à vis des valeurs de ces champs dans les événements envoyés à Canopsis.
+    La concaténation des champs `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]` générés par vos évènements ne doit pas dépasser 256 caractères, sans quoi l'évènement ne pourr pas être traité par Canopsis.
+    
+    Consultez la documentation sur les [limitations des évènements](../../guide-utilisation/limitations/index.md#limitations-des-evenements] pour en savoir plus.
 
 ## Envoi d'un événement
 
