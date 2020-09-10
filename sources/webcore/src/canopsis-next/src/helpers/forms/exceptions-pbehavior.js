@@ -13,7 +13,13 @@ export function pbehaviorExceptionToForm(exception = {}) {
   return {
     name: exception.name || '',
     description: exception.description || '',
-    exdates: exception.exdates ? addKeyInEntity(cloneDeep(exception.exdates)) : [],
+    exdates: exception.exdates
+      ? addKeyInEntity(cloneDeep(exception.exdates).map(({ begin, end, ...exdate }) => ({
+        begin: moment.unix(begin).toDate(),
+        end: moment.unix(end).toDate(),
+        ...exdate,
+      })))
+      : [],
   };
 }
 

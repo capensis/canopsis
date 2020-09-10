@@ -1,22 +1,15 @@
 <template lang="pug">
-  v-layout(row)
-    v-flex.mr-2(xs3)
-      date-time-picker-field(
-        v-field="value.begin",
-        v-validate="beginRules",
-        :error-messages="errors.collect(beginName)",
-        :label="$t('common.begin')",
-        :name="beginName"
+  v-layout(row, wrap)
+    v-flex(xs6)
+      date-time-range-picker-field(
+        v-model="dateField",
+        :startLabel="$t('common.begin')",
+        :endLabel="$t('common.end')",
+        :startRules="beginRules",
+        :endRules="endRules",
+        :fullDay="fullDay"
       )
-    v-flex.mr-2(xs3)
-      date-time-picker-field(
-        v-field="value.end",
-        v-validate="endRules",
-        :error-messages="errors.collect(endName)",
-        :label="$t('common.end')",
-        :name="endName"
-      )
-    v-flex(xs5)
+    v-flex.pl-2(xs5)
       pbehavior-type-field(
         v-field="value.type",
         :name="typeName"
@@ -24,26 +17,63 @@
     v-flex(xs1)
       v-btn(color="error", icon, @click="$emit('delete')")
         v-icon delete
+    v-flex(xs12)
+      v-checkbox.mt-0(
+        v-model="fullDay",
+        :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
+        color="primary",
+        hide-details
+      )
 </template>
 
 <script>
 import moment from 'moment';
 
 import { DATETIME_FORMATS } from '@/constants';
+import { isEndOfDay, isStartOfDay } from '@/helpers/date';
 
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import formMixin from '@/mixins/form';
+
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
+import DateTimeRangePickerField from '@/components/forms/fields/date-time-range-picker-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimePickerField, PbehaviorTypeField },
+  components: { DateTimeRangePickerField, PbehaviorTypeField },
+  mixins: [formMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
       required: true,
     },
   },
+  data() {
+    return {
+      fullDay: isStartOfDay(this.value.begin) && isEndOfDay(this.value.end),
+    };
+  },
   computed: {
+    dateField: {
+      set({ tstart, tstop }) {
+        this.updateModel({
+          ...this.value,
+
+          begin: tstart,
+          end: tstop,
+        });
+      },
+      get() {
+        return {
+          tstart: this.value.begin,
+          tstop: this.value.end,
+        };
+      },
+    },
+
     beginRules() {
       return {
         required: true,
@@ -70,8 +100,22 @@ export default {
     endName() {
       return `end${this.nameSuffix}`;
     },
+
     typeName() {
       return `type${this.nameSuffix}`;
+    },
+  },
+  watch: {
+    fullDay() {
+      const beginMoment = moment(this.value.begin).startOf('day');
+      const endMoment = moment(this.value.end).endOf('day');
+
+      this.updateModel({
+        ...this.value,
+
+        begin: beginMoment.toDate(),
+        end: endMoment.toDate(),
+      });
     },
   },
 };
