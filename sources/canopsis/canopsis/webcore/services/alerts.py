@@ -163,7 +163,8 @@ def exports(ws):
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
-        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
+        entities = context_manager.get_entities_by_id(alarms_ids, with_links=False)
+
         entity_dict = {}
         for entity in entities:
             entity_dict[entity.get('_id')] = entity
@@ -202,6 +203,7 @@ def exports(ws):
         else:
             alarms['rules'] = dict()
 
+        children_ent_ids = set()
         for alarm in alarms['alarms']:
             rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm and 'v' in alarm and \
                 alarm['v'].get('parents') else None
@@ -211,6 +213,8 @@ def exports(ws):
                         'total': len(alarm_children['alarms']),
                         'data': alarm_children['alarms'],
                     }
+                    for al_child in alarm_children['alarms']:
+                        children_ent_ids.add(al_child['d'])
                 else:
                     alarm['causes'] = {
                         'total': len(rules),
@@ -238,7 +242,7 @@ def exports(ws):
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
-                alarm['links'] = entity_dict[alarm['d']]['links']
+                alarm['links'] = context_manager.enrich_links_to_entity_with_alarm(entity_dict[alarm['d']], alarm)
 
                 # TODO: 'infos' is already present in entity.
                 # Remove this one if unused.
@@ -255,8 +259,24 @@ def exports(ws):
                 map(lambda al_ch: al_ch.update({'causes': {'rules': [alarm['rule']], 'total': 1}}),  alarm_children['alarms'])
                 alarm['consequences']['data'] = alarm_children['alarms']
                 alarm['consequences']['total'] = alarm_children['total']
+                for al_child in alarm_children['alarms']:
+                    children_ent_ids.add(al_child['d'])
 
             list_alarm.append(alarm)
+
+        if children_ent_ids:
+            children_entities = context_manager.get_entities_by_id(
+                list(children_ent_ids), with_links=False)
+            for entity in children_entities:
+                entity_dict[entity.get('_id')] = entity
+
+            for alarm in alarms['alarms']:
+                for cat in ('causes', 'consequences'):
+                    if cat in alarm and alarm[cat].get('data'):
+                        for child in alarm[cat]['data']:
+                            if child['d'] in entity_dict:
+                                child['links'] = context_manager.enrich_links_to_entity_with_alarm(
+                                    entity_dict[child['d']], child)
 
         del alarms['rules']
         alarms['alarms'] = list_alarm

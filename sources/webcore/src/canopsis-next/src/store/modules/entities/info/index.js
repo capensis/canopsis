@@ -50,6 +50,7 @@ export default {
       state.footer = userInterface.footer;
       state.description = userInterface.login_page_description;
       state.language = userInterface.language;
+      state.popupTimeout = userInterface.popup_timeout;
 
       state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
       state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;

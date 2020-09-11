@@ -356,10 +356,20 @@ Afficher la division 10 par 2 :
 !!! Note
     Une division par 0 affichera `infinity`
 
-## Helper `concat`
+## Helpers chaînes de caractères
 
 !!! note
-    Disponible depuis Canopsis 3.39.0.
+    Disponible depuis Canopsis 3.45.0.
+
+5 helpers sont disponibles pour réaliser des opérations sur des chaînes de caractères.
+
+1. concat : concatène des chaînes de caractères
+1. lowercase : convertit une chaîne de caractères en minuscule
+1. uppercase : convertit une chaîne de caractères en majuscule
+3. capitalize : ajoute une majuscule en début de chaîne de caractères
+4. capitalize-all : ajoute une majuscule sur la première lettre de tous les mots d'une chaîne de caractères
+
+### Helper `concat`
 
 Le helper `concat` permet de concaténer des chaînes de caractères.  
 
@@ -395,3 +405,69 @@ Utiliser la concaténation dans le helper [request](#helper-request) pour bâtir
      {{/each}}
 {{/request}}
 ```
+
+### Helper `lowercase`
+
+```handlebars
+{{lowercase "chaine1"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et la renvoie en minuscule.
+
+#### Exemple d'utilisation du helper `lowercase`
+
+Afficher la chaîne "CHAINE" en minuscule :
+
+```handlebars
+{{lowercase "CHAINE"}}
+```
+
+### Helper `uppercase`
+
+```handlebars
+{{uppercase "chaine1"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et la renvoie en majuscule.
+
+#### Exemple d'utilisation du helper `uppercase`
+
+Afficher la chaîne "chaine" en majuscule :
+
+```handlebars
+{{uppercase "chaine"}}
+```
+
+### Helper `capitalize`
+
+```handlebars
+{{capitalize "chaine1"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre en majuscule.
+
+#### Exemple d'utilisation du helper `capitalize`
+
+Ajouter une majuscule sur la première lettre de la chaîne "chaine" :
+
+```handlebars
+{{capitalize "chaine"}}
+```
+
+### Helper `capitalize-all`
+
+```handlebars
+{{capitalize-all "mot1 mot2 mot3"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre de chaque mot en majuscule.
+
+#### Exemple d'utilisation du helper `capitalize-all`
+
+Ajouter une majuscule sur la première lettre de chaque mot de la chaîne "mot1 mot2 mot3" :
+
+```handlebars
+{{capitalize-all "mot1 mot2 mot3"}}
+```
+
+

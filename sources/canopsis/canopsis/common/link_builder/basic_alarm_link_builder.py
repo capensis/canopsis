@@ -81,8 +81,10 @@ class BasicAlarmLinkBuilder(HypertextLinkBuilder):
         return phrase.format(**hay)
 
     def build(self, entity, options={}):
+        alarm = options.pop('alarm', None)
         opt = merge_two_dicts(self.options, options)
-        alarm = self.alerts_collection.find_one({'d': entity['_id']})
+        if alarm is None:
+            alarm = self.alerts_collection.find_one({'d': entity['_id']})
         links = {}
 
         if 'base_url' in opt:

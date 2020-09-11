@@ -7,7 +7,7 @@
         dark,
         @click="showPbehaviorsListModal"
       )
-        v-icon(small) edit
+        v-icon(small) list
       span {{ $t('modals.watcher.editPbehaviors') }}
     v-runtime-template(:template="compiledTemplate")
 </template>
@@ -76,7 +76,7 @@ export default {
         <watcher-entities-wrapper
             :watcher="watcher"
             :watcher-entities="watcherEntities"
-            :template="entityTemplate"
+            :entity-template="entityTemplate"
             :items-per-page="itemsPerPage"
             entity-name-field="${entityNameField}"
             @add:event="addEventToQueue"
