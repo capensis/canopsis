@@ -289,7 +289,7 @@ Afficher une pastille « Invalid val » (la criticité étant invalide) :
 3. mul : renvoie le produit de 2 nombres
 4. divide : renvoie le résultat de la division entre 2 nombres
 
-### Helper `sum`
+### Helper `sum`
 
 ```handlebars
 {{sum 1 2 3}}
@@ -305,7 +305,7 @@ Afficher la somme de 1, 2, et 3 :
 {{sum 1 2 3}}
 ```
 
-### Helper `minus`
+### Helper `minus`
 
 ```handlebars
 {{minus 10 1}}
@@ -321,7 +321,7 @@ Afficher la différence entre 10 et 1 :
 {{minus 10 1}}
 ```
 
-### Helper `mul`
+### Helper `mul`
 
 ```handlebars
 {{mul 5 6}}
@@ -337,7 +337,7 @@ Afficher le produit entre 5 et 6 :
 {{mul 5 6}}
 ```
 
-### Helper `divide`
+### Helper `divide`
 
 ```handlebars
 {{divde 10 2}}
@@ -406,7 +406,7 @@ Utiliser la concaténation dans le helper [request](#helper-request) pour bâtir
 {{/request}}
 ```
 
-### Helper `lowercase`
+### Helper `lowercase`
 
 ```handlebars
 {{lowercase "chaine1"}}
@@ -422,7 +422,7 @@ Afficher la chaîne "CHAINE" en minuscule :
 {{lowercase "CHAINE"}}
 ```
 
-### Helper `uppercase`
+### Helper `uppercase`
 
 ```handlebars
 {{uppercase "chaine1"}}
@@ -438,7 +438,7 @@ Afficher la chaîne "chaine" en majuscule :
 {{uppercase "chaine"}}
 ```
 
-### Helper `capitalize`
+### Helper `capitalize`
 
 ```handlebars
 {{capitalize "chaine1"}}
@@ -454,7 +454,7 @@ Ajouter une majuscule sur la première lettre de la chaîne "chaine" :
 {{capitalize "chaine"}}
 ```
 
-### Helper `capitalize-all`
+### Helper `capitalize-all`
 
 ```handlebars
 {{capitalize-all "mot1 mot2 mot3"}}
