@@ -96,9 +96,11 @@ export default {
     alarm() {
       return this.row.item;
     },
+
     isResolvedAlarm() {
       return isResolvedAlarm(this.alarm);
     },
+
     expandButtonClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 1);
