@@ -59,7 +59,7 @@ export default {
     },
     name: {
       type: String,
-      required: true,
+      default: 'date-range',
     },
     noEnding: {
       type: Boolean,
