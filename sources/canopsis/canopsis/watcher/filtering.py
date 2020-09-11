@@ -60,7 +60,7 @@ class WatcherFilter(object):
         """
         return value in ['1', 1, "true", "True", True]
 
-    def _filter_dict(self, dictdoc):
+    def _filter_dict(self, dictdoc, remove_tile_filter=False):
         cdoc = copy.deepcopy(dictdoc)
         for k, v in dictdoc.items():
             if k == 'active_pb_all':
@@ -83,8 +83,11 @@ class WatcherFilter(object):
                 self._watcher = self.to_bool(v)
                 del cdoc[k]
 
+            elif remove_tile_filter and k in ["tileIcon", "tileSecondaryIcon", "tileColor"]:
+                del cdoc[k]
+
             else:
-                nv = self._filter(v)
+                nv = self._filter(v, remove_tile_filter)
                 if nv is not None or v is None:
                     cdoc[k] = nv
                 else:
@@ -92,11 +95,11 @@ class WatcherFilter(object):
 
         return cdoc
 
-    def _filter_list(self, listdoc):
+    def _filter_list(self, listdoc, remove_tile_filter=False):
         cdoc = copy.deepcopy(listdoc)
         j = 0
         for i, item in enumerate(listdoc):
-            v = self._filter(item)
+            v = self._filter(item, remove_tile_filter)
             if v is not None:
                 cdoc[j] = v
                 j += 1
@@ -105,15 +108,15 @@ class WatcherFilter(object):
 
         return cdoc
 
-    def _filter(self, doc):
+    def _filter(self, doc, remove_tile_filter=False):
         if isinstance(doc, dict):
-            ndoc = self._filter_dict(doc)
+            ndoc = self._filter_dict(doc, remove_tile_filter)
             if len(ndoc) == 0 and len(doc) != 0:
                 return None
             return ndoc
 
         elif isinstance(doc, list):
-            ndoc = self._filter_list(doc)
+            ndoc = self._filter_list(doc, remove_tile_filter)
             if len(ndoc) == 0 and len(doc) != 0:
                 return None
             return ndoc
@@ -141,14 +144,19 @@ class WatcherFilter(object):
 
         return False
 
-    def filter(self, doc):
+    def filter(self, doc, remove_tile_filter=False):
         """
         :rtype: dict
         """
-        res = self._filter(doc)
+        res = self._filter(doc, remove_tile_filter)
         if res is None:
             return {}
         return res
+
+    def get_tile_prefix_filter(self, _filter):
+        cdoc = copy.deepcopy(_filter)
+        cdoc.pop('type', None)
+        return cdoc
 
     def match(self, allstatus, somestatus, watcherstatus, pb_types=None):
         """
