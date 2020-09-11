@@ -8,6 +8,7 @@
         :endLabel="$t('common.end')",
         :startRules="beginRules",
         :endRules="endRules",
+        :name="datesName",
         :fullDay="fullDay",
         @update:start="updateField('begin', $event)",
         @update:end="updateField('end', $event)"
@@ -77,6 +78,10 @@ export default {
 
     nameSuffix() {
       return this.value.key ? `-${this.value.key}` : '';
+    },
+
+    datesName() {
+      return `dates${this.nameSuffix}`;
     },
 
     typeName() {

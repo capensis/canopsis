@@ -6,7 +6,7 @@
         :value="start",
         :fullDay="fullDay",
         :label="startLabel",
-        name="start",
+        :name="`${name}_start`",
         @input="$emit('update:start', $event)"
       )
     template(v-if="!noEnding")
@@ -18,7 +18,7 @@
           :value="end",
           :fullDay="fullDay",
           :label="endLabel",
-          name="end",
+          :name="`${name}_end`",
           reverse,
           @input="$emit('update:end', $event)"
         )
@@ -54,6 +54,10 @@ export default {
       required: true,
     },
     endLabel: {
+      type: String,
+      required: true,
+    },
+    name: {
       type: String,
       required: true,
     },
