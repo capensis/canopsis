@@ -117,6 +117,7 @@ export default {
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actions',
           sortable: false,
         },
       ];

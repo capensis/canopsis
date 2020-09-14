@@ -18,6 +18,7 @@
       :loading="loading",
       :total-items="totalItems",
       :pagination="pagination",
+      :header-text="headerText",
       :item-key="itemKey",
       :select-all="selectAll",
       :expand="expand",
@@ -26,21 +27,22 @@
     )
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
-          tr(:key="props.index")
+          tr(:key="props.item[itemKey] || props.index", @click="expandPanel(props)")
             td(v-if="selectAll")
-              v-checkbox(v-model="props.selected", hide-details)
+              slot(name="selectAll", v-bind="getItemsProps(props)")
+                v-checkbox(v-model="props.selected", hide-details)
             td(v-for="header in headers", :key="header.value")
-              slot(:name="header.value") {{ props.item | get(header.value) }}
+              slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
       template(v-if="hasExpandSlot", slot="expand", slot-scope="props")
         div.secondary.lighten-2
           slot(name="expand", v-bind="props")
-      template(v-if="hasHeaderCellSlot", slot="headerCell", slot-scope="props")
-        slot(name="headerCell", v-bind="props")
+      template(slot="headerCell", slot-scope="props")
+        slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
     v-layout.white(v-show="totalItems && advancedPagination", align-center)
       v-flex(xs10)
         pagination(
           :page="pagination.page",
-          :limit="pagination.limit",
+          :limit="pagination.rowsPerPage",
           :total="totalItems",
           @input="updatePage"
         )
@@ -117,6 +119,10 @@ export default {
       type: String,
       default: '_id',
     },
+    headerText: {
+      type: String,
+      default: 'text',
+    },
     searchTooltip: {
       type: String,
       default: '',
@@ -133,10 +139,6 @@ export default {
   computed: {
     hasExpandSlot() {
       return this.$slots.expand || this.$scopedSlots.expand;
-    },
-
-    hasHeaderCellSlot() {
-      return this.$slots.headerCell || this.$scopedSlots.headerCell;
     },
 
     shownSearch() {
@@ -173,12 +175,12 @@ export default {
         expand: value => state.expanded = value || !state.expanded,
       };
     },
+
+    expandPanel(state) {
+      if (this.expand) {
+        state.expanded = !state.expanded;
+      }
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .item-checkbox {
-    display: inline-block;
-  }
-</style>
