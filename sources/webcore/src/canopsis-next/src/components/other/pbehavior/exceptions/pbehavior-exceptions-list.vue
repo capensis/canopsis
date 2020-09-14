@@ -21,7 +21,13 @@
       template(slot="items", slot-scope="props")
         tr(@click="props.expanded = !props.expanded")
           td(@click.stop="")
-            v-checkbox-functional(v-model="props.selected", :disabled="!props.item.deletable", primary, hide-details)
+            v-checkbox-functional(
+              v-if="props.item.deletable",
+              v-model="props.selected",
+              primary,
+              hide-details
+            )
+            v-checkbox-functional(v-else, disabled, primary, hide-details)
           td {{ props.item.name }}
           td
             v-layout

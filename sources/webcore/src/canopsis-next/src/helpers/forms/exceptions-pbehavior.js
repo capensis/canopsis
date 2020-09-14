@@ -19,6 +19,7 @@ export function pbehaviorExceptionToForm(exception = {}) {
         type: { ...type },
       })))
       : [],
+    _id: exception._id,
   };
 }
 
