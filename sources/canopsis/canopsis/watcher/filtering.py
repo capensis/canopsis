@@ -153,11 +153,6 @@ class WatcherFilter(object):
             return {}
         return res
 
-    def get_tile_prefix_filter(self, _filter):
-        cdoc = copy.deepcopy(_filter)
-        cdoc.pop('type', None)
-        return cdoc
-
     def match(self, allstatus, somestatus, watcherstatus, pb_types=None):
         """
         Call WatcherFilter.filter(filter_) first before calling this function.
