@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.text-editor(:class="{ 'error--text': hasError }")
+  div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
     div(ref="textEditor")
     div.text-editor__details
       div.v-messages.theme--light.error--text

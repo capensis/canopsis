@@ -60,6 +60,24 @@
           v-model="form.description",
           :config="textEditorConfig"
         )
+    v-layout.mt-3(
+      data-test="descriptionLayout",
+      row
+    )
+      v-flex
+        text-editor(
+          ref="textEditor",
+          v-if="toggled",
+          v-model="form.description",
+          v-click-outside.same="{ handler: toggleOff, closeConditional }",
+          :config="textEditorConfig"
+        )
+        text-editor-disabled(
+          v-else,
+          :value="form.description",
+          :label="$t('parameters.userInterfaceForm.fields.description')",
+          @click="toggleOn"
+        )
     v-layout.mt-3(row)
       v-flex
         span.theme--light.v-label.file-selector__label {{ $t('parameters.userInterfaceForm.fields.logo') }}
@@ -99,6 +117,7 @@ import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
+import TextEditorDisabled from '@/components/other/text-editor/text-editor-disabled.vue';
 import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
 import TimezoneField from '@/components/forms/fields/timezone-field.vue';
 
@@ -111,6 +130,7 @@ export default {
     PopupTimeoutField,
     FileSelector,
     TextEditor,
+    TextEditorDisabled,
   },
   mixins: [entitiesInfoMixin],
   props: {
@@ -121,6 +141,7 @@ export default {
   },
   data() {
     return {
+      toggled: false,
       submitting: false,
       logoFile: null,
       form: {
@@ -149,6 +170,23 @@ export default {
     this.initForm();
   },
   methods: {
+    closeConditional(e) {
+      return this.toggled && !this.$refs.textEditor.$el.contains(e.target);
+    },
+
+    toggleOn() {
+      this.toggled = true;
+
+      this.$nextTick(() => {
+        if (this.$refs.textEditor) {
+          this.$refs.textEditor.editor.selection.focus();
+        }
+      });
+    },
+
+    toggleOff() {
+      this.toggled = false;
+    },
     initForm() {
       this.form = {
         appTitle: this.appTitle || DEFAULT_APP_TITLE,
