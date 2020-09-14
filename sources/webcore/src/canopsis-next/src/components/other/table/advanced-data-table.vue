@@ -28,7 +28,7 @@
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
           tr(:key="props.item[itemKey] || props.index", @click="expandPanel(props)")
-            td(v-if="selectAll")
+            td(v-if="selectAll", @click.stop)
               slot(name="selectAll", v-bind="getItemsProps(props)")
                 v-checkbox(v-model="props.selected", hide-details)
             td(v-for="header in headers", :key="header.value")
