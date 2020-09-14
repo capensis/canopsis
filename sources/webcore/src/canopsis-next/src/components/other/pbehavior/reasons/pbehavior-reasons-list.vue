@@ -1,71 +1,63 @@
 <template lang="pug">
-  div.white
-    v-layout(row, wrap)
-      v-flex(xs4)
-        search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
+  advanced-data-table.white(
+    v-model="selected",
+    :headers="headers",
+    :items="pbehaviorReasons",
+    :loading="pending",
+    :total-items="totalItems",
+    :pagination="pagination",
+    select-all,
+    expand,
+    search,
+    hide-actions,
+    advanced-pagination,
+    @update:pagination="$emit('update:pagination', $event)"
+  )
+    template(slot="toolbar")
       v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && selectedReasons.length", xs4)
         v-btn(@click="deleteSelectedReasons", icon)
           v-icon delete
-    v-data-table(
-      v-model="selected",
-      :headers="headers",
-      :items="pbehaviorReasons",
-      :loading="pending",
-      :total-items="totalItems",
-      :pagination="pagination",
-      item-key="_id",
-      select-all,
-      expand,
-      @update:pagination="$emit('update:pagination', $event)"
-    )
-      template(slot="items", slot-scope="props")
-        tr(@click="props.expanded = !props.expanded")
-          td(@click.stop="")
-            v-checkbox-functional(
-              v-if="props.item.deletable",
-              v-model="props.selected",
-              primary,
-              hide-details
-            )
-            v-checkbox-functional(v-else, disabled, primary, hide-details)
-          td {{ props.item.name }}
-          td
-            v-layout
-              v-btn.mx-0(
-                slot="activator",
-                v-if="hasUpdateAnyPbehaviorReasonAccess",
-                icon,
-                small,
-                @click.stop="$emit('edit', props.item)"
-              )
-                v-icon edit
-              v-tooltip(bottom, :disabled="props.item.deletable")
-                v-btn.mx-0(
-                  slot="activator",
-                  v-if="hasDeleteAnyPbehaviorReasonAccess",
-                  :disabled="!props.item.deletable",
-                  icon,
-                  small,
-                  @click.stop="$emit('remove', props.item._id)"
-                )
-                  v-icon(color="error") delete
-                span {{ $t('pbehaviorReasons.usingReason') }}
-      template(slot="expand", slot-scope="props")
-        pbehavior-reasons-list-expand-panel(:pbehaviorReason="props.item")
+    template(slot="selectAll", slot-scope="props")
+      v-checkbox-functional(
+        v-if="props.item.deletable",
+        :inputValue="props.selected",
+        primary,
+        hide-details,
+        @change="props.select"
+      )
+      v-checkbox-functional(v-else, disabled, primary, hide-details)
+    template(slot="actions", slot-scope="props")
+      v-layout
+        v-btn.mx-0(
+          slot="activator",
+          v-if="hasUpdateAnyPbehaviorReasonAccess",
+          icon,
+          small,
+          @click.stop="$emit('edit', props.item)"
+        )
+          v-icon edit
+        v-tooltip(bottom, :disabled="props.item.deletable")
+          v-btn.mx-0(
+            slot="activator",
+            v-if="hasDeleteAnyPbehaviorReasonAccess",
+            :disabled="!props.item.deletable",
+            icon,
+            small,
+            @click.stop="$emit('remove', props.item._id)"
+          )
+            v-icon(color="error") delete
+          span {{ $t('pbehaviorReasons.usingReason') }}
+    template(slot="expand", slot-scope="props")
+      pbehavior-reasons-list-expand-panel(:pbehaviorReason="props.item")
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
-
-import SearchField from '@/components/forms/fields/search-field.vue';
 
 import PbehaviorReasonsListExpandPanel from './partials/pbehavior-reasons-list-expand-panel.vue';
 
 export default {
   components: {
-    SearchField,
     PbehaviorReasonsListExpandPanel,
   },
   mixins: [rightsTechnicalPbehaviorReasonsMixin],
@@ -101,6 +93,7 @@ export default {
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actions',
           sortable: false,
         },
       ];
@@ -111,23 +104,9 @@ export default {
     },
   },
   methods: {
-    updateSearchHandler(search) {
-      this.$emit('update:pagination', { ...this.pagination, search });
-    },
-
-    clearSearchHandler() {
-      this.$emit('update:pagination', omit(this.pagination, ['search']));
-    },
-
     deleteSelectedReasons() {
       this.$emit('remove-selected', this.selectedReasons);
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .item-checkbox {
-    display: inline-block;
-  }
-</style>
