@@ -98,7 +98,7 @@ class WatcherFilter(object):
     def _filter_list(self, listdoc, remove_tile_filter=False):
         cdoc = copy.deepcopy(listdoc)
         j = 0
-        for i, item in enumerate(listdoc):
+        for _, item in enumerate(listdoc):
             v = self._filter(item, remove_tile_filter)
             if v is not None:
                 cdoc[j] = v
