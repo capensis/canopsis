@@ -33,7 +33,7 @@
         ) {{ $t("filterEditor.buttons.deleteGroup") }}
 
     v-layout
-      pattern-information.mt-2.mr-2.mb-2(v-if="filterInformationShown") {{ groupOperator }}
+      pattern-information.my-2.mr-2(v-if="filterInformationShown") {{ groupOperator }}
       v-flex
         div(data-test="filterRuleLayout")
           filter-rule(
