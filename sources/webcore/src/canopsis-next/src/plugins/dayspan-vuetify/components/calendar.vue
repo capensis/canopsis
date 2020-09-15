@@ -66,6 +66,8 @@
 
 
 <script>
+import { get } from 'lodash';
+
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 import { DsCalendar } from 'dayspan-vuetify/src/components';
 
@@ -105,7 +107,7 @@ export default {
       };
       const span = new DaySpan(calendarEvent.start, calendarEvent.end);
 
-      if (calendarEvent.fullDay) {
+      if (calendarEvent.fullDay && !span.end.isEnd()) {
         span.end = span.end.prev().end();
       }
 
@@ -186,8 +188,9 @@ export default {
       }
     },
 
-    startEditing() {
+    startEditing(event) {
       this.editing = true;
+      this.editingEvent = event;
     },
 
     mouseMoveCheck() {
@@ -337,8 +340,14 @@ export default {
       this.resizingBelow = true;
     },
 
-    endEditing() {
-      this.editing = false;
+    endEditing(event) {
+      if (
+        this.editingEvent
+        && get(event, 'calendarEvent.event.id') === get(this.editingEvent, 'calendarEvent.event.id')
+      ) {
+        this.editing = false;
+        this.editingEvent = null;
+      }
     },
 
     changeAddPlaceholder(mouseEvent) {

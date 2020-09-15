@@ -102,31 +102,31 @@ export default {
       }
     },
 
-    cancel() {
+    cancel(event) {
       const { cachedForm } = this.calendarEvent.data;
 
       if (isOmitEqual(cachedForm, this.form, ['_id'])) {
-        return this.close(true);
+        return this.close(event, true);
       }
 
       return this.$modals.show({
         name: MODALS.confirmation,
         config: {
           text: this.$t('modals.createPbehavior.cancelConfirmation'),
-          action: () => this.close(true),
+          action: () => this.close(event, true),
         },
       });
     },
 
-    remove() {
+    remove(event) {
       this.$emit('remove', this.pbehavior);
-      this.close();
+      this.close(event);
     },
 
-    close(manualClose = false) {
+    close(event, manualClose = false) {
       this.manualClose = manualClose;
 
-      this.$emit('close');
+      this.$emit('close', event);
     },
   },
 };
