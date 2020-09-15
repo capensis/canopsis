@@ -17,7 +17,7 @@
       v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selectedExceptions.length", xs4)
         v-btn(@click="deleteSelectedExceptions", icon)
           v-icon delete
-    template(slot="selectAll", slot-scope="props")
+    template(slot="item-select", slot-scope="props")
       v-checkbox-functional(
         v-if="props.item.deletable",
         :inputValue="props.selected",

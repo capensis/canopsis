@@ -27,9 +27,9 @@
     )
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
-          tr(:key="props.item[itemKey] || props.index", @click="expandPanel(props)")
+          tr(:key="props.item[itemKey] || props.index", @click="toggleExpandPanel(props)")
             td(v-if="selectAll", @click.stop)
-              slot(name="selectAll", v-bind="getItemsProps(props)")
+              slot(name="item-select", v-bind="getItemsProps(props)")
                 v-checkbox(v-model="props.selected", hide-details)
             td(v-for="header in headers", :key="header.value")
               slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
@@ -176,7 +176,7 @@ export default {
       };
     },
 
-    expandPanel(state) {
+    toggleExpandPanel(state) {
       if (this.expand) {
         state.expanded = !state.expanded;
       }
