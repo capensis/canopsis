@@ -104,6 +104,11 @@ export default {
         moving: false,
       };
       const span = new DaySpan(calendarEvent.start, calendarEvent.end);
+
+      if (calendarEvent.fullDay) {
+        span.end = span.end.prev().end();
+      }
+
       const schedule = calendarEvent.fullDay
         ? Schedule.forDay(span.start, span.days(Op.UP))
         : Schedule.forSpan(span);
@@ -275,7 +280,7 @@ export default {
         const event = this.getEvent('moved', {
           mouseEvent,
           movingEvent: this.movingEvent,
-          calendarEvent: this.movingEvent.calendarEvent,
+          calendarEvent: this.copyCalendarEvent(this.movingEvent.calendarEvent),
           target: this.placeholder.time,
           openPopover: () => this.placeholderForCreate = true,
           closePopover: () => this.clearPlaceholder(),
@@ -299,7 +304,7 @@ export default {
         const event = this.getEvent('resized', {
           mouseEvent,
           resizingEvent: this.resizingEvent,
-          calendarEvent: this.resizingEvent.calendarEvent,
+          calendarEvent: this.copyCalendarEvent(this.resizingEvent.calendarEvent),
           target: this.placeholder.time,
           openPopover: () => this.placeholderForCreate = true,
           closePopover: () => this.clearPlaceholder(),
