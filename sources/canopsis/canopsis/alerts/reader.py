@@ -670,6 +670,7 @@ class AlertsReader(object):
                             '$or': conditions}]
                         if resolved:
                             final_filter['$and'].append(resolved)
+                            ff_copy['$and'].remove(resolved)
                 elif final_filter['$and'] == 1:
                     final_filter['$and'].append(children_reference)
             elif '$or' in final_filter and final_filter['$or']:
