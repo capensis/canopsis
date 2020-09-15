@@ -9,7 +9,6 @@
     select-all,
     expand,
     search,
-    hide-actions,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )

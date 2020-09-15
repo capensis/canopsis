@@ -22,20 +22,23 @@
       :item-key="itemKey",
       :select-all="selectAll",
       :expand="expand",
-      :hide-actions="hideActions",
+      :hide-actions="hideActions || advancedPagination",
       @update:pagination="updatePagination($event)"
     )
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
-          tr(:key="props.item[itemKey] || props.index", @click="toggleExpandPanel(props)")
-            td(v-if="selectAll", @click.stop)
-              slot(name="item-select", v-bind="getItemsProps(props)")
-                v-checkbox(v-model="props.selected", hide-details)
+          tr(:key="props.item[itemKey] || props.index")
+            td(v-if="selectAll || expand", @click.stop)
+              v-layout.checkbox-wrapper(row, justify-start)
+                slot(v-if="selectAll", v-bind="getItemsProps(props)", name="item-select")
+                  v-checkbox-functional(v-model="props.selected", hide-details)
+                slot(name="item-expand", v-bind="getItemsProps(props)")
+                  expand-button.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
             td(v-for="header in headers", :key="header.value")
               slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
       template(v-if="hasExpandSlot", slot="expand", slot-scope="props")
         div.secondary.lighten-2
-          slot(name="expand", v-bind="props")
+          slot(v-bind="props", name="expand")
       template(slot="headerCell", slot-scope="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
     v-layout.white(v-show="totalItems && advancedPagination", align-center)
@@ -56,6 +59,7 @@ import { omit } from 'lodash';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
+import ExpandButton from '@/components/other/buttons/expand-button.vue';
 import Pagination from '@/components/tables/pagination.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 
@@ -63,6 +67,7 @@ export default {
   components: {
     SearchField,
     AdvancedSearch,
+    ExpandButton,
     Pagination,
     RecordsPerPage,
   },
@@ -175,12 +180,12 @@ export default {
         expand: value => state.expanded = value || !state.expanded,
       };
     },
-
-    toggleExpandPanel(state) {
-      if (this.expand) {
-        state.expanded = !state.expanded;
-      }
-    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .checkbox-wrapper {
+    display: inline-flex;
+  }
+</style>
