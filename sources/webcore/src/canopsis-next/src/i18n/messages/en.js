@@ -112,7 +112,6 @@ export default {
     playlists: 'Playlists',
     planningAdministration: 'Planning Administration',
     icon: 'Icon',
-    priority: 'Priority',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
@@ -120,6 +119,9 @@ export default {
     begin: 'Begin',
     timezone: 'Timezone',
     reason: 'Reason',
+    or: 'Or',
+    and: 'And',
+    priority: 'Priority',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

@@ -24,7 +24,10 @@ export default {
   },
   mixins: [authMixin, entitiesInfoMixin],
   async mounted() {
-    this.fetchLoginInfos();
+    await this.fetchLoginInfos();
+
+    this.setTitle();
+    this.setPopupTimeout();
   },
 };
 </script>

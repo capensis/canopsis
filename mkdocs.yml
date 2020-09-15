@@ -1,3 +1,8 @@
+# Note: use the following command to get the right mkdocs version
+# python3 -m pip install -r ./sources/docs/requirements.txt
+#
+# See sources/docs/README.md for more information.
+
 site_name: Documentation Canopsis
 site_url: https://doc.canopsis.net
 
@@ -13,9 +18,13 @@ theme:
   language: fr
   # Still using the old syntax here, because our icon isn't in SVG
   logo: 'img/canopsis-mkdocs.png'
+  icon:
+    repo: fontawesome/brands/gitlab
   palette:
     primary: green
     accent: green
+    # (Automatic) dark theme still not OK with green, as of mkdocs-material-5.5.6
+    #scheme: preference
   features:
     - tabs
 
@@ -23,6 +32,9 @@ markdown_extensions:
     - admonition
     - codehilite:
         guess_lang: false
+    - def_list
+    - pymdownx.tabbed
+    - pymdownx.superfences
     - toc:
         permalink: true
 
@@ -33,3 +45,12 @@ plugins:
     - git-revision-date-localized:
         locale: fr
         type: iso_date
+
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/canopsis
+    - icon: fontawesome/brands/linkedin
+      link: https://fr.linkedin.com/company/capensis
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/u/canopsis/

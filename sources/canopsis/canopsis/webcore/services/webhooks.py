@@ -22,63 +22,14 @@ import uuid
 from bottle import request
 
 from pymongo.errors import PyMongoError
-
 from canopsis.common.collection import CollectionError
 from canopsis.webhooks import WebhookManager
-from canopsis.webcore.utils import (gen_json, gen_json_error,
-                                    HTTP_NOT_FOUND, HTTP_ERROR)
+from canopsis.webcore.utils import (gen_json, gen_json_error, HTTP_ERROR)
 
 
 def exports(ws):
 
     webhook_manager = WebhookManager(WebhookManager.default_collection())
-
-    @ws.application.get(
-        '/api/v2/webhook'
-    )
-    def get_webhook_list():
-        """
-        Return the list of all webhooks.
-
-        :returns: <Webhook>
-        :rtype: list
-        """
-        try:
-            document = webhook_manager.get_webhook_list()
-        except PyMongoError:
-            return gen_json_error(
-                {"description": "Can not retrieve the webhooks list from "
-                                "database, contact your administrator."},
-                HTTP_ERROR)
-
-        return gen_json(document)
-
-    @ws.application.get(
-        '/api/v2/webhook/<webhook_id:re:.+>'
-    )
-    def get_webhook_by_id(webhook_id):
-        """
-        Return a webhook given the id.
-
-        :param webhook_id: ID of the webhook
-        :type webhook_id: str
-        :returns: <Webhook>
-        :rtype: dict
-        """
-        try:
-            document = webhook_manager.get_webhook_by_id(webhook_id)
-        except PyMongoError:
-            return gen_json_error(
-                {"description": "Can not retrieve the webhook data from "
-                                "database, contact your administrator."},
-                HTTP_ERROR)
-
-        if document is None:
-            return gen_json_error(
-                {"description": "No webhook found with ID " + webhook_id},
-                HTTP_ERROR)
-
-        return gen_json(document)
 
     @ws.application.post(
         '/api/v2/webhook'
@@ -177,3 +128,20 @@ def exports(ws):
                 HTTP_ERROR)
 
         return gen_json({"status": ok})
+
+    @ws.application.get('/api/v2/webhook')
+    def read():
+        """
+        Get a pbehavior.
+        """
+        _id = request.params.get('_id', None)
+        search = request.params.get('search', None)
+        try:
+            limit = int(request.params.get('limit', None))
+        except:
+            limit = None
+        try:
+            skip = int(request.params.get('skip', None))
+        except:
+            skip = None
+        return webhook_manager.read(_id, search, limit, skip)

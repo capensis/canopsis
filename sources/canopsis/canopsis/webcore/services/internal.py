@@ -114,6 +114,8 @@ def get_login_config(ws):
                 login_service['server'],
                 login_service['service'],
             ))
+        elif login_service_name == 'ldapconfig':
+            login_config[login_service_name] = {'enable': login_service.get('enable', False)}
 
     if "canopsis_cat.webcore.services.saml2" in ws.webmodules:
         result = ws.db.find({'_id': "canopsis"}, namespace='default_saml2')
