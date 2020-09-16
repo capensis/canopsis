@@ -14,7 +14,7 @@
   )
     template(slot="toolbar", slot-scope="props")
       v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && props.selected.length", xs4)
-        v-btn(@click="deleteReasons(props.selected)", icon)
+        v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
       v-layout
@@ -87,10 +87,6 @@ export default {
   methods: {
     isDisabledReason({ deletable }) {
       return !deletable;
-    },
-
-    deleteReasons(reasons) {
-      this.$emit('remove-selected', reasons);
     },
   },
 };

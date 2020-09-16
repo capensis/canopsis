@@ -14,7 +14,7 @@
   )
     template(slot="toolbar", slot-scope="props")
       v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && props.selected.length", xs4)
-        v-btn(@click="deleteTypes(props.selected)", icon)
+        v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="icon_name", slot-scope="props")
       span.pbehavior-type-icon(v-if="props.item.icon_name")
@@ -102,10 +102,6 @@ export default {
   methods: {
     isDisabledType({ deletable }) {
       return !deletable;
-    },
-
-    deleteTypes(selected) {
-      this.$emit('remove-selected', selected);
     },
   },
 };

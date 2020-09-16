@@ -14,7 +14,7 @@
   )
     template(slot="toolbar", slot-scope="props")
       v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && props.selected.length", xs4)
-        v-btn(@click="deleteExceptions(props.selected)", icon)
+        v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
       v-layout
@@ -92,10 +92,6 @@ export default {
   methods: {
     isDisabledException({ deletable }) {
       return !deletable;
-    },
-
-    deleteExceptions(exceptions) {
-      this.$emit('remove-selected', exceptions);
     },
   },
 };
