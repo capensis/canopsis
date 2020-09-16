@@ -85,7 +85,7 @@ Vous avez la possibilité de personnaliser le schéma de construction de l'attri
 
 L'attribut `display_name` d'une alarme permet d'identifier une alarme par une chaîne plus simple que son identifiant technique.
 
-!!! warning
+!!! attention
     Canopsis n'apporte pas la garantie que cet identifiant sera unique.
     Il vous appartient d'utiliser un schéma qui offre une probabilité suffisamment faible par rapport au nombre d'alarmes avec lesquelles vous allez traiter. 
 

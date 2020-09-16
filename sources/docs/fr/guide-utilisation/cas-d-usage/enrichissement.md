@@ -18,8 +18,7 @@ Plusieurs possibilités sont offertes dans Canopsis :
 * Enrichissement conditionné par des règles de gestion appliquées aux événements (CAT)
 * Enrichissement par l'intermédiaire de référentiels externes (CAT)
 
-
-!!! Warning
+!!! attention
     Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go.
 
 ## Enrichissement depuis les événements

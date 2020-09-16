@@ -14,7 +14,7 @@ Une action est un document JSON contenant les paramètres suivants :
  - `entity_filter` (requis) : un filtre MongoDB appliqué à la collection `periodical_alarm` pour sélectionner les alarmes sur lesquelles l'action doit être exécutée.
  - `condition` (requis): un filtre MongoDB appliqué à la collection `periodical_alarm` pour sélectionner les alarmes sur lesquelles l'action doit être exécutée. Il est recommandé d'utiliser l'`entity_filter` pour filtrer les alarmes, et d'utiliser la valeur `{}` pour le champ `condition`.
  - `tasks` (requis) : une liste de tâches à appliquer à l'alarme.
- - `output_format` (optionnel) : le message à afficher dans la timeline des alarmes.
+ - `output_format` (optionnel) : le message à afficher dans la chronologie des alarmes.
  - `limit` (requis) : la durée (en secondes) entre la création de l'alarme et l'exécution de l'action, et entre deux exécutions consécutives de l'action.
  - `postpone_if_active_pbehavior` (optionnel, `false` par défaut): `true` pour que l'action ne soit pas exécutée si un comportement périodique est actif sur l'alarme, et pour que le décompte du délai `limit` soit réinitialisé en sortie de comportement périodique.
  - `repeat` (optionnel, 1 par défaut) : le nombre d'exécutions de l'action.
