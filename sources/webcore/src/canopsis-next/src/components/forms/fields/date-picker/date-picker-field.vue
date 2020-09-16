@@ -20,7 +20,7 @@
         readonly,
         @click:append="clear"
       )
-    v-date-picker(
+    v-date-picker.date-picker(
       :value="value",
       :opened="opened",
       :color="color",
@@ -111,3 +111,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .date-picker {
+    .v-picker__body,
+    .v-time-picker-clock__item,
+    .v-time-picker-clock__item span,
+    .v-time-picker-clock__hand {
+      z-index: inherit;
+    }
+  }
+</style>

@@ -5,7 +5,7 @@
     pbehavior-exception-list(v-if="exceptions.length", :exceptions="exceptions")
     v-layout.mt-3(row)
       v-flex(xs12)
-        pbehavior-exception-field(
+        pbehavior-exception-field.mb-3(
           v-for="(exdate, index) in exdates",
           v-field="exdates[index]",
           :key="exdate.key",

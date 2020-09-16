@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { cloneDeep } from 'lodash';
 
 import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
 
@@ -13,7 +12,14 @@ export function pbehaviorExceptionToForm(exception = {}) {
   return {
     name: exception.name || '',
     description: exception.description || '',
-    exdates: exception.exdates ? addKeyInEntity(cloneDeep(exception.exdates)) : [],
+    exdates: exception.exdates
+      ? addKeyInEntity(exception.exdates.map(({ begin, end, type }) => ({
+        begin: moment.unix(begin).toDate(),
+        end: moment.unix(end).toDate(),
+        type: { ...type },
+      })))
+      : [],
+    _id: exception._id,
   };
 }
 

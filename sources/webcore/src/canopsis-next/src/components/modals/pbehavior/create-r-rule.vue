@@ -24,6 +24,8 @@ import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
+
 import RRuleForm from '@/components/forms/rrule.vue';
 import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
 
@@ -48,7 +50,7 @@ export default {
       form: {
         rrule: this.modal.config.rrule || '',
         exdates: this.modal.config.exdates ? cloneDeep(this.modal.config.exdates) : [],
-        exceptions: this.modal.config.exceptions ? cloneDeep(this.modal.config.exceptions) : [],
+        exceptions: this.modal.config.exceptions ? this.modal.config.exceptions.map(pbehaviorExceptionToForm) : [],
       },
     };
   },
@@ -58,7 +60,10 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
-          this.config.action(this.form);
+          this.config.action({
+            ...this.form,
+            exceptions: this.form.exceptions.map(formToPbehaviorException),
+          });
         }
 
         this.$modals.hide();
