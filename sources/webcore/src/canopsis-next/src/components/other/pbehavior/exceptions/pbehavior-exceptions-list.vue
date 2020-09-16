@@ -1,30 +1,21 @@
 <template lang="pug">
   advanced-data-table.white(
-    v-model="selected",
     :headers="headers",
     :items="pbehaviorExceptions",
     :loading="pending",
     :total-items="totalItems",
     :pagination="pagination",
+    :is-disabled-item="isDisabledException",
     select-all,
     expand,
     search,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar")
-      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selectedExceptions.length", xs4)
-        v-btn(@click="deleteSelectedExceptions", icon)
+    template(slot="toolbar", slot-scope="props")
+      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && props.selected.length", xs4)
+        v-btn(@click="deleteExceptions(props.selected)", icon)
           v-icon delete
-    template(slot="item-select", slot-scope="props")
-      v-checkbox-functional(
-        v-if="props.item.deletable",
-        :inputValue="props.selected",
-        primary,
-        hide-details,
-        @change="props.select"
-      )
-      v-checkbox-functional(v-else, disabled, primary, hide-details)
     template(slot="actions", slot-scope="props")
       v-layout
         v-btn.mx-0(
@@ -97,14 +88,14 @@ export default {
         },
       ];
     },
-
-    selectedExceptions() {
-      return this.selected.filter(({ deletable }) => deletable);
-    },
   },
   methods: {
-    deleteSelectedExceptions() {
-      this.$emit('remove-selected', this.selectedExceptions);
+    isDisabledException({ deletable }) {
+      return !deletable;
+    },
+
+    deleteExceptions(exceptions) {
+      this.$emit('remove-selected', exceptions);
     },
   },
 };

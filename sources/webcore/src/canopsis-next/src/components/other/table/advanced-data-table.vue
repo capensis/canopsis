@@ -10,9 +10,9 @@
           :tooltip="searchTooltip",
           @update:query="updatePagination"
         )
-      slot(name="toolbar")
+      slot(name="toolbar", :selected="selected")
     v-data-table(
-      v-field="selected",
+      :value="selected",
       :headers="headers",
       :items="items",
       :loading="loading",
@@ -22,8 +22,10 @@
       :item-key="itemKey",
       :select-all="selectAll",
       :expand="expand",
+      :is-disabled-item="isDisabledItem",
       :hide-actions="hideActions || advancedPagination",
-      @update:pagination="updatePagination($event)"
+      @update:pagination="updatePagination($event)",
+      @input="selectHandler"
     )
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
@@ -31,7 +33,13 @@
             td(v-if="selectAll || expand", @click.stop)
               v-layout.checkbox-wrapper(row, justify-start)
                 slot(v-if="selectAll", v-bind="getItemsProps(props)", name="item-select")
-                  v-checkbox-functional(v-model="props.selected", hide-details)
+                  v-checkbox-functional(
+                    v-if="!isDisabledItem(props.item)",
+                    v-model="props.selected",
+                    primary,
+                    hide-details
+                  )
+                  v-checkbox-functional(v-else, primary, disabled, hide-details)
                 slot(name="item-expand", v-bind="getItemsProps(props)")
                   expand-button.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
             td(v-for="header in headers", :key="header.value")
@@ -77,10 +85,6 @@ export default {
   },
   props: {
     headers: {
-      type: Array,
-      required: true,
-    },
-    selected: {
       type: Array,
       required: true,
     },
@@ -140,6 +144,15 @@ export default {
       type: Function,
       default: pagination => pagination,
     },
+    isDisabledItem: {
+      type: Function,
+      default: item => !item,
+    },
+  },
+  data() {
+    return {
+      selected: [],
+    };
   },
   computed: {
     hasExpandSlot() {
@@ -151,6 +164,10 @@ export default {
     },
   },
   methods: {
+    selectHandler(selected) {
+      this.selected = selected.filter(item => !this.isDisabledItem(item));
+    },
+
     updatePagination(pagination) {
       this.$emit('update:pagination', this.getPagination(pagination));
     },

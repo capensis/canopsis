@@ -1,30 +1,21 @@
 <template lang="pug">
   advanced-data-table.white(
-    v-model="selected",
     :headers="headers",
     :items="pbehaviorTypes",
     :loading="pending",
     :total-items="totalItems",
     :pagination="pagination",
+    :is-disabled-item="isDisabledType",
     select-all,
     expand,
     search,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar")
-      v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selectedTypes.length", xs4)
-        v-btn(@click="deleteSelectedTypes", icon)
+    template(slot="toolbar", slot-scope="props")
+      v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && props.selected.length", xs4)
+        v-btn(@click="deleteTypes(props.selected)", icon)
           v-icon delete
-    template(slot="item-select", slot-scope="props")
-      v-checkbox-functional(
-        v-if="props.item.deletable",
-        :inputValue="props.selected",
-        primary,
-        hide-details,
-        @change="props.select"
-      )
-      v-checkbox-functional(v-else, disabled, primary, hide-details)
     template(slot="icon_name", slot-scope="props")
       span.pbehavior-type-icon(v-if="props.item.icon_name")
         v-icon(color="white", size="18") {{ props.item.icon_name }}
@@ -84,11 +75,6 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      selected: [],
-    };
-  },
   computed: {
     headers() {
       return [
@@ -112,14 +98,14 @@ export default {
         },
       ];
     },
-
-    selectedTypes() {
-      return this.selected.filter(({ deletable }) => deletable);
-    },
   },
   methods: {
-    deleteSelectedTypes() {
-      this.$emit('remove-selected', this.selectedTypes);
+    isDisabledType({ deletable }) {
+      return !deletable;
+    },
+
+    deleteTypes(selected) {
+      this.$emit('remove-selected', selected);
     },
   },
 };

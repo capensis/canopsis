@@ -1,30 +1,21 @@
 <template lang="pug">
   advanced-data-table.white(
-    v-model="selected",
     :headers="headers",
     :items="pbehaviorReasons",
     :loading="pending",
     :total-items="totalItems",
     :pagination="pagination",
+    :is-disabled-item="isDisabledReason",
     select-all,
     expand,
     search,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar")
-      v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && selectedReasons.length", xs4)
-        v-btn(@click="deleteSelectedReasons", icon)
+    template(slot="toolbar", slot-scope="props")
+      v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && props.selected.length", xs4)
+        v-btn(@click="deleteReasons(props.selected)", icon)
           v-icon delete
-    template(slot="item-select", slot-scope="props")
-      v-checkbox-functional(
-        v-if="props.item.deletable",
-        :inputValue="props.selected",
-        primary,
-        hide-details,
-        @change="props.select"
-      )
-      v-checkbox-functional(v-else, disabled, primary, hide-details)
     template(slot="actions", slot-scope="props")
       v-layout
         v-btn.mx-0(
@@ -78,11 +69,6 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      selected: [],
-    };
-  },
   computed: {
     headers() {
       return [
@@ -97,14 +83,14 @@ export default {
         },
       ];
     },
-
-    selectedReasons() {
-      return this.selected.filter(({ deletable }) => deletable);
-    },
   },
   methods: {
-    deleteSelectedReasons() {
-      this.$emit('remove-selected', this.selectedReasons);
+    isDisabledReason({ deletable }) {
+      return !deletable;
+    },
+
+    deleteReasons(reasons) {
+      this.$emit('remove-selected', reasons);
     },
   },
 };
