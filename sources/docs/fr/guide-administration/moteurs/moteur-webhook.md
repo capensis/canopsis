@@ -9,7 +9,9 @@ Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement e
 
 Depuis la `3.37.0`, la fonction de répétition est disponible.
 
-Depuis la `3.39.0`, le webhhook peut être activé ou désactivé avec l'attribut `enabled`.
+Depuis la `3.39.0`, le webhook peut être activé ou désactivé avec l'attribut `enabled`.
+
+Depuis la `3.41.0`, les valeurs des champs `declare_ticket` peuvent être définies sous forme d'expressions régulières.
 
 Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
@@ -39,8 +41,9 @@ Pour cela, il est nécessaire de lancer le moteur `engine-dynamic-infos` avec l'
 
 À l'arrivée dans sa file, le moteur va vérifier si l'événement correspond à un ou plusieurs de ces Webhooks.
 
-Si oui, il va alors appliquer le ou les Webhooks correspondant.  
-En cas d'échec, il existe un mécanisme de réémission du webhook.  
+Si oui, il va alors immédiatement appliquer les Webhooks correspondant (il n'y a pas de *beat*).
+
+En cas d'échec, il existe un mécanisme de réémission du webhook.
 
 Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dans le guide d'utilisation](../../guide-utilisation/cas-d-usage/notifications.md).
 
@@ -70,6 +73,7 @@ Une règle est un document JSON contenant les paramètres suivants :
      - `unit` (optionnel) : unité de temps de l'intervalle (notation : "s" pour seconde, "m" pour minute, "h" pour heure)
  - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme. Le [trigger `declareticketwebhook`](../architecture-interne/triggers.md) est également alors déclenché.
      - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
+     - `regexp` est un booléen qui détermine si les valeurs des champs `ticket_id` ou tout autre champ de l'option `declare_ticket` doivent être traitées comme des expressions régulières.
      - `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
 
 Lors du lancement du moteur `engine-webhook`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
@@ -159,6 +163,17 @@ Si l'API renvoie une réponse sous forme de JSON imbriqué, il faut prendre en c
 
 Les autres champs de `declare_ticket` sont stockés dans `Alarm.Value.Ticket.Data` de telle sorte que la clé dans `Data` corresponde à la valeur dans les données du service. Par exemple avec `"ticket_creation_date" : "timestamp"`, la valeur de `ticket["timestamp"]` sera mise dans `Alarm.Value.Ticket.Data["ticket_creation_date"]`.
 
+A partir de la version 3.41.0 de Canopsis, les valeurs des champs `ticket_id` et autres champs de `declare_ticket` peuvent être définies sous forme d'expressions régulières.
+
+Pour cela, il est nécessaire de positionner l'option `regexp` à `true` comme dans l'exemple suivant :
+
+```json
+"declare_ticket": {
+  "ticket_id": "objects\\.UserRequest.*\\.fields\\.id",
+  "regexp": true
+}
+```
+
 #### Réponse vide du service externe
 
 Dans le cas où le service externe renvoie une réponse (par exemple `200 OK`) mais sans contenu, il est possible d'ajouter le champ `empty_response` au `declare_ticket`. Si le champ `empty_response` est présent et vaut `true` alors tous les autres champs du `declare_ticket` sont ignorés. Un step `declareticket` est créé avec un numéro de ticket qui vaut `"N/A"`.
@@ -211,7 +226,8 @@ Si le champ `empty_response` n'est pas présent dans le `declare_ticket` ou qu'i
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
-        "priority" : "priority"
+        "priority" : "priority",
+        "regexp": false
     }
 }
 ```
@@ -245,7 +261,8 @@ Les webhooks sont stockés dans la collection MongoDB `webhooks`.
     "declare_ticket" : {
         "priority" : "priority",
         "ticket_id" : "id",
-        "ticket_creation_date" : "timestamp"
+        "ticket_creation_date" : "timestamp",
+        "regexp": false
     },
     "hook" : {
         "entity_patterns" : [

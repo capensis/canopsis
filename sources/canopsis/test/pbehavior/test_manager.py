@@ -676,8 +676,10 @@ class TestManager(BaseTest):
         alarm_coll = self.pbm.alarmAdapter.collection
         alarm_coll.remove()
 
+        entity_id = 'é'
+
         self.pbm.context._put_entities([{
-            '_id': 1,
+            '_id': entity_id,
             'name': 'pbehavior-engine-test1',
             'depends': ["connector/connector_name"],
             'type': 'pbehavior-metric-test',
@@ -706,7 +708,7 @@ class TestManager(BaseTest):
             "rrule": 'invalid rrule ff',
             "tstart": 1546942445,
             "tstop": 2147483647,
-            "eids": [1]
+            "eids": [entity_id]
         })
         self.pbm.collection.remove()
         self.pbm.collection.insert([pbehavior1])
@@ -734,13 +736,13 @@ class TestManager(BaseTest):
             "rrule": '',
             "tstart": 1546942445,
             "tstop": 2147483647,
-            "eids": [1]
+            "eids": [entity_id]
             }
         )
 
         alarm_coll.insert({
             "_id": "alarm_2",
-            "d": 1,
+            "d": entity_id,
             "v": {
                 "state": {
                     "_t": 'stateinc',
@@ -770,7 +772,7 @@ class TestManager(BaseTest):
 
         pbehavior1.update({
             'name': 'hourly test',
-            'eids': [1],
+            'eids': [entity_id],
             'rrule': 'FREQ=HOURLY',
             'tstart': tstart1,
             'tstop': tstop1
@@ -782,7 +784,7 @@ class TestManager(BaseTest):
         self.assertEqual(len(events), 2)
         self.assertEqual(events[0]['event_type'], 'pbhleave')
         self.assertEqual(events[0]['display_name'], 'downtime')
-        self.assertEqual(events[0]['timestamp'], 2147483647)
+        self.assertGreaterEqual(events[0]['timestamp'], now)
         old_now = now
 
         next_hour = old_now + 3599
@@ -791,16 +793,16 @@ class TestManager(BaseTest):
         self.assertEqual(len(events), 2)
         self.assertEqual(events[0]['event_type'], 'pbhleave')
         self.assertEqual(events[0]['display_name'], 'hourly test')
-        self.assertEqual(events[0]['timestamp'], old_now + 3600 - old_now % 3600)
+        self.assertGreaterEqual(events[0]['timestamp'], now)
         # new pbhenter
         self.assertEqual(events[1]['event_type'], 'pbhenter')
         self.assertEqual(events[1]['display_name'], 'hourly test')
-        self.assertEqual(events[1]['timestamp'], next_hour - next_hour % 3600)
+        self.assertGreaterEqual(events[1]['timestamp'], now)
 
         # modify rrule
         pbehavior1.update({
             'name': 'minutely test',
-            'eids': [1],
+            'eids': [entity_id],
             'rrule': 'FREQ=MINUTELY;INTERVAL=15',
         })
         self.pbm.collection.update({'_id': pbehavior1['_id']}, {"$set": pbehavior1})
@@ -810,13 +812,13 @@ class TestManager(BaseTest):
         # send pbhleave for last pbhenter
         self.assertEqual(events[0]['event_type'], 'pbhleave')
         self.assertEqual(events[0]['display_name'], 'hourly test')
-        self.assertEqual(events[0]['timestamp'], next_hour - next_hour % 3600 + 3600)
+        self.assertGreaterEqual(events[0]['timestamp'], now)
         # send new pbhenter for new rrule
         self.assertEqual(events[1]['event_type'], 'pbhenter')
         self.assertEqual(events[1]['display_name'], 'minutely test')
         # because pivot time is 39th minute of hour
         # so with FREQ=MINUTELY;INTERVAL=15 --> last start time is: 30th minute of hour
-        self.assertEqual(events[1]['timestamp'], next_hour - next_hour % 3600 + 30 * 60)
+        self.assertGreaterEqual(events[1]['timestamp'], now)
 
 if __name__ == '__main__':
     output = root_path + "/tmp/tests_report"

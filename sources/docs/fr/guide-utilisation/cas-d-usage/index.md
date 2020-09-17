@@ -11,3 +11,4 @@ Ce chapitre se concentre sur les cas d'usages qui peuvent vous intéresser
 *  [Comportements Périodiques](comportements_periodiques.md)
 *  [Personnalisation via templates](template_handlebars.md)
 *  [Alarmes et indicateurs](alarmes_et_indicateurs.md)
+*  [Groupement d'alarmes par corrélation](groupement-alarmes.md)

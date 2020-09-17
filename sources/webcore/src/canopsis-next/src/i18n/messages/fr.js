@@ -7,12 +7,14 @@ import {
   STATS_QUICK_RANGES,
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
 
 export default {
   common: {
+    ok: 'Ok',
     undefined: 'Non défini',
     entity: 'Entité',
     watcher: 'Observateur',
@@ -23,6 +25,7 @@ export default {
     addPbehavior: 'Ajouter un comportement périodique',
     refresh: 'Rafraîchir',
     toggleEditView: 'Activer/Désactiver le mode édition',
+    toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode d\'édition pour cela',
     name: 'Nom',
     description: 'Description',
     author: 'Auteur',
@@ -49,8 +52,9 @@ export default {
     preview: 'Aperçu',
     recursive: 'Récursif',
     select: 'Sélectionner',
-    states: 'Сriticités',
-    sla: 'Sla',
+    states: 'Sévérités',
+    state: 'Sévérité',
+    sla: 'SLA',
     authors: 'Auteurs',
     stat: 'Statistique',
     trend: 'Tendance',
@@ -93,11 +97,26 @@ export default {
     exploitation: 'Exploitation',
     administration: 'Administration',
     forbidden: 'Accès refusé',
+    notFound: 'Introuvable',
     search: 'Recherche',
+    filters: 'Filtres',
+    filter: 'Filtre',
     webhooks: 'Webhooks',
+    emptyObject: 'Objet vide',
+    startDate: 'Date de début',
+    endDate: 'Date de fin',
     links: 'Liens',
+    stack: 'Pile',
+    edition: 'Édition',
     broadcastMessages: 'Diffuser des messages',
+    playlists: 'Playlists',
+    fullscreen: 'Plein écran',
+    interval: 'Période',
     status: 'Statut',
+    unit: 'Unité',
+    or: 'OU',
+    and: 'ET',
+    priority: 'Priorité',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -112,6 +131,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Supprimer la pause',
       [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Commenter l\'alarme',
     },
     times: {
       second: 'seconde | secondes',
@@ -133,10 +153,11 @@ export default {
     impacts: 'Impacts',
     dependencies: 'Dépendances',
     moreInfos: {
+      infos: 'Les informations',
       type: 'Type',
       enabled: 'Activé',
       disabled: 'Désactivé',
-      lastActiveDate: 'Dernière Date d\'Activité',
+      lastActiveDate: 'Dernière date d\'activité',
       infosSearchLabel: 'Rechercher une info',
       tabs: {
         main: 'Principal',
@@ -207,7 +228,7 @@ export default {
         fastAck: 'Ack rapide',
         ackRemove: 'Annuler ack',
         pbehavior: 'Comportement périodique',
-        snooze: 'Snooze',
+        snooze: 'Mettre en veille',
         pbehaviorList: 'Lister les comportements périodiques',
         declareTicket: 'Déclarer un incident',
         associateTicket: 'Associer un ticket',
@@ -216,14 +237,16 @@ export default {
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour meta alarmes',
+        comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
         ack: 'Ack',
         declareTicket: 'Déclarer un incident',
         canceled: 'Annulé',
-        snooze: 'Snooze',
+        snooze: 'Mettre en veille',
         pbehaviors: 'Comportement périodique',
         grouping: 'Meta alarmes',
+        comment: 'Commentaire',
       },
       iconsFields: {
         ticketNumber: 'Numéro de ticket',
@@ -256,6 +279,7 @@ export default {
         pbhenter: 'Comportement périodique activé',
         pbhleave: 'Comportement périodique désactivé',
         cancel: 'Alarme annulée',
+        comment: 'Alarme commentée',
       },
     },
     tabs: {
@@ -282,6 +306,11 @@ export default {
     reason: 'Raison',
     rrule: 'Récurrence',
     status: 'Statut',
+    tabs: {
+      filter: 'Filtre',
+      eids: 'Entités',
+      comments: 'Commentaires',
+    },
   },
   settings: {
     titles: {
@@ -317,7 +346,7 @@ export default {
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
-    isCorrelationEnabled: 'Correlation activé ?',
+    isCorrelationEnabled: 'Corrélation activée ?',
     duration: 'Durée',
     tstop: 'Date de fin',
     periodsNumber: 'Nombre d\'étapes',
@@ -326,6 +355,7 @@ export default {
     statsSelect: {
       title: 'Sélecteur de statistique',
       required: 'Veuillez sélectionner au moins une statistique',
+      draggable: 'Essayez de faire glisser un élément',
     },
     yesNoMode: 'Mode Oui/Non',
     selectAFilter: 'Sélectionner un filtre',
@@ -341,7 +371,11 @@ export default {
     },
     statsDateInterval: {
       monthPeriodInfo: "Avec une période 'au mois', les dates de début/fin de calcul des statistiques seront arrondies au 1er jour du mois, à 00:00 UTC",
+      fields: {
+        quickRanges: 'Valeurs usuelles',
+      },
       quickRanges: {
+        [STATS_QUICK_RANGES.custom.value]: 'Personnalisé',
         [STATS_QUICK_RANGES.last2Days.value]: '2 derniers jours',
         [STATS_QUICK_RANGES.last7Days.value]: '7 derniers jours',
         [STATS_QUICK_RANGES.last30Days.value]: '30 derniers jours',
@@ -388,7 +422,7 @@ export default {
     expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
     weatherTemplate: 'Template - Tuiles',
     modalTemplate: 'Template - Modale',
-    entityTemplate: 'Template - Entitées',
+    entityTemplate: 'Template - Entités',
     blockTemplate: 'Template - Tuiles',
     columnSM: 'Colonnes - Petit',
     columnMD: 'Colonnes - Moyen',
@@ -444,7 +478,13 @@ export default {
       fields: {
         moreInfo: 'Plus d\'infos',
         alarmList: 'Bac à alarmes',
+        both: 'Les deux',
       },
+    },
+    templateEditor: 'Modèle',
+    columns: {
+      isHtml: 'Est-ce du HTML?',
+      isState: 'Affiché comme une sévérité ?',
     },
     liveReporting: {
       title: 'Suivi personnalisé',
@@ -492,6 +532,7 @@ export default {
       editTitle: 'Éditer un observateur',
       duplicateTitle: 'Dupliquer un observateur',
       displayName: 'Nom',
+      outputTemplate: 'Modèle de sortie',
       success: {
         create: 'Observateur créé avec succès !',
         edit: 'Observateur édité avec succès !',
@@ -595,7 +636,6 @@ export default {
       duplicate: {
         title: 'Dupliquer un comportement périodique',
       },
-      title: 'Ajouter un comportement périodique',
       steps: {
         general: {
           title: 'Paramètres généraux',
@@ -656,6 +696,9 @@ export default {
       title: 'Associer un numéro de ticket',
       fields: {
         ticket: 'Numéro du ticket',
+      },
+      alerts: {
+        noAckItems: 'Il y a {count} élément sans accusé de réception. L\'événement Ack pour l\'élément sera envoyé avant. | Il y a {count} éléments sans accusé de réception. Les événements Ack pour les éléments seront envoyés avant.',
       },
     },
     liveReporting: {
@@ -835,6 +878,9 @@ export default {
         title: 'Éditer une règle',
         success: 'Règle éditée avec succès !',
       },
+      remove: {
+        success: 'La règle a bien été supprimée !',
+      },
       priority: 'Priorité',
       editPattern: 'Éditer le pattern',
       advanced: 'Avancée',
@@ -861,12 +907,34 @@ export default {
         removeRuleField: 'Supprimer le groupe/la règle',
       },
     },
+    metaAlarmRule: {
+      create: {
+        title: 'Créer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer une règle',
+        success: 'Règle créée avec succès !',
+      },
+      edit: {
+        title: 'Éditer une règle',
+        success: 'Règle éditée avec succès !',
+      },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
+      editPattern: 'Éditer le pattern',
+      actions: 'Actions',
+    },
     viewTab: {
       create: {
         title: 'Ajouter un onglet',
       },
       edit: {
         title: 'Éditer l\'onglet',
+      },
+      duplicate: {
+        title: 'Dupliquer l\'onglet',
       },
       fields: {
         title: 'Titre',
@@ -890,11 +958,69 @@ export default {
       fields: {
         id: 'ID',
         retryDelay: 'Intervalle',
+        retryUnit: 'Unit',
         retryCount: 'Nombre d\'essais après échec',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
       },
+    },
+    statsDateInterval: {
+      title: 'Stats - Intervalle de dates',
+      fields: {
+        periodValue: 'Période',
+        periodUnit: 'Unité',
+      },
+      errors: {
+        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
+      },
+      info: {
+        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
+      },
+    },
+    createSnmpRule: {
+      create: {
+        title: 'Créer une règle SNMP',
+      },
+      edit: {
+        title: 'Modifier la règle SNMP',
+      },
+      fields: {
+        oid: {
+          title: 'OID',
+          labels: {
+            module: 'Sélectionnez un module MIB',
+          },
+        },
+        output: {
+          title: 'Message',
+        },
+        resource: {
+          title: 'Ressource',
+        },
+        component: {
+          title: 'Composant',
+        },
+        connectorName: {
+          title: 'Nom du connecteur',
+        },
+        state: {
+          title: 'Criticité',
+          labels: {
+            toCustom: 'Pour personnaliser',
+            defineVar: 'Définir la variable SNMP correspondante',
+            writeTemplate: 'Écrire un modèle',
+          },
+        },
+        moduleMibObjects: {
+          vars: 'Champ de match vars SNMP',
+          regex: 'Regex',
+          formatter: 'Format (groupe de capture avec \\x)',
+        },
+      },
+    },
+    selectViewTab: {
+      title: 'Sélectionnez l\'onglet',
     },
     createAction: {
       create: {
@@ -918,19 +1044,6 @@ export default {
         ticket: 'Numéro du ticket',
         delay: 'Intervalle',
         delayUnit: 'Unité',
-      },
-    },
-    statsDateInterval: {
-      title: 'Stats - Interval de dates',
-      fields: {
-        periodValue: 'Période',
-        periodUnit: 'Unité',
-      },
-      errors: {
-        endDateLessOrEqualStartDate: 'La date de fin doit se situer après la date de début',
-      },
-      info: {
-        monthPeriodUnit: 'Les statistiques calculées seront situées entre {start} et {stop}',
       },
     },
     createHeartbeat: {
@@ -1032,6 +1145,33 @@ export default {
         selectColor: 'Sélectionnez la couleur d\'arrière-plan',
       },
     },
+    createCommentEvent: {
+      title: 'Ajouter un commentaire',
+      fields: {
+        comment: 'Commentaire',
+      },
+    },
+    createPlaylist: {
+      create: {
+        title: 'Créer playlist',
+      },
+      edit: {
+        title: 'Éditée playlist',
+      },
+      duplicate: {
+        title: 'Dupliquer une playlist',
+      },
+      errors: {
+        emptyTabs: 'Merci de ajouter un onglet',
+      },
+      fields: {
+        interval: 'Période',
+        unit: 'Unité',
+      },
+      groups: 'Groupe',
+      result: 'Résultat',
+      manageTabs: 'Gérer les onglets',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1042,7 +1182,7 @@ export default {
       id: 'Id',
     },
     alarmGeneral: {
-      title: 'Generale',
+      title: 'Générale',
       author: 'Auteur',
       connector: 'Type de connecteur',
       connectorName: 'Nom du connecteur',
@@ -1183,6 +1323,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
     pathCopied: 'Chemin copié dans le presse-papier',
+    authKeyCopied: 'Clé d\'authentification copiée dans le presse-papiers',
     widgetIdCopied: 'Widget id copié dans le presse-papier',
   },
   filterEditor: {
@@ -1211,6 +1352,7 @@ export default {
       },
     },
     errors: {
+      cantParseToVisualEditor: 'Nous ne pouvons pas analyser ce filtre dans Visual Editor',
       invalidJSON: 'JSON non valide',
       required: 'Merci d\'ajouter au moins une règle valide',
     },
@@ -1257,6 +1399,25 @@ export default {
     id: 'Id',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   },
+  metaAlarmRule: {
+    title: 'Meta alarm rule',
+    type: 'Type',
+    patterns: 'Patterns',
+    actions: 'Actions',
+    id: 'Id',
+    idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+    fields: {
+      eventPatterns: 'Patterns des événements',
+      alarmPatterns: 'Patterns des alarmes',
+      entityPatterns: 'Pattern des entités',
+      thresholdType: 'Type de seuil',
+      thresholdRate: 'Taux de déclenchement',
+      thresholdCount: 'Seuil de déclenchement',
+      timeInterval: 'Intervalle de temps',
+      valuePath: 'Chemin de valeur',
+      autoResolve: 'Résolution automatique',
+    },
+  },
   snmpRules: {
     title: 'Règles SNMP',
     uploadMib: 'Envoyer un fichier MIB',
@@ -1265,10 +1426,10 @@ export default {
   actions: {
     title: 'Actions',
     addAction: 'Ajouter une action',
-    delay: 'Intervalle',
     table: {
       id: 'Id',
       type: 'Type',
+      delay: 'Délai',
       expand: {
         tabs: {
           general: 'Général',
@@ -1301,6 +1462,7 @@ export default {
         create: 'Créer une vue',
         settings: 'Paramètres',
       },
+      activeSessions: 'Sessions actives',
       ordering: {
         popups: {
           success: 'Les groupes ont été réorganisés',
@@ -1312,6 +1474,10 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Paramètres',
+      importExportViews: 'Importation/Exportation',
+    },
     interfaceLanguage: 'Langue de l\'interface',
     groupsNavigationType: {
       title: 'Type d\'affichage de la barre de vues',
@@ -1331,6 +1497,7 @@ export default {
         infoPopupTimeout: 'Timeout pour les popup d\'informations',
         errorPopupTimeout: 'Timeout pour les popup d\'erreurs',
         popupTimeoutUnit: 'Unité',
+        allowChangeSeverityToInfo: 'Allow change severity to info',
       },
     },
   },
@@ -1342,6 +1509,8 @@ export default {
     deleteWidget: 'Supprimer le widget',
     fullScreen: 'Plein écran',
     fullScreenShortcut: 'Alt + Entrée / Command + Entrée',
+    copyWidgetId: 'Copier l\'ID du widget',
+    autoHeightButton: 'Si ce bouton est sélectionné, la hauteur sera calculée automatiquement.',
   },
   patternsList: {
     noData: 'Aucun pattern. Cliquez sur \'Ajouter\' pour ajouter des champs au pattern',
@@ -1356,7 +1525,6 @@ export default {
         requestMethod: 'Requête: Méthode',
         requestUrl: 'Requête: URL',
         retryDelay: 'Intervalle',
-        retryUnit: 'Unité',
         retryCount: 'Nombre d\'essais',
         enabled: 'Activé',
       },
@@ -1401,6 +1569,9 @@ export default {
       tstop: {
         after: 'La date de fin doit être postérieure à {1}',
       },
+      logo: {
+        size: 'La taille {0} doit être inférieure à {1} Ko.',
+      },
     },
   },
   home: {
@@ -1424,7 +1595,6 @@ export default {
       },
     },
   },
-
   dynamicInfo: {
     title: 'Informations dynamiques',
     table: {
@@ -1439,11 +1609,12 @@ export default {
       informations: 'Informations',
     },
   },
-
+  contextGeneralTable: {
+    addSelection: 'Ajouter une sélection',
+  },
   liveReporting: {
     button: 'Définir un intervalle de dates',
   },
-
   tours: {
     [TOURS.alarmsExpandPanel]: {
       step1: 'Détails',
@@ -1451,7 +1622,6 @@ export default {
       step3: 'Onglet chronologie',
     },
   },
-
   handlebars: {
     requestHelper: {
       errors: {
@@ -1461,9 +1631,29 @@ export default {
       },
     },
   },
-
   importExportViews: {
     selectAll: 'Sélectionnez tous les groupes et vues',
+  },
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Les actions sont désactivées en mode plein écran',
+      },
+    },
+  },
+
+  rights: {
+    technical: {
+      admin: 'Droits d\'administration',
+      exploitation: 'Droits d\'exploitation',
+    },
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: 'Droits communs',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Droits pour le widget Bac à alarmes',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Droits pour le widget Explorateur de contexte',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
+    },
   },
 
   ...featureService.get('i18n.fr'),

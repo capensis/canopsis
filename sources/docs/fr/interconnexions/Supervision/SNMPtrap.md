@@ -5,8 +5,6 @@ Réceptionne les traps SNMP, les traduit grâce à un jeu de règles et les conv
 !!! attention
     Ce connecteur n'est disponible que dans l'édition CAT de Canopsis.
 
-    À noter aussi que ce moteur n'est actuellement pas fonctionnel en environnement Debian 8 ([bug #1456](https://git.canopsis.net/canopsis/canopsis/issues/1456)).
-
 ## Introduction
 
 Ce guide décrit la réception et la traduction de traps SNMP pour Canopsis.
@@ -112,7 +110,7 @@ Exemple de JSON en sortie du connecteur :
 ```
 
 Le connecteur ne possédant aucune MIB, `snmp_trap_oid` et le tableau `snmp_vars`
-contient les OID des éléments sans aucune traduction.
+contiennent les OID des éléments sans aucune traduction.
 
 Les messages seront traduits ultérieurement, par le moteur `SNMP` de Canopsis.
 

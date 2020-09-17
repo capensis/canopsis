@@ -1,7 +1,13 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
+
+import {
+  childProcessStrategy,
+  childMergeStrategy,
+  parentProcessStrategy,
+  viewTabProcessStrategy,
+} from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
@@ -48,13 +54,13 @@ export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
   idAttribute: '_id',
 });
 
-export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
-  widgets: [widgetSchema],
-}, { idAttribute: '_id' });
-
 export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
-  rows: [viewRowSchema],
-}, { idAttribute: '_id' });
+  widgets: [widgetSchema],
+}, {
+  idAttribute: '_id',
+  processStrategy: viewTabProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   tabs: [viewTabSchema],
@@ -79,6 +85,8 @@ export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribu
 
 export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
 
+export const metaAlarmRuleSchema = new schema.Entity(ENTITIES_TYPES.metaAlarmRule, {}, { idAttribute: '_id' });
+
 export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idAttribute: '_id' });
 
 export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { idAttribute: '_id' });
@@ -91,6 +99,10 @@ export const dynamicInfoSchema = new schema.Entity(ENTITIES_TYPES.dynamicInfo, {
 
 export const broadcastMessageSchema = new schema.Entity(ENTITIES_TYPES.broadcastMessage, {}, { idAttribute: '_id' });
 
+export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {
+  tabs: [viewTabSchema],
+}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -100,7 +112,6 @@ export default {
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.group]: groupSchema,
   [ENTITIES_TYPES.view]: viewSchema,
-  [ENTITIES_TYPES.viewRow]: viewRowSchema,
   [ENTITIES_TYPES.viewTab]: viewTabSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,
@@ -112,4 +123,6 @@ export default {
   [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
   [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
+  [ENTITIES_TYPES.playlist]: playlistSchema,
+  [ENTITIES_TYPES.metaAlarmRule]: metaAlarmRuleSchema,
 };

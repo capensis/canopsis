@@ -176,6 +176,11 @@ class PBehaviorManager(object):
     _UPDATE_FLAG = 'updatedExisting'
     __TYPE_ERR = "id_ must be a list of string or a string"
 
+    SORT_ORDER = {
+        'DESC': -1,
+        'ASC': 1
+    }
+
     @classmethod
     def provide_default_basics(cls):
         """
@@ -219,7 +224,32 @@ class PBehaviorManager(object):
         if amqp_pub is None:
             self.amqp_pub = AmqpPublisher(get_default_amqp_conn(), self.logger)
 
-    def get(self, _id, search=None, limit=None, skip=None):
+    def _resolve_sort(self, sort):
+        db_sort = {}
+        if not isinstance(sort, list):
+            return []
+
+        for element in sort:
+            if isinstance(element, str) and element in PBehavior._FIELDS:
+                db_sort[element] = 1  # default ASC sorting
+            elif isinstance(element, dict):
+                prop = element.get('property', '')
+                direction = element.get('direction', 'ASC')
+                if prop == 'type':
+                    prop = 'type_'
+                if prop in PBehavior._FIELDS and direction in ('ASC', 'DESC'):
+                    db_sort[prop] = self.SORT_ORDER[direction]
+        if db_sort:
+            return [{"$sort": db_sort}]
+        return []
+
+    def _is_sort_on_status(self, sort):
+        try:
+            return sort[0] == 'is_currently_active' or sort[0]['property'] == 'is_currently_active'
+        except:
+            return False
+
+    def get(self, _id, search=None, limit=None, skip=None, sort=None):
         """Get pbehavior by id.
 
         When _id is None, all the pbehaviors are returned. This behavior
@@ -266,7 +296,12 @@ class PBehaviorManager(object):
                 "The aggregate returned unexpected data about total_count")
             return {"total_count": 0, "count": 0, "data": []}
 
-        if _id is None:
+        status_sort = self._is_sort_on_status(sort)
+        if not status_sort:
+            if sort is not None:
+                pipeline.extend(self._resolve_sort(sort))
+
+        if _id is None and not status_sort:
             if skip is not None:
                 pipeline.append({"$skip": skip})
             if limit is not None:
@@ -407,6 +442,7 @@ class PBehaviorManager(object):
                         except:
                             sleep(0.5)
                             pass
+                    pb_kwargs[PBehavior.ENABLED] = False
                     expired_data = PBehavior(**pb_kwargs)
                     self.collection.insert(expired_data.to_dict())
                     result = self.collection.insert(data.to_dict())
@@ -417,7 +453,7 @@ class PBehaviorManager(object):
 
         return result
 
-    def get_pbehaviors_by_eid(self, id_):
+    def get_pbehaviors_by_eid(self, id_, enabled_filter=None):
         """Retreive from database every pbehavior that contains
         the given id_ in the PBehavior.EIDS field.
 
@@ -439,6 +475,9 @@ class PBehaviorManager(object):
 
         cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}})
 
+        if enabled_filter is not None:
+            cursor = self.collection.find({PBehavior.EIDS: {"$in": id_}, "enabled": enabled_filter})
+
         pbehaviors = []
 
         now = int(time())
@@ -453,11 +492,11 @@ class PBehaviorManager(object):
 
         return pbehaviors
 
-    def read(self, _id=None, search=None, limit=None, skip=None):
+    def read(self, _id=None, search=None, limit=None, skip=None, sort=None):
         """Get pbehavior or list pbehaviors.
         :param str _id: pbehavior id, _id may be equal to None
         """
-        result = self.get(_id, search=search, limit=limit, skip=skip)
+        result = self.get(_id, search=search, limit=limit, skip=skip, sort=sort)
 
         return result
 
@@ -683,7 +722,7 @@ class PBehaviorManager(object):
         Compute all filters and update eids attributes.
         """
         pbehaviors = self.collection.find(
-            {PBehavior.FILTER: {'$exists': True}})
+            {PBehavior.FILTER: {'$exists': True}, PBehavior.ENABLED: True})
 
         for pbehavior in pbehaviors:
 
@@ -1328,6 +1367,8 @@ class PBehaviorManager(object):
 
         for pb in ret_val:
             try:
+                if not pb[PBehavior.ENABLED]:
+                    continue
                 if self.check_active_pbehavior(timestamp, pb):
                     results.append(pb)
             except ValueError:
@@ -1410,7 +1451,7 @@ class PBehaviorManager(object):
                     events = chain(events, self._make_pbenter_event(
                         now,
                         self.pbehavior_event_sent_flag[active_pb].pbehavior,
-                        self.pbehavior_event_sent_flag[active_pb].pbleave_time,
+                        self.pbehavior_event_sent_flag[active_pb].pbenter_time,
                         list(current_eids.difference(old_eids))))
             else:
                 events = chain(events, self._make_pbenter_event(
@@ -1494,12 +1535,13 @@ class PBehaviorManager(object):
         for eid in eids:
             alarms = self.alarmAdapter.find_unresolved_alarms([eid])
             for al in alarms:
-                average_time = round((time() - start_time), 5)
+                now = time()
+                average_time = round((now - start_time), 5)
                 event = forger(
                     connector=al.identity.connector,
                     connector_name=al.identity.connector_name,
                     event_type=pb_event_type,
-                    component=str(eid),
+                    component=eid,
                     output="Pbehavior {}. Type: {}. Reason: {}".format(pb[PBehavior.NAME].encode('utf-8'),
                                                                        pb[PBehavior.TYPE].encode('utf-8'),
                                                                        pb[PBehavior.REASON].encode('utf-8')),#"{}. Name: {}. Type:{}".format(message, pb[PBehavior.NAME], pb[PBehavior.TYPE]),
@@ -1509,7 +1551,7 @@ class PBehaviorManager(object):
                         "value": average_time
                     }],
                     display_name=pb[PBehavior.NAME],
-                    timestamp=self._to_timestamp(action_time)
+                    timestamp=int(now)
                 )
                 events.append(event)
         return events

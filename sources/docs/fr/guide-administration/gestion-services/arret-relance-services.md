@@ -50,8 +50,8 @@ Le serveur de cache Redis peut être redémarré avec la commande suivante :
 systemctl restart redis.service
 ```
 
-Bien que Redis soit un serveur de cache, veuillez noter qu'un redémarrage du service n'occasionnera pas une purge du cache existant. Utilisez la commande `FLUSHALL`, à cet effet.
+Veuillez noter qu'un redémarrage du service n'occasionnera pas une purge du cache existant. Ce comportement est intentionnel.
 
 ## Aller plus loin 
 
-Pour connaître l'état de votre service, [rendez-vous ici](../troubleshooting/etat-des-services.md).
+Pour connaître l'état de votre service, [rendez-vous ici](../../guide-de-depannage/etat-des-services.md).

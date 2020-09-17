@@ -202,12 +202,18 @@ class route(object):
                 params = parse_qs(body)
 
             else:
-                params = request.params  # request params
+                if request.content_type.lower().split(';')[0] == 'application/json':
+                    params = request.query
+                else:
+                    params = request.params  # request params
                 body = request.body.readline()
 
             if self.raw_body:
                 kwargs['body'] = body
 
+            elif request.json:
+                for k in request.json:
+                    params[k] = request.json[k]
             else:
                 # params are request params
                 try:
@@ -215,6 +221,10 @@ class route(object):
                 except (ValueError, TypeError):
                     pass
                 else:
+                    # with bottle 0.12 route received whole request body as one of kwargs key
+                    if body in params:
+                        params.pop(body, None)
+                        kwargs.pop(body, None)
                     for lb in loaded_body:
                         value = loaded_body[lb]
                         params[lb] = value

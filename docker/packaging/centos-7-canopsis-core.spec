@@ -57,6 +57,7 @@ fi
 /opt/canopsis/include
 /opt/canopsis/lib
 /opt/canopsis/lib64
+/opt/canopsis/share
 /opt/canopsis/tmp
 /opt/canopsis/var
 /opt/canopsis/.vimrc

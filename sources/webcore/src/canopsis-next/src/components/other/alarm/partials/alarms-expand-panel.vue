@@ -20,7 +20,12 @@
         v-flex(:class="cardFlexClass")
           v-card.tab-item-card
             v-card-text
-              time-line(:alarm="alarm", :widget="widget", :isHTMLEnabled="isHTMLEnabled")
+              time-line(
+                :alarm="alarm",
+                :widget="widget",
+                :isHTMLEnabled="isHTMLEnabled",
+                :hideGroups="hideGroups"
+              )
     template(v-if="alarm.causes && !hideGroups")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
@@ -150,5 +155,13 @@ export default {
 <style lang="scss" scoped>
   .tab-item-card {
     margin: auto;
+  }
+
+  @media (min-width: 0) {
+    .xs0 {
+      max-width: 0;
+      max-height: 0;
+      overflow: hidden;
+    }
   }
 </style>

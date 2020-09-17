@@ -34,6 +34,7 @@
             :widget="widget",
             :columns="columns",
             :columnFiltersMap="columnFiltersMap",
+            :hideGroups="hideGroups",
             :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
         template(slot="expand", slot-scope="props")

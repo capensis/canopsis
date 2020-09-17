@@ -90,7 +90,7 @@ export default ({
      * @returns {Promise<AxiosPromise>}
      */
     update(context, { id, data }) {
-      return request.put(`${route}/${id}`, data);
+      return request.put(`${route}/${encodeURIComponent(id)}`, data);
     },
 
     /**
@@ -101,7 +101,7 @@ export default ({
      * @returns {Promise<AxiosPromise>}
      */
     remove(context, { id } = {}) {
-      return request.delete(`${route}/${id}`);
+      return request.delete(`${route}/${encodeURIComponent(id)}`);
     },
   };
 

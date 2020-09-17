@@ -1,0 +1,132 @@
+swagger: '2.0'
+info: {title: bottle-swagger, version: 1.0.0}
+produces: [application/json]
+consumes: [application/json]
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
+
+definitions:
+  Interval:
+    type: object
+    properties:
+      interval: {type: integer}
+      unit: {type: string}
+  Playlist:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+      interval:
+        $ref: "#/definitions/Interval"
+      fullscreen:
+        type: boolean
+      enabled:
+        type: boolean
+      tabs_list:
+        type: array
+        items:
+          type: string
+    required:
+      - name
+      - interval
+      - fullscreen
+      - enabled
+      - tabs_list
+    type: object
+paths:
+  /api/v2/playlist:
+    get:
+      summary: Get playlist list
+      tags:
+        - playlist
+      responses:
+        '200':
+          description: List of playlist
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Playlist"
+
+    post:
+      summary: Create playlist
+      tags:
+        - playlist
+      parameters:
+        - in: body
+          name: playlist
+          schema:
+            $ref: "#/definitions/Playlist"
+      responses:
+        '200':
+          description: Playlist has been created
+        '400':
+          description: Playlist create error
+          schema:
+            properties:
+              description:
+                type: string
+  /api/v2/playlist/{playlist_id}:
+    get:
+      summary: Returns a playlist by ID
+      tags:
+        - playlist
+      parameters:
+        - in: path
+          name: playlist_id
+          required: true
+          type: string
+          description: The ID of the playlist to return
+      responses:
+        '200':
+            description: A playlist object
+            schema:
+              $ref: "#/definitions/Playlist"
+        '400':
+          description: Get playlist has error
+          schema:
+            properties:
+              description:
+                type: string
+    put:
+      summary: Update a playlist by ID
+      tags:
+        - playlist
+      parameters:
+        - in: path
+          name: playlist_id
+          required: true
+          type: string
+          description: The ID of the playlist to update
+      responses:
+        '200':
+          description: Playlist has been updated
+          schema:
+            type: object
+        '400':
+          description: Playlist update error
+          schema:
+            properties:
+              description:
+                type: string
+    delete:
+      summary: Delete a playlist by ID
+      tags:
+        - playlist
+      parameters:
+        - in: path
+          name: playlist_id
+          required: true
+          type: string
+          description: The ID of the playlist to delete
+      responses:
+        '200':
+          description: Playlist has been deleted
+          schema:
+            properties:
+              status:
+                description: True for success
+                type: boolean

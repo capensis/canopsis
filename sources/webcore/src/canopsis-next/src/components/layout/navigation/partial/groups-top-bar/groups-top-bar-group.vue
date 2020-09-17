@@ -40,25 +40,3 @@ export default {
   mixins: [layoutNavigationGroupsBarGroupMixin],
 };
 </script>
-
-<style lang="scss" scoped>
-  .group-v-menu-content {
-    & /deep/ .v-list {
-      background-color: inherit;
-
-      .v-list__tile__title {
-        height: 28px;
-        line-height: 28px;
-      }
-
-      .edit-view-button, .duplicate-view-button {
-        vertical-align: top;
-        margin: 0 0 0 8px;
-      }
-    }
-  }
-
-  .group-item /deep/ .v-menu__activator .v-btn {
-    text-transform: none;
-  }
-</style>

@@ -53,6 +53,7 @@ def exports(ws):
         ws.application.get,
         name='alerts/get-alarms',
         payload=[
+            'authkey',
             'tstart',
             'tstop',
             'opened',
@@ -74,6 +75,7 @@ def exports(ws):
         ]
     )
     def get_alarms(
+            authkey=None,
             tstart=None,
             tstop=None,
             opened=True,
@@ -161,7 +163,8 @@ def exports(ws):
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
-        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
+        entities = context_manager.get_entities_by_id(alarms_ids, with_links=False)
+
         entity_dict = {}
         for entity in entities:
             entity_dict[entity.get('_id')] = entity
@@ -170,8 +173,8 @@ def exports(ws):
             alarm_children = ar.get(
                 tstart=tstart,
                 tstop=tstop,
-                opened=opened,
-                resolved=resolved,
+                opened=True,
+                resolved=True,
                 lookups=lookups,
                 filter_={'d': {'$in': consequences_children}},
                 sort_key=sort_key,
@@ -181,7 +184,8 @@ def exports(ws):
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
-                correlation=correlation
+                correlation=correlation,
+                consequences_children=True
             )
 
         list_alarm = []
@@ -199,14 +203,18 @@ def exports(ws):
         else:
             alarms['rules'] = dict()
 
+        children_ent_ids = set()
         for alarm in alarms['alarms']:
-            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm else None
+            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm and 'v' in alarm and \
+                alarm['v'].get('parents') else None
             if rules:
                 if with_causes:
                     alarm['causes'] = {
                         'total': len(alarm_children['alarms']),
                         'data': alarm_children['alarms'],
                     }
+                    for al_child in alarm_children['alarms']:
+                        children_ent_ids.add(al_child['d'])
                 else:
                     alarm['causes'] = {
                         'total': len(rules),
@@ -234,7 +242,7 @@ def exports(ws):
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
-                alarm['links'] = entity_dict[alarm['d']]['links']
+                alarm['links'] = context_manager.enrich_links_to_entity_with_alarm(entity_dict[alarm['d']], alarm)
 
                 # TODO: 'infos' is already present in entity.
                 # Remove this one if unused.
@@ -248,9 +256,27 @@ def exports(ws):
             alarm = compat_go_crop_states(alarm)
 
             if with_consequences and isinstance(alarm.get('consequences'), dict) and alarm_children['total'] > 0:
+                map(lambda al_ch: al_ch.update({'causes': {'rules': [alarm['rule']], 'total': 1}}),  alarm_children['alarms'])
                 alarm['consequences']['data'] = alarm_children['alarms']
+                alarm['consequences']['total'] = alarm_children['total']
+                for al_child in alarm_children['alarms']:
+                    children_ent_ids.add(al_child['d'])
 
             list_alarm.append(alarm)
+
+        if children_ent_ids:
+            children_entities = context_manager.get_entities_by_id(
+                list(children_ent_ids), with_links=False)
+            for entity in children_entities:
+                entity_dict[entity.get('_id')] = entity
+
+            for alarm in alarms['alarms']:
+                for cat in ('causes', 'consequences'):
+                    if cat in alarm and alarm[cat].get('data'):
+                        for child in alarm[cat]['data']:
+                            if child['d'] in entity_dict:
+                                child['links'] = context_manager.enrich_links_to_entity_with_alarm(
+                                    entity_dict[child['d']], child)
 
         del alarms['rules']
         alarms['alarms'] = list_alarm
@@ -351,20 +377,27 @@ def exports(ws):
                     if eid in entity_id:
                         enabled_pbh_entity_dict.add(eid)
 
+        pbehavior_active_snooze = 0
+
         for alarm in alarms['alarms']:
             v = alarm.get('v')
+            snoozed = False
             if isinstance(v, dict):
                 if v.get('ack', {}).get('_t') == 'ack':
                     counters['ack'] += 1
-                if v.get('snooze', {}).get('_t') == 'snooze':
+                snoozed = v.get('snooze', {}).get('_t') == 'snooze'
+                if snoozed:
                     counters['snooze'] += 1
                 if v.get('ticket', {}).get('_t') in ['declareticket', 'assocticket']:
                     counters['ticket'] += 1
             d = alarm.get('d')
             if d in enabled_pbh_entity_dict:
                 counters['pbehavior_active'] += 1
+                if snoozed:
+                    pbehavior_active_snooze += 1
 
-        counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze']
+        counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze'] + \
+            pbehavior_active_snooze
         return counters
 
     @route(

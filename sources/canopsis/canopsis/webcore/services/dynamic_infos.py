@@ -84,9 +84,18 @@ def exports(ws):
                 {"description": "skip should be an integer"},
                 HTTP_ERROR)
 
+        sort_key = request.query.sort_key
+        sort_dir = request.query.sort_dir
+        if not sort_dir:
+            sort_dir = manager.SORT_DIRECTION_ASC
+        if sort_dir not in [None, manager.SORT_DIRECTION_ASC, manager.SORT_DIRECTION_DESC]:
+            return gen_json_error(
+                {"description": "sort_dir should be either ASC or DESC"},
+                HTTP_ERROR)
+
         try:
             count = manager.count(search, search_fields)
-            rules = manager.list(search, search_fields, limit, skip)
+            rules = manager.list(search, search_fields, limit, skip, sort_key, sort_dir)
         except CollectionError:
             return gen_json_error(
                 {"description": "Cannot retrieve the dynamic infos list from "

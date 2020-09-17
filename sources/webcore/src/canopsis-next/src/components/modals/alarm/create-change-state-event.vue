@@ -5,17 +5,10 @@
         span {{ $t('modals.createChangeStateEvent.title') }}
       template(slot="text")
         v-container
-          v-layout(row)
-            state-criticity-field(v-model="form.state", :stateValues="availableStateValues")
-          v-layout.mt-4(row)
-            v-text-field(
-              v-model="form.output",
-              v-validate="'required'",
-              :label="$t('modals.createChangeStateEvent.fields.output')",
-              :error-messages="errors.collect('output')",
-              name="output",
-              data-test="createChangeStateEventNote"
-            )
+          change-state-field(
+            v-model="form",
+            :label="$t('modals.createChangeStateEvent.fields.output')"
+          )
       template(slot="actions")
         v-btn(
           data-test="createChangeStateEventCancelButton",
@@ -32,15 +25,14 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
-import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
+import ChangeStateField from '@/components/other/action/form/fields/change-state.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -52,8 +44,8 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { StateCriticityField, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
+  components: { ChangeStateField, ModalWrapper },
+  mixins: [entitiesInfoMixin, modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {
       form: {
@@ -61,11 +53,6 @@ export default {
         state: ENTITIES_STATES.major,
       },
     };
-  },
-  computed: {
-    availableStateValues() {
-      return omit(ENTITIES_STATES, ['ok']);
-    },
   },
   mounted() {
     this.form.state = this.firstItem.v.state.val;

@@ -3,6 +3,7 @@ import { POPUP_TYPES, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constant
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
 import { getSecondsByUnit } from '@/helpers/time';
+import { setTabTitle } from '@/helpers/set-tab-title';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
@@ -22,6 +23,7 @@ export default {
       description: 'description',
       language: 'language',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
+      allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
     }),
@@ -60,7 +62,7 @@ export default {
       const { interval, unit } = this.popupTimeout.info;
       const delay = getSecondsByUnit(interval, unit) * 1000;
 
-      this.$popups.setDefaultCloseTime(POPUP_TYPES.infos, delay);
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.info, delay);
       this.$popups.setDefaultCloseTime(POPUP_TYPES.success, delay);
     },
 
@@ -76,6 +78,10 @@ export default {
       if (this.popupTimeout.info) {
         this.setInfoPopupTime();
       }
+    },
+
+    setTitle() {
+      setTabTitle(this.appTitle);
     },
   },
 };

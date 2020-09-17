@@ -10,43 +10,6 @@ Les règles sont définies dans la collection MongoDB `eventfilter`, et peuvent 
 
 Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la partie [Exemples](#exemples).
 
-## Activation du plugin d'enrichissement depuis une ressource externe
-
-!!! note
-    Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
-
-L['event-filter](moteur-che-event_filter.md) peut utiliser des sources de données externes pour enrichir les évènements. Ces sources externes (à l'exception de `entity`) sont des [plugins](../../guide-developpement/plugins/event-filter-data-source.md) disponibles dans Canopsis CAT.
-
-Les plugins doivent être placés dans un dossier accessible par le moteur `engine-che`.
-
-### Activation avec Docker
-
-Les plugins doivent être ajoutés dans un volume dans l'image Docker, et leur emplacement doit être précisé dans la commande. Par exemple, avec `docker-compose` :
-
-```yaml
-  che:
-    image: canopsis/engine-che-cat:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    restart: unless-stopped
-    command: /engine-che -dataSourceDirectory /data-source-plugins
-    volumes:
-      - "./plugins:/data-source-plugins"
-```
-
-Dans une installation Docker, l'image `canopsis/engine-che-cat` remplace l'image par défaut `canopsis/engine-che`. Le moteur `engine-che` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin d'enrichissement externe soit chargé : `engine-che -dataSourceDirectory /data-source-plugins`
-
-Les plugins doivent être placés dans un dossier accessible par le moteur `engine-che`.
-
-L'exécutable `engine-che` accepte une option `-dataSourceDirectory` permettant de préciser le dossier contenant les plugins. Par défaut, ce dossier est celui contenant `engine-che`.
-
-### Activation par paquets
-
-Pour pouvoir utiliser l'enrichissement depuis une ressource externe, il faut :
-
-*  lancer le moteur `engine-che` avec l'option `-dataSourceDirectory <dossier contenant les plugins>`. Par défaut, ce dossier est celui contenant `engine-che`.
-
-
 ## Règles
 
 Une règle est un document JSON contenant les paramètres suivants :
@@ -253,7 +216,7 @@ Par exemple, l'action suivante modifie l'information `customer` d'une entité :
 Cette action échoue si l'entité n'a pas été ajoutée à l'évènement au préalable.
 Pour utiliser cette action, il est donc nécessaire de définir une règle
 [ajoutant les entités aux
-évènements](#ajout-de-lentite-correspondant-à-un-evenement), avec une priorité
+évènements](#ajout-de-lentite-correspondant-a-un-evenement), avec une priorité
 inférieure à celles des règles contenant des actions de type
 `set_entity_info_from_template`.
 
@@ -324,6 +287,10 @@ les actions de type `copy`.
 Une source de données est un objet JSON contenant un champ `type` indiquant le
 type de la source, et des paramètres. Les différents types de source de données
 sont précisés ci-dessous.
+
+Dans une installation Canopsis CAT, l'acquisition de données externes peut aussi
+se faire avec un plugin `datasource`. Ceci nécessite [l'activation des plugins
+datasource](moteur-che.md#activation-des-plugins-denrichissement-externe-datasource).
 
 #### Entités
 
@@ -651,7 +618,6 @@ des évènements.
     "on_failure" : "pass"
 }
 ```
-
 
 ## Annexe
 

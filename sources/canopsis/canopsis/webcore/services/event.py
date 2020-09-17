@@ -31,6 +31,7 @@ from canopsis.common.ws import route
 from canopsis.event.eventslogmanager import EventsLog
 from canopsis.common.utils import singleton_per_scope
 from canopsis.webcore.utils import gen_json_error, HTTP_ERROR
+from canopsis.userinterface.manager import is_allow_allow_change_severity_to_info
 
 
 def is_valid(ws, event):
@@ -40,7 +41,8 @@ def is_valid(ws, event):
     :returns: True if the event is valid, False otherwise.
     """
     event_type = event.get("event_type")
-    if event_type in ['changestate', 'keepstate'] and event.get('state', None) == 0:
+    if event_type in ['changestate', 'keepstate'] and (event.get('state', None) == 0 and
+                                                       not is_allow_allow_change_severity_to_info()):
         ws.logger.error("cannot set state to info with changestate/keepstate")
         return False
 
@@ -83,10 +85,12 @@ def transform_event(ws, am, event):
         if new_event.get('resource'): 
             eid = "{}/{}".format(new_event['resource'], eid)
     alarm = am.get_last_alarm_by_connector_eid(new_event['connector'], eid)
-    if isinstance(alarm, dict) and 'v' in alarm:
-        if 'children' in alarm['v']:
+    if isinstance(alarm, dict) and 'v' in alarm and isinstance(alarm['v'], dict):
+        def alarmvalue_has_list(
+            x): return x in alarm['v'] and isinstance(alarm['v'][x], list)
+        if alarmvalue_has_list('children'):
             new_event['ma_children'] = list(alarm['v']['children'])
-        if 'parents' in alarm['v']:
+        if alarmvalue_has_list('parents'):
             new_event['ma_parents'] = list(alarm['v']['parents'])
 
     return new_event

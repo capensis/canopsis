@@ -235,62 +235,58 @@ Différents exemples de retour des routes `PUT /api/contextgraph/import` et `GET
 **Exemple de corps de requête** :
 
 ```json
-{
-    "json":{
-        "cis":[
-            {
-                "name":"capitals",
-                "enabled":true,
-                "action":"create",
-                "infos":{
-                    "info1":{
-                        "name":"info1",
-                        "value":"Paris",
-                        "description":"Capitale de la France"
-                    },
-                    "info2":{
-                        "name":"info2",
-                        "value":"Londres",
-                        "description":"Capitale de la Grande-Bretagne"
-                    }
+json={
+    "cis":[
+        {
+            "name":"capitals",
+            "enabled":true,
+            "action":"create",
+            "infos":{
+                "info1":{
+                    "name":"info1",
+                    "value":"Paris",
+                    "description":"Capitale de la France"
                 },
-                "_id":"capitals",
-                "type":"component"
-            }
-        ],
-        "links":[]
-    }
+                "info2":{
+                    "name":"info2",
+                    "value":"Londres",
+                    "description":"Capitale de la Grande-Bretagne"
+                }
+            },
+            "_id":"capitals",
+            "type":"component"
+        }
+    ],
+    "links":[]
 }
 ```
 
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut ajouter le JSON ci-dessus :
 
 ```sh
-curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
-    "json":{
-        "cis":[
-            {
-                "name":"capitals",
-                "enabled":true,
-                "action":"create",
-                "infos":{
-                    "info1":{
-                        "name":"info1",
-                        "value":"Paris",
-                        "description":"Capitale de la France"
-                    },
-                    "info2":{
-                        "name":"info2",
-                        "value":"Londres",
-                        "description":"Capitale de la Grande-Bretagne"
-                    }
+curl -X PUT -u root:root -H "Content-type: application/x-www-form-urlencoded" -d 'json={
+    "cis":[
+        {
+            "name":"capitals",
+            "enabled":true,
+            "action":"create",
+            "infos":{
+                "info1":{
+                    "name":"info1",
+                    "value":"Paris",
+                    "description":"Capitale de la France"
                 },
-                "_id":"capitals",
-                "type":"component"
-            }
-        ],
-        "links":[]
-    }
+                "info2":{
+                    "name":"info2",
+                    "value":"Londres",
+                    "description":"Capitale de la Grande-Bretagne"
+                }
+            },
+            "_id":"capitals",
+            "type":"component"
+        }
+    ],
+    "links":[]
 }' 'http://<Canopsis_URL>/api/contextgraph/import'
 ```
 
@@ -324,7 +320,11 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 
 **Permissions requises** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut connaître le statut de la task `c3090ed6-5b17-4c75-ad23-82238cffa62f` : `curl -u root:root http://<Canopsis_URL>/api/contextgraph/import/status/c3090ed6-5b17-4c75-ad23-82238cffa62f`
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut connaître le statut de la task `c3090ed6-5b17-4c75-ad23-82238cffa62f` :
+
+```
+curl -u root:root http://<Canopsis_URL>/api/contextgraph/import/status/c3090ed6-5b17-4c75-ad23-82238cffa62f
+```
 
 #### Import en attente
 
