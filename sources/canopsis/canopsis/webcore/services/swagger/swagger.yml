@@ -123,3 +123,9 @@ paths:
               deletedCount:
                 description: 1 when document deleted
                 type: integer
+        '400':
+          description: Rule delete error
+          schema:
+            properties:
+              description:
+                type: string

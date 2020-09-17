@@ -71,7 +71,8 @@ def exports(ws):
             'hide_resources',
             'with_consequences',
             'with_causes',
-            'correlation'
+            'correlation',
+            'manual_only'
         ]
     )
     def get_alarms(
@@ -93,7 +94,8 @@ def exports(ws):
             hide_resources=False,
             with_consequences=False,
             with_causes=False,
-            correlation=False
+            correlation=False,
+            manual_only=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -123,11 +125,15 @@ def exports(ws):
 
         :param bool hide_resources: hide_resources if component has an alarm
 
+        :param bool manual_only: manual meta-alarms only with open status (resolved=None)
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
         if isinstance(search, int):
             search = str(search)
+
+        if manual_only:
+            return ar.manual_only()
 
         try:
             alarms = ar.get(
