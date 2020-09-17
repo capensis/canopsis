@@ -13,12 +13,12 @@
   failed_when: "ansiblecrap is failed and 'Could not find the requested service' not in ansiblecrap.msg"
 
 - name: Initializing RabbitMQ for Go engines
-  shell: "eval $(grep -v '^#' /opt/canopsis/etc/go-engines-vars.conf | sed 's/^/export /') && {{ canopsis_home }}/bin/init -conf {{ canopsis_home }}/etc/initialisation.toml"
+  shell: "eval $(grep -v '^#' /opt/canopsis/etc/go-engines-vars.conf | sed 's/^/export /') && {{ canopsis_home }}/bin/canopsis-reconfigure"
   environment:
     CPS_WAIT_FIRST_ATTEMPT: 2
     CPS_MAX_RETRY: 3
-  register: goinitcmd
-  failed_when: goinitcmd.rc != 0
+  register: reconfigurecmd
+  failed_when: reconfigurecmd.rc != 0
 
 - name: Start and enable Canopsis default Go engines
   systemd:
