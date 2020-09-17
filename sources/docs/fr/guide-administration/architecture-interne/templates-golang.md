@@ -152,7 +152,7 @@ La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) 
 
 ### Cas particulier des méta alarmes
 
-Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../../moteurs/moteur-correlation), il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  
+Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../moteurs/moteur-correlation.md), il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  
 Pour cela, un opérateur `range` permet d'itérer sur la variable `.Children` qui contient l'ensemble des alarmes conséquences de la méta alarme.
 
 La syntaxe à utiliser est la suivante :
