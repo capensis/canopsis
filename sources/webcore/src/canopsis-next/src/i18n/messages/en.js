@@ -312,6 +312,8 @@ export default {
     reason: 'Reason',
     rrule: 'Rrule',
     status: 'Status',
+    created: 'Creation date',
+    updated: 'Last update date',
     tabs: {
       filter: 'Filter',
       comments: 'Comments',
