@@ -18,6 +18,7 @@ import AdminParameters from '@/views/admin/parameters.vue';
 import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import AdminPlaylists from '@/views/admin/playlists.vue';
 import AdminPlanning from '@/views/admin/planning.vue';
+import AdminRemediation from '@/views/admin/remediation.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
@@ -147,6 +148,17 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.planning,
+      },
+    },
+  },
+  {
+    path: '/admin/remediation',
+    name: 'remediation-administration',
+    component: AdminRemediation,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.remediation,
       },
     },
   },

@@ -192,6 +192,12 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.planning,
         },
+        {
+          route: { name: 'remediation-administration' },
+          text: this.$t('common.remediation'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.remediation,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));

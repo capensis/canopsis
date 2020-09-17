@@ -721,6 +721,7 @@ export const USERS_RIGHTS = {
     planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
     exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
+    remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,

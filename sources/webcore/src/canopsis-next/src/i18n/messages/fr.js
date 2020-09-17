@@ -111,6 +111,8 @@ export default {
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
     planningAdministration: 'Administration de la planification',
+    remediation: 'Remediation',
+    instructions: 'Instructions',
     icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',
