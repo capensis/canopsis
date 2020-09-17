@@ -184,8 +184,8 @@ services:
       - rabbitmq
       - influxdb
     restart: unless-stopped
-  init:
-    image: canopsis/init:${CANOPSIS_IMAGE_TAG}
+  canopsis_reconfigure:
+    image: canopsis/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
     depends_on:
       - "rabbitmq"
       - "mongodb"
