@@ -1441,17 +1441,6 @@ export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
 
-export const MANUAL_META_ALARM_REGEX = {
-  d: /^meta-alarm-entity-/,
-  'v.meta': /^zgrp-/,
-};
-
-export const MANUAL_META_ALARMS_REQUEST_FILTER = {
-  [FILTER_MONGO_OPERATORS.and]: Object.entries(MANUAL_META_ALARM_REGEX).map(([key, regex]) => ({
-    [key]: { [FILTER_MONGO_OPERATORS.regex]: regex },
-  })),
-};
-
 export const META_ALARM_EVENT_DEFAULT_FIELDS = {
   component: 'metaalarm',
   connector: 'engine',

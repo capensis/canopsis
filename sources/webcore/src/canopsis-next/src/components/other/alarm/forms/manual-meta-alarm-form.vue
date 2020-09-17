@@ -27,7 +27,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { MANUAL_META_ALARMS_REQUEST_FILTER } from '@/constants';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
@@ -61,7 +60,7 @@ export default {
       this.pending = true;
 
       const { alarms = [] } = await this.fetchAlarmsListWithoutStore({
-        params: { filter: MANUAL_META_ALARMS_REQUEST_FILTER },
+        params: { manual_only: true },
       });
 
       this.manualMetaAlarms = alarms;
