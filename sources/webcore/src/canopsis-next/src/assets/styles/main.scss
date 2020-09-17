@@ -129,3 +129,24 @@ $mobileBreakpoint: 450px;
 .pre {
   white-space: pre;
 }
+
+.rounded-field {
+  .v-input__slot {
+    border-radius: 10px !important;
+
+    &:before, &:after {
+      bottom: 5px !important;
+      left: 12px !important;
+      width: calc(100% - 24px) !important;
+    }
+
+    input, textarea {
+      margin-bottom: 6px !important;
+      margin-top: 18px;
+    }
+
+    .v-label {
+      top: 14px;
+    }
+  }
+}
