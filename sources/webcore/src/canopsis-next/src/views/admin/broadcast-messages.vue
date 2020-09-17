@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.broadcastMessages') }}
+    the-page-header {{ $t('common.broadcastMessages') }}
     div.white
       v-data-table(
         :headers="headers",

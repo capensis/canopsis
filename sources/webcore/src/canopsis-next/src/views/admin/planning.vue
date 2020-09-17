@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.planningAdministration') }}
+    the-page-header {{ $t('common.planningAdministration') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2
