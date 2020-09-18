@@ -1,5 +1,5 @@
 <template lang="pug">
-  tr(:data-test="`tableRow-${alarm._id}`")
+  tr(:data-test="`tableRow-${alarm._id}`", :class="{ 'not-filtered': isNotFiltered }")
     td.pr-0(v-if="selectable || expandable", data-test="rowCheckbox")
       v-layout(row, align-center)
         template(v-if="selectable")
@@ -31,7 +31,8 @@
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :isResolvedAlarm="isResolvedAlarm"
+        :isResolvedAlarm="isResolvedAlarm",
+        :parentAlarm="parentAlarm"
       )
 </template>
 
@@ -91,20 +92,32 @@ export default {
       type: Boolean,
       default: false,
     },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
   },
   computed: {
     alarm() {
       return this.row.item;
     },
+
     isResolvedAlarm() {
       return isResolvedAlarm(this.alarm);
     },
+
     expandButtonClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 1);
       }
 
       return '';
+    },
+
+    isNotFiltered() {
+      return this.parentAlarm
+        && this.parentAlarm.filtered
+        && !this.parentAlarm.filtered.includes(this.alarm._id);
     },
   },
   methods: {
@@ -118,3 +131,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .not-filtered {
+    opacity: .4;
+    transition: opacity .3s linear;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+</style>

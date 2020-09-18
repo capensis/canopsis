@@ -68,8 +68,12 @@ export default {
     },
   },
   computed: {
+    /**
+     * We are filtered 'manualgroup' because we are using in only in the alarms list widget directly
+     */
     ruleTypes() {
-      return Object.values(META_ALARMS_RULE_TYPES);
+      return Object.values(META_ALARMS_RULE_TYPES)
+        .filter(type => type !== META_ALARMS_RULE_TYPES.manualgroup);
     },
 
     /**

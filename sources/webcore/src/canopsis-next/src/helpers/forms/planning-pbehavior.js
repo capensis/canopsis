@@ -4,7 +4,10 @@ import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
-import { convertDateToTimestampByTimezone, convertTimestampToMoment } from '@/helpers/date';
+import {
+  convertDateToTimestampByTimezone,
+  convertTimestampToMoment,
+} from '@/helpers/date';
 import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/entities';
 
 /**

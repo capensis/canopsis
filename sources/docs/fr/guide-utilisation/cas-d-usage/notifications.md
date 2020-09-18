@@ -3,7 +3,7 @@
 Canopsis est capable de *réagir* en fonction de critères objectifs afin de notifier un outil tiers en appelant une API HTTP.  
 Ce guide vous propose d'interagir avec Mattermost et avec Logstash.  
 
-!!! Warning
+!!! attention
     Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go dans l'édition CAT de Canopsis.
 
 Le moteur [`engine-webhook`](../../guide-administration/moteurs/moteur-webhook.md) vous permet de prendre en charge cette fonctionnalité.

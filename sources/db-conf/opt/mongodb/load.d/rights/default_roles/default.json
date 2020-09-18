@@ -213,6 +213,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_manualMetaAlarmGroup": {
+            "checksum": 1,
+            "desc": ""
+        },
         "listalarm_listPbehavior": {
             "checksum": 1,
             "desc": ""

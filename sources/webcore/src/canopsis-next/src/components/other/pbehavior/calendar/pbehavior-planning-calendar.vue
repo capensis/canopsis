@@ -402,7 +402,8 @@ export default {
      * @returns {Promise<void>}
      */
     applyEventChangesForAllHandler({ target, calendarEvent }) {
-      const pbehavior = get(calendarEvent, 'data.pbehavior');
+      const pbehaviorId = get(calendarEvent, 'data.pbehavior._id');
+      const pbehavior = this.allPbehaviorsById[pbehaviorId];
       const startDiff = target.start.secondsBetween(calendarEvent.start, Op.FLOOR, false);
       const endDiff = target.end.secondsBetween(calendarEvent.end, Op.FLOOR, false);
       const tstart = pbehavior.tstart + startDiff;
@@ -442,13 +443,18 @@ export default {
         name: MODALS.pbehaviorRecurrentChangesConfirmation,
         config: {
           action: async (type) => {
-            if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
-              await this.applyEventChangesForSelectedHandler(event);
-            } else {
-              await this.applyEventChangesForAllHandler(event);
-            }
+            try {
+              if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
+                await this.applyEventChangesForSelectedHandler(event);
+              } else {
+                await this.applyEventChangesForAllHandler(event);
+              }
 
-            this.closePopoverForEvent(event);
+              this.closePopoverForEvent(event);
+            } catch (err) {
+              this.$popups.error({ text: err.description || err.message || this.$t('errors.default') });
+              this.closePopoverForEvent(event);
+            }
           },
           cancel: () => this.closePopoverForEvent(event),
         },

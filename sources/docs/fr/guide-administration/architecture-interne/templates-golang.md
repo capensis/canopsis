@@ -150,6 +150,33 @@ Ainsi, pour afficher transformer un champ en une date au format `heure:minute:se
 
 La [documentation officielle de Go](https://golang.org/pkg/time/#pkg-constants) fournit par ailleurs les valeurs à utiliser pour des formats de dates standards. Pour obtenir une date suivant le RFC3339, il faudra utiliser `formattedDate \"2006-01-02T15:04:05Z07:00\"`. De même, `formattedDate \"02 Jan 06 15:04 MST\"` sera appelé pour générer une date au format RFC822.
 
+### Cas particulier des méta alarmes
+
+Lorsque l'alarme à laquelle le webhook est confronté est une [méta alarme](../moteurs/moteur-correlation.md), il est possible de parcourir les alarmes conséquences pour en extraire le contenu.  
+Pour cela, un opérateur `range` permet d'itérer sur la variable `.Children` qui contient l'ensemble des alarmes conséquences de la méta alarme.
+
+La syntaxe à utiliser est la suivante :
+
+```
+{{ range $variable := .Children }} ... {{ end }}
+```
+
+Voici un exemple concret d'utilisation de cette variable dans un payload de Webhook :
+
+```
+{
+  "message": "{{ range $children := .Children }}{{ $children.ID }} - {{ $children.Value.State.Message }}\n{{ end }}"
+}
+```
+
+Le payload de ce webhook sera donc constitué d'un attribut `message` dont la valeur sera une succession de lignes contenant l'identifiant et le message des alarmes conséquences séparés par un "-".
+
+```
+{
+  "message": "23818029-b80d-416e-9d12-5963c76bcbfa - message alarme conséquence 1\n6594ddea-9fd7-4423-a2db-ba10b72c67aa - message alarme conséquence 2\n"
+}
+```
+
 ## Exemples
 
 Cette section présente différents exemples de templates pour les liens et pour les payloads, accompagnés d'explications.

@@ -10,7 +10,7 @@
           small,
           flat,
           @click="addRule"
-        ) {{$t("filterEditor.buttons.addRule")}}
+        ) {{ $t("filterEditor.buttons.addRule") }}
       v-flex(xs5, md3)
         v-btn(
           data-test="addGroup",
@@ -19,7 +19,7 @@
           small,
           flat,
           @click="addGroup"
-        ) {{$t("filterEditor.buttons.addGroup")}}
+        ) {{ $t("filterEditor.buttons.addGroup") }}
       v-flex(xs5, md3)
         v-btn(
           data-test="deleteGroup",
@@ -30,39 +30,43 @@
           small,
           flat,
           @click="$emit('deleteGroup')"
-        ) {{$t("filterEditor.buttons.deleteGroup")}}
+        ) {{ $t("filterEditor.buttons.deleteGroup") }}
 
-    div(data-test="filterRuleLayout")
-      filter-rule(
-        v-for="(rule, ruleKey) in group.rules",
-        :key="ruleKey",
-        :rule="rule",
-        :possibleFields="possibleFields",
-        @deleteRule="deleteRule(ruleKey)",
-        @update:rule="updateRule(ruleKey, $event)"
-      )
+    v-layout
+      pattern-information.my-2.mr-2(v-if="filterInformationShown") {{ groupOperator }}
+      v-flex
+        div(data-test="filterRuleLayout")
+          filter-rule(
+            v-for="(rule, ruleKey) in group.rules",
+            :key="ruleKey",
+            :rule="rule",
+            :possibleFields="possibleFields",
+            @deleteRule="deleteRule(ruleKey)",
+            @update:rule="updateRule(ruleKey, $event)"
+          )
 
-    div(data-test="filterGroupLayout")
-      filter-group.filterGroup(
-        v-for="(group, groupKey) in group.groups",
-        :key="groupKey",
-        :group="group",
-        :possibleFields="possibleFields",
-        @deleteGroup="deleteGroup(groupKey)",
-        @update:group="updateGroup(groupKey, $event)"
-      )
+        div(data-test="filterGroupLayout")
+          filter-group.filterGroup(
+            v-for="(group, groupKey) in group.groups",
+            :key="groupKey",
+            :group="group",
+            :possibleFields="possibleFields",
+            @deleteGroup="deleteGroup(groupKey)",
+            @update:group="updateGroup(groupKey, $event)"
+          )
 </template>
 
 <script>
 import { omit, cloneDeep } from 'lodash';
 
-import { FILTER_DEFAULT_VALUES } from '@/constants';
+import { FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
 import formMixin from '@/mixins/form';
 
 import OperatorField from '@/components/forms/fields/operator-field.vue';
+import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 import FilterRule from './filter-rule.vue';
 
@@ -79,6 +83,7 @@ import FilterRule from './filter-rule.vue';
 export default {
   name: 'filter-group', // We need it for recursive
   components: {
+    PatternInformation,
     OperatorField,
     FilterRule,
   },
@@ -100,6 +105,15 @@ export default {
     isInitial: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    filterInformationShown() {
+      return Object.keys(this.group.rules).length > 1;
+    },
+
+    groupOperator() {
+      return this.group.condition === FILTER_MONGO_OPERATORS.and ? this.$t('common.and') : this.$t('common.or');
     },
   },
   methods: {
