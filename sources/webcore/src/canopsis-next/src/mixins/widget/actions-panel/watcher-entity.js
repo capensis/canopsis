@@ -3,20 +3,20 @@ import {
   EVENT_ENTITY_TYPES,
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_RIGHTS_ACTIONS_MAP,
-  WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT,
+  WEATHER_AUTOREMOVE_BYPAUSE_OUTPUT, PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import eventActionsWatcherEntityMixin from '@/mixins/event-actions/watcher-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
+import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 
 export default {
   mixins: [
     authMixin,
+    entitiesPbehaviorTypesMixin,
     eventActionsWatcherEntityMixin,
     entitiesPbehaviorMixin,
-    entitiesPbehaviorCommentMixin,
   ],
   methods: {
     /**
@@ -83,7 +83,11 @@ export default {
       this.actionsClicked.push(EVENT_ENTITY_TYPES.invalidate);
     },
 
-    preparePauseAction() {
+    async preparePauseAction() {
+      const defaultPbehaviorTypes = await this.fetchDefaultPbehaviorTypes();
+
+      const pauseType = defaultPbehaviorTypes.find(({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause);
+
       this.$modals.show({
         name: MODALS.createWatcherPauseEvent,
         config: {
@@ -92,6 +96,7 @@ export default {
               entity: this.entity,
               comment: pause.comment,
               reason: pause.reason,
+              type: pauseType,
             });
             this.addCancelActionToQueue({
               entity: this.entity,
@@ -102,6 +107,14 @@ export default {
           },
         },
       });
+    },
+
+    async fetchDefaultPbehaviorTypes() {
+      const { data } = await this.fetchPbehaviorTypesListWithoutStore({
+        params: { default: true },
+      });
+
+      return data;
     },
 
     preparePlayAction() {

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    div.mt-2(v-for="watcherEntity in slicedWatcherEntities", :key="watcherEntity._id")
+    div.mt-2(v-for="watcherEntity in slicedWatcherEntities", :key="watcherEntity.key")
       watcher-entity(
         :watcherId="watcher._id",
         :isWatcherOnPbehavior="watcher.active_pb_watcher",

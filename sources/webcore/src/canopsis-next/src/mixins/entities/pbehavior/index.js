@@ -1,14 +1,18 @@
 import { createNamespacedHelpers } from 'vuex';
 
+import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
+
 const { mapGetters, mapActions } = createNamespacedHelpers('pbehavior');
 
 /**
  * @mixin
  */
 export default {
+  mixins: [entitiesPbehaviorCommentMixin],
   computed: {
     ...mapGetters({
       pbehaviors: 'items',
+      getPbehavior: 'getItem',
       pbehaviorsPending: 'pending',
       pbehaviorsMeta: 'meta',
     }),
@@ -23,8 +27,11 @@ export default {
       fetchPbehaviorsByEntityId: 'fetchListByEntityId',
     }),
 
-    createPbehaviors(pbehaviors, options = {}) {
-      return Promise.all(pbehaviors.map(data => this.createPbehavior({ data, ...options })));
+    async createPbehaviors(pbehaviors) {
+      return Promise.all(pbehaviors.map(async (data) => {
+        const pbehavior = await this.createPbehavior({ data });
+        return this.updateSeveralPbehaviorComments({ comments: data.comments, pbehavior });
+      }));
     },
 
     removePbehaviors(pbehaviors) {
@@ -32,7 +39,13 @@ export default {
     },
 
     updatePbehaviors(pbehaviors) {
-      return Promise.all(pbehaviors.map(data => this.updatePbehavior({ data, id: data._id })));
+      return Promise.all(pbehaviors.map((pbehavior) => {
+        this.updatePbehavior({ data: pbehavior, id: pbehavior._id });
+        return this.updateSeveralPbehaviorComments({
+          pbehavior: this.getPbehavior(pbehavior._id),
+          comments: pbehavior.comments,
+        });
+      }));
     },
   },
 };

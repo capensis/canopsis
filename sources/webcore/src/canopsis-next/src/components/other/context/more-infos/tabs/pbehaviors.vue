@@ -36,7 +36,6 @@ import EnabledColumn from '@/components/tables/enabled-column.vue';
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
   components: {
@@ -47,7 +46,6 @@ export default {
     authMixin,
     queryMixin,
     entitiesPbehaviorMixin,
-    entitiesPbehaviorCommentMixin,
   ],
   props: {
     itemId: {
@@ -76,7 +74,7 @@ export default {
         },
         {
           text: this.$t('pbehaviors.isEnabled'),
-          value: 'isEnabled',
+          value: 'enabled',
         },
         {
           text: this.$t('pbehaviors.begins'),
@@ -88,11 +86,11 @@ export default {
         },
         {
           text: this.$t('pbehaviors.type'),
-          value: 'type_',
+          value: 'type.type',
         },
         {
           text: this.$t('pbehaviors.reason'),
-          value: 'reason',
+          value: 'reason.name',
         },
         {
           text: this.$t('pbehaviors.rrule'),
@@ -126,12 +124,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           pbehaviors: [pbehavior],
-          afterSubmit: () => {
-            this.fetchList();
-            this.$popups.success({
-              text: this.$t('success.default'),
-            });
-          },
+          afterSubmit: this.fetchList,
         },
       });
     },

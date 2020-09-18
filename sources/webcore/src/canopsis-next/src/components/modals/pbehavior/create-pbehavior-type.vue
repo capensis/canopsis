@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import { has } from 'lodash';
-
 import { MODALS } from '@/constants';
-import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type';
+
+import { pbehaviorTypeToForm, formToPbehaviorType } from '@/helpers/forms/type-pbehavior';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import validationErrorsMixin from '@/mixins/form/validation-errors';
 
 import CreateTypeForm from '@/components/other/pbehavior/types/form/create-pbehavior-type-form.vue';
 
@@ -31,21 +31,16 @@ export default {
     CreateTypeForm,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    validationErrorsMixin(),
+  ],
   data() {
     return {
       form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
     };
   },
   methods: {
-    setFormError(err = {}) {
-      const existFieldErrors = Object.entries(err).filter(([field]) => has(this.form, field));
-
-      if (existFieldErrors.length) {
-        this.errors.add(existFieldErrors.map(([field, msg]) => ({ field, msg })));
-      }
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
@@ -57,7 +52,7 @@ export default {
 
           this.$modals.hide();
         } catch (err) {
-          this.setFormError(err);
+          this.setFormErrors(err);
         }
       }
     },

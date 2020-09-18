@@ -20,6 +20,7 @@
       pbehavior-create-event(
         slot-scope="{ calendarEvent, close, edit }",
         :calendarEvent="calendarEvent",
+        :filter="filter",
         @close="close",
         @submit="edit",
         @remove="removePbehavior"
@@ -40,6 +41,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { get, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op, Units } from 'dayspan';
@@ -48,6 +50,7 @@ import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES }
 
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
+import { pbehaviorToTimespan } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone } from '@/helpers/date';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
@@ -151,6 +154,14 @@ export default {
       return [Units.MONTH, Units.YEAR].includes(this.calendar.type);
     },
   },
+  watch: {
+    pbehaviorsById: {
+      immediate: true,
+      handler() {
+        this.setCalendarView();
+      },
+    },
+  },
   mounted() {
     this.fetchEvents();
     this.fetchDefaultTypes();
@@ -163,6 +174,20 @@ export default {
     ...pbehaviorTypesMapActions({
       fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
     }),
+
+    /**
+     * Set calendar view to min event date
+     */
+    setCalendarView() {
+      const startTimestamps = Object.values(this.pbehaviorsById).map(({ tstart }) => tstart);
+
+      if (startTimestamps.length) {
+        const startTimestamp = Math.min.apply(null, startTimestamps);
+        const calendarStart = moment.unix(startTimestamp);
+
+        this.calendar.set({ around: calendarStart });
+      }
+    },
 
     /**
      * Get color for pbehavior and save that into data for correct displaying
@@ -214,18 +239,14 @@ export default {
       const viewFrom = (tstartBeforeCalendarStart && tstopAfterCalendarStart) ? pbehavior.tstart : calendarStart;
       const viewTo = (tstartBeforeCalendarEnd && tstopAfterCalendarEnd) ? pbehavior.tstop : calendarEnd;
 
-      return this.fetchTimespans({
-        data: {
-          rrule: pbehavior.rrule,
-          start_at: pbehavior.tstart,
-          end_at: pbehavior.tstop,
-          view_from: viewFrom,
-          view_to: viewTo,
-          exdates: pbehavior.exdates,
-          exceptions: pbehavior.exceptions,
-          by_date: this.isCalendarTypeWeek,
-        },
+      const timespan = pbehaviorToTimespan({
+        pbehavior,
+        viewFrom,
+        viewTo,
+        byDate: this.isCalendarTypeWeek,
       });
+
+      return this.fetchTimespans({ data: timespan });
     },
 
     /**
@@ -298,21 +319,21 @@ export default {
      *
      * @param {Object} pbehavior
      */
-    removePbehavior(removablePbehavior) {
-      if (this.addedPbehaviorsById[removablePbehavior._id]) {
-        this.$emit('update:addedPbehaviorsById', omit(this.addedPbehaviorsById, [removablePbehavior._id]));
+    removePbehavior(pbehavior) {
+      if (this.addedPbehaviorsById[pbehavior._id]) {
+        this.$emit('update:addedPbehaviorsById', omit(this.addedPbehaviorsById, [pbehavior._id]));
       } else {
         this.$emit('update:removedPbehaviorsById', {
           ...this.removedPbehaviorsById,
-          [removablePbehavior._id]: removablePbehavior,
+          [pbehavior._id]: pbehavior,
         });
 
-        if (this.changedPbehaviorsById[removablePbehavior._id]) {
-          this.$emit('update:changedPbehaviorsById', omit(this.changedPbehaviorsById, [removablePbehavior._id]));
+        if (this.changedPbehaviorsById[pbehavior._id]) {
+          this.$emit('update:changedPbehaviorsById', omit(this.changedPbehaviorsById, [pbehavior._id]));
         }
       }
 
-      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== removablePbehavior._id);
+      this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
     },
 
     /**
@@ -328,7 +349,7 @@ export default {
       }
 
       if (event.closePopover) {
-        event.closePopover();
+        event.closePopover(event);
       }
 
       event.clearPlaceholder();
@@ -382,10 +403,11 @@ export default {
      */
     applyEventChangesForAllHandler({ target, calendarEvent }) {
       const pbehavior = get(calendarEvent, 'data.pbehavior');
+      const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
       const startDiff = target.start.secondsBetween(calendarEvent.start, Op.FLOOR, false);
       const endDiff = target.end.secondsBetween(calendarEvent.end, Op.FLOOR, false);
-      const tstart = pbehavior.tstart + startDiff;
-      const tstop = pbehavior.tstop + endDiff;
+      const tstart = originalPbehavior.tstart + startDiff;
+      const tstop = originalPbehavior.tstop + endDiff;
       const newPbehavior = {
         ...pbehavior,
 
@@ -407,7 +429,7 @@ export default {
       }
 
       if (event.closePopover) {
-        event.closePopover();
+        event.closePopover(event);
       }
     },
 
@@ -421,13 +443,18 @@ export default {
         name: MODALS.pbehaviorRecurrentChangesConfirmation,
         config: {
           action: async (type) => {
-            if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
-              await this.applyEventChangesForSelectedHandler(event);
-            } else {
-              await this.applyEventChangesForAllHandler(event);
-            }
+            try {
+              if (type === PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected) {
+                await this.applyEventChangesForSelectedHandler(event);
+              } else {
+                await this.applyEventChangesForAllHandler(event);
+              }
 
-            this.closePopoverForEvent(event);
+              this.closePopoverForEvent(event);
+            } catch (err) {
+              this.$popups.error({ text: err.description || err.message || this.$t('errors.default') });
+              this.closePopoverForEvent(event);
+            }
           },
           cancel: () => this.closePopoverForEvent(event),
         },

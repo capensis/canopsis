@@ -60,7 +60,6 @@ import {
 
 import authMixin from '@/mixins/auth';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import EntityTemplate from './entity-template.vue';
@@ -72,7 +71,6 @@ export default {
   mixins: [
     authMixin,
     widgetActionPanelWatcherEntityMixin,
-    entitiesPbehaviorCommentMixin,
     entitiesWatcherEntityMixin,
   ],
   props: {
@@ -204,11 +202,7 @@ export default {
     },
 
     hasActivePbehavior() {
-      if (!this.entity.pbehaviors || !this.entity.pbehaviors.length) {
-        return false;
-      }
-
-      return this.entity.pbehaviors.some(pbehavior => pbehavior.enabled);
+      return this.entity.pbehaviors.some(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.active);
     },
 
     isPaused() {

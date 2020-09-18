@@ -1,15 +1,15 @@
 <template lang="pug">
   div
     v-layout(row)
-      search-field(@submit="handleSearch", @clear="handleSearchClear")
+      search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
     v-data-table(
       v-field="exceptions",
       :headers="headers",
       :items="pbehaviorExceptions",
       :loading="pbehaviorExceptionsPending",
       :total-items="pbehaviorExceptionsMeta.total_count",
-      :pagination.sync="query",
-      item-key="id",
+      :pagination.sync="pagination",
+      item-key="_id",
       select-all
     )
       template(slot="items", slot-scope="props")
@@ -20,10 +20,12 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
-import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exception';
-import exceptionQueryMixin from '@/mixins/pbehavior/exception/query';
+import { PLANNING_TABS } from '@/constants';
+
+import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exceptions';
+import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 
@@ -31,7 +33,7 @@ export default {
   components: { SearchField },
   mixins: [
     entitiesPbehaviorExceptionMixin,
-    exceptionQueryMixin,
+    pbehaviorQueryMixin,
   ],
   model: {
     prop: 'exceptions',
@@ -41,6 +43,10 @@ export default {
     exceptions: {
       type: Array,
       default: () => [],
+    },
+    queryId: {
+      type: String,
+      default: PLANNING_TABS.exceptions,
     },
   },
   computed: {
@@ -58,7 +64,15 @@ export default {
 
   methods: {
     async fetchList() {
-      this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
+      this.fetchPbehaviorExceptionsList({ params: this.query });
+    },
+
+    updateSearchHandler(search) {
+      this.$emit('update:pagination', { ...this.pagination, search });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
     },
   },
 };

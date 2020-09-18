@@ -1,42 +1,56 @@
 import { API_ROUTES } from '@/config';
+import { ENTITIES_TYPES } from '@/constants';
+import { pbehaviorReasonsSchema } from '@/store/schemas';
 
-import request from '@/services/request';
+import { createEntityModule } from '@/store/plugins/entities';
 
 export const types = {
-  FETCH_PBEHAVIOR_REASONS: 'FETCH_PBEHAVIOR_REASONS',
-  FETCH_PBEHAVIOR_REASONS_COMPLETED: 'FETCH_PBEHAVIOR_REASONS_COMPLETED',
+  FETCH_LIST: 'FETCH_LIST',
+  FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
-export default {
-  namespaced: true,
+export default createEntityModule({
+  types,
+  route: API_ROUTES.planning.reasons,
+  entityType: ENTITIES_TYPES.pbehaviorReasons,
+  withFetchingParams: true,
+}, {
   state: {
-    pending: false,
-    pbehaviorReasons: [],
+    meta: {},
   },
   getters: {
-    pending: state => state.pending,
-    pbehaviorReasons: state => state.pbehaviorReasons,
+    meta: state => state.meta,
   },
   mutations: {
-    [types.FETCH_PBEHAVIOR_REASONS](state) {
-      state.pending = true;
-    },
-    [types.FETCH_PBEHAVIOR_REASONS_COMPLETED](state, { reasons = [] }) {
+    [types.FETCH_LIST_COMPLETED](state, { allIds, meta }) {
+      state.allIds = allIds;
+      state.meta = meta;
       state.pending = false;
-      state.pbehaviorReasons = reasons;
     },
   },
   actions: {
-    async fetchPbehaviorReasons({ commit }) {
+    async fetchList({ commit, dispatch }, { params } = {}) {
       try {
-        commit(types.FETCH_PBEHAVIOR_REASONS);
+        commit(types.FETCH_LIST, { params });
 
-        const { reasons } = await request.get(API_ROUTES.pbehaviorReasons);
+        const { normalizedData, data } = await dispatch('entities/fetch', {
+          params,
+          route: API_ROUTES.planning.reasons,
+          schema: [pbehaviorReasonsSchema],
+          dataPreparer: d => d.data,
+        }, { root: true });
 
-        commit(types.FETCH_PBEHAVIOR_REASONS_COMPLETED, { reasons });
+        commit(types.FETCH_LIST_COMPLETED, {
+          allIds: normalizedData.result,
+          meta: data.meta,
+        });
       } catch (err) {
         console.error(err);
+        commit(types.FETCH_LIST_FAILED);
+
+        throw err;
       }
     },
   },
-};
+});

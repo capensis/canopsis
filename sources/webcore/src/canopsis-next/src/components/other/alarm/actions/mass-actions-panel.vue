@@ -123,9 +123,8 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           filter: {
-            _id: { $in: this.items.map(item => item.d) },
+            _id: { $in: this.items.map(item => item.entity._id) },
           },
-          afterSubmit: () => this.$popups.success({ text: this.$t('success.default') }),
         },
       });
     },

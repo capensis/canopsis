@@ -16,7 +16,6 @@ import formMixin from '@/mixins/form/object';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorCommentsForm from './pbehavior-comments-form.vue';
-import PbehaviorExceptionDatesForm from './pbehavior-exception-dates-form.vue';
 import PbehaviorFilterField from './pbehavior-filter-field.vue';
 import PbehaviorRruleField from './pbehavior-rrule-field.vue';
 
@@ -26,7 +25,6 @@ export default {
     PbehaviorFilterField,
     PbehaviorGeneralForm,
     PbehaviorCommentsForm,
-    PbehaviorExceptionDatesForm,
   },
   mixins: [formMixin],
   model: {

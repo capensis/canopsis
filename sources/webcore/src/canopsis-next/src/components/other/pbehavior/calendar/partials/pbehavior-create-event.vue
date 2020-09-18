@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter),
+      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter, this.$system.timezone),
     };
   },
   computed: {
@@ -90,7 +90,7 @@ export default {
       this.calendarEvent.data.cachedForm = cloneDeep(this.form);
     },
 
-    async submitHandler() {
+    async submitHandler(event) {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
@@ -98,35 +98,37 @@ export default {
 
         const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent, this.$system.timezone);
 
-        this.$emit('submit', calendarEvent);
+        this.manualClose = true;
+
+        this.$emit('submit', calendarEvent, event);
       }
     },
 
-    cancel() {
+    cancel(event) {
       const { cachedForm } = this.calendarEvent.data;
 
       if (isOmitEqual(cachedForm, this.form, ['_id'])) {
-        return this.close(true);
+        return this.close(event, true);
       }
 
       return this.$modals.show({
         name: MODALS.confirmation,
         config: {
           text: this.$t('modals.createPbehavior.cancelConfirmation'),
-          action: () => this.close(true),
+          action: () => this.close(event, true),
         },
       });
     },
 
-    remove() {
+    remove(event) {
       this.$emit('remove', this.pbehavior);
-      this.close();
+      this.close(event);
     },
 
-    close(manualClose = false) {
+    close(event, manualClose = false) {
       this.manualClose = manualClose;
 
-      this.$emit('close');
+      this.$emit('close', event);
     },
   },
 };

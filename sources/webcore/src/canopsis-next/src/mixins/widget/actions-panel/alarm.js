@@ -79,7 +79,7 @@ export default {
         name: MODALS.pbehaviorList,
         config: {
           ...this.modalConfig,
-          pbehaviors: this.item.pbehaviors,
+          pbehaviors: [this.item.pbehavior],
           entityId: this.item.entity._id,
           availableActions,
         },
@@ -135,7 +135,7 @@ export default {
         name: MODALS.pbehaviorPlanning,
         config: {
           filter: {
-            _id: { $in: [this.item.d] },
+            _id: { $in: [this.item.entity._id] },
           },
         },
       });

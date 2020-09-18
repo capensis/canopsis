@@ -14,11 +14,11 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, PLANNING_TABS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
-import pbehaviorTypesQueryMixin from '@/mixins/pbehavior/types/query';
+import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
 
 import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
 
@@ -27,29 +27,31 @@ export default {
   mixins: [
     rightsTechnicalPbehaviorTypesMixin,
     entitiesPbehaviorTypesMixin,
-    pbehaviorTypesQueryMixin,
+    pbehaviorQueryMixin,
   ],
   props: {
     params: {
       type: Object,
       default: () => ({}),
     },
+    queryId: {
+      type: String,
+      default: PLANNING_TABS.types,
+    },
   },
   watch: {
     query(query, oldQuery) {
       if (!isEqual(query, oldQuery)) {
         this.fetchList();
-        this.$emit('update:params', this.getQuery());
       }
     },
   },
   mounted() {
     this.fetchList();
-    this.$emit('update:params', this.getQuery());
   },
   methods: {
     fetchList() {
-      this.fetchPbehaviorTypesList({ params: this.getQuery() });
+      this.fetchPbehaviorTypesList({ params: this.query });
     },
 
     async tryRemovePbehaviorType(pbehaviorTypeId) {

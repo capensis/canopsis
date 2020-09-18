@@ -66,6 +66,8 @@
 
 
 <script>
+import { get } from 'lodash';
+
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 import { DsCalendar } from 'dayspan-vuetify/src/components';
 
@@ -104,6 +106,11 @@ export default {
         moving: false,
       };
       const span = new DaySpan(calendarEvent.start, calendarEvent.end);
+
+      if (calendarEvent.fullDay && !span.end.isEnd()) {
+        span.end = span.end.prev().end();
+      }
+
       const schedule = calendarEvent.fullDay
         ? Schedule.forDay(span.start, span.days(Op.UP))
         : Schedule.forSpan(span);
@@ -181,8 +188,13 @@ export default {
       }
     },
 
-    startEditing() {
+    startEditing(event) {
+      if (this.editingEvent && this.editingEvent.closePopover) {
+        this.editingEvent.closePopover(event);
+      }
+
       this.editing = true;
+      this.editingEvent = event;
     },
 
     mouseMoveCheck() {
@@ -275,7 +287,7 @@ export default {
         const event = this.getEvent('moved', {
           mouseEvent,
           movingEvent: this.movingEvent,
-          calendarEvent: this.movingEvent.calendarEvent,
+          calendarEvent: this.copyCalendarEvent(this.movingEvent.calendarEvent),
           target: this.placeholder.time,
           openPopover: () => this.placeholderForCreate = true,
           closePopover: () => this.clearPlaceholder(),
@@ -294,17 +306,12 @@ export default {
     handleResized(mouseEvent) {
       const target = this.placeholder.time;
       const source = this.resizingEvent.calendarEvent.time;
-      const isDay = mouseEvent.type === 'mouse-up-day';
 
-      if (
-        isDay
-          ? !(target.start.sameDay(source.start) && target.end.sameDay(source.end))
-          : !(target.start.sameMinute(source.start) && target.end.sameMinute(source.end))
-      ) {
+      if (!(target.start.sameMinute(source.start) && target.end.sameMinute(source.end))) {
         const event = this.getEvent('resized', {
           mouseEvent,
           resizingEvent: this.resizingEvent,
-          calendarEvent: this.resizingEvent.calendarEvent,
+          calendarEvent: this.copyCalendarEvent(this.resizingEvent.calendarEvent),
           target: this.placeholder.time,
           openPopover: () => this.placeholderForCreate = true,
           closePopover: () => this.clearPlaceholder(),
@@ -337,8 +344,14 @@ export default {
       this.resizingBelow = true;
     },
 
-    endEditing() {
-      this.editing = false;
+    endEditing(event) {
+      if (
+        this.editingEvent
+        && get(event, 'calendarEvent.event.id') === get(this.editingEvent, 'calendarEvent.event.id')
+      ) {
+        this.editing = false;
+        this.editingEvent = null;
+      }
     },
 
     changeAddPlaceholder(mouseEvent) {

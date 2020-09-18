@@ -13,7 +13,7 @@
           v-if="hasColumns",
           :page="query.page",
           :limit="query.limit",
-          :total="alarmsMeta.total",
+          :total="alarmsMeta.total_count",
           type="top",
           @input="updateQueryPage"
         )
@@ -53,7 +53,7 @@
     alarms-list-table(
       :widget="widget",
       :alarms="alarms",
-      :totalItems="alarmsMeta.total",
+      :totalItems="alarmsMeta.total_count",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
       :isTourEnabled="isTourEnabled",
@@ -63,13 +63,13 @@
       expandable,
       ref="alarmsTable"
     )
-      v-layout.white(v-show="alarmsMeta.total", align-center)
+      v-layout.white(v-show="alarmsMeta.total_count", align-center)
         v-flex(xs10)
           pagination(
             data-test="bottomPagination",
             :page="query.page",
             :limit="query.limit",
-            :total="alarmsMeta.total",
+            :total="alarmsMeta.total_count",
             @input="updateQueryPage"
           )
         v-spacer

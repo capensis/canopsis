@@ -11,8 +11,8 @@
             enabled-column(:value="props.item.enabled")
           td {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
           td {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
-          td {{ props.item.type.name }}
-          td {{ props.item.reason.name }}
+          td {{ props.item.type | get('name', null, '') }}
+          td {{ props.item.reason | get('name', null, '') }}
           td
             v-btn.mx-0(
               v-for="action in availableActions",
@@ -41,7 +41,6 @@ import { MODALS, CRUD_ACTIONS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
@@ -52,7 +51,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   components: { EnabledColumn, ModalWrapper },
-  mixins: [modalInnerMixin, entitiesPbehaviorMixin, entitiesPbehaviorCommentMixin],
+  mixins: [modalInnerMixin, entitiesPbehaviorMixin],
   inject: ['$system'],
   computed: {
     headers() {

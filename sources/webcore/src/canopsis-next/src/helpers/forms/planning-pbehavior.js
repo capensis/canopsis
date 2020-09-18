@@ -1,12 +1,75 @@
 import Vue from 'vue';
+import moment from 'moment-timezone';
 import { omit, isObject, isString, cloneDeep, isUndefined } from 'lodash';
 import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import uid from '@/helpers/uid';
-import { convertDateToTimestampByTimezone, convertTimestampToMoment } from '@/helpers/date';
-import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
+import {
+  convertDateToTimestampByTimezone,
+  convertTimestampToMomentByTimezone,
+} from '@/helpers/date';
+import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/entities';
 
-export function pbehaviorToForm(pbehavior = {}, filter = null) {
+/**
+ * Clear exdate entity and convert to request.
+ *
+ * @param {Array} exdates
+ * @return {{end: number, type: string, begin: number }[]}
+ */
+export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
+  type: getIdFromEntity(type),
+  begin,
+  end,
+}));
+
+/**
+ * Convert exdate to form
+ *
+ * @param {Object} exdate
+ * @param {string} [timezone = moment.tz.guess()]
+ * @return {{end: Date, type: Object, begin: Date }[]}
+ */
+export const exdateToForm = (exdate, timezone = moment.tz.guess()) => ({
+  ...exdate,
+  key: uid(),
+  begin: convertTimestampToMomentByTimezone(exdate.begin, timezone).toDate(),
+  end: convertTimestampToMomentByTimezone(exdate.end, timezone).toDate(),
+});
+
+/**
+ * Convert exdate form to exdate
+ *
+ * @param {Object} formExdate
+ * @param {string} [timezone = moment.tz.guess()]
+ * @return {{type: string, begin: number, end: number}}
+ */
+export const formToExdate = (formExdate, timezone = moment.tz.guess()) => ({
+  type: formExdate.type,
+  begin: convertDateToTimestampByTimezone(formExdate.begin, timezone),
+  end: convertDateToTimestampByTimezone(formExdate.end, timezone),
+});
+
+/**
+ * Convert exceptions to exceptions id array.
+ *
+ * @param {Array} exceptions
+ * @return {string[]}
+ */
+export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
+
+/**
+ * Convert pbehavior entity to form data.
+ *
+ * @param {Object} [pbehavior = {}]
+ * @param {string|Object} [filter = null]
+ * @param {string} [timezone = moment.tz.guess()]
+ * @return {Object}
+ */
+export const pbehaviorToForm = (
+  pbehavior = {},
+  filter = null,
+  timezone = moment.tz.guess(),
+) => {
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
@@ -21,54 +84,88 @@ export function pbehaviorToForm(pbehavior = {}, filter = null) {
     enabled: isUndefined(pbehavior.enabled) ? true : pbehavior.enabled,
     author: pbehavior.author || '',
     name: pbehavior.name || '',
-    type: pbehavior.type, // TODO: add cloneDeep
-    reason: pbehavior.reason, // TODO: add cloneDeep
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : null,
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : null,
+    type: cloneDeep(pbehavior.type),
+    reason: cloneDeep(pbehavior.reason),
+    tstart: pbehavior.tstart ? convertTimestampToMomentByTimezone(pbehavior.tstart, timezone).toDate() : null,
+    tstop: pbehavior.tstop ? convertTimestampToMomentByTimezone(pbehavior.tstop, timezone).toDate() : null,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
-    comments: addKeyInEntity(cloneDeep(pbehavior.comments || [])),
-    exdates: addKeyInEntity(cloneDeep(pbehavior.exdates || [])), // TODO: convert timestamp to Date
+    exceptions: pbehavior.exceptions ? addKeyInEntity(cloneDeep(pbehavior.exceptions)) : [],
+    comments: pbehavior.comments ? addKeyInEntity(cloneDeep(pbehavior.comments)) : [],
+    exdates: pbehavior.exdates ? pbehavior.exdates.map(exdate => exdateToForm(exdate, timezone)) : [],
   };
-}
+};
 
-export function formToPbehavior(form, timezone) {
-  return {
-    ...form,
+/**
+ * Convert form to pbehavior entity.
+ *
+ * @param {Object} form
+ * @param {string} timezone
+ * @return {Object}
+ */
+export const formToPbehavior = (form, timezone) => ({
+  ...form,
 
-    reason: '8a48507a-7eba-463f-953f-41b93fce9745', // TODO should be replaced in version 6
-    comments: removeKeyFromEntity(form.comments),
-    exdates: removeKeyFromEntity(form.exdates),
-    tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
-    tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
-  };
-}
+  enabled: isUndefined(form.enabled) ? true : form.enabled,
+  reason: form.reason,
+  type: form.type,
+  comments: removeKeyFromEntity(form.comments),
+  exdates: form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)),
+  exceptions: removeKeyFromEntity(form.exceptions),
+  tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
+  tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
+});
 
-export function calendarEventToPbehaviorForm(calendarEvent, filter) {
-  const { pbehavior, cachedForm = {} } = calendarEvent.data || {};
+/**
+ * Convert calendar event to pbehavior form data
+ *
+ * @param {CalendarEvent} calendarEvent
+ * @param {string|Object} filter
+ * @param {string} [timezone = moment.tz.guess()]
+ * @return {Object}
+ */
+export const calendarEventToPbehaviorForm = (
+  calendarEvent,
+  filter,
+  timezone = moment.tz.guess(),
+) => {
+  const {
+    start,
+    end,
+    schedule,
+    data: { pbehavior, cachedForm = {} },
+  } = calendarEvent;
 
   const form = {
-    ...pbehaviorToForm(pbehavior, filter),
+    ...pbehaviorToForm(pbehavior, filter, timezone),
     ...cachedForm,
   };
 
-  form.tstart = calendarEvent.start.date.toDate();
+  form.tstart = start.date.toDate();
 
   if (!pbehavior || pbehavior.tstop) {
-    if (calendarEvent.schedule.durationUnit === 'days') {
-      if (calendarEvent.end.date.diff(calendarEvent.start.date, 'days') <= 0) {
-        form.tstop = calendarEvent.start.date.clone().endOf('day').toDate();
+    if (schedule.durationUnit === 'days') {
+      if (end.date.diff(start.date, 'hours') <= 24) {
+        form.tstop = start.date.clone().endOf('day').toDate();
       } else {
-        form.tstop = calendarEvent.end.date.clone().subtract(1, 'second').toDate();
+        form.tstop = calendarEvent.end.date.clone().subtract(1, 'millisecond').toDate();
       }
     } else {
-      form.tstop = calendarEvent.end.date.toDate();
+      form.tstop = end.date.toDate();
     }
   }
 
   return form;
-}
+};
 
-export function formToCalendarEvent(form, calendarEvent, timezone) {
+/**
+ * Convert form to calendar event.
+ *
+ * @param {Object} form
+ * @param {CalendarEvent} calendarEvent
+ * @param {string} timezone
+ * @return {CalendarEvent}
+ */
+export const formToCalendarEvent = (form, calendarEvent, timezone) => {
   const span = new DaySpan(calendarEvent.start, calendarEvent.end);
 
   const schedule = calendarEvent.fullDay
@@ -86,22 +183,27 @@ export function formToCalendarEvent(form, calendarEvent, timezone) {
   event.id = calendarEvent.event.id;
 
   return new CalendarEvent(calendarEvent.id, event, span, calendarEvent.day);
-}
+};
 
-export function pbehaviorToRequest(pbehavior) {
-  const result = omit(pbehavior, ['_id', 'type', 'reason', 'exdates']);
+/**
+ * Convert pbehavior to request data.
+ *
+ * @param {Object} pbehavior
+ * @return {Object}
+ */
+export const pbehaviorToRequest = (pbehavior) => {
+  const result = omit(pbehavior, ['type', 'reason', 'exdates']);
 
-  result.type = isObject(pbehavior.type) ? pbehavior.type._id : pbehavior.type;
-  result.reason = isObject(pbehavior.reason) ? pbehavior.reason._id : pbehavior.reason;
-
-  if (!pbehavior._id.includes('pbehavior')) { // TODO: fix that
-    result._id = pbehavior._id;
-  }
+  result.type = getIdFromEntity(pbehavior.type);
+  result.reason = getIdFromEntity(pbehavior.reason);
 
   if (pbehavior.exdates) {
-    result.exdates = pbehavior.exdates
-      .map(exdate => ({ ...exdate, type: isObject(exdate.type) ? exdate.type._id : exdate.type }));
+    result.exdates = exdatesToRequest(pbehavior.exdates);
+  }
+
+  if (pbehavior.exceptions) {
+    result.exceptions = exceptionsToRequest(pbehavior.exceptions);
   }
 
   return result;
-}
+};

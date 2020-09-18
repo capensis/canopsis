@@ -37,7 +37,11 @@
                   span.black--text {{ link.text }}
                   v-icon.ml-2 {{ link.icon }}
       v-menu(bottom, offset-y, offset-x)
-        v-btn.white--text(slot="activator", data-test="userTopBarDropdownButton", flat) {{ currentUser._id }}
+        v-btn.white--text(
+          slot="activator",
+          data-test="userTopBarDropdownButton",
+          flat
+        ) {{ userName }}
         v-list.pb-0
           v-list-tile
             v-list-tile-content
@@ -191,6 +195,10 @@ export default {
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));
+    },
+
+    userName() {
+      return this.currentUser.crecord_name || this.currentUser._id;
     },
   },
   methods: {

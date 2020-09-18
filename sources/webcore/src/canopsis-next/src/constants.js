@@ -34,8 +34,9 @@ export const ENTITIES_TYPES = {
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
   playlist: 'playlist',
-  pbehaviorException: 'pbehaviorException',
+  pbehaviorExceptions: 'pbehaviorExceptions',
   pbehaviorTypes: 'pbehaviorTypes',
+  pbehaviorReasons: 'pbehaviorReasons',
 };
 
 export const MODALS = {
@@ -96,9 +97,11 @@ export const MODALS = {
   managePlaylistTabs: 'manage-playlist-tabs',
   pbehaviorPlanning: 'pbehavior-planning',
   createRRule: 'create-r-rule',
-  selectExceptionsDatesLists: 'select-exceptions-dates-lists',
+  selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
+  createPbehaviorReason: 'create-pbehavior-reason',
+  createPbehaviorException: 'create-pbehavior-exception',
   createManualMetaAlarm: 'create-manual-meta-alarm',
 };
 
@@ -194,20 +197,6 @@ export const WATCHER_STATES_COLORS = {
   [WATCHER_STATES.major]: ENTITIES_STATES_STYLES[ENTITIES_STATES.major].color,
   [WATCHER_STATES.critical]: ENTITIES_STATES_STYLES[ENTITIES_STATES.critical].color,
   [WATCHER_STATES.pause]: COLORS.state.pause,
-};
-
-export const PBEHAVIOR_TYPES = {
-  maintenance: 'Maintenance',
-  unmonitored: 'Hors plage horaire de surveillance',
-  pause: 'pause',
-};
-
-export const PAUSE_REASONS = {
-  authorisationProblem: 'Problème d\'habilitation',
-  robotProblem: 'Problème Robot',
-  scenarioProblem: 'Problème Scénario',
-  flashFunctionnalProblem: 'Problème Flash Fonctionnel',
-  other: 'Autre',
 };
 
 export const COUNTER_STATES_ICONS = {
@@ -727,6 +716,7 @@ export const USER_RIGHTS_PREFIXES = {
     weather: 'serviceweather',
     counter: 'counter',
   },
+  api: 'api',
 };
 
 export const USERS_RIGHTS = {
@@ -739,7 +729,9 @@ export const USERS_RIGHTS = {
     broadcastMessage: `${USER_RIGHTS_PREFIXES.technical.admin}_broadcastMessage`,
     playlist: `${USER_RIGHTS_PREFIXES.technical.admin}_playlist`,
     planning: `${USER_RIGHTS_PREFIXES.technical.admin}_planning`,
-    type: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
+    planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
+    planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
+    exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -825,6 +817,27 @@ export const USERS_RIGHTS = {
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
       },
     },
+  },
+  api: {
+    alarmUpdate: `${USER_RIGHTS_PREFIXES.api}_alarm_update`,
+    alarmDelete: `${USER_RIGHTS_PREFIXES.api}_alarm_delete`,
+    alarmFilter: `${USER_RIGHTS_PREFIXES.api}_alarmfilter`,
+    idleRule: `${USER_RIGHTS_PREFIXES.api}_idlerule`,
+    eventFilter: `${USER_RIGHTS_PREFIXES.api}_eventfilter`,
+    action: `${USER_RIGHTS_PREFIXES.api}_action`,
+    webhook: `${USER_RIGHTS_PREFIXES.api}_webhook`,
+    metaalarmrule: `${USER_RIGHTS_PREFIXES.api}_metaalarmrule`,
+    playlist: `${USER_RIGHTS_PREFIXES.api}_playlist`,
+    dynamicinfos: `${USER_RIGHTS_PREFIXES.api}_dynamicinfos`,
+    heartbeat: `${USER_RIGHTS_PREFIXES.api}_heartbeat`,
+    watcher: `${USER_RIGHTS_PREFIXES.api}_watcher`,
+    viewgroup: `${USER_RIGHTS_PREFIXES.api}_viewgroup`,
+    view: `${USER_RIGHTS_PREFIXES.api}_view`,
+    pbehavior: `${USER_RIGHTS_PREFIXES.api}_pbehavior`,
+    pbehaviorType: `${USER_RIGHTS_PREFIXES.api}_pbehaviortype`,
+    pbehaviorReason: `${USER_RIGHTS_PREFIXES.api}_pbehaviorreason`,
+    pbehaviorException: `${USER_RIGHTS_PREFIXES.api}_pbehaviorexception`,
+    event: `${USER_RIGHTS_PREFIXES.api}_event`,
   },
 };
 
@@ -1469,3 +1482,9 @@ export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
 };
 
 export const DEFAULT_TIMEZONE = 'Europe/Paris';
+
+export const PLANNING_TABS = {
+  types: 'types',
+  reasons: 'reasons',
+  exceptions: 'exceptions',
+};

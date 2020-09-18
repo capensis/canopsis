@@ -2,9 +2,10 @@
   div
     h3.my-3.grey--text {{ $t('pbehaviorExceptions.title') }}
     v-divider
+    pbehavior-exception-list(v-if="exceptions.length", :exceptions="exceptions")
     v-layout.mt-3(row)
       v-flex(xs12)
-        pbehavior-exception-date-field(
+        pbehavior-exception-field.mb-3(
           v-for="(exdate, index) in exdates",
           v-field="exdates[index]",
           :key="exdate.key",
@@ -12,9 +13,9 @@
         )
     v-layout(row)
       v-flex
-        v-btn.ml-0(outline, @click="addExceptionDate") {{ $t('pbehaviorExceptions.create') }}
+        v-btn.ml-0(outline, @click="addException") {{ $t('pbehaviorExceptions.create') }}
       v-flex
-        v-btn.mr-0(outline, @click="showSelectExceptionDatesModal") {{ $t('pbehaviorExceptions.choose') }}
+        v-btn.mr-0(outline, @click="showSelectExceptionModal") {{ $t('pbehaviorExceptions.choose') }}
 </template>
 
 <script>
@@ -26,10 +27,11 @@ import uid from '@/helpers/uid';
 
 import formArrayMixin from '@/mixins/form/array';
 
-import PbehaviorExceptionDateField from './pbehavior-exception-date-field.vue';
+import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
+import PbehaviorExceptionList from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-list.vue';
 
 export default {
-  components: { PbehaviorExceptionDateField },
+  components: { PbehaviorExceptionList, PbehaviorExceptionField },
   mixins: [formArrayMixin],
   model: {
     prop: 'exdates',
@@ -40,26 +42,23 @@ export default {
       type: Array,
       default: () => [],
     },
+    exceptions: {
+      type: Array,
+      default: () => [],
+    },
   },
   methods: {
-    showSelectExceptionDatesModal() {
+    showSelectExceptionModal() {
       this.$modals.show({
-        name: MODALS.selectExceptionsDatesLists,
+        name: MODALS.selectExceptionsLists,
         config: {
-          action: (exceptions) => {
-            const preparedExceptionDates = exceptions.reduce((acc, { exdates = [] }) => {
-              acc.push(...exdates);
-
-              return acc;
-            }, []);
-            preparedExceptionDates.push(...this.dates);
-
-            this.$emit('input', preparedExceptionDates);
-          },
+          exceptions: this.exceptions,
+          action: exceptions => this.$emit('update:exceptions', exceptions),
         },
       });
     },
-    addExceptionDate() {
+
+    addException() {
       const startOfTodayMoment = moment().startOf('day');
 
       this.addItemIntoArray({

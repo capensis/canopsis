@@ -2,9 +2,9 @@
   div.white
     v-layout(row, wrap)
       v-flex(xs4)
-        search-field(@submit="updateSearchHandler")
-      v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', selected)", icon)
+        search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
+      v-flex(v-show="hasDeleteAnyPbehaviorTypeAccess && selectedTypes.length", xs4)
+        v-btn(@click="deleteSelectedTypes", icon)
           v-icon delete
     v-data-table(
       v-model="selected",
@@ -21,10 +21,16 @@
       template(slot="items", slot-scope="props")
         tr(@click="props.expanded = !props.expanded")
           td(@click.stop="")
-            v-checkbox-functional(v-model="props.selected", primary, hide-details)
+            v-checkbox-functional(
+              v-if="props.item.deletable",
+              v-model="props.selected",
+              primary,
+              hide-details
+            )
+            v-checkbox-functional(v-else, disabled, primary, hide-details)
           td {{ props.item.name }}
           td
-            span.pbehavior-type-icon
+            span.pbehavior-type-icon(v-if="props.item.icon_name")
               v-icon(color="white", size="18") {{ props.item.icon_name }}
           td {{ props.item.priority }}
           td
@@ -56,6 +62,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
@@ -113,13 +121,22 @@ export default {
         },
       ];
     },
+
+    selectedTypes() {
+      return this.selected.filter(({ deletable }) => deletable);
+    },
   },
   methods: {
     updateSearchHandler(search) {
-      this.$emit('update:pagination', {
-        ...this.pagination,
-        search,
-      });
+      this.$emit('update:pagination', { ...this.pagination, search });
+    },
+
+    clearSearchHandler() {
+      this.$emit('update:pagination', omit(this.pagination, ['search']));
+    },
+
+    deleteSelectedTypes() {
+      this.$emit('remove-selected', this.selectedTypes);
     },
   },
 };

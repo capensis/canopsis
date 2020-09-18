@@ -4,7 +4,7 @@ import watcherModule from './watcher';
 import pbehaviorModule from './pbehavior';
 import pbehaviorReasonsModule from './pbehavior-reasons';
 import pbehaviorTimespanModule from './pbehavior-timespan';
-import pbehaviorExceptionModule from './pbehavior-exception';
+import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
@@ -37,7 +37,7 @@ export default {
   pbehavior: pbehaviorModule,
   pbehaviorReasons: pbehaviorReasonsModule,
   pbehaviorTimespan: pbehaviorTimespanModule,
-  pbehaviorException: pbehaviorExceptionModule,
+  pbehaviorExceptions: pbehaviorExceptionsModule,
   pbehaviorTypes: pbehaviorTypesModule,
   userPreference: userPreferenceModule,
   view: viewModule,

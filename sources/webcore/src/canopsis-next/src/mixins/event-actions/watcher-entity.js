@@ -100,9 +100,15 @@ export default {
      *
      * @param {Object} entity
      * @param {string} comment
-     * @param {string} reason
+     * @param {Object} reason
+     * @param {Object} type
      */
-    addPauseActionToQueue({ entity, comment, reason }) {
+    addPauseActionToQueue({
+      entity,
+      comment,
+      reason,
+      type,
+    }) {
       const data = {
         author: this.currentUser._id,
         comments: [{
@@ -110,13 +116,13 @@ export default {
           message: comment,
         }],
         filter: {
-          _id: entity._id,
+          _id: { $in: [entity._id] },
         },
         name: 'downtime',
         reason,
         tstart: moment().unix(),
         tstop: 2147483647, // 01/19/2038 @ 3:14am (UTC)
-        type_: 'pause',
+        type,
       };
 
       this.$emit('add:event', { type: EVENT_ENTITY_TYPES.pause, data, entity });

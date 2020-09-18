@@ -1,5 +1,5 @@
 import sha1 from 'sha1';
-import { get, omit, cloneDeep } from 'lodash';
+import { get, omit, cloneDeep, isObject } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
@@ -604,6 +604,10 @@ export function prepareUserByData(data, user = generateUser()) {
     result.shadowpasswd = sha1(data.password);
   }
 
+  if (!data._id) {
+    result._id = data.crecord_name;
+  }
+
   return result;
 }
 
@@ -671,7 +675,7 @@ export function getDefaultPlaylist() {
  * @param {Array} entities
  * @return {Array}
  */
-export const addKeyInEntity = entities => entities.map(entity => ({
+export const addKeyInEntity = (entities = []) => entities.map(entity => ({
   ...entity,
   key: uid(),
 }));
@@ -682,4 +686,15 @@ export const addKeyInEntity = entities => entities.map(entity => ({
  * @param {Array} entities
  * @return {Array}
  */
-export const removeKeyFromEntity = entities => entities.map(entity => omit(entity, ['key']));
+export const removeKeyFromEntity = (entities = []) => entities.map(entity => omit(entity, ['key']));
+
+/**
+ * Get id from entity
+ *
+ * @param {Object} entity
+ * @param {String} entity._id
+ * @param {String} idField
+ * @return {String}
+ */
+export const getIdFromEntity = (entity, idField = '_id') =>
+  (isObject(entity) ? entity[idField] : entity);

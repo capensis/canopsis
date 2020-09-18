@@ -216,11 +216,12 @@ export default {
     entities: 'Entités',
   },
   login: {
-    standard: 'Standard',
+    base: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Se connecter avec CAS',
     documentation: 'Documentation',
     forum: 'Forum',
+    website: 'Canopsis.com',
     connectionProtocols: 'Modes de connexion',
     errors: {
       incorrectEmailOrPassword: 'Mot de passe / Email incorrect',
@@ -657,6 +658,8 @@ export default {
             type: 'Type',
             start: 'Début',
             stop: 'Fin',
+            fullDay: 'Toute la journée',
+            noEnding: 'Pas de fin',
           },
         },
         filter: {
@@ -1184,7 +1187,7 @@ export default {
     pbehaviorPlanning: {
       title: 'Comportement périodiques',
     },
-    selectExceptionsDatesLists: {
+    selectExceptionsLists: {
       title: 'Choisissez la liste des exceptions',
     },
     createRrule: {
@@ -1209,6 +1212,21 @@ export default {
       fields: {
         selected: 'Seulement période sélectionnée',
         all: 'Toutes les périodes',
+      },
+    },
+    createPbehaviorReason: {
+      title: 'Créer un reason',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
+    createPbehaviorException: {
+      title: 'Créer une liste d\'exceptions',
+      addDate: 'Ajouter une date',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
       },
     },
     createManualMetaAlarm: {
@@ -1723,11 +1741,15 @@ export default {
     defaultType: 'Le type est par défaut, car ne peut pas être modifié',
   },
 
+  pbehaviorReasons: {
+    usingReason: 'La raison utilise, car ne peut pas être supprimée',
+  },
+
   planning: {
     tabs: {
       type: 'Type',
       reason: 'Raison',
-      datesOfExceptions: 'Dates d\'exception',
+      exceptions: 'Dates d\'exception',
     },
   },
 
