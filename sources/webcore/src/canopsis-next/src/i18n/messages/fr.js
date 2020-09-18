@@ -314,6 +314,8 @@ export default {
     reason: 'Raison',
     rrule: 'Récurrence',
     status: 'Statut',
+    created: 'Date de création',
+    updated: 'Date de dernière modification',
     tabs: {
       filter: 'Filtre',
       comments: 'Commentaires',
