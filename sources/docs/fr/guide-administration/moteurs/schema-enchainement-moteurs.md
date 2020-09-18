@@ -1,5 +1,9 @@
 # Enchaînement des moteurs Canopsis
 
+Canopsis est constitué d'un enchaînement de moteurs Go et Python. Vous trouverez sur cette page les détails de la configuration et une représentation visuelle de cet enchaînement.
+
+Les informations sur le rôle des différents moteurs sont dans [la liste des moteurs](index.md#liste-des-moteurs).
+
 ## Enchaînement des moteurs Go
 
 L'enchaînement des moteurs Go de Canopsis se configure à leur lancement via l'option `-publishQueue`.
@@ -20,10 +24,67 @@ Dans le fichier `amqp2engines.conf` il y a `event.processing` et `beat.processin
 
 ## Représentation de l'enchaînement des moteurs
 
-Lorsqu'un évènement entre dans le processus de traitement, il passe par la première vague de moteurs qui vont traiter et renvoyer l'information vers une seconde série de moteurs et ainsi de suite.
+*Vous pouvez cliquer sur le nom des moteurs pour être redirigé vers la page de documentation dédiée.*
 
-Le schéma suivant représente un *exemple* de configuration d'enchaînement de moteurs dans Canopsis.
+```mermaid
+graph TD
+linkStyle default interpolate basis
+sup[Supervision] -- connecteurs :<br />centreon2canopsis<br />zabbix2canopsis<br />shinken2canopsis<br />etc--> exch.events{canopsis.events}
+exch.events --> heart(engine-heartbeat)
+exch.events --> fifo(engine-fifo &#40failover&#41)
+fifo --> che(engine-che &#40multi-instanciable&#41)
+che --> filter(event_filter)
+filter --> metric(metric)
+filter --> pbh(pbehavior)
+pbh --> axe(engine-axe &#40multi-instanciable&#41)
+axe --> correl(engine-correlation &#40multi-instanciable&#41)
+axe --> watcher(engine-watcher)
+correl --> watcher
+watcher --> info(engine-dynamic-infos)
+watcher --> action
+info --> webh(engine-webhook)
+webh --> action(engine-action)
 
-![schema_moteurs](img/schema_moteurs_V3.png)
+click snmp "https://doc.canopsis.net/guide-administration/moteurs/moteur-snmp/"
+click heart "https://doc.canopsis.net/guide-administration/moteurs/moteur-heartbeat/"
+click fifo "https://doc.canopsis.net/guide-administration/moteurs/moteur-fifo/"
+click che "https://doc.canopsis.net/guide-administration/moteurs/moteur-che/"
+click filter "https://doc.canopsis.net/guide-administration/moteurs/moteur-che-event_filter/"
+click metric "https://doc.canopsis.net/guide-administration/moteurs/moteur-metric/"
+click pbh "https://doc.canopsis.net/guide-administration/moteurs/moteur-pbehavior/"
+click axe "https://doc.canopsis.net/guide-administration/moteurs/moteur-axe/"
+click correl "https://doc.canopsis.net/guide-administration/moteurs/moteur-correlation/"
+click watcher "https://doc.canopsis.net/guide-administration/moteurs/moteur-watcher/"
+click info "https://doc.canopsis.net/guide-administration/moteurs/moteur-dynamic-infos/"
+click webh "https://doc.canopsis.net/guide-administration/moteurs/moteur-webhook/"
+click action "https://doc.canopsis.net/guide-administration/moteurs/moteur-action/"
 
-Le détail du rôle des différents moteurs est dans [la liste des moteurs](index.md#liste-des-moteurs).
+classDef grey font-weight:normal,font-size:12pt,color:#fff,fill:#878787,stroke:#222,stroke-width:3px;
+classDef core-green font-weight:normal,font-size:12pt,color:#fff,fill:#2fab63,color:#fff,stroke:#222,stroke-width:3px;
+classDef cat-blue font-weight:normal,font-size:12pt,color:#fff,fill:#2b3e4f,color:#fff,stroke:#222,stroke-width:3px;
+classDef rabbit-orange font-weight:normal,font-size:12pt,color:#fff,fill:#ff6600,color:#fff,stroke:#222,stroke-width:3px;
+class sup grey
+class heart,fifo,che,filter,metric,pbh,axe,watcher,action core-green
+class snmp,kpi,correl,info,webh cat-blue
+class exch.snmp,exch.events rabbit-orange
+```
+
+Légende :
+```mermaid
+graph TD
+leg-rabbit{Exchange<br />RabbitMQ}
+leg-core(Moteur Core)
+leg-cat(Moteur CAT)
+
+classDef grey font-weight:normal,font-size:12pt,color:#fff,fill:#878787,stroke:#222,stroke-width:3px;
+classDef core-green font-weight:normal,font-size:12pt,color:#fff,fill:#2fab63,color:#fff,stroke:#222,stroke-width:3px;
+classDef cat-blue font-weight:normal,font-size:12pt,color:#fff,fill:#2b3e4f,color:#fff,stroke:#222,stroke-width:3px;
+classDef rabbit-orange font-weight:normal,font-size:12pt,color:#fff,fill:#ff6600,color:#fff,stroke:#222,stroke-width:3px;
+class leg grey
+class leg-core core-green
+class leg-cat cat-blue
+class leg-rabbit rabbit-orange
+```
+
+!!! Note
+    Certains moteurs ne sont pas représentés sur ce diagramme car leur fonctionnement est indépendant de l'enchaînement des moteurs de base. Par exemple [`snmp`](moteur-snmp.md) ou `import_ctx`.

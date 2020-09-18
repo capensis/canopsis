@@ -8,6 +8,7 @@
       :isEditingMode="isEditingMode",
       :hasColumns="hasGroupColumns",
       :columns="groupColumns",
+      :parentAlarm="alarm",
       expandable,
       hideGroups,
       ref="alarmsTable"

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytz
+import re
 from uuid import uuid4
 from json import loads, dumps
 
@@ -64,6 +65,7 @@ class BaseMetaAlarmRule(dict):
 
 
 META_ALARM_CONFIG_FIELD = 'config'
+SERVICE_ID_PREFIX = 'zgrp-'
 
 class MetaAlarmRule(BaseMetaAlarmRule):
     """
@@ -159,7 +161,7 @@ class MetaAlarmRuleManager(object):
         return self.collection.find_one({"_id": id})
 
     def read_all(self):
-        return list(self.collection.find({}))
+        return list(self.collection.find({"_id": {"$not": re.compile("^{}.+".format(SERVICE_ID_PREFIX))}}))
 
     def update(self, _id, name, rule_type, patterns=None, config=None, auto_resolve=False):
         data = self._build_metaalarm(name, rule_type, patterns, config, _id, auto_resolve)
@@ -185,4 +187,4 @@ class MetaAlarmRuleManager(object):
         if ids:
             query["_id"] = {"$in": ids}
 
-        return dict(((rule[MetaAlarmRule.ID], rule[MetaAlarmRule.NAME]) for rule in self.collection.find(query)))
+        return dict(((rule[MetaAlarmRule.ID], rule.get(MetaAlarmRule.NAME)) for rule in self.collection.find(query)))

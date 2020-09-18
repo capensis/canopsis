@@ -40,7 +40,6 @@
           deletable-chips
         )
         v-combobox(
-          ref="combobox",
           v-validate="'required'",
           :value="groupName",
           :items="groupNames",
@@ -48,6 +47,7 @@
           :error-messages="errors.collect('group')",
           name="group",
           data-test="viewFieldGroupId",
+          blur-on-create,
           @change="changeGroupName"
         )
           template(slot="no-data")
@@ -57,15 +57,12 @@
 </template>
 
 <script>
-import vuetifyComboboxMixin from '@/mixins/vuetify/combobox';
-
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 export default {
   components: { EnabledField, PeriodicRefreshField },
   inject: ['$validator'],
-  mixins: [vuetifyComboboxMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -92,7 +89,6 @@ export default {
   methods: {
     changeGroupName(value) {
       this.$emit('update:groupName', value);
-      this.closeComboboxMenuOnChange();
     },
   },
 };

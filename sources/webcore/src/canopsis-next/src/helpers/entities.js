@@ -620,6 +620,15 @@ export function isResolvedAlarm(alarm) {
   return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
 }
 
+/**
+ * Checks if alarm have critical state
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export function isWarningAlarmState(alarm) {
+  return ENTITIES_STATES.ok !== alarm.v.state.val;
+}
 
 /**
  * Function return new name if name is not uniq
