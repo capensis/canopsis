@@ -71,7 +71,8 @@ def exports(ws):
             'hide_resources',
             'with_consequences',
             'with_causes',
-            'correlation'
+            'correlation',
+            'manual_only'
         ]
     )
     def get_alarms(
@@ -93,7 +94,8 @@ def exports(ws):
             hide_resources=False,
             with_consequences=False,
             with_causes=False,
-            correlation=False
+            correlation=False,
+            manual_only=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -123,11 +125,15 @@ def exports(ws):
 
         :param bool hide_resources: hide_resources if component has an alarm
 
+        :param bool manual_only: manual meta-alarms only with open status (resolved=None)
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
         if isinstance(search, int):
             search = str(search)
+
+        if manual_only:
+            return ar.manual_only()
 
         try:
             alarms = ar.get(
@@ -203,14 +209,18 @@ def exports(ws):
         else:
             alarms['rules'] = dict()
 
+        children_ent_ids = set()
         for alarm in alarms['alarms']:
-            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm and alarm.get('parents') else None
+            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm and 'v' in alarm and \
+                alarm['v'].get('parents') else None
             if rules:
                 if with_causes:
                     alarm['causes'] = {
                         'total': len(alarm_children['alarms']),
                         'data': alarm_children['alarms'],
                     }
+                    for al_child in alarm_children['alarms']:
+                        children_ent_ids.add(al_child['d'])
                 else:
                     alarm['causes'] = {
                         'total': len(rules),
@@ -255,8 +265,24 @@ def exports(ws):
                 map(lambda al_ch: al_ch.update({'causes': {'rules': [alarm['rule']], 'total': 1}}),  alarm_children['alarms'])
                 alarm['consequences']['data'] = alarm_children['alarms']
                 alarm['consequences']['total'] = alarm_children['total']
+                for al_child in alarm_children['alarms']:
+                    children_ent_ids.add(al_child['d'])
 
             list_alarm.append(alarm)
+
+        if children_ent_ids:
+            children_entities = context_manager.get_entities_by_id(
+                list(children_ent_ids), with_links=False)
+            for entity in children_entities:
+                entity_dict[entity.get('_id')] = entity
+
+            for alarm in alarms['alarms']:
+                for cat in ('causes', 'consequences'):
+                    if cat in alarm and alarm[cat].get('data'):
+                        for child in alarm[cat]['data']:
+                            if child['d'] in entity_dict:
+                                child['links'] = context_manager.enrich_links_to_entity_with_alarm(
+                                    entity_dict[child['d']], child)
 
         del alarms['rules']
         alarms['alarms'] = list_alarm

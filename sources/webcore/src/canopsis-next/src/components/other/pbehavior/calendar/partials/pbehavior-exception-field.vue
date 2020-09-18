@@ -1,20 +1,19 @@
 <template lang="pug">
-  v-layout(row)
-    v-flex.mr-2(xs3)
-      date-time-picker-field(
-        v-field="value.begin",
-        v-validate="beginRules",
-        :label="$t('common.begin')",
-        :name="beginName"
+  v-layout(row, wrap)
+    v-flex(xs6)
+      date-time-splitted-range-picker-field(
+        :start="value.begin",
+        :end="value.end",
+        :startLabel="$t('common.begin')",
+        :endLabel="$t('common.end')",
+        :startRules="beginRules",
+        :endRules="endRules",
+        :name="datesName",
+        :fullDay="fullDay",
+        @update:start="updateField('begin', $event)",
+        @update:end="updateField('end', $event)"
       )
-    v-flex.mr-2(xs3)
-      date-time-picker-field(
-        v-field="value.end",
-        v-validate="endRules",
-        :label="$t('common.end')",
-        :name="endName"
-      )
-    v-flex(xs5)
+    v-flex.pl-2(xs5)
       pbehavior-type-field(
         v-field="value.type",
         :name="typeName"
@@ -22,24 +21,44 @@
     v-flex(xs1)
       v-btn(color="error", icon, @click="$emit('delete')")
         v-icon delete
+    v-flex(xs12)
+      v-checkbox.mt-0(
+        v-model="fullDay",
+        :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
+        color="primary",
+        hide-details
+      )
 </template>
 
 <script>
 import moment from 'moment';
 
 import { DATETIME_FORMATS } from '@/constants';
+import { isEndOfDay, isStartOfDay } from '@/helpers/date';
 
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import formMixin from '@/mixins/form';
+
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimePickerField, PbehaviorTypeField },
+  components: { DateTimeSplittedRangePickerField, PbehaviorTypeField },
+  mixins: [formMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      fullDay: isStartOfDay(this.value.begin) && isEndOfDay(this.value.end),
+    };
   },
   computed: {
     beginRules() {
@@ -61,16 +80,25 @@ export default {
       return this.value.key ? `-${this.value.key}` : '';
     },
 
-    beginName() {
-      return `begin${this.nameSuffix}`;
-    },
-
-    endName() {
-      return `end${this.nameSuffix}`;
+    datesName() {
+      return `dates${this.nameSuffix}`;
     },
 
     typeName() {
       return `type${this.nameSuffix}`;
+    },
+  },
+  watch: {
+    fullDay() {
+      const beginMoment = moment(this.value.begin).startOf('day');
+      const endMoment = moment(this.value.end).endOf('day');
+
+      this.updateModel({
+        ...this.value,
+
+        begin: beginMoment.toDate(),
+        end: endMoment.toDate(),
+      });
     },
   },
 };

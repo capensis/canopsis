@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.users') }}
+    the-page-header {{ $t('common.users') }}
     div.white
       v-layout(row, wrap)
         v-flex(xs4)

@@ -45,6 +45,7 @@ from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
 import json
+import copy
 
 
 rconn = RedisStore.get_default()
@@ -383,7 +384,7 @@ class AlertsReader(object):
 
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns,
-            correlation=False
+            correlation=False, resolved=False, consequences_children=False,
     ):
         """
         Computes the real filter:
@@ -617,7 +618,8 @@ class AlertsReader(object):
             }
         ]
         if correlation and not consequences_children:
-            self._add_metaalarm_filter(pipeline, 3, with_consequences)
+            self._add_metaalarm_filter(pipeline, 3, with_consequences, filter_, final_filter)
+
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
@@ -641,7 +643,41 @@ class AlertsReader(object):
             pipeline.append({"$project": {"infos_array": 0}})
         return pipeline
 
-    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
+    @staticmethod
+    def not_by_id(x):
+        return "u'_id':" not in str(x)
+
+    def _can_add_metaalarm_filter(self, with_consequences, filter_):
+        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and self.not_by_id(filter_)) or \
+            (isinstance(filter_, list) and filter_ != [] and self.not_by_id(filter_))) or with_consequences
+
+    def ff_ref_children(self, final_filter):
+        ff_copy = copy.deepcopy(final_filter)
+        if isinstance(final_filter, dict):
+            children_reference = {'children': {'$ne': []}}
+            if '$and' in final_filter:
+                if final_filter['$and'] > 1:
+                    conditions, resolved = [], None
+                    for ff_item in final_filter['$and']:
+                        if isinstance(ff_item, dict) and 'v.resolved' in ff_item:
+                            resolved = ff_item
+                        elif ff_item:
+                            conditions.append(ff_item)
+                    if conditions:
+                        # update $and conditions followed by 'v.resolved'
+                        conditions.append(children_reference)
+                        final_filter['$and'] = [{
+                            '$or': conditions}]
+                        if resolved:
+                            final_filter['$and'].append(resolved)
+                            ff_copy['$and'].remove(resolved)
+                elif final_filter['$and'] == 1:
+                    final_filter['$and'].append(children_reference)
+            elif '$or' in final_filter and final_filter['$or']:
+                final_filter['$or'].append(children_reference)
+        return ff_copy
+
+    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences, filter_, final_filter):
         """
         Method adds filter to find metaalarms
 
@@ -661,14 +697,25 @@ class AlertsReader(object):
                 "else": "$consequences"
                 }
             },
-            'metaalarm': 1 }})
+            'metaalarm': 1, 'filtered': '$children._id' }})
         pipeline.insert(start_pos+1, {"$addFields": {
             "rule": "$v.meta", 
             "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
             "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
         }})
-        pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {
-                        "v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+        if self._can_add_metaalarm_filter(with_consequences, filter_):
+            old_final_filter = self.ff_ref_children(final_filter)
+            lookup_children_pipeline = [
+                {'$match': {'$expr': {"$in": ['$$eid', '$v.parents']}}},
+                {'$match': old_final_filter}]
+            pipeline.insert(start_pos, {'$lookup': {
+                'from': 'periodical_alarm',
+                'let':  {'eid': '$d'},
+                'pipeline': lookup_children_pipeline,
+                'as': 'children',
+            }})
+            pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$in": [None, []]}}, {
+                            "v.children": {"$nin": [None, []]}}]}})
 
 
     def _search_aggregate(self,
@@ -945,9 +992,9 @@ class AlertsReader(object):
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         final_filter = self._get_final_filter(
-            filter_, time_filter, search, active_columns, correlation=correlation
+            filter_, time_filter, search, active_columns, correlation=correlation, resolved=resolved,
+            consequences_children=consequences_children
         )
-
 
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
@@ -1094,6 +1141,33 @@ class AlertsReader(object):
             )
 
         return results
+
+    def manual_only(self):
+        """
+        return list of opened manual meta-alarms
+        """
+        pipeline = [
+            {'$match': {'v.resolved': None, 'v.meta': re.compile('^zgrp-.+')}},
+            {'$lookup': {'foreignField': '_id', 'as': 'entity',
+                        'from': 'default_entities', 'localField': 'd'}},
+            {'$unwind': {'path': '$entity', 'preserveNullAndEmptyArrays': True}},
+            {'$match': {'$or': [{'entity.enabled': True},
+                                {'entity': {'$exists': False}}]}},
+            {'$match': {'$or': [{'v.parents': {'$in': [None, []]}}, {
+                'v.children': {'$nin': [None, []]}}]}},
+            {'$sort': {'t': -1}},
+            {'$lookup': {'foreignField': '_id', 'as': 'rule',
+                         'from': 'meta_alarm_rules', 'localField': 'v.meta'}},
+            {'$match': {'rule.type': 'manualgroup'}},
+            {'$project': {'t': 1, 'v': 1, 'd': 1}}
+        ]
+        alarms = self.alarm_collection.aggregate(
+            pipeline, allowDiskUse=True, cursor={}
+        )
+
+        return {
+            'alarms': list(alarms),
+        }
 
 
 def remove_resources_alarms(alarms):

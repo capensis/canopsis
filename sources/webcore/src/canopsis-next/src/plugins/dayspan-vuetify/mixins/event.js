@@ -84,9 +84,9 @@ export default {
       }
     },
 
-    closePopover() {
+    closePopover(event) {
       this.menu = false;
-      this.$emit('mouse-end-edit');
+      this.$emit('mouse-end-edit', this.getEvent('mouse-end-edit', event));
     },
   },
 };

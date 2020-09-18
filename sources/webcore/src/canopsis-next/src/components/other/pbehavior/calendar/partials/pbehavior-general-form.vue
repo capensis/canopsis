@@ -10,35 +10,21 @@
           name="name"
         )
       v-flex(xs12)
-        v-switch(
-          v-field="form.enabled",
-          :label="$t('modals.createPbehavior.steps.general.fields.enabled')",
-          color="primary",
-          hide-details
-        )
+        enabled-field(v-field="form.enabled", hide-details)
       v-flex.mt-3(xs12)
         v-layout(row)
-          v-flex.pr-1(xs5)
-            date-time-splited-picker-field(
-              v-validate="tstartRules",
-              :value="form.tstart",
-              :fullDay="fullDay",
-              :label="$t('modals.createPbehavior.steps.general.fields.start')",
-              name="tstart",
-              @input="updateField('tstart', $event)"
-            )
-          v-flex.pr-1(v-if="!noEnding", xs2)
-            div.time-dash –
-          v-flex(v-if="!noEnding", xs5)
-            date-time-splited-picker-field(
-              v-validate="tstopRules",
-              :value="form.tstop",
-              :fullDay="fullDay",
-              :label="$t('modals.createPbehavior.steps.general.fields.stop')",
-              name="tstop",
-              reverse,
-              @input="updateField('tstop', $event)"
-            )
+          date-time-splitted-range-picker-field(
+            :start="form.tstart",
+            :end="form.tstop",
+            :startLabel="$t('modals.createPbehavior.steps.general.fields.start')",
+            :endLabel="$t('modals.createPbehavior.steps.general.fields.stop')",
+            :startRules="tstartRules",
+            :endRules="tstopRules",
+            :noEnding="noEnding",
+            :fullDay="fullDay",
+            @update:start="updateField('tstart', $event)",
+            @update:end="updateField('tstop', $event)"
+          )
         v-layout(wrap)
           v-checkbox.mt-0(
             v-model="fullDay",
@@ -72,13 +58,15 @@ import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
-import DateTimeSplitedPickerField from '@/components/forms/fields/date-time-picker/date-time-splited-picker-field.vue';
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 export default {
   components: {
-    DateTimeSplitedPickerField,
+    EnabledField,
+    DateTimeSplittedRangePickerField,
     PbehaviorReasonsField,
     PbehaviorTypeField,
   },
@@ -164,11 +152,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.time-dash {
-  line-height: 68px;
-  padding: 0 8px;
-  text-align: center;
-}
-</style>

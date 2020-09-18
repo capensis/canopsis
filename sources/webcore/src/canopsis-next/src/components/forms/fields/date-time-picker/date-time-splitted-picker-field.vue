@@ -28,7 +28,7 @@
       div.v-messages.theme--light.error--text
         div.v-messages__wrapper
           div.v-messages__message(
-            v-for="error in errors.collect(name)",
+            v-for="error in errorMessages",
             :key="error"
           ) {{ error }}
 </template>
@@ -87,6 +87,10 @@ export default {
         xs8: !this.fullDay,
         xs12: this.fullDay,
       };
+    },
+
+    errorMessages() {
+      return this.errors.collect(this.name).map(error => error.replace(this.name, this.label));
     },
   },
 };

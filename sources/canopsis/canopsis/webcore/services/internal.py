@@ -54,6 +54,8 @@ VALID_CANOPSIS_LANGUAGES = [
     'en', 'fr'
 ]
 
+DEFAULT_INTERVAL_VALUE = 3
+
 user_interface_manager = UserInterfaceManager(
         *UserInterfaceManager.provide_default_basics())
 
@@ -142,7 +144,7 @@ def sanitize_popup_timeout(popup_setting):
     if not isinstance(popup_setting, dict):
         return {
             'unit': 's',
-            'interval': 10
+            'interval': DEFAULT_INTERVAL_VALUE
         }
 
     else:
@@ -150,7 +152,7 @@ def sanitize_popup_timeout(popup_setting):
             popup_setting['unit'] = 's'
         if 'interval' not in popup_setting or not isinstance(popup_setting['interval'], int) or \
             popup_setting['interval'] < 0:
-            popup_setting['interval'] = 10
+            popup_setting['interval'] = DEFAULT_INTERVAL_VALUE
     # remove redundant keys in popup_timeout
     for k in popup_setting.keys():
         if k not in VALID_POPUP_PARAMS:
@@ -254,10 +256,10 @@ def exports(ws):
         if 'popup_timeout' not in interface.keys():
             interface['popup_timeout'] = dict(info={
                 'unit': 's',
-                'interval': 10
+                'interval': DEFAULT_INTERVAL_VALUE
             }, error={
                 'unit': 's',
-                'interval': 10
+                'interval': DEFAULT_INTERVAL_VALUE
             })
 
         if 'allow_change_severity_to_info' not in interface.keys() or \
