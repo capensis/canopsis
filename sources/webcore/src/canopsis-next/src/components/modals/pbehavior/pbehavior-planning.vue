@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-form.fill-min-height(@submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(fillHeight)
       template(slot="title")
         span {{ $t('modals.pbehaviorPlanning.title') }}

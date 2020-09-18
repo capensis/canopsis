@@ -14,27 +14,13 @@ import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/
  * Clear exdate entity and convert to request.
  *
  * @param {Array} exdates
- * @return {{end: Number, type: String, begin: Number }[]}
+ * @return {{end: number, type: string, begin: number }[]}
  */
 export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
   type: getIdFromEntity(type),
   begin,
   end,
 }));
-
-/**
- * Convert exdate timestamp to Date.
- *
- * @param {Array} [exdates = []]
- * @param {string} [timezone = moment.tz.guess()]
- * @return {{end: Date, type: Object, begin: Date }[]}
- */
-export const exdatesToForm = (exdates = [], timezone = moment.tz.guess()) =>
-  exdates.map(({ type, begin, end }) => ({
-    type,
-    begin: convertTimestampToMomentByTimezone(begin, timezone).toDate(),
-    end: convertTimestampToMomentByTimezone(end, timezone).toDate(),
-  }));
 
 /**
  * Convert exdate to form
@@ -55,7 +41,7 @@ export const exdateToForm = (exdate, timezone = moment.tz.guess()) => ({
  *
  * @param {Object} formExdate
  * @param {string} [timezone = moment.tz.guess()]
- * @return {{type: String, begin: number, end: number}}
+ * @return {{type: string, begin: number, end: number}}
  */
 export const formToExdate = (formExdate, timezone = moment.tz.guess()) => ({
   type: formExdate.type,
@@ -113,7 +99,7 @@ export const pbehaviorToForm = (
  * Convert form to pbehavior entity.
  *
  * @param {Object} form
- * @param {String} timezone
+ * @param {string} timezone
  * @return {Object}
  */
 export const formToPbehavior = (form, timezone) => ({
@@ -176,7 +162,7 @@ export const calendarEventToPbehaviorForm = (
  *
  * @param {Object} form
  * @param {CalendarEvent} calendarEvent
- * @param {String} timezone
+ * @param {string} timezone
  * @return {CalendarEvent}
  */
 export const formToCalendarEvent = (form, calendarEvent, timezone) => {
