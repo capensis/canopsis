@@ -48,8 +48,7 @@ export default {
       return this.fetchAlarmItem({
         id: alarm._id,
         params: { ...defaultParams, ...params },
-        dataPreparer: (d) => {
-          const { alarms: fetchedAlarms = [] } = d.data[0];
+        dataPreparer: ({ data: fetchedAlarms = [] }) => {
           const [firstFetchedAlarm] = fetchedAlarms;
 
           if (alarm.filtered && firstFetchedAlarm) {
