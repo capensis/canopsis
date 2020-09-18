@@ -541,6 +541,13 @@
         "desc": "Rights on listalarm: group request"
     },
     {
+        "_id" : "listalarm_manualMetaAlarmGroup",
+        "loader_id" : "listalarm_manualMetaAlarmGroup",
+        "crecord_name" : "listalarm_manualMetaAlarmGroup",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: Manual meta alarm actions"
+    },
+    {
         "_id" : "listalarm_listPbehavior",
         "loader_id" : "listalarm_listPbehavior",
         "crecord_name" : "listalarm_listPbehavior",

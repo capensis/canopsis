@@ -45,6 +45,8 @@ from canopsis.stat.manager import StatManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 from pymongo.errors import PyMongoError
+from montydb.utils import MontyList
+
 
 alarm_manager = Alerts(*Alerts.provide_default_basics())
 alarmreader_manager = AlertsReader(*AlertsReader.provide_default_basics())
@@ -692,9 +694,9 @@ def exports(ws):
                 limit = DEFAULT_LIMIT
 
         wf = WatcherFilter()
+        original_filter = copy.deepcopy(watcher_filter)
         watcher_filter['type'] = 'watcher'
-        watcher_filter = wf.filter(watcher_filter)
-
+        watcher_filter = wf.filter(watcher_filter, True)
         try:
             pipeline = _generate_tile_pipeline(watcher_filter,
                                                limit,
@@ -716,6 +718,7 @@ def exports(ws):
 
         try:
             for watcher in pipeline_result:
+
                 try:
                     watcher = _rework_watcher_pipeline_element(watcher, ws.logger)
                 except Exception as error:
@@ -746,7 +749,9 @@ def exports(ws):
             return gen_json_error({"name": "Query error",
                                 "description": str(error)}, 500)
 
-        return gen_json(result)
+        tile_filter = wf.filter(original_filter)
+        mtl = MontyList(result).find(tile_filter)
+        return gen_json(list(mtl))
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
     def weatherwatchers(watcher_id):

@@ -5,7 +5,8 @@
       field-columns(
         v-field="form.widgetColumns",
         :label="$t('settings.columnNames')",
-        withHtml
+        withHtml,
+        withState
       )
       v-divider
       field-default-elements-per-page(v-field="form.itemsPerPage")

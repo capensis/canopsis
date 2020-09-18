@@ -1,10 +1,5 @@
 <template lang="pug">
-  v-btn.ma-0(
-    :class="expandButtonClass",
-    icon,
-    small,
-    @click="$emit('expand')"
-  )
+  v-btn.ma-0(icon, small, @click="$emit('expand')")
     v-icon {{ expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
 </template>
 

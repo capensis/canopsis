@@ -35,11 +35,15 @@ export default {
       required: true,
     },
   },
-  data() {
-    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  computed: {
+    ...entitiesMapGetters({
+      getEntitiesList: 'getList',
+    }),
 
-    return {
-      actions: [
+    actions() {
+      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
+      return [
         {
           type: alarmsListActionsTypes.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
@@ -83,18 +87,19 @@ export default {
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
         {
-          type: alarmsListActionsTypes.group,
+          type: alarmsListActionsTypes.groupRequest,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
           title: this.$t('alarmList.actions.titles.groupRequest'),
           method: this.showCreateGroupRequestEventModal,
         },
-      ],
-    };
-  },
-  computed: {
-    ...entitiesMapGetters({
-      getEntitiesList: 'getList',
-    }),
+        {
+          type: alarmsListActionsTypes.manualMetaAlarmGroup,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
+          title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
+          method: this.showCreateManualMetaAlarmModal,
+        },
+      ];
+    },
 
     filteredActions() {
       return this.actions.filter(this.actionsAccessFilterHandler);
@@ -144,6 +149,17 @@ export default {
 
           title: this.$t('modals.createGroupRequestEvent.title'),
           eventType: EVENT_ENTITY_TYPES.groupRequest,
+        },
+      });
+    },
+
+    showCreateManualMetaAlarmModal() {
+      this.$modals.show({
+        name: MODALS.createManualMetaAlarm,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createManualMetaAlarm.title'),
         },
       });
     },

@@ -99,6 +99,7 @@ export const MODALS = {
   selectExceptionsDatesLists: 'select-exceptions-dates-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehaviorType: 'create-pbehavior-type',
+  createManualMetaAlarm: 'create-manual-meta-alarm',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -119,9 +120,13 @@ export const EVENT_ENTITY_TYPES = {
   pause: 'pause',
   play: 'play',
   groupRequest: 'groupRequest',
+  group: 'group',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
   comment: 'comment',
+  manualMetaAlarmGroup: 'manual_metaalarm_group',
+  manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
+  manualMetaAlarmUpdate: 'manual_metaalarm_update',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -377,6 +382,12 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.comment]: {
     color: COLORS.entitiesEvents.comment,
     icon: 'comment',
+  },
+  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: {
+    icon: 'center_focus_strong',
+  },
+  [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
+    icon: 'link_off',
   },
 };
 
@@ -755,6 +766,7 @@ export const USERS_RIGHTS = {
         changeState: `${USER_RIGHTS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_RIGHTS_PREFIXES.business.alarmsList}_history`,
         groupRequest: `${USER_RIGHTS_PREFIXES.business.alarmsList}_groupRequest`,
+        manualMetaAlarmGroup: `${USER_RIGHTS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
         comment: `${USER_RIGHTS_PREFIXES.business.alarmsList}_comment`,
 
         listFilters: `${USER_RIGHTS_PREFIXES.business.alarmsList}_listFilters`,
@@ -837,6 +849,9 @@ export const WIDGETS_ACTIONS_TYPES = {
     variablesHelp: 'variablesHelp',
     history: 'history',
     groupRequest: 'groupRequest',
+    manualMetaAlarmGroup: 'manualMetaAlarmGroup',
+    manualMetaAlarmUngroup: 'manualMetaAlarmUngroup',
+    manualMetaAlarmUpdate: 'manualMetaAlarmUpdate',
     comment: 'comment',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
@@ -900,6 +915,12 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp]: USERS_RIGHTS.business.alarmsList.actions.variablesHelp,
     [WIDGETS_ACTIONS_TYPES.alarmsList.comment]: USERS_RIGHTS.business.alarmsList.actions.comment,
     [WIDGETS_ACTIONS_TYPES.alarmsList.groupRequest]: USERS_RIGHTS.business.alarmsList.actions.groupRequest,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmGroup]:
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmUngroup]:
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmUpdate]:
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -967,6 +988,12 @@ export const META_ALARMS_RULE_TYPES = {
   attribute: 'attribute',
   complex: 'complex',
   valuegroup: 'valuegroup',
+
+  /**
+   * Manual group type doesn't using in the form
+   * We are using it only inside alarms list widget
+   */
+  manualgroup: 'manualgroup',
 };
 
 export const META_ALARMS_THRESHOLD_TYPES = {
@@ -1428,6 +1455,13 @@ export const WIDGET_GRID_SIZES_STYLES = {
 export const WIDGET_GRID_ROW_HEIGHT = 20;
 
 export const WIDGET_GRID_COLUMNS_COUNT = 12;
+
+export const META_ALARM_EVENT_DEFAULT_FIELDS = {
+  component: 'metaalarm',
+  connector: 'engine',
+  connector_name: 'correlation',
+  source_type: 'metaalarm',
+};
 
 export const PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES = {
   selected: 0,
