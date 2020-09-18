@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(fillHeight)
       template(slot="title")
         span {{ $t('modals.pbehaviorPlanning.title') }}
       template(slot="text")
@@ -35,7 +35,11 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.pbehaviorPlanning,
   components: { PbehaviorPlanningCalendar, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin(), entitiesPbehaviorMixin],
+  mixins: [
+    modalInnerMixin,
+    entitiesPbehaviorMixin,
+    submittableMixin(),
+  ],
   data() {
     return {
       form: {

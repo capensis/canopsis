@@ -20,11 +20,7 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
-
 import { MODALS } from '@/constants';
-
-import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
 
 import RRuleForm from '@/components/forms/rrule.vue';
 import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
@@ -39,6 +35,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: {
     PbehaviorExceptionForm,
     RRuleForm,
@@ -46,11 +43,13 @@ export default {
   },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
+    const { rrule, exdates, exceptions } = this.modal.config;
+
     return {
       form: {
-        rrule: this.modal.config.rrule || '',
-        exdates: this.modal.config.exdates ? cloneDeep(this.modal.config.exdates) : [],
-        exceptions: this.modal.config.exceptions ? this.modal.config.exceptions.map(pbehaviorExceptionToForm) : [],
+        rrule: rrule || '',
+        exdates: exdates || [],
+        exceptions: exceptions || [],
       },
     };
   },
@@ -60,9 +59,12 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
+          const { rrule, exdates, exceptions } = this.form;
+
           this.config.action({
-            ...this.form,
-            exceptions: this.form.exceptions.map(formToPbehaviorException),
+            rrule,
+            exdates,
+            exceptions,
           });
         }
 

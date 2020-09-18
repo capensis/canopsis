@@ -6,7 +6,7 @@ import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
-  convertTimestampToMoment,
+  convertTimestampToMomentByTimezone,
 } from '@/helpers/date';
 import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/entities';
 
@@ -14,7 +14,7 @@ import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/
  * Clear exdate entity and convert to request.
  *
  * @param {Array} exdates
- * @return {{end: Number, type: String, begin: Number }[]}
+ * @return {{end: number, type: string, begin: number }[]}
  */
 export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, end }) => ({
   type: getIdFromEntity(type),
@@ -23,33 +23,53 @@ export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, en
 }));
 
 /**
- * Convert exdate timestamp to Date.
+ * Convert exdate to form
  *
- * @param {Array} exdates
+ * @param {Object} exdate
+ * @param {string} [timezone = moment.tz.guess()]
  * @return {{end: Date, type: Object, begin: Date }[]}
  */
-export const exdatesToForm = (exdates = []) => exdates.map(({ type, begin, end }) => ({
-  type,
-  begin: moment.unix(begin).toDate(),
-  end: moment.unix(end).toDate(),
-}));
+export const exdateToForm = (exdate, timezone = moment.tz.guess()) => ({
+  ...exdate,
+  key: uid(),
+  begin: convertTimestampToMomentByTimezone(exdate.begin, timezone).toDate(),
+  end: convertTimestampToMomentByTimezone(exdate.end, timezone).toDate(),
+});
+
+/**
+ * Convert exdate form to exdate
+ *
+ * @param {Object} formExdate
+ * @param {string} [timezone = moment.tz.guess()]
+ * @return {{type: string, begin: number, end: number}}
+ */
+export const formToExdate = (formExdate, timezone = moment.tz.guess()) => ({
+  type: formExdate.type,
+  begin: convertDateToTimestampByTimezone(formExdate.begin, timezone),
+  end: convertDateToTimestampByTimezone(formExdate.end, timezone),
+});
 
 /**
  * Convert exceptions to exceptions id array.
  *
  * @param {Array} exceptions
- * @return {String[]}
+ * @return {string[]}
  */
 export const exceptionsToRequest = (exceptions = []) => exceptions.map(exception => getIdFromEntity(exception));
 
 /**
  * Convert pbehavior entity to form data.
  *
- * @param {Object} pbehavior
- * @param {String|Object} filter
+ * @param {Object} [pbehavior = {}]
+ * @param {string|Object} [filter = null]
+ * @param {string} [timezone = moment.tz.guess()]
  * @return {Object}
  */
-export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
+export const pbehaviorToForm = (
+  pbehavior = {},
+  filter = null,
+  timezone = moment.tz.guess(),
+) => {
   let rrule = pbehavior.rrule || null;
 
   if (pbehavior.rrule && isObject(pbehavior.rrule)) {
@@ -66,12 +86,12 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
     name: pbehavior.name || '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
-    tstart: pbehavior.tstart ? convertTimestampToMoment(pbehavior.tstart).toDate() : null,
-    tstop: pbehavior.tstop ? convertTimestampToMoment(pbehavior.tstop).toDate() : null,
+    tstart: pbehavior.tstart ? convertTimestampToMomentByTimezone(pbehavior.tstart, timezone).toDate() : null,
+    tstop: pbehavior.tstop ? convertTimestampToMomentByTimezone(pbehavior.tstop, timezone).toDate() : null,
     filter: isString(resultFilter) ? JSON.parse(resultFilter) : cloneDeep(resultFilter),
     exceptions: pbehavior.exceptions ? addKeyInEntity(cloneDeep(pbehavior.exceptions)) : [],
     comments: pbehavior.comments ? addKeyInEntity(cloneDeep(pbehavior.comments)) : [],
-    exdates: pbehavior.exdates ? addKeyInEntity(exdatesToForm(pbehavior.exdates)) : [],
+    exdates: pbehavior.exdates ? pbehavior.exdates.map(exdate => exdateToForm(exdate, timezone)) : [],
   };
 };
 
@@ -79,7 +99,7 @@ export const pbehaviorToForm = (pbehavior = {}, filter = null) => {
  * Convert form to pbehavior entity.
  *
  * @param {Object} form
- * @param {String} timezone
+ * @param {string} timezone
  * @return {Object}
  */
 export const formToPbehavior = (form, timezone) => ({
@@ -89,11 +109,7 @@ export const formToPbehavior = (form, timezone) => ({
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntity(form.comments),
-  exdates: removeKeyFromEntity(form.exdates).map(({ type, begin, end }) => ({
-    type,
-    begin: moment(begin).unix(),
-    end: moment(end).unix(),
-  })),
+  exdates: form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)),
   exceptions: removeKeyFromEntity(form.exceptions),
   tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
@@ -103,10 +119,15 @@ export const formToPbehavior = (form, timezone) => ({
  * Convert calendar event to pbehavior form data
  *
  * @param {CalendarEvent} calendarEvent
- * @param {String|Object} filter
+ * @param {string|Object} filter
+ * @param {string} [timezone = moment.tz.guess()]
  * @return {Object}
  */
-export const calendarEventToPbehaviorForm = (calendarEvent, filter) => {
+export const calendarEventToPbehaviorForm = (
+  calendarEvent,
+  filter,
+  timezone = moment.tz.guess(),
+) => {
   const {
     start,
     end,
@@ -115,7 +136,7 @@ export const calendarEventToPbehaviorForm = (calendarEvent, filter) => {
   } = calendarEvent;
 
   const form = {
-    ...pbehaviorToForm(pbehavior, filter),
+    ...pbehaviorToForm(pbehavior, filter, timezone),
     ...cachedForm,
   };
 
@@ -141,7 +162,7 @@ export const calendarEventToPbehaviorForm = (calendarEvent, filter) => {
  *
  * @param {Object} form
  * @param {CalendarEvent} calendarEvent
- * @param {String} timezone
+ * @param {string} timezone
  * @return {CalendarEvent}
  */
 export const formToCalendarEvent = (form, calendarEvent, timezone) => {
