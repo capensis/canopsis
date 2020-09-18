@@ -255,6 +255,12 @@ paths:
               deletedCount:
                 description: 1 when document deleted
                 type: integer
+        '400':
+          description: Service rule cannot be deleted
+          schema:
+            properties:
+              description:
+                type: string
       tags:
       - metaalarm
 
@@ -355,7 +361,7 @@ paths:
               deletedCount:
                 description: 1 when document deleted
                 type: integer
-        '404':
+        '400':
           description: Rule delete error
           schema:
             properties:

@@ -43,3 +43,4 @@ validictory<1.2.0
 xmlsec<1.4.0
 redlock-py<1.2.0
 durationpy==0.5
+montydb==2.1.1

@@ -8,7 +8,7 @@ import os.path
 
 from canopsis.common.converters import id_filter
 from canopsis.common.ws import route
-from canopsis.metaalarmrule.manager import MetaAlarmRuleManager
+from canopsis.metaalarmrule.manager import MetaAlarmRuleManager, SERVICE_ID_PREFIX
 from canopsis.webcore.utils import HTTP_ERROR, HTTP_NOT_FOUND
 
 VALID_PARAMS = [
@@ -54,7 +54,8 @@ class RouteHandlerMetaAlarmRule(object):
             raise ValueError("rule type invalid value {}".format(rule_type))
         if name is not None and not isinstance(name, string_types):
             raise ValueError("name has invalid value: {}".format(name))
-        if ma_rule_id is not None and not isinstance(ma_rule_id, string_types):
+        if ma_rule_id is not None and (not isinstance(ma_rule_id, string_types) or ma_rule_id.startswith(
+                SERVICE_ID_PREFIX)):
             raise ValueError("_id has invalid value: {}".format(ma_rule_id))
 
         if not isinstance(auto_resolve, bool):
@@ -210,5 +211,8 @@ def exports(ws):
         :rtype: dict
         """
         ws.logger.info('Delete meta-alarm rule: {}'.format(rule_id))
+        if rule_id.startswith(SERVICE_ID_PREFIX):
+            _set_status(HTTP_ERROR)
+            return {'description': 'Can not delete rule with prefix "{}"'.format(SERVICE_ID_PREFIX)}
 
         return rh_ma_rule.delete(rule_id)

@@ -27,7 +27,7 @@ Si le moteur [`engine-webhook`](moteur-webhook.md) est activé, le moteur `engin
 
 ## Fonctionnement
 
-### Règles
+### Règles
 
 Les règles sont définies dans la collection MongoDB `dynamic-infos`, et peuvent être ajoutées et modifiées avec l'[API Informations Dynamiques](../../guide-developpement/api/api-v2-dynamic-infos.md).
 

@@ -9,7 +9,7 @@ site_url: https://doc.canopsis.net
 repo_url: https://git.canopsis.net/canopsis/canopsis
 repo_name: 'git.canopsis.net'
 
-docs_dir: 
+docs_dir:
    sources/docs/fr
 copyright: Documentation © Capensis 2018–2020 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
@@ -37,6 +37,11 @@ markdown_extensions:
     - pymdownx.superfences
     - toc:
         permalink: true
+    - pymdownx.superfences:
+        custom_fences:
+          - name: mermaid
+            class: mermaid
+            format: !!python/name:pymdownx.superfences.fence_div_format
 
 plugins:
     - search:
@@ -54,3 +59,6 @@ extra:
       link: https://fr.linkedin.com/company/capensis
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/canopsis/
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.7.0/dist/mermaid.min.js

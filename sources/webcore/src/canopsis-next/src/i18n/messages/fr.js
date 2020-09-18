@@ -237,6 +237,8 @@ export default {
         variablesHelp: 'Liste des variables disponibles',
         history: 'Historique',
         groupRequest: 'Proposition de regroupement pour meta alarmes',
+        manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
+        manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
       },
       iconsTitles: {
@@ -613,6 +615,9 @@ export default {
     },
     createGroupRequestEvent: {
       title: 'Proposition de regroupement pour meta alarmes',
+    },
+    createGroupEvent: {
+      title: 'Créer une meta alarme',
     },
     createChangeStateEvent: {
       title: 'Changer la сriticité',
@@ -1171,6 +1176,14 @@ export default {
       groups: 'Groupe',
       result: 'Résultat',
       manageTabs: 'Gérer les onglets',
+    },
+    createManualMetaAlarm: {
+      title: 'Gestion manuelle des méta-alarmes',
+      noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
+      fields: {
+        metaAlarm: 'Méta-alarme manuelle',
+        output: 'Note',
+      },
     },
   },
   tables: {

@@ -4,7 +4,7 @@ Le document suivant décrit les limitations connues de Canopsis à ce jour.
 
 Les limitations se différencient des « bugs », dans le sens où elles sont :
 
-* soit voulues ;
+* soit voulues ;
 * soit inhérentes à l'architecture ou aux choix faits dans la conception de Canopsis ;
 * soit non destinées à être corrigées dans l'immédiat (en raison d'une incidence mineure, d'une plus faible priorité, ou d'un coût de résolution trop important).
 
@@ -21,7 +21,7 @@ L'interface de Canopsis n'est donc **pas** compatible avec les navigateurs suiva
 
 * Internet Explorer, toutes versions ;
 * Microsoft Edge, avant la version 80 ;
-* Mozilla Firefox, avant la version 68 ESR ;
+* Mozilla Firefox, avant la version 68 ESR ;
 * Google Chrome, avant la version 85.
 
 ### Taille maximale des filtres du Bac à alarmes
@@ -38,7 +38,7 @@ Vous devez donc soit concevoir vos filtres de Bac à alarmes de manière à ce q
 
 ### Encodage des évènements
 
-Les évènements envoyés à Canospis ne peuvent être encodés qu'en UTF-8 (ou en ASCII).
+Les évènements envoyés à Canopsis ne peuvent être encodés qu'en UTF-8 (ou en ASCII).
 
 Les autres encodages, tels qu'ISO-8859-1, CP1252 ou UTF-16, ne sont pas gérés : les évènements en question peuvent être ignorés ou causer des problèmes d'affichage.
 

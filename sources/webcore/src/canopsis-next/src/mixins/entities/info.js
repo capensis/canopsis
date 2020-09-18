@@ -62,7 +62,7 @@ export default {
       const { interval, unit } = this.popupTimeout.info;
       const delay = getSecondsByUnit(interval, unit) * 1000;
 
-      this.$popups.setDefaultCloseTime(POPUP_TYPES.infos, delay);
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.info, delay);
       this.$popups.setDefaultCloseTime(POPUP_TYPES.success, delay);
     },
 
