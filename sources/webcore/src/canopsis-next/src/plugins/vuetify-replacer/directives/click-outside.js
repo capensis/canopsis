@@ -1,4 +1,3 @@
-import ClickOutside from 'vuetify/es5/directives/click-outside';
 import { getZIndex } from 'vuetify/es5/util/helpers';
 
 import { get } from 'lodash';
@@ -53,14 +52,61 @@ function directive(e, el, binding) {
   }
 }
 
+/* eslint-disable no-underscore-dangle, no-param-reassign */
 export default {
   inserted(el, binding) {
     const onClick = e => directive(e, el, binding);
     const app = document.querySelector('[data-app]') || document.body;
-    app.addEventListener('click', onClick, true);
-    // eslint-disable-next-line
-    el._clickOutside = onClick;
+    const { same, zIndex } = binding.modifiers;
+
+    if (same) {
+      let mousedownWasOnElement = false;
+
+      const mousedownOutside = (e) => {
+        mousedownWasOnElement = el.contains(e.target) || (zIndex && !defaultConditionalWithZIndex(e.target, el));
+      };
+
+      const mouseupOutside = (e) => {
+        if (!mousedownWasOnElement) {
+          onClick(e);
+        }
+      };
+
+      app.addEventListener('mousedown', mousedownOutside, true);
+      app.addEventListener('mouseup', mouseupOutside, true);
+
+      el._mousedownOutside = mousedownOutside;
+      el._mouseupOutside = mouseupOutside;
+    } else {
+      app.addEventListener('click', onClick, true);
+
+      el._clickOutside = onClick;
+    }
   },
 
-  unbind: ClickOutside.unbind,
+  unbind(el, binding) {
+    const app = document.querySelector('[data-app]') || document.body; // This is only for unit tests
+
+    if (!app) {
+      return;
+    }
+
+    const { same } = binding.modifiers;
+
+    if (same) {
+      if (el._mousedownOutside) {
+        app.removeEventListener('mousedown', el._mousedownOutside, true);
+        delete el._mousedownOutside;
+      }
+
+      if (el._mouseupOutside) {
+        app.removeEventListener('mouseup', el._mouseupOutside, true);
+        delete el._mouseupOutside;
+      }
+    } else if (el._clickOutside) {
+      app.removeEventListener('click', el._clickOutside, true);
+      delete el._clickOutside;
+    }
+  },
 };
+/* eslint-enable no-underscore-dangle, no-param-reassign */
