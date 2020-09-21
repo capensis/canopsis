@@ -1755,5 +1755,13 @@ export default {
     },
   },
 
+  remediation: {
+    tabs: {
+      instructions: 'Instructions',
+      configurations: 'Configurations',
+      jobs: 'Jobs',
+    },
+  },
+
   ...featureService.get('i18n.fr'),
 };

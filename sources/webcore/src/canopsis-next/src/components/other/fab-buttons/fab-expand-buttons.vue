@@ -9,8 +9,9 @@
         :transition="transition"
       )
         v-btn(slot="activator", color="primary", fab, v-model="fab")
-          v-icon add
-          v-icon close
+          slot(name="icons")
+            v-icon add
+            v-icon close
         slot
 </template>
 

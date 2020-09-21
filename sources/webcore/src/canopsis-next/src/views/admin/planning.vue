@@ -6,18 +6,18 @@
         v-card.ma-2
           v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
             template(v-if="hasReadAnyPbehaviorTypeAccess")
-              v-tab(href="#types") {{ $t('planning.tabs.type') }}
-              v-tab-item(value="types")
+              v-tab(:href="`#${$constants.PLANNING_TABS.types}`") {{ $t('planning.tabs.type') }}
+              v-tab-item(:value="$constants.PLANNING_TABS.types")
                 v-card-text
                   planning-types
             template(v-if="hasReadAnyPbehaviorReasonAccess")
-              v-tab(href="#reasons") {{ $t('planning.tabs.reason') }}
-              v-tab-item(value="reasons")
+              v-tab(:href="`#${$constants.PLANNING_TABS.reasons}`") {{ $t('planning.tabs.reason') }}
+              v-tab-item(:value="$constants.PLANNING_TABS.reasons")
                 v-card-text
                   planning-reasons
             template(v-if="hasReadAnyPbehaviorExceptionAccess")
-              v-tab(href="#exceptions") {{ $t('planning.tabs.exceptions') }}
-              v-tab-item(value="exceptions")
+              v-tab(:href="`#${$constants.PLANNING_TABS.exceptions}`") {{ $t('planning.tabs.exceptions') }}
+              v-tab-item(:value="$constants.PLANNING_TABS.exceptions")
                 v-card-text
                   planning-exceptions
     fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
