@@ -1489,3 +1489,9 @@ export const PLANNING_TABS = {
   reasons: 'reasons',
   exceptions: 'exceptions',
 };
+
+export const REMEDIATION_TABS = {
+  instructions: 'instructions',
+  configurations: 'configurations',
+  jobs: 'jobs',
+};

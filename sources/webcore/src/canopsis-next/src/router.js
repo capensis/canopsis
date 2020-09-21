@@ -155,12 +155,6 @@ const routes = [
     path: '/admin/remediation',
     name: 'remediation-administration',
     component: AdminRemediation,
-    meta: {
-      requiresLogin: true,
-      requiresRight: {
-        id: USERS_RIGHTS.technical.remediation,
-      },
-    },
   },
   {
     path: '/exploitation/pbehaviors',
