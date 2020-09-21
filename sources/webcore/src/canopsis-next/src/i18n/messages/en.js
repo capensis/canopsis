@@ -111,6 +111,8 @@ export default {
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
     planningAdministration: 'Planning Administration',
+    remediation: 'Remediation',
+    instructions: 'Instructions',
     icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
@@ -1750,6 +1752,14 @@ export default {
       type: 'Type',
       reason: 'Reason',
       exceptions: 'Dates of exceptions',
+    },
+  },
+
+  remediation: {
+    tabs: {
+      instructions: 'Instructions',
+      configurations: 'Configurations',
+      jobs: 'Jobs',
     },
   },
 
