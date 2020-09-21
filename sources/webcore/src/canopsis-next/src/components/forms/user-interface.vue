@@ -121,7 +121,6 @@ export default {
   },
   data() {
     return {
-      toggled: false,
       submitting: false,
       logoFile: null,
       form: {
@@ -150,23 +149,6 @@ export default {
     this.initForm();
   },
   methods: {
-    closeConditional(e) {
-      return this.toggled && !this.$refs.textEditor.$el.contains(e.target);
-    },
-
-    toggleOn() {
-      this.toggled = true;
-
-      this.$nextTick(() => {
-        if (this.$refs.textEditor) {
-          this.$refs.textEditor.editor.selection.focus();
-        }
-      });
-    },
-
-    toggleOff() {
-      this.toggled = false;
-    },
     initForm() {
       this.form = {
         appTitle: this.appTitle || DEFAULT_APP_TITLE,
