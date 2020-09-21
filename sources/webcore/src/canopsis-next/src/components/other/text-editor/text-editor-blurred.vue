@@ -40,6 +40,6 @@ export default {
 }
 
 .v-text-field__slot {
-  padding-top: 28px!important;
+  padding-top: 28px !important;
 }
 </style>
