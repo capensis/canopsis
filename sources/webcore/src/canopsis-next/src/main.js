@@ -41,6 +41,7 @@ import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import GridPlugin from '@/plugins/grid';
 
 import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
+import AdvancedDataTable from '@/components/other/table/advanced-data-table.vue';
 import ThePageHeader from '@/components/layout/the-page-header/the-page-header.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
@@ -133,9 +134,8 @@ Vue.use(DaySpanVuetifyPlugin, {
 });
 
 Vue.component('alarm-chips', AlarmChips);
-
 Vue.component('alarms-list-table', AlarmsListTable);
-
+Vue.component('advanced-data-table', AdvancedDataTable);
 Vue.component('the-page-header', ThePageHeader);
 
 Vue.use(VueMq, {
