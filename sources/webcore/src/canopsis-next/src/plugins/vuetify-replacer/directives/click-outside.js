@@ -57,13 +57,13 @@ export default {
   inserted(el, binding) {
     const onClick = e => directive(e, el, binding);
     const app = document.querySelector('[data-app]') || document.body;
-    const { same } = binding.modifiers;
+    const { same, zIndex } = binding.modifiers;
 
     if (same) {
       let mousedownWasOnElement = false;
 
       const mousedownOutside = (e) => {
-        mousedownWasOnElement = el.contains(e.target);
+        mousedownWasOnElement = el.contains(e.target) || (zIndex && !defaultConditionalWithZIndex(e.target, el));
       };
 
       const mouseupOutside = (e) => {

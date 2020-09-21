@@ -45,9 +45,9 @@
       row
     )
       v-flex
-        span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.footer') }}
-        text-editor(
+        text-editor-field(
           v-model="form.footer",
+          :label="$t('parameters.userInterfaceForm.fields.footer')",
           :config="textEditorConfig"
         )
     v-layout.mt-3(
@@ -55,28 +55,10 @@
       row
     )
       v-flex
-        span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.description') }}
-        text-editor(
+        text-editor-field(
           v-model="form.description",
-          :config="textEditorConfig"
-        )
-    v-layout.mt-3(
-      data-test="descriptionLayout",
-      row
-    )
-      v-flex
-        text-editor(
-          ref="textEditor",
-          v-if="toggled",
-          v-model="form.description",
-          v-click-outside.same="{ handler: toggleOff, closeConditional }",
-          :config="textEditorConfig"
-        )
-        text-editor-disabled(
-          v-else,
-          :value="form.description",
           :label="$t('parameters.userInterfaceForm.fields.description')",
-          @click="toggleOn"
+          :config="textEditorConfig"
         )
     v-layout.mt-3(row)
       v-flex
@@ -116,10 +98,9 @@ import { getFileDataUrlContent } from '@/helpers/file-select';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
-import TextEditor from '@/components/other/text-editor/text-editor.vue';
-import TextEditorDisabled from '@/components/other/text-editor/text-editor-disabled.vue';
 import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
 import TimezoneField from '@/components/forms/fields/timezone-field.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   $_veeValidate: {
@@ -129,8 +110,7 @@ export default {
     TimezoneField,
     PopupTimeoutField,
     FileSelector,
-    TextEditor,
-    TextEditorDisabled,
+    TextEditorField,
   },
   mixins: [entitiesInfoMixin],
   props: {

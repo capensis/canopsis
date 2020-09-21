@@ -1,10 +1,14 @@
 <template lang="pug">
-  div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
-    div(ref="textEditor")
-    div.text-editor__details
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message(v-for="errorMessage in errorMessages") {{ errorMessage }}
+  div
+    span.theme--light.v-label.text-editor__label.mb-2(
+      v-show="label"
+    ) {{ label }}
+    div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
+      div(ref="textEditor")
+      div.text-editor__details
+        div.v-messages.theme--light.error--text
+          div.v-messages__wrapper
+            div.v-messages__message(v-for="errorMessage in errorMessages") {{ errorMessage }}
 </template>
 
 <script>
@@ -16,6 +20,10 @@ export default {
   props: {
     value: {
       type: String,
+    },
+    label: {
+      type: String,
+      default: '',
     },
     buttons: {
       type: Array,
@@ -102,6 +110,11 @@ export default {
 
 <style lang="scss" scoped>
   .text-editor {
+    &__label {
+      font-size: .85em;
+      display: block;
+    }
+
     &__details {
       display: -webkit-box;
       display: -ms-flexbox;
