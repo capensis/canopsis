@@ -38,4 +38,8 @@ export default {
   right: auto;
   position: absolute;
 }
+
+.v-text-field__slot {
+  padding-top: 28px!important;
+}
 </style>
