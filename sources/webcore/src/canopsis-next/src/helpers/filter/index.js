@@ -1,8 +1,15 @@
-import { get, isString } from 'lodash';
+import { get, isEmpty, isString } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
-export default function prepareMainFilterToQueryFilter(
+/**
+ * Prepare user main filter to query filter
+ *
+ * @param {Object|Array} [filterObject = {}]
+ * @param {string} [condition = FILTER_DEFAULT_VALUES.condition]
+ * @returns {Object|undefined}
+ */
+export function prepareMainFilterToQueryFilter(
   filterObject = {},
   condition = FILTER_DEFAULT_VALUES.condition,
 ) {
@@ -23,5 +30,32 @@ export default function prepareMainFilterToQueryFilter(
   }
 
   return filter;
+}
+
+/**
+ * Get main filter for the widget by widget and userPreference parameters
+ *
+ * @param {Object} widget
+ * @param {Object} userPreference
+ * @returns {Object|null}
+ */
+export function getMainFilter(widget, userPreference) {
+  const {
+    mainFilter: userMainFilter,
+    mainFilterUpdatedAt: userMainFilterUpdatedAt = 0,
+  } = userPreference.widget_preferences;
+
+  const {
+    mainFilter: widgetMainFilter,
+    mainFilterUpdatedAt: widgetMainFilterUpdatedAt = 0,
+  } = widget.parameters;
+
+  let mainFilter = userMainFilter;
+
+  if (isEmpty(mainFilter) && !isEmpty(widgetMainFilter) && widgetMainFilterUpdatedAt >= userMainFilterUpdatedAt) {
+    mainFilter = widgetMainFilter;
+  }
+
+  return mainFilter || null;
 }
 

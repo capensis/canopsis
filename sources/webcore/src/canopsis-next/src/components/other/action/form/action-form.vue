@@ -1,22 +1,36 @@
 <template lang="pug">
-  v-form
+  div
     v-text-field(
-      :value="form.generalParameters._id",
-      @input="updateField('generalParameters._id', $event)",
-      label="Id",
-      name="id",
+      v-field="form.generalParameters._id",
       v-validate="'required'",
       :error-messages="errors.collect('id')",
-      :disabled="disabledId"
+      :disabled="disabledId",
+      label="Id",
+      name="id"
     )
+    delay-field(v-field="form.generalParameters.delay")
     v-select(
-      :value="form.generalParameters.type",
-      @input="updateField('generalParameters.type', $event)",
-      label="Type",
-      :items="actionTypes",
-      name="actionType",
+      v-field="form.generalParameters.type",
       v-validate="'required'",
-      :error-messages="errors.collect('actionType')"
+      :items="actionTypes",
+      :error-messages="errors.collect('actionType')",
+      label="Type",
+      name="actionType",
+      @change="errors.clear()"
+    )
+    v-text-field(
+      v-field.number="form.generalParameters.priority",
+      v-validate="'numeric'",
+      :label="$t('common.priority')",
+      :error-messages="errors.collect('priority')",
+      type="number",
+      name="priority"
+    )
+    v-switch.mb-3(
+      v-field="form.generalParameters.enabled",
+      :label="$t('common.enabled')",
+      color="primary",
+      hide-details
     )
     v-tabs(fixed-tabs, slider-color="primary")
       v-tab
@@ -24,7 +38,10 @@
           :class="{ 'error--text': hasGeneralFormAnyError }"
         ) {{ $t('modals.createAction.tabs.general') }}
       v-tab-item
-        action-general-tab(:form="form", ref="generalForm", @input="updateModel($event)")
+        action-general-tab(
+          ref="generalForm",
+          v-field="form"
+        )
       v-tab
         .validation-header(
           :class="{ 'error--text': hasHookFormAnyError }"
@@ -32,28 +49,27 @@
       v-tab-item
         webhook-form-hook-tab(
           ref="hookForm",
-          :hook="form.generalParameters.hook",
-          @input="updateField('generalParameters.hook', $event)",
-          :operators="$constants.WEBHOOK_EVENT_FILTER_RULE_OPERATORS"
+          v-field="form.generalParameters.hook"
         )
 </template>
 
 <script>
 import { ACTION_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
+import DelayField from '@/components/other/action/form/fields/delay.vue';
 import ActionGeneralTab from './tabs/action-general-tab.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    DelayField,
     ActionGeneralTab,
     WebhookFormHookTab,
   },
-  mixins: [formMixin, formValidationHeaderMixin],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -76,7 +92,15 @@ export default {
   },
   computed: {
     actionTypes() {
-      return Object.values(ACTION_TYPES);
+      return Object.values(ACTION_TYPES).map((type) => {
+        let text = type;
+
+        if (type === ACTION_TYPES.changeState) {
+          text = `${type} (${this.$t('alarmList.actions.titles.changeState')})`;
+        }
+
+        return { text, value: type };
+      });
     },
   },
   mounted() {

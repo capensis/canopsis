@@ -1,4 +1,4 @@
-# Metric
+# Moteur `metric` (Python, Core)
 
 Le moteur `metric` est un moteur qui enregistre les données de performance envoyés avec les évènements (dans `perf_data` et `perf_data_array`) vers la base InfluxDB.
 

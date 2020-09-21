@@ -2,7 +2,7 @@
 
 ![Bac à alarmes](./img/listalarm.png  "Bac à alarmes")
 
-## Sommaire 
+## Sommaire
 
 ### Guide utilisateur
 
@@ -11,6 +11,8 @@
 3. [Filtres](#filtres)
 4. [Actions](#actions)
 5. [Elements par page](#elements-par-page)
+6. [Suivi personnalisé](#suivi-personnalise)
+7. [Lien direct vers une alarme](#lien-direct-vers-une-alarme)
 
 ### Guide exploitant
 
@@ -27,11 +29,11 @@ En plus de détails de l'alarme, chaque ligne expose une liste d'actions opérab
 
 Il est possible d'attacher à chaque colonne une Info popup, qui s'ouvrira au clic sur le texte de la colonne, présentant dans une fenêtre un texte personnalisable (*Cf: [Guide exploitant](#guide-exploitant)*).
 
-Au clic sur une alarme (en dehors du texte des colonnes), l'historique de l'alarme s'affiche.
+Au clic sur une alarme (en dehors du texte des colonnes), la chronologie de l'alarme s'affiche.
 
-![Time line](./img/timeline.png "Time line")
+![Chronologie de l'alarme](./img/timeline.png "Chronologie de l'alarme")
 
-Cet historique reprend certains éléments du cycle de vie de l'alarme (notamment les actions effectuées sur celle-ci).
+Cette chronologie reprend certains éléments du cycle de vie de l'alarme (notamment les actions effectuées sur celle-ci).
 
 ### Recherche
 
@@ -44,7 +46,7 @@ Pour effectuer une recherche 'simple', il suffit d'entrer les termes de la reche
 Dans le bac à alarmes, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cette aspect [ici](../../recherche/index.md) !
 
 Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche")
- 
+
 ### Filtres
 
 Le sélecteur de filtre permet d'appliquer un filtre sur le Bac à alarmes. Seules les alarmes correspondant aux critères du filtres seront affichées.
@@ -67,15 +69,20 @@ Une fois l'options activée, un sélecteur apparaît à droite du bouton d'activ
 
 Une fois l'opérateur sélectionné, il ne vous reste plus qu'à sélectionner les filtres à appliquer dans le menu déroulant de sélection de filtres.
 
-#### Filtres de période
+#### Suivi personnalisé
 
-Le filtre par période permet de filtre les alarmes en ne conservant que les alarmes d'une période donnée.
+Le Suivi personnalisé sert à paramétrer des filtres par période. Ils permet de filtrer les alarmes en ne conservant que les alarmes d'une période donnée.
 
 Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/period-filter.png "Filtre par période") présente à droite du sélecteur de filtre. Une fenêtre apparaît.
 
 ![modale filtre par période](./img/modal-filtre-periode.png "modale filtre par période")
 
-Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisé en sélectionnant 'Personnalisé', puis en renseignant les dates de début et de fin.
+Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisée en sélectionnant 'Custom', puis en renseignant les dates de début et de fin.
+
+Dans un bac à alarmes en cours, le filtre est appliqué sur la date de création.
+
+Dans un bac à alarmes résolues, le filtre est appliqué sur la date de résolution.
+
 Cliquez ensuite sur 'Appliquer'.
 
 La fenêtre se ferme, le bac à alarmes se rafraîchit. Votre filtre par période est appliqué.
@@ -84,6 +91,21 @@ Celui-ci est visible en haut du Bac à alarmes.
 ![Filtre par période selectionné](./img/filter-current-period.png "Filtre par période selectionné")
 
 Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le filtre (*Cf Image ci-dessus*)
+
+#### Lien direct vers une alarme
+
+!!! Note 
+    Disponible depuis Canopsis 3.39.0
+
+Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
+Cette URL est de la forme : `http(s)://IP_CANOPSIS:PORT/alarms/<alarmID>[?widgetId=<widgetID>]`.  
+
+* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.  
+* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)  
+
+L'identifiant d'un widget est disponible pour copie dans le mode **édition** d'une vue en bas d'un widget.  
+
+
 
 ### Actions
 
@@ -97,13 +119,19 @@ Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à aff
 
 Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
 
+### Suivi personnalisé
+
+Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à afficher sur chaque page.
+
+Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
+
 ## Guide exploitant
 
 ### Aide - Variables
 
 Durant la configuration de votre widget Bac à alarmes, notamment paramètres "Info popup", et "Fenêtre Plus d'infos", il vous sera possible d'accéder à des variables concernant les alarmes et les entités.
 
-Exemple: Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", l'état de l'alarme.
+Exemple : Il vous sera possible d'afficher, dans la fenêtre "Plus d'infos", la criticité de l'alarme.
 
 Afin de connaitre les variables disponibles, une modale d'aide est disponible.
 
@@ -147,6 +175,8 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
+À noter : par défaut, le tri sur un bac à alarmes se base sur la date de création.
+
 ![Paramètre colonne de tri par défaut](../img/settings/default-column-sort.png "Paramètre colonne de tri par défaut")
 
 Un champ de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom.
@@ -169,14 +199,60 @@ Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessai
 
 Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'alarme et de l'entité concernée par l'alarme peuvent être utilisés.
 
-Exemple : Pour ajouter une colonne ayant pour label "Composant" et pour valeur le nom du composant, renseignez les champs comme suit :
+Voici quelques exemples pratiques de colonnes :
 
-*  Label : "Composant"
-*  Valeur : "alarm.v.component"
+###### Champs basiques
+
+Label  | Valeur  
+--|--
+Connecteur	| `alarm.v.connector `
+Nom du Connecteur	| `alarm.v.connector_name`
+Composant | `alarm.v.component`
+Ressource | `alarm.v.resource`
+Message | `alarm.v.output`
+État | `alarm.v.state.val`
+Statut | `alarm.v.status.val`
+
+###### Champs enrichis
+
+Label  | Valeur  
+--|--
+Nom du champ enrichi	| `infos.NOM_DU_CHAMP_ENRICHI`
+
+###### Dates
+
+Label  | Valeur
+--|--
+Date de création | `alarm.v.creation_date`
+Date du dernier changement de criticité | `alarm.v.state.t`
+Date de fin | `alarm.v.resolved`
+Durée de l'alarme | `alarm.v.duration`
+
+###### Acquittement
+
+Label  | Valeur
+--|--
+Auteur de l'acquittement | `alarm.v.ack.a`
+Message de l'acquittement | `alarm.v.ack.m`
+
+###### Ticket
+
+Label  | Valeur
+--|--
+Auteur du Ticket | `alarm.v.ticket.a`
+Numéro du Ticket | `alarm.v.ticket.val`
+Message du Ticket | `alarm.v.ticket.m`
+Type du Ticket | `alarm.v.ticket._t`
+
+###### Mise en veille
+
+Label  | Valeur
+--|--
+Auteur de la mise en veille | `alarm.v.snooze.a`
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
-Dans la liste des colonnes sont égalements présentes, pour chaque colonne, des flèches permettant de modifier l'ordre des colonnes. Les colonnes sont présentées dans l'ordre de haut en bas. Pour modifier la place d'une colonne, cliquez sur une des flèches. Pour faire monter/descendre une colonne dans la liste.
+Dans la liste des colonnes sont également présentes, pour chaque colonne, des flèches permettant de modifier l'ordre des colonnes. Les colonnes sont présentées dans l'ordre de haut en bas. Pour modifier la place d'une colonne, cliquez sur une des flèches. Pour faire monter/descendre une colonne dans la liste.
 
 Enfin, une option est présente pour chaque colonne, permettant d'activer (ou non) l'interprétation HTML de la valeur présente dans cette colonne.
 
@@ -185,8 +261,8 @@ Exemple: Vous souhaitez afficher la valeur du champ ```output``` des alarmes. Vo
 Il est à noter que seuls certaines balises et attributs sont autorisés dans les colonnes du Bac à alarmes.
 
 - Balises autorisées: ```h3, h4, h5, h6, blockquote, p, a, ul, ol, nl, li, b, i, strong, em, strike, code, hr, br, div, table, thead, caption, tbody, tr, th, td, pre, iframe, span, font, u```
-  
-- Attributs autorisées : 
+
+- Attributs autorisés :
     - Pour toutes les balises: ```style```
     - Pour les balises ```a```: ```href, name, target```
     - Pour les balises ```img```: ```src, alt```
@@ -202,24 +278,115 @@ Les valeurs disponibles sont : 5, 10, 20, 50 et 100.
 
 ##### Filtre sur Open/Resolved
 
-Ce paramètre permet de filtrer les alarmes en fonction de leur état.
+Ce paramètre permet de filtrer les alarmes en fonction de leur état de résolution.
 
 *  Open : Alarmes "Ouvertes"
 *  Resolved : Alarmes "Résolues"
 
 Pour modifier ce paramètre, sélectionnez les types d'alarmes que vous souhaitez afficher en cochant la case correspondante.
+
 Il est possible de ne cocher aucune des cases (aucune alarme ne sera affichée), une des deux cases, ou les deux cases (les alarmes ouvertes ET résolues seront alors affichées).
+
+Lorsqu'une alarme est résolue, elle reste entre 1 et 2 minutes dans le bac à Alarmes "Ouvertes" avant de basculer dans le bac à Alarmes "Résolues". Pour plus d'informations sur le sujet, consulter la [documentation du moteur `engine-axe`](../../../../guide-administration/moteurs/moteur-axe.md)).
+
+Lorsqu'une alarme est annulée, elle reste pendant 1 heure dans le bac à Alarmes "Ouvertes" avant de passer dans le bac à Alarmes "Résolues".
 
 ##### Filtres
 
 Ce paramètre permet de sélectionner un filtre à appliquer au bac à alarmes, et d'en créer de nouveaux.
 
-Un champ de sélection permet d'abord de choisir un filtre à appliquer au bac à alarmes parmi les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmi les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer au bac à alarmes (*Cf: [filtres](#filtres)*).
+Un champ de sélection permet d'abord de choisir un filtre à appliquer au bac à alarmes parmi les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmi les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliqué au bac à alarmes (*Cf: [filtres](#filtres)*).
 
 Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
+
 Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer ou de supprimer les filtres.
 
 L'option "Mix filters" est également disponible depuis ce menu. Pour plus de détails concernant cette option, voir  [Mix filters](#mix-filters).
+
+Voici quelques exemples pratiques de filtres :
+
+###### Champs basiques
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Composant  | `component`  | `equal`  | *VALEUR_DU_COMPOSANT*
+Ressource  | `resource`  | `equal`  | *VALEUR_DE_LA_RESSOURCE*
+Connecteur	| `connector` | `equal` | *VALEUR_DU_CONNECTEUR*
+Connecteur	| `connector_name` | `equal` | *VALEUR_DU_NOM_DU_CONNECTEUR*
+Message	| `v.output` | `equal` | *VALEUR_DU_MESSAGE*
+
+###### Selon la criticité
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Uniquement les alarmes Mineures  | `v.state.val`  | `equal`  | `1` (valeur de type number)
+Uniquement les alarmes Majeures  | `v.state.val`  | `equal`  | `2` (valeur de type number)
+Uniquement les alarmes Critiques  | `v.state.val`  | `equal`  | `3` (valeur de type number)
+
+###### Champs enrichis
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Champ enrichi	| `entity.infos.NOM_DU_CHAMP_ENRICHI.value` | equal | *VALEUR_DU_CHAMP_ENRICHI*
+
+###### En fonction des informations dynamiques
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Les alarmes qui contiennent une information dynamique de type `consignes`	| `v.infos.*.type` | equal | *consigne*
+
+###### Acquittement
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Exclure les alarmes avec acquittement  | `v.ack._t`  | `not equal` | `ack` (valeur string)
+Uniquement les alarmes avec acquittement  | `v.ack._t`  | `equal` | `ack` (valeur string)
+Uniquement les alarmes avec acquittement sans champ `Note` (fast-ack basique)  | `v.ack.m`  | `is empty` | *PAS_DE_VALEUR*
+Exclure les alarmes avec acquittement avec un champ `Note`  | `v.ack.m`  | `is not empty` | *PAS_DE_VALEUR*
+Auteur de l'acquittement  | `v.ack.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DE_L_ACQUITTEMENT*
+Message de l'acquittement | `v.ack.m`  |  `equal`  | *CONTENU_DU_MESSAGE_DE_L_ACQUITTEMENT*
+
+###### Ticket
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Exlure les alarmes avec Ticket (quel que soit le type)  | `v.ticket._t`  | `is null` | *PAS_DE_VALEUR*
+Exclure les alarmes avec Ticket de type `assocticket`  | `v.ticket._t`  | `not equal` | `assocticket` (valeur string)
+Exclure les alarmes avec Ticket de type `declareticket`  | `v.ticket._t`  | `not equal` | `declareticket` (valeur string)
+Uniquement les alarmes avec Ticket  | `v.ticket._t`  | `is not null` | *PAS_DE_VALEUR*
+Auteur du Ticket  | `v.ticket.a`  |  `equal`  | *NOM_DE_L_AUTEUR_DU_TICKET*
+
+###### Mise en veille
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Exclure les alarmes mises en veille | `v.snooze._t`  | `not equal` | `snooze` (valeur string)
+Uniquement les alarmes mises en veille | `v.snooze._t`  | `equal` | `snooze` (valeur string)
+Auteur de la mise en veille | `v.snooze.a`  |  `equal`  | *NOM_DE_L_AUTEUR_MISE_EN_VEILLE*
+
+###### Comportements périodiques
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Exclure les alarmes avec un comportement périodique actif  | `has_active_pb`  | `equal`  | `False` (valeur booléenne)
+Uniquement les alarmes avec un comportement périodique actif  | `has_active_pb`  | `equal`  | `True` (valeur booléenne)
+
+!!! attention
+    L'attribut fictif `has_active_pb` ne prend pas en compte les [règles de récurrence](../../../../guide-administration/moteurs/moteur-pbehavior.md#regles-de-recurrence-rrule). Il ne prend en compte que la première occurrence du comportement périodique.
+
+###### Changement de criticité
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Exclure les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `not equal` | `changestate` (valeur string)
+Uniquement les alarmes dont on a manuellement changé la criticité  | `v.state._t`  | `equal` | `changestate` (valeur string)
+
+###### Observateurs
+
+Description  | 1° colonne  | 2° colonne | 3° colonne
+--|---|--|--
+Exclure les alarmes liées à des observateurs | `entity.type`  | `not equal` | `watcher` (valeur string)
+Uniquement les alarmes des observateurs | `entity.type`  | `equal` | `watcher` (valeur string)
 
 ##### Info popup
 
@@ -232,7 +399,7 @@ Cette case comporte deux champs :
 
 *  Colonne : Ce champ permet de définir sur quelle colonne l'info popup sera disponible. Il faut ici entrer la **valeur** de la colonne, et non son nom.
 Exemple : pour ajouter une info popup sur la colonne que vous avez nommée "Connecteur", avec comme valeur "alarm.v.connector" (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*), il faut entrer ici "alarm.v.connector" et non "Connecteur".
-*  Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template l'état de l'alarme, ajoutez au template `{{ alarm.v.state.val }}`.
+*  Texte : Ce champ, qui a la forme d'un éditeur de texte, permet de définir le contenu de l'info popup. Le langage utilisé ici pour le template de la popup est l'Handlebar. Deux variables sont disponibles : "alarm" et "entity". Exemple : Pour ajouter au template la criticité de l'alarme, ajoutez au template `{{ alarm.v.state.val }}`.
 
 Vous pouvez ajouter autant d'info popup que vous le souhaitez.
 
@@ -248,4 +415,4 @@ Deux variables sont disponibles ici, 'alarm' et 'entity'.
 
 En plus du texte que vous souhaitez afficher, il vous est donc possible d'intégrer des informations de l'alarme ou de l'entité concernée par cette alarme.
 
-Exemple : Pour afficher l'état de l'alarme, ajoutez `{{ alarm.v.state.val }}`.
+Exemple : Pour afficher la criticité de l'alarme, ajoutez `{{ alarm.v.state.val }}`.

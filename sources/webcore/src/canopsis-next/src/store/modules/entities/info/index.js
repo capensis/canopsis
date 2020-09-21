@@ -19,12 +19,16 @@ export default {
     language: '',
     isLDAPAuthEnabled: false,
     isCASAuthEnabled: false,
+    allowChangeSeverityToInfo: false,
     casConfig: {},
+    popupTimeout: undefined,
   },
   getters: {
     version: state => state.version,
     logo: state => state.logo,
     appTitle: state => state.appTitle,
+    popupTimeout: state => state.popupTimeout,
+    allowChangeSeverityToInfo: state => state.allowChangeSeverityToInfo,
     footer: state => state.footer,
     edition: state => state.edition,
     stack: state => state.stack,
@@ -46,6 +50,7 @@ export default {
       state.footer = userInterface.footer;
       state.description = userInterface.login_page_description;
       state.language = userInterface.language;
+      state.popupTimeout = userInterface.popup_timeout;
 
       state.isLDAPAuthEnabled = loginConfig.ldapconfig ? loginConfig.ldapconfig.enable : false;
       state.isCASAuthEnabled = loginConfig.casconfig ? loginConfig.casconfig.enable : false;
@@ -56,6 +61,8 @@ export default {
       version,
       logo,
       appTitle,
+      popupTimeout,
+      allowChangeSeverityToInfo,
       edition,
       stack,
       language,
@@ -63,6 +70,8 @@ export default {
       state.version = version;
       state.logo = logo;
       state.appTitle = appTitle;
+      state.popupTimeout = popupTimeout;
+      state.allowChangeSeverityToInfo = allowChangeSeverityToInfo;
       state.edition = edition;
       state.stack = stack;
       state.language = language;
@@ -93,6 +102,8 @@ export default {
           version,
           logo,
           app_title: appTitle,
+          popup_timeout: popupTimeout,
+          allow_change_severity_to_info: allowChangeSeverityToInfo,
           edition,
           stack,
           language,
@@ -105,6 +116,8 @@ export default {
             logo,
             appTitle,
             edition,
+            popupTimeout,
+            allowChangeSeverityToInfo,
             stack,
             language,
           },

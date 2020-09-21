@@ -9,7 +9,8 @@
     v-tooltip(
       slot="activator",
       :right="tooltipRight",
-      :left="tooltipLeft"
+      :left="tooltipLeft",
+      z-index="10"
     )
       v-btn.primary(
         data-test="settingsViewButton",
@@ -23,12 +24,13 @@
     v-tooltip(
       v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
       :right="tooltipRight",
-      :left="tooltipLeft"
+      :left="tooltipLeft",
+      z-index="10"
     )
       v-btn(
         data-test="editModeButton",
         slot="activator",
-        :input-value="isEditingMode",
+        :input-value="isNavigationEditingMode",
         color="blue darken-4",
         small,
         dark,
@@ -41,7 +43,8 @@
     v-tooltip(
       v-if="hasCreateAnyViewAccess",
       :right="tooltipRight",
-      :left="tooltipLeft"
+      :left="tooltipLeft",
+      z-index="10"
     )
       v-btn(
         data-test="addViewButton",
@@ -59,16 +62,15 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
+import layoutNavigationEditingModeMixin from '@/mixins/layout/navigation/editing-mode';
 
 export default {
-  mixins: [modalMixin, rightsTechnicalViewMixin],
+  mixins: [
+    rightsTechnicalViewMixin,
+    layoutNavigationEditingModeMixin,
+  ],
   props: {
-    isEditingMode: {
-      type: Boolean,
-      default: false,
-    },
     tooltipRight: {
       type: Boolean,
       default: false,
@@ -101,7 +103,7 @@ export default {
   },
   methods: {
     showCreateViewModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createView,
       });
     },

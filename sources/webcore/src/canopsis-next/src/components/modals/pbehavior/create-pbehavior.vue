@@ -1,14 +1,23 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.createPbehavior.title') }}
-    v-card-text
-      pbehavior-form(v-model="form")
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(depressed, flat, @click="hideModal") {{ $t('common.cancel') }}
-      v-btn.primary(:disabled="errors.any()", @click="submit") {{ $t('common.actions.saveChanges') }}
+  v-form(data-test="createPbehaviorModal", @submit.prevent="submit")
+    modal-wrapper
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        pbehavior-form(v-model="form")
+      template(slot="actions")
+        v-btn(
+          data-test="createPbehaviorCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit",
+          data-test="createPbehaviorSubmitButton"
+        ) {{ $t('common.actions.saveChanges') }}
 </template>
 
 <script>
@@ -16,6 +25,7 @@ import { MODALS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import {
   commentsToPbehaviorComments,
@@ -28,15 +38,15 @@ import {
 
 import PbehaviorForm from '@/components/other/pbehavior/form/pbehavior-form.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    PbehaviorForm,
-  },
-  mixins: [authMixin, modalInnerMixin],
+  components: { PbehaviorForm, ModalWrapper },
+  mixins: [authMixin, modalInnerMixin, submittableMixin()],
   data() {
     const { pbehavior = {} } = this.modal.config;
 
@@ -48,6 +58,17 @@ export default {
       },
     };
   },
+  computed: {
+    title() {
+      let type = 'create';
+
+      if (this.config.pbehavior) {
+        type = this.config.isDuplicating ? 'duplicate' : 'edit';
+      }
+
+      return this.$t(`modals.createPbehavior.${type}.title`);
+    },
+  },
   methods: {
     async submit() {
       const isValid = await this.$validator.validateAll();
@@ -58,15 +79,13 @@ export default {
         pbehavior.comments = commentsToPbehaviorComments(this.form.comments);
         pbehavior.exdate = exdatesToPbehaviorExdates(this.form.exdate);
 
-        if (!pbehavior.author) {
-          pbehavior.author = this.currentUser._id;
-        }
+        pbehavior.author = this.currentUser._id;
 
         if (this.config.action) {
           await this.config.action(pbehavior);
         }
 
-        this.hideModal();
+        this.$modals.hide();
       }
     },
   },

@@ -9,6 +9,7 @@ export default {
   computed: {
     ...mapGetters({
       getAlarmItem: 'getItem',
+      getAlarmsList: 'getList',
       getAlarmsListByWidgetId: 'getListByWidgetId',
       getAlarmsMetaByWidgetId: 'getMetaByWidgetId',
       getAlarmsPendingByWidgetId: 'getPendingByWidgetId',

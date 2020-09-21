@@ -8,15 +8,15 @@
           :false-value="$constants.SNMP_STATE_TYPES.simple",
           :true-value="$constants.SNMP_STATE_TYPES.template",
           :label="$t('modals.createSnmpRule.fields.state.labels.toCustom')",
-          @change="updateTypeField"
+          @change="updateTypeField",
+          color="primary"
         )
     v-divider(light)
     template(v-if="isTemplate")
       snmp-rule-form-module-mib-objects-form(
-        :form="form.stateoid",
+        v-field="form.stateoid",
         :items="items",
-        :label="$t('modals.createSnmpRule.fields.state.labels.defineVar')",
-        @input="updateField('stateoid', $event)"
+        :label="$t('modals.createSnmpRule.fields.state.labels.defineVar')"
       )
       v-layout(row, wrap)
         v-flex(xs12)
@@ -26,23 +26,19 @@
                 strong.state-title {{ $t(`modals.createChangeStateEvent.states.${key}`) }}
             v-flex(xs10)
               v-text-field(
-                :value="form[key]",
-                :placeholder="$t('modals.createSnmpRule.fields.state.labels.writeTemplate')",
-                @input="updateField(key, $event)"
+                v-field="form[key]",
+                :placeholder="$t('modals.createSnmpRule.fields.state.labels.writeTemplate')"
               )
     template(v-else)
       v-layout.mt-3(row, wrap)
         v-flex(xs12)
-          state-criticity-field(
-            :value="form.state",
-            @input="updateField('state', $event)"
-          )
+          state-criticity-field(v-field="form.state")
 </template>
 
 <script>
 import { SNMP_STATE_TYPES } from '@/constants';
 
-import formMixin from '@/mixins/form';
+import formBaseMixin from '@/mixins/form/base';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
@@ -55,7 +51,7 @@ export default {
     SnmpRuleFormFieldTitle,
     SnmpRuleFormModuleMibObjectsForm,
   },
-  mixins: [formMixin],
+  mixins: [formBaseMixin],
   model: {
     prop: 'form',
     event: 'input',

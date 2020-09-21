@@ -1,19 +1,13 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-row-grid-size(
-        :rowId.sync="settings.rowId",
-        :size.sync="settings.widget.size",
-        :availableRows="availableRows",
-        @createRow="createRow"
-      )
-      v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']"
+        :hiddenFields="['title']",
+        :entitiesType="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-text-editor(
@@ -22,7 +16,7 @@
         :title="$t('settings.templateEditor')"
       )
       v-divider
-      v-list-group(data-test="textWidgetStats")
+      v-list-group(v-if="edition === $constants.CANOPSIS_EDITION.cat", data-test="textWidgetStats")
         v-list-tile(slot="activator") {{ $t('settings.stats') }}
           .font-italic.caption.ml-1 ({{ $t('common.optional') }})
         v-list.grey.lighten-4.px-2.py-0(expand)
@@ -39,8 +33,8 @@ import { cloneDeep } from 'lodash';
 import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
+import entitiesInfoMixin from '@/mixins/entities/info';
 
-import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
 import FieldStatsSelector from './fields/stats/stats-selector.vue';
@@ -53,20 +47,18 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldRowGridSize,
     FieldTitle,
     FieldDateInterval,
     FieldStatsSelector,
     FieldFilterEditor,
     FieldTextEditor,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [widgetSettingsMixin, entitiesInfoMixin],
   data() {
-    const { widget, rowId } = this.config;
+    const { widget } = this.config;
 
     return {
       settings: {
-        rowId,
         widget: cloneDeep(widget),
       },
     };

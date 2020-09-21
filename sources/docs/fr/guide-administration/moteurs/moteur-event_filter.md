@@ -1,4 +1,4 @@
-# Event-filter
+# Moteur `event_filter` (Python, Core)
 
 !!! note
     Cette page concerne l'event-filter ancienne génération, disponible uniquement

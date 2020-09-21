@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card(data-test="selectViewModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.view.select.title') }}
-    v-card-text
+  modal-wrapper(data-test="selectViewModal")
+    template(slot="title")
+      span {{ $t('modals.view.select.title') }}
+    template(slot="text")
       v-list.py-0(dark)
         v-list-group(v-for="group in availableGroups", :key="group._id")
           v-list-tile(
@@ -27,8 +26,11 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.selectView,
+  components: { ModalWrapper },
   mixins: [modalInnerMixin, entitiesViewsGroupsMixin, rightsEntitiesGroupMixin],
   methods: {
     async selectView(viewId) {
@@ -36,7 +38,7 @@ export default {
         await this.config.action(viewId);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

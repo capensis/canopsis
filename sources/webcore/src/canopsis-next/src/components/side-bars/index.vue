@@ -18,6 +18,7 @@ import StatsCalendarSettings from './settings/widgets/stats-calendar.vue';
 import StatsNumberSettings from './settings/widgets/stats-number.vue';
 import StatsParetoSettings from './settings/widgets/stats-pareto.vue';
 import TextSettings from './settings/widgets/text.vue';
+import CounterSettings from './settings/widgets/counter.vue';
 
 /**
  * Wrapper for all side-bars
@@ -35,6 +36,7 @@ export default {
     StatsNumberSettings,
     StatsParetoSettings,
     TextSettings,
+    CounterSettings,
   },
   mixins: [sideBarInnerMixin],
   data() {

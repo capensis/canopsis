@@ -1,27 +1,28 @@
 <template lang="pug">
-  div
+  div.pattern-simple-editor
     v-layout(justify-end)
       v-tooltip(v-for="(action, index) in mainActions", :key="`action-${index}`", top)
         v-btn(slot="activator", icon, @click="action.action()")
           v-icon(:class="action.iconClass") {{ action.icon }}
         span {{ action.tooltip }}
     v-layout(row)
+      pattern-information(v-if="treeViewItems.length > 1") {{ $t('common.and') }}
       v-flex(xs12)
         v-treeview(:items="treeViewItems", :open.sync="opened", open-all)
           template(slot="label", slot-scope="{ item }")
             v-flex(xs12)
               v-layout(row)
-                v-flex(xs6) {{ item.name }}
+                v-flex.text-field(xs6) {{ item.name }}
                   span(v-show="item.isValueRule") :
                 template(v-if="item.isValueRule")
-                  v-flex(v-if="isSimpleValueRule(item.value)")
-                    span.body-1.font-italic {{ item.value | treeViewValue }}
-                  v-flex(v-else)
-                    v-layout(column)
-                      v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
-                        p.body-1.font-italic {{ fieldKey }} {{ field }}
+                  v-flex(xs6, v-if="isSimpleValueRule(item.value)")
+                    span.body-1.font-italic.text-field {{ item.value | treeViewValue }}
+                  v-flex(xs6, v-else)
+                    v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
+                      p.body-1.font-italic {{ fieldKey }}
+                      p.body-1.font-italic.text-field {{ field }}
           template(slot="append", slot-scope="{ item }")
-            div
+            v-layout(row)
               v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
                 v-btn(slot="activator", icon, @click="action.action(item)")
                   v-icon(:class="action.iconClass") {{ action.icon }}
@@ -34,9 +35,11 @@ import { isObject, isString, isNull, dropRight, has } from 'lodash';
 import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
-import modalMixin from '@/mixins/modal';
+
+import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 export default {
+  components: { PatternInformation },
   filters: {
     treeViewValue(value) {
       if (isString(value)) {
@@ -48,7 +51,7 @@ export default {
       return value;
     },
   },
-  mixins: [formMixin, modalMixin],
+  mixins: [formMixin],
   model: {
     prop: 'pattern',
     event: 'input',
@@ -115,47 +118,42 @@ export default {
       ];
     },
 
-    getActionsForItem() {
-      const { actionsMap } = this;
-
-      return (treeViewItem) => {
-        if (has(treeViewItem, 'value')) {
-          return [
-            actionsMap.editValueRuleField,
-            actionsMap.removeRuleField,
-          ];
-        }
-
-        return [
-          actionsMap.addValueRuleField,
-          actionsMap.addObjectRuleField,
-          actionsMap.editObjectRuleField,
-          actionsMap.removeRuleField,
-        ];
-      };
-    },
-
     treeViewItems() {
       return this.parsePatternToTreeview(this.pattern);
     },
-
-    isSimpleValueRule() {
-      return rule => !isObject(rule);
-    },
-
-    isValueRule() {
-      return (rule) => {
-        if (isObject(rule)) {
-          const items = Object.entries(rule);
-
-          return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
-        }
-
-        return true;
-      };
-    },
   },
   methods: {
+    isValueRule(rule) {
+      if (!isObject(rule)) {
+        return true;
+      }
+
+      const items = Object.entries(rule);
+
+      return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
+    },
+
+    isSimpleValueRule(rule) {
+      return !isObject(rule);
+    },
+
+    getActionsForItem(treeViewItem) {
+      const { actionsMap } = this;
+
+      if (has(treeViewItem, 'value')) {
+        return [
+          actionsMap.editValueRuleField,
+          actionsMap.removeRuleField,
+        ];
+      }
+
+      return [
+        actionsMap.addValueRuleField,
+        actionsMap.addObjectRuleField,
+        actionsMap.editObjectRuleField,
+        actionsMap.removeRuleField,
+      ];
+    },
     /**
      * Parse pattern object to treeview items
      *
@@ -201,7 +199,7 @@ export default {
     showAddValueRuleFieldModal(treeViewParent) {
       const parentPath = treeViewParent ? treeViewParent.path : [];
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
           operators: this.operators,
@@ -223,7 +221,7 @@ export default {
     showEditValueRuleFieldModal(treeViewItem) {
       const { name, value, path } = treeViewItem;
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
           ruleKey: name,
@@ -247,7 +245,7 @@ export default {
     showAddObjectRuleFieldModal(treeViewParent) {
       const parentPath = treeViewParent ? treeViewParent.path : [];
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
@@ -271,7 +269,7 @@ export default {
      * @param {Object} treeViewItem
      */
     showEditObjectRuleFieldModal(treeViewItem) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.eventFilterRule.tooltips.editObjectRuleField'),
@@ -297,3 +295,36 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .pattern-simple-editor {
+    & /deep/ {
+      .v-treeview-node__content, .v-treeview-node__label {
+        flex-shrink: 8;
+      }
+      .v-treeview-node__label {
+        width: 100%;
+      }
+      .text-field {
+        word-break: break-all;
+        margin-bottom: 0;
+      }
+    }
+
+    .operator {
+      height: 100%;
+      position: relative;
+    }
+
+    .bracket {
+      position: absolute;
+      width: 15px;
+      border-radius: 100% 0 0 100% / 50% 50% 50% 50%;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      border: 4px #a6a6a6 solid;
+      border-right: none;
+    }
+  }
+</style>

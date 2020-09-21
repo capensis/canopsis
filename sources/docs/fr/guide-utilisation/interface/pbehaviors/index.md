@@ -1,6 +1,6 @@
-#  Les PBehaviors
+# Les comportements périodiques
 
-Les Pbehaviors sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance, par exemple).
+Les comportements périodiques (ou *pbehaviors*) sont des évènements de calendrier récurrents qui arrêtent temporairement la surveillance d'une entité pendant un temps donné (pour la maintenance, par exemple).
 
 # Utiliser la vue Context
 
@@ -31,29 +31,29 @@ Ainsi, le sélecteur ne sera pas influencé par les faux états erronés de l'en
 
 ## Comment l'utiliser ?
 
-Pour instaurer un Pbehavior il vous suffit de selectionner un évènement, un bouton pause va alors apparaître :
+Pour instaurer un comportement périodique il vous suffit de selectionner un évènement, un bouton pause va alors apparaître :
 
 ![menu](img/menu.png)
 
 Cliquez dessus, plusieurs configuration sont disponibles :
 
-*  le titre de ce PBehavior
+*  le titre de ce comportement périodique
 *  sa durée
-*  la mise en place d'une récursivité ou non
+*  la mise en place d'une récurrence ou non
 *  la raison
 *  le type
 
 ### Exemple
 
-On veut un PBehavior nommé "Mon premier PBehavior !", qui s'étend du 12/10/2018 à 18h00 au 14/10/2018 à 9h00 dont la raison est "autre" et dont le type est "hors plage horraire de surveillance".
+On veut un comportement périodique nommé "Mon premier PBehavior !", qui s'étend du 12/10/2018 à 18h00 au 14/10/2018 à 9h00 dont la raison est "Autre" et dont le type est "hors plage horaire de surveillance".
 
 Dans ce cas, notre fenêtre sera la suivante :
 
 ![fen1](img/fen1.png)
 
-### Récursivité
+### Récurrence
 
-On voudrait maintenant mettre en place une règle de récursivité sur un PBehavior.
+On voudrait maintenant mettre en place une règle de récurrence sur un comportement périodique.
 
 Il vous suffit de cliquer sur "Put a rrule on this PBehavior ?"
 
@@ -62,13 +62,13 @@ Il vous suffit de cliquer sur "Put a rrule on this PBehavior ?"
 Nous allons tout d'abord nous concentrer sur la configuration basique. Plusieurs options sont disponibles :
 
 *  La fréquence : les choix possibles sont variés : toutes les X Secondes, minutes, heures, jours, semaines, mois ou années.
-*  Jusqu'à : date et heure de fin de l'activation de ce PBehavior.
-*  Un jour en particulier : choisir un jour où le PBehavior va s'activer.
-*  Répétition : combien de fois le PBehavior va s'activer.
-*  Intervalle : intervalle de jours entre chaque activation du PBehavior.
+*  Jusqu'à : date et heure de fin de l'activation de ce comportement périodique.
+*  Un jour en particulier : choisir un jour où le comportement périodique va s'activer.
+*  Répétition : combien de fois le comportement périodique va s'activer.
+*  Intervalle : intervalle de jours entre chaque activation du comportement périodique.
 
 #### Configuration Avancée
 
 La configuration avancée est reservée aux utilisateurs les plus expérimentés.
 
-Elle permet, comme son nom l'indique, d'appliquer des règles plus détailées comme sélectionner les jours / heures / secondes sur un laps de temps précis (mois, années, semaines) dans lesquelles le PBehavior va se déclencher.
+Elle permet, comme son nom l'indique, d'appliquer des règles plus détailées comme sélectionner les jours / heures / secondes sur un laps de temps précis (mois, années, semaines) dans lesquelles le comportement périodique va se déclencher.

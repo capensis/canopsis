@@ -1,0 +1,113 @@
+{{ ansible_managed | comment }}
+
+{% if item.value.upstreams is defined %}
+{% for upstream in item.value.upstreams %}
+upstream {{ item.value.upstreams[upstream].name }} {
+{% if item.value.upstreams[upstream].lb_method is defined %}
+    {{ item.value.upstreams[upstream].lb_method }};
+{% endif %}
+    zone {{ item.value.upstreams[upstream].zone_name }} {{ item.value.upstreams[upstream].zone_size }};
+{% for server in item.value.upstreams[upstream].servers %}
+    server {{ item.value.upstreams[upstream].servers[server].address }}:{{ item.value.upstreams[upstream].servers[server].port }} weight={{ item.value.upstreams[upstream].servers[server].weight|default("1") }} {{ item.value.upstreams[upstream].servers[server].health_check|default("") }};
+{% endfor %}
+{% if item.value.upstreams[upstream].sticky_cookie is defined %}
+{% if item.value.upstreams[upstream].sticky_cookie %}
+    sticky cookie srv_id expires=1h  path=/;
+{% endif %}
+{% endif %}
+{% if item.value.upstreams[upstream].custom_options is defined and item.value.upstreams[upstream].custom_options | length %}
+{% for inline_option in item.value.upstreams[upstream].custom_options %}
+    {{ inline_option }};
+{% endfor %}
+{% endif %}
+}
+{% endfor %}
+{% endif %}
+
+{% if item.value.custom_options is defined and item.value.custom_options | length %}
+{% for inline_option in item.value.custom_options %}
+{{ inline_option }};
+{% endfor %}
+{% endif %}
+
+{% if item.value.network_streams is defined %}
+{% for stream in item.value.network_streams %}
+server {
+{% if item.value.network_streams[stream].listen_address is defined and item.value.network_streams[stream].listen_port is defined %}
+{% if item.value.network_streams[stream].listen_address == 'localhost' %}
+{% if item.value.network_streams[stream].udp_enable %}
+    listen {{ item.value.network_streams[stream].listen_port }} udp;
+{% else %}
+    listen {{ item.value.network_streams[stream].listen_port }};
+{% endif %}
+{% else %}
+{% if item.value.network_streams[stream].udp_enable %}
+    listen {{ item.value.network_streams[stream].listen_address }}:{{ item.value.network_streams[stream].listen_port }} udp;
+{% else %}
+    listen {{ item.value.network_streams[stream].listen_address }}:{{ item.value.network_streams[stream].listen_port }};
+{% endif %}
+{% endif %}
+{% elif item.value.network_streams[stream].listen_port is defined %}
+{% if item.value.network_streams[stream].udp_enable %}
+    listen {{ item.value.network_streams[stream].listen_port }} udp;
+{% else %}
+    listen {{ item.value.network_streams[stream].listen_port }};
+{% endif %}
+{% endif %}
+{% if item.value.network_streams[stream].include_files is defined and item.value.network_streams[stream].include_files | length %}
+{% for file in item.value.network_streams[stream].include_files %}
+    include "{{ file }}";
+{% endfor %}
+{% endif %}
+    proxy_pass {{ item.value.network_streams[stream].proxy_pass }};
+    proxy_timeout {{ item.value.network_streams[stream].proxy_timeout }};
+    proxy_connect_timeout {{ item.value.network_streams[stream].proxy_connect_timeout }};
+{% if item.value.network_streams[stream].proxy_protocol %}
+    proxy_protocol on;
+{% else %}
+    proxy_protocol off;
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl is defined %}
+    proxy_ssl on;
+{% if item.value.network_streams[stream].proxy_ssl.cert is defined %}
+    proxy_ssl_certificate {{ item.value.network_streams[stream].proxy_ssl.cert }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.key is defined %}
+    proxy_ssl_certificate_key {{ item.value.network_streams[stream].proxy_ssl.key }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.server_name is defined %}
+    proxy_ssl_server_name {{ item.value.network_streams[stream].proxy_ssl.server_name | ternary("on", "off") }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.name is defined %}
+    proxy_ssl_name {{ item.value.network_streams[stream].proxy_ssl.name }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.protocols is defined %}
+    proxy_ssl_protocols {{ item.value.network_streams[stream].proxy_ssl.protocols }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.ciphers is defined %}
+    proxy_ssl_ciphers {{ item.value.network_streams[stream].proxy_ssl.ciphers }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.trusted_cert is defined %}
+    proxy_ssl_trusted_certificate {{ item.value.network_streams[stream].proxy_ssl.trusted_cert }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.verify is defined %}
+    proxy_ssl_verify {{ item.value.network_streams[stream].proxy_ssl.verify | ternary("on", "off") }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.verify_depth is defined %}
+    proxy_ssl_verify_depth {{ item.value.network_streams[stream].proxy_ssl.verify_depth }};
+{% endif %}
+{% if item.value.network_streams[stream].proxy_ssl.session_reuse is defined %}
+    proxy_ssl_session_reuse {{ item.value.network_streams[stream].proxy_ssl.session_reuse | ternary("on", "off") }};
+{% endif %}
+{% endif %}
+{% if item.value.network_streams[stream].health_check_plus %}
+    health_check;
+{% endif %}
+{% if item.value.network_streams[stream].custom_options is defined and item.value.network_streams[stream].custom_options | length %}
+{% for inline_option in item.value.network_streams[stream].custom_options %}
+    {{ inline_option }};
+{% endfor %}
+{% endif %}
+}
+{% endfor %}
+{% endif %}

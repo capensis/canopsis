@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.badge-container
     span.badge(:style="{ backgroundColor: style.color }") {{ style.text }}
 </template>
 
@@ -39,6 +39,9 @@ export default {
 };
 </script>
 <style scoped>
+  .badge-container {
+    display: inline-block;
+  }
   .badge {
     padding: 3px 7px;
     font-size: 14px;

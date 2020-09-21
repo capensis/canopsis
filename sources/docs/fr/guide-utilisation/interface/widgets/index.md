@@ -4,29 +4,31 @@
 
 Plusieurs types de widgets sont disponibles dans Canopsis :
 
-* Bac à alarmes
-* Explorateur de contexte
-* Météo de services
+* [Bac à alarmes](bac-a-alarmes/index.md)
+* [Explorateur de contexte](contexte/index.md)
+* [Météo de services](meteo-des-services/index.md)
+* [Compteur](compteur/index.md)
 * Statistiques :
     - Tableau
     - Compteur
     - Histogramme
     - Courbes
     - Calendrier
+    - Texte
 
-### Bac à alarmes
+### [Bac à alarmes](bac-a-alarmes/index.md)
 
 Le widget **Bac à alarmes** permet de visualiser les alarmes présentes dans le SI.
 
 Il permet de visualiser les informations de l'alarme (composant concerné, statut de l'alarme, etc), ainsi que d'effectuer des actions sur ces alarmes.
 
-Pour plus d'information sur ce qu'est une alarme, ainsi que sur les champs présents, voir la [description d'une alarme](./bac-a-alarmes/description-alarme.md).
+Pour plus d'information sur ce qu'est une alarme, voir son [entrée dans la page du vocabulaire](../../vocabulaire/index.md#alarme).
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du bac à alarmes](./bac-a-alarmes/index.md)
 
 Pour les informations concernant le paramètrage du Bac à alarmes, voir la partie : [Guide de l'exploitant du bac à alarmes](./bac-a-alarmes/index.md#guide-exploitant)
 
-### Explorateur de contexte
+### [Explorateur de contexte](contexte/index.md)
 
 Le widget **Explorateur de contexte** permet de lister les entités (composants, connecteurs, ressources et observateurs).
 
@@ -35,13 +37,21 @@ Il permet également d'accéder à la liste des comportements périodiques de ch
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./contexte/index.md)
 
-### Météo de services
+### [Météo de services](meteo-des-services/index.md)
 
 Le widget **Météo de services** permet de visualiser rapidement l'état des services.
 
 Celui-ci présente sous forme de grille un ensemble de services, avec un jeu de couleurs et d'icones permettant de rapidement visualiser une éventuelle source de problème.
 
 Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services/index.md)
+
+### [Compteur](compteur/index.md)
+
+Le widget **Compteur** permet de présenter des compteurs d'alarmes.  
+
+Il se présente sous la forme d'une grille de tuiles, avec un un jeu de couleurs et d'icônes permettant de visualiser un dépassement de seuil. 
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur](./compteur/index.md)
 
 ### Tableau de statistiques
 

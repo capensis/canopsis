@@ -35,6 +35,7 @@ from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.pbehavior.utils import check_valid_rrule
 from canopsis.watcher.manager import Watcher as WatcherManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+import time
 
 
 VALID_PBEHAVIOR_PARAMS = [
@@ -114,7 +115,7 @@ def check_values(data):
                 if not isinstance(date, int):
                     raise ValueError("The date inside exdate must be an int.")
         else:
-            raise ValueError("Exdate must be a list of string.")
+            raise ValueError("Exdate must be a list.")
     # useful when enabled doesn't exist in document
     if ("enabled" not in data
             or data["enabled"] is None
@@ -169,7 +170,7 @@ class RouteHandlerPBehavior(object):
                enabled=True, comments=None,
                connector='canopsis', connector_name='canopsis',
                type_=PBehavior.DEFAULT_TYPE, reason='', timezone=None,
-               exdate=None, _id=None):
+               exdate=None, _id=None, replace_expired=False):
         """
         Create a pbehavior.
 
@@ -186,6 +187,7 @@ class RouteHandlerPBehavior(object):
         :param str type_: an associated type_
         :param str reason: a reason to apply this behavior
         :param str _id: the pb id (optional)
+        :param bool replace_expired: rename current _id to EXP={_id} if exists or not
         """
         if exdate is None:
             exdate = []
@@ -230,15 +232,16 @@ class RouteHandlerPBehavior(object):
             type_=type_,
             reason=reason,
             timezone=timezone,
-            exdate=exdate
+            exdate=exdate,
+            replace_expired=replace_expired
         )
 
         return result
 
-    def get_by_eid(self, eid):
-        return self.pb_manager.get_pbehaviors_by_eid(eid)
+    def get_by_eid(self, eid, enabled_filter=None):
+        return self.pb_manager.get_pbehaviors_by_eid(eid, enabled_filter)
 
-    def read(self, _id, search=None, limit=None, skip=None):
+    def read(self, _id, search=None, limit=None, skip=None, current_active_pbh=False, sort=None):
         """
         Read a pbehavior.
 
@@ -258,8 +261,56 @@ class RouteHandlerPBehavior(object):
         if not is_ok:
             raise ValueError("_id should be str, a list, None (null) not {}"
                              .format(type(_id)))
+        pbehaviors = self.pb_manager.read(_id, search, limit, skip, sort)
+        return self._get_active_only(pbehaviors, current_active_pbh, sort, limit, skip)
 
-        return self.pb_manager.read(_id, search, limit, skip)
+    def _get_active_only(self, pbehaviors_data, current_active_pbh=False, sorting=None, limit=None, skip=None):
+        active_ones = []
+        now = int(time.time())
+        for pb in pbehaviors_data.get("data", []):
+            if self.pb_manager.check_active_pbehavior(now, pb):
+                pb["is_currently_active"] = True
+                if current_active_pbh:
+                    active_ones.append(pb)
+            else:
+                pb["is_currently_active"] = False
+
+        if current_active_pbh:
+            pbehaviors_data["data"] = active_ones
+            pbehaviors_data["total_count"] = len(active_ones)
+            pbehaviors_data["count"] = len(active_ones)
+
+        # sort by is_currently_active field
+        if sorting:
+            direction = 'ASC'
+            is_sort = False
+            try:
+                if sorting[0] == 'is_currently_active':
+                    is_sort = True
+                elif sorting[0]['property'] == 'is_currently_active':
+                    is_sort = True
+                    direction = sorting[0].get('direction', 'ASC')
+            except:
+                pass
+
+            if is_sort:
+                data = pbehaviors_data["data"]
+                reverse = False
+
+                def sort_func(p):
+                    return p['is_currently_active']
+                if direction == 'DESC':
+                    reverse = True
+                data.sort(reverse=reverse, key=sort_func)
+                try:
+                    if skip is not None:
+                        data = data[skip:]
+                    if limit is not None:
+                        data = data[:limit]
+                except:
+                    pass
+                pbehaviors_data["data"] = data
+        return pbehaviors_data
 
     def update(self, _id, **kwargs):
         """
@@ -407,7 +458,14 @@ def exports(ws):
         if len(invalid_keys) != 0:
             ws.logger.error('Invalid keys {} in payload'.format(invalid_keys))
 
+        replace_expired = False
         try:
+            replace_expired = int(request.params['replace_expired']) == 1
+        except:
+            pass
+
+        try:
+            elements['replace_expired'] = replace_expired
             return rhpb.create(**elements)
         except TypeError:
             return gen_json_error(
@@ -471,13 +529,13 @@ def exports(ws):
     @route(
         ws.application.get,
         name='pbehavior/read',
-        payload=['_id', 'search', 'limit', 'skip']
+        payload=['_id', 'search', 'limit', 'skip', 'current_active_pbh', 'sort']
     )
-    def read(_id=None, search=None, limit=None, skip=None):
+    def read(_id=None, search=None, limit=None, skip=None, current_active_pbh=False, sort=None):
         """
         Get a pbehavior.
         """
-        return rhpb.read(_id, search=search, limit=limit, skip=skip)
+        return rhpb.read(_id, search=search, limit=limit, skip=skip, current_active_pbh=current_active_pbh, sort=sort)
 
     @route(
         ws.application.put,
@@ -552,7 +610,20 @@ def exports(ws):
         """
         Return pbehaviors that apply on entity entity_id.
         """
-        return gen_json(rhpb.get_by_eid(entity_id))
+        enabled_filter = None
+        try:
+            enabled_filter = int(request.params['enabled'])
+        except:
+            pass
+
+        if enabled_filter == 1:
+            enabled_filter = True
+        elif enabled_filter == 0:
+            enabled_filter = False
+        else:
+            enabled_filter = None
+
+        return gen_json(rhpb.get_by_eid(entity_id, enabled_filter))
 
     @route(
         ws.application.post,

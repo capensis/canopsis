@@ -18,9 +18,9 @@
           :value="form.mibName",
           :items="moduleMibs",
           :loading="moduleMibsPending",
+          :menu-props="{ offsetY: true }",
           item-text="name",
           hide-details,
-          offset-y,
           return-object,
           @input="selectMib"
         )

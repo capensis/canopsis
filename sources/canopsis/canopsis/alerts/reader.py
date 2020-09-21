@@ -44,6 +44,8 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
+import json
+
 
 rconn = RedisStore.get_default()
 
@@ -70,6 +72,8 @@ class AlertsReader(object):
                               "v.connector",
                               "v.resource",
                               "v.connector_name"]
+    WILDCARD_DYNAMIC_INFOS_FILTER_PREFIX = "v.infos.*."
+    WILDCARD_DYNAMIC_INFOS_FILTER_POSITION = 10
 
     def __init__(self, logger, config, storage, pbehavior_manager):
         """
@@ -138,7 +142,7 @@ class AlertsReader(object):
             return self.alarm_fields['properties'][key]['stored_name']
 
         # This translates the keys in filters to look in alarm.entity.infos
-        # rather than in alarm.infos. 
+        # rather than in alarm.infos.
         # Alarm.infos is a redundant json object that doesn't exists in mongo,
         # thus creating problems when searching or filtering on it in the front
         # copied directly from alarm.entity.infos which does exist in mongo
@@ -198,7 +202,7 @@ class AlertsReader(object):
 
         return tkey, tdir
 
-    def _get_time_filter(self, opened, resolved, tstart, tstop):
+    def _get_opened_resolved_time_filter(self, opened, resolved, tstart, tstop):
         """
         Transform opened, resolved, tstart and tstop parameters into a mongo
         filter. This filter is specific to alarms collection.
@@ -235,7 +239,7 @@ class AlertsReader(object):
         return None
 
     @staticmethod
-    def _get_opened_time_filter(tstart, tstop):
+    def _get_time_filter(resolved, tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -244,32 +248,21 @@ class AlertsReader(object):
         :type tstart: int or None
         :type tstop: int or None
 
-        :return: Mongo filter
+        :return: Specific mongo filter
         :rtype: dict
         """
-
-        if tstop is not None and tstart is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstop, "$gte": tstart}
-            }
-
+        cond = {'v.resolved': resolved, 't': dict()}
+        if tstart is not None:
+            cond['t']['$gte'] = tstart
         if tstop is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstop}
-            }
+            cond['t']['$lte'] = tstop
 
-        elif tstart is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstart}
-            }
+        if not cond['t']:
+            del cond['t']
 
-        return {'v.resolved': None}
+        return cond
 
-    @staticmethod
-    def _get_resolved_time_filter(tstart, tstop):
+    def _get_opened_time_filter(self, tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -282,22 +275,22 @@ class AlertsReader(object):
         :rtype: dict
         """
 
-        if tstart is not None and tstop is not None:
-            return {
-                'v.resolved': {'$ne': None},
-                't': {'$gte': tstart, '$lte': tstop}
-            }
+        return self._get_time_filter(None, tstart, tstop)
 
-        elif tstart is not None:
-            return {'v.resolved': {'$ne': None, '$gte': tstart}}
+    def _get_resolved_time_filter(self, tstart, tstop):
+        """
+        Get a specific mongo filter.
 
-        elif tstop is not None:
-            return {
-                'v.resolved': {'$ne': None},
-                't': {'$lte': tstop}
-            }
+        :param tstart: Timestamp
+        :param tstop: Timestamp
+        :type tstart: int or None
+        :type tstop: int or None
 
-        return {'v.resolved': {'$ne': None}}
+        :return: Specific mongo filter
+        :rtype: dict
+        """
+
+        return self._get_time_filter({'$ne': None}, tstart, tstop)
 
     @classmethod
     def __convert_to_bool(cls, value):
@@ -358,8 +351,10 @@ class AlertsReader(object):
 
         if not search:
             return ('this', {})
-
-        return interpret(search, grammar_file=self.grammar)
+        t, q = interpret(search, grammar_file=self.grammar)
+        if q and type(q) is str:
+            q = json.loads(json.dumps(q).replace("\\\\'", "'").decode("string_escape"))
+        return t, q
 
     def _lookup(self, alarms, lookups):
         """
@@ -387,7 +382,8 @@ class AlertsReader(object):
         return alarms
 
     def _get_final_filter(
-            self, view_filter, time_filter, search, active_columns
+            self, view_filter, time_filter, search, active_columns,
+            correlation=False
     ):
         """
         Computes the real filter:
@@ -423,9 +419,12 @@ class AlertsReader(object):
             in a column ends with '.' it will be ignored.
 
             The 'd' column is always added.
+        :param bool correlation: True to return meta-alarms instead of alarms list that was grouped 
         """
         final_filter = {'$and': []}
 
+        if not correlation:
+            final_filter['$and'].append({"d": {"$not": re.compile("^meta-alarm-entity-.+")}})
         t_view_filter = self._translate_filter(view_filter)
         # add the view filter if not empty
         if view_filter not in [None, {}]:
@@ -445,7 +444,7 @@ class AlertsReader(object):
             final_filter['$and'].append(bnf_search_filter)
 
         else:
-            escaped_search = re.escape(str(search))
+            escaped_search = re.escape(str(search).decode('utf-8'))
             column_filter = {'$or': []}
             for column in active_columns:
                 # filter is used in mongo
@@ -474,11 +473,26 @@ class AlertsReader(object):
 
         return final_filter
 
-    def add_pbh_filter(self, pipeline, filter_):
+    def contains_wildcard_dynamic_filter(self, query, has_dynamic_filter=[False]):
+        if isinstance(query, dict):
+            for key in query.keys():
+                if isinstance(key, (str, unicode)):
+                    if key.startswith(self.WILDCARD_DYNAMIC_INFOS_FILTER_PREFIX):
+                        query["infos_array.v.{}".format(key[self.WILDCARD_DYNAMIC_INFOS_FILTER_POSITION:])] = query.pop(key)
+                        has_dynamic_filter[0] = True
+                    elif isinstance(query[key], (list, dict)):
+                        self.contains_wildcard_dynamic_filter(query[key], has_dynamic_filter)
+        elif isinstance(query, list):
+            for element in query:
+                self.contains_wildcard_dynamic_filter(element, has_dynamic_filter)
+        return has_dynamic_filter[0]
+
+    def add_pbh_filter(self, pipeline, filter_, add_pbh_filter=True):
         """Add to the aggregation pipeline the stages to filter the alarm
         with their pbehavior.
         :param list pipeline: the aggregation pipeline
-        :param dict filter_: the filter received from the front."""
+        :param dict filter_: the filter received from the front.
+        :param bool add_pbh_filter: explicitly tell adding pbh filter"""
         self.parse_filter(filter_)
         pipeline.append({"$lookup": {
             "from": "default_pbehavior",
@@ -486,7 +500,7 @@ class AlertsReader(object):
             "foreignField": "eids",
             "as": "pbehaviors"}})
 
-        if self.has_active_pbh is not None:
+        if add_pbh_filter and self.has_active_pbh is not None:
             tnow = int(time())
             stage = {
                 "$project": {
@@ -523,13 +537,47 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
-    
+    @staticmethod
+    def _last_comment_aggregation():
+        """
+        Aggregation pipeline step to add field v.lastComment with last comment step
+        Empty dictionary when comments not found
+        """
+        return {"$addFields": {
+            "lastComment": {
+                "$reduce": {
+                    "input": {
+                        # slice array to top 1
+                        "$slice": [{
+                            # filter steps with comment type, newer first
+                            "$filter": {
+                                "input": {"$reverseArray": "$v.steps"},
+                                "as": "steps",
+                                "cond": {
+                                    "$eq": ["$$steps._t", "comment"]
+                                }
+                            }
+                        },
+                            1
+                        ]
+                    },
+                    "initialValue": {},
+                    "in": {"$mergeObjects": [{}, "$$this"]}
+                }
+            }
+        }}
+
     def _build_aggregate_pipeline(self,
                                   final_filter,
                                   sort_key,
                                   sort_dir,
                                   with_steps,
-                                  filter_):
+                                  with_consequences,
+                                  filter_,
+                                  add_pbh_filter=True,
+                                  has_wildcard_dynamic_filter=False,
+                                  correlation=False,
+                                  consequences_children=False):
         """
         :param dict final_filter: the filter sent by the front page
         :param str sort_key: Name of the column to sort. If the value ends with
@@ -537,6 +585,7 @@ class AlertsReader(object):
         :param str sort_dir: Either "ASC" or "DESC"
         :param bool with_steps: True if you want alarm steps in your alarm.
         :param dict filter_: Mongo filter
+        :param bool correlation: True to return meta-alarms instead of grouped alarms 
 
         :returns: List of steps used in mongo aggregation
         :rtype: list
@@ -567,12 +616,66 @@ class AlertsReader(object):
                 }
             }
         ]
+        if correlation and not consequences_children:
+            self._add_metaalarm_filter(pipeline, 3, with_consequences, filter_)
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
+        # insert pipeline operations into 0 position in reverse order:
+        # aggregate last comment from steps as lastComment, replace with null when empty, move lastComment 
+        # into v.lastComment
+        pipeline.insert(0, {"$project": {"lastComment": False}})
+        pipeline.insert(0, {'$addFields': {"v.lastComment": "$lastComment"}})
+        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "infos_array": 1, "lastComment": {
+            "$cond": {
+                "if": {"$eq": [{}, "$lastComment"]},
+                "then": None,
+                "else": "$lastComment"
+            }
+        }}})
+        pipeline.insert(0, self._last_comment_aggregation())
 
-        self.add_pbh_filter(pipeline, filter_)
+        self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
+        if has_wildcard_dynamic_filter:
+            pipeline.insert(0, {"$project": {"infos_array": {"$objectToArray": "$v.infos"}, "t": 1, "d": 1, "v": 1}})
+            pipeline.append({"$project": {"infos_array": 0}})
         return pipeline
+
+    def _can_add_metaalarm_filter(self, with_consequences, filter_):
+        not_by_id = lambda x: "u'_id':" not in str(x)
+        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and not_by_id(filter_)) or \
+            (isinstance(filter_, list) and filter_ != [] and not_by_id(filter_))) or with_consequences
+
+    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences, filter_):
+        """
+        Method adds filter to find metaalarms
+
+        :param list of dict pipeline: MongoDB aggregation pipeline
+        :param int start_pos: pipeline item position to insert filter
+        :param bool with_consequences: `with_consequences` request parameter to group alarms with metaalarm under
+        `consequneces` key
+        """
+        consequences_pipeline = {"total": {"$size": "$v.children"}}
+        if with_consequences:
+            consequences_pipeline["data"] = "$v.children"
+        pipeline.insert(start_pos+1, {'$project': {'t': 1, 'd': 1, 'v': 1, 'entity': 1, "rule": 1,
+            "consequences": {
+                "$cond": {
+                "if": { "$eq": [ {}, "$consequences" ] },
+                "then": "$$REMOVE",
+                "else": "$consequences"
+                }
+            },
+            'metaalarm': 1 }})
+        pipeline.insert(start_pos+1, {"$addFields": {
+            "rule": "$v.meta", 
+            "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
+            "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
+        }})
+        if self._can_add_metaalarm_filter(with_consequences, filter_):
+            pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {
+                            "v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+
 
     def _search_aggregate(self,
                           skip,
@@ -580,7 +683,7 @@ class AlertsReader(object):
                           pipeline):
         """
         :param int skip: Number of alarms to skip (pagination)
-        :param int limit: Maximum number of alarms to return    
+        :param int limit: Maximum number of alarms to return
         :param list pipeline: list of steps in mongo aggregate command
 
         :returns: Dict containing alarms, the list of alarms returned by mongo
@@ -660,6 +763,7 @@ class AlertsReader(object):
                         sort_key,
                         sort_dir,
                         api_limit,
+                        rules,
                         pipeline):
         """
         :param int skip: Number of alarms to skip (pagination)
@@ -674,6 +778,7 @@ class AlertsReader(object):
         :param dict filter_: Mongo filter
         :param int apt_limit: A hard limit for when hide_resources is active
         :param list pipeline: list of steps in mongo aggregate command
+        :param dict rules: map of alarm IDs to meta-alarm rules
 
         :returns: Dict containing alarms, truncated, first and last
         :rtype: dict
@@ -681,6 +786,7 @@ class AlertsReader(object):
         len_alarms = 0
         results = {
             'alarms': [],
+            'rules': rules,
             'total': total,
             'truncated': False,
             'first': 1+skip,
@@ -716,7 +822,45 @@ class AlertsReader(object):
 
         results['last'] = results['first']-1+len(results['alarms'])
 
+        self._add_is_active_field(results['alarms'])
+
         return results
+
+    def _add_is_active_field(self, alarms):
+        """
+        Add an isActive field to the alarm's pbehaviors, indicating whether the
+        pbehavior is active or not.
+
+        :param List[Dict] alarms: A list of alarms (as dictionaries). Each
+            alarm should have a pbehaviors field, containing the list of the
+            pbehaviors that impact it.
+            The isActive field will be added in place to the list.
+        """
+        now = time()
+
+        for alarm in alarms:
+            for pbehavior in alarm.get('pbehaviors'):
+                active = False
+                try:
+                    active = self.pbehavior_manager.check_active_pbehavior(
+                        now, pbehavior)
+                except ValueError:
+                    self.logger.exception("Unable to check if pbehavior {} is active".format(pbehavior.get('_id')))
+
+                pbehavior['isActive'] = active
+                del pbehavior['eids']
+
+    def _metaalarm_children_rules(self):
+        """
+        Create map with mataalarms children IDs as key and list of rule names as value
+        """
+        pipeline = [
+            {"$match": {"v.meta": {"$nin": ["", None]}}}, 
+            {"$project": {"children": "$v.children", "rule": "$v.meta"}}, {"$unwind": "$children"},
+            {"$group": {"_id": {"children": "$children"}, "rule": {"$addToSet": "$rule"}}}, 
+            {"$project": {"_id": "$_id.children", "rule": "$rule"}}
+        ]
+        return {child["_id"]:child["rule"] for child in self.alarm_collection.aggregate(pipeline)}
 
     def get(
             self,
@@ -734,7 +878,11 @@ class AlertsReader(object):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            with_consequences=False,
+            add_pbh_filter=True,
+            correlation=False,
+            consequences_children=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -770,6 +918,12 @@ class AlertsReader(object):
         :param bool hide_resources: hide resources' alarms if the component has
         an alarm
 
+        :param bool with_consequences: display meta-alarm consequences: grouped alarms
+
+        :param bool add_pbh_filter: add pbehavior filter or not
+
+        :param bool correlation: display meta-alarms, grouped alarms as consequences
+
         :returns: List of sorted alarms + pagination informations
         :rtype: dict
         """
@@ -787,7 +941,7 @@ class AlertsReader(object):
         if active_columns is None:
             active_columns = self.DEFAULT_ACTIVE_COLUMNS
 
-        time_filter = self._get_time_filter(
+        time_filter = self._get_opened_resolved_time_filter(
             opened=opened, resolved=resolved,
             tstart=tstart, tstop=tstop
         )
@@ -797,14 +951,18 @@ class AlertsReader(object):
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         final_filter = self._get_final_filter(
-            filter_, time_filter, search, active_columns
+            filter_, time_filter, search, active_columns, correlation=correlation
         )
+
 
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
 
-        pipeline = self._build_aggregate_pipeline(final_filter, sort_key,
-                                                  sort_dir, with_steps, filter_)
+        has_wildcard_dynamic_filter = self.contains_wildcard_dynamic_filter(final_filter)
+        pipeline = self._build_aggregate_pipeline(
+            final_filter, sort_key, sort_dir, with_steps, with_consequences, filter_,
+            add_pbh_filter=add_pbh_filter, has_wildcard_dynamic_filter=has_wildcard_dynamic_filter,
+            correlation=correlation, consequences_children=consequences_children)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"
@@ -816,6 +974,10 @@ class AlertsReader(object):
                                                          cursor={}))[0]['count']
         except IndexError:
             total = 0
+
+        rules = dict()
+        if correlation and filter_ and not with_consequences:
+            rules = self._metaalarm_children_rules()
 
         if limit is None:
             limit = total
@@ -838,7 +1000,7 @@ class AlertsReader(object):
         result = self._loop_aggregate(skip, limit, filters,
                                       post_sort, total,
                                       sort_key, sort_dir,
-                                      api_limit, pipeline)
+                                      api_limit, rules, pipeline)
 
         return result
 

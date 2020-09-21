@@ -29,7 +29,6 @@ import featuresService from '@/services/features';
  *
  * @prop {Object} item - Object representing an alarm
  * @prop {Object} widget - Full widget object
- * @prop {boolean} [isEditingMode=false] - Is editing mode enable on a view
  */
 export default {
   components: { SharedActionsPanel },
@@ -49,7 +48,7 @@ export default {
       type: Object,
       required: true,
     },
-    isEditingMode: {
+    isResolvedAlarm: {
       type: Boolean,
       default: false,
     },
@@ -111,7 +110,7 @@ export default {
           type: alarmsListActionsTypes.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
-          method: this.showActionModal(MODALS.createCancelEvent),
+          method: this.showCancelEventModal,
         },
         changeState: {
           type: alarmsListActionsTypes.changeState,
@@ -119,17 +118,23 @@ export default {
           title: this.$t('alarmList.actions.titles.changeState'),
           method: this.showActionModal(MODALS.createChangeStateEvent),
         },
-        moreInfos: {
-          type: alarmsListActionsTypes.moreInfos,
-          icon: 'info',
-          title: this.$t('alarmList.actions.titles.moreInfos'),
-          method: this.showMoreInfosModal,
-        },
         variablesHelp: {
           type: alarmsListActionsTypes.variablesHelp,
           icon: 'help',
           title: this.$t('alarmList.actions.titles.variablesHelp'),
           method: this.showVariablesHelperModal,
+        },
+        history: {
+          type: alarmsListActionsTypes.history,
+          icon: 'history',
+          title: this.$t('alarmList.actions.titles.history'),
+          method: this.showHistoryModal,
+        },
+        comment: {
+          type: alarmsListActionsTypes.comment,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
+          title: this.$t('alarmList.actions.titles.comment'),
+          method: this.showCreateCommentModal,
         },
       },
     };
@@ -145,22 +150,26 @@ export default {
         afterSubmit: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
       };
     },
-    actions() {
+    resolvedActions() {
+      const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
+
+      return [pbehaviorList, variablesHelp];
+    },
+    unresolvedActions() {
       const { filteredActionsMap } = this;
 
-      let actions = [
+      const actions = [
         filteredActionsMap.snooze,
         filteredActionsMap.pbehaviorAdd,
         filteredActionsMap.pbehaviorList,
+        filteredActionsMap.comment,
       ];
 
-      if (this.isEditingMode) {
-        actions.push(filteredActionsMap.variablesHelp);
+      if (this.item.entity) {
+        actions.push(filteredActionsMap.history);
       }
 
-      if (this.widget.parameters.moreInfoTemplate !== '') {
-        actions.push(filteredActionsMap.moreInfos);
-      }
+      actions.push(filteredActionsMap.variablesHelp);
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {
@@ -183,17 +192,23 @@ export default {
         }
       }
 
+      return actions;
+    },
+    actions() {
+      let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
+
       actions = compact(actions);
 
-      const inlineActions = actions.slice(0, 3);
-      const dropDownActions = actions.slice(3);
-
       const result = {
-        inline: inlineActions.filter(action => !!action),
-        dropDown: dropDownActions.filter(action => !!action),
+        inline: actions.slice(0, 3),
+        dropDown: actions.slice(3),
       };
 
-      if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
+      if (!this.isResolvedAlarm && featuresService.has('components.alarmListActionPanel.computed.actions')) {
         return featuresService.call('components.alarmListActionPanel.computed.actions', this, result);
       }
 

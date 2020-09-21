@@ -1,18 +1,27 @@
-import { omit } from 'lodash';
+import { get, omit, cloneDeep } from 'lodash';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, BUSINESS_USER_RIGHTS_ACTIONS_MAP, CRUD_ACTIONS } from '@/constants';
+import {
+  MODALS,
+  ENTITIES_TYPES,
+  EVENT_ENTITY_TYPES,
+  BUSINESS_USER_RIGHTS_ACTIONS_MAP,
+  CRUD_ACTIONS,
+  WIDGET_TYPES,
+  STATS_QUICK_RANGES,
+} from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
+import { generateWidgetByType } from '@/helpers/entities';
+
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [modalMixin, eventActionsAlarmMixin, entitiesPbehaviorMixin],
+  mixins: [eventActionsAlarmMixin, entitiesPbehaviorMixin],
   methods: {
     createFastAckEvent() {
       let eventData = {};
@@ -22,6 +31,16 @@ export default {
       }
 
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
+    },
+
+    showCreateCommentModal() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          ...this.modalConfig,
+          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
+        },
+      });
     },
 
     async createMassFastAckEvent() {
@@ -38,14 +57,14 @@ export default {
     },
 
     showActionModal(name) {
-      return () => this.showModal({
+      return () => this.$modals.show({
         name,
         config: this.modalConfig,
       });
     },
 
     showAckModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createAckEvent,
         config: {
           ...this.modalConfig,
@@ -55,30 +74,33 @@ export default {
     },
 
     showPbehaviorsListModal() {
-      this.showModal({
+      const availableActions = !this.isResolvedAlarm ? [CRUD_ACTIONS.delete, CRUD_ACTIONS.update] : [];
+
+      this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
           ...this.modalConfig,
           pbehaviors: this.item.pbehaviors,
           entityId: this.item.entity._id,
-          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
+          availableActions,
         },
       });
     },
 
-    showMoreInfosModal() {
-      this.showModal({
-        name: MODALS.moreInfos,
+    showCancelEventModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
-          template: this.widget.parameters.moreInfoTemplate,
+          title: this.$t('modals.createCancelEvent.title'),
+          eventType: EVENT_ENTITY_TYPES.cancel,
         },
       });
     },
 
     showAckRemoveModal() {
-      this.showModal({
-        name: MODALS.createCancelEvent,
+      this.$modals.show({
+        name: MODALS.createEvent,
         config: {
           ...this.modalConfig,
           title: this.$t('modals.createAckRemove.title'),
@@ -90,7 +112,7 @@ export default {
     showVariablesHelperModal() {
       const variables = [];
 
-      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity']), 'alarm');
+      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity', 'infos']), 'alarm');
 
       variables.push(alarmFields);
 
@@ -99,7 +121,7 @@ export default {
         variables.push(entityFields);
       }
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.variablesHelp,
         config: {
           ...this.modalConfig,
@@ -110,7 +132,7 @@ export default {
     },
 
     showAddPbehaviorModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createPbehavior,
         config: {
           pbehavior: {
@@ -123,6 +145,49 @@ export default {
             parents: [this.item],
             parentsType: ENTITIES_TYPES.alarm,
           }),
+        },
+      });
+    },
+
+    showHistoryModal() {
+      const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
+      const filter = { $and: [{ 'entity._id': get(this.item, 'entity._id') }] };
+      const entityFilter = {
+        title: this.item.entity.name,
+        filter,
+      };
+
+      /**
+       * Default value for columns
+       */
+      widget.parameters.widgetColumns = cloneDeep(this.widget.parameters.widgetColumns);
+
+      /**
+       * Default value for liveReporting is last 30 days
+       */
+      widget.parameters.liveReporting = {
+        tstart: STATS_QUICK_RANGES.last30Days.start,
+        tstop: STATS_QUICK_RANGES.last30Days.stop,
+      };
+
+      /**
+       * Default value for alarmsStateFilter
+       */
+      widget.parameters.alarmsStateFilter = {
+        opened: false,
+        resolved: true,
+      };
+
+      /**
+       * Special entity filter for alarms list modal
+       */
+      widget.parameters.mainFilter = entityFilter;
+      widget.parameters.viewFilters = [entityFilter];
+
+      this.$modals.show({
+        name: MODALS.alarmsList,
+        config: {
+          widget,
         },
       });
     },

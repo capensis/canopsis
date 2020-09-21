@@ -1,6 +1,9 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
+const { API_ROUTES } = require('@/config');
+
 const el = require('../../helpers/el');
+const { WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
 
 const commands = {
   clickSubmitAlarms() {
@@ -12,6 +15,12 @@ const commands = {
       if (value !== String(checked)) {
         this.customClick('@enableHtml');
       }
+    });
+  },
+
+  checkEnableHtmlValue(expected) {
+    return this.getAttribute('@enableHtmlInput', 'aria-checked', ({ value }) => {
+      this.assert.equal(value, String(expected));
     });
   },
 
@@ -35,6 +44,12 @@ const commands = {
     });
   },
 
+  checkIsMultiAckEnabled(expected) {
+    return this.getAttribute('@isMultiAckEnabledInput', 'aria-checked', ({ value }) => {
+      this.assert.equal(value, String(expected));
+    });
+  },
+
   clickFastAckOutput() {
     return this.customClick('@fastAckOutput');
   },
@@ -44,6 +59,12 @@ const commands = {
       if (value !== String(checked)) {
         this.customClick('@fastAckOutputSwitch');
       }
+    });
+  },
+
+  checkFastAckOutputSwitch(expected) {
+    return this.getAttribute('@fastAckOutputSwitchInput', 'aria-checked', ({ value }) => {
+      this.assert.equal(value, String(expected));
     });
   },
 
@@ -69,6 +90,47 @@ const commands = {
 
   clickDeleteLiveReporting() {
     return this.customClick('@liveReportingDeleteButton');
+  },
+
+  waitFirstAlarmsListXHR(triggerFunc, callback) {
+    return this.waitForFirstXHR(
+      API_ROUTES.alarmList,
+      WAIT_FOR_FIRST_XHR_TIME,
+      triggerFunc,
+      ({ responseData, requestData }) => callback({
+        responseData: JSON.parse(responseData),
+        requestData: JSON.parse(requestData),
+      }),
+    );
+  },
+
+  waitAllAlarmsListXHR(triggerFunc, callback, delay = WAIT_FOR_FIRST_XHR_TIME) {
+    return this.waitForXHR(
+      API_ROUTES.alarmList,
+      delay,
+      triggerFunc,
+      callback,
+    );
+  },
+
+  waitFirstEventXHR(triggerFunc, callback) {
+    return this.waitForFirstXHR(
+      API_ROUTES.event,
+      WAIT_FOR_FIRST_XHR_TIME,
+      triggerFunc,
+      ({ responseData }) => callback({
+        responseData: JSON.parse(responseData),
+      }),
+    );
+  },
+
+  waitFirstPbehaviorXHR(triggerFunc, callback) {
+    return this.waitForFirstXHR(
+      API_ROUTES.pbehavior.pbehavior,
+      WAIT_FOR_FIRST_XHR_TIME,
+      triggerFunc,
+      ({ responseData }) => callback(responseData),
+    );
   },
 
   el,

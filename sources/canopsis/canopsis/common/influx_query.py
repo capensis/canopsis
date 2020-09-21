@@ -20,8 +20,9 @@
 
 from __future__ import unicode_literals
 
-from canopsis.common.influx import SECONDS, quote_ident, quote_regex,\
-    escape_regex
+from canopsis.common.influx import (
+    SECONDS, quote_ident, quote_literal, quote_regex, escape_regex
+)
 
 
 class SelectColumn(object):
@@ -226,6 +227,18 @@ class SelectQuery(object):
                 self.where_conditions.append(condition)
         return self
 
+    def where_equal(self, tag, value):
+        """
+        Add a condition to the WHERE statement checking that the value of a tag
+        is equal to a specified value.
+
+        :param str tag: The name of the tag
+        :param str value: The expected value of the tag
+        """
+        return self.where('{} = {}'.format(
+            quote_ident(tag),
+            quote_literal(value)))
+
     def where_in(self, tag, values):
         """
         Add a condition to the WHERE statement checking that the value of a tag
@@ -257,7 +270,7 @@ class SelectQuery(object):
         :param Union[int, float] timestamp:
         """
         if timestamp is not None:
-            return self.where('time >= {:.0f}'.format(timestamp * SECONDS))
+            return self.where('time >= {:.0f}ns'.format(timestamp * SECONDS))
 
         return self
 
@@ -268,7 +281,7 @@ class SelectQuery(object):
         :param Union[int, float] timestamp:
         """
         if timestamp is not None:
-            return self.where('time < {:.0f}'.format(timestamp * SECONDS))
+            return self.where('time < {:.0f}ns'.format(timestamp * SECONDS))
 
         return self
 

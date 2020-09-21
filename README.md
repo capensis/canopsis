@@ -28,4 +28,4 @@ Commercial offers are also available on [canopsis.com](http://www.canopsis.com).
 
 Main development is coordinated on [git.canopsis.net](https://git.canopsis.net/canopsis/canopsis), and then mirrored on [GitHub](https://github.com/capensis/canopsis).
 
-© 2011–2019 Capensis
+© 2011–2020 Capensis

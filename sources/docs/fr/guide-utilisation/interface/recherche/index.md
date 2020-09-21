@@ -1,6 +1,6 @@
 # Moteur de recherche
 
-Actuellement, il y a deux types de recherches disponibles dans le bac à alarmes :
+Actuellement, il y a deux types de recherches disponibles dans le bac à alarmes et l'explorateur de contexte :
 
 *  la recherche naturelle
 *  la recherche avancée
@@ -9,7 +9,7 @@ Actuellement, il y a deux types de recherches disponibles dans le bac à alarmes
 
 ## La recherche naturelle
 
-La recherche naturelle consiste en la recherche d'une chaîne de caractères, saisie dans le champ de recherche, sur toutes les colonnes affichées dans le bac à alarmes.
+La recherche naturelle consiste en la recherche d'une chaîne de caractères, saisie dans le champ de recherche, sur toutes les colonnes affichées dans le bac à alarmes ou l'explorateur de contexte.
 
 ## La recherche avancée
 
@@ -31,7 +31,7 @@ L'opérande de gauche correspond au nom de la colonne dans laquelle rechercher l
 
 #### Le nom de colonne
 
-Le nom de colonne est une chaîne de caractères alpha-numériques correspondant aux noms des colonnes affichées dans le bac à alarmes.
+Le nom de colonne est une chaîne de caractères alpha-numériques correspondant aux noms des colonnes affichées dans le bac à alarmes ou dans l'explorateur de contexte.
 
 #### Les types de valeurs
 
@@ -65,9 +65,17 @@ Il existe 3 opérateurs logiques :
 
 ### Exemples d'utilisation
 
+**Pour le bac à alarmes**
+
 * ```- Connector = "connector_1"``` : pour rechercher toutes les alarmes dont le connecteur est "connector_1" ;
 * ```- Connector="connector_1" AND Resource="resource_3"``` : pour rechercher toutes les alarmes dont le connecteur est "connector_1" et la ressource est "resource_3" ;
 * ```- Connector="connector_1" OR Resource="resource_3"``` : pour rechercher toutes les alarmes dont le connecteur est "connector_1" ou la ressource est "resource_3" ;
 * ```- Connector LIKE 1 OR Connector LIKE 2``` : pour rechercher toutes les alarmes dont le connector contient un 1 ou toutes les alarmes dont le connector contient un 2 ;
-* ```- NOT Connector = "connector_1"``` : pour rechercher toutes les alarmes dont le connecteur n'est pas "connector_1".
+* ```- NOT Connector="connector_1"``` : pour rechercher toutes les alarmes dont le connecteur n'est pas "connector_1".
 *  Recherche d'alarmes à partir d'un numéro de ticket : `- ticket.val = "123456"`
+
+**Pour l'explorateur de contexte**
+
+* ```- Name="name_1" AND Type="watcher"``` : pour rechercher les entités dont le nom est "name_1" et le type est "watcher"
+* ```- infos.client.value LIKE "Client1" OR infos.client.value LIKE "Client2"``` : pour rechercher les entités dont la valeur de client est "Client1" ou "Client2"
+* ```- Not Name="name_1"``` : pour rechercher les entités dont le nom n'est pas "name_1"

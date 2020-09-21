@@ -1,14 +1,6 @@
 <template lang="pug">
   v-card.my-1.pa-2(data-test="filterGroup")
-    v-radio-group(
-      :value="group.condition",
-      @change="updateField('condition', $event)",
-      hide-details,
-      mandatory,
-      row
-    )
-      v-radio(data-test="radioAnd", label="AND", value="$and", color="blue darken-4")
-      v-radio(data-test="radioOr", label="OR", value="$or", color="blue darken-4")
+    operator-field(v-field="group.condition")
     v-layout.text-xs-center(wrap, justify-space-around)
       v-flex(xs5, md3)
         v-btn(
@@ -67,7 +59,10 @@ import { omit, cloneDeep } from 'lodash';
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
 import uid from '@/helpers/uid';
+
 import formMixin from '@/mixins/form';
+
+import OperatorField from '@/components/forms/fields/operator-field.vue';
 
 import FilterRule from './filter-rule.vue';
 
@@ -84,6 +79,7 @@ import FilterRule from './filter-rule.vue';
 export default {
   name: 'filter-group', // We need it for recursive
   components: {
+    OperatorField,
     FilterRule,
   },
   mixins: [formMixin],

@@ -1,13 +1,6 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-row-grid-size(
-        :rowId.sync="settings.rowId",
-        :size.sync="settings.widget.size",
-        :availableRows="availableRows",
-        @createRow="createRow"
-      )
-      v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       v-list-group(data-test="advancedSettings")
@@ -19,7 +12,10 @@
             :columnsLabel="$t('settings.columnName')"
           )
           v-divider
-          field-columns(v-model="settings.widget.parameters.widgetColumns")
+          field-columns(
+            v-model="settings.widget.parameters.widgetColumns",
+            :label="$t('settings.columnNames')"
+          )
           v-divider
           template(v-if="hasAccessToListFilters")
             field-filters(
@@ -28,7 +24,8 @@
               :filters.sync="settings.widget.parameters.viewFilters",
               :condition.sync="settings.widget.parameters.mainFilterCondition",
               :hasAccessToAddFilter="hasAccessToAddFilter",
-              :hasAccessToEditFilter="hasAccessToEditFilter"
+              :hasAccessToEditFilter="hasAccessToEditFilter",
+              @input="updateMainFilterUpdatedAt"
             )
             v-divider
           field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
@@ -44,7 +41,6 @@ import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
-import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
@@ -60,7 +56,6 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
@@ -72,11 +67,10 @@ export default {
     widgetSettingsMixin,
   ],
   data() {
-    const { widget, rowId } = this.config;
+    const { widget } = this.config;
 
     return {
       settings: {
-        rowId,
         widget: cloneDeep(widget),
         widget_preferences: {
           selectedTypes: [],
@@ -115,6 +109,10 @@ export default {
 
         ...newQuery,
       };
+    },
+
+    updateMainFilterUpdatedAt() {
+      this.settings.widget.parameters.mainFilterUpdatedAt = Date.now();
     },
   },
 };

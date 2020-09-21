@@ -1,13 +1,6 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-row-grid-size(
-        :rowId.sync="settings.rowId",
-        :size.sync="settings.widget.size",
-        :availableRows="availableRows",
-        @createRow="createRow"
-      )
-      v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-date-interval(v-model="settings.widget.parameters.dateInterval")
@@ -15,7 +8,8 @@
       field-filter-editor(
         data-test="widgetFilterEditor",
         v-model="settings.widget.parameters.mfilter",
-        :hiddenFields="['title']"
+        :hiddenFields="['title']",
+        :entitiesType="$constants.ENTITIES_TYPES.entity"
       )
       v-divider
       field-stats-selector(v-model="settings.widget.parameters.stats", required)
@@ -42,7 +36,6 @@ import { SIDE_BARS } from '@/constants';
 
 import widgetSettingsMixin from '@/mixins/widget/settings';
 
-import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldFilterEditor from './fields/common/filter-editor.vue';
 import FieldDateInterval from './fields/stats/date-interval.vue';
@@ -57,7 +50,6 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldRowGridSize,
     FieldTitle,
     FieldFilterEditor,
     FieldDateInterval,
@@ -68,11 +60,10 @@ export default {
   },
   mixins: [widgetSettingsMixin],
   data() {
-    const { widget, rowId } = this.config;
+    const { widget } = this.config;
 
     return {
       settings: {
-        rowId,
         widget: cloneDeep(widget),
       },
     };

@@ -1,3 +1,5 @@
+export const { BASE_URL } = process.env;
+
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
@@ -12,6 +14,8 @@ export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
+export const DEFAULT_KEEP_ALIVE_INTERVAL = 120000;
+
 export const LOCALE_PRIORITIES = {
   default: 1,
   global: 2,
@@ -20,7 +24,13 @@ export const LOCALE_PRIORITIES = {
 
 export const POPUP_AUTO_CLOSE_DELAY = 3000;
 
+export const ACTIVE_SESSIONS_COUNT_FETCHING_INTERVAL = 60000;
+
+export const ACTIVE_BROADCAST_MESSAGE_FETCHING_INTERVAL = 60000;
+
 export const VUETIFY_ANIMATION_DELAY = 300;
+
+export const POPUP_TICK_DELAY = 100;
 
 export const SIDE_BAR_WIDTH = 250;
 
@@ -38,6 +48,8 @@ export const MEDIA_QUERIES_BREAKPOINTS = {
 export const MAX_LOGO_SIZE_IN_KB = 16384;
 
 export const DEFAULT_APP_TITLE = 'Canopsis';
+
+export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';
 
 export const API_ROUTES = {
   auth: '/auth',
@@ -77,6 +89,7 @@ export const API_ROUTES = {
     remove: '/account/delete/role',
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
+  metaAlarmRule: '/api/v2/metaalarmrule',
   webhook: '/api/v2/webhook',
   snmpRule: {
     list: '/snmprule',
@@ -93,6 +106,21 @@ export const API_ROUTES = {
     userInterface: '/api/internal/user_interface',
   },
   heartbeat: '/api/v2/heartbeat/',
+  dynamicInfo: '/api/v2/dynamic-infos',
+  filterHints: '/api/v2/associativetable/filterhints',
+  sessionStart: '/api/v2/sessionstart',
+  sessionTracePath: '/api/v2/session_tracepath',
+  keepalive: '/api/v2/keepalive',
+  alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
+  pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
+  dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
+  session: '/api/v2/sessions',
+  broadcastMessage: {
+    list: '/api/v2/broadcast-message',
+    activeList: '/api/v2/broadcast-message/active',
+  },
+  counter: '/alerts/get-counters',
+  playlist: '/api/v2/playlist',
 };
 
 export const COLORS = {
@@ -119,6 +147,9 @@ export const COLORS = {
     declareTicket: '#2196f3',
     snooze: '#e91e63',
     done: '#00a65a',
+    pbhenter: '#18ffff',
+    pbhleave: '#18ffff',
+    comment: '#ba68c8',
   },
   statsDefault: '#dddddd',
 };

@@ -13,12 +13,13 @@ import VueFullScreen from 'vue-fullscreen';
 import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
+import VueAsyncComputed from 'vue-async-computed';
+import PortalVue from 'portal-vue';
 import sanitizeHTML from 'sanitize-html';
 
+import 'vue-tour/dist/vue-tour.css';
 import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
-
-import '@/services/features';
 
 import * as config from '@/config';
 import * as constants from '@/constants';
@@ -28,18 +29,32 @@ import store from '@/store';
 import i18n from '@/i18n';
 import filters from '@/filters';
 
+import featuresService from '@/services/features';
+
+import ModalsPlugin from '@/plugins/modals';
+import PopupsPlugin from '@/plugins/popups';
 import SetSeveralPlugin from '@/plugins/set-several';
+import UpdateFieldPlugin from '@/plugins/update-field';
+import ToursPlugin from '@/plugins/tours';
+import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
+import GridPlugin from '@/plugins/grid';
 
 import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
 import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
-import VCheckboxFunctional from '@/components/forms/fields/v-checkbox-functional.vue';
-import VExpansionPanelContent from '@/components/tables/v-expansion-panel-content.vue';
+import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
+import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
+import BullhornIcon from '@/components/icons/bullhorn.vue';
+import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
+
+import * as modalsComponents from '@/components/modals';
 /* eslint-enable import/first */
 
+Vue.use(VueAsyncComputed);
 Vue.use(VueResizeText);
+Vue.use(PortalVue);
 Vue.use(filters);
 Vue.use(Vuetify, {
   iconfont: 'md',
@@ -51,9 +66,16 @@ Vue.use(Vuetify, {
     webhook: {
       component: WebhookIcon,
     },
+    bullhorn: {
+      component: BullhornIcon,
+    },
+    settings_sync: {
+      component: SettingsSyncIcon,
+    },
   },
 });
 
+Vue.use(GridPlugin);
 Vue.use(VueFullScreen);
 Vue.use(DaySpanVuetify, {
   methods: {
@@ -71,7 +93,8 @@ Vue.use(DaySpanVuetify, {
   data: {
     defaults: {
       dsWeeksView: {
-        weekdays: moment.weekdaysShort(true),
+        // dayspan-vuetify doesn't not supported first day in weekend, because return weekdays without locale sort.
+        weekdays: moment.weekdaysShort(),
       },
       dsCalendarEventTime: {
         placeholderStyle: false,
@@ -92,8 +115,9 @@ Vue.use(DaySpanVuetify, {
 Vue.component('dsCalendarEvent', DsCalendarEvent);
 Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
-Vue.component('v-checkbox-functional', VCheckboxFunctional);
-Vue.component('v-expansion-panel-content', VExpansionPanelContent);
+Vue.component('alarm-chips', AlarmChips);
+
+Vue.component('alarms-list-table', AlarmsListTable);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -112,15 +136,45 @@ Vue.use(VeeValidate, {
   },
 });
 
+const { MODALS } = constants;
+
+Vue.use(ModalsPlugin, {
+  store,
+
+  components: {
+    ...modalsComponents,
+    ...featuresService.get('components.modals.components'),
+  },
+
+  dialogPropsMap: {
+    [MODALS.createPbehavior]: { maxWidth: 920, lazy: true },
+    [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
+    [MODALS.createWidget]: { maxWidth: 500, lazy: true },
+    [MODALS.alarmsList]: { fullscreen: true, lazy: true },
+    [MODALS.createFilter]: { maxWidth: 920, lazy: true },
+    [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
+    [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },
+    [MODALS.watcher]: { maxWidth: 920, lazy: true },
+    [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
+    [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
+
+    ...featuresService.get('components.modals.dialogPropsMap'),
+  },
+});
+
+Vue.use(PopupsPlugin, { store });
 Vue.use(SetSeveralPlugin);
+Vue.use(UpdateFieldPlugin);
+Vue.use(ToursPlugin);
+Vue.use(VuetifyReplacerPlugin);
 
 Vue.config.productionTip = false;
 
 /**
  * TODO: Update it to Vue.config.errorHandler after updating to 2.6.0+ Vue version
  */
-window.addEventListener('unhandledrejection', () => {
-  store.dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') });
+window.addEventListener('unhandledrejection', (err) => {
+  store.dispatch('popups/error', { text: err.description || i18n.t('errors.default') });
 });
 
 if (process.env.NODE_ENV === 'development') {

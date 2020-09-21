@@ -15,7 +15,6 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
@@ -26,7 +25,6 @@ import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
  */
 export default {
   mixins: [
-    modalMixin,
     entitiesWatcherMixin,
     entitiesContextEntityMixin,
   ],
@@ -50,7 +48,7 @@ export default {
   },
   methods: {
     showCreateEntityModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createEntity,
         config: {
           title: this.$t('modals.createEntity.createTitle'),
@@ -59,7 +57,7 @@ export default {
       });
     },
     showCreateWatcherModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createWatcher,
         config: {
           title: this.$t('modals.createWatcher.createTitle'),

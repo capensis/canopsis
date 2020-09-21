@@ -3,23 +3,29 @@ import Router from 'vue-router';
 import Cookies from 'js-cookie';
 
 import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
-import { USERS_RIGHTS } from '@/constants';
+import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
 import store from '@/store';
-import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Home from '@/views/home.vue';
 import View from '@/views/view.vue';
+import Alarm from '@/views/alarm.vue';
 import AdminRights from '@/views/admin/rights.vue';
 import AdminUsers from '@/views/admin/users.vue';
 import AdminRoles from '@/views/admin/roles.vue';
 import AdminParameters from '@/views/admin/parameters.vue';
+import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
+import AdminPlaylists from '@/views/admin/playlists.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
 import ExploitationSnmpRules from '@/views/exploitation/snmp-rules.vue';
 import ExploitationActions from '@/views/exploitation/actions.vue';
 import ExploitationHeartbeats from '@/views/exploitation/heartbeats.vue';
+import ExploitationDynamicInfos from '@/views/exploitation/dynamic-infos.vue';
+import Playlist from '@/views/playlist.vue';
+import ExploitationMetaAlarmRule from '@/views/exploitation/meta-alarm-rule.vue';
 
 Vue.use(Router);
 
@@ -50,6 +56,18 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: route => route.params.id,
+      },
+    },
+    props: route => ({ id: route.params.id }),
+  },
+  {
+    path: '/alarms/:id',
+    name: 'alarms',
+    component: Alarm,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.view,
       },
     },
     props: route => ({ id: route.params.id }),
@@ -95,6 +113,28 @@ const routes = [
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.parameters,
+      },
+    },
+  },
+  {
+    path: '/admin/broadcast-messages',
+    name: 'admin-broadcast-messages',
+    component: AdminBroadcastMessages,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.broadcastMessage,
+      },
+    },
+  },
+  {
+    path: '/admin/playlists',
+    name: 'admin-playlists',
+    component: AdminPlaylists,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.playlist,
       },
     },
   },
@@ -164,6 +204,47 @@ const routes = [
       },
     },
   },
+  {
+    path: '/exploitation/dynamic-infos',
+    name: 'exploitation-dynamic-infos',
+    component: ExploitationDynamicInfos,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.dynamicInfo,
+      },
+    },
+  },
+  {
+    path: '/playlist/:id',
+    name: 'playlist',
+    component: Playlist,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: route => route.params.id,
+        mask: USERS_RIGHTS_MASKS.default,
+      },
+    },
+    props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
+  },
+  {
+    path: '/exploitation/meta-alarm-rule',
+    name: 'exploitation-meta-alarm-rules',
+    component: ExploitationMetaAlarmRule,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        id: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
+      },
+    },
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'home',
+    },
+  },
 ];
 
 const router = new Router({
@@ -209,9 +290,25 @@ router.beforeResolve(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
+  const isLoggedIn = !!Cookies.get(COOKIE_SESSION_KEY);
+
   if (to.path !== from.path) {
     store.dispatch('entities/sweep');
   }
+
+  if (isLoggedIn) {
+    store.dispatch('keepalive/sessionTracePath', { path: getKeepalivePathByRoute(to) });
+  }
+});
+
+/**
+ * Promisified router replace method
+ *
+ * @param {Object} route
+ * @returns {Promise<unknown>}
+ */
+router.replaceAsync = route => new Promise((resolve, reject) => {
+  router.replace(route, resolve, reject);
 });
 
 export default router;

@@ -1,59 +1,22 @@
-# Che - Event-filter
+# `engine-che` - Event-filter
 
 !!! note
     Cette page concerne l'event-filter nouvelle génération, disponible uniquement
-    avec le moteur Go `che`.
+    avec le moteur Go `engine-che`.
 
-L'event-filter est une fonctionnalité du moteur [`che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
+L'event-filter est une fonctionnalité du moteur [`engine-che`](moteur-che.md) permettant de définir des règles manipulant les évènements.
 
-Les règles sont définies dans la collection MongoDB `eventfilter`, et peuvent être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/event-filter/api_v2_event-filter.md).
+Les règles sont définies dans la collection MongoDB `eventfilter`, et peuvent être ajoutées et modifiées avec l'[API event-filter](../../guide-developpement/api/api-v2-event-filter.md).
 
 Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la partie [Exemples](#exemples).
-
-## Activation du plugin d'enrichissement depuis une ressource externe
-
-!!! note
-    Cette fonctionnalité n'est disponible que dans l'édition CAT de Canopsis.
-
-L['event-filter](moteur-che-event_filter.md) peut utiliser des sources de données externes pour enrichir les évènements. Ces sources externes (à l'exception de `entity`) sont des [plugins](../../guide-developpement/plugins/event-filter-data-source.md) disponibles dans Canopsis CAT.
-
-Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
-
-### Activation avec Docker
-
-Les plugins doivent-être ajoutés dans un volume dans l'image docker, et leur emplacement doit-être précisé dans la commande. Par exemple, avec `docker-compose` :
-
-```yaml
-  che:
-    image: canopsis/engine-che-cat:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    restart: unless-stopped
-    command: /engine-che -dataSourceDirectory /data-source-plugins
-    volumes:
-      - "./plugins:/data-source-plugins"
-```
-
-Dans une installation Docker, l'image `canopsis/engine-che-cat` remplace l'image par défaut `canopsis/engine-che`. Le moteur `che` doit ensuite être lancé au minimum avec l'option suivante pour que le plugin d'enrichissement externe soit chargé : `engine-che -dataSourceDirectory /data-source-plugins`
-
-Les plugins doivent-être placés dans un dossier accessible par le moteur `che`.
-
-L'exécutable `engine-che` accepte une option `-dataSourceDirectory` permettant de préciser le dossier contenant les plugins. Par défaut, ce dossier est celui contenant `engine-che`.
-
-### Activation par paquets
-
-Pour pouvoir utiliser l'enrichissement depuis une ressource externe, il faut :
-
-*  lancer le moteur `che` avec l'option `-dataSourceDirectory <dossier contenant les plugins>`. Par défaut, ce dossier est celui contenant `engine-che`.
-
 
 ## Règles
 
 Une règle est un document JSON contenant les paramètres suivants :
 
  - `_id` (optionnel) : un identifiant unique (généré automatiquement s'il n'est pas défini par l'utilisateur).
- - `description` (optionnel) : une description de la règle de la règle, donnée par l'utilisateur.
- - `type` (requis) : le type de la règle (voir [Types de règles](#types-de-règles) pour plus de détails).
+ - `description` (optionnel) : une description de la règle, donnée par l'utilisateur.
+ - `type` (requis) : le type de la règle (voir [Types de règles](#types-de-regles) pour plus de détails).
  - `pattern` (optionnel) : un pattern permettant de sélectionner les évènements auxquels la règle doit être appliquée. Si le pattern n'est pas précisé, la
    règle est appliquée à tous les évènements (voir [Patterns](#patterns) pour plus de détails).
  - `priority` (optionnel, 0 par défaut) : la priorité de la règle. Les règles sont appliquées par ordre de priorité croissante.
@@ -79,15 +42,17 @@ Cette règle supprime donc les évènements dont la ressource vaut `invalid_reso
 
 ### Application des règles
 
-Lors de la réception d'un évènement par le moteur `che`, les règles sont parcourues par ordre de priorité croissante. Si l'évènement est reconnu par le `pattern` d'une règle, celle-ci est appliquée à l'évènement. Le traitement effectué dépend du `type` de la règle (voir [Types de règles](#types-de-règles) pour plus de détails).
+Lors de la réception d'un évènement par le moteur `engine-che`, les règles sont parcourues par ordre de priorité croissante. Si l'évènement est reconnu par le `pattern` d'une règle, celle-ci est appliquée à l'évènement. Le traitement effectué dépend du `type` de la règle (voir [Types de règles](#types-de-regles) pour plus de détails).
 
-**Note :** Pour pouvoir être traité par Canopsis, un évènement doit respecter la condition suivante :
+**Note :** Pour pouvoir être traité par Canopsis, un évènement doit respecter l'une des conditions suivantes :
 
- - son champ `source_type` vaut `component`, et son champ `component` est défini et ne vaut pas `""`; *ou*
+ - son champ `source_type` vaut `component`, et son champ `component` est défini et ne vaut pas `""`
+
+**ou**
+
  - son champ `source_type` vaut `resource`, et ses champs `component` et `resource` sont définis et ne valent pas `""`.
 
-Les évènements ne respectant pas cette condition en entrée du moteur `che` ou en sortie de l'event-filter sont supprimés.
-
+Les évènements ne respectant pas l'une de ces conditions en entrée du moteur `engine-che` ou en sortie de l'event-filter sont supprimés.
 
 ### Patterns
 
@@ -113,12 +78,12 @@ Pour plus d'expressivité, il est possible d'associer à un champ un objet conte
  - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
  - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est celle de [go](https://golang.org/pkg/regexp/syntax/), et est similaire à celle acceptée par Perl et Python.
 
-Par exemple, le pattern suivant sélectionne les évènements dont l'état est compris entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
+Par exemple, le pattern suivant sélectionne les évènements dont la criticité est comprise entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
 
 ```json
 "pattern": {
     "state": {">=": 1, "<=": 3},
-    "output": {"regex_match": "Warning: CPU Load is critical \\(.*\\)"}
+    "output": {"regex_match": "Warning: CPU Load is critical \(.*\)"}
 }
 ```
 
@@ -128,7 +93,7 @@ Par exemple, le pattern suivant sélectionne les évènements dont l'état est c
 
 Lorsqu'une règle de type `drop` est appliquée à un évènement, cet évènement est supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est ignoré par Canopsis.
 
-Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur `che` l'affiche sur sa sortie de log :
+Lorsqu'un évènement provoque le déclenchement d'une règle « drop », le moteur `engine-che` l'affiche sur sa sortie de log :
 
 ```
 2019/05/02 12:45:19 event dropped by event filter: {"hostgroups":["HG_FOOBAR"],"event_type":"check","execution_time":2.139087200164795,"timestamp":1556793914,"component":"foobar","state_type":0,"source_type":"resource","resource":"PING","current_attempt":1,"connector":"foobar","long_output":"","state":2,"connector_name":"foobar","output":"foo","command_name":"foo","perf_data":"","max_attempts":2}
@@ -149,11 +114,11 @@ Les règles de types `enrichment` sont des règles d'enrichissement, qui permett
 Ces règles peuvent avoir les paramètres suivants (en plus de `type`, `pattern`, `priority` et `enabled`) :
 
  - `actions` (requis) : une liste d'actions à appliquer à l'évènement (voir [Actions](#actions) pour plus de détails).
- - `external_data` (optionnel) : des sources de données externes (voir [Données externes](#données-externes) pour plus de détails).
+ - `external_data` (optionnel) : des sources de données externes (voir [Données externes](#donnees-externes) pour plus de détails).
  - `on_success` (optionnel, `pass` par défaut) : le résultat de la règle en cas de succès (`pass`, `break` ou `drop`).
  - `on_failure` (optionnel, `pass` par défaut) : le résultat de la règle en cas d'échec (`pass`, `break` ou `drop`).
 
-Lorsqu'une règle d'enrichissement est appliquée, les données externes sont récupérées, puis les règles sont appliquées, dans l'ordre dans lequel elles ont été définies. Si la récupération de données ou l'exécution d'une action échoue, l'application de la règle est interrompue, et son résultat sera la valeur de `on_failure`. Sinon, son résultat est la valeur de `on_success`.
+Lorsqu'une règle d'enrichissement est appliquée, les données externes sont récupérées, puis les actions sont exécutées, dans l'ordre dans lequel elles ont été définies. Si la récupération de données ou l'exécution d'une action échoue, l'application de la règle est interrompue, et son résultat sera la valeur de `on_failure`. Sinon, son résultat est la valeur de `on_success`.
 
 Si le résultat de la règle est `drop`, l'évènement est supprimé. Les règles suivantes ne sont pas appliquées à cet évènement, et il est ignoré par Canopsis.
 
@@ -165,7 +130,7 @@ Si le résultat de la règle est `pass`, l'exécution de l'event-filter continue
 
 Une action est un objet JSON contenant un champ `type` indiquant le type de l'action, et des paramètres. Les actions disponibles sont précisées ci-dessous.
 
-**Note :** Les actions utilisent la représentation interne à Canopsis des évènements. Voir [Champs des évènements](#champs-des-évènements) pour la correspondance entre les noms des champs des évènements en JSON et dans la représentation de Canopsis.
+**Note :** Les actions utilisent la représentation interne à Canopsis des évènements. Voir [Champs des évènements](#champs-des-evenements) pour la correspondance entre les noms des champs des évènements en JSON et dans la représentation de Canopsis.
 
 #### `set_field`
 
@@ -176,7 +141,7 @@ Les paramètres de l'action sont :
  - `name` (requis) : le nom du champ.
  - `value` (requis) : la nouvelle valeur du champ.
 
-Par exemple, l'action suivante remplace l'état d'un évènement par un état critique :
+Par exemple, l'action suivante passe la criticité d'un évènement en critique :
 
 ```json
 {
@@ -189,7 +154,7 @@ Par exemple, l'action suivante remplace l'état d'un évènement par un état cr
 #### `set_field_from_template`
 
 L'action `set_field_from_template` permet de modifier un champ de l'évènement
-avec un template.
+à partir un template.
 
 Les paramètres de l'action sont :
 
@@ -201,8 +166,8 @@ go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-régulières) pour plus de détails), ou
-d'utiliser des [données externes](#données-externes).
+[Expressions régulières](#expressions-regulieres) pour plus de détails), ou
+d'utiliser des [données externes](#donnees-externes).
 
 Par exemple, l'action suivante modifie l'output d'un évènement pour y ajouter
 son auteur :
@@ -233,8 +198,8 @@ go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-régulières) pour plus de détails), ou
-d'utiliser des [données externes](#données-externes).
+[Expressions régulières](#expressions-regulieres) pour plus de détails), ou
+d'utiliser des [données externes](#donnees-externes).
 
 
 Par exemple, l'action suivante modifie l'information `customer` d'une entité :
@@ -251,7 +216,7 @@ Par exemple, l'action suivante modifie l'information `customer` d'une entité :
 Cette action échoue si l'entité n'a pas été ajoutée à l'évènement au préalable.
 Pour utiliser cette action, il est donc nécessaire de définir une règle
 [ajoutant les entités aux
-évènements](#ajout-de-lentité-correspondant-à-un-évènement), avec une priorité
+évènements](#ajout-de-lentite-correspondant-a-un-evenement), avec une priorité
 inférieure à celles des règles contenant des actions de type
 `set_entity_info_from_template`.
 
@@ -263,14 +228,12 @@ Les paramètres de l'action sont :
 
  - `from` : le nom du champ dont la valeur doit être copiée. Il peut s'agir
    d'un champ de l'évènement (`Event.NomDuChamp`), d'un sous-groupe d'une
-   expression régulière (voir [Expressions
-   régulières](#expressions-régulières)), ou d'une donnée externe (voir
-   [Données externes](#données-externes)).
+   expression régulière (voir [Expressions régulières](#expressions-regulieres),
+    ou d'une donnée externe (voir [Données externes](#donnees-externes)).
  - `to` : le nom du champ de l'évènement dans lequel la valeur doit être
    copiée.
 
-Par exemple, l'action suivante copie une entité dans le champ `Entity` d'un
-évènement :
+Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évènement existe déjà dans le référentiel interne de Canopsis. Si c'est le cas elle sera copiée dans le champ `Entity` de l'évènement (reportez vous à cet [exemple](#ajout-dinformations-a-lentite) pour l'utilisation du champ entity de l'évènement) :
 
 ```json
 {
@@ -283,7 +246,7 @@ Par exemple, l'action suivante copie une entité dans le champ `Entity` d'un
 ### Expressions régulières
 
 Si le pattern d'une règle contient une expression régulière (avec l'opérateur
-`regex_match`) contenant des sous-groupes nommés, les valeurs de ces
+`regex_match`) et des sous-groupes nommés, les valeurs de ces
 sous-groupes peuvent être utilisés dans les templates des actions de type
 `set_field_from_template` et `set_entity_info_from_template`, et comme champ
 `from` des actions de type `copy`.
@@ -302,7 +265,7 @@ Par exemple, si le pattern vaut :
 ```json
 "pattern": {
     "State": {">=": 2},
-    "Output": {"regex_match": "Warning: CPU Load is critical \\((?P<load>.*)%\\)"}
+    "Output": {"regex_match": "Warning: CPU Load is critical \((?P<load>.*)%\)"}
 }
 ```
 
@@ -313,17 +276,21 @@ qui vaudra `97.5`, dans un template.
 ### Données externes
 
 Le champ `external_data` est un objet JSON contenant des couples `<nom de la
-données>: <source de données>`.
+donnée>: <source de données>`.
 
 Lors de l'application d'une règle d'enrichissement à un évènement, les sources
 de données sont utilisées pour récupérer les données correspondant à cet
 évènement. Ces données sont alors disponibles dans `{{.ExternalData.<nom de la
-données>}}` pour les templates, et dans `ExternalData.<nom de la données>` pour
+donnée>}}` pour les templates, et dans `ExternalData.<nom de la donnée>` pour
 les actions de type `copy`.
 
 Une source de données est un objet JSON contenant un champ `type` indiquant le
 type de la source, et des paramètres. Les différents types de source de données
 sont précisés ci-dessous.
+
+Dans une installation Canopsis CAT, l'acquisition de données externes peut aussi
+se faire avec un plugin `datasource`. Ceci nécessite [l'activation des plugins
+datasource](moteur-che.md#activation-des-plugins-denrichissement-externe-datasource).
 
 #### Entités
 
@@ -331,7 +298,7 @@ Une source de données de type `entity` renvoie l'entité correspondant à un
 évènement. Elle ne prend pas de paramètres.
 
 Voir [Ajout de l'entité correspondant à un
-évènement](#ajout-de-lentité-correspondant-à-un-évènement) pour un exemple
+évènement](#ajout-de-lentite-correspondant-a-un-evenement) pour un exemple
 d'utilisation de cette source de données.
 
 #### Collection MongoDB
@@ -353,7 +320,7 @@ go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
-[Expressions régulières](#expressions-régulières) pour plus de détails).
+[Expressions régulières](#expressions-regulieres) pour plus de détails).
 
 Par exemple, la source de données ci-dessous permet de récupérer un document
 dont l'id est le nom du composant d'un évènement dans une collection
@@ -369,18 +336,18 @@ dont l'id est le nom du composant d'un évènement dans une collection
 }
 ```
 
-Voir [Ajout d'informations à l'entité](#ajout-dinformations-à-lentité) pour un
+Voir [Ajout d'informations à l'entité](#ajout-dinformations-a-lentite) pour un
 exemple de règle utilisant cette source de données.
 
 **Note :** Chaque utilisation d'une source de données de type `mongo` effectue
-une requête MongoDB, ce qui risque d'affecter les performances du moteur `che`.
+une requête MongoDB, ce qui risque d'affecter les performances du moteur `engine-che`.
 Il est donc déconseillé de les utiliser dans des règles appliquées à tous les
 évènements.
 
 
 ## En cas de problème
 
-Les logs du container docker `che` peuvent contenir des informations sur
+Les logs du conteneur Docker `che` peuvent contenir des informations sur
 l'exécution de l'event-filter.
 
 ### Délai d'application des règles
@@ -394,10 +361,10 @@ Lors du chargement des règles, les règles dont le format est invalide sont
 ignorées. Un message d'erreur est écrit dans les logs, contenant la règle et la
 raison pour laquelle elle n'est pas valide.
 
-### Mode débug
+### Mode debug
 
 Pour tester le fonctionnement de l'event-filter, il est possible d'envoyer des
-évènements en mode débug, permettant de tracer l'exécution de l'event-filter
+évènements en mode debug, permettant de tracer l'exécution de l'event-filter
 sur cet évènement. Pour cela, il faut définir le champ `debug` de l'évènement à
 `true`.
 
@@ -496,7 +463,7 @@ l'event-filter, avec une priorité inférieure à celle des règles de traductio
 
 ### Passer des évènements en mode debug
 
-La règle suivante permet de passer les évènements d'un composant en mode débug.
+La règle suivante permet de passer les évènements d'un composant en mode debug.
 
 ```json
 {
@@ -651,7 +618,6 @@ des évènements.
     "on_failure" : "pass"
 }
 ```
-
 
 ## Annexe
 

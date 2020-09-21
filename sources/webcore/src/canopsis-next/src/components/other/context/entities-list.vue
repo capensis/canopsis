@@ -2,7 +2,11 @@
   div
     v-layout.white(justify-space-between, align-center)
       v-flex
-        context-search(:query.sync="query")
+        advanced-search(
+          :query.sync="query",
+          :columns="columns",
+          :tooltip="$t('search.contextAdvancedSearch')"
+        )
       v-flex
         pagination(
           v-if="hasColumns",
@@ -24,7 +28,8 @@
           :hasAccessToListFilter="hasAccessToListFilter",
           @input="updateSelectedFilter",
           @update:condition="updateSelectedCondition",
-          @update:filters="updateFilters"
+          @update:filters="updateFilters",
+          :entitiesType="$constants.ENTITIES_TYPES.entity"
         )
       v-flex.ml-4
         mass-actions-panel(:itemsIds="selectedIds")
@@ -56,9 +61,7 @@
             @click="props.expanded = !props.expanded"
           )
             div(v-if="column.value === 'enabled'")
-              v-icon(
-                :color="props.item.enabled ? 'primary' : 'error'"
-              ) {{ props.item.enabled ? 'check' : 'clear' }}
+              enabled-column(:value="props.item.enabled")
             ellipsis(
               v-else,
               :text="props.item | get(column.value, null, '')",
@@ -84,20 +87,20 @@
 import { omit, isString } from 'lodash';
 
 import { USERS_RIGHTS } from '@/constants';
-import prepareMainFilterToQueryFilter from '@/helpers/filter';
+import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
-import ContextSearch from '@/components/other/context/search/context-search.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import EnabledColumn from '@/components/tables/enabled-column.vue';
+import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import MoreInfos from './more-infos/more-infos.vue';
@@ -118,7 +121,6 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
 export default {
   components: {
     Ellipsis,
-    ContextSearch,
     RecordsPerPage,
     NoColumnsTable,
     FilterSelector,
@@ -126,14 +128,15 @@ export default {
     ContextFab,
     ActionsPanel,
     MassActionsPanel,
+    EnabledColumn,
+    AdvancedSearch,
   },
   mixins: [
     authMixin,
-    widgetQueryMixin,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
-    widgetRecordsPerPageMixin,
     entitiesContextEntityMixin,
   ],
   props: {
@@ -200,7 +203,7 @@ export default {
         }];
       }
 
-      const filters = ['mainFilter', 'searchFilter', 'typesFilter'].reduce((acc, filterKey) => {
+      const filters = ['mainFilter', 'typesFilter'].reduce((acc, filterKey) => {
         const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
 
         if (queryFilter) {

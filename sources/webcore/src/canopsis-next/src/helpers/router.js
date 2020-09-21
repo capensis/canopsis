@@ -1,6 +1,6 @@
 import { isEmpty, isFunction, isMatch } from 'lodash';
 
-import { USERS_RIGHTS_MASKS, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
+import { USERS_RIGHTS_MASKS, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES, POPUP_TYPES } from '@/constants';
 import store from '@/store';
 import i18n from '@/i18n';
 
@@ -56,7 +56,7 @@ export async function checkAppInfoAccessForRoute(to = {}) {
     return true;
   }
 
-  store.dispatch('popup/add', { text: i18n.t('common.notFound') });
+  store.dispatch('popups/add', { text: i18n.t('common.notFound') });
 
   throw new Error('Application don\'t have access to the page');
 }
@@ -89,7 +89,24 @@ export async function checkUserAccessForRoute(to = {}) {
     return true;
   }
 
-  store.dispatch('popup/add', { text: i18n.t('common.forbidden') });
+  store.dispatch('popups/add', { text: i18n.t('common.forbidden'), type: POPUP_TYPES.error });
 
   throw new Error('User don\'t have access to page');
+}
+
+/**
+ * Get path array for keep alive requests by route
+ *
+ * @param {string} path
+ * @param {Object} query
+ * @returns {Array}
+ */
+export function getKeepalivePathByRoute({ path, query } = {}) {
+  const { tabId } = query;
+
+  if (tabId) {
+    return [path, tabId];
+  }
+
+  return [path];
 }

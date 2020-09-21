@@ -1,4 +1,4 @@
-- src: https://github.com/geerlingguy/ansible-role-haproxy
+- src: https://github.com/nginxinc/ansible-role-nginx
   scm: git
 
 # adapted to our deployment needs

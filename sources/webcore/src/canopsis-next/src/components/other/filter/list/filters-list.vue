@@ -1,8 +1,13 @@
 <template lang="pug">
   div
-    v-list
-      v-list-tile.pa-0(v-for="(filter, index) in filters", :key="filter.title")
-        v-layout
+    draggable(
+      :value="filters",
+      :options="draggableOptions",
+      element="v-list",
+      @change="changeFiltersOrdering"
+    )
+      v-list-tile.filter-item.pa-0(v-for="(filter, index) in filters", :key="filter.title")
+        v-layout(:data-test="`filterItem-${filter.title}`")
           v-flex(xs12)
             v-list-tile-content {{ filter.title }}
           v-list-tile-action(v-if="hasAccessToEditFilter")
@@ -28,12 +33,14 @@
 </template>
 
 <script>
-import { MODALS, ENTITIES_TYPES } from '@/constants';
+import Draggable from 'vuedraggable';
 
-import modalMixin from '@/mixins/modal';
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { MODALS, ENTITIES_TYPES } from '@/constants';
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 export default {
-  mixins: [modalMixin],
+  components: { Draggable },
   props: {
     filters: {
       type: Array,
@@ -50,26 +57,29 @@ export default {
     entitiesType: {
       type: String,
       default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity, ENTITIES_TYPES.pbehavior].includes(value),
+      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
   computed: {
     existingTitles() {
       return this.filters.map(({ title }) => title);
     },
+
+    draggableOptions() {
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+      };
+    },
   },
   methods: {
     showCreateFilterModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.create.title'),
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: (newFilter) => {
-            this.$emit('create:filter', newFilter);
-            this.$emit('update:filters', [...this.filters, newFilter]);
-          },
+          action: newFilter => this.$emit('create:filter', newFilter),
         },
       });
     },
@@ -77,32 +87,36 @@ export default {
     showEditFilterModal(index) {
       const filter = this.filters[index];
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createFilter,
         config: {
           title: this.$t('modals.filter.edit.title'),
           filter,
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: (newFilter) => {
-            this.$emit('update:filter', newFilter, index);
-            this.$emit('update:filters', this.filters.map((v, i) => (index === i ? newFilter : v)));
-          },
+          action: newFilter => this.$emit('update:filter', newFilter, index),
         },
       });
     },
 
     showDeleteFilterModal(index) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => {
-            this.$emit('delete:filter', index);
-            this.$emit('update:filters', this.filters.filter((v, i) => index !== i));
-          },
+          action: () => this.$emit('delete:filter', index),
         },
       });
+    },
+
+    changeFiltersOrdering(event) {
+      this.$emit('update:filters', dragDropChangePositionHandler(this.filters, event));
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .filter-item {
+    cursor: move;
+  }
+</style>

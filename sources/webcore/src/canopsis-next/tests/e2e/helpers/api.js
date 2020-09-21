@@ -1,7 +1,7 @@
 const qs = require('qs');
 const axios = require('axios');
 const faker = require('faker');
-const { omit } = require('lodash');
+const { omit, merge } = require('lodash');
 
 const { API_ROUTES, DEFAULT_LOCALE } = require('@/config');
 const {
@@ -10,6 +10,8 @@ const {
   prepareUserByData,
   generateRight,
   generateRoleRightByChecksum,
+  generateWidgetByType,
+  generateViewRow,
 } = require('@/helpers/entities');
 const { generateTemporaryView } = require('./entities');
 const { queueFunction, onNextQueueFunction } = require('./nightwatch-child-process');
@@ -120,6 +122,70 @@ async function createView(viewDefault, options = {}) {
   }, options);
 
   return response.data;
+}
+
+/**
+ * Query for get view
+ * @param {String} viewId
+ * @param {Object} [options]
+ * @returns {Promise}
+ */
+async function getView(viewId, options = {}) {
+  const response = await request.get(`${API_ROUTES.view}/${viewId}`, options);
+
+  return response.data;
+}
+
+/**
+ * Query for update view
+ * @param {String} viewId
+ * @param {Object} viewDefault
+ * @param {Object} [options]
+ * @returns {Promise<any>}
+ */
+async function updateView(viewId, viewDefault, options = {}) {
+  const response = await request.put(`${API_ROUTES.view}/${viewId}`, viewDefault, options);
+
+  return response.data;
+}
+
+/**
+ * Api query for create widget
+ * @param {String} viewId
+ * @param {Object} widget
+ * @returns {Promise}
+ */
+async function createWidgetForView(viewId, { row, type, ...widget }) {
+  const { headers } = await authAsAdmin();
+
+  const options = {
+    headers: {
+      Cookie: headers['set-cookie'],
+    },
+  };
+
+  const viewData = await getView(viewId, options);
+
+  const generatedWidget = merge(generateWidgetByType(type), widget);
+
+  const tab = {
+    ...generateViewTab(),
+    rows: [{
+      ...generateViewRow(),
+      ...row,
+      widgets: [generatedWidget],
+    }],
+  };
+
+  await updateView(viewId, {
+    ...viewData,
+    tabs: [tab],
+  }, options);
+
+  return {
+    viewId,
+    widgetId: generatedWidget._id,
+  };
 }
 
 /**
@@ -281,4 +347,5 @@ module.exports.createUser = createUser;
 module.exports.createAdminUser = createAdminUser;
 module.exports.removeUser = removeUser;
 module.exports.createWidgetView = createWidgetView;
+module.exports.createWidgetForView = createWidgetForView;
 module.exports.removeWidgetView = removeWidgetView;

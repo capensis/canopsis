@@ -268,6 +268,22 @@
         "type": "RW"
     },
     {
+        "_id" : "models_broadcastMessage",
+        "loader_id" : "models_broadcastMessage",
+        "crecord_name": "models_broadcastMessage",
+        "crecord_type" : "action",
+        "desc": "Broadcast Messages",
+        "type": "CRUD"
+    },
+    {
+        "_id" : "models_playlist",
+        "loader_id" : "models_playlist",
+        "crecord_name": "models_playlist",
+        "crecord_type" : "action",
+        "desc": "Playlists",
+        "type": "CRUD"
+    },
+    {
         "_id" : "models_serie",
         "loader_id" : "models_serie",
         "crecord_name": "models_serie",
@@ -402,6 +418,22 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_exploitation_dynamicInfo",
+        "loader_id": "models_exploitation_dynamicInfo",
+        "crecord_name": "models_exploitation_dynamicInfo",
+        "crecord_type": "action",
+        "desc": "Exploitation: Dynamic informations",
+        "type": "CRUD"
+    },
+    {
+      "_id": "models_exploitation_metaAlarmRule",
+      "loader_id": "models_exploitation_metaAlarmRule",
+      "crecord_name": "models_exploitation_metaAlarmRule",
+      "crecord_type": "action",
+      "desc": "Exploitation: Meta alarm rule",
+      "type": "CRUD"
+    },
+    {
         "_id" : "listalarm_ack",
         "loader_id" : "listalarm_ack",
         "crecord_name" : "listalarm_ack",
@@ -479,6 +511,20 @@
         "desc": "Rights on listalarm: snooze alarm"
     },
     {
+        "_id" : "listalarm_history",
+        "loader_id" : "listalarm_history",
+        "crecord_name" : "listalarm_history",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: history"
+    },
+    {
+        "_id" : "listalarm_groupRequest",
+        "loader_id" : "listalarm_groupRequest",
+        "crecord_name" : "listalarm_groupRequest",
+        "crecord_type" : "action",
+        "desc": "Rights on listalarm: group request"
+    },
+    {
         "_id" : "listalarm_listPbehavior",
         "loader_id" : "listalarm_listPbehavior",
         "crecord_name" : "listalarm_listPbehavior",
@@ -528,6 +574,13 @@
         "desc": "Rights on listalarm: Access to Links"
     },
     {
+      "_id": "listalarm_comment",
+      "loader_id": "listalarm_comment",
+      "crecord_name": "listalarm_comment",
+      "crecord_type": "action",
+      "desc": "Rights on listalarm: Access to 'Comment' action"
+    },
+    {
         "_id": "serviceweather_moreInfos",
         "loader_id": "serviceweather_moreInfos",
         "crecord_name": "serviceweather_moreInfos",
@@ -547,6 +600,13 @@
         "crecord_name": "serviceweather_entityAck",
         "crecord_type": "action",
         "desc": "Service weather: Access to 'Ack' action"
+    },
+    {
+        "_id": "serviceweather_entityAssocTicket",
+        "loader_id": "serviceweather_entityAssocTicket",
+        "crecord_name": "serviceweather_entityAssocTicket",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Assoc Ticket' action"
     },
     {
         "_id": "serviceweather_entityDeclareTicket",
@@ -603,6 +663,20 @@
         "crecord_name": "serviceweather_entityLinks",
         "crecord_type": "action",
         "desc": "Service weather: Access to Links"
+    },
+    {
+        "_id": "serviceweather_entityComment",
+        "loader_id": "serviceweather_entityComment",
+        "crecord_name": "serviceweather_entityComment",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to 'Comment' action"
+    },
+    {
+        "_id": "serviceweather_pbehaviorList",
+        "loader_id": "serviceweather_pbehaviorList",
+        "crecord_name": "serviceweather_pbehaviorList",
+        "crecord_type": "action",
+        "desc": "Service weather: Access to watcher pbehavior list"
     },
     {
         "_id": "crudcontext_createEntity",
@@ -722,6 +796,26 @@
         "desc" : "Rights on view: history alarms"
     },
     {
+        "_id" : "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+        "loader_id" : "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa",
+        "crecord_write_time" : 1543852261,
+        "crecord_type" : "action",
+        "enable" : true,
+        "type" : "RW",
+        "checksum" : 15,
+        "crecord_creation_time" : 1543852261,
+        "crecord_name" : null,
+        "desc" : "Rights on view: Explorateur de Contexte"
+    },
+    {
+        "_id" : "view_context_explorer",
+        "loader_id" : "view_context_explorer",
+        "crecord_type" : "action",
+        "type" : "RW",
+        "crecord_name" : "view_context_explorer",
+        "desc" : "Rights on view: context explorer"
+    },
+    {
         "_id" : "serviceweather_ack",
         "loader_id" : "serviceweather_ack",
         "crecord_name" : "serviceweather_ack",
@@ -805,5 +899,19 @@
         "crecord_name": "showview_view_notifications",
         "crecord_type" : "action",
         "desc": "Access to view.notifications menu"
+    },
+    {
+        "_id" : "common_variablesHelp",
+        "loader_id" : "common_variablesHelp",
+        "crecord_name": "common_variablesHelp",
+        "crecord_type" : "action",
+        "desc": "Access to available variables list"
+    },
+    {
+        "_id" : "counter_alarmsList",
+        "loader_id" : "counter_alarmsList",
+        "crecord_name": "counter_alarmsList",
+        "crecord_type" : "action",
+        "desc": "Counter: Access to 'Alarms list' modal"
     }
 ]

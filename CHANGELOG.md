@@ -2,6 +2,40 @@
 
 This document references all changes made to Canopsis since 2017/08/21. Some older lines may appear in their original language.
 
+⚠️ **Note:** this ChangeLog is currently unmaintained since Canopsis 3.35.0, as some workflow/Git/build processes are being changed. In the meantime, please consult Git history and <https://doc.canopsis.net>.
+
+## Canopsis 3.34.0 - Due date : 2019-12-18
+
+- [Documentation] Add Service Weather API documentation
+- [Documentation] Add documentation for the new engine-dynamic-infos CAT engine
+- [Go] CAT: Add a new engine-dynamic-infos engine
+- [Go] CAT: Add a new engine-webhook engine; drop the old webhook.so plugin
+- [UI] Alarms list ack and declare ticket action
+- [UI] Add a 'Dynamic info' CRUD
+- [UI] Create entity form (impact and depends)
+- [UI] bad filter on pbehavior form
+- [UI - Alarmlist] Assocticket mass action
+- [UI - Context Explorer] 'Enabled' columns
+- [UI - Filter editor] Add field suggestions
+
+## Canopsis 3.33.0 - Due date : 2019-11-22
+
+- [Documentation] Mention that resolve and unsnooze are incompatible with event\_patterns
+- [API] Add a new /api/v2/dynamic-infos API, not completely usuable yet
+- [Go] Handle RabbitMQ connection loss
+- [Go] Fix cache usage in alarm service
+- [Go] Fix corrupted traces with large events
+- [Go] Remove dead code
+- [Go] Allow to use null value for pattern lists
+- [UI] Add helpers to deal with integers and string comparisons
+- [UI - AlarmList] Fix ack\_resources usage when acknowleding an alarm
+- [UI - Context] Fix impact/depends search in entity creation modal
+- [UI - pbehavior] Refactor pbehavior form
+- [UI - pbehavior] Fix "required" rule on pbehavior filter
+- [UX] Various UX improvements in widget containers
+
+## Canopsis 3.32.0 - Due date : 2019-11-08
+
 ## Canopsis 3.31.0 - Due date : 2019-10-28
 
 - [Packages] Introduce new "canoctl deploy-go" command

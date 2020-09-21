@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.variablesHelp.variables') }}
-    v-card-text
+  modal-wrapper
+    template(slot="title")
+      span {{ $t('modals.variablesHelp.variables') }}
+    template(slot="text")
       v-treeview(
         :items="config.variables",
         item-key="name"
@@ -13,20 +12,20 @@
         template(slot="label", slot-scope="props")
           div {{ props.item.name }}
             span.pl-1(v-if="props.leaf") :
-              ellipsis.pl-1.d-inline-block.grey--text.body-1(:text="String(props.item.value)")
+              ellipsis.pl-1.d-inline-block.grey--text.body-1.pre-wrap(:text="String(props.item.value)")
             span.pl-1(v-else-if="!props.leaf && !(props.item.children && props.item.children.length)") :
               .pl-1.d-inline-block.grey--text.text--darken-1.body-1.font-italic {{ $t('common.emptyObject') }}
         template(slot="append", slot-scope="props", v-if="props.leaf")
           v-tooltip(left)
             v-btn(
               v-clipboard:copy="props.item.path",
-              v-clipboard:success="() => addSuccessPopup({ text: $t('success.pathCopied') })",
-              v-clipboard:error="() => addErrorPopup({ text: $t('errors.default') })",
+              v-clipboard:success="() => $popups.success({ text: $t('success.pathCopied') })",
+              v-clipboard:error="() => $popups.error({ text: $t('errors.default') })",
               slot="activator",
               small,
               icon
             )
-              v-icon file_copy
+              v-icon content_copy
             span {{ $t('modals.variablesHelp.copyToClipboard') }}
 </template>
 
@@ -34,12 +33,14 @@
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
-import popupMixin from '@/mixins/popup';
+
 import Ellipsis from '@/components/tables/ellipsis.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.variablesHelp,
-  components: { Ellipsis },
-  mixins: [modalInnerMixin, popupMixin],
+  components: { Ellipsis, ModalWrapper },
+  mixins: [modalInnerMixin],
 };
 </script>

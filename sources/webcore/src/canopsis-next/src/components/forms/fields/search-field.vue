@@ -6,13 +6,17 @@
       data-test="searchingTextField",
       hide-details,
       single-line,
-      @keyup.enter="submit",
+      @keydown.enter.prevent="submit",
       @input="$emit('input', $event)"
     )
-    v-btn(data-test="submitSearchButton", icon, @click="submit")
-      v-icon search
-    v-btn(data-test="clearSearchButton", icon, @click="clear")
-      v-icon clear
+    v-tooltip(bottom)
+      v-btn(slot="activator", data-test="submitSearchButton", icon, @click="submit")
+        v-icon search
+      span {{ $t('search.submit') }}
+    v-tooltip(bottom)
+      v-btn(slot="activator", data-test="clearSearchButton", icon, @click="clear")
+        v-icon clear
+      span {{ $t('search.clear') }}
     slot
 </template>
 

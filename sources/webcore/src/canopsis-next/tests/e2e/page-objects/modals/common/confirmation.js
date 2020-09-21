@@ -8,6 +8,7 @@ module.exports = modalCreator(modalSelector, {
   elements: {
     ...elementsWrapperCreator(modalSelector, {
       submitButton: sel('submitButton'),
+      cancelButton: sel('cancelButton'),
     }),
   },
 });

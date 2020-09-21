@@ -33,9 +33,15 @@ export default {
         scales: {
           xAxes: [{
             stacked: true,
+            ticks: {
+              fontSize: 11,
+            },
           }],
           yAxes: [{
             stacked: true,
+            ticks: {
+              fontSize: 11,
+            },
           }],
         },
       }, this.options);

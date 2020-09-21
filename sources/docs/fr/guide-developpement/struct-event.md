@@ -10,59 +10,69 @@
 
 ## Structure basique d'un évènement
 
-Voici la structure de base d'un évènement, commune à tous les type d'évènements.
+Voici la structure de base d'un [évènement](../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les [types d'évènements](#liste-des-types-devenements).
 
 ```javascript
 {
-    "event_type":       // Event type (see below)
-    "source_type":      // Source of event ("component", or "resource")
-    "connector":        // Connector Type (gelf, nagios, snmp, ...)
-    "connector_name":   // Connector Identifier (nagios1, nagios2, ...)
-    "component":        // Component's name
-    "resource":         // Resource's name (only if source_type is "resource")
+    "event_type":       // Event type (see below) - value field is `string` type
+    "source_type":      // Source of event ("component", or "resource") - value field is `string` type
+    "connector":        // Connector Type (gelf, nagios, snmp, ...) - value field is `string` type
+    "connector_name":   // Connector Identifier (nagios1, nagios2, ...) - value field is `string` type
+    "component":        // Component's name - value field is `string` type
+    "resource":         // Resource's name (only if source_type is "resource") - value field is `string` type
 
     // /!\ The following is optional /!\
 
-    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now)
-    "output":           // Message
-    "long_output":      // Description
-
+    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is an integer `number` type
+    "output":           // Message - value field is `string` type
+    "long_output":      // Description - value field is `string` type
 }
 ```
+
+## Liste des types d'évènements
+
+Certains de ces événements déclenchent également un [trigger](../guide-administration/architecture-interne/triggers.md).
+
+Type              | Description                                                                                                                                |
+------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+ack               | Acquitte une alarme                                                                                                                        |
+ackremove         | Supprimer l'acquittement d'une alarme. (champ ack supprimé)                                                                                |
+assocticket       | Associe un ticket                                                                                                                          |
+declareticket     | Envoie un trigger declareticket                                                                                                            |
+cancel            | Annule un évènement et met son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.    |
+changestate       | Change et verrouille la criticité d'une alarme                                                                                             |
+check             | Envoie le résultat d'un check (depuis Nagios, Icinga,...)                                                                                  |
+snmp              | Envoyé par le connecteur [`snmp2canopsis`](../interconnexions/Supervision/SNMPtrap.md) au moteur [`snmp`](../guide-administration/moteurs/moteur-snmp.md) |
+snooze            | Place un Snooze sur une alarme                                                                                                             |
+statcounterinc    | Incrémente un compteur dans l'engine statistics                                                                                            |
+statduration      | Ajoute une durée dans l'engine statistics                                                                                                  |
+statstateinterval | Ajoute un état d'intervalle dans l'engine statistics                                                                                       |
+uncancel          | Annule un évènement sur l'alarme et restaure son statut précédent                                                                          |
+updatewatcher     | Déclenche la mise à jour de l'état d'un watcher (interne)                                                                                  |
 
 ## Ajout d'éléments et personnalisation
 
-Aprés avoir défini la structure de base de l'évènement, choississez ce que vous voulez ajouter à celui-ci et ajoutez les champs suivants.
-
-### Event Check Structure
-
-```javascript
-{
-    "event_type": "check",
-
-    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0
-}
-```
+Après avoir défini la structure de base de l'[évènement](../guide-utilisation/vocabulaire/index.md#evenement), choisissez le type d'événement que vous souhaitez envoyer et ajoutez les champs correspondants.
 
 ### Event Acknowledgment Structure
 
 ```javascript
 {
-    "event_type": "ack",    // mandatory
+    "event_type": "ack",    // mandatory - value field is `string` type
 
-    "author":               // Acknowledgment author, optional
-    "output":               // Acknowledgment comment, optional
+    "author":               // Acknowledgment author, optional - value field is `string` type
+    "output":               // Acknowledgment comment, optional - value field is `string` type
 }
 ```
 
-### Event Declareticket Structure
+### Event Ackremove Structure
 
 ```javascript
 {
-    "event_type": "declareticket",    // mandatory
+    "event_type": "ackremove",  // mandatory - value field is `string` type
 
-    "author":               // Declareticket author, optional
-    "output":               // Declareticket comment, optional
+    "author":               // author, optional - value field is `string` type
+    "output":               // comment, optional - value field is `string` type
 }
 ```
 
@@ -70,22 +80,22 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "assocticket",    // mandatory
+    "event_type": "assocticket",    // mandatory - value field is `string` type
 
-    "author":               // Assocticket author, optional
-    "ticket":               // Assocticket number, optional
-    "output":               // Assocticket comment, optional
+    "author":               // Assocticket author, optional - value field is `string` type
+    "ticket":               // Assocticket number, optional - value field is `string` type
+    "output":               // Assocticket comment, optional - value field is `string` type
 }
 ```
 
-### Event Snooze Structure
+### Event Declareticket Structure
 
 ```javascript
 {
-  "event_type": "snooze",   // mandatory
+    "event_type": "declareticket",    // mandatory - value field is `string` type
 
-  "author":           // snooze author, optional
-  "output":           // snooze comment, optional
+    "author":               // Declareticket author, optional - value field is `string` type
+    "output":               // Declareticket comment, optional - value field is `string` type
 }
 ```
 
@@ -93,33 +103,32 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "cancel",     // mandatory
+    "event_type": "cancel",     // mandatory - value field is `string` type
 
-    "author":               // author, optional
-    "output":               // comment, optional
+    "author":               // author, optional - value field is `string` type
+    "output":               // comment, optional - value field is `string` type
 }
 ```
 
-### Event Undo Cancel Structure
+### Event Changestate Structure
 
 ```javascript
 {
-    "event_type": "uncancel",   // mandatory
+  "event_type": "changestate",   // mandatory
+  "state":                       // state that will be locked for the alarm (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0, mandatory - value field is an integer `number` type
 
-    "author":               // author, optional
-    "output":               // comment, optional
+  "author":           // changestate author, optional
+  "output":           // changestate comment, optional
 }
 ```
 
-
-### Event Ackremove Structure
+### Event Check Structure
 
 ```javascript
 {
-    "event_type": "ackremove",  // mandatory
+    "event_type": "check",  // mandatory - value field is `string` type
 
-    "author":               // author, optional
-    "output":               // comment, optional
+    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0 - value field is an integer `number` type
 }
 ```
 
@@ -127,11 +136,23 @@ Aprés avoir défini la structure de base de l'évènement, choississez ce que v
 
 ```javascript
 {
-    "event_type": "trap",  // mandatory
+    "event_type": "trap",  // mandatory - value field is `string` type
 
-    "snmp_severity":        // SNMP severity, mandatory
-    "snmp_state":           // SNMP state, mandatory
-    "snmp_oid":             // SNMP oid, mandatory
+    "snmp_severity":        // SNMP severity, mandatory - value field is `string` type
+    "snmp_state":           // SNMP state, mandatory - value field is `string` type
+    "snmp_oid":             // SNMP oid, mandatory - value field is `string` type
+}
+```
+
+### Event Snooze Structure
+
+```javascript
+{
+  "event_type": "snooze",   // mandatory - value field is `string` type
+
+  "duration":         // snooze duration, in seconds - value field is an integer `number` type
+  "author":           // snooze author, optional - value field is `string` type
+  "output":           // snooze comment, optional - value field is `string` type
 }
 ```
 
@@ -182,19 +203,26 @@ Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
 Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
 
+### Event Undo Cancel Structure
 
-## List of event types
+```javascript
+{
+    "event_type": "uncancel",   // mandatory - value field is `string` type
 
-Type | Description |
------|-------------|
-check | Utilisé pour envoyer le résultat d'un check (depuis Nagios, Icinga,...)  |
-statcounterinc | Utilisé pour incrémenter un compteur dans l'engine statistics |
-statduration | Utilisé pour ajouter une durée dans l'engine statistics |
-statstateinterval | Utilisé pour ajouter un état d'intervalle dans l'engine statistics |
-ack | Utilisé pour acquitter une alerte |
-cancel | Utilisé pour cancel un évènement et mettre son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.  |
-uncancel | Utilisé pour annuler un évènement. le statut précédent est restauré et accusé de réception aussi, le cas échéant.  |
-ackremove | Utilisé pour supprimer un accusé de réception d'un évènement. (champ ack supprimé et collection ack mise à jour) |
-snooze | Utilisé pour placer un Snooze sur une alarme |
-declareticket | Utilisé pour déclarer un ticket |
-assocticket | Utilisé pour associer un ticcket |
+    "author":               // author, optional - value field is `string` type
+    "output":               // comment, optional - value field is `string` type
+}
+```
+
+### Event Updatewatcher Structure
+
+```javascript
+{
+    "event_type": "updatewatcher",   // mandatory
+
+    "connector": "watcher",          // fixed value
+    "connector_name": "watcher",     // fixed value
+    "source_type": "component",      // fixed value
+    "component"                      // component value is the watcher id, mandatory
+}
+```

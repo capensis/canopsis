@@ -1,29 +1,35 @@
 <template lang="pug">
-  div
-    v-card
-      v-card-title.primary.white--text
-        v-layout(justify-space-between, align-center)
-          span.headline {{ $t('alarmList.actions.titles.pbehaviorList') }}
-      v-card-text
-        v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
-          template(slot="items", slot-scope="props")
-            td(v-for="key in fields")
-              span(
-                v-if="key === 'tstart' || key === 'tstop'",
-                key="key"
-              ) {{ props.item[key] | date('long') }}
-              span(v-else) {{ props.item[key] }}
-            td
-              v-btn.mx-0(
-                v-for="action in availableActions",
-                :key="action.name",
-                @click="() => action.action(props.item)",
-                icon
-              )
-                v-icon {{ action.icon }}
-      v-divider
-      v-layout.py-1(justify-end)
-        v-btn.primary(@click="hideModal") {{ $t('common.ok') }}
+  modal-wrapper(data-test="pbehaviorListModal")
+    template(slot="title")
+      span {{ $t('alarmList.actions.titles.pbehaviorList') }}
+    template(slot="text")
+      v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
+        template(slot="items", slot-scope="props")
+          td(v-for="key in fields", :key="key")
+            span(
+              v-if="key === 'tstart' || key === 'tstop'",
+            ) {{ props.item[key] | date('long') }}
+            span(v-else) {{ props.item[key] }}
+          td
+            v-btn.mx-0(
+              v-for="action in availableActions",
+              :key="action.name",
+              :data-test="`pbehaviorRow-${props.item._id}-action-${action.name}`",
+              @click="() => action.action(props.item)",
+              icon
+            )
+              v-icon {{ action.icon }}
+      v-layout(v-if="showAddButton", justify-end)
+        v-btn(
+          icon,
+          fab,
+          small,
+          color="primary",
+          @click="showCreatePbehaviorModal"
+        )
+          v-icon add
+    template(slot="actions")
+      v-btn.primary(data-test="pbehaviorListConfirmButton", @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>
@@ -34,12 +40,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 /**
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
   name: MODALS.pbehaviorList,
-
+  components: { ModalWrapper },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin, entitiesPbehaviorCommentMixin],
   data() {
     const fields = [
@@ -92,13 +100,16 @@ export default {
 
       return this.pbehaviors;
     },
+    showAddButton() {
+      return this.modal.config.availableActions.includes(CRUD_ACTIONS.create);
+    },
   },
   mounted() {
     this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId });
   },
   methods: {
     showRemovePbehaviorModal(pbehaviorId) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => this.removePbehavior({ id: pbehaviorId }),
@@ -106,8 +117,22 @@ export default {
       });
     },
 
+    showCreatePbehaviorModal() {
+      this.$modals.show({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior: {
+            filter: {
+              _id: { $in: [this.modal.config.entityId] },
+            },
+          },
+          action: data => this.createPbehavior({ data }),
+        },
+      });
+    },
+
     showEditPbehaviorModal(pbehavior) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createPbehavior,
         config: {
           pbehavior,

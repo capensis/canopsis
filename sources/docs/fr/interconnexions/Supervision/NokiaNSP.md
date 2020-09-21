@@ -146,7 +146,7 @@ Cas particulier : les champs calculés `canopsisState` et `canopsisComponent` so
 
 #### Section `[states]`
 
-Cette section permet de configurer la correspondance entre les noms des niveaux de sévérité dans l'outil Nokia NSP et les valeurs numériques attendues par Canopsis pour représenter l'état du check.
+Cette section permet de configurer la correspondance entre les noms des niveaux de criticité dans l'outil Nokia NSP et les valeurs numériques attendues par Canopsis pour représenter la criticité du check.
 
 Niveaux Canopsis :
 
@@ -155,7 +155,7 @@ Niveaux Canopsis :
 *  2 - MAJOR
 *  3 - CRITICAL.
 
-Si un nom de sévérité Nokia NSP n'est pas défini dans la configuration, le connecteur lui associera par défaut la valeur 0 (niveau `INFO`, c'est-à-dire OK).
+Si un nom de criticité Nokia NSP n'est pas défini dans la configuration, le connecteur lui associera par défaut la valeur 0 (niveau `INFO`, c'est-à-dire OK).
 
 ### Exécution
 

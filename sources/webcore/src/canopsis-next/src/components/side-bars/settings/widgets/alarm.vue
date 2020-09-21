@@ -1,13 +1,6 @@
 <template lang="pug">
   div
     v-list.pt-0(expand)
-      field-row-grid-size(
-        :rowId.sync="settings.rowId",
-        :size.sync="settings.widget.size",
-        :availableRows="availableRows",
-        @createRow="createRow"
-      )
-      v-divider
       field-title(v-model="settings.widget.title", :title="$t('common.title')")
       v-divider
       field-periodic-refresh(v-model="settings.widget.parameters.periodicRefresh")
@@ -21,7 +14,19 @@
             :columnsLabel="$t('settings.columnName')"
           )
           v-divider
-          field-columns(v-model="settings.widget.parameters.widgetColumns", withHtml)
+          field-columns(
+            v-model="settings.widget.parameters.widgetColumns",
+            :label="$t('settings.columnNames')",
+            withHtml,
+            withState
+          )
+          v-divider
+          field-columns(
+            v-model="settings.widget.parameters.widgetGroupColumns",
+            :label="$t('settings.groupColumnNames')",
+            withHtml,
+            withState
+          )
           v-divider
           field-default-elements-per-page(v-model="settings.widget_preferences.itemsPerPage")
           v-divider
@@ -34,7 +39,8 @@
               :filters.sync="settings.widget.parameters.viewFilters",
               :condition.sync="settings.widget.parameters.mainFilterCondition",
               :hasAccessToAddFilter="hasAccessToAddFilter",
-              :hasAccessToEditFilter="hasAccessToEditFilter"
+              :hasAccessToEditFilter="hasAccessToEditFilter",
+              @input="updateMainFilterUpdatedAt"
             )
             v-divider
           field-live-reporting(v-model="settings.widget.parameters.liveReporting")
@@ -50,10 +56,20 @@
             :title="$t('settings.moreInfosModal')"
           )
           v-divider
+          field-grid-range-size(
+            v-model="settings.widget.parameters.expandGridRangeSize",
+            :title="$t('settings.expandGridRangeSize')"
+          )
+          v-divider
           field-switcher(
             data-test="isHtmlEnabledOnTimeLine",
             v-model="settings.widget.parameters.isHtmlEnabledOnTimeLine",
             :title="$t('settings.isHtmlEnabledOnTimeLine')"
+          )
+          v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.isCorrelationEnabled",
+            :title="$t('settings.isCorrelationEnabled')"
           )
           v-divider
           v-list-group(data-test="ackGroup")
@@ -86,7 +102,6 @@ import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
 
-import FieldRowGridSize from './fields/common/row-grid-size.vue';
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldColumns from './fields/common/columns.vue';
@@ -99,6 +114,7 @@ import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
+import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -109,7 +125,6 @@ export default {
     validator: 'new',
   },
   components: {
-    FieldRowGridSize,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,
@@ -122,14 +137,14 @@ export default {
     FieldTextEditor,
     FieldSwitcher,
     FieldFastAckOutput,
+    FieldGridRangeSize,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {
-    const { widget, rowId } = this.config;
+    const { widget } = this.config;
 
     return {
       settings: {
-        rowId,
         widget: this.prepareAlarmWidgetSettings(cloneDeep(widget), true),
         widget_preferences: {
           itemsPerPage: PAGINATION_LIMIT,
@@ -158,6 +173,10 @@ export default {
     };
   },
   methods: {
+    updateMainFilterUpdatedAt() {
+      this.settings.widget.parameters.mainFilterUpdatedAt = Date.now();
+    },
+
     prepareWidgetSettings() {
       const { widget } = this.settings;
 

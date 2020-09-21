@@ -5,30 +5,28 @@
       v-layout(row, wrap)
         v-flex(xs12)
           v-switch(
+            v-field="annotationLine.enabled",
             data-test="annotationEnabled",
-            :input-value="annotationLine.enabled",
             :label="$t('settings.statsAnnotationLine.enabled')",
-            @change="updateField('enabled', $event)"
+            color="primary"
           )
         v-flex(xs12)
           v-text-field(
+            v-field="annotationLine.value",
+            v-validate="'numeric'",
             data-test="annotationValue",
-            :value="annotationLine.value",
             :label="$t('settings.statsAnnotationLine.value')",
             :disabled="!annotationLine.enabled",
-            type="number",
             :name="valueName",
             :error-messages="errors ? errors.collect(valueName) : []",
-            v-validate="'numeric'",
-            @input="updateField('value', $event)"
+            type="number"
           )
         v-flex(xs12)
           v-text-field(
+            v-field="annotationLine.label",
             data-test="annotationLabel",
-            :value="annotationLine.label",
             :label="$t('settings.statsAnnotationLine.label')",
-            :disabled="!annotationLine.enabled",
-            @input="updateField('label', $event)"
+            :disabled="!annotationLine.enabled"
           )
         v-flex(xs12)
           v-btn(
@@ -48,11 +46,10 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 
 export default {
-  mixins: [modalMixin, formMixin],
+  mixins: [formMixin],
   model: {
     prop: 'annotationLine',
     event: 'input',
@@ -70,7 +67,7 @@ export default {
   },
   methods: {
     showColorPickerModal(key) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.colorPicker,
         config: {
           title: this.$t('modals.colorPicker.title'),

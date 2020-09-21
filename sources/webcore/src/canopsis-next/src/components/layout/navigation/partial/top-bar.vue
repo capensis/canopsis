@@ -9,12 +9,14 @@
       data-test="groupsSideBarButton",
       @click="$emit('toggleSideBar')"
     )
-    v-layout.topBarBrand(v-else, fill-height, align-center)
-      img.canopsisLogo(src="@/assets/canopsis.png")
+    v-layout(v-else, fill-height, align-center)
+      app-logo.canopsisLogo.mr-2
       v-layout.version.ml-1(fill-height, align-end)
-        div {{ version }}
+        active-sessions-count(badgeColor="secondary")
+        app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
+    portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items
       v-menu(v-show="exploitationLinks.length", bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ $t('common.exploitation') }}
@@ -45,7 +47,7 @@
                   div.ml-2 {{ $t('user.seeProfile') }}
           v-list-tile
             v-list-tile-content
-              v-btn.ma-0.pa-1.error--text(data-test="logoutButton", flat, @click.prevent="logout")
+              v-btn.ma-0.pa-1.error--text(data-test="logoutButton", flat, @click.prevent="logoutHandler")
                 v-layout(align-center)
                   v-icon exit_to_app
                   div.ml-2 {{ $t('common.logout') }}
@@ -54,17 +56,18 @@
 </template>
 
 <script>
-import sha1 from 'sha1';
-import { omit, cloneDeep } from 'lodash';
-
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
+import { prepareUserByData } from '@/helpers/entities';
+
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import entitiesUserMixin from '@/mixins/entities/user';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import GroupsTopBar from './groups-top-bar.vue';
+import AppLogo from './app-logo.vue';
+import AppVersion from './app-version.vue';
+import ActiveSessionsCount from './active-sessions-count.vue';
+import GroupsTopBar from './groups-top-bar/groups-top-bar.vue';
 
 /**
  * Component for the top bar of the application
@@ -72,10 +75,14 @@ import GroupsTopBar from './groups-top-bar.vue';
  * @event toggleSideBar#click
  */
 export default {
-  components: { GroupsTopBar },
+  components: {
+    AppLogo,
+    AppVersion,
+    ActiveSessionsCount,
+    GroupsTopBar,
+  },
   mixins: [
     authMixin,
-    modalMixin,
     entitiesUserMixin,
     entitiesInfoMixin,
   ],
@@ -118,6 +125,18 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.heartbeat,
         },
+        {
+          route: { name: 'exploitation-dynamic-infos' },
+          text: this.$t('dynamicInfo.title'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.exploitation.dynamicInfo,
+        },
+        {
+          route: { name: 'exploitation-meta-alarm-rules' },
+          text: this.$t('metaAlarmRule.title'),
+          icon: 'list',
+          right: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
+        },
       ];
 
       return links.filter(({ right }) =>
@@ -151,6 +170,18 @@ export default {
           icon: 'settings',
           right: USERS_RIGHTS.technical.parameters,
         },
+        {
+          route: { name: 'admin-broadcast-messages' },
+          text: this.$t('common.broadcastMessages'),
+          icon: '$vuetify.icons.bullhorn',
+          right: USERS_RIGHTS.technical.broadcastMessage,
+        },
+        {
+          route: { name: 'admin-playlists' },
+          text: this.$t('common.playlists'),
+          icon: 'playlist_play',
+          right: USERS_RIGHTS.technical.playlist,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));
@@ -158,25 +189,22 @@ export default {
   },
   methods: {
     showEditUserModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createUser,
         config: {
           title: this.$t('common.profile'),
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            const editedUser = cloneDeep(this.currentUser);
-
-            if (data.password && data.password !== '') {
-              editedUser.shadowpasswd = sha1(data.password);
-            }
-
-            await this.createUser({ data: { ...editedUser, ...omit(data, ['password']) } });
+            await this.createUser({ data: prepareUserByData(data, this.currentUser) });
 
             await this.fetchCurrentUser();
           },
         },
       });
+    },
+    logoutHandler() {
+      return this.logout({ redirectTo: { name: 'login' } });
     },
   },
 };
@@ -191,6 +219,13 @@ export default {
   .version {
     color: white;
     font-size: 0.7em;
+    position: relative;
+
+    & /deep/ .active-sessions-count {
+      position: absolute;
+      top: 0;
+      left: -8px;
+    }
   }
 
   a {

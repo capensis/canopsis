@@ -56,6 +56,8 @@ class AlarmField(DefaultEnum):
     output = "output"
     long_output_history = "long_out_history"
     resource = "resource"
+    parents = "parents"
+    children = "children"
 
 
 class States(DefaultEnum):

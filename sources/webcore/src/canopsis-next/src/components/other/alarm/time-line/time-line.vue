@@ -1,29 +1,35 @@
 <template lang="pug">
-  div.timeline
+  div.timeline(:data-test="`alarmTimeLine-${alarm._id}`")
     ul(v-for="(steps, day) in groupedSteps", :key="day")
       li(v-for="(step, index) in steps", :key="`step-${index}`")
         .timeline-item(v-show="index === 0")
-          .date {{ day | date('short', true) }}
+          .date {{ day }}
         .timeline-item
-          .time {{ step.t | date('H:mm:SS', true) }}
+          .time {{ step.t | date('time', true) }}
           time-line-flag.flag(:step="step")
           time-line-card(:step="step", :isHTMLEnabled="isHTMLEnabled")
 </template>
 
 <script>
 import moment from 'moment';
-import { orderBy, groupBy } from 'lodash';
+import { groupBy } from 'lodash';
+
+import { DATETIME_FORMATS } from '@/constants';
 
 import TimeLineFlag from '@/components/other/alarm/time-line/time-line-flag.vue';
 import TimeLineCard from '@/components/other/alarm/time-line/time-line-card.vue';
 
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },
-  mixins: [entitiesAlarmMixin],
+  mixins: [widgetExpandPanelAlarmTimeLine],
   props: {
     alarm: {
+      type: Object,
+      required: true,
+    },
+    widget: {
       type: Object,
       required: true,
     },
@@ -32,41 +38,28 @@ export default {
       default: false,
     },
   },
-  computed: {
-    steps() {
-      return this.alarm.v.steps || [];
-    },
-
-    groupedSteps() {
-      if (this.alarm && this.alarm.v.steps) {
-        const orderedSteps = orderBy(this.alarm.v.steps, ['t'], 'desc');
-
-        return groupBy(orderedSteps, step => moment.unix(step.t).startOf('day').format());
-      }
-
-      return {};
-    },
+  data() {
+    return {
+      groupedSteps: {},
+    };
   },
-  mounted() {
-    this.fetchItem();
+  watch: {
+    alarm: {
+      immediate: true,
+      handler(alarm) {
+        if (alarm.v.steps) {
+          this.groupedSteps = this.groupSteps(alarm.v.steps);
+        } else {
+          this.fetchAlarmItemWithGroupsAndSteps(alarm);
+        }
+      },
+    },
   },
   methods: {
-    fetchItem() {
-      const params = {
-        sort_key: 't',
-        sort_dir: 'DESC',
-        limit: 1,
-        with_steps: true,
-      };
+    groupSteps(steps) {
+      const orderedSteps = steps.reverse();
 
-      if (this.alarm.v.resolved) {
-        params.resolved = true;
-      }
-
-      this.fetchAlarmItem({
-        id: this.alarm._id,
-        params,
-      });
+      return groupBy(orderedSteps, step => moment.unix(step.t).format(DATETIME_FORMATS.short));
     },
   },
 };
@@ -84,9 +77,9 @@ export default {
       li:last-child {
         .timeline-item:last-child {
           border-image: linear-gradient(
-              to bottom,
-              $border-line 60%,
-              $background) 1 100%;
+                  to bottom,
+                  $border-line 60%,
+                  $background) 1 100%;
         }
       }
     }

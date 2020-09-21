@@ -1,7 +1,13 @@
 import { schema } from 'normalizr';
 
 import { ENTITIES_TYPES } from '@/constants';
-import { childProcessStrategy, childMergeStrategy, parentProcessStrategy } from '@/helpers/schema';
+
+import {
+  childProcessStrategy,
+  childMergeStrategy,
+  parentProcessStrategy,
+  viewTabProcessStrategy,
+} from '@/helpers/schema';
 
 export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
   idAttribute: '_id',
@@ -15,6 +21,17 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
   idAttribute: '_id',
   processStrategy: parentProcessStrategy,
 });
+
+alarmSchema.define({
+  consequences: {
+    data: [alarmSchema],
+  },
+  causes: {
+    data: [alarmSchema],
+  },
+});
+
+alarmSchema.disabledCache = true;
 
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   pbehaviors: [pbehaviorSchema],
@@ -37,29 +54,38 @@ export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
   idAttribute: '_id',
 });
 
-export const viewRowSchema = new schema.Entity(ENTITIES_TYPES.viewRow, {
-  widgets: [widgetSchema],
-}, { idAttribute: '_id' });
-
 export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
-  rows: [viewRowSchema],
-}, { idAttribute: '_id' });
+  widgets: [widgetSchema],
+}, {
+  idAttribute: '_id',
+  processStrategy: viewTabProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
 
 export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   tabs: [viewTabSchema],
-}, { idAttribute: '_id' });
+}, {
+  idAttribute: '_id',
+  processStrategy: childProcessStrategy,
+  mergeStrategy: childMergeStrategy,
+});
 
 export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   views: [viewSchema],
 }, {
   idAttribute: '_id',
+  processStrategy: parentProcessStrategy,
 });
+
+groupSchema.disabledCache = true;
 
 export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribute: '_id' });
 
 export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
 
 export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
+
+export const metaAlarmRuleSchema = new schema.Entity(ENTITIES_TYPES.metaAlarmRule, {}, { idAttribute: '_id' });
 
 export const webhookSchema = new schema.Entity(ENTITIES_TYPES.webhook, {}, { idAttribute: '_id' });
 
@@ -68,6 +94,14 @@ export const snmpRuleSchema = new schema.Entity(ENTITIES_TYPES.snmpRule, {}, { i
 export const actionSchema = new schema.Entity(ENTITIES_TYPES.action, {}, { idAttribute: '_id' });
 
 export const heartbeatSchema = new schema.Entity(ENTITIES_TYPES.heartbeat, {}, { idAttribute: '_id' });
+
+export const dynamicInfoSchema = new schema.Entity(ENTITIES_TYPES.dynamicInfo, {}, { idAttribute: '_id' });
+
+export const broadcastMessageSchema = new schema.Entity(ENTITIES_TYPES.broadcastMessage, {}, { idAttribute: '_id' });
+
+export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {
+  tabs: [viewTabSchema],
+}, { idAttribute: '_id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
@@ -78,7 +112,6 @@ export default {
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
   [ENTITIES_TYPES.group]: groupSchema,
   [ENTITIES_TYPES.view]: viewSchema,
-  [ENTITIES_TYPES.viewRow]: viewRowSchema,
   [ENTITIES_TYPES.viewTab]: viewTabSchema,
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,
@@ -88,4 +121,8 @@ export default {
   [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
   [ENTITIES_TYPES.action]: actionSchema,
   [ENTITIES_TYPES.heartbeat]: heartbeatSchema,
+  [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
+  [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
+  [ENTITIES_TYPES.playlist]: playlistSchema,
+  [ENTITIES_TYPES.metaAlarmRule]: metaAlarmRuleSchema,
 };

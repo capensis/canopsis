@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { merge, get } from 'lodash';
 
-import request from '@/services/request';
+import request, { useRequestCancelling } from '@/services/request';
 import i18n from '@/i18n';
 import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
@@ -26,6 +26,8 @@ export default {
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
     getItem: (state, getters, rootState, rootGetters) => id =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.alarm, id),
+    getList: (state, getters, rootState, rootGetters) => ids =>
+      rootGetters['entities/getList'](ENTITIES_TYPES.alarm, ids),
   },
   mutations: {
     [types.FETCH_LIST](state, { widgetId, params }) {
@@ -49,37 +51,41 @@ export default {
           throw err;
         }
 
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         return { alarms: [], total: 0 };
       }
     },
     async fetchList({ commit, dispatch }, { widgetId, params, withoutPending } = {}) {
       try {
-        if (!withoutPending) {
-          commit(types.FETCH_LIST, { widgetId, params });
-        }
+        await useRequestCancelling(async (source) => {
+          if (!withoutPending) {
+            commit(types.FETCH_LIST, { widgetId, params });
+          }
 
-        const { normalizedData, data } = await dispatch('entities/fetch', {
-          route: API_ROUTES.alarmList,
-          schema: [alarmSchema],
-          params,
-          dataPreparer: d => d.data[0].alarms,
-        }, { root: true });
+          const { normalizedData, data } = await dispatch('entities/fetch', {
+            route: API_ROUTES.alarmList,
+            schema: [alarmSchema],
+            params,
+            cancelToken: source.token,
+            dataPreparer: d => d.data[0].alarms,
+          }, { root: true });
 
-        const total = data.data[0].total ? data.data[0].total : normalizedData.result.length;
+          const [meta] = data.data;
+          const total = meta.total ? meta.total : normalizedData.result.length;
 
-        commit(types.FETCH_LIST_COMPLETED, {
-          widgetId,
-          allIds: normalizedData.result,
-          meta: {
-            total,
-            first: data.data[0].first,
-            last: data.data[0].last,
-          },
-        });
+          commit(types.FETCH_LIST_COMPLETED, {
+            widgetId,
+            allIds: normalizedData.result,
+            meta: {
+              total,
+              first: meta.first,
+              last: meta.last,
+            },
+          });
+        }, `alarms-list-${widgetId}`);
       } catch (err) {
-        await dispatch('popup/add', { type: 'error', text: i18n.t('errors.default') }, { root: true });
+        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED, { widgetId });
       }
@@ -88,7 +94,7 @@ export default {
     fetchListWithPreviousParams({ dispatch, state }, { widgetId }) {
       return dispatch('fetchList', {
         widgetId,
-        params: state.widgets[widgetId].fetchingParams,
+        params: get(state, ['widgets', widgetId, 'fetchingParams'], {}),
         withoutPending: true,
       });
     },

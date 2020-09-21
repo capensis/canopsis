@@ -1,0 +1,6 @@
+---
+- name: Start and enable Nginx
+  systemd:
+    name: "nginx.service"
+    state: restarted
+    enabled: true

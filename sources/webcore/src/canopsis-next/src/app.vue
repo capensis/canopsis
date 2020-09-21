@@ -3,21 +3,21 @@
     v-layout(v-if="!pending")
       navigation#main-navigation(v-if="$route.name !== 'login'")
       v-content#main-content
+        active-broadcast-message
         router-view(:key="routeViewKey")
     side-bars
-    modals
-    popups
+    the-modals
+    the-popups
 </template>
-
 
 <script>
 import Navigation from '@/components/layout/navigation/index.vue';
 import SideBars from '@/components/side-bars/index.vue';
-import Modals from '@/components/modals/index.vue';
-import Popups from '@/components/popups/index.vue';
+import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
+import keepaliveMixin from '@/mixins/entities/keepalive';
 
 import '@/assets/styles/main.scss';
 
@@ -25,10 +25,9 @@ export default {
   components: {
     Navigation,
     SideBars,
-    Modals,
-    Popups,
+    ActiveBroadcastMessage,
   },
-  mixins: [authMixin, entitiesInfoMixin],
+  mixins: [authMixin, entitiesInfoMixin, keepaliveMixin],
   data() {
     return {
       pending: true,
@@ -48,9 +47,30 @@ export default {
 
     if (this.isLoggedIn) {
       await this.fetchAppInfos();
+
+      this.setTitle();
+      this.setPopupTimeout();
+
+      this.startKeepalive();
+    } else {
+      this.registerIsLoggedInOnceWatcher();
     }
 
     this.pending = false;
+  },
+  beforeDestroy() {
+    this.stopKeepalive();
+  },
+  methods: {
+    registerIsLoggedInOnceWatcher() {
+      const unwatch = this.$watch('isLoggedIn', (isLoggedIn) => {
+        if (isLoggedIn) {
+          this.startKeepalive();
+
+          unwatch();
+        }
+      });
+    },
   },
 };
 </script>

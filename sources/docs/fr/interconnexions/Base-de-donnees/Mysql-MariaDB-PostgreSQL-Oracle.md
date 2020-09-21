@@ -65,7 +65,7 @@ usage: connector-sql2canopsis.py [-h] -c CONFIG [-l LOGLEVEL]
 
 ## Installation d'un « dialect »
 
-On a aussi besoin d'installer un `dialect` sqlachemy (<http://docs.sqlalchemy.org/en/latest/dialects/index.html>) en fonction de la base de données ciblée.
+On a aussi besoin d'installer un `dialect` sqlachemy (<https://docs.sqlalchemy.org/en/latest/dialects/index.html>) en fonction de la base de données ciblée.
 
 ### MySQL / MariaDB
 
@@ -115,7 +115,7 @@ url=postgresql://user:password@postgresql_host/database
 
 ### Oracle
 
-Prérequis : récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`). Disponibles sur <http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html> (attention, un compte est nécessaire).
+Prérequis : récupérer et installer Oracle Instant Client et son SDK (`instantclient-basic-linux` et `instantclient-sdk-linux`). Disponibles sur <https://www.oracle.com/technetwork/database/database-technologies/instant-client/overview/index.html> (attention, un compte est nécessaire).
 
 Définir le répertoire d'installation d'Oracle Instant Client :
 ```shell
@@ -143,7 +143,7 @@ url=oracle://user:password@oracle_host:1521/sid
 
 ### Plus de détails sur les URL de connexion
 
-Voir le lien suivant afin d'en savoir plus sur le paramètre `url`, si nécessaire : <http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls>
+Voir le lien suivant afin d'en savoir plus sur le paramètre `url`, si nécessaire : <https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls>
 
 ## Utilisation
 
@@ -221,9 +221,9 @@ metrique2.metric.value=age
 metrique2.metric.crit=5:
 ```
 
-Dans cet exemple, l'état « min » sera atteint lorsque la valeur associée à `metrique1` (ici `nb`) dépassera 50.
+Dans cet exemple, la criticité « min » sera atteinte lorsque la valeur associée à `metrique1` (ici `nb`) dépassera 50.
 
-De la même façon, l'état « crit » sera atteint lorsque la valeur associée à `metrique2` (ici `age`) sera en dessous de 5. Les « : » à la suite du nombre (`5:`) permettent en effet de préciser que l'état sera atteint lorsque la valeur sera *inférieure* au nombre indiqué.
+De la même façon, la criticité « crit » sera atteinte lorsque la valeur associée à `metrique2` (ici `age`) sera en dessous de 5. Les « : » à la suite du nombre (`5:`) permettent en effet de préciser que la criticité sera atteinte lorsque la valeur sera *inférieure* au nombre indiqué.
 
 Lorsque plusieurs métriques sont utilisées pour générer des évènements, le niveau de criticité le plus important sera retenu.
 

@@ -4,38 +4,40 @@ Lorsqu'un évènement arrive, il est envoyé vers le bac à évènements, puis t
 
 Les différentes actions possibles sur cette alarme sont :
 
-*  [Accuser réception (Ack)](#accuser-réception-ack)
-*  Une fois la réception faite, la gestion de l'incident :
-    *  [Déclarer un incident](#déclarer-un-ticket)
+*  [Acquitter l'alarme](#acquitter-lalarme)
+*  Une fois l'alarme acquittée, la gestion de l'incident :
+    *  [Déclarer un incident](#declarer-un-ticket)
     *  [Associer un ticket](#associer-un-ticket)
     *  [Annuler l'alarme](#annuler-lalarme)
-    *  [Annuler l'Ack](#annuler-lack)
-    *  [Snooze](#snooze)
-    *  [Changer la criticité](#changer-la-criticité)
-    *  [Comportement périodique](#comportement-périodique)
-    *  [Lister les comportements périodiques](#lister-les-comportements-périodiques)
-    *  [Obtenir plus d'infos](#obtenir-plus-d-infos)
+    *  [Annuler l'acquittement](#annuler-lacquittement)
+    *  [Mise en veille](#mise-en-veille)
+    *  [Changer la criticité](#changer-la-criticite)
+    *  [Comportement périodique](#comportement-periodique)
+    *  [Lister les comportements périodiques](#lister-les-comportements-periodiques)
+    *  [Commenter l'alarme](#commenter-lalarme) 
+    *  [Historique](#historique)
+    *  [Liste des variables disponibles](#liste-des-variables-disponibles)
 
-## Accuser réception (ACK)
+## Acquitter l'alarme
 
-Deux choix possibles : ACK et ACK rapide.
+Deux choix possibles : Acquittement et Acquittement rapide.
 
-L'Ack permet de voir les détails généraux de l'évènement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
+L'acquittement permet de voir les détails généraux de l'évènement, de lier un numéro de ticket et d'écrire une note. Il permet d'accuser réception, ou d'accuser réception et de reporter un incident.
 
-L'Ack rapide, lui, permet d'accuser réception sans pour autant remplir ces informations.
+L'acquittement rapide, lui, permet d'accuser réception sans pour autant remplir ces informations.
 
 Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Ack Extra details](./img/ack-extra-details-icon.png  "Icone Ack Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
 ## Gérer l'incident
 
-Une fois la réception faite, un nouveau menu apparaît à la place des actions d'Ack et d'Ack rapide.
+Une fois l'alarme acquittée, un nouveau menu apparaît à la place des actions d'acquittement.
 
 Il permet de :
 
 *  déclarer un ticket
 *  associer un ticket
 *  annuler l'alarme
-*  snooze
+*  mettre en veille
 *  changer la criticité
 *  lister les comportements périodiques
 *  définir un comportement périodique
@@ -55,7 +57,7 @@ L'action 'Déclarer un ticket' permet de déclarer un incident, à partir d'une 
 
 Au clic sur l'action 'Déclarer un ticket', une fenêtre s'affiche :
 
-![Modal action Déclarer ticket](./img/modal-declare-ticket.png  "Modal action Déclarer ticket")
+![Modale action Déclarer ticket](./img/modal-declare-ticket.png  "Modale action Déclarer ticket")
 
 Cette fenêtre présente quelques détails de l'évènement.
 
@@ -66,9 +68,9 @@ Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vo
 
 L'action 'Associer un ticket' permet d'associser un numéro de ticket à une alarme.
 
-Au clic sur l'action 'Associer un ticket', une fenêtre s'affiche : 
+Au clic sur l'action 'Associer un ticket', une fenêtre s'affiche :
 
-![Modal action Associer ticket](./img/modal-assoc-ticket.png  "Modal action Associer ticket")
+![Modale action Associer ticket](./img/modal-assoc-ticket.png  "Modale action Associer ticket")
 
 Cette fenêtre présente quelques détails de l'évènement.
 
@@ -83,9 +85,9 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 L'action 'Annuler l'alarme' permet d'annuler une alarme.
 
-Au clic sur l'action 'Annuler l'alarme', une fenêtre s'affiche : 
+Au clic sur l'action 'Annuler l'alarme', une fenêtre s'affiche :
 
-![Modal action Annuler alarme](./img/modal-cancel.png  "Modal action Annuler alarme")
+![Modale action Annuler alarme](./img/modal-cancel.png  "Modale action Annuler alarme")
 
 Cette fenêtre présente quelques détails de l'évènement.
 
@@ -96,13 +98,17 @@ Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vo
 
 Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Cancel Extra details](./img/cancel-extra-details-icon.png  "Icone Cancel Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
 
-### Annuler l'Ack
+L'alarme prend alors le statut `cancel` et reste pendant 1h dans le bac des alarmes en cours. Ce délai de 1h passé, elle change de statut pour passer en `resolved` et bascule dans le bac des alarmes résolues.
 
-L'action 'Annuler l'Ack' permet d'annuler la confirmation de réception de l'alarme.
+**Note :** Toute alarme annulée garde son dernier niveau de criticité connu.
 
-Au clic sur l'action 'Annuler l'Ack', une fenêtre s'affiche : 
+### Annuler l'acquittement
 
-![Modal action Annuler Ack](./img/modal-cancel-ack.png  "Modal action Annuler Ack")
+L'action 'Annuler l'acquittement' permet d'annuler la confirmation de réception de l'alarme.
+
+Au clic sur l'action 'Annuler l'acquittement', une fenêtre s'affiche :
+
+![Modale action Annuler Ack](./img/modal-cancel-ack.png  "Modale action Annuler Ack")
 
 Cette fenêtre présente quelques détails de l'évènement.
 
@@ -111,15 +117,15 @@ En dessous des détails de l'évènement, un champ de texte vous demande de rens
 Après avoir renseigné cette note, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Les actions disponibles reviennent alors à l'état dans lequel elles étaient avant l'action d'Ack (ou Ack rapide) effectuée auparavant.
+Les actions disponibles reviennent alors à l'état dans lequel elles étaient avant l'action d'acquittement effectuée auparavant.
 
-### Snooze
+### Mettre en veille
 
-L'action 'Snooze' permet de reporter une alarme pour une durée déterminée.
+L'action 'Mettre en veille' (*snooze*) permet de reporter une alarme pour une durée déterminée.
 
-Au clic sur l'action 'Snooze', une fenêtre s'affiche :
+Au clic sur l'action 'Mettre en veille', une fenêtre s'affiche :
 
-![Modal action Snooze](./img/modal-snooze.png  "Modal action Snooze")
+![Modale action Mettre en veille](./img/modal-snooze.png  "Modale action Mettre en veille")
 
 Cette fenêtre vous demande de renseigner la durée souhaitée.
 
@@ -130,18 +136,18 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 ### Changer la criticité
 
-L'action 'Changer la criticité' permet de modifier l'état d'une alarme (Info, Mineur, Majeur, Critique) *Cf: [Description d'une alarme](./description-alarme.md#les-différents-états)*.
+L'action 'Changer la criticité' permet de modifier [la criticité](../../../vocabulaire/index.md#criticite) d'une [alarme](../../../vocabulaire/index.md#alarme) (Info, Mineure, Majeure, Critique).
 
 Au clic sur l'action 'Changer la criticité', une fenêtre s'affiche :
 
-![Modal action Changer criticité](./img/modal-change-criticity.png  "Modal action Changer criticité")
+![Modale action Changer criticité](./img/modal-change-criticity.png  "Modale action Changer criticité")
 
 Cette fenêtre vous demande de choisir le niveau de criticité souhaité et de renseigner une note concernant l'action que vous effectuez.
 
 Une fois la durée renseignée, cliquez sur 'Sauvegarder'.
 Une fenêtre 'Action effectuée avec succès !' en haut à droite de l'écran vous confirme que l'action a bien été effectuée.
 
-Si la colonne 'state' est activée dans le Bac à alarmes, l'icone ![Icone User state](./img/icone-user-state.png  "Icone User state") apparaît à côté de l'état de l'alarme, signifiant que celui-ci a été modifié manuellement.
+Si la colonne 'state' est activée dans le Bac à alarmes, l'icone ![Icone User state](./img/icone-user-state.png  "Icone User state") apparaît à côté de la criticité de l'alarme, signifiant que celle-ci a été modifiée manuellement.
 
 ### Comportement périodique
 
@@ -155,7 +161,7 @@ L'action 'Lister les comportements périodiques' permet de lister les comporteme
 
 Au clic sur l'action 'Lister les comportements périodiques', une fenêtre s'affiche :
 
-![Modal action Lister comportements périodiques](./img/modal-list-pbehaviors.png  "Modal action Lister comportements périodiques")
+![Modale action Lister comportements périodiques](./img/modal-list-pbehaviors.png  "Modale action Lister comportements périodiques")
 
 Cette fenêtre présente une liste des comportements périodiques affectant cet évènement.
 
@@ -163,6 +169,28 @@ Il est possible depuis cette fenêtre de supprimer les comportements périodique
 
 Pour fermer la fenêtre, cliquez en dehors de celle-ci, ou sur le bouton 'Annuler'
 
-### Obtenir plus d'infos 
+### Commenter l'alarme
 
-L'action 'Obtenir plus d'infos' permet d'ouvrir la fenêtre 'Plus d'infos'. Cette fenêtre personnalisable permet d'afficher toutes les informations souhaitées concernant l'alarme ou l'entité associée à cette alarme.
+L'action 'Commenter l'alarme' permet de poser un commentaire sur une alarme. 
+
+![Commenter l'alarme](./img/comment.png "Commenter l'alarme")
+
+Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Icone Comment Extra details](./img/comment-extra-details-icon.png  "Icone Comment Extra details") apparaît. Au survol de la souris, des informations sur l'action sont disponibles (auteur, date, etc).
+
+
+### Historique
+
+L'action 'Historique' permet de consulter l'historique de cette alarme durant les 30 derniers jours (valeur par défaut).  
+
+![Historique](./img/history.png  "Historique")
+
+En utilisant le [suivi personnalisé](../../bac-a-alarmes/#suivi-personnalise), vous pouvez modifier l'intervalle de dates pour cet historique.
+
+### Liste des variables disponibles
+
+Cette action permet de montrer à l'utilisateur l'ensemble des variables disponibles concernant l'alarme et son entité.  
+
+![Liste des variables disponibles](./img/available_variables.png  "Liste des variables disponibles")
+
+!!! Info
+    Cette action est autorisée grâce au droit `common_variablesHelp(Access to available variables list)`.

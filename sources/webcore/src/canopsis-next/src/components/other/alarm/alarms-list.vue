@@ -1,10 +1,15 @@
 <template lang="pug">
-  div
+  div(data-test="tableWidget")
     v-layout.white(row, wrap, justify-space-between, align-center)
       v-flex
-        alarm-list-search(:query.sync="query", :columns="columns")
+        advanced-search(
+          :query.sync="query",
+          :columns="columns",
+          :tooltip="$t('search.alarmAdvancedSearch')"
+        )
       v-flex
         pagination(
+          data-test="topPagination",
           v-if="hasColumns",
           :page="query.page",
           :limit="query.limit",
@@ -14,6 +19,7 @@
         )
       v-flex
         filter-selector(
+          data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
           :lockedFilters="widgetViewFilters",
@@ -28,86 +34,72 @@
         )
       v-flex
         v-chip.primary.white--text(
+          data-test="resetAlarmsDateInterval",
           v-if="activeRange",
           close,
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-btn(@click="showEditLiveReportModal", icon, small)
-          v-icon(:color="activeRange ? 'primary' : 'black'") schedule
-      v-flex.px-3(v-show="selected.length", xs12)
-        mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
-    no-columns-table(v-if="!hasColumns")
-    div(v-else)
-      v-data-table.alarms-list-table(
-        :class="vDataTableClass",
-        v-model="selected",
-        :items="alarms",
-        :headers="headers",
-        :total-items="alarmsMeta.total",
-        :pagination.sync="vDataTablePagination",
-        :loading="alarmsPending",
-        ref="dataTable",
-        item-key="_id",
-        hide-actions,
-        select-all,
-        expand
-      )
-        template(slot="progress")
-          v-fade-transition
-            v-progress-linear(height="2", indeterminate, color="primary")
-        template(slot="headerCell", slot-scope="props")
-          span {{ props.header.text }}
-        template(slot="items", slot-scope="props")
-          tr
-            td
-              v-checkbox-functional(v-model="props.selected", primary, hide-details)
-            td(
-              v-for="column in columns",
-              @click="props.expanded = !props.expanded"
-            )
-              alarm-column-value(:alarm="props.item", :column="column", :widget="widget")
-            td
-              actions-panel(:item="props.item", :widget="widget", :isEditingMode="isEditingMode")
-        template(slot="expand", slot-scope="props")
-          time-line(:alarm="props.item", :isHTMLEnabled="widget.parameters.isHtmlEnabledOnTimeLine")
-      v-layout.white(align-center)
+        v-tooltip(bottom)
+          v-btn(
+            slot="activator",
+            data-test="alarmsDateInterval",
+            icon,
+            small,
+            @click="showEditLiveReportModal"
+          )
+            v-icon(:color="activeRange ? 'primary' : 'black'") schedule
+          span {{ $t('liveReporting.button') }}
+    alarms-list-table(
+      :widget="widget",
+      :alarms="alarms",
+      :totalItems="alarmsMeta.total",
+      :pagination.sync="vDataTablePagination",
+      :loading="alarmsPending",
+      :isTourEnabled="isTourEnabled",
+      :hasColumns="hasColumns",
+      :columns="columns",
+      selectable,
+      expandable,
+      ref="alarmsTable"
+    )
+      v-layout.white(v-show="alarmsMeta.total", align-center)
         v-flex(xs10)
           pagination(
+            data-test="bottomPagination",
             :page="query.page",
             :limit="query.limit",
             :total="alarmsMeta.total",
             @input="updateQueryPage"
           )
         v-spacer
-        v-flex(xs2)
+        v-flex(xs2, data-test="itemsPerPage")
           records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+    alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS } from '@/constants';
+import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
-import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
-import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
-import AlarmListSearch from '@/components/other/alarm/search/alarm-list-search.vue';
+
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
-import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
-import widgetRecordsPerPageMixin from '@/mixins/widget/records-per-page';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
+
+import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsListTable from './partials/alarms-list-table.vue';
 
 /**
  * Alarm-list component
@@ -120,23 +112,19 @@ import entitiesAlarmMixin from '@/mixins/entities/alarm';
  */
 export default {
   components: {
-    AlarmListSearch,
     RecordsPerPage,
-    TimeLine,
-    MassActionsPanel,
-    ActionsPanel,
-    AlarmColumnValue,
-    NoColumnsTable,
     FilterSelector,
+    AdvancedSearch,
+    AlarmsListTable,
+    AlarmsExpandPanelTour,
   },
   mixins: [
     authMixin,
-    modalMixin,
-    widgetQueryMixin,
+    alarmColumnFilters,
+    widgetFetchQueryMixin,
     widgetColumnsMixin,
     widgetPaginationMixin,
     widgetFilterSelectMixin,
-    widgetRecordsPerPageMixin,
     widgetPeriodicRefreshMixin,
     entitiesAlarmMixin,
   ],
@@ -144,10 +132,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    isEditingMode: {
-      type: Boolean,
-      default: false,
     },
     tabId: {
       type: String,
@@ -160,6 +144,17 @@ export default {
     };
   },
   computed: {
+    tourCallbacks() {
+      return {
+        onPreviousStep: this.onTourPreviousStep,
+        onNextStep: this.onTourNextStep,
+      };
+    },
+
+    isTourEnabled() {
+      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel) && !!this.alarms.length;
+    },
+
     activeRange() {
       const { tstart, tstop } = this.query;
 
@@ -168,34 +163,6 @@ export default {
       }
 
       return null;
-    },
-
-    selectedIds() {
-      return this.selected.map(item => item._id);
-    },
-
-    headers() {
-      if (this.hasColumns) {
-        return [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
-      }
-
-      return [];
-    },
-
-    vDataTableClass() {
-      const columnsLength = this.headers.length;
-      const COLUMNS_SIZES_VALUES = {
-        sm: { min: 0, max: 10, label: 'sm' },
-        md: { min: 11, max: 12, label: 'md' },
-        lg: { min: 13, max: Number.MAX_VALUE, label: 'lg' },
-      };
-
-      const { label = COLUMNS_SIZES_VALUES.sm.label } = Object.values(COLUMNS_SIZES_VALUES)
-        .find(({ min, max }) => columnsLength >= min && columnsLength <= max);
-
-      return {
-        [`columns-${label}`]: true,
-      };
     },
 
     hasAccessToListFilter() {
@@ -209,14 +176,57 @@ export default {
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
+
+    firstAlarmExpanded() {
+      const [alarm] = this.alarms;
+
+      return alarm && this.$refs.alarmsTable.expanded[alarm._id];
+    },
+  },
+  mounted() {
+    this.fetchAlarmColumnFilters();
   },
   methods: {
+    updateRecordsPerPage(limit) {
+      this.updateWidgetPreferencesInUserPreference({
+        ...this.userPreference.widget_preferences,
+
+        itemsPerPage: limit,
+      });
+
+      this.query = {
+        ...this.query,
+
+        limit,
+      };
+    },
+
+    expandFirstAlarm() {
+      if (this.alarms[0] && !this.firstAlarmExpanded) {
+        this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
+      }
+    },
+
+    onTourPreviousStep(currentStep) {
+      if (currentStep !== 1) {
+        this.expandFirstAlarm();
+      }
+
+      return this.$nextTick();
+    },
+
+    onTourNextStep() {
+      this.expandFirstAlarm();
+
+      return this.$nextTick();
+    },
+
     removeHistoryFilter() {
       this.query = omit(this.query, ['tstart', 'tstop']);
     },
 
     showEditLiveReportModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['tstart', 'tstop']),
@@ -229,7 +239,7 @@ export default {
       if (this.hasColumns) {
         const query = this.getQuery();
 
-        if (isPeriodicRefresh && !isEmpty(this.$refs.dataTable.expanded)) {
+        if (isPeriodicRefresh && !isEmpty(this.$refs.alarmsTable.expanded)) {
           query.with_steps = true;
         }
 
@@ -242,62 +252,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-  .alarms-list-table {
-    &.columns-lg {
-      table.v-table {
-        tbody, thead {
-          td, th {
-            padding: 0 8px;
-          }
-
-          @media screen and (max-width: 1600px) {
-            td, th {
-              padding: 0 4px;
-            }
-          }
-
-          @media screen and (max-width: 1450px) {
-            td, th {
-              font-size: 0.85em;
-            }
-
-            .badge {
-              font-size: inherit;
-            }
-          }
-        }
-      }
-    }
-
-    &.columns-md {
-      table.v-table {
-        tbody, thead {
-          @media screen and (max-width: 1700px) {
-            td, th {
-              padding: 0 12px;
-            }
-          }
-
-          @media screen and (max-width: 1250px) {
-            td, th {
-              padding: 0 8px;
-            }
-          }
-
-          @media screen and (max-width: 1150px) {
-            td, th {
-              font-size: 0.85em;
-              padding: 0 4px;
-            }
-
-            .badge {
-              font-size: inherit;
-            }
-          }
-        }
-      }
-    }
-  }
-</style>

@@ -4,7 +4,7 @@
       v-layout(justify-space-between, align-center)
         span.headline {{ $t('modals.eventFilterRule.editPattern') }}
     v-card-text
-      v-tabs(fixed-tabs, v-model="activeTab")
+      v-tabs(fixed-tabs, v-model="activeTab", slider-color="primary")
         v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
       v-tabs-items(v-model="activeTab")
         v-tab-item
@@ -17,7 +17,7 @@
           pattern-advanced-editor(v-model="pattern")
     v-divider
     v-layout.pa-2(justify-end)
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
+      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -58,7 +58,7 @@ export default {
         await this.config.action(this.pattern);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

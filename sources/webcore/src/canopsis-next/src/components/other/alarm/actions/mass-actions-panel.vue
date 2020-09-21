@@ -68,7 +68,25 @@ export default {
           type: alarmsListActionsTypes.cancel,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           title: this.$t('alarmList.actions.titles.cancel'),
-          method: this.showActionModal(MODALS.createCancelEvent),
+          method: this.showCancelEventModal,
+        },
+        {
+          type: alarmsListActionsTypes.associateTicket,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
+          title: this.$t('alarmList.actions.titles.associateTicket'),
+          method: this.showCreateAssociateTicketEventModal,
+        },
+        {
+          type: alarmsListActionsTypes.snooze,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
+          title: this.$t('alarmList.actions.titles.snooze'),
+          method: this.showActionModal(MODALS.createSnoozeEvent),
+        },
+        {
+          type: alarmsListActionsTypes.group,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
+          title: this.$t('alarmList.actions.titles.groupRequest'),
+          method: this.showCreateGroupRequestEventModal,
         },
       ],
     };
@@ -91,6 +109,49 @@ export default {
         itemsType: ENTITIES_TYPES.alarm,
         itemsIds: this.itemsIds,
       };
+    },
+  },
+
+  methods: {
+    showAddPbehaviorModal() {
+      this.$modals.show({
+        name: MODALS.createPbehavior,
+        config: {
+          pbehavior: {
+            filter: {
+              _id: { $in: this.items.map(item => item.d) },
+            },
+          },
+          action: data => this.createPbehavior({
+            data,
+            parents: [this.items],
+            parentsType: ENTITIES_TYPES.alarm,
+          }),
+        },
+      });
+    },
+
+    showCreateAssociateTicketEventModal() {
+      this.$modals.show({
+        name: MODALS.createAssociateTicketEvent,
+        config: {
+          ...this.modalConfig,
+
+          fastAckOutput: this.widget.parameters.fastAckOutput,
+        },
+      });
+    },
+
+    showCreateGroupRequestEventModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createGroupRequestEvent.title'),
+          eventType: EVENT_ENTITY_TYPES.groupRequest,
+        },
+      });
     },
   },
 };

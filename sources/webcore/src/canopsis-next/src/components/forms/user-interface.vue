@@ -14,6 +14,14 @@
           :disabled="disabled",
           :label="$t('parameters.userInterfaceForm.fields.appTitle')"
         )
+    popup-timeout-field(
+      v-model="form.popupTimeout.info",
+      :label="$t('parameters.userInterfaceForm.fields.infoPopupTimeout')"
+    )
+    popup-timeout-field(
+      v-model="form.popupTimeout.error",
+      :label="$t('parameters.userInterfaceForm.fields.errorPopupTimeout')"
+    )
     v-layout(
       data-test="languageLayout",
       row
@@ -24,6 +32,11 @@
           :items="languages",
           :label="$t('parameters.userInterfaceForm.fields.language')"
         )
+    v-layout(row)
+      v-switch(
+        v-model="form.allowChangeSeverityToInfo",
+        :label="$t('parameters.userInterfaceForm.fields.allowChangeSeverityToInfo')"
+      )
     v-layout(
       data-test="footerLayout",
       row
@@ -79,18 +92,18 @@ import { DEFAULT_APP_TITLE, DEFAULT_LOCALE } from '@/config';
 
 import { getFileDataUrlContent } from '@/helpers/file-select';
 
-import popupMixin from '@/mixins/popup';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
+import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { FileSelector, TextEditor },
-  mixins: [popupMixin, entitiesInfoMixin],
+  components: { PopupTimeoutField, FileSelector, TextEditor },
+  mixins: [entitiesInfoMixin],
   props: {
     disabled: {
       type: Boolean,
@@ -106,6 +119,8 @@ export default {
         language: DEFAULT_LOCALE,
         footer: '',
         description: '',
+        popupTimeout: {},
+        allowChangeSeverityToInfo: false,
       },
     };
   },
@@ -130,6 +145,8 @@ export default {
         language: this.language || DEFAULT_LOCALE,
         footer: this.footer || '',
         description: this.description || '',
+        popupTimeout: this.popupTimeout ? { ...this.popupTimeout } : {},
+        allowChangeSeverityToInfo: this.allowChangeSeverityToInfo || false,
       };
     },
 
@@ -151,6 +168,8 @@ export default {
             footer: this.form.footer,
             language: this.form.language,
             login_page_description: this.form.description,
+            popup_timeout: this.form.popupTimeout,
+            allow_change_severity_to_info: this.form.allowChangeSeverityToInfo,
           };
 
           if (this.logoFile) {
@@ -160,7 +179,10 @@ export default {
           await this.updateUserInterface({ data });
           await this.fetchAllInfos();
 
-          this.addSuccessPopup({ text: this.$t('success.default') });
+          this.setTitle();
+          this.setPopupTimeout();
+
+          this.$popups.success({ text: this.$t('success.default') });
           this.reset();
         }
       } catch (err) {

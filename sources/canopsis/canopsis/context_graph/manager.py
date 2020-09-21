@@ -567,7 +567,7 @@ class ContextGraph(object):
         entities = self.get_entities_by_id(status["deletions"])
 
         if len(entities) != len(status["deletions"]):
-            raise ValueError("Could not find some entity in database.")
+            self.logger.warning("Could not find some entity in database.")
 
         # update the related entities
         for entity in entities:
@@ -585,7 +585,7 @@ class ContextGraph(object):
         entities = self.get_entities_by_id(status["insertions"])
 
         if len(entities) != len(status["insertions"]):
-            raise ValueError("Could not find some entity in database.")
+            self.logger.warning("Could not find some entity in database.")
 
         # update the related entities
         for entity in entities:
@@ -751,6 +751,12 @@ class ContextGraph(object):
             return result, count
         else:
             return result
+
+    def enrich_links_to_entity_with_alarm(self, entity, alarm):
+        if hasattr(self, 'hlb_manager'):
+            links = self.hlb_manager.links_for_entity(entity, options={'alarm': alarm})
+            return links
+        return {}
 
     def get_entities_by_id(self, _id, with_links=False):
         """

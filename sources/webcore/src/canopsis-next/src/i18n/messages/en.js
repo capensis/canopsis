@@ -5,6 +5,8 @@ import {
   STATS_TYPES,
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
+  TOURS,
+  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -22,6 +24,7 @@ export default {
     addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
+    toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
     name: 'Name',
     description: 'Description',
     author: 'Author',
@@ -42,22 +45,28 @@ export default {
     by: 'By',
     date: 'Date',
     comment: 'Comment | Comments',
+    start: 'Start',
     end: 'End',
+    message: 'Message',
+    preview: 'Preview',
     recursive: 'Recursive',
     select: 'Select',
-    states: 'States',
-    state: 'State',
+    states: 'Severities',
+    state: 'Severity',
     sla: 'Sla',
     authors: 'Authors',
     stat: 'Stat',
     trend: 'Trend',
     users: 'Users',
     roles: 'Roles',
+    import: 'Import',
+    export: 'Export',
     rights: 'Rights',
     profile: 'Profile',
     username: 'Username',
     password: 'Password',
     authKey: 'Auth. key',
+    widgetId: 'Widget id',
     connect: 'Connect',
     optional: 'optional',
     logout: 'Logout',
@@ -72,6 +81,7 @@ export default {
     delete: 'Delete',
     show: 'Show',
     edit: 'Edit',
+    duplicate: 'Duplicate',
     parse: 'Parse',
     home: 'Home',
     step: 'Step',
@@ -89,12 +99,23 @@ export default {
     notFound: 'Not found',
     search: 'Search',
     filters: 'Filters',
+    filter: 'Filter',
     webhooks: 'Webhooks',
     emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
-    filter: 'Filter',
+    stack: 'Stack',
+    edition: 'Edition',
+    broadcastMessages: 'Broadcast messages',
+    playlists: 'Playlists',
+    fullscreen: 'Fullscreen',
+    interval: 'Interval',
+    status: 'Status',
+    unit: 'Unit',
+    or: 'Or',
+    and: 'And',
+    priority: 'Priority',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -109,6 +130,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Play',
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
     },
     times: {
       second: 'second | seconds',
@@ -154,7 +176,7 @@ export default {
     },
   },
   search: {
-    advancedSearch: '<span>Help on the advanced research :</span>\n' +
+    alarmAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
       '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
       '<p>The "-" before the research is required</p>\n' +
       '<p>Operators :\n' +
@@ -162,11 +184,26 @@ export default {
       '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
       '<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" and the ressources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
-      '    <dd>Alarms whose connectors is "connector_1" or the ressources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>\n' +
+      '    <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>\n' +
       '    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>\n' +
       '    <dd>Alarms whose connectors isn\'t "connector_1"</dd>\n' +
       '</dl>',
+    contextAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators :\n' +
+      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="watcher"</dt>\n' +
+      '    <dd>Entities whose names is "name_1" and the types is "watcher"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
+      '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
+      '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose name isn\'t "name_1"</dd>\n' +
+      '</dl>',
+    submit: 'Search',
+    clear: 'Clear search input',
   },
   entities: {
     watcher: 'Watcher',
@@ -195,9 +232,11 @@ export default {
         declareTicket: 'Declare ticket',
         associateTicket: 'Associate ticket',
         cancel: 'Cancel alarm',
-        changeState: 'Change criticity',
-        moreInfos: 'More infos',
+        changeState: 'Change and lock severity',
         variablesHelp: 'List of available variables',
+        history: 'History',
+        groupRequest: 'Suggest group request for meta alarm',
+        comment: 'Comment',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -205,9 +244,14 @@ export default {
         canceled: 'Canceled',
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
+        grouping: 'Meta alarm',
+        comment: 'Comment',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
+        causes: 'Causes',
+        consequences: 'Consequences',
+        rule: 'Rule | Rules',
       },
     },
     timeLine: {
@@ -215,10 +259,36 @@ export default {
         by: 'by',
       },
       stateCounter: {
-        header: 'Cropped State (since last change of status)',
+        header: 'Cropped Severity (since last change of status)',
         stateIncreased: 'State increased',
         stateDecreased: 'State decreases',
       },
+      types: {
+        ack: 'Ack',
+        ackremove: 'Ack removed',
+        stateinc: 'State increased',
+        statedec: 'State decreased',
+        statusinc: 'Status increased',
+        statusdec: 'Status decreased',
+        assocticket: 'Ticket associated',
+        declareticket: 'Ticket declared',
+        snooze: 'Alarm snoozed',
+        unsooze: 'Alarm unsnoozed',
+        changestate: 'Change and lock severity',
+        pbhenter: 'Periodic behavior enabled',
+        pbhleave: 'Periodic behavior disabled',
+        cancel: 'Alarm cancelled',
+        comment: 'Alarm commented',
+      },
+    },
+    tabs: {
+      moreInfos: 'More infos',
+      timeLine: 'Timeline',
+      alarmsConsequences: 'Alarms consequences',
+      alarmsCauses: 'Alarms causes',
+    },
+    moreInfos: {
+      defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
   },
@@ -226,7 +296,7 @@ export default {
     moreInfos: 'More info',
   },
   pbehaviors: {
-    connector: 'Connector',
+    connector: 'Connector Type',
     connectorName: 'Connector name',
     isEnabled: 'Is enabled',
     begins: 'Begins',
@@ -234,6 +304,7 @@ export default {
     type: 'Type',
     reason: 'Reason',
     rrule: 'Rrule',
+    status: 'Status',
     tabs: {
       filter: 'Filter',
       eids: 'Eids',
@@ -252,12 +323,15 @@ export default {
       statsNumberSettings: 'Stats number settings',
       statsParetoSettings: 'Stats Pareto diagram settings',
       textSettings: 'Text settings',
+      counterSettings: 'Counter settings',
     },
     advancedSettings: 'Advanced settings',
     widgetTitle: 'Widget title',
     columnName: 'Column name',
     defaultSortColumn: 'Default sort column',
+    sortColumnNoData: 'Press <kbd>enter</kbd> to create a new one',
     columnNames: 'Column names',
+    groupColumnNames: 'Column names for meta alarms',
     orderBy: 'Order by',
     periodicRefresh: 'Periodic refresh',
     defaultNumberOfElementsPerPage: 'Default number of elements/page',
@@ -270,7 +344,8 @@ export default {
     isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
-    isHtmlEnabledOnTimeLine: 'HTML enabled on time line ?',
+    isHtmlEnabledOnTimeLine: 'HTML enabled on timeline ?',
+    isCorrelationEnabled: 'Is correlation enabled ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -343,9 +418,11 @@ export default {
       },
     },
     moreInfosModal: '"More Infos" Popup',
+    expandGridRangeSize: 'Expand card (more infos / timeline) width',
     weatherTemplate: 'Template - Weather item',
     modalTemplate: 'Template - Modal',
     entityTemplate: 'Template - Entities',
+    blockTemplate: 'Template - Tile',
     columnSM: 'Columns - Small',
     columnMD: 'Columns - Medium',
     columnLG: 'Columns - Large',
@@ -362,7 +439,7 @@ export default {
       title: 'Type of entities',
       fields: {
         component: 'Component',
-        connector: 'Connector',
+        connector: 'Connector Type',
         resource: 'Resource',
         watcher: 'Watcher',
       },
@@ -383,11 +460,14 @@ export default {
     },
     statsAnnotationLine: {
       title: 'Annotation line',
-      enabled: 'Is enabled?',
+      enabled: 'Is enabled ?',
       value: 'Value',
       label: 'Label',
       pickLineColor: 'Pick line color',
       pickLabelColor: 'Pick label color',
+    },
+    statsPointsStyles: {
+      title: 'Points style',
     },
     considerPbehaviors: {
       title: 'Consider pbehaviors',
@@ -403,9 +483,16 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      isState: 'Displayed as severity ?',
     },
     liveReporting: {
       title: 'Live reporting',
+    },
+    counterLevels: {
+      title: 'Levels',
+      fields: {
+        counter: 'Counter',
+      },
     },
   },
   modals: {
@@ -428,7 +515,7 @@ export default {
         impact: 'Impact',
         depends: 'Depends',
         types: {
-          connector: 'connector',
+          connector: 'connector type',
           component: 'component',
           resource: 'resource',
         },
@@ -444,6 +531,7 @@ export default {
       editTitle: 'Edit a watcher',
       duplicateTitle: 'Duplicate a watcher',
       displayName: 'Name',
+      outputTemplate: 'Output template',
       success: {
         create: 'Watcher successfully created !',
         edit: 'Watcher successfully edited !',
@@ -470,6 +558,7 @@ export default {
       },
       noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
       fields: {
+        periodicRefresh: 'Periodic refresh',
         groupIds: 'Choose a group, or create a new one',
         groupTags: 'Group tags',
       },
@@ -486,6 +575,11 @@ export default {
       errors: {
         rightCreating: 'Error on right creating',
         rightRemoving: 'Error on right removing',
+      },
+    },
+    createEvent: {
+      fields: {
+        output: 'Note',
       },
     },
     createAckEvent: {
@@ -515,12 +609,12 @@ export default {
     },
     createCancelEvent: {
       title: 'Cancel',
-      fields: {
-        output: 'Note',
-      },
+    },
+    createGroupRequestEvent: {
+      title: 'Suggest group request for meta alarm',
     },
     createChangeStateEvent: {
-      title: 'Change state',
+      title: 'Change severity',
       states: {
         ok: 'Info',
         minor: 'Minor',
@@ -532,20 +626,55 @@ export default {
       },
     },
     createPbehavior: {
-      title: 'Create periodical behavior',
-      fields: {
-        name: 'Name',
-        start: 'Start',
-        stop: 'End',
-        reason: 'Reason',
-        type: 'Type',
-        message: 'Message',
-        rRuleQuestion: 'Put a rrule on this pbehavior ?',
-        exdate: 'Exdates',
+      create: {
+        title: 'Create periodical behavior',
       },
-      buttons: {
-        addComment: 'Add comment',
-        addExdate: 'Add exdate',
+      edit: {
+        title: 'Edit periodic behavior',
+      },
+      duplicate: {
+        title: 'Duplicate periodic behavior',
+      },
+      steps: {
+        general: {
+          title: 'General parameters',
+          general: 'General',
+          dates: 'Dates',
+          fields: {
+            enabled: 'Enabled',
+            name: 'Name',
+            reason: 'Reason',
+            type: 'Type',
+            start: 'Start',
+            stop: 'End',
+            timezone: 'Timezone',
+          },
+        },
+        filter: {
+          title: 'Filter',
+        },
+        rrule: {
+          title: 'Rrule',
+          exdate: 'Exclusion dates',
+          buttons: {
+            addExdate: 'Add an exclusion date',
+          },
+          fields: {
+            rRuleQuestion: 'Add a recurrence rule to the pbehavior ?',
+          },
+        },
+        comments: {
+          title: 'Comments',
+          buttons: {
+            addComment: 'Add a new comment',
+          },
+          fields: {
+            message: 'Message',
+          },
+        },
+      },
+      errors: {
+        invalid: 'Invalid',
       },
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
@@ -567,6 +696,9 @@ export default {
       fields: {
         ticket: 'Number of the ticket',
       },
+      alerts: {
+        noAckItems: 'There is {count} item without ack. Ack event for the item will send before. | There is {count} items without ack. Ack events for items will send before.',
+      },
     },
     liveReporting: {
       editLiveReporting: 'Live reporting',
@@ -580,10 +712,6 @@ export default {
       custom: 'Custom',
       tstart: 'Begins',
       tstop: 'Ends',
-    },
-    moreInfos: {
-      moreInfos: 'More infos',
-      defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopupSetting: {
       title: 'Info popup',
@@ -603,7 +731,7 @@ export default {
       organization: 'Organization',
       numberOk: 'Number Ok',
       numberKo: 'Number Ko',
-      state: 'State',
+      state: 'Severity',
       name: 'Name',
       org: 'Org',
       noData: 'No data',
@@ -670,6 +798,9 @@ export default {
         },
         text: {
           title: 'Text',
+        },
+        counter: {
+          title: 'Counter',
         },
       },
     },
@@ -775,6 +906,25 @@ export default {
         removeRuleField: 'Remove rule field',
       },
     },
+    metaAlarmRule: {
+      create: {
+        title: 'Create meta alarm rule',
+        success: 'Rule successfully created !',
+      },
+      duplicate: {
+        title: 'Duplicate meta alarm rule',
+        success: 'Rule successfully created !',
+      },
+      edit: {
+        title: 'Edit an meta alarm rule',
+        success: 'Rule successfully edited !',
+      },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
+      editPattern: 'Edit pattern',
+      actions: 'Actions',
+    },
     viewTab: {
       create: {
         title: 'Create tab',
@@ -798,11 +948,17 @@ export default {
         title: 'Edit webhook',
         success: 'Webhook successfully edited !',
       },
+      duplicate: {
+        title: 'Duplicate webhook',
+      },
       remove: {
         success: 'Webhook successfully removed !',
       },
       fields: {
         id: 'ID',
+        retryDelay: 'Delay',
+        retryUnit: 'Unit',
+        retryCount: 'Repeat',
       },
       tooltips: {
         id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
@@ -848,7 +1004,7 @@ export default {
           title: 'connector_name',
         },
         state: {
-          title: 'state',
+          title: 'severity',
           labels: {
             toCustom: 'To custom',
             defineVar: 'Define matching snmp var',
@@ -883,6 +1039,10 @@ export default {
       fields: {
         message: 'Message',
         duration: 'Duration',
+        output: 'Note',
+        ticket: 'Associate ticket',
+        delay: 'Delay',
+        delayUnit: 'Unit',
       },
     },
     createHeartbeat: {
@@ -898,6 +1058,119 @@ export default {
       },
       patternRequired: 'Pattern is required',
     },
+    createDynamicInfo: {
+      create: {
+        title: 'Create dynamic information',
+        success: 'Dynamic information successfully created !',
+      },
+      edit: {
+        title: 'Edit dynamic information',
+        success: 'Dynamic information successfully edited !',
+      },
+      duplicate: {
+        title: 'Duplicate dynamic information',
+      },
+      remove: {
+        success: 'Dynamic information successfully removed !',
+      },
+      errors: {
+        invalid: 'Invalid',
+      },
+      steps: {
+        general: {
+          title: 'General',
+          fields: {
+            id: 'Id',
+            name: 'Name',
+            description: 'Description',
+          },
+        },
+        infos: {
+          title: 'Informations',
+          validationError: 'Every values must be filled',
+        },
+        patterns: {
+          title: 'Patterns',
+          alarmPatterns: 'Alarm patterns',
+          entityPatterns: 'Entity patterns',
+          validationError: 'At least one pattern must be set. Please add an alarm patterns and/or an entity pattern',
+        },
+      },
+    },
+    createDynamicInfoInformation: {
+      create: {
+        title: 'Add an information to the dynamic information rule',
+      },
+      fields: {
+        name: 'Name',
+        value: 'Value',
+      },
+    },
+    dynamicInfoTemplatesList: {
+      title: 'Dynamic info templates',
+    },
+    createDynamicInfoTemplate: {
+      create: {
+        title: 'Create dynamic info template',
+      },
+      edit: {
+        title: 'Edit dynamic info template',
+      },
+      fields: {
+        names: 'Names',
+      },
+      buttons: {
+        addName: 'Add new name',
+      },
+      errors: {
+        noNames: 'You have to add at least 1 name',
+      },
+    },
+    importExportViews: {
+      title: 'Import/Export views',
+      groups: 'Groups',
+      views: 'Views',
+      result: 'Result',
+    },
+    createBroadcastMessage: {
+      create: {
+        title: 'Create broadcast message',
+      },
+      edit: {
+        title: 'Edit broadcast message',
+      },
+      defaultMessage: 'Your message here',
+      buttons: {
+        selectColor: 'Select background color',
+      },
+    },
+    createCommentEvent: {
+      title: 'Add comment',
+      fields: {
+        comment: 'Comment',
+      },
+    },
+    createPlaylist: {
+      create: {
+        title: 'Create playlist',
+      },
+      edit: {
+        title: 'Edit playlist',
+      },
+      duplicate: {
+        title: 'Duplicate playlist',
+      },
+      errors: {
+        emptyTabs: 'You should add a tab',
+      },
+      fields: {
+        interval: 'Interval',
+        unit: 'Unit',
+      },
+      groups: 'Groups',
+      result: 'Result',
+      manageTabs: 'Manage tabs',
+    },
   },
   tables: {
     noData: 'No data',
@@ -910,7 +1183,7 @@ export default {
     alarmGeneral: {
       title: 'General',
       author: 'Author',
-      connector: 'Connector',
+      connector: 'Connector Type',
       connectorName: 'Connector name',
       component: 'Component',
       resource: 'Resource',
@@ -918,7 +1191,7 @@ export default {
       lastUpdateDate: 'Last update date',
       creationDate: 'Creation date',
       duration: 'Duration',
-      state: 'State',
+      state: 'Severity',
       status: 'Status',
       extraDetails: 'Extra details',
     },
@@ -928,7 +1201,7 @@ export default {
     pbehaviorList: {
       name: 'Name',
       author: 'Author',
-      connector: 'Connector',
+      connector: 'Connector Type',
       connectorName: 'Connector name',
       enabled: 'Is enabled',
       tstart: 'Begins',
@@ -971,6 +1244,13 @@ export default {
           role: 'Role',
           enabled: 'Enabled',
         },
+      },
+    },
+    broadcastMessages: {
+      statuses: {
+        [BROADCAST_MESSAGES_STATUSES.active]: 'Active',
+        [BROADCAST_MESSAGES_STATUSES.pending]: 'Pending',
+        [BROADCAST_MESSAGES_STATUSES.expired]: 'Expired',
       },
     },
   },
@@ -1029,6 +1309,7 @@ export default {
     JSONNotValid: 'Invalid JSON',
     versionNotFound: 'Unable to get application version',
     statsRequestProblem: 'An error occurred while retrieving stats data',
+    statsWrongEditionError: "Stats widgets are not available with 'core' edition",
   },
   calendar: {
     today: 'Today',
@@ -1041,6 +1322,8 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
+    authKeyCopied: 'Auth key copied to clipboard',
+    widgetIdCopied: 'Widget id copied to clipboard',
   },
   filterEditor: {
     title: 'Filter editor',
@@ -1056,7 +1339,7 @@ export default {
     },
     resultsTableHeaders: {
       alarm: {
-        connector: 'Connector',
+        connector: 'Connector Type',
         connectorName: 'Connector name',
         component: 'Component',
         resource: 'Resource',
@@ -1078,6 +1361,9 @@ export default {
     fields: {
       mixFilters: 'Mix filters',
     },
+    buttons: {
+      list: 'Manage filters',
+    },
   },
   validator: {
     unique: 'Field must be unique',
@@ -1090,10 +1376,10 @@ export default {
       [STATS_TYPES.alarmsAcknowledged.value]: 'Alarms acknowledged',
       [STATS_TYPES.ackTimeSla.value]: 'Ack time Sla',
       [STATS_TYPES.resolveTimeSla.value]: 'Resolve time Sla',
-      [STATS_TYPES.timeInState.value]: 'Time in state',
-      [STATS_TYPES.stateRate.value]: 'State rate',
+      [STATS_TYPES.timeInState.value]: 'Time in severity',
+      [STATS_TYPES.stateRate.value]: 'Severity rate',
       [STATS_TYPES.mtbf.value]: 'MTBF',
-      [STATS_TYPES.currentState.value]: 'Current state',
+      [STATS_TYPES.currentState.value]: 'Current severity',
       [STATS_TYPES.ongoingAlarms.value]: 'Ongoing alarms',
       [STATS_TYPES.currentOngoingAlarms.value]: 'Current ongoing alarms',
       [STATS_TYPES.currentOngoingAlarmsWithAck.value]: 'Current ongoing alarms with ack',
@@ -1112,6 +1398,25 @@ export default {
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
+  metaAlarmRule: {
+    title: 'Meta alarm rule',
+    type: 'Type',
+    patterns: 'Patterns',
+    actions: 'Actions',
+    id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+    fields: {
+      eventPatterns: 'Event patterns',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
+      thresholdType: 'Threshold type',
+      thresholdRate: 'Threshold rate',
+      thresholdCount: 'Threshold count',
+      timeInterval: 'Time interval',
+      valuePath: 'Value path',
+      autoResolve: 'Auto resolve',
+    },
+  },
   snmpRules: {
     title: 'SNMP rules',
     uploadMib: 'Upload MIB',
@@ -1123,6 +1428,7 @@ export default {
     table: {
       id: 'Id',
       type: 'Type',
+      delay: 'Delay',
       expand: {
         tabs: {
           general: 'General',
@@ -1140,6 +1446,10 @@ export default {
             duration: 'Duration',
             noMessage: 'No message is set',
           },
+          changeState: {
+            output: 'Output',
+            noOutput: 'No output is set',
+          },
         },
       },
     },
@@ -1151,9 +1461,22 @@ export default {
         create: 'Create view',
         settings: 'Settings',
       },
+      activeSessions: 'Active sessions',
+      ordering: {
+        popups: {
+          success: 'The groups was reordered',
+          error: 'Several groups wasn\'t reordered',
+          periodicRefreshWasPaused: 'Periodic refresh was paused while you are editing the groups bar',
+          periodicRefreshWasResumed: 'Periodic refresh was resumed',
+        },
+      },
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Parameters',
+      importExportViews: 'Import/Export',
+    },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
       title: 'Groups navigation type',
@@ -1170,6 +1493,10 @@ export default {
         footer: 'Login footer',
         description: 'Login page description',
         logo: 'Logo',
+        infoPopupTimeout: 'Info popup timeout',
+        errorPopupTimeout: 'Error popup timeout',
+        popupTimeoutUnit: 'Unit',
+        allowChangeSeverityToInfo: 'Allow change severity to info',
       },
     },
   },
@@ -1181,6 +1508,8 @@ export default {
     deleteWidget: 'Delete widget',
     fullScreen: 'Full screen',
     fullScreenShortcut: 'Alt + Enter / Command + Enter',
+    copyWidgetId: 'Copy widget ID',
+    autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
   patternsList: {
     noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
@@ -1194,6 +1523,9 @@ export default {
         id: 'ID',
         requestMethod: 'Request method',
         requestUrl: 'Request URL',
+        retryDelay: 'Delay',
+        retryCount: 'Repeat',
+        enabled: 'Enabled',
       },
     },
     tabs: {
@@ -1234,7 +1566,7 @@ export default {
   validation: {
     custom: {
       tstop: {
-        after: 'The {0} should be after than {1}',
+        after: 'End time should be later than {1}',
       },
       logo: {
         size: 'The {0} size must be less than {1} KB.',
@@ -1253,7 +1585,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
-
   heartbeat: {
     title: 'Heartbeats',
     table: {
@@ -1261,6 +1592,65 @@ export default {
         id: 'ID',
         expectedInterval: 'Expected interval',
       },
+    },
+  },
+  dynamicInfo: {
+    title: 'Dynamic informations',
+    table: {
+      id: 'Id',
+      name: 'Name',
+      description: 'Description',
+      user: 'Author',
+      creationDate: 'Creation date',
+      lastUpdateDate: 'Last update date',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
+      informations: 'Informations',
+    },
+  },
+  contextGeneralTable: {
+    addSelection: 'Add selection',
+  },
+  liveReporting: {
+    button: 'Set a custom date range',
+  },
+  tours: {
+    [TOURS.alarmsExpandPanel]: {
+      step1: 'Details',
+      step2: 'MoreInfos tab (Displayed only in case of existing confguration)',
+      step3: 'Timeline tab',
+    },
+  },
+  handlebars: {
+    requestHelper: {
+      errors: {
+        timeout: 'Request timeout',
+        unauthorized: 'Unauthorized',
+        other: 'Error while fetching data',
+      },
+    },
+  },
+  importExportViews: {
+    selectAll: 'Select all groups and views',
+  },
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Actions are disabled in full screen mode',
+      },
+    },
+  },
+  rights: {
+    technical: {
+      admin: 'Admin rights',
+      exploitation: 'Exploitation rights',
+    },
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: 'Rights for common',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Rights for Alarms List',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
     },
   },
 

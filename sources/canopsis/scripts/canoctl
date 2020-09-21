@@ -7,7 +7,7 @@ help_usage()
 	echo "  deploy-python: stop services then play ansible playbook (with Python engines)"
 	echo "  deploy-go: stop services then play ansible playbook (with Go engines)"
 	echo
-	echo "  deploy: use the default stack (currently: deploy-python)"
+	echo "  deploy: use the default stack (deploy-go since Canopsis 3.39.0)"
 	exit 1
 }
 
@@ -28,18 +28,25 @@ if [ "$(id -u)" -ne 0 ]; then
 	exit 1
 fi
 
+if command -v selinuxenabled >/dev/null 2>&1 && selinuxenabled ; then
+	echo "ERROR: Running Canopsis with SELinux is unsupported."
+	echo "Please disable it, if you may."
+
+	exit 1
+fi
+
 while true ; do
 	case $1 in
 	start|status|restart|stop)
 		/opt/canopsis/bin/canopsis-systemd "$1"
 		exit $?
 		;;
-	deploy|deploy-python)
+	deploy-python)
 		/opt/canopsis/bin/canopsis-systemd stop
 		/opt/canopsis/deploy-ansible/install-self.sh deploy-python
 		exit $?
 		;;
-	deploy-go)
+	deploy|deploy-go)
 		check_go_prerequisites_or_die
 		/opt/canopsis/bin/canopsis-systemd stop
 		/opt/canopsis/deploy-ansible/install-self.sh deploy-go

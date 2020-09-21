@@ -3,14 +3,14 @@ import { omit, isUndefined, isEmpty } from 'lodash';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
-import prepareMainFilterToQueryFilter from './filter';
+import { prepareMainFilterToQueryFilter, getMainFilter } from './filter';
 
 /**
  * WIDGET CONVERTERS
  */
 
 /**
- * This function converts widget.default_sort_column to query Object
+ * This function converts widget.parameters.sort to query Object
  *
  * @param {Object} widget
  * @returns {{}}
@@ -26,6 +26,29 @@ export function convertSortToQuery({ parameters }) {
 }
 
 /**
+ *  This function converts widget.parameters.alarmsStateFilter to query Object
+ *
+ * @param {Object} parameters
+ * @returns {{}}
+ */
+export function convertAlarmStateFilterToQuery({ parameters }) {
+  const { alarmsStateFilter } = parameters;
+  const query = {};
+
+  if (alarmsStateFilter) {
+    if (!isUndefined(alarmsStateFilter.opened)) {
+      query.opened = alarmsStateFilter.opened;
+    }
+
+    if (!isUndefined(alarmsStateFilter.resolved)) {
+      query.resolved = alarmsStateFilter.resolved;
+    }
+  }
+
+  return query;
+}
+
+/**
  * This function converts widget with type 'AlarmsList' to query Object
  *
  * @param {Object} widget
@@ -37,20 +60,16 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
-    mainFilter,
-    mainFilterCondition,
+    isCorrelationEnabled,
   } = widget.parameters;
 
   const query = {
     page: 1,
+    correlation: isCorrelationEnabled || false,
     opened: alarmsStateFilter.opened || false,
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
   };
-
-  if (!isEmpty(mainFilter)) {
-    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
-  }
 
   if (!isEmpty(liveReporting)) {
     query.tstart = liveReporting.tstart;
@@ -77,6 +96,7 @@ export function convertContextWidgetToQuery(widget) {
   const {
     itemsPerPage,
     selectedTypes,
+    widgetColumns,
   } = widget.parameters;
 
   const query = {
@@ -84,6 +104,10 @@ export function convertContextWidgetToQuery(widget) {
     limit: itemsPerPage || PAGINATION_LIMIT,
     selectedTypes,
   };
+
+  if (widgetColumns) {
+    query.active_columns = widgetColumns.map(v => v.value);
+  }
 
   return { ...query, ...convertSortToQuery(widget) };
 }
@@ -134,7 +158,6 @@ export function convertWidgetStatsParameterToQuery(widget) {
 export function convertStatsCalendarWidgetToQuery(widget) {
   const {
     filters,
-    alarmsStateFilter,
     considerPbehaviors,
   } = widget.parameters;
 
@@ -143,17 +166,7 @@ export function convertStatsCalendarWidgetToQuery(widget) {
     filters: filters || [],
   };
 
-  if (alarmsStateFilter) {
-    if (!isUndefined(alarmsStateFilter.opened)) {
-      query.opened = alarmsStateFilter.opened;
-    }
-
-    if (!isUndefined(alarmsStateFilter.resolved)) {
-      query.resolved = alarmsStateFilter.resolved;
-    }
-  }
-
-  return query;
+  return { ...query, ...convertAlarmStateFilterToQuery(widget) };
 }
 
 /**
@@ -214,6 +227,21 @@ export function convertStatsParetoWidgetToQuery(widget) {
 }
 
 /**
+ *
+ * @param widget
+ * @returns {{filters: *}}
+ */
+export function convertCounterWidgetToQuery(widget) {
+  const { viewFilters } = widget.parameters;
+
+  return {
+    ...convertAlarmStateFilterToQuery(widget),
+
+    filters: viewFilters.map(({ filter }) => filter),
+  };
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -225,18 +253,10 @@ export function convertStatsParetoWidgetToQuery(widget) {
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
   const query = {};
-  const {
-    itemsPerPage,
-    mainFilter,
-    mainFilterCondition,
-  } = widgetPreferences;
+  const { itemsPerPage } = widgetPreferences;
 
   if (itemsPerPage) {
     query.limit = itemsPerPage;
-  }
-
-  if (!isEmpty(mainFilter)) {
-    query.filter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   return query;
@@ -250,19 +270,10 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
  */
 export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences = {} }) {
   const query = {};
-  const {
-    itemsPerPage,
-    mainFilter,
-    mainFilterCondition,
-    selectedTypes,
-  } = widgetPreferences;
+  const { itemsPerPage, selectedTypes } = widgetPreferences;
 
   if (itemsPerPage) {
     query.limit = itemsPerPage;
-  }
-
-  if (!isEmpty(mainFilter)) {
-    query.mainFilter = prepareMainFilterToQueryFilter(mainFilter, mainFilterCondition);
   }
 
   if (!isEmpty(selectedTypes)) {
@@ -320,7 +331,42 @@ export function convertWidgetToQuery(widget) {
       return convertStatsParetoWidgetToQuery(widget);
     case WIDGET_TYPES.statsCalendar:
       return convertStatsCalendarWidgetToQuery(widget);
+    case WIDGET_TYPES.counter:
+      return convertCounterWidgetToQuery(widget);
     default:
       return {};
   }
+}
+
+/**
+ * Prepare query by widget and userPreference objects
+ *
+ * @param {Object} widget
+ * @param {Object} userPreference
+ * @returns {Object}
+ */
+export function prepareQuery(widget, userPreference) {
+  const widgetQuery = convertWidgetToQuery(widget);
+  const userPreferenceQuery = convertUserPreferenceToQuery(userPreference);
+  const query = {
+    ...widgetQuery,
+    ...userPreferenceQuery,
+  };
+
+  const WIDGET_FILTER_KEYS_MAP = {
+    [WIDGET_TYPES.alarmList]: 'filter',
+    [WIDGET_TYPES.context]: 'mainFilter',
+  };
+
+  const filterKey = WIDGET_FILTER_KEYS_MAP[widget.type];
+
+  if (filterKey) {
+    const activeMainFilter = getMainFilter(widget, userPreference);
+
+    if (activeMainFilter) {
+      query[filterKey] = prepareMainFilterToQueryFilter(activeMainFilter);
+    }
+  }
+
+  return query;
 }

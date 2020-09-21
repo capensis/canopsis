@@ -1,90 +1,105 @@
 <template lang="pug">
   div
-    v-layout(row)
+    v-divider
+    h3.my-3.grey--text {{ $t('modals.createPbehavior.steps.general.general') }}
+    v-divider
+    v-layout
+      v-switch(
+        v-field="form.enabled",
+        :label="$t('modals.createPbehavior.steps.general.fields.enabled')",
+        color="primary",
+        hide-details
+      )
+    v-layout
       v-text-field(
-      v-validate="'required'",
-      :value="form.name",
-      :label="$t('modals.createPbehavior.fields.name')",
-      :error-messages="errors.collect('name')",
-      name="name",
-      @input="updateField('name', $event)"
+        v-field="form.name",
+        v-validate="'required'",
+        :label="$t('modals.createPbehavior.steps.general.fields.name')",
+        :error-messages="errors.collect('name')",
+        name="name",
+        data-test="pbehaviorFormName"
       )
-    v-layout(row)
-      date-time-picker-field(
-      v-validate="tstartRules",
-      :value="form.tstart",
-      :label="$t('modals.createPbehavior.fields.start')",
-      name="tstart",
-      @input="updateField('tstart', $event)"
-      )
-    v-layout(row)
-      date-time-picker-field(
-      v-validate="tstopRules",
-      :value="form.tstop",
-      :label="$t('modals.createPbehavior.fields.stop')",
-      name="tstop",
-      @input="updateField('tstop', $event)"
-      )
-    v-layout(v-if="!noFilter", row)
-      v-btn.primary(type="button", @click="showCreateFilterModal") {{ $t('common.filter') }}
-    r-rule-form(:value="form.rrule", @input="updateField('rrule', $event)")
-    v-layout(row)
+    v-layout(data-test="pbehaviorTypeLayout", row)
       v-combobox(
-      v-validate="'required'",
-      :value="form.reason",
-      :label="$t('modals.createPbehavior.fields.reason')",
-      :items="reasons",
-      :error-messages="errors.collect('reason')",
-      name="reason",
-      @input="updateField('reason', $event)"
+        v-field="form.reason",
+        v-validate="'required'",
+        :label="$t('modals.createPbehavior.steps.general.fields.reason')",
+        :loading="pbehaviorReasonsPending",
+        :items="reasons",
+        :error-messages="errors.collect('reason')",
+        name="reason",
+        data-test="pbehaviorReason"
       )
-    v-layout(row)
-      v-select(
-      v-validate="'required'",
-      :value="form.type_",
-      :label="$t('modals.createPbehavior.fields.type')",
-      :items="types",
-      :error-messages="errors.collect('type')",
-      name="type",
-      @input="updateField('type_', $event)"
+      v-select.ml-3(
+        v-field="form.type_",
+        v-validate="'required'",
+        :label="$t('modals.createPbehavior.steps.general.fields.type')",
+        :items="types",
+        :error-messages="errors.collect('type')",
+        name="type"
       )
+    v-divider
+    h3.my-3.grey--text {{ $t('modals.createPbehavior.steps.general.dates') }}
+    v-divider
+    v-layout.mt-3(wrap)
+      v-flex(xs12)
+        v-layout(wrap, justify-space-between)
+          v-flex(data-test="startDateTimePicker", xs4)
+            date-time-picker-field(
+              v-validate="tstartRules",
+              :value="form.tstart",
+              :label="$t('modals.createPbehavior.steps.general.fields.start')",
+              name="tstart",
+              @input="updateField('tstart', $event)"
+            )
+          v-flex(data-test="stopDateTimePicker", xs4)
+            date-time-picker-field(
+              v-validate="tstopRules",
+              :value="form.tstop",
+              :label="$t('modals.createPbehavior.steps.general.fields.stop')",
+              name="tstop",
+              @input="updateField('tstop', $event)"
+            )
+          v-flex(xs3)
+            v-autocomplete(
+              v-field="form.timezone",
+              v-validate="'required'",
+              :items="timezones",
+              :label="$t('modals.createPbehavior.steps.general.fields.timezone')",
+              name="timezone"
+            )
 </template>
 
 <script>
-import moment from 'moment';
-import { ENTITIES_TYPES, MODALS, PAUSE_REASONS, PBEHAVIOR_TYPES, DATETIME_FORMATS } from '@/constants';
+import moment from 'moment-timezone';
 
-import authMixin from '@/mixins/auth';
+import { PBEHAVIOR_TYPES, DATETIME_FORMATS, PAUSE_REASONS } from '@/constants';
+
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import formMixin from '@/mixins/form';
-import modalMixin from '@/mixins/modal';
+import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior-reasons';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
-import RRuleForm from '@/components/forms/rrule.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     DateTimePickerField,
-    RRuleForm,
   },
-  mixins: [authMixin, formMixin, modalMixin],
+  mixins: [formMixin, formValidationHeaderMixin, pbehaviorReasonsMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
+  inject: ['$validator'],
   props: {
     form: {
       type: Object,
       required: true,
     },
-    noFilter: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     reasons() {
-      return Object.values(PAUSE_REASONS);
+      return this.pbehaviorReasons.length ? this.pbehaviorReasons : Object.values(PAUSE_REASONS);
     },
 
     types() {
@@ -108,21 +123,13 @@ export default {
 
       return rules;
     },
-  },
-  methods: {
-    showCreateFilterModal() {
-      this.showModal({
-        name: MODALS.createFilter,
-        config: {
-          hiddenFields: ['title'],
-          entitiesType: ENTITIES_TYPES.pbehavior,
-          filter: {
-            filter: this.form.filter || {},
-          },
-          action: ({ filter }) => this.updateField('filter', filter),
-        },
-      });
+
+    timezones() {
+      return moment.tz.names();
     },
+  },
+  mounted() {
+    this.fetchPbehaviorReasons();
   },
 };
 </script>

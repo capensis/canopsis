@@ -1,7 +1,7 @@
 <template lang="pug">
   v-list-group(data-test="columnNames")
     v-list-tile(slot="activator")
-      div(:class="validationHeaderClass") {{ $t('settings.columnNames') }}
+      div(:class="validationHeaderClass") {{ label }}
     v-container
       v-card.my-2(
         data-test="columnName",
@@ -59,7 +59,15 @@
               data-test="columnNameSwitch",
               :label="$t('settings.columns.isHtml')",
               :input-value="column.isHtml",
-              @change="updateFieldInArrayItem(index, 'isHtml', $event)"
+              @change="updateFieldInArrayItem(index, 'isHtml', $event)",
+              color="primary"
+            )
+          v-flex(v-if="withState", xs11)
+            v-switch(
+              :label="$t('settings.columns.isState')",
+              :input-value="column.isState",
+              @change="updateFieldInArrayItem(index, 'isState', $event)",
+              color="primary"
             )
       v-btn(
         data-test="columnNameAddButton",
@@ -90,6 +98,14 @@ export default {
     withHtml: {
       type: Boolean,
       default: false,
+    },
+    withState: {
+      type: Boolean,
+      default: false,
+    },
+    label: {
+      type: String,
+      required: true,
     },
   },
   methods: {

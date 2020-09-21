@@ -14,10 +14,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 
 export default {
-  mixins: [modalMixin],
   props: {
     value: {
       type: Object,
@@ -26,7 +24,7 @@ export default {
   },
   methods: {
     showStatDisplayModeModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.statsDisplayMode,
         config: {
           displayMode: this.value,

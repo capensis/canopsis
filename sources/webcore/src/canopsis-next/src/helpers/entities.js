@@ -2,8 +2,10 @@ import sha1 from 'sha1';
 import { get, omit, cloneDeep } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
 import {
+  DEFAULT_ALARMS_WIDGET_COLUMNS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   WIDGET_TYPES,
   STATS_CALENDAR_COLORS,
   STATS_TYPES,
@@ -15,9 +17,17 @@ import {
   SORT_ORDERS,
   ACTION_TYPES,
   DURATION_UNITS,
+  ENTITIES_STATES,
+  ENTITIES_STATUSES,
+  GRID_SIZES, AVAILABLE_COUNTERS,
+  DEFAULT_COUNTER_BLOCK_TEMPLATE,
+  TIME_UNITS,
+  WIDGET_GRID_SIZES_KEYS,
+  WIDGET_GRID_COLUMNS_COUNT,
 } from '@/constants';
 
 import uuid from './uuid';
+import { pbehaviorToForm } from './forms/pbehavior';
 
 /**
  * Generate widget by type
@@ -31,11 +41,17 @@ export function generateWidgetByType(type) {
     _id: uuid(`widget_${type}`),
     title: '',
     parameters: {},
-    size: {
-      sm: 3,
-      md: 3,
-      lg: 3,
-    },
+    gridParameters: Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
+      acc[size] = {
+        x: 0,
+        y: 0,
+        h: 0,
+        w: WIDGET_GRID_COLUMNS_COUNT,
+        autoHeight: true,
+      };
+
+      return acc;
+    }, {}),
   };
 
   const alarmsListDefaultParameters = {
@@ -45,44 +61,19 @@ export function generateWidgetByType(type) {
     isAckNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
+    isCorrelationEnabled: false,
     fastAckOutput: {
       enabled: false,
       value: 'auto ack',
     },
-    widgetColumns: [
-      {
-        label: i18n.t('tables.alarmGeneral.connector'),
-        value: 'v.connector',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.connectorName'),
-        value: 'v.connector_name',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.component'),
-        value: 'v.component',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.resource'),
-        value: 'v.resource',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.output'),
-        value: 'v.output',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.extraDetails'),
-        value: 'extra_details',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.state'),
-        value: 'v.state.val',
-      },
-      {
-        label: i18n.t('tables.alarmGeneral.status'),
-        value: 'v.status.val',
-      },
-    ],
+    widgetColumns: DEFAULT_ALARMS_WIDGET_COLUMNS.map(({ labelKey, value }) => ({
+      label: i18n.t(labelKey),
+      value,
+    })),
+    widgetGroupColumns: DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS.map(({ labelKey, value }) => ({
+      label: i18n.t(labelKey),
+      value,
+    })),
   };
 
   let specialParameters = {};
@@ -94,11 +85,13 @@ export function generateWidgetByType(type) {
 
         viewFilters: [],
         mainFilter: null,
+        mainFilterUpdatedAt: 0,
         infoPopups: [],
         liveReporting: {},
         periodicRefresh: {
           enabled: false,
           interval: 60,
+          unit: 's',
         },
         sort: {
           order: SORT_ORDERS.asc,
@@ -106,6 +99,7 @@ export function generateWidgetByType(type) {
         alarmsStateFilter: {
           opened: true,
         },
+        expandGridRangeSize: [GRID_SIZES.min, GRID_SIZES.max],
       };
       break;
 
@@ -114,6 +108,7 @@ export function generateWidgetByType(type) {
         itemsPerPage: PAGINATION_LIMIT,
         viewFilters: [],
         mainFilter: null,
+        mainFilterUpdatedAt: 0,
         widgetColumns: [
           {
             label: i18n.t('tables.contextList.name'),
@@ -153,6 +148,7 @@ export function generateWidgetByType(type) {
         heightFactor: 1,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
         alarmsList: alarmsListDefaultParameters,
+        modalItemsPerPage: PAGINATION_LIMIT,
       };
       break;
 
@@ -271,6 +267,40 @@ export function generateWidgetByType(type) {
         mfilter: {},
         stats: {},
         template: '',
+      };
+      break;
+    case WIDGET_TYPES.counter:
+      specialParameters = {
+        viewFilters: [],
+        alarmsStateFilter: {
+          opened: true,
+        },
+        blockTemplate: DEFAULT_COUNTER_BLOCK_TEMPLATE,
+        columnSM: 6,
+        columnMD: 4,
+        columnLG: 3,
+        margin: {
+          top: 1,
+          right: 1,
+          bottom: 1,
+          left: 1,
+        },
+        heightFactor: 6,
+        levels: {
+          counter: AVAILABLE_COUNTERS.total,
+          colors: {
+            ok: COLORS.state.ok,
+            minor: COLORS.state.minor,
+            major: COLORS.state.major,
+            critical: COLORS.state.critical,
+          },
+          values: {
+            minor: 20,
+            major: 30,
+            critical: 40,
+          },
+        },
+        alarmsList: alarmsListDefaultParameters,
       };
       break;
   }
@@ -431,15 +461,11 @@ export function generateRoleRightByChecksum(checksum) {
 export function generateCopyOfViewTab(tab) {
   return {
     ...generateViewTab(),
+    ...omit(tab, ['_id', 'widgets']),
 
-    rows: tab.rows.map(row => ({
-      ...generateViewRow(),
-
-      title: row.title,
-      widgets: row.widgets.map(widget => ({
-        ...generateWidgetByType(widget.type),
-        ...omit(widget, ['_id']),
-      })),
+    widgets: tab.widgets.map(widget => ({
+      ...generateWidgetByType(widget.type),
+      ...omit(widget, ['_id']),
     })),
   };
 }
@@ -455,11 +481,7 @@ export function generateCopyOfView(view) {
     ...generateView(),
     ...omit(view, ['_id', 'tabs']),
 
-    tabs: view.tabs.map(tab => ({
-      ...generateCopyOfViewTab(tab),
-
-      ...omit(tab, ['_id', 'rows']),
-    })),
+    tabs: view.tabs.map(tab => generateCopyOfViewTab(tab)),
   };
 }
 
@@ -479,7 +501,10 @@ export function generateAction() {
   const generalParameters = {
     _id: uuid('action'),
     type: ACTION_TYPES.snooze,
+    enabled: true,
+    delay: {},
     hook: defaultHook,
+    priority: 0,
   };
 
   // Default 'snooze' action parameters
@@ -493,22 +518,53 @@ export function generateAction() {
 
   // Default 'pbehavior' action parameters
   const pbehaviorParameters = {
-    general: {
-      name: '',
-      tstart: new Date(),
-      tstop: new Date(),
-      rrule: null,
-      reason: '',
-      type_: '',
-    },
+    general: { ...pbehaviorToForm() },
     comments: [],
     exdate: [],
+  };
+
+  // Default 'changestate' action parameters
+  const changeStateParameters = {
+    state: ENTITIES_STATES.minor,
+    output: '',
+  };
+
+  // Default 'ack' action parameters
+  const ackParameters = {
+    output: '',
+  };
+
+  // Default 'ackremove' action parameters
+  const ackremoveParameters = {
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const assocticketParameters = {
+    ticket: '',
+    output: '',
+  };
+
+  // Default 'assocticket' action parameters
+  const declareticketParameters = {
+    output: '',
+  };
+
+  // Default 'cancel' action parameters
+  const cancelParameters = {
+    output: '',
   };
 
   return {
     generalParameters,
     snoozeParameters,
     pbehaviorParameters,
+    changeStateParameters,
+    ackParameters,
+    ackremoveParameters,
+    assocticketParameters,
+    declareticketParameters,
+    cancelParameters,
   };
 }
 
@@ -520,13 +576,15 @@ export function generateAction() {
  * @returns {Array.<{ oldId: number, newId: number }>}
  */
 export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
-  return oldTab.rows.reduce((acc, row, rowIndex) => {
+  return oldTab.widgets.reduce((acc, row, rowIndex) => {
     const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
       oldId: widget._id,
       newId: get(newTab, `rows.${rowIndex}.widgets.${widgetIndex}._id`, null),
     }));
 
-    return acc.concat(widgetsIds);
+    acc.push(...widgetsIds);
+
+    return acc;
   }, []);
 }
 
@@ -543,11 +601,60 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...user, ...omit(data, ['password']) };
+  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);
   }
 
   return result;
+}
+
+/**
+ * Checks if alarm is resolved
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export function isResolvedAlarm(alarm) {
+  return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
+}
+
+
+/**
+ * Function return new name if name is not uniq
+ * @param {Object} entity
+ * @param {Array} entities
+ * @returns {string}
+ */
+export function getDuplicateEntityName(entity, entities) {
+  const suffixRegexp = '(\\s\\(\\d+\\))?$';
+  const clearName = entity.name.replace(new RegExp(suffixRegexp), '');
+
+  const nameRegexp = new RegExp(`^${clearName}${suffixRegexp}`);
+
+  const duplicateEntityCount = entities.reduce((count, { name }) => {
+    const isDuplicate = nameRegexp.test(name);
+
+    return isDuplicate ? count + 1 : count;
+  }, 0);
+
+  return duplicateEntityCount !== 0 ? `${clearName} (${duplicateEntityCount})` : entity.name;
+}
+
+/**
+ * Create default playlist entity
+ *
+ * @returns {Object}
+ */
+export function getDefaultPlaylist() {
+  return {
+    name: '',
+    fullscreen: true,
+    enabled: true,
+    interval: {
+      interval: 10,
+      unit: TIME_UNITS.second,
+    },
+    tabs_list: [],
+  };
 }

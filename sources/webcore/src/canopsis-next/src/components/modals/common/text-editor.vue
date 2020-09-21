@@ -1,28 +1,39 @@
 <template lang="pug">
-  v-card.text-editor-modal(data-test="textEditorModal")
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ title }}
-    v-card-text(data-test="jodit")
-      text-editor-component(v-model="text")
-    v-divider
-    v-layout.py-1(justify-end)
-      v-btn(data-test="textEditorCancelButton", @click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(data-test="textEditorSubmitButton", @click="submit") {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper(data-test="textEditorModal")
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        text-editor-component(v-model="text", data-test="jodit")
+      template(slot="actions")
+        v-btn(
+          data-test="textEditorCancelButton",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit",
+          data-test="textEditorSubmitButton"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
+
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import TextEditorComponent from '@/components/other/text-editor/text-editor.vue';
 
+import ModalWrapper from '../modal-wrapper.vue';
+
 export default {
   name: MODALS.textEditor,
-  components: {
-    TextEditorComponent,
-  },
-  mixins: [modalInnerMixin],
+  components: { TextEditorComponent, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const text = this.modal.config.text || '';
 
@@ -41,7 +52,7 @@ export default {
         await this.config.action(this.text);
       }
 
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

@@ -1,12 +1,10 @@
 <template lang="pug">
-  v-card
-    v-card-title.white--text(:style="{ backgroundColor: color }")
-      v-layout(justify-space-between, align-center)
-        span.headline {{ watcher.display_name }}
-        v-btn(icon, dark, @click.native="hideModal")
-          v-icon close
-    v-divider
-    v-card-text
+  modal-wrapper
+    template(slot="fullTitle")
+      v-card-title.white--text(:style="{ backgroundColor: color }")
+        v-layout(justify-space-between, align-center)
+          span.headline {{ watcher.display_name }}
+    template(slot="text")
       v-fade-transition
         div(v-show="!watcherEntitiesPending")
           watcher-template(
@@ -14,25 +12,29 @@
             :watcherEntities="watcherEntities",
             :modalTemplate="config.modalTemplate",
             :entityTemplate="config.entityTemplate",
-            @addEvent="addEventToQueue"
+            :itemsPerPage="config.itemsPerPage",
+            @add:event="addEventToQueue"
           )
       v-fade-transition
         v-layout(v-show="watcherEntitiesPending", column)
           v-flex(xs12)
             v-layout(justify-center)
               v-progress-circular(indeterminate, color="primary")
-    v-divider
-    v-layout.py-1(justify-end, align-center)
+    template(slot="actions")
       v-alert.ma-0.pa-1.pr-2(
         :value="eventsQueue.length",
         type="info"
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
-      v-btn(@click="hideModal", depressed, flat) {{ $t('common.cancel') }}
-      v-tooltip(top)
-        v-btn(@click="refresh", color="secondary", slot="activator")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-tooltip.mx-2(top)
+        v-btn.secondary(slot="activator", @click="fetchWatchersList")
           v-icon refresh
         span {{ $t('modals.watcher.refreshEntities') }}
-      v-btn.primary(@click="submit", :loading="submitting", :disabled="submitting") {{ $t('common.submit') }}
+      v-btn.primary(
+        :disabled="isDisabled",
+        :loading="submitting",
+        @click="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -41,26 +43,29 @@ import { pick, mapValues } from 'lodash';
 import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: { WatcherTemplate },
+  components: { WatcherTemplate, ModalWrapper },
   mixins: [
     modalInnerMixin,
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesWatcherEntityMixin,
+    submittableMixin(),
   ],
   data() {
     return {
       attributes: {},
       eventsQueue: [],
-      submitting: false,
     };
   },
   computed: {
@@ -72,6 +77,8 @@ export default {
     },
   },
   mounted() {
+    this.fetchWatchersList();
+
     const infoAttributes = mapValues(pick(this.watcher.infos, [
       'application_crit_label',
       'product_line',
@@ -85,21 +92,17 @@ export default {
       org: this.watcher.org,
       ...infoAttributes,
     };
-
-    this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
   },
   methods: {
+    fetchWatchersList() {
+      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
+    },
+
     addEventToQueue(event) {
       this.eventsQueue.push(event);
     },
 
-    refresh() {
-      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
-    },
-
     async submit() {
-      this.submitting = true;
-
       const requests = this.eventsQueue.reduce((acc, event) => {
         if (event.type === EVENT_ENTITY_TYPES.pause) {
           acc.push(this.createPbehavior({
@@ -110,7 +113,12 @@ export default {
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
             if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
-              accSecond.push(this.removePbehavior({ id: pbehavior._id }));
+              const data = {
+                ...pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']),
+                tstop: Math.round(Date.now() / 1000),
+              };
+
+              accSecond.push(this.updatePbehavior({ data, id: pbehavior._id }));
             }
 
             return accSecond;
@@ -126,8 +134,7 @@ export default {
 
       await Promise.all(requests);
 
-      this.submitting = false;
-      this.hideModal();
+      this.$modals.hide();
     },
   },
 };

@@ -13,12 +13,11 @@
 <script>
 import { STATS_TYPES, MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
   inject: ['$validator'],
-  mixins: [modalMixin, formValidationHeaderMixin],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'stat',
     event: 'input',
@@ -49,7 +48,7 @@ export default {
   },
   methods: {
     openAddStatModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.addStat,
         config: {
           title: this.$t('modals.addStat.title.add'),

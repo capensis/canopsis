@@ -4,8 +4,6 @@
 
 Les environnements SELinux ne sont pas pris en charge par Canopsis. Il est donc nécessaire de désactiver SELinux s'il est présent sur votre environnement.
 
-La commande `canoctl deploy` s'en charge automatiquement lors de votre premier déploiement de Canopsis.
-
 Plus de détails dans [la documentation des différentes méthodes d'installation](index.md).
 
 ## Prérequis pare-feu (flux réseau)

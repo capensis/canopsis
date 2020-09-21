@@ -11,9 +11,10 @@ if [ -f ~/.bash_completion ]; then
      . ~/.bash_completion
 fi
 
-alias ls="ls --color=auto"
+alias ls="ls --color=auto -F"
 alias ll="ls -l"
 
-if [ -x "$(command -v canopsis-version)" ]; then
-     export PS1='(\u `canopsis-version`)[\u@\h \W]\$ '
+if [ -f "$HOME/VERSION.txt" ]; then
+     CANOPSIS_VERSION=$(cat "$HOME/VERSION.txt")
+     export PS1="($CANOPSIS_VERSION)[\\u@\\h \\W]\\$ "
 fi

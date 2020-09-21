@@ -1,9 +1,8 @@
 <template lang="pug">
   div
     snmp-rule-form-module-form(
-      :form="form.oid",
-      :moduleMibs.sync="moduleMibs",
-      @input="updateField('oid', $event)"
+      v-field="form.oid",
+      :moduleMibs.sync="moduleMibs"
     )
     v-layout(v-if="selectedModuleMib", row, wrap)
       v-alert.mt-3(
@@ -11,43 +10,36 @@
         color="grey darken-1"
       ) {{ selectedModuleMib.description }}
     snmp-rule-form-module-mib-objects-form(
-      :form="form.output",
+      v-field="form.output",
       :items="selectedModuleMibObjects",
       :label="$t('modals.createSnmpRule.fields.output.title')",
-      large,
-      @input="updateField('output', $event)"
+      large
     )
     snmp-rule-form-module-mib-objects-form(
-      :form="form.component",
+      v-field="form.component",
       :items="selectedModuleMibObjects",
       :label="$t('modals.createSnmpRule.fields.component.title')",
-      large,
-      @input="updateField('component', $event)"
+      large
     )
     snmp-rule-form-module-mib-objects-form(
-      :form="form.resource",
+      v-field="form.resource",
       :items="selectedModuleMibObjects",
       :label="$t('modals.createSnmpRule.fields.resource.title')",
-      large,
-      @input="updateField('resource', $event)"
+      large
     )
     snmp-rule-form-module-mib-objects-form(
-      :form="form.connector_name",
+      v-field="form.connector_name",
       :items="selectedModuleMibObjects",
       :label="$t('modals.createSnmpRule.fields.connectorName.title')",
-      large,
-      @input="updateField('connector_name', $event)"
+      large
     )
     snmp-rule-form-state-form(
-      :form="form.state",
-      :items="selectedModuleMibObjects",
-      @input="updateField('state', $event)"
+      v-field="form.state",
+      :items="selectedModuleMibObjects"
     )
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-
 import SnmpRuleFormModuleForm from './snmp-rule-form-module-form.vue';
 import SnmpRuleFormModuleMibObjectsForm from './snmp-rule-form-module-mib-objects-form.vue';
 import SnmpRuleFormStateForm from './snmp-rule-form-state-form.vue';
@@ -58,7 +50,6 @@ export default {
     SnmpRuleFormModuleMibObjectsForm,
     SnmpRuleFormStateForm,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',

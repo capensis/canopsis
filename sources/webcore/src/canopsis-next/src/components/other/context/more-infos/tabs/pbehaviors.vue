@@ -1,17 +1,14 @@
 <template lang="pug">
   v-card.secondary.lighten-2(flat)
     v-card-text
-      v-data-table.ma-0.pbehaviorsTable(:items="pbehaviors", :headers="headers")
+      v-data-table.ma-0(:items="pbehaviors", :headers="headers")
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
           td {{ props.item.connector }}
           td {{ props.item.connector_name }}
           td
-            v-icon(
-              small,
-              :color="props.item.enabled ? 'primary' : 'error'"
-            ) {{ props.item.enabled ? 'check' : 'clear'}}
+            enabled-column(:value="props.item.enabled")
           td {{ props.item.tstart | date('long') }}
           td {{ props.item.tstop | date('long') }}
           td {{ props.item.type_ }}
@@ -36,18 +33,19 @@
 <script>
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
+import EnabledColumn from '@/components/tables/enabled-column.vue';
+
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
-import popupMixin from '@/mixins/popup';
 import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
+  components: {
+    EnabledColumn,
+  },
   mixins: [
     authMixin,
-    modalMixin,
-    popupMixin,
     queryMixin,
     entitiesPbehaviorMixin,
     entitiesPbehaviorCommentMixin,
@@ -71,46 +69,47 @@ export default {
       return [
         {
           text: this.$t('common.name'),
-          sortable: false,
+          value: 'name',
         },
         {
           text: this.$t('common.author'),
-          sortable: false,
+          value: 'author',
         },
         {
           text: this.$t('pbehaviors.connector'),
-          sortable: false,
+          value: 'connector',
         },
         {
           text: this.$t('pbehaviors.connectorName'),
-          sortable: false,
+          value: 'connector_name',
         },
         {
           text: this.$t('pbehaviors.isEnabled'),
-          sortable: false,
+          value: 'isEnabled',
         },
         {
           text: this.$t('pbehaviors.begins'),
-          sortable: false,
+          value: 'tstart',
         },
         {
           text: this.$t('pbehaviors.ends'),
-          sortable: false,
+          value: 'tstop',
         },
         {
           text: this.$t('pbehaviors.type'),
-          sortable: false,
+          value: 'type_',
         },
         {
           text: this.$t('pbehaviors.reason'),
-          sortable: false,
+          value: 'reason',
         },
         {
           text: this.$t('pbehaviors.rrule'),
-          sortable: false,
+          value: 'rrule',
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actionsLabel',
           sortable: false,
         },
       ];
@@ -132,7 +131,7 @@ export default {
   },
   methods: {
     showEditPbehaviorModal(pbehavior) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createPbehavior,
         config: {
           pbehavior,
@@ -144,14 +143,14 @@ export default {
             await this.updateSeveralPbehaviorComments({ pbehavior, comments });
 
             this.fetchList();
-            this.addSuccessPopup({ text: this.$t('success.default') });
+            this.$popups.success({ text: this.$t('success.default') });
           },
         },
       });
     },
 
     showDeletePbehaviorModal(pbehaviorId) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {

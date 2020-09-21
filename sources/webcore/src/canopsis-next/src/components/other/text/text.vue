@@ -1,7 +1,10 @@
 <template lang="pug">
   div.position-relative
     progress-overlay(:pending="pending")
-    stats-alert-overlay(:value="hasError", :message="serverErrorMessage")
+    alert-overlay(
+      :value="hasError",
+      :message="serverErrorMessage"
+    )
     v-runtime-template(:template="compiledTemplate")
 </template>
 
@@ -10,28 +13,32 @@ import { isEmpty } from 'lodash';
 import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
+import { CANOPSIS_EDITION } from '@/constants';
+
 import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
-import widgetQueryMixin from '@/mixins/widget/query';
+import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import entitiesStatsMixin from '@/mixins/entities/stats';
 import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
+import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
+import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
-import StatsAlertOverlay from '../stats/partials/stats-alert-overlay.vue';
 import TextStatTemplate from './text-stat-template.vue';
 
 export default {
   components: {
     VRuntimeTemplate,
     ProgressOverlay,
-    StatsAlertOverlay,
+    AlertOverlay,
     TextStatTemplate,
   },
   mixins: [
-    widgetQueryMixin,
     entitiesStatsMixin,
     widgetStatsQueryMixin,
+    widgetFetchQueryMixin,
+    widgetStatsWrapperMixin,
   ],
   props: {
     widget: {
@@ -41,15 +48,27 @@ export default {
   },
   data() {
     return {
-      pending: true,
-      hasError: false,
-      serverErrorMessage: null,
+      pending: false,
       stats: {},
     };
   },
+  asyncComputed: {
+    compiledTemplate: {
+      async get() {
+        const compiledTemplate = await compile(this.widget.parameters.template);
+
+        return `<div>${compiledTemplate}</div>`;
+      },
+      default: '',
+    },
+  },
   computed: {
-    compiledTemplate() {
-      return `<div>${compile(this.widget.parameters.template)}</div>`;
+    /**
+     * Check if there are 'stats' associated with the widget. As stats are only available with 'cat' edition
+     * Override editionError computed prop from widgetStatsWrapperMixin
+     */
+    editionError() {
+      return Object.keys(this.stats).length && this.edition === CANOPSIS_EDITION.core;
     },
   },
   beforeCreate() {
@@ -57,7 +76,7 @@ export default {
       const statName = hash.name;
 
       return new Handlebars.SafeString(`
-        <text-stat-template name="${statName}" :stats="stats"></text-stat-template>
+        <text-stat-template v-if="editionError" name="${statName}" :stats="stats"></text-stat-template>
       `);
     });
   },
@@ -92,7 +111,6 @@ export default {
     async fetchList() {
       try {
         this.pending = true;
-        this.hasError = false;
         this.serverErrorMessage = null;
 
         if (!isEmpty(this.widget.parameters.stats)) {
@@ -103,7 +121,6 @@ export default {
           this.stats = aggregations;
         }
       } catch (err) {
-        this.hasError = true;
         this.serverErrorMessage = err.description || null;
       } finally {
         this.pending = false;

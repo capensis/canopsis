@@ -1,36 +1,54 @@
 <template lang="pug">
-  div(:data-test="`view-page-${id}`")
+  div.view-wrapper(:data-test="`view-page-${id}`")
     v-fade-transition
       view-tabs-wrapper(
         v-if="isViewTabsReady",
         :view="view",
         :isEditingMode="isEditingMode",
         :hasUpdateAccess="hasUpdateAccess",
-        :updateViewMethod="data => updateView({ id, data })"
+        :updateViewMethod="updateViewMethod",
+        @update:widgetsFields="updateWidgetsFieldsForUpdateById"
       )
     .fab
-      v-layout(data-test="controlViewLayout", column)
-        v-tooltip(left)
-          v-btn(slot="activator", fab, dark, color="secondary", @click.stop="refreshView")
-            v-icon refresh
-          span {{ $t('common.refresh') }}
+      v-layout(data-test="controlViewLayout", row)
+        v-tooltip(top)
+          v-btn(
+            slot="activator",
+            :input-value="isPeriodicRefreshEnabled",
+            color="secondary",
+            fab,
+            dark,
+            @click.stop="refreshHandler"
+          )
+            v-icon(v-if="!isPeriodicRefreshEnabled") refresh
+            v-progress-circular.periodic-refresh-progress(
+              v-else,
+              :rotate="270",
+              :size="30",
+              :width="2",
+              :value="periodicRefreshProgressValue",
+              color="white",
+              button
+            )
+              span.refresh-btn {{ periodicRefreshProgress | maxDurationByUnit }}
+          span {{ tooltipContent }}
         v-speed-dial(
           v-if="hasUpdateAccess",
           v-model="isVSpeedDialOpen",
-          direction="left",
+          direction="top",
           transition="slide-y-reverse-transition"
         )
           v-btn(
-            data-test="menuViewButton",
             slot="activator",
             :input-value="isVSpeedDialOpen",
+            data-test="menuViewButton",
             color="primary",
             dark,
             fab
           )
             v-icon menu
             v-icon close
-          v-tooltip(top)
+          v-tooltip(left)
             v-btn(
               slot="activator",
               v-model="isFullScreenMode",
@@ -42,24 +60,26 @@
               v-icon fullscreen
               v-icon fullscreen_exit
             span alt + enter / command + enter
-          v-tooltip(v-if="hasUpdateAccess", top)
+          v-tooltip(v-if="hasUpdateAccess", left)
             v-btn(
-              data-test="editViewButton",
               slot="activator",
+              :input-value="isEditingMode",
+              data-test="editViewButton",
               fab,
               dark,
               small,
-              @click.stop="toggleViewEditingMode",
-              v-model="isEditingMode"
+              @click.stop="toggleViewEditingMode"
             )
               v-icon edit
               v-icon done
-            span {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
-          v-tooltip(top)
+            div
+              div {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
+              div.font-italic {{ $t('common.toggleEditViewSubtitle') }}
+          v-tooltip(left)
             v-btn(
-              data-test="addWidgetButton",
-              v-if="hasUpdateAccess",
               slot="activator",
+              v-if="hasUpdateAccess",
+              data-test="addWidgetButton",
               fab,
               dark,
               small,
@@ -68,11 +88,11 @@
             )
               v-icon add
             span {{ $t('common.addWidget') }}
-          v-tooltip(top)
+          v-tooltip(left)
             v-btn(
-              data-test="addTabButton",
-              v-if="hasUpdateAccess",
               slot="activator",
+              v-if="hasUpdateAccess",
+              data-test="addTabButton",
               fab,
               dark,
               small,
@@ -81,7 +101,7 @@
             )
               v-icon add
             span {{ $t('common.addTab') }}
-        v-tooltip(v-else, left)
+        v-tooltip(v-else, top)
           v-btn(
             slot="activator",
             v-model="isFullScreenMode",
@@ -96,29 +116,28 @@
 </template>
 
 <script>
-import { MODALS, USERS_RIGHTS_MASKS } from '@/constants';
-import { generateViewTab } from '@/helpers/entities';
+import { isEmpty } from 'lodash';
 
-import ViewTabRows from '@/components/other/view/view-tab-rows.vue';
+import { MODALS } from '@/constants';
+import { generateViewTab } from '@/helpers/entities';
+import { setSeveralFields } from '@/helpers/immutable';
+
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
-import popupMixin from '@/mixins/popup';
 import queryMixin from '@/mixins/query';
 import entitiesViewMixin from '@/mixins/entities/view';
+import periodicRefreshMixin from '@/mixins/view/periodic-refresh';
 
 export default {
   components: {
-    ViewTabRows,
     ViewTabsWrapper,
   },
   mixins: [
     authMixin,
-    modalMixin,
-    popupMixin,
     queryMixin,
     entitiesViewMixin,
+    periodicRefreshMixin,
   ],
   props: {
     id: {
@@ -131,11 +150,16 @@ export default {
       isEditingMode: false,
       isFullScreenMode: false,
       isVSpeedDialOpen: false,
+      widgetsFieldsForUpdateById: {},
     };
   },
   computed: {
+    tooltipContent() {
+      return this.isPeriodicRefreshEnabled ? this.periodicRefreshProgressFormatted : this.$t('common.refresh');
+    },
+
     hasUpdateAccess() {
-      return this.checkUpdateAccess(this.id, USERS_RIGHTS_MASKS.update);
+      return this.checkUpdateAccess(this.id);
     },
 
     activeTab() {
@@ -160,6 +184,7 @@ export default {
   created() {
     document.addEventListener('keydown', this.keyDownListener);
     this.registerViewOnceWatcher();
+    this.$periodicRefresh.subscribe(this.refreshView);
   },
 
   mounted() {
@@ -169,9 +194,22 @@ export default {
   beforeDestroy() {
     this.$fullscreen.exit();
     document.removeEventListener('keydown', this.keyDownListener);
+    this.$periodicRefresh.unsubscribe(this.refreshView);
   },
 
   methods: {
+    updateViewMethod(data) {
+      return this.updateView({ id: this.id, data });
+    },
+
+    async refreshView() {
+      await this.fetchView({ id: this.id });
+
+      if (this.activeTab) {
+        this.forceUpdateQuery({ id: this.activeTab._id });
+      }
+    },
+
     registerViewOnceWatcher() {
       const unwatch = this.$watch('view', (view) => {
         if (view) {
@@ -208,33 +246,25 @@ export default {
           });
         }
       } else {
-        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
-      }
-    },
-
-    async refreshView() {
-      await this.fetchView({ id: this.id });
-
-      if (this.activeTab) {
-        this.forceUpdateQuery({ id: this.activeTab._id });
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
     showCreateWidgetModal() {
       if (this.activeTab) {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.createWidget,
           config: {
             tabId: this.activeTab._id,
           },
         });
       } else {
-        this.addWarningPopup({ text: this.$t('view.errors.emptyTabs') });
+        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
       }
     },
 
     showCreateTabModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.viewTab.create.title'),
@@ -257,9 +287,53 @@ export default {
       });
     },
 
-    toggleViewEditingMode() {
+    updateWidgetsFieldsForUpdateById(widgetsFieldsForUpdateById) {
+      this.widgetsFieldsForUpdateById = {
+        ...this.widgetsFieldsForUpdateById,
+        ...widgetsFieldsForUpdateById,
+      };
+    },
+
+    updateTabs() {
+      const view = {
+        ...this.view,
+
+        tabs: this.view.tabs.map(tab => ({
+          ...tab,
+
+          widgets: tab.widgets.map((widget) => {
+            const fields = this.widgetsFieldsForUpdateById[widget._id];
+
+            if (fields) {
+              return setSeveralFields(widget, fields);
+            }
+
+            return widget;
+          }),
+        })),
+      };
+
+      return this.updateView({ id: this.id, data: view });
+    },
+
+    async toggleViewEditingMode() {
+      if (this.isEditingMode && !isEmpty(this.widgetsFieldsForUpdateById)) {
+        await this.updateTabs();
+      }
+
       this.isEditingMode = !this.isEditingMode;
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .refresh-btn {
+    text-decoration: none;
+    text-transform: none;
+  }
+
+  .view-wrapper {
+    padding-bottom: 70px;
+  }
+</style>

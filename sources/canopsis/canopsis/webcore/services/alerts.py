@@ -33,7 +33,9 @@ from canopsis.common.converters import id_filter
 from canopsis.common.ws import route, WebServiceError
 from canopsis.context_graph.manager import ContextGraph
 from canopsis.event import forger
+from canopsis.metaalarmrule.manager import MetaAlarmRuleManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
+from canopsis.pbehavior.manager import PBehaviorManager,PBehavior
 
 
 def exports(ws):
@@ -43,11 +45,15 @@ def exports(ws):
     context_manager = ContextGraph(ws.logger)
     am = Alerts(*Alerts.provide_default_basics())
     ar = AlertsReader(*AlertsReader.provide_default_basics())
+    ma_rule_manager = MetaAlarmRuleManager(
+        *MetaAlarmRuleManager.provide_default_basics())
+    pbm = PBehaviorManager(*PBehaviorManager.provide_default_basics())
 
     @route(
         ws.application.get,
         name='alerts/get-alarms',
         payload=[
+            'authkey',
             'tstart',
             'tstop',
             'opened',
@@ -62,10 +68,14 @@ def exports(ws):
             'with_steps',
             'natural_search',
             'active_columns',
-            'hide_resources'
+            'hide_resources',
+            'with_consequences',
+            'with_causes',
+            'correlation'
         ]
     )
     def get_alarms(
+            authkey=None,
             tstart=None,
             tstop=None,
             opened=True,
@@ -80,7 +90,10 @@ def exports(ws):
             with_steps=False,
             natural_search=False,
             active_columns=None,
-            hide_resources=False
+            hide_resources=False,
+            with_consequences=False,
+            with_causes=False,
+            correlation=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -132,24 +145,90 @@ def exports(ws):
                 with_steps=with_steps,
                 natural_search=natural_search,
                 active_columns=active_columns,
-                hide_resources=hide_resources
+                hide_resources=hide_resources,
+                with_consequences=with_consequences,
+                correlation=correlation
             )
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)
             raise WebServiceError(message)
 
-        alarms_ids = []
+        alarms_ids, consequences_children = [], []
+        alarm_children = {'alarms': [], 'total': 0}
         for alarm in alarms['alarms']:
+            if with_consequences:
+                consequences_children.extend(alarm.get('consequences', {}).get('data', []))
+            elif with_causes and alarm.get('v') and alarm['v'].get('parents'):
+                consequences_children.extend(alarm['v']['parents'])
             tmp_id = alarm.get('d')
             if tmp_id:
                 alarms_ids.append(tmp_id)
-        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
+        entities = context_manager.get_entities_by_id(alarms_ids, with_links=False)
+
         entity_dict = {}
         for entity in entities:
             entity_dict[entity.get('_id')] = entity
 
+        if consequences_children:
+            alarm_children = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=True,
+                resolved=True,
+                lookups=lookups,
+                filter_={'d': {'$in': consequences_children}},
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=None,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources,
+                correlation=correlation,
+                consequences_children=True
+            )
+
         list_alarm = []
+        rule_ids = set()
+        if 'rules' in alarms:
+            for alarm_rules in alarms['rules'].values():
+                for v in alarm_rules:
+                    rule_ids.add(v)
+            named_rules = ma_rule_manager.read_rules_with_names(list(rule_ids))
+            for d, alarm_rules in alarms['rules'].items():
+                alarm_named_rules = []
+                for v in alarm_rules:
+                    alarm_named_rules.append({'id': v, 'name': named_rules.get(v, "")})
+                alarms['rules'][d] = alarm_named_rules
+        else:
+            alarms['rules'] = dict()
+
+        children_ent_ids = set()
         for alarm in alarms['alarms']:
+            rules = alarms['rules'].get(alarm['d'], []) if 'd' in alarm and 'v' in alarm and \
+                alarm['v'].get('parents') else None
+            if rules:
+                if with_causes:
+                    alarm['causes'] = {
+                        'total': len(alarm_children['alarms']),
+                        'data': alarm_children['alarms'],
+                    }
+                    for al_child in alarm_children['alarms']:
+                        children_ent_ids.add(al_child['d'])
+                else:
+                    alarm['causes'] = {
+                        'total': len(rules),
+                        'rules': rules,
+                    }
+
+            if alarm.get('v') is None:
+                alarm['v'] = dict()
+            if alarm.get('v').get('meta'):
+                del alarm['v']['meta']
+
+            if isinstance(alarm.get('rule'), basestring) and alarm['rule'] != "":
+                alarm['rule'] = {'id': alarm['rule'], 'name': named_rules.get(alarm['rule'], alarm['rule'])}
+
             now = int(time())
 
             alarm_end = alarm.get('v', {}).get('resolved')
@@ -163,7 +242,7 @@ def exports(ws):
             tmp_entity_id = alarm['d']
 
             if alarm['d'] in entity_dict:
-                alarm['links'] = entity_dict[alarm['d']]['links']
+                alarm['links'] = context_manager.enrich_links_to_entity_with_alarm(entity_dict[alarm['d']], alarm)
 
                 # TODO: 'infos' is already present in entity.
                 # Remove this one if unused.
@@ -176,11 +255,150 @@ def exports(ws):
 
             alarm = compat_go_crop_states(alarm)
 
+            if with_consequences and isinstance(alarm.get('consequences'), dict) and alarm_children['total'] > 0:
+                map(lambda al_ch: al_ch.update({'causes': {'rules': [alarm['rule']], 'total': 1}}),  alarm_children['alarms'])
+                alarm['consequences']['data'] = alarm_children['alarms']
+                alarm['consequences']['total'] = alarm_children['total']
+                for al_child in alarm_children['alarms']:
+                    children_ent_ids.add(al_child['d'])
+
             list_alarm.append(alarm)
 
+        if children_ent_ids:
+            children_entities = context_manager.get_entities_by_id(
+                list(children_ent_ids), with_links=False)
+            for entity in children_entities:
+                entity_dict[entity.get('_id')] = entity
+
+            for alarm in alarms['alarms']:
+                for cat in ('causes', 'consequences'):
+                    if cat in alarm and alarm[cat].get('data'):
+                        for child in alarm[cat]['data']:
+                            if child['d'] in entity_dict:
+                                child['links'] = context_manager.enrich_links_to_entity_with_alarm(
+                                    entity_dict[child['d']], child)
+
+        del alarms['rules']
         alarms['alarms'] = list_alarm
 
         return alarms
+
+    @route(
+        ws.application.get,
+        name='alerts/get-counters',
+        payload=[
+            'tstart',
+            'tstop',
+            'opened',
+            'resolved',
+            'lookups',
+            'filter',
+            'search',
+            'sort_key',
+            'sort_dir',
+            'skip',
+            'limit',
+            'with_steps',
+            'natural_search',
+            'active_columns',
+            'hide_resources'
+        ]
+    )
+    def get_counters(
+        tstart=None,
+        tstop=None,
+        opened=True,
+        resolved=False,
+        lookups=[],
+        filter={},
+        search='',
+        sort_key='opened',
+        sort_dir='DESC',
+        skip=0,
+        limit=None,
+        with_steps=False,
+        natural_search=False,
+        active_columns=None,
+        hide_resources=False
+    ):
+
+        if isinstance(search, int):
+            search = str(search)
+
+        try:
+            alarms = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=opened,
+                resolved=resolved,
+                lookups=lookups,
+                filter_=filter,
+                search=search.strip(),
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=limit,
+                with_steps=with_steps,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources,
+                add_pbh_filter=False
+            )
+        except OperationFailure as of_err:
+            message = 'Operation failure on get-alarms: {}'.format(of_err)
+            raise WebServiceError(message)
+
+        counters = {
+            "total": len(alarms['alarms']),
+            "total_active": 0,
+            "snooze": 0,
+            "ack": 0,
+            "ticket": 0,
+            "pbehavior_active": 0
+        }
+
+        alarms_ids = []
+        for alarm in alarms['alarms']:
+            tmp_id = alarm.get('d')
+            if tmp_id:
+                alarms_ids.append(tmp_id)
+        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
+        entity_id = []
+        for entity in entities:
+            _id = entity.get('_id')
+            if _id:
+                entity_id.append(_id)
+
+        active_pbh = pbm.get_active_pbehaviors_on_entities(entity_id)
+        enabled_pbh_entity_dict = set()
+        for pbh in active_pbh:
+            if pbh[PBehavior.ENABLED]:
+                for eid in pbh.get(PBehavior.EIDS, []):
+                    if eid in entity_id:
+                        enabled_pbh_entity_dict.add(eid)
+
+        pbehavior_active_snooze = 0
+
+        for alarm in alarms['alarms']:
+            v = alarm.get('v')
+            snoozed = False
+            if isinstance(v, dict):
+                if v.get('ack', {}).get('_t') == 'ack':
+                    counters['ack'] += 1
+                snoozed = v.get('snooze', {}).get('_t') == 'snooze'
+                if snoozed:
+                    counters['snooze'] += 1
+                if v.get('ticket', {}).get('_t') in ['declareticket', 'assocticket']:
+                    counters['ticket'] += 1
+            d = alarm.get('d')
+            if d in enabled_pbh_entity_dict:
+                counters['pbehavior_active'] += 1
+                if snoozed:
+                    pbehavior_active_snooze += 1
+
+        counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze'] + \
+            pbehavior_active_snooze
+        return counters
 
     @route(
         ws.application.get,

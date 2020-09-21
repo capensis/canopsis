@@ -1,7 +1,12 @@
 // https://nightwatchjs.org/guide/#working-with-page-objects
 
+const { API_ROUTES } = require('@/config');
+
 const el = require('../../helpers/el');
-const { FILTERS_TYPE } = require('../../constants');
+const { elementsWrapperCreator } = require('../../helpers/page-object-creators');
+const { FILTERS_TYPE, WAIT_FOR_FIRST_XHR_TIME } = require('../../constants');
+
+const sideBarSelector = sel('sideBarWrapper');
 
 const commands = {
   el,
@@ -29,6 +34,10 @@ const commands = {
     return this.customClick('@periodicRefreshSwitch');
   },
 
+  clickPeriodicRefreshField() {
+    return this.customClick('@periodicRefreshField');
+  },
+
   clearPeriodicRefreshField() {
     return this.customClearValue('@periodicRefreshField');
   },
@@ -38,15 +47,19 @@ const commands = {
   },
 
   clickWidgetTitle() {
-    return this.customClick('@widgetTitle');
+    return this.customClick('@settingsWidgetTitle');
   },
 
-  setWidgetTitleField(value) {
+  setWidgetTitle(value) {
     return this.customSetValue('@widgetTitleField', value);
   },
 
-  clearWidgetTitleField() {
+  clearWidgetTitle() {
     return this.customClearValue('@widgetTitleField');
+  },
+
+  getWidgetTitle(id, callback) {
+    return this.getText(this.el('@widgetTitle', id), callback);
   },
 
   clickCloseWidget() {
@@ -144,12 +157,20 @@ const commands = {
     return this.customClick('@openWidgetFilterCreateModal');
   },
 
-  clickEditFilter() {
-    return this.customClick('@openWidgetFilterEditModal');
+  clickEditFilter(name) {
+    return this.customClick(this.el('@editFilter', name));
   },
 
-  clickDeleteFilter() {
-    return this.customClick('@openWidgetFilterDeleteModal');
+  verifyFilterVisible(name) {
+    return this.assert.visible(this.el('@filterItem', name));
+  },
+
+  verifyFilterDeleted(name) {
+    return this.waitForElementNotPresent(this.el('@filterItem', name));
+  },
+
+  clickDeleteFilter(name) {
+    return this.customClick(this.el('@deleteFilter', name));
   },
 
   clickCreateMoreInfos() {
@@ -222,7 +243,7 @@ const commands = {
     return this.customClick(this.el('@columnNameSwitchField', index));
   },
 
-  setColumnNameSwitch(index, checked = false) {
+  setColumnNameIsHtml(index, checked = false) {
     return this.getAttribute(this.el('@columnNameSwitchFieldInput', index), 'aria-checked', ({ value }) => {
       if (value !== String(checked)) {
         this.clickColumnNameSwitch(index);
@@ -239,7 +260,7 @@ const commands = {
       .setColumnNameValue(index, value);
 
     if (typeof isHtml === 'boolean') {
-      this.setColumnNameSwitch(index, isHtml);
+      this.setColumnNameIsHtml(index, isHtml);
     }
 
     return this;
@@ -265,7 +286,7 @@ const commands = {
     });
   },
 
-  clickInfoPopup() {
+  clickCreateOrEditInfoPopup() {
     return this.customClick('@widgetInfoPopup');
   },
 
@@ -299,6 +320,15 @@ const commands = {
     return this.customClick('@selectFilters')
       .waitForElementVisible(this.el('@optionSelect', index))
       .customClick(this.el('@optionSelect', index));
+  },
+
+  selectFilterByName(name) {
+    this.customClick('@selectFilters')
+      .api.useXpath()
+      .customClick(this.el('@optionSelectXPath', name))
+      .useCss();
+
+    return this;
   },
 
   clickStatsSelect() {
@@ -390,22 +420,41 @@ const commands = {
   clickStatSelectButton() {
     return this.customClick('@statSelectButton');
   },
+
+  assertWidgetRowClasses(id, classes) {
+    return this.assert.cssClassPresent(this.el('@widgetRow', id), classes);
+  },
+
+  waitFirstUserPreferencesXHR(triggerFunc, callback) {
+    return this.waitForFirstXHR(
+      API_ROUTES.userPreferences,
+      WAIT_FOR_FIRST_XHR_TIME,
+      triggerFunc,
+      ({ responseData, requestData }) => callback({
+        responseData: JSON.parse(responseData),
+        requestData: JSON.parse(requestData),
+      }),
+    );
+  },
 };
 
 
 module.exports = {
   elements: {
     optionSelect: '.menuable__content__active .v-select-list [role="listitem"]:nth-of-type(%s)',
+    optionSelectXPath: './/*[contains(@class, "menuable__content__active")]//*[contains(@class, "v-select-list")]//span[contains(text(), "%s")]',
 
     periodicRefresh: sel('periodicRefresh'),
     periodicRefreshSwitchInput: `input${sel('periodicRefreshSwitch')}`,
     periodicRefreshSwitch: `.v-input${sel('periodicRefreshSwitch')} .v-input--selection-controls__ripple`,
     periodicRefreshField: sel('periodicRefreshField'),
 
-    widgetTitle: sel('widgetTitle'),
+    widgetTitle: sel('widgetTitle-%s'),
+    settingsWidgetTitle: sel('settingsWidgetTitle'),
     widgetTitleField: sel('widgetTitleField'),
     closeWidget: sel('closeWidget'),
 
+    widgetRow: sel('widgetRow-%s'),
     rowGridSize: sel('rowGridSize'),
     rowGridSizeCombobox: sel('rowGridSizeCombobox'),
 
@@ -468,15 +517,20 @@ module.exports = {
     widgetInfoPopup: sel('infoPopupButton'),
 
     filters: sel('filters'),
-    mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
-    mixFiltersInput: `input${sel('mixFilters')}`,
-    addFilter: sel('addFilter'),
-    andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
-    andFiltersInput: `input${sel('andFilters')}`,
-    orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
-    editFilter: sel('editFilter-%s'),
-    deleteFilter: sel('deleteFilter-%s'),
-    selectFilters: `${sel('selectFilters')} .v-input__slot`,
+
+    ...elementsWrapperCreator(sideBarSelector, {
+      mixFilters: `div${sel('mixFilters')} .v-input--selection-controls__ripple`,
+      mixFiltersInput: `input${sel('mixFilters')}`,
+      addFilter: sel('addFilter'),
+      andFilters: `${sel('andFilters')} + .v-input--selection-controls__ripple`,
+      andFiltersInput: `input${sel('andFilters')}`,
+      orFilters: `${sel('orFilters')} + .v-input--selection-controls__ripple`,
+      editFilter: sel('editFilter-%s'),
+      deleteFilter: sel('deleteFilter-%s'),
+      filterItem: sel('filterItem-%s'),
+
+      selectFilters: `${sel('selectFilters')} .v-select__slot`,
+    }),
 
     statsSelector: sel('statsSelector'),
     addStatButton: sel('addStatButton'),

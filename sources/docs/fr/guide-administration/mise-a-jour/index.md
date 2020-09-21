@@ -5,7 +5,7 @@
 
 ## Principes des numéros de version de Canopsis
 
-Une nouvelle version de Canopsis sort généralement tous les 15 jours.
+Une nouvelle version de Canopsis sort généralement toutes les 3 semaines.
 
 Afin de décrire ses changements, Canopsis suit le principe du *versionnage sémantique*.
 
@@ -87,6 +87,8 @@ canoctl restart
 ```
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md) qui vous concernent.
+
+**Si vous bénéficiez d'un développement spécifique** (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
 
 Vous pouvez alors vous connecter à nouveau sur l'interface Canopsis pour valider que tout fonctionne correctement.
 

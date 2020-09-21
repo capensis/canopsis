@@ -11,10 +11,21 @@ import rightModule from './right';
 import eventFilterRuleModule from './event-filter-rule';
 import webhookModule from './webhook';
 import infoModule from './info';
+import filterHintModule from './filter-hint';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import actionModule from './action';
 import heartbeatModule from './heartbeat';
+import keepaliveModule from './keepalive';
+import dynamicInfoModule from './dynamic-info';
+import dynamicInfoTemplateModule from './dynamic-info-template';
+import pbehaviorReasonsModule from './pbehavior-reasons';
+import alarmColumnFiltersModule from './alarm-column-filters';
+import sessionModule from './session';
+import broadcastMessageModule from './broadcast-message';
+import counterModule from './counter';
+import metaAlarmRuleModule from './meta-alarm-rule';
+import playlistModule from './playlist';
 
 export default {
   alarm: alarmModule,
@@ -34,4 +45,15 @@ export default {
   snmpMib: snmpMibModule,
   action: actionModule,
   heartbeat: heartbeatModule,
+  keepalive: keepaliveModule,
+  dynamicInfo: dynamicInfoModule,
+  dynamicInfoTemplate: dynamicInfoTemplateModule,
+  filterHint: filterHintModule,
+  pbehaviorReasons: pbehaviorReasonsModule,
+  alarmColumnFilters: alarmColumnFiltersModule,
+  session: sessionModule,
+  broadcastMessage: broadcastMessageModule,
+  counter: counterModule,
+  playlist: playlistModule,
+  metaAlarmRule: metaAlarmRuleModule,
 };

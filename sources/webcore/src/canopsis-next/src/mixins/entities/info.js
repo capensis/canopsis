@@ -1,7 +1,9 @@
-import { USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
+import { POPUP_TYPES, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
 
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
+import { getSecondsByUnit } from '@/helpers/time';
+import { setTabTitle } from '@/helpers/set-tab-title';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
@@ -14,12 +16,14 @@ export default {
       version: 'version',
       logo: 'logo',
       appTitle: 'appTitle',
+      popupTimeout: 'popupTimeout',
       footer: 'footer',
       edition: 'edition',
       stack: 'stack',
       description: 'description',
       language: 'language',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
+      allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
     }),
@@ -44,6 +48,40 @@ export default {
       };
 
       return isMatch(appInfo, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right]);
+    },
+
+    setErrorPopupTime() {
+      const { interval, unit } = this.popupTimeout.error;
+      const delay = getSecondsByUnit(interval, unit) * 1000;
+
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.error, delay);
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.warning, delay);
+    },
+
+    setInfoPopupTime() {
+      const { interval, unit } = this.popupTimeout.info;
+      const delay = getSecondsByUnit(interval, unit) * 1000;
+
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.info, delay);
+      this.$popups.setDefaultCloseTime(POPUP_TYPES.success, delay);
+    },
+
+    setPopupTimeout() {
+      if (!this.popupTimeout) {
+        return;
+      }
+
+      if (this.popupTimeout.error) {
+        this.setErrorPopupTime();
+      }
+
+      if (this.popupTimeout.info) {
+        this.setInfoPopupTime();
+      }
+    },
+
+    setTitle() {
+      setTabTitle(this.appTitle);
     },
   },
 };

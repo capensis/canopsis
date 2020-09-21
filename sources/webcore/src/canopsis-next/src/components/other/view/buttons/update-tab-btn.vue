@@ -12,12 +12,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
-
 export default {
-  mixins: [
-    modalMixin,
-  ],
   props: {
     tab: {
       type: Object,
@@ -31,7 +26,7 @@ export default {
 
   methods: {
     showUpdateTabModal(tab) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('modals.viewTab.edit.title'),

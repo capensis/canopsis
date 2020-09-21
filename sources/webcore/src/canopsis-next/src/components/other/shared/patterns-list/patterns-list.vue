@@ -13,13 +13,18 @@
       align-center
     )
       v-flex(:class="disabled ? 'xs12' : 'xs11'")
-        v-textarea(
-          :value="pattern | json",
-          rows="7",
-          no-resize,
-          readonly,
-          disabled
-        )
+        v-layout
+          pattern-information.ma-3.ml-0 {{ $t('common.and') }}
+          v-flex(xs12)
+            v-textarea(
+              :value="pattern | json",
+              rows="7",
+              no-resize,
+              readonly,
+              disabled
+            )
+        v-layout(v-if="index !== patterns.length - 1", justify-center)
+          span.text-uppercase.operator-chip {{ $t('common.or') }}
       v-flex.text-xs-center(v-if="!disabled", xs1)
         div
           v-btn(icon, @click="showEditPatternModal(index)")
@@ -33,11 +38,15 @@
 <script>
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
-import modalMixin from '@/mixins/modal';
 import formArrayMixin from '@/mixins/form/array';
 
+import PatternInformation from '@/components/other/pattern/pattern-information.vue';
+
 export default {
-  mixins: [modalMixin, formArrayMixin],
+  components: {
+    PatternInformation,
+  },
+  mixins: [formArrayMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -63,7 +72,7 @@ export default {
   },
   methods: {
     showCreatePatternModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createEventFilterRulePattern,
         config: {
           operators: this.operators,
@@ -73,7 +82,7 @@ export default {
     },
 
     showEditPatternModal(index) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createEventFilterRulePattern,
         config: {
           pattern: this.patterns[index],
@@ -84,7 +93,7 @@ export default {
     },
 
     showRemovePatternModal(index) {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => this.removeItemFromArray(index),

@@ -8,8 +8,8 @@
         template(v-else)
           v-btn.primary(data-test="editButton", small, @click="listeners.edit")
             span {{ parent.$t('common.edit') }}
-          v-btn.error(small, @click="listeners.delete")
-            v-icon(data-test="deleteButton") delete
+          v-btn.error(data-test="deleteButton", small, @click="listeners.delete")
+            v-icon delete
 </template>
 
 <script>

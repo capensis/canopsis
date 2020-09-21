@@ -1,32 +1,64 @@
+# Note: use the following command to get the right mkdocs version
+# python3 -m pip install -r ./sources/docs/requirements.txt
+#
+# See sources/docs/README.md for more information.
+
 site_name: Documentation Canopsis
 site_url: https://doc.canopsis.net
 
 repo_url: https://git.canopsis.net/canopsis/canopsis
+repo_name: 'git.canopsis.net'
 
-docs_dir: 
+docs_dir:
    sources/docs/fr
-copyright: Documentation © Canopsis 2018–2019 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
+copyright: Documentation © Capensis 2018–2020 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
 theme:
   name: material
   language: fr
+  # Still using the old syntax here, because our icon isn't in SVG
   logo: 'img/canopsis-mkdocs.png'
+  icon:
+    repo: fontawesome/brands/gitlab
   palette:
-    primary: 'green'
-    accent: 'green'
-  feature:
-    tabs: true
-
-extra:
-  search:
-    language: 'en'
+    primary: green
+    accent: green
+    # (Automatic) dark theme still not OK with green, as of mkdocs-material-5.5.6
+    #scheme: preference
+  features:
+    - tabs
 
 markdown_extensions:
     - admonition
     - codehilite:
         guess_lang: false
+    - def_list
+    - pymdownx.tabbed
+    - pymdownx.superfences
     - toc:
-        permalink: True
+        permalink: true
+    - pymdownx.superfences:
+        custom_fences:
+          - name: mermaid
+            class: mermaid
+            format: !!python/name:pymdownx.superfences.fence_div_format
 
 plugins:
-    - search
+    - search:
+        lang:
+          - en
+    - git-revision-date-localized:
+        locale: fr
+        type: iso_date
+
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/canopsis
+    - icon: fontawesome/brands/linkedin
+      link: https://fr.linkedin.com/company/capensis
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/u/canopsis/
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.7.0/dist/mermaid.min.js

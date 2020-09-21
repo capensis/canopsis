@@ -10,7 +10,6 @@ import { MODALS, ENTITIES_TYPES, WIDGETS_ACTIONS_TYPES } from '@/constants';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import authMixin from '@/mixins/auth';
-import modalMixin from '@/mixins/modal';
 import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
@@ -30,7 +29,6 @@ export default {
   components: { SharedActionsPanel },
   mixins: [
     authMixin,
-    modalMixin,
     entitiesWatcherMixin,
     entitiesContextEntityMixin,
     entitiesPbehaviorMixin,
@@ -111,7 +109,7 @@ export default {
   methods: {
     showEditEntityModal() {
       if (this.item.type === ENTITIES_TYPES.watcher) {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.createWatcher,
           config: {
             item: this.item,
@@ -120,7 +118,7 @@ export default {
           },
         });
       } else {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.createEntity,
           config: {
             item: this.item,
@@ -133,7 +131,7 @@ export default {
 
     showDuplicateEntityModal() {
       if (this.item.type === ENTITIES_TYPES.watcher) {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.createWatcher,
           config: {
             item: this.item,
@@ -143,7 +141,7 @@ export default {
           },
         });
       } else {
-        this.showModal({
+        this.$modals.show({
           name: MODALS.createEntity,
           config: {
             item: this.item,
@@ -156,7 +154,7 @@ export default {
     },
 
     showDeleteEntityModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: () => this.removeContextEntity({ id: this.item._id }),
@@ -165,7 +163,7 @@ export default {
     },
 
     showAddPbehaviorModal() {
-      this.showModal({
+      this.$modals.show({
         name: MODALS.createPbehavior,
         config: {
           pbehavior: {
@@ -182,7 +180,7 @@ export default {
       const entitiesFields = convertObjectToTreeview(this.item, 'entity');
       const variables = [entitiesFields];
 
-      this.showModal({
+      this.$modals.show({
         name: MODALS.variablesHelp,
         config: {
           variables,

@@ -1,89 +1,184 @@
-# Axe
+# Moteur `engine-axe` (Go, Core)
 
-Le moteur axe permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le bac à alarmes.
+Le moteur `engine-axe` permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le Bac à alarmes.
 
-Dans la version CAT, il permet aussi d'appliquer des [`webhooks`](moteur-axe-webhooks.md).
+Jusqu'à Canopsis 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhooks, dans la version CAT. Depuis Canopsis 3.34.0, les Webhooks sont gérés par un moteur [`engine-webhook`](moteur-webhook.md) dédié (toujours en édition CAT).
 
-## Fonctionnement
+## Utilisation
 
-La file du moteur est placée juste après le moteur [che](moteur-che.md).
+### Options du moteur
 
-À l'arrivée dans sa file, le moteur axe va transformer les événements en alarmes qu'il va créer et enrichir.
+La commande `engine-axe -help` liste toutes les options acceptées par le moteur.
 
-Si l'événement correspond à une alarme en cours, l'alarme va alors être mise à jour.
-
-Si l'événement en correspond à aucune alarme en cours, l'alarme va alors être créée.
-
-Si l'événement correspond à une action (comme la mise d'un ACK), l'alarme va être mise à jour en prenant en compte l'action.
-
-### Options de l'engine-axe
+Les options acceptées par la dernière version de Canopsis sont les suivantes :
 
 ```
-  -autoDeclareTickets
-        Déclare les tickets automatiquement pour chaque alarme. DÉPRÉCIÉ, remplacé par les webhooks.
-  -d    debug
-  -featureHideResources
-        Active les features de gestion de ressources cachées.
+  -d	debug
   -featureStatEvents
-        Envoie les évènements de statistiques
-  -postProcessorsDirectory
-        Le répertoire contenant les plugins de post-traitement (par défaut ".")
+      Send statistic events
+  -ignoreDefaultTomlConfig
+      load toml file values into database
   -printEventOnError
-        Afficher les évènements sur les erreurs de traitement.
-  -publishQueue
-        Publie les événements sur cette file. (par défaut "Engine_watcher")
+      Print event on processing error
+  -publishQueue string
+      Publish event to this queue. (default "Engine_watcher")
   -version
-        version infos
+      version infos
 ```
 
-## Collection
+### Multi-instanciation
+
+!!! note
+    Cette fonctionnalité est disponible à partir de Canopsis 3.40.0. Elle ne doit pas être utilisée sur les versions antérieures.
+
+Il est possible, à partir de **Canopsis 3.40.0**, de lancer plusieurs instances du moteur `engine-axe`, afin d'améliorer sa performance de traitement et sa résilience.
+
+En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale axe=2` pour que le moteur `engine-axe` soit lancé avec 2 instances.
+
+Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
+
+## Fichier de configuration
+
+Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
+
+À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet au moteur de ne pas prendre en compte les paramètres qui se trouvent dans son fichier de configuration lors du démarrage. Il se basera alors uniquement sur les données présentes en base. Si cette option n'est pas précisée, `engine-axe` synchronisera les informations présentes en base avec celles contenues dans le fichier lors de son lancement.
+
+Le contenu par défaut de ce fichier de configuration est le suivant :
+
+```ini
+[global]
+PrefetchCount = 10000
+PrefetchSize = 0
+
+[alarm]
+FlappingFreqLimit = 0
+FlappingInterval = 0
+StealthyInterval = 0
+BaggotTime = "60s"
+EnableLastEventDate = false
+CancelAutosolveDelay = "1h"
+```
+
+### Option `EnableLastEventDate`
+
+!!! attention
+    Activer cette option entraîne une action supplémentaire systématique dans le moteur qui a une incidence négative sur ses performances.
+
+Les alarmes dans Canopsis incluent un champ `alarm.v.last_event_date`.
+
+Cependant, la mise à jour de ce champ n'est pas activée par défaut. Sa valeur est celle de `alarm.v.creation_date`, soit la date de création de l'alarme par `engine-axe`.
+
+Pour l'activer, passez le paramètre `EnableLastEventDate` du fichier de configuration à `true`.
+
+### Option `CancelAutosolveDelay`
+
+Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, elle prend le statut annulée et reste pendant 1h dans le bac des alarmes en cours. Passé le délai d'une heure, elle change de statut pour passer en résolue et bascule dans le bac des alarmes résolues tout en gardant le dernier niveau de criticité connu.
+
+Vous pouvez agir sur ce délai en modifiant le paramètre `CancelAutosolveDelay`.
+
+### Option `DisplayNameScheme`
+
+!!! note
+    Cette fonctionnalité est disponible à partir de Canopsis 3.45.0.
+
+Vous avez la possibilité de personnaliser le schéma de construction de l'attribut `display_name` d'une alarme par l'intermédiaire de l'option `DisplayNameScheme`.
+
+L'attribut `display_name` d'une alarme permet d'identifier une alarme par une chaîne plus simple que son identifiant technique.
+
+!!! warning
+    Canopsis n'apporte pas la garantie que cet identifiant sera unique.
+    Il vous appartient d'utiliser un schéma qui offre une probabilité suffisamment faible par rapport au nombre d'alarmes avec lesquelles vous allez traiter. 
+
+Par défaut, le schéma utilisé est le suivant : "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
+
+Vous pouvez modifier cette valeur en utilisant une fonction du tableau ci-après (Une seule fonction à ce jour)
+
+| Fonction | Description | Syntaxe
+| ------ | ------ | ---- | 
+| `rand_string` | Lettre ou chiffre aléatoire | `rand_string ${longueur}`
+
+Exemples : 
+
+```ini
+[alarm]
+...
+DisplayNameScheme = "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}"
+```
+
+```ini
+[alarm]
+...
+DisplayNameScheme = "{{ rand_string 4 }}_{{ rand_string 3 }}_{{ rand_string 2 }}"
+```
+
+## Fonctionnement du moteur
+
+La file du moteur est placée juste après le moteur [`engine-che`](moteur-che.md).
+
+À l'arrivée dans sa file, le moteur `engine-axe` va transformer les événements en alarmes qu'il va créer et mettre à jour.
+
+Lorsque la multi-instanciation est activée, une seule instance d'`engine-axe` s'occupe du *periodical process*. Ce mécanisme est automatique.
+
+### Gestion des événements de type check
+
+3 possibilités pour un événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure) :
+
+1. Il ne correspond à aucune alarme en cours : l'alarme va alors être créée
+2. Il correspond à une alarme en cours et son champ `state` ne vaut pas `0` : l'alarme va alors être mise à jour
+3. Il correspond à une alarme en cours et son champ `state` vaut `0` : l'alarme va alors passer en `OK`. Au 2° [battement (beat)](../../guide-utilisation/vocabulaire/index.md#battement) suivant, si l'alarme n'a pas été rouverte par un nouvel événement de type [`check`](../../guide-developpement/struct-event.md#event-check-structure), elle est considérée comme résolue. Un champ `v.resolved` lui est alors ajouté avec le timestamp courant.
+
+### Gestion des autres types d'événements
+
+Si l'événement correspond à une action (comme la mise d'un [acquittement](../../guide-developpement/struct-event.md#event-acknowledgment-structure)), l'alarme va être mise à jour en appliquant l'action.
+
+## Collection MongoDB associée
 
 Les alarmes sont stockées dans la collection MongoDB `periodical_alarm`.
 
-L'`_id` est générée automatiquement.
+Le champ `_id` est généré automatiquement.
 
 Le champ `d` correspond à l'`_id` de l'entité à laquelle l'alarme est rattachée.
 
 ```json
 {
     "_id" : "aad73d0b-2e0e-453d-90c5-1c843cd196b2",
-    "t" : NumberLong(1567498879),
+    "t" : 1567498879,
     "d" : "disk2/serveur_de_salle_machine_DHCP",
     "v" : {
         "state" : {
             "_t" : "stateinc",
-            "t" : NumberLong(1567498879),
+            "t" : 1567498879,
             "a" : "superviseur1.superviseur1",
             "m" : "Disque plein a 98%, 50GO occupe",
-            "val" : NumberLong(2)
+            "val" : 2
         },
         "status" : {
             "_t" : "statusinc",
-            "t" : NumberLong(1567498879),
+            "t" : 1567498879,
             "a" : "superviseur1.superviseur1",
             "m" : "Disque plein a 98%, 50GO occupe",
-            "val" : NumberLong(1)
+            "val" : 1
         },
         "steps" : [
             {
                 "_t" : "stateinc",
-                "t" : NumberLong(1567498879),
+                "t" : 1567498879,
                 "a" : "superviseur1.superviseur1",
                 "m" : "Disque plein a 98%, 50GO occupe",
-                "val" : NumberLong(2)
+                "val" : 2
             },
             {
                 "_t" : "statusinc",
-                "t" : NumberLong(1567498879),
+                "t" : 1567498879,
                 "a" : "superviseur1.superviseur1",
                 "m" : "Disque plein a 98%, 50GO occupe",
-                "val" : NumberLong(1)
+                "val" : 1
             }
         ],
         "component" : "serveur_de_salle_machine_DHCP",
         "connector" : "superviseur1",
         "connector_name" : "superviseur1",
-        "creation_date" : NumberLong(1567498879),
+        "creation_date" : 1567498879,
         "display_name" : "XA-KU-AQ",
         "extra" : {},
         "initial_output" : "Disque plein a 98%, 50GO occupe",
@@ -93,12 +188,12 @@ Le champ `d` correspond à l'`_id` de l'entité à laquelle l'alarme est rattach
         "long_output_history" : [
             ""
         ],
-        "last_update_date" : NumberLong(1567498879),
-        "last_event_date" : NumberLong(1567498879),
+        "last_update_date" : 1567498879,
+        "last_event_date" : 1567498879,
         "resource" : "disk2",
-        "state_changes_since_status_update" : NumberLong(0),
+        "state_changes_since_status_update" : 0,
         "tags" : [],
-        "total_state_changes" : NumberLong(1)
+        "total_state_changes" : 1
     }
 }
 ```

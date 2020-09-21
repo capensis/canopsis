@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { get, pick, uniq, mergeWith } from 'lodash';
+import { get, pick, uniqWith, mergeWith, isEqual } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import request from '@/services/request';
@@ -24,7 +24,7 @@ export const entitiesModule = {
   namespaced: true,
   getters: {
     getItem(state) {
-      return (type, id, withEmbedded) => {
+      return (type, id, withEmbedded = false) => {
         let schema = schemas[type];
 
         if (typeof type !== 'string') {
@@ -45,19 +45,21 @@ export const entitiesModule = {
           return undefined;
         }
 
-        if (cache.has(entity)) {
+        if (!schema.disabledCache && cache.has(entity)) {
           return cache.get(entity);
         }
 
         const result = denormalize(id, schema, state);
 
-        cache.set(entity, result);
+        if (!schema.disabledCache) {
+          cache.set(entity, result);
+        }
 
         return result;
       };
     },
     getList(state) {
-      return (type, ids = []) => {
+      return (type, ids = [], withEmbedded = false) => {
         if (typeof type !== 'string') {
           throw new Error('[entities/getList] Missing required argument.');
         }
@@ -65,20 +67,32 @@ export const entitiesModule = {
         if (!state[type] || ids.length === 0) {
           return [];
         }
-        const schema = schemas[type];
-        const { idAttribute } = schema;
 
-        return denormalize(ids, [schema], state)
-          .filter(item => !!item)
-          .map((item) => {
-            if (cache.has(state[type][item[idAttribute]])) {
-              return cache.get(state[type][item[idAttribute]]);
-            }
+        let schema = schemas[type];
 
-            cache.set(state[type][item[idAttribute]], item);
+        if (withEmbedded) {
+          schema = cloneSchemaWithEmbedded(schema);
+        }
 
-            return item;
-          });
+        const { idAttribute, disabledCache } = schema;
+        const entities = denormalize(ids, [schema], state)
+          .filter(item => !!item);
+
+        if (disabledCache) {
+          return entities;
+        }
+
+        return entities.map((item) => {
+          const entity = state[type][item[idAttribute]];
+
+          if (cache.has(entity)) {
+            return cache.get(entity);
+          }
+
+          cache.set(entity, item);
+
+          return item;
+        });
       };
     },
   },
@@ -107,6 +121,10 @@ export const entitiesModule = {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             cache.clearForEntity(state, entity);
 
+            if (state[type][key]) {
+              cache.clearForEntity(state, state[type][key]);
+            }
+
             Vue.set(state[type], key, entity);
           });
         }
@@ -125,13 +143,17 @@ export const entitiesModule = {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             const newEntity = mergeWith({}, state[type][key] || {}, entity, (objValue, srcValue) => {
               if (Array.isArray(objValue)) {
-                return uniq(objValue.concat(srcValue));
+                return uniqWith(objValue.concat(srcValue), isEqual);
               }
 
               return undefined;
             });
 
             cache.clearForEntity(state, newEntity);
+
+            if (state[type][key]) {
+              cache.clearForEntity(state, state[type][key]);
+            }
 
             Vue.set(state[type], key, newEntity);
           });
@@ -148,6 +170,10 @@ export const entitiesModule = {
         if (state[type]) {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             cache.delete(entity);
+
+            if (state[type][key]) {
+              cache.delete(state[type][key]);
+            }
 
             Vue.delete(state[type], key);
           });
@@ -228,6 +254,7 @@ export const entitiesModule = {
         route,
         schema,
         body,
+        cancelToken,
         method = 'GET',
         headers = {},
         params = {},
@@ -237,18 +264,20 @@ export const entitiesModule = {
     ) {
       let data;
 
-      switch (method) {
+      const config = { params, headers, cancelToken };
+
+      switch (method.toUpperCase()) {
         case 'GET':
-          data = await request.get(route, { params, headers });
+          data = await request.get(route, config);
           break;
         case 'POST':
-          data = await request.post(route, body, { params, headers });
+          data = await request.post(route, body, config);
           break;
         case 'PUT':
-          data = await request.put(route, body, { params, headers });
+          data = await request.put(route, body, config);
           break;
         case 'DELETE':
-          data = await request.delete(route, { params, headers });
+          data = await request.delete(route, config);
           break;
         default:
           throw new Error(`Invalid method: ${method}`);

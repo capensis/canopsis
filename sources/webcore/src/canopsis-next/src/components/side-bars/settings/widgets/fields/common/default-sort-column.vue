@@ -4,24 +4,20 @@
     v-container
       v-layout(data-test="defaultSortColumnOrderByLayout", row)
         v-select(
-          :value="value.column",
+          v-field="value.column",
           :items="columns",
           :label="columnsLabel",
           item-text="label",
-          item-value="value",
-          @change="updateField('column', $event)"
+          item-value="value"
         )
       v-layout(data-test="defaultSortColumnOrdersLayout", row)
         v-select(
-          :value="value.order",
-          :items="orders",
-          @input="updateField('order', $event)"
+          v-field="value.order",
+          :items="orders"
         )
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-
 import { SORT_ORDERS } from '@/constants';
 
 /**
@@ -32,13 +28,12 @@ import { SORT_ORDERS } from '@/constants';
  * @event value#input
  */
 export default {
-  mixins: [formMixin],
   props: {
     value: {
       type: Object,
       default: () => ({
         column: '',
-        order: 'ASC',
+        order: SORT_ORDERS.asc,
       }),
     },
     columns: {
