@@ -1,72 +1,54 @@
 <template lang="pug">
-  div.white
-    v-layout(row, wrap)
-      v-flex(xs4)
-        search-field(@submit="updateSearchHandler", @clear="clearSearchHandler")
-      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && selectedExceptions.length", xs4)
-        v-btn(@click="deleteSelectedExceptions", icon)
+  advanced-data-table.white(
+    :headers="headers",
+    :items="pbehaviorExceptions",
+    :loading="pending",
+    :total-items="totalItems",
+    :pagination="pagination",
+    :is-disabled-item="isDisabledException",
+    select-all,
+    expand,
+    search,
+    advanced-pagination,
+    @update:pagination="$emit('update:pagination', $event)"
+  )
+    template(slot="toolbar", slot-scope="props")
+      v-flex(v-show="hasDeleteAnyPbehaviorExceptionAccess && props.selected.length", xs4)
+        v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
-    v-data-table(
-      v-model="selected",
-      :headers="headers",
-      :items="pbehaviorExceptions",
-      :loading="pending",
-      :total-items="totalItems",
-      :pagination="pagination",
-      item-key="_id",
-      select-all,
-      expand,
-      @update:pagination="$emit('update:pagination', $event)"
-    )
-      template(slot="items", slot-scope="props")
-        tr(@click="props.expanded = !props.expanded")
-          td(@click.stop="")
-            v-checkbox-functional(
-              v-if="props.item.deletable",
-              v-model="props.selected",
-              primary,
-              hide-details
-            )
-            v-checkbox-functional(v-else, disabled, primary, hide-details)
-          td {{ props.item.name }}
-          td
-            v-layout
-              v-btn.mx-0(
-                slot="activator",
-                v-if="hasUpdateAnyPbehaviorExceptionAccess",
-                icon,
-                small,
-                @click.stop="$emit('edit', props.item)"
-              )
-                v-icon edit
-              v-tooltip(bottom, :disabled="props.item.deletable")
-                v-btn.mx-0(
-                  slot="activator",
-                  v-if="hasDeleteAnyPbehaviorExceptionAccess",
-                  :disabled="!props.item.deletable",
-                  icon,
-                  small,
-                  @click.stop="$emit('remove', props.item._id)"
-                )
-                  v-icon(color="error") delete
-                span {{ $t('pbehaviorExceptions.usingException') }}
-      template(slot="expand", slot-scope="props")
-        pbehavior-exceptions-list-expand-panel(:pbehaviorException="props.item")
+    template(slot="actions", slot-scope="props")
+      v-layout
+        v-btn.mx-0(
+          slot="activator",
+          v-if="hasUpdateAnyPbehaviorExceptionAccess",
+          icon,
+          small,
+          @click.stop="$emit('edit', props.item)"
+        )
+          v-icon edit
+        v-tooltip(bottom, :disabled="props.item.deletable")
+          v-btn.mx-0(
+            slot="activator",
+            v-if="hasDeleteAnyPbehaviorExceptionAccess",
+            :disabled="!props.item.deletable",
+            icon,
+            small,
+            @click.stop="$emit('remove', props.item._id)"
+          )
+            v-icon(color="error") delete
+          span {{ $t('pbehaviorExceptions.usingException') }}
+    template(slot="expand", slot-scope="props")
+      pbehavior-exceptions-list-expand-panel(:pbehaviorException="props.item")
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
-
-import SearchField from '@/components/forms/fields/search-field.vue';
 
 import PbehaviorExceptionsListExpandPanel from './partials/pbehavior-exceptions-list-expand-panel.vue';
 
 export default {
   components: {
     PbehaviorExceptionsListExpandPanel,
-    SearchField,
   },
   mixins: [rightsTechnicalPbehaviorExceptionsMixin],
   props: {
@@ -101,33 +83,16 @@ export default {
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actions',
           sortable: false,
         },
       ];
     },
-
-    selectedExceptions() {
-      return this.selected.filter(({ deletable }) => deletable);
-    },
   },
   methods: {
-    updateSearchHandler(search) {
-      this.$emit('update:pagination', { ...this.pagination, search });
-    },
-
-    clearSearchHandler() {
-      this.$emit('update:pagination', omit(this.pagination, ['search']));
-    },
-
-    deleteSelectedExceptions() {
-      this.$emit('remove-selected', this.selectedExceptions);
+    isDisabledException({ deletable }) {
+      return !deletable;
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .item-checkbox {
-    display: inline-block;
-  }
-</style>
