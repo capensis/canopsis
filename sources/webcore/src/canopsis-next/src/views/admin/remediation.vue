@@ -6,17 +6,19 @@
         v-card.ma-2
           v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
             template
-              v-tab(href="#instructions") {{ $t('remediation.tabs.instructions') }}
+              v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('remediation.tabs.instructions') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.instructions")
                 v-card-text
                   span {{ $t('remediation.tabs.instructions') }}
             template
-              v-tab(href="#configurations") {{ $t('remediation.tabs.configurations') }}
+              v-tab(
+                :href="`#${$constants.REMEDIATION_TABS.configurations}`"
+              ) {{ $t('remediation.tabs.configurations') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.configurations")
                 v-card-text
                   span {{ $t('remediation.tabs.configurations') }}
             template
-              v-tab(href="#jobs") {{ $t('remediation.tabs.jobs') }}
+              v-tab(:href="`#${$constants.REMEDIATION_TABS.jobs}`") {{ $t('remediation.tabs.jobs') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.jobs")
                 v-card-text
                   span {{ $t('remediation.tabs.jobs') }}
