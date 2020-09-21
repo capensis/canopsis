@@ -107,7 +107,10 @@ export default {
     },
   },
   async mounted() {
-    this.fetchLoginInfos();
+    await this.fetchLoginInfos();
+
+    this.setTitle();
+    this.setPopupTimeout();
   },
   methods: {
     async submit() {

@@ -34,7 +34,6 @@ Crée une nouvelle action à partir du corps de la requête.
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
-{
     "entity_filter": "{\"v.state.val\": 1}",
     "condition": {},
     "tasks": [
@@ -108,7 +107,6 @@ Modifie une action à partir du corps de la requête.
 
 ```sh
 curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
-{
     "_id": "ad8457d0-d593-492e-bb41-c701d396b0b2",
     "entity_filter": "{\"v.state.val\": 2}",
     "condition": {},

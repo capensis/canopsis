@@ -2,7 +2,7 @@
 
 L'interface web de Canopsis est basée sur [VueJS](https://vuejs.org) et [Material Design](https://material.io).
 
-Cette interface est compatible avec les navigateurs tels que Mozilla Firefox et Google Chrome. Elle n'est en revanche pas compatible avec Internet Explorer, qui n'est plus maintenu depuis 2013.
+Elle n'est officiellement compatible qu'avec une version raisonnablement récente des navigateurs Mozilla Firefox et Google Chrome. Voyez le document décrivant les [limitations de compatibilité avec les anciens navigateurs](../limitations/index.md) pour plus de détails.
 
 ## Les vues
 
@@ -11,6 +11,12 @@ Canopsis fonctionne avec un système de vues, personnalisables, regroupées dans
 Si vous avez les droits nécessaires, il vous est possible de créer/modifier des vues et des groupes de vues.
 
 Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues", en cliquant [ici](./vues/index.md).
+
+## Les playlists
+
+Les vues peuvent être affichées sous forme de playlists c'est-à-dire les unes après les autres avec un délai associé.
+
+Pour savoir comment utiliser cette fonctionnalité, rendez-vous sur cette [page explicative](./playlists/index.md).
 
 ## Les widgets
 
@@ -29,3 +35,9 @@ Pour les découvrir, cliquez [ici](./parametres-de-linterface/index.md)
 Différents *helpers* sont disponibles pour ajouter un peu de logique dans ces templates.
 
 Pour plus de détails, consultez la [documentation des helpers Handlebars de Canopsis](helpers/index.md).
+
+## La diffusion de messages
+
+Il est possible de programmer l'affichage d'un bandeau contenant des messages d'information qui apparaîtront dans l'interface de Canopsis.
+
+Reportez vous à cette [page](broadcast-messages.md) pour en savoir plus.

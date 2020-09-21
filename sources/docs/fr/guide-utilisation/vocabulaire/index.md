@@ -4,7 +4,7 @@
 
 Une *alarme* est le résultat du traitement des [évènements](#evenement) par un [moteur](#moteur) et sert à alerter sur un problème.
 
-Elle est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [observateur](#observateur).
+Elle est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [observateur](#observateur). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un [composant](#composant) et d'une [ressource](#ressource) créé une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
 
 Elle peut connaître de multiples changements de criticité et de statut, et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../../guide-administration/moteurs/moteur-action.md). L'ensemble de ces changements et actions s'appelle un *cycle d'alarme*.
 
@@ -35,7 +35,7 @@ Un *connecteur* peut être soit :
 - Un champ d'un [évènement](#evenement). Le plus souvent, il s'agit du nom du logiciel qui envoie ses données à Canopsis. Il sert à créer l'entité [connecteur](#connecteur).
 - Un [script](../../interconnexions/index.md#connecteurs) permettant d’envoyer à Canopsis des [évènements](#evenement) à partir de sources d'informations extérieures.
 
-## Criticité 
+## Criticité
 
 Une [alarme](#alarme) a une *criticité*, indiquant la gravité de l'incident. Il y a actuellement 4 criticités possibles : 1 stable et 3 d'alerte.
 
@@ -83,7 +83,7 @@ La [*météo des services* est un widget](../interface/widgets/meteo-des-service
 
 ## Moteur
 
-Un *moteur* Canopsis consomme les [évènements](#evenement) entrants pour les traiter, puis les acheminer vers le(s) moteur(s) suivant(s). Ils effectuent également une tâche périodique au [battement](#beat) et consomment leurs enregistrements en base de données lorsqu'ils sont disponibles. Vous pouvez consulter plus d'informations sur les *moteurs* dans la documentation du [guide d'administration](../../guide-administration/moteurs/index.md)
+Un *moteur* Canopsis consomme les [évènements](#evenement) entrants pour les traiter, puis les acheminer vers le(s) moteur(s) suivant(s). Ils effectuent également une tâche périodique au [battement](#battement) et consomment leurs enregistrements en base de données lorsqu'ils sont disponibles. Vous pouvez consulter plus d'informations sur les *moteurs* dans la documentation du [guide d'administration](../../guide-administration/moteurs/index.md)
 
 ## Nom de connecteur
 

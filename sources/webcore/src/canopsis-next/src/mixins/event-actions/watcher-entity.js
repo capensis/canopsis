@@ -146,5 +146,21 @@ export default {
 
       this.$emit('add:event', { type: EVENT_ENTITY_TYPES.cancel, data });
     },
+
+    /**
+     * Call emit add:event for comment entity event
+     *
+     * @param {Object} entity
+     * @param {string} output
+     */
+    addCommentActionToQueue({ entity, output }) {
+      const data = {
+        ...this.prepareData(EVENT_ENTITY_TYPES.comment, entity),
+        author: this.currentUser._id,
+        output,
+      };
+
+      this.$emit('add:event', { type: EVENT_ENTITY_TYPES.comment, data });
+    },
   },
 };

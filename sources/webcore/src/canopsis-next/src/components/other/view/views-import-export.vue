@@ -41,11 +41,10 @@
 </template>
 
 <script>
-import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
-
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import entitiesViewMixin from '@/mixins/entities/view';
 
+import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
 import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-bar/group-view-panel.vue';

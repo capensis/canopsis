@@ -1,6 +1,11 @@
 # Événement
 
-L'API event permet d'envoyer un [événement](../struct-event.md#structure-basique-dun-evenement) sur l'exchange de Canopsis.
+L'API event permet d'envoyer un [événement](../struct-event.md#structure-basique-dun-evenement) sur l'exchange de Canopsis dans le [bus AMQP](../../struct-event/#focus-amqp).
+
+!!! note
+    La concaténation des champs `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]` générés par vos évènements ne doit pas dépasser 256 caractères, sans quoi l'évènement ne pourr pas être traité par Canopsis.
+    
+    Consultez la documentation sur les [limitations des évènements](../../guide-utilisation/limitations/index.md#limitations-des-evenements] pour en savoir plus.
 
 ## Envoi d'un événement
 

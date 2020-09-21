@@ -8,6 +8,7 @@ export { default as CreateSnoozeEvent } from './alarm/create-snooze-event.vue';
 export { default as VariablesHelp } from './common/variables-help.vue';
 export { default as InfoPopupSetting } from './alarm/info-popup-setting/info-popup-setting.vue';
 export { default as AddInfoPopup } from './alarm/info-popup-setting/add-info-popup.vue';
+export { default as CreateManualMetaAlarm } from './alarm/create-manual-meta-alarm.vue';
 export { default as CreatePbehavior } from './pbehavior/create-pbehavior.vue';
 export { default as PbehaviorList } from './pbehavior/pbehavior-list.vue';
 export { default as EditLiveReporting } from './alarm/edit-live-reporting.vue';
@@ -50,3 +51,7 @@ export { default as CreateDynamicInfo } from './dynamic-info/create-dynamic-info
 export { default as CreateDynamicInfoInformation } from './dynamic-info/create-dynamic-info-information.vue';
 export { default as DynamicInfoTemplatesList } from './dynamic-info/dynamic-info-templates-list.vue';
 export { default as CreateDynamicInfoTemplate } from './dynamic-info/create-dynamic-info-template.vue';
+export { default as CreateMetaAlarmRule } from './meta-alarm-rule/create-meta-alarm-rule.vue';
+export { default as CreateCommentEvent } from './common/create-comment-event.vue';
+export { default as CreatePlaylist } from './admin/create-playlist.vue';
+export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue';

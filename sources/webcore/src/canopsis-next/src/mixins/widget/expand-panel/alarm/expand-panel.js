@@ -3,6 +3,12 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
+  props: {
+    hideGroups: {
+      type: Boolean,
+      default: false,
+    },
+  },
   methods: {
     ...mapActions({
       fetchAlarmItem: 'fetchItem',
@@ -14,12 +20,14 @@ export default {
         correlation: this.widget.parameters.isCorrelationEnabled || false,
       };
 
-      if (alarm.causes) {
-        params.with_causes = true;
-      }
+      if (!this.hideGroups) {
+        if (alarm.causes) {
+          params.with_causes = true;
+        }
 
-      if (alarm.consequences) {
-        params.with_consequences = true;
+        if (alarm.consequences) {
+          params.with_consequences = true;
+        }
       }
 
       return this.fetchAlarmItemWithParams(alarm, params);
@@ -39,6 +47,20 @@ export default {
       return this.fetchAlarmItem({
         id: alarm._id,
         params: { ...defaultParams, ...params },
+        dataPreparer: (d) => {
+          const { alarms: fetchedAlarms = [] } = d.data[0];
+          const [firstFetchedAlarm] = fetchedAlarms;
+
+          if (alarm.filtered && firstFetchedAlarm) {
+            return [{
+              ...firstFetchedAlarm,
+
+              filtered: alarm.filtered,
+            }];
+          }
+
+          return fetchedAlarms;
+        },
       });
     },
   },

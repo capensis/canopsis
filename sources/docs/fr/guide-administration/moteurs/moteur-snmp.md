@@ -17,12 +17,12 @@ Pour rappel, le résultat de la traduction doit se concrétiser par la générat
 
 Ce message doit comporter à minima les informations suivantes :
 
-*  connector
-*  connector\_name
-*  component
-*  resource
-*  state
-*  output
+*  `connector`
+*  `connector_name`
+*  `component`
+*  `resource`
+*  `state`
+*  `output`
 
 Le principal objectif est donc de déduire ces attributs à partir du tableau `snmp_vars` présent dans les traps bruts.
 
@@ -35,6 +35,20 @@ Sur le nœud des moteurs Canopsis :
 ```sh
 systemctl enable canopsis-engine-cat@snmp
 systemctl start canopsis-engine-cat@snmp
+```
+
+### Activation du service SNMP dans l'interface web
+
+À la fin du fichier `/opt/canopsis/etc/webserver.conf` (ou équivalent Docker), ajouter la ligne suivante :
+
+```ini
+canopsis_cat.webcore.services.snmprule = 1
+```
+
+et redémarrer le serveur web Canopsis :
+
+```sh
+systemctl restart canopsis-webserver
 ```
 
 ### Traduction des traps
@@ -73,15 +87,15 @@ Pour cela, nous devons :
 
 Le paquet `snmp-mibs-downloader` peut être nécessaire. Il embarque lui-même une bibliothèque de MIB et permet, au besoin, d'en télécharger automatiquement des complémentaires depuis le web.
 
-Lors de l'upload des MIB, Canopsis concatène les fichiers uploadés par ordre
-alphabétique. On fera donc particulièrement attention à renommer les fichiers
-pour que l’ordre alphabétique des MIB soit cohérent avec les fichiers à importer.
+Lors de l'upload des MIB, Canopsis concatène les fichiers uploadés dans l'ordre dans lequel il les reçoit. Il faut donc être vigilant sur ce point. Par exemple, Firefox upload les fichiers dans l'ordre dans lequel ils ont été sélectionnés dans la fenêtre de sélection de fichiers. Chrome, quant à lui, upload les fichiers sélectionnés dans l'ordre alphabétique.
 
-Ici par exemple, le fichier `nagios-root.mib` doit être traité avant le fichier `NAGIOS-NOTIFY-MIB`. Ils ont donc été respectivement renommés en `NAGIOS1-ROOT-MIB` et `NAGIOS2-ROOT-MIB`.
+Par exemple, si le fichier `nagios-root.mib` doit être traité avant le fichier `NAGIOS-NOTIFY-MIB`. Vous devrez soit les uploader dans cet ordre soit les renommer respectivement en `NAGIOS1-ROOT-MIB` et `NAGIOS2-ROOT-MIB`.
 
 On sélectionne les fichiers.
 
-![img2](img/scenario_e1.png) ![img3](img/scenario_e2.png)
+![img2](img/scenario_e1.png)
+
+![img3](img/scenario_e2.png)
 
 On vérifie que le traducteur a bien trouvé des objets de type `notification`
 

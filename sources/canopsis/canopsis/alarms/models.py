@@ -226,9 +226,9 @@ class Alarm(object):
             'resolved': self.resolved,
             'ack': None,
             'steps': [],
-            'parents': self.parents,
-            'children': self.children,
             'activation_date': self.activation_date,
+            'parents': [],
+            'children': []
         }
         if self.status is not None:
             value['status'] = self.status.to_dict()
@@ -256,6 +256,12 @@ class Alarm(object):
 
         for ste in self.steps:
             value['steps'].append(ste.to_dict())
+
+        if isinstance(self.parents, list):
+            value['parents'] = list(self.parents)
+
+        if isinstance(self.children, list):
+            value['children'] = list(self.children)
 
         return {
             '_id': self._id,

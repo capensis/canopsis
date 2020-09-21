@@ -1,4 +1,5 @@
 $seeAlarmBtnHeight: 18px;
+$mobileBreakpoint: 450px;
 
 .v-toolbar--fixed {
   z-index: 3;
@@ -99,7 +100,7 @@ $seeAlarmBtnHeight: 18px;
   }
 
   .watcherName {
-    max-width: 100%;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
@@ -115,4 +116,23 @@ $seeAlarmBtnHeight: 18px;
     top: 0;
     z-index: 1;
   }
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.v-tooltip__content {
+  max-width: 60%;
+
+  @media screen and (max-width: $mobileBreakpoint) {
+    max-width: 80%;
+  }
+}
+
+.operator-chip {
+  background: #a6a6a6;
+  padding: 3px 8px;
+  color: white;
+  border-radius: 5px;
 }

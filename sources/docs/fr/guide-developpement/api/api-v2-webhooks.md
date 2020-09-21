@@ -64,7 +64,8 @@ Crée un nouveau Webhook à partir du corps de la requête.
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
-        "priority" : "priority"
+        "priority" : "priority",
+        "regexp" : false
     }
 }
 ```
@@ -115,7 +116,8 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
-        "priority" : "priority"
+        "priority" : "priority",
+        "regexp" : false
     }
 }' 'http://<Canopsis_URL>/api/v2/webhook'
 ```
@@ -236,7 +238,8 @@ Modifie un Webhook à partir du corps de la requête.
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
-        "priority" : "priority"
+        "priority" : "priority",
+        "regexp" : false
     }
 }
 ```
@@ -287,7 +290,8 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
-        "priority" : "priority"
+        "priority" : "priority",
+        "regexp" : false
     }
 }' 'http://<Canopsis_URL>/api/v2/webhook/declare_external_ticket'
 ```
@@ -421,7 +425,8 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/webhook/declare_external_
     "declare_ticket" : {
         "ticket_id" : "id",
         "ticket_creation_date" : "timestamp",
-        "priority" : "priority"
+        "priority" : "priority",
+        "regexp" : false
     }
 }
 ```

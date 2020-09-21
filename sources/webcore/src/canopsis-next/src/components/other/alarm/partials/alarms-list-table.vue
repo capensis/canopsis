@@ -34,6 +34,8 @@
             :widget="widget",
             :columns="columns",
             :columnFiltersMap="columnFiltersMap",
+            :hideGroups="hideGroups",
+            :parentAlarm="parentAlarm",
             :isTourEnabled="checkIsTourEnabledForAlarmByIndex(props.index)"
           )
         template(slot="expand", slot-scope="props")
@@ -48,7 +50,7 @@
 
 <script>
 import { isResolvedAlarm } from '@/helpers/entities';
-import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
+
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
@@ -69,7 +71,6 @@ export default {
     RecordsPerPage,
     AlarmsExpandPanel,
     MassActionsPanel,
-    ActionsPanel,
     AlarmColumnValue,
     NoColumnsTable,
   },
@@ -118,6 +119,10 @@ export default {
     expandable: {
       type: Boolean,
       default: false,
+    },
+    parentAlarm: {
+      type: Object,
+      default: null,
     },
   },
   data() {

@@ -146,6 +146,8 @@ export default {
             if (user._id === this.currentUser._id) {
               requests.push(this.fetchCurrentUser());
             }
+
+            await Promise.all(requests);
           },
         },
       });

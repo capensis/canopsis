@@ -1,5 +1,5 @@
 <template lang="pug">
-  tr(:data-test="`tableRow-${alarm._id}`")
+  tr(:data-test="`tableRow-${alarm._id}`", :class="{ 'not-filtered': isNotFiltered }")
     td.pr-0(v-if="selectable || expandable", data-test="rowCheckbox")
       v-layout(row, align-center)
         template(v-if="selectable")
@@ -15,13 +15,11 @@
             hide-details
           )
         v-layout.ml-2(v-if="expandable", align-center)
-          v-btn.ma-0(
+          expand-button(
             :class="expandButtonClass",
-            icon,
-            small,
-            @click="showExpandPanel"
+            :expanded="row.expanded",
+            @expand="showExpandPanel"
           )
-            v-icon {{ row.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
     td(v-for="column in columns")
       alarm-column-value(
         :alarm="alarm",
@@ -33,7 +31,8 @@
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :isResolvedAlarm="isResolvedAlarm"
+        :isResolvedAlarm="isResolvedAlarm",
+        :parentAlarm="parentAlarm"
       )
 </template>
 
@@ -45,11 +44,13 @@ import { getStepClass } from '@/helpers/tour';
 
 import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
 import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
+import ExpandButton from '@/components/other/buttons/expand-button.vue';
 
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
 export default {
   components: {
+    ExpandButton,
     ActionsPanel,
     AlarmColumnValue,
   },
@@ -91,20 +92,32 @@ export default {
       type: Boolean,
       default: false,
     },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
   },
   computed: {
     alarm() {
       return this.row.item;
     },
+
     isResolvedAlarm() {
       return isResolvedAlarm(this.alarm);
     },
+
     expandButtonClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 1);
       }
 
       return '';
+    },
+
+    isNotFiltered() {
+      return this.parentAlarm
+        && this.parentAlarm.filtered
+        && !this.parentAlarm.filtered.includes(this.alarm._id);
     },
   },
   methods: {
@@ -118,3 +131,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .not-filtered {
+    opacity: .4;
+    transition: opacity .3s linear;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+</style>

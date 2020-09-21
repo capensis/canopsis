@@ -1,3 +1,5 @@
+export const { BASE_URL } = process.env;
+
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
@@ -87,6 +89,7 @@ export const API_ROUTES = {
     remove: '/account/delete/role',
   },
   eventFilterRules: '/api/v2/eventfilter/rules',
+  metaAlarmRule: '/api/v2/metaalarmrule',
   webhook: '/api/v2/webhook',
   snmpRule: {
     list: '/snmprule',
@@ -117,6 +120,7 @@ export const API_ROUTES = {
     activeList: '/api/v2/broadcast-message/active',
   },
   counter: '/alerts/get-counters',
+  playlist: '/api/v2/playlist',
 };
 
 export const COLORS = {
@@ -145,6 +149,7 @@ export const COLORS = {
     done: '#00a65a',
     pbhenter: '#18ffff',
     pbhleave: '#18ffff',
+    comment: '#ba68c8',
   },
   statsDefault: '#dddddd',
 };

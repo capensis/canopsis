@@ -44,6 +44,9 @@ from canopsis.pbehavior.manager import PBehaviorManager
 from canopsis.task.core import get_task
 from canopsis.timeserie.timewindow import Interval, TimeWindow
 from canopsis.tools.schema import get as get_schema
+import json
+import copy
+
 
 rconn = RedisStore.get_default()
 
@@ -200,7 +203,7 @@ class AlertsReader(object):
 
         return tkey, tdir
 
-    def _get_time_filter(self, opened, resolved, tstart, tstop):
+    def _get_opened_resolved_time_filter(self, opened, resolved, tstart, tstop):
         """
         Transform opened, resolved, tstart and tstop parameters into a mongo
         filter. This filter is specific to alarms collection.
@@ -237,7 +240,7 @@ class AlertsReader(object):
         return None
 
     @staticmethod
-    def _get_opened_time_filter(tstart, tstop):
+    def _get_time_filter(resolved, tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -246,32 +249,21 @@ class AlertsReader(object):
         :type tstart: int or None
         :type tstop: int or None
 
-        :return: Mongo filter
+        :return: Specific mongo filter
         :rtype: dict
         """
-
-        if tstop is not None and tstart is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstop, "$gte": tstart}
-            }
-
+        cond = {'v.resolved': resolved, 't': dict()}
+        if tstart is not None:
+            cond['t']['$gte'] = tstart
         if tstop is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstop}
-            }
+            cond['t']['$lte'] = tstop
 
-        elif tstart is not None:
-            return {
-                'v.resolved': None,
-                't': {'$lte': tstart}
-            }
+        if not cond['t']:
+            del cond['t']
 
-        return {'v.resolved': None}
+        return cond
 
-    @staticmethod
-    def _get_resolved_time_filter(tstart, tstop):
+    def _get_opened_time_filter(self, tstart, tstop):
         """
         Get a specific mongo filter.
 
@@ -284,22 +276,22 @@ class AlertsReader(object):
         :rtype: dict
         """
 
-        if tstart is not None and tstop is not None:
-            return {
-                'v.resolved': {'$ne': None},
-                't': {'$gte': tstart, '$lte': tstop}
-            }
+        return self._get_time_filter(None, tstart, tstop)
 
-        elif tstart is not None:
-            return {'v.resolved': {'$ne': None, '$gte': tstart}}
+    def _get_resolved_time_filter(self, tstart, tstop):
+        """
+        Get a specific mongo filter.
 
-        elif tstop is not None:
-            return {
-                'v.resolved': {'$ne': None},
-                't': {'$lte': tstop}
-            }
+        :param tstart: Timestamp
+        :param tstop: Timestamp
+        :type tstart: int or None
+        :type tstop: int or None
 
-        return {'v.resolved': {'$ne': None}}
+        :return: Specific mongo filter
+        :rtype: dict
+        """
+
+        return self._get_time_filter({'$ne': None}, tstart, tstop)
 
     @classmethod
     def __convert_to_bool(cls, value):
@@ -360,8 +352,10 @@ class AlertsReader(object):
 
         if not search:
             return ('this', {})
-
-        return interpret(search, grammar_file=self.grammar)
+        t, q = interpret(search, grammar_file=self.grammar)
+        if q and type(q) is str:
+            q = json.loads(json.dumps(q).replace("\\\\'", "'").decode("string_escape"))
+        return t, q
 
     def _lookup(self, alarms, lookups):
         """
@@ -390,7 +384,7 @@ class AlertsReader(object):
 
     def _get_final_filter(
             self, view_filter, time_filter, search, active_columns,
-            correlation=False
+            correlation=False, resolved=False, consequences_children=False,
     ):
         """
         Computes the real filter:
@@ -430,9 +424,7 @@ class AlertsReader(object):
         """
         final_filter = {'$and': []}
 
-        # filtered list must have all alarms but meta-alarms except the filter by alarm _id or entity id 
-        if isinstance(view_filter, dict) and view_filter and not "_id" in view_filter and not "d" in view_filter or \
-            (isinstance(view_filter, list) and view_filter != []) or not correlation:
+        if not correlation:
             final_filter['$and'].append({"d": {"$not": re.compile("^meta-alarm-entity-.+")}})
         t_view_filter = self._translate_filter(view_filter)
         # add the view filter if not empty
@@ -453,7 +445,7 @@ class AlertsReader(object):
             final_filter['$and'].append(bnf_search_filter)
 
         else:
-            escaped_search = re.escape(str(search))
+            escaped_search = re.escape(str(search).decode('utf-8'))
             column_filter = {'$or': []}
             for column in active_columns:
                 # filter is used in mongo
@@ -546,6 +538,36 @@ class AlertsReader(object):
             pipeline.append(pbh_filter)
         self.has_active_pbh = None
 
+    @staticmethod
+    def _last_comment_aggregation():
+        """
+        Aggregation pipeline step to add field v.lastComment with last comment step
+        Empty dictionary when comments not found
+        """
+        return {"$addFields": {
+            "lastComment": {
+                "$reduce": {
+                    "input": {
+                        # slice array to top 1
+                        "$slice": [{
+                            # filter steps with comment type, newer first
+                            "$filter": {
+                                "input": {"$reverseArray": "$v.steps"},
+                                "as": "steps",
+                                "cond": {
+                                    "$eq": ["$$steps._t", "comment"]
+                                }
+                            }
+                        },
+                            1
+                        ]
+                    },
+                    "initialValue": {},
+                    "in": {"$mergeObjects": [{}, "$$this"]}
+                }
+            }
+        }}
+
     def _build_aggregate_pipeline(self,
                                   final_filter,
                                   sort_key,
@@ -555,7 +577,8 @@ class AlertsReader(object):
                                   filter_,
                                   add_pbh_filter=True,
                                   has_wildcard_dynamic_filter=False,
-                                  correlation=False):
+                                  correlation=False,
+                                  consequences_children=False):
         """
         :param dict final_filter: the filter sent by the front page
         :param str sort_key: Name of the column to sort. If the value ends with
@@ -594,11 +617,25 @@ class AlertsReader(object):
                 }
             }
         ]
-        if correlation and self._can_add_metaalarm_filter(filter_, with_consequences):
-            self._add_metaalarm_filter(pipeline, 3, with_consequences)
+        if correlation and not consequences_children:
+            self._add_metaalarm_filter(pipeline, 3, with_consequences, filter_, final_filter)
+
 
         if not with_steps:
             pipeline.insert(0, {"$project": {"v.steps": False}})
+        # insert pipeline operations into 0 position in reverse order:
+        # aggregate last comment from steps as lastComment, replace with null when empty, move lastComment 
+        # into v.lastComment
+        pipeline.insert(0, {"$project": {"lastComment": False}})
+        pipeline.insert(0, {'$addFields': {"v.lastComment": "$lastComment"}})
+        pipeline.insert(0, {'$project': {'t': 1, 'd': 1, 'v': 1, "infos_array": 1, "lastComment": {
+            "$cond": {
+                "if": {"$eq": [{}, "$lastComment"]},
+                "then": None,
+                "else": "$lastComment"
+            }
+        }}})
+        pipeline.insert(0, self._last_comment_aggregation())
 
         self.add_pbh_filter(pipeline, filter_, add_pbh_filter=True)
         if has_wildcard_dynamic_filter:
@@ -606,23 +643,41 @@ class AlertsReader(object):
             pipeline.append({"$project": {"infos_array": 0}})
         return pipeline
 
-    def _can_add_metaalarm_filter(self, filter_, with_consequences):
-        """
-        Method checks ability to filter metaalarms
+    @staticmethod
+    def not_by_id(x):
+        return "u'_id':" not in str(x)
 
-        With any conditions in filter except filter by _id metaalarms grouping must be skipped, a regular alarms list
-        in this case.
-        An empty filter or filter by _id or `with_consequences` allows to group metaalarms.
+    def _can_add_metaalarm_filter(self, with_consequences, filter_):
+        return (isinstance(filter_, dict) and (filter_ == {} or filter_ and self.not_by_id(filter_)) or \
+            (isinstance(filter_, list) and filter_ != [] and self.not_by_id(filter_))) or with_consequences
 
-        :param dict| list of dict filter_: MongoDB filter
-        :param bool with_consequences: `with_consequences` request parameter to group alarms with metaalarm under
-        `consequences` key
-        :returns: True when filter can be changed to find metaalarms
-        :rtype: bool
-        """
-        return not filter_ or with_consequences
+    def ff_ref_children(self, final_filter):
+        ff_copy = copy.deepcopy(final_filter)
+        if isinstance(final_filter, dict):
+            children_reference = {'children': {'$ne': []}}
+            if '$and' in final_filter:
+                if final_filter['$and'] > 1:
+                    conditions, resolved = [], None
+                    for ff_item in final_filter['$and']:
+                        if isinstance(ff_item, dict) and 'v.resolved' in ff_item:
+                            resolved = ff_item
+                        elif ff_item:
+                            conditions.append(ff_item)
+                    if conditions:
+                        # update $and conditions followed by 'v.resolved'
+                        conditions.append(children_reference)
+                        final_filter['$and'] = [{
+                            '$or': conditions}]
+                        if resolved:
+                            final_filter['$and'].append(resolved)
+                            ff_copy['$and'].remove(resolved)
+                elif final_filter['$and'] == 1:
+                    final_filter['$and'].append(children_reference)
+            elif '$or' in final_filter and final_filter['$or']:
+                final_filter['$or'].append(children_reference)
+        return ff_copy
 
-    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences):
+    def _add_metaalarm_filter(self, pipeline, start_pos, with_consequences, filter_, final_filter):
         """
         Method adds filter to find metaalarms
 
@@ -642,13 +697,25 @@ class AlertsReader(object):
                 "else": "$consequences"
                 }
             },
-            'metaalarm': 1 }})
+            'metaalarm': 1, 'filtered': '$children._id' }})
         pipeline.insert(start_pos+1, {"$addFields": {
             "rule": "$v.meta", 
             "metaalarm": {"$cond": [{"$not": ["$v.meta"]}, "0", "1"]}, 
             "consequences": {"$cond": [{"$not": ["$v.meta"]}, {}, consequences_pipeline]}
         }})
-        pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$exists": False}}, {"v.parents": {"$eq": []}}, {"v.meta": {"$exists": True}}]}})
+        if self._can_add_metaalarm_filter(with_consequences, filter_):
+            old_final_filter = self.ff_ref_children(final_filter)
+            lookup_children_pipeline = [
+                {'$match': {'$expr': {"$in": ['$$eid', '$v.parents']}}},
+                {'$match': old_final_filter}]
+            pipeline.insert(start_pos, {'$lookup': {
+                'from': 'periodical_alarm',
+                'let':  {'eid': '$d'},
+                'pipeline': lookup_children_pipeline,
+                'as': 'children',
+            }})
+            pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$in": [None, []]}}, {
+                            "v.children": {"$nin": [None, []]}}]}})
 
 
     def _search_aggregate(self,
@@ -822,13 +889,14 @@ class AlertsReader(object):
                     self.logger.exception("Unable to check if pbehavior {} is active".format(pbehavior.get('_id')))
 
                 pbehavior['isActive'] = active
+                del pbehavior['eids']
 
     def _metaalarm_children_rules(self):
         """
         Create map with mataalarms children IDs as key and list of rule names as value
         """
         pipeline = [
-            {"$match": {"$and": [{"v.meta": {"$exists": True}}, {"v.meta": {"$ne": ""}}]}}, 
+            {"$match": {"v.meta": {"$nin": ["", None]}}}, 
             {"$project": {"children": "$v.children", "rule": "$v.meta"}}, {"$unwind": "$children"},
             {"$group": {"_id": {"children": "$children"}, "rule": {"$addToSet": "$rule"}}}, 
             {"$project": {"_id": "$_id.children", "rule": "$rule"}}
@@ -854,7 +922,8 @@ class AlertsReader(object):
             hide_resources=False,
             with_consequences=False,
             add_pbh_filter=True,
-            correlation=False
+            correlation=False,
+            consequences_children=False
     ):
         """
         Return filtered, sorted and paginated alarms.
@@ -913,7 +982,7 @@ class AlertsReader(object):
         if active_columns is None:
             active_columns = self.DEFAULT_ACTIVE_COLUMNS
 
-        time_filter = self._get_time_filter(
+        time_filter = self._get_opened_resolved_time_filter(
             opened=opened, resolved=resolved,
             tstart=tstart, tstop=tstop
         )
@@ -923,9 +992,9 @@ class AlertsReader(object):
         sort_key, sort_dir = self._translate_sort(sort_key, sort_dir)
 
         final_filter = self._get_final_filter(
-            filter_, time_filter, search, active_columns, correlation=correlation
+            filter_, time_filter, search, active_columns, correlation=correlation, resolved=resolved,
+            consequences_children=consequences_children
         )
-
 
         if sort_key[-1] == '.':
             sort_key = 'v.last_update_date'
@@ -934,7 +1003,7 @@ class AlertsReader(object):
         pipeline = self._build_aggregate_pipeline(
             final_filter, sort_key, sort_dir, with_steps, with_consequences, filter_,
             add_pbh_filter=add_pbh_filter, has_wildcard_dynamic_filter=has_wildcard_dynamic_filter,
-            correlation=correlation)
+            correlation=correlation, consequences_children=consequences_children)
         count_pipeline = pipeline[:]
         count_pipeline.append({
             "$count": "count"
@@ -1072,6 +1141,33 @@ class AlertsReader(object):
             )
 
         return results
+
+    def manual_only(self):
+        """
+        return list of opened manual meta-alarms
+        """
+        pipeline = [
+            {'$match': {'v.resolved': None, 'v.meta': re.compile('^zgrp-.+')}},
+            {'$lookup': {'foreignField': '_id', 'as': 'entity',
+                        'from': 'default_entities', 'localField': 'd'}},
+            {'$unwind': {'path': '$entity', 'preserveNullAndEmptyArrays': True}},
+            {'$match': {'$or': [{'entity.enabled': True},
+                                {'entity': {'$exists': False}}]}},
+            {'$match': {'$or': [{'v.parents': {'$in': [None, []]}}, {
+                'v.children': {'$nin': [None, []]}}]}},
+            {'$sort': {'t': -1}},
+            {'$lookup': {'foreignField': '_id', 'as': 'rule',
+                         'from': 'meta_alarm_rules', 'localField': 'v.meta'}},
+            {'$match': {'rule.type': 'manualgroup'}},
+            {'$project': {'t': 1, 'v': 1, 'd': 1}}
+        ]
+        alarms = self.alarm_collection.aggregate(
+            pipeline, allowDiskUse=True, cursor={}
+        )
+
+        return {
+            'alarms': list(alarms),
+        }
 
 
 def remove_resources_alarms(alarms):

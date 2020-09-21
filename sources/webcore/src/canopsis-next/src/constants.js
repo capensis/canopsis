@@ -1,4 +1,5 @@
-import { COLORS } from '@/config';
+import { COLORS, MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+
 import featuresService from '@/services/features';
 
 export const CRUD_ACTIONS = {
@@ -19,19 +20,20 @@ export const ENTITIES_TYPES = {
   userPreference: 'userPreference',
   group: 'group',
   view: 'view',
-  viewRow: 'viewRow',
   viewTab: 'viewTab',
   widget: 'widget',
   stat: 'stat',
   user: 'user',
   role: 'role',
   eventFilterRule: 'eventFilterRule',
+  metaAlarmRule: 'metaAlarmRule',
   webhook: 'webhook',
   snmpRule: 'snmpRule',
   action: 'action',
   heartbeat: 'heartbeat',
   dynamicInfo: 'dynamicInfo',
   broadcastMessage: 'broadcastMessage',
+  playlist: 'playlist',
 };
 
 export const MODALS = {
@@ -39,6 +41,7 @@ export const MODALS = {
   createAckEvent: 'create-ack-event',
   confirmAckWithTicket: 'confirm-ack-with-ticket',
   createAssociateTicketEvent: 'create-associate-ticket-event',
+  createCommentEvent: 'create-comment-event',
   createChangeStateEvent: 'create-change-state-event',
   createDeclareTicketEvent: 'create-declare-ticket-event',
   createSnoozeEvent: 'create-snooze-event',
@@ -71,6 +74,7 @@ export const MODALS = {
   createRight: 'create-right',
   createBroadcastMessage: 'create-broadcast-message',
   createEventFilterRule: 'create-event-filter-rule',
+  createMetaAlarmRule: 'create-meta-alarm-rule',
   createEventFilterRulePattern: 'create-event-filter-rule-pattern',
   addEventFilterRuleToPattern: 'add-event-filter-rule-to-pattern',
   eventFilterRuleActions: 'event-filter-rule-actions',
@@ -87,6 +91,9 @@ export const MODALS = {
   importExportViews: 'import-groups-and-views',
   dynamicInfoTemplatesList: 'dynamic-info-templates-list',
   createDynamicInfoTemplate: 'create-dynamic-info-template',
+  createPlaylist: 'create-playlist',
+  managePlaylistTabs: 'manage-playlist-tabs',
+  createManualMetaAlarm: 'create-manual-meta-alarm',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -107,8 +114,13 @@ export const EVENT_ENTITY_TYPES = {
   pause: 'pause',
   play: 'play',
   groupRequest: 'groupRequest',
+  group: 'group',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
+  comment: 'comment',
+  manualMetaAlarmGroup: 'manual_metaalarm_group',
+  manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
+  manualMetaAlarmUpdate: 'manual_metaalarm_update',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -356,10 +368,20 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'play_arrow',
   },
   groupConsequences: {
-    icon: 'flash_on',
+    icon: 'center_focus_strong',
   },
   groupCauses: {
-    icon: 'note',
+    icon: 'center_focus_weak',
+  },
+  [EVENT_ENTITY_TYPES.comment]: {
+    color: COLORS.entitiesEvents.comment,
+    icon: 'comment',
+  },
+  [EVENT_ENTITY_TYPES.manualMetaAlarmGroup]: {
+    icon: 'center_focus_strong',
+  },
+  [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
+    icon: 'link_off',
   },
 };
 
@@ -661,6 +683,7 @@ export const STATS_CALENDAR_COLORS = {
 };
 
 export const USERS_RIGHTS_MASKS = {
+  default: 1,
   create: 8,
   read: 4,
   update: 2,
@@ -672,98 +695,134 @@ export const USERS_RIGHTS_TYPES = {
   rw: 'RW',
 };
 
+export const USERS_RIGHTS_TYPES_TO_MASKS = {
+  [USERS_RIGHTS_TYPES.crud]: [
+    USERS_RIGHTS_MASKS.create,
+    USERS_RIGHTS_MASKS.read,
+    USERS_RIGHTS_MASKS.update,
+    USERS_RIGHTS_MASKS.delete,
+  ],
+  [USERS_RIGHTS_TYPES.rw]: [
+    USERS_RIGHTS_MASKS.read,
+    USERS_RIGHTS_MASKS.update,
+    USERS_RIGHTS_MASKS.delete,
+  ],
+};
+
+export const USER_RIGHTS_PREFIXES = {
+  technical: {
+    admin: 'models',
+    exploitation: 'models_exploitation',
+  },
+  business: {
+    common: 'common',
+    alarmsList: 'listalarm',
+    context: 'crudcontext',
+    weather: 'serviceweather',
+    counter: 'counter',
+  },
+};
+
 export const USERS_RIGHTS = {
   technical: {
-    view: 'models_userview',
-    role: 'models_role',
-    action: 'models_action',
-    user: 'models_user',
-    parameters: 'models_parameters',
-    broadcastMessage: 'models_broadcastMessage',
+    view: `${USER_RIGHTS_PREFIXES.technical.admin}_userview`,
+    role: `${USER_RIGHTS_PREFIXES.technical.admin}_role`,
+    action: `${USER_RIGHTS_PREFIXES.technical.admin}_action`,
+    user: `${USER_RIGHTS_PREFIXES.technical.admin}_user`,
+    parameters: `${USER_RIGHTS_PREFIXES.technical.admin}_parameters`,
+    broadcastMessage: `${USER_RIGHTS_PREFIXES.technical.admin}_broadcastMessage`,
+    playlist: `${USER_RIGHTS_PREFIXES.technical.admin}_playlist`,
     exploitation: {
-      eventFilter: 'models_exploitation_eventFilter',
-      pbehavior: 'models_exploitation_pbehavior',
-      webhook: 'models_exploitation_webhook',
-      snmpRule: 'models_exploitation_snmpRule',
-      action: 'models_exploitation_action',
-      heartbeat: 'models_exploitation_heartbeat',
-      dynamicInfo: 'models_exploitation_dynamicInfo',
+      eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
+      pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
+      webhook: `${USER_RIGHTS_PREFIXES.technical.exploitation}_webhook`,
+      snmpRule: `${USER_RIGHTS_PREFIXES.technical.exploitation}_snmpRule`,
+      action: `${USER_RIGHTS_PREFIXES.technical.exploitation}_action`,
+      heartbeat: `${USER_RIGHTS_PREFIXES.technical.exploitation}_heartbeat`,
+      dynamicInfo: `${USER_RIGHTS_PREFIXES.technical.exploitation}_dynamicInfo`,
+      metaAlarmRule: `${USER_RIGHTS_PREFIXES.technical.exploitation}_metaAlarmRule`,
     },
   },
   business: {
     alarmsList: {
       actions: {
-        ack: 'listalarm_ack',
-        fastAck: 'listalarm_fastAck',
-        ackRemove: 'listalarm_cancelAck',
-        pbehaviorAdd: 'listalarm_pbehavior',
-        snooze: 'listalarm_snoozeAlarm',
-        pbehaviorList: 'listalarm_listPbehavior',
-        declareTicket: 'listalarm_declareanIncident',
-        associateTicket: 'listalarm_assignTicketNumber',
-        cancel: 'listalarm_removeAlarm',
-        changeState: 'listalarm_changeState',
-        history: 'listalarm_history',
-        variablesHelp: 'common_variablesHelp',
-        groupRequest: 'listalarm_groupRequest',
+        ack: `${USER_RIGHTS_PREFIXES.business.alarmsList}_ack`,
+        fastAck: `${USER_RIGHTS_PREFIXES.business.alarmsList}_fastAck`,
+        ackRemove: `${USER_RIGHTS_PREFIXES.business.alarmsList}_cancelAck`,
+        pbehaviorAdd: `${USER_RIGHTS_PREFIXES.business.alarmsList}_pbehavior`,
+        snooze: `${USER_RIGHTS_PREFIXES.business.alarmsList}_snoozeAlarm`,
+        pbehaviorList: `${USER_RIGHTS_PREFIXES.business.alarmsList}_listPbehavior`,
+        declareTicket: `${USER_RIGHTS_PREFIXES.business.alarmsList}_declareanIncident`,
+        associateTicket: `${USER_RIGHTS_PREFIXES.business.alarmsList}_assignTicketNumber`,
+        cancel: `${USER_RIGHTS_PREFIXES.business.alarmsList}_removeAlarm`,
+        changeState: `${USER_RIGHTS_PREFIXES.business.alarmsList}_changeState`,
+        history: `${USER_RIGHTS_PREFIXES.business.alarmsList}_history`,
+        groupRequest: `${USER_RIGHTS_PREFIXES.business.alarmsList}_groupRequest`,
+        manualMetaAlarmGroup: `${USER_RIGHTS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
+        comment: `${USER_RIGHTS_PREFIXES.business.alarmsList}_comment`,
 
-        listFilters: 'listalarm_listFilters',
-        editFilter: 'listalarm_editFilter',
-        addFilter: 'listalarm_addFilter',
-        userFilter: 'listalarm_userFilter',
+        listFilters: `${USER_RIGHTS_PREFIXES.business.alarmsList}_listFilters`,
+        editFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_editFilter`,
+        addFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_addFilter`,
+        userFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_userFilter`,
 
-        links: 'listalarm_links',
+        links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
+
+        variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
 
         ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
       },
     },
     context: {
       actions: {
-        createEntity: 'crudcontext_createEntity',
-        editEntity: 'crudcontext_edit',
-        duplicateEntity: 'crudcontext_duplicate',
-        deleteEntity: 'crudcontext_delete',
-        pbehaviorAdd: 'crudcontext_pbehavior',
-        pbehaviorList: 'crudcontext_listPbehavior',
-        pbehaviorDelete: 'crudcontext_deletePbehavior',
+        createEntity: `${USER_RIGHTS_PREFIXES.business.context}_createEntity`,
+        editEntity: `${USER_RIGHTS_PREFIXES.business.context}_edit`,
+        duplicateEntity: `${USER_RIGHTS_PREFIXES.business.context}_duplicate`,
+        deleteEntity: `${USER_RIGHTS_PREFIXES.business.context}_delete`,
+        pbehaviorAdd: `${USER_RIGHTS_PREFIXES.business.context}_pbehavior`,
+        pbehaviorList: `${USER_RIGHTS_PREFIXES.business.context}_listPbehavior`,
+        pbehaviorDelete: `${USER_RIGHTS_PREFIXES.business.context}_deletePbehavior`,
 
-        listFilters: 'crudcontext_listFilters',
-        editFilter: 'crudcontext_editFilter',
-        addFilter: 'crudcontext_addFilter',
-        userFilter: 'crudcontext_userFilter',
+        listFilters: `${USER_RIGHTS_PREFIXES.business.context}_listFilters`,
+        editFilter: `${USER_RIGHTS_PREFIXES.business.context}_editFilter`,
+        addFilter: `${USER_RIGHTS_PREFIXES.business.context}_addFilter`,
+        userFilter: `${USER_RIGHTS_PREFIXES.business.context}_userFilter`,
       },
     },
     weather: {
       actions: {
-        entityAck: 'serviceweather_entityAck',
-        entityAssocTicket: 'serviceweather_entityAssocTicket',
-        entityValidate: 'serviceweather_entityValidate',
-        entityInvalidate: 'serviceweather_entityInvalidate',
-        entityPause: 'serviceweather_entityPause',
-        entityPlay: 'serviceweather_entityPlay',
-        entityCancel: 'serviceweather_entityCancel',
-        entityManagePbehaviors: 'serviceweather_entityManagePbehaviors',
+        entityAck: `${USER_RIGHTS_PREFIXES.business.weather}_entityAck`,
+        entityAssocTicket: `${USER_RIGHTS_PREFIXES.business.weather}_entityAssocTicket`,
+        entityComment: `${USER_RIGHTS_PREFIXES.business.weather}_entityComment`,
+        entityValidate: `${USER_RIGHTS_PREFIXES.business.weather}_entityValidate`,
+        entityInvalidate: `${USER_RIGHTS_PREFIXES.business.weather}_entityInvalidate`,
+        entityPause: `${USER_RIGHTS_PREFIXES.business.weather}_entityPause`,
+        entityPlay: `${USER_RIGHTS_PREFIXES.business.weather}_entityPlay`,
+        entityCancel: `${USER_RIGHTS_PREFIXES.business.weather}_entityCancel`,
+        entityManagePbehaviors: `${USER_RIGHTS_PREFIXES.business.weather}_entityManagePbehaviors`,
 
-        entityLinks: 'serviceweather_entityLinks',
+        entityLinks: `${USER_RIGHTS_PREFIXES.business.weather}_entityLinks`,
 
-        moreInfos: 'serviceweather_moreInfos',
-        alarmsList: 'serviceweather_alarmsList',
-        pbehaviorList: 'serviceweather_pbehaviorList',
-        variablesHelp: 'common_variablesHelp',
+        moreInfos: `${USER_RIGHTS_PREFIXES.business.weather}_moreInfos`,
+        alarmsList: `${USER_RIGHTS_PREFIXES.business.weather}_alarmsList`,
+        pbehaviorList: `${USER_RIGHTS_PREFIXES.business.weather}_pbehaviorList`,
+
+        variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
       },
     },
     counter: {
       actions: {
-        alarmsList: 'counter_alarmsList',
-        variablesHelp: 'common_variablesHelp',
+        alarmsList: `${USER_RIGHTS_PREFIXES.business.counter}_alarmsList`,
+
+        variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
       },
     },
   },
 };
 
-export const NOT_COMPLETED_USER_RIGHTS_KEYS = [
-  'business.alarmsList.actions.links',
-  'business.weather.actions.entityLinks',
+export const NOT_COMPLETED_USER_RIGHTS = [
+  USERS_RIGHTS.business.alarmsList.actions.links,
+  USERS_RIGHTS.business.weather.actions.entityLinks,
 ];
 
 export const WIDGETS_ACTIONS_TYPES = {
@@ -782,6 +841,10 @@ export const WIDGETS_ACTIONS_TYPES = {
     variablesHelp: 'variablesHelp',
     history: 'history',
     groupRequest: 'groupRequest',
+    manualMetaAlarmGroup: 'manualMetaAlarmGroup',
+    manualMetaAlarmUngroup: 'manualMetaAlarmUngroup',
+    manualMetaAlarmUpdate: 'manualMetaAlarmUpdate',
+    comment: 'comment',
 
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
@@ -813,6 +876,7 @@ export const WIDGETS_ACTIONS_TYPES = {
     entityPause: 'entityPause',
     entityPlay: 'entityPlay',
     entityCancel: 'entityCancel',
+    entityComment: 'entityComment',
 
     entityLinks: 'entityLinks',
 
@@ -841,7 +905,14 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.changeState]: USERS_RIGHTS.business.alarmsList.actions.changeState,
     [WIDGETS_ACTIONS_TYPES.alarmsList.history]: USERS_RIGHTS.business.alarmsList.actions.history,
     [WIDGETS_ACTIONS_TYPES.alarmsList.variablesHelp]: USERS_RIGHTS.business.alarmsList.actions.variablesHelp,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.comment]: USERS_RIGHTS.business.alarmsList.actions.comment,
     [WIDGETS_ACTIONS_TYPES.alarmsList.groupRequest]: USERS_RIGHTS.business.alarmsList.actions.groupRequest,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmGroup]:
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmUngroup]:
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.manualMetaAlarmUpdate]:
+      USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
 
@@ -883,6 +954,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.weather.alarmsList]: USERS_RIGHTS.business.weather.actions.alarmsList,
     [WIDGETS_ACTIONS_TYPES.weather.pbehaviorList]: USERS_RIGHTS.business.weather.actions.pbehaviorList,
     [WIDGETS_ACTIONS_TYPES.weather.variablesHelp]: USERS_RIGHTS.business.weather.actions.variablesHelp,
+    [WIDGETS_ACTIONS_TYPES.weather.entityComment]: USERS_RIGHTS.business.weather.actions.entityComment,
   },
 
   counter: {
@@ -900,6 +972,25 @@ export const EVENT_FILTER_RULE_TYPES = {
   drop: 'drop',
   break: 'break',
   enrichment: 'enrichment',
+};
+
+export const META_ALARMS_RULE_TYPES = {
+  relation: 'relation',
+  timebased: 'timebased',
+  attribute: 'attribute',
+  complex: 'complex',
+  valuegroup: 'valuegroup',
+
+  /**
+   * Manual group type doesn't using in the form
+   * We are using it only inside alarms list widget
+   */
+  manualgroup: 'manualgroup',
+};
+
+export const META_ALARMS_THRESHOLD_TYPES = {
+  thresholdRate: 'thresholdRate',
+  thresholdCount: 'thresholdCount',
 };
 
 export const EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES = {
@@ -1231,9 +1322,8 @@ export const DEFAULT_PERIODIC_REFRESH = {
   unit: TIME_UNITS.second,
 };
 
-export const DEFAULT_RETRY_FIELD = {
-  count: 0,
-  delay: RETRY_DEFAULT_DELAY,
+export const DEFAULT_TIME_INTERVAL = {
+  interval: 60,
   unit: TIME_UNITS.second,
 };
 
@@ -1308,3 +1398,52 @@ export const DEFAULT_COUNTER_BLOCK_TEMPLATE = `<h2 style="text-align: justify;">
   <center><strong><span style="font-size: 18px;">{{ counter.total_active }} alarmes actives</span></strong></center>
   <br>Seuil mineur à {{ levels.values.minor }}, seuil critique à {{ levels.values.critical }}
   <p style="text-align: justify;">{{ counter.ack }} acquittées, {{ counter.ticket}} avec ticket</p>`;
+
+export const PORTALS_NAMES = {
+  additionalTopBarItems: 'additional-top-bar-items',
+};
+
+export const WIDGET_GRID_SIZES_KEYS = {
+  mobile: 'mobile',
+  tablet: 'tablet',
+  desktop: 'desktop',
+};
+
+export const MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP = {
+  m: WIDGET_GRID_SIZES_KEYS.mobile,
+  t: WIDGET_GRID_SIZES_KEYS.tablet,
+  l: WIDGET_GRID_SIZES_KEYS.desktop,
+  xl: WIDGET_GRID_SIZES_KEYS.desktop,
+};
+
+export const WIDGET_LAYOUT_MAX_WIDTHS = {
+  [WIDGET_GRID_SIZES_KEYS.desktop]: '100%',
+  [WIDGET_GRID_SIZES_KEYS.tablet]: `${MEDIA_QUERIES_BREAKPOINTS.t}px`,
+  [WIDGET_GRID_SIZES_KEYS.mobile]: `${MEDIA_QUERIES_BREAKPOINTS.m}px`,
+};
+
+export const WIDGET_GRID_SIZES_STYLES = {
+  [WIDGET_GRID_SIZES_KEYS.mobile]: {
+    value: WIDGET_GRID_SIZES_KEYS.mobile,
+    icon: 'stay_primary_portrait',
+  },
+  [WIDGET_GRID_SIZES_KEYS.tablet]: {
+    value: WIDGET_GRID_SIZES_KEYS.tablet,
+    icon: 'tablet_mac',
+  },
+  [WIDGET_GRID_SIZES_KEYS.desktop]: {
+    value: WIDGET_GRID_SIZES_KEYS.desktop,
+    icon: 'desktop_windows',
+  },
+};
+
+export const WIDGET_GRID_ROW_HEIGHT = 20;
+
+export const WIDGET_GRID_COLUMNS_COUNT = 12;
+
+export const META_ALARM_EVENT_DEFAULT_FIELDS = {
+  component: 'metaalarm',
+  connector: 'engine',
+  connector_name: 'correlation',
+  source_type: 'metaalarm',
+};

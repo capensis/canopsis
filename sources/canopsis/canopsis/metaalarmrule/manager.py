@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytz
+import re
 from uuid import uuid4
 from json import loads, dumps
 
@@ -64,6 +65,7 @@ class BaseMetaAlarmRule(dict):
 
 
 META_ALARM_CONFIG_FIELD = 'config'
+SERVICE_ID_PREFIX = 'zgrp-'
 
 class MetaAlarmRule(BaseMetaAlarmRule):
     """
@@ -74,10 +76,11 @@ class MetaAlarmRule(BaseMetaAlarmRule):
     TYPE = 'type'
     PATTERNS = 'patterns'
     CONFIG = 'config'
+    AUTO_RESOLVE = 'auto_resolve'
 
-    _FIELDS = (NAME, TYPE, PATTERNS, CONFIG, ID)
+    _FIELDS = (NAME, TYPE, PATTERNS, CONFIG, ID, AUTO_RESOLVE)
 
-    _EDITABLE_FIELDS = (NAME, TYPE, PATTERNS, CONFIG)
+    _EDITABLE_FIELDS = (NAME, TYPE, PATTERNS, CONFIG, AUTO_RESOLVE)
 
     def __init__(self, **kwargs):
         super(MetaAlarmRule, self).__init__(**kwargs)
@@ -123,7 +126,7 @@ class MetaAlarmRuleManager(object):
         self.logger = logger
         self.collection = ma_rule_collection
 
-    def _build_metaalarm(self, name, rule_type, patterns=None, config=None, ma_rule_id=None):
+    def _build_metaalarm(self, name, rule_type, patterns=None, config=None, ma_rule_id=None, auto_resolve=False):
         if ma_rule_id is None:
             ma_rule_id = str(uuid4())
 
@@ -133,6 +136,7 @@ class MetaAlarmRuleManager(object):
             MetaAlarmRule.TYPE: rule_type,
             MetaAlarmRule.PATTERNS: patterns,
             MetaAlarmRule.CONFIG: config,
+            MetaAlarmRule.AUTO_RESOLVE: auto_resolve
         }
 
         data = MetaAlarmRule(**create_kwargs)
@@ -143,8 +147,8 @@ class MetaAlarmRuleManager(object):
             raise ValueError("config_dict {} from {}".format(config_dict, config))
         return data
 
-    def create(self, name, rule_type, patterns=None, config=None, ma_rule_id=None):
-        data = self._build_metaalarm(name, rule_type, patterns, config, ma_rule_id)
+    def create(self, name, rule_type, patterns=None, config=None, ma_rule_id=None, auto_resolve=False):
+        data = self._build_metaalarm(name, rule_type, patterns, config, ma_rule_id, auto_resolve)
         try:
             result = self.collection.insert(data.to_dict())
         except CollectionError:
@@ -157,10 +161,10 @@ class MetaAlarmRuleManager(object):
         return self.collection.find_one({"_id": id})
 
     def read_all(self):
-        return list(self.collection.find({}))
+        return list(self.collection.find({"_id": {"$not": re.compile("^{}.+".format(SERVICE_ID_PREFIX))}}))
 
-    def update(self, _id, name, rule_type, patterns=None, config=None):
-        data = self._build_metaalarm(name, rule_type, patterns, config, _id)
+    def update(self, _id, name, rule_type, patterns=None, config=None, auto_resolve=False):
+        data = self._build_metaalarm(name, rule_type, patterns, config, _id, auto_resolve)
         try:
             resp = self.collection.update(query={'_id': _id}, document=data.to_dict())
         except Exception as e:
@@ -183,4 +187,4 @@ class MetaAlarmRuleManager(object):
         if ids:
             query["_id"] = {"$in": ids}
 
-        return dict(((rule[MetaAlarmRule.ID], rule[MetaAlarmRule.NAME]) for rule in self.collection.find(query)))
+        return dict(((rule[MetaAlarmRule.ID], rule.get(MetaAlarmRule.NAME)) for rule in self.collection.find(query)))

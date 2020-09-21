@@ -102,7 +102,7 @@ s'il y a 60 alarmes en cours dont 12 critiques sur les entités observées.
         "_id": {"regex_match": ".+/comp"}
     }],
     "state": {
-        "method": "worst",
+        "method": "worst"
     },
     "output_template": "Alarmes critiques : {{.State.Critical}}, Alarmes acquittées : {{.Acknowledged}}"
 }

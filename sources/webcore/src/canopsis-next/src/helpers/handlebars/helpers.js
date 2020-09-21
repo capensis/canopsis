@@ -1,4 +1,4 @@
-import { get, isFunction, isNumber, isObject, unescape } from 'lodash';
+import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
@@ -159,48 +159,57 @@ export function compareHelper(a, operator, b, options = {}) {
     throw new Error('handlebars Helper {{compare}} expects 4 arguments');
   }
 
+  const flags = get(options, ['hash', 'flags']);
   let result;
 
-  switch (operator) {
-    case '==':
-      result = a == b; // eslint-disable-line eqeqeq
-      break;
-    case '===':
-      result = a === b;
-      break;
-    case '!=':
-      result = a != b; // eslint-disable-line eqeqeq
-      break;
-    case '!==':
-      result = a !== b;
-      break;
-    case '<':
-    case '&lt;':
-      result = a < b;
-      break;
-    case '>':
-    case '&gt;':
-      result = a > b;
-      break;
-    case '<=':
-    case '&lte;':
-    case '&lt;=':
-      result = a <= b;
-      break;
-    case '>=':
-    case '&gte;':
-    case '&gt;=':
-      result = a >= b;
-      break;
-    case 'typeof':
-      result = typeof a === b; // eslint-disable-line valid-typeof
-      break;
-    case 'regex':
-    case 'regexp':
-      result = new RegExp(b, get(options, ['hash', 'flags'])).test(a);
-      break;
-    default:
-      throw new Error(`helper {{compare}}: invalid operator: '${operator}'`);
+  if (['regex', 'regexp'].includes(operator)) {
+    result = new RegExp(b, flags).test(a);
+  } else {
+    let preparedA = a;
+    let preparedB = b;
+
+    if (flags && flags.search('i') !== -1) {
+      preparedA = String(a).toLowerCase();
+      preparedB = String(b).toLowerCase();
+    }
+
+    switch (operator) {
+      case '==':
+        result = preparedA == preparedB; // eslint-disable-line eqeqeq
+        break;
+      case '===':
+        result = preparedA === preparedB;
+        break;
+      case '!=':
+        result = preparedA != preparedB; // eslint-disable-line eqeqeq
+        break;
+      case '!==':
+        result = preparedA !== preparedB;
+        break;
+      case '<':
+      case '&lt;':
+        result = preparedA < preparedB;
+        break;
+      case '>':
+      case '&gt;':
+        result = preparedA > preparedB;
+        break;
+      case '<=':
+      case '&lte;':
+      case '&lt;=':
+        result = preparedA <= preparedB;
+        break;
+      case '>=':
+      case '&gte;':
+      case '&gt;=':
+        result = preparedA >= preparedB;
+        break;
+      case 'typeof':
+        result = typeof preparedA === preparedB; // eslint-disable-line valid-typeof
+        break;
+      default:
+        throw new Error(`helper {{compare}}: invalid operator: '${operator}'`);
+    }
   }
 
   if (isFunction(options.fn) && isFunction(options.inverse)) {
@@ -296,4 +305,72 @@ export function divideHelper(a, b) {
   }
 
   return a / b;
+}
+
+/**
+ * Capitalize the first word in a string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function capitalizeHelper(str) {
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Capitalize all words in a string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+export function capitalizeAllHelper(str) {
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.replace(/\w\S*/g, capitalizeHelper);
+}
+
+/**
+ * Lowercase all of characters in a string
+ *
+ * Example: {{lowercase 'test'}}
+ *
+ * @param {string|Object} str
+ * @returns {string}
+ */
+export function lowercaseHelper(str) {
+  if (isObject(str) && str.fn) {
+    return str.fn(this).toLowerCase();
+  }
+
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.toLowerCase();
+}
+
+/**
+ * Uppercase all of characters in a string
+ *
+ * Example: {{uppercase 'test'}}
+ *
+ * @param {string|Object} str
+ * @returns {string}
+ */
+export function uppercaseHelper(str) {
+  if (isObject(str) && str.fn) {
+    return str.fn(this).toUpperCase();
+  }
+
+  if (!isString(str)) {
+    return '';
+  }
+
+  return str.toUpperCase();
 }

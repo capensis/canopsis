@@ -44,6 +44,11 @@ Ce helper accepte quatre paramètres, dans l'ordre suivant :
 *  `options` (optionnel). Permet de définir des options propres à un opérateur de comparaison.
     *  Seul l'opérateur `regex` est concerné par ce paramètre optionnel, pour l'instant. Il s'agit d'une chaîne regroupant l'ensemble des [flags de regex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2) à appliquer lors de son évaluation.
 
+!!! note
+    Disponible depuis Canopsis 3.41.0.
+
+Les opérateurs de comparaison `==` et `===` supportent le flag `i` dans leur évaluation.  
+
 #### Exemples d'utilisation du helper `compare`
 
 Afficher `Test` uniquement si le nombre d'`essais` est supérieur à 10 :
@@ -63,6 +68,16 @@ Afficher `Test` uniquement si une chaîne se *termine* par « motif », en ign
 ```handlebars
 {{#compare 'Cette phrase se termine par MOTIF' 'regex' 'motif$' flags='i'}}Test{{/compare}}
 ```
+
+Afficher `Test` uniquement si le contenu de `variable` est égal à `Cette phrase insensible à la CASSE` sans tenir compte de la casse :
+
+!!! note
+    Disponible depuis Canopsis 3.41.0.
+
+```handlebars
+{{#compare variable '==' 'Cette phrase insensible à la CASSE'  flags='i'}}Test{{/compare}}
+```
+
 
 ### Helper `duration`
 
@@ -274,7 +289,7 @@ Afficher une pastille « Invalid val » (la criticité étant invalide) :
 3. mul : renvoie le produit de 2 nombres
 4. divide : renvoie le résultat de la division entre 2 nombres
 
-### Helper `sum`
+### Helper `sum`
 
 ```handlebars
 {{sum 1 2 3}}
@@ -290,7 +305,7 @@ Afficher la somme de 1, 2, et 3 :
 {{sum 1 2 3}}
 ```
 
-### Helper `minus`
+### Helper `minus`
 
 ```handlebars
 {{minus 10 1}}
@@ -306,7 +321,7 @@ Afficher la différence entre 10 et 1 :
 {{minus 10 1}}
 ```
 
-### Helper `mul`
+### Helper `mul`
 
 ```handlebars
 {{mul 5 6}}
@@ -322,7 +337,7 @@ Afficher le produit entre 5 et 6 :
 {{mul 5 6}}
 ```
 
-### Helper `divide`
+### Helper `divide`
 
 ```handlebars
 {{divde 10 2}}
@@ -341,10 +356,20 @@ Afficher la division 10 par 2 :
 !!! Note
     Une division par 0 affichera `infinity`
 
-## Helper `concat`
+## Helpers chaînes de caractères
 
 !!! note
-    Disponible depuis Canopsis 3.39.0.
+    Disponible depuis Canopsis 3.45.0.
+
+5 helpers sont disponibles pour réaliser des opérations sur des chaînes de caractères.
+
+1. concat : concatène des chaînes de caractères
+1. lowercase : convertit une chaîne de caractères en minuscule
+1. uppercase : convertit une chaîne de caractères en majuscule
+3. capitalize : ajoute une majuscule en début de chaîne de caractères
+4. capitalize-all : ajoute une majuscule sur la première lettre de tous les mots d'une chaîne de caractères
+
+### Helper `concat`
 
 Le helper `concat` permet de concaténer des chaînes de caractères.  
 
@@ -380,3 +405,69 @@ Utiliser la concaténation dans le helper [request](#helper-request) pour bâtir
      {{/each}}
 {{/request}}
 ```
+
+### Helper `lowercase`
+
+```handlebars
+{{lowercase "chaine1"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et la renvoie en minuscule.
+
+#### Exemple d'utilisation du helper `lowercase`
+
+Afficher la chaîne "CHAINE" en minuscule :
+
+```handlebars
+{{lowercase "CHAINE"}}
+```
+
+### Helper `uppercase`
+
+```handlebars
+{{uppercase "chaine1"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et la renvoie en majuscule.
+
+#### Exemple d'utilisation du helper `uppercase`
+
+Afficher la chaîne "chaine" en majuscule :
+
+```handlebars
+{{uppercase "chaine"}}
+```
+
+### Helper `capitalize`
+
+```handlebars
+{{capitalize "chaine1"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre en majuscule.
+
+#### Exemple d'utilisation du helper `capitalize`
+
+Ajouter une majuscule sur la première lettre de la chaîne "chaine" :
+
+```handlebars
+{{capitalize "chaine"}}
+```
+
+### Helper `capitalize-all`
+
+```handlebars
+{{capitalize-all "mot1 mot2 mot3"}}
+```
+
+Ce helper attend en paramètre une chaîne de caractères et transforme la première lettre de chaque mot en majuscule.
+
+#### Exemple d'utilisation du helper `capitalize-all`
+
+Ajouter une majuscule sur la première lettre de chaque mot de la chaîne "mot1 mot2 mot3" :
+
+```handlebars
+{{capitalize-all "mot1 mot2 mot3"}}
+```
+
+

@@ -143,7 +143,7 @@ class TestReader(BaseTest):
     def test__get_time_filter(self):
         # opened=False, resolved=False
         self.assertIs(
-            self.reader._get_time_filter(
+            self.reader._get_opened_resolved_time_filter(
                 opened=False, resolved=False, tstart=0, tstop=0),
             None
         )
@@ -151,7 +151,7 @@ class TestReader(BaseTest):
         # opened=True, resolved=False
         expected_opened = {'v.resolved': None, 't': {'$lte': 2, "$gte": 1}}
         self.assertEqual(
-            self.reader._get_time_filter(
+            self.reader._get_opened_resolved_time_filter(
                 opened=True, resolved=False, tstart=1, tstop=2),
             expected_opened
         )
@@ -162,7 +162,7 @@ class TestReader(BaseTest):
             't': {'$gte': 1, '$lte': 2}
         }
         self.assertEqual(
-            self.reader._get_time_filter(
+            self.reader._get_opened_resolved_time_filter(
                 opened=False, resolved=True, tstart=1, tstop=2),
             expected_resolved
         )
@@ -170,14 +170,14 @@ class TestReader(BaseTest):
         # opened=True, resolved=True
         expected_both = {'$or': [expected_opened, expected_resolved]}
         self.assertEqual(
-            self.reader._get_time_filter(
+            self.reader._get_opened_resolved_time_filter(
                 opened=True, resolved=True, tstart=1, tstop=2),
             expected_both
         )
 
         # opened=True, resolved=True, tstart=tstop=None
         self.assertEqual(
-            self.reader._get_time_filter(
+            self.reader._get_opened_resolved_time_filter(
                 opened=True, resolved=True,
                 tstart=None, tstop=None
             ),
@@ -204,7 +204,7 @@ class TestReader(BaseTest):
             {
                 'tstart': 13,
                 'tstop': None,
-                'expected': {'v.resolved': None, 't': {'$lte': 13}}
+                'expected': {'v.resolved': None, 't': {'$gte': 13}}
             },
             {
                 'tstart': 13,
@@ -231,7 +231,8 @@ class TestReader(BaseTest):
                 'tstart': 13,
                 'tstop': None,
                 'expected': {
-                    'v.resolved': {'$ne': None, '$gte': 13}
+                    'v.resolved': {'$ne': None},
+                    't': {'$gte': 13}
                 }
             },
             {
@@ -337,16 +338,29 @@ class TestReader(BaseTest):
                 {
                     '$or': [
                         {'resource': {
-                            '$regex': '.*turret.*', '$options': 'i'}},
+                            '$regex': u'.*turret.*', '$options': 'i'}},
                         {'component': {
-                            '$regex': '.*turret.*', '$options': 'i'}},
+                            '$regex': u'.*turret.*', '$options': 'i'}},
                         {'d': {
-                            '$regex': '.*turret.*', '$options': 'i'}}
+                            '$regex': u'.*turret.*', '$options': 'i'}}
                     ]
                 }
             ]
         }
-        self.assertEqual(ref_filter, filter_)
+
+        # compiled regex resluted diffrent objects, that makes mismatched ref_filter and filter_
+        # first assert equality of patterns of these values 
+        # then assert equality for rest of conditions without compiled pattern objects
+        _get_regex_condition = lambda x: x["$and"][0]["d"]["$not"]
+        _get_pattern = lambda x: _get_regex_condition(x).pattern
+        def _del_pattern(x):
+            del x["$and"][0]["d"]["$not"]
+            return x
+        ref_pattern, filter_pattern = _get_pattern(ref_filter), _get_pattern(filter_)
+        self.assertEqual(ref_pattern, filter_pattern)
+        print("representation of matched paterns: {} {}, compiled regex {} {}".format(
+            ref_pattern, filter_pattern, _get_regex_condition(ref_filter), _get_regex_condition(filter_)))
+        self.assertEqual(_del_pattern(ref_filter), _del_pattern(filter_))
 
     def test__get_final_filter_natural_numonly(self):
         view_filter = {}

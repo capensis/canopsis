@@ -33,6 +33,16 @@ export default {
       return this.createEvent(EVENT_ENTITY_TYPES.ack, this.item, eventData);
     },
 
+    showCreateCommentModal() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          ...this.modalConfig,
+          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
+        },
+      });
+    },
+
     async createMassFastAckEvent() {
       let eventData = {};
 
@@ -102,7 +112,7 @@ export default {
     showVariablesHelperModal() {
       const variables = [];
 
-      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity']), 'alarm');
+      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity', 'infos']), 'alarm');
 
       variables.push(alarmFields);
 
@@ -178,6 +188,18 @@ export default {
         name: MODALS.alarmsList,
         config: {
           widget,
+        },
+      });
+    },
+
+    showManualMetaAlarmUngroupModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          ...this.modalConfig,
+          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
+          eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
+          parentsIds: [get(this.parentAlarm, 'd')],
         },
       });
     },

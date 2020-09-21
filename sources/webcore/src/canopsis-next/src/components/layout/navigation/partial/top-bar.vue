@@ -16,6 +16,7 @@
         app-version
     v-toolbar-title.white--text.font-weight-regular(v-if="appTitle") {{ appTitle }}
     v-spacer
+    portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
     v-toolbar-items
       v-menu(v-show="exploitationLinks.length", bottom, offset-y)
         v-btn.white--text(slot="activator", flat) {{ $t('common.exploitation') }}
@@ -46,7 +47,7 @@
                   div.ml-2 {{ $t('user.seeProfile') }}
           v-list-tile
             v-list-tile-content
-              v-btn.ma-0.pa-1.error--text(data-test="logoutButton", flat, @click.prevent="logout")
+              v-btn.ma-0.pa-1.error--text(data-test="logoutButton", flat, @click.prevent="logoutHandler")
                 v-layout(align-center)
                   v-icon exit_to_app
                   div.ml-2 {{ $t('common.logout') }}
@@ -130,6 +131,12 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.exploitation.dynamicInfo,
         },
+        {
+          route: { name: 'exploitation-meta-alarm-rules' },
+          text: this.$t('metaAlarmRule.title'),
+          icon: 'list',
+          right: USERS_RIGHTS.technical.exploitation.metaAlarmRule,
+        },
       ];
 
       return links.filter(({ right }) =>
@@ -169,6 +176,12 @@ export default {
           icon: '$vuetify.icons.bullhorn',
           right: USERS_RIGHTS.technical.broadcastMessage,
         },
+        {
+          route: { name: 'admin-playlists' },
+          text: this.$t('common.playlists'),
+          icon: 'playlist_play',
+          right: USERS_RIGHTS.technical.playlist,
+        },
       ];
 
       return links.filter(({ right }) => this.checkReadAccess(right));
@@ -189,6 +202,9 @@ export default {
           },
         },
       });
+    },
+    logoutHandler() {
+      return this.logout({ redirectTo: { name: 'login' } });
     },
   },
 };

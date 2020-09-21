@@ -11,7 +11,18 @@
           strong {{ $t('alarmList.actions.iconsTitles.ack') }}
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
-          div(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
+          div.message(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
+    div(v-if="alarm.v.lastComment")
+      v-tooltip(top)
+        v-icon.badge.white--text.purple.lighten-2(
+          small,
+          slot="activator"
+        ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.comment].icon }}
+        div.text-md-center
+          strong {{ $t('alarmList.actions.iconsTitles.comment') }}
+          div {{ $t('common.by') }} : {{ alarm.v.lastComment.a }}
+          div {{ $t('common.date') }} : {{ alarm.v.lastComment.t | date('long') }}
+          div.message(v-if="alarm.v.lastComment.m") {{ $tc('common.comment') }} : {{ alarm.v.lastComment.m }}
     div(v-if="alarm.v.ticket")
       v-tooltip(top)
         v-icon.badge.blue.white--text(
@@ -37,7 +48,7 @@
           strong {{ $t('alarmList.actions.iconsTitles.canceled') }}
           div {{ $t('common.by') }} : {{ alarm.v.canceled.a }}
           div {{ $t('common.date') }} : {{ alarm.v.canceled.t | date('long') }}
-          div(v-if="alarm.v.canceled.m") {{ $tc('common.comment') }} : {{ alarm.v.canceled.m }}
+          div.message(v-if="alarm.v.canceled.m") {{ $tc('common.comment') }} : {{ alarm.v.canceled.m }}
     div(v-if="alarm.v.snooze")
       v-tooltip(top)
         v-icon.badge.pink.white--text(
@@ -74,7 +85,7 @@
             v-divider
     div(v-if="alarm.causes")
       v-tooltip(top)
-        v-icon.badge.purple.white--text(
+        v-icon.badge.brown.darken-1.white--text(
           slot="activator",
           data-test="extraDetailsOpenButton-groupCauses",
           small
@@ -82,9 +93,9 @@
         div.text-md-center(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.grouping') }}
           v-layout(row)
-            v-flex(xs6)
+            v-flex
               div {{ $tc('alarmList.actions.iconsFields.rule', causesRules.length) }}&nbsp;:
-            v-flex(xs6)
+            v-flex
               div(
                 v-for="(rule, index) in causesRules",
                 :key="rule.id",
@@ -93,7 +104,7 @@
           div {{ $t('alarmList.actions.iconsFields.causes') }} : {{ alarm.causes.total }}
     div(v-if="alarm.consequences")
       v-tooltip(top)
-        v-icon.badge.purple.white--text(
+        v-icon.badge.brown.darken-1.white--text(
           slot="activator",
           data-test="extraDetailsOpenButton-groupConsequences",
           small
@@ -148,5 +159,9 @@ export default {
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: 10px;
+  }
+  .message {
+    max-width: 600px;
+    white-space: pre-line;
   }
 </style>

@@ -19,7 +19,7 @@ export function eventFilterRuleToForm(rule = {}) {
     },
     enrichmentOptions: {
       actions: rule.actions ? cloneDeep(rule.actions) : [],
-      externalData: rule.externalData ? cloneDeep(rule.externalData) : {},
+      externalData: rule.external_data ? cloneDeep(rule.external_data) : {},
       onSuccess: rule.on_success || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
       onFailure: rule.on_failure || EVENT_FILTER_ENRICHMENT_RULE_AFTER_TYPES.pass,
     },

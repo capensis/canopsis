@@ -43,6 +43,9 @@
         "models_exploitation_dynamicInfo": {
             "checksum": 15
         },
+        "models_exploitation_metaAlarmRule": {
+          "checksum": 15
+        },
         "tabs_showeditionmenu" : {
             "checksum": 1
         },
@@ -210,6 +213,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_manualMetaAlarmGroup": {
+            "checksum": 1,
+            "desc": ""
+        },
         "listalarm_listPbehavior": {
             "checksum": 1,
             "desc": ""
@@ -235,6 +242,14 @@
             "desc": ""
         },
         "listalarm_done": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_comment": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "serviceweather_entityComment": {
             "checksum": 1,
             "desc": ""
         },
@@ -362,32 +377,36 @@
             "checksum": 1,
             "desc": ""
         },
-	"da7ac9b9-db1c-4435-a1f2-edb4d6be4db8" : {
-        	"checksum" : 15,
-		"crecord_type" : "right"
-	},
-	"875df4c2-027b-4549-8add-e20ed7ff7d4f" : {
-        	"checksum" : 15,
-		"crecord_type" : "right"
-	},
-  "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa" : {
-        	"checksum" : 15,
-		"crecord_type" : "right"
-	}
+        "models_broadcastMessage": {
+            "checksum": 15,
+            "desc": ""
+        },
+        "models_playlist": {
+            "checksum": 15,
+            "desc": ""
+        },
+        "common_variablesHelp": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "counter_alarmsList": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "da7ac9b9-db1c-4435-a1f2-edb4d6be4db8" : {
+            "checksum" : 15,
+            "crecord_type" : "right"
+        },
+        "875df4c2-027b-4549-8add-e20ed7ff7d4f" : {
+            "checksum" : 15,
+            "crecord_type" : "right"
+        },
+        "583ba368-8a3b-4778-8b4a-dc65e6c5b1fa" : {
+            "checksum" : 15,
+            "crecord_type" : "right"
+        }
     },
-    "models_broadcastMessage": {
-        "checksum": 15,
-        "desc": ""
-    },
-    "common_variablesHelp": {
-        "checksum": 1,
-        "desc": ""
-    },
-    "counter_alarmsList": {
-        "checksum": 1,
-        "desc": ""
-    },
-	"defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
+    "defaultview": "875df4c2-027b-4549-8add-e20ed7ff7d4f"
 },{
     "_id": "Supervision",
     "rights": {
@@ -503,7 +522,7 @@
             "desc": ""
         }
     },
-	"defaultview": "view.current_alarms"
+    "defaultview": "view.current_alarms"
 },{
     "_id": "Manager",
     "rights": {
@@ -595,7 +614,7 @@
             "desc": ""
         }
     },
-	"defaultview": "view.current_alarms"
+    "defaultview": "view.current_alarms"
 },{
     "_id": "Visualisation",
     "rights": {
@@ -612,7 +631,7 @@
             "desc": ""
         }
     },
-	"defaultview": "view.current_alarms"
+    "defaultview": "view.current_alarms"
 },{
     "_id": "Norights",
     "rights": {

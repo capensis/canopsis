@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { omit, pick, isEmpty } from 'lodash';
-import { ACTION_TYPES, TIME_UNITS, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
+import { ACTION_TYPES, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
@@ -12,6 +12,8 @@ import {
   commentsToPbehaviorComments,
   exdatesToPbehaviorExdates,
 } from '@/helpers/forms/pbehavior';
+import { convertDurationToIntervalObject } from '@/helpers/date';
+import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
 /**
  * If action's type is "snooze", get snooze parameters
@@ -23,23 +25,11 @@ function actionSnoozeParametersToForm(parameters = {}) {
   const data = {};
 
   if (parameters.duration) {
-    const durationUnits = [
-      TIME_UNITS.year,
-      TIME_UNITS.month,
-      TIME_UNITS.week,
-      TIME_UNITS.week,
-      TIME_UNITS.day,
-      TIME_UNITS.hour,
-      TIME_UNITS.minute,
-      TIME_UNITS.second,
-    ];
-
-    // Check for the lowest possible unit to convert the duration in.
-    const durationType = durationUnits.find(unit => moment.duration(parameters.duration, 'seconds').as(unit) % 1 === 0);
+    const { unit, interval } = convertDurationToIntervalObject(parameters.duration);
 
     data.duration = {
-      duration: moment.duration(parameters.duration, 'seconds').as(durationType),
-      durationType,
+      duration: interval,
+      durationType: unit,
     };
   }
 
@@ -85,7 +75,8 @@ export function actionToForm(action) {
     return data;
   }
 
-  data.generalParameters = pick(action, ['_id', 'type', 'hook']);
+  data.generalParameters = pick(action, ['_id', 'type', 'hook', 'priority']);
+  data.generalParameters.enabled = action.enabled !== false;
 
   if (action.delay) {
     const [, value, unit] = action.delay.match(/^(\d+)(\w)$/);
@@ -167,15 +158,15 @@ export function formToAction({
   generalParameters = {},
   ...form
 }) {
-  let data = { ...generalParameters };
-
-  const patternsCondition = value => !value || !value.length;
   const hasValue = v => !v;
 
-  data = unsetSeveralFieldsWithConditions(data, {
-    'hook.event_patterns': patternsCondition,
-    'hook.alarm_patterns': patternsCondition,
-    'hook.entity_patterns': patternsCondition,
+  const data = unsetSeveralFieldsWithConditions(generalParameters, {
+    ...getConditionsForRemovingEmptyPatterns([
+      'hook.entity_patterns',
+      'hook.alarm_patterns',
+      'hook.event_patterns',
+    ]),
+
     'delay.unit': hasValue,
     'delay.value': hasValue,
   });

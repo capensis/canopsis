@@ -97,13 +97,15 @@ export default {
     },
   },
   data() {
-    const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
-
     return {
-      menu: false,
-      state: this.entity.state.val,
       actionsClicked: [],
-      actionsMap: {
+    };
+  },
+  computed: {
+    actionsMap() {
+      const { weather: weatherActionsTypes } = WIDGETS_ACTIONS_TYPES;
+
+      return {
         ack: {
           type: weatherActionsTypes.entityAck,
           eventType: EVENT_ENTITY_TYPES.ack,
@@ -146,16 +148,20 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           action: this.prepareCancelAction,
         },
-      },
-    };
-  },
-  computed: {
+        comment: {
+          type: weatherActionsTypes.entityComment,
+          eventType: EVENT_ENTITY_TYPES.comment,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.comment].icon,
+          action: this.prepareCommentAction,
+        },
+      };
+    },
     color() {
       if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
         return WATCHER_STATES_COLORS.pause;
       }
 
-      return ENTITIES_STATES_STYLES[this.state].color;
+      return ENTITIES_STATES_STYLES[this.entity.state.val].color;
     },
 
     mainIcons() {
@@ -229,7 +235,7 @@ export default {
 
     availableActions() {
       const { filteredActionsMap } = this;
-      const actions = [];
+      const actions = [filteredActionsMap.comment];
 
       if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);

@@ -3,7 +3,7 @@ import date from './date';
 import duration from './duration';
 import json from './json';
 import percentage from './percentage';
-import maxDurationByUnit from './maxDurationByUnit';
+import maxDurationByUnit from './max-duration-by-unit';
 
 export default {
   install(Vue) {

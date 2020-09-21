@@ -6,7 +6,7 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES,
+  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -24,6 +24,7 @@ export default {
     addPbehavior: 'Add pbehavior',
     refresh: 'Refresh',
     toggleEditView: 'Toggle view edition mode',
+    toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
     name: 'Name',
     description: 'Description',
     author: 'Author',
@@ -98,16 +99,23 @@ export default {
     notFound: 'Not found',
     search: 'Search',
     filters: 'Filters',
+    filter: 'Filter',
     webhooks: 'Webhooks',
     emptyObject: 'Empty object',
     startDate: 'Start date',
     endDate: 'End date',
     links: 'Links',
-    filter: 'Filter',
     stack: 'Stack',
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
+    playlists: 'Playlists',
+    fullscreen: 'Fullscreen',
+    interval: 'Interval',
     status: 'Status',
+    unit: 'Unit',
+    or: 'Or',
+    and: 'And',
+    priority: 'Priority',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -122,6 +130,7 @@ export default {
       [EVENT_ENTITY_TYPES.play]: 'Play',
       [EVENT_ENTITY_TYPES.cancel]: 'Cancel',
       [EVENT_ENTITY_TYPES.assocTicket]: 'Associate ticket',
+      [EVENT_ENTITY_TYPES.comment]: 'Comment',
     },
     times: {
       second: 'second | seconds',
@@ -227,6 +236,9 @@ export default {
         variablesHelp: 'List of available variables',
         history: 'History',
         groupRequest: 'Suggest group request for meta alarm',
+        manualMetaAlarmGroup: 'Manual meta alarm management',
+        manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
+        comment: 'Comment',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -235,6 +247,7 @@ export default {
         snooze: 'Snooze',
         pbehaviors: 'Periodic behaviors',
         grouping: 'Meta alarm',
+        comment: 'Comment',
       },
       iconsFields: {
         ticketNumber: 'Ticket number',
@@ -267,6 +280,7 @@ export default {
         pbhenter: 'Periodic behavior enabled',
         pbhleave: 'Periodic behavior disabled',
         cancel: 'Alarm cancelled',
+        comment: 'Alarm commented',
       },
     },
     tabs: {
@@ -471,6 +485,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
+      isState: 'Displayed as severity ?',
     },
     liveReporting: {
       title: 'Live reporting',
@@ -599,6 +614,9 @@ export default {
     },
     createGroupRequestEvent: {
       title: 'Suggest group request for meta alarm',
+    },
+    createGroupEvent: {
+      title: 'Create meta alarm',
     },
     createChangeStateEvent: {
       title: 'Change severity',
@@ -893,6 +911,25 @@ export default {
         removeRuleField: 'Remove rule field',
       },
     },
+    metaAlarmRule: {
+      create: {
+        title: 'Create meta alarm rule',
+        success: 'Rule successfully created !',
+      },
+      duplicate: {
+        title: 'Duplicate meta alarm rule',
+        success: 'Rule successfully created !',
+      },
+      edit: {
+        title: 'Edit an meta alarm rule',
+        success: 'Rule successfully edited !',
+      },
+      remove: {
+        success: 'Rule successfully removed !',
+      },
+      editPattern: 'Edit pattern',
+      actions: 'Actions',
+    },
     viewTab: {
       create: {
         title: 'Create tab',
@@ -1110,6 +1147,41 @@ export default {
       defaultMessage: 'Your message here',
       buttons: {
         selectColor: 'Select background color',
+      },
+    },
+    createCommentEvent: {
+      title: 'Add comment',
+      fields: {
+        comment: 'Comment',
+      },
+    },
+    createPlaylist: {
+      create: {
+        title: 'Create playlist',
+      },
+      edit: {
+        title: 'Edit playlist',
+      },
+      duplicate: {
+        title: 'Duplicate playlist',
+      },
+      errors: {
+        emptyTabs: 'You should add a tab',
+      },
+      fields: {
+        interval: 'Interval',
+        unit: 'Unit',
+      },
+      groups: 'Groups',
+      result: 'Result',
+      manageTabs: 'Manage tabs',
+    },
+    createManualMetaAlarm: {
+      title: 'Manual meta alarm management',
+      noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
+      fields: {
+        metaAlarm: 'Manual meta alarm',
+        output: 'Note',
       },
     },
   },
@@ -1339,6 +1411,25 @@ export default {
     id: 'Id',
     idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
+  metaAlarmRule: {
+    title: 'Meta alarm rule',
+    type: 'Type',
+    patterns: 'Patterns',
+    actions: 'Actions',
+    id: 'Id',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
+    fields: {
+      eventPatterns: 'Event patterns',
+      alarmPatterns: 'Alarm patterns',
+      entityPatterns: 'Entity patterns',
+      thresholdType: 'Threshold type',
+      thresholdRate: 'Threshold rate',
+      thresholdCount: 'Threshold count',
+      timeInterval: 'Time interval',
+      valuePath: 'Value path',
+      autoResolve: 'Auto resolve',
+    },
+  },
   snmpRules: {
     title: 'SNMP rules',
     uploadMib: 'Upload MIB',
@@ -1395,6 +1486,10 @@ export default {
     },
   },
   parameters: {
+    tabs: {
+      parameters: 'Parameters',
+      importExportViews: 'Import/Export',
+    },
     interfaceLanguage: 'Interface language',
     groupsNavigationType: {
       title: 'Groups navigation type',
@@ -1414,6 +1509,7 @@ export default {
         infoPopupTimeout: 'Info popup timeout',
         errorPopupTimeout: 'Error popup timeout',
         popupTimeoutUnit: 'Unit',
+        allowChangeSeverityToInfo: 'Allow change severity to info',
       },
     },
   },
@@ -1425,6 +1521,8 @@ export default {
     deleteWidget: 'Delete widget',
     fullScreen: 'Full screen',
     fullScreenShortcut: 'Alt + Enter / Command + Enter',
+    copyWidgetId: 'Copy widget ID',
+    autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   },
   patternsList: {
     noData: 'No pattern set. Click \'Add\' button to start adding fields to the pattern',
@@ -1500,7 +1598,6 @@ export default {
   serviceWeather: {
     seeAlarms: 'See alarms',
   },
-
   heartbeat: {
     title: 'Heartbeats',
     table: {
@@ -1510,7 +1607,6 @@ export default {
       },
     },
   },
-
   dynamicInfo: {
     title: 'Dynamic informations',
     table: {
@@ -1525,15 +1621,12 @@ export default {
       informations: 'Informations',
     },
   },
-
   contextGeneralTable: {
     addSelection: 'Add selection',
   },
-
   liveReporting: {
     button: 'Set a custom date range',
   },
-
   tours: {
     [TOURS.alarmsExpandPanel]: {
       step1: 'Details',
@@ -1541,7 +1634,6 @@ export default {
       step3: 'Timeline tab',
     },
   },
-
   handlebars: {
     requestHelper: {
       errors: {
@@ -1551,9 +1643,28 @@ export default {
       },
     },
   },
-
   importExportViews: {
     selectAll: 'Select all groups and views',
+  },
+  playlist: {
+    player: {
+      tooltips: {
+        fullscreen: 'Actions are disabled in full screen mode',
+      },
+    },
+  },
+  rights: {
+    technical: {
+      admin: 'Admin rights',
+      exploitation: 'Exploitation rights',
+    },
+    business: {
+      [USER_RIGHTS_PREFIXES.business.common]: 'Rights for common',
+      [USER_RIGHTS_PREFIXES.business.alarmsList]: 'Rights for Alarms List',
+      [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
+      [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
+      [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
+    },
   },
 
   ...featureService.get('i18n.en'),
