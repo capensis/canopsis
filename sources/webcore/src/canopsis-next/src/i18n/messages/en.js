@@ -116,6 +116,9 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    output: 'Note',
+    created: 'Creation date',
+    updated: 'Last update date',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
