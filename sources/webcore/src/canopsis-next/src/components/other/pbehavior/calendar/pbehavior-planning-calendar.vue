@@ -349,7 +349,7 @@ export default {
       }
 
       if (event.closePopover) {
-        event.closePopover();
+        event.closePopover(event);
       }
 
       event.clearPlaceholder();
@@ -402,12 +402,12 @@ export default {
      * @returns {Promise<void>}
      */
     applyEventChangesForAllHandler({ target, calendarEvent }) {
-      const pbehaviorId = get(calendarEvent, 'data.pbehavior._id');
-      const pbehavior = this.allPbehaviorsById[pbehaviorId];
+      const pbehavior = get(calendarEvent, 'data.pbehavior');
+      const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
       const startDiff = target.start.secondsBetween(calendarEvent.start, Op.FLOOR, false);
       const endDiff = target.end.secondsBetween(calendarEvent.end, Op.FLOOR, false);
-      const tstart = pbehavior.tstart + startDiff;
-      const tstop = pbehavior.tstop + endDiff;
+      const tstart = originalPbehavior.tstart + startDiff;
+      const tstop = originalPbehavior.tstop + endDiff;
       const newPbehavior = {
         ...pbehavior,
 
@@ -429,7 +429,7 @@ export default {
       }
 
       if (event.closePopover) {
-        event.closePopover();
+        event.closePopover(event);
       }
     },
 

@@ -189,6 +189,10 @@ export default {
     },
 
     startEditing(event) {
+      if (this.editingEvent && this.editingEvent.closePopover) {
+        this.editingEvent.closePopover(event);
+      }
+
       this.editing = true;
       this.editingEvent = event;
     },
