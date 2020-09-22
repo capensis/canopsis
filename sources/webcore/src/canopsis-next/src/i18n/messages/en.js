@@ -124,6 +124,7 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    steps: 'Steps',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1761,6 +1762,18 @@ export default {
       configurations: 'Configurations',
       jobs: 'Jobs',
     },
+  },
+
+  remediationInstructions: {
+    table: {
+      rating: 'Rating',
+      lastModifiedOn: 'Last modified on',
+      averageTimeCompletion: 'Average time of completion',
+      monthExecutions: 'Number of executions this month',
+      lastExecutedBy: 'Last executed by',
+      lastExecutedOn: 'Last executed on',
+    },
+    usingInstruction: 'Cannot be deleted since it is in use',
   },
 
   ...featureService.get('i18n.en'),

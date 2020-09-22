@@ -37,6 +37,7 @@ export const ENTITIES_TYPES = {
   pbehaviorExceptions: 'pbehaviorExceptions',
   pbehaviorTypes: 'pbehaviorTypes',
   pbehaviorReasons: 'pbehaviorReasons',
+  remediationInstruction: 'remediationInstruction',
 };
 
 export const MODALS = {
@@ -733,6 +734,7 @@ export const USERS_RIGHTS = {
     planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
     exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
+    remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationInstruction`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,

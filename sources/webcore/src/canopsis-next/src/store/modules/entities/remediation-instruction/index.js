@@ -11,8 +11,8 @@ export const types = {
 
 export default createEntityModule({
   types,
-  route: API_ROUTES.planning.reasons,
-  entityType: ENTITIES_TYPES.pbehaviorReasons,
+  route: API_ROUTES.remediation.instructions,
+  entityType: ENTITIES_TYPES.remediationInstruction,
   dataPreparer: d => d.data,
   withFetchingParams: true,
   withMeta: true,

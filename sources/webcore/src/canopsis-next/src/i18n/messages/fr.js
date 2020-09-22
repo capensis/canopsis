@@ -1763,5 +1763,16 @@ export default {
     },
   },
 
+  remediationInstructions: {
+    table: {
+      rating: 'Évaluation',
+      lastModifiedOn: 'Dernière modification le',
+      averageTimeCompletion: 'Temps moyen d\'achèvement',
+      monthExecutions: 'Nombre d\'exécutions ce mois-ci',
+      lastExecutedBy: 'Dernière exécution par',
+      lastExecutedOn: 'Dernière exécution le',
+    },
+  },
+
   ...featureService.get('i18n.fr'),
 };
