@@ -19,7 +19,7 @@ Si vous obtenez une version inférieure à 4.4, veuillez utiliser un noyau plus
 
 ### Installation de Docker CE et Docker Compose
 
-Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 18.06 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux proposés par votre distribution.
+Canopsis nécessite [l'installation de Docker CE](https://docs.docker.com/install/#supported-platforms), version 19.03.5 minimum. Veuillez utiliser les dépôts officiels de Docker CE, et non pas ceux proposés par votre distribution.
 
 Une fois Docker CE installé, vous devez ensuite [installer Docker Compose](https://docs.docker.com/compose/install/#install-compose).
 
