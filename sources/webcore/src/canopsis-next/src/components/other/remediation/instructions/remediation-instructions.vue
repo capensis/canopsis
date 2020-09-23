@@ -6,7 +6,7 @@
       :totalItems="remediationInstructionsMeta.total_count",
       :pagination.sync="pagination",
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
-      @assign="showEditPatternModal",
+      @assign-filter="showCreateFilterModal",
       @remove="showRemoveRemediationInstructionModal",
       @edit="showEditRemediationInstructionModal"
     )
@@ -47,52 +47,65 @@ export default {
     showEditRemediationInstructionModal() {
     },
 
-    showConfirmEditRunningRemediationInstructionModal(action) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          text: this.$t('remediationInstructions.errors.runningInstruction'),
-          action,
-        },
+    showConfirmModalOnRunningRemediationInstruction(action) {
+      return new Promise((resolve) => {
+        this.$modals.show({
+          name: MODALS.confirmation,
+          config: {
+            text: this.$t('remediationInstructions.errors.runningInstruction'),
+            action: async (...args) => {
+              await action(...args);
+              resolve();
+            },
+            cancel: resolve,
+          },
+        });
       });
     },
 
-    showEditPatternModal(remediationInstruction) {
-      this.$modals.show({
-        name: MODALS.createEventFilterRulePattern,
-        config: {
-          isSimplePattern: true,
-          pattern: remediationInstruction.pattern,
-          action: (pattern) => {
-            const id = remediationInstruction._id;
-            const data = { ...remediationInstruction, pattern };
+    async updateRemediationInstructionFilter(remediationInstruction, filter) {
+      if (isEqual(remediationInstruction.filter, filter)) {
+        return;
+      }
 
-            if (remediationInstruction.running) {
-              this.showConfirmEditRunningRemediationInstructionModal(() => {
-                this.updateRemediationInstruction({ id, data });
-              });
-            } else {
-              this.updateRemediationInstruction({ id, data });
-            }
+      const id = remediationInstruction._id;
+      const data = { ...remediationInstruction, filter };
+
+      if (remediationInstruction.running) {
+        await this.showConfirmModalOnRunningRemediationInstruction(() => {
+          this.updateRemediationInstruction({ id, data });
+        });
+      } else {
+        await this.updateRemediationInstruction({ id, data });
+      }
+    },
+
+    showCreateFilterModal(remediationInstruction) {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          filter: { filter: remediationInstruction.filter },
+          hiddenFields: ['title'],
+          action: async ({ filter }) => {
+            await this.updateRemediationInstructionFilter(remediationInstruction, filter);
           },
         },
       });
     },
 
     showRemoveRemediationInstructionModal(remediationInstruction) {
-      const action = async () => {
-        await this.removeRemediationInstruction({ id: remediationInstruction._id });
-        await this.fetchList();
-      };
-
-      if (remediationInstruction.running) {
-        this.showConfirmEditRunningRemediationInstructionModal(action);
-      } else {
-        this.$modals.show({
-          name: MODALS.confirmation,
-          config: { action },
-        });
-      }
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          text: remediationInstruction.running
+            ? this.$t('remediationInstructions.errors.runningInstruction')
+            : undefined,
+          action: async () => {
+            await this.removeRemediationInstruction({ id: remediationInstruction._id });
+            await this.fetchList();
+          },
+        },
+      });
     },
 
     showRemoveSelectedRemediationInstructionModal(selected) {

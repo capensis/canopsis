@@ -37,16 +37,14 @@
         )
           v-icon edit
         v-btn.mx-0(
-          v-if="hasUpdateAnyRemediationInstructionAccess",
           icon,
           small,
-          @click.stop="$emit('assign', props.item)"
+          @click.stop="$emit('assign-filter', props.item)"
         )
           v-icon assignment
         v-tooltip(bottom, :disabled="props.item.deletable")
           v-btn.mx-0(
             slot="activator",
-            v-if="hasDeleteAnyRemediationInstructionAccess",
             :disabled="!props.item.deletable",
             icon,
             small,
