@@ -36,7 +36,7 @@ from bottle_swagger import SwaggerPlugin
 def init_swagger():
     this_dir = os.path.dirname(os.path.abspath(__file__))
     with open("{}/swagger/swagger.yml".format(this_dir)) as f:
-        swagger_def = yaml.load(f)
+        swagger_def = yaml.full_load(f)
 
     swagger_plugin = SwaggerPlugin(swagger_def, ignore_undefined_api_routes=True, serve_swagger_ui=True)
     install(swagger_plugin)
