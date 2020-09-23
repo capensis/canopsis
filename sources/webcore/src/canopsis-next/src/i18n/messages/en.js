@@ -124,7 +124,6 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
-    steps: 'Steps',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1240,6 +1239,15 @@ export default {
         output: 'Note',
       },
     },
+    createRemediationInstruction: {
+      title: 'Create instruction',
+    },
+    createRemediationConfiguration: {
+      title: 'Create configuration',
+    },
+    createRemediationJob: {
+      title: 'Create Job',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1766,6 +1774,7 @@ export default {
 
   remediationInstructions: {
     usingInstruction: 'Cannot be deleted since it is in use',
+    addStep: 'Add step',
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
