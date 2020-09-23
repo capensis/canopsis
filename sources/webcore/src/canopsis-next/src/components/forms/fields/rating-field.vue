@@ -4,7 +4,8 @@
     :readonly="readonly",
     backgroundColor="primary",
     medium,
-    half-increments
+    half-increments,
+    @input="$emit('input', $event)"
   )
 </template>
 

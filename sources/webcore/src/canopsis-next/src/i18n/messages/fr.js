@@ -1764,6 +1764,7 @@ export default {
   },
 
   remediationInstructions: {
+    usingInstruction: 'La raison utilise, car ne peut pas être supprimée',
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',
@@ -1771,6 +1772,9 @@ export default {
       monthExecutions: 'Nombre d\'exécutions ce mois-ci',
       lastExecutedBy: 'Dernière exécution par',
       lastExecutedOn: 'Dernière exécution le',
+    },
+    errors: {
+      runningInstruction: 'Des instructions en cours sont affectées à ce modèle. Souhaitez-vous les annuler?',
     },
   },
 

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { isEmpty, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -44,14 +44,6 @@ export default {
       this.fetchRemediationInstructionsList({ params: this.getQuery() });
     },
 
-    async tryRemoveRemediationInstruction(remediationInstructionId) {
-      try {
-        await this.removeRemediationInstruction({ id: remediationInstructionId });
-      } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
-    },
-
     showEditRemediationInstructionModal() {
     },
 
@@ -59,7 +51,7 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          text: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
+          text: this.$t('remediationInstructions.errors.runningInstruction'),
           action,
         },
       });
@@ -72,12 +64,15 @@ export default {
           isSimplePattern: true,
           pattern: remediationInstruction.pattern,
           action: (pattern) => {
-            const data = { id: remediationInstruction._id, data: { ...remediationInstruction, pattern } };
+            const id = remediationInstruction._id;
+            const data = { ...remediationInstruction, pattern };
 
             if (remediationInstruction.running) {
-              this.showConfirmEditRunningRemediationInstructionModal(() => this.updateRemediationInstruction(data));
-            } else if (isEmpty(remediationInstruction.pattern)) {
-              this.updateRemediationInstruction(data);
+              this.showConfirmEditRunningRemediationInstructionModal(() => {
+                this.updateRemediationInstruction({ id, data });
+              });
+            } else {
+              this.updateRemediationInstruction({ id, data });
             }
           },
         },
@@ -86,7 +81,7 @@ export default {
 
     showRemoveRemediationInstructionModal(remediationInstruction) {
       const action = async () => {
-        await this.tryRemoveRemediationInstruction(remediationInstruction._id);
+        await this.removeRemediationInstruction({ id: remediationInstruction._id });
         await this.fetchList();
       };
 
@@ -95,9 +90,7 @@ export default {
       } else {
         this.$modals.show({
           name: MODALS.confirmation,
-          config: {
-            action,
-          },
+          config: { action },
         });
       }
     },
@@ -107,7 +100,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(selected.map(({ _id: id }) => this.tryRemoveRemediationInstruction(id)));
+            await Promise.all(selected.map(({ _id: id }) => this.removeRemediationInstruction({ id })));
 
             await this.fetchList();
           },

@@ -21,6 +21,7 @@ export default {
       set(value) {
         this.query = {
           ...this.query,
+          search: value.search || '',
           page: value.page,
           rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
           sortKey: value.sortBy,
@@ -29,7 +30,7 @@ export default {
       },
       get() {
         return {
-          ...pick(this.query, ['page', 'rowsPerPage']),
+          ...pick(this.query, ['page', 'rowsPerPage', 'search']),
           sortBy: this.query.sortKey,
           descending: this.query.sortDir === SORT_ORDERS.desc,
         };

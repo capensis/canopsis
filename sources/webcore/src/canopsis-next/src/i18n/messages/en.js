@@ -1765,6 +1765,7 @@ export default {
   },
 
   remediationInstructions: {
+    usingInstruction: 'Cannot be deleted since it is in use',
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
@@ -1773,7 +1774,9 @@ export default {
       lastExecutedBy: 'Last executed by',
       lastExecutedOn: 'Last executed on',
     },
-    usingInstruction: 'Cannot be deleted since it is in use',
+    errors: {
+      runningInstruction: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
+    },
   },
 
   ...featureService.get('i18n.en'),
