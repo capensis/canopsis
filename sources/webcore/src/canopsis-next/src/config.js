@@ -1,5 +1,7 @@
 export const { BASE_URL } = process.env;
 
+export const API_BASE_URL = process.env.NODE_ENV === 'production' ? '' : '/api';
+
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
@@ -122,6 +124,7 @@ export const API_ROUTES = {
     pbehaviorById: '/api/v4/entities/pbehaviors',
     reasons: '/api/v4/pbehavior-reasons',
   },
+  file: '/api/v4/file',
 };
 
 export const COLORS = {
