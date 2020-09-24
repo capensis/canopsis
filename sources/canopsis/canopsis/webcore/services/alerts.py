@@ -406,35 +406,36 @@ def exports(ws):
 
         if not correlation:
             return count(alrs)
-        else:
-            try:
-                alrs_with_meta_group = ar.get(
-                    tstart=tstart,
-                    tstop=tstop,
-                    opened=opened,
-                    resolved=resolved,
-                    lookups=lookups,
-                    filter_=filter,
-                    search=search.strip(),
-                    sort_key=sort_key,
-                    sort_dir=sort_dir,
-                    skip=skip,
-                    limit=limit,
-                    with_steps=with_steps,
-                    natural_search=natural_search,
-                    active_columns=active_columns,
-                    hide_resources=hide_resources,
-                    add_pbh_filter=False,
-                    correlation=True
-                )
 
-                regular_counters = count(alrs)
-                meta_alarm_counters = count(alrs_with_meta_group)
-                counters = dict(regular_counters.items() + {k + "_correlation": v for k, v in meta_alarm_counters.items()}.items())
-                return counters
-            except OperationFailure as of_err:
-                message = 'Operation failure on get-alarms: {}'.format(of_err)
-                raise WebServiceError(message)
+        try:
+            alrs_with_meta_group = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=opened,
+                resolved=resolved,
+                lookups=lookups,
+                filter_=filter,
+                search=search.strip(),
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=limit,
+                with_steps=with_steps,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources,
+                add_pbh_filter=False,
+                correlation=True
+            )
+
+            regular_counters = count(alrs)
+            meta_alarm_counters = count(alrs_with_meta_group)
+            counters = dict(regular_counters.items(
+            ) + {k + "_correlation": v for k, v in meta_alarm_counters.items()}.items())
+            return counters
+        except OperationFailure as of_err:
+            message = 'Operation failure on get-alarms: {}'.format(of_err)
+            raise WebServiceError(message)
 
     @route(
         ws.application.get,
