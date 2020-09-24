@@ -6,7 +6,7 @@
       template(slot="text")
         r-rule-form(v-model="form.rrule")
         pbehavior-exception-form(
-          v-if="form.rrule && config.noExdates",
+          v-if="form.rrule && !config.noExdates",
           v-model="form.exdates",
           :exceptions.sync="form.exceptions"
         )

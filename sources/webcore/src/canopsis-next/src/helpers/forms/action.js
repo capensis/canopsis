@@ -11,7 +11,7 @@ import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/pa
 /**
  * If action's type is "snooze", get snooze parameters
  *
- * @param {Object} [parameters={}]
+ * @param {Object} [parameters = {}]
  * @returns {Object}
  */
 function actionSnoozeParametersToForm(parameters = {}) {
@@ -61,8 +61,8 @@ function actionPbehaviorParametersToForm(parameters = {}, timezone = moment.tz.g
 /**
  * If action's type is "pbehavior", get pbehavior parameters
  *
- * @param {Object} [form={}]
- * @param {string} [timezone=moment.tz.guess()]
+ * @param {Object} [form = {}]
+ * @param {string} [timezone = moment.tz.guess()]
  * @returns {Object}
  */
 function formToActionPbehaviorParameters(form = {}, timezone = moment.tz.guess()) {
@@ -120,8 +120,8 @@ export function actionToForm(action, timezone = moment.tz.guess()) {
 /**
  * Prepare snooze parameters from form
  *
- * @param snoozeParameters
- * @returns {{duration: number}}
+ * @param {Object} [snoozeParameters = {}]
+ * @returns {Object}
  */
 export function prepareSnoozeParameters({ snoozeParameters = {} }) {
   return ({
@@ -136,17 +136,17 @@ export function prepareSnoozeParameters({ snoozeParameters = {} }) {
 /**
  * Prepare action object by form object
  *
- * @param [generalParameters]
+ * @param {Object} [generalParameters = {}]
  * @param {Object} form
- * @param [form.pbehaviorParameters]
- * @param [form.snoozeParameters]
- * @param [form.changeStateParameters]
- * @param [form.ackParameters]
- * @param [form.ackremoveParameters]
- * @param [form.assocticketParameters]
- * @param [form.declareticketParameters]
- * @param [form.cancelParameters]
- * @param [timezone = moment.tz.guess()]
+ * @param {Object} [form.pbehaviorParameters]
+ * @param {Object} [form.snoozeParameters]
+ * @param {Object} [form.changeStateParameters]
+ * @param {Object} [form.ackParameters]
+ * @param {Object} [form.ackremoveParameters]
+ * @param {Object} [form.assocticketParameters]
+ * @param {Object} [form.declareticketParameters]
+ * @param {Object} [form.cancelParameters]
+ * @param {string} [timezone = moment.tz.guess()]
  * @returns {Object}
  */
 export function formToAction({
