@@ -124,6 +124,7 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    steps: 'Steps',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1760,6 +1761,21 @@ export default {
       instructions: 'Instructions',
       configurations: 'Configurations',
       jobs: 'Jobs',
+    },
+  },
+
+  remediationInstructions: {
+    usingInstruction: 'Cannot be deleted since it is in use',
+    table: {
+      rating: 'Rating',
+      lastModifiedOn: 'Last modified on',
+      averageTimeCompletion: 'Average time of completion',
+      monthExecutions: 'Number of executions this month',
+      lastExecutedBy: 'Last executed by',
+      lastExecutedOn: 'Last executed on',
+    },
+    errors: {
+      runningInstruction: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
     },
   },
 

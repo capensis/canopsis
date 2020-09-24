@@ -9,7 +9,7 @@
               v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('remediation.tabs.instructions') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.instructions")
                 v-card-text
-                  span {{ $t('remediation.tabs.instructions') }}
+                  remediation-instructions
             template
               v-tab(
                 :href="`#${$constants.REMEDIATION_TABS.configurations}`"
@@ -30,11 +30,16 @@
 import { REMEDIATION_TABS } from '@/constants';
 
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
+import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
+
+import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
 
 export default {
   components: {
+    RemediationInstructions,
     FabButtons,
   },
+  mixins: [entitiesRemediationInstructionMixin],
   data() {
     return {
       activeTab: REMEDIATION_TABS.instructions,
@@ -79,6 +84,7 @@ export default {
     },
 
     fetchInstructionsList() {
+      this.fetchRemediationInstructionsListWithPreviousParams();
     },
 
     fetchConfigurationsList() {

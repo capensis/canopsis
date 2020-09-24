@@ -2,7 +2,12 @@
   div.white
     v-layout(row, wrap)
       v-flex(v-if="shownSearch", xs4)
-        search-field(v-if="search", @submit="updateSearchHandler", @clear="clearSearchHandler")
+        search-field(
+          v-if="search",
+          :value="pagination.search",
+          @submit="updateSearchHandler",
+          @clear="clearSearchHandler"
+        )
         advanced-search(
           v-else,
           :query="pagination",
