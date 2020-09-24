@@ -1239,6 +1239,15 @@ export default {
         output: 'Note',
       },
     },
+    createRemediationInstruction: {
+      title: 'Créer une instruction',
+    },
+    createRemediationConfiguration: {
+      title: 'Créer une configuration',
+    },
+    createRemediationJob: {
+      title: 'Créer un travail',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1765,6 +1774,7 @@ export default {
 
   remediationInstructions: {
     usingInstruction: 'La raison utilise, car ne peut pas être supprimée',
+    addStep: 'Ajouter une étape',
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',

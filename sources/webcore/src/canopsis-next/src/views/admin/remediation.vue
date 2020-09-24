@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  div
     the-page-header {{ $t('common.instructions') }}
     v-layout(row, wrap)
       v-flex(xs12)
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { REMEDIATION_TABS } from '@/constants';
+import { MODALS, REMEDIATION_TABS } from '@/constants';
 
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
@@ -47,7 +47,11 @@ export default {
   },
   computed: {
     tooltipText() {
-      return '';
+      return {
+        [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.title'),
+        [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.title'),
+        [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.title'),
+      }[this.activeTab];
     },
 
     hasAccess() {
@@ -94,6 +98,15 @@ export default {
     },
 
     showCreateInstructionModal() {
+      this.$modals.show({
+        name: MODALS.createRemediationInstruction,
+        config: {
+          action: async (instruction) => {
+            await this.createRemediationInstruction({ data: instruction });
+            await this.fetchInstructionsList();
+          },
+        },
+      });
     },
 
     showCreateConfigurationModal() {

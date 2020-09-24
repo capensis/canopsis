@@ -44,7 +44,17 @@ export default {
       this.fetchRemediationInstructionsList({ params: this.getQuery() });
     },
 
-    showEditRemediationInstructionModal() {
+    showEditRemediationInstructionModal(remediationInstruction) {
+      this.$modals.show({
+        name: MODALS.createRemediationInstruction,
+        config: {
+          remediationInstruction,
+          action: async (instruction) => {
+            await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);
+            await this.fetchList();
+          },
+        },
+      });
     },
 
     showConfirmModalOnRunningRemediationInstruction(action) {
@@ -63,21 +73,22 @@ export default {
       });
     },
 
+    async updateRemediationInstructionWithConfirm(remediationInstruction, data) {
+      if (remediationInstruction.running) {
+        await this.showConfirmModalOnRunningRemediationInstruction(() => {
+          this.updateRemediationInstruction({ id: remediationInstruction._id, data });
+        });
+      } else {
+        await this.updateRemediationInstruction({ id: remediationInstruction._id, data });
+      }
+    },
+
     async updateRemediationInstructionFilter(remediationInstruction, filter) {
       if (isEqual(remediationInstruction.filter, filter)) {
         return;
       }
 
-      const id = remediationInstruction._id;
-      const data = { ...remediationInstruction, filter };
-
-      if (remediationInstruction.running) {
-        await this.showConfirmModalOnRunningRemediationInstruction(() => {
-          this.updateRemediationInstruction({ id, data });
-        });
-      } else {
-        await this.updateRemediationInstruction({ id, data });
-      }
+      this.updateRemediationInstructionWithConfirm(remediationInstruction, { ...remediationInstruction, filter });
     },
 
     showCreateFilterModal(remediationInstruction) {
