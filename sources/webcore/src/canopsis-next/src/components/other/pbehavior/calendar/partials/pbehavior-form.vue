@@ -2,13 +2,13 @@
   div
     v-layout(wrap)
       v-flex(xs12)
-        pbehavior-general-form(v-field="form")
-      v-flex(xs12)
+        pbehavior-general-form(v-field="form", :noEnabled="noEnabled")
+      v-flex(v-if="!noComments", xs12)
         pbehavior-comments-form(v-field="form.comments")
       v-flex(v-if="!noFilter", xs12)
         pbehavior-filter-field(v-field="form")
       v-flex(xs12)
-        pbehavior-rrule-field(v-field="form")
+        pbehavior-rrule-field(v-field="form", :noExdates="noExdates")
 </template>
 
 <script>
@@ -38,6 +38,18 @@ export default {
       required: true,
     },
     noFilter: {
+      type: Boolean,
+      default: false,
+    },
+    noEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    noComments: {
+      type: Boolean,
+      default: false,
+    },
+    noExdates: {
       type: Boolean,
       default: false,
     },

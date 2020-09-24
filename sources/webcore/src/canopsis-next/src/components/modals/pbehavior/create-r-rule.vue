@@ -5,7 +5,11 @@
         span {{ $t('modals.createRrule.title') }}
       template(slot="text")
         r-rule-form(v-model="form.rrule")
-        pbehavior-exception-form(v-if="form.rrule", v-model="form.exdates", :exceptions.sync="form.exceptions")
+        pbehavior-exception-form(
+          v-if="form.rrule && config.noExdates",
+          v-model="form.exdates",
+          :exceptions.sync="form.exceptions"
+        )
       template(slot="actions")
         v-btn(
           depressed,

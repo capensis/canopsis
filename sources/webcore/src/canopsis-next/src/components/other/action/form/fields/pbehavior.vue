@@ -1,5 +1,5 @@
 <template lang="pug">
-  pbehavior-form(v-field="value", noFilter)
+  pbehavior-form(v-field="value", noFilter, noEnabled, noExdates, noComments)
 </template>
 
 <script>

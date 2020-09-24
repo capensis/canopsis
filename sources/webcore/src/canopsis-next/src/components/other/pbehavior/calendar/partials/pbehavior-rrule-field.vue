@@ -28,6 +28,10 @@ export default {
       type: Object,
       required: true,
     },
+    noExdates: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     hasRRule() {
@@ -40,6 +44,7 @@ export default {
         name: MODALS.createRRule,
         config: {
           rrule: this.form.rrule,
+          noExdates: this.noExdates,
           exdates: this.form.exdates,
           exceptions: this.form.exceptions,
           action: ({ rrule, exdates, exceptions }) => this.updateModel({

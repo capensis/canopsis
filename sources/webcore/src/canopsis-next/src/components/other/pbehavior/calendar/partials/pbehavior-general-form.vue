@@ -9,7 +9,7 @@
           :error-messages="errors.collect('name')",
           name="name"
         )
-      v-flex(xs12)
+      v-flex(v-if="!noEnabled", xs12)
         enabled-field(v-field="form.enabled", hide-details)
       v-flex.mt-3(xs12)
         v-layout(row)
@@ -85,9 +85,13 @@ export default {
       type: Object,
       required: true,
     },
+    noEnabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
-    const noEnding = !this.form.tstop;
+    const noEnding = !this.form.tstop && this.form.tstart;
 
     return {
       noEnding,
@@ -134,15 +138,18 @@ export default {
       }
     },
     fullDay() {
-      const tstartMoment = moment(this.form.tstart).startOf('day');
-
-      this.updateField('tstart', tstartMoment.toDate());
+      const tstartMoment = moment(this.form.tstart || new Date()).startOf('day');
+      const updatedFields = {
+        tstart: tstartMoment.toDate(),
+      };
 
       if (!this.noEnding) {
-        const tstopMoment = moment(this.form.tstop).endOf('day');
+        const tstopMoment = moment(this.form.tstop || new Date()).endOf('day');
 
-        this.updateField('tstop', tstopMoment.toDate());
+        updatedFields.tstop = tstopMoment.toDate();
       }
+
+      this.updateModel({ ...this.form, ...updatedFields });
     },
     hasPauseType(value) {
       if (!value) {
