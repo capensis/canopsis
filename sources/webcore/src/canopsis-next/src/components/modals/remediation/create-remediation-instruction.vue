@@ -24,7 +24,7 @@ import RemediationInstructionForm from '@/components/other/remediation/instructi
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createPbehaviorException,
+  name: MODALS.createRemediationInstruction,
   $_veeValidate: {
     validator: 'new',
   },

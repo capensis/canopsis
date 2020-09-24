@@ -9,6 +9,7 @@ import { isUndefined } from 'lodash';
 export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   name: remediationInstruction.name || '',
   enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
+  description: remediationInstruction.description || '',
   filter: {},
   steps: [],
 });
