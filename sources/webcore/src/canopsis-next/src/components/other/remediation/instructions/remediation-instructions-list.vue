@@ -30,6 +30,7 @@
     template(slot="actions", slot-scope="props")
       v-layout
         v-btn.mx-0(
+          v-if="hasUpdateAnyRemediationInstructionAccess",
           icon,
           small,
           @click.stop="$emit('edit', props.item)"
