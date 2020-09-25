@@ -22,7 +22,7 @@ help_usage()
 # to be missing in some installations.
 check_go_prerequisites_or_die()
 {
-	if ! [ -f /opt/canopsis/etc/canopsis.toml.example ]; then
+	if ! [ -f /opt/canopsis/etc/canopsis-core.toml.example ]; then
 		echo "A Go component is required, but could not be found." >&2
 		echo "Is the canopsis-engines-go package installed?" >&2
 		exit 1
