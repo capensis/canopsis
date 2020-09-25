@@ -158,5 +158,5 @@ export const COLORS = {
   statsDefault: '#dddddd',
 };
 
-export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
+export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
 
