@@ -117,6 +117,8 @@ export default {
     or: 'OU',
     and: 'ET',
     priority: 'Priorité',
+    created: 'Date de création',
+    updated: 'Date de dernière modification',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
