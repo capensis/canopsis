@@ -1775,6 +1775,11 @@ export default {
   remediationInstructions: {
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
+    addOperation: 'Add operation',
+    addEndpoint: 'Add endpoint',
+    workflow: 'Workflow if this step fails:',
+    stop: 'Stop',
+    remainingStep: 'Continue with remaining steps',
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
