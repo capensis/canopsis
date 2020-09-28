@@ -18,7 +18,10 @@
               :hide-actions="!everySaved",
               @remove="removeStep(index)"
             )
-            remediation-instruction-operations-form(v-show="step.saved", v-field="steps[index].operations")
+            remediation-instruction-operations-form(
+              v-show="step.saved",
+              v-field="steps[index].operations"
+            )
             remediation-instruction-step-actions(
               v-show="step.saved",
               :has-operations="!!step.operations.length",
