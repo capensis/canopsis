@@ -1775,6 +1775,11 @@ export default {
   remediationInstructions: {
     usingInstruction: 'La raison utilise, car ne peut pas être supprimée',
     addStep: 'Ajouter une étape',
+    addOperation: 'Ajouter une opération',
+    addEndpoint: 'Ajouter un point de terminaison',
+    workflow: 'Workflow si cette étape échoue:',
+    stop: 'Arrêtez',
+    remainingStep: 'Continuez avec les étapes restantes',
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',

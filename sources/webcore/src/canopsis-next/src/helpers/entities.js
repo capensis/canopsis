@@ -23,7 +23,7 @@ import {
   DEFAULT_COUNTER_BLOCK_TEMPLATE,
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
-  WIDGET_GRID_COLUMNS_COUNT,
+  WIDGET_GRID_COLUMNS_COUNT, WORKFLOW_TYPES,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -698,3 +698,41 @@ export const removeKeyFromEntity = (entities = []) => entities.map(entity => omi
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
+
+/**
+ * Generate an remediation instruction step entity
+ *
+ * @typedef {Object} RemediationInstructionStep
+ * @property {string} endpoint
+ * @property {string} name
+ * @property {string} workflow
+ * @property {RemediationInstructionStepOperation[]} operations
+ * @property {boolean} [saved]
+ * @property {string} [key]
+ * @return {RemediationInstructionStep}
+ */
+export const generateRemediationInstructionStep = () => ({
+  endpoint: '',
+  name: '',
+  operations: [],
+  workflow: WORKFLOW_TYPES.stop,
+  saved: false,
+  key: uid(),
+});
+
+/**
+ * Generate an remediation instruction step operation entity
+ *
+ * @typedef {Object} RemediationInstructionStepOperation
+ * @property {string} name
+ * @property {string} description
+ * @property {number} time_to_complete
+ * @property {string} [key]
+ * @return {RemediationInstructionStepOperation}
+ */
+export const generateRemediationInstructionStepOperation = () => ({
+  key: uid(),
+  description: '',
+  name: '',
+  time_to_complete: 0,
+});

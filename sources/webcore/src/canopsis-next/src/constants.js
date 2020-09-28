@@ -1498,3 +1498,8 @@ export const REMEDIATION_TABS = {
   configurations: 'configurations',
   jobs: 'jobs',
 };
+
+export const WORKFLOW_TYPES = {
+  stop: 'stop',
+  continue: 'continue',
+};
