@@ -28,7 +28,6 @@ import { MODALS } from '@/constants';
 
 import { generateRemediationInstructionStep, generateRemediationInstructionStepOperation } from '@/helpers/entities';
 
-import formMixin from '@/mixins/form';
 import formArrayMixin from '@/mixins/form/array';
 
 import RemediationInstructionStepField from './remediation-instruction-step-field.vue';
@@ -46,7 +45,7 @@ export default {
     RemediationInstructionStepsWorkflowField,
   },
   inject: ['$validator'],
-  mixins: [formMixin, formArrayMixin],
+  mixins: [formArrayMixin],
   model: {
     prop: 'steps',
     event: 'input',

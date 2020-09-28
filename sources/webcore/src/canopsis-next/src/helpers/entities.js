@@ -706,7 +706,7 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @property {string} endpoint
  * @property {string} name
  * @property {string} workflow
- * @property {Array} operations
+ * @property {RemediationInstructionStepOperation[]} operations
  * @property {boolean} [saved]
  * @property {string} [key]
  * @return {RemediationInstructionStep}

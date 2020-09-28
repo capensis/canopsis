@@ -1,6 +1,6 @@
 <template lang="pug" functional>
   v-layout(align-center, justify-end)
-    v-icon.draggable(v-if="props.draggable") drag_indicator
+    v-icon.mr-1.draggable(v-if="props.draggable") drag_indicator
     v-avatar.white--text(color="primary", size="32")
       slot
 </template>
