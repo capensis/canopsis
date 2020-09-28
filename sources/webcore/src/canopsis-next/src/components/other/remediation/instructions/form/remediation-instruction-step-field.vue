@@ -9,7 +9,8 @@
           :disabled="step.saved",
           :error-messages="nameErrorMessages",
           :name="name",
-          box
+          box,
+          @keyup.prevent.enter="saveName"
         )
       v-layout(v-if="step.saved")
         remediation-instruction-steps-workflow-field(v-field="step.workflow")
