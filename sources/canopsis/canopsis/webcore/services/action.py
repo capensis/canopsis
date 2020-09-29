@@ -28,7 +28,7 @@ from canopsis.common.collection import CollectionError
 from canopsis.common.converters import id_filter
 from canopsis.models.action import Action
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, HTTP_UNAUTHORIZED
-import durationpy
+import time
 
 
 def exports(ws):
@@ -107,6 +107,10 @@ def exports(ws):
         delay = element.get("delay")
         if delay and not action_manager.is_delay_valid(delay):
             return gen_json_error({"description": "delay value is invalid"}, HTTP_ERROR)
+
+        now = int(time.time())
+        element['creation_date'] = now
+        element['last_update_date'] = now
 
         try:
             Action(**Action.convert_keys(element))
