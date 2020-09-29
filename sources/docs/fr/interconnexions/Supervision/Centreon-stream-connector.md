@@ -61,27 +61,23 @@ créé.
 Seuls les évènements de type HARD lors d'un changement d'état sont envoyés à Canopsis.
 La traduction des états entre Centreon et Canopsis est la suivante :
 
-```
--- CENTREON // CANOPSIS
--- ---------------------
---       UP    (0) // INFO     (0)
---     DOWN    (1) // CRITICAL (3)
--- UNREACHABLE (2) // MAJOR    (2)
-```
+| CENTREON        | CANOPSIS    |
+|-----------------|-------------|
+| UP (0)          | INFO (0)    |
+| DOWN (1)        | CRITICAL (3)|
+| UNREACHABLE (2) | MAJOR (2)   |
 
 #### Services
 
 Seuls les évènements de type HARD lors d'un changement d'état sont envoyés à Canopsis.
 La traduction des états entre Centreon et Canopsis est la suivante :
 
-```
--- CENTREON // CANOPSIS
--- ---------------------
---       OK (0) // INFO     (0)
---  WARNING (1) // MINOR    (1)
--- CRITICAL (2) // CRITICAL (3)
--- UNKNOWN  (3) // MAJOR    (2)
-```
+| CENTREON        | CANOPSIS    |
+|-----------------|-------------|
+| OK (0)          | INFO (0)    |
+| WARNING (1)     | MINOR (1)   |
+| CRITICAL (2)    | CRITICAL (3)|
+| UNKNOWN (3)     | MAJOR (2)   |
 
 ## Intégration du connecteur
 
@@ -136,25 +132,26 @@ Centreon.
 
 **Voici les principaux paramètres surchargeables :**
 
-```
-connector_name         = "Nom du connecteur"
-canopsis_user          = "Utilisateur de l'API"
-canopsis_password      = "Mot de passer de l'utilisateur"
-canopsis_host          = "Hôte Canopsis"
-```
+| VARIABLE          | DESCRIPTION                   | VALEUR PAR DÉFAUT       |
+|-------------------|-------------------------------|-------------------------|
+| connector_name    | Nom du connecteur             | centreon-stream-central |
+| canopsis_user     | Utilisateur de l'API          | root                    |
+| canopsis_password | Mot de passe de l'utilisateur | root                    |
+| canopsis_host     | Hôte Canopsis                 | localhost               |
+| canopsis_port     | Port d'écoute de Canopsis     | 8080                    |
 
 **Il est possible de modifier les paramètres de file d'attente par défaut :**
 
-```
-max_buffer_age         = 60     -- durée de rétention des évènements avant envoi
-max_buffer_size        = 10     -- nombre d'évènements en attente avant envoi
-```
+| VARIABLE          | DESCRIPTION                                   | VALEUR PAR DÉFAUT |
+|-------------------|-----------------------------------------------|-------------------|
+| max_buffer_age    | Durée (en secondes) de rétention des évènements avant envoi | 60  |
+| canopsis_user     | Nombre d'évènements en attente avant envoi    | 10                |
 
 **Temps de propagation et convergence des évènements :**
 
-```
-init_spread_timer      = 360   -- temps de propagation des évènements au démarrage du connecteur
-```
+| VARIABLE          | DESCRIPTION                                                    | VALEUR PAR DÉFAUT |
+|-------------------|----------------------------------------------------------------|-------------------|
+| init_spread_timer | Temps de propagation (en secondes) des évènements au démarrage du connecteur | 360 |
 
 Ce compteur est nécessaire pour que lors de l'activation du connecteur,
 un maximum d'évènement en état "HARD" soient transmis à Canopsis même s'il n'y a
