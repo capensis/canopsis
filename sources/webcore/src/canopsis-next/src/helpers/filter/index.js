@@ -72,5 +72,5 @@ export function removeSpacesFromStringFilter(filter) {
     throw new Error('Incorrect using of the function. Filter should be a string.');
   }
 
-  return JSON.string(JSON.parse(filter));
+  return JSON.stringify(JSON.parse(filter));
 }
