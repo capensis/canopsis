@@ -12,7 +12,7 @@ Ce connecteur utilise les fonctionnalités du Stream Connector de Centreon.
 
 Le connecteur est en langage lua comme imposé par le mécanisme du Stream Connector.
 Tous les évènements filtrés par le connecteur sont traduits au format JSON et 
-envoyés sur l'**API** Canopsis via le protcole **HTTP**.
+envoyés sur l'**API** Canopsis via le protocole **HTTP**.
 
 ### Évènements filtrés
 
