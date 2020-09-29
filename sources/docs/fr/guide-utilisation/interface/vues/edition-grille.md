@@ -8,7 +8,7 @@ On peut alors entrer en mode edition grâce à `ctrl + e` ou cliquer sur le bout
 
 ![edit](img/edit.png)
 
-* Nous avons alors accès à des nouvelles options, les trois petits points en haut à droite du widget.
+* Nous avons alors accès à des nouvelles options, cliquez sur les trois petits points en haut à droite du widget.
 
 ![option](img/options.png)
 
