@@ -2,12 +2,14 @@
 
 ## Description
 
-Cette documentation fait référence au [README][readme] du connecteur, ainsi qu'à
-[la documentation du stream connector de Centreon][centreon-stream-connector].
-
 Le connecteur convertit des évènements envoyés par le Broker Centreon en 
 évènements Canopsis.
 Ce connecteur utilise les fonctionnalités du Stream Connector de Centreon.
+
+Liens connexes :
+
+- [README des sources du connecteur][readme]
+- [Documentation du stream connector de Centreon][centreon-stream-connector]
 
 ## Principe de fonctionnement
 
