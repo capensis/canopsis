@@ -10,7 +10,7 @@ Ce connecteur utilise les fonctionnalités du Stream Connector de Centreon.
 
 ## Principe de fonctionnement
 
-Le connecteur est en langage lua comme imposé par le mécanisme du Stream Connector.
+Le connecteur est développé en `lua`, le langage imposé par le mécanisme du Stream Connector.
 Tous les évènements filtrés par le connecteur sont traduits au format JSON et 
 envoyés sur l'**API** Canopsis via le protocole **HTTP**.
 
