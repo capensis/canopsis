@@ -54,7 +54,7 @@ d'annulation puisse être fonctionnelle en retrouvant le downtime précèdemment
 créé.
 
 !!! warning
-Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
+    Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
 
 #### Hosts
 
@@ -92,7 +92,7 @@ La traduction des états entre Centreon et Canopsis est la suivante :
 #### Par les paquets
 
 !!! warning
-Uniquement valable pour une version de centreon-broker >= 20.04.2.
+    Uniquement valable pour une version de centreon-broker >= 20.04.2.
 
 **Installation du dépôt Canopsis :**
 
@@ -113,7 +113,7 @@ yum install canopsis-connector-centreon-stream-connector
 #### Par les sources
 
 !!! warning
-Compatible avec la version 19.10.5 et >= 20.04.2 :
+    Compatible avec la version 19.10.5 et >= 20.04.2 :
 
 0. Récupérer les [sources du connecteur][sources]
 1. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
@@ -164,7 +164,7 @@ Canopsis tous les évènements qui circulent sans qu'il y ait forcément de chan
 d'état et ce pendant la durée du "init_spread_timer".
 
 !!! warning
-Cela implique un pic de charge  lors de l'activation du connecteur pendant la
+    Cela implique un pic de charge  lors de l'activation du connecteur pendant la
 durée du "init_spread_timer".
 
 #### Exemple de configuration
