@@ -53,8 +53,7 @@ Pour chaque downtime, un identifiant unique est généré afin que l'action
 d'annulation puisse être fonctionnelle en retrouvant le downtime précèdemment
 créé.
 
-!!! warning
-    Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
+:warning: Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
 
 #### Hosts
 
@@ -91,8 +90,7 @@ La traduction des états entre Centreon et Canopsis est la suivante :
 
 #### Par les paquets
 
-!!! warning
-    Uniquement valable pour une version de centreon-broker >= 20.04.2.
+:warning: Uniquement valable pour une version de centreon-broker >= 20.04.2.
 
 **Installation du dépôt Canopsis :**
 
@@ -112,8 +110,7 @@ yum install canopsis-connector-centreon-stream-connector
 
 #### Par les sources
 
-!!! warning
-    Compatible avec la version 19.10.5 et >= 20.04.2 :
+:warning: Compatible avec la version 19.10.5 et >= 20.04.2 :
 
 0. Récupérer les [sources du connecteur][sources]
 1. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
