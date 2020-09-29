@@ -1,8 +1,9 @@
-# Connecteur bbdo2canopis.lua "Centreon Stream Connector"
+# Connecteur Centreon "Stream Connector"
 
 ## Description
 
-Cette documentation fait référence au [README][readme] du connecteur.
+Cette documentation fait référence au [README][readme] du connecteur, ainsi qu'à
+[la documentation du stream connector de Centreon][centreon-stream-connector].
 
 Le connecteur convertit des évènements envoyés par le Broker Centreon en 
 évènements Canopsis.
@@ -52,7 +53,7 @@ Pour chaque downtime, un identifiant unique est généré afin que l'action
 d'annulation puisse être fonctionnelle en retrouvant le downtime précèdemment
 créé.
 
-!!! note
+!!! warning
     Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
 
 #### Hosts
@@ -94,7 +95,8 @@ La traduction des états entre Centreon et Canopsis est la suivante :
 
 #### Par les paquets
 
-Uniquement valable pour une version de centreon-broker >= 20.04.2.
+!!! warning
+    Uniquement valable pour une version de centreon-broker >= 20.04.2.
 
 **Installation du dépôt Canopsis :**
 
@@ -114,7 +116,8 @@ yum install canopsis-connector-centreon-stream-connector
 
 #### Par les sources
 
-Compatible avec la version 19.10.5 et >= 20.04.2 :
+!!! warning
+    Compatible avec la version 19.10.5 et >= 20.04.2 :
 
 0. Récupérer les [sources du connecteur][sources]
 1. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
@@ -170,14 +173,6 @@ Output > Select "Generic - Stream connector" > Add
 
 ![centreon-configuration-screenshot](img/centreon-configuration-screenshot.png)
 
-:warning: n'utilisez pas caractères spéciaux ou même de points "." dans le nom
-des variables au risque de rencontrer cette erreur :
-
-```
-[1600158738] error:   main: configuration update could not succeed, reloading previous configuration: state applier: endpoint name '.'
- is not valid: allowed characters are ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -_
-```
-
 ### Contrôle du bon fonctionnement
 
 Connectez-vous l'interface de Canopsis et assurez-vous que les évènements et leurs
@@ -188,3 +183,4 @@ Pour rappel, seules les alarmes sont envoyées (état différent de "ok").
 [readme]: https://git.canopsis.net/canopsis-connectors/connector-centreon-stream-connector/-/blob/master/README.md
 [sources]: https://git.canopsis.net/canopsis-connectors/connector-centreon-stream-connector
 [configure-centreon-broker]: https://docs.centreon.com/current/en/developer/developer-stream-connector.html#configure-centreon-broker
+[centreon-stream-connector]: https://docs.centreon.com/current/en/developer/developer-stream-connector.html#docsNav
