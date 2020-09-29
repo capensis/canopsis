@@ -23,16 +23,12 @@
 </template>
 
 <script>
-import formMixin from '@/mixins/form';
-import formArrayMixin from '@/mixins/form/array';
-
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 
 export default {
   components: { RemediationInstructionStepsForm, EnabledField },
   inject: ['$validator'],
-  mixins: [formMixin, formArrayMixin],
   model: {
     prop: 'form',
     event: 'input',
