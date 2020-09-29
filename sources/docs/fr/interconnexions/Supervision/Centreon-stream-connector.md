@@ -53,7 +53,8 @@ Pour chaque downtime, un identifiant unique est généré afin que l'action
 d'annulation puisse être fonctionnelle en retrouvant le downtime précèdemment
 créé.
 
-:warning: Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
+!!! warning
+Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
 
 #### Hosts
 
@@ -90,7 +91,8 @@ La traduction des états entre Centreon et Canopsis est la suivante :
 
 #### Par les paquets
 
-:warning: Uniquement valable pour une version de centreon-broker >= 20.04.2.
+!!! warning
+Uniquement valable pour une version de centreon-broker >= 20.04.2.
 
 **Installation du dépôt Canopsis :**
 
@@ -110,7 +112,8 @@ yum install canopsis-connector-centreon-stream-connector
 
 #### Par les sources
 
-:warning: Compatible avec la version 19.10.5 et >= 20.04.2 :
+!!! warning
+Compatible avec la version 19.10.5 et >= 20.04.2 :
 
 0. Récupérer les [sources du connecteur][sources]
 1. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
@@ -119,6 +122,7 @@ yum install canopsis-connector-centreon-stream-connector
 #### Activation du connecteur
 
 1. Ajout d'une nouvelle entrée ["Generic - Stream connector"][configure-centreon-broker]
+   Voir les détails de la configuration dans la [section Configuration](#configuration)
 2. Export de la [configuration du poller][configure-centreon-broker]
 3. Redémarrage des services `systemctl restart cbd centengine gorgoned`
 
@@ -127,7 +131,7 @@ yum install canopsis-connector-centreon-stream-connector
 Toute la configuration du connecteur peut se faire au travers de l'interface
 Centreon.
 
-**Voici les principaux paramètres surchargeables :**
+**Voici les principaux paramètres :**
 
 | VARIABLE          | DESCRIPTION                   | VALEUR PAR DÉFAUT       |
 |-------------------|-------------------------------|-------------------------|
@@ -135,28 +139,31 @@ Centreon.
 | canopsis_user     | Utilisateur de l'API          | root                    |
 | canopsis_password | Mot de passe de l'utilisateur | root                    |
 | canopsis_host     | Hôte Canopsis                 | localhost               |
-| canopsis_port     | Port d'écoute de Canopsis     | 8080                    |
+| canopsis_port     | Port d'écoute de Canopsis     | 8082                    |
 
-**Il est possible de modifier les paramètres de file d'attente par défaut :**
+**Il est possible de modifier les paramètres de file d'attente :**
 
 | VARIABLE          | DESCRIPTION                                   | VALEUR PAR DÉFAUT |
 |-------------------|-----------------------------------------------|-------------------|
 | max_buffer_age    | Durée (en secondes) de rétention des évènements avant envoi | 60  |
-| canopsis_user     | Nombre d'évènements en attente avant envoi    | 10                |
+| max_buffer_size   | Nombre d'évènements en attente avant envoi    | 10                |
 
 **Temps de propagation et convergence des évènements :**
 
 | VARIABLE          | DESCRIPTION                                                    | VALEUR PAR DÉFAUT |
 |-------------------|----------------------------------------------------------------|-------------------|
-| init_spread_timer | Temps de propagation (en secondes) des évènements au démarrage du connecteur | 360 |
+| init_spread_timer | Temps de propagation (en secondes) des évènements, quelque soit leur état, au démarrage du connecteur | 360 |
 
-Ce compteur est nécessaire pour que lors de l'activation du connecteur,
-un maximum d'évènement en état "HARD" soient transmis à Canopsis même s'il n'y a
-pas eu de changement d'état pendant le temps de non activation du connecteur.
+Étant donné que seuls les changements d'état sont transmis à Canopsis,
+au moment du démarrage du connecteur, s'il existe déjà des alarmes Centreon,
+alors elles ne seront pas transmises à Canopsis car aucun changement d'état ne
+sera détecté.
 
-Cette fonctionnalité permet de tendre vers une convergence d'informations entre
-Centreon et Canopsis.
+Pour limiter ce phénomène, nous proposons une option qui permet d'envoyer à 
+Canopsis tous les évènements qui circulent sans qu'il y ait forcément de changement 
+d'état et ce pendant la durée du "init_spread_timer".
 
+!!! warning
 Cela implique un pic de charge  lors de l'activation du connecteur pendant la
 durée du "init_spread_timer".
 
