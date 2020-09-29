@@ -74,7 +74,7 @@ Un groupement d'alarmes se caractérise par les informations suivantes.
 | `threshold_rate`  | float  | Le `taux de déclenchement` exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
 | `value_path`  | string  | Le `chemin de valeurs` désigne l'adresse de l'attribut à partir duquel le groupement va opérer. |
 
-Dans un groupement de type `complex` ou `valuegroup`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
+Dans un groupement de type `complex`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
 
 ### Types de groupements
 
@@ -160,7 +160,7 @@ Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, on
 #### Groupement complexe avec taux de déclenchement
 
 Comme le précédent il s'agit d'un groupement par attribut et par intervalle de temps. Mais celui-ci calcule le taux d'entités en erreur par rapport à un groupe donné, défini par un [pattern](moteur-che-event_filter.md#patterns).  
-Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes. Au préalable vous aurez pris soin d'enrichir les entités concernées avec `infos.site.value = Wasquehal`.
+Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes. Au préalable, vous aurez pris soin de créer ces entités dans le [référentiel interne](../../guide-developpement/api/api-v2-import.md) de Canopsis et de les enrichir avec `infos.site.value = Wasquehal`.
 
 Exemple :
 ```json
