@@ -10,7 +10,7 @@
           :error-messages="nameErrorMessages",
           :name="name",
           box,
-          @keyup.prevent.enter="saveName"
+          @keyup.stop.enter="saveName"
         )
       v-layout(v-if="step.saved")
         remediation-instruction-steps-workflow-field(v-field="step.workflow")
