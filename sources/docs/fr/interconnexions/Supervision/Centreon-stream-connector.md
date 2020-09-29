@@ -34,7 +34,7 @@ services :
 
 #### Acquittement (ack)
 
-Deux sortes d'action sont envoyées à Canopsis :
+Deux sortes d'actions sont envoyées à Canopsis :
 
 - Création d'un ack
 - Suppression d'un ack
@@ -43,7 +43,7 @@ L'ack est positionné sur le couple resource/component concerné.
 
 #### Plages de maintenance (downtimes)
 
-Deux sortes d'action sont envoyées à Canopsis :
+Deux sortes d'actions sont envoyées à Canopsis :
 
 - Création d'un downtime
 - Annulation d'un downtime
@@ -57,7 +57,7 @@ créé.
 
 #### Hosts
 
-Seuls les évènements de type HARD et sur changement d'état sont envoyés à Canopsis.
+Seuls les évènements de type HARD lors d'un changement d'état sont envoyés à Canopsis.
 La traduction des états entre Centreon et Canopsis est la suivante :
 
 ```
@@ -70,7 +70,7 @@ La traduction des états entre Centreon et Canopsis est la suivante :
 
 #### Services
 
-Seuls les évènements de type HARD et sur changement d'état sont envoyés à Canopsis.
+Seuls les évènements de type HARD lors d'un changement d'état sont envoyés à Canopsis.
 La traduction des états entre Centreon et Canopsis est la suivante :
 
 ```
@@ -116,9 +116,9 @@ yum install canopsis-connector-centreon-stream-connector
 
 Compatible avec la version 19.10.5 et >= 20.04.2 :
 
-0. Récupérez les [sources du connecteur][sources]
+0. Récupérer les [sources du connecteur][sources]
 1. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
-2. Ajouter les permissions suivantes : `chown centreon-engine:centreon-engine /usr/share/centreon-broker/lua/bbdo2canopsis.lua`
+2. Ajouter les permissions suivantes : `chown centreon-engine:centreon-engine /usr/share/centreon-broker/lua/bbdo4canopsis.lua`
 
 #### Activation du connecteur
 
@@ -157,6 +157,9 @@ Ce compteur est nécessaire pour que lors de l'activation du connecteur,
 un maximum d'évènement en état "HARD" soient transmis à Canopsis même s'il n'y a
 pas eu de changement d'état pendant le temps de non activation du connecteur.
 
+Cette fonctionnalité permet de tendre vers une convergence d'informations entre
+Centreon et Canopsis.
+
 Cela implique un pic de charge  lors de l'activation du connecteur pendant la
 durée du "init_spread_timer".
 
@@ -177,10 +180,10 @@ des variables au risque de rencontrer cette erreur :
 
 ### Contrôle du bon fonctionnement
 
-Connectez vous l'interface de Canopsis et assurez vous que les évènements et leurs
-états affichés côté Centreon correspondent avec les évènements côté Canopsis.
+Connectez-vous l'interface de Canopsis et assurez-vous que les évènements et leurs
+états affichés du côté de Centreon correspondent avec les évènements côté Canopsis.
 
-Pour rappel seuls les alarmes sont envoyées (état différent de ok).
+Pour rappel, seules les alarmes sont envoyées (état différent de "ok").
 
 [readme]: https://git.canopsis.net/canopsis-connectors/connector-centreon-stream-connector/-/blob/master/README.md
 [sources]: https://git.canopsis.net/canopsis-connectors/connector-centreon-stream-connector
