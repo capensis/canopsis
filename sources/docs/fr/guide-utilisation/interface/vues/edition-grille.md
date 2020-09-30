@@ -14,15 +14,15 @@ On peut alors entrer en mode edition grâce à `ctrl + e` ou cliquer sur le bout
 
 Vous pouvez modifier le nom, dupliquer, copier l'id du widget ou encore le supprimer.
 
-* À côté de ces options, il y a un cadenas qui permet de calculer automatiquement la hauteur en fonction du nombre d'entités présentes dans le bac.
+* À côté de ces options, il y a un cadenas qui permet de calculer automatiquement la hauteur en fonction du nombres d'éléments dans le widget.
 
 ![height](img/height.png)
 
-* Il est possible de modifier l'emplacement des widgets. Il faut maintenir le clic et déplacer la souris sur la barre supérieure au même niveau que le cadenas et les options comme indiqué.
+* Pour déplacer un widget maintenez le clic sur la barre supérieure et glissez le à l'emplacement désiré.
 
 ![move-widget](img/move-widget.png)
 
-* Enfin, il est possible de modifier la largeur du widget dès que l'on clique sur le coin à droite.
+* Pour redimensionner un widget maintenez le clic sur le coin inférieur droit.
 
 ![width](img/width.png)
 
