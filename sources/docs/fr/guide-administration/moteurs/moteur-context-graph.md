@@ -2,6 +2,9 @@
 
 Le moteur `context-graph` gère les dépendances entre les entités.
 
+!!! note
+    Ce moteur est considéré **obsolète**.
+
 ## Récupérer les entités du context-graph
 
 Ce nœud final renvoie une liste d'entités de graphe de contexte, basées sur un filtre MongoDB prédéfini.
