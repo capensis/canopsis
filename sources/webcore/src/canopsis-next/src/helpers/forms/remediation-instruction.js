@@ -1,7 +1,6 @@
 import { isUndefined, omit } from 'lodash';
 
 import uuid from '@/helpers/uuid';
-import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
 
 /**
  * Convert a remediation instruction steps array to form array
@@ -11,7 +10,11 @@ import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
  */
 const remediationInstructionStepsToForm = steps => steps.map(step => ({
   ...step,
-  operations: addKeyInEntity(step.operations),
+  operations: step.operations.map(operation => ({
+    ...operation,
+    saved: true,
+    key: uuid(),
+  })),
   saved: true,
   key: uuid(),
 }));
@@ -47,7 +50,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
  */
 const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
   ...omit(step, ['key', 'saved']),
-  operations: removeKeyFromEntity(step.operations),
+  operations: step.operations.map(operation => omit(operation, ['key', 'saved'])),
 }));
 
 /**

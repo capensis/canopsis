@@ -15,9 +15,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .handler {
-    margin-right: 3px;
-  }
-</style>

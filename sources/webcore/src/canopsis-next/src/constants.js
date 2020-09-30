@@ -1503,3 +1503,5 @@ export const WORKFLOW_TYPES = {
   stop: 'stop',
   continue: 'continue',
 };
+
+export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;

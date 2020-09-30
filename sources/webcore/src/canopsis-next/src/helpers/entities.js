@@ -32,6 +32,12 @@ import uid from './uid';
 import { pbehaviorToForm } from './forms/planning-pbehavior';
 
 /**
+ * @typedef {Object} Interval
+ * @property {Number} interval
+ * @property {String} unit
+ */
+
+/**
  * Generate widget by type
  *
  * @param {string} type
@@ -727,13 +733,18 @@ export const generateRemediationInstructionStep = () => ({
  * @typedef {Object} RemediationInstructionStepOperation
  * @property {string} name
  * @property {string} description
- * @property {number} time_to_complete
+ * @property {Interval} time_to_complete
+ * @property {boolean} [saved]
  * @property {string} [key]
  * @return {RemediationInstructionStepOperation}
  */
 export const generateRemediationInstructionStepOperation = () => ({
-  key: uid(),
-  description: '',
   name: '',
-  time_to_complete: 0,
+  description: '',
+  time_to_complete: {
+    interval: 0,
+    unit: TIME_UNITS.minute,
+  },
+  saved: false,
+  key: uid(),
 });

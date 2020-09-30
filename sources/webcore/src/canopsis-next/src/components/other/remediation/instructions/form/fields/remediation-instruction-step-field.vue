@@ -12,8 +12,8 @@
           box,
           @keyup.stop.enter="saveName"
         )
-      v-layout(v-if="step.saved")
-        remediation-instruction-steps-workflow-field(v-field="step.workflow")
+      v-layout
+        remediation-instruction-steps-workflow-field(v-field="step.workflow", :disabled="step.saved")
       v-layout(v-if="!step.saved", justify-end)
         v-btn.mt-0(depressed, flat, @click="cancelChangeName") {{ $t('common.cancel') }}
         v-btn.mt-0.mr-0.primary(@click="saveName") {{ $t('common.save') }}
@@ -31,9 +31,11 @@ import formMixin from '@/mixins/form';
 import RemediationInstructionStepsWorkflowField from './remediation-instruction-steps-workflow-field.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: { RemediationInstructionStepsWorkflowField },
   mixins: [formMixin],
-  inject: ['$validator'],
   model: {
     prop: 'step',
     event: 'input',
@@ -50,7 +52,7 @@ export default {
   },
   data() {
     return {
-      oldName: null,
+      oldStep: null,
     };
   },
   computed: {
@@ -67,17 +69,16 @@ export default {
     },
   },
   methods: {
-    async editName() {
-      this.oldName = this.step.name;
+    editName() {
+      this.oldStep = this.step;
 
       this.updateField('saved', false);
     },
 
-    async cancelChangeName() {
-      if (this.oldName) {
+    cancelChangeName() {
+      if (this.oldStep) {
         this.updateModel({
-          ...this.step,
-          name: this.oldName,
+          ...this.oldStep,
           saved: true,
         });
       } else {
@@ -86,10 +87,10 @@ export default {
     },
 
     async saveName() {
-      const isValid = await this.$validator.validate(this.name);
+      const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        this.oldName = null;
+        this.oldStep = null;
 
         this.updateField('saved', true);
       }
