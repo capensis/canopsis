@@ -1,15 +1,10 @@
-# Feature Description
+## Feature description
 
-Explain what you want to add or change ( with words, mockups, screenshots ... ) into canopsis ?
+(Explain what you want to add or change, with words, mockups, screenshots…)
 
+## Extra information
 
-
-# Canopsis Informations
-
-| Information                         | value                            |
-| ----------------------------------- | -------------------------------- |
-| Canopsis target component           | front / back / connector / other |
-| Customer specific feature           | yes / no                         |
-| Time estimation required            | yes / no                         |
-| Link with other feature / milestone | yes / no ( describe if `yes` )   |
-
+* Canopsis component: front/back/connector/other
+* Customer specific feature: yes/no
+* Time estimation required: yes/no
+* Related to a specific feature or milestone: yes/no (+ description)

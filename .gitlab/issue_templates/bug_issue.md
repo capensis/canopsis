@@ -1,26 +1,18 @@
-# Bug Description
+## Bug description
 
-Explain the bug with as much informations as possible ( screenshot, curl requests results ... )
+(Explain the bug with as much information as possible: screenshots, curl requests, results…)
 
+## Expected behavior
 
+(Write here the expected behavior: what should happen when there's no bug)
 
-# Canopsis Informations
+## Environment
 
-| Information       | value             |
-| ----------------- | ----------------- |
-| canopsis version  | 3.XX.Y            |
-| installation type | docker / packages |
-| legacy stack      | yes / no          |
-| customer impact   | yes / no          |
+* Canopsis version: 3.XX.Y
+* Installation type: Docker/packages
+* Legacy stack: yes/no
+* Customer impact: yes/no
 
+## How to reproduce
 
-
-# How to Reproduce ?
-
-Write some informations or add some screenshots to reproduce easily this bug
-
-
-
-# What would be the good behavior ?
-
-Write here the expected behavior without the bug
+(Write some information or add some screenshots to describe how to easily reproduce this bug)
