@@ -1,4 +1,4 @@
-# Moteur `engine-correlation` (Go, Cat)
+# Moteur `engine-correlation` (Go, CAT)
 
 !!! note
     Ce moteur est disponible à partir de Canopsis 3.40.0.

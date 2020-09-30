@@ -1,4 +1,4 @@
-# Context-graph
+# Moteur `context-graph` (Python)
 
 Le moteur `context-graph` gère les dépendances entre les entités.
 
