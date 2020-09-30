@@ -188,7 +188,7 @@ Clef primaire composite sur le couple (session_id, view_id).
 Le fichier de configuration `etc/kpi/engine.conf` contient la chaîne de
 connexion à PostgreSQL, exemple :
 
-```
+```ini
 [ENGINE]
 postgresql_uri=host=postgresql port=5432 dbname=canopsis user=canopsis password=canopsis
 ```
@@ -341,7 +341,7 @@ Votre *panel* « Nombre d'alarmes » présente la statistique désirée :
 
 La routine de purge des données de statistiques (vidage des tables PostgreSQL
 alimentées par le moteur `kpi`) peut être déclenchée en envoyant l'évènement
-"initkpi" à Canopsis :
+`initkpi` à Canopsis :
 
 ```json
 {
