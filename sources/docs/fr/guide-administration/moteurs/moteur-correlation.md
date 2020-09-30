@@ -17,18 +17,6 @@ Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la
 
 La commande `engine-correlation -help` liste toutes les options acceptées par le moteur.
 
-```
-  -consumeQueue string
-    	Consume events from this queue. (default "Engine_correlation")
-  -d	debug
-  -printEventOnError
-    	Print event on processing error
-  -publishQueue string
-    	Publish event to this queue. (default "Engine_watcher")
-  -version
-    	version infos
-```
-
 ### Multi-instanciation
 
 !!! note

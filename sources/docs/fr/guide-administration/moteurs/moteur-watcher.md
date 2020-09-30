@@ -12,20 +12,9 @@ Des exemples pratiques d'utilisation des observateurs sont disponibles dans la p
 ## Utilisation
 
 La file du moteur est placée juste après le moteur [`engine-axe`](moteur-axe.md).
+### Options du moteur
 
-### Options de l'engine-watcher
-
-```
-  -autoRecomputeWatchers
-      Automatically recompute watchers each minute.
-  -d	debug
-  -printEventOnError
-      Print event on processing error
-  -publishQueue string
-      Publish event to this queue. (default "Engine_action")
-  -version
-      version infos
-```
+La commande `engine-watcher -help` liste toutes les options acceptées par le moteur.
 
 ## Fonctionnement
 

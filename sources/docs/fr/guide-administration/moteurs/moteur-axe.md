@@ -10,22 +10,6 @@ Jusqu'à Canopsis 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhook
 
 La commande `engine-axe -help` liste toutes les options acceptées par le moteur.
 
-Les options acceptées par la dernière version de Canopsis sont les suivantes :
-
-```
-  -d	debug
-  -featureStatEvents
-      Send statistic events
-  -ignoreDefaultTomlConfig
-      load toml file values into database
-  -printEventOnError
-      Print event on processing error
-  -publishQueue string
-      Publish event to this queue. (default "Engine_watcher")
-  -version
-      version infos
-```
-
 ### Multi-instanciation
 
 !!! note

@@ -11,22 +11,6 @@ La possibilité de pouvoir démarrer plusieurs instances des moteurs [`engine-ch
 
 La commande `engine-fifo -help` liste toutes les options acceptées par le moteur.
 
-```
-  -consumeQueue string
-    Consume events from this queue. (default "Engine_fifo")
-  -d debug
-  -enableMetaAlarmProcessing
-    Enable meta-alarm processing (default true)
-  -lockTtl int
-    Redis lock ttl time in seconds (default 10)
-  -printEventOnError
-    Print event on processing error
-  -publishQueue string
-    Publish event to this queue. (default "Engine_che")
-  -version
-    version infos
-```
-
 ## Fonctionnement
 
 A l'arrivée d'un événement le moteur `engine-fifo` en extrait l'entité. Il y a ensuite 2 cas de figure possibles :

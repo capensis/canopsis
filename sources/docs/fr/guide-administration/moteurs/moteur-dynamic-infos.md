@@ -14,16 +14,7 @@ Pour cela, il est nécessaire de lancer le moteur `engine-watcher` avec l'option
 Si le moteur [`engine-webhook`](moteur-webhook.md) est activé, le moteur `engine-dynamic-infos` doit être lancé avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file de ce moteur. Sinon, il publie dans la file du moteur [`engine-action`](moteur-action.md).
 
 ### Options de l'engine-dynamic-infos
-
-```
-  -d	debug
-  -printEventOnError
-      Print event on processing error
-  -publishQueue string
-      Publish event to this queue. (default "Engine_action")
-  -version
-      version infos
-```
+La commande `engine-dynamic-infos -help` liste toutes les options acceptées par le moteur.
 
 ## Fonctionnement
 
