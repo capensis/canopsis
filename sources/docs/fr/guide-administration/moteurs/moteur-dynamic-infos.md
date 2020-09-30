@@ -62,8 +62,8 @@ Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux p
 
 ### Templates
 
-!!! Info
-    Disponible à partir de Canopsis 3.38.0
+!!! info
+    Disponible à partir de Canopsis 3.38.0.
 
 Les champs `value` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de la criticité de l'alarme ou de l'entité.  
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
@@ -80,7 +80,7 @@ Un exemple concret d'utilisation du moteur `engine-dynamic-infos` pour l'afficha
 
 ### Pré remplissage des attributs
 
-!!! Info
+!!! info
     Disponible à partir de Canopsis 3.39.0.
 
 Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour n'avoir plus que la saisie des valeurs à effectuer.  

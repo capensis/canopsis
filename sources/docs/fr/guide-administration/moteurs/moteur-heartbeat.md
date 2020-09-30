@@ -12,7 +12,7 @@ La commande `engine-heartbeat -help` liste toutes les options acceptées par le 
 
 ## Fonctionnement
 
-Un `heartbeat` est une règle qui définit un pattern d'événement entrant et un intervalle de temps.
+Un heartbeat est une règle qui définit un modèle d'événement entrant et un intervalle de temps.
 
 Passé cet intervalle de temps, si le moteur n'a pas traité d'événements correspondant au pattern donné, il lèvera automatiquement une alarme.
 

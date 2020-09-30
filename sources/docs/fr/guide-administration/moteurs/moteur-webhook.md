@@ -3,6 +3,8 @@
 !!! info
     Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
 
+Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
+
 Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `engine-axe` (en version CAT).
 
 Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
@@ -12,8 +14,6 @@ Depuis la `3.37.0`, la fonction de répétition est disponible.
 Depuis la `3.39.0`, le webhook peut être activé ou désactivé avec l'attribut `enabled`.
 
 Depuis la `3.41.0`, les valeurs des champs `declare_ticket` peuvent être définies sous forme d'expressions régulières.
-
-Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
 
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
@@ -132,12 +132,13 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 Ces paramètres sont positionnés dans la configuration de chaque webhook.  
 Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
 
-````
-cat webhook.conf
+Exemple de fichier `webhook.conf` :
+
+```ini
 count=5
 delay=1
 unit="m"
-````
+```
 
 ### Données externes
 
