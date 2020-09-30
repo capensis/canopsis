@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     getQuery() {
-      return omit(this.query, ['filters']);
+      return omit(this.query, ['filters', 'correlation']);
     },
 
     fetchList() {

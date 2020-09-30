@@ -118,6 +118,7 @@ export default {
     priority: 'Priority',
     created: 'Creation date',
     updated: 'Last update date',
+    correlation: 'Correlation',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
