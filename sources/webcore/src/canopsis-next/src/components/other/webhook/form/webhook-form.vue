@@ -1,13 +1,18 @@
 <template lang="pug">
-  v-tabs(:color="vTabsColor", :dark="dark", fixed-tabs, slider-color="primary")
-    template(v-for="(tab, index) in tabs")
-      v-tab(:key="`tab-${index}`")
-        .validation-header(:class="{ 'error--text': validationErrorsFlagsForTabs[index] }") {{ tab.title }}
-      v-tab-item(:key="`tab-item-${index}`")
+  v-tabs(
+    :color="vTabsColor",
+    :dark="dark",
+    fixed-tabs,
+    slider-color="primary"
+  )
+    template(v-for="tab in tabs")
+      v-tab(:key="`tab-${tab.key}`")
+        div.validation-header(:class="{ 'error--text': validationErrorsFlagsForTabs[tab.key] }") {{ tab.title }}
+      v-tab-item(:key="`tab-item-${tab.key}`")
         div(:class="vTabItemInnerWrapperClass")
           div(:class="vTabItemInnerClass")
-            component(
-              ref="forms",
+            component.pt-2(
+              :ref="tab.key",
               :is="tab.component",
               :class="webhookTabClass",
               v-bind="tab.bind",
@@ -57,13 +62,15 @@ export default {
   },
   data() {
     return {
-      validationErrorsFlagsForTabs: [],
+      validationErrorsFlagsForTabs: {},
+      watchers: [],
     };
   },
   computed: {
     tabs() {
-      return [
+      const tabs = [
         {
+          key: 'hook',
           title: this.$t('webhook.tabs.hook.title'),
           component: 'webhook-form-hook-tab',
           bind: {
@@ -76,6 +83,7 @@ export default {
           },
         },
         {
+          key: 'request',
           title: this.$t('webhook.tabs.request.title'),
           component: 'webhook-form-request-tab',
           bind: {
@@ -87,6 +95,7 @@ export default {
           },
         },
         {
+          key: 'declare-ticket',
           title: this.$t('webhook.tabs.declareTicket.title'),
           component: 'webhook-form-declare-ticket-tab',
           bind: {
@@ -100,6 +109,24 @@ export default {
           },
         },
       ];
+
+      if (this.form.combine_meta_alarm_request) {
+        tabs.push({
+          key: 'combine-meta-alarm-request',
+          title: this.$t('webhook.tabs.combineMetaAlarmRequest.title'),
+          component: 'webhook-form-request-tab',
+          bind: {
+            request: this.form.combine_meta_alarm_request,
+            disabled: this.disabled,
+            namePrefix: 'combineMetaAlarmRequest',
+          },
+          on: {
+            input: event => this.updateField('combine_meta_alarm_request', event),
+          },
+        });
+      }
+
+      return tabs;
     },
 
     hasBlockedTriggers() {
@@ -131,14 +158,44 @@ export default {
       };
     },
   },
+  watch: {
+    'form.combine_meta_alarm_request': {
+      handler() {
+        this.$nextTick(() => {
+          this.setupWatchers();
+        });
+      },
+    },
+  },
   mounted() {
-    this.tabs.forEach((item, index) => {
-      this.$set(this.validationErrorsFlagsForTabs, index, false);
+    this.setupWatchers();
+  },
+  methods: {
+    setupWatchers() {
+      const formRefs = this.tabs.map(({ key }) => key);
 
-      this.$watch(() => this.$refs.forms[index].hasAnyError, (value) => {
-        this.$set(this.validationErrorsFlagsForTabs, index, value);
-      });
-    });
+      if (this.watchers.length) {
+        this.watchers.forEach(unwatch => unwatch());
+      }
+
+      this.watchers = formRefs.reduce((acc, key) => {
+        if (!this.$refs[key]) {
+          return acc;
+        }
+
+        const [ref] = this.$refs[key];
+
+        if (ref) {
+          this.$set(this.validationErrorsFlagsForTabs, key, ref.hasAnyError);
+
+          acc.push(this.$watch(() => ref.hasAnyError, (value) => {
+            this.$set(this.validationErrorsFlagsForTabs, key, value);
+          }));
+        }
+
+        return acc;
+      }, []);
+    },
   },
 };
 </script>

@@ -157,6 +157,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.watcher]: { maxWidth: 920, lazy: true },
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
+    [MODALS.createWebhook]: { maxWidth: 800, lazy: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

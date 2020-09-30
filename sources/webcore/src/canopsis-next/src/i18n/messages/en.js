@@ -966,6 +966,7 @@ export default {
         retryDelay: 'Delay',
         retryUnit: 'Unit',
         retryCount: 'Repeat',
+        isCombineMetaAlarmRequestEnabled: 'Is combine meta alarm request enabled ?',
       },
       tooltips: {
         id: 'This field is optional, if no ID is entered, an ID will be auto-generated.',
@@ -1575,6 +1576,9 @@ export default {
           text: 'Key',
           value: 'Value',
         },
+      },
+      combineMetaAlarmRequest: {
+        title: 'Combine meta alarm request',
       },
     },
   },

@@ -20,9 +20,12 @@
 
 <script>
 import TextPairs from '@/components/forms/fields/text-pairs.vue';
+import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 export default {
+  inject: ['$validator'],
   components: { TextPairs },
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'declareTicket',
     event: 'input',

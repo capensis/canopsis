@@ -8,8 +8,8 @@
           :items="availableMethods",
           :disabled="disabled",
           :label="$t('webhook.tabs.request.fields.method')",
-          :error-messages="errors.collect('request.method')",
-          name="request.method"
+          :error-messages="errors.collect(getName('method'))",
+          :name="getName('method')"
         )
       v-flex.pa-1(xs6)
         v-text-field(
@@ -17,8 +17,8 @@
           v-validate="'required'",
           :disabled="disabled",
           :label="$t('webhook.tabs.request.fields.url')",
-          :error-messages="errors.collect('request.url')",
-          name="request.url"
+          :error-messages="errors.collect(getName('url'))",
+          :name="getName('url')"
         )
     v-layout(row, wrap)
       v-flex(xs12)
@@ -58,8 +58,8 @@
           :disabled="disabled",
           :read-only="disabled",
           :label="$t('webhook.tabs.request.fields.payload')",
-          :error-messages="errors.collect('request.payload')",
-          name="request.payload"
+          :error-messages="errors.collect(getName('payload'))",
+          :name="getName('payload')"
         )
 </template>
 
@@ -86,6 +86,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: 'request',
+    },
   },
   data() {
     return {
@@ -110,6 +114,11 @@ export default {
       return [
         'POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'CONNECT', 'OPTIONS', 'TRACE',
       ];
+    },
+  },
+  methods: {
+    getName(field) {
+      return `${this.name}.${field}`;
     },
   },
 };

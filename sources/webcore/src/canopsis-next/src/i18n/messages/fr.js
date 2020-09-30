@@ -967,6 +967,7 @@ export default {
         retryDelay: 'Intervalle',
         retryUnit: 'Unit',
         retryCount: 'Nombre d\'essais après échec',
+        isCombineMetaAlarmRequestEnabled: 'La demande de méta-alarme combinée est-elle activée?',
       },
       tooltips: {
         id: 'Ce champ est optionnel, si aucun ID n\'est renseigné, un ID sera automatiquement généré.',
@@ -1576,6 +1577,9 @@ export default {
           text: 'Clé',
           value: 'Valeur',
         },
+      },
+      combineMetaAlarmRequest: {
+        title: 'Combiner la demande de méta-alarme',
       },
     },
   },

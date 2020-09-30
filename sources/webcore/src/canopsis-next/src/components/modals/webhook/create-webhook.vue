@@ -18,9 +18,13 @@
           v-model="form.enabled",
           :label="$t('common.enabled')"
         )
-        v-switch(
+        v-switch.mt-0(
           v-model="form.disable_if_active_pbehavior",
           :label="$t('webhook.disableIfActivePbehavior')"
+        )
+        v-switch.mt-0(
+          v-model="isCombineMetaAlarmRequestEnabled",
+          :label="$t('modals.createWebhook.fields.isCombineMetaAlarmRequestEnabled')"
         )
         webhook-form(v-model="form")
       template(slot="actions")
@@ -33,7 +37,7 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { omit, isEmpty } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -88,6 +92,23 @@ export default {
     };
   },
   computed: {
+    isCombineMetaAlarmRequestEnabled: {
+      get() {
+        return !isEmpty(this.form.combine_meta_alarm_request);
+      },
+      set(value) {
+        if (value) {
+          this.$set(this.form, 'combine_meta_alarm_request', {
+            method: '',
+            url: '',
+            headers: [],
+            payload: '{}',
+          });
+        } else {
+          this.$delete(this.form, 'combine_meta_alarm_request');
+        }
+      },
+    },
     title() {
       let type = 'create';
 

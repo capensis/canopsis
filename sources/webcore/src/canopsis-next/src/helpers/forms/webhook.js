@@ -14,14 +14,19 @@ function getWebhookFormFields(webhook) {
   const patternsFieldsCustomizer = value => value || [];
 
   const declareTicketField = webhook.declare_ticket ? omit(webhook.declare_ticket, ['empty_response']) : {};
-
-  return {
+  const pathValuesMap = {
     declare_ticket: () => objectToTextPairs(declareTicketField),
     'request.headers': objectToTextPairs,
     'hook.event_patterns': patternsFieldsCustomizer,
     'hook.alarm_patterns': patternsFieldsCustomizer,
     'hook.entity_patterns': patternsFieldsCustomizer,
   };
+
+  if (webhook.combine_meta_alarm_request) {
+    pathValuesMap['combine_meta_alarm_request.headers'] = objectToTextPairs;
+  }
+
+  return pathValuesMap;
 }
 
 export function webhookToForm(webhook) {
@@ -44,38 +49,46 @@ function getWebhookDeclareTicketField() {
 }
 
 /**
- * Get webhook's auth fields values
+ * Get fields with customizers for request subform
  *
  * @param {Object} form
+ * @param {string} [pathPrefix = 'request']
  * @returns {Object}
  */
-function getWebhookAuthField(form) {
-  return {
-    username: form.request.auth.username,
-    password: form.request.auth.password,
+function getRequestFormFields(form, pathPrefix = 'request') {
+  const authPath = `${pathPrefix}.auth`;
+  const auth = get(form, authPath);
+
+  const pathValuesMap = {
+    [`${pathPrefix}.headers`]: textPairsToObject,
   };
+
+  if (auth) {
+    pathValuesMap[authPath] = {
+      username: auth.username,
+      password: auth.password,
+    };
+  }
+
+  return pathValuesMap;
 }
 
 /**
  * Create a webhook object that is valid to the API
  *
- * @param {Object} form
+ * @param {Object} [form = {}]
  * @returns {Object}
  */
-function createWebhookObject(form) {
-  const hasAuth = get(form, 'request.auth');
-
+function createWebhookObjectFromForm(form = {}) {
   const pathValuesMap = {
-    'request.headers': textPairsToObject,
+    ...getRequestFormFields(form),
+    ...(form.combine_meta_alarm_request && getRequestFormFields(form, 'combine_meta_alarm_request')),
+
     empty_response: form.emptyResponse || false,
   };
 
   if (form.declare_ticket) {
     pathValuesMap.declare_ticket = getWebhookDeclareTicketField(form);
-  }
-
-  if (hasAuth) {
-    pathValuesMap['request.auth'] = getWebhookAuthField(form);
   }
 
   return setSeveralFields(omit(form, ['emptyResponse']), pathValuesMap);
@@ -90,7 +103,7 @@ function createWebhookObject(form) {
 export function formToWebhook(form) {
   const hasValue = v => !v;
 
-  return unsetSeveralFieldsWithConditions(createWebhookObject(form), {
+  return unsetSeveralFieldsWithConditions(createWebhookObjectFromForm(form), {
     ...getConditionsForRemovingEmptyPatterns([
       'hook.alarm_patterns',
       'hook.entity_patterns',
