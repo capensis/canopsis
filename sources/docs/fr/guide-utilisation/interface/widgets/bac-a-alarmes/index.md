@@ -127,6 +127,8 @@ Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: 
 
 ## Guide exploitant
 
+Vous pouvez configurer la taille, l'emplacement, le nom, ... des widgets directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
+
 ### Aide - Variables
 
 Durant la configuration de votre widget Bac à alarmes, notamment paramètres "Info popup", et "Fenêtre Plus d'infos", il vous sera possible d'accéder à des variables concernant les alarmes et les entités.
@@ -143,25 +145,13 @@ Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables
 
 ### Paramètres du widget
 
-1. Taille du widget
-2. Titre
-3. Paramètres avancés
+1. Titre
+2. Paramètres avancés
     1. Colonne de tri par défaut
     2. Nom des colonnes
     3. Nombre d'éléments par page par défaut
     4. Filtre sur open/resolved
     5. Filtres
-
-#### Taille du widget (*requis*)
-
-Ce paramètre permet de régler la taille du widget.
-
-![Paramètre Taille du widget](../img/settings/widget-size.png "Paramètre Taille du widget")
-
-La première information à renseigner est la ligne dans laquelle le widget doit apparaître. Ce champ permet de rechercher parmi les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
-
-Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
-La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
 
 #### Titre (*optionnel*)
 
