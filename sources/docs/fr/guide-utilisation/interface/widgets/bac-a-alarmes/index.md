@@ -10,7 +10,7 @@
 2. [Recherche](#recherche)
 3. [Filtres](#filtres)
 4. [Actions](#actions)
-5. [Elements par page](#elements-par-page)
+5. [Éléments par page](#elements-par-page)
 6. [Suivi personnalisé](#suivi-personnalise)
 7. [Lien direct vers une alarme](#lien-direct-vers-une-alarme)
 
@@ -195,12 +195,12 @@ Voici quelques exemples pratiques de colonnes :
 
 Label  | Valeur  
 --|--
-Connecteur	| `alarm.v.connector `
-Nom du Connecteur	| `alarm.v.connector_name`
+Type de connecteur | `alarm.v.connector `
+Nom du connecteur | `alarm.v.connector_name`
 Composant | `alarm.v.component`
 Ressource | `alarm.v.resource`
 Message | `alarm.v.output`
-État | `alarm.v.state.val`
+Criticité | `alarm.v.state.val`
 Statut | `alarm.v.status.val`
 
 ###### Champs enrichis
@@ -229,10 +229,10 @@ Message de l'acquittement | `alarm.v.ack.m`
 
 Label  | Valeur
 --|--
-Auteur du Ticket | `alarm.v.ticket.a`
-Numéro du Ticket | `alarm.v.ticket.val`
-Message du Ticket | `alarm.v.ticket.m`
-Type du Ticket | `alarm.v.ticket._t`
+Auteur du ticket | `alarm.v.ticket.a`
+Numéro du ticket | `alarm.v.ticket.val`
+Message du ticket | `alarm.v.ticket.m`
+Type du ticket | `alarm.v.ticket._t`
 
 ###### Mise en veille
 
