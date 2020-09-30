@@ -105,7 +105,7 @@ export const API_ROUTES = {
     app: '/api/internal/app_info',
     userInterface: '/api/internal/user_interface',
   },
-  heartbeat: '/api/v2/heartbeat/',
+  heartbeat: '/api/v4/heartbeats',
   dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
   sessionStart: '/api/v2/sessionstart',

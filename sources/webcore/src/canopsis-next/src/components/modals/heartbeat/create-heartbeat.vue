@@ -17,6 +17,9 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { heartbeatToForm, formToHeartbeat } from '@/helpers/forms/heartbeat';
+
+import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
@@ -33,14 +36,12 @@ export default {
     validator: 'new',
   },
   components: { HeartbeatForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [authMixin, modalInnerMixin, submittableMixin()],
   data() {
+    const { heartbeat = {} } = this.modal.config;
+
     return {
-      form: {
-        pattern: {},
-        periodValue: '',
-        periodUnit: '',
-      },
+      form: heartbeatToForm(heartbeat),
     };
   },
   methods: {
@@ -48,14 +49,12 @@ export default {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
-        const { pattern, periodValue, periodUnit } = this.form;
-        const data = {
-          pattern,
-          expected_interval: `${periodValue}${periodUnit}`,
-        };
-
         if (this.config.action) {
-          await this.config.action(data);
+          const heartbeat = formToHeartbeat(this.form);
+
+          heartbeat.author = this.currentUser._id;
+
+          await this.config.action(heartbeat);
         }
 
         this.$modals.hide();
