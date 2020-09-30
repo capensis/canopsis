@@ -282,7 +282,7 @@ export default {
         [EVENT_ENTITY_TYPES.pbhleave]: 'Periodic behavior disabled',
         [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
         [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
-        [EVENT_ENTITY_TYPES.metaalarmattach]: 'Attached to metaalarm',
+        [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
       },
     },
     tabs: {
