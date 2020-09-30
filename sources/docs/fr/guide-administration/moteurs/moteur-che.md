@@ -4,8 +4,6 @@ Le moteur `engine-che` permet d'enrichir les [événements](../../guide-developp
 
 ## Utilisation
 
-La file du moteur est placée juste après l'exchange `canopsis.events`.
-
 ### Options du moteur
 
 La commande `engine-che -help` liste toutes les options acceptées par le moteur.

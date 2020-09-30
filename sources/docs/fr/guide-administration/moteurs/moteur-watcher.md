@@ -11,7 +11,6 @@ Des exemples pratiques d'utilisation des observateurs sont disponibles dans la p
 
 ## Utilisation
 
-La file du moteur est placée juste après le moteur [`engine-axe`](moteur-axe.md).
 ### Options du moteur
 
 La commande `engine-watcher -help` liste toutes les options acceptées par le moteur.

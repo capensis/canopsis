@@ -7,13 +7,8 @@ Le moteur `engine-dynamic-infos` permet d'ajouter des informations aux alarmes. 
 
 ## Utilisation
 
-Le moteur doit être placé en sortie du moteur [`engine-watcher`](moteur-watcher.md).
+### Options du moteur
 
-Pour cela, il est nécessaire de lancer le moteur `engine-watcher` avec l'option `-publishQueue Engine_dynamic_infos` pour qu'il publie dans la file du moteur `engine-dynamic-infos`.
-
-Si le moteur [`engine-webhook`](moteur-webhook.md) est activé, le moteur `engine-dynamic-infos` doit être lancé avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file de ce moteur. Sinon, il publie dans la file du moteur [`engine-action`](moteur-action.md).
-
-### Options de l'engine-dynamic-infos
 La commande `engine-dynamic-infos -help` liste toutes les options acceptées par le moteur.
 
 ## Fonctionnement

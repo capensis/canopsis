@@ -21,9 +21,6 @@ Des exemples pratiques d'utilisation des webhooks sont disponibles dans la parti
 
 ## Utilisation
 
-Le moteur doit être placé en sortie du moteur [`engine-dynamic-infos`](moteur-dynamic-infos).
-
-Pour cela, il est nécessaire de lancer le moteur `engine-dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `engine-webhook`.
 ### Options du moteur
 
 La commande `engine-webhook -help` liste toutes les options acceptées par le moteur.

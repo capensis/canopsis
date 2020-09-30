@@ -6,7 +6,6 @@ Les heartbeats sont définis dans la collection MongoDB `heartbeat`, et peuvent 
 
 ## Utilisation
 
-La file du moteur est placée juste après l'exchange `canopsis.events`.
 ### Options du moteur
 
 La commande `engine-heartbeat -help` liste toutes les options acceptées par le moteur.
