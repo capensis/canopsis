@@ -206,11 +206,11 @@ def exports(ws):
                 named_rules = ar.meta_parents_with_rules(list(parent_eids))
                 for alarm in alarms['alarms']:
                     if 'd' in alarm and 'v' in alarm and alarm['v'].get('parents'):
-                        alarm_named_rules = set()
+                        alarm_named_rules = dict()
                         for p in alarm['v']['parents']:
                             for r in named_rules[p]:
-                                alarm_named_rules.add(r)
-                        alarms['rules'][alarm['d']] = list(alarm_named_rules)
+                                alarm_named_rules[r['id']] = r
+                        alarms['rules'][alarm['d']] = alarm_named_rules.values()
             else:
                 rule_ids = set()
                 for alarm_rules in alarms['rules'].values():
