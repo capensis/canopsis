@@ -1045,6 +1045,19 @@ class AlertsReader(object):
 
         return result
 
+    def meta_parents_with_rules(self, eids):
+        pipeline = [
+            {'$match': {'v.resolved': None, 'd': {'$in': eids}}},
+            {'$lookup': {'foreignField': '_id', 'as': 'rule',
+                         'from': 'meta_alarm_rules', 'localField': 'v.meta'}},
+            {'$project': {'rule': 1, 'd': 1}},
+            {'$unwind': {'path': '$rule'}},
+            {'$group': {'_id': '$d', 'rules': {
+                '$addToSet': {'id': '$rule._id', 'name': '$rule.name'}}}},
+        ]
+
+        return {r["_id"]: r["rules"] for r in self.alarm_collection.aggregate(pipeline)}
+
     @staticmethod
     def _aggregate_post_sort(alarms, sort_key, sort_dir):
         return sorted(
