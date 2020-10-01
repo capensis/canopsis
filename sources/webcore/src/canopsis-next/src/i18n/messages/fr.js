@@ -1780,6 +1780,7 @@ export default {
     workflow: 'Workflow si cette étape échoue:',
     stop: 'Arrêtez',
     remainingStep: 'Continuez avec les étapes restantes',
+    timeToComplete: 'Temps pour terminer',
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',
