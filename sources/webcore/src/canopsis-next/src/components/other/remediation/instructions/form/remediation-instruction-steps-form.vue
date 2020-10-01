@@ -25,13 +25,11 @@
             remediation-instruction-step-actions(
               v-show="step.saved",
               :has-operations="!!step.operations.length",
-              :add-disabled="!hasSteps || !everySaved",
-              @add-step="addStepBetween(index)",
               @add-operation="addStepOperation(index)",
               @add-endpoint="addEndpoint(index)"
             )
     v-layout
-      v-btn.ml-0.primary(v-if="!hasSteps", @click="addStep") {{ $t('remediationInstructions.addStep') }}
+      v-btn.ml-0.primary(@click="addStep") {{ $t('remediationInstructions.addStep') }}
 </template>
 
 <script>
@@ -82,10 +80,6 @@ export default {
       return this.steps.every(({ saved }) => saved);
     },
 
-    hasSteps() {
-      return !!this.steps.length;
-    },
-
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
@@ -100,14 +94,6 @@ export default {
   methods: {
     addStep() {
       this.addItemIntoArray(generateRemediationInstructionStep());
-    },
-
-    addStepBetween(stepIndex) {
-      const steps = [...this.steps];
-
-      steps.splice(stepIndex + 1, 0, generateRemediationInstructionStep());
-
-      this.updateModel(steps);
     },
 
     addStepOperation(stepIndex) {

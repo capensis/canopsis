@@ -8,18 +8,18 @@
   )
     v-radio(
       :label="$t('remediationInstructions.stop')",
-      :value="$constants.WORKFLOW_TYPES.stop",
+      :value="$constants.REMEDIATION_WORKFLOW_TYPES.stop",
       color="primary"
     )
     v-radio(
       :label="$t('remediationInstructions.remainingStep')",
-      :value="$constants.WORKFLOW_TYPES.continue",
+      :value="$constants.REMEDIATION_WORKFLOW_TYPES.continue",
       color="primary"
     )
 </template>
 
 <script>
-import { WORKFLOW_TYPES } from '@/constants';
+import { REMEDIATION_WORKFLOW_TYPES } from '@/constants';
 
 export default {
   model: {
@@ -29,7 +29,7 @@ export default {
   props: {
     value: {
       type: String,
-      default: WORKFLOW_TYPES.stop,
+      default: REMEDIATION_WORKFLOW_TYPES.stop,
     },
   },
 };

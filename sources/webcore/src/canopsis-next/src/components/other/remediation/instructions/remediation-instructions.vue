@@ -63,8 +63,8 @@ export default {
           name: MODALS.confirmation,
           config: {
             text: this.$t('remediationInstructions.errors.runningInstruction'),
-            action: async (...args) => {
-              await action(...args);
+            action: async () => {
+              await action();
               resolve();
             },
             cancel: resolve,
