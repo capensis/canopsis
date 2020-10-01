@@ -14,11 +14,11 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { MODALS, PLANNING_TABS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
 import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
-import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import PlanningExceptionsList from './pbehavior-exceptions-list.vue';
 
@@ -27,14 +27,8 @@ export default {
   mixins: [
     rightsTechnicalPbehaviorExceptionsMixin,
     entitiesPbehaviorExceptionsMixin,
-    pbehaviorQueryMixin,
+    localQueryMixin,
   ],
-  props: {
-    queryId: {
-      type: String,
-      default: PLANNING_TABS.exceptions,
-    },
-  },
   watch: {
     query(query, oldQuery) {
       if (!isEqual(query, oldQuery)) {
@@ -47,7 +41,7 @@ export default {
   },
   methods: {
     fetchList() {
-      this.fetchPbehaviorExceptionsList({ params: this.query });
+      this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
     },
 
     async tryRemovePbehaviorException(pbehavioExceptionId) {

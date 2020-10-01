@@ -14,11 +14,11 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { MODALS, PLANNING_TABS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
-import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
 
@@ -27,16 +27,12 @@ export default {
   mixins: [
     rightsTechnicalPbehaviorTypesMixin,
     entitiesPbehaviorTypesMixin,
-    pbehaviorQueryMixin,
+    localQueryMixin,
   ],
   props: {
     params: {
       type: Object,
       default: () => ({}),
-    },
-    queryId: {
-      type: String,
-      default: PLANNING_TABS.types,
     },
   },
   watch: {
@@ -51,7 +47,7 @@ export default {
   },
   methods: {
     fetchList() {
-      this.fetchPbehaviorTypesList({ params: this.query });
+      this.fetchPbehaviorTypesList({ params: this.getQuery() });
     },
 
     async tryRemovePbehaviorType(pbehaviorTypeId) {

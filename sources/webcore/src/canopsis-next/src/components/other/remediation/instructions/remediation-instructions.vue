@@ -18,7 +18,7 @@ import { isEqual } from 'lodash';
 import { MODALS } from '@/constants';
 
 import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
-import remediationQueryMixin from '@/mixins/remediation/query';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
@@ -27,7 +27,7 @@ export default {
   inject: ['$validator'],
   mixins: [
     entitiesRemediationInstructionMixin,
-    remediationQueryMixin,
+    localQueryMixin,
   ],
   watch: {
     query(query, oldQuery) {
