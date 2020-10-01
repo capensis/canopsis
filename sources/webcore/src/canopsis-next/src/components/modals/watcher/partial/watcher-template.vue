@@ -9,7 +9,7 @@
       )
         v-icon(small) list
       span {{ $t('modals.watcher.editPbehaviors') }}
-    v-runtime-template(:template="compiledTemplate")
+    v-runtime-template(v-if="compiledTemplate", :template="compiledTemplate")
 </template>
 
 <script>
@@ -17,6 +17,7 @@ import Handlebars from 'handlebars';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import { PAGINATION_LIMIT } from '@/config';
+
 import { CRUD_ACTIONS, MODALS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -91,12 +92,13 @@ export default {
     addEventToQueue(event) {
       this.$emit('add:event', event);
     },
+
     showPbehaviorsListModal() {
       this.$modals.show({
         name: MODALS.pbehaviorList,
         config: {
-          pbehaviors: this.watcher.watcher_pbehavior,
-          entityId: this.watcher.entity_id,
+          pbehaviors: this.watcher.pbehaviors,
+          entityId: this.watcher._id,
           onlyActive: true,
           availableActions: [CRUD_ACTIONS.create, CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },

@@ -20,11 +20,13 @@ export default {
     alarms() {
       return get(this.alarm, 'consequences.data') || get(this.alarm, 'causes.data', []);
     },
+
     alarmsMeta() {
       return {
-        total: this.alarms.length,
+        total_count: this.alarms.length,
       };
     },
+
     displayedAlarms() {
       const { page, limit } = this.query;
 

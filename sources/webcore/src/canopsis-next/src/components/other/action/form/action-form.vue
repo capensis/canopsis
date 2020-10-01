@@ -26,12 +26,7 @@
       type="number",
       name="priority"
     )
-    v-switch.mb-3(
-      v-field="form.generalParameters.enabled",
-      :label="$t('common.enabled')",
-      color="primary",
-      hide-details
-    )
+    enabled-field.mb-3(v-field="form.generalParameters.enabled", hide-details)
     v-tabs(fixed-tabs, slider-color="primary")
       v-tab
         .validation-header(
@@ -60,11 +55,14 @@ import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
 import WebhookFormHookTab from '@/components/other/webhook/form/tabs/webhook-form-hook-tab.vue';
 import DelayField from '@/components/other/action/form/fields/delay.vue';
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
+
 import ActionGeneralTab from './tabs/action-general-tab.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    EnabledField,
     DelayField,
     ActionGeneralTab,
     WebhookFormHookTab,

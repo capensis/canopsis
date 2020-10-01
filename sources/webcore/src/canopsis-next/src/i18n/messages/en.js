@@ -6,7 +6,8 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
+  BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -109,10 +110,15 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
+    planningAdministration: 'Planning Administration',
+    icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    begin: 'Begin',
+    timezone: 'Timezone',
+    reason: 'Reason',
     or: 'Or',
     and: 'And',
     priority: 'Priority',
@@ -213,11 +219,12 @@ export default {
     entities: 'Entities',
   },
   login: {
-    standard: 'Standard',
+    base: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Login with CAS',
     documentation: 'Documentation',
     forum: 'Forum',
+    website: 'Canopsis.com',
     connectionProtocols: 'Connection protocols',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
@@ -310,9 +317,10 @@ export default {
     reason: 'Reason',
     rrule: 'Rrule',
     status: 'Status',
+    created: 'Creation date',
+    updated: 'Last update date',
     tabs: {
       filter: 'Filter',
-      eids: 'Eids',
       comments: 'Comments',
     },
   },
@@ -655,7 +663,8 @@ export default {
             type: 'Type',
             start: 'Start',
             stop: 'End',
-            timezone: 'Timezone',
+            fullDay: 'Whole day',
+            noEnding: 'No ending',
           },
         },
         filter: {
@@ -674,7 +683,7 @@ export default {
         comments: {
           title: 'Comments',
           buttons: {
-            addComment: 'Add a new comment',
+            addComment: 'Add comment',
           },
           fields: {
             message: 'Message',
@@ -687,6 +696,7 @@ export default {
       success: {
         create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
+      cancelConfirmation: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
     },
     createPause: {
       title: 'Create Pause event',
@@ -1179,6 +1189,51 @@ export default {
       result: 'Result',
       manageTabs: 'Manage tabs',
     },
+    pbehaviorPlanning: {
+      title: 'Periodical behaviors',
+    },
+    selectExceptionsLists: {
+      title: 'Choose list of exceptions',
+    },
+    createRrule: {
+      title: 'Create RRule',
+    },
+    createPbehaviorType: {
+      title: 'Create type',
+      iconNameHint: 'Enter a name of an icon from material.io',
+      errors: {
+        iconName: 'The name is invalid',
+      },
+      fields: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priority',
+        iconName: 'Icon name',
+      },
+    },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modify',
+      fields: {
+        selected: 'Only selected period',
+        all: 'All the periods',
+      },
+    },
+    createPbehaviorReason: {
+      title: 'Create reason',
+      fields: {
+        name: 'Name',
+        description: 'Description',
+      },
+    },
+    createPbehaviorException: {
+      title: 'Create date of exception',
+      addDate: 'Add date',
+      fields: {
+        name: 'Name',
+        description: 'Description',
+      },
+    },
     createManualMetaAlarm: {
       title: 'Manual meta alarm management',
       noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
@@ -1222,7 +1277,7 @@ export default {
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Reason',
       rrule: 'Rrule',
     },
@@ -1533,7 +1588,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Disable if a pbehavior is active',
+    disableDuringPeriods: 'Disable during periods',
     table: {
       headers: {
         id: 'ID',
@@ -1667,6 +1722,39 @@ export default {
       [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
       [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
+    },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Add filter',
+      editFilter: 'Edit filter',
+      addRRule: 'Add RRule',
+      editRrule: 'Edit RRule',
+    },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Exception dates',
+    create: 'Add an exception date',
+    choose: 'Choose list of exceptions',
+    usingException: 'Cannot be deleted since it is in use',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Cannot be deleted since it is in use',
+    defaultType: 'Type is default, because cannot be edited',
+  },
+
+  pbehaviorReasons: {
+    usingReason: 'Cannot be deleted since it is in use',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Reason',
+      exceptions: 'Dates of exceptions',
     },
   },
 

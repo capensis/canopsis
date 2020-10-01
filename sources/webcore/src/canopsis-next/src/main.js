@@ -2,7 +2,7 @@ import './bootstrap';
 
 /* eslint-disable import/first */
 import Vue from 'vue';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import deepFreeze from 'deep-freeze';
 import Vuetify from 'vuetify';
 import VeeValidate from 'vee-validate';
@@ -10,12 +10,12 @@ import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
-import DaySpanVuetify from 'dayspan-vuetify';
 import VueClipboard from 'vue-clipboard2';
 import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
 import PortalVue from 'portal-vue';
 import sanitizeHTML from 'sanitize-html';
+import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
 
 import 'vue-tour/dist/vue-tour.css';
 import 'vuetify/dist/vuetify.min.css';
@@ -37,19 +37,17 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
+import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import GridPlugin from '@/plugins/grid';
-
-import DsCalendarEvent from '@/components/other/stats/calendar/day-span/partial/calendar-event.vue';
-import DsCalendarEventTime from '@/components/other/stats/calendar/day-span/partial/calendar-event-time.vue';
 
 import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
-import SettingsSyncIcon from '@/components/icons/settings-sync.vue';
 
 import * as modalsComponents from '@/components/modals';
+
 /* eslint-enable import/first */
 
 Vue.use(VueAsyncComputed);
@@ -69,15 +67,56 @@ Vue.use(Vuetify, {
     bullhorn: {
       component: BullhornIcon,
     },
-    settings_sync: {
-      component: SettingsSyncIcon,
-    },
   },
 });
 
 Vue.use(GridPlugin);
 Vue.use(VueFullScreen);
-Vue.use(DaySpanVuetify, {
+Vue.use(DaySpanVuetifyPlugin, {
+  data: {
+    locales: {
+      fr: frDaySpanVuetifyMessages,
+    },
+    defaults: {
+      dsWeeksView: {
+        // dayspan-vuetify doesn't not supported first day in weekend, because return weekdays without locale sort.
+        weekdays: moment.weekdaysShort(),
+      },
+      dsCalendarEventTime: {
+        placeholderStyle: false,
+        disabled: false,
+        popoverProps: {
+          nudgeWidth: 200,
+          closeOnContentClick: false,
+          transition: 'fade-transition',
+          offsetOverflow: true,
+          offsetX: true,
+          maxWidth: 500,
+          openOnHover: true,
+        },
+      },
+      dsCalendarEvent: {
+        popoverProps: {
+          offsetY: true,
+          openOnHover: true,
+          transition: 'fade-transition',
+        },
+      },
+      dsCalendarEventPlaceholder: {
+        popoverProps: {
+          offsetY: true,
+          openOnHover: true,
+          transition: 'fade-transition',
+        },
+      },
+      dsCalendarEventTimePlaceholder: {
+        popoverProps: {
+          openOnHover: true,
+          transition: 'fade-transition',
+        },
+      },
+    },
+  },
   methods: {
     getPrefix: () => '',
     getStyleColor(details, calendarEvent, past, cancelled) {
@@ -90,30 +129,7 @@ Vue.use(DaySpanVuetify, {
       return color;
     },
   },
-  data: {
-    defaults: {
-      dsWeeksView: {
-        // dayspan-vuetify doesn't not supported first day in weekend, because return weekdays without locale sort.
-        weekdays: moment.weekdaysShort(),
-      },
-      dsCalendarEventTime: {
-        placeholderStyle: false,
-        disabled: false,
-        popoverProps: {
-          nudgeWidth: 200,
-          closeOnContentClick: false,
-          offsetOverflow: true,
-          offsetX: true,
-          maxWidth: 500,
-          openOnHover: true,
-        },
-      },
-    },
-  },
 });
-
-Vue.component('dsCalendarEvent', DsCalendarEvent);
-Vue.component('dsCalendarEventTime', DsCalendarEventTime);
 
 Vue.component('alarm-chips', AlarmChips);
 
@@ -147,7 +163,6 @@ Vue.use(ModalsPlugin, {
   },
 
   dialogPropsMap: {
-    [MODALS.createPbehavior]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorList]: { maxWidth: 1280, lazy: true },
     [MODALS.createWidget]: { maxWidth: 500, lazy: true },
     [MODALS.alarmsList]: { fullscreen: true, lazy: true },
@@ -157,6 +172,8 @@ Vue.use(ModalsPlugin, {
     [MODALS.watcher]: { maxWidth: 920, lazy: true },
     [MODALS.importExportViews]: { maxWidth: 920, persistent: true },
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
+    [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true, persistent: true },
+    [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

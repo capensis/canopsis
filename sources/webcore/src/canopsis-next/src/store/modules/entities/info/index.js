@@ -22,6 +22,7 @@ export default {
     allowChangeSeverityToInfo: false,
     casConfig: {},
     popupTimeout: undefined,
+    timezone: undefined,
   },
   getters: {
     version: state => state.version,
@@ -37,6 +38,7 @@ export default {
     isLDAPAuthEnabled: state => state.isLDAPAuthEnabled,
     isCASAuthEnabled: state => state.isCASAuthEnabled,
     casConfig: state => state.casConfig,
+    timezone: state => state.timezone,
   },
   mutations: {
     [types.FETCH_LOGIN_INFOS](state, {
@@ -66,6 +68,7 @@ export default {
       edition,
       stack,
       language,
+      timezone,
     }) {
       state.version = version;
       state.logo = logo;
@@ -75,6 +78,7 @@ export default {
       state.edition = edition;
       state.stack = stack;
       state.language = language;
+      state.timezone = timezone;
     },
   },
   actions: {
@@ -107,6 +111,7 @@ export default {
           edition,
           stack,
           language,
+          timezone,
         } = await request.get(API_ROUTES.infos.app);
 
         commit(
@@ -120,6 +125,7 @@ export default {
             allowChangeSeverityToInfo,
             stack,
             language,
+            timezone,
           },
         );
 

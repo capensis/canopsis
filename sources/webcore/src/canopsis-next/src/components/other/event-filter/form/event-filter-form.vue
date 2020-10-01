@@ -21,7 +21,7 @@
       :label="$t('modals.eventFilterRule.priority')",
       type="number"
     )
-    v-switch(v-field="form.enabled", :label="$t('common.enabled')")
+    enabled-field(v-field="form.enabled")
     v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
 </template>
 
@@ -30,7 +30,10 @@ import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
+
 export default {
+  components: { EnabledField },
   inject: ['$validator'],
   mixins: [formMixin],
   model: {

@@ -58,7 +58,12 @@ export default {
   data() {
     return {
       pending: false,
-      groupedRights: { business: [], view: [], technical: [] },
+      groupedRights: {
+        business: [],
+        view: [],
+        technical: [],
+        api: [],
+      },
       changedRoles: {},
     };
   },

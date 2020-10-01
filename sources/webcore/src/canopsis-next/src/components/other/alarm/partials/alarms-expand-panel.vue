@@ -103,9 +103,11 @@ export default {
     causesKey() {
       return `${ALARMS_GROUP_PREFIX.CAUSES}${this.alarm._id}`;
     },
+
     consequencesKey() {
       return `${ALARMS_GROUP_PREFIX.CONSEQUENCES}${this.alarm._id}`;
     },
+
     moreInfosTabClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 2);
@@ -113,6 +115,7 @@ export default {
 
       return '';
     },
+
     timeLineTabClass() {
       if (this.isTourEnabled) {
         return getStepClass(TOURS.alarmsExpandPanel, 3);
@@ -120,6 +123,7 @@ export default {
 
       return '';
     },
+
     cardFlexClass() {
       const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
 
@@ -128,6 +132,7 @@ export default {
         `xs${end - start}`,
       ];
     },
+
     isHTMLEnabled() {
       return this.widget.parameters.isHtmlEnabledOnTimeLine;
     },
@@ -138,6 +143,7 @@ export default {
         this.refreshTabs();
       },
     },
+
     isTourEnabled(value, oldValue) {
       if (value !== oldValue) {
         this.refreshTabs();

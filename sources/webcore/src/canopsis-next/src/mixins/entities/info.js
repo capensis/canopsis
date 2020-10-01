@@ -26,6 +26,7 @@ export default {
       allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
+      timezone: 'timezone',
     }),
   },
   methods: {

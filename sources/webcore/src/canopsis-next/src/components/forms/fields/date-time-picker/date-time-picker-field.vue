@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import moment from 'moment';
+import { convertTimestampToMoment } from '@/helpers/date';
 
 import DateTimePicker from './date-time-picker.vue';
 
@@ -56,7 +56,7 @@ export default {
 
       const startOfValue = this.useSeconds ? 'second' : 'minute';
 
-      return moment(this.value).startOf(startOfValue).toDate();
+      return convertTimestampToMoment(this.value).startOf(startOfValue).toDate();
     },
 
     name() {
@@ -71,7 +71,7 @@ export default {
       default: false,
     },
     value: {
-      type: Date,
+      type: [Date, Number],
       default: null,
     },
     label: {
@@ -99,7 +99,7 @@ export default {
   computed: {
     errorMessages() {
       if (this.$validator && this.errors && this.name) {
-        return this.errors.collect(this.name);
+        return this.errors.collect(this.name).map(error => error.replace(this.name, this.label));
       }
 
       return [];

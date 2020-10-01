@@ -1,13 +1,13 @@
 <template lang="pug">
   v-toolbar.white(dense, flat)
     v-text-field(
-      :value="value",
+      :value="localValue",
       :label="$t('common.search')",
       data-test="searchingTextField",
       hide-details,
       single-line,
       @keydown.enter.prevent="submit",
-      @input="$emit('input', $event)"
+      @input="input"
     )
     v-tooltip(bottom)
       v-btn(slot="activator", data-test="submitSearchButton", icon, @click="submit")
@@ -31,13 +31,32 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      localValue: this.value,
+    };
+  },
+  watch: {
+    value(newValue) {
+      if (newValue !== this.localValue) {
+        this.localValue = newValue;
+      }
+    },
+  },
   methods: {
+    input(value) {
+      this.localValue = value;
+
+      this.$emit('input', value);
+    },
     clear() {
+      this.localValue = '';
+
       this.$emit('input', '');
       this.$emit('clear');
     },
     submit() {
-      this.$emit('submit', this.value);
+      this.$emit('submit', this.localValue);
     },
   },
 };

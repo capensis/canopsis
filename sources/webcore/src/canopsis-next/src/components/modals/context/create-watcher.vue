@@ -85,7 +85,7 @@ export default {
             ...omit(this.form, ['entities', 'output_template']),
             _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
             infos: this.form.infos,
-            display_name: this.form.name,
+            name: this.form.name,
             type: ENTITIES_TYPES.watcher,
           };
         }

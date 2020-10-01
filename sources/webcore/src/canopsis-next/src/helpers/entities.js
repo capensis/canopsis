@@ -1,5 +1,5 @@
 import sha1 from 'sha1';
-import { get, omit, cloneDeep } from 'lodash';
+import { get, omit, cloneDeep, isObject } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
@@ -27,7 +27,8 @@ import {
 } from '@/constants';
 
 import uuid from './uuid';
-import { pbehaviorToForm } from './forms/pbehavior';
+import uid from './uid';
+import { pbehaviorToForm } from './forms/planning-pbehavior';
 
 /**
  * Generate widget by type
@@ -517,11 +518,7 @@ export function generateAction() {
   };
 
   // Default 'pbehavior' action parameters
-  const pbehaviorParameters = {
-    general: { ...pbehaviorToForm() },
-    comments: [],
-    exdate: [],
-  };
+  const pbehaviorParameters = pbehaviorToForm();
 
   // Default 'changestate' action parameters
   const changeStateParameters = {
@@ -607,6 +604,10 @@ export function prepareUserByData(data, user = generateUser()) {
     result.shadowpasswd = sha1(data.password);
   }
 
+  if (!data._id) {
+    result._id = data.crecord_name;
+  }
+
   return result;
 }
 
@@ -667,3 +668,33 @@ export function getDefaultPlaylist() {
     tabs_list: [],
   };
 }
+
+/**
+ * Add uniq key field in each entity.
+ *
+ * @param {Array} entities
+ * @return {Array}
+ */
+export const addKeyInEntity = (entities = []) => entities.map(entity => ({
+  ...entity,
+  key: uid(),
+}));
+
+/**
+ * Remove key field from each entity.
+ *
+ * @param {Array} entities
+ * @return {Array}
+ */
+export const removeKeyFromEntity = (entities = []) => entities.map(entity => omit(entity, ['key']));
+
+/**
+ * Get id from entity
+ *
+ * @param {Object} entity
+ * @param {String} entity._id
+ * @param {String} idField
+ * @return {String}
+ */
+export const getIdFromEntity = (entity, idField = '_id') =>
+  (isObject(entity) ? entity[idField] : entity);

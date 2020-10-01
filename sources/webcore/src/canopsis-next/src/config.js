@@ -55,22 +55,12 @@ export const API_ROUTES = {
   auth: '/auth',
   currentUser: '/account/me',
   version: '/api/v2/version',
-  alarmList: '/alerts/get-alarms',
+  alarmList: '/api/v4/alarms',
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   watcherng: '/api/v2/watcherng',
-  weatherWatcher: '/api/v2/weather/watchers',
-  pbehavior: {
-    pbehavior: '/api/v2/pbehavior',
-    list: '/pbehavior/read',
-    comment: {
-      create: '/pbehavior/comment/create',
-      update: '/pbehavior/comment/update',
-      delete: '/pbehavior/comment/delete',
-    },
-  },
-  pbehaviorById: '/api/v2/pbehavior_byeid',
+  weatherWatcher: '/api/v4/weather-watchers',
   actions: '/api/v2/actions',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
@@ -112,15 +102,26 @@ export const API_ROUTES = {
   sessionTracePath: '/api/v2/session_tracepath',
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
-  pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
   dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
   broadcastMessage: {
     list: '/api/v2/broadcast-message',
     activeList: '/api/v2/broadcast-message/active',
   },
-  counter: '/alerts/get-counters',
+  counter: '/api/v4/alarm-counters',
   playlist: '/api/v2/playlist',
+  /**
+   * TODO: rename to pbehavior
+   */
+  planning: {
+    timespan: '/api/v4/pbehavior-timespans',
+    exceptions: '/api/v4/pbehavior-exceptions',
+    types: '/api/v4/pbehavior-types',
+    pbehaviors: '/api/v4/pbehaviors',
+    pbehaviorComments: '/api/v4/pbehavior-comments',
+    pbehaviorById: '/api/v4/entities/pbehaviors',
+    reasons: '/api/v4/pbehavior-reasons',
+  },
 };
 
 export const COLORS = {

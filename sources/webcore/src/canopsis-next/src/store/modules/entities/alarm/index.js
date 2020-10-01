@@ -43,9 +43,9 @@ export default {
   actions: {
     async fetchListWithoutStore({ dispatch }, { params, withoutCatch = false }) {
       try {
-        const { data: [result] } = await request.get(API_ROUTES.alarmList, { params });
+        const response = await request.get(API_ROUTES.alarmList, { params });
 
-        return result;
+        return response;
       } catch (err) {
         if (withoutCatch) {
           throw err;
@@ -68,20 +68,13 @@ export default {
             schema: [alarmSchema],
             params,
             cancelToken: source.token,
-            dataPreparer: d => d.data[0].alarms,
+            dataPreparer: d => d.data,
           }, { root: true });
-
-          const [meta] = data.data;
-          const total = meta.total ? meta.total : normalizedData.result.length;
 
           commit(types.FETCH_LIST_COMPLETED, {
             widgetId,
             allIds: normalizedData.result,
-            meta: {
-              total,
-              first: meta.first,
-              last: meta.last,
-            },
+            meta: data.meta,
           });
         }, `alarms-list-${widgetId}`);
       } catch (err) {
@@ -99,7 +92,7 @@ export default {
       });
     },
 
-    async fetchItem({ dispatch }, { id, params, dataPreparer = d => d.data[0].alarms }) {
+    async fetchItem({ dispatch }, { id, params, dataPreparer = d => d.data }) {
       try {
         const paramsWithItemId = merge(params, { filter: { _id: id } });
 

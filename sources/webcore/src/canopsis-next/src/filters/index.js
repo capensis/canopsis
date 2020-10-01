@@ -4,6 +4,7 @@ import duration from './duration';
 import json from './json';
 import percentage from './percentage';
 import maxDurationByUnit from './max-duration-by-unit';
+import timezone from './timezone';
 
 export default {
   install(Vue) {
@@ -13,5 +14,7 @@ export default {
     Vue.filter('json', json);
     Vue.filter('percentage', percentage);
     Vue.filter('maxDurationByUnit', maxDurationByUnit);
+    Vue.filter('maxDurationByUnit', maxDurationByUnit);
+    Vue.filter('timezone', timezone);
   },
 };

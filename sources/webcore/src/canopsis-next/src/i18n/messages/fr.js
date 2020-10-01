@@ -110,10 +110,15 @@ export default {
     edition: 'Édition',
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
+    planningAdministration: 'Administration de la planification',
+    icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
+    begin: 'Commencer',
+    timezone: 'Fuseau horaire',
+    reason: 'Raison',
     or: 'OU',
     and: 'ET',
     priority: 'Priorité',
@@ -214,11 +219,12 @@ export default {
     entities: 'Entités',
   },
   login: {
-    standard: 'Standard',
+    base: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Se connecter avec CAS',
     documentation: 'Documentation',
     forum: 'Forum',
+    website: 'Canopsis.com',
     connectionProtocols: 'Modes de connexion',
     errors: {
       incorrectEmailOrPassword: 'Mot de passe / Email incorrect',
@@ -311,9 +317,10 @@ export default {
     reason: 'Raison',
     rrule: 'Récurrence',
     status: 'Statut',
+    created: 'Date de création',
+    updated: 'Date de dernière modification',
     tabs: {
       filter: 'Filtre',
-      eids: 'Entités',
       comments: 'Commentaires',
     },
   },
@@ -656,7 +663,8 @@ export default {
             type: 'Type',
             start: 'Début',
             stop: 'Fin',
-            timezone: 'Fuseau horaire',
+            fullDay: 'Toute la journée',
+            noEnding: 'Pas de fin',
           },
         },
         filter: {
@@ -688,6 +696,7 @@ export default {
       success: {
         create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
       },
+      cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
     },
     createPause: {
       title: 'Mettre en pause',
@@ -1180,6 +1189,51 @@ export default {
       result: 'Résultat',
       manageTabs: 'Gérer les onglets',
     },
+    pbehaviorPlanning: {
+      title: 'Comportement périodiques',
+    },
+    selectExceptionsLists: {
+      title: 'Choisissez la liste des exceptions',
+    },
+    createRrule: {
+      title: 'Créer un récurrence',
+    },
+    createPbehaviorType: {
+      title: 'Créer un type',
+      iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+      errors: {
+        iconName: 'Le nom est invalide',
+      },
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priorité',
+        iconName: 'Nom de l\'icône',
+      },
+    },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modifier',
+      fields: {
+        selected: 'Seulement période sélectionnée',
+        all: 'Toutes les périodes',
+      },
+    },
+    createPbehaviorReason: {
+      title: 'Créer un reason',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
+    createPbehaviorException: {
+      title: 'Créer une liste d\'exceptions',
+      addDate: 'Ajouter une date',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
     createManualMetaAlarm: {
       title: 'Gestion manuelle des méta-alarmes',
       noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
@@ -1223,7 +1277,7 @@ export default {
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finit',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Raison',
       rrule: 'Récurrence',
     },
@@ -1534,7 +1588,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Désactivé si un pbehavior est actif',
+    disableDuringPeriods: 'Désactiver pendant les règles',
     table: {
       headers: {
         id: 'ID',
@@ -1669,6 +1723,38 @@ export default {
       [USER_RIGHTS_PREFIXES.business.context]: 'Droits pour le widget Explorateur de contexte',
       [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
+    },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Ajouter un filtre',
+      editFilter: 'Modifier le filtre',
+      addRRule: 'Ajouter RRule',
+      editRrule: 'Modifier RRule',
+    },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Dates d\'exception',
+    create: 'Ajouter une date d\'exception',
+    choose: 'Sélectionnez la liste d\'exclusion',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Le type utilise, car ne peut pas être supprimé',
+    defaultType: 'Le type est par défaut, car ne peut pas être modifié',
+  },
+
+  pbehaviorReasons: {
+    usingReason: 'La raison utilise, car ne peut pas être supprimée',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Raison',
+      exceptions: 'Dates d\'exception',
     },
   },
 
