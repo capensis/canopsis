@@ -12,13 +12,11 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
-
-import { MODALS, PLANNING_TABS } from '@/constants';
+import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
-import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import PlanningReasonsList from './pbehavior-reasons-list.vue';
 
@@ -27,23 +25,12 @@ export default {
   mixins: [
     rightsTechnicalPbehaviorReasonsMixin,
     entitiesPbehaviorReasonsMixin,
-    pbehaviorQueryMixin,
+    localQueryMixin,
   ],
   props: {
     params: {
       type: Object,
       default: () => ({}),
-    },
-    queryId: {
-      type: String,
-      default: PLANNING_TABS.reasons,
-    },
-  },
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
     },
   },
   mounted() {
@@ -51,7 +38,7 @@ export default {
   },
   methods: {
     fetchList() {
-      this.fetchPbehaviorReasonsList({ params: this.query });
+      this.fetchPbehaviorReasonsList({ params: this.getQuery() });
     },
 
     async tryRemovePbehaviorReason(pbehavioReasonId) {

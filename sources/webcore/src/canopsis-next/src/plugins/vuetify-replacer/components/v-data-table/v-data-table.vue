@@ -10,9 +10,12 @@ export default {
     },
   },
   computed: {
+    activeItems() {
+      return this.filteredItems.filter(item => !this.isDisabledItem(item));
+    },
+
     everyItem() {
-      return this.filteredItems.length &&
-        this.filteredItems.every(item => this.isDisabledItem(item) || this.isSelected(item));
+      return this.activeItems.length && this.activeItems.every(this.isSelected);
     },
   },
 };

@@ -1241,6 +1241,15 @@ export default {
         output: 'Note',
       },
     },
+    createRemediationInstruction: {
+      title: 'Create instruction',
+    },
+    createRemediationConfiguration: {
+      title: 'Create configuration',
+    },
+    createRemediationJob: {
+      title: 'Create Job',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1762,6 +1771,27 @@ export default {
       instructions: 'Instructions',
       configurations: 'Configurations',
       jobs: 'Jobs',
+    },
+  },
+
+  remediationInstructions: {
+    usingInstruction: 'Cannot be deleted since it is in use',
+    addStep: 'Add step',
+    addOperation: 'Add operation',
+    addEndpoint: 'Add endpoint',
+    workflow: 'Workflow if this step fails:',
+    stop: 'Stop',
+    remainingStep: 'Continue with remaining steps',
+    table: {
+      rating: 'Rating',
+      lastModifiedOn: 'Last modified on',
+      averageTimeCompletion: 'Average time of completion',
+      monthExecutions: 'Number of executions this month',
+      lastExecutedBy: 'Last executed by',
+      lastExecutedOn: 'Last executed on',
+    },
+    errors: {
+      runningInstruction: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
     },
   },
 

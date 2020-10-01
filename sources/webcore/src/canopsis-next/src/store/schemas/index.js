@@ -107,6 +107,8 @@ export const pbehaviorReasonsSchema = new schema.Entity(ENTITIES_TYPES.pbehavior
 
 export const pbehaviorExceptionsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorExceptions, {}, { idAttribute: '_id' });
 
+export const remediationInstructionSchema = new schema.Entity(ENTITIES_TYPES.remediationInstruction, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -132,4 +134,5 @@ export default {
   [ENTITIES_TYPES.pbehaviorTypes]: pbehaviorTypesSchema,
   [ENTITIES_TYPES.pbehaviorReasons]: pbehaviorReasonsSchema,
   [ENTITIES_TYPES.pbehaviorExceptions]: pbehaviorExceptionsSchema,
+  [ENTITIES_TYPES.remediationInstruction]: remediationInstructionSchema,
 };
