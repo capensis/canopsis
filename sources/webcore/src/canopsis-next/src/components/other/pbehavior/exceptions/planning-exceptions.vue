@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
@@ -29,13 +27,6 @@ export default {
     entitiesPbehaviorExceptionsMixin,
     localQueryMixin,
   ],
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
-    },
-  },
   mounted() {
     this.fetchList();
   },

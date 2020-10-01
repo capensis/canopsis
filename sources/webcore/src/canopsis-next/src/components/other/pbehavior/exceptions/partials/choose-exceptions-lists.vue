@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { isEqual, omit } from 'lodash';
+import { omit } from 'lodash';
 
 import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exceptions';
 import localQueryMixin from '@/mixins/query-local/query';
@@ -48,14 +48,9 @@ export default {
       return [{ text: this.$t('common.name'), value: 'name', sortable: false }];
     },
   },
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
-    },
+  mounted() {
+    this.fetchList();
   },
-
   methods: {
     async fetchList() {
       this.fetchPbehaviorExceptionsList({ params: this.getQuery() });

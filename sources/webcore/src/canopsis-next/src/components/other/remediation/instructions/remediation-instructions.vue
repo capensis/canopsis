@@ -29,13 +29,6 @@ export default {
     entitiesRemediationInstructionMixin,
     localQueryMixin,
   ],
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
-    },
-  },
   mounted() {
     this.fetchList();
   },

@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
@@ -33,13 +31,6 @@ export default {
     params: {
       type: Object,
       default: () => ({}),
-    },
-  },
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
     },
   },
   mounted() {
