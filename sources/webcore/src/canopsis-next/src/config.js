@@ -124,7 +124,7 @@ export const API_ROUTES = {
     pbehaviorById: '/api/v4/entities/pbehaviors',
     reasons: '/api/v4/pbehavior-reasons',
   },
-  file: '/api/v4/file',
+  file: '/api/v4/cat/file',
 };
 
 export const COLORS = {

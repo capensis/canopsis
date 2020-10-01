@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { isString } from 'lodash';
 import { Jodit } from 'jodit';
 
 import 'jodit/build/jodit.min.css';
@@ -19,9 +20,6 @@ import 'jodit/build/jodit.min.css';
 import { BASE_URL, FILE_BASE_URL } from '@/config';
 
 const { modules: { Dom, Widget: { FileSelectorWidget } } } = Jodit;
-
-const isJoditObject = jodit =>
-  jodit && jodit instanceof Object && typeof jodit.constructor === 'function' && jodit.constructor.name === 'Jodit';
 
 export default {
   props: {
@@ -94,7 +92,7 @@ export default {
     uploaderConfig() {
       return {
         enableDragAndDropFileToEditor: true,
-        insertImageAsBase64URI: true,
+        insertImageAsBase64URI: false,
         format: 'json',
         filesVariableName: 'files',
         url: FILE_BASE_URL,
@@ -113,6 +111,11 @@ export default {
           popup: this.controlsFilePopup,
           tags: ['a'],
           tooltip: 'Insert file',
+        },
+        image: {
+          popup: this.controlsImagePopup,
+          tags: ['img'],
+          tooltip: 'Insert image',
         },
       };
     },
@@ -136,10 +139,21 @@ export default {
     delete this.editor;
   },
   methods: {
+    /**
+     * Editor change event handler
+     *
+     * @param {string} value
+     */
     onChange(value) {
       this.$emit('input', value);
     },
 
+    /**
+     * Prepare data for file upload
+     *
+     * @param {FormData} data
+     * @returns {FormData}
+     */
     uploaderPrepareData(data) {
       data.delete('path');
       data.delete('source');
@@ -168,10 +182,22 @@ export default {
       return data;
     },
 
+    /**
+     * Is success checker for uploader
+     *
+     * @param response
+     * @returns {boolean}
+     */
     uploaderIsSuccess(response) {
-      return !response.errors;
+      return !response.files;
     },
 
+    /**
+     * Process handler for uploader
+     *
+     * @param {Object} response
+     * @returns {{msg: *, baseurl: string, files: (*|*[]), error: *}}
+     */
     uploaderProcess(response) {
       this.uploadedFiles.push(...response[this.editor.options.uploader.filesVariableName]);
 
@@ -183,115 +209,204 @@ export default {
       };
     },
 
+    /**
+     * Uploader error handler
+     *
+     * @param {Object} err
+     */
     uploaderError(err) {
       this.editor.events.fire('errorPopap', [err.getMessage(), 'error', 4000]);
     },
 
+    /**
+     * Uploader default handler for success
+     *
+     * @param {Object} response
+     */
     uploaderDefaultHandlerSuccess(response) {
       if (response.files && response.files.length) {
         response.files.forEach((file, index) => {
-          const { id, fileName } = file;
           const [tagName, attr] = response.isImages && response.isImages[index] ? ['img', 'src'] : ['a', 'href'];
+          const attrValue = isString(file) ? file : response.baseurl + file.id;
           const elm = this.editor.create.inside.element(tagName);
 
-          elm.setAttribute(attr, response.baseurl + id);
+          elm.setAttribute(attr, attrValue);
 
-          if (tagName === 'a') {
-            elm.innerText = fileName;
+          if (tagName === 'a' && file.fileName) {
+            elm.innerText = file.fileName;
           }
 
-          if (isJoditObject(this.editor)) {
-            if (tagName === 'img') {
-              this.editor.selection.insertImage(elm, null, this.editor.options.imageDefaultWidth);
-            } else {
-              this.editor.selection.insertNode(elm);
-            }
+          if (tagName === 'img') {
+            this.editor.selection.insertImage(elm, null, this.editor.options.imageDefaultWidth);
+          } else {
+            this.editor.selection.insertNode(elm);
           }
         });
       }
     },
 
+    /**
+     * Uploader default handler for error
+     *
+     * @param {Object} response
+     */
     uploaderDefaultHandlerError(response) {
       this.editor.events.fire('errorPopap', [this.editor.options.getMessage(response)]);
     },
 
+    /**
+     * File control popup
+     *
+     * @param {Object} editor
+     * @param {HTMLDocument|HTMLElement} current
+     * @param {Object} self
+     * @param {Function} close
+     * @returns {Object}
+     */
     controlsFilePopup(editor, current, self, close) {
-      const insert = (url, title = '') => {
+      /**
+       * Insert link into editor selection
+       *
+       * @param {string} url
+       * @param {string} [title = '']
+       */
+      const insertLink = (url, title = '') => {
         const linkElement = `<a href="${url}" title="${title}">${title || url}</a>`;
 
         editor.selection.insertNode(editor.create.inside.fromHTML(linkElement));
       };
 
+      /**
+       * filebrowser and upload handler for file popup control
+       *
+       * @param {Object} data
+       */
+      const uploadHandler = (data) => {
+        if (data.files && data.files.length) {
+          for (let i = 0; i < data.files.length; i += 1) {
+            insertLink(data.baseurl + data.files[i].id, data.files[i].fileName);
+          }
+        }
+
+        close();
+      };
+
+      const isLink = current.nodeName === 'A';
       let sourceAnchor = null;
 
-      if (current && (current.nodeName === 'A' || Dom.closest(current, 'A', editor.editor))) {
-        sourceAnchor = current.nodeName === 'A' ? current : Dom.closest(current, 'A', editor.editor);
+      if (current && (isLink || Dom.closest(current, 'A', editor.editor))) {
+        sourceAnchor = isLink ? current : Dom.closest(current, 'A', editor.editor);
       }
 
       return FileSelectorWidget(editor, {
-        filebrowser: (data) => {
-          if (data.files && data.files.length) {
-            let i;
-            for (i = 0; i < data.files.length; i += 1) {
-              insert(data.baseurl + data.files[i].id, data.files[i].fileName);
-            }
-          }
-          close();
-        },
-        upload: (data) => {
-          let i;
-          if (data.files && data.files.length) {
-            for (i = 0; i < data.files.length; i += 1) {
-              insert(data.baseurl + data.files[i].id, data.files[i].fileName);
-            }
-          }
-          close();
-        },
+        filebrowser: uploadHandler,
+        upload: uploadHandler,
         url: (url, text) => {
           if (sourceAnchor) {
             sourceAnchor.setAttribute('href', url);
             sourceAnchor.setAttribute('title', text);
           } else {
-            insert(url, text);
+            insertLink(url, text);
           }
           close();
         },
       }, sourceAnchor, close, false);
+    },
+
+    /**
+     * Image control popup
+     *
+     * @param {Object} editor
+     * @param {HTMLDocument|HTMLElement} current
+     * @param {Object} self
+     * @param {Function} close
+     * @returns {Object}
+     */
+    controlsImagePopup(editor, current, self, close) {
+      /**
+       * filebrowser and upload handler for image popup control
+       *
+       * @param {Object} data
+       */
+      const uploadHandler = async (data) => {
+        if (data.files && data.files.length) {
+          for (let i = 0; i < data.files.length; i += 1) {
+            const src = data.baseurl + data.files[i].id;
+
+            // eslint-disable-next-line no-await-in-loop
+            await editor.selection.insertImage(src, null, editor.options.imageDefaultWidth);
+          }
+        }
+        close();
+      };
+
+      /**
+       * Get img elements from current
+       *
+       * @param {HTMLDocument|HTMLElement} root
+       * @returns {[]}
+       */
+      const getImgElements = root => (root instanceof HTMLDocument ? [...root.querySelectorAll('img')] : []);
+
+      const imgElements = getImgElements(current);
+      const isImage = current.tagName === 'IMG';
+      let sourceImage = null;
+
+      if (current && current.nodeType !== Node.TEXT_NODE && (isImage || imgElements.length)) {
+        sourceImage = isImage ? current : imgElements[0];
+      }
+
+      return FileSelectorWidget(editor, {
+        filebrowser: uploadHandler,
+        upload: uploadHandler,
+        url: async (url, text) => {
+          const image = sourceImage || editor.create.inside.element('img');
+
+          image.setAttribute('src', url);
+          image.setAttribute('alt', text);
+
+          if (!sourceImage) {
+            await editor.selection.insertImage(image, null, editor.options.imageDefaultWidth);
+          }
+
+          close();
+        },
+      }, sourceImage, close);
     },
   },
 };
 </script>
 
 <style>
-  .jodit_fullsize_box {
-    z-index: 100000 !important;
-  }
+.jodit_fullsize_box {
+  z-index: 100000 !important;
+}
 </style>
 
 <style lang="scss" scoped>
-  .text-editor {
-    &__label {
-      font-size: .85em;
-      display: block;
-    }
+.text-editor {
+  &__label {
+    font-size: .85em;
+    display: block;
+  }
 
-    &__details {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-flex: 1;
-      -ms-flex: 1 0 auto;
-      flex: 1 0 auto;
-      max-width: 100%;
-      overflow: hidden;
-    }
+  &__details {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 0 auto;
+    flex: 1 0 auto;
+    max-width: 100%;
+    overflow: hidden;
+  }
 
-    &.error--text /deep/ .jodit_container {
-      margin-bottom: 8px;
+  &.error--text /deep/ .jodit_container {
+    margin-bottom: 8px;
 
-      .jodit_workplace {
-        border-color: currentColor;
-      }
+    .jodit_workplace {
+      border-color: currentColor;
     }
   }
+}
 </style>
