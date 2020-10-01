@@ -22,7 +22,7 @@ Pour changer la langue de l'interface, choisissez simplement la langue souhaité
 
 Par défaut dans Canopsis, le menu listant les vues disponibles sur situe dans la barre latérale gauche de l'application.
 
-![Paramètre position barre vues - Latérale](./img/side-bar-setting.png "Paramètre position barre vues - Latérale")  
+![Paramètre position barre vues - Latérale](./img/side-bar-setting.png "Paramètre position barre vues - Latérale")
 
 Il est néanmoins possible de placer cette barre vers le haut de la page, juste en dessous de la barre de titre.
 
@@ -33,13 +33,12 @@ Pour modifier ce paramètre, sélectionnez simplement l'affichage souhaité dans
 ## 3. Page de connexion (avancé)
 
 Vous avez la possibilité de personnaliser la page de connexion de Canopsis.  
-Les éléments paramétrables sont : 
+Les éléments paramétrables sont :
 
 1. Titre de l'application
 2. Description de l'application
 3. Footer du formulaire
 4. Logo applicatif sur le menu de l'application
-
 
 ![Page de connexion](./img/connexion.png "Page de connexion")
 
@@ -56,11 +55,11 @@ Voici un exemple de configuration (user_interface.json) :
   "logo" : "data:image/png;base64, ..."
 }
 ```
-* Le champ **login_page_description** contient le titre et la description de l'application.  Il s'agit d'une chaine HTML.
-* Le champ **app_title** contient le titre de l'application. Il s'agit d'une chaîne de caractère simple.
-* Le champ **footer** contient le footer positionné en dessous du formulaire de connexion. Il s'agit d'une chaîne HTML.
-* Le champ **logo** doit être une image encodée en base64.
 
+* Le champ `login_page_description` contient le titre et la description de l'application. Il s'agit d'une chaîne HTML.
+* Le champ `app_title` contient le titre de l'application. Il s'agit d'une chaîne de caractère simple.
+* Le champ `footer` contient le footer positionné en dessous du formulaire de connexion. Il s'agit d'une chaîne HTML.
+* Le champ `logo` doit être une image encodée en base64.
 
 Pour soumettre cette configuration, vous pouvez utiliser *curl* comme suit : 
 
