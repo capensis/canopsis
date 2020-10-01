@@ -58,7 +58,7 @@ Une règle est un document JSON contenant les paramètres suivants :
  - `retry` (optionnel) : politique à suivre en cas d'échec
      - `count` (optionnel) : nombre de répétition
      - `delay` (optionnel) : intervalle entre 2 essais
-     - `unit` (optionnel) : unité de temps de l'intervalle (notation : "s" pour seconde, "m" pour minute, "h" pour heure)
+     - `unit` (optionnel) : unité de temps de l'intervalle (notation : "s" pour seconde, "m" pour minute, "h" pour heure) - unité par défaut "s"
  - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme. Le [trigger `declareticketwebhook`](../architecture-interne/triggers.md) est également alors déclenché.
      - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
      - `regexp` est un booléen qui détermine si les valeurs des champs `ticket_id` ou tout autre champ de l'option `declare_ticket` doivent être traitées comme des expressions régulières.
