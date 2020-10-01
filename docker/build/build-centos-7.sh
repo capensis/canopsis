@@ -22,6 +22,9 @@ yum install -y \
     nettle-devel \
     openldap-devel \
     openssl-devel \
+    postgresql \
+    postgresql-devel \
+    postgresql-libs \
     python-devel \
     python-virtualenv \
     python-wheel \

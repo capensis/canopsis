@@ -13,6 +13,7 @@ apt-get -y --no-install-recommends install \
     libxslt1-dev \
     libssl-dev \
     libffi-dev \
+    libpq-dev \
     libxmlsec1-dev \
     libxmlsec1-openssl \
     libldap2-dev \
