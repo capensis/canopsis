@@ -23,6 +23,7 @@ yum install -y \
     openldap-devel \
     openssl-devel \
     postgresql \
+    postgresql-devel \
     postgresql-libs \
     python-devel \
     python-virtualenv \
