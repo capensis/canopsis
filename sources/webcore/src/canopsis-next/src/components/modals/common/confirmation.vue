@@ -14,7 +14,7 @@
         ) {{ $t('common.yes') }}
         v-btn.error(
           data-test="cancelButton",
-          @click="$modals.hide"
+          @click="cancel"
         ) {{ $t('common.no') }}
 </template>
 
@@ -33,12 +33,26 @@ export default {
   name: MODALS.confirmation,
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
+  beforeDestroy() {
+    this.cancelHandler();
+  },
   methods: {
+    async cancelHandler() {
+      if (this.config.cancel) {
+        await this.config.cancel();
+      }
+    },
+
     async submit() {
       if (this.config.action) {
         await this.config.action();
       }
 
+      this.$modals.hide();
+    },
+
+    async cancel() {
+      await this.cancelHandler();
       this.$modals.hide();
     },
   },

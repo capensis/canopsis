@@ -108,15 +108,15 @@ export default {
     },
 
     fetchTypesList() {
-      this.fetchPbehaviorTypesList({ params: this.getQueryById(PLANNING_TABS.types) });
+      this.fetchPbehaviorTypesListWithPreviousParams();
     },
 
     fetchReasonsList() {
-      this.fetchPbehaviorReasonsList({ params: this.getQueryById(PLANNING_TABS.reasons) });
+      this.fetchPbehaviorReasonsListWithPreviousParams();
     },
 
     fetchExceptionsList() {
-      this.fetchPbehaviorExceptionsList({ params: this.getQueryById(PLANNING_TABS.exceptions) });
+      this.fetchPbehaviorExceptionsListWithPreviousParams();
     },
 
     showCreateTypeModal() {

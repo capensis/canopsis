@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter),
+      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter, this.$system.timezone),
     };
   },
   computed: {
@@ -90,7 +90,7 @@ export default {
       this.calendarEvent.data.cachedForm = cloneDeep(this.form);
     },
 
-    async submitHandler() {
+    async submitHandler(event) {
       const isValid = await this.$validator.validateAll();
 
       if (isValid) {
@@ -98,7 +98,9 @@ export default {
 
         const calendarEvent = formToCalendarEvent(this.form, this.calendarEvent, this.$system.timezone);
 
-        this.$emit('submit', calendarEvent);
+        this.manualClose = true;
+
+        this.$emit('submit', calendarEvent, event);
       }
     },
 

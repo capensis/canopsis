@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-container
+  div
     the-page-header {{ $t('common.instructions') }}
     v-layout(row, wrap)
       v-flex(xs12)
@@ -9,7 +9,7 @@
               v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('remediation.tabs.instructions') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.instructions")
                 v-card-text
-                  span {{ $t('remediation.tabs.instructions') }}
+                  remediation-instructions
             template
               v-tab(
                 :href="`#${$constants.REMEDIATION_TABS.configurations}`"
@@ -27,14 +27,19 @@
 </template>
 
 <script>
-import { REMEDIATION_TABS } from '@/constants';
+import { MODALS, REMEDIATION_TABS } from '@/constants';
 
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
+import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
+
+import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
 
 export default {
   components: {
+    RemediationInstructions,
     FabButtons,
   },
+  mixins: [entitiesRemediationInstructionMixin],
   data() {
     return {
       activeTab: REMEDIATION_TABS.instructions,
@@ -42,7 +47,11 @@ export default {
   },
   computed: {
     tooltipText() {
-      return '';
+      return {
+        [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.title'),
+        [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.title'),
+        [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.title'),
+      }[this.activeTab];
     },
 
     hasAccess() {
@@ -79,6 +88,7 @@ export default {
     },
 
     fetchInstructionsList() {
+      this.fetchRemediationInstructionsListWithPreviousParams();
     },
 
     fetchConfigurationsList() {
@@ -88,6 +98,15 @@ export default {
     },
 
     showCreateInstructionModal() {
+      this.$modals.show({
+        name: MODALS.createRemediationInstruction,
+        config: {
+          action: async (instruction) => {
+            await this.createRemediationInstruction({ data: instruction });
+            await this.fetchInstructionsList();
+          },
+        },
+      });
     },
 
     showCreateConfigurationModal() {

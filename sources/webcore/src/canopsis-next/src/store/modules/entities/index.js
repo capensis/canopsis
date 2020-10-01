@@ -6,6 +6,7 @@ import pbehaviorReasonsModule from './pbehavior-reasons';
 import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
+import remediationInstructionModule from './remediation-instruction';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -62,4 +63,5 @@ export default {
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,
+  remediationInstruction: remediationInstructionModule,
 };

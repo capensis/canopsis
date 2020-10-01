@@ -16,6 +16,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPbehaviorReasonsList: 'fetchList',
+      fetchPbehaviorReasonsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchPbehaviorReasonsListWithoutStore: 'fetchListWithoutStore',
       createPbehaviorReason: 'create',
       updatePbehaviorReason: 'update',

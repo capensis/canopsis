@@ -61,3 +61,4 @@ export { default as pbehaviorRecurrentChangesConfirmation } from './pbehavior/pb
 export { default as CreatePbehaviorType } from './pbehavior/create-pbehavior-type.vue';
 export { default as CreatePbehaviorReason } from './pbehavior/create-pbehavior-reason.vue';
 export { default as CreatePbehaviorException } from './pbehavior/create-pbehavior-exception.vue';
+export { default as CreateRemediationInstruction } from './remediation/create-remediation-instruction.vue';

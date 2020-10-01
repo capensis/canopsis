@@ -2,7 +2,12 @@
   div.white
     v-layout(row, wrap)
       v-flex(v-if="shownSearch", xs4)
-        search-field(v-if="search", @submit="updateSearchHandler", @clear="clearSearchHandler")
+        search-field(
+          v-if="search",
+          :value="pagination.search",
+          @submit="updateSearchHandler",
+          @clear="clearSearchHandler"
+        )
         advanced-search(
           v-else,
           :query="pagination",
@@ -40,7 +45,7 @@
                     hide-details
                   )
                   v-checkbox-functional(v-else, primary, disabled, hide-details)
-                slot(name="item-expand", v-bind="getItemsProps(props)")
+                slot(v-if="expand", name="item-expand", v-bind="getItemsProps(props)")
                   expand-button.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
             td(v-for="header in headers", :key="header.value")
               slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}

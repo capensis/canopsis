@@ -316,6 +316,8 @@ export default {
     reason: 'Raison',
     rrule: 'Récurrence',
     status: 'Statut',
+    created: 'Date de création',
+    updated: 'Date de dernière modification',
     tabs: {
       filter: 'Filtre',
       comments: 'Commentaires',
@@ -1239,6 +1241,15 @@ export default {
         output: 'Note',
       },
     },
+    createRemediationInstruction: {
+      title: 'Créer une instruction',
+    },
+    createRemediationConfiguration: {
+      title: 'Créer une configuration',
+    },
+    createRemediationJob: {
+      title: 'Créer un travail',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1760,6 +1771,27 @@ export default {
       instructions: 'Instructions',
       configurations: 'Configurations',
       jobs: 'Jobs',
+    },
+  },
+
+  remediationInstructions: {
+    usingInstruction: 'La raison utilise, car ne peut pas être supprimée',
+    addStep: 'Ajouter une étape',
+    addOperation: 'Ajouter une opération',
+    addEndpoint: 'Ajouter un point de terminaison',
+    workflow: 'Workflow si cette étape échoue:',
+    stop: 'Arrêtez',
+    remainingStep: 'Continuez avec les étapes restantes',
+    table: {
+      rating: 'Évaluation',
+      lastModifiedOn: 'Dernière modification le',
+      averageTimeCompletion: 'Temps moyen d\'achèvement',
+      monthExecutions: 'Nombre d\'exécutions ce mois-ci',
+      lastExecutedBy: 'Dernière exécution par',
+      lastExecutedOn: 'Dernière exécution le',
+    },
+    errors: {
+      runningInstruction: 'Des instructions en cours sont affectées à ce modèle. Souhaitez-vous les annuler?',
     },
   },
 
