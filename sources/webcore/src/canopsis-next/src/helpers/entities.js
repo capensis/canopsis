@@ -733,7 +733,8 @@ export const generateRemediationInstructionStep = () => ({
  * @typedef {Object} RemediationInstructionStepOperation
  * @property {string} name
  * @property {string} description
- * @property {Interval} time_to_complete
+ * @property {Interval|string} time_to_complete
+ * @property {string} [time_to_complete_unit]
  * @property {boolean} [saved]
  * @property {string} [key]
  * @return {RemediationInstructionStepOperation}

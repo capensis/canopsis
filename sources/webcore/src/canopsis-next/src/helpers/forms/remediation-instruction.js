@@ -3,6 +3,22 @@ import { isUndefined, omit } from 'lodash';
 import uuid from '@/helpers/uuid';
 
 /**
+ * Convert a remediation instruction step operation array to form array
+ *
+ * @param {RemediationInstructionStepOperation[]} operations
+ * @returns {Array}
+ */
+const remediationInstructionStepOperationsToForm = operations => operations.map(operation => ({
+  ...operation,
+  time_to_complete: {
+    interval: operation.time_to_complete,
+    unit: operation.time_to_complete_unit,
+  },
+  saved: true,
+  key: uuid(),
+}));
+
+/**
  * Convert a remediation instruction steps array to form array
  *
  * @param {RemediationInstructionStep[]} steps
@@ -10,11 +26,7 @@ import uuid from '@/helpers/uuid';
  */
 const remediationInstructionStepsToForm = steps => steps.map(step => ({
   ...step,
-  operations: step.operations.map(operation => ({
-    ...operation,
-    saved: true,
-    key: uuid(),
-  })),
+  operations: remediationInstructionStepOperationsToForm(step.operations),
   saved: true,
   key: uuid(),
 }));
@@ -43,6 +55,18 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
 
 
 /**
+ * Convert a remediation instruction step operations form array to a API compatible operation array
+ *
+ * @param {RemediationInstructionStepOperation[]} operations
+ * @returns {Array}
+ */
+const formOperationsToRemediationInstructionOperation = operations => operations.map(operation => ({
+  ...omit(operation, ['key', 'saved']),
+  time_to_complete: operation.time_to_complete.interval,
+  time_to_complete_unit: operation.time_to_complete.unit,
+}));
+
+/**
  * Convert a remediation instruction steps form array to a API compatible array
  *
  * @param {RemediationInstructionStep[]} steps
@@ -50,7 +74,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
  */
 const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
   ...omit(step, ['key', 'saved']),
-  operations: step.operations.map(operation => omit(operation, ['key', 'saved'])),
+  operations: formOperationsToRemediationInstructionOperation(step.operations),
 }));
 
 /**
