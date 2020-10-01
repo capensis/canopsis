@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { isEqual, pick } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
@@ -14,6 +14,14 @@ export default {
         sortDir: SORT_ORDERS.asc,
       },
     };
+  },
+
+  watch: {
+    query(query, oldQuery) {
+      if (!isEqual(query, oldQuery)) {
+        this.fetchList();
+      }
+    },
   },
 
   computed: {
@@ -63,4 +71,6 @@ export default {
       return query;
     },
   },
+
+  fetchList() {},
 };

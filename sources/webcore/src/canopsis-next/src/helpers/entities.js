@@ -24,7 +24,7 @@ import {
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
   WIDGET_GRID_COLUMNS_COUNT,
-  WORKFLOW_TYPES,
+  REMEDIATION_WORKFLOW_TYPES,
 } from '@/constants';
 
 import uuid from './uuid';
@@ -722,7 +722,7 @@ export const generateRemediationInstructionStep = () => ({
   endpoint: '',
   name: '',
   operations: [],
-  workflow: WORKFLOW_TYPES.stop,
+  workflow: REMEDIATION_WORKFLOW_TYPES.stop,
   saved: false,
   key: uid(),
 });

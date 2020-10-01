@@ -123,7 +123,7 @@ export const API_ROUTES = {
     reasons: '/api/v4/pbehavior-reasons',
   },
   remediation: {
-    instructions: '/api/v4/instructions',
+    instructions: '/api/v4/cat/instructions',
   },
 };
 

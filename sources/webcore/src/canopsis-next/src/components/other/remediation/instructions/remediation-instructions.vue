@@ -18,7 +18,7 @@ import { isEqual } from 'lodash';
 import { MODALS } from '@/constants';
 
 import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
-import remediationQueryMixin from '@/mixins/remediation/query';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
@@ -27,15 +27,8 @@ export default {
   inject: ['$validator'],
   mixins: [
     entitiesRemediationInstructionMixin,
-    remediationQueryMixin,
+    localQueryMixin,
   ],
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
-    },
-  },
   mounted() {
     this.fetchList();
   },
@@ -63,8 +56,8 @@ export default {
           name: MODALS.confirmation,
           config: {
             text: this.$t('remediationInstructions.errors.runningInstruction'),
-            action: async (...args) => {
-              await action(...args);
+            action: async () => {
+              await action();
               resolve();
             },
             cancel: resolve,

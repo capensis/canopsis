@@ -1499,7 +1499,7 @@ export const REMEDIATION_TABS = {
   jobs: 'jobs',
 };
 
-export const WORKFLOW_TYPES = {
+export const REMEDIATION_WORKFLOW_TYPES = {
   stop: 'stop',
   continue: 'continue',
 };

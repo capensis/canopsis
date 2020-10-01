@@ -16,6 +16,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPbehaviorExceptionsList: 'fetchList',
+      fetchPbehaviorExceptionsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchPbehaviorExceptionsListWithoutStore: 'fetchListWithoutStore',
       createPbehaviorException: 'create',
       updatePbehaviorException: 'update',

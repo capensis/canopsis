@@ -16,6 +16,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPbehaviorTypesList: 'fetchList',
+      fetchPbehaviorTypesListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
       createPbehaviorType: 'create',
       updatePbehaviorType: 'update',

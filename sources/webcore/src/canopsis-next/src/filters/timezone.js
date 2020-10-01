@@ -2,7 +2,11 @@ import { convertTimestampToMomentByTimezone } from '@/helpers/date';
 
 import dateFilter from './date';
 
-export default function (date, timezone, format, ignoreTodayChecker) {
-  return dateFilter(convertTimestampToMomentByTimezone(date, timezone), format, ignoreTodayChecker);
+export default function (date, timezone, format, ignoreTodayChecker, defaultValue = '') {
+  if (!date) {
+    return defaultValue;
+  }
+
+  return dateFilter(convertTimestampToMomentByTimezone(date, timezone), format, ignoreTodayChecker, defaultValue);
 }
 
