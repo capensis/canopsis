@@ -768,6 +768,8 @@ export const USERS_RIGHTS = {
 
         links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
 
+        correlation: `${USER_RIGHTS_PREFIXES.business.alarmsList}_correlation`,
+
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
 
         ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
@@ -850,6 +852,8 @@ export const WIDGETS_ACTIONS_TYPES = {
 
     links: 'links',
 
+    correlation: 'correlation',
+
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
@@ -915,6 +919,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
       USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.correlation]: USERS_RIGHTS.business.alarmsList.actions.correlation,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
