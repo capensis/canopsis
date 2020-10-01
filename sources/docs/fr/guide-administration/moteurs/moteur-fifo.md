@@ -29,15 +29,14 @@ La commande `engine-fifo -help` liste toutes les options acceptées par le moteu
 
 ## Fonctionnement
 
-A l'arrivée d'un événement le moteur `engine-fifo` en extrait l'entité. Il y a ensuite 2 cas de figure possibles :
+À l'arrivée d'un événement, le moteur `engine-fifo` en extrait l'entité. Il y a ensuite deux cas de figure possibles :
 
-**1. Il n'existe pas de traitement en cours (changement d'état, exécution d'une action, exécution d'un webhook...) sur cette  entité.**  
-Dans ce cas, le moteur `engine-fifo` transmet l'événement directement au moteur `engine-che`.  
+1. **Il n'existe pas de traitement en cours (changement d'état, exécution d'une action, exécution d'un webhook…) sur cette entité.**
+    * Dans ce cas, le moteur `engine-fifo` transmet l'événement directement au moteur `engine-che`.  
+2. **Il existe déjà un traitement en cours sur cette entité.**  
+    * Dans ce cas, le moteur crée une file d'attente temporaire dans Redis et stocke l'événement dans cette file. À la fin de la chaîne de traitement, les autres moteurs déposent un acquittement dans un `ack manager` géré par le moteur `engine-fifo`. Si cet acquittement concerne l'entité de l'événement stocké dans la file temporaire, celui-ci est libéré et transmis au moteur `engine-che`.
 
-**2. Il existe déjà un traitement en cours sur cette  entité.**  
-Dans ce cas, le moteur créé une file d'attente temporaire dans Redis et stocke l'événement dans cette file. A la fin de la chaîne de traitement les autres moteurs déposent un acquittement dans un `ack manager` géré par le moteur `engine-fifo`. Si cet acquittement concerne l'entité de l'événement stocké dans la file temporaire, celui-ci est libéré et transmis au moteur `engine-che`.
-
-Dans les 2 cas, le moteur créé un verrou concernant l'entité en cours de traitement et le stocke dans Redis. C'est ce verrou qui lui permettra de savoir si un événement existe déjà pour cette entité. Le verrou est supprimé lors de la réception d'un acquittement ou après un certain délai. Ce délai est de 10 secondes par défaut et peut être configuré au moyen de l'option `-lockTtl` du moteur.
+Dans les deux cas, le moteur créé un verrou concernant l'entité en cours de traitement et le stocke dans Redis. C'est ce verrou qui lui permettra de savoir si un événement existe déjà pour cette entité. Le verrou est supprimé lors de la réception d'un acquittement ou après un certain délai. Ce délai est de 10 secondes par défaut et peut être configuré au moyen de l'option `-lockTtl` du moteur.
 
 ## Haute-disponibilité
 
