@@ -2,21 +2,15 @@
 
 Certains aspects de l'interface de Canopsis sont personnalisables.
 
-Pour accéder à ces paramètres, cliquez sur le bouton 'Paramètres', situé dans le menu 'Administration', dans la barre en haut de la page. 
-
-## Sommaire 
-
-1. Langue
-2. Position du menu des vues
-3. Page de connexion (avancé)
+Pour accéder à ces paramètres, cliquez sur le bouton « Paramètres », situé dans le menu « Administration », dans la barre en haut de la page.
 
 ## 1. Langue
 
-Ce paramètre vous permet de choisir la langue de l'interface.
+Ce paramètre vous permet de choisir la langue par défaut de l'interface.
 
-2 langues sont actuellement disponibles : Français et Anglais.
+Deux langues sont actuellement disponibles : le français et l'anglais.
 
-Pour changer la langue de l'interface, choisissez simplement la langue souhaitée dans le menu déroulant 'Langage de l'interface'.
+Pour changer la langue de l'interface, choisissez simplement la langue souhaitée dans le menu déroulant « Langue par défaut ».
 
 ## 2. Position du menu des vues
 
@@ -28,7 +22,7 @@ Il est néanmoins possible de placer cette barre vers le haut de la page, juste 
 
 ![Paramètre position barre vues - Haut](./img/top-bar-setting.png "Paramètre position barre vues - Haut")
 
-Pour modifier ce paramètre, sélectionnez simplement l'affichage souhaité dans le menu déroulant 'Type de navigation'.
+Pour modifier ce paramètre, sélectionnez simplement l'affichage souhaité dans le menu déroulant « Type de navigation ».
 
 ## 3. Page de connexion (avancé)
 
@@ -45,7 +39,7 @@ Les éléments paramétrables sont :
 ![Menu](./img/menu.png "Menu")
 
 Pour cela, vous devez pour le moment écrire un jeu de configuration dans un fichier json et le soumettre à l'API `user_interface`.  
-Voici un exemple de configuration (user_interface.json) : 
+Voici un exemple de configuration (`user_interface.json`) :
 
 ```json
 {
@@ -61,11 +55,11 @@ Voici un exemple de configuration (user_interface.json) :
 * Le champ `footer` contient le footer positionné en dessous du formulaire de connexion. Il s'agit d'une chaîne HTML.
 * Le champ `logo` doit être une image encodée en base64.
 
-Pour soumettre cette configuration, vous pouvez utiliser *curl* comme suit : 
+Pour soumettre cette configuration, vous pouvez utiliser `curl` comme suit :
 
-````
-curl -u "user:password" -X POST -H "Content-type: application/json" -d @user_interface.json 'http://IP_CANOPSIS:PORT_CANOPSIS/api/internal/user_interface'
-````
+```sh
+curl -u root:root -X POST -H "Content-type: application/json" -d @user_interface.json http://localhost:8082/api/internal/user_interface
+```
 
 Le résultat renvoyé doit être de type :
 

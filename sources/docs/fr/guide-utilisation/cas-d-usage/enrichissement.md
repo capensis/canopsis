@@ -40,29 +40,19 @@ Considérons l'évènement suivant :
     "output": "doc cas d'usage",
     "client": "client-doc1"
 }
-
-````
-
-En publiant cet événement, l'attribut **client** ne sera pas interprété car il ne participe pas à la spécification d'un événement.  
-Vous souhaitez néanmoins que cette information soit disponible pour l'entité **ressource-doc1/composant-doc1**.  
-
-Deux options du moteur `engine-che` vont vous permettre de systématiser cette prise en charge.
-
-```
--enrichContext
 ```
 
-Cette option active l'enrichissment à partir d'un événement.
+En publiant cet évènement, l'attribut `client` ne sera pas interprété, car il ne participe pas à la spécification d'un évènement.
 
-````
--enrichInclude "client"
-````
+Vous souhaitez néanmoins que cette information soit disponible pour l'entité `ressource-doc1/composant-doc1`. Deux options du moteur `engine-che` sont nécessaires pour systématiser cette prise en charge :
 
-Cette option va permettre l'ajout de l'attribut **client** dans la champ **infos** de l'entité correspondante.
-Pour rendre cette valeur visible sur l'interface de Canopsis, il faut ensuite l'ajouter manuellement. Pour cela, 2 solutions :
+* `-enrichContext` : active l'enrichissment à partir d'un évènement.
+* `-enrichInclude "client"` : permet l'ajout de l'attribut `client` dans la champ `infos` de l'entité correspondante.
 
-* Pour un widget de manière générale (Plus d'infos / Info popup / Template) : **{{ entity.infos.client.value }}**
-* Pour une colonne de bac à alarmes : **entity.infos.client.value**
+Pour rendre cette valeur visible sur l'interface de Canopsis, il faut ensuite l'ajouter manuellement. Pour cela, deux solutions :
+
+* Pour un widget de manière générale (Plus d'infos, Info popup, Template) : `{{ entity.infos.client.value }}`
+* Pour une colonne de Bac à alarmes : `entity.infos.client.value`
 
 ![Nom des colonnes](./img/enrichissement_evenement_colonnes.png "Nom des colonnes")
 
@@ -70,18 +60,17 @@ Pour rendre cette valeur visible sur l'interface de Canopsis, il faut ensuite l'
 
 ## Enrichissement via des règles de gestion
 
-Dans Canopsis, il existe la possibilité de définir des règles **event-filter** dont le but est de
+Dans Canopsis, il existe la possibilité de définir des règles **event-filter** dont le but est :
 
-* manipuler les attributs d'un événement, d'une alarme, d'une entité
-* d'enrichir les entités
-* d'enrichir les entités à partir d'une collection de données externe (CAT)
+* de manipuler les attributs d'un évènement, d'une alarme, d'une entité ;
+* d'enrichir les entités ;
+* d'enrichir les entités à partir d'une collection de données externe (CAT).
 
-La documentation complète se trouve [sur cette page](../../guide-administration/moteurs/moteur-che-event_filter.md)
+La documentation complète se trouve [sur cette page](../../guide-administration/moteurs/moteur-che-event_filter.md).
 
 Prenons le cas d'usage suivant :
 
-!!! note ""
-    Si l'événement contient un attribut *"groupe" : "grp1"* alors l'entité appartient aus domaine métier "Logistique"
+> Si l'évènement contient un attribut `"groupe" : "grp1"`, alors l'entité appartient au domaine métier « Logistique ».
 
 Considérons l'évènement suivant :
 
@@ -99,8 +88,9 @@ Considérons l'évènement suivant :
 }
 ```
 
-Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des événements de la documentation de l'event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).  
-Dans notre cas, l'attribut **groupe** est personalisé et sera donc positionné *automatiquement* dans un dictionnaire *extrainfos*.  
+Chose importante, les attributs pris en charge sont décrits [dans la partie sur les champs des évènements de la documentation de l'event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#champs-des-evenements).
+
+Dans notre cas, l'attribut `groupe` est personalisé et sera donc positionné *automatiquement* dans un dictionnaire **`extrainfos`**.
 
 On commence en ajoutant une règle via le menu adéquat
 
@@ -108,20 +98,18 @@ On commence en ajoutant une règle via le menu adéquat
 
 ![Ajout d'une règle](./img/event_filter_ajout_regle.png "Ajout d'une règle")
 
-Ensuite on définit sur quels événements sera exécutée cette règle.
-Dans notre cas, nous utilisons un critère tel que **connector_name**.  
+Ensuite, on définit sur quels évènements sera exécutée cette règle. Dans notre cas, nous utilisons un critère tel que `connector_name`.
 
 ![Définition du pattern](./img/event_filter_edit_pattern.png "Définition du pattern")
 
-Dernière étape, nous allons récupérer le contenu de l'attribut **groupe** et le positionner dans un nouvel attribut d'entité **domainemetier**.  
-![Ajout d'une action ](./img/event_filter_ajout_action.png "Ajout d'une action")
+Dernière étape, nous allons récupérer le contenu de l'attribut `groupe` et le positionner dans un nouvel attribut d'entité `domainemetier`.
 
-!!! Warning
-    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire.  
-    Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente
+![Ajout d'une action](./img/event_filter_ajout_action.png "Ajout d'une action")
 
-Le résultat pourra être observé sur un bac à alarmes par exemple :  
+!!! attention
+    Pour manipuler l'entité comme nous venons de le faire, une opération préalable est nécessaire. Une règle de [copie d'entité](../../guide-administration/moteurs/moteur-che-event_filter.md#ajout-dinformations-a-lentite) doit être présente
 
+Le résultat pourra être observé sur un Bac à alarmes, par exemple :
 
 ![Nom des colonnes](./img/event_filter_nom_colonnes.png "Nom des colonnes")
 
@@ -139,13 +127,14 @@ Pour plus d'informations, n'hésitez pas à nous consulter.
 
 ### Consulter le contexte
 
-De manière générale, vous pouvez consulter le contenu de la base de données qui porte les entités, le `contexte`.  
-Pour cela, vous devez instancier un widget **Explorateur de contexte** et effectuer une recherche sur l'entité voulue.  
+De manière générale, vous pouvez consulter le contenu de la base de données qui porte les entités, le Contexte.
 
-Voici un exemple avec **ressource-doc1**.  
+Pour cela, vous devez instancier un widget « Explorateur de contexte » et effectuer une recherche sur l'entité voulue.
+
+Voici un exemple avec `ressource-doc1`.
 
 ![Contexte](./img/consulter_contexte.png "Consulter le contexte")
 
-Puis avec **ressource-doc2**.  
+Puis avec `ressource-doc2`.
 
 ![Contexte](./img/consulter_contexte2.png "Consulter le contexte")
