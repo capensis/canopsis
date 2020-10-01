@@ -10,22 +10,6 @@ Jusqu'à Canopsis 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhook
 
 La commande `engine-axe -help` liste toutes les options acceptées par le moteur.
 
-Les options acceptées par la dernière version de Canopsis sont les suivantes :
-
-```
-  -d	debug
-  -featureStatEvents
-      Send statistic events
-  -ignoreDefaultTomlConfig
-      load toml file values into database
-  -printEventOnError
-      Print event on processing error
-  -publishQueue string
-      Publish event to this queue. (default "Engine_watcher")
-  -version
-      version infos
-```
-
 ### Multi-instanciation
 
 !!! note
@@ -42,22 +26,6 @@ Cette fonctionnalité sera aussi disponible en installation par paquets lors d'u
 Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
 
 À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet au moteur de ne pas prendre en compte les paramètres qui se trouvent dans son fichier de configuration lors du démarrage. Il se basera alors uniquement sur les données présentes en base. Si cette option n'est pas précisée, `engine-axe` synchronisera les informations présentes en base avec celles contenues dans le fichier lors de son lancement.
-
-Le contenu par défaut de ce fichier de configuration est le suivant :
-
-```ini
-[global]
-PrefetchCount = 10000
-PrefetchSize = 0
-
-[alarm]
-FlappingFreqLimit = 0
-FlappingInterval = 0
-StealthyInterval = 0
-BaggotTime = "60s"
-EnableLastEventDate = false
-CancelAutosolveDelay = "1h"
-```
 
 ### Option `EnableLastEventDate`
 
