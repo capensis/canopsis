@@ -17,7 +17,7 @@
           type="top",
           @input="updateQueryPage"
         )
-      v-flex
+      v-flex(v-if="hasAccessToCorrelationSwitcher")
         v-switch(
           :value="query.correlation",
           :label="$t('common.correlation')",
@@ -182,6 +182,10 @@ export default {
 
     hasAccessToUserFilter() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
+    },
+
+    hasAccessToCorrelationSwitcher() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.correlation);
     },
 
     firstAlarmExpanded() {

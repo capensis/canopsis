@@ -249,6 +249,10 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_correlation": {
+            "checksum": 1,
+            "desc": ""
+        },
         "serviceweather_entityComment": {
             "checksum": 1,
             "desc": ""
