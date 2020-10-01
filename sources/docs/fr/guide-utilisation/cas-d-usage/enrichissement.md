@@ -15,19 +15,18 @@ L'idée est donc de classer les alarmes, apporter de l'information objective sur
 
 Plusieurs possibilités sont offertes dans Canopsis :
 
-* Enrichissement systématique depuis les événements
-* Enrichissement conditionné par des règles de gestion appliquées aux événements (CAT)
+* Enrichissement systématique depuis les évènements
+* Enrichissement conditionné par des règles de gestion appliquées aux évènements (CAT)
 * Enrichissement par l'intermédiaire de référentiels externes (CAT)
 
 !!! attention
     Dans tous les cas, ces possibilités ne sont offertes que par l'utilisation des moteurs Go.
 
-## Enrichissement depuis les événements
+## Enrichissement depuis les évènements
 
-Vous avez paramétré des connecteurs de données qui transmettent des événements à Canopsis.  
-Un événement est constitué d'attributs, certains sont mandataires, d'autres facultatifs.  
+Vous avez paramétré des connecteurs de données qui transmettent des évènements à Canopsis. Un évènement est constitué d'attributs, certains sont obligatoires, d'autres facultatifs.
 
-Considérons l'événement suivant :
+Considérons l'évènement suivant :
 
 ```json
 {
@@ -84,7 +83,7 @@ Prenons le cas d'usage suivant :
 !!! note ""
     Si l'événement contient un attribut *"groupe" : "grp1"* alors l'entité appartient aus domaine métier "Logistique"
 
-Considérons l'événement suivant :
+Considérons l'évènement suivant :
 
 ```json
 {
