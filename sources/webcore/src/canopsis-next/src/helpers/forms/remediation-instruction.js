@@ -1,6 +1,6 @@
 import { isUndefined, omit } from 'lodash';
 
-import { getSecondsByUnit, getUnitValueFromSeconds } from '@/helpers/time';
+import { getSecondsByUnit, getUnitValueFromOtherUnit } from '@/helpers/time';
 import uuid from '@/helpers/uuid';
 
 /**
@@ -12,7 +12,7 @@ import uuid from '@/helpers/uuid';
 const remediationInstructionStepOperationsToForm = operations => operations.map(operation => ({
   ...operation,
   time_to_complete: {
-    interval: getUnitValueFromSeconds(operation.time_to_complete, operation.time_to_complete_unit),
+    interval: getUnitValueFromOtherUnit(operation.time_to_complete, operation.time_to_complete_unit),
     unit: operation.time_to_complete_unit,
   },
   saved: true,
