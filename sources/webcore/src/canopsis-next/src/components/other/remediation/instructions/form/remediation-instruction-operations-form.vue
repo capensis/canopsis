@@ -1,24 +1,39 @@
 <template lang="pug">
   v-layout.mt-2(column)
+    v-layout(v-if="hasSavedOperations")
+      v-flex(xs10)
+        v-layout(justify-end)
+          v-btn.mx-0.secondary(
+            v-if="allCollapsed",
+            @click="expandAllItems"
+          ) {{ $t('remediationInstructions.expandAll') }}
+          v-btn.mx-0.primary(
+            v-else,
+            @click="collapseAllItems"
+          ) {{ $t('remediationInstructions.hideAll') }}
     v-layout(v-for="(operation, index) in operations", :key="operation.key")
       v-flex.mt-3(xs1)
         draggable-step-number
           span {{ stepNumber }}
           span {{ getCharByIndex(index) }}
-      v-flex.pl-3(xs9)
-        remediation-instruction-operation-field(
-          v-field="operations[index]",
-          @remove="removeOperation(index)"
-        )
+      v-flex(:class="{ 'pl-4': !operation.saved }", xs9)
+        v-layout
+          expand-button.operation-expand(
+            v-show="operation.saved",
+            :expanded="isExpandedOperation(operation)",
+            @expand="expandHandler(operation)"
+          )
+          remediation-instruction-operation-field(
+            v-field="operations[index]",
+            :expanded="isExpandedOperation(operation)",
+            @remove="removeOperation(index)"
+          )
       v-flex(xs2)
     v-layout(v-show="!hideActions", row)
       div
         v-btn.ml-0.accent.darken-1(@click="addOperation") {{ $t('remediationInstructions.addOperation') }}
         div.error--text(v-show="errors.has(fieldName)") {{ $t('remediationInstructions.errors.operationRequired') }}
-      v-btn.accent.darken-1(
-        v-if="!!operations.length",
-        @click="addEndpoint"
-      ) {{ $t('remediationInstructions.addEndpoint') }}
+      v-btn.accent.darken-1(v-if="hasOperations", @click="addEndpoint") {{ $t('remediationInstructions.addEndpoint') }}
 </template>
 
 <script>
@@ -28,12 +43,18 @@ import { FIRST_LETTER_ALPHABET_CHAR_CODE, MODALS } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
 
+import ExpandButton from '@/components/other/buttons/expand-button.vue';
+
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 
 export default {
-  components: { RemediationInstructionOperationField, DraggableStepNumber },
+  components: {
+    RemediationInstructionOperationField,
+    DraggableStepNumber,
+    ExpandButton,
+  },
   inject: ['$validator'],
   mixins: [formArrayMixin],
   model: {
@@ -41,6 +62,10 @@ export default {
     event: 'input',
   },
   props: {
+    step: {
+      type: Object,
+      default: () => ({}),
+    },
     operations: {
       type: Array,
       default: () => ([]),
@@ -54,9 +79,30 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      collapsedItems: [],
+    };
+  },
   computed: {
     fieldName() {
-      return `operations${this.stepNumber}`;
+      return `operations${this.step.key ? this.step.key : ''}`;
+    },
+
+    savedOperation() {
+      return this.operations.filter(operation => operation.saved);
+    },
+
+    hasOperations() {
+      return !!this.operations.length;
+    },
+
+    hasSavedOperations() {
+      return !!this.savedOperation.length;
+    },
+
+    allCollapsed() {
+      return this.savedOperation.length === this.collapsedItems.length;
     },
   },
   created() {
@@ -90,6 +136,40 @@ export default {
     },
 
     addEndpoint() {},
+
+    isExpandedOperation(operation) {
+      return !this.collapsedItems.includes(operation.key);
+    },
+
+    expandHandler(operation) {
+      if (this.isExpandedOperation(operation)) {
+        this.collapsedItems.push(operation.key);
+      } else {
+        this.collapsedItems = this.collapsedItems.filter(id => id !== operation.key);
+      }
+    },
+
+    collapseAllItems() {
+      this.collapsedItems = this.operations.reduce((acc, operation) => {
+        if (operation.saved) {
+          acc.push(operation.key);
+        }
+
+        return acc;
+      }, []);
+    },
+
+    expandAllItems() {
+      this.collapsedItems = [];
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .operation-expand {
+    margin: 24px 2px 0 2px !important;
+    width: 20px;
+    height: 20px;
+  }
+</style>

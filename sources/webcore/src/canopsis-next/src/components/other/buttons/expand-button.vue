@@ -6,7 +6,7 @@
 <script>
 export default {
   model: {
-    prop: 'value',
+    prop: 'expanded',
     event: 'expand',
   },
   props: {

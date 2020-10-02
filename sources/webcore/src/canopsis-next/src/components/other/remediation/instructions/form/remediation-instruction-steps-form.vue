@@ -20,6 +20,7 @@
             )
             remediation-instruction-operations-form(
               v-field="steps[index].operations",
+              :step="step",
               :hide-actions="!allSaved",
               :stepNumber="index + 1"
             )
