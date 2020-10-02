@@ -4,15 +4,13 @@
       v-text-field(
         v-field="operation.name",
         v-validate="'required'",
-        :disabled="operation.saved",
         :label="$t('common.name')",
         :error-messages="errors.collect('name')",
         name="name",
         box
       )
     remediation-instruction-time-to-complete-field(
-      v-field="operation.time_to_complete",
-      :disabled="operation.saved"
+      v-field="operation.time_to_complete"
     )
     v-layout
       v-textarea(
@@ -20,7 +18,6 @@
         v-validate="'required'",
         :label="$t('common.description')",
         :error-messages="errors.collect('description')",
-        :disabled="operation.saved",
         name="description",
         box
       )
