@@ -1,22 +1,15 @@
-import { TIME_UNITS } from '@/constants';
-import { getUnitValueFromSeconds } from '@/helpers/time';
+import { getMaxAvailableIntervalFromUnit } from '@/helpers/time';
 
-const AVAILABLE_UNITS = [
-  TIME_UNITS.year,
-  TIME_UNITS.month,
-  TIME_UNITS.day,
-  TIME_UNITS.hour,
-  TIME_UNITS.minute,
-  TIME_UNITS.second,
-];
+/**
+ * Filter for getting max available interval value from unit
+ *
+ * @param {number|string} value
+ * @param {string} fromUnit
+ * @param {string[]} availableUnits
+ * @return {string}
+ */
+export default function (value = 0, fromUnit, availableUnits) {
+  const { unit, interval } = getMaxAvailableIntervalFromUnit(value, fromUnit, availableUnits);
 
-export default function (value = 0, availableUnits = AVAILABLE_UNITS) {
-  let unitValue;
-
-  const maxUnit = availableUnits.find((unit) => {
-    unitValue = Math.floor(getUnitValueFromSeconds(value, unit));
-    return unitValue;
-  });
-
-  return `${unitValue}${maxUnit || TIME_UNITS.second}`;
+  return `${interval}${unit}`;
 }

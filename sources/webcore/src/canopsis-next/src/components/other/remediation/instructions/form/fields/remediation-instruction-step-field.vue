@@ -12,6 +12,13 @@
           box,
           @keyup.stop.enter="saveName"
         )
+      v-layout(v-if="timeToComplete > 0")
+        v-text-field(
+          :value="timeToComplete | duration(undefined,  'refreshFieldFormat')",
+          :label="$t('remediationInstructions.timeToComplete')",
+          disabled,
+          box
+        )
       v-layout
         remediation-instruction-steps-workflow-field(v-field="step.workflow", :disabled="step.saved")
       v-layout(v-if="!step.saved", justify-end)
@@ -27,6 +34,8 @@
 
 <script>
 import formMixin from '@/mixins/form';
+
+import { getUnitValueFromOtherUnit } from '@/helpers/time';
 
 import RemediationInstructionStepsWorkflowField from './remediation-instruction-steps-workflow-field.vue';
 
@@ -66,6 +75,14 @@ export default {
 
     nameErrorMessages() {
       return this.errors.collect(this.name).map(error => error.replace(this.fieldSuffix, ''));
+    },
+
+    timeToComplete() {
+      return this.step.operations.reduce((acc, operation) => {
+        const { time_to_complete: { interval, unit } } = operation;
+
+        return acc + getUnitValueFromOtherUnit(interval, unit);
+      }, 0);
     },
   },
   methods: {
