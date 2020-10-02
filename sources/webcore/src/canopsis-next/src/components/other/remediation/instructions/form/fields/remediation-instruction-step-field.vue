@@ -14,7 +14,7 @@
         )
       v-layout(v-if="timeToComplete > 0")
         v-text-field(
-          :value="timeToComplete | duration(undefined,  'refreshFieldFormat')",
+          :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
           :label="$t('remediationInstructions.timeToComplete')",
           disabled,
           box
