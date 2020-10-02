@@ -105,6 +105,11 @@ export default {
       return this.savedOperation.length === this.collapsedItems.length;
     },
   },
+  watch: {
+    operations() {
+      this.$validator.validate(this.fieldName);
+    },
+  },
   created() {
     this.$validator.attach({
       name: this.fieldName,
@@ -120,7 +125,6 @@ export default {
 
     addOperation() {
       this.addItemIntoArray(generateRemediationInstructionStepOperation());
-      this.$nextTick(() => this.$validator.validate(this.fieldName));
     },
 
     removeOperation(index) {
@@ -129,7 +133,6 @@ export default {
         config: {
           action: () => {
             this.removeItemFromArray(index);
-            this.$nextTick(() => this.$validator.validate(this.fieldName));
           },
         },
       });
