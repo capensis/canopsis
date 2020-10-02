@@ -1,5 +1,6 @@
 import { isUndefined, omit } from 'lodash';
 
+import { getSecondsByUnit, getUnitValueFromSeconds } from '@/helpers/time';
 import uuid from '@/helpers/uuid';
 
 /**
@@ -11,7 +12,7 @@ import uuid from '@/helpers/uuid';
 const remediationInstructionStepOperationsToForm = operations => operations.map(operation => ({
   ...operation,
   time_to_complete: {
-    interval: operation.time_to_complete,
+    interval: getUnitValueFromSeconds(operation.time_to_complete, operation.time_to_complete_unit),
     unit: operation.time_to_complete_unit,
   },
   saved: true,
@@ -60,11 +61,15 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
  * @param {RemediationInstructionStepOperation[]} operations
  * @returns {Array}
  */
-const formOperationsToRemediationInstructionOperation = operations => operations.map(operation => ({
-  ...omit(operation, ['key', 'saved']),
-  time_to_complete: operation.time_to_complete.interval,
-  time_to_complete_unit: operation.time_to_complete.unit,
-}));
+const formOperationsToRemediationInstructionOperation = operations => operations.map((operation) => {
+  const { interval, unit } = operation.time_to_complete;
+
+  return ({
+    ...omit(operation, ['key', 'saved']),
+    time_to_complete: getSecondsByUnit(interval, unit),
+    time_to_complete_unit: unit,
+  });
+});
 
 /**
  * Convert a remediation instruction steps form array to a API compatible array
