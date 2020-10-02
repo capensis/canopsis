@@ -50,7 +50,6 @@ export default {
   data() {
     return {
       editor: null,
-      uploadedFiles: [],
     };
   },
   computed: {
@@ -99,6 +98,7 @@ export default {
         prepareData: this.uploaderPrepareData,
         isSuccess: this.uploaderIsSuccess,
         process: this.uploaderProcess,
+        getMessage: this.uploaderGetMessage,
         error: this.uploaderError,
         defaultHandlerSuccess: this.uploaderDefaultHandlerSuccess,
         defaultHandlerError: this.uploaderDefaultHandlerError,
@@ -189,7 +189,7 @@ export default {
      * @returns {boolean}
      */
     uploaderIsSuccess(response) {
-      return !response.files;
+      return response.files;
     },
 
     /**
@@ -199,14 +199,25 @@ export default {
      * @returns {{msg: *, baseurl: string, files: (*|*[]), error: *}}
      */
     uploaderProcess(response) {
-      this.uploadedFiles.push(...response[this.editor.options.uploader.filesVariableName]);
+      const { filesVariableName } = this.editor.options.uploader;
+      const files = response[filesVariableName].filter(file => !file.error);
 
       return {
-        files: response[this.editor.options.uploader.filesVariableName] || [],
+        files,
         baseurl: `${FILE_BASE_URL}/`,
         error: response.error,
         msg: response.msg,
       };
+    },
+
+    /**
+     * Uploader get message handler
+     *
+     * @param {Object} response
+     * @return {string}
+     */
+    uploaderGetMessage(response) {
+      return response.files.filter(file => file.error).join(' ');
     },
 
     /**
@@ -215,7 +226,7 @@ export default {
      * @param {Object} err
      */
     uploaderError(err) {
-      this.editor.events.fire('errorPopap', [err.getMessage(), 'error', 4000]);
+      this.editor.events.fire('errorPopap', [err, 'error', 7000]);
     },
 
     /**
@@ -281,11 +292,12 @@ export default {
        *
        * @param {Object} data
        */
-      const uploadHandler = (data) => {
-        if (data.files && data.files.length) {
-          for (let i = 0; i < data.files.length; i += 1) {
-            insertLink(data.baseurl + data.files[i].id, data.files[i].fileName);
-          }
+      const uploadHandler = ({ baseurl, files = [] } = {}) => {
+        for (let i = 0; i < files.length; i += 1) {
+          const file = files[i];
+          const url = baseurl + file.id;
+
+          insertLink(url, file.fileName);
         }
 
         close();
@@ -328,27 +340,19 @@ export default {
        *
        * @param {Object} data
        */
-      const uploadHandler = async (data) => {
-        if (data.files && data.files.length) {
-          for (let i = 0; i < data.files.length; i += 1) {
-            const src = data.baseurl + data.files[i].id;
+      const uploadHandler = async ({ baseurl, files = [] } = {}) => {
+        for (let i = 0; i < files.length; i += 1) {
+          const file = files[i];
+          const url = baseurl + file.id;
 
-            // eslint-disable-next-line no-await-in-loop
-            await editor.selection.insertImage(src, null, editor.options.imageDefaultWidth);
-          }
+          // eslint-disable-next-line no-await-in-loop
+          await editor.selection.insertImage(url, null, editor.options.imageDefaultWidth);
         }
+
         close();
       };
 
-      /**
-       * Get img elements from current
-       *
-       * @param {HTMLDocument|HTMLElement} root
-       * @returns {[]}
-       */
-      const getImgElements = root => (root instanceof HTMLDocument ? [...root.querySelectorAll('img')] : []);
-
-      const imgElements = getImgElements(current);
+      const imgElements = current instanceof HTMLDocument ? [...current.querySelectorAll('img')] : [];
       const isImage = current.tagName === 'IMG';
       let sourceImage = null;
 
