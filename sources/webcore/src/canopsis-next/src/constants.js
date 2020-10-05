@@ -121,6 +121,12 @@ export const EVENT_ENTITY_TYPES = {
   manualMetaAlarmGroup: 'manual_metaalarm_group',
   manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
   manualMetaAlarmUpdate: 'manual_metaalarm_update',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  statusinc: 'statusinc',
+  statusdec: 'statusdec',
+  unsooze: 'unsooze',
+  metaalarmattach: 'metaalarmattach',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -382,6 +388,10 @@ export const EVENT_ENTITY_STYLE = {
   },
   [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
     icon: 'link_off',
+  },
+  [EVENT_ENTITY_TYPES.metaalarmattach]: {
+    color: COLORS.entitiesEvents.metaalarmattach,
+    icon: 'center_focus_weak',
   },
 };
 
