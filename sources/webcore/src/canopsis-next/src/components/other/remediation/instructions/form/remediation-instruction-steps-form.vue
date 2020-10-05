@@ -42,7 +42,6 @@ import formArrayMixin from '@/mixins/form/array';
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
-import RemediationInstructionStepsWorkflowField from './fields/remediation-instruction-steps-workflow-field.vue';
 import RemediationInstructionOperationsForm from './remediation-instruction-operations-form.vue';
 
 export default {
@@ -51,7 +50,6 @@ export default {
     DraggableStepNumber,
     RemediationInstructionStepField,
     RemediationInstructionOperationsForm,
-    RemediationInstructionStepsWorkflowField,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],
