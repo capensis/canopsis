@@ -1782,6 +1782,7 @@ export default {
     workflow: 'Workflow if this step fails:',
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',
+    timeToComplete: 'Time to complete',
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
@@ -1792,6 +1793,7 @@ export default {
     },
     errors: {
       runningInstruction: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
+      operationRequired: 'Please add at least one operation',
     },
   },
 

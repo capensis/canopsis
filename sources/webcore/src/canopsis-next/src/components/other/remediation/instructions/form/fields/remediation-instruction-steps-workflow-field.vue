@@ -2,6 +2,7 @@
   v-radio-group.mt-0(
     v-field="value",
     :label="$t('remediationInstructions.workflow')",
+    :disabled="disabled",
     hide-details,
     mandatory,
     color="primary"
@@ -28,8 +29,12 @@ export default {
   },
   props: {
     value: {
-      type: String,
+      type: Boolean,
       default: REMEDIATION_WORKFLOW_TYPES.stop,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };

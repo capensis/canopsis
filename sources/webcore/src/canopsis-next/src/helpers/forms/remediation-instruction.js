@@ -1,7 +1,29 @@
 import { isUndefined, omit } from 'lodash';
 
+import { TIME_UNITS } from '@/constants';
+
+import { getSecondsByUnit, getUnitValueFromSeconds } from '@/helpers/time';
 import uuid from '@/helpers/uuid';
-import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
+
+/**
+ * Convert a remediation instruction step operation array to form array
+ *
+ * @param {RemediationInstructionStepOperation[]} operations
+ * @returns {Array}
+ */
+const remediationInstructionStepOperationsToForm = operations => operations.map(operation => ({
+  ...operation,
+  time_to_complete: {
+    interval: getUnitValueFromSeconds(
+      operation.time_to_complete.seconds,
+      TIME_UNITS.second,
+      operation.time_to_complete.unit,
+    ),
+    unit: operation.time_to_complete_unit || TIME_UNITS.second,
+  },
+  saved: true,
+  key: uuid(),
+}));
 
 /**
  * Convert a remediation instruction steps array to form array
@@ -11,7 +33,7 @@ import { addKeyInEntity, removeKeyFromEntity } from '@/helpers/entities';
  */
 const remediationInstructionStepsToForm = steps => steps.map(step => ({
   ...step,
-  operations: addKeyInEntity(step.operations),
+  operations: remediationInstructionStepOperationsToForm(step.operations),
   saved: true,
   key: uuid(),
 }));
@@ -40,6 +62,24 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
 
 
 /**
+ * Convert a remediation instruction step operations form array to a API compatible operation array
+ *
+ * @param {RemediationInstructionStepOperation[]} operations
+ * @returns {Array}
+ */
+const formOperationsToRemediationInstructionOperation = operations => operations.map((operation) => {
+  const { interval, unit } = operation.time_to_complete;
+
+  return ({
+    ...omit(operation, ['key', 'saved']),
+    time_to_complete: {
+      seconds: getSecondsByUnit(interval, unit),
+      unit,
+    },
+  });
+});
+
+/**
  * Convert a remediation instruction steps form array to a API compatible array
  *
  * @param {RemediationInstructionStep[]} steps
@@ -47,7 +87,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
  */
 const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
   ...omit(step, ['key', 'saved']),
-  operations: removeKeyFromEntity(step.operations),
+  operations: formOperationsToRemediationInstructionOperation(step.operations),
 }));
 
 /**
