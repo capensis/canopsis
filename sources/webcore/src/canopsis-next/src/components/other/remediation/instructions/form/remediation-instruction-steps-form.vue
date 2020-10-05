@@ -8,7 +8,7 @@
       @start="startDragging",
       @end="endDragging"
     )
-      v-layout(v-for="(step, index) in steps", :key="step.key", xs-10)
+      v-layout(v-for="(step, index) in steps", :key="step.key")
         v-layout.my-1(row, wrap)
           v-flex.mt-3(xs1)
             draggable-step-number(:draggable="allSaved") {{ index + 1 }}
