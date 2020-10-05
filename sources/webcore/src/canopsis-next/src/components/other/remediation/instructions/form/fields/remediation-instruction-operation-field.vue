@@ -1,19 +1,18 @@
 <template lang="pug">
   v-layout(column)
-    v-text-field(
-      v-field="operation.name",
-      v-validate="'required'",
-      :disabled="operation.saved",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name",
-      box
-    )
+    v-layout
+      v-text-field(
+        v-field="operation.name",
+        v-validate="'required'",
+        :label="$t('common.name')",
+        :error-messages="errors.collect('name')",
+        name="name",
+        box
+      )
     v-expand-transition(mode="out-in")
       v-layout(v-show="expanded", column)
         remediation-instruction-time-to-complete-field(
           v-field="operation.time_to_complete",
-          :disabled="operation.saved"
         )
         v-layout
           v-textarea(
@@ -21,7 +20,6 @@
             v-validate="'required'",
             :label="$t('common.description')",
             :error-messages="errors.collect('description')",
-            :disabled="operation.saved",
             name="description",
             box
           )
@@ -33,18 +31,13 @@
 <script>
 import formMixin from '@/mixins/form';
 
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
-
 import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    ExpandButton,
-    RemediationInstructionTimeToCompleteField,
-  },
+  components: { RemediationInstructionTimeToCompleteField },
   mixins: [formMixin],
   model: {
     prop: 'operation',

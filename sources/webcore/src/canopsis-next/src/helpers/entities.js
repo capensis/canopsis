@@ -719,7 +719,8 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @return {RemediationInstructionStep}
  */
 export const generateRemediationInstructionStep = () => ({
-  endpoint: '',
+  // TODO Should be removed after endpoint feature will be done
+  endpoint: 'Endpoint?',
   name: '',
   operations: [],
   workflow: REMEDIATION_WORKFLOW_TYPES.stop,
