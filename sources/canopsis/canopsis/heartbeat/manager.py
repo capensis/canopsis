@@ -21,6 +21,8 @@
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
+from canopsis.models.heartbeat import HeartBeat
+import time
 
 
 class HeartbeatError(Exception):
@@ -109,3 +111,16 @@ class HeartbeatManager(object):
         :raises: (`~.common.collection.CollectionError`, ).
         """
         return self.__collection.remove({"_id": heartbeat_id})
+
+    def update(self, _id, heartbeat):
+        try:
+            current_heartbeat = self.__collection.find_one({"_id": _id})
+            heartbeat = heartbeat.to_dict()
+            if HeartBeat.CREATED_KEY in current_heartbeat:
+                heartbeat[HeartBeat.CREATED_KEY] = current_heartbeat[HeartBeat.CREATED_KEY]
+            heartbeat[HeartBeat.UPDATED_KEY] = int(time.time())
+            heartbeat[HeartBeat.ID_KEY] = _id
+            resp = self.__collection.update(query={'_id': _id}, document=heartbeat)
+        except Exception as e:
+            raise e
+        return self.__collection.is_successfull(resp)
