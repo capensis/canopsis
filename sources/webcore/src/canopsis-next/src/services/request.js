@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { API_BASE_URL } from '@/config';
+
 /**
  * Active axios sources
  *
@@ -75,7 +77,7 @@ function errorResponseHandler(responseWithError) {
 }
 
 const request = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? '' : '/api',
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
