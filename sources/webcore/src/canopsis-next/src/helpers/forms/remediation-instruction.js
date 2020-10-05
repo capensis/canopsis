@@ -14,7 +14,11 @@ import uuid from '@/helpers/uuid';
 const remediationInstructionStepOperationsToForm = operations => operations.map(operation => ({
   ...operation,
   time_to_complete: {
-    interval: getUnitValueFromSeconds(operation.time_to_complete, TIME_UNITS.second, operation.time_to_complete_unit),
+    interval: getUnitValueFromSeconds(
+      operation.time_to_complete.seconds,
+      TIME_UNITS.second,
+      operation.time_to_complete.unit,
+    ),
     unit: operation.time_to_complete_unit || TIME_UNITS.second,
   },
   saved: true,
@@ -68,8 +72,10 @@ const formOperationsToRemediationInstructionOperation = operations => operations
 
   return ({
     ...omit(operation, ['key', 'saved']),
-    time_to_complete: getSecondsByUnit(interval, unit),
-    time_to_complete_unit: unit,
+    time_to_complete: {
+      seconds: getSecondsByUnit(interval, unit),
+      unit,
+    },
   });
 });
 
