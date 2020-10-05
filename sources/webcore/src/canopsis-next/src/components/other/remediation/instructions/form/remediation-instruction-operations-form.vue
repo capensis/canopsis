@@ -16,19 +16,13 @@
         draggable-step-number
           span {{ stepNumber }}
           span {{ getCharByIndex(index) }}
-      v-flex(:class="{ 'pl-4': !operation.saved }", xs9)
-        v-layout
-          expand-button.operation-expand(
-            v-show="operation.saved",
-            :expanded="isExpandedOperation(operation)",
-            @expand="expandHandler(operation)"
-          )
-          remediation-instruction-operation-field(
-            v-field="operations[index]",
-            :expanded="isExpandedOperation(operation)",
-            @remove="removeOperation(index)"
-          )
-      v-flex(xs2)
+      v-flex(xs11)
+        remediation-instruction-operation-field(
+          v-field="operations[index]",
+          :expanded="isExpandedOperation(operation)",
+          @expand="expandHandler(operation)",
+          @remove="removeOperation(index)"
+        )
     v-layout(v-show="!hideActions", row)
       div
         v-btn.ml-0.accent.darken-1(@click="addOperation") {{ $t('remediationInstructions.addOperation') }}
@@ -43,8 +37,6 @@ import { FIRST_LETTER_ALPHABET_CHAR_CODE, MODALS } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
 
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
-
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
@@ -53,7 +45,6 @@ export default {
   components: {
     RemediationInstructionOperationField,
     DraggableStepNumber,
-    ExpandButton,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],
@@ -168,11 +159,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .operation-expand {
-    margin: 24px 2px 0 2px !important;
-    width: 20px;
-    height: 20px;
-  }
-</style>
