@@ -1500,8 +1500,8 @@ export const REMEDIATION_TABS = {
 };
 
 export const REMEDIATION_WORKFLOW_TYPES = {
-  stop: 'stop',
-  continue: 'continue',
+  stop: true,
+  continue: false,
 };
 
 export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
