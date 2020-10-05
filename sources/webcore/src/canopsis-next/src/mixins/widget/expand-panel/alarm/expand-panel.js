@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import queryMixin from '../../../query';
+import queryMixin from '@/mixins/query';
 
 const { mapActions } = createNamespacedHelpers('alarm');
 
