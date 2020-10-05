@@ -1,6 +1,6 @@
 <template lang="pug" functional>
   v-layout(align-center, justify-end)
-    v-icon.handler.draggable(v-show="props.draggable") drag_indicator
+    v-icon.handler.draggable(:class="props.dragClass", v-show="props.draggable") drag_indicator
     v-avatar.white--text(color="primary", size="32")
       slot
 </template>
@@ -12,6 +12,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    dragClass: {
+      type: String,
+      default: '',
+    },
   },
 };
 </script>
+
+<style lang="scss">
+  .handler {
+    width: 20px !important;
+  }
+</style>

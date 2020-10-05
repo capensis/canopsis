@@ -7,6 +7,7 @@
         :label="$t('remediationInstructions.timeToComplete')",
         :error-messages="errors.collect('interval')",
         :disabled="disabled",
+        :min="0",
         name="interval",
         type="number",
         box

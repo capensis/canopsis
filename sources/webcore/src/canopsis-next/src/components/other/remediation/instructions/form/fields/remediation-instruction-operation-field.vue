@@ -13,13 +13,15 @@
             v-validate="'required'",
             :label="$t('common.name')",
             :error-messages="errors.collect('name')",
+            :disabled="operation.saved",
             name="name",
             box
           )
           v-expand-transition(mode="out-in")
-            v-layout(v-show="expanded", column)
+            v-layout(v-show="expanded || !operation.saved", column)
               remediation-instruction-time-to-complete-field(
                 v-field="operation.time_to_complete",
+                :disabled="operation.saved"
               )
               v-layout
                 v-textarea(
@@ -27,13 +29,21 @@
                   v-validate="'required'",
                   :label="$t('common.description')",
                   :error-messages="errors.collect('description')",
+                  :disabled="operation.saved",
                   name="description",
                   box
                 )
       v-layout(v-if="!operation.saved", justify-end)
         v-btn.mt-0(depressed, flat, @click="cancelChangeOperation") {{ $t('common.cancel') }}
         v-btn.mt-0.mr-0.primary(@click="saveOperation") {{ $t('common.save') }}
-    v-flex.mt-3(v-if="operation.saved", xs2)
+    v-flex.mt-3(v-if="operation.saved && !hideActions", xs2)
+      v-layout(justify-start)
+        v-btn.ma-0(icon, small, @click="editOperation")
+          v-icon edit
+        v-btn.ma-0.ml-1(icon, small, disabled)
+          v-icon assignment
+        v-btn.ma-0.ml-1(icon, small, @click.prevent="$emit('remove')")
+          v-icon(color="error") delete
 </template>
 
 <script>
@@ -62,6 +72,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -69,7 +83,7 @@ export default {
     };
   },
   methods: {
-    editName() {
+    editOperation() {
       this.oldOperation = this.operation;
 
       this.updateField('saved', false);

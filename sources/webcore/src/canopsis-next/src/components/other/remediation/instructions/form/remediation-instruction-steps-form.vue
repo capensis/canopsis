@@ -8,22 +8,21 @@
       @start="startDragging",
       @end="endDragging"
     )
-      v-layout(v-for="(step, index) in steps", :key="step.key")
-        v-layout.my-1(row, wrap)
-          v-flex.mt-3(xs1)
-            draggable-step-number(:draggable="allSaved") {{ index + 1 }}
-          v-flex.pl-3(xs11)
-            remediation-instruction-step-field(
-              v-field="steps[index]",
-              :hide-actions="!allSaved",
-              @remove="removeStep(index)"
-            )
-            remediation-instruction-operations-form(
-              v-field="steps[index].operations",
-              :step="step",
-              :hide-actions="!allSaved",
-              :stepNumber="index + 1"
-            )
+      v-layout.my-1(v-for="(step, index) in steps", :key="step.key", row, wrap)
+        v-flex.mt-3(xs1)
+          draggable-step-number(drag-class="step-drag-handler", :draggable="allSaved") {{ index + 1 }}
+        v-flex.pl-3(xs11)
+          remediation-instruction-step-field(
+            v-field="steps[index]",
+            :hide-actions="!allSaved",
+            @remove="removeStep(index)"
+          )
+          remediation-instruction-operations-form(
+            v-field="steps[index].operations",
+            :step="step",
+            :hide-actions="!allSaved",
+            :stepNumber="index + 1"
+          )
     v-layout
       v-btn.ml-0.primary(v-if="allSaved", @click="addStep") {{ $t('remediationInstructions.addStep') }}
 </template>
@@ -42,7 +41,6 @@ import formArrayMixin from '@/mixins/form/array';
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
-import RemediationInstructionStepsWorkflowField from './fields/remediation-instruction-steps-workflow-field.vue';
 import RemediationInstructionOperationsForm from './remediation-instruction-operations-form.vue';
 
 export default {
@@ -51,7 +49,6 @@ export default {
     DraggableStepNumber,
     RemediationInstructionStepField,
     RemediationInstructionOperationsForm,
-    RemediationInstructionStepsWorkflowField,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],
@@ -86,7 +83,7 @@ export default {
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.handler',
+        handle: '.step-drag-handler',
         ghostClass: 'white',
         group: {
           name: 'remediation-instruction-steps',

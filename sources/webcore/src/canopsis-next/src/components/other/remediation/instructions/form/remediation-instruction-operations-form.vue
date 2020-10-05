@@ -11,15 +11,14 @@
             v-else,
             @click="collapseAllItems"
           ) {{ $t('remediationInstructions.hideAll') }}
-    v-layout(v-for="(operation, index) in operations", :key="operation.key")
+    v-layout.my-1(v-for="(operation, index) in operations", :key="operation.key")
       v-flex.mt-3(xs1)
-        draggable-step-number
-          span {{ stepNumber }}
-          span {{ getCharByIndex(index) }}
+        draggable-step-number {{ getStepLabel(index) }}
       v-flex(xs11)
         remediation-instruction-operation-field(
           v-field="operations[index]",
           :expanded="isExpandedOperation(operation)",
+          :hideActions="hideActions",
           @expand="expandHandler(operation)",
           @remove="removeOperation(index)"
         )
@@ -110,6 +109,10 @@ export default {
     });
   },
   methods: {
+    getStepLabel(index) {
+      return `${this.stepNumber}${this.getCharByIndex(index)}`;
+    },
+
     getCharByIndex(index) {
       return String.fromCharCode(FIRST_LETTER_ALPHABET_CHAR_CODE + index);
     },

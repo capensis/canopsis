@@ -26,7 +26,7 @@
         v-btn.mt-0.mr-0.primary(@click="saveName") {{ $t('common.save') }}
     v-flex.mt-3(v-if="step.saved && !hideActions", xs2)
       v-layout(justify-start)
-        v-btn.ma-0.ml-2(icon, small, @click="editName")
+        v-btn.ma-0.ml-2(icon, small, @click="editStep")
           v-icon edit
         v-btn.ma-0.ml-1(icon, small, @click.prevent="$emit('remove')")
           v-icon(color="error") delete
@@ -86,7 +86,7 @@ export default {
     },
   },
   methods: {
-    editName() {
+    editStep() {
       this.oldStep = this.step;
 
       this.updateField('saved', false);
