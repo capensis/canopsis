@@ -29,7 +29,7 @@ export default {
   },
   props: {
     value: {
-      type: String,
+      type: Boolean,
       default: REMEDIATION_WORKFLOW_TYPES.stop,
     },
     disabled: {

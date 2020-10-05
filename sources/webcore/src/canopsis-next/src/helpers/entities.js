@@ -712,7 +712,7 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @typedef {Object} RemediationInstructionStep
  * @property {string} endpoint
  * @property {string} name
- * @property {string} workflow
+ * @property {boolean} stop_on_fail
  * @property {RemediationInstructionStepOperation[]} operations
  * @property {boolean} [saved]
  * @property {string} [key]
@@ -723,7 +723,7 @@ export const generateRemediationInstructionStep = () => ({
   endpoint: 'Endpoint?',
   name: '',
   operations: [],
-  workflow: REMEDIATION_WORKFLOW_TYPES.stop,
+  stop_on_fail: REMEDIATION_WORKFLOW_TYPES.stop,
   saved: false,
   key: uid(),
 });

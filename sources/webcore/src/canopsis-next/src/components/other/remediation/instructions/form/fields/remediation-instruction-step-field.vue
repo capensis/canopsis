@@ -20,7 +20,7 @@
           box
         )
       v-layout
-        remediation-instruction-steps-workflow-field(v-field="step.workflow", :disabled="step.saved")
+        remediation-instruction-steps-workflow-field(v-field="step.asfasf", :disabled="step.saved")
       v-layout(v-if="!step.saved", justify-end)
         v-btn.mt-0(depressed, flat, @click="cancelChangeName") {{ $t('common.cancel') }}
         v-btn.mt-0.mr-0.primary(@click="saveName") {{ $t('common.save') }}
