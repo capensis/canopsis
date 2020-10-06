@@ -31,4 +31,4 @@ Les triggers possibles sont : `"ack"`, `"ackremove"`, `"assocticket"`, `"cancel"
 | `"unsnooze"`             | Sortie de veille de l'alarme                                                                        | ❌                           |
 
 !!! attention
-   Le trigger `"declareticketwebhook"` peut dans certains cas générer une boucle infinie si il n'est pas utilisé correctement, il faut donc être attentif lors de son utilisatiion 
+   Le trigger `"declareticketwebhook"` peut dans certains cas générer une boucle infinie si il n'est pas utilisé correctement, il faut donc être attentif lors de son utilisation. 
