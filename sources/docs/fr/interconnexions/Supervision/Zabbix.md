@@ -398,7 +398,7 @@ wget https://git.canopsis.net/canopsis-connectors/connector-zabbix2canopsis/-/ra
 #### Rendre exécutable le script
 
 ```shell
-chmod +x /usr/lib/zabbix/alertscripts/zabbix2filebeat.py
+chmod +x /usr/lib/zabbix/alertscripts/zabbix2canopsis.py
 ```
 
 #### Rotation du log via logrotate
