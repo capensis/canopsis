@@ -97,4 +97,4 @@ Vous pouvez alors vous connecter à nouveau sur l'interface Canopsis pour valide
 !!! note
     Dans la plupart des cas, la mise à jour d'un environnement installé via Docker consistera à mettre à jour les versions de tags des images Docker utilisées. Dans tous les cas, il est recommandé d'aller lire les [notes de version](https://doc.canopsis.net/#dernieres-versions) entre la version à mettre à jour et la version qui doit être installée.
     
-    Dans le cas d'une version Core, vous pouvez allez récupérer la dernière version des configurations `docker-compose` dans le [gitlab](https://git.canopsis.net/canopsis/canopsis/-/tree/develop/docker-compose) ou via un `git pull` si vous avez déjà un clone de ce dépôt.
+    Dans le cas d'une version Core, vous pouvez allez récupérer la dernière version des configurations `docker-compose` dans le [Gitlab](https://git.canopsis.net/canopsis/canopsis/-/tree/develop/docker-compose) ou via un `git pull` si vous avez déjà un clone de ce dépôt.
