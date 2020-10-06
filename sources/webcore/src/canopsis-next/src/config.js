@@ -1,4 +1,6 @@
-export const { BASE_URL } = process.env;
+export const { BASE_URL, VUE_APP_API_HOST: API_HOST } = process.env;
+
+export const API_BASE_URL = process.env.NODE_ENV === 'development' ? '/api' : '';
 
 export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
 
@@ -125,6 +127,7 @@ export const API_ROUTES = {
   remediation: {
     instructions: '/api/v4/cat/instructions',
   },
+  file: '/api/v4/cat/file',
 };
 
 export const COLORS = {
@@ -157,3 +160,6 @@ export const COLORS = {
   },
   statsDefault: '#dddddd',
 };
+
+export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
+

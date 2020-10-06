@@ -23,8 +23,9 @@
     template(slot="last_modified", slot-scope="props")
       | {{ props.item.last_modified | date('long', true, null) }}
     template(slot="avg_complete_time", slot-scope="props")
-      | {{ props.item.avg_complete_time }}
-      | {{ $tc('common.times.minute', props.item.avg_complete_time) }}
+      span(v-if="props.item.avg_complete_time")
+        | {{ props.item.avg_complete_time }}
+        | {{ $tc('common.times.minute', props.item.avg_complete_time) }}
     template(slot="last_executed_on", slot-scope="props")
       | {{ props.item.last_executed_on | date('long', true, null) }}
     template(slot="actions", slot-scope="props")

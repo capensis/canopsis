@@ -32,6 +32,12 @@ import uid from './uid';
 import { pbehaviorToForm } from './forms/planning-pbehavior';
 
 /**
+ * @typedef {Object} Interval
+ * @property {Number} interval
+ * @property {String} unit
+ */
+
+/**
  * Generate widget by type
  *
  * @param {string} type
@@ -706,17 +712,18 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @typedef {Object} RemediationInstructionStep
  * @property {string} endpoint
  * @property {string} name
- * @property {string} workflow
+ * @property {boolean} stop_on_fail
  * @property {RemediationInstructionStepOperation[]} operations
  * @property {boolean} [saved]
  * @property {string} [key]
  * @return {RemediationInstructionStep}
  */
 export const generateRemediationInstructionStep = () => ({
-  endpoint: '',
+  // TODO Should be removed after endpoint feature will be done
+  endpoint: 'Endpoint?',
   name: '',
   operations: [],
-  workflow: REMEDIATION_WORKFLOW_TYPES.stop,
+  stop_on_fail: REMEDIATION_WORKFLOW_TYPES.stop,
   saved: false,
   key: uid(),
 });
@@ -727,13 +734,19 @@ export const generateRemediationInstructionStep = () => ({
  * @typedef {Object} RemediationInstructionStepOperation
  * @property {string} name
  * @property {string} description
- * @property {number} time_to_complete
+ * @property {Interval|string} time_to_complete
+ * @property {string} [time_to_complete_unit]
+ * @property {boolean} [saved]
  * @property {string} [key]
  * @return {RemediationInstructionStepOperation}
  */
 export const generateRemediationInstructionStepOperation = () => ({
-  key: uid(),
-  description: '',
   name: '',
-  time_to_complete: 0,
+  description: '',
+  time_to_complete: {
+    interval: 0,
+    unit: TIME_UNITS.minute,
+  },
+  saved: false,
+  key: uid(),
 });

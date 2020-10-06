@@ -1782,6 +1782,7 @@ export default {
     workflow: 'Workflow si cette étape échoue:',
     stop: 'Arrêtez',
     remainingStep: 'Continuez avec les étapes restantes',
+    timeToComplete: 'Temps pour terminer',
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',
@@ -1792,6 +1793,7 @@ export default {
     },
     errors: {
       runningInstruction: 'Des instructions en cours sont affectées à ce modèle. Souhaitez-vous les annuler?',
+      operationRequired: 'Veuillez ajouter au moins une opération',
     },
   },
 
