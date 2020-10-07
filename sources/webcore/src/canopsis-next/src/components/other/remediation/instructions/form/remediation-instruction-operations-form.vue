@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.mt-2(column)
+  v-layout(column)
     v-layout(v-if="hasSavedOperations")
       v-flex(xs10)
         v-layout(justify-end)
@@ -11,17 +11,27 @@
             v-else,
             @click="collapseAllItems"
           ) {{ $t('remediationInstructions.hideAll') }}
-    v-layout.my-1(v-for="(operation, index) in operations", :key="operation.key")
-      v-flex.mt-3(xs1)
-        draggable-step-number {{ getStepLabel(index) }}
-      v-flex(xs11)
-        remediation-instruction-operation-field(
-          v-field="operations[index]",
-          :expanded="isExpandedOperation(operation)",
-          :hideActions="hideActions",
-          @expand="expandHandler(operation)",
-          @remove="removeOperation(index)"
-        )
+    draggable(
+      v-field="operations",
+      :options="draggableOptions",
+      :class="{ 'grey lighten-2': isDragging }",
+      @start="startDragging",
+      @end="endDragging"
+    )
+      v-layout.py-1(v-for="(operation, index) in operations", :key="operation.key")
+        v-flex.mt-3(xs1)
+          draggable-step-number(
+            drag-class="operation-drag-handler",
+            :draggable="!hideActions"
+          ) {{ getStepLabel(index) }}
+        v-flex(xs11)
+          remediation-instruction-operation-field(
+            v-field="operations[index]",
+            :expanded="isExpandedOperation(operation)",
+            :hideActions="hideActions",
+            @expand="expandHandler(operation)",
+            @remove="removeOperation(index)"
+          )
     v-layout(v-show="!hideActions", row)
       div
         v-btn.ml-0.accent.darken-1(@click="addOperation") {{ $t('remediationInstructions.addOperation') }}
@@ -30,8 +40,10 @@
 </template>
 
 <script>
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import Draggable from 'vuedraggable';
 
+import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { FIRST_LETTER_ALPHABET_CHAR_CODE, MODALS } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
@@ -42,8 +54,9 @@ import RemediationInstructionOperationField from './fields/remediation-instructi
 
 export default {
   components: {
-    RemediationInstructionOperationField,
+    Draggable,
     DraggableStepNumber,
+    RemediationInstructionOperationField,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],
@@ -72,6 +85,7 @@ export default {
   data() {
     return {
       collapsedItems: [],
+      isDragging: false,
     };
   },
   computed: {
@@ -93,6 +107,19 @@ export default {
 
     allCollapsed() {
       return this.savedOperation.length === this.collapsedItems.length;
+    },
+
+    draggableOptions() {
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+        handle: '.operation-drag-handler',
+        ghostClass: 'white',
+        group: {
+          name: 'remediation-instruction-operations',
+          pull: false,
+          put: false,
+        },
+      };
     },
   },
   watch: {
@@ -158,6 +185,14 @@ export default {
 
     expandAllItems() {
       this.collapsedItems = [];
+    },
+
+    startDragging() {
+      this.isDragging = true;
+    },
+
+    endDragging() {
+      this.isDragging = false;
     },
   },
 };

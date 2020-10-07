@@ -1,16 +1,18 @@
 <template lang="pug">
   v-layout(column)
     draggable(
-      :value="steps",
+      v-field="steps",
       :options="draggableOptions",
       :class="{ 'grey lighten-2': isDragging }",
-      @change="changeStepsOrdering",
       @start="startDragging",
       @end="endDragging"
     )
-      v-layout.my-1(v-for="(step, index) in steps", :key="step.key", row, wrap)
+      v-layout.py-1(v-for="(step, index) in steps", :key="step.key", row, wrap)
         v-flex.mt-3(xs1)
-          draggable-step-number(drag-class="step-drag-handler", :draggable="allSaved") {{ index + 1 }}
+          draggable-step-number(
+            drag-class="step-drag-handler",
+            :draggable="allSaved"
+          ) {{ index + 1 }}
         v-flex.pl-3(xs11)
           remediation-instruction-step-field(
             v-field="steps[index]",
