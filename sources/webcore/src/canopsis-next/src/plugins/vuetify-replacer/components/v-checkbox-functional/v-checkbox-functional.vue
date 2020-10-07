@@ -1,4 +1,4 @@
-<template lang="pug" functional>
+<template lang="pug">
   .v-input.v-input--selection-controls.v-input--checkbox.theme--light(
     :class="{ 'v-input--is-disabled': disabled, 'v-input--hide-details': hideDetails }"
   )
