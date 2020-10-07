@@ -67,6 +67,9 @@ export default {
       context: () => this,
     });
   },
+  beforeDestroy() {
+    this.$validator.detach(this.fieldName);
+  },
   methods: {
     getCharByIndex(index) {
       return String.fromCharCode(FIRST_LETTER_ALPHABET_CHAR_CODE + index);

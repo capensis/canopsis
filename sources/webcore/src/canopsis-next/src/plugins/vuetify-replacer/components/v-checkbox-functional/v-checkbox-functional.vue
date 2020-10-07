@@ -1,29 +1,29 @@
 <template lang="pug" functional>
   .v-input.v-input--selection-controls.v-input--checkbox.theme--light(
-    :class="{ 'v-input--is-disabled': props.disabled, 'v-input--hide-details': props.hideDetails }"
+    :class="{ 'v-input--is-disabled': disabled, 'v-input--hide-details': hideDetails }"
   )
     .v-input__control
       .v-input__slot
         .v-input--selection-controls__input(
           data-test="vCheckboxFunctional",
-          @click="listeners.change(!props.inputValue)"
+          @click="$emit('change', !inputValue)"
         )
           input(
             class="hidden",
-            :aria-checked="String(props.inputValue)",
-            :checked="props.inputValue",
-            :disabled="props.disabled",
+            :aria-checked="String(inputValue)",
+            :checked="inputValue",
+            :disabled="disabled",
             role="checkbox",
             type="checkbox"
           )
           .v-input--selection-controls__ripple.primary--text(v-ripple="{ center: true }")
           i.v-icon.material-icons.theme--light(
-            :class="{ 'primary--text': props.inputValue }"
-          ) {{ props.inputValue ? 'check_box' : 'check_box_outline_blank' }}
+            :class="{ 'primary--text': inputValue }"
+          ) {{ inputValue ? 'check_box' : 'check_box_outline_blank' }}
         label(
-          v-show="props.label !== ''",
-          @click="listeners.change(!props.inputValue)"
-        ) {{ props.label }}
+          v-show="label !== ''",
+          @click="$emit('change', !inputValue)"
+        ) {{ label }}
 </template>
 
 <script>

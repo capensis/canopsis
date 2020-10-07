@@ -12,15 +12,13 @@
     remediation-instruction-time-to-complete-field(
       v-field="operation.time_to_complete"
     )
-    v-layout
-      v-textarea(
-        v-field="operation.description",
-        v-validate="'required'",
-        :label="$t('common.description')",
-        :error-messages="errors.collect('description')",
-        name="description",
-        box
-      )
+    v-layout.mt-3
+      v-flex
+        text-editor-field(
+          v-field="operation.description",
+          :label="$t('common.description')",
+          focusable
+        )
     v-layout(v-if="!operation.saved", justify-end)
       v-btn.mt-0(depressed, flat, @click="cancelChangeOperation") {{ $t('common.cancel') }}
       v-btn.mt-0.mr-0.primary(@click="saveOperation") {{ $t('common.save') }}
@@ -29,13 +27,18 @@
 <script>
 import formMixin from '@/mixins/form';
 
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+
 import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { RemediationInstructionTimeToCompleteField },
+  components: {
+    TextEditorField,
+    RemediationInstructionTimeToCompleteField,
+  },
   mixins: [formMixin],
   model: {
     prop: 'operation',

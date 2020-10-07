@@ -5,8 +5,8 @@
     div.v-input__control(@click="$emit('click', $event)")
       div.v-input__slot
         div.v-text-field__slot
-          label.v-label.v-label--active.theme--light {{ label }}
-          div(v-html="value")
+          label.v-label.theme--light(:class="{ 'v-label--active': value }") {{ label }}
+          div(ref="content", v-html="value")
       div.v-text-field__details
         div.v-messages.theme--light.error--text
           div.v-messages__wrapper
@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 export default {
   props: {
     value: {
@@ -28,11 +30,62 @@ export default {
       type: Array,
       default: () => [],
     },
+    editing: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  watch: {
+    editing(editing) {
+      if (editing) {
+        this.removeImagesListeners();
+      } else {
+        this.addImagesListeners();
+      }
+    },
+    value() {
+      if (!this.editing) {
+        this.addImagesListeners();
+      }
+    },
+  },
+  mounted() {
+    if (!this.editing) {
+      this.addImagesListeners();
+    }
+  },
+  beforeDestroy() {
+    this.removeImagesListeners();
+  },
+  methods: {
+    addImagesListeners() {
+      this.removeImagesListeners();
+
+      this.imagesElements = this.$refs.content.querySelectorAll('img');
+      this.imagesElements.forEach(image => image.addEventListener('click', this.clickHandler));
+    },
+
+    removeImagesListeners() {
+      if (this.imagesElements) {
+        this.imagesElements.forEach(image => image.removeEventListener('click', this.clickHandler));
+      }
+    },
+
+    clickHandler(e) {
+      e.stopPropagation();
+
+      this.$modals.show({
+        name: MODALS.imageViewer,
+        config: {
+          src: e.target.getAttribute('src'),
+        },
+      });
+    },
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .v-label {
   left: 0;
   right: auto;
@@ -41,5 +94,11 @@ export default {
 
 .v-text-field__slot {
   padding-top: 28px !important;
+  min-height: 150px;
+  max-width: 100%;
+
+  & /deep/ img {
+    cursor: pointer !important;
+  }
 }
 </style>

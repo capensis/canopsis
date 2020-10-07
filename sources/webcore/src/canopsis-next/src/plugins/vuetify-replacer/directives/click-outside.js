@@ -43,7 +43,7 @@ function directive(e, el, binding) {
     return;
   }
 
-  const elements = (include || (() => []))();
+  const elements = include ? include() : [];
 
   elements.push(el);
 

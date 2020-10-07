@@ -32,6 +32,14 @@ export default {
     },
   },
   methods: {
+    hideScroll() {
+      if (this.fullscreen) {
+        document.documentElement.classList.add('overflow-y-hidden');
+      } else {
+        overlayableMixin.methods.hideScroll.call(this);
+      }
+    },
+
     getMaxZIndex(exclude = []) {
       const base = this.$el;
       // Start with lowest allowed z-index or z-index of

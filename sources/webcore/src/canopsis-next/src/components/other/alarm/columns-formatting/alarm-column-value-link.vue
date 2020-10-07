@@ -1,10 +1,10 @@
-<template lang="pug" functional>
+<template lang="pug">
   div
     a(
-      :href="props.link.link",
+      :href="link.link",
       target="_blank",
       @click.stop=""
-    ) {{ props.link.label }}
+    ) {{ link.label }}
 </template>
 
 <script>

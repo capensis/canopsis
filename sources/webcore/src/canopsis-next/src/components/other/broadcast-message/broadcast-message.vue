@@ -1,11 +1,11 @@
-<template lang="pug" functional>
+<template lang="pug">
   div.broadcast-message.pa-2(
-    :style="{ backgroundColor: props.color }",
-    :title="props.message"
+    :style="{ backgroundColor: color }",
+    :title="message"
   )
     span
       v-icon.mr-1(small) $vuetify.icons.bullhorn
-      | {{ props.message }}
+      | {{ message }}
 </template>
 
 <script>

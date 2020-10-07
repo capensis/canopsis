@@ -177,7 +177,8 @@ Vue.use(ModalsPlugin, {
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
-    [MODALS.createRemediationInstruction]: { maxWidth: 750, persistent: true },
+    [MODALS.createRemediationInstruction]: { maxWidth: 750 },
+    [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
