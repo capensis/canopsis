@@ -36,7 +36,6 @@ import { MODALS } from '@/constants';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { generateRemediationInstructionStep } from '@/helpers/entities';
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import formArrayMixin from '@/mixins/form/array';
 
@@ -96,10 +95,6 @@ export default {
   methods: {
     addStep() {
       this.addItemIntoArray(generateRemediationInstructionStep());
-    },
-
-    changeStepsOrdering(event) {
-      this.updateModel(dragDropChangePositionHandler(this.steps, event));
     },
 
     startDragging() {
