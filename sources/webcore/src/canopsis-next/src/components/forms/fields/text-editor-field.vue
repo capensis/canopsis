@@ -25,6 +25,7 @@
         v-else,
         :value="value",
         :label="label",
+        editing,
         @click="toggleFocusedOn"
       )
 </template>
