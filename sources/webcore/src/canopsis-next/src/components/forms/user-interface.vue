@@ -58,8 +58,7 @@
         text-editor-field(
           v-model="form.description",
           :label="$t('parameters.userInterfaceForm.fields.description')",
-          :config="textEditorConfig",
-          focusable
+          :config="textEditorConfig"
         )
     v-layout.mt-3(row)
       v-flex

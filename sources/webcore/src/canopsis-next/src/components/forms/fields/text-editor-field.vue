@@ -14,6 +14,7 @@
         ref="textEditor",
         v-if="focused",
         v-field="value",
+        v-click-outside.same="{ handler: toggleFocusedOff, closeConditional }",
         :label="label",
         :buttons="buttons",
         :extraButtons="extraButtons",
@@ -23,7 +24,8 @@
       text-editor-blurred(
         v-else,
         :value="value",
-        :label="label"
+        :label="label",
+        @click="toggleFocusedOn"
       )
 </template>
 

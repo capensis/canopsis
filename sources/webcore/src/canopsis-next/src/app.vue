@@ -3,11 +3,6 @@
     v-layout(v-if="!pending")
       navigation#main-navigation(v-if="$route.name !== 'login'")
       v-content#main-content
-        v-container
-          v-layout(column)
-            v-flex
-              text-editor-blurred(v-if="show")
-        v-btn(@click="toggle") TOGGLE
         active-broadcast-message
         router-view(:key="routeViewKey")
     side-bars
@@ -25,13 +20,10 @@ import systemMixin from '@/mixins/system';
 import entitiesInfoMixin from '@/mixins/entities/info';
 import keepaliveMixin from '@/mixins/entities/keepalive';
 
-
 import '@/assets/styles/main.scss';
-import TextEditorBlurred from '@/components/other/text-editor/text-editor-blurred.vue';
 
 export default {
   components: {
-    TextEditorBlurred,
     Navigation,
     SideBars,
     ActiveBroadcastMessage,
@@ -39,7 +31,6 @@ export default {
   mixins: [authMixin, systemMixin, entitiesInfoMixin, keepaliveMixin],
   data() {
     return {
-      show: false,
       pending: true,
     };
   },
@@ -73,9 +64,6 @@ export default {
     this.stopKeepalive();
   },
   methods: {
-    toggle() {
-      this.show = !this.show;
-    },
     registerIsLoggedInOnceWatcher() {
       const unwatch = this.$watch('isLoggedIn', (isLoggedIn) => {
         if (isLoggedIn) {
