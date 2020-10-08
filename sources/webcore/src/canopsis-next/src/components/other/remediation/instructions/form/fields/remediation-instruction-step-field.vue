@@ -1,34 +1,27 @@
 <template lang="pug">
   v-layout(row)
-    v-flex(xs10)
+    v-flex(xs11)
+      v-layout(row)
+        v-flex(xs8)
+          v-text-field(
+            v-field="step.name",
+            v-validate="'required'",
+            :label="$t('common.name')",
+            :error-messages="nameErrorMessages",
+            :name="name",
+            box
+          )
+        v-flex.pl-2(xs4)
+          v-text-field.step-time-complete-unit(
+            :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
+            :label="$t('remediationInstructions.timeToComplete')",
+            readonly
+          )
       v-layout
-        v-text-field(
-          v-field="step.name",
-          v-validate="'required'",
-          :label="$t('common.name')",
-          :disabled="step.saved",
-          :error-messages="nameErrorMessages",
-          :name="name",
-          box,
-          @keyup.stop.enter="saveName"
-        )
-      v-layout(v-if="timeToComplete > 0")
-        v-text-field(
-          :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
-          :label="$t('remediationInstructions.timeToComplete')",
-          disabled,
-          box
-        )
-      v-layout
-        remediation-instruction-steps-workflow-field(v-field="step.asfasf", :disabled="step.saved")
-      v-layout(v-if="!step.saved", justify-end)
-        v-btn.mt-0(depressed, flat, @click="cancelChangeName") {{ $t('common.cancel') }}
-        v-btn.mt-0.mr-0.primary(@click="saveName") {{ $t('common.save') }}
-    v-flex.mt-3(v-if="step.saved && !hideActions", xs2)
-      v-layout(justify-start)
-        v-btn.ma-0.ml-2(icon, small, @click="editStep")
-          v-icon edit
-        v-btn.ma-0.ml-1(icon, small, @click.prevent="$emit('remove')")
+        remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
+    v-flex.mt-3(xs1)
+      v-layout(justify-center)
+        v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
           v-icon(color="error") delete
 </template>
 
@@ -40,9 +33,7 @@ import { getUnitValueFromOtherUnit } from '@/helpers/time';
 import RemediationInstructionStepsWorkflowField from './remediation-instruction-steps-workflow-field.vue';
 
 export default {
-  $_veeValidate: {
-    validator: 'new',
-  },
+  inject: ['$validator'],
   components: { RemediationInstructionStepsWorkflowField },
   mixins: [formMixin],
   model: {
@@ -54,15 +45,6 @@ export default {
       type: Object,
       required: true,
     },
-    hideActions: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      oldStep: null,
-    };
   },
   computed: {
     fieldSuffix() {
@@ -85,33 +67,13 @@ export default {
       }, 0);
     },
   },
-  methods: {
-    editStep() {
-      this.oldStep = this.step;
-
-      this.updateField('saved', false);
-    },
-
-    cancelChangeName() {
-      if (this.oldStep) {
-        this.updateModel({
-          ...this.oldStep,
-          saved: true,
-        });
-      } else {
-        this.$emit('remove');
-      }
-    },
-
-    async saveName() {
-      const isValid = await this.$validator.validateAll();
-
-      if (isValid) {
-        this.oldStep = null;
-
-        this.updateField('saved', true);
-      }
-    },
-  },
 };
 </script>
+
+<style lang="scss">
+  .step-time-complete-unit .v-input__slot {
+    &:before, &:after {
+      content: none !important;
+    }
+  }
+</style>

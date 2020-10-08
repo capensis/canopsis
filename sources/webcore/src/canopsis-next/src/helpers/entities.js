@@ -736,7 +736,6 @@ export const generateRemediationInstructionStep = () => ({
  * @property {string} description
  * @property {Interval|string} time_to_complete
  * @property {string} [time_to_complete_unit]
- * @property {boolean} [saved]
  * @property {string} [key]
  * @return {RemediationInstructionStepOperation}
  */
@@ -747,6 +746,5 @@ export const generateRemediationInstructionStepOperation = () => ({
     interval: 0,
     unit: TIME_UNITS.minute,
   },
-  saved: false,
   key: uid(),
 });
