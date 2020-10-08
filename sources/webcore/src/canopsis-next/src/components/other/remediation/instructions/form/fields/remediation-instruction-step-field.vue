@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(row)
-    v-flex(xs10)
+    v-flex(xs11)
       v-layout
         v-text-field(
           v-field="step.name",
@@ -13,11 +13,11 @@
           @keyup.stop.enter="saveName"
         )
       v-layout
-        remediation-instruction-steps-workflow-field(v-field="step.asfasf", :disabled="step.saved")
+        remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail", :disabled="step.saved")
       v-layout(v-if="!step.saved", justify-end)
         v-btn.mt-0(depressed, flat, @click="cancelChangeName") {{ $t('common.cancel') }}
         v-btn.mt-0.mr-0.primary(@click="saveName") {{ $t('common.save') }}
-    v-flex.mt-3(v-if="step.saved && !hideActions", xs2)
+    v-flex.mt-3(v-if="step.saved && !hideActions", xs1)
       v-layout(justify-start)
         v-btn.ma-0.ml-2(icon, small, @click="editName")
           v-icon edit
@@ -31,9 +31,7 @@ import formMixin from '@/mixins/form';
 import RemediationInstructionStepsWorkflowField from './remediation-instruction-steps-workflow-field.vue';
 
 export default {
-  $_veeValidate: {
-    validator: 'new',
-  },
+  inject: ['$validator'],
   components: { RemediationInstructionStepsWorkflowField },
   mixins: [formMixin],
   model: {
