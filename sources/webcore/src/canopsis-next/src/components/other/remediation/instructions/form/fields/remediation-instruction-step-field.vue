@@ -1,22 +1,22 @@
 <template lang="pug">
   v-layout(row)
     v-flex(xs11)
-      v-layout
-        v-text-field(
-          v-field="step.name",
-          v-validate="'required'",
-          :label="$t('common.name')",
-          :error-messages="nameErrorMessages",
-          :name="name",
-          box
-        )
-      v-layout(v-if="timeToComplete > 0")
-        v-text-field(
-          :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
-          :label="$t('remediationInstructions.timeToComplete')",
-          disabled,
-          box
-        )
+      v-layout(row)
+        v-flex(xs8)
+          v-text-field(
+            v-field="step.name",
+            v-validate="'required'",
+            :label="$t('common.name')",
+            :error-messages="nameErrorMessages",
+            :name="name",
+            box
+          )
+        v-flex.pl-2(xs4)
+          v-text-field.step-time-complete-unit(
+            :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
+            :label="$t('remediationInstructions.timeToComplete')",
+            readonly
+          )
       v-layout
         remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
     v-flex.mt-3(xs1)
@@ -69,3 +69,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .step-time-complete-unit .v-input__slot {
+    &:before, &:after {
+      content: none !important;
+    }
+  }
+</style>
