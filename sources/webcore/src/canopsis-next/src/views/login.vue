@@ -110,6 +110,7 @@ export default {
     await this.fetchLoginInfos();
 
     this.setTitle();
+    this.setPopupTimeout();
   },
   methods: {
     async submit() {

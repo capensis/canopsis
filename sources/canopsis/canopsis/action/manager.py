@@ -30,6 +30,7 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
 from canopsis.models.action import Action
 import durationpy
+import time
 
 
 class ActionManager(object):
@@ -109,8 +110,15 @@ class ActionManager(object):
         :rtype: bool
         """
         query = {Action._ID: id_}
-        resp = self.collection.update(query=query, document=action)
+        print action
+        if 'creation_date' not in action:
+            current_action = self.collection.find_one({'_id': id_})
+            if 'creation_date' in current_action:
+                action['creation_date'] = current_action['creation_date']
+        now = int(time.time())
+        action['last_update_date'] = now
 
+        resp = self.collection.update(query=query, document=action)
         return self.collection.is_successfull(resp)
 
     def delete_id(self, id_):

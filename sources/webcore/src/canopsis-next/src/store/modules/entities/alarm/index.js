@@ -99,7 +99,7 @@ export default {
       });
     },
 
-    async fetchItem({ dispatch }, { id, params }) {
+    async fetchItem({ dispatch }, { id, params, dataPreparer = d => d.data[0].alarms }) {
       try {
         const paramsWithItemId = merge(params, { filter: { _id: id } });
 
@@ -107,7 +107,7 @@ export default {
           route: API_ROUTES.alarmList,
           schema: [alarmSchema],
           params: paramsWithItemId,
-          dataPreparer: d => d.data[0].alarms,
+          dataPreparer,
         }, { root: true });
       } catch (err) {
         console.error(err);

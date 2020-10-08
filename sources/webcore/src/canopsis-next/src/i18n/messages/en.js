@@ -6,7 +6,8 @@ import {
   STATS_CRITICITY,
   STATS_QUICK_RANGES,
   TOURS,
-  BROADCAST_MESSAGES_STATUSES, USER_RIGHTS_PREFIXES,
+  BROADCAST_MESSAGES_STATUSES,
+  USER_RIGHTS_PREFIXES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -113,6 +114,12 @@ export default {
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    or: 'Or',
+    and: 'And',
+    priority: 'Priority',
+    created: 'Creation date',
+    updated: 'Last update date',
+    correlation: 'Correlation',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -233,6 +240,8 @@ export default {
         variablesHelp: 'List of available variables',
         history: 'History',
         groupRequest: 'Suggest group request for meta alarm',
+        manualMetaAlarmGroup: 'Manual meta alarm management',
+        manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
       },
       iconsTitles: {
@@ -261,21 +270,22 @@ export default {
         stateDecreased: 'State decreases',
       },
       types: {
-        ack: 'Ack',
-        ackremove: 'Ack removed',
-        stateinc: 'State increased',
-        statedec: 'State decreased',
-        statusinc: 'Status increased',
-        statusdec: 'Status decreased',
-        assocticket: 'Ticket associated',
-        declareticket: 'Ticket declared',
-        snooze: 'Alarm snoozed',
-        unsooze: 'Alarm unsnoozed',
-        changestate: 'Change and lock severity',
-        pbhenter: 'Periodic behavior enabled',
-        pbhleave: 'Periodic behavior disabled',
-        cancel: 'Alarm cancelled',
-        comment: 'Alarm commented',
+        [EVENT_ENTITY_TYPES.ack]: 'Ack',
+        [EVENT_ENTITY_TYPES.ackRemove]: 'Ack removed',
+        [EVENT_ENTITY_TYPES.stateinc]: 'State increased',
+        [EVENT_ENTITY_TYPES.statedec]: 'State decreased',
+        [EVENT_ENTITY_TYPES.statusinc]: 'Status increased',
+        [EVENT_ENTITY_TYPES.statusdec]: 'Status decreased',
+        [EVENT_ENTITY_TYPES.assocTicket]: 'Ticket associated',
+        [EVENT_ENTITY_TYPES.declareTicket]: 'Ticket declared',
+        [EVENT_ENTITY_TYPES.snooze]: 'Alarm snoozed',
+        [EVENT_ENTITY_TYPES.unsooze]: 'Alarm unsnoozed',
+        [EVENT_ENTITY_TYPES.changeState]: 'Change and lock severity',
+        [EVENT_ENTITY_TYPES.pbhenter]: 'Periodic behavior enabled',
+        [EVENT_ENTITY_TYPES.pbhleave]: 'Periodic behavior disabled',
+        [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
+        [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
+        [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
       },
     },
     tabs: {
@@ -609,6 +619,9 @@ export default {
     },
     createGroupRequestEvent: {
       title: 'Suggest group request for meta alarm',
+    },
+    createGroupEvent: {
+      title: 'Create meta alarm',
     },
     createChangeStateEvent: {
       title: 'Change severity',
@@ -1167,6 +1180,14 @@ export default {
       groups: 'Groups',
       result: 'Result',
       manageTabs: 'Manage tabs',
+    },
+    createManualMetaAlarm: {
+      title: 'Manual meta alarm management',
+      noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
+      fields: {
+        metaAlarm: 'Manual meta alarm',
+        output: 'Note',
+      },
     },
   },
   tables: {

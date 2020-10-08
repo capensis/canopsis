@@ -87,10 +87,16 @@ export default {
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
         {
-          type: alarmsListActionsTypes.group,
+          type: alarmsListActionsTypes.groupRequest,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
           title: this.$t('alarmList.actions.titles.groupRequest'),
           method: this.showCreateGroupRequestEventModal,
+        },
+        {
+          type: alarmsListActionsTypes.manualMetaAlarmGroup,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
+          title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
+          method: this.showCreateManualMetaAlarmModal,
         },
       ];
     },
@@ -149,6 +155,17 @@ export default {
 
           title: this.$t('modals.createGroupRequestEvent.title'),
           eventType: EVENT_ENTITY_TYPES.groupRequest,
+        },
+      });
+    },
+
+    showCreateManualMetaAlarmModal() {
+      this.$modals.show({
+        name: MODALS.createManualMetaAlarm,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createManualMetaAlarm.title'),
         },
       });
     },

@@ -1,8 +1,11 @@
 import { createNamespacedHelpers } from 'vuex';
 
+import queryMixin from '@/mixins/query';
+
 const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
+  mixins: [queryMixin],
   props: {
     hideGroups: {
       type: Boolean,
@@ -15,12 +18,14 @@ export default {
     }),
 
     fetchAlarmItemWithGroupsAndSteps(alarm) {
+      const { correlation = false } = this.getQueryById(this.widget._id);
       const params = {
+        correlation,
+
         with_steps: true,
-        correlation: this.widget.parameters.isCorrelationEnabled || false,
       };
 
-      if (!this.hideGroups) {
+      if (!this.hideGroups && correlation) {
         if (alarm.causes) {
           params.with_causes = true;
         }
@@ -47,6 +52,20 @@ export default {
       return this.fetchAlarmItem({
         id: alarm._id,
         params: { ...defaultParams, ...params },
+        dataPreparer: (d) => {
+          const { alarms: fetchedAlarms = [] } = d.data[0];
+          const [firstFetchedAlarm] = fetchedAlarms;
+
+          if (alarm.filtered && firstFetchedAlarm) {
+            return [{
+              ...firstFetchedAlarm,
+
+              filtered: alarm.filtered,
+            }];
+          }
+
+          return fetchedAlarms;
+        },
       });
     },
   },

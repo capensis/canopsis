@@ -104,8 +104,6 @@ class BasePBehavior(dict):
         return self.__dict__
 
 
-
-
 class PBehavior(BasePBehavior):
     """
     PBehavior class.
@@ -438,12 +436,12 @@ class PBehaviorManager(object):
                     for i in range(5):
                         try:
                             now = int(time() * 1000)
-                            pb_kwargs[PBehavior.ID] = 'EXP{}-{}'.format(now, pbh_id)
+                            current_pbh[PBehavior.ID] = 'EXP{}-{}'.format(now, pbh_id)
                         except:
                             sleep(0.5)
                             pass
-                    pb_kwargs[PBehavior.ENABLED] = False
-                    expired_data = PBehavior(**pb_kwargs)
+                    current_pbh[PBehavior.ENABLED] = False
+                    expired_data = PBehavior(**current_pbh)
                     self.collection.insert(expired_data.to_dict())
                     result = self.collection.insert(data.to_dict())
                 else:

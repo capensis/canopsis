@@ -10,22 +10,6 @@ Jusqu'à Canopsis 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhook
 
 La commande `engine-axe -help` liste toutes les options acceptées par le moteur.
 
-Les options acceptées par la dernière version de Canopsis sont les suivantes :
-
-```
-  -d	debug
-  -featureStatEvents
-      Send statistic events
-  -ignoreDefaultTomlConfig
-      load toml file values into database
-  -printEventOnError
-      Print event on processing error
-  -publishQueue string
-      Publish event to this queue. (default "Engine_watcher")
-  -version
-      version infos
-```
-
 ### Multi-instanciation
 
 !!! note
@@ -43,22 +27,6 @@ Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de co
 
 À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet au moteur de ne pas prendre en compte les paramètres qui se trouvent dans son fichier de configuration lors du démarrage. Il se basera alors uniquement sur les données présentes en base. Si cette option n'est pas précisée, `engine-axe` synchronisera les informations présentes en base avec celles contenues dans le fichier lors de son lancement.
 
-Le contenu par défaut de ce fichier de configuration est le suivant :
-
-```ini
-[global]
-PrefetchCount = 10000
-PrefetchSize = 0
-
-[alarm]
-FlappingFreqLimit = 0
-FlappingInterval = 0
-StealthyInterval = 0
-BaggotTime = "60s"
-EnableLastEventDate = false
-CancelAutosolveDelay = "1h"
-```
-
 ### Option `EnableLastEventDate`
 
 !!! attention
@@ -75,6 +43,41 @@ Pour l'activer, passez le paramètre `EnableLastEventDate` du fichier de configu
 Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, elle prend le statut annulée et reste pendant 1h dans le bac des alarmes en cours. Passé le délai d'une heure, elle change de statut pour passer en résolue et bascule dans le bac des alarmes résolues tout en gardant le dernier niveau de criticité connu.
 
 Vous pouvez agir sur ce délai en modifiant le paramètre `CancelAutosolveDelay`.
+
+### Option `DisplayNameScheme`
+
+!!! note
+    Cette fonctionnalité est disponible à partir de Canopsis 3.45.0.
+
+Vous avez la possibilité de personnaliser le schéma de construction de l'attribut `display_name` d'une alarme par l'intermédiaire de l'option `DisplayNameScheme`.
+
+L'attribut `display_name` d'une alarme permet d'identifier une alarme par une chaîne plus simple que son identifiant technique.
+
+!!! attention
+    Canopsis n'apporte pas la garantie que cet identifiant sera unique.
+    Il vous appartient d'utiliser un schéma qui offre une probabilité suffisamment faible par rapport au nombre d'alarmes que vous allez traiter.
+
+Par défaut, le schéma utilisé est le suivant : "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
+
+Vous pouvez modifier cette valeur en utilisant une fonction du tableau ci-après (Une seule fonction à ce jour)
+
+| Fonction | Description | Syntaxe
+| ------ | ------ | ---- | 
+| `rand_string` | Lettre ou chiffre aléatoire | `rand_string ${longueur}`
+
+Exemples : 
+
+```ini
+[alarm]
+...
+DisplayNameScheme = "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}"
+```
+
+```ini
+[alarm]
+...
+DisplayNameScheme = "{{ rand_string 4 }}_{{ rand_string 3 }}_{{ rand_string 2 }}"
+```
 
 ## Fonctionnement du moteur
 

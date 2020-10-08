@@ -61,7 +61,6 @@ export function generateWidgetByType(type) {
     isAckNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
-    isCorrelationEnabled: false,
     fastAckOutput: {
       enabled: false,
       value: 'auto ack',
@@ -286,6 +285,7 @@ export function generateWidgetByType(type) {
           left: 1,
         },
         heightFactor: 6,
+        isCorrelationEnabled: false,
         levels: {
           counter: AVAILABLE_COUNTERS.total,
           colors: {
@@ -504,6 +504,7 @@ export function generateAction() {
     enabled: true,
     delay: {},
     hook: defaultHook,
+    priority: 0,
   };
 
   // Default 'snooze' action parameters
@@ -618,6 +619,15 @@ export function isResolvedAlarm(alarm) {
   return [ENTITIES_STATUSES.off, ENTITIES_STATUSES.cancelled].includes(alarm.v.status.val);
 }
 
+/**
+ * Checks if alarm have critical state
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export function isWarningAlarmState(alarm) {
+  return ENTITIES_STATES.ok !== alarm.v.state.val;
+}
 
 /**
  * Function return new name if name is not uniq

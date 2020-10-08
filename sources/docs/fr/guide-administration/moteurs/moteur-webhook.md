@@ -3,6 +3,8 @@
 !!! info
     Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
 
+Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
+
 Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `engine-axe` (en version CAT).
 
 Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
@@ -13,29 +15,15 @@ Depuis la `3.39.0`, le webhook peut être activé ou désactivé avec l'attribut
 
 Depuis la `3.41.0`, les valeurs des champs `declare_ticket` peuvent être définies sous forme d'expressions régulières.
 
-Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
-
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
 Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
 
 ## Utilisation
 
-Le moteur doit être placé en sortie du moteur [`engine-dynamic-infos`](moteur-dynamic-infos).
+### Options du moteur
 
-Pour cela, il est nécessaire de lancer le moteur `engine-dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `engine-webhook`.
-
-### Options de l'engine-webhook
-
-```
--configPath string
-    Webhook engine configuration file path. (default "./webhook.conf.toml")
--d	debug
--publishQueue string
-    Publish event to this queue. (default "Engine_action")
--version
-    version infos
-```
+La commande `engine-webhook -help` liste toutes les options acceptées par le moteur.
 
 ## Fonctionnement
 
@@ -144,12 +132,13 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 Ces paramètres sont positionnés dans la configuration de chaque webhook.  
 Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
 
-````
-cat webhook.conf
+Exemple de fichier `webhook.conf` :
+
+```ini
 count=5
 delay=1
 unit="m"
-````
+```
 
 ### Données externes
 

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { pickBy, compact } from 'lodash';
+import { get, pickBy, compact } from 'lodash';
 
 import {
   MODALS,
@@ -12,6 +12,7 @@ import {
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
   WIDGETS_ACTIONS_TYPES,
+  META_ALARMS_RULE_TYPES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -48,16 +49,20 @@ export default {
       type: Object,
       required: true,
     },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
     isResolvedAlarm: {
       type: Boolean,
       default: false,
     },
   },
-  computed: {
-    actionsMap() {
-      const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
+  data() {
+    const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-      return {
+    return {
+      actionsMap: {
         ack: {
           type: alarmsListActionsTypes.ack,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
@@ -136,9 +141,19 @@ export default {
           title: this.$t('alarmList.actions.titles.comment'),
           method: this.showCreateCommentModal,
         },
-      };
+        manualMetaAlarmUngroup: {
+          type: alarmsListActionsTypes.manualMetaAlarmUngroup,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmUngroup].icon,
+          title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
+          method: this.showManualMetaAlarmUngroupModal,
+        },
+      },
+    };
+  },
+  computed: {
+    isParentAlarmManualMetaAlarm() {
+      return get(this.parentAlarm, 'rule.type') === META_ALARMS_RULE_TYPES.manualgroup;
     },
-
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
@@ -172,6 +187,10 @@ export default {
       }
 
       actions.push(filteredActionsMap.variablesHelp);
+
+      if (this.isParentAlarmManualMetaAlarm) {
+        actions.push(filteredActionsMap.manualMetaAlarmUngroup);
+      }
 
       if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
         if (this.item.v.ack) {

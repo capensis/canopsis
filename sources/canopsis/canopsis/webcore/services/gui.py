@@ -62,5 +62,13 @@ def exports(ws):
     @ws.application.get('/:lang/index.html', skip=skip_login)
     @ws.application.get('/:lang/:key/', skip=skip_login)
     @ws.application.get('/:lang/:key/index.html', skip=skip_login)
-    def uiv2(lang='en', **kwargs):
+    def uiv2(lang='en', key=None, **kwargs):
+        session = request.environ.get('beaker.session')
+
+        # Try to authenticate user
+        key = key or request.params.get('authkey', default=None)
+
+        if key:
+            auth_module.autoLogin(key)
+
         redirect('/{}{}'.format(lang, ws.config.get('ui', {}).get('url', '')))

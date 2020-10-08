@@ -20,7 +20,7 @@ Par défaut, ces moteurs sont open-source. Les moteurs marqués « CAT » ne so
 | [`engine-che-cat`](moteur-che.md#activation-des-plugins-denrichissement-externe-datasource) | Variante d'`engine-che`, ajoutant des plugins d'enrichissement externe | ✅ |
 | [`engine-correlation`](moteur-correlation.md) | Applique et gère les règles de corrélation | ✅ |
 | [`engine-dynamic-infos`](moteur-dynamic-infos.md)| Enrichit les alarmes | ✅ |
-| `engine-fifo` | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
+| [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
 | [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille des entités, et lève des alarmes en cas d'absence d'information | |
 | [`engine-watcher`](moteur-watcher.md)| Calcule les états des observateurs | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
@@ -35,6 +35,7 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 | `datametrie` | Gère le connecteur datametrie | ✅ |
 | [`pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
 | [`event_filter` (Python)](moteur-event_filter.md) | Applique des règles de filtrage. Ne doit pas être confondu avec le nouvel `event-filter` Go, contenu dans `engine-che` | |
+| [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
 | `metric` | Stocke les données de métrologie des évènements | |
 | `scheduler` | Coordonne le travail destiné aux différents moteurs `task_*` | |
 | [`snmp`](moteur-snmp.md) | Gère les traps SNMP | ✅ |
@@ -65,8 +66,14 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `task_linklist` | Utilisation du [linkbuilder](../linkbuilder/index.md) |
 | `task_mail` | Utilisation d'un [Webhook](moteur-webhook.md) (CAT) vers un service d'envoi d'e-mails |
 | `ticket` | ? |
-| `watcher` | `engine-watcher` | 
+| `watcher` | `engine-watcher` |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
+
+## Variables d'environnement liées aux moteurs
+
+Certains comportements des moteurs de Canopsis peuvent être ajustés à l'aide de variables.
+
+Consultez la [liste des variables d'environnement de Canopsis](../administration-avancee/variables-environnement.md) pour en savoir plus.
 
 ## Enchaînement des moteurs
 
