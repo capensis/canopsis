@@ -18,6 +18,6 @@ export default {
 
 <style lang="scss">
   .handler {
-    width: 20px !important;
+    width: 18px !important;
   }
 </style>

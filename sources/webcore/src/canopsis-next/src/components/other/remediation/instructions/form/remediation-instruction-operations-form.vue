@@ -7,7 +7,7 @@
         remediation-instruction-operation-field(v-field="operations[index]", @remove="removeOperation(index)")
     v-layout(row)
       div
-        v-btn.ml-0.accent.darken-1(@click="addOperation") {{ $t('remediationInstructions.addOperation') }}
+        v-btn.ml-0(outline, color="primary", @click="addOperation") {{ $t('remediationInstructions.addOperation') }}
         div.error--text(v-show="errors.has(fieldName)") {{ $t('remediationInstructions.errors.operationRequired') }}
 </template>
 
