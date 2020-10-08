@@ -1,33 +1,14 @@
 <template lang="pug">
   v-layout.mt-2(column)
-    v-layout(v-if="hasSavedOperations")
-      v-flex(xs10)
-        v-layout(justify-end)
-          v-btn.mx-0.secondary(
-            v-if="allCollapsed",
-            @click="expandAllItems"
-          ) {{ $t('remediationInstructions.expandAll') }}
-          v-btn.mx-0.primary(
-            v-else,
-            @click="collapseAllItems"
-          ) {{ $t('remediationInstructions.hideAll') }}
-    v-layout(v-for="(operation, index) in operations", :key="operation.key")
+    v-layout.py-1(v-for="(operation, index) in operations", :key="operation.key")
       v-flex.mt-3(xs1)
-        draggable-step-number
-          span {{ stepNumber }}
-          span {{ getCharByIndex(index) }}
+        draggable-step-number(drag-class="operation-drag-handler") {{ getStepLabel(index) }}
       v-flex(xs11)
-        remediation-instruction-operation-field(
-          v-field="operations[index]",
-          :expanded="isExpandedOperation(operation)",
-          @expand="expandHandler(operation)",
-          @remove="removeOperation(index)"
-        )
-    v-layout(v-show="!hideActions", row)
+        remediation-instruction-operation-field(v-field="operations[index]", @remove="removeOperation(index)")
+    v-layout(row)
       div
-        v-btn.ml-0.accent.darken-1(@click="addOperation") {{ $t('remediationInstructions.addOperation') }}
+        v-btn.ml-0(outline, color="primary", @click="addOperation") {{ $t('remediationInstructions.addOperation') }}
         div.error--text(v-show="errors.has(fieldName)") {{ $t('remediationInstructions.errors.operationRequired') }}
-      v-btn.accent.darken-1(v-if="hasOperations", @click="addEndpoint") {{ $t('remediationInstructions.addEndpoint') }}
 </template>
 
 <script>
@@ -65,35 +46,15 @@ export default {
       type: [String, Number],
       default: '',
     },
-    hideActions: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
-      collapsedItems: [],
+      isDragging: false,
     };
   },
   computed: {
     fieldName() {
       return `operations${this.step.key ? this.step.key : ''}`;
-    },
-
-    savedOperation() {
-      return this.operations.filter(operation => operation.saved);
-    },
-
-    hasOperations() {
-      return !!this.operations.length;
-    },
-
-    hasSavedOperations() {
-      return !!this.savedOperation.length;
-    },
-
-    allCollapsed() {
-      return this.savedOperation.length === this.collapsedItems.length;
     },
   },
   watch: {
@@ -109,7 +70,14 @@ export default {
       context: () => this,
     });
   },
+  beforeDestroy() {
+    this.$validator.detach(this.fieldName);
+  },
   methods: {
+    getStepLabel(index) {
+      return `${this.stepNumber}${this.getCharByIndex(index)}`;
+    },
+
     getCharByIndex(index) {
       return String.fromCharCode(FIRST_LETTER_ALPHABET_CHAR_CODE + index);
     },
@@ -127,34 +95,6 @@ export default {
           },
         },
       });
-    },
-
-    addEndpoint() {},
-
-    isExpandedOperation(operation) {
-      return !this.collapsedItems.includes(operation.key);
-    },
-
-    expandHandler(operation) {
-      if (this.isExpandedOperation(operation)) {
-        this.collapsedItems.push(operation.key);
-      } else {
-        this.collapsedItems = this.collapsedItems.filter(id => id !== operation.key);
-      }
-    },
-
-    collapseAllItems() {
-      this.collapsedItems = this.operations.reduce((acc, operation) => {
-        if (operation.saved) {
-          acc.push(operation.key);
-        }
-
-        return acc;
-      }, []);
-    },
-
-    expandAllItems() {
-      this.collapsedItems = [];
     },
   },
 };

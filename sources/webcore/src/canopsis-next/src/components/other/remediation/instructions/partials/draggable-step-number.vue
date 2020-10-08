@@ -1,6 +1,6 @@
-<template lang="pug" functional>
-  v-layout(align-center, justify-end)
-    v-icon.handler.draggable(v-show="props.draggable") drag_indicator
+<template lang="pug">
+  v-layout(align-center)
+    v-icon.handler.draggable(:class="dragClass") drag_indicator
     v-avatar.white--text(color="primary", size="32")
       slot
 </template>
@@ -8,10 +8,16 @@
 <script>
 export default {
   props: {
-    draggable: {
-      type: Boolean,
-      default: false,
+    dragClass: {
+      type: String,
+      default: '',
     },
   },
 };
 </script>
+
+<style lang="scss">
+  .handler {
+    width: 18px !important;
+  }
+</style>

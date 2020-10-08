@@ -21,7 +21,6 @@ const remediationInstructionStepOperationsToForm = operations => operations.map(
     ),
     unit: operation.time_to_complete_unit || TIME_UNITS.second,
   },
-  saved: true,
   key: uuid(),
 }));
 
@@ -71,7 +70,7 @@ const formOperationsToRemediationInstructionOperation = operations => operations
   const { interval, unit } = operation.time_to_complete;
 
   return ({
-    ...omit(operation, ['key', 'saved']),
+    ...omit(operation, ['key']),
     time_to_complete: {
       seconds: getSecondsByUnit(interval, unit),
       unit,
