@@ -26,7 +26,7 @@
                 :isHTMLEnabled="isHTMLEnabled",
                 :hideGroups="hideGroups"
               )
-    template(v-if="isCorrelationEnabled && alarm.causes && !hideGroups")
+    template(v-if="alarm.causes && !hideGroups")
       v-tab {{ $t('alarmList.tabs.alarmsCauses') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -40,7 +40,7 @@
                   :alarm="alarm",
                   :isEditingMode="isEditingMode"
                 )
-    template(v-if="isCorrelationEnabled && alarm.consequences && !hideGroups")
+    template(v-if="alarm.consequences && !hideGroups")
       v-tab {{ $t('alarmList.tabs.alarmsConsequences') }}
       v-tab-item
         v-layout.pa-3.secondary.lighten-2(row)
@@ -130,9 +130,6 @@ export default {
     },
     isHTMLEnabled() {
       return this.widget.parameters.isHtmlEnabledOnTimeLine;
-    },
-    isCorrelationEnabled() {
-      return this.widget.parameters.isCorrelationEnabled;
     },
   },
   watch: {

@@ -64,6 +64,7 @@
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
       :isTourEnabled="isTourEnabled",
+      :hideGroups="!query.correlation",
       :hasColumns="hasColumns",
       :columns="columns",
       selectable,
