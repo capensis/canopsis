@@ -1,28 +1,37 @@
 <template lang="pug">
   v-layout(row)
-    v-flex(xs11)
-      v-layout(row)
-        v-flex(xs8)
-          v-text-field(
-            v-field="step.name",
-            v-validate="'required'",
-            :label="$t('common.name')",
-            :error-messages="nameErrorMessages",
-            :name="name",
-            box
-          )
-        v-flex.pl-2(xs4)
-          v-text-field.step-time-complete-unit(
-            :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
-            :label="$t('remediationInstructions.timeToComplete')",
-            readonly
-          )
-      v-layout
-        remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
-    v-flex.mt-3(xs1)
-      v-layout(justify-center)
-        v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
-          v-icon(color="error") delete
+    v-layout
+      expand-button.step-expand(v-model="expanded")
+      v-layout(column)
+        v-layout(row)
+          v-flex(xs8)
+            v-text-field(
+              v-field="step.name",
+              v-validate="'required'",
+              :label="$t('common.name')",
+              :error-messages="nameErrorMessages",
+              :name="name",
+              box
+            )
+          v-flex.pl-2(xs4)
+            v-text-field.step-time-complete-unit(
+              :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
+              :label="$t('remediationInstructions.timeToComplete')",
+              readonly
+            )
+          v-flex.mt-3(xs1)
+            v-layout(justify-center)
+              v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
+                v-icon(color="error") delete
+        v-expand-transition(mode="out-in")
+          v-layout(v-show="expanded", column)
+            v-layout
+              remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
+            remediation-instruction-operations-form(
+              v-field="step.operations",
+              :step="step",
+              :stepNumber="index + 1"
+            )
 </template>
 
 <script>
@@ -30,11 +39,19 @@ import formMixin from '@/mixins/form';
 
 import { getUnitValueFromOtherUnit } from '@/helpers/time';
 
+import ExpandButton from '@/components/other/buttons/expand-button.vue';
+
+import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';
+
 import RemediationInstructionStepsWorkflowField from './remediation-instruction-steps-workflow-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { RemediationInstructionStepsWorkflowField },
+  components: {
+    ExpandButton,
+    RemediationInstructionStepsWorkflowField,
+    RemediationInstructionOperationsForm,
+  },
   mixins: [formMixin],
   model: {
     prop: 'step',
@@ -45,6 +62,15 @@ export default {
       type: Object,
       required: true,
     },
+    index: {
+      type: Number,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      expanded: true,
+    };
   },
   computed: {
     fieldSuffix() {
@@ -71,6 +97,11 @@ export default {
 </script>
 
 <style lang="scss">
+  .step-expand {
+    margin: 24px 2px 0 2px !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
   .step-time-complete-unit .v-input__slot {
     &:before, &:after {
       content: none !important;

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(align-center)
+  v-layout(align-center, justify-space-between)
     v-icon.handler.draggable(:class="dragClass") drag_indicator
     v-avatar.white--text(color="primary", size="32")
       slot
