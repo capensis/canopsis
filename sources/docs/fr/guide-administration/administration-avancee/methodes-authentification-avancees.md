@@ -11,19 +11,6 @@ Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs sur n'importe quel annuaire LDAP, tant que celui-ci respecte la [RFC 4510](https://tools.ietf.org/html/rfc4510) et ses déclinaisons.
 
-### Activation de LDAP
-
-Pour activer l'authentification LDAP, le service doit être activé dans la configuration du serveur web.
-
-Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`, où `canopsis.auth.ldap` doit être ajouté aux mécanismes d'authentification.
-
-```ini
-[auth]
-providers = canopsis.auth.authkey,canopsis.auth.ldap
-```
-
-Un redémarrage du serveur web est nécessaire.
-
 ### Configuration de LDAP
 
 La configuration de l'authentification se fait au moyen d'une requête sur l’API. Vous devez préparer un fichier de configuration et l'envoyer sur l'API.
@@ -92,6 +79,19 @@ Le résultat renvoyé doit être de type :
 {"total": 1, "data": [{"..."}], "success": true}
 ```
 
+Enfin, vous devez vous assurer que le fichier `/opt/canopsis/etc/webserver.conf` contienne bien `canopsis.auth.ldap` dans la liste des mécanismes d'authentification :
+
+```ini
+[auth]
+providers = canopsis.auth.authkey,canopsis.auth.ldap
+```
+
+Vous devez ensuite **obligatoirement** redémarrer le serveur web Gunicorn (ou le conteneur `webserver` en Docker) :
+
+```sh
+systemctl restart canopsis-webserver
+```
+
 ### Utilisation de LDAP
 
 À ce stade, vous êtes en mesure de vous authentifier sur l'interface de Canopsis. Le profil d'affectation sera celui spécifié dans la configuration.
@@ -103,19 +103,6 @@ L'authentification CAS est fonctionnelle en UIv3 (uniquement) depuis **Canopsis�
 Sa configuration par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs via WebSSO.
-
-### Activation de CAS
-
-Pour activer l'authentification CAS, le service doit être activé dans la configuration du serveur web.
-
-Le fichier à modifier est `/opt/canopsis/etc/webserver.conf`, où `canopsis.auth.cas` doit être ajouté aux mécanismes d'authentification.
-
-```ini
-[auth]
-providers = canopsis.auth.authkey,canopsis.auth.cas
-```
-
-Un redémarrage du serveur web est nécessaire.
 
 ### Configuration de CAS
 
@@ -155,6 +142,19 @@ Le résultat renvoyé doit être de type :
 
 ```json
 {"total": 1, "data": [{"..."}], "success": true}
+```
+
+Enfin, vous devez vous assurer que le fichier `/opt/canopsis/etc/webserver.conf` contienne bien `canopsis.auth.cas` dans la liste des mécanismes d'authentification :
+
+```ini
+[auth]
+providers = canopsis.auth.authkey,canopsis.auth.cas
+```
+
+Vous devez ensuite **obligatoirement** redémarrer le serveur web Gunicorn (ou le conteneur `webserver` en Docker) :
+
+```sh
+systemctl restart canopsis-webserver
 ```
 
 ### Utilisation de CAS
