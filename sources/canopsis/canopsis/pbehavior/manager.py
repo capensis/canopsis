@@ -441,8 +441,7 @@ class PBehaviorManager(object):
                             sleep(0.5)
                             pass
                     current_pbh[PBehavior.ENABLED] = False
-                    expired_data = PBehavior(**current_pbh)
-                    self.collection.insert(expired_data.to_dict())
+                    self.collection.insert(current_pbh)
                     result = self.collection.insert(data.to_dict())
                 else:
                     raise ValueError("Trying to insert PBehavior with already existing _id")
