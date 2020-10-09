@@ -910,9 +910,9 @@ export default {
       onFailure: 'En cas d\'échec',
       tooltips: {
         addValueRuleField: 'Ajouter une règle',
-        editValueRuleField: 'Editer la règle',
+        editValueRuleField: 'Éditer la règle',
         addObjectRuleField: 'Ajouter un groupe',
-        editObjectRuleField: 'Editer le groupe',
+        editObjectRuleField: 'Éditer le groupe',
         removeRuleField: 'Supprimer le groupe/la règle',
       },
     },
@@ -1124,7 +1124,7 @@ export default {
         title: 'Créer un modèle d\'informations dynamiques',
       },
       edit: {
-        title: 'Editer un modèle d\'informations dynamiques',
+        title: 'Éditer un modèle d\'informations dynamiques',
       },
       fields: {
         names: 'Attributs',
