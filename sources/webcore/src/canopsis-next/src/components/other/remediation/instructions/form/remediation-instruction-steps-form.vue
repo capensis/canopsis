@@ -1,32 +1,23 @@
 <template lang="pug">
   v-layout(column)
-    draggable(
-      v-field="steps",
-      :options="draggableOptions",
-      :class="{ 'grey lighten-2': isDragging }",
-      @start="startDragging",
-      @end="endDragging"
-    )
-      v-layout.py-1(v-for="(step, index) in steps", :key="step.key", row, wrap)
-        v-flex.mt-3(xs1)
-          draggable-step-number(
-            drag-class="step-drag-handler",
-            :draggable="allSaved"
-          ) {{ index + 1 }}
-        v-flex.pl-3(xs11)
-          remediation-instruction-step-field(
-            v-field="steps[index]",
-            :hide-actions="!allSaved",
-            @remove="removeStep(index)"
-          )
-          remediation-instruction-operations-form(
-            v-field="steps[index].operations",
-            :step="step",
-            :hide-actions="!allSaved",
-            :stepNumber="index + 1"
-          )
+    draggable(v-field="steps", :options="draggableOptions")
+      v-card.my-2(v-for="(step, index) in steps", :key="step.key")
+        v-card-text
+          v-layout(row, wrap)
+            v-flex.mt-3(xs1)
+              draggable-step-number(drag-class="step-drag-handler") {{ index + 1 }}
+            v-flex(xs11)
+              remediation-instruction-step-field(
+                v-field="steps[index]",
+                :index="index",
+                @remove="removeStep(index)"
+              )
     v-layout
-      v-btn.ml-0.primary(v-if="allSaved", @click="addStep") {{ $t('remediationInstructions.addStep') }}
+      v-btn.ml-0(
+        outline,
+        color="primary",
+        @click="addStep"
+      ) {{ $t('remediationInstructions.addStep') }}
 </template>
 
 <script>
@@ -42,14 +33,12 @@ import formArrayMixin from '@/mixins/form/array';
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
-import RemediationInstructionOperationsForm from './remediation-instruction-operations-form.vue';
 
 export default {
   components: {
     Draggable,
     DraggableStepNumber,
     RemediationInstructionStepField,
-    RemediationInstructionOperationsForm,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],
@@ -69,18 +58,6 @@ export default {
     };
   },
   computed: {
-    allSaved() {
-      return this.everyStepsSaved && this.everyOperationsSaved;
-    },
-
-    everyStepsSaved() {
-      return this.steps.every(step => step.saved);
-    },
-
-    everyOperationsSaved() {
-      return this.steps.every(step => step.operations.every(operation => operation.saved));
-    },
-
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
@@ -95,14 +72,6 @@ export default {
   methods: {
     addStep() {
       this.addItemIntoArray(generateRemediationInstructionStep());
-    },
-
-    startDragging() {
-      this.isDragging = true;
-    },
-
-    endDragging() {
-      this.isDragging = false;
     },
 
     removeStep(index) {

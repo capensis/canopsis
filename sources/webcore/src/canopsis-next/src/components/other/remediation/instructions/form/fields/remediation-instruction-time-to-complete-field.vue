@@ -5,10 +5,9 @@
         v-field.number="value.interval",
         v-validate="'required|min_value:1'",
         :label="$t('remediationInstructions.timeToComplete')",
-        :error-messages="errors.collect('interval')",
-        :disabled="disabled",
+        :error-messages="timeToCompleteErrors",
         :min="0",
-        name="interval",
+        :name="intervalFieldName",
         type="number",
         box
       )
@@ -17,8 +16,7 @@
         v-field="value.unit",
         v-validate="'required'",
         :items="availableUnits",
-        :disabled="disabled",
-        name="unit",
+        :name="unitFieldName",
         hide-details
       )
 </template>
@@ -39,12 +37,25 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    disabled: {
-      type: Boolean,
-      default: false,
+    name: {
+      type: String,
+      default: '',
     },
   },
   computed: {
+    intervalFieldName() {
+      return `${this.name}.interval`;
+    },
+
+    unitFieldName() {
+      return `${this.name}.unit`;
+    },
+
+    timeToCompleteErrors() {
+      return this.errors.collect(this.intervalFieldName)
+        .map(error => error.replace(this.intervalFieldName, this.$t('remediationInstructions.timeToComplete')));
+    },
+
     availableUnits() {
       return Object.values(omit(AVAILABLE_TIME_UNITS, ['year'])).map(({ value, text }) => ({
         value,

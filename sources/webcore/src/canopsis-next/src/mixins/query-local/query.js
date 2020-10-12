@@ -51,7 +51,7 @@ export default {
       page,
       search,
       rowsPerPage,
-      sortBy,
+      sortKey,
       sortDir,
     } = this.query) {
       const query = {};
@@ -59,8 +59,8 @@ export default {
       query.limit = rowsPerPage;
       query.page = page;
 
-      if (sortBy) {
-        query.sort_key = sortBy;
+      if (sortKey) {
+        query.sort_key = sortKey;
         query.sort_dir = sortDir;
       }
 

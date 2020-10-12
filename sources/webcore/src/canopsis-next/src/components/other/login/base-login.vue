@@ -19,7 +19,8 @@
               v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                 span {{ $t('login.errors.incorrectEmailOrPassword') }}
           v-divider
-          v-layout(v-if="footer", v-html="footer", data-test="loginFormFooter")
+          v-layout(v-if="footer", data-test="loginFormFooter")
+            div(v-html="footer")
 </template>
 
 <script>
