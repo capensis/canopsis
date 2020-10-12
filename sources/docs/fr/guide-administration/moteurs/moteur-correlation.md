@@ -6,6 +6,9 @@
 !!! note
     Le type `valuegroup` est disponible à partir de Canopsis 3.43.0.
 
+!!! note
+    L'attribut `output_template` est disponible à partir de Canopsis 3.47.0.
+
 
 Le moteur `engine-correlation` permet de créer des méta alarmes à partir de `règles de gestion`. Ces règles peuvent être ajoutées via l'[API méta alarmes](../../guide-developpement/api/api-v2-meta-alarm-rule.md).
 
@@ -61,6 +64,8 @@ Un groupement d'alarmes se caractérise par les informations suivantes.
 | `threshold_count`  | int  | Le `seuil de déclenchement` exprime un nombre d'alarmes au delà duquel le groupement sera effectué.  |
 | `threshold_rate`  | float  | Le `taux de déclenchement` exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
 | `value_path`  | string  | Le `chemin de valeurs` désigne l'adresse de l'attribut à partir duquel le groupement va opérer. |
+| `auto_resolve`  | bool  | Permet de résoudre la méta alarme lorsque toutes ses alarmes conséquences sont résolues. |
+| `output_template`  | string  | L'`output_template` permet de formater le message informatif associé à une méta alarme. |
 
 Dans un groupement de type `complex`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
 
@@ -93,6 +98,7 @@ Exemple :
 {
   "name": "Règle de groupement par intervalle de temps",
   "type": "timebased",
+  "output_template" : "Regroupé par intervalle de temps",
   "config": {
     "time_interval": 60
   }
@@ -110,6 +116,7 @@ Exemple :
 {
   "name": "Règle de groupement par attribut",
   "type": "attribute",
+  "output_template" : "Regroupé par attribut",
   "config": {
     "alarm_patterns": [
       {
@@ -133,6 +140,7 @@ Exemple :
 {
   "name": "Règle de groupement complexe",
   "type": "complex",
+  "output_template" : "Regroupement complexe",
   "config": {
     "time_interval": 60,
     "threshold_count": 3,
@@ -159,6 +167,7 @@ Exemple :
 ```json
 {
   "name": "Groupement dysfonctionnement global site Wasquehal",
+  "output_template" : "Regroupé à partir d'un seuil de déclenchement",
   "type": "complex",
   "config": {
     "time_interval": 300,
@@ -187,6 +196,7 @@ Exemple :
 {
     "name": "Groupe de valeurs",
     "type": "valuegroup",
+    "output_template" : "Regroupé par un chemin de valeurs",
     "config": {
         "time_interval": 3600,
         "threshold_count": 5,
@@ -280,6 +290,25 @@ La méta alarme a été enrichie avec de nouvelles variables.
 - `v.children` : embarque les `id` des entités liées.
 
 - `v.parents` : est présent dans les variables mais ne sera renseigné que pour les alarmes liées à la méta alarme.
+
+### Format du message informatif d'une méta alarme
+
+Le message informatif, ou `output`, peut être formaté grâce à un template porté par la variable `output_template`.
+
+Cet attribut peut-être composé de **texte statique** et/ou de **variables**.
+
+Les variables accessibles sont : 
+
+* **.Count** : Le nombre d'alarmes conséquences attachées à la méta alarme.
+* **.Children** : L'ensemble des variables de la dernière alarme conséquence attachée à la méta alarme.
+* **.Rule** : Les informations administratives de la méta alarme en elle-même
+
+Quelques exemples :
+
+* {{ .Count }} Alarmes conséquences; {{ .Children.Alarm.Value.State.Message }}; Règle : {{ .Rule.Name }}
+* Un message informatif statique
+* Corrélé par la règle {{ .Rule.Name }}
+
 
 ## Collection MongoDB associée
 
