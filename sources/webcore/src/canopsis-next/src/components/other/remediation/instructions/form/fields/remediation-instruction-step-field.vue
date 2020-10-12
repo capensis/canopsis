@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.step-field(row)
+  .step-field
     v-layout
       expand-button.step-expand(v-model="expanded")
       v-layout(column)
@@ -95,14 +95,15 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .step-field {
-    .step-expand {
+    & /deep/ .step-expand {
       margin: 24px 2px 0 2px !important;
       width: 20px !important;
       height: 20px !important;
     }
-    .step-time-complete-unit .v-input__slot {
+
+    & /deep/ .step-time-complete-unit .v-input__slot {
       &:before, &:after {
         content: none !important;
       }
