@@ -2,19 +2,15 @@
   v-layout(column)
     draggable(v-field="steps", :options="draggableOptions")
       v-card.my-2(v-for="(step, index) in steps", :key="step.key")
-        v-card-text.pr-0
+        v-card-text
           v-layout(row, wrap)
             v-flex.mt-3(xs1)
               draggable-step-number(drag-class="step-drag-handler") {{ index + 1 }}
-            v-flex.pl-3(xs11)
+            v-flex(xs11)
               remediation-instruction-step-field(
                 v-field="steps[index]",
+                :index="index",
                 @remove="removeStep(index)"
-              )
-              remediation-instruction-operations-form(
-                v-field="steps[index].operations",
-                :step="step",
-                :stepNumber="index + 1"
               )
     v-layout
       v-btn.ml-0(outline, color="primary", @click="addStep") {{ $t('remediationInstructions.addStep') }}
@@ -33,14 +29,12 @@ import formArrayMixin from '@/mixins/form/array';
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
-import RemediationInstructionOperationsForm from './remediation-instruction-operations-form.vue';
 
 export default {
   components: {
     Draggable,
     DraggableStepNumber,
     RemediationInstructionStepField,
-    RemediationInstructionOperationsForm,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],

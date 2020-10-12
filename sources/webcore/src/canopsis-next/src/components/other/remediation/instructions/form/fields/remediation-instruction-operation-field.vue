@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(row)
     v-flex.pr-1(xs11)
-      v-layout
+      v-layout(row)
         expand-button.operation-expand(v-model="expanded")
         v-layout(column)
           v-text-field(
@@ -18,15 +18,14 @@
                 v-field="operation.time_to_complete",
                 :name="timeToCompleteFieldName"
               )
-              v-layout
-                v-textarea(
-                  v-field="operation.description",
-                  v-validate="'required'",
-                  :label="$t('common.description')",
-                  :error-messages="descriptionErrors",
-                  :name="descriptionFieldName",
-                  box
-                )
+              v-textarea(
+                v-field="operation.description",
+                v-validate="'required'",
+                :label="$t('common.description')",
+                :error-messages="descriptionErrors",
+                :name="descriptionFieldName",
+                box
+              )
     v-flex.mt-3(xs1)
       v-layout(justify-center)
         v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")

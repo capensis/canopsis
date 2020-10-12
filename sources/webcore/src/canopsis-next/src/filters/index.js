@@ -14,7 +14,6 @@ export default {
     Vue.filter('json', json);
     Vue.filter('percentage', percentage);
     Vue.filter('maxDurationByUnit', maxDurationByUnit);
-    Vue.filter('maxDurationByUnit', maxDurationByUnit);
     Vue.filter('timezone', timezone);
   },
 };
