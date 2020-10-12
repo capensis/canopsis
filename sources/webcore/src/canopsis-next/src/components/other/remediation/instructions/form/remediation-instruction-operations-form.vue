@@ -18,10 +18,10 @@
     v-layout(row, align-center)
       v-btn.ml-0(
         outline,
-        :color="hasOperationsCountError ? 'error' : 'primary'",
+        :color="hasOperationsErrors ? 'error' : 'primary'",
         @click="addOperation"
       ) {{ $t('remediationInstructions.addOperation') }}
-      span.error--text(v-show="hasOperationsCountError") {{ $t('remediationInstructions.errors.operationRequired') }}
+      span.error--text(v-show="hasOperationsErrors") {{ $t('remediationInstructions.errors.operationRequired') }}
 </template>
 
 <script>
@@ -50,9 +50,9 @@ export default {
     event: 'input',
   },
   props: {
-    step: {
-      type: Object,
-      default: () => ({}),
+    name: {
+      type: String,
+      default: 'operations',
     },
     operations: {
       type: Array,
@@ -69,12 +69,8 @@ export default {
     };
   },
   computed: {
-    hasOperationsCountError() {
-      return this.errors.has(this.fieldName);
-    },
-
-    fieldName() {
-      return `operations${this.step.key ? this.step.key : ''}`;
+    hasOperationsErrors() {
+      return this.errors.has(this.name);
     },
 
     draggableOptions() {
@@ -92,19 +88,19 @@ export default {
   },
   watch: {
     operations() {
-      this.$validator.validate(this.fieldName);
+      this.$validator.validate(this.name);
     },
   },
   created() {
     this.$validator.attach({
-      name: this.fieldName,
+      name: this.name,
       rules: 'min_value:1',
       getter: () => this.operations.length,
       context: () => this,
     });
   },
   beforeDestroy() {
-    this.$validator.detach(this.fieldName);
+    this.$validator.detach(this.name);
   },
   methods: {
     getStepLabel(index) {

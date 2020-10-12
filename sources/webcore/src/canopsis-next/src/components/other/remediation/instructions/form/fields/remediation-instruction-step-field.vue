@@ -10,7 +10,7 @@
               v-validate="'required'",
               :label="$t('common.name')",
               :error-messages="nameErrorMessages",
-              :name="name",
+              :name="nameFieldName",
               box
             )
           v-flex.pl-2(xs3)
@@ -28,7 +28,7 @@
             remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
             remediation-instruction-operations-form(
               v-field="step.operations",
-              :step="step",
+              :name="operationFieldName",
               :step-number="index + 1"
             )
 </template>
@@ -76,12 +76,16 @@ export default {
       return this.step.key ? `-${this.step.key}` : '';
     },
 
-    name() {
+    nameFieldName() {
       return `name${this.fieldSuffix}`;
     },
 
+    operationFieldName() {
+      return `operations${this.fieldSuffix}`;
+    },
+
     nameErrorMessages() {
-      return this.errors.collect(this.name).map(error => error.replace(this.fieldSuffix, ''));
+      return this.errors.collect(this.nameFieldName).map(error => error.replace(this.fieldSuffix, ''));
     },
 
     timeToComplete() {

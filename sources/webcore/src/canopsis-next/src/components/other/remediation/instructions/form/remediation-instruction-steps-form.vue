@@ -12,12 +12,13 @@
                 :index="index",
                 @remove="removeStep(index)"
               )
-    v-layout
+    v-layout(row, align-center)
       v-btn.ml-0(
+        :color="hasStepsErrors ? 'error' : 'primary'",
         outline,
-        color="primary",
         @click="addStep"
       ) {{ $t('remediationInstructions.addStep') }}
+      span.error--text(v-show="hasStepsErrors") {{ $t('remediationInstructions.errors.stepRequired') }}
 </template>
 
 <script>
@@ -51,6 +52,10 @@ export default {
       type: Array,
       default: () => ([]),
     },
+    name: {
+      type: String,
+      default: 'steps',
+    },
   },
   data() {
     return {
@@ -58,6 +63,10 @@ export default {
     };
   },
   computed: {
+    hasStepsErrors() {
+      return this.errors.has(this.name);
+    },
+
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
@@ -68,6 +77,22 @@ export default {
         },
       };
     },
+  },
+  watch: {
+    steps() {
+      this.$validator.validate(this.name);
+    },
+  },
+  created() {
+    this.$validator.attach({
+      name: this.name,
+      rules: 'min_value:1',
+      getter: () => this.steps.length,
+      context: () => this,
+    });
+  },
+  beforeDestroy() {
+    this.$validator.detach(this.name);
   },
   methods: {
     addStep() {
