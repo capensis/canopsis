@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row)
+  v-layout.step-field(row)
     v-layout
       expand-button.step-expand(v-model="expanded")
       v-layout(column)
@@ -15,7 +15,7 @@
             )
           v-flex.pl-2(xs3)
             v-text-field.step-time-complete-unit(
-              :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
+              :value="timeToComplete | duration('refreshFieldFormat')",
               :label="$t('remediationInstructions.timeToComplete')",
               readonly
             )
@@ -96,14 +96,16 @@ export default {
 </script>
 
 <style lang="scss">
-  .step-expand {
-    margin: 24px 2px 0 2px !important;
-    width: 20px !important;
-    height: 20px !important;
-  }
-  .step-time-complete-unit .v-input__slot {
-    &:before, &:after {
-      content: none !important;
+  .step-field {
+    .step-expand {
+      margin: 24px 2px 0 2px !important;
+      width: 20px !important;
+      height: 20px !important;
+    }
+    .step-time-complete-unit .v-input__slot {
+      &:before, &:after {
+        content: none !important;
+      }
     }
   }
 </style>

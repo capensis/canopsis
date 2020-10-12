@@ -1,15 +1,6 @@
 import moment from 'moment';
 
-import { TIME_UNITS } from '@/constants';
-
-const AVAILABLE_UNITS = [
-  TIME_UNITS.year,
-  TIME_UNITS.month,
-  TIME_UNITS.day,
-  TIME_UNITS.hour,
-  TIME_UNITS.minute,
-  TIME_UNITS.second,
-];
+import { AVAILABLE_SORTED_TIME_UNITS, TIME_UNITS } from '@/constants';
 
 /**
  * Convert time in unit system to seconds
@@ -37,15 +28,15 @@ export const getUnitValueFromOtherUnit = (
 /**
  * Get max available interval value
  *
- * @param {number|string} value
- * @param {string} fromUnit
- * @param {string[]} availableUnits
+ * @param {number|string} [value]
+ * @param {string} [fromUnit]
+ * @param {string[]} [availableUnits]
  * @return {Interval}
  */
 export const getMaxAvailableIntervalFromUnit = (
   value = 0,
   fromUnit = TIME_UNITS.second,
-  availableUnits = AVAILABLE_UNITS,
+  availableUnits = AVAILABLE_SORTED_TIME_UNITS,
 ) => {
   let unitValue;
 
