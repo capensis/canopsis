@@ -15,14 +15,13 @@
             v-field="operations[index]",
             @remove="removeOperation(index)"
           )
-    v-layout(row)
-      div
-        v-btn.ml-0(
-          outline,
-          color="primary",
-          @click="addOperation"
-        ) {{ $t('remediationInstructions.addOperation') }}
-        div.error--text(v-show="errors.has(fieldName)") {{ $t('remediationInstructions.errors.operationRequired') }}
+    v-layout(row, align-center)
+      v-btn.ml-0(
+        outline,
+        :color="hasOperationsCountError ? 'error' : 'primary'",
+        @click="addOperation"
+      ) {{ $t('remediationInstructions.addOperation') }}
+      span.error--text(v-show="hasOperationsCountError") {{ $t('remediationInstructions.errors.operationRequired') }}
 </template>
 
 <script>
@@ -70,6 +69,10 @@ export default {
     };
   },
   computed: {
+    hasOperationsCountError() {
+      return this.errors.has(this.fieldName);
+    },
+
     fieldName() {
       return `operations${this.step.key ? this.step.key : ''}`;
     },
