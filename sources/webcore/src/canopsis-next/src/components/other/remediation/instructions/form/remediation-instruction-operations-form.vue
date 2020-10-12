@@ -4,10 +4,17 @@
       v-flex.mt-3(xs1)
         draggable-step-number(drag-class="operation-drag-handler") {{ getStepLabel(index) }}
       v-flex(xs11)
-        remediation-instruction-operation-field(v-field="operations[index]", @remove="removeOperation(index)")
+        remediation-instruction-operation-field(
+          v-field="operations[index]",
+          @remove="removeOperation(index)"
+        )
     v-layout(row)
       div
-        v-btn.ml-0(outline, color="primary", @click="addOperation") {{ $t('remediationInstructions.addOperation') }}
+        v-btn.ml-0(
+          outline,
+          color="primary",
+          @click="addOperation"
+        ) {{ $t('remediationInstructions.addOperation') }}
         div.error--text(v-show="errors.has(fieldName)") {{ $t('remediationInstructions.errors.operationRequired') }}
 </template>
 

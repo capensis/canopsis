@@ -13,7 +13,7 @@
               :name="name",
               box
             )
-          v-flex.pl-2(xs4)
+          v-flex.pl-2(xs3)
             v-text-field.step-time-complete-unit(
               :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
               :label="$t('remediationInstructions.timeToComplete')",
@@ -25,12 +25,11 @@
                 v-icon(color="error") delete
         v-expand-transition(mode="out-in")
           v-layout(v-show="expanded", column)
-            v-layout
-              remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
+            remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
             remediation-instruction-operations-form(
               v-field="step.operations",
               :step="step",
-              :stepNumber="index + 1"
+              :step-number="index + 1"
             )
 </template>
 
