@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(row)
-    v-flex.operation-field(xs11)
+    v-flex.pr-1(xs11)
       v-layout
         expand-button.operation-expand(v-model="expanded")
         v-layout(column)
@@ -93,10 +93,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .operation-field {
-    padding-right: 4px;
-  }
-
   .operation-expand {
     margin: 24px 2px 0 2px !important;
     width: 20px;
