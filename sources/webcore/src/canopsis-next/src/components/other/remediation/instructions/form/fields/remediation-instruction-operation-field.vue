@@ -2,13 +2,14 @@
   v-layout(row)
     v-flex.pr-1(xs11)
       v-layout(row)
-        expand-button.operation-expand(v-model="expanded")
+        expand-button.operation-expand(v-model="expanded", :color="shownChildrenError ? 'error' : 'black'")
         v-layout(column)
           v-text-field(
             v-field="operation.name",
             v-validate="'required'",
             :label="$t('common.name')",
             :error-messages="nameErrors",
+            :error="shownChildrenError",
             :name="nameFieldName",
             box
           )
@@ -34,6 +35,7 @@
 
 <script>
 import formMixin from '@/mixins/form';
+import validationChildrenMixin from '@/mixins/form/validation-children';
 
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
 
@@ -42,7 +44,7 @@ import RemediationInstructionTimeToCompleteField from './remediation-instruction
 export default {
   inject: ['$validator'],
   components: { ExpandButton, RemediationInstructionTimeToCompleteField },
-  mixins: [formMixin],
+  mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'operation',
     event: 'input',
@@ -59,6 +61,10 @@ export default {
     };
   },
   computed: {
+    shownChildrenError() {
+      return !this.expanded && this.hasChildrenError;
+    },
+
     fieldName() {
       return this.operation.key ? this.operation.key : '';
     },

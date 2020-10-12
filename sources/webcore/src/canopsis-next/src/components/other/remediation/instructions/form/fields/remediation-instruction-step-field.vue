@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(row)
     v-layout
-      expand-button.step-expand(v-model="expanded")
+      expand-button.step-expand(v-model="expanded", :color="shownChildrenError ? 'error' : 'black'")
       v-layout(column)
         v-layout(row)
           v-flex(xs8)
@@ -10,6 +10,7 @@
               v-validate="'required'",
               :label="$t('common.name')",
               :error-messages="nameErrorMessages",
+              :error="shownChildrenError",
               :name="nameFieldName",
               box
             )
@@ -35,6 +36,7 @@
 
 <script>
 import formMixin from '@/mixins/form';
+import validationChildrenMixin from '@/mixins/form/validation-children';
 
 import { getUnitValueFromOtherUnit } from '@/helpers/time';
 
@@ -51,7 +53,7 @@ export default {
     RemediationInstructionStepsWorkflowField,
     RemediationInstructionOperationsForm,
   },
-  mixins: [formMixin],
+  mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'step',
     event: 'input',
@@ -72,6 +74,10 @@ export default {
     };
   },
   computed: {
+    shownChildrenError() {
+      return !this.expanded && this.hasChildrenError;
+    },
+
     fieldSuffix() {
       return this.step.key ? `-${this.step.key}` : '';
     },
