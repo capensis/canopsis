@@ -20,8 +20,10 @@
               )
               text-editor-field(
                 v-field="operation.description",
+                v-validate="'required'",
                 :label="$t('common.description')",
-                focusable
+                :error-messages="descriptionErrors",
+                :name="descriptionFieldName"
               )
     v-flex.mt-3(xs1)
       v-layout(justify-center)
