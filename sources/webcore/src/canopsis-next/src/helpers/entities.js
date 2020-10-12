@@ -311,19 +311,6 @@ export function generateWidgetByType(type) {
 }
 
 /**
- * Generate view row
- *
- * @returns {Object}
- */
-export function generateViewRow() {
-  return {
-    _id: uuid('view-row'),
-    title: '',
-    widgets: [],
-  };
-}
-
-/**
  * Generate view tab
  *
  * @returns {Object}
@@ -332,7 +319,7 @@ export function generateViewTab() {
   return {
     _id: uuid('view-tab'),
     title: '',
-    rows: [],
+    widgets: [],
   };
 }
 
@@ -576,16 +563,10 @@ export function generateAction() {
  * @returns {Array.<{ oldId: number, newId: number }>}
  */
 export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
-  return oldTab.widgets.reduce((acc, row, rowIndex) => {
-    const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
-      oldId: widget._id,
-      newId: get(newTab, `rows.${rowIndex}.widgets.${widgetIndex}._id`, null),
-    }));
-
-    acc.push(...widgetsIds);
-
-    return acc;
-  }, []);
+  return oldTab.widgets.map((acc, widget, widgetIndex) => ({
+    oldId: widget._id,
+    newId: get(newTab, `widgets.${widgetIndex}._id`, null),
+  }));
 }
 
 /**
