@@ -18,13 +18,12 @@
                 v-field="operation.time_to_complete",
                 :name="timeToCompleteFieldName"
               )
-              v-textarea(
+              text-editor-field(
                 v-field="operation.description",
                 v-validate="'required'",
                 :label="$t('common.description')",
                 :error-messages="descriptionErrors",
-                :name="descriptionFieldName",
-                box
+                :name="descriptionFieldName"
               )
     v-flex.mt-3(xs1)
       v-layout(justify-center)
@@ -35,13 +34,18 @@
 <script>
 import formMixin from '@/mixins/form';
 
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
 
 import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ExpandButton, RemediationInstructionTimeToCompleteField },
+  components: {
+    TextEditorField,
+    ExpandButton,
+    RemediationInstructionTimeToCompleteField,
+  },
   mixins: [formMixin],
   model: {
     prop: 'operation',

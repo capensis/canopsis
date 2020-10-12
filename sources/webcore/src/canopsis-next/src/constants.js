@@ -105,6 +105,7 @@ export const MODALS = {
   createPbehaviorException: 'create-pbehavior-exception',
   createManualMetaAlarm: 'create-manual-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
+  imageViewer: 'image-viewer',
 };
 
 export const EVENT_ENTITY_TYPES = {

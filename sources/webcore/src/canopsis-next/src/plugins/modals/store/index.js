@@ -68,6 +68,7 @@ export default {
         dialogProps,
       });
     },
+
     /**
      * Hide modal by id
      *

@@ -1,42 +1,30 @@
 <template lang="pug">
-  div
-    text-editor(
-      v-if="!focusable",
-      v-field="value",
-      :label="label",
-      :buttons="buttons",
-      :extraButtons="extraButtons",
-      :config="config",
-      :errorMessages="errorMessages"
-    )
-    div(v-else)
-      text-editor(
-        ref="textEditor",
-        v-if="focused",
-        v-field="value",
-        v-click-outside.same="{ handler: toggleFocusedOff, closeConditional }",
-        :label="label",
-        :buttons="buttons",
-        :extraButtons="extraButtons",
-        :config="config",
-        :errorMessages="errorMessages"
-      )
-      text-editor-blurred(
-        v-else,
-        :value="value",
-        :label="label",
-        @click="toggleFocusedOn"
-      )
+  text-editor(
+    v-field="value",
+    :label="label",
+    :buttons="buttons",
+    :extraButtons="extraButtons",
+    :config="config",
+    :errorMessages="errorMessages"
+  )
 </template>
 
 <script>
 import TextEditor from '@/components/other/text-editor/text-editor.vue';
-import TextEditorBlurred from '@/components/other/text-editor/text-editor-blurred.vue';
 
 export default {
+  $_veeValidate: {
+    value() {
+      return this.value;
+    },
+
+    name() {
+      return this.name;
+    },
+  },
+  inject: ['$validator'],
   components: {
     TextEditor,
-    TextEditorBlurred,
   },
   model: {
     prop: 'value',
@@ -46,6 +34,10 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    name: {
+      type: String,
+      default: 'text',
     },
     label: {
       type: String,
@@ -66,34 +58,6 @@ export default {
     errorMessages: {
       type: Array,
       default: () => [],
-    },
-    focusable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      focused: !this.focusable,
-    };
-  },
-  methods: {
-    closeConditional(e) {
-      return this.focused && (this.$refs.textEditor && !this.$refs.textEditor.$el.contains(e.target));
-    },
-
-    toggleFocusedOn() {
-      this.focused = true;
-
-      this.$nextTick(() => {
-        if (this.$refs.textEditor) {
-          this.$refs.textEditor.editor.selection.focus();
-        }
-      });
-    },
-
-    toggleFocusedOff() {
-      this.focused = false;
     },
   },
 };
