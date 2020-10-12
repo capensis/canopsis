@@ -179,7 +179,7 @@ export default {
 
           /**
            * If we're creating a new view, or duplicating an existing one.
-           * Generate a new view. Then copy tabs, rows and widgets if we're duplicating a view
+           * Generate a new view. Then copy tabs and widgets if we're duplicating a view
            */
           if (!this.config.view || this.config.isDuplicating) {
             const data = {
