@@ -1221,6 +1221,15 @@ export const TIME_UNITS = {
   year: 'y',
 };
 
+export const AVAILABLE_SORTED_TIME_UNITS = [
+  TIME_UNITS.year,
+  TIME_UNITS.month,
+  TIME_UNITS.day,
+  TIME_UNITS.hour,
+  TIME_UNITS.minute,
+  TIME_UNITS.second,
+];
+
 export const AVAILABLE_TIME_UNITS = {
   second: {
     text: 'common.times.second',

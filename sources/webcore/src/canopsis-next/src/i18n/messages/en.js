@@ -1783,6 +1783,8 @@ export default {
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',
     timeToComplete: 'Time to complete',
+    hideAll: 'Hide all',
+    expandAll: 'Expand all',
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
