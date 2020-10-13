@@ -40,13 +40,11 @@ Ces groupements d'alarmes permettent de visualiser rapidement les corrélations 
 
 ### Activation de la corrélation
 
-Le moteur est maintenant activé par défaut avec la version **3.45.0**, pour les versions antérieures vous pouvez vous reporter aux [notes de version adéquates](../../notes-de-version/3.41.0.md) pour activer le moteur
+Le moteur est maintenant activé par défaut avec la version **3.45.0**, pour les versions antérieures vous pouvez vous reporter aux [notes de version adéquates](../../notes-de-version/3.41.0.md) pour activer le moteur.
 
-Passez votre bac à alarmes en mode édition (`CTRL + E`) pour accéder aux paramètres avancés et activez la corrélation.
+Dans les bacs à alarmes un interrupteur situé en haut du widget vous permet d'activer la corrélation.
 
-![Activation de la corrélation](img/correlation_activer.png)
-
-Sauvegardez les changements et désactivez le mode édition.
+![Activer la corrélation](./img/correlation_activer.png)
 
 ### Définition d'un groupement
 
