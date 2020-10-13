@@ -9,7 +9,10 @@
       v-flex(xs11)
         v-layout(row)
           v-layout
-            expand-button.step-expand(v-model="expanded")
+            expand-button.step-expand(
+              v-model="expanded",
+              :color="!expanded && hasChildrenError ? 'error' : 'black'"
+            )
             v-layout(column)
               v-layout(row)
                 v-flex(xs8)
@@ -48,7 +51,8 @@ import validationChildrenMixin from '@/mixins/form/validation-children';
 import { getUnitValueFromOtherUnit } from '@/helpers/time';
 
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
-import DraggableStepNumber from '@/components/other/remediation/instructions/partials/draggable-step-number.vue';
+
+import DraggableStepNumber from '../../partials/draggable-step-number.vue';
 
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';
 

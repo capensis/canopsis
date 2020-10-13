@@ -9,7 +9,10 @@
       v-layout(row)
         v-flex.pr-1(xs11)
           v-layout(row)
-            expand-button.operation-expand(v-model="expanded")
+            expand-button.operation-expand(
+              v-model="expanded",
+              :color="!expanded && hasChildrenError ? 'error' : 'black'"
+            )
             v-layout(column)
               v-text-field(
                 v-field="operation.name",
@@ -44,7 +47,8 @@ import validationChildrenMixin from '@/mixins/form/validation-children';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
-import DraggableStepNumber from '@/components/other/remediation/instructions/partials/draggable-step-number.vue';
+
+import DraggableStepNumber from '../../partials/draggable-step-number.vue';
 
 import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
 
