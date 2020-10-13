@@ -1801,6 +1801,7 @@ export default {
     errors: {
       runningInstruction: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
       operationRequired: 'Please add at least one operation',
+      stepRequired: 'Please add at least one step',
     },
   },
 

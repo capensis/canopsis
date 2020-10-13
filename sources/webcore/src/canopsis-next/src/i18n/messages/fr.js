@@ -1801,6 +1801,7 @@ export default {
     errors: {
       runningInstruction: 'Des instructions en cours sont affectées à ce modèle. Souhaitez-vous les annuler?',
       operationRequired: 'Veuillez ajouter au moins une opération',
+      stepRequired: 'Veuillez ajouter au moins une étape',
     },
   },
 

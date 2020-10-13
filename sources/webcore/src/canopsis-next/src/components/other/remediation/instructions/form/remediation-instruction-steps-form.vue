@@ -3,17 +3,18 @@
     draggable(v-field="steps", :options="draggableOptions")
       v-card.my-2(v-for="(step, index) in steps", :key="step.key")
         v-card-text
-          v-layout(row, wrap)
-            v-flex.mt-3(xs1)
-              draggable-step-number(drag-class="step-drag-handler") {{ index + 1 }}
-            v-flex(xs11)
-              remediation-instruction-step-field(
-                v-field="steps[index]",
-                :index="index",
-                @remove="removeStep(index)"
-              )
-    v-layout
-      v-btn.ml-0(outline, color="primary", @click="addStep") {{ $t('remediationInstructions.addStep') }}
+          remediation-instruction-step-field(
+            v-field="steps[index]",
+            :step-number="index + 1",
+            @remove="removeStep(index)"
+          )
+    v-layout(row, align-center)
+      v-btn.ml-0(
+        :color="hasStepsErrors ? 'error' : 'primary'",
+        outline,
+        @click="addStep"
+      ) {{ $t('remediationInstructions.addStep') }}
+      span.error--text(v-show="hasStepsErrors") {{ $t('remediationInstructions.errors.stepRequired') }}
 </template>
 
 <script>
@@ -47,6 +48,10 @@ export default {
       type: Array,
       default: () => ([]),
     },
+    name: {
+      type: String,
+      default: 'steps',
+    },
   },
   data() {
     return {
@@ -54,6 +59,10 @@ export default {
     };
   },
   computed: {
+    hasStepsErrors() {
+      return this.errors.has(this.name);
+    },
+
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
@@ -64,6 +73,23 @@ export default {
         },
       };
     },
+  },
+  watch: {
+    steps() {
+      this.$validator.validate(this.name);
+    },
+  },
+  created() {
+    this.$validator.attach({
+      name: this.name,
+      rules: 'min_value:1',
+      getter: () => this.steps.length,
+      context: () => this,
+      vm: this,
+    });
+  },
+  beforeDestroy() {
+    this.$validator.detach(this.name);
   },
   methods: {
     addStep() {

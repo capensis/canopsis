@@ -1,26 +1,34 @@
 <template lang="pug">
   v-layout.mt-2(column)
-    v-layout.py-1(v-for="(operation, index) in operations", :key="operation.key")
-      v-flex.mt-3(xs1)
-        draggable-step-number(drag-class="operation-drag-handler") {{ getStepLabel(index) }}
-      v-flex(xs11)
-        remediation-instruction-operation-field(
-          v-field="operations[index]",
-          @remove="removeOperation(index)"
-        )
-    v-layout(row)
-      div
-        v-btn.ml-0(
-          outline,
-          color="primary",
-          @click="addOperation"
-        ) {{ $t('remediationInstructions.addOperation') }}
-        div.error--text(v-show="errors.has(fieldName)") {{ $t('remediationInstructions.errors.operationRequired') }}
+    draggable(
+      v-field="operations",
+      :options="draggableOptions",
+      :class="{ 'grey lighten-2': isDragging }",
+      @start="startDragging",
+      @end="endDragging"
+    )
+      remediation-instruction-operation-field.py-1(
+        v-for="(operation, index) in operations",
+        v-field="operations[index]",
+        :key="operation.key",
+        :index="index",
+        :operationNumber="getOperationNumber(index)",
+        @remove="removeOperation(index)"
+      )
+    v-layout(row, align-center)
+      v-btn.ml-0(
+        outline,
+        :color="hasOperationsErrors ? 'error' : 'primary'",
+        @click="addOperation"
+      ) {{ $t('remediationInstructions.addOperation') }}
+      span.error--text(v-show="hasOperationsErrors") {{ $t('remediationInstructions.errors.operationRequired') }}
 </template>
 
 <script>
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import Draggable from 'vuedraggable';
 
+import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { FIRST_LETTER_ALPHABET_CHAR_CODE, MODALS } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
@@ -31,8 +39,9 @@ import RemediationInstructionOperationField from './fields/remediation-instructi
 
 export default {
   components: {
-    RemediationInstructionOperationField,
+    Draggable,
     DraggableStepNumber,
+    RemediationInstructionOperationField,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],
@@ -41,9 +50,9 @@ export default {
     event: 'input',
   },
   props: {
-    step: {
-      type: Object,
-      default: () => ({}),
+    name: {
+      type: String,
+      default: 'operations',
     },
     operations: {
       type: Array,
@@ -60,28 +69,42 @@ export default {
     };
   },
   computed: {
-    fieldName() {
-      return `operations${this.step.key ? this.step.key : ''}`;
+    hasOperationsErrors() {
+      return this.errors.has(this.name);
+    },
+
+    draggableOptions() {
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+        handle: '.operation-drag-handler',
+        ghostClass: 'white',
+        group: {
+          name: 'remediation-instruction-operations',
+          pull: false,
+          put: false,
+        },
+      };
     },
   },
   watch: {
     operations() {
-      this.$validator.validate(this.fieldName);
+      this.$validator.validate(this.name);
     },
   },
   created() {
     this.$validator.attach({
-      name: this.fieldName,
+      name: this.name,
       rules: 'min_value:1',
       getter: () => this.operations.length,
       context: () => this,
+      vm: this,
     });
   },
   beforeDestroy() {
-    this.$validator.detach(this.fieldName);
+    this.$validator.detach(this.name);
   },
   methods: {
-    getStepLabel(index) {
+    getOperationNumber(index) {
       return `${this.stepNumber}${this.getCharByIndex(index)}`;
     },
 
@@ -102,6 +125,14 @@ export default {
           },
         },
       });
+    },
+
+    startDragging() {
+      this.isDragging = true;
+    },
+
+    endDragging() {
+      this.isDragging = false;
     },
   },
 };
