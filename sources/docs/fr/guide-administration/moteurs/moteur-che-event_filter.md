@@ -58,6 +58,13 @@ Les évènements ne respectant pas l'une de ces conditions en entrée du moteur 
 
 Le pattern d'une règle permet de sélectionner les évènements auxquels elle doit être appliquée.
 
+!!! info
+    Afin de connaître l'intitulé exact du pattern que vous souhaitez utiliser, vous pouvez, en tant qu'administrateur, prendre une alarme représentative dans votre Bac à alarmes, et vous aider du bouton d'action « Liste des variables disponibles ».
+    
+    Cette vue vous présente le contenu de vos alarmes et de vos entités, sous la forme d'un arbre.
+    
+    Elle vous permet par exemple de savoir que le composant est directement accessible depuis le champ `component`, tandis que les hostgroups se situent dans `infos.hostgroups.value`.
+
 #### Patterns simples
 
 Un pattern peut être défini comme un objet JSON contenant les valeurs de certains champs d'un évènement.
@@ -76,7 +83,7 @@ Par exemple, une règle contenant le pattern suivant sera appliquée aux évène
 Pour plus d'expressivité, il est possible d'associer à un champ un objet contenant des couples `operateur: valeur`. Les opérateurs disponibles sont :
 
  - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
- - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est celle de [go](https://golang.org/pkg/regexp/syntax/), et est similaire à celle acceptée par Perl et Python.
+ - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est [définie dans un document dédié](../../guide-utilisation/formats-et-syntaxe/format-regex.md).
 
 Par exemple, le pattern suivant sélectionne les évènements dont la criticité est comprise entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
 
