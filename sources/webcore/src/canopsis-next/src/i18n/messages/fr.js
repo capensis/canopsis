@@ -124,6 +124,7 @@ export default {
     or: 'OU',
     and: 'ET',
     priority: 'Priorité',
+    clear: 'Clair',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

@@ -23,12 +23,15 @@
 </template>
 
 <script>
+import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
+
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 
 export default {
   components: { RemediationInstructionStepsForm, EnabledField },
   inject: ['$validator'],
+  mixins: [entitiesRemediationJobsMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -38,6 +41,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+  mounted() {
+    this.fetchRemediationJobsList();
   },
 };
 </script>

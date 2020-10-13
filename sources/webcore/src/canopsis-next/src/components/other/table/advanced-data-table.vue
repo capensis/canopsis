@@ -15,7 +15,12 @@
           :tooltip="searchTooltip",
           @update:query="updatePagination"
         )
-      slot(name="toolbar", :selected="selected")
+      slot(
+        name="toolbar",
+        :selected="selected",
+        :updateSearch="updateSearchHandler",
+        :clearSearch="clearSearchHandler"
+      )
     v-data-table(
       :value="selected",
       :headers="headers",
@@ -197,6 +202,7 @@ export default {
       return {
         item: state.item,
         selected: state.selected,
+        disabled: this.isDisabledItem(state.item),
         expanded: state.expanded,
         select: value => state.selected = value || !state.selected,
         expand: value => state.expanded = value || !state.expanded,

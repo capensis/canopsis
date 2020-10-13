@@ -4,7 +4,9 @@ import { ENTITIES_TYPES } from '@/constants';
 import { createEntityModule } from '@/store/plugins/entities';
 
 export default createEntityModule({
-  route: API_ROUTES.actions,
-  entityType: ENTITIES_TYPES.action,
+  route: API_ROUTES.remediation.jobs,
+  entityType: ENTITIES_TYPES.remediationJob,
+  dataPreparer: d => d.data,
   withFetchingParams: true,
+  withMeta: true,
 });
