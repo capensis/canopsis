@@ -32,7 +32,6 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 
 | Moteur | Rôle | CAT ? |
 |--------|------|:-----:|
-| `datametrie` | Gère le connecteur datametrie | ✅ |
 | [`pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
 | [`event_filter` (Python)](moteur-event_filter.md) | Applique des règles de filtrage. Ne doit pas être confondu avec le nouvel `event-filter` Go, contenu dans `engine-che` | |
 | [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
@@ -43,7 +42,7 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 | `task_importctx` | Gestionnaire des imports de données en masse | |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
-En installation par paquets, les moteurs Python se trouvent dans le namespace systemd `canopsis-engine@` ou `canopsis-engine-cat@`. Les moteurs `datametrie` et `snmp` n'ont pas de namespace.
+En installation par paquets, les moteurs Python se trouvent dans le namespace systemd `canopsis-engine@` ou `canopsis-engine-cat@`. Le moteur `snmp` n'a pas de namespace.
 
 ### Liste des moteurs obsolètes
 
