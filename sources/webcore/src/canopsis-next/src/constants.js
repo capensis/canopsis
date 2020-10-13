@@ -60,6 +60,7 @@ export const MODALS = {
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
+  formConfirmation: 'form-confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',
@@ -735,8 +736,8 @@ export const USERS_RIGHTS = {
     planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
     exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
-    remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
-    remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationInstruction`,
+    remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
+    remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,

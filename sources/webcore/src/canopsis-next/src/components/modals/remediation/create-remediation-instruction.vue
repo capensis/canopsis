@@ -7,7 +7,11 @@
         remediation-instruction-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(type="submit") {{ $t('common.submit') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -18,6 +22,8 @@ import { formToRemediationInstruction, remediationInstructionToForm } from '@/he
 import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
+import submittableMixin from '@/mixins/submittable';
+import confirmableMixin from '@/mixins/confirmable';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
@@ -36,6 +42,8 @@ export default {
     authMixin,
     modalInnerMixin,
     validationErrorsMixin(),
+    submittableMixin(),
+    confirmableMixin(),
   ],
   data() {
     return {

@@ -1250,6 +1250,15 @@ export default {
     createRemediationJob: {
       title: 'Créer un travail',
     },
+    formConfirmation: {
+      title: 'Êtes-vous sûr(e) ?',
+      text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',
+      buttons: {
+        save: 'Sauver',
+        dontSave: 'Ne sauvez pas',
+        backToForm: 'Retour au formulaire',
+      },
+    },
   },
   tables: {
     noData: 'Aucune donnée',

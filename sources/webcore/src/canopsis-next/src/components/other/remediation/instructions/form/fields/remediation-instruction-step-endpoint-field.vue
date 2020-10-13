@@ -2,7 +2,10 @@
   v-layout.mt-2(column)
     v-layout.py-1
       v-flex.mt-3(xs1)
-        draggable-step-number(disabled) {{ $t('remediationInstructions.endpointAvatar') }}
+        draggable-step-number(
+          :color="draggableStepNumberColor",
+          disabled
+        ) {{ $t('remediationInstructions.endpointAvatar') }}
       v-flex(xs11)
         v-layout(row)
           v-flex.px-1(xs11)
@@ -47,6 +50,9 @@ export default {
     },
     errorMessages() {
       return this.errors.collect(this.name).map(error => error.replace(this.fieldSuffix, ''));
+    },
+    draggableStepNumberColor() {
+      return this.errors.has(this.name) ? 'error' : 'primary';
     },
   },
 };

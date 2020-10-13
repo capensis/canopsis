@@ -2,8 +2,9 @@ import { isUndefined, omit } from 'lodash';
 
 import { TIME_UNITS } from '@/constants';
 
-import { getSecondsByUnit, getUnitValueFromOtherUnit } from '@/helpers/time';
 import uuid from '@/helpers/uuid';
+import { getSecondsByUnit, getUnitValueFromOtherUnit } from '@/helpers/time';
+import { generateRemediationInstructionStep } from '@/helpers/entities';
 
 /**
  * Convert a remediation instruction step operation array to form array
@@ -56,7 +57,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   filter: remediationInstruction.filter || {},
   steps: remediationInstruction.steps
     ? remediationInstructionStepsToForm(remediationInstruction.steps)
-    : [],
+    : [generateRemediationInstructionStep()],
 });
 
 

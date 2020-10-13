@@ -13,6 +13,7 @@
  * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
  */
 export default {
+  inject: ['$clickOutside'],
   props: {
     modal: {
       type: Object,
@@ -41,6 +42,8 @@ export default {
         ...defaultDialogProps,
         ...dialogPropsMap[this.modal.name],
         ...this.modal.dialogProps,
+
+        customCloseConditional: (...args) => this.$clickOutside.call(...args),
       };
     },
   },
