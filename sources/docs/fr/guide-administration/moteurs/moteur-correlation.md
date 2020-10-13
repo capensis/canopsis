@@ -42,7 +42,7 @@ Ces groupements d'alarmes permettent de visualiser rapidement les corrélations 
 
 Le moteur est maintenant activé par défaut avec la version **3.45.0**, pour les versions antérieures vous pouvez vous reporter aux [notes de version adéquates](../../notes-de-version/3.41.0.md) pour activer le moteur.
 
-Dans les bacs à alarmes un interrupteur situé en haut du widget vous permet d'activer la corrélation.
+Dans les bacs à alarmes, un interrupteur situé en haut du widget vous permet d'activer la corrélation.
 
 ![Activer la corrélation](./img/correlation_activer.png)
 
