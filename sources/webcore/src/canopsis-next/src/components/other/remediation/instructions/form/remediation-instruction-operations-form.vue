@@ -7,14 +7,14 @@
       @start="startDragging",
       @end="endDragging"
     )
-      v-layout.py-1(v-for="(operation, index) in operations", :key="operation.key")
-        v-flex.mt-3(xs1)
-          draggable-step-number(drag-class="operation-drag-handler") {{ getStepLabel(index) }}
-        v-flex(xs11)
-          remediation-instruction-operation-field(
-            v-field="operations[index]",
-            @remove="removeOperation(index)"
-          )
+      remediation-instruction-operation-field.py-1(
+        v-for="(operation, index) in operations",
+        v-field="operations[index]",
+        :key="operation.key",
+        :index="index",
+        :operationNumber="getOperationNumber(index)",
+        @remove="removeOperation(index)"
+      )
     v-layout(row, align-center)
       v-btn.ml-0(
         outline,
@@ -104,7 +104,7 @@ export default {
     this.$validator.detach(this.name);
   },
   methods: {
-    getStepLabel(index) {
+    getOperationNumber(index) {
       return `${this.stepNumber}${this.getCharByIndex(index)}`;
     },
 

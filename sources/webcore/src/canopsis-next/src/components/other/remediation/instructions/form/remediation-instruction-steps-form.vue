@@ -3,15 +3,11 @@
     draggable(v-field="steps", :options="draggableOptions")
       v-card.my-2(v-for="(step, index) in steps", :key="step.key")
         v-card-text
-          v-layout(row, wrap)
-            v-flex.mt-3(xs1)
-              draggable-step-number(drag-class="step-drag-handler") {{ index + 1 }}
-            v-flex(xs11)
-              remediation-instruction-step-field(
-                v-field="steps[index]",
-                :index="index",
-                @remove="removeStep(index)"
-              )
+          remediation-instruction-step-field(
+            v-field="steps[index]",
+            :step-number="index + 1",
+            @remove="removeStep(index)"
+          )
     v-layout(row, align-center)
       v-btn.ml-0(
         :color="hasStepsErrors ? 'error' : 'primary'",

@@ -1,36 +1,42 @@
 <template lang="pug">
-  v-layout(row)
-    v-flex.pr-1(xs11)
+  v-layout
+    v-flex.mt-3(xs1)
+      draggable-step-number(
+        drag-class="operation-drag-handler",
+        :color="hasChildrenError ? 'error' : 'primary'"
+      ) {{ operationNumber }}
+    v-flex(xs11)
       v-layout(row)
-        expand-button.operation-expand(v-model="expanded", :color="shownChildrenError ? 'error' : 'black'")
-        v-layout(column)
-          v-text-field(
-            v-field="operation.name",
-            v-validate="'required'",
-            :label="$t('common.name')",
-            :error-messages="nameErrors",
-            :error="shownChildrenError",
-            :name="nameFieldName",
-            box
-          )
-          v-expand-transition(mode="out-in")
-            v-layout(v-show="expanded", column)
-              remediation-instruction-time-to-complete-field(
-                v-field="operation.time_to_complete",
-                :name="timeToCompleteFieldName"
-              )
-              v-textarea(
-                v-field="operation.description",
+        v-flex.pr-1(xs11)
+          v-layout(row)
+            expand-button.operation-expand(v-model="expanded")
+            v-layout(column)
+              v-text-field(
+                v-field="operation.name",
                 v-validate="'required'",
-                :label="$t('common.description')",
-                :error-messages="descriptionErrors",
-                :name="descriptionFieldName",
+                :label="$t('common.name')",
+                :error-messages="nameErrors",
+                :name="nameFieldName",
                 box
               )
-    v-flex.mt-3(xs1)
-      v-layout(justify-center)
-        v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
-          v-icon(color="error") delete
+              v-expand-transition(mode="out-in")
+                v-layout(v-show="expanded", column)
+                  remediation-instruction-time-to-complete-field(
+                    v-field="operation.time_to_complete",
+                    :name="timeToCompleteFieldName"
+                  )
+                  v-textarea(
+                    v-field="operation.description",
+                    v-validate="'required'",
+                    :label="$t('common.description')",
+                    :error-messages="descriptionErrors",
+                    :name="descriptionFieldName",
+                    box
+                  )
+        v-flex.mt-3(xs1)
+          v-layout(justify-center)
+            v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
+              v-icon(color="error") delete
 </template>
 
 <script>
@@ -38,12 +44,17 @@ import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
 
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
+import DraggableStepNumber from '@/components/other/remediation/instructions/partials/draggable-step-number.vue';
 
 import RemediationInstructionTimeToCompleteField from './remediation-instruction-time-to-complete-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ExpandButton, RemediationInstructionTimeToCompleteField },
+  components: {
+    DraggableStepNumber,
+    ExpandButton,
+    RemediationInstructionTimeToCompleteField,
+  },
   mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'operation',
@@ -54,6 +65,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    operationNumber: {
+      type: [Number, String],
+      default: 0,
+    },
   },
   data() {
     return {
@@ -61,10 +76,6 @@ export default {
     };
   },
   computed: {
-    shownChildrenError() {
-      return !this.expanded && this.hasChildrenError;
-    },
-
     fieldName() {
       return this.operation.key ? this.operation.key : '';
     },
