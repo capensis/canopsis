@@ -1780,6 +1780,7 @@ export default {
     addOperation: 'Add operation',
     addEndpoint: 'Add endpoint',
     endpoint: 'Endpoint',
+    endpointAvatar: 'EP',
     workflow: 'Workflow if this step fails:',
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',

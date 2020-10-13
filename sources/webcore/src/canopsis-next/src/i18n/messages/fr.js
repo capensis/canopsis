@@ -1780,6 +1780,7 @@ export default {
     addOperation: 'Ajouter une opération',
     addEndpoint: 'Ajouter un point de terminaison',
     endpoint: 'Point de terminaison',
+    endpointAvatar: 'EP',
     workflow: 'Workflow si cette étape échoue:',
     stop: 'Arrêtez',
     remainingStep: 'Continuez avec les étapes restantes',

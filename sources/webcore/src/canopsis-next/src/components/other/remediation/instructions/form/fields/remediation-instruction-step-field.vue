@@ -51,8 +51,8 @@ export default {
   inject: ['$validator'],
   components: {
     ExpandButton,
-    RemediationInstructionStepWorkflowField,
     RemediationInstructionOperationsForm,
+    RemediationInstructionStepWorkflowField,
     RemediationInstructionStepEndpointField,
   },
   mixins: [formMixin],

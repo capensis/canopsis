@@ -2,7 +2,7 @@
   v-layout.mt-2(column)
     v-layout.py-1
       v-flex.mt-3(xs1)
-        draggable-step-number(disabled) EP
+        draggable-step-number(disabled) {{ $t('remediationInstructions.endpointAvatar') }}
       v-flex(xs11)
         v-layout(row)
           v-flex.px-1(xs11)
