@@ -1,6 +1,10 @@
 <template lang="pug">
   div
-    modal-base(:modals="modals")
+    modal-base(
+      v-for="modal in modals",
+      :key="modal.id",
+      :modal="modal"
+    )
 </template>
 
 <script>

@@ -105,6 +105,7 @@ export const MODALS = {
   createPbehaviorException: 'create-pbehavior-exception',
   createManualMetaAlarm: 'create-manual-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
+  imageViewer: 'image-viewer',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -1219,6 +1220,15 @@ export const TIME_UNITS = {
   month: 'M',
   year: 'y',
 };
+
+export const AVAILABLE_SORTED_TIME_UNITS = [
+  TIME_UNITS.year,
+  TIME_UNITS.month,
+  TIME_UNITS.day,
+  TIME_UNITS.hour,
+  TIME_UNITS.minute,
+  TIME_UNITS.second,
+];
 
 export const AVAILABLE_TIME_UNITS = {
   second: {

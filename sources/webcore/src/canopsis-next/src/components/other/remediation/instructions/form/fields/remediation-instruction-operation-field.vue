@@ -25,13 +25,12 @@
                     v-field="operation.time_to_complete",
                     :name="timeToCompleteFieldName"
                   )
-                  v-textarea(
+                  text-editor-field(
                     v-field="operation.description",
                     v-validate="'required'",
                     :label="$t('common.description')",
                     :error-messages="descriptionErrors",
-                    :name="descriptionFieldName",
-                    box
+                    :name="descriptionFieldName"
                   )
         v-flex.mt-3(xs1)
           v-layout(justify-center)
@@ -43,6 +42,7 @@
 import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
 
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
 import DraggableStepNumber from '@/components/other/remediation/instructions/partials/draggable-step-number.vue';
 
@@ -53,6 +53,7 @@ export default {
   components: {
     DraggableStepNumber,
     ExpandButton,
+    TextEditorField,
     RemediationInstructionTimeToCompleteField,
   },
   mixins: [formMixin, validationChildrenMixin],

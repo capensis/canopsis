@@ -1,43 +1,44 @@
 <template lang="pug">
-  v-layout
-    v-flex.mt-3(xs1)
-      draggable-step-number(
-        drag-class="step-drag-handler",
-        :color="hasChildrenError ? 'error' : 'primary'"
-      ) {{ stepNumber }}
-    v-flex(xs11)
-      v-layout(row)
-        v-layout
-          expand-button.step-expand(v-model="expanded")
-          v-layout(column)
-            v-layout(row)
-              v-flex(xs8)
-                v-text-field(
-                  v-field="step.name",
-                  v-validate="'required'",
-                  :label="$t('common.name')",
-                  :error-messages="nameErrorMessages",
-                  :name="nameFieldName",
-                  box
-                )
-              v-flex.pl-2(xs3)
-                v-text-field.step-time-complete-unit(
-                  :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
-                  :label="$t('remediationInstructions.timeToComplete')",
-                  readonly
-                )
-              v-flex.mt-3(xs1)
-                v-layout(justify-center)
-                  v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
-                    v-icon(color="error") delete
-            v-expand-transition(mode="out-in")
-              v-layout(v-show="expanded", column)
-                remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
-                remediation-instruction-operations-form(
-                  v-field="step.operations",
-                  :name="operationFieldName",
-                  :step-number="stepNumber"
-                )
+  .step-field
+    v-layout
+      v-flex.mt-3(xs1)
+        draggable-step-number(
+          drag-class="step-drag-handler",
+          :color="hasChildrenError ? 'error' : 'primary'"
+        ) {{ stepNumber }}
+      v-flex(xs11)
+        v-layout(row)
+          v-layout
+            expand-button.step-expand(v-model="expanded")
+            v-layout(column)
+              v-layout(row)
+                v-flex(xs8)
+                  v-text-field(
+                    v-field="step.name",
+                    v-validate="'required'",
+                    :label="$t('common.name')",
+                    :error-messages="nameErrorMessages",
+                    :name="nameFieldName",
+                    box
+                  )
+                v-flex.pl-2(xs3)
+                  v-text-field.step-time-complete-unit(
+                    :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
+                    :label="$t('remediationInstructions.timeToComplete')",
+                    readonly
+                  )
+                v-flex.mt-3(xs1)
+                  v-layout(justify-center)
+                    v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
+                      v-icon(color="error") delete
+              v-expand-transition(mode="out-in")
+                v-layout(v-show="expanded", column)
+                  remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
+                  remediation-instruction-operations-form(
+                    v-field="step.operations",
+                    :name="operationFieldName",
+                    :step-number="stepNumber"
+                  )
 </template>
 
 <script>
@@ -109,15 +110,18 @@ export default {
 };
 </script>
 
-<style lang="scss">
-  .step-expand {
-    margin: 24px 2px 0 2px !important;
-    width: 20px !important;
-    height: 20px !important;
-  }
-  .step-time-complete-unit .v-input__slot {
-    &:before, &:after {
-      content: none !important;
+<style lang="scss" scoped>
+  .step-field {
+    & /deep/ .step-expand {
+      margin: 24px 2px 0 2px !important;
+      width: 20px !important;
+      height: 20px !important;
+    }
+
+    & /deep/ .step-time-complete-unit .v-input__slot {
+      &:before, &:after {
+        content: none !important;
+      }
     }
   }
 </style>
