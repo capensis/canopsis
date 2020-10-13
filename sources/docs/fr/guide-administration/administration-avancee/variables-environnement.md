@@ -73,3 +73,11 @@ L'outil `canopsinit` dispose lui aussi de variables d'environnement permettant d
 | `CPS_INIT_MAX_RETRY` | `10` | Nombre maximum de tentatives de connexion aux services externes |
 | `CPS_INIT_RETRY_DELAY` | `30` | Temps maximum d'attente, en secondes, lors de chaque tentative de connexion à un service externe |
 | `CPS_INIT_WAIT_FIRST_ATTEMPT` | `0` | Temps d'attente obligatoire, en secondes, avant la première tentative de connexion aux services externes |
+
+### Docker
+
+Les variables suivantes ne sont disponibles que dans un environnement Canopsis reposant sur Docker. Elles sont sans effet sur les autres méthodes d'installation.
+
+| Variable d'environnement | Valeur par défaut | Utilité |
+|:-------------------------|-------------------|---------|
+| `CPS_LOGGING_LEVEL` | `info` | Permet de surcharger le niveau de verbosité des moteurs et tasks Python. `debug` permet d'obtenir davantage d'informations |
