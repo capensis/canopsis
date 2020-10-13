@@ -44,6 +44,13 @@ export default {
           remediationInstruction,
           action: async (instruction) => {
             await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationInstruction.edit.popups.success', {
+                instructionName: instruction.name,
+              }),
+            });
+
             await this.fetchList();
           },
         },
