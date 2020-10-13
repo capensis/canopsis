@@ -11,7 +11,7 @@
           v-layout(row)
             expand-button.operation-expand(
               v-model="expanded",
-              :color="!expanded && hasChildrenError ? 'error' : 'black'"
+              :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
             )
             v-layout(column)
               v-text-field(
