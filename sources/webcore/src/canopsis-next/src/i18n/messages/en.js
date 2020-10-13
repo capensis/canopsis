@@ -1779,12 +1779,16 @@ export default {
     addStep: 'Add step',
     addOperation: 'Add operation',
     addEndpoint: 'Add endpoint',
+    endpoint: 'Endpoint',
     workflow: 'Workflow if this step fails:',
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',
     timeToComplete: 'Time to complete',
     hideAll: 'Hide all',
     expandAll: 'Expand all',
+    tooltips: {
+      endpoint: 'Endpoint should be in question in Yes/No format',
+    },
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',

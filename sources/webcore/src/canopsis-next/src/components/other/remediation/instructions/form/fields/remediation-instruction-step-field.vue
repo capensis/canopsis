@@ -21,11 +21,12 @@
             )
           v-flex.mt-3(xs1)
             v-layout(justify-center)
-              v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
+              v-btn.ma-0(icon, @click.prevent="$emit('remove')")
                 v-icon(color="error") delete
         v-expand-transition(mode="out-in")
           v-layout(v-show="expanded", column)
             remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
+            remediation-instruction-step-endpoint-field(v-field="step.endpoint")
             remediation-instruction-operations-form(
               v-field="step.operations",
               :step="step",
@@ -40,9 +41,11 @@ import { getUnitValueFromOtherUnit } from '@/helpers/time';
 
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
 
+
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';
 
 import RemediationInstructionStepsWorkflowField from './remediation-instruction-steps-workflow-field.vue';
+import RemediationInstructionStepEndpointField from './remediation-instruction-step-endpoint-field.vue';
 
 export default {
   inject: ['$validator'],
@@ -50,6 +53,7 @@ export default {
     ExpandButton,
     RemediationInstructionStepsWorkflowField,
     RemediationInstructionOperationsForm,
+    RemediationInstructionStepEndpointField,
   },
   mixins: [formMixin],
   model: {
