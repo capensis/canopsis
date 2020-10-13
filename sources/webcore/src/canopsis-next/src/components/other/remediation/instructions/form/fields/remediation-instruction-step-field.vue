@@ -37,6 +37,7 @@
               v-expand-transition(mode="out-in")
                 v-layout(v-show="expanded", column)
                   remediation-instruction-steps-workflow-field(v-field="step.stop_on_fail")
+                  remediation-instruction-step-endpoint-field(v-field="step.endpoint")
                   remediation-instruction-operations-form(
                     v-field="step.operations",
                     :name="operationFieldName",
@@ -56,15 +57,17 @@ import DraggableStepNumber from '../../partials/draggable-step-number.vue';
 
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';
 
-import RemediationInstructionStepsWorkflowField from './remediation-instruction-steps-workflow-field.vue';
+import RemediationInstructionStepWorkflowField from './remediation-instruction-step-workflow-field.vue';
+import RemediationInstructionStepEndpointField from './remediation-instruction-step-endpoint-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     DraggableStepNumber,
     ExpandButton,
-    RemediationInstructionStepsWorkflowField,
     RemediationInstructionOperationsForm,
+    RemediationInstructionStepWorkflowField,
+    RemediationInstructionStepEndpointField,
   },
   mixins: [formMixin, validationChildrenMixin],
   model: {

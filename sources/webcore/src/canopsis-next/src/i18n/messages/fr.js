@@ -1779,12 +1779,17 @@ export default {
     addStep: 'Ajouter une étape',
     addOperation: 'Ajouter une opération',
     addEndpoint: 'Ajouter un point de terminaison',
+    endpoint: 'Point de terminaison',
+    endpointAvatar: 'EP',
     workflow: 'Workflow si cette étape échoue:',
     stop: 'Arrêtez',
     remainingStep: 'Continuez avec les étapes restantes',
     timeToComplete: 'Temps pour terminer',
     hideAll: 'Cacher tout',
     expandAll: 'Développer tout',
+    tooltips: {
+      endpoint: 'Le point final doit être en question au format Oui / Non',
+    },
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',

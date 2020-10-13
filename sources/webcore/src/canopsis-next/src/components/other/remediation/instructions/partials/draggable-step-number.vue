@@ -1,6 +1,7 @@
 <template lang="pug">
   v-layout(align-center, justify-space-around)
-    v-icon.handler.draggable(:class="dragClass") drag_indicator
+    span.handler
+      v-icon.draggable(v-show="!disabled", :class="dragClass") drag_indicator
     v-avatar.white--text(:color="color", size="32")
       slot
 </template>
@@ -15,6 +16,10 @@ export default {
     color: {
       type: String,
       default: 'primary',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };
