@@ -83,7 +83,7 @@ Par exemple, une règle contenant le pattern suivant sera appliquée aux évène
 Pour plus d'expressivité, il est possible d'associer à un champ un objet contenant des couples `operateur: valeur`. Les opérateurs disponibles sont :
 
  - `>=`, `>`, `<`, `<=` : compare une valeur numérique à une autre valeur.
- - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est [définie dans un document dédié](../../guide-utilisation/formats-et-syntaxe/index.md).
+ - `regex_match` : filtre la valeur d'une clé selon une expression régulière. La syntaxe des expressions régulières est [définie dans un document dédié](../../guide-utilisation/formats-et-syntaxe/format-regex.md).
 
 Par exemple, le pattern suivant sélectionne les évènements dont la criticité est comprise entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
 
