@@ -106,6 +106,7 @@ def save_role(ws, role):
 
 def save_user(ws, record):
     uid = record.pop('_id')
+    oid = record.pop('id')
     urole = record.pop('role')
     ucontact = record.pop('contact', None)
     urights = record.pop('rights', None)
@@ -124,7 +125,15 @@ def save_user(ws, record):
             'email': record.get('mail', '')
         }
 
-    user = rights.get_user(uid)
+    _id = oid or uid
+    if (_id != uid and oid is not None) or oid is None:
+        user = rights.get_user(uid)
+        if user:
+            raise ws.Error('Exist user')
+        if oid is not None:
+            rights.delete('user', oid)
+
+    user = rights.get_user(_id)
 
     if not user:
         user = rights.create_user(
