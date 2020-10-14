@@ -20,7 +20,6 @@
 <script>
 import Draggable from 'vuedraggable';
 
-import { MODALS } from '@/constants';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { generateRemediationInstructionStep } from '@/helpers/entities';
@@ -97,12 +96,7 @@ export default {
     },
 
     removeStep(index) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: () => this.removeItemFromArray(index),
-        },
-      });
+      this.removeItemFromArray(index);
     },
   },
 };

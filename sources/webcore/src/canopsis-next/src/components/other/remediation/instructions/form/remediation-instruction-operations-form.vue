@@ -29,7 +29,7 @@ import Draggable from 'vuedraggable';
 
 import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { FIRST_LETTER_ALPHABET_CHAR_CODE, MODALS } from '@/constants';
+import { FIRST_LETTER_ALPHABET_CHAR_CODE } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
 
@@ -117,14 +117,7 @@ export default {
     },
 
     removeOperation(index) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: () => {
-            this.removeItemFromArray(index);
-          },
-        },
-      });
+      this.removeItemFromArray(index);
     },
 
     startDragging() {

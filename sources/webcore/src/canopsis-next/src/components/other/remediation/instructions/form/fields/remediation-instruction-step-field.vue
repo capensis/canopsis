@@ -32,7 +32,7 @@
                   )
                 v-flex.mt-3(xs1)
                   v-layout(justify-center)
-                    v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
+                    v-btn.ma-0(icon, small, @click.prevent="remove")
                       v-icon(color="error") delete
               v-expand-transition(mode="out-in")
                 v-layout(v-show="expanded", column)
@@ -49,7 +49,11 @@
 import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
 
+import { isOmitEqual } from '@/helpers/is-omit-equal';
 import { getUnitValueFromOtherUnit } from '@/helpers/time';
+import { generateRemediationInstructionStep } from '@/helpers/entities';
+
+import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
 
@@ -69,7 +73,23 @@ export default {
     RemediationInstructionStepWorkflowField,
     RemediationInstructionStepEndpointField,
   },
-  mixins: [formMixin, validationChildrenMixin],
+  mixins: [
+    formMixin,
+    validationChildrenMixin,
+    confirmableFormMixin({
+      field: 'step',
+      method: 'remove',
+      comparator(step) {
+        const emptyStep = generateRemediationInstructionStep();
+        const paths = [
+          'key',
+          step.operations.length ? ['operations', 0, 'key'] : 'operations',
+        ];
+
+        return isOmitEqual(step, emptyStep, paths);
+      },
+    }),
+  ],
   model: {
     prop: 'step',
     event: 'input',
@@ -112,6 +132,11 @@ export default {
 
         return acc + getUnitValueFromOtherUnit(interval, unit);
       }, 0);
+    },
+  },
+  methods: {
+    remove() {
+      this.$emit('remove');
     },
   },
 };
