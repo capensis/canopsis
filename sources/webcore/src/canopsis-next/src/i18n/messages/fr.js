@@ -1242,7 +1242,18 @@ export default {
       },
     },
     createRemediationInstruction: {
-      title: 'Créer une instruction',
+      create: {
+        title: 'Créer une instruction',
+        popups: {
+          success: '{instructionName} a été créé avec succès',
+        },
+      },
+      edit: {
+        title: 'Éditée une instruction',
+        popups: {
+          success: '{instructionName} a été modifié avec succès',
+        },
+      },
     },
     createRemediationConfiguration: {
       title: 'Créer une configuration',

@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ $t('modals.createRemediationInstruction.title') }}
+        span {{ title }}
       template(slot="text")
         remediation-instruction-form(v-model="form")
       template(slot="actions")
@@ -41,6 +41,15 @@ export default {
     return {
       form: remediationInstructionToForm(this.modal.config.remediationInstruction),
     };
+  },
+  computed: {
+    title() {
+      if (this.config.remediationInstruction) {
+        return this.$t('modals.createRemediationInstruction.edit.title');
+      }
+
+      return this.$t('modals.createRemediationInstruction.create.title');
+    },
   },
   methods: {
     async submit() {

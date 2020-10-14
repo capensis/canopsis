@@ -103,6 +103,13 @@ export default {
         config: {
           action: async (instruction) => {
             await this.createRemediationInstruction({ data: instruction });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationInstruction.create.popups.success', {
+                instructionName: instruction.name,
+              }),
+            });
+
             await this.fetchInstructionsList();
           },
         },
