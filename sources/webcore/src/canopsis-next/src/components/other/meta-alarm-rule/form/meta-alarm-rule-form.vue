@@ -19,7 +19,6 @@
     )
     v-textarea(
       v-field="form.output_template",
-      :error-messages="errors.collect('output_template')",
       :label="$t('metaAlarmRule.fields.outputTemplate')",
       name="output_template"
     )
