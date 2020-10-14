@@ -1,14 +1,23 @@
 <template lang="pug">
-  v-layout(wrap)
-    v-chip(
-      v-for="entity in entities",
-      :key="entity[itemKey]",
-      close,
-      @input="$emit('remove', entity)"
-    )
-      slot(:entity="entity") {{ contentKey ? entity[contentKey] : entity }}
-    v-btn(v-if="clearable && entities.length", small, icon, @click="$emit('clear')")
-      v-icon(color="error") delete
+  v-layout(row, wrap, align-center)
+    v-flex(xs11)
+      v-chip(
+        v-for="entity in entities",
+        :key="entity[itemKey]",
+        close,
+        @input="$emit('remove', entity)"
+      )
+        slot(:entity="entity") {{ contentKey ? entity[contentKey] : entity }}
+    v-flex(v-if="clearable && entities.length", xs1)
+      v-tooltip(right)
+        v-btn(
+          slot="activator",
+          small,
+          icon,
+          @click="$emit('clear')"
+        )
+          v-icon(color="error") delete
+        span {{ $t('common.deleteAll') }}
 </template>
 
 <script>

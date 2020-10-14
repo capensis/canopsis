@@ -125,6 +125,7 @@ export default {
     and: 'And',
     priority: 'Priority',
     clear: 'Clear',
+    deleteAll: 'Delete all',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

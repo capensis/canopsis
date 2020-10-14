@@ -10,17 +10,18 @@
     advanced-pagination
   )
     template(slot="toolbar", slot-scope="props")
-      v-layout(row, justify-space-between)
-        v-flex(xs9)
-          search-field(@submit="props.updateSearch", @clear="props.clearSearch")
-        v-btn(
-          v-if="props.selected.length",
-          color="primary",
-          @click="$emit('select', props.selected)"
-        ) {{ $t('common.add') }}
+      v-layout(row)
+        search-field(@submit="props.updateSearch", @clear="props.clearSearch")
     template(slot="actions", slot-scope="props")
       v-btn(:disabled="props.disabled", icon, small, @click="$emit('select', [props.item])")
         v-icon add
+    template(slot="mass-actions", slot-scope="props")
+      v-btn(
+        v-if="props.selected.length",
+        outline,
+        color="primary",
+        @click="$emit('select', props.selected)"
+      ) {{ $t('common.add') }}
 </template>
 
 <script>

@@ -22,7 +22,7 @@
         :clearSearch="clearSearchHandler"
       )
     v-data-table(
-      :value="selected",
+      v-model="selected",
       :headers="headers",
       :items="items",
       :loading="loading",
@@ -34,8 +34,7 @@
       :expand="expand",
       :is-disabled-item="isDisabledItem",
       :hide-actions="hideActions || advancedPagination",
-      @update:pagination="updatePagination($event)",
-      @input="selectHandler"
+      @update:pagination="updatePagination($event)"
     )
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
@@ -59,6 +58,7 @@
           slot(v-bind="props", name="expand")
       template(slot="headerCell", slot-scope="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
+    slot(name="mass-actions", :selected="selected")
     v-layout.white(v-show="totalItems && advancedPagination", align-center)
       v-flex(xs10)
         pagination(
@@ -161,10 +161,18 @@ export default {
   },
   data() {
     return {
-      selected: [],
+      selectedItems: [],
     };
   },
   computed: {
+    selected: {
+      get() {
+        return this.selectedItems.filter(item => !this.isDisabledItem(item));
+      },
+      set(selected) {
+        this.selectedItems = selected;
+      },
+    },
     hasExpandSlot() {
       return this.$slots.expand || this.$scopedSlots.expand;
     },

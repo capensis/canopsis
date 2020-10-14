@@ -125,6 +125,7 @@ export default {
     and: 'ET',
     priority: 'Priorité',
     clear: 'Clair',
+    deleteAll: 'Tout supprimer',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
