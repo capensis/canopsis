@@ -1250,7 +1250,7 @@ export default {
     createRemediationJob: {
       title: 'Create Job',
     },
-    formConfirmation: {
+    clickOutsideConfirmation: {
       title: 'Are you sure?',
       text: 'Changes will not be saved. Are you sure?',
       buttons: {

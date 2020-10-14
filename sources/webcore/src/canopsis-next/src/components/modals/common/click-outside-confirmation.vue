@@ -1,30 +1,28 @@
 <template lang="pug">
   modal-wrapper
     template(slot="title")
-      span {{ $t('modals.formConfirmation.title') }}
+      span {{ $t('modals.clickOutsideConfirmation.title') }}
     template(slot="text")
-      span.subheading {{ $t('modals.formConfirmation.text') }}
+      span.subheading {{ $t('modals.clickOutsideConfirmation.text') }}
     template(slot="actions")
       v-btn(
         depressed,
         flat,
         @click="$modals.hide"
-      ) {{ $t('modals.formConfirmation.buttons.backToForm') }}
+      ) {{ $t('modals.clickOutsideConfirmation.buttons.backToForm') }}
       v-btn.warning(
         :loading="submitting",
         :disabled="isDisabled",
         @click.prevent="submit(false)"
-      ) {{ $t('modals.formConfirmation.buttons.dontSave') }}
+      ) {{ $t('modals.clickOutsideConfirmation.buttons.dontSave') }}
       v-btn.primary(
         :loading="submitting",
         :disabled="isDisabled",
         @click.prevent="submit(true)"
-      ) {{ $t('modals.formConfirmation.buttons.save') }}
+      ) {{ $t('modals.clickOutsideConfirmation.buttons.save') }}
 </template>
 
 <script>
-import { isUndefined } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -33,20 +31,15 @@ import submittableMixin from '@/mixins/submittable';
 import ModalWrapper from '../modal-wrapper.vue';
 
 /**
- * Confirmation modal
+ * Click outside confirmation modal
  */
 export default {
-  name: MODALS.formConfirmation,
+  name: MODALS.clickOutsideConfirmation,
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
-  destroyed() {
-    if (this.config.action && !isUndefined(this.confirmed)) {
-      this.config.action(this.confirmed);
-    }
-  },
   methods: {
     async submit(confirmed) {
-      this.confirmed = confirmed;
+      await this.config.action(confirmed);
 
       this.$modals.hide();
     },

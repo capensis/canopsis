@@ -79,7 +79,6 @@ export default {
     confirmableFormMixin({
       field: 'step',
       method: 'remove',
-      cloning: false,
       comparator(step) {
         const emptyStep = generateRemediationInstructionStep();
         const paths = [

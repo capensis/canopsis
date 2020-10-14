@@ -70,7 +70,6 @@ export default {
     confirmableFormMixin({
       field: 'operation',
       method: 'remove',
-      cloning: false,
       comparator(operation) {
         const emptyOperation = generateRemediationInstructionStepOperation();
         const paths = ['key'];

@@ -4,12 +4,22 @@ import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
+/**
+ * Confirm user action on form mixin creator
+ *
+ * @param {string} [field = 'form']
+ * @param {string} [method = 'submit']
+ * @param {string} [modalName = MODALS.clickOutsideConfirmation]
+ * @param {Function} [comparator = isEqual]
+ * @param {boolean} [cloning = false]
+ * @returns {{created(): void, methods: {}, beforeDestroy(): void, inject: [string]}|*}
+ */
 export default ({
   field = 'form',
   method = 'submit',
   modalName = MODALS.confirmation,
   comparator = isEqual,
-  cloning = true,
+  cloning = false,
 } = {}) => {
   const originalField = Symbol('originalField');
   const confirmationModalIdField = Symbol('confirmationModalIdField');
@@ -24,9 +34,7 @@ export default ({
       const sourceMethod = this[method];
 
       if (sourceMethod) {
-        this[method] = async (...args) => {
-          this[confirmationMethodKey](() => sourceMethod.apply(this, args));
-        };
+        this[method] = (...args) => this[confirmationMethodKey](() => sourceMethod.apply(this, args));
       }
     },
     methods: {

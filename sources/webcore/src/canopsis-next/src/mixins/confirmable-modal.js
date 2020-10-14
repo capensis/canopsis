@@ -4,6 +4,15 @@ import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
+/**
+ * Confirm modal click outside mixin creator
+ *
+ * @param {string} [field = 'form']
+ * @param {string} [method = 'submit']
+ * @param {string} [modalName = MODALS.clickOutsideConfirmation]
+ * @param {Function} [comparator = isEqual]
+ * @returns {{created(): void, methods: {}, beforeDestroy(): void, inject: [string]}|*}
+ */
 export default ({
   field = 'form',
   method = 'submit',
