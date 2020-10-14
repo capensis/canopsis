@@ -19,8 +19,7 @@
     )
     v-textarea(
       v-field="form.output_template",
-      :label="$t('metaAlarmRule.fields.outputTemplate')",
-      name="output_template"
+      :label="$t('metaAlarmRule.fields.outputTemplate')"
     )
       v-tooltip(slot="append", left)
         v-icon(slot="activator") help
