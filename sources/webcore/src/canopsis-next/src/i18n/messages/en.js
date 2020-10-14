@@ -1423,7 +1423,16 @@ export default {
     actions: 'Actions',
     id: 'Id',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
+    outputTemplateHelp: '<p>The accessible variables are:</p>' +
+      '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>' +
+      '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>' +
+      '<p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p>' +
+      '<p>For example:</p>' +
+      '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>' +
+      '<p>A static informative message</p>' +
+      '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
+      outputTemplate: 'Output template',
       eventPatterns: 'Event patterns',
       alarmPatterns: 'Alarm patterns',
       entityPatterns: 'Entity patterns',

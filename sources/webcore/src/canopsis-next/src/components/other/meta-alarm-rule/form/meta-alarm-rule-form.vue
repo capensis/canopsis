@@ -17,6 +17,16 @@
       :label="$t('common.name')",
       name="name"
     )
+    v-textarea(
+      v-validate="'required'",
+      v-field="form.output_template",
+      :error-messages="errors.collect('output_template')",
+      :label="$t('metaAlarmRule.fields.outputTemplate')",
+      name="output_template"
+    )
+      v-tooltip(slot="append", left)
+        v-icon(slot="activator") help
+        div(v-html="$t('metaAlarmRule.outputTemplateHelp')")
     v-switch(
       v-field="form.auto_resolve",
       :label="$t('metaAlarmRule.fields.autoResolve')",
