@@ -246,10 +246,10 @@ le conteneur `snmp`. L'exécution du script et son résultat se présentent comm
 suit :
 
 ```console
-(canopsis 3.20.0)[canopsis@ct ~]$ custom-trap-tester.py -t /tmp/event.json -c canopsis_cat.snmp.custom_handler.guitare
+(canopsis x.yy.z)[canopsis@ct ~]$ custom-trap-tester.py -t /tmp/event.json -c canopsis_cat.snmp.custom_handler.guitare
 * Found class GuitarTrap
-* The trap match can be treated by this class. Commencing traitment...
-* An event has been generated: 
+* Trap can be handled by this class. Building event...
+* The following event has been generated: 
 {
     "_id": "snmp.snmp2canopsis.check.resource.Gibson.matter", 
     "component": "Gibson", 
