@@ -42,8 +42,8 @@ Une action est composée d'un JSON contenant les paramètres suivants :
 * `parameters` : obligatoire. [Paramétrage spécifique](#parametres-specifiques) à chaque type d'action.
 * `delay` : optionnel. Délai avant l'exécution de l'action. Les unités acceptées sont celles utilisées par le langage [Golang](https://golang.org/pkg/time/#ParseDuration) soit `s`, `m`, `h` pour secondes, minutes et heures respectivement. Le champ est de type `string`.
 * `hook` : obligatoire. Il est composé des paramètres suivants :
-    - [`patterns`](moteur-che-event_filter.md#patterns) : optionnel. Conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée.
-    - [`triggers`](../architecture-interne/triggers.md) : obligatoire. Ils servent comme point de déclenchement pour les actions automatisées, en général lors de la réception d'un évènement.
+    * [`patterns`](moteur-che-event_filter.md#patterns) : optionnel. Conditions sur les champs des alarmes (`alarm_patterns`), des entités (`entity_patterns`) ou des évènements (`event_patterns`) dans lesquelles l'action doit être appelée.
+    * [`triggers`](../architecture-interne/triggers.md) : obligatoire. Ils servent comme point de déclenchement pour les actions automatisées, en général lors de la réception d'un évènement.
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
