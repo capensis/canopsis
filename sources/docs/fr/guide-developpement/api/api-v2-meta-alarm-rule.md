@@ -22,6 +22,7 @@ Crée une nouvelle règle à partir du corps de la requête.
   "_id" : "metarule1",
   "name": "Test groupement de type complexe",
   "type": "complex",
+  "output_template" : "{{ .Children.Alarm.Value.State.Message }}",
   "config": {
     "time_interval": 10,
     "threshold_count": 3,
@@ -48,6 +49,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
   "_id" : "metarule1",
   "name": "Test groupement de type complexe",
   "type": "complex",
+  "output_template" : "{{ .Children.Alarm.Value.State.Message }}",
   "config": {
     "time_interval": 10,
     "threshold_count": 3,
@@ -222,6 +224,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule/8c7b1732-52
 {
   "patterns": null,
   "_id": "8c7b1732-522f-4bcf-a7ac-d08bd9c085eb",
+  "output_template" : "{{ .Children.Alarm.Value.State.Message }}",
   "config": {
     "time_interval": 10,
     "alarm_patterns": [
@@ -291,11 +294,13 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule'
     "_id": "73da1ad7-058e-46af-8442-7ea3f246eb68",
     "config": null,
     "name": "Relation-composant-ressource",
+    "output_template" : "{{ .Children.Alarm.Value.State.Message }}",
     "type": "relation"
   },
   {
     "patterns": null,
     "_id": "47757b30-4499-4cb6-afc5-f3d3f44300e8",
+    "output_template" : "{{ .Children.Alarm.Value.State.Message }}",
     "config": {
       "time_interval": 10,
       "alarm_patterns": [
@@ -318,6 +323,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule'
   {
     "patterns": null,
     "_id": "8c7b1732-522f-4bcf-a7ac-d08bd9c085eb",
+    "output_template" : "{{ .Children.Alarm.Value.State.Message }}",
     "config": {
       "time_interval": 10,
       "alarm_patterns": [
@@ -340,6 +346,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule'
   {
     "patterns": null,
     "_id": "mon_id_de_regle",
+    "output_template" : "{{ .Children.Alarm.Value.State.Message }}",
     "config": {
       "time_interval": 10,
       "alarm_patterns": [
