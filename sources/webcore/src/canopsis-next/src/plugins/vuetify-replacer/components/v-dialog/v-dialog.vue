@@ -38,7 +38,7 @@ export default {
     },
   },
   methods: {
-    closeConditional: function closeConditional(e) {
+    closeConditional(e) {
       // If the dialog content contains
       // the click event, or if the
       // dialog is not active
