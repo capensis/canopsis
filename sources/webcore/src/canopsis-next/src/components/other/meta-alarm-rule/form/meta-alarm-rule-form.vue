@@ -18,7 +18,6 @@
       name="name"
     )
     v-textarea(
-      v-validate="'required'",
       v-field="form.output_template",
       :error-messages="errors.collect('output_template')",
       :label="$t('metaAlarmRule.fields.outputTemplate')",
