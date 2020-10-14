@@ -7,8 +7,9 @@ import uid from '@/helpers/uid';
 export default ({
   field = 'form',
   method = 'submit',
-  modalName = MODALS.formConfirmation,
+  modalName = MODALS.confirmation,
   comparator = isEqual,
+  cloning = true,
 } = {}) => {
   const originalField = Symbol('originalField');
   const confirmationModalIdField = Symbol('confirmationModalIdField');
@@ -16,7 +17,10 @@ export default ({
 
   return {
     created() {
-      this[originalField] = cloneDeep(this[field]);
+      if (cloning) {
+        this[originalField] = cloneDeep(this[field]);
+      }
+
       const sourceMethod = this[method];
 
       if (sourceMethod) {
@@ -37,9 +41,7 @@ export default ({
               persistent: true,
             },
             config: {
-              action: async () => {
-                action();
-              },
+              action,
             },
           });
         } else {

@@ -20,14 +20,11 @@
 <script>
 import Draggable from 'vuedraggable';
 
-import { MODALS } from '@/constants';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { isOmitEqual } from '@/helpers/is-omit-equal';
 import { generateRemediationInstructionStep } from '@/helpers/entities';
 
 import formArrayMixin from '@/mixins/form/array';
-import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
@@ -40,28 +37,7 @@ export default {
     RemediationInstructionStepField,
   },
   inject: ['$validator'],
-  mixins: [
-    formArrayMixin,
-    confirmableFormMixin({
-      field: 'steps',
-      method: 'removeStep',
-      modalName: MODALS.confirmation,
-      comparator(newSteps = [], oldSteps = []) {
-        const paths = oldSteps.reduce((acc, step, index) => {
-          acc.push(['steps', index, 'key']);
-
-          const operationsPaths =
-              step.operations.map((operation, operationIndex) => ['steps', index, 'operations', operationIndex, 'key']);
-
-          acc.push(...operationsPaths);
-
-          return acc;
-        }, []);
-
-        return isOmitEqual(newSteps, oldSteps, paths);
-      },
-    }),
-  ],
+  mixins: [formArrayMixin],
   model: {
     prop: 'steps',
     event: 'input',

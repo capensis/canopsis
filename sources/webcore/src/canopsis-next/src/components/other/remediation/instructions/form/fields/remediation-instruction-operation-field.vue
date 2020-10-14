@@ -37,13 +37,17 @@
                   )
         v-flex.mt-3(xs1)
           v-layout(justify-center)
-            v-btn.ma-0(icon, small, @click.prevent="$emit('remove')")
+            v-btn.ma-0(icon, small, @click.prevent="remove")
               v-icon(color="error") delete
 </template>
 
 <script>
+import { isOmitEqual } from '@/helpers/is-omit-equal';
+import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+
 import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
+import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
@@ -60,7 +64,21 @@ export default {
     TextEditorField,
     RemediationInstructionTimeToCompleteField,
   },
-  mixins: [formMixin, validationChildrenMixin],
+  mixins: [
+    formMixin,
+    validationChildrenMixin,
+    confirmableFormMixin({
+      field: 'operation',
+      method: 'remove',
+      cloning: false,
+      comparator(operation) {
+        const emptyOperation = generateRemediationInstructionStepOperation();
+        const paths = ['key'];
+
+        return isOmitEqual(operation, emptyOperation, paths);
+      },
+    }),
+  ],
   model: {
     prop: 'operation',
     event: 'input',
@@ -108,6 +126,10 @@ export default {
   methods: {
     getErrors(name, nameReplacer) {
       return this.errors.collect(name).map(error => error.replace(name, nameReplacer));
+    },
+
+    remove() {
+      this.$emit('remove');
     },
   },
 };

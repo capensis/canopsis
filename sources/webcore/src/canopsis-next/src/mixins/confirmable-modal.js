@@ -7,7 +7,8 @@ import uid from '@/helpers/uid';
 export default ({
   field = 'form',
   method = 'submit',
-  modalName = MODALS.formConfirmation,
+  modalName = MODALS.clickOutsideConfirmation,
+  comparator = isEqual,
 } = {}) => {
   const originalField = Symbol('originalField');
   const confirmationModalIdField = Symbol('confirmationModalIdField');
@@ -26,7 +27,7 @@ export default ({
     },
     methods: {
       [clickOutsideHandlerMethodKey]() {
-        const equal = isEqual(this[field], this[originalField]);
+        const equal = comparator.call(this, this[field], this[originalField]);
         const statePath = [this.$modals.moduleName, 'byId', this[confirmationModalIdField]];
 
         if (!equal && !get(this.$store.state, statePath)) {

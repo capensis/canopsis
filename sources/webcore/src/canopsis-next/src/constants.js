@@ -60,7 +60,7 @@ export const MODALS = {
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
-  formConfirmation: 'form-confirmation',
+  clickOutsideConfirmation: 'click-outside-confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',

@@ -23,7 +23,8 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 import submittableMixin from '@/mixins/submittable';
-import confirmableMixin from '@/mixins/confirmable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
+
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
@@ -43,7 +44,7 @@ export default {
     modalInnerMixin,
     validationErrorsMixin(),
     submittableMixin(),
-    confirmableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     return {
