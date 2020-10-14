@@ -1423,7 +1423,16 @@ export default {
     actions: 'Actions',
     id: 'Id',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+    outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n' +
+      '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta alarme.</p>' +
+      '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta alarme.</p>' +
+      '<p><strong>.Rule</strong>: Les informations administratives de la méta alarme en elle-même.</p>' +
+      '<p>Quelques exemples:</p>' +
+      '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>' +
+      '<p>Un message informatif statique</p>' +
+      '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
+      outputTemplate: 'Modèle de sortie',
       eventPatterns: 'Patterns des événements',
       alarmPatterns: 'Patterns des alarmes',
       entityPatterns: 'Pattern des entités',
