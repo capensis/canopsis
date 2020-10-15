@@ -30,29 +30,14 @@ export default {
       type: Array,
       default: () => [],
     },
-    editing: {
-      type: Boolean,
-      default: false,
-    },
   },
   watch: {
-    editing(editing) {
-      if (editing) {
-        this.removeImagesListeners();
-      } else {
-        this.addImagesListeners();
-      }
-    },
     value() {
-      if (!this.editing) {
-        this.addImagesListeners();
-      }
+      this.addImagesListeners();
     },
   },
   mounted() {
-    if (!this.editing) {
-      this.addImagesListeners();
-    }
+    this.addImagesListeners();
   },
   beforeDestroy() {
     this.removeImagesListeners();
