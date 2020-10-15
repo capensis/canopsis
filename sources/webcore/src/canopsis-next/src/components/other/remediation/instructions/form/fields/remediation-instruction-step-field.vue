@@ -35,7 +35,7 @@
                     v-btn.ma-0(icon, small, @click.prevent="remove")
                       v-icon(color="error") delete
               v-expand-transition(mode="out-in")
-                v-layout(v-show="expanded", column)
+                v-layout(v-if="expanded", column)
                   remediation-instruction-step-workflow-field(v-field="step.stop_on_fail")
                   remediation-instruction-step-endpoint-field(v-field="step.endpoint")
                   remediation-instruction-operations-form(

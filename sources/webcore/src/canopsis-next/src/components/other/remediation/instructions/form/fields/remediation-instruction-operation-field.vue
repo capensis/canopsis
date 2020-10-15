@@ -23,7 +23,7 @@
                 box
               )
               v-expand-transition(mode="out-in")
-                v-layout(v-show="expanded", column)
+                v-layout(v-if="expanded", column)
                   remediation-instruction-time-to-complete-field(
                     v-field="operation.time_to_complete",
                     :name="timeToCompleteFieldName"

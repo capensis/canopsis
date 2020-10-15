@@ -1,7 +1,7 @@
 <template lang="pug">
   .choose-expansion-panel
     v-expansion-panel.my-1
-      v-expansion-panel-content.grey.darken-2.white--text
+      v-expansion-panel-content.grey.darken-2.white--text(lazy-with-unmount)
         div.white--text(slot="header") {{ label }}
         v-card
           chips-list(

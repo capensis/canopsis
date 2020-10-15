@@ -25,7 +25,6 @@ import validationErrorsMixin from '@/mixins/form/validation-errors';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
