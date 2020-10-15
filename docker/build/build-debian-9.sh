@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#
+# This file contains buildtime dependencies for Debian docker images.
+#
 set -e
 set -o pipefail
 set -u
