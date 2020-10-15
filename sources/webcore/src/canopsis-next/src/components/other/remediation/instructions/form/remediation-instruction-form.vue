@@ -42,8 +42,5 @@ export default {
       default: () => ({}),
     },
   },
-  mounted() {
-    this.fetchRemediationJobsList();
-  },
 };
 </script>

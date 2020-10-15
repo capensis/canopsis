@@ -1,9 +1,9 @@
 <template lang="pug">
   advanced-data-table.white(
     :headers="headers",
-    :items="remediationJobs",
-    :loading="remediationJobsPending",
-    :total-items="remediationJobsMeta.total_count",
+    :items="jobsItems",
+    :loading="pending",
+    :total-items="totalItems",
     :is-disabled-item="isSelectedJob",
     :pagination.sync="pagination",
     select-all,
@@ -43,6 +43,9 @@ export default {
   },
   data() {
     return {
+      pending: false,
+      jobsItems: [],
+      totalItems: 0,
       query: {
         rowsPerPage: 5,
       },
@@ -61,13 +64,22 @@ export default {
       ];
     },
   },
+  mounted() {
+    this.fetchList();
+  },
   methods: {
     isSelectedJob({ _id }) {
       return this.selectedIds.includes(_id);
     },
 
     async fetchList() {
-      this.fetchRemediationJobsList({ params: this.getQuery() });
+      this.pending = true;
+
+      const { data: jobs, meta } = await this.fetchRemediationJobsListWithoutStore({ params: this.getQuery() });
+
+      this.jobsItems = jobs;
+      this.totalItems = meta.total_count;
+      this.pending = false;
     },
   },
 };
