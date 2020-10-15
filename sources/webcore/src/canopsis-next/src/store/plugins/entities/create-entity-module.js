@@ -4,8 +4,14 @@ import request from '@/services/request';
 
 import schemas from '@/store/schemas';
 
+export const DEFAULT_ENTITY_MODULE_TYPES = {
+  FETCH_LIST: 'FETCH_LIST',
+  FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+};
+
 export default ({
-  types,
+  types = DEFAULT_ENTITY_MODULE_TYPES,
   entityType,
   route,
   dataPreparer,

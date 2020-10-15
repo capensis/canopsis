@@ -35,6 +35,7 @@
                     :error-messages="descriptionErrors",
                     :name="descriptionFieldName"
                   )
+                  jobs-select(v-field="operation.jobs")
         v-flex.mt-3(xs1)
           v-layout(justify-center)
             v-btn.ma-0(icon, small, @click.prevent="remove")
@@ -51,6 +52,7 @@ import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
+import JobsSelect from '@/components/other/remediation/instructions/partials/jobs-select.vue';
 
 import DraggableStepNumber from '../../partials/draggable-step-number.vue';
 
@@ -61,8 +63,9 @@ export default {
   components: {
     DraggableStepNumber,
     ExpandButton,
-    TextEditorField,
     RemediationInstructionTimeToCompleteField,
+    TextEditorField,
+    JobsSelect,
   },
   mixins: [
     formMixin,

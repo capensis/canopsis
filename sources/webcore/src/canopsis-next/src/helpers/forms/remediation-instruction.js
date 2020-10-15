@@ -22,6 +22,7 @@ const remediationInstructionStepOperationsToForm = operations => operations.map(
     ),
     unit: operation.time_to_complete_unit || TIME_UNITS.second,
   },
+  jobs: operation.jobs || [],
   key: uuid(),
 }));
 
@@ -76,6 +77,7 @@ const formOperationsToRemediationInstructionOperation = operations => operations
       seconds: getSecondsByUnit(interval, unit),
       unit,
     },
+    jobs: operation.jobs.map(({ _id }) => _id),
   });
 });
 

@@ -124,6 +124,8 @@ export default {
     or: 'OU',
     and: 'ET',
     priority: 'Priorité',
+    clear: 'Clair',
+    deleteAll: 'Tout supprimer',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1823,6 +1825,10 @@ export default {
       operationRequired: 'Veuillez ajouter au moins une opération',
       stepRequired: 'Veuillez ajouter au moins une étape',
     },
+  },
+
+  remediationJobs: {
+    addJobs: 'Ajouter {count} emploi | Ajouter {count} emplois',
   },
 
   ...featureService.get('i18n.fr'),

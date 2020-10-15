@@ -15,9 +15,14 @@
           :tooltip="searchTooltip",
           @update:query="updatePagination"
         )
-      slot(name="toolbar", :selected="selected")
+      slot(
+        name="toolbar",
+        :selected="selected",
+        :updateSearch="updateSearchHandler",
+        :clearSearch="clearSearchHandler"
+      )
     v-data-table(
-      :value="selected",
+      v-model="selected",
       :headers="headers",
       :items="items",
       :loading="loading",
@@ -29,8 +34,7 @@
       :expand="expand",
       :is-disabled-item="isDisabledItem",
       :hide-actions="hideActions || advancedPagination",
-      @update:pagination="updatePagination($event)",
-      @input="selectHandler"
+      @update:pagination="updatePagination($event)"
     )
       template(slot="items", slot-scope="props")
         slot(v-bind="getItemsProps(props)", name="items")
@@ -54,6 +58,7 @@
           slot(v-bind="props", name="expand")
       template(slot="headerCell", slot-scope="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
+    slot(name="mass-actions", :selected="selected")
     v-layout.white(v-show="totalItems && advancedPagination", align-center)
       v-flex(xs10)
         pagination(
@@ -156,10 +161,18 @@ export default {
   },
   data() {
     return {
-      selected: [],
+      selectedItems: [],
     };
   },
   computed: {
+    selected: {
+      get() {
+        return this.selectedItems.filter(item => !this.isDisabledItem(item));
+      },
+      set(selected) {
+        this.selectedItems = selected;
+      },
+    },
     hasExpandSlot() {
       return this.$slots.expand || this.$scopedSlots.expand;
     },
@@ -169,16 +182,14 @@ export default {
     },
   },
   methods: {
-    selectHandler(selected) {
-      this.selected = selected.filter(item => !this.isDisabledItem(item));
-    },
-
     updatePagination(pagination) {
+      this.selected = [];
+
       this.$emit('update:pagination', this.getPagination(pagination));
     },
 
     updateSearchHandler(search) {
-      this.updatePagination({ ...this.pagination, search });
+      this.updatePagination({ ...this.pagination, search, page: 1 });
     },
 
     updateRecordsPerPage(rowsPerPage) {
@@ -197,6 +208,7 @@ export default {
       return {
         item: state.item,
         selected: state.selected,
+        disabled: this.isDisabledItem(state.item),
         expanded: state.expanded,
         select: value => state.selected = value || !state.selected,
         expand: value => state.expanded = value || !state.expanded,

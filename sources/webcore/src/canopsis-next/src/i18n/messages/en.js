@@ -124,6 +124,8 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    clear: 'Clear',
+    deleteAll: 'Delete all',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1824,6 +1826,10 @@ export default {
       operationRequired: 'Please add at least one operation',
       stepRequired: 'Please add at least one step',
     },
+  },
+
+  remediationJobs: {
+    addJobs: 'Add {count} job | Add {count} jobs',
   },
 
   ...featureService.get('i18n.en'),

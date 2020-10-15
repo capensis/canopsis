@@ -712,6 +712,7 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @typedef {Object} RemediationInstructionStepOperation
  * @property {string} name
  * @property {string} description
+ * @property {Array} jobs
  * @property {Interval|string} time_to_complete
  * @property {string} [time_to_complete_unit]
  * @property {string} [key]
@@ -720,6 +721,7 @@ export const getIdFromEntity = (entity, idField = '_id') =>
 export const generateRemediationInstructionStepOperation = () => ({
   name: '',
   description: '',
+  jobs: [],
   time_to_complete: {
     interval: 0,
     unit: TIME_UNITS.minute,

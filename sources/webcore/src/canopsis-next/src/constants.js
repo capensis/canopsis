@@ -38,6 +38,7 @@ export const ENTITIES_TYPES = {
   pbehaviorTypes: 'pbehaviorTypes',
   pbehaviorReasons: 'pbehaviorReasons',
   remediationInstruction: 'remediationInstruction',
+  remediationJob: 'remediationJob',
 };
 
 export const MODALS = {
