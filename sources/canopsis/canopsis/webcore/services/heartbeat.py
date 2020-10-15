@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 
 from pymongo.errors import PyMongoError
 from bottle import request
-
+from canopsis.common.ws import route
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_ERROR, HTTP_NOT_FOUND)
 from canopsis.models.heartbeat import HeartBeat
@@ -84,9 +84,10 @@ def exports(ws):
         })
 
     @ws.application.get(
-        "/api/v2/heartbeat"
+        '/api/v2/heartbeat',
+        payload=['page', 'limit', 'search', 'sort', 'sort_by']
     )
-    def list_heartbeats():
+    def list_heartbeats(page=None, limit=None, search=None, sort=False, sort_by=None):
         """ Return every heartbeats stored in database.
 
         :rtype: a json representation as a list of every heartbeats stored in
@@ -94,7 +95,14 @@ def exports(ws):
         encountered.
         """
         try:
-            return gen_json(manager.get())
+            query = request.query
+            return gen_json(manager.get(None,
+                                        query.get('page', None),
+                                        query.get('limit', None),
+                                        query.get('search', None),
+                                        query.get('sort', None),
+                                        query.get('sort_by', None))
+                            )
         except PyMongoError:
             return gen_database_error()
 

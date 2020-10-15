@@ -55,19 +55,60 @@ definitions:
       updated:
         type: integer
     type: object
+  HeartBeatPaginationMeta:
+    properties:
+      per_page:
+        type: integer
+      page_count:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  PaginationResponse:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/HeartBeat"
+      meta:
+        $ref: "#/definitions/HeartBeatPaginationMeta"
+    type: object
 paths:
   /api/v2/heartbeat:
     get:
       summary: Get heartbeat list
+      parameters:
+        - type: integer
+          description: current page
+          name: page
+          in: query
+          required: true
+        - type: integer
+          description: items per page
+          name: limit
+          in: query
+          required: true
+        - type: string
+          description: search query
+          name: search
+          in: query
+        - type: string
+          description: sort query
+          name: sort
+          in: query
+        - type: string
+          description: sort query
+          name: sort_by
+          in: query
       tags:
         - heartbeat
       responses:
         '200':
           description: List of heartbeat
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/HeartBeat"
+            $ref: "#/definitions/PaginationResponse"
 
     post:
       summary: Create heartbeat

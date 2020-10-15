@@ -23,6 +23,7 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
 from canopsis.models.heartbeat import HeartBeat
 import time
+import re
 
 
 class HeartbeatError(Exception):
@@ -88,7 +89,7 @@ class HeartbeatManager(object):
 
         return self.__collection.insert(heartbeat.to_dict())
 
-    def get(self, heartbeat_id=None):
+    def get(self, heartbeat_id=None, page=None, limit=None, search=None, sort=None, sort_by=None):
         """
         Get Heartbeat by ID or a list of Heartbeats
         when calling with default arguments.
@@ -98,9 +99,53 @@ class HeartbeatManager(object):
                   else single Heartbeat document or None if not found.
         :raises: (`pymongo.errors.PyMongoError`, ).
         """
+
         if heartbeat_id:
             return self.__collection.find_one({"_id": heartbeat_id})
-        return [x for x in self.__collection.find({})]
+
+        pipeline = []
+        if search is not None:
+            or_query = [
+                {"name": re.compile(str(search), re.IGNORECASE)},
+                {"description": re.compile(str(search), re.IGNORECASE)},
+                {"author": re.compile(str(search), re.IGNORECASE)}
+            ]
+            pipeline.append({"$match": {"$or": or_query}})
+        else:
+            pipeline.append({"$match": {}})
+
+        total_count_data = list(self.__collection.aggregate(
+            pipeline + [{'$count': 'total_count'}]))
+
+        if len(total_count_data) == 1:
+            try:
+                total_count = total_count_data[0]["total_count"]
+            except (IndexError, KeyError):
+                self.__logger.error(
+                    "Exception while trying to reach total_count")
+                return {"meta": {"page": 0, "page_count": 0, "per_page": 0, "total_count": 0}, "data": []}
+
+        sort_by = sort_by or "created"
+        sort = sort or "desc"
+        sort = -1 if sort == "desc" else 1
+        pipeline.append({"$sort": {sort_by: sort}})
+
+        page = int(page or 0)
+        limit = int(limit or 10)
+        pipeline.append({"$skip": page * limit})
+        pipeline.append({"$limit": limit})
+
+        data = list(self.__collection.aggregate(pipeline))
+        page_count = len(data)/limit + 1
+        return {
+            "meta": {
+                "page": page,
+                "page_count": page_count,
+                "per_page": limit,
+                "total_count": total_count
+            },
+            "data": data
+        }
 
     def delete(self, heartbeat_id):
         """
