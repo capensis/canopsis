@@ -21,6 +21,10 @@
         :updateSearch="updateSearchHandler",
         :clearSearch="clearSearchHandler"
       )
+      v-flex(v-if="hasMassActionsSlot", xs12)
+        v-expand-transition
+          v-layout(v-if="selected.length")
+            slot(name="mass-actions", :selected="selected", :count="selected.length")
     v-data-table(
       v-model="selected",
       :headers="headers",
@@ -58,7 +62,6 @@
           slot(v-bind="props", name="expand")
       template(slot="headerCell", slot-scope="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
-    slot(name="mass-actions", :selected="selected")
     v-layout.white(v-show="totalItems && advancedPagination", align-center)
       v-flex(xs10)
         pagination(
@@ -173,8 +176,13 @@ export default {
         this.selectedItems = selected;
       },
     },
+
     hasExpandSlot() {
       return this.$slots.expand || this.$scopedSlots.expand;
+    },
+
+    hasMassActionsSlot() {
+      return this.$slots['mass-actions'] || this.$scopedSlots['mass-actions'];
     },
 
     shownSearch() {

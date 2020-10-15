@@ -16,13 +16,11 @@
       v-btn(:disabled="props.disabled", icon, small, @click="$emit('select', [props.item])")
         v-icon add
     template(slot="mass-actions", slot-scope="props")
-      v-expand-transition
-        v-layout(v-if="props.selected.length")
-          v-btn.ma-2(
-            outline,
-            color="primary",
-            @click="$emit('select', props.selected)"
-          ) {{ getButtonContent(props.selected.length) }}
+      v-btn.ma-2(
+        outline,
+        color="primary",
+        @click="$emit('select', props.selected)"
+      ) {{ $tc('remediationJobs.addJobs', props.count, { count: props.count }) }}
 </template>
 
 <script>
@@ -66,10 +64,6 @@ export default {
   methods: {
     isSelectedJob({ _id }) {
       return this.selectedIds.includes(_id);
-    },
-
-    getButtonContent(count) {
-      return this.$tc('remediationJobs.addJobs', count, { count });
     },
 
     async fetchList() {
