@@ -182,16 +182,14 @@ export default {
     },
   },
   methods: {
-    selectHandler(selected) {
-      this.selected = selected.filter(item => !this.isDisabledItem(item));
-    },
-
     updatePagination(pagination) {
+      this.selected = [];
+
       this.$emit('update:pagination', this.getPagination(pagination));
     },
 
     updateSearchHandler(search) {
-      this.updatePagination({ ...this.pagination, search });
+      this.updatePagination({ ...this.pagination, search, page: 1 });
     },
 
     updateRecordsPerPage(rowsPerPage) {
