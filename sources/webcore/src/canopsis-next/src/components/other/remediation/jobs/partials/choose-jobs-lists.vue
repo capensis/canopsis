@@ -43,11 +43,6 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      query: 5,
-    };
-  },
   computed: {
     selectedIds() {
       return this.jobs.map(({ _id }) => _id);
