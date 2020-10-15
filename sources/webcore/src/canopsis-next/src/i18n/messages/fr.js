@@ -117,6 +117,7 @@ export default {
     or: 'OU',
     and: 'ET',
     priority: 'Priorité',
+    output: 'Note',
     created: 'Date de création',
     updated: 'Date de dernière modification',
     correlation: 'Corrélation',
@@ -1059,6 +1060,10 @@ export default {
       create: {
         title: 'Créer un heartbeat',
         success: 'Heartbeat créé avec succès !',
+      },
+      edit: {
+        title: 'Modifier le heartbeat',
+        success: 'Heartbeat modifié avec succès !',
       },
       remove: {
         success: 'Heartbeat supprimé avec succès !',

@@ -117,6 +117,7 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    output: 'Note',
     created: 'Creation date',
     updated: 'Last update date',
     correlation: 'Correlation',
@@ -1059,6 +1060,10 @@ export default {
       create: {
         title: 'Create heartbeat',
         success: 'Heartbeat successfully created!',
+      },
+      edit: {
+        title: 'Modify heartbeat',
+        success: 'Heartbeat successfully modified!',
       },
       remove: {
         success: 'Heartbeat successfully removed!',
