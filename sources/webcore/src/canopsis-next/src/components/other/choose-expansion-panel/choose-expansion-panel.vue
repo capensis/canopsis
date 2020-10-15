@@ -1,17 +1,18 @@
 <template lang="pug">
-  v-expansion-panel.my-1
-    v-expansion-panel-content.grey.darken-2.white--text
-      div.white--text(slot="header") {{ label }}
-      v-card
-        chips-list(
-          :entities="entities",
-          :content-key="contentKey",
-          :item-key="itemKey",
-          :clearable="clearable",
-          @remove="$emit('remove', $event)",
-          @clear="$emit('clear')"
-        )
-        slot
+  .choose-expansion-panel
+    v-expansion-panel.my-1
+      v-expansion-panel-content.grey.darken-2.white--text
+        div.white--text(slot="header") {{ label }}
+        v-card
+          chips-list(
+            :entities="entities",
+            :content-key="contentKey",
+            :item-key="itemKey",
+            :clearable="clearable",
+            @remove="$emit('remove', $event)",
+            @clear="$emit('clear')"
+          )
+          slot
 </template>
 
 <script>
@@ -43,3 +44,11 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+  .choose-expansion-panel {
+    & /deep/ .v-expansion-panel__header .v-icon {
+      color: white !important;
+    }
+  }
+</style>

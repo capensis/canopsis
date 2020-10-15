@@ -1807,5 +1807,9 @@ export default {
     },
   },
 
+  remediationJobs: {
+    addJobs: 'Ajouter {count} emploi | Ajouter {count} emplois',
+  },
+
   ...featureService.get('i18n.fr'),
 };

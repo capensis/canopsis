@@ -1807,5 +1807,9 @@ export default {
     },
   },
 
+  remediationJobs: {
+    addJobs: 'Add {count} job | Add {count} jobs',
+  },
+
   ...featureService.get('i18n.en'),
 };
