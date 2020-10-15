@@ -1,5 +1,6 @@
 import moment from 'moment';
 import 'moment-duration-format';
+
 import { DATETIME_FORMATS } from '@/constants';
 
 /**
