@@ -124,6 +124,8 @@ export default {
     or: 'OU',
     and: 'ET',
     priority: 'Priorité',
+    clear: 'Clair',
+    deleteAll: 'Tout supprimer',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1242,13 +1244,33 @@ export default {
       },
     },
     createRemediationInstruction: {
-      title: 'Créer une instruction',
+      create: {
+        title: 'Créer une instruction',
+        popups: {
+          success: '{instructionName} a été créé avec succès',
+        },
+      },
+      edit: {
+        title: 'Éditée une instruction',
+        popups: {
+          success: '{instructionName} a été modifié avec succès',
+        },
+      },
     },
     createRemediationConfiguration: {
       title: 'Créer une configuration',
     },
     createRemediationJob: {
       title: 'Créer un travail',
+    },
+    clickOutsideConfirmation: {
+      title: 'Êtes-vous sûr(e) ?',
+      text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',
+      buttons: {
+        save: 'Sauver',
+        dontSave: 'Ne sauvez pas',
+        backToForm: 'Retour au formulaire',
+      },
     },
   },
   tables: {
@@ -1779,10 +1801,17 @@ export default {
     addStep: 'Ajouter une étape',
     addOperation: 'Ajouter une opération',
     addEndpoint: 'Ajouter un point de terminaison',
+    endpoint: 'Point de terminaison',
+    endpointAvatar: 'EP',
     workflow: 'Workflow si cette étape échoue:',
     stop: 'Arrêtez',
     remainingStep: 'Continuez avec les étapes restantes',
     timeToComplete: 'Temps pour terminer',
+    hideAll: 'Cacher tout',
+    expandAll: 'Développer tout',
+    tooltips: {
+      endpoint: 'Le point final doit être en question au format Oui / Non',
+    },
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',
@@ -1794,7 +1823,12 @@ export default {
     errors: {
       runningInstruction: 'Des instructions en cours sont affectées à ce modèle. Souhaitez-vous les annuler?',
       operationRequired: 'Veuillez ajouter au moins une opération',
+      stepRequired: 'Veuillez ajouter au moins une étape',
     },
+  },
+
+  remediationJobs: {
+    addJobs: 'Ajouter {count} emploi | Ajouter {count} emplois',
   },
 
   ...featureService.get('i18n.fr'),

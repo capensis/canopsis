@@ -48,7 +48,7 @@ export default {
   computed: {
     tooltipText() {
       return {
-        [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.title'),
+        [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.create.title'),
         [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.title'),
         [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.title'),
       }[this.activeTab];
@@ -103,6 +103,13 @@ export default {
         config: {
           action: async (instruction) => {
             await this.createRemediationInstruction({ data: instruction });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationInstruction.create.popups.success', {
+                instructionName: instruction.name,
+              }),
+            });
+
             await this.fetchInstructionsList();
           },
         },

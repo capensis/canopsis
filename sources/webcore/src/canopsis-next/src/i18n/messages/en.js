@@ -124,6 +124,8 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    clear: 'Clear',
+    deleteAll: 'Delete all',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1242,7 +1244,18 @@ export default {
       },
     },
     createRemediationInstruction: {
-      title: 'Create instruction',
+      create: {
+        title: 'Create instruction',
+        popups: {
+          success: '{instructionName} has been successfully created',
+        },
+      },
+      edit: {
+        title: 'Modify instruction',
+        popups: {
+          success: '{instructionName} has been successfully modified',
+        },
+      },
     },
     createRemediationConfiguration: {
       title: 'Create configuration',
@@ -1250,6 +1263,16 @@ export default {
     createRemediationJob: {
       title: 'Create Job',
     },
+    clickOutsideConfirmation: {
+      title: 'Are you sure?',
+      text: 'Changes will not be saved. Are you sure?',
+      buttons: {
+        save: 'Save',
+        dontSave: 'Don\'t save',
+        backToForm: 'Back to form',
+      },
+    },
+
   },
   tables: {
     noData: 'No data',
@@ -1779,10 +1802,17 @@ export default {
     addStep: 'Add step',
     addOperation: 'Add operation',
     addEndpoint: 'Add endpoint',
+    endpoint: 'Endpoint',
+    endpointAvatar: 'EP',
     workflow: 'Workflow if this step fails:',
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',
     timeToComplete: 'Time to complete',
+    hideAll: 'Hide all',
+    expandAll: 'Expand all',
+    tooltips: {
+      endpoint: 'Endpoint should be in question in Yes/No format',
+    },
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
@@ -1794,7 +1824,12 @@ export default {
     errors: {
       runningInstruction: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
       operationRequired: 'Please add at least one operation',
+      stepRequired: 'Please add at least one step',
     },
+  },
+
+  remediationJobs: {
+    addJobs: 'Add {count} job | Add {count} jobs',
   },
 
   ...featureService.get('i18n.en'),

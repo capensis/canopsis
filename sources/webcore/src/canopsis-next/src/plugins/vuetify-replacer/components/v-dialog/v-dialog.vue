@@ -7,6 +7,12 @@ import overlayableMixin from '../../mixins/overlayable';
 export default {
   extends: VDialog,
   mixins: [overlayableMixin],
+  props: {
+    customCloseConditional: {
+      type: Function,
+      default: () => true,
+    },
+  },
   computed: {
     activeZIndex() {
       if (typeof window === 'undefined') {
@@ -32,6 +38,37 @@ export default {
     },
   },
   methods: {
+    closeConditional(e) {
+      // If the dialog content contains
+      // the click event, or if the
+      // dialog is not active
+      if (!this.isActive || this.$refs.content.contains(e.target)) {
+        return false;
+      }
+      // If we made it here, the click is outside
+      // and is active. If persistent, and the
+      // click is on the overlay, animate
+      if (this.persistent) {
+        if (!this.noClickAnimation && this.overlay === e.target) {
+          this.animateClick();
+        }
+
+        return false;
+      }
+
+      // close dialog if !persistent, clicked outside and we're the topmost dialog.
+      // Since this should only be called in a capture event (bottom up), we shouldn't need to stop propagation
+      return this.activeZIndex >= this.getMaxZIndex() && this.customCloseConditional();
+    },
+
+    hideScroll() {
+      if (this.fullscreen) {
+        document.documentElement.classList.add('overflow-y-hidden');
+      } else {
+        overlayableMixin.methods.hideScroll.call(this);
+      }
+    },
+
     getMaxZIndex(exclude = []) {
       const base = this.$el;
       // Start with lowest allowed z-index or z-index of

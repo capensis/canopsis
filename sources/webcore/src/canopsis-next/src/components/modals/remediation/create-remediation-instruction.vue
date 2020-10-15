@@ -2,12 +2,16 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ $t('modals.createRemediationInstruction.title') }}
+        span {{ title }}
       template(slot="text")
         remediation-instruction-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(type="submit") {{ $t('common.submit') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -18,6 +22,8 @@ import { formToRemediationInstruction, remediationInstructionToForm } from '@/he
 import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
+import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
@@ -36,11 +42,22 @@ export default {
     authMixin,
     modalInnerMixin,
     validationErrorsMixin(),
+    submittableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     return {
       form: remediationInstructionToForm(this.modal.config.remediationInstruction),
     };
+  },
+  computed: {
+    title() {
+      if (this.config.remediationInstruction) {
+        return this.$t('modals.createRemediationInstruction.edit.title');
+      }
+
+      return this.$t('modals.createRemediationInstruction.create.title');
+    },
   },
   methods: {
     async submit() {

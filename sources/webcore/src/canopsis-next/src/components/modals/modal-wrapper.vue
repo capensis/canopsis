@@ -1,7 +1,7 @@
-<template lang="pug" functional>
+<template lang="pug">
   v-card(
-    :class="{ 'fill-min-height': props.fillHeight }",
-    :data-test="data.attrs && data.attrs['data-test']"
+    :class="{ 'fill-min-height': fillHeight }",
+    :data-test="$attrs['data-test']"
   )
     v-card-title.primary.white--text(v-if="$slots.title && !$slots.fullTitle")
       v-layout(justify-space-between, align-center)

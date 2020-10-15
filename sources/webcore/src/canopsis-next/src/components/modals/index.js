@@ -12,6 +12,7 @@ export { default as CreateManualMetaAlarm } from './alarm/create-manual-meta-ala
 export { default as PbehaviorList } from './pbehavior/pbehavior-list.vue';
 export { default as EditLiveReporting } from './alarm/edit-live-reporting.vue';
 export { default as Confirmation } from './common/confirmation.vue';
+export { default as ClickOutsideConfirmation } from './common/click-outside-confirmation.vue';
 export { default as CreateWidget } from './view/create-widget.vue';
 export { default as ColorPicker } from './common/color-picker.vue';
 export { default as TextEditor } from './common/text-editor.vue';
@@ -62,3 +63,4 @@ export { default as CreatePbehaviorType } from './pbehavior/create-pbehavior-typ
 export { default as CreatePbehaviorReason } from './pbehavior/create-pbehavior-reason.vue';
 export { default as CreatePbehaviorException } from './pbehavior/create-pbehavior-exception.vue';
 export { default as CreateRemediationInstruction } from './remediation/create-remediation-instruction.vue';
+export { default as ImageViewer } from './common/image-viewer.vue';

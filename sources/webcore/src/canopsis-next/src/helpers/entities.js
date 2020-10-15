@@ -707,6 +707,29 @@ export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
 
 /**
+ * Generate an remediation instruction step operation entity
+ *
+ * @typedef {Object} RemediationInstructionStepOperation
+ * @property {string} name
+ * @property {string} description
+ * @property {Array} jobs
+ * @property {Interval|string} time_to_complete
+ * @property {string} [time_to_complete_unit]
+ * @property {string} [key]
+ * @return {RemediationInstructionStepOperation}
+ */
+export const generateRemediationInstructionStepOperation = () => ({
+  name: '',
+  description: '',
+  jobs: [],
+  time_to_complete: {
+    interval: 0,
+    unit: TIME_UNITS.minute,
+  },
+  key: uid(),
+});
+
+/**
  * Generate an remediation instruction step entity
  *
  * @typedef {Object} RemediationInstructionStep
@@ -719,34 +742,10 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @return {RemediationInstructionStep}
  */
 export const generateRemediationInstructionStep = () => ({
-  // TODO Should be removed after endpoint feature will be done
-  endpoint: 'Endpoint?',
+  endpoint: '',
   name: '',
-  operations: [],
+  operations: [generateRemediationInstructionStepOperation()],
   stop_on_fail: REMEDIATION_WORKFLOW_TYPES.stop,
-  saved: false,
-  key: uid(),
-});
-
-/**
- * Generate an remediation instruction step operation entity
- *
- * @typedef {Object} RemediationInstructionStepOperation
- * @property {string} name
- * @property {string} description
- * @property {Interval|string} time_to_complete
- * @property {string} [time_to_complete_unit]
- * @property {boolean} [saved]
- * @property {string} [key]
- * @return {RemediationInstructionStepOperation}
- */
-export const generateRemediationInstructionStepOperation = () => ({
-  name: '',
-  description: '',
-  time_to_complete: {
-    interval: 0,
-    unit: TIME_UNITS.minute,
-  },
   saved: false,
   key: uid(),
 });

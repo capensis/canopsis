@@ -1,17 +1,32 @@
-<template lang="pug" functional>
-  v-layout(align-center, justify-end)
-    v-icon.handler.draggable(v-show="props.draggable") drag_indicator
-    v-avatar.white--text(color="primary", size="32")
+<template lang="pug">
+  v-layout(align-center, justify-space-around)
+    span.handler
+      v-icon.draggable(v-show="!disabled", :class="dragClass") drag_indicator
+    v-avatar.white--text(:color="color", size="32")
       slot
 </template>
 
 <script>
 export default {
   props: {
-    draggable: {
+    dragClass: {
+      type: String,
+      default: '',
+    },
+    color: {
+      type: String,
+      default: 'primary',
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
   },
 };
 </script>
+
+<style lang="scss">
+  .handler {
+    width: 18px !important;
+  }
+</style>

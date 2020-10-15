@@ -126,6 +126,7 @@ export const API_ROUTES = {
   },
   remediation: {
     instructions: '/api/v4/cat/instructions',
+    jobs: '/api/v4/cat/jobs',
   },
   file: '/api/v4/cat/file',
 };

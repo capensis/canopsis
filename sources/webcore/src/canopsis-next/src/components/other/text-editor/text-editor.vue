@@ -244,6 +244,8 @@ export default {
           elm.setAttribute(attr, attrValue);
 
           if (tagName === 'a' && file.fileName) {
+            elm.setAttribute('target', '_blank');
+
             elm.innerText = file.fileName;
           }
 
@@ -282,7 +284,7 @@ export default {
        * @param {string} [title = '']
        */
       const insertLink = (url, title = '') => {
-        const linkElement = `<a href="${url}" title="${title}">${title || url}</a>`;
+        const linkElement = `<a href="${url}" title="${title}" target="_blank">${title || url}</a>`;
 
         editor.selection.insertNode(editor.create.inside.fromHTML(linkElement));
       };
@@ -315,6 +317,7 @@ export default {
         upload: uploadHandler,
         url: (url, text) => {
           if (sourceAnchor) {
+            sourceAnchor.setAttribute('target', '_blank');
             sourceAnchor.setAttribute('href', url);
             sourceAnchor.setAttribute('title', text);
           } else {

@@ -1,30 +1,35 @@
 <template lang="pug">
   v-layout.mt-2(column)
-    v-layout(v-for="(operation, index) in operations", :key="operation.key")
-      v-flex.mt-3(xs1)
-        draggable-step-number
-          span {{ stepNumber }}
-          span {{ getCharByIndex(index) }}
-      v-flex.pl-3(xs9)
-        remediation-instruction-operation-field(
-          v-field="operations[index]",
-          @remove="removeOperation(index)"
-        )
-      v-flex(xs2)
-    v-layout(v-show="!hideActions", row)
-      div
-        v-btn.ml-0.accent.darken-1(@click="addOperation") {{ $t('remediationInstructions.addOperation') }}
-        div.error--text(v-show="errors.has(fieldName)") {{ $t('remediationInstructions.errors.operationRequired') }}
-      v-btn.accent.darken-1(
-        v-if="!!operations.length",
-        @click="addEndpoint"
-      ) {{ $t('remediationInstructions.addEndpoint') }}
+    draggable(
+      v-field="operations",
+      :options="draggableOptions",
+      :class="{ 'grey lighten-2': isDragging }",
+      @start="startDragging",
+      @end="endDragging"
+    )
+      remediation-instruction-operation-field.py-1(
+        v-for="(operation, index) in operations",
+        v-field="operations[index]",
+        :key="operation.key",
+        :index="index",
+        :operationNumber="getOperationNumber(index)",
+        @remove="removeOperation(index)"
+      )
+    v-layout(row, align-center)
+      v-btn.ml-0(
+        outline,
+        :color="hasOperationsErrors ? 'error' : 'primary'",
+        @click="addOperation"
+      ) {{ $t('remediationInstructions.addOperation') }}
+      span.error--text(v-show="hasOperationsErrors") {{ $t('remediationInstructions.errors.operationRequired') }}
 </template>
 
 <script>
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import Draggable from 'vuedraggable';
 
-import { FIRST_LETTER_ALPHABET_CHAR_CODE, MODALS } from '@/constants';
+import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { FIRST_LETTER_ALPHABET_CHAR_CODE } from '@/constants';
 
 import formArrayMixin from '@/mixins/form/array';
 
@@ -33,7 +38,11 @@ import DraggableStepNumber from '../partials/draggable-step-number.vue';
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 
 export default {
-  components: { RemediationInstructionOperationField, DraggableStepNumber },
+  components: {
+    Draggable,
+    DraggableStepNumber,
+    RemediationInstructionOperationField,
+  },
   inject: ['$validator'],
   mixins: [formArrayMixin],
   model: {
@@ -41,6 +50,10 @@ export default {
     event: 'input',
   },
   props: {
+    name: {
+      type: String,
+      default: 'operations',
+    },
     operations: {
       type: Array,
       default: () => ([]),
@@ -49,47 +62,71 @@ export default {
       type: [String, Number],
       default: '',
     },
-    hideActions: {
-      type: Boolean,
-      default: false,
-    },
+  },
+  data() {
+    return {
+      isDragging: false,
+    };
   },
   computed: {
-    fieldName() {
-      return `operations${this.stepNumber}`;
+    hasOperationsErrors() {
+      return this.errors.has(this.name);
+    },
+
+    draggableOptions() {
+      return {
+        animation: VUETIFY_ANIMATION_DELAY,
+        handle: '.operation-drag-handler',
+        ghostClass: 'white',
+        group: {
+          name: 'remediation-instruction-operations',
+          pull: false,
+          put: false,
+        },
+      };
+    },
+  },
+  watch: {
+    operations() {
+      this.$validator.validate(this.name);
     },
   },
   created() {
     this.$validator.attach({
-      name: this.fieldName,
+      name: this.name,
       rules: 'min_value:1',
       getter: () => this.operations.length,
       context: () => this,
+      vm: this,
     });
   },
+  beforeDestroy() {
+    this.$validator.detach(this.name);
+  },
   methods: {
+    getOperationNumber(index) {
+      return `${this.stepNumber}${this.getCharByIndex(index)}`;
+    },
+
     getCharByIndex(index) {
       return String.fromCharCode(FIRST_LETTER_ALPHABET_CHAR_CODE + index);
     },
 
     addOperation() {
       this.addItemIntoArray(generateRemediationInstructionStepOperation());
-      this.$nextTick(() => this.$validator.validate(this.fieldName));
     },
 
     removeOperation(index) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: () => {
-            this.removeItemFromArray(index);
-            this.$nextTick(() => this.$validator.validate(this.fieldName));
-          },
-        },
-      });
+      this.removeItemFromArray(index);
     },
 
-    addEndpoint() {},
+    startDragging() {
+      this.isDragging = true;
+    },
+
+    endDragging() {
+      this.isDragging = false;
+    },
   },
 };
 </script>

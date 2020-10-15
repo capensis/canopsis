@@ -1,54 +1,40 @@
 <template lang="pug">
   v-layout(column)
-    draggable(
-      :value="steps",
-      :options="draggableOptions",
-      :class="{ 'grey lighten-2': isDragging }",
-      @change="changeStepsOrdering",
-      @start="startDragging",
-      @end="endDragging"
-    )
-      v-layout(v-for="(step, index) in steps", :key="step.key", xs-10)
-        v-layout.my-1(row, wrap)
-          v-flex.mt-3(xs1)
-            draggable-step-number(:draggable="allSaved") {{ index + 1 }}
-          v-flex.pl-3(xs11)
-            remediation-instruction-step-field(
-              v-field="steps[index]",
-              :hide-actions="!allSaved",
-              @remove="removeStep(index)"
-            )
-            remediation-instruction-operations-form(
-              v-field="steps[index].operations",
-              :hide-actions="!allSaved",
-              :stepNumber="index + 1"
-            )
-    v-layout
-      v-btn.ml-0.primary(v-if="allSaved", @click="addStep") {{ $t('remediationInstructions.addStep') }}
+    draggable(v-field="steps", :options="draggableOptions")
+      v-card.my-2(v-for="(step, index) in steps", :key="step.key")
+        v-card-text
+          remediation-instruction-step-field(
+            v-field="steps[index]",
+            :step-number="index + 1",
+            @remove="removeStep(index)"
+          )
+    v-layout(row, align-center)
+      v-btn.ml-0(
+        :color="hasStepsErrors ? 'error' : 'primary'",
+        outline,
+        @click="addStep"
+      ) {{ $t('remediationInstructions.addStep') }}
+      span.error--text(v-show="hasStepsErrors") {{ $t('remediationInstructions.errors.stepRequired') }}
 </template>
 
 <script>
 import Draggable from 'vuedraggable';
 
-import { MODALS } from '@/constants';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { generateRemediationInstructionStep } from '@/helpers/entities';
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import formArrayMixin from '@/mixins/form/array';
 
 import DraggableStepNumber from '../partials/draggable-step-number.vue';
 
 import RemediationInstructionStepField from './fields/remediation-instruction-step-field.vue';
-import RemediationInstructionOperationsForm from './remediation-instruction-operations-form.vue';
 
 export default {
   components: {
     Draggable,
     DraggableStepNumber,
     RemediationInstructionStepField,
-    RemediationInstructionOperationsForm,
   },
   inject: ['$validator'],
   mixins: [formArrayMixin],
@@ -61,6 +47,10 @@ export default {
       type: Array,
       default: () => ([]),
     },
+    name: {
+      type: String,
+      default: 'steps',
+    },
   },
   data() {
     return {
@@ -68,22 +58,14 @@ export default {
     };
   },
   computed: {
-    allSaved() {
-      return this.everyStepsSaved && this.everyOperationsSaved;
-    },
-
-    everyStepsSaved() {
-      return this.steps.every(step => step.saved);
-    },
-
-    everyOperationsSaved() {
-      return this.steps.every(step => step.operations.every(operation => operation.saved));
+    hasStepsErrors() {
+      return this.errors.has(this.name);
     },
 
     draggableOptions() {
       return {
         animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.handler',
+        handle: '.step-drag-handler',
         ghostClass: 'white',
         group: {
           name: 'remediation-instruction-steps',
@@ -91,30 +73,30 @@ export default {
       };
     },
   },
+  watch: {
+    steps() {
+      this.$validator.validate(this.name);
+    },
+  },
+  created() {
+    this.$validator.attach({
+      name: this.name,
+      rules: 'min_value:1',
+      getter: () => this.steps.length,
+      context: () => this,
+      vm: this,
+    });
+  },
+  beforeDestroy() {
+    this.$validator.detach(this.name);
+  },
   methods: {
     addStep() {
       this.addItemIntoArray(generateRemediationInstructionStep());
     },
 
-    changeStepsOrdering(event) {
-      this.updateModel(dragDropChangePositionHandler(this.steps, event));
-    },
-
-    startDragging() {
-      this.isDragging = true;
-    },
-
-    endDragging() {
-      this.isDragging = false;
-    },
-
     removeStep(index) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: () => this.removeItemFromArray(index),
-        },
-      });
+      this.removeItemFromArray(index);
     },
   },
 };
