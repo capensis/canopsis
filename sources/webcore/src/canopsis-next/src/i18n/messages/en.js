@@ -1830,6 +1830,11 @@ export default {
 
   remediationJobs: {
     addJobs: 'Add {count} job | Add {count} jobs',
+    usingJob: 'Cannot be deleted since it is in use',
+    table: {
+      configuration: 'Configuration',
+      jobId: 'Job ID',
+    },
   },
 
   ...featureService.get('i18n.en'),

@@ -1829,6 +1829,11 @@ export default {
 
   remediationJobs: {
     addJobs: 'Ajouter {count} emploi | Ajouter {count} emplois',
+    usingJob: 'La raison utilise, car ne peut pas être supprimée',
+    table: {
+      configuration: 'Configuration',
+      jobId: 'Emploi ID',
+    },
   },
 
   ...featureService.get('i18n.fr'),
