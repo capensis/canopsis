@@ -66,7 +66,7 @@ def save_profile(ws, profile):
     return profile
 
 
-def save_role(ws, role):
+def save_role(ws, role, add_non_existing_action=False):
     role_payload = role
     rid = role['_id']
 
@@ -99,7 +99,7 @@ def save_role(ws, role):
         rights.update_group(rid, 'role', rgroup, role)
 
     if rrights:
-        rights.update_rights(rid, 'role', rrights, role)
+        rights.update_rights(rid, 'role', rrights, role, add_non_existing_action)
 
     return role_payload
 
@@ -182,11 +182,17 @@ def exports(ws):
 
     @route(ws.application.post, name='account/role', payload=['role'])
     def create_role(role):
-        return save_role(ws, role)
+        add_non_existing_action = True
+        if request.forms:
+            add_non_existing_action = request.forms.get("add_non_existing_action", True)
+        return save_role(ws, role, add_non_existing_action)
 
     @route(ws.application.put, name='account/role', payload=['role'])
     def update_role(_id, role):
-        return save_role(ws, role)
+        add_non_existing_action = True
+        if request.forms:
+            add_non_existing_action = request.forms.get("add_non_existing_action", True)
+        return save_role(ws, role, add_non_existing_action)
 
     @ws.application.post('/account/user')
     def create_user():
