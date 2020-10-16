@@ -10,9 +10,9 @@ import { HEARTBEAT_DURATION_UNITS } from '@/constants';
  */
 export function heartbeatToForm(heartbeat = {}) {
   const regex = new RegExp(`^(\\d+)(${Object.values(HEARTBEAT_DURATION_UNITS).join('|')})$`);
-  const [, interval = '', unit = ''] = heartbeat.expected_interval
-    ? heartbeat.expected_interval.match(regex)
-    : [];
+  const { expected_interval: expectedInterval = '' } = heartbeat;
+
+  const [, interval = '', unit = ''] = expectedInterval.match(regex) || [];
 
   return {
     name: heartbeat.name || '',

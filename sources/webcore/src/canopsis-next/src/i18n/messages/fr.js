@@ -1065,6 +1065,9 @@ export default {
         title: 'Modifier le heartbeat',
         success: 'Heartbeat modifié avec succès !',
       },
+      duplicate: {
+        title: 'Dupliquer un heartbeat',
+      },
       remove: {
         success: 'Heartbeat supprimé avec succès !',
       },

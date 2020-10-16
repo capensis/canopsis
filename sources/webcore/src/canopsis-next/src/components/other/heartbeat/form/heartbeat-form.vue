@@ -8,19 +8,26 @@
         :error-messages="errors.collect('name')",
         name="name"
       )
-      v-layout(row, wrap)
-        v-textarea(
-          v-field="form.description",
-          v-validate="'required'",
-          :label="$t('common.description')",
-          :error-messages="errors.collect('description')",
-          name="description"
-        )
-      v-layout(row, wrap)
-        v-text-field(
-          v-field="form.output",
-          :label="$t('common.output')"
-        )
+    v-layout(row, wrap)
+      time-interval-field(
+        v-field="form.expectedInterval",
+        :intervalLabel="$t('modals.statsDateInterval.fields.periodValue')",
+        :unitLabel="$t('modals.statsDateInterval.fields.periodUnit')",
+        :units="periodUnits"
+      )
+    v-layout(row, wrap)
+      v-textarea(
+        v-field="form.description",
+        v-validate="'required'",
+        :label="$t('common.description')",
+        :error-messages="errors.collect('description')",
+        name="description"
+      )
+    v-layout(row, wrap)
+      v-text-field(
+        v-field="form.output",
+        :label="$t('common.output')"
+      )
     v-layout
       v-btn.ml-0(@click="showEditPatternModal") {{ $t('modals.eventFilterRule.editPattern') }}
     v-layout

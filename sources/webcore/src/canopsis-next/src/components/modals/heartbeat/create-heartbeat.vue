@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ $t('modals.createHeartbeat.create.title') }}
+        span {{ title }}
       template(slot="text")
         heartbeat-form(v-model="form")
       template(slot="actions")
@@ -43,6 +43,17 @@ export default {
     return {
       form: heartbeatToForm(heartbeat),
     };
+  },
+  computed: {
+    title() {
+      let type = 'create';
+
+      if (this.config.heartbeat) {
+        type = this.config.isDuplicating ? 'duplicate' : 'edit';
+      }
+
+      return this.$t(`modals.createHeartbeat.${type}.title`);
+    },
   },
   methods: {
     async submit() {
