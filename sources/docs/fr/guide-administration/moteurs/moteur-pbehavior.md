@@ -110,7 +110,31 @@ Dans le cas où la `rrule` est présente, `tstart` et `tstop` seront recalculés
 
 Il est possible d'empêcher l'exécution d'une occurrence d'un comportement périodique, à l'aide du champ `exdate`.
 
-`exdate` est une liste de timestamps correspondant au début d'une occurence à empêcher.
+`exdate` est une liste de timestamps correspondant au début d'une occurrence à empêcher.
+
+### Raison (`reason`)
+
+Ce champ permet de préciser librement la raison qui motive la création de ce comportement périodique.
+
+En revanche, lors de la création d'un comportement périodique par l'interface graphique, une liste de raisons prédéfinies est proposée à l'utilisateur.
+
+Pour personnaliser cette liste vous devez insérer une configuration via l'API `associativetable`. Elle est stockée dans la collection `default_associativetable` de MongoDB. Par exemple :
+
+```
+curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+    "reasons" :
+    [
+        "Problème de sonde",
+        "Problème de consigne",
+        "Maintenance préventive",
+        "Changement",
+        "Période de congés",
+        "Autre"
+    ]
+}' 'http://localhost:8082/api/v2/associativetable/pbehavior-reasons'
+```
+
+Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
 
 ### Fuseau horaire (`timezone`)
 
