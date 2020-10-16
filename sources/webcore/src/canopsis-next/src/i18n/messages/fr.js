@@ -125,6 +125,7 @@ export default {
     output: 'Note',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    pattern: 'Pattern',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1067,6 +1068,13 @@ export default {
       create: {
         title: 'Créer un heartbeat',
         success: 'Heartbeat créé avec succès !',
+      },
+      edit: {
+        title: 'Modifier le heartbeat',
+        success: 'Heartbeat modifié avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer un heartbeat',
       },
       remove: {
         success: 'Heartbeat supprimé avec succès !',
