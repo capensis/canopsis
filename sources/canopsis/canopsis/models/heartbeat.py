@@ -19,8 +19,19 @@ class HeartBeat(object):
 
     __EXPECTED_INTERVAL_REGEXP = re.compile(r"^[0-9]*(s|m|h)$")
 
+    ID_KEY = "_id"
     PATTERN_KEY = "pattern"
     EXPECTED_INTERVAL_KEY = "expected_interval"
+    NAME_KEY = "name"
+    DESCRIPTION_KEY = "description"
+    AUTHOR_KEY = "author"
+    OUTPUT_KEY = "output"
+    CREATED_KEY = "created"
+    UPDATED_KEY = "updated"
+
+    _FIELDS = (ID_KEY, PATTERN_KEY, EXPECTED_INTERVAL_KEY, NAME_KEY,
+               DESCRIPTION_KEY, AUTHOR_KEY, OUTPUT_KEY,
+               CREATED_KEY, UPDATED_KEY)
 
     def __init__(self, heartbeat_json):
         """
@@ -31,8 +42,11 @@ class HeartBeat(object):
         """
         if not self.is_valid_heartbeat(heartbeat_json):
             raise ValueError('invalid heartbeat format')
-        self.pattern = heartbeat_json[self.PATTERN_KEY]
-        self.expected_interval = heartbeat_json[self.EXPECTED_INTERVAL_KEY]
+        # self.pattern = heartbeat_json[self.PATTERN_KEY]
+        # self.expected_interval = heartbeat_json[self.EXPECTED_INTERVAL_KEY]
+        for key, value in heartbeat_json.items():
+            if key in self._FIELDS:
+                setattr(self, key, value)
 
     @property
     def id(self):
@@ -53,7 +67,11 @@ class HeartBeat(object):
         return {
             "_id": self.id,
             self.PATTERN_KEY: self.pattern,
-            self.EXPECTED_INTERVAL_KEY: self.expected_interval
+            self.EXPECTED_INTERVAL_KEY: self.expected_interval,
+            self.NAME_KEY: self.name,
+            self.DESCRIPTION_KEY: self.description,
+            self.AUTHOR_KEY: self.author,
+            self.OUTPUT_KEY: self.output
         }
 
     @staticmethod

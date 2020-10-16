@@ -18,6 +18,13 @@
           @input="updateQueryPage"
         )
       v-flex
+        v-switch(
+          :value="query.correlation",
+          :label="$t('common.correlation')",
+          color="primary",
+          @change="updateCorrelation"
+        )
+      v-flex
         filter-selector(
           data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
@@ -187,6 +194,20 @@ export default {
     this.fetchAlarmColumnFilters();
   },
   methods: {
+    updateCorrelation(correlation) {
+      this.updateWidgetPreferencesInUserPreference({
+        ...this.userPreference.widget_preferences,
+
+        isCorrelationEnabled: correlation,
+      });
+
+      this.query = {
+        ...this.query,
+
+        correlation,
+      };
+    },
+
     updateRecordsPerPage(limit) {
       this.updateWidgetPreferencesInUserPreference({
         ...this.userPreference.widget_preferences,

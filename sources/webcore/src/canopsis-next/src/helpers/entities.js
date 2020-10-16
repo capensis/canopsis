@@ -62,7 +62,6 @@ export function generateWidgetByType(type) {
     isAckNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
-    isCorrelationEnabled: false,
     fastAckOutput: {
       enabled: false,
       value: 'auto ack',
@@ -287,6 +286,7 @@ export function generateWidgetByType(type) {
           left: 1,
         },
         heightFactor: 6,
+        isCorrelationEnabled: false,
         levels: {
           counter: AVAILABLE_COUNTERS.total,
           colors: {

@@ -38,7 +38,8 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | [Snmp Trap](Supervision/SNMPtrap.md) | Tout trap SNMP respectant la [RFC1157](https://www.rfc-editor.org/rfc/pdfrfc/rfc1157.txt.pdf) | CAT | Oui | Toutes versions |
 | [Snmp Trap Custom](Supervision/SNMPtrap_custom.md) | Tout trap SNMP nécessitant un traitement spécifique | CAT | Oui | Version ≥ 3 |
 | [Nagios](Supervision/Nagios-et-Icinga.md) | [Icinga](https://icinga.com/) 1, [Nagios](https://www.nagios.org/)  ≤ 3.x (Nagios 4.x en beta) | OpenCore | Oui | Toutes versions |
-| [Centreon](Supervision/Centreon.md) | [Centreon](https://www.centreon.com/) 2.11.5 à 2.11.7, 3.0.3 à 3.0.11, 3.0.13, 3.0.14, 3.0.16, 18.10 et 19.04 | OpenCore | Oui | Toutes versions |
+| [Centreon Legacy](Supervision/Centreon.md) | [Centreon](https://www.centreon.com/) 2.11.5 à 2.11.7, 3.0.3 à 3.0.11, 3.0.13, 3.0.14, 3.0.16, 18.10 et 19.04 | OpenCore | Oui | Toutes versions |
+| [Centreon Stream Connector](Supervision/Centreon-stream-connector.md) | [Centreon Stream Connector](https://docs.centreon.com/current/en/developer/developer-broker-stream-connector.html) | CAT | Oui | 19.10.5, >= 20.04.2 |
 | [Icinga](Supervision/Icinga2.md) | [Icinga 2](https://icinga.com/) | OpenCore | Oui | Toutes versions |
 | [Zabbix](Supervision/Zabbix.md) | [Zabbix](https://www.zabbix.com/) | OpenCore | Oui | Toutes versions |
 | [LibreNMS](Supervision/LibreNMS.md) | [LibreNMS](https://www.librenms.org/) | OpenCore | Oui | Toutes versions |

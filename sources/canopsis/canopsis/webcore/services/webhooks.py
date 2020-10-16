@@ -25,6 +25,7 @@ from pymongo.errors import PyMongoError
 from canopsis.common.collection import CollectionError
 from canopsis.webhooks import WebhookManager
 from canopsis.webcore.utils import (gen_json, gen_json_error, HTTP_ERROR)
+import time
 
 
 def exports(ws):
@@ -57,6 +58,10 @@ def exports(ws):
             webhook['_id'] = str(uuid.uuid4())
         else:
             webhook['_id'] = webhook['_id'].strip()
+
+        now = int(time.time())
+        webhook['creation_date'] = now
+        webhook['last_update_date'] = now
 
         try:
             _id = webhook_manager.create_webhook(webhook)

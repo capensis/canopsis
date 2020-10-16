@@ -16,12 +16,13 @@ export default {
     }),
 
     fetchAlarmItemWithGroupsAndSteps(alarm) {
+      const { parameters: { isCorrelationEnabled = false } } = this.widget;
       const params = {
         with_steps: true,
-        correlation: this.widget.parameters.isCorrelationEnabled || false,
+        correlation: isCorrelationEnabled,
       };
 
-      if (!this.hideGroups) {
+      if (!this.hideGroups && isCorrelationEnabled) {
         if (alarm.causes) {
           params.with_causes = true;
         }

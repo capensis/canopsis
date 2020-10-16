@@ -125,6 +125,7 @@ export default {
     output: 'Note',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    correlation: 'Corrélation',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
