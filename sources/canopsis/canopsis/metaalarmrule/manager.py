@@ -77,10 +77,11 @@ class MetaAlarmRule(BaseMetaAlarmRule):
     PATTERNS = 'patterns'
     CONFIG = 'config'
     AUTO_RESOLVE = 'auto_resolve'
+    OUTPUT_TEMPLATE = 'output_template'
 
-    _FIELDS = (NAME, TYPE, PATTERNS, CONFIG, ID, AUTO_RESOLVE)
+    _FIELDS = (NAME, TYPE, PATTERNS, CONFIG, ID, AUTO_RESOLVE, OUTPUT_TEMPLATE)
 
-    _EDITABLE_FIELDS = (NAME, TYPE, PATTERNS, CONFIG, AUTO_RESOLVE)
+    _EDITABLE_FIELDS = (NAME, TYPE, PATTERNS, CONFIG, AUTO_RESOLVE, OUTPUT_TEMPLATE)
 
     def __init__(self, **kwargs):
         super(MetaAlarmRule, self).__init__(**kwargs)
@@ -126,7 +127,7 @@ class MetaAlarmRuleManager(object):
         self.logger = logger
         self.collection = ma_rule_collection
 
-    def _build_metaalarm(self, name, rule_type, patterns=None, config=None, ma_rule_id=None, auto_resolve=False):
+    def _build_metaalarm(self, name, rule_type, patterns=None, config=None, ma_rule_id=None, auto_resolve=False, output_template=''):
         if ma_rule_id is None:
             ma_rule_id = str(uuid4())
 
@@ -136,7 +137,8 @@ class MetaAlarmRuleManager(object):
             MetaAlarmRule.TYPE: rule_type,
             MetaAlarmRule.PATTERNS: patterns,
             MetaAlarmRule.CONFIG: config,
-            MetaAlarmRule.AUTO_RESOLVE: auto_resolve
+            MetaAlarmRule.AUTO_RESOLVE: auto_resolve,
+            MetaAlarmRule.OUTPUT_TEMPLATE: output_template
         }
 
         data = MetaAlarmRule(**create_kwargs)
@@ -147,8 +149,8 @@ class MetaAlarmRuleManager(object):
             raise ValueError("config_dict {} from {}".format(config_dict, config))
         return data
 
-    def create(self, name, rule_type, patterns=None, config=None, ma_rule_id=None, auto_resolve=False):
-        data = self._build_metaalarm(name, rule_type, patterns, config, ma_rule_id, auto_resolve)
+    def create(self, name, rule_type, patterns=None, config=None, ma_rule_id=None, auto_resolve=False, output_template=''):
+        data = self._build_metaalarm(name, rule_type, patterns, config, ma_rule_id, auto_resolve, output_template)
         try:
             result = self.collection.insert(data.to_dict())
         except CollectionError:
@@ -163,8 +165,8 @@ class MetaAlarmRuleManager(object):
     def read_all(self):
         return list(self.collection.find({"_id": {"$not": re.compile("^{}.+".format(SERVICE_ID_PREFIX))}}))
 
-    def update(self, _id, name, rule_type, patterns=None, config=None, auto_resolve=False):
-        data = self._build_metaalarm(name, rule_type, patterns, config, _id, auto_resolve)
+    def update(self, _id, name, rule_type, patterns=None, config=None, auto_resolve=False, output_template=''):
+        data = self._build_metaalarm(name, rule_type, patterns, config, _id, auto_resolve, output_template)
         try:
             resp = self.collection.update(query={'_id': _id}, document=data.to_dict())
         except Exception as e:

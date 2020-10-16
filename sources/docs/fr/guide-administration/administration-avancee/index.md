@@ -19,6 +19,7 @@ Cette section vous accompagne dans l'adminsitration avancée des services liés 
 
 ### Configuration avancée des services
 
+- [Configuration avancée de la base de données MongoDB](configuration-services/base-de-donnees-mongodb.md)
 - [Configuration avancée du serveur de cache Redis](configuration-services/serveur-cache-redis.md)
 - [Configuration avancée du reverse proxy HTTP Nginx](configuration-services/reverse-proxy-nginx.md)
 - [Liste des variables d'environnement liées à Canopsis](variables-environnement.md)

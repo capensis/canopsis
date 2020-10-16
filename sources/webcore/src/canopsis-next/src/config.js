@@ -151,6 +151,7 @@ export const COLORS = {
     pbhenter: '#18ffff',
     pbhleave: '#18ffff',
     comment: '#ba68c8',
+    metaalarmattach: '#6d4c41',
   },
   statsDefault: '#dddddd',
 };

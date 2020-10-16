@@ -80,9 +80,7 @@ export const childMergeStrategy = (entityA, entityB) => {
 export function viewTabProcessStrategy(entity, parent, key) {
   const newEntity = childProcessStrategy.call(this, entity, parent, key);
 
-  if (!newEntity.grid || !newEntity.widgets) {
-    newEntity.grid = {};
-
+  if (!newEntity.widgets && newEntity.rows) {
     newEntity.widgets = newEntity.rows.reduce((acc, { widgets }, rowIndex) => {
       const prevEnd = {
         [WIDGET_GRID_SIZES_KEYS.mobile]: 0,
