@@ -1,3 +1,9 @@
+# Currently, both Core and CAT required Python modules must be maintained
+# in this file.
+#
+# Use '==' whenever possible. Only Python 2.7 compatible modules are
+# allowed. Put indirect dependencies whenever possible, too.
+#
 amqp==2.4.2
 Beaker<1.6.0
 bottle==0.12.18
@@ -25,6 +31,8 @@ path.py<12.0
 pika<0.12.0
 procfs<0.6.0
 psutil<5.5.0
+# kpi engine
+psycopg2==2.8.4
 # This fork is required for CentOS 7 compatibility. See canopsis#1791
 pybars3 @ https://git.canopsis.net/canopsis/pybars3/-/archive/0.9.6-999/pybars3-0.9.6-999.tar.gz#sha1=a537276514d74d0643521324ebf8f6b58c11465e
 pymongo<3.7.0

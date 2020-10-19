@@ -47,6 +47,11 @@
           )
           v-divider
           counter-levels-form(v-model="settings.widget.parameters.levels")
+          v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.isCorrelationEnabled",
+            :title="$t('settings.isCorrelationEnabled')"
+          )
       v-divider
     v-btn.primary(data-test="submitWeather", @click="submit") {{ $t('common.save') }}
 </template>
@@ -65,6 +70,7 @@ import FieldTemplate from './fields/common/template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldFilters from './fields/common/filters.vue';
 import FieldSlider from './fields/common/slider.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
 import AlarmsListModalForm from './forms/alarms-list-modal.vue';
 import MarginsForm from './forms/margins.vue';
 import CounterLevelsForm from './forms/counter-levels.vue';
@@ -81,6 +87,7 @@ export default {
     FieldGridSize,
     FieldFilters,
     FieldSlider,
+    FieldSwitcher,
     AlarmsListModalForm,
     MarginsForm,
     CounterLevelsForm,

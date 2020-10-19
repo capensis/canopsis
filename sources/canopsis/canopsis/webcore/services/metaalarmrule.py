@@ -12,7 +12,7 @@ from canopsis.metaalarmrule.manager import MetaAlarmRuleManager, SERVICE_ID_PREF
 from canopsis.webcore.utils import HTTP_ERROR, HTTP_NOT_FOUND
 
 VALID_PARAMS = [
-    '_id', 'name', 'type', 'patterns', 'config', 'auto_resolve'
+    '_id', 'name', 'type', 'patterns', 'config', 'auto_resolve', 'output_template'
 ]
 
 VALID_CONFIG_PARAMS = {
@@ -49,7 +49,7 @@ class RouteHandlerMetaAlarmRule(object):
     def __init__(self, ma_rule_manager):
         self.ma_rule_manager = ma_rule_manager
 
-    def _sanitize(self, name, rule_type, patterns, config, ma_rule_id, auto_resolve=False):
+    def _sanitize(self, name, rule_type, patterns, config, ma_rule_id, auto_resolve=False, output_template=''):
         if rule_type not in VALID_RULE_TYPES:
             raise ValueError("rule type invalid value {}".format(rule_type))
         if name is not None and not isinstance(name, string_types):
@@ -60,6 +60,9 @@ class RouteHandlerMetaAlarmRule(object):
 
         if not isinstance(auto_resolve, bool):
             raise ValueError("invalid auto_resolve value type {}".format(auto_resolve))
+
+        if not isinstance(output_template, string_types):
+            raise ValueError("invalid output_template value type {}".format(output_template))
 
         if isinstance(patterns, string_types):
             try:
@@ -84,14 +87,16 @@ class RouteHandlerMetaAlarmRule(object):
             raise ValueError("invalid config value type {}".format(config))
         return name, rule_type, patterns, config, ma_rule_id
 
-    def create(self, name, rule_type, patterns, config, ma_rule_id=None, auto_resolve=False):
-        name, rule_type, patterns, config, ma_rule_id = self._sanitize(name, rule_type, patterns, config, ma_rule_id, auto_resolve)
-        result = self.ma_rule_manager.create(name, rule_type, patterns, config, ma_rule_id=ma_rule_id, auto_resolve=auto_resolve)
+    def create(self, name, rule_type, patterns, config, ma_rule_id=None, auto_resolve=False, output_template=''):
+        name, rule_type, patterns, config, ma_rule_id = self._sanitize(name, rule_type, patterns, config, ma_rule_id,
+                                                                       auto_resolve, output_template)
+        result = self.ma_rule_manager.create(name, rule_type, patterns, config, ma_rule_id=ma_rule_id,
+                                             auto_resolve=auto_resolve, output_template=output_template)
         return result
 
-    def update(self, _id, name, rule_type, patterns, config, auto_resolve=False):
-        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id, auto_resolve)
-        result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config, auto_resolve)
+    def update(self, _id, name, rule_type, patterns, config, auto_resolve=False, output_template=''):
+        name, rule_type, patterns, config, _id = self._sanitize(name, rule_type, patterns, config, _id, auto_resolve, output_template)
+        result = self.ma_rule_manager.update(_id, name, rule_type, patterns, config, auto_resolve, output_template)
         return result
 
     def read(self, rule_id):
@@ -146,7 +151,9 @@ def exports(ws):
         try:
             return rh_ma_rule.create(
                 elements["name"], elements["type"], elements.get("patterns"), elements.get("config"), 
-                ma_rule_id=ma_rule_id, auto_resolve=elements.get("auto_resolve", False))
+                ma_rule_id=ma_rule_id, auto_resolve=elements.get("auto_resolve", False),
+                output_template=elements.get('output_template', '')
+            )
         except (TypeError, KeyError):
             _set_status(HTTP_ERROR)
             return {'description': 'The fields \'name\' and \'type\' are required.'}
@@ -176,7 +183,9 @@ def exports(ws):
 
         try:
             success = rh_ma_rule.update(rule_id, elements["name"], elements["type"], elements.get("patterns"),
-                                     elements.get("config"), auto_resolve=elements.get("auto_resolve", False))
+                                        elements.get("config"), auto_resolve=elements.get("auto_resolve", False),
+                                        output_template=elements.get('output_template', '')
+                                        )
         except Exception as exc:
             _set_status(HTTP_ERROR)
             return {'description': '{}'.format(exc)}
