@@ -120,6 +120,7 @@ export default {
     output: 'Note',
     created: 'Date de création',
     updated: 'Date de dernière modification',
+    pattern: 'Pattern',
     correlation: 'Corrélation',
     actions: {
       close: 'Fermer',
