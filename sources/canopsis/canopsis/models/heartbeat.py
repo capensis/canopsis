@@ -2,8 +2,7 @@ from __future__ import unicode_literals
 
 import re
 import itertools
-
-from hashlib import md5
+import uuid
 
 
 class HeartBeat(object):
@@ -83,11 +82,7 @@ class HeartBeat(object):
         :returns: heartbeat pattern hash.
         :rtype: `str`.
         """
-        checksum = md5()
-        for chunk in itertools.chain(*((k, pattern[k])
-                                       for k in sorted(pattern))):
-            checksum.update(chunk)
-        return checksum.hexdigest()
+        return str(uuid.uuid4())
 
     @staticmethod
     def validate_heartbeat_pattern(pattern):

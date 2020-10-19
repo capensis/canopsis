@@ -84,6 +84,7 @@ class HeartbeatManager(object):
                   `pymongo.errors.PyMongoError`,
                   `~.common.collection.CollectionError`, ).
         """
+        print heartbeat.to_dict()
         if self.get(heartbeat.id):
             raise HeartbeatPatternExistsError()
 
@@ -130,9 +131,9 @@ class HeartbeatManager(object):
         sort = -1 if sort == "desc" else 1
         pipeline.append({"$sort": {sort_by: sort}})
 
-        page = int(page or 0)
+        page = int(page or 1)
         limit = int(limit or 10)
-        pipeline.append({"$skip": page * limit})
+        pipeline.append({"$skip": (page - 1) * limit})
         pipeline.append({"$limit": limit})
 
         data = list(self.__collection.aggregate(pipeline))
