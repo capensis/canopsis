@@ -17,6 +17,13 @@
           type="top",
           @input="updateQueryPage"
         )
+      v-flex(v-if="hasAccessToCorrelationSwitcher")
+        v-switch(
+          :value="query.correlation",
+          :label="$t('common.correlation')",
+          color="primary",
+          @change="updateCorrelation"
+        )
       v-flex
         filter-selector(
           data-test="tableFilterSelector",
@@ -57,6 +64,7 @@
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
       :isTourEnabled="isTourEnabled",
+      :hideGroups="!query.correlation",
       :hasColumns="hasColumns",
       :columns="columns",
       selectable,
@@ -177,6 +185,10 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
     },
 
+    hasAccessToCorrelationSwitcher() {
+      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.correlation);
+    },
+
     firstAlarmExpanded() {
       const [alarm] = this.alarms;
 
@@ -187,6 +199,20 @@ export default {
     this.fetchAlarmColumnFilters();
   },
   methods: {
+    updateCorrelation(correlation) {
+      this.updateWidgetPreferencesInUserPreference({
+        ...this.userPreference.widget_preferences,
+
+        isCorrelationEnabled: correlation,
+      });
+
+      this.query = {
+        ...this.query,
+
+        correlation,
+      };
+    },
+
     updateRecordsPerPage(limit) {
       this.updateWidgetPreferencesInUserPreference({
         ...this.userPreference.widget_preferences,

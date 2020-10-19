@@ -24,6 +24,7 @@ definitions:
     properties:
       _id: {type: string}
       auto_resolve: {type: boolean}
+      output_template: {type: string}
       name: {type: string}
       type: {type: string}
       patterns: 
