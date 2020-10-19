@@ -1261,7 +1261,20 @@ export default {
       title: 'Créer une configuration',
     },
     createRemediationJob: {
-      title: 'Créer un travail',
+      create: {
+        title: 'Créer un travail',
+      },
+      edit: {
+        title: 'Éditée une travail',
+      },
+      fields: {
+        configuration: 'Configuration',
+        jobId: 'Emploi ID',
+        payload: 'Payload',
+      },
+      errors: {
+        invalidJSON: 'JSON non valide',
+      },
     },
     clickOutsideConfirmation: {
       title: 'Êtes-vous sûr(e) ?',

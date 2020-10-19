@@ -7,6 +7,7 @@ import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
 import remediationInstructionModule from './remediation-instruction';
+import remediationConfigurationModule from './remediation-configuration';
 import remediationJobModule from './remediation-job';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
@@ -66,4 +67,5 @@ export default {
   metaAlarmRule: metaAlarmRuleModule,
   remediationInstruction: remediationInstructionModule,
   remediationJob: remediationJobModule,
+  remediationConfiguration: remediationConfigurationModule,
 };

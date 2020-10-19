@@ -63,4 +63,5 @@ export { default as CreatePbehaviorType } from './pbehavior/create-pbehavior-typ
 export { default as CreatePbehaviorReason } from './pbehavior/create-pbehavior-reason.vue';
 export { default as CreatePbehaviorException } from './pbehavior/create-pbehavior-exception.vue';
 export { default as CreateRemediationInstruction } from './remediation/create-remediation-instruction.vue';
+export { default as CreateRemediationJob } from './remediation/create-remediation-job.vue';
 export { default as ImageViewer } from './common/image-viewer.vue';
