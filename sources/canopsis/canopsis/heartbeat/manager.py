@@ -84,11 +84,13 @@ class HeartbeatManager(object):
                   `pymongo.errors.PyMongoError`,
                   `~.common.collection.CollectionError`, ).
         """
-        print heartbeat.to_dict()
         if self.get(heartbeat.id):
             raise HeartbeatPatternExistsError()
-
-        return self.__collection.insert(heartbeat.to_dict())
+        now = int(time.time())
+        heartbeat = heartbeat.to_dict()
+        heartbeat[HeartBeat.CREATED_KEY] = now
+        heartbeat[HeartBeat.UPDATED_KEY] = now
+        return self.__collection.insert(heartbeat)
 
     def get(self, heartbeat_id=None, page=None, limit=None, search=None, sort=None, sort_by=None):
         """
