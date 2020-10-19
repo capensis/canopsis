@@ -106,10 +106,10 @@ export default {
     },
 
     fetchConfigurationsList() {
-      this.fetchRemediationJobsListWithPreviousParams();
     },
 
     fetchJobsList() {
+      this.fetchRemediationJobsListWithPreviousParams();
     },
 
     showCreateInstructionModal() {

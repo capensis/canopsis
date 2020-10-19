@@ -3,7 +3,7 @@
     remediation-jobs-list(
       :remediation-jobs="remediationJobs",
       :pending="remediationJobsPending",
-      :totalItems="remediationJobsMeta.total_count",
+      :total-items="remediationJobsMeta.total_count",
       :pagination.sync="pagination",
       @remove-selected="showRemoveSelectedRemediationJobsModal",
       @remove="showRemoveRemediationJobModal",
@@ -36,12 +36,12 @@ export default {
 
     showEditRemediationJobModal() {},
 
-    showRemoveRemediationJobModal(remediationInstruction) {
+    showRemoveRemediationJobModal(remediationJob) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await this.removeRemediationJob({ id: remediationInstruction._id });
+            await this.removeRemediationJob({ id: remediationJob._id });
             await this.fetchList();
           },
         },
