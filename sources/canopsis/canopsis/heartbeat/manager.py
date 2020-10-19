@@ -117,7 +117,7 @@ class HeartbeatManager(object):
 
         total_count_data = list(self.__collection.aggregate(
             pipeline + [{'$count': 'total_count'}]))
-
+        total_count = 0
         if len(total_count_data) == 1:
             try:
                 total_count = total_count_data[0]["total_count"]
