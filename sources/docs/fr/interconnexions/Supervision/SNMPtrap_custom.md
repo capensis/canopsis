@@ -19,9 +19,9 @@ le moteur de traitement custom se déclenche.
 Le moteur va alors utiliser les différentes classes « custom » à sa disposition
 pour identifier le trap reçu (fonction `match` qui retourne `True` ou `False`).
 
-La première classe qui « reconnaît » ainsi le trap est sélectionnée pour
-exécuter la seconde opération : la fonction `build_event`, qui construit
-l'évènement envoyé à Canopsis.
+Toute classe qui « reconnaît » ainsi le trap est sélectionnée pour exécuter la
+seconde opération : la fonction `build_event`, qui construit l'évènement envoyé
+à Canopsis.
 
 ## Conception d'une classe custom
 
@@ -58,6 +58,7 @@ class MyCustomTrap(SnmpTrap):
 
     DELIMITER = '#'
     RULE_TAG = 'MYRULENAME'
+    STOP_AT_FIRST_MATCH = False
 
     def match(self, trap):
         """
@@ -108,6 +109,19 @@ Dans le cas d'un environnement Docker, il est conseillé de créer un volume pou
 ce répertoire, ce qui facilitera le placement des fichiers.
 
 Une fois le fichier ajouté ou modifié, redémarrer le moteur `snmp` de Canopsis.
+
+## Ordre et options de traitement
+
+Les modules Python déposés dans le dossier `custom_handler` sont chargés
+d'après l'ordre des noms de fichiers (ordre lexicographique). Lors du traitement
+d'un trap, les classes sont « exécutées » dans ce même ordre.
+
+Par défaut, si plusieurs classes reconnaissent un même trap, le mécanisme de
+traitement de traps personnalisés peut produire plusieurs évènements pour ce
+même trap. Ce comportement peut être modifié sur chaque classe en définissant
+l'attribut de classe `STOP_AT_FIRST_MATCH` (booléen). Lorsque cet attribut est
+vrai pour une classe et que cette classe a reconnu un trap, aucune autre classe
+suivante ne sera essayée pour ce trap.
 
 ## Outil de test de classe
 
