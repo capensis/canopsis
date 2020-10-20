@@ -102,10 +102,11 @@ export default {
               filter,
             };
 
-            this.updateRemediationInstructionWithConfirm(
+            await this.updateRemediationInstructionWithConfirm(
               remediationInstruction,
               formToRemediationInstruction(form),
             );
+            await this.fetchList();
           },
         },
       });
