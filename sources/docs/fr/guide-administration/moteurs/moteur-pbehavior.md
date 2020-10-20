@@ -120,7 +120,7 @@ En revanche, lors de la création d'un comportement périodique par l'interface 
 
 Pour personnaliser cette liste vous devez insérer une configuration via l'API `associativetable`. Elle est stockée dans la collection `default_associativetable` de MongoDB. Par exemple :
 
-```
+```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "reasons" :
     [
