@@ -125,6 +125,7 @@ export default {
     output: 'Note',
     created: 'Creation date',
     updated: 'Last update date',
+    pattern: 'Pattern',
     correlation: 'Correlation',
     actions: {
       close: 'Close',
@@ -1069,6 +1070,13 @@ export default {
       create: {
         title: 'Create heartbeat',
         success: 'Heartbeat successfully created!',
+      },
+      edit: {
+        title: 'Modify heartbeat',
+        success: 'Heartbeat successfully modified!',
+      },
+      duplicate: {
+        title: 'Duplicate heartbeat',
       },
       remove: {
         success: 'Heartbeat successfully removed!',
