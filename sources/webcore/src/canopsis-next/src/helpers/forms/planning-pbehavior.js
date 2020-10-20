@@ -102,14 +102,14 @@ export const pbehaviorToForm = (
  * @param {string} timezone
  * @return {Object}
  */
-export const formToPbehavior = (form, timezone) => ({
+export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
   ...form,
 
   enabled: isUndefined(form.enabled) ? true : form.enabled,
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntity(form.comments),
-  exdates: form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)),
+  exdates: form.exdates ? form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)) : [],
   exceptions: removeKeyFromEntity(form.exceptions),
   tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
