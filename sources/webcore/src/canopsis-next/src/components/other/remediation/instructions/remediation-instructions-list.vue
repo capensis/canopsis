@@ -44,11 +44,11 @@
           @click.stop="$emit('assign-filter', props.item)"
         )
           v-icon assignment
-        v-tooltip(bottom, :disabled="props.item.deletable")
+        v-tooltip(bottom, :disabled="!props.disabled")
           v-btn.mx-0(
             slot="activator",
             v-if="hasDeleteAnyRemediationInstructionAccess",
-            :disabled="!props.item.deletable",
+            :disabled="props.disabled",
             icon,
             small,
             @click.stop="$emit('remove', props.item)"

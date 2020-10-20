@@ -324,6 +324,22 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_remediationInstruction",
+        "loader_id": "models_remediationInstruction",
+        "crecord_name": "models_remediationInstruction",
+        "crecord_type": "action",
+        "desc": "Remediation instruction",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_remediationJob",
+        "loader_id": "models_remediationJob",
+        "crecord_name": "models_remediationJob",
+        "crecord_type": "action",
+        "desc": "Remediation job",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_serie",
         "loader_id": "models_serie",
         "crecord_name": "models_serie",

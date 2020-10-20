@@ -5,7 +5,7 @@
       v-flex(xs12)
         v-card.ma-2
           v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
-            template
+            template(v-if="hasReadAnyRemediationInstructionAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('remediation.tabs.instructions') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.instructions")
                 v-card-text
@@ -17,12 +17,12 @@
               v-tab-item(:value="$constants.REMEDIATION_TABS.configurations")
                 v-card-text
                   span {{ $t('remediation.tabs.configurations') }}
-            template
+            template(v-if="hasReadAnyRemediationJobAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.jobs}`") {{ $t('remediation.tabs.jobs') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.jobs")
                 v-card-text
-                  span {{ $t('remediation.tabs.jobs') }}
-    fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
+                  remediation-jobs
+    fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
       span {{ tooltipText }}
 </template>
 
@@ -31,15 +31,25 @@ import { MODALS, REMEDIATION_TABS } from '@/constants';
 
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
+import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
 
 import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
+import entitiesRemediationJobMixin from '@/mixins/entities/remediation/jobs';
+import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
+import rightsTechnicalRemediationJobMixin from '@/mixins/rights/technical/remediation-job';
 
 export default {
   components: {
     RemediationInstructions,
+    RemediationJobs,
     FabButtons,
   },
-  mixins: [entitiesRemediationInstructionMixin],
+  mixins: [
+    entitiesRemediationInstructionMixin,
+    entitiesRemediationJobMixin,
+    rightsTechnicalRemediationInstructionMixin,
+    rightsTechnicalRemediationJobMixin,
+  ],
   data() {
     return {
       activeTab: REMEDIATION_TABS.instructions,
@@ -54,8 +64,12 @@ export default {
       }[this.activeTab];
     },
 
-    hasAccess() {
-      return true;
+    hasCreateAccess() {
+      return {
+        [REMEDIATION_TABS.instructions]: this.hasCreateAnyRemediationInstructionAccess,
+        [REMEDIATION_TABS.configurations]: true,
+        [REMEDIATION_TABS.jobs]: this.hasCreateAnyRemediationJobAccess,
+      }[this.activeTab];
     },
   },
   methods: {
@@ -95,6 +109,7 @@ export default {
     },
 
     fetchJobsList() {
+      this.fetchRemediationJobsListWithPreviousParams();
     },
 
     showCreateInstructionModal() {

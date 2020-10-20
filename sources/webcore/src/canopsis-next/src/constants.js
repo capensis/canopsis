@@ -739,6 +739,7 @@ export const USERS_RIGHTS = {
     exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
     remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationInstruction`,
+    remediationJob: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationJob`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
