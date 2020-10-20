@@ -2,6 +2,7 @@
   v-menu(
     v-model="opened",
     :close-on-content-click="false",
+    :disabled="disabled",
     content-class="date-picker",
     transition="slide-y-transition",
     max-width="290px",
@@ -15,9 +16,10 @@
         :error="error",
         :error-messages="errorMessages",
         :name="name",
+        :disabled="disabled",
         :hide-details="hideDetails",
         :append-icon="clearable ? 'close' : ''",
-        readonly,
+        :readonly="!disabled",
         @click:append="clear"
       )
     v-date-picker.date-picker(
@@ -78,6 +80,10 @@ export default {
       default: false,
     },
     hideDetails: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

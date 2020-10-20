@@ -6,6 +6,7 @@
           :value="value | date('timePicker', true, null)",
           :label="label",
           :error="errors.has(name)",
+          :disabled="disabled",
           hide-details,
           @input="updateTime"
         )
@@ -14,6 +15,7 @@
           :value="value | date('YYYY-MM-DD', true, null)",
           :label="!reverse || fullDay ? label : ''",
           :error="errors.has(name)",
+          :disabled="disabled",
           hide-details,
           @input="updateDate"
         )
@@ -21,6 +23,7 @@
         time-picker-field(
           :value="value | date('timePicker', true, null)",
           :error="errors.has(name)",
+          :disabled="disabled",
           hide-details,
           @input="updateTime"
         )
@@ -76,6 +79,10 @@ export default {
       default: 'date',
     },
     reverse: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

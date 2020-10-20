@@ -126,6 +126,7 @@ export default {
     created: 'Creation date',
     updated: 'Last update date',
     correlation: 'Correlation',
+    periods: 'Periods',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
