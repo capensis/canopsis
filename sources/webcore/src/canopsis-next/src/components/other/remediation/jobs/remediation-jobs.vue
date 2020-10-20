@@ -44,12 +44,12 @@ export default {
             await this.updateRemediationJob({ id: remediationJob._id, data: job });
 
             this.$popups.success({
-              text: this.$t('modals.createRemediationInstruction.edit.popups.success', {
-                jobName: remediationJob.name,
+              text: this.$t('modals.createRemediationJob.edit.popups.success', {
+                jobName: job.name,
               }),
             });
 
-            await this.fetchJobsList();
+            await this.fetchList();
           },
         },
       });

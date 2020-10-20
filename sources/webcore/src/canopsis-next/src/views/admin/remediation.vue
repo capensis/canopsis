@@ -142,7 +142,7 @@ export default {
             await this.createRemediationJob({ data: remediationJob });
 
             this.$popups.success({
-              text: this.$t('modals.createRemediationInstruction.create.popups.success', {
+              text: this.$t('modals.createRemediationJob.create.popups.success', {
                 jobName: remediationJob.name,
               }),
             });
