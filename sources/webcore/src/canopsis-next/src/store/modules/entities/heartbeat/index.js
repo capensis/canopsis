@@ -2,7 +2,6 @@ import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
 import { createEntityModule } from '@/store/plugins/entities';
-import request from '@/services/request';
 import { heartbeatSchema } from '@/store/schemas';
 import i18n from '@/i18n';
 
@@ -52,9 +51,6 @@ export default createEntityModule({
 
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
       }
-    },
-    remove(context, { id } = {}) {
-      return request.delete(`${API_ROUTES.heartbeat}${id}`);
     },
   },
 });
