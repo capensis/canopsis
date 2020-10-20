@@ -39,6 +39,7 @@ export default {
         name: MODALS.createRemediationJob,
         config: {
           remediationJob,
+          title: this.$t('modals.createRemediationJob.edit.title'),
           action: async (job) => {
             await this.updateRemediationJob({ id: remediationJob._id, data: job });
 

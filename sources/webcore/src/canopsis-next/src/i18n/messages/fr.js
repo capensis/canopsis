@@ -1263,9 +1263,15 @@ export default {
     createRemediationJob: {
       create: {
         title: 'Créer un travail',
+        popups: {
+          success: '{jobName} a été créé avec succès',
+        },
       },
       edit: {
         title: 'Éditée une travail',
+        popups: {
+          success: '{jobName} a été modifié avec succès',
+        },
       },
       fields: {
         configuration: 'Configuration',

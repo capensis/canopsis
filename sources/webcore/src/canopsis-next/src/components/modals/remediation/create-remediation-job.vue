@@ -52,11 +52,7 @@ export default {
   },
   computed: {
     title() {
-      if (this.config.remediationJob) {
-        return this.$t('modals.createRemediationJob.edit.title');
-      }
-
-      return this.$t('modals.createRemediationJob.create.title');
+      return this.config.title || this.$t('modals.createRemediationJob.create.title');
     },
   },
   methods: {
