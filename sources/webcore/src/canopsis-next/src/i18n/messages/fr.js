@@ -127,6 +127,7 @@ export default {
     updated: 'Date de dernière modification',
     pattern: 'Pattern',
     correlation: 'Corrélation',
+    periods: 'Périodes',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

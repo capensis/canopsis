@@ -6,9 +6,10 @@
           v-for="(exdate, index) in exdates",
           v-field="exdates[index]",
           :key="exdate.key",
+          :disabled="disabled",
           @delete="removeItemFromArray(index)"
         )
-    v-layout(row)
+    v-layout(v-if="!disabled", row)
       v-flex
         v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorException.addDate') }}
     v-alert(:value="errors.has('exdates')", type="error") {{ errors.first('exdates') }}
@@ -35,6 +36,10 @@ export default {
     exdates: {
       type: Array,
       default: () => [],
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   created() {

@@ -127,6 +127,7 @@ export default {
     updated: 'Last update date',
     pattern: 'Pattern',
     correlation: 'Correlation',
+    periods: 'Periods',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
