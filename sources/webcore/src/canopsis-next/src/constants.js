@@ -1163,6 +1163,7 @@ export const WEBHOOK_TRIGGERS = {
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',
+  activate: 'activate',
 };
 
 export const EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
