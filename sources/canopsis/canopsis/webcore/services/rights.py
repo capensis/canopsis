@@ -118,11 +118,11 @@ def save_user(ws, record):
 
     if ucontact is None:
         ucontact = {
-            'name': '{0} {1}'.format(
+            'name': u'{0} {1}'.format(
                 record.get('firstname', ''),
                 record.get('lastname', ''),
             ),
-            'email': record.get('mail', '')
+            'email': u'{}'.format(record.get('mail', ''))
         }
 
     _id = oid or uid
