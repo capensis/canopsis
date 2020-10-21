@@ -4,7 +4,7 @@ import { ACTION_TYPES, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/c
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
-import { pbehaviorToForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { convertDurationToIntervalObject } from '@/helpers/date';
 import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
@@ -117,12 +117,10 @@ export function prepareSnoozeParameters({ snoozeParameters = {} }) {
  * @param [form.assocticketParameters]
  * @param [form.declareticketParameters]
  * @param [form.cancelParameters]
+ * @param [timezone = moment.tz.guess()]
  * @returns {Object}
  */
-export function formToAction({
-  generalParameters = {},
-  ...form
-}, timezone) {
+export function formToAction({ generalParameters = {}, ...form }, timezone = moment.tz.guess()) {
   const hasValue = v => !v;
 
   const data = unsetSeveralFieldsWithConditions(generalParameters, {
@@ -144,7 +142,11 @@ export function formToAction({
 
   const formToActionPrepareMap = {
     [ACTION_TYPES.snooze]: prepareSnoozeParameters,
-    [ACTION_TYPES.pbehavior]: ({ pbehaviorParameters = {} }) => pbehaviorToRequest(pbehaviorParameters, timezone),
+    [ACTION_TYPES.pbehavior]: ({ pbehaviorParameters = {} }) => {
+      const pbehavior = formToPbehavior(pbehaviorParameters, timezone);
+
+      return pbehaviorToRequest(pbehavior);
+    },
   };
 
   const prepareField = formToActionPrepareMap[generalParameters.type];
