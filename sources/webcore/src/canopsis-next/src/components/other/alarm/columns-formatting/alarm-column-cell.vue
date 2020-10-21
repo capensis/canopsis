@@ -5,6 +5,7 @@
     :close-on-content-click="false",
     :open-on-click="false",
     offset-x,
+    lazy-with-unmount,
     lazy
   )
     div(slot="activator")
@@ -200,6 +201,11 @@ export default {
           text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
         },
       };
+    },
+  },
+  watch: {
+    isInfoPopupOpen(value) {
+      this.async_computed$lazy_active$popupTextContent = value; // TODO: move into plugins
     },
   },
   methods: {
