@@ -44,7 +44,7 @@
 import moment from 'moment';
 import { get, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Op, Units } from 'dayspan';
+import { Calendar, Op } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
@@ -149,10 +149,6 @@ export default {
       return Object.values(this.allPbehaviorsById)
         .filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
     },
-
-    isCalendarTypeWeek() {
-      return [Units.MONTH, Units.YEAR].includes(this.calendar.type);
-    },
   },
   watch: {
     pbehaviorsById: {
@@ -243,7 +239,6 @@ export default {
         pbehavior,
         viewFrom,
         viewTo,
-        byDate: this.isCalendarTypeWeek,
       });
 
       return this.fetchTimespans({ data: timespan });
@@ -267,7 +262,6 @@ export default {
           start: timespan.from,
           end: timespan.to,
           timezone: this.$system.timezone,
-          isDate: this.isCalendarTypeWeek,
         });
 
         return {

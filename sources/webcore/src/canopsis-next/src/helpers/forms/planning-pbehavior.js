@@ -147,7 +147,7 @@ export const calendarEventToPbehaviorForm = (
       if (end.date.diff(start.date, 'hours') <= 24) {
         form.tstop = start.date.clone().endOf('day').toDate();
       } else {
-        form.tstop = calendarEvent.end.date.clone().subtract(1, 'millisecond').toDate();
+        form.tstop = end.date.clone().subtract(1, 'millisecond').toDate();
       }
     } else {
       form.tstop = end.date.toDate();
