@@ -68,13 +68,84 @@ class ActionManager(object):
 
         :rtype: List[Dict[str, Any]]
         """
-        return list(self.collection.find({}))
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "pbehavior_type",
+                    "localField": "parameters.type",
+                    "foreignField": "_id",
+                    "as": "parameters.type"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "pbehavior_reason",
+                    "localField": "parameters.reason",
+                    "foreignField": "_id",
+                    "as": "parameters.reason"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.reason",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.type",
+                    "preserveNullAndEmptyArrays": True
+                }
+            }
+        ]
+        return list(self.collection.aggregate(pipeline))
 
     def get_id(self, id_):
         """
         Helper to find just an object from his _id.
         """
-        return self.get(query={Action._ID: id_})
+        pipeline = [
+            {
+                "$match": {
+                    "_id": id_
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "pbehavior_type",
+                    "localField": "parameters.type",
+                    "foreignField": "_id",
+                    "as": "parameters.type"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "pbehavior_reason",
+                    "localField": "parameters.reason",
+                    "foreignField": "_id",
+                    "as": "parameters.reason"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.reason",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.type",
+                    "preserveNullAndEmptyArrays": True
+                }
+            }
+        ]
+
+        records = list(self.collection.aggregate(pipeline))
+        if not records:
+            return
+
+        action = Action(**Action.convert_keys(records[0]))
+        return action
 
     def get(self, query):
         """
