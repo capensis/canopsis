@@ -1,10 +1,10 @@
 <script>
-import VExpansionPanelContent from 'vuetify/es5/components/VExpansionPanel/VExpansionPanelContent';
+import VMenu from 'vuetify/es5/components/VMenu';
 
 import lazyWithUnmountMixin from '../../mixins/lazy-with-unmount';
 
 export default {
-  extends: VExpansionPanelContent,
+  extends: VMenu,
   mixins: [lazyWithUnmountMixin],
 };
 </script>
