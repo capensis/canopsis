@@ -305,6 +305,7 @@ export default {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
     infoPopup: 'Info popup',
+    instructionInfoPopup: 'Il existe une consigne pour ce type d\'incidents',
   },
   weather: {
     moreInfos: 'Plus d\'infos',
