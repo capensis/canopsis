@@ -8,6 +8,7 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  PBEHAVIOR_RRULE_PERIODS_RANGES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -128,6 +129,7 @@ export default {
     pattern: 'Pattern',
     correlation: 'Correlation',
     periods: 'Periods',
+    range: 'Range',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1346,6 +1348,13 @@ export default {
     },
     errors: {
       main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
+    },
+    periodsRanges: {
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek]: 'This week',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek]: 'Next week',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks]: 'Next 2 weeks',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'This month',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Next month',
     },
     fields: {
       freq: 'Frequency',
