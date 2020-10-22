@@ -511,6 +511,7 @@ export default {
         counter: 'Counter',
       },
     },
+    counters: 'Counters enabled?',
   },
   modals: {
     contextInfos: {

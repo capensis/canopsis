@@ -79,6 +79,11 @@
             :max="20"
           )
           v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.isCountersEnabled",
+            :title="$t('settings.counters')"
+          )
+          v-divider
           field-modal-type(v-model="settings.widget.parameters.modalType")
     v-btn.primary(data-test="submitWeather", @click="submit") {{ $t('common.save') }}
 </template>
@@ -99,6 +104,7 @@ import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
 import FieldTemplate from './fields/common/template.vue';
 import FieldGridSize from './fields/common/grid-size.vue';
 import FieldSlider from './fields/common/slider.vue';
+import FieldSwitcher from './fields/common/switcher.vue';
 import FieldModalType from './fields/weather/modal-type.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldNumber from './fields/common/number.vue';
@@ -119,6 +125,7 @@ export default {
     FieldTemplate,
     FieldGridSize,
     FieldSlider,
+    FieldSwitcher,
     FieldModalType,
     FieldDefaultElementsPerPage,
     FieldNumber,
