@@ -50,20 +50,23 @@ import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES }
 
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
-import { pbehaviorToTimespan } from '@/helpers/forms/timespans-pbehavior';
+import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone } from '@/helpers/date';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
+import entitiesPbehaviorTimespansMixin from '@/mixins/entities/pbehavior/timespans';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
-const { mapActions: pbehaviorTimespanMapActions } = createNamespacedHelpers('pbehaviorTimespan');
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
 export default {
   inject: ['$system'],
   components: { PbehaviorCreateEvent },
-  mixins: [entitiesInfoMixin],
+  mixins: [
+    entitiesInfoMixin,
+    entitiesPbehaviorTimespansMixin,
+  ],
   model: {
     prop: 'pbehaviors',
     event: 'input',
@@ -163,10 +166,6 @@ export default {
     this.fetchDefaultTypes();
   },
   methods: {
-    ...pbehaviorTimespanMapActions({
-      fetchTimespans: 'fetchItems',
-    }),
-
     ...pbehaviorTypesMapActions({
       fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
     }),
@@ -223,25 +222,16 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
-      const calendarStart = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
-      const calendarEnd = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
+      const from = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
+      const to = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
 
-      const tstartBeforeCalendarStart = pbehavior.tstart < calendarStart;
-      const tstopAfterCalendarStart = !pbehavior.tstop || (pbehavior.tstop > calendarStart);
-
-      const tstartBeforeCalendarEnd = pbehavior.tstart < calendarEnd;
-      const tstopAfterCalendarEnd = pbehavior.tstop && (pbehavior.tstop > calendarEnd);
-
-      const viewFrom = (tstartBeforeCalendarStart && tstopAfterCalendarStart) ? pbehavior.tstart : calendarStart;
-      const viewTo = (tstartBeforeCalendarEnd && tstopAfterCalendarEnd) ? pbehavior.tstop : calendarEnd;
-
-      const timespan = pbehaviorToTimespan({
+      const timespan = pbehaviorToTimespanRequest({
         pbehavior,
-        viewFrom,
-        viewTo,
+        from,
+        to,
       });
 
-      return this.fetchTimespans({ data: timespan });
+      return this.fetchTimespansListWithoutStore({ data: timespan });
     },
 
     /**

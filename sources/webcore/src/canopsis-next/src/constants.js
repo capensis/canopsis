@@ -1504,3 +1504,11 @@ export const PLANNING_TABS = {
   reasons: 'reasons',
   exceptions: 'exceptions',
 };
+
+export const PBEHAVIOR_RRULE_PERIODS_RANGES = {
+  thisWeek: 'thisWeek',
+  nextWeek: 'nextWeek',
+  next2Weeks: 'next2Weeks',
+  thisMonth: 'thisMonth',
+  nextMonth: 'nextMonth',
+};
