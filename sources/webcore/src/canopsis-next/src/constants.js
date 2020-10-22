@@ -1349,6 +1349,7 @@ export const EXPLOITATION_PAGES_RULES = {
   heartbeat: { stack: CANOPSIS_STACK.go },
   action: { stack: CANOPSIS_STACK.go },
   dynamicInfo: { edition: CANOPSIS_EDITION.cat },
+  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
@@ -1358,6 +1359,7 @@ export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
   [USERS_RIGHTS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
+  [USERS_RIGHTS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
 };
 
 export const WIDGET_TYPES_RULES = {
