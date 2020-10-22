@@ -18,12 +18,13 @@ VALID_PARAMS = [
 VALID_CONFIG_PARAMS = {
     'time_interval': ['timebased', 'complex', 'valuegroup'],
     'threshold_count': ['complex', 'valuegroup'],
-    'threshold_rate': ['complex'],
+    'threshold_rate': ['complex', 'valuegroup'],
     'alarm_patterns': ['attribute', 'complex', 'valuegroup'],
     'entity_patterns': ['attribute', 'complex', 'valuegroup'],
     'event_patterns': ['attribute', 'complex', 'valuegroup'],
+    'total_entity_patterns': ['complex', 'valuegroup'],
     'attribute_patterns': ['attribute', 'complex'],
-    'value_path': ['valuegroup']
+    'value_paths': ['valuegroup']
 }
 
 VALID_RULE_TYPES = [

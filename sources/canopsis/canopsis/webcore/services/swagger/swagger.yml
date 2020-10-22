@@ -13,10 +13,22 @@ definitions:
     properties:
       time_interval: {type: integer}
       threshold_count: {type: integer}
-      value_path: {type: string}
+      threshold_rate: {type: number}
+      value_paths:
+        type: array
+        items:
+          type: string
       alarm_patterns:
         type: array
         items: 
+          type: object
+      entity_patterns:
+        type: array
+        items:
+          type: object
+      total_entity_patterns:
+        type: array
+        items:
           type: object
     type: object
     x-nullable: true 
