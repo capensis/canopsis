@@ -126,6 +126,7 @@ export default {
     priority: 'Priorité',
     clear: 'Clair',
     deleteAll: 'Tout supprimer',
+    payload: 'Payload',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1276,7 +1277,6 @@ export default {
       fields: {
         configuration: 'Configuration',
         jobId: 'Emploi ID',
-        payload: 'Payload',
       },
       errors: {
         invalidJSON: 'JSON non valide',

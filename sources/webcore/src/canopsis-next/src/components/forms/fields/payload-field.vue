@@ -2,8 +2,8 @@
   v-textarea(
     v-model="localValue",
     v-validate="'required|json'",
-    :label="$t('modals.createRemediationJob.fields.payload')",
-    :error-messages="errors.collect('payload')",
+    :label="$t('common.payload')",
+    :error-messages="errorsMessages",
     name="payload",
     @blur="updatePayload($event)"
   )
@@ -30,6 +30,11 @@ export default {
       localValue: this.convertPayloadValueToString(this.value),
     };
   },
+  computed: {
+    errorsMessages() {
+      return this.fields.payload && this.fields.payload.touched ? this.errors.collect('payload') : [];
+    },
+  },
   watch: {
     value() {
       this.localValue = this.convertPayloadValueToString(this.value);
@@ -37,7 +42,7 @@ export default {
   },
   created() {
     this.$validator.extend('json', {
-      getMessage: () => this.$t('modals.createRemediationJob.errors.invalidJSON'),
+      getMessage: () => this.$t('errors.JSONNotValid'),
       validate: (value) => {
         try {
           return !!JSON.parse(value);
