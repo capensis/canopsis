@@ -135,7 +135,7 @@ export default {
     },
 
     isCountersEnabled() {
-      return !!this.widget.parameters.isCountersEnabled;
+      return this.widget.parameters.isCountersEnabled;
     },
   },
   methods: {
