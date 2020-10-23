@@ -19,8 +19,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 from argparse import ArgumentParser
-import getpass
 import os
+import pwd
 import subprocess
 import sys
 import time
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     if args.reinit is True:
         COMMANDS[1].append(AUTH_REINIT)
 
-    current_user = getpass.getuser()
+    current_user = pwd.getpwuid(os.getuid()).pw_name
     if current_user != 'canopsis':
         print("Error: canopsinit is only meant to be run through \"canopsis\" user")
         exit(1)
