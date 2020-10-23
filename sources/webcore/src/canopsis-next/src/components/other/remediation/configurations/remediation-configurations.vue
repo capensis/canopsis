@@ -14,7 +14,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesRemediationConfigurationMixin from '@/mixins/entities/remediation/configurations';
+import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
 import localQueryMixin from '@/mixins/query-local/query';
 
 import RemediationConfigurationsList from './remediation-configurations-list.vue';
@@ -22,7 +22,7 @@ import RemediationConfigurationsList from './remediation-configurations-list.vue
 export default {
   components: { RemediationConfigurationsList },
   mixins: [
-    entitiesRemediationConfigurationMixin,
+    entitiesRemediationConfigurationsMixin,
     localQueryMixin,
   ],
   mounted() {

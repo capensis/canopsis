@@ -15,11 +15,11 @@
 </template>
 
 <script>
-import entitiesRemediationConfigurationMixin from '@/mixins/entities/remediation/configurations';
+import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
 
 export default {
   inject: ['$validator'],
-  mixins: [entitiesRemediationConfigurationMixin],
+  mixins: [entitiesRemediationConfigurationsMixin],
   model: {
     prop: 'value',
     event: 'input',

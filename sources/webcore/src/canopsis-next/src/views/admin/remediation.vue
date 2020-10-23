@@ -35,8 +35,8 @@ import RemediationJobs from '@/components/other/remediation/jobs/remediation-job
 import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
 
 import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
-import entitiesRemediationConfigurationMixin from '@/mixins/entities/remediation/configurations';
-import entitiesRemediationJobMixin from '@/mixins/entities/remediation/jobs';
+import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
+import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
 import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
 import rightsTechnicalRemediationConfigurationMixin from '@/mixins/rights/technical/remediation-configuration';
 import rightsTechnicalRemediationJobMixin from '@/mixins/rights/technical/remediation-job';
@@ -50,8 +50,8 @@ export default {
   },
   mixins: [
     entitiesRemediationInstructionsMixin,
-    entitiesRemediationConfigurationMixin,
-    entitiesRemediationJobMixin,
+    entitiesRemediationConfigurationsMixin,
+    entitiesRemediationJobsMixin,
     rightsTechnicalRemediationInstructionMixin,
     rightsTechnicalRemediationConfigurationMixin,
     rightsTechnicalRemediationJobMixin,
