@@ -850,6 +850,7 @@ export const USERS_RIGHTS = {
     pbehaviorReason: `${USER_RIGHTS_PREFIXES.api}_pbehaviorreason`,
     pbehaviorException: `${USER_RIGHTS_PREFIXES.api}_pbehaviorexception`,
     event: `${USER_RIGHTS_PREFIXES.api}_event`,
+    engine: `${USER_RIGHTS_PREFIXES.api}_engine`,
   },
 };
 
