@@ -18,9 +18,9 @@ export default {
       fetchRemediationConfigurationsList: 'fetchList',
       fetchRemediationConfigurationsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchRemediationConfigurationsListWithoutStore: 'fetchListWithoutStore',
-      createRemediationConfigurations: 'create',
-      updateRemediationConfigurations: 'update',
-      removeRemediationConfigurations: 'remove',
+      createRemediationConfiguration: 'create',
+      updateRemediationConfiguration: 'update',
+      removeRemediationConfiguration: 'remove',
     }),
   },
 };

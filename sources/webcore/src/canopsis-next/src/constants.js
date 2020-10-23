@@ -742,6 +742,7 @@ export const USERS_RIGHTS = {
     remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
     remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationJob`,
+    remediationConfiguration: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationConfiguration`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
