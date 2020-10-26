@@ -262,6 +262,8 @@ def get_routingkey(event):
     """
     event[Event.SOURCE_TYPE] = Event.COMPONENT
     if event.get(Event.RESOURCE, ''):
+        logger.info("Event {} have changed source_type from {} to {}", event,
+                    event.get(Event.SOURCE_TYPE, ''), Event.RESOURCE)
         event[Event.SOURCE_TYPE] = Event.RESOURCE
 
     rk = u"{}.{}.{}.{}.{}".format(
