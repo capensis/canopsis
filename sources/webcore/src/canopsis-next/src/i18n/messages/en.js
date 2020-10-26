@@ -126,6 +126,7 @@ export default {
     priority: 'Priority',
     clear: 'Clear',
     deleteAll: 'Delete all',
+    payload: 'Payload',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1261,7 +1262,25 @@ export default {
       title: 'Create configuration',
     },
     createRemediationJob: {
-      title: 'Create Job',
+      create: {
+        title: 'Create Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      fields: {
+        configuration: 'Configuration',
+        jobId: 'Job ID',
+      },
+      errors: {
+        invalidJSON: 'Invalid JSON',
+      },
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',

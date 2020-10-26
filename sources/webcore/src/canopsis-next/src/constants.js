@@ -39,6 +39,7 @@ export const ENTITIES_TYPES = {
   pbehaviorReasons: 'pbehaviorReasons',
   remediationInstruction: 'remediationInstruction',
   remediationJob: 'remediationJob',
+  remediationConfiguration: 'remediationConfiguration',
 };
 
 export const MODALS = {
@@ -107,6 +108,7 @@ export const MODALS = {
   createPbehaviorException: 'create-pbehavior-exception',
   createManualMetaAlarm: 'create-manual-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
+  createRemediationJob: 'create-remediation-job',
   imageViewer: 'image-viewer',
 };
 
@@ -1518,3 +1520,5 @@ export const REMEDIATION_WORKFLOW_TYPES = {
 };
 
 export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
+
+export const MAX_LIMIT = 10000;

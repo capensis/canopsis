@@ -60,7 +60,7 @@ export default {
       return {
         [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.create.title'),
         [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.title'),
-        [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.title'),
+        [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.create.title'),
       }[this.activeTab];
     },
 
@@ -135,6 +135,22 @@ export default {
     },
 
     showCreateJobModal() {
+      this.$modals.show({
+        name: MODALS.createRemediationJob,
+        config: {
+          action: async (remediationJob) => {
+            await this.createRemediationJob({ data: remediationJob });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationJob.create.popups.success', {
+                jobName: remediationJob.name,
+              }),
+            });
+
+            await this.fetchJobsList();
+          },
+        },
+      });
     },
   },
 };

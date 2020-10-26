@@ -34,7 +34,26 @@ export default {
       this.fetchRemediationJobsList({ params: this.getQuery() });
     },
 
-    showEditRemediationJobModal() {},
+    showEditRemediationJobModal(remediationJob) {
+      this.$modals.show({
+        name: MODALS.createRemediationJob,
+        config: {
+          remediationJob,
+          title: this.$t('modals.createRemediationJob.edit.title'),
+          action: async (job) => {
+            await this.updateRemediationJob({ id: remediationJob._id, data: job });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationJob.edit.popups.success', {
+                jobName: job.name,
+              }),
+            });
+
+            await this.fetchList();
+          },
+        },
+      });
+    },
 
     showRemoveRemediationJobModal(remediationJob) {
       this.$modals.show({

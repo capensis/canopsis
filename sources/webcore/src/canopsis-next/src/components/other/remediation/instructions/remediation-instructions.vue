@@ -17,6 +17,8 @@ import { isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
+
 import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
 import localQueryMixin from '@/mixins/query-local/query';
 
@@ -83,14 +85,6 @@ export default {
       }
     },
 
-    async updateRemediationInstructionFilter(remediationInstruction, filter) {
-      if (isEqual(remediationInstruction.filter, filter)) {
-        return;
-      }
-
-      this.updateRemediationInstructionWithConfirm(remediationInstruction, { ...remediationInstruction, filter });
-    },
-
     showCreateFilterModal(remediationInstruction) {
       this.$modals.show({
         name: MODALS.createFilter,
@@ -98,7 +92,21 @@ export default {
           filter: { filter: remediationInstruction.filter },
           hiddenFields: ['title'],
           action: async ({ filter }) => {
-            await this.updateRemediationInstructionFilter(remediationInstruction, filter);
+            if (isEqual(remediationInstruction.filter, filter)) {
+              return;
+            }
+
+            const form = {
+              ...remediationInstructionToForm(remediationInstruction),
+              author: remediationInstruction.author,
+              filter,
+            };
+
+            await this.updateRemediationInstructionWithConfirm(
+              remediationInstruction,
+              formToRemediationInstruction(form),
+            );
+            await this.fetchList();
           },
         },
       });
