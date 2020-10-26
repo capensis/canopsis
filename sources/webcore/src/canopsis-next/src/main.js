@@ -5,7 +5,7 @@ import Vue from 'vue';
 import moment from 'moment-timezone';
 import deepFreeze from 'deep-freeze';
 import Vuetify from 'vuetify';
-import VeeValidate from 'vee-validate';
+import VeeValidate, { Validator } from 'vee-validate';
 import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
 import VueMq from 'vue-mq';
@@ -144,6 +144,17 @@ Vue.use(VueMq, {
 
 VueClipboard.config.autoSetContainer = true;
 Vue.use(VueClipboard);
+
+Validator.extend('json', {
+  getMessage: () => i18n.$t('errors.JSONNotValid'),
+  validate: (value) => {
+    try {
+      return !!JSON.parse(value);
+    } catch (err) {
+      return false;
+    }
+  },
+});
 
 Vue.use(VeeValidate, {
   i18n,
