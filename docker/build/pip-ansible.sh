@@ -28,6 +28,7 @@ cffi==1.14.3
 chardet==3.0.4
 enum34==1.1.10
 idna==2.10
+ipaddress==1.0.23
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 pycparser==2.20
