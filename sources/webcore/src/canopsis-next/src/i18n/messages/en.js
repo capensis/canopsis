@@ -305,6 +305,7 @@ export default {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
+    instructionInfoPopup: 'There is an instruction for this type of incidents',
   },
   weather: {
     moreInfos: 'More info',
