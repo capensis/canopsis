@@ -652,6 +652,13 @@
       "desc": "Rights on listalarm: Access to 'Comment' action"
     },
     {
+      "_id": "listalarm_executeInstruction",
+      "loader_id": "listalarm_executeInstruction",
+      "crecord_name": "listalarm_executeInstruction",
+      "crecord_type": "action",
+      "desc": "Rights on listalarm: Access to 'Execute instruction' action"
+    },
+    {
         "_id": "serviceweather_moreInfos",
         "loader_id": "serviceweather_moreInfos",
         "crecord_name": "serviceweather_moreInfos",

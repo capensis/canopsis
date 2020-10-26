@@ -147,6 +147,16 @@ export default {
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           method: this.showManualMetaAlarmUngroupModal,
         },
+        executeInstruction: {
+          type: alarmsListActionsTypes.executeInstruction,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
+          method: this.showExecuteInstructionModal,
+        },
+        resumeInstruction: {
+          type: alarmsListActionsTypes.executeInstruction,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
+          method: this.showResumeInstructionModal,
+        },
       },
     };
   },
@@ -207,6 +217,52 @@ export default {
             filteredActionsMap.ack,
             filteredActionsMap.fastAck,
           );
+        }
+      }
+
+      actions.push(...this.assignedInstructionsUnresolvedActions);
+
+      return actions;
+    },
+    assignedInstructionsUnresolvedActions() {
+      const { filteredActionsMap } = this;
+      const { assigned_instructions: assignedInstructions = [] } = this.item;
+
+      const actions = [];
+
+      if (assignedInstructions.length) {
+        /**
+         * Filtered available instructions for executing
+         */
+        if (filteredActionsMap.executeInstruction) {
+          const executeInstructionActions = assignedInstructions.filter(instruction => !instruction.has_execution)
+            .map(instruction => ({
+              ...filteredActionsMap.executeInstruction,
+
+              title: this.$t('alarmList.actions.titles.executeInstruction', {
+                instructionName: instruction.name,
+              }),
+              method: () => filteredActionsMap.executeInstruction.method(instruction),
+            }));
+
+          actions.push(...executeInstructionActions);
+        }
+
+        /**
+         * Filtered available instructions for resuming
+         */
+        if (filteredActionsMap.resumeInstruction) {
+          const resumeInstructionActions = assignedInstructions.filter(instruction => instruction.has_execution)
+            .map(instruction => ({
+              ...filteredActionsMap.resumeInstruction,
+
+              title: this.$t('alarmList.actions.titles.resumeInstruction', {
+                instructionName: instruction.name,
+              }),
+              method: () => filteredActionsMap.resumeInstruction.method(instruction),
+            }));
+
+          actions.push(...resumeInstructionActions);
         }
       }
 

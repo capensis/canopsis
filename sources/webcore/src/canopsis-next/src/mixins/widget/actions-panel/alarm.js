@@ -196,6 +196,10 @@ export default {
       });
     },
 
+    showExecuteInstructionModal() {},
+
+    showResumeInstructionModal() {},
+
     actionsAccessFilterHandler({ type }) {
       const right = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[type];
 

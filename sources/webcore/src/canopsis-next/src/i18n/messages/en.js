@@ -251,6 +251,8 @@ export default {
         manualMetaAlarmGroup: 'Manual meta alarm management',
         manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
+        executeInstruction: 'Execute {instructionName}',
+        resumeInstruction: 'Resume {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',
