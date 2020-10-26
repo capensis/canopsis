@@ -8,6 +8,7 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  REMEDIATION_CONFIGURATION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1260,7 +1261,26 @@ export default {
       },
     },
     createRemediationConfiguration: {
-      title: 'Create configuration',
+      create: {
+        title: 'Create configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      types: {
+        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
+        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
+      },
+      fields: {
+        host: 'Host',
+        token: 'Authorization token',
+      },
     },
     createRemediationJob: {
       create: {

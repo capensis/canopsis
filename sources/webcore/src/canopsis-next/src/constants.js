@@ -108,6 +108,7 @@ export const MODALS = {
   createPbehaviorException: 'create-pbehavior-exception',
   createManualMetaAlarm: 'create-manual-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
+  createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
   imageViewer: 'image-viewer',
 };
@@ -1521,3 +1522,8 @@ export const REMEDIATION_WORKFLOW_TYPES = {
 };
 
 export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
+
+export const REMEDIATION_CONFIGURATION_TYPES = {
+  rundeck: 'rundeck',
+  awx: 'awx',
+};

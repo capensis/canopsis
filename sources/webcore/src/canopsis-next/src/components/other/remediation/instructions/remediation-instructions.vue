@@ -43,6 +43,7 @@ export default {
         name: MODALS.createRemediationInstruction,
         config: {
           remediationInstruction,
+          title: this.$t('modals.createRemediationInstruction.edit.title'),
           action: async (instruction) => {
             await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);
 

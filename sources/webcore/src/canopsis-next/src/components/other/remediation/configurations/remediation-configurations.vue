@@ -33,7 +33,25 @@ export default {
       this.fetchRemediationConfigurationsList({ params: this.getQuery() });
     },
 
-    showEditRemediationConfigurationModal() {
+    showEditRemediationConfigurationModal(remediationConfiguration) {
+      this.$modals.show({
+        name: MODALS.createRemediationConfiguration,
+        config: {
+          title: this.$t('modals.createRemediationConfiguration.edit.title'),
+          remediationConfiguration,
+          action: async (configuration) => {
+            await this.updateRemediationConfiguration({ id: remediationConfiguration._id, data: configuration });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationConfiguration.edit.popups.success', {
+                configurationName: configuration.name,
+              }),
+            });
+
+            await this.fetchList();
+          },
+        },
+      });
     },
 
     showRemoveRemediationConfigurationModal(remediationConfiguration) {
