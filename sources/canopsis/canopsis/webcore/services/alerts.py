@@ -257,8 +257,10 @@ def exports(ws):
             alarm_end = alarm.get('v', {}).get('resolved')
             if not alarm_end:
                 alarm_end = now
-            alarm["v"]['duration'] = (
-                alarm_end - alarm.get('v', {}).get('creation_date', alarm_end))
+            alarm_value = alarm.get('v', {})
+            activation_date = alarm_value.get('activation_date')
+            alarm["v"]['duration'] = alarm_end - (alarm_value.get('creation_date', alarm_end) \
+                if activation_date is None else activation_date)
 
             state_time = alarm.get('v', {}).get('state', {}).get('t', now)
             alarm["v"]['current_state_duration'] = now - state_time
@@ -667,3 +669,51 @@ def exports(ws):
             entity_id=entity_id
         )
         return gen_json(retour)
+
+    @ws.application.post(
+        '/api/v2/links',
+    )
+    def links():
+        r = request.json
+        if not r or not isinstance(r, dict) or not isinstance(r.get('entities'), list):
+            return gen_json_error(
+                {'description': 'wrong entities payload'}, HTTP_ERROR)
+
+        links, alarm_ids, entity_ids = [], [], []
+
+        for en in r['entities']:
+            if isinstance(en,  dict):
+                if en.get('alarm'):
+                    alarm_ids.append(en['alarm'])
+                if en.get('entity'):
+                    entity_ids.append(en['entity'])
+
+        if alarm_ids:
+            alarms = ar.alarm_collection.find({'_id': {'$in': alarm_ids}})
+            entities = context_manager.get_entities_by_id(
+                entity_ids, with_links=False)
+
+            entity_dict = {}
+            for entity in entities:
+                entity_dict[entity.get('_id')] = entity
+            for alarm in alarms:
+                if alarm['d'] in entity_dict:
+                    links.append({
+                        'entity': alarm['d'],
+                        'alarm': alarm['_id'],
+                        'links': context_manager.enrich_links_to_entity_with_alarm(entity_dict[alarm['d']], alarm)
+                    })
+        elif entity_ids:
+            entities = context_manager.get_entities(
+                query={"_id": {"$in": entity_ids}},
+                with_links=True
+            )
+            for entity in entities:
+                if isinstance(entity, dict) and '_id' in entity and entity.get('links'):
+                    links.append({
+                        'entity': entity['_id'],
+                        'links': entity['links']
+                    })
+        return {
+            'data': links
+        }

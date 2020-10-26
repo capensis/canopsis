@@ -132,7 +132,7 @@ class Rights(Middleware):
             return False
 
         found = entity['rights'].get(right_id, None)
-        if (found and found.get('checksum', 0) & checksum >= checksum):
+        if (found and int(found.get('checksum', 0)) & checksum >= checksum):
             return True
 
         return False

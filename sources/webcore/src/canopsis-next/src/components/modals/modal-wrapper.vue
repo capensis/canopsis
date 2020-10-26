@@ -1,5 +1,8 @@
 <template lang="pug" functional>
-  v-card(:data-test="data.attrs && data.attrs['data-test']")
+  v-card(
+    :class="{ 'fill-min-height': props.fillHeight }",
+    :data-test="data.attrs && data.attrs['data-test']"
+  )
     v-card-title.primary.white--text(v-if="$slots.title && !$slots.fullTitle")
       v-layout(justify-space-between, align-center)
         span.headline
@@ -13,3 +16,14 @@
         v-layout.py-1(justify-end)
           slot(name="actions")
 </template>
+
+<script>
+export default {
+  props: {
+    fillHeight: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
+</script>

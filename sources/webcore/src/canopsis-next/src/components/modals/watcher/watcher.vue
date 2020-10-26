@@ -3,20 +3,19 @@
     template(slot="fullTitle")
       v-card-title.white--text(:style="{ backgroundColor: color }")
         v-layout(justify-space-between, align-center)
-          span.headline {{ watcher.display_name }}
+          span.headline {{ watcher.name }}
     template(slot="text")
-      v-fade-transition
-        div(v-show="!watcherEntitiesPending")
-          watcher-template(
-            :watcher="watcher",
-            :watcherEntities="watcherEntities",
-            :modalTemplate="config.modalTemplate",
-            :entityTemplate="config.entityTemplate",
-            :itemsPerPage="config.itemsPerPage",
-            @add:event="addEventToQueue"
-          )
-      v-fade-transition
-        v-layout(v-show="watcherEntitiesPending", column)
+      v-fade-transition(mode="out-in")
+        watcher-template(
+          v-if="!watcherEntitiesPending",
+          :watcher="watcher",
+          :watcherEntities="watcherEntitiesWithKey",
+          :modalTemplate="config.modalTemplate",
+          :entityTemplate="config.entityTemplate",
+          :itemsPerPage="config.itemsPerPage",
+          @add:event="addEventToQueue"
+        )
+        v-layout(v-else, column)
           v-flex(xs12)
             v-layout(justify-center)
               v-progress-circular(indeterminate, color="primary")
@@ -38,9 +37,13 @@
 </template>
 
 <script>
+import moment from 'moment-timezone';
 import { pick, mapValues } from 'lodash';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { addKeyInEntity } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -55,6 +58,7 @@ import WatcherTemplate from './partial/watcher-template.vue';
 export default {
   name: MODALS.watcher,
   components: { WatcherTemplate, ModalWrapper },
+  inject: ['$system'],
   mixins: [
     modalInnerMixin,
     eventActionsMixin,
@@ -72,8 +76,13 @@ export default {
     watcher() {
       return this.config.watcher;
     },
+
     color() {
       return this.config.color;
+    },
+
+    watcherEntitiesWithKey() {
+      return addKeyInEntity(this.watcherEntities);
     },
   },
   mounted() {
@@ -95,7 +104,7 @@ export default {
   },
   methods: {
     fetchWatchersList() {
-      this.fetchWatcherEntitiesList({ watcherId: this.watcher.entity_id });
+      this.fetchWatcherEntitiesList({ watcherId: this.watcher._id });
     },
 
     addEventToQueue(event) {
@@ -105,20 +114,20 @@ export default {
     async submit() {
       const requests = this.eventsQueue.reduce((acc, event) => {
         if (event.type === EVENT_ENTITY_TYPES.pause) {
-          acc.push(this.createPbehavior({
-            data: event.data,
-            parents: [event.entity],
-            parentsType: ENTITIES_TYPES.entity,
-          }));
+          const pbehavior = pbehaviorToRequest(formToPbehavior(event.data));
+
+          acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
           const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
-            if (pbehavior.type_ === PBEHAVIOR_TYPES.pause) {
-              const data = {
-                ...pick(pbehavior, ['author', 'exdate', 'filter', 'name', 'reason', 'rrule', 'tstart', 'type_']),
-                tstop: Math.round(Date.now() / 1000),
-              };
+            if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
+              accSecond.push(this.updatePbehavior({
+                id: pbehavior._id,
+                data: pbehaviorToRequest({
+                  ...formToPbehavior(pbehavior),
 
-              accSecond.push(this.updatePbehavior({ data, id: pbehavior._id }));
+                  tstop: moment().unix(),
+                }),
+              }));
             }
 
             return accSecond;

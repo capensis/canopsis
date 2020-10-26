@@ -9,7 +9,6 @@ export { default as VariablesHelp } from './common/variables-help.vue';
 export { default as InfoPopupSetting } from './alarm/info-popup-setting/info-popup-setting.vue';
 export { default as AddInfoPopup } from './alarm/info-popup-setting/add-info-popup.vue';
 export { default as CreateManualMetaAlarm } from './alarm/create-manual-meta-alarm.vue';
-export { default as CreatePbehavior } from './pbehavior/create-pbehavior.vue';
 export { default as PbehaviorList } from './pbehavior/pbehavior-list.vue';
 export { default as EditLiveReporting } from './alarm/edit-live-reporting.vue';
 export { default as Confirmation } from './common/confirmation.vue';
@@ -55,3 +54,10 @@ export { default as CreateMetaAlarmRule } from './meta-alarm-rule/create-meta-al
 export { default as CreateCommentEvent } from './common/create-comment-event.vue';
 export { default as CreatePlaylist } from './admin/create-playlist.vue';
 export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue';
+export { default as PbehaviorPlanning } from './pbehavior/pbehavior-planning.vue';
+export { default as SelectExceptionsLists } from './pbehavior/select-exceptions-lists.vue';
+export { default as CreateRRule } from './pbehavior/create-r-rule.vue';
+export { default as pbehaviorRecurrentChangesConfirmation } from './pbehavior/pbehavior-recurrent-changes-confirmation.vue';
+export { default as CreatePbehaviorType } from './pbehavior/create-pbehavior-type.vue';
+export { default as CreatePbehaviorReason } from './pbehavior/create-pbehavior-reason.vue';
+export { default as CreatePbehaviorException } from './pbehavior/create-pbehavior-exception.vue';

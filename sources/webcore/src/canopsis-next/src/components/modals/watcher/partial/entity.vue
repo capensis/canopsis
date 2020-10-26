@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { find, isNull, pickBy } from 'lodash';
+import { isNull, pickBy } from 'lodash';
 
 import {
   CRUD_ACTIONS,
@@ -52,15 +52,14 @@ import {
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
   ENTITIES_STATES_STYLES,
-  PBEHAVIOR_TYPES,
   WIDGETS_ACTIONS_TYPES,
   USERS_RIGHTS,
   ENTITIES_STATUSES,
+  PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetActionPanelWatcherEntityMixin from '@/mixins/widget/actions-panel/watcher-entity';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import EntityTemplate from './entity-template.vue';
@@ -72,7 +71,6 @@ export default {
   mixins: [
     authMixin,
     widgetActionPanelWatcherEntityMixin,
-    entitiesPbehaviorCommentMixin,
     entitiesWatcherEntityMixin,
   ],
   props: {
@@ -161,31 +159,17 @@ export default {
         return WATCHER_STATES_COLORS.pause;
       }
 
-      return ENTITIES_STATES_STYLES[this.entity.state.val].color;
+      return ENTITIES_STATES_STYLES[this.entity.state].color;
     },
 
     mainIcons() {
-      const state = ENTITIES_STATES_STYLES[this.entity.state.val].text;
       const mainIcons = [];
+
       if (!this.isPaused && !this.hasActivePbehavior) {
-        mainIcons.push(WEATHER_ICONS[state]);
+        mainIcons.push(WEATHER_ICONS[this.entity.color]);
       }
 
-      const pausePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.pause });
-      const maintenancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.maintenance });
-      const outOfSurveillancePbehavior = find(this.entity.pbehavior, { type_: PBEHAVIOR_TYPES.unmonitored });
-
-      if (maintenancePbehavior) {
-        mainIcons.push(WEATHER_ICONS.maintenance);
-      }
-
-      if (outOfSurveillancePbehavior) {
-        mainIcons.push(WEATHER_ICONS.unmonitored);
-      }
-
-      if (pausePbehavior) {
-        mainIcons.push(WEATHER_ICONS.pause);
-      }
+      mainIcons.push(...this.entity.pbehaviors.map(({ type }) => type.icon_name));
 
       return mainIcons;
     },
@@ -193,21 +177,21 @@ export default {
     extraIcons() {
       const extraIcons = [];
 
-      if (this.entity.ack) {
+      if (this.entity.acked) {
         extraIcons.push({
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
           color: 'purple',
         });
       }
 
-      if (this.entity.ticket) {
+      if (this.entity.has_ticket) {
         extraIcons.push({
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
           color: 'blue',
         });
       }
 
-      if (this.entity.status && this.entity.status.val === ENTITIES_STATUSES.cancelled) {
+      if (this.entity.status && this.entity.status === ENTITIES_STATUSES.cancelled) {
         extraIcons.push({
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
           color: 'grey darken-1',
@@ -218,15 +202,11 @@ export default {
     },
 
     hasActivePbehavior() {
-      if (!this.entity.pbehavior || !this.entity.pbehavior.length) {
-        return false;
-      }
-
-      return this.entity.pbehavior.filter(value => value.isActive).length;
+      return this.entity.pbehaviors.some(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.active);
     },
 
     isPaused() {
-      return this.entity.pbehavior.some(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
+      return this.entity.pbehaviors.some(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause);
     },
 
     filteredActionsMap() {
@@ -243,7 +223,7 @@ export default {
 
       actions.push(filteredActionsMap.assocTicket);
 
-      if (this.entity.state.val === ENTITIES_STATES.major) {
+      if (this.entity.state === ENTITIES_STATES.major) {
         actions.push(filteredActionsMap.validate, filteredActionsMap.invalidate);
       }
 
@@ -255,7 +235,7 @@ export default {
 
       if (
         this.entity.alarm_display_name &&
-        (!this.entity.status || this.entity.status.val !== ENTITIES_STATUSES.cancelled)
+        (!this.entity.status || this.entity.status !== ENTITIES_STATUSES.cancelled)
       ) {
         actions.push(filteredActionsMap.cancel);
       }
@@ -268,7 +248,7 @@ export default {
     },
 
     pausePbehaviors() {
-      return this.entity.pbehavior.filter(pbehavior => pbehavior.type_.toLowerCase() === PBEHAVIOR_TYPES.pause);
+      return this.entity.pbehaviors.filter(pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause);
     },
 
     hasAccessToManagePbehaviors() {
@@ -281,7 +261,7 @@ export default {
         name: MODALS.pbehaviorList,
         config: {
           pbehaviors: this.pausePbehaviors,
-          entityId: this.entity.entity_id,
+          entityId: this.entity._id,
           onlyActive: true,
           availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },

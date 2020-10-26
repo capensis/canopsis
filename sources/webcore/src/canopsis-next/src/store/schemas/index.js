@@ -16,7 +16,7 @@ export const pbehaviorSchema = new schema.Entity(ENTITIES_TYPES.pbehavior, {}, {
 });
 
 export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {
-  pbehaviors: [pbehaviorSchema],
+  pbehavior: pbehaviorSchema,
 }, {
   idAttribute: '_id',
   processStrategy: parentProcessStrategy,
@@ -40,11 +40,9 @@ export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   processStrategy: parentProcessStrategy,
 });
 
-export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: 'entity_id' });
+export const watcherSchema = new schema.Entity(ENTITIES_TYPES.watcher, {}, { idAttribute: '_id' });
 
-export const watcherEntitySchema = new schema.Entity(ENTITIES_TYPES.watcherEntity, {}, {
-  idAttribute: 'entity_id',
-});
+export const watcherEntitySchema = new schema.Entity(ENTITIES_TYPES.watcherEntity, {}, { idAttribute: '_id' });
 
 export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPreference, {}, {
   idAttribute: '_id',
@@ -103,6 +101,12 @@ export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {
   tabs: [viewTabSchema],
 }, { idAttribute: '_id' });
 
+export const pbehaviorTypesSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorTypes, {}, { idAttribute: '_id' });
+
+export const pbehaviorReasonsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorReasons, {}, { idAttribute: '_id' });
+
+export const pbehaviorExceptionsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorExceptions, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -125,4 +129,7 @@ export default {
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
   [ENTITIES_TYPES.playlist]: playlistSchema,
   [ENTITIES_TYPES.metaAlarmRule]: metaAlarmRuleSchema,
+  [ENTITIES_TYPES.pbehaviorTypes]: pbehaviorTypesSchema,
+  [ENTITIES_TYPES.pbehaviorReasons]: pbehaviorReasonsSchema,
+  [ENTITIES_TYPES.pbehaviorExceptions]: pbehaviorExceptionsSchema,
 };

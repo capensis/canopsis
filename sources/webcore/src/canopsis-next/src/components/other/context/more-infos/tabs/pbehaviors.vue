@@ -5,14 +5,12 @@
         template(slot="items", slot-scope="props")
           td {{ props.item.name }}
           td {{ props.item.author }}
-          td {{ props.item.connector }}
-          td {{ props.item.connector_name }}
           td
             enabled-column(:value="props.item.enabled")
-          td {{ props.item.tstart | date('long') }}
-          td {{ props.item.tstop | date('long') }}
-          td {{ props.item.type_ }}
-          td {{ props.item.reason }}
+          td {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
+          td {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
+          td {{ props.item.type.name }}
+          td {{ props.item.reason.name }}
           td {{ props.item.rrule }}
           td
             template(v-if="hasAccessToDeletePbehavior")
@@ -38,17 +36,16 @@ import EnabledColumn from '@/components/tables/enabled-column.vue';
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesPbehaviorCommentMixin from '@/mixins/entities/pbehavior/comment';
 
 export default {
   components: {
     EnabledColumn,
   },
+  inject: ['$system'],
   mixins: [
     authMixin,
     queryMixin,
     entitiesPbehaviorMixin,
-    entitiesPbehaviorCommentMixin,
   ],
   props: {
     itemId: {
@@ -76,16 +73,8 @@ export default {
           value: 'author',
         },
         {
-          text: this.$t('pbehaviors.connector'),
-          value: 'connector',
-        },
-        {
-          text: this.$t('pbehaviors.connectorName'),
-          value: 'connector_name',
-        },
-        {
           text: this.$t('pbehaviors.isEnabled'),
-          value: 'isEnabled',
+          value: 'enabled',
         },
         {
           text: this.$t('pbehaviors.begins'),
@@ -97,11 +86,11 @@ export default {
         },
         {
           text: this.$t('pbehaviors.type'),
-          value: 'type_',
+          value: 'type.type',
         },
         {
           text: this.$t('pbehaviors.reason'),
-          value: 'reason',
+          value: 'reason.name',
         },
         {
           text: this.$t('pbehaviors.rrule'),
@@ -132,19 +121,10 @@ export default {
   methods: {
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior,
-
-          action: async (data) => {
-            const { comments, ...preparedData } = data;
-
-            await this.updatePbehavior({ data: preparedData, id: pbehavior._id });
-            await this.updateSeveralPbehaviorComments({ pbehavior, comments });
-
-            this.fetchList();
-            this.$popups.success({ text: this.$t('success.default') });
-          },
+          pbehaviors: [pbehavior],
+          afterSubmit: this.fetchList,
         },
       });
     },

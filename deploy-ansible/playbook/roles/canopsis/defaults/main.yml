@@ -32,17 +32,11 @@ canopsis_redis_host: localhost
 canopsis_redis_port: "6379"
 canopsis_redis_dbnum: 0
 
-# use 'cat' if you have CAT engines
+# 'core' by default; use 'cat' if you have CAT engines
 canopsis_edition: core
 
-# use 'go' if you want to use Go engines
-canopsis_engines_type: python
-
-# Default Python engines which haven't been replaced by a Go engine, yet
-canopsis_common_engines:
-  -
-    module: dynamic
-    name: pbehavior
+# Default Python Core engines which haven't been replaced by a Go engine, yet
+canopsis_core_python_engines:
   -
     module: event_filter
     name: event_filter
@@ -56,23 +50,20 @@ canopsis_common_engines:
     module: task_importctx
     name: task_importctx
 
-# When choosing canopsis_engines_type: "python"
-canopsis_python_engines:
+# Additional Python engines in CAT
+canopsis_cat_python_additional_engines:
   -
-    module: cleaner
-    name: cleaner_events
-  -
-    module: dynamic
-    name: alerts
-  -
-    module: dynamic
-    name: context-graph
-  -
-    module: dynamic
-    name: watcher
+    module: task_ackcentreon
+    name: task_ackcentreon
 
-# When choosing canopsis_engines_type: "go"
-canopsis_go_engines:
+# XXX
+# Same as above, but snmp engine has a broken name…
+canopsis_cat_python_additional_engines_broken_names:
+  -
+    name: snmp
+
+# Default Go Core engines
+canopsis_core_go_engines:
   -
     name: engine-action
   -
@@ -84,10 +75,11 @@ canopsis_go_engines:
   -
     name: engine-heartbeat
   -
+    name: engine-pbehavior
+  -
     name: engine-watcher
 
-# When choosing canopsis_engines_type: "go"
-# and canopsis_edition: "cat"
+# Additional Go engines in CAT
 canopsis_cat_go_additional_engines:
   -
     name: engine-dynamic-infos
@@ -96,13 +88,9 @@ canopsis_cat_go_additional_engines:
   -
     name: engine-correlation
 
-# When choosing canopsis_edition: "cat"
-canopsis_cat_common_additional_engines:
+# Default other Core components
+canopsis_core_other_default_services:
   -
-    module: task_ackcentreon
-    name: task_ackcentreon
-
-# Same as above, but snmp engine has a broken name…
-canopsis_cat_common_additional_engines_broken_names:
+    name: canopsis-api
   -
-    name: snmp
+    name: canopsis-webserver

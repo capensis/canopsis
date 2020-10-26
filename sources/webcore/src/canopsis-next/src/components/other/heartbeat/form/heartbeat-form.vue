@@ -40,6 +40,7 @@ import { isEmpty } from 'lodash';
 import { MODALS, HEARTBEAT_DURATION_UNITS } from '@/constants';
 
 import formMixin from '@/mixins/form';
+import TimeIntervalField from '@/components/forms/fields/time-interval.vue';
 
 import TimeIntervalField from '@/components/forms/fields/time-interval.vue';
 

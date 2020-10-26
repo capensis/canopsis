@@ -12,7 +12,7 @@
           div {{ $t('common.by') }} : {{ alarm.v.ack.a }}
           div {{ $t('common.date') }} : {{ alarm.v.ack.t | date('long') }}
           div.message(v-if="alarm.v.ack.m") {{ $tc('common.comment') }} : {{ alarm.v.ack.m }}
-    div(v-if="alarm.v.lastComment")
+    div(v-if="alarm.v.lastComment && alarm.v.lastComment.m")
       v-tooltip(top)
         v-icon.badge.white--text.purple.lighten-2(
           small,
@@ -61,26 +61,28 @@
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
           div {{ $t('common.date') }} : {{ alarm.v.snooze.t | date('long') }}
           div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}
-    div(v-if="pbehaviors.length")
+    div(v-if="alarm.pbehavior")
       v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(
           small,
           data-test="extraDetailsOpenButton-pbehaviors",
           slot="activator"
-        ) {{ $constants.EVENT_ENTITY_STYLE[$constants.EVENT_ENTITY_TYPES.pbehaviorAdd].icon }}
+        ) {{ alarm.pbehavior.type.icon_name }}
         div(:data-test="`extraDetailsContent-${alarm._id}`")
           strong {{ $t('alarmList.actions.iconsTitles.pbehaviors') }}
-          div(v-for="pbehavior in pbehaviors")
-            div.mt-2.font-weight-bold {{ pbehavior.name }}
-            div {{ $t('common.author') }}: {{ pbehavior.author }}
-            div {{ $t('common.type') }}: {{ pbehavior.type_ }}
-            div {{ pbehavior.tstart | date('long') }} - {{ pbehavior.tstop | date('long') }}
-            div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
+          div
+            div.mt-2.font-weight-bold {{ alarm.pbehavior.name }}
+            div {{ $t('common.author') }}: {{ alarm.pbehavior.author }}
+            div(v-if="alarm.pbehavior.type") {{ $t('common.type') }}: {{ alarm.pbehavior.type.name }}
+            div(v-if="alarm.pbehavior.reason") {{ $t('common.reason') }}: {{ alarm.pbehavior.reason.name }}
+            div {{ alarm.pbehavior.tstart | date('long') }}
+              template(v-if="alarm.pbehavior.tstop")
+                |  - {{ alarm.pbehavior.tstop | date('long') }}
+            div(v-if="alarm.pbehavior.rrule") {{ alarm.pbehavior.rrule }}
             div(
-              v-show="pbehavior.comments && pbehavior.comments.length",
-              v-for="comment in pbehavior.comments",
+              v-for="comment in alarm.pbehavior.comments",
               :key="comment._id"
-            ) {{ $tc('common.comment', pbehavior.comments.length) }}:
+            ) {{ $tc('common.comment', alarm.pbehavior.comments.length) }}:
               div.ml-2 - {{ comment.author }}: {{ comment.message }}
             v-divider
     div(v-if="alarm.causes")
@@ -142,9 +144,6 @@ export default {
     },
   },
   computed: {
-    pbehaviors() {
-      return this.alarm.pbehaviors.filter(pbehavior => pbehavior.isActive);
-    },
     causesRules() {
       return get(this.alarm.causes, 'rules', []);
     },

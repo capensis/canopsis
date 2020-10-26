@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       form: {
-        _id: '',
+        crecord_name: '',
         firstname: '',
         lastname: '',
         mail: '',
@@ -69,7 +69,7 @@ export default {
   async mounted() {
     if (!this.isNew) {
       this.form = pick(this.config.user, [
-        '_id',
+        'crecord_name',
         'firstname',
         'lastname',
         'mail',

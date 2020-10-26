@@ -118,6 +118,10 @@ $mobileBreakpoint: 450px;
   }
 }
 
+.pre {
+  white-space: pre;
+}
+
 .pre-wrap {
   white-space: pre-wrap;
 }
@@ -135,4 +139,18 @@ $mobileBreakpoint: 450px;
   padding: 3px 8px;
   color: white;
   border-radius: 5px;
+}
+
+.fill-min-height {
+  min-height: 100vh;
+}
+
+.v-menu__activator {
+  &--disabled {
+    cursor: default !important;
+
+    & * {
+      cursor: default !important;
+    }
+  }
 }

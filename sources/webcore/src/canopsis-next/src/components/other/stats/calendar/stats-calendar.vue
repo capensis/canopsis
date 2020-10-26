@@ -6,28 +6,22 @@
         :value="hasError",
         :message="serverErrorMessage"
       )
-      ds-calendar(
+      ds-calendar-app.stats-calendar-app(
+        :class="{ single: !hasMultipleFilters }",
         :calendar="calendar",
-        :class="{ multiple: hasMultipleFilters, single: !hasMultipleFilters }",
         :events="events",
+        fluid,
+        read-only,
         @change="changeCalendar",
-        @edit="editEvent"
+        @edit="eventClick"
       )
-        v-card(slot="eventPopover", slot-scope="{ calendarEvent, details }")
-          v-card-text(v-if="calendarEvent.data.meta")
-            v-layout(
-              v-for="(event, index) in calendarEvent.data.meta.events",
-              :key="`popover-event-${index}`",
-              row,
-              wrap
-            )
-              v-flex(xs12)
-                div.ds-calendar-event(
-                  :style="{ backgroundColor: getStyleColor(details, event) }",
-                  @click="editEvent(event)"
-                )
-                  strong {{ event.data.title }}
-                  p {{ event.data.description }}
+      stats-calendar-menu(
+        v-if="hasMenu",
+        :activator="menuActivator",
+        :calendarEvent="menuCalendarEvent",
+        @event-click="menuEventClick",
+        @closed="closedMenu"
+      )
 </template>
 
 <script>
@@ -44,16 +38,19 @@ import { generateWidgetByType } from '@/helpers/entities';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 
-
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
-import DsCalendar from './day-span/calendar.vue';
+import StatsCalendarMenu from './stats-calendar-menu.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: { ProgressOverlay, DsCalendar, AlertOverlay },
+  components: {
+    ProgressOverlay,
+    AlertOverlay,
+    StatsCalendarMenu,
+  },
   mixins: [widgetFetchQueryMixin, widgetStatsWrapperMixin],
   props: {
     widget: {
@@ -63,6 +60,8 @@ export default {
   },
   data() {
     return {
+      menuActivator: null,
+      menuCalendarEvent: null,
       pending: false,
       alarms: [],
       alarmsCollections: [],
@@ -70,12 +69,8 @@ export default {
     };
   },
   computed: {
-    getStyleColor() {
-      return (details, calendarEvent) => {
-        const past = calendarEvent.schedule.end.isBefore(new Date());
-
-        return this.$dayspan.getStyleColor(details, calendarEvent, past);
-      };
+    hasMenu() {
+      return this.menuActivator && this.menuCalendarEvent;
     },
 
     getCalendarEventColor() {
@@ -139,8 +134,31 @@ export default {
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    editEvent(event) {
-      const { meta } = event.data;
+    closedMenu() {
+      this.menuActivator = null;
+      this.menuCalendarEvent = null;
+    },
+
+    menuEventClick(calendarEvent) {
+      const meta = get(calendarEvent, 'data.meta', {});
+
+      this.showAlarmsListModal(meta);
+    },
+
+    eventClick({ $element, calendarEvent }) {
+      const meta = get(calendarEvent, 'data.meta', {});
+
+      if ($element && meta.events) {
+        this.menuActivator = $element;
+        this.menuCalendarEvent = calendarEvent;
+
+        return;
+      }
+
+      this.showAlarmsListModal(meta);
+    },
+
+    showAlarmsListModal(meta) {
       const widget = generateWidgetByType(WIDGET_TYPES.alarmList);
       const widgetParameters = {
         ...this.widget.parameters.alarmsList,
@@ -152,7 +170,7 @@ export default {
         },
       };
 
-      if (!isEmpty(event.data.meta.filter)) {
+      if (!isEmpty(meta.filter)) {
         widgetParameters.viewFilters = [meta.filter];
         widgetParameters.mainFilter = meta.filter;
       }
@@ -236,51 +254,57 @@ export default {
       font-size: 14px;
     }
 
-    .single {
-      & /deep/ .ds-calendar-event-menu {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100% !important;
-        padding: 4px;
-
-        .v-menu__activator {
+    & /deep/ .ds-calendar-app.stats-calendar-app {
+      &.single {
+        .ds-calendar-event-menu {
+          position: absolute;
+          left: 0;
+          top: 0;
           width: 100%;
-          height: 100%;
-        }
+          height: 100% !important;
+          padding: 4px;
 
-        .ds-calendar-event {
-          padding-left: 0;
-          display: flex;
-          height: 100%;
-          width: 100%;
-
-          & > span {
-            margin: auto;
-            text-align: center;
+          .v-menu__activator {
+            width: 100%;
+            height: 100%;
           }
 
+          .ds-calendar-event {
+            padding-left: 0;
+            display: flex;
+            height: 100%;
+            width: 100%;
+
+            & > span {
+              margin: auto;
+              text-align: center;
+            }
+
+            .ds-ev-description {
+              display: none;
+            }
+          }
+        }
+
+        .ds-week {
           .ds-ev-description {
             display: none;
           }
         }
       }
 
-      & /deep/ .ds-week {
-        .ds-ev-description {
-          display: none;
-        }
-      }
-    }
+      &:not(.single) {
+        & /deep/ .ds-calendar-event-menu {
+          position: relative;
+          height: 20px;
 
-    .multiple {
-      & /deep/ .ds-calendar-event-menu {
-        position: relative;
-        height: 20px;
+          .ds-calendar-event {
+            top: 0 !important;
+          }
 
-        .ds-ev-title {
-          margin-right: 10px;
+          .ds-ev-title {
+            margin-right: 10px;
+          }
         }
       }
     }
@@ -309,17 +333,10 @@ export default {
       .ds-day-header {
         z-index: 10;
       }
-    }
-  }
 
-  .ds-calendar-event {
-    color: white;
-    margin: 1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-left: 0.5em;
-    cursor: pointer;
-    border-radius: 2px;
+      .ds-calendar-event > .v-menu__activator {
+        height: 100%;
+      }
+    }
   }
 </style>
