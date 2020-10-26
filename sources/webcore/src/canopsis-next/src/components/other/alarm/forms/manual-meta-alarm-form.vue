@@ -59,11 +59,20 @@ export default {
     async fetchManualMetaAlarms() {
       this.pending = true;
 
-      const { alarms = [] } = await this.fetchAlarmsListWithoutStore({
-        params: { manual_only: true },
-      });
+      const params = {
+        manual: true,
+        correlation: true,
+        page: 1,
 
-      this.manualMetaAlarms = alarms;
+        /**
+         * We need this option for fetching of every items
+         */
+        limit: 10000,
+      };
+
+      const { data = [] } = await this.fetchAlarmsListWithoutStore({ params });
+
+      this.manualMetaAlarms = data;
       this.pending = false;
     },
   },
