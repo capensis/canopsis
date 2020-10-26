@@ -4,21 +4,41 @@ set -o pipefail
 
 virtualenv --system-site-packages ${CPS_HOME}/venv-ansible
 
-source /etc/os-release
-repver="${ID}-${VERSION_ID}"
-
 source ${CPS_HOME}/venv-ansible/bin/activate
-source /etc/os-release
 
-# duplicate command for force version pip
 pip install -U setuptools "pip==20.1.1"
+pip install -U wheel
 
 # jmespath is required by ansible role repository adder maat
 # pymongo 3.5.0 is required by ansible 2.4.x module mongodb
 # influxdb is required for the modified ansible role influxdb
 # pyopenssl is required to fix compatibility between systems
+# crytography 2.9.2 to avoid Python 2 warning, for now
 # NEVER, NEVER, NEVER ⚠️⚠️⚠️ UPGRADE ANSIBLE, OR BE PREPARED FOR PAIN.
-pip install -U wheel "jmespath==0.10.0" "pymongo==3.5.0" "influxdb==5.1.0" "pyOpenSSL==19.1.0" "ansible==2.8.7"
+cat > tmprequirements.txt << EOF
+jmespath==0.10.0
+pymongo==3.5.0
+influxdb==5.1.0
+pyOpenSSL==19.1.0
+cryptography==2.9.2
+ansible==2.8.7
+# indirect dependencies follow
+certifi==2020.6.20
+cffi==1.14.3
+chardet==3.0.4
+cryptography==2.9.2
+enum34==1.1.10
+idna==2.10
+Jinja2==2.11.2
+MarkupSafe==1.1.1
+pycparser==2.20
+python-dateutil==2.8.1
+pytz==2020.1
+PyYAML==5.3.1
+requests==2.24.0
+six==1.15.0
+urllib3==1.25.11
+EOF
+pip install -U -r ./tmprequirements.txt
 
-rm -rf /tmp/pipbuild
-rm -rf ~/.cache
+rm -rf /tmp/pipbuild ~/.cache tmprequirements.txt
