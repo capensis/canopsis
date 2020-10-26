@@ -111,7 +111,7 @@ export default {
     },
 
     hasAlarmInstruction() {
-      return !!this.alarm.assigned_instructions.length;
+      return this.alarm.assigned_instructions.length;
     },
 
     isResolvedAlarm() {
