@@ -10,13 +10,13 @@
               v-tab-item(:value="$constants.REMEDIATION_TABS.instructions")
                 v-card-text
                   remediation-instructions
-            template
+            template(v-if="hasReadAnyRemediationConfigurationAccess")
               v-tab(
                 :href="`#${$constants.REMEDIATION_TABS.configurations}`"
               ) {{ $t('remediation.tabs.configurations') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.configurations")
                 v-card-text
-                  span {{ $t('remediation.tabs.configurations') }}
+                  remediation-configurations
             template(v-if="hasReadAnyRemediationJobAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.jobs}`") {{ $t('remediation.tabs.jobs') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.jobs")
@@ -32,22 +32,28 @@ import { MODALS, REMEDIATION_TABS } from '@/constants';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
 import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
+import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
 
-import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
-import entitiesRemediationJobMixin from '@/mixins/entities/remediation/jobs';
+import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
+import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
 import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
+import rightsTechnicalRemediationConfigurationMixin from '@/mixins/rights/technical/remediation-configuration';
 import rightsTechnicalRemediationJobMixin from '@/mixins/rights/technical/remediation-job';
 
 export default {
   components: {
     RemediationInstructions,
+    RemediationConfigurations,
     RemediationJobs,
     FabButtons,
   },
   mixins: [
-    entitiesRemediationInstructionMixin,
-    entitiesRemediationJobMixin,
+    entitiesRemediationInstructionsMixin,
+    entitiesRemediationConfigurationsMixin,
+    entitiesRemediationJobsMixin,
     rightsTechnicalRemediationInstructionMixin,
+    rightsTechnicalRemediationConfigurationMixin,
     rightsTechnicalRemediationJobMixin,
   ],
   data() {
@@ -67,7 +73,7 @@ export default {
     hasCreateAccess() {
       return {
         [REMEDIATION_TABS.instructions]: this.hasCreateAnyRemediationInstructionAccess,
-        [REMEDIATION_TABS.configurations]: true,
+        [REMEDIATION_TABS.configurations]: this.hasCreateAnyRemediationConfigurationAccess,
         [REMEDIATION_TABS.jobs]: this.hasCreateAnyRemediationJobAccess,
       }[this.activeTab];
     },
@@ -106,6 +112,7 @@ export default {
     },
 
     fetchConfigurationsList() {
+      this.fetchRemediationConfigurationsListWithPreviousParams();
     },
 
     fetchJobsList() {

@@ -1856,5 +1856,12 @@ export default {
     },
   },
 
+  remediationConfigurations: {
+    usingConfiguration: 'La raison utilise, car ne peut pas être supprimée',
+    table: {
+      host: 'Hôte',
+    },
+  },
+
   ...featureService.get('i18n.fr'),
 };

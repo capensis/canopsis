@@ -1857,5 +1857,12 @@ export default {
     },
   },
 
+  remediationConfigurations: {
+    usingConfiguration: 'Cannot be deleted since it is in use',
+    table: {
+      host: 'Host',
+    },
+  },
+
   ...featureService.get('i18n.en'),
 };

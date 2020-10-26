@@ -340,6 +340,14 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_remediationConfiguration",
+        "loader_id": "models_remediationConfiguration",
+        "crecord_name": "models_remediationConfiguration",
+        "crecord_type": "action",
+        "desc": "Remediation configuration",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_serie",
         "loader_id": "models_serie",
         "crecord_name": "models_serie",

@@ -21,7 +21,6 @@ import RemediationJobsList from './remediation-jobs-list.vue';
 
 export default {
   components: { RemediationJobsList },
-  inject: ['$validator'],
   mixins: [
     entitiesRemediationJobsMixin,
     localQueryMixin,
