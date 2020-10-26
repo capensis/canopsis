@@ -26,7 +26,6 @@ ansible==2.8.7
 certifi==2020.6.20
 cffi==1.14.3
 chardet==3.0.4
-cryptography==2.9.2
 enum34==1.1.10
 idna==2.10
 Jinja2==2.11.2
