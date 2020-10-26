@@ -142,6 +142,10 @@ export default {
         .map(item => item._id);
     },
 
+    hasInstructionsAlarms() {
+      return this.alarms.some(alarm => alarm.assigned_instructions.length);
+    },
+
     headers() {
       if (!this.hasColumns) {
         return [];
@@ -149,7 +153,7 @@ export default {
 
       const headers = [...this.columns, { text: this.$t('common.actionsLabel'), sortable: false }];
 
-      if (this.expandable && !this.selectable) {
+      if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
         // We need it for the expand panel open button
         headers.unshift({ sortable: false });
       }
