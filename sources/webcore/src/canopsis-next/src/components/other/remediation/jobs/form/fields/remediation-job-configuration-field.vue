@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { MAX_LIMIT } from '@/constants';
+
 import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
 
 export default {
@@ -43,7 +45,9 @@ export default {
     async fetchConfigurations() {
       this.pending = true;
 
-      const { data: configurations } = await this.fetchRemediationConfigurationsListWithoutStore();
+      const { data: configurations } = await this.fetchRemediationConfigurationsListWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
 
       this.configurations = configurations;
       this.pending = false;

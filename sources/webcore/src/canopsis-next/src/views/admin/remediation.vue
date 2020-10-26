@@ -22,7 +22,7 @@
               v-tab-item(:value="$constants.REMEDIATION_TABS.jobs")
                 v-card-text
                   remediation-jobs
-    fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
+    fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
       span {{ tooltipText }}
 </template>
 
@@ -70,7 +70,7 @@ export default {
       }[this.activeTab];
     },
 
-    hasAccess() {
+    hasCreateAccess() {
       return {
         [REMEDIATION_TABS.instructions]: this.hasCreateAnyRemediationInstructionAccess,
         [REMEDIATION_TABS.configurations]: this.hasCreateAnyRemediationConfigurationAccess,

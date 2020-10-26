@@ -20,7 +20,7 @@
               v-tab-item(:value="$constants.PLANNING_TABS.exceptions")
                 v-card-text
                   planning-exceptions
-    fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
+    fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
       span {{ tooltipText }}
 </template>
 
@@ -70,7 +70,7 @@ export default {
       }[this.activeTab];
     },
 
-    hasAccess() {
+    hasCreateAccess() {
       return {
         [PLANNING_TABS.types]: this.hasCreateAnyPbehaviorTypeAccess,
         [PLANNING_TABS.reasons]: this.hasCreateAnyPbehaviorReasonAccess,

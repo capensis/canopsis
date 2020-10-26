@@ -40,18 +40,6 @@ export default {
       this.localValue = this.convertPayloadValueToString(this.value);
     },
   },
-  created() {
-    this.$validator.extend('json', {
-      getMessage: () => this.$t('errors.JSONNotValid'),
-      validate: (value) => {
-        try {
-          return !!JSON.parse(value);
-        } catch (err) {
-          return false;
-        }
-      },
-    });
-  },
   methods: {
     async updatePayload() {
       const isValid = await this.$validator.validate('payload');
