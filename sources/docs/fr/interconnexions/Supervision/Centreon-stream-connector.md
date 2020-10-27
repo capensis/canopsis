@@ -32,8 +32,8 @@ services :
 
 - action_url
 - notes_url
-- servicegroups (pour les services)
-- hostgroups (pour les hôtes)
+- hostgroups
+- servicegroups (pour les services uniquement)
 
 #### Acquittement (ack)
 

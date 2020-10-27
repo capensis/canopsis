@@ -22,12 +22,13 @@ from __future__ import unicode_literals
 
 from pymongo.errors import PyMongoError
 from bottle import request
-
+from canopsis.common.ws import route
 from canopsis.webcore.utils import (gen_json, gen_json_error,
                                     HTTP_ERROR, HTTP_NOT_FOUND)
 from canopsis.models.heartbeat import HeartBeat
 from canopsis.heartbeat import (HeartbeatManager, HeartbeatPatternExistsError)
 from canopsis.common.collection import CollectionError
+import time
 
 
 def gen_database_error():
@@ -43,7 +44,7 @@ def exports(ws):
         *HeartbeatManager.provide_default_basics())
 
     @ws.application.post(
-        "/api/v2/heartbeat/"
+        "/api/v2/heartbeat"
     )
     def create_heartbeat():
         """Create a new heartbeat. Read the body of the request to extract
@@ -58,6 +59,9 @@ def exports(ws):
             return gen_json_error({'description': "invalid json."},
                                   HTTP_ERROR)
         try:
+            now = int(time.time())
+            json[HeartBeat.CREATED_KEY] = now
+            json[HeartBeat.UPDATED_KEY] = now
             model = HeartBeat(json)
         except ValueError:
             return gen_json_error(
@@ -80,9 +84,10 @@ def exports(ws):
         })
 
     @ws.application.get(
-        "/api/v2/heartbeat/"
+        '/api/v2/heartbeat',
+        payload=['page', 'limit', 'search', 'sort', 'sort_by']
     )
-    def list_heartbeats():
+    def list_heartbeats(page=None, limit=None, search=None, sort=False, sort_by=None):
         """ Return every heartbeats stored in database.
 
         :rtype: a json representation as a list of every heartbeats stored in
@@ -90,9 +95,45 @@ def exports(ws):
         encountered.
         """
         try:
-            return gen_json(manager.get())
+            query = request.query
+            return gen_json(manager.get(None,
+                                        query.get('page', None),
+                                        query.get('limit', None),
+                                        query.get('search', None),
+                                        query.get('sort', None),
+                                        query.get('sort_by', None))
+                            )
         except PyMongoError:
             return gen_database_error()
+
+    @ws.application.put(
+        '/api/v2/heartbeat/<heartbeat_id:id_filter>'
+    )
+    def update_heartbeat(heartbeat_id):
+        """
+        Update a Heartbeat by ID.
+
+        :param `str` heartbeat_id: Heartbeat ID.
+        :returns: ``200 OK`` if success or ``404 Not Found`` if a Heartbeat
+                  with a given ID is not found or ``400 Bad Request``
+                  if database error.
+        """
+        try:
+            if not manager.get(heartbeat_id):
+                return gen_json_error({"name": "heartbeat not found",
+                                       "description": heartbeat_id},
+                                      HTTP_NOT_FOUND)
+            json = request.json
+            model = HeartBeat(json)
+            manager.update(heartbeat_id, model)
+
+        except (PyMongoError, CollectionError):
+            return gen_database_error()
+
+        return gen_json({
+            "name": "heartbeat updated",
+            "description": heartbeat_id
+        })
 
     @ws.application.delete(
         '/api/v2/heartbeat/<heartbeat_id:id_filter>'
