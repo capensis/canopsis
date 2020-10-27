@@ -501,6 +501,30 @@ class AlertsReader(object):
             "foreignField": "eids",
             "as": "pbehaviors"}})
 
+        filter_enabled_pbhs = {
+            "$project": {
+                "pbehaviors": {
+                    "$filter": {
+                        "as": "pbh",
+                        "input": "$pbehaviors",
+                        "cond":
+                            {
+                                "$and":
+                                    [
+                                        {"$eq": ["$$pbh.enabled", True]}
+                                    ]
+                            }
+                    }
+                },
+                "_id": 1,
+                "v": 1,
+                "d": 1,
+                "t": 1,
+                "entity": 1
+            }
+        }
+        pipeline.append(filter_enabled_pbhs)
+
         if add_pbh_filter and self.has_active_pbh is not None:
             tnow = int(time())
             stage = {
