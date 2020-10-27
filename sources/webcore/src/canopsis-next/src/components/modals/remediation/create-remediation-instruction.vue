@@ -8,7 +8,7 @@
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isSubmitDisabled",
+          :disabled="isDisabled",
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
@@ -51,10 +51,6 @@ export default {
     };
   },
   computed: {
-    isSubmitDisabled() {
-      return this.isDisabled || !this.isFormChanged;
-    },
-
     title() {
       return this.config.title || this.$t('modals.createRemediationInstruction.create.title');
     },
