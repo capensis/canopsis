@@ -206,5 +206,5 @@ def exports(ws):
 
     @route(ws.application.get, wsgi_params={'skip': ws.skip_logout})
     def logout():
-        session.delete()
-        redirect('/')
+        session.close_session()
+        redirect("/")

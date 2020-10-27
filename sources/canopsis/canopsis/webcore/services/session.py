@@ -68,7 +68,6 @@ def get():
     """
 
     beaker_sess = request.environ.get('beaker.session', None)
-
     if "user" not in beaker_sess:
         # Authorization: Basic
         try:
@@ -101,8 +100,20 @@ def get():
         beaker_sess["user"] = credential[0]
         beaker_sess["auth_on"] = True
         beaker_sess.save()
+    else:
+        logged_out = beaker_sess["user"].get("logged_out", False)
+        if logged_out:
+            abort(401, "session is closed")
 
     return beaker_sess
+
+
+def close_session():
+    beaker_sess = request.environ.get('beaker.session', None)
+    if "user" not in beaker_sess:
+        abort(403, 'Forbidden')
+    beaker_sess["user"]["logged_out"] = True
+    beaker_sess.save()
 
 
 def create(user):
