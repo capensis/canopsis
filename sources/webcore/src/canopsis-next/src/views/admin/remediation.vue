@@ -65,7 +65,7 @@ export default {
     tooltipText() {
       return {
         [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.create.title'),
-        [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.title'),
+        [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.create.title'),
         [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.create.title'),
       }[this.activeTab];
     },
@@ -139,6 +139,22 @@ export default {
     },
 
     showCreateConfigurationModal() {
+      this.$modals.show({
+        name: MODALS.createRemediationConfiguration,
+        config: {
+          action: async (remediationConfiguration) => {
+            await this.createRemediationConfiguration({ data: remediationConfiguration });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationConfiguration.create.popups.success', {
+                configurationName: remediationConfiguration.name,
+              }),
+            });
+
+            await this.fetchConfigurationsList();
+          },
+        },
+      });
     },
 
     showCreateJobModal() {
