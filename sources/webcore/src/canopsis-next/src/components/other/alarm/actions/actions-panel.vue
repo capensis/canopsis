@@ -152,11 +152,6 @@ export default {
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
           method: this.showExecuteInstructionModal,
         },
-        resumeInstruction: {
-          type: alarmsListActionsTypes.executeInstruction,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
-          method: this.showResumeInstructionModal,
-        },
       },
     };
   },
@@ -181,6 +176,7 @@ export default {
     },
     unresolvedActions() {
       const { filteredActionsMap } = this;
+      const { assigned_instructions: assignedInstructions = [] } = this.item;
 
       const actions = [
         filteredActionsMap.snooze,
@@ -220,54 +216,29 @@ export default {
         }
       }
 
-      actions.push(...this.assignedInstructionsUnresolvedActions);
+      /**
+       * Add actions for available instructions
+       */
+      if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+        assignedInstructions.forEach((instruction) => {
+          const titlePrefix = instruction.has_execution ? 'resume' : 'execute';
 
-      return actions;
-    },
-    assignedInstructionsUnresolvedActions() {
-      const { filteredActionsMap } = this;
-      const { assigned_instructions: assignedInstructions = [] } = this.item;
+          const action = {
+            ...filteredActionsMap.executeInstruction,
 
-      const actions = [];
+            title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
+              instructionName: instruction.name,
+            }),
+            method: () => filteredActionsMap.executeInstruction.method(instruction),
+          };
 
-      if (assignedInstructions.length) {
-        /**
-         * Filtered available instructions for executing
-         */
-        if (filteredActionsMap.executeInstruction) {
-          const executeInstructionActions = assignedInstructions.filter(instruction => !instruction.has_execution)
-            .map(instruction => ({
-              ...filteredActionsMap.executeInstruction,
-
-              title: this.$t('alarmList.actions.titles.executeInstruction', {
-                instructionName: instruction.name,
-              }),
-              method: () => filteredActionsMap.executeInstruction.method(instruction),
-            }));
-
-          actions.push(...executeInstructionActions);
-        }
-
-        /**
-         * Filtered available instructions for resuming
-         */
-        if (filteredActionsMap.resumeInstruction) {
-          const resumeInstructionActions = assignedInstructions.filter(instruction => instruction.has_execution)
-            .map(instruction => ({
-              ...filteredActionsMap.resumeInstruction,
-
-              title: this.$t('alarmList.actions.titles.resumeInstruction', {
-                instructionName: instruction.name,
-              }),
-              method: () => filteredActionsMap.resumeInstruction.method(instruction),
-            }));
-
-          actions.push(...resumeInstructionActions);
-        }
+          actions.push(action);
+        });
       }
 
       return actions;
     },
+
     actions() {
       let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
 
