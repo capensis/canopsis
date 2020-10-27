@@ -251,6 +251,8 @@ export default {
         manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
         manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
+        executeInstruction: 'Exécuter le {instructionName}',
+        resumeInstruction: 'Reprendre le {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',

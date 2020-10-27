@@ -147,6 +147,11 @@ export default {
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           method: this.showManualMetaAlarmUngroupModal,
         },
+        executeInstruction: {
+          type: alarmsListActionsTypes.executeInstruction,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
+          method: this.showExecuteInstructionModal,
+        },
       },
     };
   },
@@ -171,6 +176,7 @@ export default {
     },
     unresolvedActions() {
       const { filteredActionsMap } = this;
+      const { assigned_instructions: assignedInstructions = [] } = this.item;
 
       const actions = [
         filteredActionsMap.snooze,
@@ -210,8 +216,29 @@ export default {
         }
       }
 
+      /**
+       * Add actions for available instructions
+       */
+      if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+        assignedInstructions.forEach((instruction) => {
+          const titlePrefix = instruction.has_execution ? 'resume' : 'execute';
+
+          const action = {
+            ...filteredActionsMap.executeInstruction,
+
+            title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
+              instructionName: instruction.name,
+            }),
+            method: () => filteredActionsMap.executeInstruction.method(instruction),
+          };
+
+          actions.push(action);
+        });
+      }
+
       return actions;
     },
+
     actions() {
       let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
 

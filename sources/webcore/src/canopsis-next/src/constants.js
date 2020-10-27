@@ -137,6 +137,7 @@ export const EVENT_ENTITY_TYPES = {
   manualMetaAlarmGroup: 'manual_metaalarm_group',
   manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
   manualMetaAlarmUpdate: 'manual_metaalarm_update',
+  executeInstruction: 'executeInstruction',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -384,6 +385,9 @@ export const EVENT_ENTITY_STYLE = {
   },
   [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
     icon: 'link_off',
+  },
+  [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
   },
 };
 
@@ -779,6 +783,8 @@ export const USERS_RIGHTS = {
 
         links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
 
+        executeInstruction: `${USER_RIGHTS_PREFIXES.business.alarmsList}_executeInstruction`,
+
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
 
         ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
@@ -885,6 +891,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
+
+    executeInstruction: 'executeInstruction',
   },
   context: {
     createEntity: 'createEntity',
@@ -951,6 +959,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.executeInstruction]: USERS_RIGHTS.business.alarmsList.actions.executeInstruction,
 
     ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
