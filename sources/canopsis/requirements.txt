@@ -104,6 +104,7 @@ pbr==5.5.1
 pyasn1==0.4.8
 pycparser==2.20
 PyMeta3==0.5.1
+pytz==2020.1
 PyYAML==5.3.1
 repoze.lru==0.7
 # path.py and thus calink (CAT)
