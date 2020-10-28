@@ -40,7 +40,12 @@ function actionSnoozeParametersToForm(parameters = {}) {
  * @returns {Object}
  */
 function actionPbehaviorParametersToForm(parameters = {}) {
-  return omit(pbehaviorToForm(parameters), ['filter']);
+  return {
+    ...omit(pbehaviorToForm(parameters), ['filter']),
+
+    start_on_trigger: parameters.start_on_trigger || false,
+    duration: parameters.duration,
+  };
 }
 
 /**

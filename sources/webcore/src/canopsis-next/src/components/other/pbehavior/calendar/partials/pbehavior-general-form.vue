@@ -9,11 +9,12 @@
           :error-messages="errors.collect('name')",
           name="name"
         )
-      v-flex(xs12)
+      v-flex(v-if="!noEnabled", xs12)
         enabled-field(v-field="form.enabled", hide-details)
       v-flex.mt-3(xs12)
         v-layout(row)
           date-time-splitted-range-picker-field(
+            v-if="!form.start_on_trigger",
             :start="form.tstart",
             :end="form.tstop",
             :startLabel="$t('modals.createPbehavior.steps.general.fields.start')",
@@ -25,21 +26,34 @@
             @update:start="updateField('tstart', $event)",
             @update:end="updateField('tstop', $event)"
           )
-        v-layout(wrap)
+          duration-field(
+            v-else,
+            v-field="form.duration"
+          )
+        v-layout(v-if="withStartOnTrigger", wrap)
           v-checkbox.mt-0(
-            v-model="fullDay",
-            :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
+            v-model="form.start_on_trigger",
+            :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')",
             color="primary",
-            hide-details
+            hide-details,
+            @change="changeStartOnTrigger"
           )
-        v-layout(wrap)
-          v-checkbox.mt-0.mb-2(
-            v-if="hasPauseType",
-            v-model="noEnding",
-            :label="$t('modals.createPbehavior.steps.general.fields.noEnding')",
-            color="primary",
-            hide-details
-          )
+        template(v-if="!form.start_on_trigger")
+          v-layout(wrap)
+            v-checkbox.mt-0(
+              v-model="fullDay",
+              :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
+              color="primary",
+              hide-details
+            )
+          v-layout(wrap)
+            v-checkbox.mt-0.mb-2(
+              v-if="hasPauseType",
+              v-model="noEnding",
+              :label="$t('modals.createPbehavior.steps.general.fields.noEnding')",
+              color="primary",
+              hide-details
+            )
       v-flex(xs12)
         pbehavior-reasons-field(v-field="form.reason")
       v-flex(xs12)
@@ -58,14 +72,16 @@ import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
+import DurationField from '@/components/forms/fields/duration.vue';
+import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
-import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 export default {
   components: {
     EnabledField,
+    DurationField,
     DateTimeSplittedRangePickerField,
     PbehaviorReasonsField,
     PbehaviorTypeField,
@@ -85,9 +101,17 @@ export default {
       type: Object,
       required: true,
     },
+    noEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    withStartOnTrigger: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
-    const noEnding = !this.form.tstop;
+    const noEnding = this.form.tstart && !this.form.tstop;
 
     return {
       noEnding,
@@ -119,12 +143,14 @@ export default {
     },
   },
   watch: {
-    noEnding(value) {
-      if (value) {
+    noEnding(noEnding) {
+      const { tstart } = this.form;
+
+      if (noEnding) {
         this.updateField('tstop', null);
-      } else {
+      } else if (tstart) {
         const unit = this.fullDay ? 'day' : 'hour';
-        const tstopMoment = moment(this.form.tstart).add(1, unit);
+        const tstopMoment = moment(tstart).add(1, unit);
 
         if (this.fullDay) {
           tstopMoment.endOf(unit);
@@ -134,19 +160,40 @@ export default {
       }
     },
     fullDay() {
-      const tstartMoment = moment(this.form.tstart).startOf('day');
+      const { tstart, tstop } = this.form;
 
-      this.updateField('tstart', tstartMoment.toDate());
+      if (tstart) {
+        const tstartMoment = moment(tstart).startOf('day');
 
-      if (!this.noEnding) {
-        const tstopMoment = moment(this.form.tstop).endOf('day');
+        this.updateField('tstart', tstartMoment.toDate());
 
-        this.updateField('tstop', tstopMoment.toDate());
+        if (!this.noEnding && tstop) {
+          const tstopMoment = moment(tstop).endOf('day');
+
+          this.updateField('tstop', tstopMoment.toDate());
+        }
       }
     },
     hasPauseType(value) {
       if (!value) {
         this.noEnding = false;
+      }
+    },
+  },
+  methods: {
+    changeStartOnTrigger(value) {
+      if (value) {
+        this.fullDay = false;
+        this.noEnding = false;
+
+        this.updateModel({
+          ...this.form,
+
+          tstart: null,
+          tstop: null,
+        });
+      } else {
+        this.updateField('duration', {});
       }
     },
   },

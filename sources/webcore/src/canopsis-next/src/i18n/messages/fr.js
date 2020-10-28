@@ -671,6 +671,7 @@ export default {
             stop: 'Fin',
             fullDay: 'Toute la journée',
             noEnding: 'Pas de fin',
+            startOnTrigger: 'Démarrer sur déclencheur',
           },
         },
         filter: {

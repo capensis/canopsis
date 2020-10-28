@@ -671,6 +671,7 @@ export default {
             stop: 'End',
             fullDay: 'Whole day',
             noEnding: 'No ending',
+            startOnTrigger: 'Start on trigger',
           },
         },
         filter: {
