@@ -37,6 +37,7 @@ paramiko==2.4.3
 # calink (CAT), Python 2 support dropped with 12.0
 path.py==11.5.2
 pika==0.11.2
+# calink (CAT)
 procfs==0.5.0
 # calink (CAT)
 psutil==5.4.8
@@ -45,6 +46,7 @@ psycopg2==2.8.4
 # patched for CentOS 7 compatibility. See canopsis#1791
 pybars3 @ https://git.canopsis.net/canopsis/pybars3/-/archive/0.9.6-999/pybars3-0.9.6-999.tar.gz#sha1=a537276514d74d0643521324ebf8f6b58c11465e
 pymongo==3.6.1
+# math_parser.py
 pyparsing==2.2.2
 python-ldap==2.5.2
 # saml2 auth (CAT)
