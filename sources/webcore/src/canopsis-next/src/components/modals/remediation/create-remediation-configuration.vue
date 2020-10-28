@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        remediation-instruction-form(v-model="form")
+        remediation-configuration-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -17,7 +17,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToRemediationInstruction, remediationInstructionToForm } from '@/helpers/forms/remediation-instruction';
+import { formToRemediationConfiguration, remediationConfigurationToForm } from '@/helpers/forms/remediation-configuration';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
@@ -25,18 +25,18 @@ import validationErrorsMixin from '@/mixins/form/validation-errors';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
+import RemediationConfigurationForm from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createRemediationInstruction,
+  name: MODALS.createRemediationConfiguration,
   $_veeValidate: {
     validator: 'new',
   },
   components: {
+    RemediationConfigurationForm,
     ModalWrapper,
-    RemediationInstructionForm,
   },
   mixins: [
     authMixin,
@@ -47,12 +47,12 @@ export default {
   ],
   data() {
     return {
-      form: remediationInstructionToForm(this.modal.config.remediationInstruction),
+      form: remediationConfigurationToForm(this.modal.config.remediationConfiguration),
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createRemediationInstruction.create.title');
+      return this.config.title || this.$t('modals.createRemediationConfiguration.create.title');
     },
   },
   methods: {
@@ -62,10 +62,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            const form = formToRemediationInstruction(this.form);
-            form.author = this.currentUser._id;
-
-            await this.config.action(form);
+            await this.config.action(formToRemediationConfiguration(this.form));
           }
 
           this.$modals.hide();

@@ -324,6 +324,30 @@
         "type": "CRUD"
     },
     {
+        "_id": "models_remediationInstruction",
+        "loader_id": "models_remediationInstruction",
+        "crecord_name": "models_remediationInstruction",
+        "crecord_type": "action",
+        "desc": "Remediation instruction",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_remediationJob",
+        "loader_id": "models_remediationJob",
+        "crecord_name": "models_remediationJob",
+        "crecord_type": "action",
+        "desc": "Remediation job",
+        "type": "CRUD"
+    },
+    {
+        "_id": "models_remediationConfiguration",
+        "loader_id": "models_remediationConfiguration",
+        "crecord_name": "models_remediationConfiguration",
+        "crecord_type": "action",
+        "desc": "Remediation configuration",
+        "type": "CRUD"
+    },
+    {
         "_id": "models_serie",
         "loader_id": "models_serie",
         "crecord_name": "models_serie",
@@ -626,6 +650,13 @@
       "crecord_name": "listalarm_comment",
       "crecord_type": "action",
       "desc": "Rights on listalarm: Access to 'Comment' action"
+    },
+    {
+      "_id": "listalarm_executeInstruction",
+      "loader_id": "listalarm_executeInstruction",
+      "crecord_name": "listalarm_executeInstruction",
+      "crecord_type": "action",
+      "desc": "Rights on listalarm: Access to 'Execute instruction' action"
     },
     {
         "_id": "serviceweather_moreInfos",

@@ -5,24 +5,24 @@
       v-flex(xs12)
         v-card.ma-2
           v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
-            template
+            template(v-if="hasReadAnyRemediationInstructionAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('remediation.tabs.instructions') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.instructions")
                 v-card-text
                   remediation-instructions
-            template
+            template(v-if="hasReadAnyRemediationConfigurationAccess")
               v-tab(
                 :href="`#${$constants.REMEDIATION_TABS.configurations}`"
               ) {{ $t('remediation.tabs.configurations') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.configurations")
                 v-card-text
-                  span {{ $t('remediation.tabs.configurations') }}
-            template
+                  remediation-configurations
+            template(v-if="hasReadAnyRemediationJobAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.jobs}`") {{ $t('remediation.tabs.jobs') }}
               v-tab-item(:value="$constants.REMEDIATION_TABS.jobs")
                 v-card-text
-                  span {{ $t('remediation.tabs.jobs') }}
-    fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
+                  remediation-jobs
+    fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
       span {{ tooltipText }}
 </template>
 
@@ -31,15 +31,31 @@ import { MODALS, REMEDIATION_TABS } from '@/constants';
 
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
+import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
+import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
 
-import entitiesRemediationInstructionMixin from '@/mixins/entities/remediation/instruction';
+import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import entitiesRemediationConfigurationsMixin from '@/mixins/entities/remediation/configurations';
+import entitiesRemediationJobsMixin from '@/mixins/entities/remediation/jobs';
+import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
+import rightsTechnicalRemediationConfigurationMixin from '@/mixins/rights/technical/remediation-configuration';
+import rightsTechnicalRemediationJobMixin from '@/mixins/rights/technical/remediation-job';
 
 export default {
   components: {
     RemediationInstructions,
+    RemediationConfigurations,
+    RemediationJobs,
     FabButtons,
   },
-  mixins: [entitiesRemediationInstructionMixin],
+  mixins: [
+    entitiesRemediationInstructionsMixin,
+    entitiesRemediationConfigurationsMixin,
+    entitiesRemediationJobsMixin,
+    rightsTechnicalRemediationInstructionMixin,
+    rightsTechnicalRemediationConfigurationMixin,
+    rightsTechnicalRemediationJobMixin,
+  ],
   data() {
     return {
       activeTab: REMEDIATION_TABS.instructions,
@@ -49,13 +65,17 @@ export default {
     tooltipText() {
       return {
         [REMEDIATION_TABS.instructions]: this.$t('modals.createRemediationInstruction.create.title'),
-        [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.title'),
-        [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.title'),
+        [REMEDIATION_TABS.configurations]: this.$t('modals.createRemediationConfiguration.create.title'),
+        [REMEDIATION_TABS.jobs]: this.$t('modals.createRemediationJob.create.title'),
       }[this.activeTab];
     },
 
-    hasAccess() {
-      return true;
+    hasCreateAccess() {
+      return {
+        [REMEDIATION_TABS.instructions]: this.hasCreateAnyRemediationInstructionAccess,
+        [REMEDIATION_TABS.configurations]: this.hasCreateAnyRemediationConfigurationAccess,
+        [REMEDIATION_TABS.jobs]: this.hasCreateAnyRemediationJobAccess,
+      }[this.activeTab];
     },
   },
   methods: {
@@ -92,9 +112,11 @@ export default {
     },
 
     fetchConfigurationsList() {
+      this.fetchRemediationConfigurationsListWithPreviousParams();
     },
 
     fetchJobsList() {
+      this.fetchRemediationJobsListWithPreviousParams();
     },
 
     showCreateInstructionModal() {
@@ -117,9 +139,41 @@ export default {
     },
 
     showCreateConfigurationModal() {
+      this.$modals.show({
+        name: MODALS.createRemediationConfiguration,
+        config: {
+          action: async (remediationConfiguration) => {
+            await this.createRemediationConfiguration({ data: remediationConfiguration });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationConfiguration.create.popups.success', {
+                configurationName: remediationConfiguration.name,
+              }),
+            });
+
+            await this.fetchConfigurationsList();
+          },
+        },
+      });
     },
 
     showCreateJobModal() {
+      this.$modals.show({
+        name: MODALS.createRemediationJob,
+        config: {
+          action: async (remediationJob) => {
+            await this.createRemediationJob({ data: remediationJob });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationJob.create.popups.success', {
+                jobName: remediationJob.name,
+              }),
+            });
+
+            await this.fetchJobsList();
+          },
+        },
+      });
     },
   },
 };

@@ -8,6 +8,7 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  REMEDIATION_CONFIGURATION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -126,6 +127,7 @@ export default {
     priority: 'Priority',
     clear: 'Clear',
     deleteAll: 'Delete all',
+    payload: 'Payload',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -250,6 +252,8 @@ export default {
         manualMetaAlarmGroup: 'Manual meta alarm management',
         manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
+        executeInstruction: 'Execute {instructionName}',
+        resumeInstruction: 'Resume {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -304,6 +308,7 @@ export default {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
+    instructionInfoPopup: 'There is an instruction for this type of incidents',
   },
   weather: {
     moreInfos: 'More info',
@@ -1258,10 +1263,47 @@ export default {
       },
     },
     createRemediationConfiguration: {
-      title: 'Create configuration',
+      create: {
+        title: 'Create configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      types: {
+        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
+        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
+      },
+      fields: {
+        host: 'Host',
+        token: 'Authorization token',
+      },
     },
     createRemediationJob: {
-      title: 'Create Job',
+      create: {
+        title: 'Create Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      fields: {
+        configuration: 'Configuration',
+        jobId: 'Job ID',
+      },
+      errors: {
+        invalidJSON: 'Invalid JSON',
+      },
     },
     clickOutsideConfirmation: {
       title: 'Are you sure?',
@@ -1830,6 +1872,18 @@ export default {
 
   remediationJobs: {
     addJobs: 'Add {count} job | Add {count} jobs',
+    usingJob: 'Cannot be deleted since it is in use',
+    table: {
+      configuration: 'Configuration',
+      jobId: 'Job ID',
+    },
+  },
+
+  remediationConfigurations: {
+    usingConfiguration: 'Cannot be deleted since it is in use',
+    table: {
+      host: 'Host',
+    },
   },
 
   ...featureService.get('i18n.en'),

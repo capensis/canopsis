@@ -39,6 +39,7 @@ export const ENTITIES_TYPES = {
   pbehaviorReasons: 'pbehaviorReasons',
   remediationInstruction: 'remediationInstruction',
   remediationJob: 'remediationJob',
+  remediationConfiguration: 'remediationConfiguration',
 };
 
 export const MODALS = {
@@ -107,6 +108,8 @@ export const MODALS = {
   createPbehaviorException: 'create-pbehavior-exception',
   createManualMetaAlarm: 'create-manual-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
+  createRemediationConfiguration: 'create-remediation-configuration',
+  createRemediationJob: 'create-remediation-job',
   imageViewer: 'image-viewer',
 };
 
@@ -135,6 +138,7 @@ export const EVENT_ENTITY_TYPES = {
   manualMetaAlarmGroup: 'manual_metaalarm_group',
   manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
   manualMetaAlarmUpdate: 'manual_metaalarm_update',
+  executeInstruction: 'executeInstruction',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -382,6 +386,9 @@ export const EVENT_ENTITY_STYLE = {
   },
   [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
     icon: 'link_off',
+  },
+  [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
   },
 };
 
@@ -739,6 +746,8 @@ export const USERS_RIGHTS = {
     exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
     remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationInstruction`,
+    remediationJob: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationJob`,
+    remediationConfiguration: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationConfiguration`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -774,6 +783,8 @@ export const USERS_RIGHTS = {
         userFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_userFilter`,
 
         links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
+
+        executeInstruction: `${USER_RIGHTS_PREFIXES.business.alarmsList}_executeInstruction`,
 
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
 
@@ -881,6 +892,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
+
+    executeInstruction: 'executeInstruction',
   },
   context: {
     createEntity: 'createEntity',
@@ -947,6 +960,8 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.executeInstruction]: USERS_RIGHTS.business.alarmsList.actions.executeInstruction,
 
     ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
@@ -1517,3 +1532,10 @@ export const REMEDIATION_WORKFLOW_TYPES = {
 };
 
 export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
+
+export const MAX_LIMIT = 10000;
+
+export const REMEDIATION_CONFIGURATION_TYPES = {
+  rundeck: 'rundeck',
+  awx: 'awx',
+};

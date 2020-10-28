@@ -1,6 +1,7 @@
 <script>
 import VDialog from 'vuetify/es5/components/VDialog';
-import { getZIndex } from 'vuetify/es5/util/helpers';
+import ThemeProvider from 'vuetify/es5/util/ThemeProvider';
+import { getZIndex, convertToUnit } from 'vuetify/es5/util/helpers';
 
 import overlayableMixin from '../../mixins/overlayable';
 
@@ -10,7 +11,7 @@ export default {
   props: {
     customCloseConditional: {
       type: Function,
-      default: () => true,
+      default: null,
     },
   },
   computed: {
@@ -58,7 +59,7 @@ export default {
 
       // close dialog if !persistent, clicked outside and we're the topmost dialog.
       // Since this should only be called in a capture event (bottom up), we shouldn't need to stop propagation
-      return this.activeZIndex >= this.getMaxZIndex() && this.customCloseConditional();
+      return this.activeZIndex >= this.getMaxZIndex();
     },
 
     hideScroll() {
@@ -95,6 +96,85 @@ export default {
 
       return Math.max(...zis);
     },
+  },
+  /**
+   * We've replaced render method because we've put changes for the `click-outside` directive value function
+   *
+   * @param h
+   * @returns {*}
+   */
+  render: function render(h) {
+    const children = [];
+    const data = {
+      class: this.classes,
+      ref: 'dialog',
+      directives: [{
+        name: 'click-outside',
+        value: () => {
+          /**
+           * We can't move call of customCloseConditional into closeConditional because here this method will call
+           * more than once. But we need only once call
+           */
+          if (this.customCloseConditional && this.customCloseConditional() === false) {
+            return;
+          }
+
+          this.isActive = false;
+        },
+        args: {
+          closeConditional: this.closeConditional,
+          include: this.getOpenDependentElements,
+        },
+      }, { name: 'show', value: this.isActive }],
+      on: {
+        click: (e) => {
+          e.stopPropagation();
+        },
+      },
+    };
+
+    if (!this.fullscreen) {
+      data.style = {
+        maxWidth: this.maxWidth === 'none' ? undefined : convertToUnit(this.maxWidth),
+        width: this.width === 'auto' ? undefined : convertToUnit(this.width),
+      };
+    }
+
+    children.push(this.genActivator());
+
+    let dialog = h('div', data, this.showLazyContent(this.$slots.default));
+
+    if (this.transition) {
+      dialog = h('transition', {
+        props: {
+          name: this.transition,
+          origin: this.origin,
+        },
+      }, [dialog]);
+    }
+
+    children.push(h('div', {
+      class: this.contentClasses,
+      attrs: { tabIndex: '-1', ...this.getScopeIdAttrs() },
+      on: {
+        keydown: this.onKeydown,
+      },
+      style: { zIndex: this.activeZIndex },
+      ref: 'content',
+    }, [this.$createElement(ThemeProvider, {
+      props: {
+        root: true,
+        light: this.light,
+        dark: this.dark,
+      },
+    }, [dialog])]));
+
+    return h('div', {
+      staticClass: 'v-dialog__container',
+      style: {
+        display: !this.hasActivator || this.fullWidth ? 'block' : 'inline-block',
+      },
+    }, children);
   },
 };
 </script>

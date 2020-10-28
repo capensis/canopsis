@@ -8,6 +8,7 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  REMEDIATION_CONFIGURATION_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -126,6 +127,7 @@ export default {
     priority: 'Priorité',
     clear: 'Clair',
     deleteAll: 'Tout supprimer',
+    payload: 'Payload',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -250,6 +252,8 @@ export default {
         manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
         manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
+        executeInstruction: 'Exécuter le {instructionName}',
+        resumeInstruction: 'Reprendre le {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -304,6 +308,7 @@ export default {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
     infoPopup: 'Info popup',
+    instructionInfoPopup: 'Il existe une consigne pour ce type d\'incidents',
   },
   weather: {
     moreInfos: 'Plus d\'infos',
@@ -1258,10 +1263,47 @@ export default {
       },
     },
     createRemediationConfiguration: {
-      title: 'Créer une configuration',
+      create: {
+        title: 'Créer une configuration',
+        popups: {
+          success: '{configurationName} a été créé avec succès',
+        },
+      },
+      edit: {
+        title: 'Modifier la configuration',
+        popups: {
+          success: '{configurationName} a été modifié avec succès',
+        },
+      },
+      types: {
+        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
+        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
+      },
+      fields: {
+        host: 'Hôte',
+        token: 'Jeton d\'autorisation',
+      },
     },
     createRemediationJob: {
-      title: 'Créer un travail',
+      create: {
+        title: 'Créer un travail',
+        popups: {
+          success: '{jobName} a été créé avec succès',
+        },
+      },
+      edit: {
+        title: 'Éditée une travail',
+        popups: {
+          success: '{jobName} a été modifié avec succès',
+        },
+      },
+      fields: {
+        configuration: 'Configuration',
+        jobId: 'Emploi ID',
+      },
+      errors: {
+        invalidJSON: 'JSON non valide',
+      },
     },
     clickOutsideConfirmation: {
       title: 'Êtes-vous sûr(e) ?',
@@ -1829,6 +1871,18 @@ export default {
 
   remediationJobs: {
     addJobs: 'Ajouter {count} emploi | Ajouter {count} emplois',
+    usingJob: 'La raison utilise, car ne peut pas être supprimée',
+    table: {
+      configuration: 'Configuration',
+      jobId: 'Emploi ID',
+    },
+  },
+
+  remediationConfigurations: {
+    usingConfiguration: 'La raison utilise, car ne peut pas être supprimée',
+    table: {
+      host: 'Hôte',
+    },
   },
 
   ...featureService.get('i18n.fr'),

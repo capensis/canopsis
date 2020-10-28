@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  v-layout(column)
     v-layout(row)
       enabled-field(v-field="form.enabled")
     v-layout(row)
@@ -11,23 +11,31 @@
         name="name"
       )
     v-layout(row)
+      remediation-job-configuration-field(v-field="form.config")
+    v-layout(row)
       v-text-field(
-        v-field="form.description",
+        v-field="form.job_id",
         v-validate="'required'",
-        :label="$t('common.description')",
-        :error-messages="errors.collect('description')",
-        name="description"
+        :label="$t('modals.createRemediationJob.fields.jobId')",
+        :error-messages="errors.collect('job_id')",
+        name="job_id"
       )
     v-layout(row)
-      remediation-instruction-steps-form(v-field="form.steps")
+      payload-field(v-field="form.payload")
 </template>
 
 <script>
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
-import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
+import PayloadField from '@/components/forms/fields/payload-field.vue';
+
+import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
 
 export default {
-  components: { RemediationInstructionStepsForm, EnabledField },
+  components: {
+    EnabledField,
+    PayloadField,
+    RemediationJobConfigurationField,
+  },
   inject: ['$validator'],
   model: {
     prop: 'form',
