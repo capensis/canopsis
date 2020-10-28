@@ -51,6 +51,8 @@ pyparsing==2.2.2
 python-ldap==2.5.2
 # saml2 auth (CAT)
 python3-saml==1.4.1
+# CentOS doesn't have it by default, and it shouldn't be too outdated
+pytz==2020.1
 redis==2.10.6
 redlock-py==1.0.8
 requests==2.18.4
@@ -104,7 +106,6 @@ pbr==5.5.1
 pyasn1==0.4.8
 pycparser==2.20
 PyMeta3==0.5.1
-pytz==2020.1
 PyYAML==5.3.1
 repoze.lru==0.7
 # path.py and thus calink (CAT)
