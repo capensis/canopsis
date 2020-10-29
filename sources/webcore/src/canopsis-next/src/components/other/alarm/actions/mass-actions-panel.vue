@@ -6,7 +6,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS_ACTIONS_TYPES } from '@/constants';
+import { ENTITIES_TYPES, EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES, MODALS, WIDGETS_ACTIONS_TYPES } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
@@ -43,7 +43,7 @@ export default {
     actions() {
       const { alarmsList: alarmsListActionsTypes } = WIDGETS_ACTIONS_TYPES;
 
-      return [
+      const actions = [
         {
           type: alarmsListActionsTypes.pbehaviorAdd,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
@@ -86,19 +86,26 @@ export default {
           title: this.$t('alarmList.actions.titles.snooze'),
           method: this.showActionModal(MODALS.createSnoozeEvent),
         },
-        {
-          type: alarmsListActionsTypes.groupRequest,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
-          title: this.$t('alarmList.actions.titles.groupRequest'),
-          method: this.showCreateGroupRequestEventModal,
-        },
-        {
-          type: alarmsListActionsTypes.manualMetaAlarmGroup,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
-          title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
-          method: this.showCreateManualMetaAlarmModal,
-        },
       ];
+
+      if (!this.hasMetaAlarm) {
+        actions.push(
+          {
+            type: alarmsListActionsTypes.groupRequest,
+            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
+            title: this.$t('alarmList.actions.titles.groupRequest'),
+            method: this.showCreateGroupRequestEventModal,
+          },
+          {
+            type: alarmsListActionsTypes.manualMetaAlarmGroup,
+            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
+            title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
+            method: this.showCreateManualMetaAlarmModal,
+          },
+        );
+      }
+
+      return actions;
     },
 
     filteredActions() {
@@ -107,6 +114,10 @@ export default {
 
     items() {
       return this.getEntitiesList(ENTITIES_TYPES.alarm, this.itemsIds);
+    },
+
+    hasMetaAlarm() {
+      return this.items.some(item => item.metaalarm === '1');
     },
 
     modalConfig() {
