@@ -1,5 +1,5 @@
 import { TIME_UNITS } from '@/constants';
-import { getUnitValueFromSeconds } from '@/helpers/time';
+import { fromSeconds } from '@/helpers/duration';
 
 const AVAILABLE_UNITS = [
   TIME_UNITS.year,
@@ -14,7 +14,7 @@ export default function (value = 0, availableUnits = AVAILABLE_UNITS) {
   let unitValue;
 
   const maxUnit = availableUnits.find((unit) => {
-    unitValue = Math.floor(getUnitValueFromSeconds(value, unit));
+    unitValue = Math.floor(fromSeconds(value, unit));
     return unitValue;
   });
 

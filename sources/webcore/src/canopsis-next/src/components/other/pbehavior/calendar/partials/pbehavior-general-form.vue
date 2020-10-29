@@ -12,33 +12,30 @@
       v-flex(v-if="!noEnabled", xs12)
         enabled-field(v-field="form.enabled", hide-details)
       v-flex.mt-3(xs12)
-        v-layout(row)
-          date-time-splitted-range-picker-field(
-            v-if="!form.start_on_trigger",
-            :start="form.tstart",
-            :end="form.tstop",
-            :startLabel="$t('modals.createPbehavior.steps.general.fields.start')",
-            :endLabel="$t('modals.createPbehavior.steps.general.fields.stop')",
-            :startRules="tstartRules",
-            :endRules="tstopRules",
-            :noEnding="noEnding",
-            :fullDay="fullDay",
-            @update:start="updateField('tstart', $event)",
-            @update:end="updateField('tstop', $event)"
-          )
-          duration-field(
-            v-else,
-            v-field="form.duration"
-          )
         v-layout(v-if="withStartOnTrigger", wrap)
-          v-checkbox.mt-0(
+          v-switch.mt-0.mb-1(
             v-model="form.start_on_trigger",
             :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')",
             color="primary",
             hide-details,
             @change="changeStartOnTrigger"
           )
-        template(v-if="!form.start_on_trigger")
+        v-layout(v-if="form.start_on_trigger", row)
+          duration-field(v-field="form.duration")
+        template(v-else)
+          v-layout(row)
+            date-time-splitted-range-picker-field(
+              :start="form.tstart",
+              :end="form.tstop",
+              :startLabel="$t('modals.createPbehavior.steps.general.fields.start')",
+              :endLabel="$t('modals.createPbehavior.steps.general.fields.stop')",
+              :startRules="tstartRules",
+              :endRules="tstopRules",
+              :noEnding="noEnding",
+              :fullDay="fullDay",
+              @update:start="updateField('tstart', $event)",
+              @update:end="updateField('tstop', $event)"
+            )
           v-layout(wrap)
             v-checkbox.mt-0(
               v-model="fullDay",
@@ -193,7 +190,7 @@ export default {
           tstop: null,
         });
       } else {
-        this.updateField('duration', {});
+        this.removeField('duration');
       }
     },
   },

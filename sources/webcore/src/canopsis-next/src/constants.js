@@ -1233,6 +1233,8 @@ export const TIME_UNITS = {
   year: 'y',
 };
 
+export const DEFAULT_DURATION_FORMAT = 'D __ H _ m _ s _';
+
 export const AVAILABLE_TIME_UNITS = {
   second: {
     text: 'common.times.second',

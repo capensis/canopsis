@@ -2,58 +2,63 @@
   v-layout(row)
     v-flex(xs8)
       v-text-field(
-        v-field.number="value[valueFieldKey]",
+        v-field.number="duration.value",
         v-validate="'required|numeric|min_value:1'",
-        :label="$t('modals.createSnoozeEvent.fields.duration')",
-        :error-messages="errors.collect('duration')",
-        name="duration",
+        :label="label || $t('common.duration')",
+        :error-messages="errors.collect(name)",
+        :name="name",
         type="number"
       )
     v-flex(xs4)
       v-select(
-        v-field="value[unitFieldKey]",
+        v-field="duration.unit",
         v-validate="'required'",
         :items="availableUnits",
-        :error-messages="errors.collect('durationType')",
-        name="durationType"
+        :error-messages="errors.collect(unitFieldName)",
+        :name="unitFieldName"
       )
 </template>
 
 <script>
-import { SNOOZE_DURATION_UNITS, DURATION_UNITS } from '@/constants';
+import { AVAILABLE_TIME_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
+  model: {
+    prop: 'duration',
+    event: 'input',
+  },
   props: {
-    value: {
+    duration: {
       type: Object,
-      default() {
-        return {
-          [this.valueFieldKey || 'seconds']: '',
-          [this.unitFieldKey || 'unit']: DURATION_UNITS.minute.value,
-        };
-      },
+      default: () => ({
+        value: 0,
+        unit: AVAILABLE_TIME_UNITS.minute.value,
+      }),
     },
-    valueFieldKey: {
+    label: {
       type: String,
-      default: 'seconds',
-    },
-    unitFieldKey: {
-      type: String,
-      default: 'unit',
+      default: null,
     },
     units: {
       type: Array,
       default: null,
     },
+    name: {
+      type: String,
+      default: 'duration',
+    },
   },
   computed: {
+    unitFieldName() {
+      return `${this.name}Unit`;
+    },
     availableUnits() {
       if (this.units) {
         return this.units;
       }
 
-      return Object.values(SNOOZE_DURATION_UNITS).map(({ value, text }) => ({
+      return Object.values(AVAILABLE_TIME_UNITS).map(({ value, text }) => ({
         value,
         text: this.$tc(text, 2),
       }));

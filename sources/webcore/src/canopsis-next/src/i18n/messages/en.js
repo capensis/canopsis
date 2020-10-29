@@ -130,6 +130,7 @@ export default {
     correlation: 'Correlation',
     periods: 'Periods',
     range: 'Range',
+    duration: 'Duration',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

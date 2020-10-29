@@ -130,6 +130,7 @@ export default {
     correlation: 'Corrélation',
     periods: 'Périodes',
     range: 'Gamme',
+    duration: 'Durée',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

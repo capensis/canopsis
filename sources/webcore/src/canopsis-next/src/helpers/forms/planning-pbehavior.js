@@ -111,7 +111,7 @@ export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
   comments: removeKeyFromEntity(form.comments),
   exdates: form.exdates ? form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)) : [],
   exceptions: removeKeyFromEntity(form.exceptions),
-  tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
+  tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, timezone) : null,
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
 });
 
