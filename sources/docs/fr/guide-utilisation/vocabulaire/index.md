@@ -138,3 +138,38 @@ Une [alarme](#alarme) est considérée [Bagot](#bagot) (ou en « flapping ») si
 Une [alarme](#evenement) est considérée **cancel** si l'utilisateur l'a signalée comme tel à partir de l'interface utilisateur.
 
 Après une période donnée, une [alarme](#alarme) marquée comme **cancel** changera de criticité pour être considérée comme résolue.
+
+### Relations entre les status d'une alarme
+
+```mermaid
+sequenceDiagram
+participant Off
+participant En cours
+participant Furtif
+participant Bagot
+participant Annulée
+participant Résolue
+
+Off ->> En cours:   
+Note over Off, En cours: Envoi d'un événement <br/> de type check et criticité différente de 0
+
+En cours ->> Furtif:   
+Note over En cours, Furtif: Changement de criticité de stable à alerte <br/> 1 ou plusieurs fois <br/> durant StealthyIntervale
+
+En cours ->> Bagot:   
+Note over En cours, Bagot: Changement de state entre > 0 et 0 X fois durant Y secondes <br/> (X = FlappingFreqLimit et Y = FlappingIntervale)
+En cours ->> Annulée:   
+Note over En cours, Annulée: Envoi d'un événement de type cancel ou action utilisateur dans l'interface
+En cours ->> Résolue:   
+Note over En cours, Résolue: envoi d'un événement de type done + délai de 15 minutes (valeur fixe)
+Furtif ->> Bagot:   
+Note over Furtif, Bagot: Si le nombre de changement de states <br/> atteint la valeur FlappingFreqLimit
+Furtif ->> Résolue:   
+Note over Furtif, Résolue: Lorsque state = 0 à la fin de StealthyIntervale
+Furtif ->> En cours:   
+Note over Furtif, En cours: Lorsque state > 0 à la fin de StealthyIntervale
+Bagot ->> En cours:   
+Note over Bagot, En cours: Si le délai depuis le dernier changement de state <br/> est supérieur à FlappingIntervale
+Annulée ->> Résolue:   
+Note over Annulée, Résolue: Automatique après un certain délai <br /> (CancelAutosolveDelay)
+```
