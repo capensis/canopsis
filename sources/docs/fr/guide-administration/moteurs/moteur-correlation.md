@@ -309,6 +309,8 @@ Quelques exemples :
 * Un message informatif statique
 * Corrélé par la règle {{ .Rule.Name }}
 
+!!! Note
+    Il est possible à partir de la version 3.47.0 de Canopsis d'utiliser les informations des méta alarmes dans des règles d'enrichissement. La documentation associée se trouve [ici](./moteur-che-event_filter.md#cas-particulier-des-meta-alarmes)
 
 ## Collection MongoDB associée
 
