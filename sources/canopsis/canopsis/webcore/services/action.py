@@ -32,10 +32,26 @@ import time
 
 
 def exports(ws):
-
     ws.application.router.add_filter('id_filter', id_filter)
 
     action_manager = ActionManager(*ActionManager.provide_default_basics())
+
+    def _sanitize_pbehavior_parameter(action):
+        parameters = action.get('parameters', {})
+        if 'tstart' in parameters and 'tstop' in parameters and \
+            isinstance(parameters['tstart'], (int, float)) and \
+            isinstance(parameters['tstop'], (int, float)):
+            return
+
+        if 'start_on_trigger' in parameters and 'duration' in parameters and \
+            isinstance(parameters['duration'], dict) and \
+            'seconds' in parameters['duration'] and 'unit' in parameters['duration'] and \
+            isinstance(parameters['duration']['seconds'], (int, float)) and \
+            isinstance(parameters['duration']['unit'], basestring) and \
+            isinstance(parameters['start_on_trigger'], bool):
+            return
+
+        raise ValueError("invalid pbehavior parameters")
 
     @ws.application.get(
         '/api/v2/actions'
@@ -113,10 +129,15 @@ def exports(ws):
         element['last_update_date'] = now
 
         try:
+            if element.get('type', '') == 'pbehavior':
+                _sanitize_pbehavior_parameter(element)
             Action(**Action.convert_keys(element))
         except TypeError:
             return gen_json_error(
                 {'description': 'invalid action format'}, HTTP_ERROR)
+        except ValueError:
+            return gen_json_error(
+                {'description': 'invalid pbehavior parameters'}, HTTP_ERROR)
 
         try:
             ok = action_manager.create(action=element)
