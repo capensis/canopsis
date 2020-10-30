@@ -357,7 +357,7 @@ Cet événement met à disposition du moteur d'enrichissement plusieurs attribut
 | .Event.ExtraInfos.Meta.Rule        |  Les informations de la règle méta en elle-même            |
 
 
-Voici un exemple qui permet d'ajouter un attribut texte sur l'entité de la méta alarme et dont le contenu vaut 
+Voici un exemple qui permet d'ajouter un attribut texte sur l'entité de la méta alarme et dont le contenu vaut :
 
 **`Count : Nombre d'alarmes conséquences; Children : Sévérité de la dernière alarme conséquence attachée; Rule : Nom de la règle ayant permis le regroupement`** 
 
