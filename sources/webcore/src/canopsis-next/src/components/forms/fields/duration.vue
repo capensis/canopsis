@@ -60,7 +60,7 @@ export default {
 
       return Object.values(AVAILABLE_TIME_UNITS).map(({ value, text }) => ({
         value,
-        text: this.$tc(text, 2),
+        text: this.$tc(text, this.duration.value || 0),
       }));
     },
   },

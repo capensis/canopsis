@@ -1,8 +1,7 @@
 <template lang="pug">
-  v-layout(data-test="durationField", row)
+  v-layout(row)
     v-flex(xs8)
       v-text-field(
-        data-test="durationValue",
         v-field="value.duration",
         v-validate="'required|numeric|min_value:1'",
         :label="$t('modals.createSnoozeEvent.fields.duration')",
@@ -10,7 +9,7 @@
         data-vv-name="duration",
         type="number"
       )
-    v-flex(data-test="durationType", xs4)
+    v-flex(xs4)
       v-select(
         v-field="value.durationType",
         v-validate="'required'",
