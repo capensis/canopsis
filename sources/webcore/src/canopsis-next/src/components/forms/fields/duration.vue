@@ -1,41 +1,66 @@
 <template lang="pug">
-  v-layout(data-test="durationField", row)
+  v-layout(row)
     v-flex(xs8)
       v-text-field(
-        data-test="durationValue",
-        v-field="value.duration",
+        v-field.number="duration.value",
         v-validate="'required|numeric|min_value:1'",
-        :label="$t('modals.createSnoozeEvent.fields.duration')",
-        :error-messages="errors.collect('duration')",
-        data-vv-name="duration",
+        :label="label || $t('common.duration')",
+        :error-messages="errors.collect(name)",
+        :name="name",
         type="number"
       )
-    v-flex(data-test="durationType", xs4)
+    v-flex(xs4)
       v-select(
-        v-field="value.durationType",
+        v-field="duration.unit",
         v-validate="'required'",
         :items="availableUnits",
-        :error-messages="errors.collect('durationType')",
-        data-vv-name="durationType"
+        :error-messages="errors.collect(unitFieldName)",
+        :name="unitFieldName"
       )
 </template>
 
 <script>
-import { SNOOZE_DURATION_UNITS } from '@/constants';
+import { AVAILABLE_TIME_UNITS } from '@/constants';
 
 export default {
   inject: ['$validator'],
+  model: {
+    prop: 'duration',
+    event: 'input',
+  },
   props: {
-    value: {
+    duration: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        value: 0,
+        unit: AVAILABLE_TIME_UNITS.minute.value,
+      }),
+    },
+    label: {
+      type: String,
+      default: null,
+    },
+    units: {
+      type: Array,
+      default: null,
+    },
+    name: {
+      type: String,
+      default: 'duration',
     },
   },
   computed: {
+    unitFieldName() {
+      return `${this.name}Unit`;
+    },
     availableUnits() {
-      return Object.values(SNOOZE_DURATION_UNITS).map(({ value, text }) => ({
+      if (this.units) {
+        return this.units;
+      }
+
+      return Object.values(AVAILABLE_TIME_UNITS).map(({ value, text }) => ({
         value,
-        text: this.$tc(text, 2),
+        text: this.$tc(text, this.duration.value || 0),
       }));
     },
   },

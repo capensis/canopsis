@@ -130,6 +130,7 @@ export default {
     correlation: 'Correlation',
     periods: 'Periods',
     range: 'Range',
+    duration: 'Duration',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -671,6 +672,7 @@ export default {
             stop: 'End',
             fullDay: 'Whole day',
             noEnding: 'No ending',
+            startOnTrigger: 'Start on trigger',
           },
         },
         filter: {
