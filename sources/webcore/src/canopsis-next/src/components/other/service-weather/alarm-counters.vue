@@ -14,8 +14,8 @@
     v-tooltip(top)
       alarm-counter(
         :count="otherCountersValue",
-        slot="activator",
-        icon="more_horiz"
+        icon="more_horiz",
+        slot="activator"
       )
       div(v-for="otherCounter in alarmCounters.other", :key="otherCounter.key")
         strong {{ otherCounter.name }}
@@ -42,7 +42,7 @@ export default {
   computed: {
     alarmCounters() {
       return this.counters.reduce((acc, { count, type }) => {
-        if (this.isSelectType(type)) {
+        if (this.isSelectedType(type)) {
           acc.selected.push({
             key: type._id,
             name: type.name,
@@ -69,7 +69,7 @@ export default {
     },
   },
   methods: {
-    isSelectType(type) {
+    isSelectedType(type) {
       return this.selectedTypes.includes(type._id);
     },
   },

@@ -18,9 +18,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-  .alarm-counters {
-    position: relative;
-  }
-</style>

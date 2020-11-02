@@ -24,12 +24,11 @@ import { COUNTERS_LIMIT } from '@/constants';
 
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
-import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { PeriodicRefreshField, PbehaviorTypeField },
+  components: { PbehaviorTypeField },
   mixins: [formValidationHeaderMixin],
   props: {
     value: {
