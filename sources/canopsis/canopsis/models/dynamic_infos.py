@@ -56,18 +56,22 @@ class DynamicInfosRule(object):
     INFOS = 'infos'
     ALARM_PATTERNS = 'alarm_patterns'
     ENTITY_PATTERNS = 'entity_patterns'
+    DISABLE_DURING_PERIODS = 'disable_during_periods'
 
     REQUIRED_FIELDS = [
         NAME, INFOS
     ]
     VALID_FIELDS = frozenset([
         ID, NAME, AUTHOR, CREATION_DATE, LAST_MODIFIED_DATE, DESCRIPTION,
-        INFOS, ALARM_PATTERNS, ENTITY_PATTERNS
+        INFOS, ALARM_PATTERNS, ENTITY_PATTERNS, DISABLE_DURING_PERIODS
     ])
 
     def __init__(self, id_, name, author, creation_date, last_modified_date,
                  description=None, infos=None, alarm_patterns=None,
-                 entity_patterns=None):
+                 entity_patterns=None, disable_during_periods=None):
+        if disable_during_periods is None:
+            disable_during_periods = []
+
         self.id = id_
         self.name = name
         self.author = author
@@ -82,6 +86,7 @@ class DynamicInfosRule(object):
             self.description = description
         if infos is not None:
             self.infos = infos
+        self.disable_during_periods = disable_during_periods
 
         self._check_valid()
 
@@ -139,7 +144,8 @@ class DynamicInfosRule(object):
             description=dynamic_infos_rule.get(cls.DESCRIPTION),
             infos=infos,
             alarm_patterns=dynamic_infos_rule.get(cls.ALARM_PATTERNS),
-            entity_patterns=dynamic_infos_rule.get(cls.ENTITY_PATTERNS))
+            entity_patterns=dynamic_infos_rule.get(cls.ENTITY_PATTERNS),
+            disable_during_periods=dynamic_infos_rule.get(cls.DISABLE_DURING_PERIODS))
 
     def _check_valid(self):
         """Check that the DynamicInfosRule is valid.
@@ -205,6 +211,16 @@ class DynamicInfosRule(object):
                         "{} should only contain dictionaries, not {}".format(
                             DynamicInfosRule.ENTITY_PATTERNS, pattern))
 
+        if self.disable_during_periods is not None:
+            if not isinstance(self.disable_during_periods, list):
+                raise ValueError("{} must be a list, got {}".format(
+                    DynamicInfosRule.DISABLE_DURING_PERIODS, type(self.disable_during_periods)))
+            for period in self.disable_during_periods:
+                if not isinstance(period, basestring):
+                    raise ValueError("{} should only contain strings, not {}".format(
+                        DynamicInfosRule.DISABLE_DURING_PERIODS, type(period)))
+
+
     def as_dict(self):
         """Return the DynamicInfosRule as a dictionnary that can be stored in
         MongoDB.
@@ -221,6 +237,7 @@ class DynamicInfosRule(object):
             DynamicInfosRule.INFOS: [info.as_dict() for info in self.infos],
             DynamicInfosRule.ALARM_PATTERNS: self.alarm_patterns,
             DynamicInfosRule.ENTITY_PATTERNS: self.entity_patterns,
+            DynamicInfosRule.DISABLE_DURING_PERIODS: self.disable_during_periods,
         }
 
 

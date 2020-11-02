@@ -138,6 +138,12 @@ export const EVENT_ENTITY_TYPES = {
   manualMetaAlarmGroup: 'manual_metaalarm_group',
   manualMetaAlarmUngroup: 'manual_metaalarm_ungroup',
   manualMetaAlarmUpdate: 'manual_metaalarm_update',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  statusinc: 'statusinc',
+  statusdec: 'statusdec',
+  unsooze: 'unsooze',
+  metaalarmattach: 'metaalarmattach',
   executeInstruction: 'executeInstruction',
 };
 
@@ -386,6 +392,10 @@ export const EVENT_ENTITY_STYLE = {
   },
   [EVENT_ENTITY_TYPES.manualMetaAlarmUngroup]: {
     icon: 'link_off',
+  },
+  [EVENT_ENTITY_TYPES.metaalarmattach]: {
+    color: COLORS.entitiesEvents.metaalarmattach,
+    icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.executeInstruction]: {
     icon: 'assignment',
@@ -784,6 +794,8 @@ export const USERS_RIGHTS = {
 
         links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
 
+        correlation: `${USER_RIGHTS_PREFIXES.business.alarmsList}_correlation`,
+
         executeInstruction: `${USER_RIGHTS_PREFIXES.business.alarmsList}_executeInstruction`,
 
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
@@ -856,6 +868,7 @@ export const USERS_RIGHTS = {
     pbehaviorReason: `${USER_RIGHTS_PREFIXES.api}_pbehaviorreason`,
     pbehaviorException: `${USER_RIGHTS_PREFIXES.api}_pbehaviorexception`,
     event: `${USER_RIGHTS_PREFIXES.api}_event`,
+    engine: `${USER_RIGHTS_PREFIXES.api}_engine`,
   },
 };
 
@@ -888,6 +901,8 @@ export const WIDGETS_ACTIONS_TYPES = {
     ...featuresService.get('constants.WIDGETS_ACTIONS_TYPES.alarmsList'),
 
     links: 'links',
+
+    correlation: 'correlation',
 
     listFilters: 'listFilters',
     editFilter: 'editFilter',
@@ -956,6 +971,7 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
       USERS_RIGHTS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.links]: USERS_RIGHTS.business.alarmsList.actions.links,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.correlation]: USERS_RIGHTS.business.alarmsList.actions.correlation,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
@@ -1170,6 +1186,7 @@ export const WEBHOOK_TRIGGERS = {
   snooze: 'snooze',
   unsnooze: 'unsnooze',
   resolve: 'resolve',
+  activate: 'activate',
 };
 
 export const EVENT_FILTER_RULE_OPERATORS = ['>=', '>', '<', '<=', 'regex_match'];
@@ -1237,6 +1254,8 @@ export const TIME_UNITS = {
   month: 'M',
   year: 'y',
 };
+
+export const DEFAULT_DURATION_FORMAT = 'D __ H _ m _ s _';
 
 export const AVAILABLE_SORTED_TIME_UNITS = [
   TIME_UNITS.year,
@@ -1393,6 +1412,7 @@ export const EXPLOITATION_PAGES_RULES = {
   heartbeat: { stack: CANOPSIS_STACK.go },
   action: { stack: CANOPSIS_STACK.go },
   dynamicInfo: { edition: CANOPSIS_EDITION.cat },
+  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
 export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
@@ -1402,6 +1422,7 @@ export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
   [USERS_RIGHTS.technical.exploitation.heartbeat]: EXPLOITATION_PAGES_RULES.heartbeat,
   [USERS_RIGHTS.technical.exploitation.action]: EXPLOITATION_PAGES_RULES.action,
   [USERS_RIGHTS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
+  [USERS_RIGHTS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
 };
 
 export const WIDGET_TYPES_RULES = {
@@ -1518,6 +1539,14 @@ export const PLANNING_TABS = {
   types: 'types',
   reasons: 'reasons',
   exceptions: 'exceptions',
+};
+
+export const PBEHAVIOR_RRULE_PERIODS_RANGES = {
+  thisWeek: 'thisWeek',
+  nextWeek: 'nextWeek',
+  next2Weeks: 'next2Weeks',
+  thisMonth: 'thisMonth',
+  nextMonth: 'nextMonth',
 };
 
 export const REMEDIATION_TABS = {

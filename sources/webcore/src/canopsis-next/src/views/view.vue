@@ -228,7 +228,7 @@ export default {
       if (event.key === 'Enter' && event.altKey) {
         this.toggleFullScreenMode();
         event.preventDefault();
-      } else if (event.key === 'e' && event.ctrlKey) {
+      } else if (event.key === 'e' && event.ctrlKey && this.hasUpdateAccess) {
         this.toggleViewEditingMode();
         event.preventDefault();
       }

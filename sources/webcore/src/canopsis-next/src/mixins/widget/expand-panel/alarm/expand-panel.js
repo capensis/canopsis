@@ -1,9 +1,12 @@
 import { createNamespacedHelpers } from 'vuex';
 import { SORT_ORDERS } from '@/constants';
 
+import queryMixin from '@/mixins/query';
+
 const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
+  mixins: [queryMixin],
   props: {
     hideGroups: {
       type: Boolean,
@@ -16,12 +19,14 @@ export default {
     }),
 
     fetchAlarmItemWithGroupsAndSteps(alarm) {
+      const { correlation = false } = this.getQueryById(this.widget._id);
       const params = {
+        correlation,
+
         with_steps: true,
-        correlation: this.widget.parameters.isCorrelationEnabled || false,
       };
 
-      if (!this.hideGroups) {
+      if (!this.hideGroups && correlation) {
         if (alarm.causes) {
           params.with_causes = true;
         }

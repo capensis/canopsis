@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#
+# This file contains buildtime dependencies for CentOS docker images.
+#
 set -e
 set -o pipefail
 set -u
@@ -22,6 +25,9 @@ yum install -y \
     nettle-devel \
     openldap-devel \
     openssl-devel \
+    postgresql \
+    postgresql-devel \
+    postgresql-libs \
     python-devel \
     python-virtualenv \
     python-wheel \

@@ -97,7 +97,7 @@ export const API_ROUTES = {
     app: '/api/internal/app_info',
     userInterface: '/api/internal/user_interface',
   },
-  heartbeat: '/api/v2/heartbeat/',
+  heartbeat: '/api/v4/heartbeats',
   dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
   sessionStart: '/api/v2/sessionstart',
@@ -159,6 +159,7 @@ export const COLORS = {
     pbhenter: '#18ffff',
     pbhleave: '#18ffff',
     comment: '#ba68c8',
+    metaalarmattach: '#6d4c41',
   },
   statsDefault: '#dddddd',
 };

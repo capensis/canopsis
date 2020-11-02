@@ -69,7 +69,6 @@ export function generateWidgetByType(type) {
     isAckNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
-    isCorrelationEnabled: false,
     fastAckOutput: {
       enabled: false,
       value: 'auto ack',
@@ -294,6 +293,7 @@ export function generateWidgetByType(type) {
           left: 1,
         },
         heightFactor: 6,
+        isCorrelationEnabled: false,
         levels: {
           counter: AVAILABLE_COUNTERS.total,
           colors: {
@@ -319,19 +319,6 @@ export function generateWidgetByType(type) {
 }
 
 /**
- * Generate view row
- *
- * @returns {Object}
- */
-export function generateViewRow() {
-  return {
-    _id: uuid('view-row'),
-    title: '',
-    widgets: [],
-  };
-}
-
-/**
  * Generate view tab
  *
  * @returns {Object}
@@ -340,7 +327,7 @@ export function generateViewTab() {
   return {
     _id: uuid('view-tab'),
     title: '',
-    rows: [],
+    widgets: [],
   };
 }
 
@@ -580,16 +567,10 @@ export function generateAction() {
  * @returns {Array.<{ oldId: number, newId: number }>}
  */
 export function getViewsTabsWidgetsIdsMappings(oldTab, newTab) {
-  return oldTab.widgets.reduce((acc, row, rowIndex) => {
-    const widgetsIds = row.widgets.map((widget, widgetIndex) => ({
-      oldId: widget._id,
-      newId: get(newTab, `rows.${rowIndex}.widgets.${widgetIndex}._id`, null),
-    }));
-
-    acc.push(...widgetsIds);
-
-    return acc;
-  }, []);
+  return oldTab.widgets.map((acc, widget, widgetIndex) => ({
+    oldId: widget._id,
+    newId: get(newTab, `widgets.${widgetIndex}._id`, null),
+  }));
 }
 
 /**
@@ -713,8 +694,7 @@ export const getIdFromEntity = (entity, idField = '_id') =>
  * @property {string} name
  * @property {string} description
  * @property {Array} jobs
- * @property {Interval|string} time_to_complete
- * @property {string} [time_to_complete_unit]
+ * @property {DurationForm} time_to_complete
  * @property {string} [key]
  * @return {RemediationInstructionStepOperation}
  */
@@ -723,7 +703,7 @@ export const generateRemediationInstructionStepOperation = () => ({
   description: '',
   jobs: [],
   time_to_complete: {
-    interval: 0,
+    value: 0,
     unit: TIME_UNITS.minute,
   },
   key: uid(),

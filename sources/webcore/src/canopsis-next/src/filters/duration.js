@@ -1,18 +1,22 @@
 import moment from 'moment';
 import 'moment-duration-format';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, DEFAULT_DURATION_FORMAT, TIME_UNITS } from '@/constants';
 
 /**
  * Duration filter
  *
- * @param {Number} value - Numeric value to format
- * @param {String} format - Duration format
- * @returns {String}
+ * @param {number | Duration | DurationForm} [duration = 0]
+ * @param {string} [format = DEFAULT_DURATION_FORMAT]
+ * @param {DurationUnit} [unit = TIME_UNITS.second]
+ * @returns {string}
  */
-export default function (value = 0, format = 'D __ H _ m _ s _') {
-  const durationValue = value.value ? value.value : value;
+export default function (duration = 0, format = DEFAULT_DURATION_FORMAT, unit = TIME_UNITS.second) {
+  /**
+   * TODO: Should be removed after duration refactoring
+   */
+  const durationValue = duration.seconds || duration.value || duration;
   const resultFormat = DATETIME_FORMATS[format] || format;
 
-  return moment.duration(durationValue, 'seconds').format(resultFormat, { trim: 'both final' }) || '0s';
+  return moment.duration(durationValue, unit).format(resultFormat, { trim: 'both final' }) || '0s';
 }
