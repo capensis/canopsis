@@ -195,17 +195,34 @@ def exports(ws):
             )
 
         list_alarm = []
-        rule_ids = set()
-        if 'rules' in alarms:
-            for alarm_rules in alarms['rules'].values():
-                for v in alarm_rules:
-                    rule_ids.add(v)
-            named_rules = ma_rule_manager.read_rules_with_names(list(rule_ids))
-            for d, alarm_rules in alarms['rules'].items():
-                alarm_named_rules = []
-                for v in alarm_rules:
-                    alarm_named_rules.append({'id': v, 'name': named_rules.get(v, "")})
-                alarms['rules'][d] = alarm_named_rules
+        if ('rules' in alarms) or not correlation:
+            if not correlation:
+                parent_eids = set()
+                alarms['rules'] = dict()
+                for alarm in alarms['alarms']:
+                    if 'd' in alarm and 'v' in alarm and alarm['v'].get('parents'):
+                        for v in alarm['v']['parents']:
+                            parent_eids.add(v)
+                named_rules = ar.meta_parents_with_rules(list(parent_eids))
+                for alarm in alarms['alarms']:
+                    if 'd' in alarm and 'v' in alarm and alarm['v'].get('parents'):
+                        alarm_named_rules = dict()
+                        for p in alarm['v']['parents']:
+                            for r in named_rules[p]:
+                                alarm_named_rules[r['id']] = r
+                        alarms['rules'][alarm['d']] = alarm_named_rules.values()
+            else:
+                rule_ids = set()
+                for alarm_rules in alarms['rules'].values():
+                    for v in alarm_rules:
+                        rule_ids.add(v)
+
+                named_rules = ma_rule_manager.read_rules_with_names(list(rule_ids))
+                for d, alarm_rules in alarms['rules'].items():
+                    alarm_named_rules = []
+                    for v in alarm_rules:
+                        alarm_named_rules.append({'id': v, 'name': named_rules.get(v, "")})
+                    alarms['rules'][d] = alarm_named_rules
         else:
             alarms['rules'] = dict()
 
@@ -240,8 +257,10 @@ def exports(ws):
             alarm_end = alarm.get('v', {}).get('resolved')
             if not alarm_end:
                 alarm_end = now
-            alarm["v"]['duration'] = (
-                alarm_end - alarm.get('v', {}).get('creation_date', alarm_end))
+            alarm_value = alarm.get('v', {})
+            activation_date = alarm_value.get('activation_date')
+            alarm["v"]['duration'] = alarm_end - (alarm_value.get('creation_date', alarm_end) \
+                if activation_date is None else activation_date)
 
             state_time = alarm.get('v', {}).get('state', {}).get('t', now)
             alarm["v"]['current_state_duration'] = now - state_time
@@ -307,7 +326,8 @@ def exports(ws):
             'with_steps',
             'natural_search',
             'active_columns',
-            'hide_resources'
+            'hide_resources',
+            'correlation'
         ]
     )
     def get_counters(
@@ -325,14 +345,15 @@ def exports(ws):
         with_steps=False,
         natural_search=False,
         active_columns=None,
-        hide_resources=False
+        hide_resources=False,
+        correlation=False
     ):
 
         if isinstance(search, int):
             search = str(search)
 
         try:
-            alarms = ar.get(
+            alrs = ar.get(
                 tstart=tstart,
                 tstop=tstop,
                 opened=opened,
@@ -348,63 +369,98 @@ def exports(ws):
                 natural_search=natural_search,
                 active_columns=active_columns,
                 hide_resources=hide_resources,
-                add_pbh_filter=False
+                add_pbh_filter=False,
+                correlation=False
             )
         except OperationFailure as of_err:
             message = 'Operation failure on get-alarms: {}'.format(of_err)
             raise WebServiceError(message)
 
-        counters = {
-            "total": len(alarms['alarms']),
-            "total_active": 0,
-            "snooze": 0,
-            "ack": 0,
-            "ticket": 0,
-            "pbehavior_active": 0
-        }
+        def count(alarms):
+            counters = {
+                "total": len(alarms['alarms']),
+                "total_active": 0,
+                "snooze": 0,
+                "ack": 0,
+                "ticket": 0,
+                "pbehavior_active": 0
+            }
 
-        alarms_ids = []
-        for alarm in alarms['alarms']:
-            tmp_id = alarm.get('d')
-            if tmp_id:
-                alarms_ids.append(tmp_id)
-        entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
-        entity_id = []
-        for entity in entities:
-            _id = entity.get('_id')
-            if _id:
-                entity_id.append(_id)
+            alarms_ids = []
+            for alarm in alarms['alarms']:
+                tmp_id = alarm.get('d')
+                if tmp_id:
+                    alarms_ids.append(tmp_id)
+            entities = context_manager.get_entities_by_id(alarms_ids, with_links=True)
+            entity_id = []
+            for entity in entities:
+                _id = entity.get('_id')
+                if _id:
+                    entity_id.append(_id)
 
-        active_pbh = pbm.get_active_pbehaviors_on_entities(entity_id)
-        enabled_pbh_entity_dict = set()
-        for pbh in active_pbh:
-            if pbh[PBehavior.ENABLED]:
-                for eid in pbh.get(PBehavior.EIDS, []):
-                    if eid in entity_id:
-                        enabled_pbh_entity_dict.add(eid)
+            active_pbh = pbm.get_active_pbehaviors_on_entities(entity_id)
+            enabled_pbh_entity_dict = set()
+            for pbh in active_pbh:
+                if pbh[PBehavior.ENABLED]:
+                    for eid in pbh.get(PBehavior.EIDS, []):
+                        if eid in entity_id:
+                            enabled_pbh_entity_dict.add(eid)
 
-        pbehavior_active_snooze = 0
+            pbehavior_active_snooze = 0
 
-        for alarm in alarms['alarms']:
-            v = alarm.get('v')
-            snoozed = False
-            if isinstance(v, dict):
-                if v.get('ack', {}).get('_t') == 'ack':
-                    counters['ack'] += 1
-                snoozed = v.get('snooze', {}).get('_t') == 'snooze'
-                if snoozed:
-                    counters['snooze'] += 1
-                if v.get('ticket', {}).get('_t') in ['declareticket', 'assocticket']:
-                    counters['ticket'] += 1
-            d = alarm.get('d')
-            if d in enabled_pbh_entity_dict:
-                counters['pbehavior_active'] += 1
-                if snoozed:
-                    pbehavior_active_snooze += 1
+            for alarm in alarms['alarms']:
+                v = alarm.get('v')
+                snoozed = False
+                if isinstance(v, dict):
+                    if v.get('ack', {}).get('_t') == 'ack':
+                        counters['ack'] += 1
+                    snoozed = v.get('snooze', {}).get('_t') == 'snooze'
+                    if snoozed:
+                        counters['snooze'] += 1
+                    if v.get('ticket', {}).get('_t') in ['declareticket', 'assocticket']:
+                        counters['ticket'] += 1
+                d = alarm.get('d')
+                if d in enabled_pbh_entity_dict:
+                    counters['pbehavior_active'] += 1
+                    if snoozed:
+                        pbehavior_active_snooze += 1
 
-        counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze'] + \
-            pbehavior_active_snooze
-        return counters
+            counters['total_active'] = counters['total'] - counters['pbehavior_active'] - counters['snooze'] + \
+                pbehavior_active_snooze
+            return counters
+
+        if not correlation:
+            return count(alrs)
+
+        try:
+            alrs_with_meta_group = ar.get(
+                tstart=tstart,
+                tstop=tstop,
+                opened=opened,
+                resolved=resolved,
+                lookups=lookups,
+                filter_=filter,
+                search=search.strip(),
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                skip=skip,
+                limit=limit,
+                with_steps=with_steps,
+                natural_search=natural_search,
+                active_columns=active_columns,
+                hide_resources=hide_resources,
+                add_pbh_filter=False,
+                correlation=True
+            )
+
+            regular_counters = count(alrs)
+            meta_alarm_counters = count(alrs_with_meta_group)
+            counters = dict(regular_counters.items(
+            ) + {k + "_correlation": v for k, v in meta_alarm_counters.items()}.items())
+            return counters
+        except OperationFailure as of_err:
+            message = 'Operation failure on get-alarms: {}'.format(of_err)
+            raise WebServiceError(message)
 
     @route(
         ws.application.get,
@@ -613,3 +669,51 @@ def exports(ws):
             entity_id=entity_id
         )
         return gen_json(retour)
+
+    @ws.application.post(
+        '/api/v2/links',
+    )
+    def links():
+        r = request.json
+        if not r or not isinstance(r, dict) or not isinstance(r.get('entities'), list):
+            return gen_json_error(
+                {'description': 'wrong entities payload'}, HTTP_ERROR)
+
+        links, alarm_ids, entity_ids = [], [], []
+
+        for en in r['entities']:
+            if isinstance(en,  dict):
+                if en.get('alarm'):
+                    alarm_ids.append(en['alarm'])
+                if en.get('entity'):
+                    entity_ids.append(en['entity'])
+
+        if alarm_ids:
+            alarms = ar.alarm_collection.find({'_id': {'$in': alarm_ids}})
+            entities = context_manager.get_entities_by_id(
+                entity_ids, with_links=False)
+
+            entity_dict = {}
+            for entity in entities:
+                entity_dict[entity.get('_id')] = entity
+            for alarm in alarms:
+                if alarm['d'] in entity_dict:
+                    links.append({
+                        'entity': alarm['d'],
+                        'alarm': alarm['_id'],
+                        'links': context_manager.enrich_links_to_entity_with_alarm(entity_dict[alarm['d']], alarm)
+                    })
+        elif entity_ids:
+            entities = context_manager.get_entities(
+                query={"_id": {"$in": entity_ids}},
+                with_links=True
+            )
+            for entity in entities:
+                if isinstance(entity, dict) and '_id' in entity and entity.get('links'):
+                    links.append({
+                        'entity': entity['_id'],
+                        'links': entity['links']
+                    })
+        return {
+            'data': links
+        }

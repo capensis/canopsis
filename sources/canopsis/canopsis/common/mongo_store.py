@@ -204,5 +204,5 @@ class MongoStore(object):
             retries += 1
 
         raise AutoReconnect(
-            'failed to reconnect after {} tries, giving up.'.format(retries)
+            'failed to reconnect to MongoDB after {} tries, giving up.'.format(retries)
         )

@@ -9,6 +9,7 @@ import {
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
+  PBEHAVIOR_RRULE_PERIODS_RANGES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -128,6 +129,14 @@ export default {
     clear: 'Clair',
     deleteAll: 'Tout supprimer',
     payload: 'Payload',
+    output: 'Note',
+    created: 'Date de création',
+    updated: 'Date de dernière modification',
+    pattern: 'Pattern',
+    correlation: 'Corrélation',
+    periods: 'Périodes',
+    range: 'Gamme',
+    duration: 'Durée',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -281,21 +290,22 @@ export default {
         stateDecreased: 'Criticité diminuée',
       },
       types: {
-        ack: 'Acquittement',
-        ackremove: 'Suppression d\'acquittement',
-        stateinc: 'Augmentation de la criticité',
-        statedec: 'Diminution de la criticité',
-        statusinc: 'Augmentation du statut',
-        statusdec: 'Diminution du statut',
-        assocticket: 'Association d\'un ticket',
-        declareticket: 'Déclaration d\'un ticket',
-        snooze: 'Alarme mise en veille',
-        unsooze: 'Alarme sortie de veille',
-        changestate: 'Changement et verrouillage de la criticité',
-        pbhenter: 'Comportement périodique activé',
-        pbhleave: 'Comportement périodique désactivé',
-        cancel: 'Alarme annulée',
-        comment: 'Alarme commentée',
+        [EVENT_ENTITY_TYPES.ack]: 'Acquittement',
+        [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
+        [EVENT_ENTITY_TYPES.stateinc]: 'Augmentation de la criticité',
+        [EVENT_ENTITY_TYPES.statedec]: 'Diminution de la criticité',
+        [EVENT_ENTITY_TYPES.statusinc]: 'Augmentation du statut',
+        [EVENT_ENTITY_TYPES.statusdec]: 'Diminution du statut',
+        [EVENT_ENTITY_TYPES.assocTicket]: 'Association d\'un ticket',
+        [EVENT_ENTITY_TYPES.declareTicket]: 'Déclaration d\'un ticket',
+        [EVENT_ENTITY_TYPES.snooze]: 'Alarme mise en veille',
+        [EVENT_ENTITY_TYPES.unsooze]: 'Alarme sortie de veille',
+        [EVENT_ENTITY_TYPES.changeState]: 'Changement et verrouillage de la criticité',
+        [EVENT_ENTITY_TYPES.pbhenter]: 'Comportement périodique activé',
+        [EVENT_ENTITY_TYPES.pbhleave]: 'Comportement périodique désactivé',
+        [EVENT_ENTITY_TYPES.cancel]: 'Alarme annulée',
+        [EVENT_ENTITY_TYPES.comment]: 'Alarme commentée',
+        [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarme liée à la méta alarme',
       },
     },
     tabs: {
@@ -671,6 +681,7 @@ export default {
             stop: 'Fin',
             fullDay: 'Toute la journée',
             noEnding: 'Pas de fin',
+            startOnTrigger: 'Démarrer sur déclencheur',
           },
         },
         filter: {
@@ -924,9 +935,9 @@ export default {
       onFailure: 'En cas d\'échec',
       tooltips: {
         addValueRuleField: 'Ajouter une règle',
-        editValueRuleField: 'Editer la règle',
+        editValueRuleField: 'Éditer la règle',
         addObjectRuleField: 'Ajouter un groupe',
-        editObjectRuleField: 'Editer le groupe',
+        editObjectRuleField: 'Éditer le groupe',
         removeRuleField: 'Supprimer le groupe/la règle',
       },
     },
@@ -1074,6 +1085,13 @@ export default {
         title: 'Créer un heartbeat',
         success: 'Heartbeat créé avec succès !',
       },
+      edit: {
+        title: 'Modifier le heartbeat',
+        success: 'Heartbeat modifié avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer un heartbeat',
+      },
       remove: {
         success: 'Heartbeat supprimé avec succès !',
       },
@@ -1138,7 +1156,7 @@ export default {
         title: 'Créer un modèle d\'informations dynamiques',
       },
       edit: {
-        title: 'Editer un modèle d\'informations dynamiques',
+        title: 'Éditer un modèle d\'informations dynamiques',
       },
       fields: {
         names: 'Attributs',
@@ -1408,6 +1426,13 @@ export default {
     errors: {
       main: 'La récurrence choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
     },
+    periodsRanges: {
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek]: 'Cette semaine',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek]: 'Prochaine semaine',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks]: 'Prochaines 2 semaines',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'Ce mois',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Le mois prochain',
+    },
     fields: {
       freq: 'Fréquence',
       until: 'Jusqu\'à',
@@ -1548,7 +1573,16 @@ export default {
     actions: 'Actions',
     id: 'Id',
     idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+    outputTemplateHelp: '<p>Les variables accessibles sont:</p>\n' +
+      '<p><strong>.Count</strong>: Le nombre d\'alarmes conséquences attachées à la méta alarme.</p>' +
+      '<p><strong>.Children</strong>: L\'ensemble des variables de la dernière alarme conséquence attachée à la méta alarme.</p>' +
+      '<p><strong>.Rule</strong>: Les informations administratives de la méta alarme en elle-même.</p>' +
+      '<p>Quelques exemples:</p>' +
+      '<p><strong>{{ .Count }} conséquences;</strong> Message de la dernière alarme conséquence : <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Règle : <strong>{{ .Rule.Name }};</strong></p>' +
+      '<p>Un message informatif statique</p>' +
+      '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
+      outputTemplate: 'Modèle de sortie',
       eventPatterns: 'Patterns des événements',
       alarmPatterns: 'Patterns des alarmes',
       entityPatterns: 'Pattern des entités',

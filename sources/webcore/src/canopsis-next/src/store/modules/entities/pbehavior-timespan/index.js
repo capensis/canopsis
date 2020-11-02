@@ -5,7 +5,7 @@ import { API_ROUTES } from '@/config';
 export default {
   namespaced: true,
   actions: {
-    fetchItems(context, { data }) {
+    fetchListWithoutStore(context, { data }) {
       return request.post(API_ROUTES.planning.timespan, data);
     },
   },

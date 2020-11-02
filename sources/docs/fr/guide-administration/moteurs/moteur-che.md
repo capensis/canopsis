@@ -4,37 +4,9 @@ Le moteur `engine-che` permet d'enrichir les [événements](../../guide-developp
 
 ## Utilisation
 
-La file du moteur est placée juste après l'exchange `canopsis.events`.
-
 ### Options du moteur
 
-```
-  -consumeQueue string
-        Consomme les évènements venant de cette file. (default "Engine_che").
-  -createContext
-        Active la création de context graph. Activé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
-  -d    debug
-  -dataSourceDirectory
-        The path of the directory containing the event filter's data source plugins. (default ".")
-  -enrichContext
-        Active l'enrichissment de context graph à partir d'un event. Désactivé par défaut.
-        WARNING: désactiver l'ancien moteur context-graph lorsque vous l'utilisez. (default true)
-  -enrichExclude string
-        Liste de champs séparés par des virgules ne faisant pas partie de l'enrichissement du contexte
-  -enrichInclude string
-        Coma separated list of the only fields that will be part of context enrichment. If present, -enrichExclude is ignored.
-  -printEventOnError
-        Print event on processing error
-  -processEvent
-        enable event processing. enabled by default. (default true)
-  -publishQueue
-        Publie les événements sur cette file. (default "Engine_event_filter")
-  -purge
-        purge consumer queue(s) before work
-  -version
-        version infos
-```
+La commande `engine-che -help` liste toutes les options acceptées par le moteur.
 
 ### Multi-instanciation
 

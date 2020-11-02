@@ -19,9 +19,9 @@ le moteur de traitement custom se déclenche.
 Le moteur va alors utiliser les différentes classes « custom » à sa disposition
 pour identifier le trap reçu (fonction `match` qui retourne `True` ou `False`).
 
-La première classe qui « reconnaît » ainsi le trap est sélectionnée pour
-exécuter la seconde opération : la fonction `build_event`, qui construit
-l'évènement envoyé à Canopsis.
+Toute classe qui « reconnaît » ainsi le trap est sélectionnée pour exécuter la
+seconde opération : la fonction `build_event`, qui construit l'évènement envoyé
+à Canopsis.
 
 ## Conception d'une classe custom
 
@@ -58,6 +58,7 @@ class MyCustomTrap(SnmpTrap):
 
     DELIMITER = '#'
     RULE_TAG = 'MYRULENAME'
+    STOP_AT_FIRST_MATCH = False
 
     def match(self, trap):
         """
@@ -109,6 +110,19 @@ ce répertoire, ce qui facilitera le placement des fichiers.
 
 Une fois le fichier ajouté ou modifié, redémarrer le moteur `snmp` de Canopsis.
 
+## Ordre et options de traitement
+
+Les modules Python déposés dans le dossier `custom_handler` sont chargés
+d'après l'ordre des noms de fichiers (ordre lexicographique). Lors du traitement
+d'un trap, les classes sont « exécutées » dans ce même ordre.
+
+Par défaut, si plusieurs classes reconnaissent un même trap, le mécanisme de
+traitement de traps personnalisés peut produire plusieurs évènements pour ce
+même trap. Ce comportement peut être modifié sur chaque classe en définissant
+l'attribut de classe `STOP_AT_FIRST_MATCH` (booléen). Lorsque cet attribut est
+vrai pour une classe et que cette classe a reconnu un trap, aucune autre classe
+suivante ne sera essayée pour ce trap.
+
 ## Outil de test de classe
 
 Il est possible de tester le comportement d'une règle custom pour vérifier la
@@ -117,17 +131,24 @@ JSON qu'envoie le connecteur `snmp2canopsis`.
 
 Cela évite d'attendre l'arrivée ou la reproduction de « vrais » traps.
 
-Pour ce faire, écrire le JSON donné par `snmp2canopsis` dans un fichier
-(ci-dessous, `trap.json`) et invoquer le script `custom-trap-tester.py` avec le
-nom du module qui fournit la classe à tester.
+Pour ce faire, écrire le JSON donné par `snmp2canopsis` dans un fichier et
+invoquer le script `custom-trap-tester.py` avec :
+
+- l'option `-t` et le chemin vers le fichier de trap (ci-dessous, `trap.json`)
+- l'option `-c` et le nom complet du module qui fournit la classe à tester
+(ci-dessous, pour un fichier déposé sous le nom `mycustomtrap.py`, le nom
+complet sera `canopsis_cat.snmp.custom_handler.mycustomtrap`)
+- éventuellement, l'option `--publish` pour déclencher la publication réelle de
+l'evènement produit vers le bus de messages habituel de Canopsis
 
 Le script `custom-trap-tester.py` est disponible dans le `PATH` de
 l'utilisateur `canopsis`. Dans un environnement Docker, il faut se placer dans
 le conteneur du moteur `snmp`.
 
 ```console
-custom-trap-tester.py -t trap.json -c canopsis_cat.snmp.custom_handler.mycustomtrap
+custom-trap-tester.py -t trap.json -c canopsis_cat.snmp.custom_handler.mycustomtrap [--publish]
 ```
+
 
 ## Test complet de mise en œuvre
 
@@ -239,10 +260,10 @@ le conteneur `snmp`. L'exécution du script et son résultat se présentent comm
 suit :
 
 ```console
-(canopsis 3.20.0)[canopsis@ct ~]$ custom-trap-tester.py -t /tmp/event.json -c canopsis_cat.snmp.custom_handler.guitare
+(canopsis x.yy.z)[canopsis@ct ~]$ custom-trap-tester.py -t /tmp/event.json -c canopsis_cat.snmp.custom_handler.guitare
 * Found class GuitarTrap
-* The trap match can be treated by this class. Commencing traitment...
-* An event has been generated: 
+* Trap can be handled by this class. Building event...
+* The following event has been generated: 
 {
     "_id": "snmp.snmp2canopsis.check.resource.Gibson.matter", 
     "component": "Gibson", 

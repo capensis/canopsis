@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from bottle import request
+from bottle import request, response
 from json import loads
 from six import string_types
 import time
-import os.path
 
 from canopsis.common.errors import NotFoundError
 from canopsis.idle_rule.manager import IdleRuleManager
 from canopsis.models.idle_rule import IdleRule
-from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR, HTTP_NOT_FOUND
+from canopsis.webcore.utils import HTTP_ERROR, HTTP_NOT_FOUND
 
 
 class RouteHandlerIdleRule(object):
@@ -57,29 +56,25 @@ def exports(ws):
         try:
             elements = request.json
         except ValueError:
-            return gen_json_error(
-                {'description': 'invalid JSON'},
-                HTTP_ERROR
-            )
+            response.status = HTTP_ERROR
+            return {'description': 'invalid JSON'}
 
         try:
             rule = IdleRule.new_from_dict(
                 elements, rh_idle_rule.get_username(), int(time.time()))
         except (TypeError, ValueError, KeyError) as exception:
-            return gen_json_error(
-                {'description': 'invalid idle rule: {}'.format(
-                    exception.message)},
-                HTTP_ERROR)
+            response.status = HTTP_ERROR
+            return {'description': 'invalid idle rule: {}'.format(
+                    exception.message)}
 
         try:
             idle_rule_manager.create(rule)
         except ValueError as exception:
-            return gen_json_error(
-                {'description': 'failed to create idle rule: {}'.format(
-                    exception.message)},
-                HTTP_ERROR)
+            response.status = HTTP_ERROR
+            return {'description': 'failed to create idle rule: {}'.format(
+                    exception.message)}
 
-        return gen_json(rule.as_dict())
+        return rule.as_dict()
 
     @ws.application.put('/api/v2/idle-rule/<rule_id>')
     def update(rule_id):
@@ -89,62 +84,54 @@ def exports(ws):
         try:
             elements = request.json
         except ValueError:
-            return gen_json_error(
-                {'description': 'invalid JSON'},
-                HTTP_ERROR
-            )
+            response.status = HTTP_ERROR
+            return {'description': 'invalid JSON'},
 
         try:
             rule = IdleRule.new_from_dict(
                 elements, rh_idle_rule.get_username(), int(time.time()))
         except (TypeError, ValueError, KeyError) as exception:
-            return gen_json_error(
-                {'description': 'invalid idle rule: {}'.format(
-                    exception.message)},
-                HTTP_ERROR)
+            response.status = HTTP_ERROR
+            return {'description': 'invalid idle rule: {}'.format(
+                    exception.message)}
 
         try:
             success = idle_rule_manager.update(rule_id, rule)
         except ValueError as exception:
-            return gen_json_error(
-                {'description': 'failed to update idle rule: {}'.format(
-                    exception.message)},
-                HTTP_ERROR)
+            response.status = HTTP_ERROR
+            return {'description': 'failed to update idle rule: {}'.format(
+                    exception.message)}
         except NotFoundError as exception:
-            return gen_json_error(
-                {"description": exception.message},
-                HTTP_NOT_FOUND)
+            response.status = HTTP_NOT_FOUND
+            return {"description": exception.message}
 
         if not success:
-            return gen_json_error(
-                {"description": "failed to update idle rule"},
-                HTTP_ERROR)
+            response.status = HTTP_ERROR
+            return {"description": "failed to update idle rule"}
 
-        return gen_json(rule.as_dict())
+        return rule.as_dict()
 
     @ws.application.get('/api/v2/idle-rule/<rule_id>')
     def read(rule_id=None):
         result = rh_idle_rule.read(rule_id)
         if result is None:
-            return gen_json_error(
-                {
-                    'name': rule_id,
-                    'description': 'Rule not found',
-                },
-                HTTP_NOT_FOUND)
-        return gen_json(result)
+            response.status = HTTP_NOT_FOUND
+            return {
+                'name': rule_id,
+                'description': 'Rule not found',
+            }
+        return result
 
     @ws.application.get('/api/v2/idle-rule')
     def read_all():
-        return gen_json(rh_idle_rule.read_all())
+        return rh_idle_rule.read_all()
 
     @ws.application.delete('/api/v2/idle-rule/<rule_id>')
     def delete_rule(rule_id):
         try:
             result = rh_idle_rule.delete(rule_id)
         except NotFoundError as exception:
-            return gen_json_error(
-                {"description": exception.message},
-                HTTP_NOT_FOUND)
+            response.status = HTTP_NOT_FOUND
+            return {"description": exception.message}
 
-        return gen_json(result)
+        return result

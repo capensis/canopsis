@@ -38,6 +38,7 @@ import { cloneDeep, isEmpty, isString } from 'lodash';
 
 import { ENTITIES_TYPES, FILTER_DEFAULT_VALUES } from '@/constants';
 
+import { removeSpacesFromStringFilter } from '@/helpers/filter';
 import parseGroupToFilter from '@/helpers/filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '@/helpers/filter/editor/parse-filter-to-request';
 import { checkIfGroupIsEmpty } from '@/helpers/filter/editor/filter-check';
@@ -195,7 +196,9 @@ export default {
       this.filter = value;
       this.requestString = this.$options.filters.json(preparedFilter);
 
-      this.$emit('input', isString(this.value) ? this.requestString : preparedFilter);
+      const newValue = isString(this.value) ? removeSpacesFromStringFilter(this.requestString) : preparedFilter;
+
+      this.$emit('input', newValue);
 
       if (this.required && this.errors.has('filter')) {
         this.$validator.validate('filter');
@@ -210,7 +213,9 @@ export default {
           this.isRequestStringChanged = true;
         }
 
-        this.$emit('input', isString(this.value) ? requestString : JSON.parse(requestString));
+        const newValue = isString(this.value) ? removeSpacesFromStringFilter(requestString) : JSON.parse(requestString);
+
+        this.$emit('input', newValue);
       } catch (err) {
         console.warn(err);
       }

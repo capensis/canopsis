@@ -11,7 +11,7 @@ Ce schéma présente le cycle de vie d'un trap SNMP depuis son émission jusqu'�
 
 ![img1](img/Cycle_vie_trap_snmp.png)
 
-Comme observé sur le schéma de cycle de vie, les traps SNMP `bruts` sont traduits par un moteur grâce à un jeu de règles à définir.
+Comme observé sur le schéma de cycle de vie, les traps SNMP bruts sont traduits par un moteur grâce à un jeu de règles à définir.
 
 Pour rappel, le résultat de la traduction doit se concrétiser par la génération d'un message compréhensible par Canopsis.
 
@@ -57,10 +57,9 @@ Pour créer des règles de transformations il faut se logger sur la page dédié
 
 ![Menu exploitation](img/menu_exploitation_snmprules.png)
 
-!!! Note
+!!! note
     L'accès à cette page est régi par le droit `models_exploitation_snmpRule` de type CRUD.
     Veillez à octroyer les permissions dans la matrice des droits ![Droit SNMPRULE](img/droit_snmprule.png)
-
 
 Une règle de transformation consiste à convertir des `OID` en valeurs compréhensibles et associer les attributs nécessaires à un message Canopsis.
 

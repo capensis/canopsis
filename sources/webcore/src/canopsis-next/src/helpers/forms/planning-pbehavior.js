@@ -102,16 +102,16 @@ export const pbehaviorToForm = (
  * @param {string} timezone
  * @return {Object}
  */
-export const formToPbehavior = (form, timezone) => ({
+export const formToPbehavior = (form, timezone = moment.tz.guess()) => ({
   ...form,
 
   enabled: isUndefined(form.enabled) ? true : form.enabled,
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntity(form.comments),
-  exdates: form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)),
+  exdates: form.exdates ? form.exdates.map(exdateForm => formToExdate(exdateForm, timezone)) : [],
   exceptions: removeKeyFromEntity(form.exceptions),
-  tstart: convertDateToTimestampByTimezone(form.tstart, timezone),
+  tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, timezone) : null,
   tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
 });
 
@@ -147,7 +147,7 @@ export const calendarEventToPbehaviorForm = (
       if (end.date.diff(start.date, 'hours') <= 24) {
         form.tstop = start.date.clone().endOf('day').toDate();
       } else {
-        form.tstop = calendarEvent.end.date.clone().subtract(1, 'millisecond').toDate();
+        form.tstop = end.date.clone().subtract(1, 'millisecond').toDate();
       }
     } else {
       form.tstop = end.date.toDate();

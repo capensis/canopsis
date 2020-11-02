@@ -3,5 +3,8 @@
   template:
     src: nginx/default.j2
     dest: /etc/nginx/conf.d/default.conf
+    owner: root
+    group: root
+    mode: 0644
   vars:
     TARGET: "http://{{ canopsis_gunicorn_host }}:{{ canopsis_gunicorn_port }}/"

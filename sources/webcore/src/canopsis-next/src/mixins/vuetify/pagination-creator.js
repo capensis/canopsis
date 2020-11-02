@@ -4,12 +4,14 @@ export default ({
   field = 'pagination',
   queryField = 'query',
   defaultSortKey = null,
+  defaultSortDir = null,
   mutating = false,
 } = {}) => ({
   computed: {
     [field]: {
       get() {
-        const descending = this[queryField].sortDir === SORT_ORDERS.desc;
+        const sortDir = this[queryField].sortDir || defaultSortDir;
+        const descending = sortDir === SORT_ORDERS.desc;
         const sortBy = this[queryField].sortKey || defaultSortKey;
 
         return { sortBy, descending };

@@ -1,0 +1,212 @@
+swagger: '2.0'
+info: {title: bottle-swagger, version: 1.0.0}
+produces: [application/json]
+consumes: [application/json]
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
+
+definitions:
+  HeartBeatPayload:
+    properties:
+      author:
+        type: string
+      description:
+        type: string
+      expected_interval:
+        type: integer
+      name:
+        type: string
+      output:
+        type: string
+      pattern:
+        additionalProperties:
+          type: string
+        type: object
+    required:
+      - author
+      - description
+      - expected_interval
+      - name
+      - pattern
+    type: object
+  HeartBeat:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      expected_interval:
+        type: integer
+      name:
+        type: string
+      output:
+        type: string
+      pattern:
+        additionalProperties:
+          type: string
+        type: object
+      updated:
+        type: integer
+    type: object
+  HeartBeatPaginationMeta:
+    properties:
+      per_page:
+        type: integer
+      page_count:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  PaginationResponse:
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/HeartBeat"
+      meta:
+        $ref: "#/definitions/HeartBeatPaginationMeta"
+    type: object
+paths:
+  /api/v2/heartbeat:
+    get:
+      summary: Get heartbeat list
+      parameters:
+        - type: integer
+          description: current page
+          name: page
+          in: query
+          required: true
+        - type: integer
+          description: items per page
+          name: limit
+          in: query
+          required: true
+        - type: string
+          description: search query
+          name: search
+          in: query
+        - type: string
+          description: sort query
+          name: sort
+          in: query
+        - type: string
+          description: sort query
+          name: sort_by
+          in: query
+      tags:
+        - heartbeat
+      responses:
+        '200':
+          description: List of heartbeat
+          schema:
+            $ref: "#/definitions/PaginationResponse"
+
+    post:
+      summary: Create heartbeat
+      tags:
+        - heartbeat
+      parameters:
+        - in: body
+          name: heartbeat
+          schema:
+            $ref: "#/definitions/HeartBeatPayload"
+      responses:
+        '200':
+          description: heartbeat has been created
+          schema:
+            properties:
+              description:
+                type: string
+              name:
+                type: string
+        '400':
+          description: heartbeat create error
+          schema:
+            properties:
+              description:
+                type: string
+              name:
+                type: string
+  /api/v2/heartbeat/{heartbeat_id}:
+    get:
+      summary: Returns a heartbeat by ID
+      tags:
+        - heartbeat
+      parameters:
+        - in: path
+          name: heartbeat_id
+          required: true
+          type: string
+          description: The ID of the heartbeat to return
+      responses:
+        '200':
+            description: A heartbeat object
+            schema:
+              $ref: "#/definitions/HeartBeat"
+        '400':
+          description: Get heartbeat has error
+          schema:
+            properties:
+              description:
+                type: string
+              name:
+                type: string
+    put:
+      summary: Update a heartbeat by ID
+      tags:
+        - heartbeat
+      parameters:
+        - in: path
+          name: heartbeat_id
+          required: true
+          type: string
+          description: The ID of the heartbeat to update
+        - in: body
+          name: heartbeat
+          schema:
+            $ref: "#/definitions/HeartBeatPayload"
+      responses:
+        '200':
+          description: heartbeat has been updated
+          schema:
+            properties:
+              description:
+                type: string
+              name:
+                type: string
+        '400':
+          description: heartbeat update error
+          schema:
+            properties:
+              description:
+                type: string
+              name:
+                type: string
+    delete:
+      summary: Delete a heartbeat by ID
+      tags:
+        - heartbeat
+      parameters:
+        - in: path
+          name: heartbeat_id
+          required: true
+          type: string
+          description: The ID of the heartbeat to delete
+      responses:
+        '200':
+          description: heartbeat has been deleted
+          schema:
+            properties:
+              description:
+                type: string
+              name:
+                type: string
