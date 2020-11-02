@@ -316,6 +316,13 @@
       "type": "CRUD"
     },
     {
+        "_id": "models_engine",
+        "loader_id": "models_engine",
+        "crecord_name": "models_engine",
+        "crecord_type": "action",
+        "desc": "Engines"
+    },
+    {
         "_id" : "models_serie",
         "loader_id" : "models_serie",
         "crecord_name": "models_serie",

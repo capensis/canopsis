@@ -187,14 +187,24 @@ export default {
           right: USERS_RIGHTS.technical.playlist,
         },
         {
-          route: { name: 'planning-administration' },
+          route: { name: 'admin-planning-administration' },
           text: this.$t('common.planningAdministration'),
           icon: 'assignment',
           right: USERS_RIGHTS.technical.planning,
         },
       ];
 
-      return links.filter(({ right }) => this.checkReadAccess(right));
+      const linksWithDefaultRight = [
+        {
+          route: { name: 'admin-engine' },
+          text: this.$t('common.engines'),
+          icon: '$vuetify.icons.alt_route',
+          right: USERS_RIGHTS.technical.engine,
+        },
+      ];
+
+      return links.filter(({ right }) => this.checkReadAccess(right))
+        .concat(linksWithDefaultRight.filter(({ right }) => this.checkAccess(right)));
     },
 
     userName() {

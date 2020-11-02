@@ -131,6 +131,7 @@ export default {
     periods: 'Périodes',
     range: 'Gamme',
     duration: 'Durée',
+    engines: 'Engines',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',

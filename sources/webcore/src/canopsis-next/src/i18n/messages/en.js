@@ -131,6 +131,7 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
+    engines: 'Engines',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

@@ -18,6 +18,7 @@ import AdminParameters from '@/views/admin/parameters.vue';
 import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import AdminPlaylists from '@/views/admin/playlists.vue';
 import AdminPlanning from '@/views/admin/planning.vue';
+import AdminEngine from '@/views/admin/engine.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
@@ -141,12 +142,24 @@ const routes = [
   },
   {
     path: '/admin/planning',
-    name: 'planning-administration',
+    name: 'admin-planning-administration',
     component: AdminPlanning,
     meta: {
       requiresLogin: true,
       requiresRight: {
         id: USERS_RIGHTS.technical.planning,
+      },
+    },
+  },
+  {
+    path: '/admin/engine',
+    name: 'admin-engine',
+    component: AdminEngine,
+    meta: {
+      requiresLogin: true,
+      requiresRight: {
+        mask: USERS_RIGHTS_MASKS.default,
+        id: USERS_RIGHTS.technical.engine,
       },
     },
   },
