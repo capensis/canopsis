@@ -60,10 +60,12 @@ export function convertAlarmWidgetToQuery(widget) {
     liveReporting = {},
     widgetColumns,
     itemsPerPage,
+    isCorrelationEnabled,
   } = widget.parameters;
 
   const query = {
     page: 1,
+    correlation: isCorrelationEnabled || false,
     opened: alarmsStateFilter.opened || false,
     resolved: alarmsStateFilter.resolved || false,
     limit: itemsPerPage || PAGINATION_LIMIT,
@@ -230,12 +232,11 @@ export function convertStatsParetoWidgetToQuery(widget) {
  * @returns {{filters: *}}
  */
 export function convertCounterWidgetToQuery(widget) {
-  const { viewFilters, isCorrelationEnabled = false } = widget.parameters;
+  const { viewFilters } = widget.parameters;
 
   return {
     ...convertAlarmStateFilterToQuery(widget),
 
-    correlation: isCorrelationEnabled,
     filters: viewFilters.map(({ filter }) => filter),
   };
 }
@@ -251,8 +252,8 @@ export function convertCounterWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { itemsPerPage, isCorrelationEnabled = false } = widgetPreferences;
-  const query = { correlation: isCorrelationEnabled };
+  const query = {};
+  const { itemsPerPage } = widgetPreferences;
 
   if (itemsPerPage) {
     query.limit = itemsPerPage;

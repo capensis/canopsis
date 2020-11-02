@@ -132,7 +132,7 @@ class Rights(Middleware):
             return False
 
         found = entity['rights'].get(right_id, None)
-        if (found and int(found.get('checksum', 0)) & checksum >= checksum):
+        if (found and found.get('checksum', 0) & checksum >= checksum):
             return True
 
         return False
@@ -187,20 +187,20 @@ class Rights(Middleware):
     # If the right already exists, the checksum will be summed accordingly
     # checksum |= old_checksum
     # entity can be a role, a profile, or a group
-    def add_right(self, e_name, e_type, right_id, checksum, add_non_existing_action=False, **kwargs):
+    def add_right(self, e_name, e_type, right_id, checksum, **kwargs):
         """
         Args:
             e_name: name of the entity to add the right to
             e_type: type of the entity
             right_id: right to be modified
             checksum: flags to add
-            add_non_existing_action: bool value that indicates to add action if it doesn't exist
         Returns:
             The checksum of the right if the flags were added
             ``0`` otherwise
         """
+
         # Action not referenced, can't create a right
-        if not self.get_action(right_id) and not add_non_existing_action:
+        if not self.get_action(right_id):
             self.logger.error(
                 ('Can not create right, the action {0} ' +
                     'is not referenced').format(right_id)
@@ -886,7 +886,7 @@ class Rights(Middleware):
                     return False
         return True
 
-    def update_rights(self, e_id, e_type, e_rights, entity, add_non_existing_action=False):
+    def update_rights(self, e_id, e_type, e_rights, entity):
         """
         Args:
             e_id id of the entity to update
@@ -916,8 +916,7 @@ class Rights(Middleware):
                         e_id,
                         e_type,
                         right,
-                        e_rights[right]['checksum'],
-                        add_non_existing_action
+                        e_rights[right]['checksum']
                 ):
                     return False
         return True

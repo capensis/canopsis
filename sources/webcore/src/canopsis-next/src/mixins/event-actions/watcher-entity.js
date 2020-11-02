@@ -120,9 +120,9 @@ export default {
         },
         name: 'downtime',
         reason,
+        tstart: moment().unix(),
+        tstop: 2147483647, // 01/19/2038 @ 3:14am (UTC)
         type,
-        tstart: moment().toDate(),
-        tstop: moment.unix(2147483647), // 01/19/2038 @ 3:14am (UTC)
       };
 
       this.$emit('add:event', { type: EVENT_ENTITY_TYPES.pause, data, entity });

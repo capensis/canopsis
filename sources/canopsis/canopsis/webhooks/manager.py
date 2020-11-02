@@ -21,7 +21,6 @@
 from canopsis.common.mongo_store import MongoStore
 from canopsis.common.collection import MongoCollection
 import re
-import time
 
 
 class WebhookManager(object):
@@ -88,11 +87,6 @@ class WebhookManager(object):
         :rtype: bool
         :raises: CollectionError if the update fails.
         """
-        current_webhook = self.__collection.find_one({'_id': wid})
-        if 'creation_date' in current_webhook:
-            webhook['creation_date'] = current_webhook['creation_date']
-        now = int(time.time())
-        webhook['last_update_date'] = now
         resp = self.__collection.update(query={'_id': wid}, document=webhook)
         return self.__collection.is_successfull(resp)
 

@@ -2,11 +2,7 @@
   div
     v-layout(wrap)
       v-flex(xs12)
-        pbehavior-general-form(
-          v-field="form",
-          :no-enabled="noEnabled",
-          :with-start-on-trigger="withStartOnTrigger"
-        )
+        pbehavior-general-form(v-field="form")
       v-flex(xs12)
         pbehavior-comments-form(v-field="form.comments")
       v-flex(v-if="!noFilter", xs12)
@@ -42,14 +38,6 @@ export default {
       required: true,
     },
     noFilter: {
-      type: Boolean,
-      default: false,
-    },
-    noEnabled: {
-      type: Boolean,
-      default: false,
-    },
-    withStartOnTrigger: {
       type: Boolean,
       default: false,
     },

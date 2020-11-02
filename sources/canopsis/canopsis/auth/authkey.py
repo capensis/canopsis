@@ -23,7 +23,6 @@ from canopsis.auth.base import BaseBackend
 
 from bottle import request, HTTPError
 
-CANOPSIS_AUTHKEY = 'x-canopsis-authkey'
 
 class AuthKeyBackend(BaseBackend):
     name = 'AuthKeyBackend'
@@ -52,12 +51,7 @@ class AuthKeyBackend(BaseBackend):
         return decorated
 
     def do_auth(self):
-        skip_session_create = False
         authkey = request.params.get('authkey', None)
-        if not authkey:
-            authkey = request.headers.get(CANOPSIS_AUTHKEY, None)
-            if authkey:
-                skip_session_create = True
 
         self.logger.info(
             'Trying to authenticate user with authkey: {0}'.format(
@@ -67,8 +61,6 @@ class AuthKeyBackend(BaseBackend):
 
         if authkey:
             user = self.auth.check(mode='authkey', password=authkey)
-            if isinstance(user, dict):
-                user['skip_session_create'] = skip_session_create
 
         else:
             user = self.session.get_user()

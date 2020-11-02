@@ -4,16 +4,16 @@
       v-field="value.message",
       :label="$t('modals.createAction.fields.message')"
     )
-    old-duration-field(v-field="value.duration")
+    duration-field(v-field="value.duration")
 </template>
 
 <script>
-import OldDurationField from '@/components/forms/fields/old-duration.vue';
+import DurationField from '@/components/forms/fields/duration.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    OldDurationField,
+    DurationField,
   },
   model: {
     prop: 'value',

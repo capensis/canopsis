@@ -1,0 +1,189 @@
+swagger: '2.0'
+info: {title: bottle-swagger, version: 1.0.0}
+produces: [application/json]
+consumes: [application/json]
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
+
+definitions:
+  Rule:
+    properties:
+      _id: {type: string}
+      name: {type: string}
+      author: {type: string}
+      description: {type: string}
+      type:
+        type: string
+        enum:
+          - last_event
+          - last_update
+      duration: {type: string}
+      alarm_patterns: 
+        type: array
+        items: 
+          type: object
+        x-nullable: true 
+      entity_patterns: 
+        type: array
+        items: 
+          type: object
+        x-nullable: true 
+      operation: 
+        $ref: "#/definitions/Operation"
+    required:
+      - type
+      - duration
+      - operation
+    type: object
+  Parameters:
+    properties:
+      output: {type: string}
+      author: {type: string}
+      role: {type: string}
+    type: object
+  AssocTicketParameters:
+    allOf:
+      - $ref: "#/definitions/Parameters"
+      - type: object
+        properties:
+          output: {type: string}
+          role: {type: string}
+          ticket: {type: string}
+  SnoozeParameters:
+    allOf:
+      - $ref: "#/definitions/Parameters"
+      - type: object
+        properties:
+          message: {type: string}
+          duration: {type: integer}
+  ChangeStateParameters:
+    allOf:
+      - $ref: "#/definitions/Parameters"
+      - type: object
+        properties:
+          output: {type: string}
+          state: {type: integer}
+  PBehaviorParameters:
+    allOf:
+      - $ref: "#/definitions/Parameters"
+      - type: object
+        properties:
+          name: {type: string}
+          reason: {type: string}
+          type: {type: string}
+          rrule: {type: string}
+          tstart: {type: integer}
+          tstop: {type: integer}
+  Operation:
+    properties:
+      type:
+        type: string
+        enum:
+          - pbehavior
+          - snooze
+          - changestate
+          - declareticket
+          - assocticket
+          - ack
+          - ackremove
+          - cancel
+      parameters:
+        $ref: "#/definitions/Parameters"
+    type: object
+paths:
+  /api/v2/idle-rule:
+    get:
+      summary: Get rules list
+      responses:
+        '200':
+          description: List of idle rules
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Rule"
+
+    post:
+      summary: Create idle rule
+      parameters:
+        - in: body
+          name: rule
+          schema:
+            $ref: "#/definitions/Rule"
+      responses:
+        '200':
+          description: Rule has been created
+          schema:
+            $ref: "#/definitions/Rule"
+        '400':
+          description: Rule create error
+          schema:
+            properties:
+              description:
+                type: string
+  /api/v2/idle-rule/{rule_id}:
+    get:
+      summary: Returns a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to return
+      responses:
+        '200':
+            description: A Rule object
+            schema:
+              $ref: "#/definitions/Rule"
+        '404':
+          description: Rule not found
+          schema:
+            properties:
+              description:
+                type: string
+    put:
+      summary: Update a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to update
+      responses:
+        '200':
+          description: Rule has been updated
+          schema:
+            $ref: "#/definitions/Rule"
+        '400':
+          description: Rule update error
+          schema:
+            properties:
+              description:
+                type: string
+    delete:
+      summary: Delete a rule by ID
+      parameters:
+        - in: path
+          name: rule_id
+          required: true
+          type: string
+          description: The ID of the rule to delete
+      responses:
+        '200':
+          description: Rule has been deleted
+          schema:
+            properties:
+              acknowledged:
+                description: True for success
+                type: boolean
+              deletedCount:
+                description: 1 when document deleted
+                type: integer
+        '404':
+          description: Rule delete error
+          schema:
+            properties:
+              description:
+                type: string

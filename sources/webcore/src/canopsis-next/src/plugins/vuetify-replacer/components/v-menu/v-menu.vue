@@ -2,11 +2,8 @@
 import VMenu from 'vuetify/es5/components/VMenu';
 import { getZIndex } from 'vuetify/es5/util/helpers';
 
-import lazyWithUnmountMixin from '../../mixins/lazy-with-unmount';
-
 export default {
   extends: VMenu,
-  mixins: [lazyWithUnmountMixin],
   props: {
     ignoreClickUpperOutside: {
       type: Boolean,

@@ -1,0 +1,6 @@
+---
+# handlers file for deploy-ansible
+- name: Restart Canopsis
+  systemd:
+    name: canopsis
+    state: restarted

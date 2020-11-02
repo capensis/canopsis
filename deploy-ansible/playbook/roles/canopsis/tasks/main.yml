@@ -7,18 +7,38 @@
   tags:
     - cps_rabbitmq
 
-- import_tasks: config-engines.yml
+- import_tasks: config-common-engines.yml
   tags:
     - cps_config
 
-- import_tasks: config-additional-cat-engines.yml
+- import_tasks: config-python-engines.yml
   tags:
     - cps_config
-  when: canopsis_edition == "cat"
+  when: canopsis_engines_type == "python"
 
-- import_tasks: init-engines.yml
+- import_tasks: config-go-engines.yml
+  tags:
+    - cps_config
+  when: canopsis_engines_type == "go"
+
+- import_tasks: config-systemd-go-engines-cat.yml
+  tags:
+    - cps_config
+  when: canopsis_engines_type == "go" and canopsis_edition == "cat"
+
+- import_tasks: init-python-engines.yml
+  tags:
+    - cps_python_engines
+  when: canopsis_engines_type == "python"
+
+- import_tasks: init-go-engines.yml
   tags:
     - cps_go_engines
+  when: canopsis_engines_type == "go"
+
+- import_tasks: init-common-engines.yml
+  tags:
+    - cps_common_engines
 
 - import_tasks: init-db.yml
   become: true

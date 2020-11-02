@@ -17,12 +17,12 @@ export default {
   },
   watch: {
     query(value, oldValue) {
-      if (!this.isEditingMode && !isEqual(value, oldValue) && !isEmpty(value)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
         this.fetchList();
       }
     },
     tabQueryNonce(value, oldValue) {
-      if (!this.isEditingMode && value > oldValue) {
+      if (value > oldValue) {
         this.fetchList();
       }
     },

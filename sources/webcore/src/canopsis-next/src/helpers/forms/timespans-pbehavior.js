@@ -4,34 +4,23 @@ import { exceptionsToRequest, exdatesToRequest } from '@/helpers/forms/planning-
  * Convert pbehavior to timespan
  *
  * @param {Object} pbehavior
- * @param {Number} from
- * @param {Number} to
+ * @param {Number} viewFrom
+ * @param {Number} viewTo
  * @param {Boolean} byDate
  * @return {Object}}
  */
-export const pbehaviorToTimespanRequest = ({
+export const pbehaviorToTimespan = ({
   pbehavior,
-  from,
-  to,
+  viewFrom,
+  viewTo,
   byDate = false,
-}) => {
-  const tstartBeforeFrom = pbehavior.tstart < from;
-  const tstopAfterFrom = !pbehavior.tstop || (pbehavior.tstop > from);
-
-  const tstartBeforeTo = pbehavior.tstart < to;
-  const tstopAfterTo = pbehavior.tstop && (pbehavior.tstop > to);
-
-  const viewFrom = (tstartBeforeFrom && tstopAfterFrom) ? pbehavior.tstart : from;
-  const viewTo = (tstartBeforeTo && tstopAfterTo) ? pbehavior.tstop : to;
-
-  return {
-    rrule: pbehavior.rrule,
-    start_at: pbehavior.tstart,
-    end_at: pbehavior.tstop,
-    view_from: viewFrom,
-    view_to: viewTo,
-    exdates: exdatesToRequest(pbehavior.exdates),
-    exceptions: exceptionsToRequest(pbehavior.exceptions),
-    by_date: byDate,
-  };
-};
+}) => ({
+  rrule: pbehavior.rrule,
+  start_at: pbehavior.tstart,
+  end_at: pbehavior.tstop,
+  view_from: viewFrom,
+  view_to: viewTo,
+  exdates: exdatesToRequest(pbehavior.exdates),
+  exceptions: exceptionsToRequest(pbehavior.exceptions),
+  by_date: byDate,
+});

@@ -652,18 +652,11 @@
       "desc": "Rights on listalarm: Access to 'Comment' action"
     },
     {
-      "_id": "listalarm_correlation",
-      "loader_id": "listalarm_correlation",
-      "crecord_name": "listalarm_correlation",
+      "_id": "listalarm_executeInstruction",
+      "loader_id": "listalarm_executeInstruction",
+      "crecord_name": "listalarm_executeInstruction",
       "crecord_type": "action",
-      "desc": "Rights on listalarm: Access to 'Correlation' action"
-    },
-    {
-        "_id": "listalarm_executeInstruction",
-        "loader_id": "listalarm_executeInstruction",
-        "crecord_name": "listalarm_executeInstruction",
-        "crecord_type": "action",
-        "desc": "Rights on listalarm: Access to 'Execute instruction' action"
+      "desc": "Rights on listalarm: Access to 'Execute instruction' action"
     },
     {
         "_id": "serviceweather_moreInfos",

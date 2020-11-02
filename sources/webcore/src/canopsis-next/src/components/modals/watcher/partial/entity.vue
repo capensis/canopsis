@@ -35,7 +35,7 @@
                         span {{ $t(`common.actions.${action.eventType}`) }}
               v-tooltip(v-if="hasActivePbehavior && hasAccessToManagePbehaviors", top)
                 v-btn(small, @click="showPbehaviorsListModal", slot="activator")
-                  v-icon(small) list
+                  v-icon(small) edit
                 span {{ $t('modals.watcher.editPbehaviors') }}
             entity-template(:entity="entity", :template="template")
 </template>

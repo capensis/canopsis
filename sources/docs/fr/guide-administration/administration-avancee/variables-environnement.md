@@ -54,16 +54,6 @@ Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `
 | `CPS_MAX_DELAY` | `30` | Temps maximum d'attente, en secondes, lors de chaque tentative de connexion à un service externe |
 | `CPS_WAIT_FIRST_ATTEMPT` | `10` | Temps d'attente obligatoire, en secondes, avant la première tentative de connexion aux services externes |
 
-### Durées d'exécution maximales
-
-Les variables suivantes concernent des limites de sécurité appliquées par défaut dans Canopsis.
-
-Dans certains cas d'utilisation, il peut être pertinent d'ajuster ces valeurs à vos besoins. Il faut néanmoins faire preuve de vigilance à ce sujet.
-
-| Variable d'environnement | Valeur par défaut | Utilité |
-|:-------------------------|-------------------|---------|
-| `REGEXP2_MATCH_TIMEOUT` | `1s` | Depuis Canopsis 3.45.0. Durée (au format [`ParseDuration`](https://golang.org/pkg/time/#ParseDuration)) d'exécution maximale de l'évaluation d'une [expression régulière avancée](../../guide-utilisation/formats-et-syntaxe/format-regex.md) |
-
 ### `canopsinit`
 
 L'outil `canopsinit` dispose lui aussi de variables d'environnement permettant de définir le temps d'attente nécessaire lors des tentatives de connexion aux services externes de Canopsis.
@@ -73,11 +63,3 @@ L'outil `canopsinit` dispose lui aussi de variables d'environnement permettant d
 | `CPS_INIT_MAX_RETRY` | `10` | Nombre maximum de tentatives de connexion aux services externes |
 | `CPS_INIT_RETRY_DELAY` | `30` | Temps maximum d'attente, en secondes, lors de chaque tentative de connexion à un service externe |
 | `CPS_INIT_WAIT_FIRST_ATTEMPT` | `0` | Temps d'attente obligatoire, en secondes, avant la première tentative de connexion aux services externes |
-
-### Docker
-
-Les variables suivantes ne sont disponibles que dans un environnement Canopsis reposant sur Docker. Elles sont sans effet sur les autres méthodes d'installation.
-
-| Variable d'environnement | Valeur par défaut | Utilité |
-|:-------------------------|-------------------|---------|
-| `CPS_LOGGING_LEVEL` | `info` | Permet de surcharger le niveau de verbosité des moteurs et tasks Python. `debug` permet d'obtenir davantage d'informations |

@@ -20,7 +20,6 @@
 # ---------------------------------
 from argparse import ArgumentParser
 import os
-import pwd
 import subprocess
 import sys
 import time
@@ -51,16 +50,11 @@ if __name__ == "__main__":
     parser.add_argument(CANOPSIS_EDITION_ARG, required=False,
                         default="core", dest='canopsis_edition', choices=['cat', 'core'])
     parser.add_argument(CANOPSIS_STACK_ARG, required=False,
-                        default="go", dest='canopsis_stack', choices=['go'])
+                        default="python", dest='canopsis_stack', choices=['go', 'python'])
     args = parser.parse_args()
 
     if args.reinit is True:
         COMMANDS[1].append(AUTH_REINIT)
-
-    current_user = pwd.getpwuid(os.getuid()).pw_name
-    if current_user != 'canopsis':
-        print("Error: canopsinit is only meant to be run through \"canopsis\" user")
-        exit(1)
 
     max_retry = int(os.getenv(ENV_MAX_RETRY, DFT_MAX_RETRY))
     retry_delay = int(os.getenv(ENV_RETRY_DELAY, DFT_RETRY_DELAY))

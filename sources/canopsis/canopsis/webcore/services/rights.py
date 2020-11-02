@@ -66,7 +66,7 @@ def save_profile(ws, profile):
     return profile
 
 
-def save_role(ws, role, add_non_existing_action=False):
+def save_role(ws, role):
     role_payload = role
     rid = role['_id']
 
@@ -99,14 +99,13 @@ def save_role(ws, role, add_non_existing_action=False):
         rights.update_group(rid, 'role', rgroup, role)
 
     if rrights:
-        rights.update_rights(rid, 'role', rrights, role, add_non_existing_action)
+        rights.update_rights(rid, 'role', rrights, role)
 
     return role_payload
 
 
 def save_user(ws, record):
     uid = record.pop('_id')
-    oid = record.pop('id', None)
     urole = record.pop('role')
     ucontact = record.pop('contact', None)
     urights = record.pop('rights', None)
@@ -118,22 +117,14 @@ def save_user(ws, record):
 
     if ucontact is None:
         ucontact = {
-            'name': u'{0} {1}'.format(
+            'name': '{0} {1}'.format(
                 record.get('firstname', ''),
                 record.get('lastname', ''),
             ),
-            'email': u'{}'.format(record.get('mail', ''))
+            'email': record.get('mail', '')
         }
 
-    _id = oid or uid
-    if (_id != uid and oid is not None) or oid is None:
-        user = rights.get_user(uid)
-        if user and oid is not None:
-            raise ws.Error('Exist user')
-        if oid is not None:
-            rights.delete('user', oid)
-
-    user = rights.get_user(_id)
+    user = rights.get_user(uid)
 
     if not user:
         user = rights.create_user(
@@ -191,17 +182,11 @@ def exports(ws):
 
     @route(ws.application.post, name='account/role', payload=['role'])
     def create_role(role):
-        add_non_existing_action = True
-        if request.forms:
-            add_non_existing_action = request.forms.get("add_non_existing_action", True)
-        return save_role(ws, role, add_non_existing_action)
+        return save_role(ws, role)
 
     @route(ws.application.put, name='account/role', payload=['role'])
     def update_role(_id, role):
-        add_non_existing_action = True
-        if request.forms:
-            add_non_existing_action = request.forms.get("add_non_existing_action", True)
-        return save_role(ws, role, add_non_existing_action)
+        return save_role(ws, role)
 
     @ws.application.post('/account/user')
     def create_user():

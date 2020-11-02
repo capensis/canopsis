@@ -4,22 +4,22 @@
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2
-          v-tabs(v-model="activeTab", slider-color="primary", fixed-tabs)
+          v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
             template(v-if="hasReadAnyRemediationInstructionAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('remediation.tabs.instructions') }}
-              v-tab-item(:value="$constants.REMEDIATION_TABS.instructions", lazy)
+              v-tab-item(:value="$constants.REMEDIATION_TABS.instructions")
                 v-card-text
                   remediation-instructions
             template(v-if="hasReadAnyRemediationConfigurationAccess")
               v-tab(
                 :href="`#${$constants.REMEDIATION_TABS.configurations}`"
               ) {{ $t('remediation.tabs.configurations') }}
-              v-tab-item(:value="$constants.REMEDIATION_TABS.configurations", lazy)
+              v-tab-item(:value="$constants.REMEDIATION_TABS.configurations")
                 v-card-text
                   remediation-configurations
             template(v-if="hasReadAnyRemediationJobAccess")
               v-tab(:href="`#${$constants.REMEDIATION_TABS.jobs}`") {{ $t('remediation.tabs.jobs') }}
-              v-tab-item(:value="$constants.REMEDIATION_TABS.jobs", lazy)
+              v-tab-item(:value="$constants.REMEDIATION_TABS.jobs")
                 v-card-text
                   remediation-jobs
     fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")

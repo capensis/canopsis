@@ -57,21 +57,17 @@ class IdleRule(object):
     OPERATION = 'operation'
     ALARM_PATTERNS = 'alarm_patterns'
     ENTITY_PATTERNS = 'entity_patterns'
-    DISABLE_DURING_PERIODS = 'disable_during_periods'
 
     REQUIRED_FIELDS = [
         TYPE, DURATION, OPERATION
     ]
     VALID_FIELDS = frozenset([
         ID, NAME, AUTHOR, CREATION_DATE, LAST_MODIFIED_DATE, DESCRIPTION,
-        TYPE, DURATION, OPERATION, ALARM_PATTERNS, ENTITY_PATTERNS, DISABLE_DURING_PERIODS
+        TYPE, DURATION, OPERATION, ALARM_PATTERNS, ENTITY_PATTERNS
     ])
 
     def __init__(self, id_, name, rule_type, duration, operation, author, creation_date, last_modified_date,
-                 description=None, alarm_patterns=None, entity_patterns=None, disable_during_periods=None):
-        if disable_during_periods is None:
-            disable_during_periods = []
-
+                 description=None, alarm_patterns=None, entity_patterns=None):
         self.id = id_
         self.name = name
         self.author = author
@@ -83,7 +79,6 @@ class IdleRule(object):
         self.description = ""
         self.alarm_patterns = alarm_patterns
         self.entity_patterns = entity_patterns
-        self.disable_during_periods = disable_during_periods
 
         if description is not None:
             self.description = description
@@ -138,8 +133,7 @@ class IdleRule(object):
             last_modified_date=date,
             description=idle_rule.get(cls.DESCRIPTION),
             alarm_patterns=idle_rule.get(cls.ALARM_PATTERNS),
-            entity_patterns=idle_rule.get(cls.ENTITY_PATTERNS),
-            disable_during_periods=idle_rule.get(cls.DISABLE_DURING_PERIODS))
+            entity_patterns=idle_rule.get(cls.ENTITY_PATTERNS))
 
     def _check_valid(self):
         """Check that the IdleRule is valid.
@@ -203,15 +197,6 @@ class IdleRule(object):
                         "{} should only contain dictionaries, not {}".format(
                             IdleRule.ENTITY_PATTERNS, pattern))
 
-        if self.disable_during_periods is not None:
-            if not isinstance(self.disable_during_periods, list):
-                raise ValueError("{} must be a list, got {}".format(
-                    IdleRule.DISABLE_DURING_PERIODS, type(self.disable_during_periods)))
-            for period in self.disable_during_periods:
-                if not isinstance(period, basestring):
-                    raise ValueError("{} should only contain strings, not {}".format(
-                        IdleRule.DISABLE_DURING_PERIODS, type(period)))
-
     def as_dict(self):
         """Return the IdleRule as a dictionary that can be stored in
         MongoDB.
@@ -230,6 +215,5 @@ class IdleRule(object):
             IdleRule.DESCRIPTION: self.description,
             IdleRule.ALARM_PATTERNS: self.alarm_patterns,
             IdleRule.ENTITY_PATTERNS: self.entity_patterns,
-            IdleRule.DISABLE_DURING_PERIODS: self.disable_during_periods,
         }
 

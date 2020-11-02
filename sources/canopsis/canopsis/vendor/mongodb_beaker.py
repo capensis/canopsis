@@ -199,7 +199,7 @@ except ImportError:
 
 try:
     from canopsis.common.mongo_store import MongoStore
-    from canopsis.common.collection import MongoCollection, CollectionError
+    from canopsis.common.collection import MongoCollection
     import bson
     import bson.errors
 except ImportError:
@@ -391,14 +391,7 @@ class MongoDBNamespaceManager(NamespaceManager):
                 doc['$set']['valid_until'] = expiretime
 
         log.debug("Upserting Doc '%s' to _id '%s'" % (doc, _id))
-
-        try:
-            self.mongo.update({"_id": _id}, doc, upsert=True)
-        except CollectionError as ex:
-            if ex.message.__contains__("strings in documents must be valid UTF-8"):
-                if "$set" in doc and "data.session" in doc["$set"]:
-                    doc["$set"]["data.session"] = doc["$set"]["data.session"].decode("latin1").encode('utf-8')
-                    self.mongo.update({"_id": _id}, doc, upsert=True)
+        self.mongo.update({"_id": _id}, doc, upsert=True)
 
     def __setitem__(self, key, value):
         self.set_value(key, value)

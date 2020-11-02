@@ -114,7 +114,7 @@ export default {
     async submit() {
       const requests = this.eventsQueue.reduce((acc, event) => {
         if (event.type === EVENT_ENTITY_TYPES.pause) {
-          const pbehavior = pbehaviorToRequest(formToPbehavior(event.data));
+          const pbehavior = pbehaviorToRequest(formToPbehavior(event.data, this.$system.timezone));
 
           acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
@@ -123,9 +123,8 @@ export default {
               accSecond.push(this.updatePbehavior({
                 id: pbehavior._id,
                 data: pbehaviorToRequest({
-                  ...formToPbehavior(pbehavior),
-
-                  tstop: moment().unix(),
+                  ...formToPbehavior(pbehavior, this.$system.timezone),
+                  tstop: moment().tz(this.$system.timezone, true).unix(),
                 }),
               }));
             }

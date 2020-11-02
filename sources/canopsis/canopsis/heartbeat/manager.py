@@ -21,9 +21,6 @@
 from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
-from canopsis.models.heartbeat import HeartBeat
-import time
-import re
 
 
 class HeartbeatError(Exception):
@@ -86,13 +83,10 @@ class HeartbeatManager(object):
         """
         if self.get(heartbeat.id):
             raise HeartbeatPatternExistsError()
-        now = int(time.time())
-        heartbeat = heartbeat.to_dict()
-        heartbeat[HeartBeat.CREATED_KEY] = now
-        heartbeat[HeartBeat.UPDATED_KEY] = now
-        return self.__collection.insert(heartbeat)
 
-    def get(self, heartbeat_id=None, page=None, limit=None, search=None, sort=None, sort_by=None):
+        return self.__collection.insert(heartbeat.to_dict())
+
+    def get(self, heartbeat_id=None):
         """
         Get Heartbeat by ID or a list of Heartbeats
         when calling with default arguments.
@@ -102,53 +96,9 @@ class HeartbeatManager(object):
                   else single Heartbeat document or None if not found.
         :raises: (`pymongo.errors.PyMongoError`, ).
         """
-
         if heartbeat_id:
             return self.__collection.find_one({"_id": heartbeat_id})
-
-        pipeline = []
-        if search is not None:
-            or_query = [
-                {"name": re.compile(str(search), re.IGNORECASE)},
-                {"description": re.compile(str(search), re.IGNORECASE)},
-                {"author": re.compile(str(search), re.IGNORECASE)}
-            ]
-            pipeline.append({"$match": {"$or": or_query}})
-        else:
-            pipeline.append({"$match": {}})
-
-        total_count_data = list(self.__collection.aggregate(
-            pipeline + [{'$count': 'total_count'}]))
-        total_count = 0
-        if len(total_count_data) == 1:
-            try:
-                total_count = total_count_data[0]["total_count"]
-            except (IndexError, KeyError):
-                self.__logger.error(
-                    "Exception while trying to reach total_count")
-                return {"meta": {"page": 0, "page_count": 0, "per_page": 0, "total_count": 0}, "data": []}
-
-        sort_by = sort_by or "created"
-        sort = sort or "desc"
-        sort = -1 if sort == "desc" else 1
-        pipeline.append({"$sort": {sort_by: sort}})
-
-        page = int(page or 1)
-        limit = int(limit or 10)
-        pipeline.append({"$skip": (page - 1) * limit})
-        pipeline.append({"$limit": limit})
-
-        data = list(self.__collection.aggregate(pipeline))
-        page_count = len(data)/limit + 1
-        return {
-            "meta": {
-                "page": page,
-                "page_count": page_count,
-                "per_page": limit,
-                "total_count": total_count
-            },
-            "data": data
-        }
+        return [x for x in self.__collection.find({})]
 
     def delete(self, heartbeat_id):
         """
@@ -159,16 +109,3 @@ class HeartbeatManager(object):
         :raises: (`~.common.collection.CollectionError`, ).
         """
         return self.__collection.remove({"_id": heartbeat_id})
-
-    def update(self, _id, heartbeat):
-        try:
-            current_heartbeat = self.__collection.find_one({"_id": _id})
-            heartbeat = heartbeat.to_dict()
-            if HeartBeat.CREATED_KEY in current_heartbeat:
-                heartbeat[HeartBeat.CREATED_KEY] = current_heartbeat[HeartBeat.CREATED_KEY]
-            heartbeat[HeartBeat.UPDATED_KEY] = int(time.time())
-            heartbeat[HeartBeat.ID_KEY] = _id
-            resp = self.__collection.update(query={'_id': _id}, document=heartbeat)
-        except Exception as e:
-            raise e
-        return self.__collection.is_successfull(resp)

@@ -5,7 +5,6 @@
         v-validate="startRules",
         :value="start",
         :fullDay="fullDay",
-        :disabled="disabled",
         :label="startLabel",
         :name="`${name}_start`",
         @input="$emit('update:start', $event)"
@@ -18,7 +17,6 @@
           v-validate="endRules",
           :value="end",
           :fullDay="fullDay",
-          :disabled="disabled",
           :label="endLabel",
           :name="`${name}_end`",
           reverse,
@@ -68,10 +66,6 @@ export default {
       default: false,
     },
     fullDay: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
       type: Boolean,
       default: false,
     },

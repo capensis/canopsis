@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-#
-# This file contains buildtime dependencies for Debian docker images.
-#
 set -e
 set -o pipefail
 set -u
@@ -16,7 +13,6 @@ apt-get -y --no-install-recommends install \
     libxslt1-dev \
     libssl-dev \
     libffi-dev \
-    libpq-dev \
     libxmlsec1-dev \
     libxmlsec1-openssl \
     libldap2-dev \

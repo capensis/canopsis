@@ -5,6 +5,15 @@
 set -e
 set -o pipefail
 
+case "$1" in
+deploy-python|"")
+	cps_engines_type=python
+	;;
+deploy-go)
+	cps_engines_type=go
+	;;
+esac
+
 workdir=$(dirname $(readlink -e $0))
 cd ${workdir}
 
@@ -18,5 +27,6 @@ fi
 source ${user_home}/venv-ansible/bin/activate
 
 ansible-playbook playbook/canopsis.yml \
+    -e "canopsis_engines_type=$cps_engines_type" \
     -e "canopsis_edition=$cps_edition" \
     -i inventory.self

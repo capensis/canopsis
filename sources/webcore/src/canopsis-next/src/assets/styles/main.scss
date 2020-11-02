@@ -144,13 +144,3 @@ $mobileBreakpoint: 450px;
 .fill-min-height {
   min-height: 100vh;
 }
-
-.v-menu__activator {
-  &--disabled {
-    cursor: default !important;
-
-    & * {
-      cursor: default !important;
-    }
-  }
-}
