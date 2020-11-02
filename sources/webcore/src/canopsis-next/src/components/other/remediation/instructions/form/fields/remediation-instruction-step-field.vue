@@ -26,7 +26,7 @@
                   )
                 v-flex.pl-2(xs3)
                   v-text-field.step-time-complete-unit(
-                    :value="timeToComplete | duration('refreshFieldFormat')",
+                    :value="timeToComplete | duration(undefined, 'refreshFieldFormat')",
                     :label="$t('remediationInstructions.timeToComplete')",
                     readonly
                   )
@@ -50,7 +50,7 @@ import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
 
 import { isOmitEqual } from '@/helpers/is-omit-equal';
-import { toSeconds } from '@/helpers/duration';
+import { getUnitValueFromOtherUnit } from '@/helpers/time';
 import { generateRemediationInstructionStep } from '@/helpers/entities';
 
 import confirmableFormMixin from '@/mixins/confirmable-form';
@@ -128,9 +128,9 @@ export default {
 
     timeToComplete() {
       return this.step.operations.reduce((acc, operation) => {
-        const { time_to_complete: { value, unit } } = operation;
+        const { time_to_complete: { interval, unit } } = operation;
 
-        return acc + toSeconds(value, unit);
+        return acc + getUnitValueFromOtherUnit(interval, unit);
       }, 0);
     },
   },

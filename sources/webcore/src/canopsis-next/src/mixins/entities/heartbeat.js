@@ -6,7 +6,6 @@ export default {
   computed: {
     ...mapGetters({
       heartbeatsPending: 'pending',
-      heartbeatsMeta: 'meta',
       heartbeats: 'items',
     }),
   },
@@ -15,7 +14,6 @@ export default {
       fetchHeartbeatsList: 'fetchList',
       refreshHeartbeatsList: 'fetchListWithPreviousParams',
       createHeartbeat: 'create',
-      updateHeartbeat: 'update',
       removeHeartbeat: 'remove',
     }),
   },

@@ -98,11 +98,8 @@ export default {
       this.layouts = this.getLayoutsForAllSizes(widgets);
     },
 
-    $mq: {
-      immediate: true,
-      handler(mq) {
-        this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq];
-      },
+    $mq(mq) {
+      this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq];
     },
   },
   methods: {

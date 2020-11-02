@@ -1045,21 +1045,6 @@ class AlertsReader(object):
 
         return result
 
-    def meta_parents_with_rules(self, eids):
-        # fetch a map of rule's id/name, or id instead of name for deleted rule
-        pipeline = [
-            {'$match': {'v.resolved': None, 'd': {'$in': eids}}},
-            {'$lookup': {'foreignField': '_id', 'as': 'rule',
-                         'from': 'meta_alarm_rules', 'localField': 'v.meta'}},
-            {'$project': {'rule': 1, 'd': 1, 'v': 1}},
-            {'$unwind': {'path': '$rule', 'preserveNullAndEmptyArrays': True}},
-            {'$group': {'_id': '$d', 'rules': {
-                '$addToSet': {'id': '$v.meta', 'name': {'$cond': [{'$not': ['$rule._id']}, '$v.meta',
-                                                                  '$rule.name']}}}}},
-        ]
-
-        return {r["_id"]: r["rules"] for r in self.alarm_collection.aggregate(pipeline)}
-
     @staticmethod
     def _aggregate_post_sort(alarms, sort_key, sort_dir):
         return sorted(

@@ -31,7 +31,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { toSeconds } from '@/helpers/duration';
+import { getSecondsByUnit } from '@/helpers/time';
 
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
@@ -103,7 +103,7 @@ export default {
     initTime() {
       const { interval, unit } = this.playlist.interval;
 
-      this.time = toSeconds(interval, unit);
+      this.time = getSecondsByUnit(interval, unit);
     },
 
     play() {

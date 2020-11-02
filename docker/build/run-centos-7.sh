@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-#
-# This file contains runtime dependencies for CentOS docker images.
-#
 set -e
 set -o pipefail
 set -u
@@ -45,7 +42,6 @@ yum install -y \
     net-snmp-utils \
     openldap \
     openssl \
-    postgresql-libs \
     python \
     redhat-lsb-core \
     rsync \

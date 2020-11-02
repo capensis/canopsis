@@ -34,7 +34,7 @@ export default {
   data() {
     const { item, isDuplicating } = this.modal.config;
 
-    const form = actionToForm(item, this.$system.timezone);
+    const form = actionToForm(item);
 
     // If we're duplicating an action, generate a new unique id
     if (isDuplicating) {

@@ -1,4 +1,4 @@
-# Task ackcentreon (CAT)
+# Task ackcentreon
 
 !!! attention
     Ce moteur n'est disponible que dans l'édition CAT de Canopsis.

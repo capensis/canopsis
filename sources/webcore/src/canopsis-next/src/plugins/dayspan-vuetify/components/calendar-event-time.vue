@@ -101,9 +101,8 @@ export default {
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
       height: 10px;
-      max-height: 30%;
+      bottom: 0;
     }
   }
 </style>

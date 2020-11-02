@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-#
-# This file contains runtime dependencies for Debian docker images.
-#
 set -e
 set -o pipefail
 set -u
@@ -46,7 +43,6 @@ apt-get -y --no-install-recommends install \
     libidn11 \
     libnettle6 \
     libp11-kit0 \
-    libpq5 \
     libpsl5 \
     libssl1.1 \
     libtasn1-6 \

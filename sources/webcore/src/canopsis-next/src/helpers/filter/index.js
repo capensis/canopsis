@@ -1,4 +1,4 @@
-import { isEmpty, isString } from 'lodash';
+import { get, isEmpty, isString } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
@@ -7,16 +7,16 @@ import { FILTER_DEFAULT_VALUES } from '@/constants';
  *
  * @param {Object|Array} [filterObject = {}]
  * @param {string} [condition = FILTER_DEFAULT_VALUES.condition]
- * @returns {Object|string|undefined}
+ * @returns {Object|undefined}
  */
 export function prepareMainFilterToQueryFilter(
   filterObject = {},
   condition = FILTER_DEFAULT_VALUES.condition,
 ) {
-  let result;
+  let filter;
 
   if (Array.isArray(filterObject) && filterObject.length) {
-    result = {
+    filter = {
       [condition]: filterObject.map((item) => {
         if (isString(item.filter)) {
           return JSON.parse(item.filter);
@@ -26,12 +26,10 @@ export function prepareMainFilterToQueryFilter(
       }),
     };
   } else if (!Array.isArray(filterObject)) {
-    const { filter } = filterObject;
-
-    result = isString(filter) ? JSON.parse(filter) : filter;
+    filter = get(filterObject, 'filter');
   }
 
-  return result;
+  return filter;
 }
 
 /**
@@ -61,16 +59,3 @@ export function getMainFilter(widget, userPreference) {
   return mainFilter || null;
 }
 
-/**
- * Remove spaces from filter string
- *
- * @param {string} filter
- * @return {string}
- */
-export function removeSpacesFromStringFilter(filter) {
-  if (!isString(filter)) {
-    throw new Error('Incorrect using of the function. Filter should be a string.');
-  }
-
-  return JSON.stringify(JSON.parse(filter));
-}

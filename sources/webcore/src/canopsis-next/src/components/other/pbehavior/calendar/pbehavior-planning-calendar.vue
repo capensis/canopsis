@@ -44,29 +44,26 @@
 import moment from 'moment';
 import { get, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Op } from 'dayspan';
+import { Calendar, Op, Units } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
-import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
+import { pbehaviorToTimespan } from '@/helpers/forms/timespans-pbehavior';
 import { convertDateToTimestampByTimezone } from '@/helpers/date';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
-import entitiesPbehaviorTimespansMixin from '@/mixins/entities/pbehavior/timespans';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 
+const { mapActions: pbehaviorTimespanMapActions } = createNamespacedHelpers('pbehaviorTimespan');
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
 export default {
   inject: ['$system'],
   components: { PbehaviorCreateEvent },
-  mixins: [
-    entitiesInfoMixin,
-    entitiesPbehaviorTimespansMixin,
-  ],
+  mixins: [entitiesInfoMixin],
   model: {
     prop: 'pbehaviors',
     event: 'input',
@@ -152,6 +149,10 @@ export default {
       return Object.values(this.allPbehaviorsById)
         .filter(pbehavior => !this.removedPbehaviorsById[pbehavior._id]);
     },
+
+    isCalendarTypeWeek() {
+      return [Units.MONTH, Units.YEAR].includes(this.calendar.type);
+    },
   },
   watch: {
     pbehaviorsById: {
@@ -166,6 +167,10 @@ export default {
     this.fetchDefaultTypes();
   },
   methods: {
+    ...pbehaviorTimespanMapActions({
+      fetchTimespans: 'fetchItems',
+    }),
+
     ...pbehaviorTypesMapActions({
       fetchPbehaviorTypesListWithoutStore: 'fetchListWithoutStore',
     }),
@@ -222,16 +227,26 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     fetchTimespansForPbehavior(pbehavior) {
-      const from = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
-      const to = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
+      const calendarStart = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
+      const calendarEnd = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
 
-      const timespan = pbehaviorToTimespanRequest({
+      const tstartBeforeCalendarStart = pbehavior.tstart < calendarStart;
+      const tstopAfterCalendarStart = !pbehavior.tstop || (pbehavior.tstop > calendarStart);
+
+      const tstartBeforeCalendarEnd = pbehavior.tstart < calendarEnd;
+      const tstopAfterCalendarEnd = pbehavior.tstop && (pbehavior.tstop > calendarEnd);
+
+      const viewFrom = (tstartBeforeCalendarStart && tstopAfterCalendarStart) ? pbehavior.tstart : calendarStart;
+      const viewTo = (tstartBeforeCalendarEnd && tstopAfterCalendarEnd) ? pbehavior.tstop : calendarEnd;
+
+      const timespan = pbehaviorToTimespan({
         pbehavior,
-        from,
-        to,
+        viewFrom,
+        viewTo,
+        byDate: this.isCalendarTypeWeek,
       });
 
-      return this.fetchTimespansListWithoutStore({ data: timespan });
+      return this.fetchTimespans({ data: timespan });
     },
 
     /**
@@ -252,6 +267,7 @@ export default {
           start: timespan.from,
           end: timespan.to,
           timezone: this.$system.timezone,
+          isDate: this.isCalendarTypeWeek,
         });
 
         return {

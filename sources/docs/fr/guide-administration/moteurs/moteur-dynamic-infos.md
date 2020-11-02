@@ -7,9 +7,23 @@ Le moteur `engine-dynamic-infos` permet d'ajouter des informations aux alarmes. 
 
 ## Utilisation
 
-### Options du moteur
+Le moteur doit être placé en sortie du moteur [`engine-watcher`](moteur-watcher.md).
 
-La commande `engine-dynamic-infos -help` liste toutes les options acceptées par le moteur.
+Pour cela, il est nécessaire de lancer le moteur `engine-watcher` avec l'option `-publishQueue Engine_dynamic_infos` pour qu'il publie dans la file du moteur `engine-dynamic-infos`.
+
+Si le moteur [`engine-webhook`](moteur-webhook.md) est activé, le moteur `engine-dynamic-infos` doit être lancé avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file de ce moteur. Sinon, il publie dans la file du moteur [`engine-action`](moteur-action.md).
+
+### Options de l'engine-dynamic-infos
+
+```
+  -d	debug
+  -printEventOnError
+      Print event on processing error
+  -publishQueue string
+      Publish event to this queue. (default "Engine_action")
+  -version
+      version infos
+```
 
 ## Fonctionnement
 
@@ -62,8 +76,8 @@ Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux p
 
 ### Templates
 
-!!! info
-    Disponible à partir de Canopsis 3.38.0.
+!!! Info
+    Disponible à partir de Canopsis 3.38.0
 
 Les champs `value` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de la criticité de l'alarme ou de l'entité.  
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
@@ -80,7 +94,7 @@ Un exemple concret d'utilisation du moteur `engine-dynamic-infos` pour l'afficha
 
 ### Pré remplissage des attributs
 
-!!! info
+!!! Info
     Disponible à partir de Canopsis 3.39.0.
 
 Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour n'avoir plus que la saisie des valeurs à effectuer.  

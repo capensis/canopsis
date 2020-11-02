@@ -2,18 +2,18 @@
   v-layout
     v-flex(xs8)
       v-text-field(
-        v-field.number="duration.value",
+        v-field.number="value.interval",
         v-validate="'required|min_value:1'",
         :label="$t('remediationInstructions.timeToComplete')",
         :error-messages="timeToCompleteErrors",
         :min="0",
-        :name="durationFieldName",
+        :name="intervalFieldName",
         type="number",
         box
       )
     v-flex.pl-3(xs4)
       v-select.time-complete-unit(
-        v-field="duration.unit",
+        v-field="value.unit",
         v-validate="'required'",
         :items="availableUnits",
         :name="unitFieldName",
@@ -29,11 +29,11 @@ import { AVAILABLE_TIME_UNITS } from '@/constants';
 export default {
   inject: ['$validator'],
   model: {
-    prop: 'duration',
+    prop: 'value',
     event: 'input',
   },
   props: {
-    duration: {
+    value: {
       type: Object,
       default: () => ({}),
     },
@@ -43,8 +43,8 @@ export default {
     },
   },
   computed: {
-    durationFieldName() {
-      return `${this.name}.duration`;
+    intervalFieldName() {
+      return `${this.name}.interval`;
     },
 
     unitFieldName() {
@@ -52,14 +52,14 @@ export default {
     },
 
     timeToCompleteErrors() {
-      return this.errors.collect(this.durationFieldName)
-        .map(error => error.replace(this.durationFieldName, this.$t('remediationInstructions.timeToComplete')));
+      return this.errors.collect(this.intervalFieldName)
+        .map(error => error.replace(this.intervalFieldName, this.$t('remediationInstructions.timeToComplete')));
     },
 
     availableUnits() {
       return Object.values(omit(AVAILABLE_TIME_UNITS, ['year'])).map(({ value, text }) => ({
         value,
-        text: this.$tc(text, this.duration.value),
+        text: this.$tc(text, this.value.interval),
       }));
     },
   },

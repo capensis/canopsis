@@ -5,7 +5,7 @@
         span {{ $t('modals.createSnoozeEvent.title') }}
       template(slot="text")
         v-container
-          old-duration-field(v-model="form")
+          duration-field(v-model="form")
       template(slot="actions")
         v-btn(
           data-test="createSnoozeEventCancelButton",
@@ -30,7 +30,7 @@ import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
 
-import OldDurationField from '@/components/forms/fields/old-duration.vue';
+import DurationField from '@/components/forms/fields/duration.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -42,7 +42,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { OldDurationField, ModalWrapper },
+  components: { DurationField, ModalWrapper },
   mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
   data() {
     return {

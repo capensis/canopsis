@@ -3,17 +3,11 @@ set -e
 
 help_usage()
 {
-	echo "$0 [deploy|start|status|stop|restart|reconfigure]"
+	echo "$0 [start|status|restart|stop|deploy|deploy-python|deploy-go]"
+	echo "  deploy-python: stop services then play ansible playbook (with Python engines)"
+	echo "  deploy-go: stop services then play ansible playbook (with Go engines)"
 	echo
-	echo "  deploy:      deploy a full Canopsis stack with Go engines"
-	echo "  start:       start Canopsis engines and services"
-	echo "  status:      get the status of Canopsis engines and services"
-	echo "  stop:        stop Canopsis engines and services"
-	echo "  restart:     restart Canopsis engines and services"
-	echo "  reconfigure: reload canopsis.toml changes into Canopsis"
-	echo
-	echo "NOTE: \"deploy\" can only be called once, after a fresh install"
-	echo
+	echo "  deploy: use the default stack (deploy-go since Canopsis 3.39.0)"
 	exit 1
 }
 
@@ -22,40 +16,40 @@ help_usage()
 # to be missing in some installations.
 check_go_prerequisites_or_die()
 {
-	if ! [ -f /opt/canopsis/etc/canopsis-core.toml.example ]; then
-		echo "A Go component is required, but could not be found." >&2
-		echo "Is the canopsis-engines-go package installed?" >&2
+	if ! [ -f /opt/canopsis/etc/initialisation.toml.example ]; then
+		echo "deploy-go was called, but no /opt/canopsis/etc/initialisation.toml.example file was found"
+		echo "Is the canopsis-engines-go package installed?"
 		exit 1
 	fi
 }
 
 if [ "$(id -u)" -ne 0 ]; then
-	echo "$0: must be run as root" >&2
+	echo "$0: must be run as root"
 	exit 1
 fi
 
 if command -v selinuxenabled >/dev/null 2>&1 && selinuxenabled ; then
-	echo "ERROR: Running Canopsis with SELinux is unsupported." >&2
-	echo "Please disable it, if you may." >&2
+	echo "ERROR: Running Canopsis with SELinux is unsupported."
+	echo "Please disable it, if you may."
 
 	exit 1
 fi
 
 while true ; do
 	case $1 in
-	start|status|stop|restart)
+	start|status|restart|stop)
 		/opt/canopsis/bin/canopsis-systemd "$1"
+		exit $?
+		;;
+	deploy-python)
+		/opt/canopsis/bin/canopsis-systemd stop
+		/opt/canopsis/deploy-ansible/install-self.sh deploy-python
 		exit $?
 		;;
 	deploy|deploy-go)
 		check_go_prerequisites_or_die
 		/opt/canopsis/bin/canopsis-systemd stop
-		/opt/canopsis/deploy-ansible/install-self.sh
-		exit $?
-		;;
-	reconfigure)
-		check_go_prerequisites_or_die
-		/opt/canopsis/bin/canopsis-reconfigure
+		/opt/canopsis/deploy-ansible/install-self.sh deploy-go
 		exit $?
 		;;
 	*)

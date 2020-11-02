@@ -8,7 +8,6 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
-  PBEHAVIOR_RRULE_PERIODS_RANGES,
   REMEDIATION_CONFIGURATION_TYPES,
 } from '@/constants';
 
@@ -43,7 +42,7 @@ export default {
     yes: 'Yes',
     no: 'No',
     default: 'Default',
-    confirmation: 'Are you sure?',
+    confirmation: 'Are you sure ?',
     parameters: 'Parameters',
     by: 'By',
     date: 'Date',
@@ -129,14 +128,6 @@ export default {
     clear: 'Clear',
     deleteAll: 'Delete all',
     payload: 'Payload',
-    output: 'Note',
-    created: 'Creation date',
-    updated: 'Last update date',
-    pattern: 'Pattern',
-    correlation: 'Correlation',
-    periods: 'Periods',
-    range: 'Range',
-    duration: 'Duration',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -290,22 +281,21 @@ export default {
         stateDecreased: 'State decreases',
       },
       types: {
-        [EVENT_ENTITY_TYPES.ack]: 'Ack',
-        [EVENT_ENTITY_TYPES.ackRemove]: 'Ack removed',
-        [EVENT_ENTITY_TYPES.stateinc]: 'State increased',
-        [EVENT_ENTITY_TYPES.statedec]: 'State decreased',
-        [EVENT_ENTITY_TYPES.statusinc]: 'Status increased',
-        [EVENT_ENTITY_TYPES.statusdec]: 'Status decreased',
-        [EVENT_ENTITY_TYPES.assocTicket]: 'Ticket associated',
-        [EVENT_ENTITY_TYPES.declareTicket]: 'Ticket declared',
-        [EVENT_ENTITY_TYPES.snooze]: 'Alarm snoozed',
-        [EVENT_ENTITY_TYPES.unsooze]: 'Alarm unsnoozed',
-        [EVENT_ENTITY_TYPES.changeState]: 'Change and lock severity',
-        [EVENT_ENTITY_TYPES.pbhenter]: 'Periodic behavior enabled',
-        [EVENT_ENTITY_TYPES.pbhleave]: 'Periodic behavior disabled',
-        [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
-        [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
-        [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
+        ack: 'Ack',
+        ackremove: 'Ack removed',
+        stateinc: 'State increased',
+        statedec: 'State decreased',
+        statusinc: 'Status increased',
+        statusdec: 'Status decreased',
+        assocticket: 'Ticket associated',
+        declareticket: 'Ticket declared',
+        snooze: 'Alarm snoozed',
+        unsooze: 'Alarm unsnoozed',
+        changestate: 'Change and lock severity',
+        pbhenter: 'Periodic behavior enabled',
+        pbhleave: 'Periodic behavior disabled',
+        cancel: 'Alarm cancelled',
+        comment: 'Alarm commented',
       },
     },
     tabs: {
@@ -370,11 +360,11 @@ export default {
     resolved: 'Resolved',
     filters: 'Filters',
     filterEditor: 'Filter',
-    isAckNoteRequired: 'Note field required when ack?',
+    isAckNoteRequired: 'Note field required when ack ?',
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
-    isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
-    isCorrelationEnabled: 'Is correlation enabled?',
+    isHtmlEnabledOnTimeLine: 'HTML enabled on timeline ?',
+    isCorrelationEnabled: 'Is correlation enabled ?',
     duration: 'Duration',
     tstop: 'End date',
     periodsNumber: 'Number of steps',
@@ -489,7 +479,7 @@ export default {
     },
     statsAnnotationLine: {
       title: 'Annotation line',
-      enabled: 'Is enabled?',
+      enabled: 'Is enabled ?',
       value: 'Value',
       label: 'Label',
       pickLineColor: 'Pick line color',
@@ -512,7 +502,7 @@ export default {
     templateEditor: 'Template',
     columns: {
       isHtml: 'Is it HTML?',
-      isState: 'Displayed as severity?',
+      isState: 'Displayed as severity ?',
     },
     liveReporting: {
       title: 'Live reporting',
@@ -550,9 +540,9 @@ export default {
         },
       },
       success: {
-        create: 'Entity successfully created!',
-        edit: 'Entity successfully edited!',
-        duplicate: 'Entity successfully duplicated!',
+        create: 'Entity successfully created !',
+        edit: 'Entity successfully edited !',
+        duplicate: 'Entity successfully duplicated !',
       },
     },
     createWatcher: {
@@ -562,9 +552,9 @@ export default {
       displayName: 'Name',
       outputTemplate: 'Output template',
       success: {
-        create: 'Watcher successfully created!',
-        edit: 'Watcher successfully edited!',
-        duplicate: 'Watcher successfully duplicated!',
+        create: 'Watcher successfully created !',
+        edit: 'Watcher successfully edited !',
+        duplicate: 'Watcher successfully duplicated !',
       },
     },
     addEntityInfo: {
@@ -592,9 +582,9 @@ export default {
         groupTags: 'Group tags',
       },
       success: {
-        create: 'New view created!',
-        edit: 'View successfully edited!',
-        delete: 'View successfully deleted!',
+        create: 'New view created !',
+        edit: 'View successfully edited !',
+        delete: 'View successfully deleted !',
       },
       fail: {
         create: 'View creation failed...',
@@ -614,7 +604,7 @@ export default {
     createAckEvent: {
       title: 'Ack',
       tooltips: {
-        ackResources: 'Do you want to ack linked resources?',
+        ackResources: 'Do you want to ack linked resources ?',
       },
       fields: {
         ticket: 'Ticket number',
@@ -681,7 +671,6 @@ export default {
             stop: 'End',
             fullDay: 'Whole day',
             noEnding: 'No ending',
-            startOnTrigger: 'Start on trigger',
           },
         },
         filter: {
@@ -694,7 +683,7 @@ export default {
             addExdate: 'Add an exclusion date',
           },
           fields: {
-            rRuleQuestion: 'Add a recurrence rule to the pbehavior?',
+            rRuleQuestion: 'Add a recurrence rule to the pbehavior ?',
           },
         },
         comments: {
@@ -711,7 +700,7 @@ export default {
         invalid: 'Invalid',
       },
       success: {
-        create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
+        create: 'Pbehavior successfully created ! You may need to wait 60sec to see it in interface',
       },
       cancelConfirmation: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
     },
@@ -771,7 +760,7 @@ export default {
       org: 'Org',
       noData: 'No data',
       ticketing: 'Ticketing',
-      application_crit_label: 'Severity',
+      application_crit_label: 'Criticality',
       product_line: 'Product line',
       service_period: 'Monitoring timespan',
       isInCarat: 'Cartographic repository',
@@ -902,18 +891,18 @@ export default {
     eventFilterRule: {
       create: {
         title: 'Create event filter rule',
-        success: 'Rule successfully created!',
+        success: 'Rule successfully created !',
       },
       duplicate: {
         title: 'Duplicate event filter rule',
-        success: 'Rule successfully created!',
+        success: 'Rule successfully created !',
       },
       edit: {
         title: 'Edit an event filter rule',
-        success: 'Rule successfully edited!',
+        success: 'Rule successfully edited !',
       },
       remove: {
-        success: 'Rule successfully removed!',
+        success: 'Rule successfully removed !',
       },
       priority: 'Priority',
       editPattern: 'Edit pattern',
@@ -944,18 +933,18 @@ export default {
     metaAlarmRule: {
       create: {
         title: 'Create meta alarm rule',
-        success: 'Rule successfully created!',
+        success: 'Rule successfully created !',
       },
       duplicate: {
         title: 'Duplicate meta alarm rule',
-        success: 'Rule successfully created!',
+        success: 'Rule successfully created !',
       },
       edit: {
-        title: 'Edit a meta alarm rule',
-        success: 'Rule successfully edited!',
+        title: 'Edit an meta alarm rule',
+        success: 'Rule successfully edited !',
       },
       remove: {
-        success: 'Rule successfully removed!',
+        success: 'Rule successfully removed !',
       },
       editPattern: 'Edit pattern',
       actions: 'Actions',
@@ -977,17 +966,17 @@ export default {
     createWebhook: {
       create: {
         title: 'Create webhook',
-        success: 'Webhook successfully created!',
+        success: 'Webhook successfully created !',
       },
       edit: {
         title: 'Edit webhook',
-        success: 'Webhook successfully edited!',
+        success: 'Webhook successfully edited !',
       },
       duplicate: {
         title: 'Duplicate webhook',
       },
       remove: {
-        success: 'Webhook successfully removed!',
+        success: 'Webhook successfully removed !',
       },
       fields: {
         id: 'ID',
@@ -1059,13 +1048,13 @@ export default {
     createAction: {
       create: {
         title: 'Create action',
-        success: 'Action successfully created!',
+        success: 'Action successfully created !',
       },
       edit: {
-        success: 'Action successfully edited!',
+        success: 'Action successfully edited !',
       },
       remove: {
-        success: 'Action successfully removed!',
+        success: 'Action successfully removed !',
       },
       tabs: {
         general: 'General',
@@ -1083,37 +1072,30 @@ export default {
     createHeartbeat: {
       create: {
         title: 'Create heartbeat',
-        success: 'Heartbeat successfully created!',
-      },
-      edit: {
-        title: 'Modify heartbeat',
-        success: 'Heartbeat successfully modified!',
-      },
-      duplicate: {
-        title: 'Duplicate heartbeat',
+        success: 'Heartbeat successfully created !',
       },
       remove: {
-        success: 'Heartbeat successfully removed!',
+        success: 'Heartbeat successfully removed !',
       },
       massRemove: {
-        success: 'Heartbeats successfully removed!',
+        success: 'Heartbeats successfully removed !',
       },
       patternRequired: 'Pattern is required',
     },
     createDynamicInfo: {
       create: {
         title: 'Create dynamic information',
-        success: 'Dynamic information successfully created!',
+        success: 'Dynamic information successfully created !',
       },
       edit: {
         title: 'Edit dynamic information',
-        success: 'Dynamic information successfully edited!',
+        success: 'Dynamic information successfully edited !',
       },
       duplicate: {
         title: 'Duplicate dynamic information',
       },
       remove: {
-        success: 'Dynamic information successfully removed!',
+        success: 'Dynamic information successfully removed !',
       },
       errors: {
         invalid: 'Invalid',
@@ -1135,7 +1117,7 @@ export default {
           title: 'Patterns',
           alarmPatterns: 'Alarm patterns',
           entityPatterns: 'Entity patterns',
-          validationError: 'At least one pattern must be set. Please add an alarm pattern and/or an entity pattern',
+          validationError: 'At least one pattern must be set. Please add an alarm patterns and/or an entity pattern',
         },
       },
     },
@@ -1427,13 +1409,6 @@ export default {
     errors: {
       main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
     },
-    periodsRanges: {
-      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek]: 'This week',
-      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek]: 'Next week',
-      [PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks]: 'Next 2 weeks',
-      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'This month',
-      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Next month',
-    },
     fields: {
       freq: 'Frequency',
       until: 'Until',
@@ -1487,7 +1462,7 @@ export default {
     day: 'Day',
   },
   success: {
-    default: 'Done!',
+    default: 'Done !',
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
@@ -1565,7 +1540,7 @@ export default {
     externalDatas: 'External datas',
     actionsRequired: 'Please add at least one action',
     id: 'Id',
-    idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
   },
   metaAlarmRule: {
     title: 'Meta alarm rule',
@@ -1573,17 +1548,8 @@ export default {
     patterns: 'Patterns',
     actions: 'Actions',
     id: 'Id',
-    idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
-    outputTemplateHelp: '<p>The accessible variables are:</p>' +
-      '<p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p>' +
-      '<p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p>' +
-      '<p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p>' +
-      '<p>For example:</p>' +
-      '<p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p>' +
-      '<p>A static informative message</p>' +
-      '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
+    idHelp: 'If no id is specified, an unique id will be generated automatically on rule creation',
     fields: {
-      outputTemplate: 'Output template',
       eventPatterns: 'Event patterns',
       alarmPatterns: 'Alarm patterns',
       entityPatterns: 'Entity patterns',

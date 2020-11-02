@@ -148,8 +148,7 @@ class Alarm(object):
             done=None,
             extra={},
             parents=[],
-            children=[],
-            activation_date=None
+            children=[]
     ):
         """
         :param str _id: db ID of the alarm
@@ -173,7 +172,6 @@ class Alarm(object):
         :param AlarmStep done: done step
         :param list parents: list of metaalarm parents
         :param list children: list of metaalarm children
-        :param int activation_date: alarm activation timestamp
         """
         self._id = _id
         self.identity = identity
@@ -197,7 +195,6 @@ class Alarm(object):
         self.ticket = ticket
         self.parents = parents
         self.children = children
-        self.activation_date = activation_date
 
     def to_dict(self):
         """
@@ -226,7 +223,6 @@ class Alarm(object):
             'resolved': self.resolved,
             'ack': None,
             'steps': [],
-            'activation_date': self.activation_date,
             'parents': [],
             'children': []
         }

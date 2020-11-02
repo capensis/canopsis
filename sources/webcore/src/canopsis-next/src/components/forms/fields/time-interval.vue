@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.mb-3.time-interval(align-end)
+  v-layout.mb-3(align-center)
     v-flex(xs6)
       v-text-field(
         v-field.number="interval.interval",
@@ -8,7 +8,8 @@
         :error-messages="errors.collect('interval')",
         :min="1",
         name="interval",
-        type="number"
+        type="number",
+        hide-details
       )
     v-flex(xs6)
       v-select(
@@ -17,7 +18,8 @@
         :label="unitLabel || $t('common.unit')",
         :error-messages="errors.collect('unit')",
         :items="availableUnits",
-        name="unit"
+        name="unit",
+        hide-details
       )
 </template>
 
@@ -43,17 +45,9 @@ export default {
       type: String,
       required: false,
     },
-    units: {
-      type: Array,
-      default: () => [],
-    },
   },
   computed: {
     availableUnits() {
-      if (this.units.length) {
-        return this.units;
-      }
-
       return Object.values(PERIODIC_REFRESH_UNITS).map(({ value, text }) => ({
         value,
         text: this.$tc(text, this.interval.interval),
@@ -62,9 +56,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.time-interval /deep/ .v-text-field__details {
-  min-height: 14px;
-}
-</style>

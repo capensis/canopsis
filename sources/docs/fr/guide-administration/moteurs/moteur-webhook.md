@@ -3,8 +3,6 @@
 !!! info
     Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
 
-Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
-
 Jusqu'en `3.33.0`, les webhooks étaient une fonctionnalité implémentée sous la forme d'un plugin dans le moteur `engine-axe` (en version CAT).
 
 Depuis la `3.34.0`, ils sont devenus leur propre moteur (disponible uniquement en version CAT).
@@ -15,15 +13,29 @@ Depuis la `3.39.0`, le webhook peut être activé ou désactivé avec l'attribut
 
 Depuis la `3.41.0`, les valeurs des champs `declare_ticket` peuvent être définies sous forme d'expressions régulières.
 
+Le moteur `engine-webhook` permet d'automatiser la gestion de la vie des tickets vers un service externe en fonction de l'état des évènements ou des alarmes.
+
 Les webhooks peuvent être ajoutés et modifiés via l'[API webhooks](../../guide-developpement/api/api-v2-webhooks.md).
 
 Des exemples pratiques d'utilisation des webhooks sont disponibles dans la partie [Exemples](#exemples).
 
 ## Utilisation
 
-### Options du moteur
+Le moteur doit être placé en sortie du moteur [`engine-dynamic-infos`](moteur-dynamic-infos).
 
-La commande `engine-webhook -help` liste toutes les options acceptées par le moteur.
+Pour cela, il est nécessaire de lancer le moteur `engine-dynamic-infos` avec l'option `-publishQueue Engine_webhook` pour qu'il publie dans la file du moteur `engine-webhook`.
+
+### Options de l'engine-webhook
+
+```
+-configPath string
+    Webhook engine configuration file path. (default "./webhook.conf.toml")
+-d	debug
+-publishQueue string
+    Publish event to this queue. (default "Engine_action")
+-version
+    version infos
+```
 
 ## Fonctionnement
 
@@ -39,36 +51,36 @@ Vous pouvez trouver des cas d'usage pour la [notification via un outil tiers dan
 
 Une règle est un document JSON contenant les paramètres suivants :
 
- * `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
- * `enabled` (requis) : le webhook est-il activé ou non (booléen).
- * `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
-     * `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
-     * `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
-     * `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
-     * [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
- * `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le Webhook si un comportement périodique est actif sur l'entité.
- * `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
-     * `auth` (optionnel) : les identifiants pour l'authentification HTTP
-         * `username` (optionnel) : identifiant utilisateur employé pour l'authentification HTTP
-         * `password` (optionnel) : mot de passé employé pour l'authentification HTTP
-     * `headers` (optionnel) : les en-têtes de la requête
-     * `method` (requis) : méthode HTTP
-     * `payload` (requis) : le corps de la requête qui sera envoyée. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier JSON. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
-     * `url` (requis) : l'URL du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
- * `retry` (optionnel) : politique à suivre en cas d'échec
-     * `count` (optionnel) : nombre de répétition
-     * `delay` (optionnel) : intervalle entre 2 essais
-     * `unit` (optionnel) : unité de temps de l'intervalle (notation : "s" pour seconde, "m" pour minute, "h" pour heure) - unité par défaut "s"
- * `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme. Le [trigger `declareticketwebhook`](../architecture-interne/triggers.md) est également alors déclenché.
-     * `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
-     * `regexp` est un booléen qui détermine si les valeurs des champs `ticket_id` ou tout autre champ de l'option `declare_ticket` doivent être traitées comme des expressions régulières.
-     * `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
+ - `_id` (optionnel) : l'identifiant du webhook (généré automatiquement ou choisi par l'utilisateur).
+ - `enabled` (requis) : le webhook est-il activé ou non (booléen).
+ - `hook` (requis) : les conditions dans lesquelles le webhook doit être appelé, dont :
+     - `alarm_patterns` (optionnel) : Liste de patterns permettant de filtrer les alarmes.
+     - `entity_patterns` (optionnel) : Liste de patterns permettant de filtrer les entités.
+     - `event_patterns` (optionnel) : Liste de patterns permettant de filtrer les évènements. Le format des patterns est le même que pour l'[event-filter](moteur-che-event_filter.md).
+     - [`triggers`](../architecture-interne/triggers.md) (requis) : Liste de [triggers](../architecture-interne/triggers.md). Au moins un de ces [triggers](../architecture-interne/triggers.md) doit avoir eu lieu pour que le webhook soit appelé.
+ - `disable_if_active_pbehavior` (optionnel, `false` par défaut) : `true` pour désactiver le Webhook si un comportement périodique est actif sur l'entité.
+ - `request` (requis) : les informations nécessaires pour générer la requête vers le service externe, dont :
+     - `auth` (optionnel) : les identifiants pour l'authentification HTTP
+       - `username` (optionnel) : identifiant utilisateur employé pour l'authentification HTTP
+       - `password` (optionnel) : mot de passé employé pour l'authentification HTTP
+     - `headers` (optionnel) : les en-têtes de la requête
+     - `method` (requis) : méthode HTTP
+     - `payload` (requis) : le corps de la requête qui sera envoyée. Il s'agit d'une chaîne de texte qui est parsée pour être transformée en fichier JSON. Les caractères spéciaux doivent être échappés. Le payload peut être personnalisé grâce aux [Templates](#templates).
+     - `url` (requis) : l'URL du service externe. L'URL est personnalisable grâce aux [Templates](#templates).
+ - `retry` (optionnel) : politique à suivre en cas d'échec
+     - `count` (optionnel) : nombre de répétition
+     - `delay` (optionnel) : intervalle entre 2 essais
+     - `unit` (optionnel) : unité de temps de l'intervalle (notation : "s" pour seconde, "m" pour minute, "h" pour heure)
+ - `declare_ticket` (optionnel) : les champs qui seront extraits de la réponse du service externe. Si `declare_ticket` est défini alors les données seront récupérées et un step `declareticket` est ajouté à l'alarme. Le [trigger `declareticketwebhook`](../architecture-interne/triggers.md) est également alors déclenché.
+     - `ticket_id` est le nom du champ de la réponse contenant le numéro du ticket créé dans le service externe. La réponse du service est supposée être un objet JSON.
+     - `regexp` est un booléen qui détermine si les valeurs des champs `ticket_id` ou tout autre champ de l'option `declare_ticket` doivent être traitées comme des expressions régulières.
+     - `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
 
 Lors du lancement du moteur `engine-webhook`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
 
-* `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
-* `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
-* `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
+- `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
+- `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
+- `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
@@ -132,13 +144,12 @@ Lorsque le service appelé par le webhook répond une erreur (Code erreur HTTP !
 Ces paramètres sont positionnés dans la configuration de chaque webhook.  
 Les paramètres par défaut sont précisés dans un fichier de configuration (option `-configPath` de la ligne de commande).
 
-Exemple de fichier `webhook.conf` :
-
-```ini
+````
+cat webhook.conf
 count=5
 delay=1
 unit="m"
-```
+````
 
 ### Données externes
 

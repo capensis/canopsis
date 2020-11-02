@@ -60,8 +60,7 @@ def acknowledge(manager, alarm, author, message, event):
 
         try:
             creation_date = alarm[AlarmField.creation_date.value]
-            activation_date = alarm.get(AlarmField.activation_date.value)
-            ack_time = event['timestamp'] - (creation_date if activation_date is None else activation_date)
+            ack_time = event['timestamp'] - creation_date
         except KeyError:
             manager.logger.exception(
                 "The alarm does not have a creation date.")

@@ -1,4 +1,4 @@
-# Moteur `engine-correlation` (Go, CAT)
+# Moteur `engine-correlation` (Go, Cat)
 
 !!! note
     Ce moteur est disponible à partir de Canopsis 3.40.0.
@@ -16,6 +16,18 @@ Des exemples pratiques d'utilisation de la corrélation sont disponibles dans la
 ### Options du moteur
 
 La commande `engine-correlation -help` liste toutes les options acceptées par le moteur.
+
+```
+  -consumeQueue string
+    	Consume events from this queue. (default "Engine_correlation")
+  -d	debug
+  -printEventOnError
+    	Print event on processing error
+  -publishQueue string
+    	Publish event to this queue. (default "Engine_watcher")
+  -version
+    	version infos
+```
 
 ### Multi-instanciation
 
@@ -40,11 +52,13 @@ Ces groupements d'alarmes permettent de visualiser rapidement les corrélations 
 
 ### Activation de la corrélation
 
-Le moteur est maintenant activé par défaut avec la version **3.45.0**, pour les versions antérieures vous pouvez vous reporter aux [notes de version adéquates](../../notes-de-version/3.41.0.md) pour activer le moteur.
+Le moteur est maintenant activé par défaut avec la version **3.45.0**, pour les versions antérieures vous pouvez vous reporter aux [notes de version adéquates](../../notes-de-version/3.41.0.md) pour activer le moteur
 
-Dans les bacs à alarmes, un interrupteur situé en haut du widget vous permet d'activer la corrélation.
+Passez votre bac à alarmes en mode édition (`CTRL + E`) pour accéder aux paramètres avancés et activez la corrélation.
 
-![Activer la corrélation](./img/correlation_activer.png)
+![Activation de la corrélation](img/correlation_activer.png)
+
+Sauvegardez les changements et désactivez le mode édition.
 
 ### Définition d'un groupement
 
@@ -60,7 +74,7 @@ Un groupement d'alarmes se caractérise par les informations suivantes.
 | `threshold_rate`  | float  | Le `taux de déclenchement` exprime le pourcentage d'entités impactées au delà duquel le groupement aura lieu. |
 | `value_path`  | string  | Le `chemin de valeurs` désigne l'adresse de l'attribut à partir duquel le groupement va opérer. |
 
-Dans un groupement de type `complex`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
+Dans un groupement de type `complex` ou `valuegroup`, `threshold_count` et `threshold_rate` sont mutuellement exclusifs.
 
 ### Types de groupements
 
@@ -72,7 +86,6 @@ Il permet de regrouper les alarmes qui ont un lien de parenté.
 Par exemple, si un composant a provoqué une alarme, toutes les alarmes des ressources ayant le même composant seront regroupées dans une même méta alarme.
 
 Exemple :
-
 ```json
 {
   "name": "Règle de groupement par relation",
@@ -103,7 +116,6 @@ Ce type de groupement utilise les mêmes [patterns](moteur-che-event_filter.md#p
 Par exemple si on utilise un `event_pattern` qui vaut `component = srv001`, toutes les alarmes créées à partir d'un évènement dont le composant est égal à srv001 seront regroupées dans une méta alarme.
 
 Exemple :
-
 ```json
 {
   "name": "Règle de groupement par attribut",
@@ -126,7 +138,6 @@ C'est une combinaison de groupement par attribut et de groupement par intervalle
 Par exemple, on pourra l'utiliser pour regrouper toutes les alarmes créées pour une même entité durant un intervalle de temps donné, seulement si le nombre d'alarmes créées dépasse un certain seuil.
 
 Exemple :
-
 ```json
 {
   "name": "Règle de groupement complexe",
@@ -144,16 +155,14 @@ Exemple :
   }
 }
 ```
-
 Cette règle s'applique si 3 alarmes ou plus, dont la ressource vaut `check`, ont été créées durant un intervalle de temps de 60 secondes.
 
 #### Groupement complexe avec taux de déclenchement
 
 Comme le précédent il s'agit d'un groupement par attribut et par intervalle de temps. Mais celui-ci calcule le taux d'entités en erreur par rapport à un groupe donné, défini par un [pattern](moteur-che-event_filter.md#patterns).  
-Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes. Au préalable, vous aurez pris soin de créer ces entités dans le [référentiel interne](../../guide-developpement/api/api-v2-import.md) de Canopsis et de les enrichir avec `infos.site.value = Wasquehal`.
+Par exemple, vous avez 5 serveurs situés sur le site de Wasquehal et vous souhaitez grouper les alarmes si au moins 80% de ces serveurs sont en erreur sur une période de 5 minutes. Au préalable vous aurez pris soin d'enrichir les entités concernées avec `infos.site.value = Wasquehal`.
 
 Exemple :
-
 ```json
 {
   "name": "Groupement dysfonctionnement global site Wasquehal",
@@ -173,14 +182,12 @@ Exemple :
   }
 }
 ```
-
 #### Groupement `groupe de valeurs`
 
 Ce type de règle possède les mêmes attributs que le type `complex` avec la notion de `chemin de valeur (value_path)` en plus.  
 Ce **chemin de valeur** est utilisé pour grouper les valeurs de manière unique.
 
 Exemple :
-
 ```json
 {
     "name": "Groupe de valeurs",
@@ -203,7 +210,6 @@ Exemple :
     }
 }
 ```
-
 Cette règle s'applique si 5 alarmes ou plus concernant le même chemin de valeur (**entity.infos.site.value**), ont été créées durant un intervalle de temps de 3600 secondes.
 
 ### Processus de création d'une méta alarme

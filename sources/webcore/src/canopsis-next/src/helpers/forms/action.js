@@ -4,9 +4,8 @@ import { ACTION_TYPES, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/c
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { generateAction } from '@/helpers/entities';
-import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { pbehaviorToForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { convertDurationToIntervalObject } from '@/helpers/date';
-import { durationToForm, formToDuration } from '@/helpers/duration';
 import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
 /**
@@ -18,9 +17,6 @@ import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/pa
 function actionSnoozeParametersToForm(parameters = {}) {
   const data = {};
 
-  /**
-   *  TODO: update duration field to new format
-   */
   if (parameters.duration) {
     const { unit, interval } = convertDurationToIntervalObject(parameters.duration);
 
@@ -40,29 +36,20 @@ function actionSnoozeParametersToForm(parameters = {}) {
 /**
  * If action's type is "pbehavior", get pbehavior parameters
  *
- * @param {Object} [parameters = {}]
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {Object} [parameters={}]
  * @returns {Object}
  */
-function actionPbehaviorParametersToForm(parameters = {}, timezone = moment.tz.guess()) {
-  const pbehavior = omit(pbehaviorToForm(parameters, null, timezone), ['filter']);
-
-  if (parameters.start_on_trigger) {
-    pbehavior.start_on_trigger = parameters.start_on_trigger;
-    pbehavior.duration = durationToForm(parameters.duration);
-  }
-
-  return pbehavior;
+function actionPbehaviorParametersToForm(parameters = {}) {
+  return omit(pbehaviorToForm(parameters), ['filter']);
 }
 
 /**
  * Prepare form object from action object
  *
- * @param {Object} action
- * @param {string} [timezone = moment.tz.guess()]
+ * @param {Object} [action]
  * @returns {Object}
  */
-export function actionToForm(action, timezone = moment.tz.guess()) {
+export function actionToForm(action) {
   const data = generateAction();
 
   if (!action) {
@@ -83,7 +70,7 @@ export function actionToForm(action, timezone = moment.tz.guess()) {
 
   const actionToFormPrepareMap = {
     [ACTION_TYPES.snooze]: actionSnoozeParametersToForm,
-    [ACTION_TYPES.pbehavior]: parameters => actionPbehaviorParametersToForm(parameters, timezone),
+    [ACTION_TYPES.pbehavior]: actionPbehaviorParametersToForm,
   };
   const prepareHandler = actionToFormPrepareMap[action.type];
 
@@ -104,11 +91,10 @@ export function actionToForm(action, timezone = moment.tz.guess()) {
 /**
  * Prepare snooze parameters from form
  *
- * @param {Object} [parameters = {}]
- * @param {Object} [parameters.snoozeParameters = {}]
- * @returns {Object}
+ * @param snoozeParameters
+ * @returns {{duration: number}}
  */
-export function prepareSnoozeParameters({ snoozeParameters = {} } = {}) {
+export function prepareSnoozeParameters({ snoozeParameters = {} }) {
   return ({
     ...snoozeParameters,
     duration: moment.duration(
@@ -116,25 +102,6 @@ export function prepareSnoozeParameters({ snoozeParameters = {} } = {}) {
       snoozeParameters.duration.durationType,
     ).asSeconds(),
   });
-}
-
-/**
- * Prepare snooze parameters from form
- *
- * @param {Object} [parameters = {}]
- * @param {Object} [parameters.pbehaviorParameters = {}]
- * @param {string} [timezone = timezone = moment.tz.guess()]
- * @returns {Object}
- */
-export function preparePbehaviorParameters({ pbehaviorParameters = {} } = {}, timezone = moment.tz.guess()) {
-  const pbehavior = formToPbehavior(pbehaviorParameters, timezone);
-
-  if (pbehaviorParameters.start_on_trigger) {
-    pbehavior.start_on_trigger = pbehaviorParameters.start_on_trigger;
-    pbehavior.duration = formToDuration(pbehavior.duration);
-  }
-
-  return pbehaviorToRequest(pbehavior);
 }
 
 /**
@@ -150,10 +117,12 @@ export function preparePbehaviorParameters({ pbehaviorParameters = {} } = {}, ti
  * @param [form.assocticketParameters]
  * @param [form.declareticketParameters]
  * @param [form.cancelParameters]
- * @param [timezone = moment.tz.guess()]
  * @returns {Object}
  */
-export function formToAction({ generalParameters = {}, ...form } = {}, timezone = moment.tz.guess()) {
+export function formToAction({
+  generalParameters = {},
+  ...form
+}, timezone) {
   const hasValue = v => !v;
 
   const data = unsetSeveralFieldsWithConditions(generalParameters, {
@@ -175,7 +144,7 @@ export function formToAction({ generalParameters = {}, ...form } = {}, timezone 
 
   const formToActionPrepareMap = {
     [ACTION_TYPES.snooze]: prepareSnoozeParameters,
-    [ACTION_TYPES.pbehavior]: parameters => preparePbehaviorParameters(parameters, timezone),
+    [ACTION_TYPES.pbehavior]: ({ pbehaviorParameters = {} }) => pbehaviorToRequest(pbehaviorParameters, timezone),
   };
 
   const prepareField = formToActionPrepareMap[generalParameters.type];

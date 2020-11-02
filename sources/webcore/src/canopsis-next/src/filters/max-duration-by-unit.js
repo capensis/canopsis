@@ -1,13 +1,13 @@
 import { AVAILABLE_SORTED_TIME_UNITS, TIME_UNITS } from '@/constants';
 
-import { getMaxAvailableValueFromUnit } from '@/helpers/duration';
+import { getMaxAvailableIntervalFromUnit } from '@/helpers/time';
 
 /**
  * Filter for getting max available interval value from unit
  *
- * @param {number|string} [value = 0]
- * @param {string} [fromUnit = TIME_UNITS.second]
- * @param {string[]} [availableUnits = AVAILABLE_SORTED_TIME_UNITS]
+ * @param {number|string} [value]
+ * @param {string} [fromUnit]
+ * @param {string[]} [availableUnits]
  * @return {string}
  */
 export default function (
@@ -15,7 +15,7 @@ export default function (
   fromUnit = TIME_UNITS.second,
   availableUnits = AVAILABLE_SORTED_TIME_UNITS,
 ) {
-  const { unit, interval } = getMaxAvailableValueFromUnit(value, fromUnit, availableUnits);
+  const { unit, interval } = getMaxAvailableIntervalFromUnit(value, fromUnit, availableUnits);
 
   return `${interval}${unit}`;
 }

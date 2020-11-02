@@ -7,7 +7,6 @@
     :items="pbehaviorTypes",
     :error-messages="errorMessages",
     :name="name",
-    :disabled="disabled",
     item-text="name",
     item-value="_id",
     return-object
@@ -32,10 +31,6 @@ export default {
     name: {
       type: String,
       default: 'type',
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {
