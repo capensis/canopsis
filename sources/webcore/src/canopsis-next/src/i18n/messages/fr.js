@@ -8,6 +8,7 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  PBEHAVIOR_RRULE_PERIODS_RANGES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -128,6 +129,8 @@ export default {
     pattern: 'Pattern',
     correlation: 'Corrélation',
     periods: 'Périodes',
+    range: 'Gamme',
+    duration: 'Durée',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -670,6 +673,7 @@ export default {
             stop: 'Fin',
             fullDay: 'Toute la journée',
             noEnding: 'Pas de fin',
+            startOnTrigger: 'Démarrer sur déclencheur',
           },
         },
         filter: {
@@ -1347,6 +1351,13 @@ export default {
     },
     errors: {
       main: 'La récurrence choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
+    },
+    periodsRanges: {
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek]: 'Cette semaine',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek]: 'Prochaine semaine',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks]: 'Prochaines 2 semaines',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'Ce mois',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Le mois prochain',
     },
     fields: {
       freq: 'Fréquence',

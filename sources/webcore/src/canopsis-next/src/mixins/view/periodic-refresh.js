@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { DATETIME_FORMATS } from '@/constants';
 
 import uid from '@/helpers/uid';
-import { getSecondsByUnit } from '@/helpers/time';
+import { toSeconds } from '@/helpers/duration';
 import Observer from '@/services/observer';
 
 import layoutNavigationEditingModeMixin from '../layout/navigation/editing-mode';
@@ -107,7 +107,7 @@ export default {
     },
 
     periodicRefreshDelay() {
-      return getSecondsByUnit(this.periodicRefreshValue, this.periodicRefreshUnit);
+      return toSeconds(this.periodicRefreshValue, this.periodicRefreshUnit);
     },
 
     refreshHandler() {
