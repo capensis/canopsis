@@ -1,5 +1,0 @@
-#!/bin/bash
-
-service rabbitmq-server stop
-rm -Rf $HOME/var/lib/rabbitmq/mnesia/*
-service rabbitmq-server start

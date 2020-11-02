@@ -30,6 +30,7 @@ from canopsis.common.mongo_store import MongoStore
 from canopsis.logger import Logger
 from canopsis.models.action import Action
 import durationpy
+import time
 
 
 class ActionManager(object):
@@ -67,13 +68,84 @@ class ActionManager(object):
 
         :rtype: List[Dict[str, Any]]
         """
-        return list(self.collection.find({}))
+        pipeline = [
+            {
+                "$lookup": {
+                    "from": "pbehavior_type",
+                    "localField": "parameters.type",
+                    "foreignField": "_id",
+                    "as": "parameters.type"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "pbehavior_reason",
+                    "localField": "parameters.reason",
+                    "foreignField": "_id",
+                    "as": "parameters.reason"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.reason",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.type",
+                    "preserveNullAndEmptyArrays": True
+                }
+            }
+        ]
+        return list(self.collection.aggregate(pipeline))
 
     def get_id(self, id_):
         """
         Helper to find just an object from his _id.
         """
-        return self.get(query={Action._ID: id_})
+        pipeline = [
+            {
+                "$match": {
+                    "_id": id_
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "pbehavior_type",
+                    "localField": "parameters.type",
+                    "foreignField": "_id",
+                    "as": "parameters.type"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "pbehavior_reason",
+                    "localField": "parameters.reason",
+                    "foreignField": "_id",
+                    "as": "parameters.reason"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.reason",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$parameters.type",
+                    "preserveNullAndEmptyArrays": True
+                }
+            }
+        ]
+
+        records = list(self.collection.aggregate(pipeline))
+        if not records:
+            return
+
+        action = Action(**Action.convert_keys(records[0]))
+        return action
 
     def get(self, query):
         """
@@ -109,8 +181,15 @@ class ActionManager(object):
         :rtype: bool
         """
         query = {Action._ID: id_}
-        resp = self.collection.update(query=query, document=action)
+        print action
+        if 'creation_date' not in action:
+            current_action = self.collection.find_one({'_id': id_})
+            if 'creation_date' in current_action:
+                action['creation_date'] = current_action['creation_date']
+        now = int(time.time())
+        action['last_update_date'] = now
 
+        resp = self.collection.update(query=query, document=action)
         return self.collection.is_successfull(resp)
 
     def delete_id(self, id_):

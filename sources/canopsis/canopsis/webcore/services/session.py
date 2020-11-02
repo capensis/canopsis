@@ -112,7 +112,8 @@ def create(user):
     session = request.environ.get('beaker.session')
     session['user'] = user
     session['auth_on'] = True
-    session.save()
+    if not user.get('skip_session_create', None):
+        session.save()
 
     return session
 

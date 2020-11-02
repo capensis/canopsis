@@ -1,6 +1,9 @@
-# Context-graph
+# Moteur `context-graph` (Python)
 
 Le moteur `context-graph` gère les dépendances entre les entités.
+
+!!! note
+    Ce moteur est considéré **obsolète**.
 
 ## Récupérer les entités du context-graph
 

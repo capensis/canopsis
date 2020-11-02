@@ -10,21 +10,24 @@
         :endRules="endRules",
         :name="datesName",
         :fullDay="fullDay",
+        :disabled="disabled",
         @update:start="updateField('begin', $event)",
         @update:end="updateField('end', $event)"
       )
-    v-flex.pl-2(xs5)
+    v-flex.pl-2(:class="disabled ? 'xs6' : 'xs5'")
       pbehavior-type-field(
         v-field="value.type",
-        :name="typeName"
+        :name="typeName",
+        :disabled="disabled"
       )
-    v-flex(xs1)
+    v-flex(v-if="!disabled", xs1)
       v-btn(color="error", icon, @click="$emit('delete')")
         v-icon delete
     v-flex(xs12)
       v-checkbox.mt-0(
         v-model="fullDay",
         :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
+        :disabled="disabled",
         color="primary",
         hide-details
       )
@@ -53,6 +56,10 @@ export default {
     value: {
       type: Object,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

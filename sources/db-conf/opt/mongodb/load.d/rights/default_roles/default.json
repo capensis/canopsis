@@ -250,6 +250,10 @@
             "desc": ""
         },
         "listalarm_executeInstruction": {
+          "checksum": 1,
+          "desc": ""
+        },
+        "listalarm_correlation": {
             "checksum": 1,
             "desc": ""
         },

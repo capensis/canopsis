@@ -143,6 +143,7 @@ class __TileData(object):
 
         :param dict: a watcher dict from the watcher pipeline.
         """
+        self.watcher = copy.deepcopy(watcher)
         self.entity_id = watcher[ResultKey.ID]
         self.infos = watcher[ResultKey.INFOS]
         self.sla_tex = ""
@@ -183,6 +184,12 @@ class __TileData(object):
         self.tileColor = self.__get_tile_color(watcher)
         self.tileIcon = self.__get_tile_icon(watcher)
         self.tileSecondaryIcon = self.__get_tile_secondary_icon(watcher)
+        self.watcher["tileColor"] = self.tileColor
+        self.watcher["tileSecondaryIcon"] = self.tileSecondaryIcon
+        self.watcher["tileIcon"] = self.tileIcon
+
+    def remove_tiled_watcher(self):
+        del self.watcher
 
     @classmethod
     def __is_action_required(cls, watcher):
@@ -715,7 +722,7 @@ def exports(ws):
                                    "description": str(error)}, 500)
 
         result = []
-
+        tile_enriched_watchers = []
         try:
             for watcher in pipeline_result:
 
@@ -740,7 +747,10 @@ def exports(ws):
                             len(watcher[ResultKey.PBEHAVIORS]) > 0,
                             _pbehavior_types(watcher)):
                     tileData = __TileData(watcher)
-                    result.append(vars(tileData))
+                    tiled_watcher = tileData.watcher
+                    tile_enriched_watchers.append(tiled_watcher)
+                    tileData.remove_tiled_watcher()
+                    tiled_watcher["weather_format"] = vars(tileData)
 
         except PyMongoError as error:
             ws.logger.warning('get_watcher {} {} {}'.format(pipeline, type(error).__name__, str(error)))
@@ -750,7 +760,8 @@ def exports(ws):
                                 "description": str(error)}, 500)
 
         tile_filter = wf.filter(original_filter)
-        mtl = MontyList(result).find(tile_filter)
+        mtl = MontyList(tile_enriched_watchers).find(tile_filter)
+        mtl = [m["weather_format"] for m in mtl]
         return gen_json(list(mtl))
 
     @ws.application.route("/api/v2/weather/watchers/<watcher_id:id_filter>")
