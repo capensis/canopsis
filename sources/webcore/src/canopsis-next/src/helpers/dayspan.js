@@ -119,15 +119,9 @@ export function getSpanForTimestamps({
   start,
   end,
   timezone,
-  isDate = false,
 }) {
   const startMoment = convertTimestampToMomentByTimezone(start, timezone);
   const endMoment = convertTimestampToMomentByTimezone(end, timezone);
-
-  if (isDate) {
-    endMoment.endOf('day');
-  }
-
   const startDay = new Day(startMoment);
   const endDay = new Day(endMoment);
 

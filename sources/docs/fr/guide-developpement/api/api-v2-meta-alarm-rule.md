@@ -231,7 +231,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule/8c7b1732-52
             "val": 3
           },
           "resource": {
-            "regex_match": "meta_comple:qx"
+            "regex_match": "meta_complex"
           }
         }
       }
@@ -327,7 +327,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule'
               "val": 3
             },
             "resource": {
-              "regex_match": "meta_comple:qx"
+              "regex_match": "meta_complex"
             }
           }
         }

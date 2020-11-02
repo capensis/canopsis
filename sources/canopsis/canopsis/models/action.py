@@ -23,9 +23,11 @@ class Action(object):
     PARAMETERS = 'parameters'
     DELAY = 'delay'
     PRIORITY = 'priority'
+    CREATION_DATE = 'creation_date'
+    LAST_UPDATE_DATE = 'last_update_date'
 
     def __init__(self, _id, type_, hook=None, fields=None, regex=None, parameters=None, delay="", priority=0,
-                 *args, **kwargs):
+                 creation_date=None, last_update_date=None, *args, **kwargs):
         """
         :param str _id: action id
         :param str type_: type of the action (pbehavior, ...)
@@ -48,6 +50,8 @@ class Action(object):
         self.parameters = parameters
         self.delay = delay
         self.priority = priority
+        self.creation_date = creation_date
+        self.last_update_date = last_update_date
 
         if args not in [(), None] or kwargs not in [{}, None]:
             print('Ignored values on creation: {} // {}'.format(args, kwargs))
@@ -89,6 +93,8 @@ class Action(object):
             self.PARAMETERS: self.parameters,
             self.DELAY: self.delay,
             self.PRIORITY: self.priority,
+            self.CREATION_DATE: self.creation_date,
+            self.LAST_UPDATE_DATE: self.last_update_date
         }
 
         return dictionnary

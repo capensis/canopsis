@@ -1,7 +1,0 @@
-canopsis_deps:
-  - tmux
-  - vim
-  - htop
-  - sudo
-  - curl
-  - python-urllib3
