@@ -79,8 +79,8 @@
             :max="20"
           )
           v-divider
-          field-switcher(
-            v-model="settings.widget.parameters.isCountersEnabled",
+          field-counters-selector(
+            v-model="settings.widget.parameters.counters",
             :title="$t('settings.counters')"
           )
           v-divider
@@ -108,6 +108,7 @@ import FieldSwitcher from './fields/common/switcher.vue';
 import FieldModalType from './fields/weather/modal-type.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
 import FieldNumber from './fields/common/number.vue';
+import FieldCountersSelector from './fields/common/counters-selector.vue';
 import AlarmsListModalForm from './forms/alarms-list-modal.vue';
 import MarginsForm from './forms/margins.vue';
 
@@ -129,6 +130,7 @@ export default {
     FieldModalType,
     FieldDefaultElementsPerPage,
     FieldNumber,
+    FieldCountersSelector,
     AlarmsListModalForm,
     MarginsForm,
   },

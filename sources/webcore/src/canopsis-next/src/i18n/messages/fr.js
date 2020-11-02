@@ -511,7 +511,7 @@ export default {
         counter: 'Compteur',
       },
     },
-    counters: 'Compteurs activés?',
+    counters: 'Compteurs',
   },
   modals: {
     contextInfos: {

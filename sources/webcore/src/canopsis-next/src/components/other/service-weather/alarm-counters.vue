@@ -1,14 +1,28 @@
 <template lang="pug">
   v-layout.alarm-counters(column, justify-space-around)
-    alarm-counter(:count="alarmCounters.pause", icon="pause")
-    alarm-counter(:count="alarmCounters.build", icon="build")
-    alarm-counter(:count="alarmCounters.brightness", icon="brightness_3")
-    alarm-counter(:count="alarmCounters.other", icon="more_horiz")
+    v-tooltip(
+      v-for="counter in alarmCounters.selected",
+      :key="counter.key",
+      top
+    )
+      alarm-counter(
+        :count="counter.count",
+        :icon="counter.icon",
+        slot="activator"
+      )
+      span {{ counter.name }}
+    v-tooltip(top)
+      alarm-counter(
+        :count="otherCountersValue",
+        slot="activator",
+        icon="more_horiz"
+      )
+      div(v-for="otherCounter in alarmCounters.other", :key="otherCounter.key")
+        strong {{ otherCounter.name }}
+        span : {{ otherCounter.count }}
 </template>
 
 <script>
-import { sum } from 'lodash';
-
 import AlarmCounter from './alarm-counter.vue';
 
 export default {
@@ -16,30 +30,47 @@ export default {
     AlarmCounter,
   },
   props: {
-    counters: {
-      type: Object,
+    selectedTypes: {
+      type: Array,
       required: true,
     },
-    orientation: {
-      type: String,
-      default: 'vertical',
+    counters: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {
     alarmCounters() {
-      const {
-        paused: pause = 0,
-        maintenanced: build = 0,
-        inactive: brightness = 0,
-        ...restCounters
-      } = this.counters;
+      return this.counters.reduce((acc, { count, type }) => {
+        if (this.isSelectType(type)) {
+          acc.selected.push({
+            key: type._id,
+            name: type.name,
+            icon: type.icon_name,
+            count,
+          });
+        } else {
+          acc.other.push({
+            key: type._id,
+            name: type.name,
+            count,
+          });
+        }
 
-      return {
-        pause,
-        build,
-        brightness,
-        other: sum(Object.values(restCounters)),
-      };
+        return acc;
+      }, {
+        selected: [],
+        other: [],
+      });
+    },
+
+    otherCountersValue() {
+      return this.alarmCounters.other.reduce((acc, { count }) => acc + count, 0);
+    },
+  },
+  methods: {
+    isSelectType(type) {
+      return this.selectedTypes.includes(type._id);
     },
   },
 };

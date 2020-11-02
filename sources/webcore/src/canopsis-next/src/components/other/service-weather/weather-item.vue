@@ -20,7 +20,10 @@
         v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
       v-flex(v-if="isCountersEnabled", xs2)
-        alarm-counters.fill-height(:counters="watcher.alarm_counters")
+        alarm-counters.fill-height(
+          :counters="counters",
+          :selected-types="selectedTypes"
+        )
     v-btn.see-alarms-btn(
       v-if="isBothModalType && hasAlarmsListAccess",
       flat,
@@ -134,8 +137,28 @@ export default {
       return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
     },
 
+    counters() {
+      return this.watcher.alarm_counters || [];
+    },
+
+    hasCounters() {
+      return this.counters.length;
+    },
+
+    selectedTypes() {
+      const { counters } = this.widget.parameters;
+
+      return counters ? counters.types : [];
+    },
+
+    hasSelectedTypes() {
+      return this.selectedTypes.length;
+    },
+
     isCountersEnabled() {
-      return this.widget.parameters.isCountersEnabled;
+      const { counters = {} } = this.widget.parameters;
+
+      return counters.enabled && this.hasCounters && this.hasSelectedTypes;
     },
   },
   methods: {

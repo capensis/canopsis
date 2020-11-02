@@ -43,7 +43,7 @@
       v-flex(xs12)
         pbehavior-reasons-field(v-field="form.reason")
       v-flex(xs12)
-        pbehavior-type-field(v-field="form.type")
+        pbehavior-type-field(v-field="form.type", return-object)
 </template>
 
 <script>

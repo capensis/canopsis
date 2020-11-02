@@ -1504,3 +1504,5 @@ export const PLANNING_TABS = {
   reasons: 'reasons',
   exceptions: 'exceptions',
 };
+
+export const COUNTERS_LIMIT = 3;
