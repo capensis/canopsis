@@ -73,9 +73,9 @@ export default {
       }
     },
 
-    async update({ commit }, { route, id }) {
+    async update({ commit }, { path, id }) {
       try {
-        const instruction = await request.put(`${API_ROUTES.remediation.executions}/${id}/${route}`);
+        const instruction = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
 
         commit(types.UPDATE_ITEM_COMPLETED, instruction);
       } catch (err) {
