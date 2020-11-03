@@ -514,6 +514,7 @@ export default {
         counter: 'Compteur',
       },
     },
+    counters: 'Compteurs',
   },
   modals: {
     contextInfos: {

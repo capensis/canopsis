@@ -116,6 +116,15 @@ $mobileBreakpoint: 450px;
     top: 0;
     z-index: 1;
   }
+
+  &--background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
 }
 
 .pre {
