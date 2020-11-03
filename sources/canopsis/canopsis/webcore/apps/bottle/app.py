@@ -83,8 +83,8 @@ class EnsureAuthenticated(object):
 
 class WebServer():
 
-    CONF_PATH = 'etc/webserver.conf'
-    LOG_FILE = root_path + '/var/log/webserver.log'
+    CONF_PATH = 'etc/oldapi.conf'
+    LOG_FILE = root_path + '/var/log/oldapi.log'
 
     @property
     def application(self):
@@ -273,7 +273,7 @@ def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
         webconf = Configuration.load(WebServer.CONF_PATH, Ini)
 
     if logger is None:
-        logger = Logger.get('webserver', WebServer.LOG_FILE)
+        logger = Logger.get('oldapi', WebServer.LOG_FILE)
 
     if amqp_conn is None:
         amqp_conn = get_default_amqp_connection()
