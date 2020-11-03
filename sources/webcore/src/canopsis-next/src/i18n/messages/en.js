@@ -1833,6 +1833,10 @@ export default {
       title: 'Correlation',
       description: 'Adds dynamic infos to alarm',
     },
+    [ENGINES_NAMES.heartbeat]: {
+      title: 'Heartbeat',
+      description: 'Adds dynamic infos to alarm',
+    },
   },
 
   ...featureService.get('i18n.en'),
