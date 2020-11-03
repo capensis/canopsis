@@ -25,17 +25,18 @@
                     strong {{ $t(`engines.${engine.name}.title`) }}
                   small {{ $t(`engines.${engine.name}.description`) }}
               div.v-stepper__content(:key="`${engine.name}-content`")
+    fab-buttons(@refresh="fetchList")
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import entitiesEngineRunInfoMixin from '@/mixins/entities/engine-run-info';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-
-const { mapActions } = createNamespacedHelpers('engineRuninfo');
+import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
-  components: { ProgressOverlay },
+  components: { ProgressOverlay, FabButtons },
+  mixins: [entitiesEngineRunInfoMixin],
   data() {
     return {
       pending: true,
@@ -46,10 +47,6 @@ export default {
     this.fetchList();
   },
   methods: {
-    ...mapActions({
-      fetchEnginesListWithoutStore: 'fetchListWithoutStore',
-    }),
-
     async fetchList() {
       this.pending = true;
 

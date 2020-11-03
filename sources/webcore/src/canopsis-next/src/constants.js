@@ -1528,4 +1528,5 @@ export const ENGINES_NAMES = {
   action: 'engine-action',
   watcher: 'engine-watcher',
   dynamicInfo: 'engine-dynamic-info',
+  correlation: 'engine-correlation',
 };

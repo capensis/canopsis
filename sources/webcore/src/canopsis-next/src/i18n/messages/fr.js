@@ -1828,6 +1828,10 @@ export default {
       title: 'Dynamic infos',
       description: 'Ajoute des informations dynamiques à l\'alarme',
     },
+    [ENGINES_NAMES.correlation]: {
+      title: 'Correlation',
+      description: 'Adds dynamic infos to alarm',
+    },
   },
 
   ...featureService.get('i18n.fr'),

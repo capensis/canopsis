@@ -1829,6 +1829,10 @@ export default {
       title: 'Dynamic infos',
       description: 'Adds dynamic infos to alarm',
     },
+    [ENGINES_NAMES.correlation]: {
+      title: 'Correlation',
+      description: 'Adds dynamic infos to alarm',
+    },
   },
 
   ...featureService.get('i18n.en'),

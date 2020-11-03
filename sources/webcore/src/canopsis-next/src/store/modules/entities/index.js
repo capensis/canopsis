@@ -29,7 +29,7 @@ import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
 import playlistModule from './playlist';
 import metaAlarmRuleModule from './meta-alarm-rule';
-import engineRuninfoModule from './engine-runinfo';
+import engineRunInfoModule from './engine-run-info';
 
 export default {
   alarm: alarmModule,
@@ -63,5 +63,5 @@ export default {
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,
-  engineRuninfo: engineRuninfoModule,
+  engineRunInfo: engineRunInfoModule,
 };

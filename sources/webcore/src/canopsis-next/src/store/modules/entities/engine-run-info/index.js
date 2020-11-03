@@ -5,7 +5,7 @@ export default {
   namespaced: true,
   actions: {
     fetchListWithoutStore() {
-      return request.get(API_ROUTES.engineRuninfo);
+      return request.get(API_ROUTES.engineRunInfo);
     },
   },
 };
