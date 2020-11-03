@@ -42,7 +42,7 @@ export default {
   computed: {
     alarmCounters() {
       return this.counters.reduce((acc, { count, type }) => {
-        if (this.isSelectedType(type)) {
+        if (this.selectedTypes.includes(type._id)) {
           acc.selected.push({
             key: type._id,
             name: type.name,
@@ -66,11 +66,6 @@ export default {
 
     otherCountersValue() {
       return this.alarmCounters.other.reduce((acc, { count }) => acc + count, 0);
-    },
-  },
-  methods: {
-    isSelectedType(type) {
-      return this.selectedTypes.includes(type._id);
     },
   },
 };
