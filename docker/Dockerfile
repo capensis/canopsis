@@ -89,5 +89,5 @@ COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
 
 USER ${CPS_USER}:${CPS_GROUP}
 
-EXPOSE 8082
+EXPOSE 8081
 ENTRYPOINT /entrypoint.sh

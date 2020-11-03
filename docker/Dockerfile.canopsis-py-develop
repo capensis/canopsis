@@ -73,5 +73,5 @@ ADD sources/canopsis/test ./lib/python2.7/site-packages/canopsis_test
 
 USER ${CPS_USER}:${CPS_GROUP}
 
-EXPOSE 8082
+EXPOSE 8081
 ENTRYPOINT /entrypoint.sh
