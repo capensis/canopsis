@@ -196,7 +196,7 @@ export default {
 
       const linksWithDefaultRight = [
         {
-          route: { name: 'admin-engine' },
+          route: { name: 'admin-engines' },
           text: this.$t('common.engines'),
           icon: '$vuetify.icons.alt_route',
           right: USERS_RIGHTS.technical.engine,

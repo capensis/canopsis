@@ -1518,3 +1518,14 @@ export const PBEHAVIOR_RRULE_PERIODS_RANGES = {
   thisMonth: 'thisMonth',
   nextMonth: 'nextMonth',
 };
+
+export const ENGINES_NAMES = {
+  webhook: 'engine-webhook',
+  fifo: 'engine-fifo',
+  axe: 'engine-axe',
+  che: 'engine-che',
+  pbehavior: 'engine-pbehavior',
+  action: 'engine-action',
+  watcher: 'engine-watcher',
+  dynamicInfo: 'engine-dynamic-info',
+};

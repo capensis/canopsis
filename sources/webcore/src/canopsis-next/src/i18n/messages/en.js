@@ -9,6 +9,7 @@ import {
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
+  ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1787,6 +1788,46 @@ export default {
       type: 'Type',
       reason: 'Reason',
       exceptions: 'Dates of exceptions',
+    },
+  },
+
+  engines: {
+    event: {
+      title: 'Event',
+      description: 'Comes from resource',
+    },
+
+    [ENGINES_NAMES.webhook]: {
+      title: 'Webhook',
+      description: 'Triggers the webhooks launch',
+    },
+    [ENGINES_NAMES.fifo]: {
+      title: 'FIFO',
+      description: 'Manages the queue of events and alarms',
+    },
+    [ENGINES_NAMES.axe]: {
+      title: 'AXE',
+      description: 'Creates alarms and performs actions with them',
+    },
+    [ENGINES_NAMES.che]: {
+      title: 'CHE',
+      description: 'Applies eventfilters and created entities',
+    },
+    [ENGINES_NAMES.pbehavior]: {
+      title: 'Pbehavior',
+      description: 'Checks if the alarm is under PBehvaior',
+    },
+    [ENGINES_NAMES.action]: {
+      title: 'Action',
+      description: 'Triggers the actions launch',
+    },
+    [ENGINES_NAMES.watcher]: {
+      title: 'Watcher',
+      description: 'Updates watcher counters and generates watcher-events',
+    },
+    [ENGINES_NAMES.dynamicInfo]: {
+      title: 'Dynamic infos',
+      description: 'Adds dynamic infos to alarm',
     },
   },
 

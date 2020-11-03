@@ -8,7 +8,7 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
-  PBEHAVIOR_RRULE_PERIODS_RANGES,
+  PBEHAVIOR_RRULE_PERIODS_RANGES, ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -1787,6 +1787,46 @@ export default {
       type: 'Type',
       reason: 'Raison',
       exceptions: 'Dates d\'exception',
+    },
+  },
+
+  engines: {
+    event: {
+      title: 'Event',
+      description: 'Provient de la ressource',
+    },
+
+    [ENGINES_NAMES.webhook]: {
+      title: 'Webhook',
+      description: 'Déclenche le lancement des webhooks',
+    },
+    [ENGINES_NAMES.fifo]: {
+      title: 'FIFO',
+      description: 'Gère la file d\'attente des événements et des alarmes',
+    },
+    [ENGINES_NAMES.axe]: {
+      title: 'AXE',
+      description: 'Crée des alarmes et effectue des actions avec elles',
+    },
+    [ENGINES_NAMES.che]: {
+      title: 'CHE',
+      description: 'Applique les filtres d\'événements et les entités créées',
+    },
+    [ENGINES_NAMES.pbehavior]: {
+      title: 'Pbehavior',
+      description: 'Vérifie si l\'alarme est sous PBehvaior',
+    },
+    [ENGINES_NAMES.action]: {
+      title: 'Action',
+      description: 'Déclenche le lancement des actions',
+    },
+    [ENGINES_NAMES.watcher]: {
+      title: 'Watcher',
+      description: 'Met à jour les compteurs de l\'observateur et génère watcher-events',
+    },
+    [ENGINES_NAMES.dynamicInfo]: {
+      title: 'Dynamic infos',
+      description: 'Ajoute des informations dynamiques à l\'alarme',
     },
   },
 

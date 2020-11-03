@@ -18,7 +18,7 @@ import AdminParameters from '@/views/admin/parameters.vue';
 import AdminBroadcastMessages from '@/views/admin/broadcast-messages.vue';
 import AdminPlaylists from '@/views/admin/playlists.vue';
 import AdminPlanning from '@/views/admin/planning.vue';
-import AdminEngine from '@/views/admin/engine.vue';
+import AdminEngines from '@/views/admin/engines.vue';
 import ExploitationPbehaviors from '@/views/exploitation/pbehaviors.vue';
 import ExploitationEventFilter from '@/views/exploitation/event-filter.vue';
 import ExploitationWebhooks from '@/views/exploitation/webhooks.vue';
@@ -152,9 +152,9 @@ const routes = [
     },
   },
   {
-    path: '/admin/engine',
-    name: 'admin-engine',
-    component: AdminEngine,
+    path: '/admin/engines',
+    name: 'admin-engines',
+    component: AdminEngines,
     meta: {
       requiresLogin: true,
       requiresRight: {
