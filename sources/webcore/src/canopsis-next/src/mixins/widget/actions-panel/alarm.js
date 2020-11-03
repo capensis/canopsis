@@ -11,6 +11,7 @@ import {
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -20,7 +21,11 @@ import { generateWidgetByType } from '@/helpers/entities';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [eventActionsAlarmMixin, entitiesPbehaviorMixin],
+  mixins: [
+    eventActionsAlarmMixin,
+    entitiesPbehaviorMixin,
+    entitiesRemediationInstructionExecutionMixin,
+  ],
   methods: {
     createFastAckEvent() {
       let eventData = {};
@@ -196,7 +201,25 @@ export default {
       });
     },
 
-    showExecuteInstructionModal() {},
+    async showExecuteInstructionModal({ _id: instructionId, has_execution: hasExecution }) {
+      if (hasExecution) {
+        await this.resumeRemediationInstructionExecution({ id: instructionId });
+      } else {
+        await this.createRemediationInstructionExecution({
+          data: {
+            alarm: this.item._id,
+            instruction: instructionId,
+          },
+        });
+      }
+
+      this.$modals.show({
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          executionInstruction: this.getRemediationInstructionExecution(instructionId),
+        },
+      });
+    },
 
     actionsAccessFilterHandler({ type }) {
       const right = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[type];

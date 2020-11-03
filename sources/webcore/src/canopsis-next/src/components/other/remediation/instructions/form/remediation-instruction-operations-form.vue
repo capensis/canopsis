@@ -27,9 +27,10 @@
 <script>
 import Draggable from 'vuedraggable';
 
-import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
-import { FIRST_LETTER_ALPHABET_CHAR_CODE } from '@/constants';
+
+import { generateRemediationInstructionStepOperation } from '@/helpers/entities';
+import { getCharByIndex } from '@/helpers/string';
 
 import formArrayMixin from '@/mixins/form/array';
 
@@ -105,11 +106,7 @@ export default {
   },
   methods: {
     getOperationNumber(index) {
-      return `${this.stepNumber}${this.getCharByIndex(index)}`;
-    },
-
-    getCharByIndex(index) {
-      return String.fromCharCode(FIRST_LETTER_ALPHABET_CHAR_CODE + index);
+      return `${this.stepNumber}${getCharByIndex(index)}`;
     },
 
     addOperation() {

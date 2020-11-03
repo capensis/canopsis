@@ -128,6 +128,7 @@ export const API_ROUTES = {
     instructions: '/api/v4/cat/instructions',
     jobs: '/api/v4/cat/jobs',
     configurations: '/api/v4/cat/job-configs',
+    executions: '/api/v4/cat/executions',
   },
   file: '/api/v4/cat/file',
 };

@@ -7,6 +7,7 @@ import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
 import remediationInstructionModule from './remediation-instruction';
+import remediationInstructionExecutionModule from './remediation-instruction-execution';
 import remediationConfigurationModule from './remediation-configuration';
 import remediationJobModule from './remediation-job';
 import userPreferenceModule from './user-preference';
@@ -68,4 +69,5 @@ export default {
   remediationInstruction: remediationInstructionModule,
   remediationJob: remediationJobModule,
   remediationConfiguration: remediationConfigurationModule,
+  remediationInstructionExecution: remediationInstructionExecutionModule,
 };

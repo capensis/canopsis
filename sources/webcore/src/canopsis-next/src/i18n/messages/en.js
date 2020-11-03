@@ -1920,5 +1920,12 @@ export default {
     },
   },
 
+  remediationInstructionExecute: {
+    timeToComplete: '{duration} to complete',
+    completedAt: 'Completed at {time}',
+    failedAt: 'Failed at {time}',
+    startedAt: 'Started at {time}',
+  },
+
   ...featureService.get('i18n.en'),
 };
