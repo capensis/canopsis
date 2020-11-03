@@ -38,6 +38,18 @@ Cependant, la mise à jour de ce champ n'est pas activée par défaut. Sa valeur
 
 Pour l'activer, passez le paramètre `EnableLastEventDate` du fichier de configuration à `true`.
 
+### Option `StealthyIntervale`
+
+Si une alarme change de criticité (de stable vers alerte ou inversement), une ou plusieurs fois, durant ce délai, elle sera alors considérée comme `furtive` et se verra attribuer le [statut](../../guide-utilisation/vocabulaire/index.md#statut) correspondant.
+
+### Option `FlappingFreqLimit`
+
+Cette option représente le nombre de fois qu'une alarme doit changer de criticité (de stable vers alerte ou inversement) avant de passer en statut [statut](../../guide-utilisation/vocabulaire/index.md#statut) `bagot`.
+
+### Option `FlappingIntervale`
+
+Pour obtenir le [statut](../../guide-utilisation/vocabulaire/index.md#statut) `bagot`, une alarme doit non seulement changer de criticité un certain nombre de fois mais cela doit se faire dans un intervalle de temps donné. Cette option représente la durée de cet intervalle.
+
 ### Option `CancelAutosolveDelay`
 
 Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, elle prend le statut annulée et reste pendant 1h dans le bac des alarmes en cours. Passé le délai d'une heure, elle change de statut pour passer en résolue et bascule dans le bac des alarmes résolues tout en gardant le dernier niveau de criticité connu.
@@ -62,10 +74,10 @@ Par défaut, le schéma utilisé est le suivant : "{{ rand_string 2 }}-{{ rand_s
 Vous pouvez modifier cette valeur en utilisant une fonction du tableau ci-après (Une seule fonction à ce jour)
 
 | Fonction | Description | Syntaxe
-| ------ | ------ | ---- | 
+| ------ | ------ | ---- |
 | `rand_string` | Lettre ou chiffre aléatoire | `rand_string ${longueur}`
 
-Exemples : 
+Exemples :
 
 ```ini
 [alarm]

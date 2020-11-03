@@ -107,69 +107,78 @@ Une *ressource* peut être soit :
 
 Une [alarme](#alarme) a un *statut* , indiquant la situation dans laquelle se trouve l'alarme indiquant un incident. Il y a actuellement 5 statuts possibles :
 
-*  0 - Off
-*  1 - On going
-*  2 - Stealthy
+*  0 - Fermée
+*  1 - En cours
+*  2 - Furtive
 *  3 - Bagot
-*  4 - Cancel
+*  4 - Annulée
 
-### Off
+### Fermée
 
-Une [alarme](#alarme) est considérée **Off** si elle est stable. C'est-à-dire que sa [criticité](#criticite) est stable à 0.
+Une [alarme](#alarme) est considérée **fermée** (off) si elle est stable. C'est-à-dire que sa [criticité](#criticite) est stable à 0.
 
-### On going
+### En cours
 
-Une [alarme](#alarme) est considérée **On going** si sa [criticité](#criticite) est dans un état d'alerte (supérieur à 0).
+Une [alarme](#alarme) est considérée **en cours** (ongoing) si sa [criticité](#criticite) est dans un état d'alerte (supérieur à 0).
 
-### Stealthy
+### Furtive
 
-Une [alarme](#alarme) est considérée **Stealthy** si sa [criticité](#criticite) est passée d'alerte à stable dans un délai spécifié.  
+Une [alarme](#alarme) est considérée **furtive** (stealthy) si sa [criticité](#criticite) est passée d'alerte à stable dans un délai spécifié.  
 
-Si la [criticité](#criticite) de cette [alarme](#alarme) est modifiée à nouveau dans le délai spécifié, elle est toujours considérée **Stealthy**.  
+Si la [criticité](#criticite) de cette [alarme](#alarme) est modifiée à nouveau dans le délai spécifié, elle est toujours considérée **furtive**.  
 
-Une alarme restera **Stealthy** pendant une durée spécifiée et passera à **Off** si la dernière criticité était 0, **On Going** s'il s'agissait d'une alerte ou **Bagot** s'il se qualifie en tant que tel.
+Une alarme restera **furtive** pendant une durée spécifiée et passera à **fermée** si la dernière criticité était 0, **en cours** s'il s'agissait d'une alerte ou **bagot** s'il se qualifie en tant que tel.
 
 ### Bagot
 
-Une [alarme](#alarme) est considérée [Bagot](#bagot) (ou en « flapping ») si elle est passée d'une [criticité](#criticite) d'alerte à un état stable un nombre spécifique de fois sur une période donnée.
+Une [alarme](#alarme) est considérée **bagot** (flapping) si elle est passée d'une [criticité](#criticite) d'alerte à un état stable un nombre spécifique de fois sur une période donnée.
 
-### Cancel
+### Annulée
 
-Une [alarme](#evenement) est considérée **cancel** si l'utilisateur l'a signalée comme tel à partir de l'interface utilisateur.
+Une [alarme](#alarme) est considérée **annulée** (cancel) si l'utilisateur l'a signalée comme tel à partir de l'interface utilisateur.
 
-Après une période donnée, une [alarme](#alarme) marquée comme **cancel** changera de criticité pour être considérée comme résolue.
+Après une période donnée, une [alarme](#alarme) marquée comme **annulée** changera de criticité pour être considérée comme **résolue**.
 
-### Relations entre les status d'une alarme
+### Relations entre les statuts d'une alarme
 
 ```mermaid
 sequenceDiagram
-participant Off
+participant Fermée
 participant En cours
-participant Furtif
+participant Furtive
 participant Bagot
 participant Annulée
 participant Résolue
 
-Off ->> En cours:   
-Note over Off, En cours: Envoi d'un événement <br/> de type check et criticité différente de 0
+Fermée ->> En cours:   
+Note over Fermée, En cours: Envoi d'un événement <br/> de type check <br/> et criticité différente de 0
 
-En cours ->> Furtif:   
-Note over En cours, Furtif: Changement de criticité de stable à alerte <br/> 1 ou plusieurs fois <br/> durant StealthyIntervale
+En cours ->> Furtive:   
+Note over En cours, Furtive: Changement de criticité de stable à alerte <br/> une ou plusieurs fois pendant <br/> la durée de StealthyIntervale
 
 En cours ->> Bagot:   
-Note over En cours, Bagot: Changement de state entre > 0 et 0 X fois durant Y secondes <br/> (X = FlappingFreqLimit et Y = FlappingIntervale)
+Note over En cours, Bagot: Changement de criticité de stable à alerte X fois durant Y secondes <br/> (où X est égal à la valeur de FlappingFreqLimit et Y à FlappingIntervale)
+
 En cours ->> Annulée:   
 Note over En cours, Annulée: Envoi d'un événement de type cancel ou action utilisateur dans l'interface
+
 En cours ->> Résolue:   
-Note over En cours, Résolue: envoi d'un événement de type done + délai de 15 minutes (valeur fixe)
-Furtif ->> Bagot:   
-Note over Furtif, Bagot: Si le nombre de changement de states <br/> atteint la valeur FlappingFreqLimit
-Furtif ->> Résolue:   
-Note over Furtif, Résolue: Lorsque state = 0 à la fin de StealthyIntervale
-Furtif ->> En cours:   
-Note over Furtif, En cours: Lorsque state > 0 à la fin de StealthyIntervale
+Note over En cours, Résolue: Envoi d'un événement de type done et délai de 15 minutes (valeur fixe)
+
+Furtive ->> Bagot:   
+Note over Furtive, Bagot: Le nombre de changements de criticité <br/> atteint la valeur de FlappingFreqLimit
+
+Furtive ->> Résolue:   
+Note over Furtive, Résolue: Criticité stable à la fin de de la durée de StealthyIntervale
+
+Furtive ->> En cours:   
+Note over Furtive, En cours: Criticité de niveau alerte à la fin de <br /> la durée de StealthyIntervale
+
 Bagot ->> En cours:   
-Note over Bagot, En cours: Si le délai depuis le dernier changement de state <br/> est supérieur à FlappingIntervale
+Note over Bagot, En cours: Le délai depuis le dernier changement de criticité <br/> est supérieur à FlappingIntervale
+
 Annulée ->> Résolue:   
-Note over Annulée, Résolue: Automatique après un certain délai <br /> (CancelAutosolveDelay)
+Note over Annulée, Résolue: Automatique après un délai égal à <br/> la durée de CancelAutosolveDelay
 ```
+
+Note : cliquez sur les liens suivants pour accéder aux informations relatives aux variables utilisées dans ce diagramme : [`StealthyIntervale`](../../guide-administration/moteurs/moteur-axe/#option-stealthyintervale), [`FlappingFreqLimit`](../../guide-administration/moteurs/moteur-axe/#option-flappingfreqlimit), [`FlappingIntervale`](../../guide-administration/moteurs/moteur-axe/#option-flappingintervale) et [`CancelAutosolveDelay`](../../guide-administration/moteurs/moteur-axe/#option-cancelautosolvedelay)
