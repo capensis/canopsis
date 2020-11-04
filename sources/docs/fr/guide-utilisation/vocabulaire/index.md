@@ -169,7 +169,7 @@ Furtive ->> Bagot:
 Note over Furtive, Bagot: Le nombre de changements de criticité <br/> atteint la valeur de FlappingFreqLimit
 
 Furtive ->> Résolue:   
-Note over Furtive, Résolue: Criticité stable à la fin de de la durée de StealthyIntervale
+Note over Furtive, Résolue: Criticité stable à la fin de de la durée de StealthyInterval
 
 Furtive ->> En cours:   
 Note over Furtive, En cours: Criticité de niveau alerte à la fin de <br /> la durée de StealthyIntervale
