@@ -46,7 +46,7 @@ Si une alarme change de criticité (de stable vers alerte ou inversement), une o
 
 Cette option représente le nombre de fois qu'une alarme doit changer de criticité (de stable vers alerte ou inversement) avant de passer en statut [statut](../../guide-utilisation/vocabulaire/index.md#statut) `bagot`.
 
-### Option `FlappingIntervale`
+### Option `FlappingInterval`
 
 Pour obtenir le [statut](../../guide-utilisation/vocabulaire/index.md#statut) `bagot`, une alarme doit non seulement changer de criticité un certain nombre de fois mais cela doit se faire dans un intervalle de temps donné. Cette option représente la durée de cet intervalle.
 
