@@ -146,6 +146,11 @@ class RuleManager(object):
             raise InvalidRuleError(
                 'Unexpected fields: {0}.'.format(', '.join(unexpected_fields)))
 
+        if not isinstance(rule.get(RuleField.patterns, []), list):
+            raise InvalidRuleError(
+                'The {0} field should be a list.'.format(
+                    RuleField.patterns))
+
         # Validate the description field
         if not isinstance(rule.get(RuleField.description, ""), basestring):
             raise InvalidRuleError(
