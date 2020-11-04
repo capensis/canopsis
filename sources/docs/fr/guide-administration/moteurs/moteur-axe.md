@@ -38,7 +38,7 @@ Cependant, la mise à jour de ce champ n'est pas activée par défaut. Sa valeur
 
 Pour l'activer, passez le paramètre `EnableLastEventDate` du fichier de configuration à `true`.
 
-### Option `StealthyIntervale`
+### Option `StealthyInterval`
 
 Si une alarme change de criticité (de stable vers alerte ou inversement), une ou plusieurs fois, durant ce délai, elle sera alors considérée comme `furtive` et se verra attribuer le [statut](../../guide-utilisation/vocabulaire/index.md#statut) correspondant.
 
