@@ -157,7 +157,7 @@ En cours ->> Furtive:
 Note over En cours, Furtive: Changement de criticité de stable à alerte <br/> une ou plusieurs fois pendant <br/> la durée de StealthyIntervale
 
 En cours ->> Bagot:   
-Note over En cours, Bagot: Changement de criticité de stable à alerte X fois durant Y secondes <br/> (où X est égal à la valeur de FlappingFreqLimit et Y à FlappingIntervale)
+Note over En cours, Bagot: Changement de criticité de stable à alerte X fois durant Y secondes <br/> (où X est égal à la valeur de FlappingFreqLimit et Y à FlappingInterval)
 
 En cours ->> Annulée:   
 Note over En cours, Annulée: Envoi d'un événement de type cancel ou action utilisateur dans l'interface
