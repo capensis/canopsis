@@ -181,4 +181,4 @@ Annulée ->> Résolue:
 Note over Annulée, Résolue: Automatique après un délai égal à <br/> la durée de CancelAutosolveDelay
 ```
 
-Note : cliquez sur les liens suivants pour accéder aux informations relatives aux variables utilisées dans ce diagramme : [`StealthyIntervale`](../../guide-administration/moteurs/moteur-axe/#option-stealthyintervale), [`FlappingFreqLimit`](../../guide-administration/moteurs/moteur-axe/#option-flappingfreqlimit), [`FlappingIntervale`](../../guide-administration/moteurs/moteur-axe/#option-flappingintervale) et [`CancelAutosolveDelay`](../../guide-administration/moteurs/moteur-axe/#option-cancelautosolvedelay)
+Note : cliquez sur les liens suivants pour accéder aux informations relatives aux variables utilisées dans ce diagramme : [`StealthyInterval`](../../guide-administration/moteurs/moteur-axe/#option-stealthyinterval), [`FlappingFreqLimit`](../../guide-administration/moteurs/moteur-axe/#option-flappingfreqlimit), [`FlappingInterval`](../../guide-administration/moteurs/moteur-axe/#option-flappinginterval) et [`CancelAutosolveDelay`](../../guide-administration/moteurs/moteur-axe/#option-cancelautosolvedelay)
