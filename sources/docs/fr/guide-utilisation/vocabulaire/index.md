@@ -175,7 +175,7 @@ Furtive ->> En cours:
 Note over Furtive, En cours: Criticité de niveau alerte à la fin de <br /> la durée de StealthyInterval
 
 Bagot ->> En cours:   
-Note over Bagot, En cours: Le délai depuis le dernier changement de criticité <br/> est supérieur à FlappingIntervale
+Note over Bagot, En cours: Le délai depuis le dernier changement de criticité <br/> est supérieur à FlappingInterval
 
 Annulée ->> Résolue:   
 Note over Annulée, Résolue: Automatique après un délai égal à <br/> la durée de CancelAutosolveDelay
