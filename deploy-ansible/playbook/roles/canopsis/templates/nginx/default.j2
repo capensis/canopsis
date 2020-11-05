@@ -35,39 +35,19 @@ server {
 	expires $expires_time;
 
 	location = / {
+		include /etc/nginx/cors.inc;
 		return 303 /en/static/canopsis-next/dist/index.html;
 	}
 
 	# Serve static files directly through Nginx by default
 	location /en/static/canopsis-next/dist/ {
+		include /etc/nginx/cors.inc;
 		rewrite ^/en/static/canopsis-next/dist(/.+?)$ $1 break;
 	}
 
 	# Everything else goes to canopsis-api, because it's very likely an API call
 	location / {
-		if ($request_method = 'OPTIONS') {
-			add_header 'Access-Control-Allow-Origin' "$http_origin";
-			add_header 'Access-Control-Allow-Credentials' 'true';
-			add_header 'Access-Control-Allow-Headers' 'Authorization,Cache-Control,Content-Type';
-			add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-			add_header 'Access-Control-Max-Age' '31536000';
-			add_header 'Content-Type' 'text/plain; charset=UTF-8';
-			add_header 'Content-Length' 0;
-
-			return 204;
-		}
-
-		if ($request_method = 'POST') {
-			add_header 'Access-Control-Allow-Origin' "$http_origin";
-			add_header 'Access-Control-Allow-Credentials' 'true';
-			add_header 'Access-Control-Allow-Headers' 'Authorization,Cache-Control,Content-Type';
-		}
-
-		if ($request_method = 'GET') {
-			add_header 'Access-Control-Allow-Origin' "$http_origin";
-			add_header 'Access-Control-Allow-Credentials' 'true';
-			add_header 'Access-Control-Allow-Headers' 'Authorization,Cache-Control,Content-Type';
-		}
+		include /etc/nginx/cors.inc;
 
 		proxy_pass {{ TARGET }};
 		proxy_set_header X-Forwarded-Host $host;
