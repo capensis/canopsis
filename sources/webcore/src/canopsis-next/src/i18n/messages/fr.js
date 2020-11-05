@@ -1921,5 +1921,12 @@ export default {
     },
   },
 
+  remediationInstructionExecute: {
+    timeToComplete: '{duration} pour terminer',
+    completedAt: 'Terminé à {time}',
+    failedAt: 'Échec à {time}',
+    startedAt: 'Commencé à {time}',
+  },
+
   ...featureService.get('i18n.fr'),
 };

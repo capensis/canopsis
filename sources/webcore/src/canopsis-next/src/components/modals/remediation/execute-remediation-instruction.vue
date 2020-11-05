@@ -2,7 +2,7 @@
   v-form(@submit.prevent="submit")
     modal-wrapper
       template(slot="title")
-        span {{ title }}
+        span {{ config.title }}
       template(slot="text")
         remediation-instruction-execute(:execution-instruction-id="config.executionInstructionId")
 </template>
@@ -12,9 +12,6 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
-import validationErrorsMixin from '@/mixins/form/validation-errors';
-import submittableMixin from '@/mixins/submittable';
-import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
@@ -26,24 +23,6 @@ export default {
     ModalWrapper,
     RemediationInstructionExecute,
   },
-  mixins: [
-    authMixin,
-    modalInnerMixin,
-    validationErrorsMixin(),
-    submittableMixin(),
-    confirmableModalMixin(),
-  ],
-  computed: {
-    title() {
-      return this.config.title || '';
-    },
-  },
-  methods: {
-    async submit() {
-      if (this.config.action) {
-        await this.config.action();
-      }
-    },
-  },
+  mixins: [authMixin, modalInnerMixin],
 };
 </script>

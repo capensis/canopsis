@@ -34,15 +34,21 @@ export default {
     },
 
     completedLabel() {
-      return this.$t('remediationInstructionExecute.completedAt', { time: this.convertDate(this.completedAt) });
+      return this.$t('remediationInstructionExecute.completedAt', {
+        time: this.convertDate(this.completedAt),
+      });
     },
 
     startedLabel() {
-      return this.$t('remediationInstructionExecute.startedAt', { time: this.convertDate(this.startedAt) });
+      return this.$t('remediationInstructionExecute.startedAt', {
+        time: this.convertDate(this.startedAt),
+      });
     },
 
     failedLabel() {
-      return this.$t('remediationInstructionExecute.failedAt', { time: this.convertDate(this.failedAt) });
+      return this.$t('remediationInstructionExecute.failedAt', {
+        time: this.convertDate(this.failedAt),
+      });
     },
 
     timeToCompleteLabel() {
