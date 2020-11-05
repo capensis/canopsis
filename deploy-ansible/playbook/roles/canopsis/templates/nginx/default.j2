@@ -2,13 +2,16 @@
 # Add a bit of cache to some other static elements as well, but don't
 # cache other resources.
 map $sent_http_content_type $expires_time {
-	default			-1;
-	text/css		1d;
-	application/javascript	1d;
-	font/woff2		1d;
-	image/gif		1h;
-	image/png		1h;
-	image/x-icon		1h;
+	default				-1;
+	text/css			1d;
+	application/javascript		1d;
+	application/vnd.ms-fontobject	1d;
+	font/ttf			1d;
+	font/woff			1d;
+	font/woff2			1d;
+	image/gif			1h;
+	image/png			1h;
+	image/x-icon			1h;
 }
 
 server {
