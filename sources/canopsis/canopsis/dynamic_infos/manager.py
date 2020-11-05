@@ -90,7 +90,7 @@ class DynamicInfosManager(object):
                         dict_path(path + "." + k, v)
                     else:
                         paths.append(path + "." + k)
-        dict_path("", list(self.collection.find({}, {"entity_patterns": 1, "_id": 0})))
+        dict_path("", list(self.collection.find({}, {"entity_patterns": 1, "alarm_patterns": 1, "_id": 0})))
         return map(lambda x: x[1:], paths)
 
     def count(self, search="", search_fields=None, bnf_search=None):
