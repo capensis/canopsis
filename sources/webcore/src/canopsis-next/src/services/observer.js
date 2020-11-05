@@ -8,7 +8,7 @@ class Observer {
   }
 
   unsubscribe(callback) {
-    this.subscribers.filter(subscriber => callback !== subscriber);
+    this.subscribers = this.subscribers.filter(subscriber => callback !== subscriber);
   }
 
   async notify() {

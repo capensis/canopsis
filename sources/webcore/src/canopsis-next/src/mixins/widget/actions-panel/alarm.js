@@ -216,7 +216,7 @@ export default {
       this.$modals.show({
         name: MODALS.executeRemediationInstruction,
         config: {
-          executionInstruction: this.getRemediationInstructionExecution(instructionId),
+          executionInstructionId: instructionId,
         },
       });
     },

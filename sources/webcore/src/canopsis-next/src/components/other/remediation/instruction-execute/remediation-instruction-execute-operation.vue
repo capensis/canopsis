@@ -18,12 +18,14 @@
         :failed-at="operation.failed_at",
         :started-at="operation.started_at"
       )
-      v-expand-transition(mode="out-in")
+      template(v-if="isStartedOperation")
         text-editor-blurred(
-          v-if="!isCompletedOperation",
           :value="operation.name",
           :label="$t('common.description')"
         )
+        v-layout(row, justify-end)
+          v-btn.accent(@click="$emit('previous')") {{ $t('common.previous') }}
+          v-btn.primary.mr-0(@click="$emit('next')") {{ $t('common.next') }}
 </template>
 
 <script>
@@ -44,8 +46,8 @@ export default {
     },
   },
   computed: {
-    isCompletedOperation() {
-      return !!this.operation.completed_at;
+    isStartedOperation() {
+      return !!this.operation.started_at;
     },
   },
 };

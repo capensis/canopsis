@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-text-field(
-      :value="instruction.description",
+      :value="executionInstruction.description",
       :label="$t('common.description')",
       readonly,
       box
@@ -10,14 +10,22 @@
 </template>
 
 <script>
+import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
+
 import RemediationInstructionExecuteSteps from './remediation-instruction-execute-steps.vue';
 
 export default {
   components: { RemediationInstructionExecuteSteps },
+  mixins: [entitiesRemediationInstructionExecutionMixin],
   props: {
-    instruction: {
-      type: Object,
+    executionInstructionId: {
+      type: [String, Number],
       required: true,
+    },
+  },
+  computed: {
+    executionInstruction() {
+      return this.getRemediationInstructionExecution(this.executionInstructionId);
     },
   },
 };

@@ -137,6 +137,8 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
+    previous: 'Previous',
+    next: 'Next',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',

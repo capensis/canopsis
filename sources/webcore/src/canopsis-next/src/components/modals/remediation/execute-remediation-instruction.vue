@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        remediation-instruction-execute(:instruction="config.executionInstruction")
+        remediation-instruction-execute(:execution-instruction-id="config.executionInstructionId")
 </template>
 
 <script>
