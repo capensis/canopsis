@@ -20,7 +20,8 @@
       )
       remediation-instruction-execute-operations(
         :operations="step.operations",
-        :step-number="stepNumber"
+        :step-number="stepNumber",
+        :is-first-step="isFirst"
       )
 </template>
 
@@ -38,6 +39,10 @@ export default {
     stepNumber: {
       type: [Number, String],
       required: true,
+    },
+    isFirst: {
+      type: Boolean,
+      default: false,
     },
     isLast: {
       type: Boolean,

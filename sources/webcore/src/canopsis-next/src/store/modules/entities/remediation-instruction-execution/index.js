@@ -29,18 +29,18 @@ export default {
     [types.FETCH_ITEM]: (state) => {
       state.pending = true;
     },
-    [types.FETCH_ITEM_COMPLETED]: (state, instruction) => {
-      Vue.set(state.byId, instruction._id, instruction);
-      state.allIds.push(instruction._id);
+    [types.FETCH_ITEM_COMPLETED]: (state, instructionExecution) => {
+      Vue.set(state.byId, instructionExecution._id, instructionExecution);
+      state.allIds.push(instructionExecution._id);
 
       state.pending = false;
     },
-    [types.CREATE_ITEM_COMPLETED]: (state, instruction) => {
-      Vue.set(state.byId, instruction._id, instruction);
-      state.allIds.push(instruction._id);
+    [types.CREATE_ITEM_COMPLETED]: (state, instructionExecution) => {
+      Vue.set(state.byId, instructionExecution._id, instructionExecution);
+      state.allIds.push(instructionExecution._id);
     },
-    [types.UPDATE_ITEM_COMPLETED]: (state, instruction) => {
-      Vue.set(state.byId, instruction._id, instruction);
+    [types.UPDATE_ITEM_COMPLETED]: (state, instructionExecution) => {
+      Vue.set(state.byId, instructionExecution._id, instructionExecution);
     },
     [types.FETCH_ITEM_FAILED]: (state) => {
       state.pending = false;
@@ -51,11 +51,11 @@ export default {
       try {
         commit(types.FETCH_ITEM);
 
-        const instruction = await request.get(`${API_ROUTES.remediation.executions}/${id}`, {
+        const instructionExecution = await request.get(`${API_ROUTES.remediation.executions}/${id}`, {
           params,
         });
 
-        commit(types.FETCH_ITEM_COMPLETED, instruction);
+        commit(types.FETCH_ITEM_COMPLETED, instructionExecution);
       } catch (err) {
         console.error(err);
 
@@ -64,22 +64,23 @@ export default {
     },
 
     async create({ commit }, { data } = {}) {
-      try {
-        const instruction = await request.post(API_ROUTES.remediation.executions, data);
+      const instructionExecution = await request.post(API_ROUTES.remediation.executions, data);
 
-        commit(types.CREATE_ITEM_COMPLETED, instruction);
-      } catch (err) {
-        console.error(err);
-      }
+      commit(types.CREATE_ITEM_COMPLETED, instructionExecution);
+
+      return instructionExecution;
     },
 
     async update({ commit }, { path, id }) {
       try {
-        const instruction = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
+        const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
 
-        commit(types.UPDATE_ITEM_COMPLETED, instruction);
+        commit(types.UPDATE_ITEM_COMPLETED, instructionExecution);
+
+        return instructionExecution;
       } catch (err) {
         console.error(err);
+        return err;
       }
     },
 

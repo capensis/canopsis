@@ -5,7 +5,8 @@
       :key="step.step_id",
       :step="step",
       :step-number="index + 1",
-      :is-last="index === steps.length - 1"
+      :is-last="index === steps.length - 1",
+      :is-first="index === 0"
     )
 </template>
 

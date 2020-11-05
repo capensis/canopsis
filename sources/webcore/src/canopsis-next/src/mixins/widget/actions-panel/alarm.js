@@ -6,7 +6,7 @@ import {
   BUSINESS_USER_RIGHTS_ACTIONS_MAP,
   CRUD_ACTIONS,
   WIDGET_TYPES,
-  STATS_QUICK_RANGES,
+  STATS_QUICK_RANGES, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
@@ -201,24 +201,45 @@ export default {
       });
     },
 
-    async showExecuteInstructionModal({ _id: instructionId, has_execution: hasExecution }) {
-      if (hasExecution) {
-        await this.resumeRemediationInstructionExecution({ id: instructionId });
+    async showResumeExecuteInstructionModal({ execution, title }) {
+      if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused) {
+        await this.resumeRemediationInstructionExecution({ id: execution._id });
       } else {
-        await this.createRemediationInstructionExecution({
-          data: {
-            alarm: this.item._id,
-            instruction: instructionId,
-          },
-        });
+        await this.fetchRemediationInstructionExecution({ id: execution._id });
       }
 
       this.$modals.show({
         name: MODALS.executeRemediationInstruction,
         config: {
-          executionInstructionId: instructionId,
+          title,
+          executionInstructionId: execution._id,
         },
       });
+    },
+
+    async showExecuteInstructionModal({ _id: instructionId, execution, name }) {
+      try {
+        if (!execution) {
+          const { _id: executionInstructionId } = await this.createRemediationInstructionExecution({
+            data: {
+              alarm: this.item._id,
+              instruction: instructionId,
+            },
+          });
+
+          await this.$modals.show({
+            name: MODALS.executeRemediationInstruction,
+            config: {
+              title: name,
+              executionInstructionId,
+            },
+          });
+        } else {
+          await this.showResumeExecuteInstructionModal({ execution, title: name });
+        }
+      } catch (err) {
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
     },
 
     actionsAccessFilterHandler({ type }) {

@@ -4,7 +4,9 @@
       v-for="(operation, index) in operations",
       :key="operation.operation_id",
       :operation="operation",
-      :operation-number="getOperationNumber(index + 1)"
+      :operation-number="getOperationNumber(index + 1)",
+      :is-first="index === 0",
+      :is-first-step="isFirstStep"
     )
 </template>
 
@@ -23,6 +25,10 @@ export default {
     stepNumber: {
       type: [Number, String],
       required: true,
+    },
+    isFirstStep: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

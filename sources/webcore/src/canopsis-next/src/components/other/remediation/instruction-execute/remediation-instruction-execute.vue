@@ -6,7 +6,7 @@
       readonly,
       box
     )
-    remediation-instruction-execute-steps(:steps="instruction.steps")
+    remediation-instruction-execute-steps(:steps="executionInstruction.steps")
 </template>
 
 <script>

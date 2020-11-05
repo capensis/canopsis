@@ -5,8 +5,6 @@
 </template>
 
 <script>
-import { toSeconds } from '@/helpers/duration';
-
 export default {
   props: {
     failedAt: {
@@ -48,8 +46,7 @@ export default {
     },
 
     timeToCompleteLabel() {
-      const secondsToComplete = toSeconds(this.timeToComplete.seconds, this.timeToComplete.unit);
-      const duration = this.$options.filters.duration(secondsToComplete);
+      const duration = this.$options.filters.duration(this.timeToComplete.seconds);
 
       return this.$t('remediationInstructionExecute.timeToComplete', { duration });
     },

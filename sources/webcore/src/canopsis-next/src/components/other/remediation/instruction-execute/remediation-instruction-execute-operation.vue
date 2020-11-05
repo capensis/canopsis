@@ -18,14 +18,15 @@
         :failed-at="operation.failed_at",
         :started-at="operation.started_at"
       )
-      template(v-if="isStartedOperation")
+      template(v-if="isShownDetails")
         text-editor-blurred(
           :value="operation.name",
-          :label="$t('common.description')"
+          :label="$t('common.description')",
+          hide-details
         )
-        v-layout(row, justify-end)
-          v-btn.accent(@click="$emit('previous')") {{ $t('common.previous') }}
-          v-btn.primary.mr-0(@click="$emit('next')") {{ $t('common.next') }}
+        v-layout.mb-2(row, justify-end)
+          v-btn.accent(:disabled="isFirst && isFirstStep") {{ $t('common.previous') }}
+          v-btn.primary.mr-0 {{ $t('common.next') }}
 </template>
 
 <script>
@@ -36,6 +37,14 @@ import RemediationInstructionStatus from './partials/remediation-instruction-sta
 export default {
   components: { TextEditorBlurred, RemediationInstructionStatus },
   props: {
+    isFirstStep: {
+      type: Boolean,
+      default: false,
+    },
+    isFirst: {
+      type: Boolean,
+      default: false,
+    },
     operation: {
       type: Object,
       required: true,
@@ -46,8 +55,20 @@ export default {
     },
   },
   computed: {
+    isShownDetails() {
+      return !this.isCompletedOperation && !this.isFailedOperation && this.isStartedOperation;
+    },
+
     isStartedOperation() {
       return !!this.operation.started_at;
+    },
+
+    isCompletedOperation() {
+      return !!this.operation.completed_at;
+    },
+
+    isFailedOperation() {
+      return !!this.operation.failed_at;
     },
   },
 };

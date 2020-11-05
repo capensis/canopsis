@@ -1570,3 +1570,8 @@ export const REMEDIATION_CONFIGURATION_TYPES = {
   rundeck: 'rundeck',
   awx: 'awx',
 };
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
+  running: 0,
+  paused: 1,
+};

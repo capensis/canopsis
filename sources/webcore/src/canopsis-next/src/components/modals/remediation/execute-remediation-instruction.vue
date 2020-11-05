@@ -35,7 +35,7 @@ export default {
   ],
   computed: {
     title() {
-      return this.config.executionInstruction.name;
+      return this.config.title || '';
     },
   },
   methods: {
