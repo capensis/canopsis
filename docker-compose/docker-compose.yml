@@ -65,15 +65,13 @@ services:
   nginx:
     image: canopsis/nginx:${CANOPSIS_IMAGE_TAG}
     ports:
-      - "80:80"
+      - "8080:8080"
     env_file:
       - compose.env
-    environment:
-      - TARGET=http://webserver:8082
     depends_on:
-      - "webserver"
+      - "api"
     restart: unless-stopped
-  provisionning:
+  provisioning:
     image: canopsis/canopsis-prov:${CANOPSIS_IMAGE_TAG}
     environment:
       - CPS_STACK=go
@@ -82,24 +80,22 @@ services:
     depends_on:
       - "mongodb"
     restart: "no"
-  pbehavior:
-    image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
-    env_file:
-      - compose.env
-    depends_on:
-      - "mongodb"
-    environment:
-      - ENGINE_NAME=pbehavior
-      - ENGINE_MODULE=canopsis.engines.dynamic
-    restart: unless-stopped
-    mem_limit: 200m
-    mem_reservation: 200m
   action:
     image: canopsis/engine-action:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     restart: unless-stopped
     command: /engine-action
+  api:
+    image: canopsis/canopsis-api:${CANOPSIS_IMAGE_TAG}
+    ports:
+      - "8082:8082"
+    env_file:
+      - compose.env
+    depends_on:
+      - "oldapi"
+    restart: unless-stopped
+    command: /canopsis-api
   heartbeat:
     image: canopsis/engine-heartbeat:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -117,13 +113,19 @@ services:
     env_file:
       - compose.env
     restart: unless-stopped
-    command: /engine-che -d -publishQueue Engine_axe
+    command: /engine-che
   fifo:
     image: canopsis/engine-fifo:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     restart: unless-stopped
     command: /engine-fifo
+  pbehavior:
+    image: canopsis/engine-pbehavior:${CANOPSIS_IMAGE_TAG}
+    env_file:
+      - compose.env
+    restart: unless-stopped
+    command: /engine-pbehavior
   watcher:
     image: canopsis/engine-watcher:${CANOPSIS_IMAGE_TAG}
     env_file:
@@ -167,16 +169,16 @@ services:
     restart: unless-stopped
     mem_limit: 200m
     mem_reservation: 200m
-  webserver:
+  oldapi:
     image: canopsis/canopsis-core:${CANOPSIS_IMAGE_TAG}
     env_file:
       - compose.env
     environment:
-      - CPS_WEBSERVER=1
+      - CPS_OLD_API=1
     depends_on:
       - "mongodb"
     ports:
-      - 8082:8082
+      - "8081:8081"
     volumes:
       - importctxdata:/opt/canopsis/tmp
     links:
@@ -184,8 +186,8 @@ services:
       - rabbitmq
       - influxdb
     restart: unless-stopped
-  init:
-    image: canopsis/init:${CANOPSIS_IMAGE_TAG}
+  reconfigure:
+    image: canopsis/canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
     depends_on:
       - "rabbitmq"
       - "mongodb"
