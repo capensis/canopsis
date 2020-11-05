@@ -10,13 +10,22 @@
 </template>
 
 <script>
+import { INSTRUCTION_EXECUTE_FETCHING_INTERVAL } from '@/config';
+
+import pollingMixin from '@/mixins/polling';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import RemediationInstructionExecuteSteps from './remediation-instruction-execute-steps.vue';
 
 export default {
   components: { RemediationInstructionExecuteSteps },
-  mixins: [entitiesRemediationInstructionExecutionMixin],
+  mixins: [
+    entitiesRemediationInstructionExecutionMixin,
+    pollingMixin({
+      method: 'refresh',
+      delay: INSTRUCTION_EXECUTE_FETCHING_INTERVAL,
+    }),
+  ],
   props: {
     executionInstructionId: {
       type: [String, Number],
@@ -26,6 +35,11 @@ export default {
   computed: {
     executionInstruction() {
       return this.getRemediationInstructionExecution(this.executionInstructionId);
+    },
+  },
+  methods: {
+    async refresh() {
+      await this.fetchRemediationInstructionExecution({ id: this.executionInstructionId });
     },
   },
 };

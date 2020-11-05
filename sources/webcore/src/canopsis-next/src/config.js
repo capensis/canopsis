@@ -167,3 +167,5 @@ export const COLORS = {
 
 export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
 
+export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
+
