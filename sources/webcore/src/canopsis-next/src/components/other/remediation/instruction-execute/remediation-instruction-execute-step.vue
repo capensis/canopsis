@@ -55,7 +55,6 @@ export default {
 <style lang="scss">
 .step-line {
   flex: 1;
-  background: red;
   width: 2px;
 }
 </style>

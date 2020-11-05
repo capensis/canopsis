@@ -73,10 +73,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.step-line {
-  flex: 1;
-  width: 2px;
-}
-</style>

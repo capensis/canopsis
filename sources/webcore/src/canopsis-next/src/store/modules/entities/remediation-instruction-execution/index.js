@@ -76,11 +76,8 @@ export default {
         const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
 
         commit(types.UPDATE_ITEM_COMPLETED, instructionExecution);
-
-        return instructionExecution;
       } catch (err) {
         console.error(err);
-        return err;
       }
     },
 
