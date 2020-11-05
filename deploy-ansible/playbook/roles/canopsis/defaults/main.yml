@@ -3,8 +3,11 @@ canopsis_home: /opt/canopsis
 canopsis_user: canopsis
 canopsis_group: canopsis
 
-canopsis_gunicorn_host: localhost
-canopsis_gunicorn_port: "8081"
+canopsis_oldapi_host: localhost
+canopsis_oldapi_port: "8081"
+
+canopsis_api_host: localhost
+canopsis_api_port: "8082"
 
 canopsis_amqp_host: localhost
 canopsis_amqp_user: canopsis

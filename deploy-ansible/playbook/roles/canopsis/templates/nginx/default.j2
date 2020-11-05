@@ -49,7 +49,7 @@ server {
 	location / {
 		include /etc/nginx/cors.inc;
 
-		proxy_pass {{ CPS_OLD_API_URL }};
+		proxy_pass {{ CPS_API_URL }};
 		proxy_set_header X-Forwarded-Host $host;
 		proxy_set_header X-Forwarded-Server $host;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
