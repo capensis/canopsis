@@ -35,13 +35,20 @@ server {
 
 	expires $expires_time;
 
+	# This old URL shouldn't be used anymore
+	location = /en/static/canopsis-next/dist/index.html {
+		return 301 /;
+	}
+
+	# Redirect to /canopsis, because some APIv1 calls didn't use the /api/
+	# namespace, so there could be a conflict between them and the UI.
 	location = / {
 		include /etc/nginx/cors.inc;
-		return 303 /en/static/canopsis-next/dist/index.html;
+		return 303 /canopsis;
 	}
 
 	# Serve static files directly through Nginx by default
-	location /en/static/canopsis-next/dist/ {
+	location /canopsis {
 		include /etc/nginx/cors.inc;
 		alias /opt/canopsis/var/www/src/canopsis-next/dist/;
 	}
