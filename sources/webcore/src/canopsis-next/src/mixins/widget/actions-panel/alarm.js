@@ -205,9 +205,7 @@ export default {
         config: {
           assignedInstruction,
           alarm: this.item,
-          onReady: () => {
-            this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
-          },
+          onReady: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
         },
       });
     },
