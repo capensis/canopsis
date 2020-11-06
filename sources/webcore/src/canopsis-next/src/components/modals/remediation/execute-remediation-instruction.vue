@@ -48,10 +48,6 @@ export default {
   },
   async mounted() {
     await this.fetchInstructionExecution();
-
-    if (this.config.onReady) {
-      await this.config.onReady();
-    }
   },
   methods: {
     async createInstructionExecution() {
@@ -65,6 +61,10 @@ export default {
       });
 
       this.executionInstructionId = instructionExecution._id;
+
+      if (this.config.onCreate) {
+        await this.config.onCreate();
+      }
     },
 
     async fetchInstructionExecution() {
