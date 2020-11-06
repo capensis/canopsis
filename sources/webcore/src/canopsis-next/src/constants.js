@@ -40,6 +40,7 @@ export const ENTITIES_TYPES = {
   remediationInstruction: 'remediationInstruction',
   remediationJob: 'remediationJob',
   remediationConfiguration: 'remediationConfiguration',
+  remediationInstructionExecution: 'remediationInstructionExecution',
 };
 
 export const MODALS = {
@@ -110,6 +111,7 @@ export const MODALS = {
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
+  executeRemediationInstruction: 'execute-remediation-instruction',
   imageViewer: 'image-viewer',
 };
 
@@ -1567,4 +1569,9 @@ export const MAX_LIMIT = 10000;
 export const REMEDIATION_CONFIGURATION_TYPES = {
   rundeck: 'rundeck',
   awx: 'awx',
+};
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
+  running: 0,
+  paused: 1,
 };

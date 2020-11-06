@@ -137,6 +137,8 @@ export default {
     periods: 'Périodes',
     range: 'Gamme',
     duration: 'Durée',
+    previous: 'Précédent',
+    next: 'Suivant',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1917,6 +1919,13 @@ export default {
     table: {
       host: 'Hôte',
     },
+  },
+
+  remediationInstructionExecute: {
+    timeToComplete: '{duration} pour terminer',
+    completedAt: 'Terminé à {time}',
+    failedAt: 'Échec à {time}',
+    startedAt: 'Commencé à {time}',
   },
 
   ...featureService.get('i18n.fr'),

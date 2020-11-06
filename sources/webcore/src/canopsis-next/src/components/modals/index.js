@@ -65,4 +65,5 @@ export { default as CreatePbehaviorException } from './pbehavior/create-pbehavio
 export { default as CreateRemediationInstruction } from './remediation/create-remediation-instruction.vue';
 export { default as CreateRemediationConfiguration } from './remediation/create-remediation-configuration.vue';
 export { default as CreateRemediationJob } from './remediation/create-remediation-job.vue';
+export { default as ExecuteRemediationInstruction } from './remediation/execute-remediation-instruction.vue';
 export { default as ImageViewer } from './common/image-viewer.vue';

@@ -20,7 +20,10 @@ import { generateWidgetByType } from '@/helpers/entities';
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [eventActionsAlarmMixin, entitiesPbehaviorMixin],
+  mixins: [
+    eventActionsAlarmMixin,
+    entitiesPbehaviorMixin,
+  ],
   methods: {
     createFastAckEvent() {
       let eventData = {};
@@ -196,7 +199,16 @@ export default {
       });
     },
 
-    showExecuteInstructionModal() {},
+    async showExecuteInstructionModal(assignedInstruction) {
+      this.$modals.show({
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarm: this.item,
+          onCreate: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
+        },
+      });
+    },
 
     actionsAccessFilterHandler({ type }) {
       const right = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[type];

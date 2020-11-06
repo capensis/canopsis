@@ -7,7 +7,7 @@
         div.v-text-field__slot
           label.v-label.theme--light(:class="{ 'v-label--active': value }") {{ label }}
           div(ref="content", v-html="value")
-      div.v-text-field__details
+      div.v-text-field__details(v-if="!hideDetails")
         div.v-messages.theme--light.error--text
           div.v-messages__wrapper
             div.v-messages__message(v-for="errorMessage in errorMessages") {{ errorMessage }}
@@ -25,6 +25,10 @@ export default {
     label: {
       type: String,
       default: '',
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
     },
     errorMessages: {
       type: Array,
