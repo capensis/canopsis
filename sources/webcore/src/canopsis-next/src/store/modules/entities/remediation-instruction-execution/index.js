@@ -72,13 +72,11 @@ export default {
     },
 
     async update({ commit }, { path, id }) {
-      try {
-        const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
+      const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
 
-        commit(types.UPDATE_ITEM_COMPLETED, instructionExecution);
-      } catch (err) {
-        console.error(err);
-      }
+      commit(types.UPDATE_ITEM_COMPLETED, instructionExecution);
+
+      return instructionExecution;
     },
 
     cancel({ dispatch }, { id }) {

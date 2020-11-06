@@ -18,14 +18,9 @@ export default {
   components: { RemediationInstructionExecuteSteps },
   mixins: [entitiesRemediationInstructionExecutionMixin],
   props: {
-    executionInstructionId: {
-      type: [String, Number],
+    executionInstruction: {
+      type: Object,
       required: true,
-    },
-  },
-  computed: {
-    executionInstruction() {
-      return this.getRemediationInstructionExecution(this.executionInstructionId);
     },
   },
 };
