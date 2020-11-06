@@ -97,16 +97,25 @@ class Middleware(dict):
 
 
 class SetSameSiteCookie(object):
-    def __init__(self, app):
+    def __init__(self, app, secure):
         self.app = app
+        self.secure = secure
 
     def __call__(self, environ, start_response):
         def session_start_response(status, headers, exc_info=None):
             for header in headers:
                 if len(header) == 2 and header[0] == 'Set-cookie':
                     value = header[1].strip()
-                    if value.startswith("beaker.session.id=") and not value.endswith('SameSite=Lax'):
-                        headers.remove(('Set-cookie', header[1]))
-                        headers.append(('Set-cookie', header[1]+'; '+'SameSite=Lax'))
+                    if value.startswith("beaker.session.id="):
+                        cookie = header[1]
+                        if not value.endswith('SameSite=Lax'):
+                            headers.remove(('Set-cookie', cookie))
+                            cookie = cookie + '; ' + 'SameSite=Lax'
+                            headers.append(('Set-cookie', cookie))
+                        if self.secure:
+                            headers.remove(('Set-cookie', cookie))
+                            cookie = cookie + '; ' + 'Secure'
+                            headers.append(('Set-cookie', cookie))
+
             return start_response(status, headers, exc_info)
         return self.app(environ, session_start_response)

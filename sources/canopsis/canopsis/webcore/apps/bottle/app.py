@@ -126,6 +126,7 @@ class WebServer():
             raise RuntimeError('Missing providers')
 
         session = self.config.get('session', {})
+        self.secure_cookie = session.get('secure_cookie', 'false') == 'true'
         self.cookie_expires = int(session.get('cookie_expires',
                                               DEFAULT_COOKIES_EXPIRE))
         self.secret = session.get('secret', DEFAULT_SECRET)
@@ -243,7 +244,7 @@ class WebServer():
             'session.secret': self.secret,
             'session.lock_dir': self.data_dir
         })
-        self.app = SetSameSiteCookie(self.app)
+        self.app = SetSameSiteCookie(self.app, secure=self.secure_cookie)
 
     def unload_session(self):
         pass
