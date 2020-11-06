@@ -17,8 +17,6 @@ next = axe
 # CAT additional components.
 #
 
-[engine:task_ackcentreon]
-
 [engine:snmp]
 routing_keys = #
 exchange_name = canopsis.snmp
