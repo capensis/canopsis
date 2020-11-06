@@ -1445,12 +1445,16 @@ export default {
       eventPatterns: 'Event patterns',
       alarmPatterns: 'Alarm patterns',
       entityPatterns: 'Entity patterns',
+      totalEntityPatterns: 'Total entity patterns',
       thresholdType: 'Threshold type',
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
       timeInterval: 'Time interval',
-      valuePath: 'Value path',
+      valuePath: 'Value path | Value paths',
       autoResolve: 'Auto resolve',
+    },
+    errors: {
+      noValuePaths: 'You have to add at least 1 value path',
     },
   },
   snmpRules: {
