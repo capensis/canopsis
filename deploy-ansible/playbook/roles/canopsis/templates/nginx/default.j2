@@ -1,3 +1,5 @@
+server_tokens off;
+
 # Canopsis CSS/JS files have unique hashes in each official build.
 # Add a bit of cache to some other static elements as well, but don't
 # cache other resources.
@@ -16,7 +18,6 @@ map $sent_http_content_type $expires_time {
 
 server {
 	listen 8080;
-	root /opt/canopsis/var/www/src/canopsis-next/dist;
 
 	# Work around issue canopsis#1858
 	client_max_body_size 7m;
@@ -42,7 +43,7 @@ server {
 	# Serve static files directly through Nginx by default
 	location /en/static/canopsis-next/dist/ {
 		include /etc/nginx/cors.inc;
-		rewrite ^/en/static/canopsis-next/dist(/.+?)$ $1 break;
+		alias /opt/canopsis/var/www/src/canopsis-next/dist/;
 	}
 
 	# Everything else goes to canopsis-api, because it's very likely an API call
