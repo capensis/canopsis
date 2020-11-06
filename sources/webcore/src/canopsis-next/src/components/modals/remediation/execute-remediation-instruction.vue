@@ -46,8 +46,12 @@ export default {
       return this.getRemediationInstructionExecution(this.executionInstructionId);
     },
   },
-  mounted() {
-    this.fetchInstructionExecution();
+  async mounted() {
+    await this.fetchInstructionExecution();
+
+    if (this.config.onReady) {
+      await this.config.onReady();
+    }
   },
   methods: {
     async createInstructionExecution() {

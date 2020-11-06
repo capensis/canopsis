@@ -7,7 +7,6 @@ import {
   CRUD_ACTIONS,
   WIDGET_TYPES,
   STATS_QUICK_RANGES,
-  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
@@ -200,28 +199,13 @@ export default {
       });
     },
 
-    async showResumeExecuteInstructionModal({ execution, title }) {
-      if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused) {
-        await this.resumeRemediationInstructionExecution({ id: execution._id });
-      } else {
-        await this.fetchRemediationInstructionExecution({ id: execution._id });
-      }
-
-      this.$modals.show({
-        name: MODALS.executeRemediationInstruction,
-        config: {
-          title,
-          executionInstructionId: execution._id,
-        },
-      });
-    },
-
     async showExecuteInstructionModal(assignedInstruction) {
       this.$modals.show({
         name: MODALS.executeRemediationInstruction,
         config: {
           assignedInstruction,
           alarm: this.item,
+          onReady: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
         },
       });
     },
