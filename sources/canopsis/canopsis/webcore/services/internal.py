@@ -94,7 +94,7 @@ def get_version():
 
 def get_login_config(ws):
     login_config = {
-        'webserver': {provider: 1 for provider in ws.providers},
+        'oldapi': {provider: 1 for provider in ws.providers},
     }
 
     records = ws.db.find(

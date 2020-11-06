@@ -1,10 +1,20 @@
+server_tokens off;
+absolute_redirect off; # preserve port forwarding
+
 # Canopsis CSS/JS files have unique hashes in each official build.
-# Add a bit of cache to images as well, but don't cache other resources
+# Add a bit of cache to some other static elements as well, but don't
+# cache other resources.
 map $sent_http_content_type $expires_time {
-	default			-1;
-	text/css		1d;
-	application/javascript	1d;
-	image/png		1h;
+	default				-1;
+	text/css			1d;
+	application/javascript		1d;
+	application/vnd.ms-fontobject	1d;
+	font/ttf			1d;
+	font/woff			1d;
+	font/woff2			1d;
+	image/gif			1h;
+	image/png			1h;
+	image/x-icon			1h;
 }
 
 server {
@@ -26,33 +36,29 @@ server {
 
 	expires $expires_time;
 
+	# This old URL shouldn't be used anymore
+	location = /en/static/canopsis-next/dist/index.html {
+		return 301 /;
+	}
+
+	# Redirect to /canopsis, because some APIv1 calls didn't use the /api/
+	# namespace, so there could be a conflict between them and the UI.
+	location = / {
+		include /etc/nginx/cors.inc;
+		return 303 /canopsis;
+	}
+
+	# Serve static files directly through Nginx by default
+	location /canopsis {
+		include /etc/nginx/cors.inc;
+		alias /opt/canopsis/var/www/src/canopsis-next/dist/;
+	}
+
+	# Everything else goes to canopsis-api, because it's very likely an API call
 	location / {
-		if ($request_method = 'OPTIONS') {
-			add_header 'Access-Control-Allow-Origin' "$http_origin";
-			add_header 'Access-Control-Allow-Credentials' 'true';
-			add_header 'Access-Control-Allow-Headers' 'Authorization,Cache-Control,Content-Type';
-			add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-			add_header 'Access-Control-Max-Age' '31536000';
-			add_header 'Content-Type' 'text/plain; charset=UTF-8';
-			add_header 'Content-Length' 0;
+		include /etc/nginx/cors.inc;
 
-			return 204;
-		}
-
-		if ($request_method = 'POST') {
-			add_header 'Access-Control-Allow-Origin' "$http_origin";
-			add_header 'Access-Control-Allow-Credentials' 'true';
-			add_header 'Access-Control-Allow-Headers' 'Authorization,Cache-Control,Content-Type';
-		}
-
-		if ($request_method = 'GET') {
-			add_header 'Access-Control-Allow-Origin' "$http_origin";
-			add_header 'Access-Control-Allow-Credentials' 'true';
-			add_header 'Access-Control-Allow-Headers' 'Authorization,Cache-Control,Content-Type';
-		}
-
-		#rewrite ^/$ /en/static/canopsis-next/dist/index.html redirect;
-		proxy_pass {{ TARGET }};
+		proxy_pass {{ CPS_API_URL }};
 		proxy_set_header X-Forwarded-Host $host;
 		proxy_set_header X-Forwarded-Server $host;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

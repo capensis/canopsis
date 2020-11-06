@@ -176,8 +176,7 @@ class route(object):
 
         super(route, self).__init__()
 
-        # logger is initialized by WebServer
-        self.logger = logging.getLogger('webserver')
+        self.logger = logging.getLogger('oldapi')
 
         self.op = op
         self.name = name
