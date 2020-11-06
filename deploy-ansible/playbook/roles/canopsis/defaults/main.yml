@@ -41,12 +41,6 @@ canopsis_edition: core
 # Default Python Core engines which haven't been replaced by a Go engine, yet
 canopsis_core_python_engines:
   -
-    module: event_filter
-    name: event_filter
-  -
-    module: metric
-    name: metric
-  -
     module: scheduler
     name: scheduler
   -
@@ -54,13 +48,9 @@ canopsis_core_python_engines:
     name: task_importctx
 
 # Additional Python engines in CAT
-canopsis_cat_python_additional_engines:
-  -
-    module: task_ackcentreon
-    name: task_ackcentreon
+canopsis_cat_python_additional_engines: []
 
-# XXX
-# Same as above, but snmp engine has a broken name…
+# Same as above, but snmp engine has no module name…
 canopsis_cat_python_additional_engines_broken_names:
   -
     name: snmp
