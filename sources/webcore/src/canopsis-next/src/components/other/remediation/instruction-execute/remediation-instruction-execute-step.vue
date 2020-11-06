@@ -8,7 +8,7 @@
       v-layout
         v-text-field(
           :value="step.name",
-          :label="$t('common.description')",
+          :label="$t('common.name')",
           readonly,
           hide-details,
           box
