@@ -1,4 +1,5 @@
 server_tokens off;
+absolute_redirect off; # preserve port forwarding
 
 # Canopsis CSS/JS files have unique hashes in each official build.
 # Add a bit of cache to some other static elements as well, but don't
@@ -17,7 +18,7 @@ map $sent_http_content_type $expires_time {
 }
 
 server {
-	listen 8080;
+	listen 80;
 
 	# Work around issue canopsis#1858
 	client_max_body_size 7m;

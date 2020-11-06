@@ -15,6 +15,6 @@ WORKDIR /opt/canopsis/var/www/src/canopsis-next/dist
 
 COPY --from=build /canopsis-next/dist /opt/canopsis/var/www/src/canopsis-next/dist
 
-EXPOSE 8080
+EXPOSE 80
 
 ENTRYPOINT /entrypoint.sh

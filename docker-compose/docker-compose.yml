@@ -65,7 +65,7 @@ services:
   nginx:
     image: canopsis/nginx:${CANOPSIS_IMAGE_TAG}
     ports:
-      - "8080:8080"
+      - "80:80"
     env_file:
       - compose.env
     depends_on:
