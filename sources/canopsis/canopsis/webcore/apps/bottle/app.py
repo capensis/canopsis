@@ -47,7 +47,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.webcore.services import session as session_module
 from canopsis.common import root_path
-
+from canopsis.common.middleware import SetSameSiteCookie
 from canopsis.vendor import mongodb_beaker
 
 DEFAULT_DEBUG = False
@@ -243,6 +243,7 @@ class WebServer():
             'session.secret': self.secret,
             'session.lock_dir': self.data_dir
         })
+        self.app = SetSameSiteCookie(self.app)
 
     def unload_session(self):
         pass

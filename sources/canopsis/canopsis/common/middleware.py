@@ -94,3 +94,19 @@ class Middleware(dict):
         storage._backend = storage._get_backend(backend=storage.get_table())
 
         return storage
+
+
+class SetSameSiteCookie(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        def session_start_response(status, headers, exc_info=None):
+            for header in headers:
+                if len(header) == 2 and header[0] == 'Set-cookie':
+                    value = header[1].strip()
+                    if value.startswith("beaker.session.id=") and not value.endswith('SameSite=Lax'):
+                        headers.remove(('Set-cookie', header[1]))
+                        headers.append(('Set-cookie', header[1]+'; '+'SameSite=Lax'))
+            return start_response(status, headers, exc_info)
+        return self.app(environ, session_start_response)
