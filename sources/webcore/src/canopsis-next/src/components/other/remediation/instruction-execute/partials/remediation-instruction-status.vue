@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.my-2.black--text(:class="{ 'error--text': isFailedStatus }", row, align-center)
-    v-icon.mr-1(:color="iconName") alarm
+    v-icon.mr-1(:color="iconColor") alarm
     span {{ label }}
 </template>
 
@@ -29,7 +29,7 @@ export default {
       return !!this.failedAt;
     },
 
-    iconName() {
+    iconColor() {
       return this.isFailedStatus ? 'error' : 'black';
     },
 

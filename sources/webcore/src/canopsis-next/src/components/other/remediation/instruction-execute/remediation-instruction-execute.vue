@@ -22,24 +22,19 @@ export default {
   mixins: [
     entitiesRemediationInstructionExecutionMixin,
     pollingMixin({
-      method: 'refresh',
+      method: 'fetchExecution',
       delay: INSTRUCTION_EXECUTE_FETCHING_INTERVAL,
     }),
   ],
   props: {
-    executionInstructionId: {
-      type: [String, Number],
+    executionInstruction: {
+      type: Object,
       required: true,
     },
   },
-  computed: {
-    executionInstruction() {
-      return this.getRemediationInstructionExecution(this.executionInstructionId);
-    },
-  },
   methods: {
-    async refresh() {
-      await this.fetchRemediationInstructionExecution({ id: this.executionInstructionId });
+    async fetchExecution() {
+      await this.fetchRemediationInstructionExecution({ id: this.executionInstruction._id });
     },
   },
 };

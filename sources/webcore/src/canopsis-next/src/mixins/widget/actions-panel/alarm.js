@@ -12,7 +12,6 @@ import {
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -25,7 +24,6 @@ export default {
   mixins: [
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
-    entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
     createFastAckEvent() {
@@ -218,29 +216,14 @@ export default {
       });
     },
 
-    async showExecuteInstructionModal({ _id: instructionId, execution, name }) {
-      try {
-        if (!execution) {
-          const { _id: executionInstructionId } = await this.createRemediationInstructionExecution({
-            data: {
-              alarm: this.item._id,
-              instruction: instructionId,
-            },
-          });
-
-          await this.$modals.show({
-            name: MODALS.executeRemediationInstruction,
-            config: {
-              title: name,
-              executionInstructionId,
-            },
-          });
-        } else {
-          await this.showResumeExecuteInstructionModal({ execution, title: name });
-        }
-      } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
+    async showExecuteInstructionModal(assignedInstruction) {
+      this.$modals.show({
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarm: this.item,
+        },
+      });
     },
 
     actionsAccessFilterHandler({ type }) {
