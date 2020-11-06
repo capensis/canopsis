@@ -7,7 +7,7 @@
       v-layout
         v-text-field(
           :value="operation.name",
-          :label="$t('common.description')",
+          :label="$t('common.name')",
           readonly,
           hide-details,
           box
@@ -20,7 +20,7 @@
       )
       template(v-if="isShownDetails")
         text-editor-blurred(
-          :value="operation.name",
+          :value="operation.description",
           :label="$t('common.description')",
           hide-details
         )
