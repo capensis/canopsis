@@ -81,7 +81,7 @@ class EnsureAuthenticated(object):
         return decorated
 
 
-class WebServer():
+class OldApi():
 
     CONF_PATH = 'etc/oldapi.conf'
     LOG_FILE = root_path + '/var/log/oldapi.log'
@@ -268,12 +268,12 @@ class WebServer():
         pass
 
 
-def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
-    if webconf is None:
-        webconf = Configuration.load(WebServer.CONF_PATH, Ini)
+def get_default_app(logger=None, oldapiconf=None, amqp_conn=None, amqp_pub=None):
+    if oldapiconf is None:
+        oldapiconf = Configuration.load(OldApi.CONF_PATH, Ini)
 
     if logger is None:
-        logger = Logger.get('oldapi', WebServer.LOG_FILE)
+        logger = Logger.get('oldapi', OldApi.LOG_FILE)
 
     if amqp_conn is None:
         amqp_conn = get_default_amqp_connection()
@@ -282,6 +282,6 @@ def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
         amqp_pub = AmqpPublisher(amqp_conn, logger)
 
     # Declare WSGI application
-    ws = WebServer(config=webconf, logger=logger, amqp_pub=amqp_pub).init_app()
+    ws = OldApi(config=oldapiconf, logger=logger, amqp_pub=amqp_pub).init_app()
     app = ws.application
     return app
