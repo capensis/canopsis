@@ -100,7 +100,7 @@ function parseField(value) {
 }
 
 module.exports = {
-  baseUrl: isProduction ? '/en/static/canopsis-next/dist/' : '/',
+  baseUrl: '/',
   lintOnSave: false,
   chainWebpack: (config) => {
     config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
