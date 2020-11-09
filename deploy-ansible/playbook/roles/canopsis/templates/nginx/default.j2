@@ -46,9 +46,9 @@ server {
 
 	# Redirect API calls to canopsis-api. /backend depends on the baseURL
 	# setting of request.js.
-	location /backend {
+	location /backend/ {
 		include /etc/nginx/cors.inc;
-		proxy_pass {{ CPS_API_URL }};
+		proxy_pass {{ CPS_API_URL }}; # must end with a slash!
 		proxy_set_header X-Canopsis-API-Call-Origin "nginx";
 	}
 
