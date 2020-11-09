@@ -11,6 +11,7 @@ import {
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -23,6 +24,7 @@ export default {
   mixins: [
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
+    entitiesRemediationInstructionsMixin,
   ],
   methods: {
     refreshAlarms() {
@@ -203,6 +205,17 @@ export default {
       });
     },
 
+    showRateInstructionModal(instructionId) {
+      this.$modals.show({
+        name: MODALS.rate,
+        config: {
+          title: this.$t('modals.rateInstruction.title'),
+          text: this.$t('modals.rateInstruction.text'),
+          action: data => this.rateRemediationInstruction({ id: instructionId, data }),
+        },
+      });
+    },
+
     async showExecuteInstructionModal(assignedInstruction) {
       this.$modals.show({
         name: MODALS.executeRemediationInstruction,
@@ -210,7 +223,10 @@ export default {
           assignedInstruction,
           alarm: this.item,
           onCreate: this.refreshAlarms,
-          onFinished: this.refreshAlarms,
+          onFinished: async () => {
+            await this.refreshAlarms();
+            this.showRateInstructionModal(assignedInstruction._id);
+          },
         },
       });
     },

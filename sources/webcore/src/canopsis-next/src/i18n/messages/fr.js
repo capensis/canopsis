@@ -1334,6 +1334,10 @@ export default {
         backToForm: 'Retour au formulaire',
       },
     },
+    rateInstruction: {
+      title: 'Évaluez cette instruction',
+      text: 'Dans quelle mesure cette instruction a-t-elle été utile?',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
