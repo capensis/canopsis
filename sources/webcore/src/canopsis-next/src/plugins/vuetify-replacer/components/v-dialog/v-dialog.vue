@@ -13,6 +13,10 @@ export default {
       type: Function,
       default: null,
     },
+    ignoreClickOutside: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     activeZIndex() {
@@ -105,10 +109,10 @@ export default {
    */
   render: function render(h) {
     const children = [];
-    const data = {
-      class: this.classes,
-      ref: 'dialog',
-      directives: [{
+    const directives = [{ name: 'show', value: this.isActive }];
+
+    if (!this.ignoreClickOutside) {
+      directives.push({
         name: 'click-outside',
         value: () => {
           /**
@@ -125,7 +129,13 @@ export default {
           closeConditional: this.closeConditional,
           include: this.getOpenDependentElements,
         },
-      }, { name: 'show', value: this.isActive }],
+      });
+    }
+
+    const data = {
+      class: this.classes,
+      ref: 'dialog',
+      directives,
       on: {
         click: (e) => {
           e.stopPropagation();

@@ -9,12 +9,13 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateWidgetByType } from '@/helpers/entities';
+import { isOmitEqual } from '@/helpers/is-omit-equal';
+
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -207,6 +208,13 @@ export default {
           alarm: this.item,
           onCreate: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
         },
+        configComparator: (value, other) =>
+          isOmitEqual(value, other, [
+            'alarm.assigned_instructions',
+            'alarm.v',
+            'assignedInstruction.execution',
+            'onCreate',
+          ]),
       });
     },
 
