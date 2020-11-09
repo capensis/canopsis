@@ -3,7 +3,6 @@ import Vue from 'vue';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import uid from '@/helpers/uid';
-import { isOmitEqual } from '@/helpers/is-omit-equal';
 
 export const types = {
   SHOW: 'SHOW',
@@ -12,22 +11,6 @@ export const types = {
   MINIMIZE: 'MINIMIZE',
   MAXIMIZE: 'MAXIMIZE',
 };
-
-/**
- * Default modals config comparator
- *
- * @param {Object|Array} value
- * @param {Object|Array} other
- * @returns {boolean}
- */
-export const defaultConfigComparator = (value, other) => isOmitEqual(value, other, [
-  'action',
-  'cancel',
-  'afterSubmit',
-  'continueAction',
-  'continueWithTicketAction',
-  'onCreate',
-]);
 
 export default {
   namespaced: true,
@@ -83,23 +66,15 @@ export default {
      * @param {Object} [config = {}]
      * @param {Object} [dialogProps = {}]
      * @param {string} [id = uid()]
-     * @param {Function} [configComparator = defaultConfigComparator]
      */
     show({ commit, state }, {
       name,
       config = {},
       dialogProps = {},
       id = uid('modal'),
-      configComparator = defaultConfigComparator,
     } = {}) {
-      const sameMinimizedModalId = state.allIds.find(modalId =>
-        state.byId[modalId]
-        && state.byId[modalId].name === name
-        && state.byId[modalId].minimized
-        && configComparator(state.byId[modalId].config, config));
-
-      if (sameMinimizedModalId) {
-        return commit(types.MAXIMIZE, { id: sameMinimizedModalId });
+      if (state.byId[id]) {
+        return commit(types.MAXIMIZE, { id });
       }
 
       return commit(types.SHOW, {
