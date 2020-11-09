@@ -47,6 +47,9 @@ class HeartBeat(object):
             if key in self._FIELDS:
                 setattr(self, key, value)
 
+        if 'output' not in heartbeat_json:
+            self.output = ''
+
     @property
     def id(self):
         """
