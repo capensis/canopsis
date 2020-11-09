@@ -153,10 +153,10 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/api': {
+      '/backend': {
         target: process.env.VUE_APP_API_HOST,
         changeOrigin: true,
-        pathRewrite: { '^/api': '' },
+        pathRewrite: { '^/backend': '' },
         secure: false,
         cookieDomainRewrite: '',
       },
