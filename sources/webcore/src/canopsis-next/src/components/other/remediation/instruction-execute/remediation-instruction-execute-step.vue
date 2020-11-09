@@ -21,16 +21,24 @@
       remediation-instruction-execute-operations(
         :operations="step.operations",
         :step-number="stepNumber",
-        :is-first-step="isFirst"
+        :is-first-step="isFirst",
+        @next="$emit('next-operation')",
+        @previous="$emit('previous-operation')",
+        @finish="showEndpointModal"
       )
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import RemediationInstructionExecuteOperations from './remediation-instruction-execute-operations.vue';
 import RemediationInstructionStatus from './partials/remediation-instruction-status.vue';
 
 export default {
-  components: { RemediationInstructionExecuteOperations, RemediationInstructionStatus },
+  components: {
+    RemediationInstructionExecuteOperations,
+    RemediationInstructionStatus,
+  },
   props: {
     step: {
       type: Object,
@@ -47,6 +55,21 @@ export default {
     isLast: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    showEndpointModal() {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        dialogProps: {
+          persistent: true,
+        },
+        config: {
+          text: this.step.endpoint,
+          action: () => this.$emit('next-step', true),
+          cancel: () => this.$emit('next-step', false),
+        },
+      });
     },
   },
 };

@@ -6,7 +6,10 @@
       :step="step",
       :step-number="index + 1",
       :is-last="index === steps.length - 1",
-      :is-first="index === 0"
+      :is-first="index === 0",
+      @next-step="$emit('next-step', $event)",
+      @next-operation="$emit('next-operation')",
+      @previous-operation="$emit('previous-operation')"
     )
 </template>
 

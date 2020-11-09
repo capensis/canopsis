@@ -1574,4 +1574,7 @@ export const REMEDIATION_CONFIGURATION_TYPES = {
 export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
   running: 0,
   paused: 1,
+  completed: 2,
+  aborted: 3,
+  failed: 4,
 };

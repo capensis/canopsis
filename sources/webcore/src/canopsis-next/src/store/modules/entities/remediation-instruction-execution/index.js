@@ -71,8 +71,8 @@ export default {
       return instructionExecution;
     },
 
-    async update({ commit }, { path, id }) {
-      const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
+    async update({ commit }, { path, id, data }) {
+      const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`, data);
 
       commit(types.UPDATE_ITEM_COMPLETED, instructionExecution);
 
@@ -83,19 +83,19 @@ export default {
       return dispatch('update', { path: 'cancel', id });
     },
 
-    next({ dispatch }, { id }) {
+    nextOperation({ dispatch }, { id }) {
       return dispatch('update', { path: 'next', id });
     },
 
-    nextStep({ dispatch }, { id }) {
-      return dispatch('update', { path: 'next-step', id });
+    nextStep({ dispatch }, { id, data }) {
+      return dispatch('update', { path: 'next-step', id, data });
     },
 
     pause({ dispatch }, { id }) {
       return dispatch('update', { path: 'pause', id });
     },
 
-    previous({ dispatch }, { id }) {
+    previousOperation({ dispatch }, { id }) {
       return dispatch('update', { path: 'previous', id });
     },
 

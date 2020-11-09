@@ -1927,6 +1927,10 @@ export default {
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
+    popups: {
+      success: '{instructionName} has been successfully completed',
+      failed: '{instructionName} has been failed. Please escalate this problem further',
+    },
   },
 
   ...featureService.get('i18n.en'),

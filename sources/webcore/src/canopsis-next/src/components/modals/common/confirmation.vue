@@ -31,10 +31,14 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.confirmation,
+  inject: ['$clickOutside'],
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
+  created() {
+    this.$clickOutside.register(this.cancelHandler);
+  },
   beforeDestroy() {
-    this.cancelHandler();
+    this.$clickOutside.unregister(this.cancelHandler);
   },
   methods: {
     async cancelHandler() {

@@ -6,7 +6,12 @@
       readonly,
       box
     )
-    remediation-instruction-execute-steps(:steps="executionInstruction.steps")
+    remediation-instruction-execute-steps(
+      :steps="executionInstruction.steps",
+      @next-step="nextStep",
+      @next-operation="nextOperation",
+      @previous-operation="previousOperation"
+    )
 </template>
 
 <script>
@@ -35,6 +40,21 @@ export default {
   methods: {
     async fetchExecution() {
       await this.fetchRemediationInstructionExecution({ id: this.executionInstruction._id });
+    },
+
+    nextStep(success) {
+      this.nextStepRemediationInstructionExecution({
+        id: this.executionInstruction._id,
+        data: { failed: !success },
+      });
+    },
+
+    previousOperation() {
+      this.previousOperationRemediationInstructionExecution({ id: this.executionInstruction._id });
+    },
+
+    nextOperation() {
+      this.nextOperationRemediationInstructionExecution({ id: this.executionInstruction._id });
     },
   },
 };
