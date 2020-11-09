@@ -527,6 +527,11 @@ export default {
     },
   },
   modals: {
+    common: {
+      titleButtons: {
+        minimizeTooltip: 'Vous avez déjà réduit la fenêtre modale',
+      },
+    },
     contextInfos: {
       title: 'Infos sur l\'entité',
     },

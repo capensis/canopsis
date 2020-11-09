@@ -22,7 +22,7 @@ export default {
     $route: {
       handler() {
         if (this.modals && this.modals.length) {
-          this.modals.map(modal => this.$modals.hide({ id: modal.id }));
+          this.modals.forEach(modal => !modal.minimized && this.$modals.hide({ id: modal.id }));
         }
       },
       deep: true,

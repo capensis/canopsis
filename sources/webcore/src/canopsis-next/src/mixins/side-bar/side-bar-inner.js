@@ -13,6 +13,6 @@ export default {
       sideBarConfig: 'config',
       isSideBarHidden: 'hidden',
     }),
-    ...modalMapGetters(['hasModals']),
+    ...modalMapGetters(['hasMaximizedModal']),
   },
 };
