@@ -9,13 +9,13 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
-
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateWidgetByType } from '@/helpers/entities';
+
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -218,6 +218,7 @@ export default {
 
     async showExecuteInstructionModal(assignedInstruction) {
       this.$modals.show({
+        id: `${this.item._id}${assignedInstruction._id}`,
         name: MODALS.executeRemediationInstruction,
         config: {
           assignedInstruction,
