@@ -53,14 +53,16 @@ export default {
           REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed,
           REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted,
         ].includes(executionInstruction.status);
-
         const type = isFailedExecution ? 'failed' : 'success';
-
-        this.$popups.error({
-          text: this.$t(`remediationInstructionExecute.popups.${type}`, {
-            instructionName: executionInstruction.name,
-          }),
+        const text = this.$t(`remediationInstructionExecute.popups.${type}`, {
+          instructionName: executionInstruction.name,
         });
+
+        if (isFailedExecution) {
+          this.$popups.error({ text });
+        } else {
+          this.$popups.success({ text });
+        }
 
         if (this.config.onFinished) {
           this.config.onFinished();
