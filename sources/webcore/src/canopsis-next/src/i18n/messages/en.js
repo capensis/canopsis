@@ -527,6 +527,11 @@ export default {
     },
   },
   modals: {
+    common: {
+      titleButtons: {
+        minimizeTooltip: 'You already have minimized modal window',
+      },
+    },
     contextInfos: {
       title: 'Entities infos',
     },

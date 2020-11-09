@@ -37,11 +37,16 @@ export default {
     dialogProps() {
       const defaultDialogProps = { maxWidth: 700, lazy: true };
       const { dialogPropsMap = {} } = this.$modals;
+      const { name, dialogProps, minimized } = this.modal;
 
       return {
         ...defaultDialogProps,
-        ...dialogPropsMap[this.modal.name],
-        ...this.modal.dialogProps,
+        ...dialogPropsMap[name],
+        ...dialogProps,
+
+        hideOverlay: minimized,
+        ignoreClickOutside: minimized,
+        contentClass: minimized ? 'v-dialog--minimized' : '',
 
         customCloseConditional: (...args) => this.$clickOutside.call(...args),
       };
@@ -52,3 +57,30 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+$minimizedDialogMaxWidth: 300px;
+
+.v-dialog {
+  &.v-dialog--minimized {
+    position: fixed;
+    bottom: 0;
+    max-width: $minimizedDialogMaxWidth !important;
+    margin-bottom: 0 !important;
+    transition: all .1s linear;
+
+    .v-card__title {
+      padding: 0 10px;
+      transition: all .1s linear;
+
+      .headline {
+        font-size: 16px !important;
+      }
+    }
+  }
+
+  .v-card__title .headline .v-btn {
+    float: right;
+  }
+}
+</style>
