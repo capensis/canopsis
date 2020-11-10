@@ -4,6 +4,7 @@ absolute_redirect off; # preserve port forwarding
 # Canopsis CSS/JS files have unique hashes in each official build.
 # Add a bit of cache to some other static elements as well, but don't
 # cache other resources.
+map_hash_bucket_size 64;
 map $sent_http_content_type $expires_time {
 	default				epoch;
 	text/css			1d;
@@ -51,6 +52,7 @@ server {
 		proxy_pass {{ CPS_API_URL }}; # must end with a slash!
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_read_timeout 90s;
 		# Never cache API calls
 		proxy_no_cache 1;
 		proxy_cache_bypass 1;
