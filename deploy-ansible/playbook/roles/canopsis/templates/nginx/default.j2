@@ -5,7 +5,7 @@ absolute_redirect off; # preserve port forwarding
 # Add a bit of cache to some other static elements as well, but don't
 # cache other resources.
 map $sent_http_content_type $expires_time {
-	default				-1;
+	default				epoch;
 	text/css			1d;
 	application/javascript		1d;
 	application/vnd.ms-fontobject	1d;
@@ -39,7 +39,7 @@ server {
 
 	expires $expires_time;
 
-	# This old URL shouldn't be used anymore
+	# This old URL mustn't be used anymore
 	location = /en/static/canopsis-next/dist/index.html {
 		return 301 /;
 	}
@@ -49,7 +49,11 @@ server {
 	location /backend/ {
 		include /etc/nginx/cors.inc;
 		proxy_pass {{ CPS_API_URL }}; # must end with a slash!
-		proxy_set_header X-Canopsis-API-Call-Origin "nginx";
+		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		# Never cache API calls
+		proxy_no_cache 1;
+		proxy_cache_bypass 1;
 	}
 
 	# Serve static files directly through Nginx by default
