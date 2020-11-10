@@ -221,7 +221,7 @@ export default {
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
         assignedInstructions.forEach((instruction) => {
-          const titlePrefix = instruction.has_execution ? 'resume' : 'execute';
+          const titlePrefix = instruction.execution ? 'resume' : 'execute';
 
           const action = {
             ...filteredActionsMap.executeInstruction,

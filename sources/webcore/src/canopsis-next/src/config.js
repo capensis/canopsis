@@ -128,6 +128,7 @@ export const API_ROUTES = {
     instructions: '/api/v4/cat/instructions',
     jobs: '/api/v4/cat/jobs',
     configurations: '/api/v4/cat/job-configs',
+    executions: '/api/v4/cat/executions',
   },
   file: '/api/v4/cat/file',
 };
@@ -165,4 +166,6 @@ export const COLORS = {
 };
 
 export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
+
+export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
 

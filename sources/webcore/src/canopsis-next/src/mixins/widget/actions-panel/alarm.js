@@ -9,18 +9,21 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateWidgetByType } from '@/helpers/entities';
+
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [eventActionsAlarmMixin, entitiesPbehaviorMixin],
+  mixins: [
+    eventActionsAlarmMixin,
+    entitiesPbehaviorMixin,
+  ],
   methods: {
     createFastAckEvent() {
       let eventData = {};
@@ -196,7 +199,17 @@ export default {
       });
     },
 
-    showExecuteInstructionModal() {},
+    async showExecuteInstructionModal(assignedInstruction) {
+      this.$modals.show({
+        id: `${this.item._id}${assignedInstruction._id}`,
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarm: this.item,
+          onCreate: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
+        },
+      });
+    },
 
     actionsAccessFilterHandler({ type }) {
       const right = BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList[type];

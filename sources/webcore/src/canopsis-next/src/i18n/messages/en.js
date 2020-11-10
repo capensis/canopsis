@@ -137,6 +137,8 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
+    previous: 'Previous',
+    next: 'Next',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -525,6 +527,11 @@ export default {
     },
   },
   modals: {
+    common: {
+      titleButtons: {
+        minimizeTooltip: 'You already have minimized modal window',
+      },
+    },
     contextInfos: {
       title: 'Entities infos',
     },
@@ -1918,6 +1925,13 @@ export default {
     table: {
       host: 'Host',
     },
+  },
+
+  remediationInstructionExecute: {
+    timeToComplete: '{duration} to complete',
+    completedAt: 'Completed at {time}',
+    failedAt: 'Failed at {time}',
+    startedAt: 'Started at {time}',
   },
 
   ...featureService.get('i18n.en'),
