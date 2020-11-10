@@ -308,6 +308,12 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarme annulée',
         [EVENT_ENTITY_TYPES.comment]: 'Alarme commentée',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarme liée à la méta alarme',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'L\'instruction a commencé',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'L\'instruction a été mise en pause',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'L\'instruction a été reprise',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'L\'instruction est terminée',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'L\'instruction a été abandonnée',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'L\'instruction a échoué',
       },
     },
     tabs: {

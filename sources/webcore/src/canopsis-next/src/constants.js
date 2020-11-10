@@ -147,6 +147,12 @@ export const EVENT_ENTITY_TYPES = {
   unsooze: 'unsooze',
   metaalarmattach: 'metaalarmattach',
   executeInstruction: 'executeInstruction',
+  instructionStart: 'instructionstart',
+  instructionPause: 'instructionpause',
+  instructionResume: 'instructionresume',
+  instructionComplete: 'instructioncomplete',
+  instructionAbort: 'instructionabort',
+  instructionFail: 'instructionfail',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -400,6 +406,24 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionstart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionpause]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionresume]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructioncomplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionabort]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionfail]: {
     icon: 'assignment',
   },
 };
