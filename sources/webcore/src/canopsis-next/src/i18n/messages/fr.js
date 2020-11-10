@@ -1445,12 +1445,16 @@ export default {
       eventPatterns: 'Patterns des événements',
       alarmPatterns: 'Patterns des alarmes',
       entityPatterns: 'Pattern des entités',
+      totalEntityPatterns: 'Total des modèles d\'entité',
       thresholdType: 'Type de seuil',
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',
       timeInterval: 'Intervalle de temps',
-      valuePath: 'Chemin de valeur',
+      valuePath: 'Chemin de valeur | Chemins de valeur',
       autoResolve: 'Résolution automatique',
+    },
+    errors: {
+      noValuePaths: 'Vous devez ajouter au moins 1 chemin de valeur',
     },
   },
   snmpRules: {
