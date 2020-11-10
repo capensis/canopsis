@@ -1939,6 +1939,11 @@ export default {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
     },
+    jobs: {
+      title: 'Jobs assigned:',
+      launchedAt: 'Launched at',
+      completedAt: 'Completed at',
+    },
   },
 
   ...featureService.get('i18n.en'),
