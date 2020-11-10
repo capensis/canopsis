@@ -1,7 +1,5 @@
 export const { BASE_URL } = process.env;
 
-export const ROUTER_MODE = 'history';
-
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
 
 export const PAGINATION_LIMIT = parseInt(process.env.VUE_APP_PAGINATION_LIMIT, 10);
