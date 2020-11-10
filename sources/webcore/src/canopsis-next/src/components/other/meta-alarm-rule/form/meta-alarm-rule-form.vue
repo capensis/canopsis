@@ -36,7 +36,7 @@
     meta-alarm-rule-patterns-form(
       v-if="isPatternsFormShown",
       v-field="form.config",
-      :with-total="isValueGroupType"
+      :with-total="withTotalEntityPatterns"
     )
 </template>
 
@@ -96,6 +96,10 @@ export default {
 
     isPatternsFormShown() {
       return this.isComplexType || this.isValueGroupType || this.isPatternsType;
+    },
+
+    withTotalEntityPatterns() {
+      return this.isComplexType || this.isValueGroupType;
     },
 
     /**
