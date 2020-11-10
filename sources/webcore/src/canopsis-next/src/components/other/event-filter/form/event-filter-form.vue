@@ -21,17 +21,20 @@
       :label="$t('modals.eventFilterRule.priority')",
       type="number"
     )
-    v-switch(v-field="form.enabled", :label="$t('common.enabled')")
-    v-btn(@click="editPattern") {{ $t('modals.eventFilterRule.editPattern') }}
+    v-switch(v-field="form.enabled", :label="$t('common.enabled')", color="primary")
+    patterns-list(v-field="form.patterns")
 </template>
 
 <script>
-import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
+import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
+
 export default {
   inject: ['$validator'],
+  components: { PatternsList },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -50,17 +53,6 @@ export default {
   computed: {
     ruleTypes() {
       return Object.values(EVENT_FILTER_RULE_TYPES);
-    },
-  },
-  methods: {
-    editPattern() {
-      this.$modals.show({
-        name: MODALS.createEventFilterRulePattern,
-        config: {
-          pattern: this.form.pattern,
-          action: pattern => this.updateField('pattern', pattern),
-        },
-      });
     },
   },
 };
