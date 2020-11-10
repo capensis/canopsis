@@ -308,6 +308,12 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
         [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'Instruction has been started',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'Instruction has been paused',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'Instruction has been resumed',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'Instruction has been completed',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'Instruction has been aborted',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'Instruction has been failed',
       },
     },
     tabs: {
