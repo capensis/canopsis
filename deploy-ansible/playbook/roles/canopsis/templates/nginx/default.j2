@@ -62,5 +62,6 @@ server {
 	location / {
 		include /etc/nginx/cors.inc;
 		try_files $uri $uri/ /index.html;
+		error_page 404 /index.html;
 	}
 }
