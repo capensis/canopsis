@@ -65,6 +65,7 @@ export default {
           persistent: true,
         },
         config: {
+          hideTitle: true,
           text: this.step.endpoint,
           action: () => this.$emit('next-step', true),
           cancel: () => this.$emit('next-step', false),
