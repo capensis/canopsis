@@ -408,22 +408,22 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.executeInstruction]: {
     icon: 'assignment',
   },
-  [EVENT_ENTITY_TYPES.instructionstart]: {
+  [EVENT_ENTITY_TYPES.instructionStart]: {
     icon: 'assignment',
   },
-  [EVENT_ENTITY_TYPES.instructionpause]: {
+  [EVENT_ENTITY_TYPES.instructionPause]: {
     icon: 'assignment',
   },
-  [EVENT_ENTITY_TYPES.instructionresume]: {
+  [EVENT_ENTITY_TYPES.instructionResume]: {
     icon: 'assignment',
   },
-  [EVENT_ENTITY_TYPES.instructioncomplete]: {
+  [EVENT_ENTITY_TYPES.instructionComplete]: {
     icon: 'assignment',
   },
-  [EVENT_ENTITY_TYPES.instructionabort]: {
+  [EVENT_ENTITY_TYPES.instructionAbort]: {
     icon: 'assignment',
   },
-  [EVENT_ENTITY_TYPES.instructionfail]: {
+  [EVENT_ENTITY_TYPES.instructionFail]: {
     icon: 'assignment',
   },
 };
