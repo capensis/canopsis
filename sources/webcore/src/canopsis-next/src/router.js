@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Cookies from 'js-cookie';
 
-import { COOKIE_SESSION_KEY } from '@/config';
+import { ROUTER_MODE, COOKIE_SESSION_KEY } from '@/config';
 import { USERS_RIGHTS, USERS_RIGHTS_MASKS } from '@/constants';
 import store from '@/store';
 import { checkAppInfoAccessForRoute, checkUserAccessForRoute, getKeepalivePathByRoute } from '@/helpers/router';
@@ -260,10 +260,8 @@ const routes = [
 ];
 
 const router = new Router({
-  mode: 'history',
-  routes: [
-    { path: '*', component: NotFoundComponent }
-  ]
+  mode: ROUTER_MODE,
+  routes,
 });
 
 /**
