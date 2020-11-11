@@ -224,7 +224,7 @@ export default {
           assignedInstruction,
           alarm: this.item,
           onCreate: this.refreshAlarms,
-          onFinished: async () => {
+          onComplete: async () => {
             await this.refreshAlarms();
             this.showRateInstructionModal(assignedInstruction._id);
           },
