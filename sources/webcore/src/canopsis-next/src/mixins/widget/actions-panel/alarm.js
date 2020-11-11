@@ -211,7 +211,7 @@ export default {
           assignedInstruction,
           alarm: this.item,
           onCreate: this.refreshAlarms,
-          onFinished: this.refreshAlarms,
+          onComplete: this.refreshAlarms,
         },
       });
     },
