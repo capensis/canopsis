@@ -23,6 +23,7 @@ export default {
       pauseRemediationInstructionExecution: 'pause',
       previousOperationRemediationInstructionExecution: 'previousOperation',
       resumeRemediationInstructionExecution: 'resume',
+      rateRemediationInstructionExecution: 'rate',
     }),
   },
 };

@@ -15,7 +15,7 @@ import { generateWidgetByType } from '@/helpers/entities';
 
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
+import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
@@ -24,7 +24,7 @@ export default {
   mixins: [
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
-    entitiesRemediationInstructionsMixin,
+    entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
     refreshAlarms() {
@@ -205,13 +205,13 @@ export default {
       });
     },
 
-    showRateInstructionModal(instructionId) {
+    showRateInstructionModal(instructionExecuteId) {
       this.$modals.show({
         name: MODALS.rate,
         config: {
           title: this.$t('modals.rateInstruction.title'),
           text: this.$t('modals.rateInstruction.text'),
-          action: data => this.rateRemediationInstruction({ id: instructionId, data }),
+          action: data => this.rateRemediationInstructionExecution({ id: instructionExecuteId, data }),
         },
       });
     },
@@ -224,9 +224,9 @@ export default {
           assignedInstruction,
           alarm: this.item,
           onCreate: this.refreshAlarms,
-          onComplete: async () => {
+          onComplete: async (instructionExecute) => {
             await this.refreshAlarms();
-            this.showRateInstructionModal(assignedInstruction._id);
+            this.showRateInstructionModal(instructionExecute._id);
           },
         },
       });
