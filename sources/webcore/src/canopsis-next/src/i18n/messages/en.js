@@ -1345,7 +1345,10 @@ export default {
         backToForm: 'Back to form',
       },
     },
-
+    rateInstruction: {
+      title: 'Rate this instruction',
+      text: 'How useful was this instruction?',
+    },
   },
   tables: {
     noData: 'No data',

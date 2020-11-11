@@ -190,6 +190,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },
     [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
+    [MODALS.rate]: { maxWidth: 400 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },
