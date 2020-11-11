@@ -14,7 +14,7 @@
         ) {{ $t('common.yes') }}
         v-btn.error(
           data-test="cancelButton",
-          @click="cancel"
+          @click="$modals.hide"
         ) {{ $t('common.no') }}
 </template>
 
@@ -31,32 +31,26 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.confirmation,
-  inject: ['$clickOutside'],
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
-  created() {
-    this.$clickOutside.register(this.cancelHandler);
+  data() {
+    return {
+      submitted: false,
+    };
   },
   beforeDestroy() {
-    this.$clickOutside.unregister(this.cancelHandler);
+    if (!this.submitted && this.config.cancel) {
+      this.config.cancel();
+    }
   },
   methods: {
-    async cancelHandler() {
-      if (this.config.cancel) {
-        await this.config.cancel();
-      }
-    },
-
     async submit() {
       if (this.config.action) {
         await this.config.action();
+
+        this.submitted = true;
       }
 
-      this.$modals.hide();
-    },
-
-    async cancel() {
-      await this.cancelHandler();
       this.$modals.hide();
     },
   },
