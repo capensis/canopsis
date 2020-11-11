@@ -1,6 +1,6 @@
 <template lang="pug">
   modal-wrapper(data-test="confirmationModal")
-    template(slot="title")
+    template(v-if="!config.hideTitle", slot="title")
       span {{ $t('common.confirmation') }}
     template(v-if="config.text", slot="text")
       span.subheading {{ config.text }}
@@ -14,7 +14,7 @@
         ) {{ $t('common.yes') }}
         v-btn.error(
           data-test="cancelButton",
-          @click="cancel"
+          @click="$modals.hide"
         ) {{ $t('common.no') }}
 </template>
 
@@ -33,26 +33,23 @@ export default {
   name: MODALS.confirmation,
   components: { ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
+  data() {
+    return {
+      submitted: false,
+    };
+  },
   beforeDestroy() {
-    this.cancelHandler();
+    if (!this.submitted && this.config.cancel) {
+      this.config.cancel();
+    }
   },
   methods: {
-    async cancelHandler() {
-      if (this.config.cancel) {
-        await this.config.cancel();
-      }
-    },
-
     async submit() {
       if (this.config.action) {
         await this.config.action();
       }
 
-      this.$modals.hide();
-    },
-
-    async cancel() {
-      await this.cancelHandler();
+      this.submitted = true;
       this.$modals.hide();
     },
   },

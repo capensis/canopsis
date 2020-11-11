@@ -1937,6 +1937,10 @@ export default {
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}',
+    popups: {
+      success: '{instructionName} a été exécuté avec succès',
+      failed: '{instructionName} a échoué. Veuillez faire remonter ce problème davantage',
+    },
   },
 
   ...featureService.get('i18n.fr'),

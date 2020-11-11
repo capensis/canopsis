@@ -6,7 +6,9 @@
       :operation="operation",
       :operation-number="getOperationNumber(index + 1)",
       :is-first="index === 0",
-      :is-first-step="isFirstStep"
+      :is-first-step="isFirstStep",
+      @next="nextOperation(index)",
+      @previous="previousOperation"
     )
 </template>
 
@@ -34,6 +36,18 @@ export default {
   methods: {
     getOperationNumber(index) {
       return `${this.stepNumber}${getCharByIndex(index)}`;
+    },
+
+    nextOperation(index) {
+      const event = index === this.operations.length - 1
+        ? 'finish'
+        : 'next';
+
+      this.$emit(event);
+    },
+
+    previousOperation() {
+      this.$emit('previous');
     },
   },
 };

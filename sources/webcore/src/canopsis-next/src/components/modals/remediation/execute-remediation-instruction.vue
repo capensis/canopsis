@@ -46,6 +46,32 @@ export default {
       return this.getRemediationInstructionExecution(this.executionInstructionId);
     },
   },
+  watch: {
+    async executionInstruction(executionInstruction) {
+      if (executionInstruction.status !== REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running) {
+        const isFailedExecution = [
+          REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed,
+          REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted,
+        ].includes(executionInstruction.status);
+        const type = isFailedExecution ? 'failed' : 'success';
+        const text = this.$t(`remediationInstructionExecute.popups.${type}`, {
+          instructionName: executionInstruction.name,
+        });
+
+        if (isFailedExecution) {
+          this.$popups.error({ text });
+        } else {
+          this.$popups.success({ text });
+        }
+
+        if (this.config.onComplete) {
+          await this.config.onComplete(executionInstruction);
+        }
+
+        this.$modals.hide();
+      }
+    },
+  },
   async mounted() {
     await this.fetchInstructionExecution();
   },

@@ -3,7 +3,15 @@
  *
  * @param {string} method
  * @param {Number} delay
- * @returns {{ data(): *, mounted(): *, beforeDestroy(): void, methods(): void }}
+ * @returns {{
+ *   data(): { timeout: null },
+ *   methods: {
+ *     startPolling(): void,
+ *     stopPolling(): void
+ *   },
+ *   beforeDestroy(): void,
+ *   mounted(): void
+ * }}
  */
 export default ({ method, delay }) => ({
   data() {

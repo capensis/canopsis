@@ -25,6 +25,10 @@ export default {
     entitiesPbehaviorMixin,
   ],
   methods: {
+    refreshAlarms() {
+      this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+    },
+
     createFastAckEvent() {
       let eventData = {};
 
@@ -206,7 +210,8 @@ export default {
         config: {
           assignedInstruction,
           alarm: this.item,
-          onCreate: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
+          onCreate: this.refreshAlarms,
+          onComplete: this.refreshAlarms,
         },
       });
     },
