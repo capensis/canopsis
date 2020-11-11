@@ -1941,6 +1941,7 @@ export default {
     },
     jobs: {
       title: 'Jobs assigned:',
+      startedAt: 'Started at',
       launchedAt: 'Launched at',
       completedAt: 'Completed at',
     },

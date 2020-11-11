@@ -9,22 +9,21 @@
       )
         template(slot="headers", slot-scope="props")
           td
+          td.text-xs-center {{ $t('remediationInstructionExecute.jobs.startedAt') }}
           td.text-xs-center {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
           td.text-xs-center {{ $t('remediationInstructionExecute.jobs.completedAt') }}
         template(slot="items", slot-scope="props")
-          td.pa-0
-            v-btn.primary(
-              round,
-              small,
-              block,
-              @click="executeJob(props.item)"
-            ) {{ props.item.name }}
-          td.text-xs-center {{ props.item.launched_at || '-' }}
-          td.text-xs-center {{ props.item.completed_at || '-' }}
+          remediation-instruction-assigned-job(:job="props.item", @execute-job="executeJob")
 </template>
 
 <script>
+import entitiesRemediationJobsExecutionsMixin from '@/mixins/entities/remediation/jobs-executions';
+
+import RemediationInstructionAssignedJob from './remediation-instruction-assigned-job.vue';
+
 export default {
+  components: { RemediationInstructionAssignedJob },
+  mixins: [entitiesRemediationJobsExecutionsMixin],
   props: {
     jobs: {
       type: Array,
@@ -40,7 +39,19 @@ export default {
     },
   },
   methods: {
-    executeJob() {},
+    async executeJob(job) {
+      try {
+        await this.createRemediationJobExecution({
+          data: {
+            execution: this.executionId,
+            job: job.job_id,
+            operation: this.operationId,
+          },
+        });
+      } catch (err) {
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
+    },
   },
 };
 </script>

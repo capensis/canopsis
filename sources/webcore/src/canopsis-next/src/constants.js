@@ -1579,3 +1579,7 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
   aborted: 3,
   failed: 4,
 };
+
+export const REMEDIATION_JOB_EXECUTION_STATUSES = {
+  running: 0,
+};

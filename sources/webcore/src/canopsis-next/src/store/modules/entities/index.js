@@ -10,6 +10,7 @@ import remediationInstructionModule from './remediation-instruction';
 import remediationInstructionExecutionModule from './remediation-instruction-execution';
 import remediationConfigurationModule from './remediation-configuration';
 import remediationJobModule from './remediation-job';
+import remediationJobExecutionModule from './remediation-job-execution';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -70,4 +71,5 @@ export default {
   remediationJob: remediationJobModule,
   remediationConfiguration: remediationConfigurationModule,
   remediationInstructionExecution: remediationInstructionExecutionModule,
+  remediationJobExecution: remediationJobExecutionModule,
 };
