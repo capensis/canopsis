@@ -47,7 +47,7 @@ export default {
     },
   },
   watch: {
-    executionInstruction(executionInstruction) {
+    async executionInstruction(executionInstruction) {
       if (executionInstruction.status !== REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running) {
         const isFailedExecution = [
           REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed,
@@ -64,8 +64,8 @@ export default {
           this.$popups.success({ text });
         }
 
-        if (this.config.onFinished) {
-          this.config.onFinished();
+        if (this.config.onComplete) {
+          await this.config.onComplete(executionInstruction);
         }
 
         this.$modals.hide();

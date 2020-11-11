@@ -102,5 +102,9 @@ export default {
     resume({ dispatch }, { id }) {
       return dispatch('update', { path: 'resume', id });
     },
+
+    rate({ dispatch }, { id, data }) {
+      return dispatch('update', { path: 'rate', id, data });
+    },
   },
 };
