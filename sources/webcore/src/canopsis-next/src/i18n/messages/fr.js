@@ -1904,7 +1904,7 @@ export default {
       lastExecutedOn: 'Dernière exécution le',
     },
     errors: {
-      runningInstruction: 'Des instructions en cours sont affectées à ce modèle. Souhaitez-vous les annuler?',
+      runningInstruction: 'Les changements ne peuvent pas être enregistrés car la consigne est en cours d\'exécution. Voulez vous stopper l\'exécution de la consigne et ainsi enregistrer les changements ?',
       operationRequired: 'Veuillez ajouter au moins une opération',
       stepRequired: 'Veuillez ajouter au moins une étape',
     },
