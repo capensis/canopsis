@@ -39,10 +39,6 @@ COPY docker/build/pip-canopsis.sh /
 RUN /bin/bash /pip-canopsis.sh
 RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 
-### Webcore
-COPY sources/webcore /sources/webcore
-RUN mkdir -p ${CPS_HOME}/var/www && rsync -a /sources/webcore/ ${CPS_HOME}/var/www/
-
 COPY VERSION.txt /${CPS_HOME}/
 
 ## Canopsis Core Image

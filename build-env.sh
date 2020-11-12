@@ -20,10 +20,6 @@ export CANOPSIS_PACKAGE_REL=${CANOPSIS_PACKAGE_REL:="1"}
 # Can be used by any other script to avoid doing anything with Go.
 export CANOPSIS_SKIP_GO=${CANOPSIS_SKIP_GO:="0"}
 
-# By default, pull, commit and push sources/webcore/src/canopsis-next from
-# the canopsis/canopsis-next repository.
-export CANOPSIS_BUILD_NEXT=${CANOPSIS_BUILD_NEXT:="0"}
-
 # Only avoid undefined variable error
 export GOPATH=${GOPATH:=""}
 export http_proxy=${http_proxy:=""}
@@ -35,7 +31,6 @@ function env_recap() {
     echo "CANOPSIS_PACKAGE_TAG: ${CANOPSIS_PACKAGE_TAG}"
     echo "CANOPSIS_PACKAGE_REL: ${CANOPSIS_PACKAGE_REL}"
     echo "CANOPSIS_DOCKER_MODE: ${CANOPSIS_DOCKER_MODE}"
-    echo "CANOPSIS_BUILD_NEXT: ${CANOPSIS_BUILD_NEXT}"
     echo "GOPATH: ${GOPATH}"
 }
 
