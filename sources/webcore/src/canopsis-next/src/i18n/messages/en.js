@@ -139,6 +139,9 @@ export default {
     duration: 'Duration',
     previous: 'Previous',
     next: 'Next',
+    eventPatterns: 'Event patterns',
+    alarmPatterns: 'Alarm patterns',
+    entityPatterns: 'Entity patterns',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -1339,7 +1342,9 @@ export default {
         backToForm: 'Back to form',
       },
     },
-
+    patterns: {
+      title: 'Assign patterns',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1591,9 +1596,6 @@ export default {
       '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
       outputTemplate: 'Output template',
-      eventPatterns: 'Event patterns',
-      alarmPatterns: 'Alarm patterns',
-      entityPatterns: 'Entity patterns',
       thresholdType: 'Threshold type',
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
