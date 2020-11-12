@@ -12,7 +12,7 @@ import {
   EVENT_ENTITY_TYPES,
   EVENT_ENTITY_STYLE,
   WIDGETS_ACTIONS_TYPES,
-  META_ALARMS_RULE_TYPES,
+  META_ALARMS_RULE_TYPES, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -221,11 +221,13 @@ export default {
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
         assignedInstructions.forEach((instruction) => {
-          const titlePrefix = instruction.execution ? 'resume' : 'execute';
+          const { execution } = instruction;
+          const titlePrefix = execution ? 'resume' : 'execute';
 
           const action = {
             ...filteredActionsMap.executeInstruction,
 
+            disabled: get(execution, 'status') === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running,
             title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),

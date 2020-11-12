@@ -10,14 +10,18 @@
         )
         v-layout(v-else, justify-center)
           v-progress-circular(indeterminate, color="primary")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="close") {{ $t('common.actions.close') }}
 </template>
 
 <script>
+import { INSTRUCTION_EXECUTE_FETCHING_INTERVAL } from '@/config';
 import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
+import pollingMixin from '@/mixins/polling';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
@@ -33,12 +37,17 @@ export default {
     authMixin,
     modalInnerMixin,
     entitiesRemediationInstructionExecutionMixin,
+    pollingMixin({
+      method: 'pingInstructionExecution',
+      delay: INSTRUCTION_EXECUTE_FETCHING_INTERVAL,
+    }),
   ],
   data() {
     const { execution } = this.modal.config.assignedInstruction;
 
     return {
       executionInstructionId: execution && execution._id,
+      hasPingError: false,
     };
   },
   computed: {
@@ -76,6 +85,18 @@ export default {
     await this.fetchInstructionExecution();
   },
   methods: {
+    async pingInstructionExecution() {
+      try {
+        await this.pingRemediationInstructionExecution({ id: this.executionInstruction._id });
+      } catch (err) {
+        this.$modals.hide();
+        this.$popups.error({
+          text: 'Some message', // TODO: fix the message
+          autoClose: false,
+        });
+      }
+    },
+
     async createInstructionExecution() {
       const { _id: instructionId } = this.config.assignedInstruction;
 
@@ -108,6 +129,38 @@ export default {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
         this.$modals.hide();
       }
+    },
+
+    close() {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          hideTitle: true,
+          text: this.$t('remediationInstructionExecute.closeConfirmationText'),
+          action: async () => {
+            await this.pauseRemediationInstructionExecution({ id: this.executionInstruction._id });
+
+            if (this.config.onClose) {
+              await this.config.onClose();
+            }
+
+            this.$modals.hide();
+          },
+          cancel: async (cancelled) => {
+            if (!cancelled) {
+              return;
+            }
+
+            await this.cancelRemediationInstructionExecution({ id: this.executionInstruction._id });
+
+            if (this.config.onClose) {
+              await this.config.onClose();
+            }
+
+            this.$modals.hide();
+          },
+        },
+      });
     },
   },
 };

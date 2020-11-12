@@ -13,6 +13,7 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
+import queryMixin from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
@@ -22,13 +23,19 @@ import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/reme
  */
 export default {
   mixins: [
+    queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
     entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
-    refreshAlarms() {
-      this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+    refreshAlarm() {
+      const params = this.getQueryById(this.widget._id);
+
+      return this.fetchItem({
+        id: this.item._id,
+        params,
+      });
     },
 
     createFastAckEvent() {
@@ -223,9 +230,10 @@ export default {
         config: {
           assignedInstruction,
           alarm: this.item,
-          onCreate: this.refreshAlarms,
+          onCreate: this.refreshAlarm,
+          onClose: this.refreshAlarm,
           onComplete: async (instructionExecute) => {
-            await this.refreshAlarms();
+            await this.refreshAlarm();
             this.showRateInstructionModal(instructionExecute._id);
           },
         },

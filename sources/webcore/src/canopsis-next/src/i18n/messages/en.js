@@ -1941,6 +1941,7 @@ export default {
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
+    closeConfirmationText: 'Would you like to resume this instruction later?',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
