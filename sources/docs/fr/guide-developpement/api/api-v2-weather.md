@@ -118,13 +118,6 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/weather/watchers/watcher_
             // ...
         }
 
-        "stats": {  // Statistiques sur l'entité (si le moteur go engine-stat est activé)
-            "ko":0,
-            "ok":0,
-            "last_ko":1569919009,
-            "last_event":1569923420
-        },
-
         // Derniers steps state, status, snooze et ack de l'alarme de la dépendance
         "state": {...},   // contient {"val": 0} s'il n'y a pas d'alarme
         "status": {...},  // non défini s'il n'y a pas d'alarme

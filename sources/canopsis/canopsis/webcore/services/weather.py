@@ -41,7 +41,6 @@ from canopsis.alerts.reader import AlertsReader
 from canopsis.common.converters import mongo_filter, id_filter
 from canopsis.common.utils import get_rrule_freq
 from canopsis.pbehavior.manager import PBehaviorManager
-from canopsis.stat.manager import StatManager
 from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_NOT_FOUND
 
 from pymongo.errors import PyMongoError
@@ -671,8 +670,6 @@ def exports(ws):
     ws.application.router.add_filter('mongo_filter', mongo_filter)
     ws.application.router.add_filter('id_filter', id_filter)
 
-    stat_manager = StatManager(*StatManager.provide_default_basics(ws.logger))
-
     @ws.application.route(
         '/api/v2/weather/watchers/<watcher_filter:mongo_filter>'
     )
@@ -850,7 +847,6 @@ def exports(ws):
             enriched_entity['name'] = raw_entity['name']
             enriched_entity['source_type'] = raw_entity['type']
             enriched_entity['state'] = {'val': 0}
-            enriched_entity['stats'] = stat_manager.get_stats(entity_id).as_dict()
             if current_alarm is not None:
                 enriched_entity['alarm_creation_date'] = current_alarm.get("creation_date")
                 enriched_entity['alarm_display_name'] = current_alarm.get("display_name")
