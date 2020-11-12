@@ -19,15 +19,11 @@ enum34==1.1.10
 Flask==1.0.2
 Flask-RESTful==0.3.6
 functools32==3.2.3-2
-gevent==1.2.2
-# XXX: try this small update?
-#gevent==1.3.7
+gevent==1.3.7
 # "development of grako has stopped"
 grako==3.99.9
 # Python 2 support dropped with 20.0
-gunicorn==19.7.1
-# XXX: try this small update?
-#gunicorn==19.10.0
+gunicorn==19.10.0
 icalendar==4.0.7
 ijson==2.3
 influxdb==5.1.0
