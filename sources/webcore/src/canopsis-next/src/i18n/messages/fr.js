@@ -139,6 +139,9 @@ export default {
     duration: 'Durée',
     previous: 'Précédent',
     next: 'Suivant',
+    eventPatterns: 'Patterns des événements',
+    alarmPatterns: 'Patterns des alarmes',
+    entityPatterns: 'Pattern des entités',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -1339,6 +1342,9 @@ export default {
         backToForm: 'Retour au formulaire',
       },
     },
+    patterns: {
+      title: 'Attribuer des modèles',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1590,9 +1596,6 @@ export default {
       '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
       outputTemplate: 'Modèle de sortie',
-      eventPatterns: 'Patterns des événements',
-      alarmPatterns: 'Patterns des alarmes',
-      entityPatterns: 'Pattern des entités',
       thresholdType: 'Type de seuil',
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',

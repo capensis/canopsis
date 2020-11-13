@@ -85,5 +85,7 @@ const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
  */
 export const formToRemediationInstruction = form => ({
   ...form,
+  alarm_patterns: form.alarm_patterns.length ? form.alarm_patterns : undefined,
+  entity_patterns: form.entity_patterns.length ? form.entity_patterns : undefined,
   steps: formStepsToRemediationInstructionSteps(form.steps),
 });
