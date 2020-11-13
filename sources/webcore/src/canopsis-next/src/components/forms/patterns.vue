@@ -68,11 +68,6 @@ export default {
       activePatternTab: 0,
     };
   },
-  computed: {
-    hasErrors() {
-      return this.errors.any();
-    },
-  },
 };
 </script>
 
