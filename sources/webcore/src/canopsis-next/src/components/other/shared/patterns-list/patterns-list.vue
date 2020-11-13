@@ -33,7 +33,7 @@
           v-btn(color="error", icon, @click="showRemovePatternModal(index)")
             v-icon delete
     v-btn(v-if="!disabled", color="primary", @click="showCreatePatternModal") {{ $t('common.add') }}
-    v-layout(row)
+    v-layout(v-if="errors", row)
       v-alert(:value="errors.has(name)", type="error")
         span(v-for="error in errors.collect(name)", :key="error") {{ error }}
 </template>
