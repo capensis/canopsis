@@ -33,6 +33,9 @@
           v-btn(color="error", icon, @click="showRemovePatternModal(index)")
             v-icon delete
     v-btn(v-if="!disabled", color="primary", @click="showCreatePatternModal") {{ $t('common.add') }}
+    v-layout(row)
+      v-alert(:value="errors.has(name)", type="error")
+        span(v-for="error in errors.collect(name)", :key="error") {{ error }}
 </template>
 
 <script>
@@ -43,6 +46,16 @@ import formArrayMixin from '@/mixins/form/array';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 export default {
+  $_veeValidate: {
+    value() {
+      return this.value;
+    },
+
+    name() {
+      return this.name;
+    },
+  },
+  inject: ['$validator'],
   components: {
     PatternInformation,
   },
@@ -63,6 +76,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    name: {
+      type: String,
+      default: 'patterns',
     },
   },
   computed: {

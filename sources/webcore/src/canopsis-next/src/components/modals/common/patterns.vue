@@ -31,6 +31,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import validationErrorsMixin from '@/mixins/form/validation-errors';
 
 import PatternsForm from '@/components/forms/patterns.vue';
 
@@ -42,7 +43,11 @@ export default {
     validator: 'new',
   },
   components: { ModalWrapper, PatternsForm },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    validationErrorsMixin(),
+  ],
   data() {
     return {
       form: this.modal.config.patterns ? cloneDeep(this.modal.config.patterns) : {},
@@ -58,11 +63,15 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form);
-        }
+        try {
+          if (this.config.action) {
+            await this.config.action(this.form);
+          }
 
-        this.$modals.hide();
+          this.$modals.hide();
+        } catch (err) {
+          this.setFormErrors(err);
+        }
       }
     },
   },

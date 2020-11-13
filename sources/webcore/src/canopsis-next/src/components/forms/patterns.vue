@@ -1,19 +1,34 @@
 <template lang="pug">
   v-layout(row)
     v-flex(xs12)
-      v-tabs(v-model="activePatternTab", fixed-tabs, slider-color="primary")
+      v-tabs(v-model="activePatternTab", slider-color="primary", fixed-tabs)
         template(v-if="alarm")
-          v-tab {{ $t('common.alarmPatterns') }}
+          v-tab(:class="{ 'error--text': errors.has('alarm_patterns') }") {{ $t('common.alarmPatterns') }}
           v-tab-item
-            patterns-list(v-field="value.alarm_patterns", :disabled="disabled")
+            patterns-list(
+              v-field="value.alarm_patterns",
+              :disabled="disabled",
+              name="alarm_patterns",
+              @input="errors.remove('alarm_patterns')"
+            )
         template(v-if="event")
-          v-tab {{ $t('common.eventPatterns') }}
+          v-tab(:class="{ 'error--text': errors.has('event_patterns') }") {{ $t('common.eventPatterns') }}
           v-tab-item
-            patterns-list(v-field="value.event_patterns", :disabled="disabled")
+            patterns-list(
+              v-field="value.event_patterns",
+              :disabled="disabled",
+              name="event_patterns",
+              @input="errors.remove('event_patterns')"
+            )
         template(v-if="entity")
-          v-tab {{ $t('common.entityPatterns') }}
+          v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
           v-tab-item
-            patterns-list(v-field="value.entity_patterns", :disabled="disabled")
+            patterns-list(
+              v-field="value.entity_patterns",
+              :disabled="disabled",
+              name="entity_patterns",
+              @input="errors.remove('entity_patterns')"
+            )
 </template>
 
 <script>
@@ -52,6 +67,11 @@ export default {
     return {
       activePatternTab: 0,
     };
+  },
+  computed: {
+    hasErrors() {
+      return this.errors.any();
+    },
   },
 };
 </script>
