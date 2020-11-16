@@ -159,7 +159,6 @@ export default {
 
 .instruction-list {
   /deep/ thead th {
-    height: 100%;
     vertical-align: middle;
   }
 }
