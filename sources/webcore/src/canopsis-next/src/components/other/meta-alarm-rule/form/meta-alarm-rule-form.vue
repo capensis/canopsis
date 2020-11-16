@@ -41,23 +41,24 @@
     meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
     meta-alarm-rule-threshold-count-form(v-if="isThresholdCountFormShown", v-field="form.config")
     meta-alarm-rule-time-based-form(v-if="isTimeBasedFormShown", v-field="form.config")
-    meta-alarm-rule-patterns-form(v-if="isPatternsFormShown", v-field="form.config")
+    patterns-form(v-if="isPatternsFormShown", v-field="form.config", alarm, entity, event)
 </template>
 
 <script>
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
+import PatternsForm from '@/components/forms/patterns.vue';
+
 import MetaAlarmRuleThresholdForm from './meta-alarm-rule-threshold-form.vue';
-import MetaAlarmRulePatternsForm from './meta-alarm-rule-patterns-form.vue';
 import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
 import MetaAlarmRuleThresholdCountForm from './meta-alarm-rule-threshold-count-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    PatternsForm,
     MetaAlarmRuleThresholdCountForm,
     MetaAlarmRuleTimeBasedForm,
-    MetaAlarmRulePatternsForm,
     MetaAlarmRuleThresholdForm,
   },
   model: {

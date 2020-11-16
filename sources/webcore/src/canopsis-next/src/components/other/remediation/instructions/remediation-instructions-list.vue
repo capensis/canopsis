@@ -41,7 +41,7 @@
           v-if="hasUpdateAnyRemediationInstructionAccess",
           icon,
           small,
-          @click.stop="$emit('assign-filter', props.item)"
+          @click.stop="$emit('assign-patterns', props.item)"
         )
           v-icon assignment
         v-tooltip(bottom, :disabled="!props.disabled")
