@@ -113,6 +113,7 @@ export const MODALS = {
   createRemediationJob: 'create-remediation-job',
   executeRemediationInstruction: 'execute-remediation-instruction',
   imageViewer: 'image-viewer',
+  patterns: 'patterns',
   rate: 'rate',
 };
 
@@ -148,6 +149,12 @@ export const EVENT_ENTITY_TYPES = {
   unsooze: 'unsooze',
   metaalarmattach: 'metaalarmattach',
   executeInstruction: 'executeInstruction',
+  instructionStart: 'instructionstart',
+  instructionPause: 'instructionpause',
+  instructionResume: 'instructionresume',
+  instructionComplete: 'instructioncomplete',
+  instructionAbort: 'instructionabort',
+  instructionFail: 'instructionfail',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -401,6 +408,24 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionStart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionPause]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionResume]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionComplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionAbort]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionFail]: {
     icon: 'assignment',
   },
 };

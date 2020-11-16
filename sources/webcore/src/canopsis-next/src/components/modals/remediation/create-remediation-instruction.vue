@@ -62,10 +62,10 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            const form = formToRemediationInstruction(this.form);
-            form.author = this.currentUser._id;
+            const instruction = formToRemediationInstruction(this.form);
+            instruction.author = this.currentUser._id;
 
-            await this.config.action(form);
+            await this.config.action(instruction);
           }
 
           this.$modals.hide();

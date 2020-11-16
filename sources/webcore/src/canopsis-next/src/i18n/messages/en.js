@@ -139,6 +139,9 @@ export default {
     duration: 'Duration',
     previous: 'Previous',
     next: 'Next',
+    eventPatterns: 'Event patterns',
+    alarmPatterns: 'Alarm patterns',
+    entityPatterns: 'Entity patterns',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -308,6 +311,12 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
         [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'Instruction has been started',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'Instruction has been paused',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'Instruction has been resumed',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'Instruction has been completed',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'Instruction has been aborted',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'Instruction has been failed',
       },
     },
     tabs: {
@@ -1339,6 +1348,9 @@ export default {
         backToForm: 'Back to form',
       },
     },
+    patterns: {
+      title: 'Assign patterns',
+    },
     rateInstruction: {
       title: 'Rate this instruction',
       text: 'How useful was this instruction?',
@@ -1594,9 +1606,6 @@ export default {
       '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
       outputTemplate: 'Output template',
-      eventPatterns: 'Event patterns',
-      alarmPatterns: 'Alarm patterns',
-      entityPatterns: 'Entity patterns',
       thresholdType: 'Threshold type',
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
@@ -1908,7 +1917,7 @@ export default {
       lastExecutedOn: 'Last executed on',
     },
     errors: {
-      runningInstruction: 'There are instruction in progress assigned to this pattern. Would you like to cancel them?',
+      runningInstruction: 'New changes cannot be applied to the instruction in progress. Would you like to cancel started instruction and apply new changes?',
       operationRequired: 'Please add at least one operation',
       stepRequired: 'Please add at least one step',
     },

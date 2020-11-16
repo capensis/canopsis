@@ -47,10 +47,9 @@ export default {
     async submit() {
       if (this.config.action) {
         await this.config.action();
-
-        this.submitted = true;
       }
 
+      this.submitted = true;
       this.$modals.hide();
     },
   },

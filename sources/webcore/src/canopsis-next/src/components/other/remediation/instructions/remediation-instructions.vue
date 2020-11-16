@@ -6,7 +6,7 @@
       :totalItems="remediationInstructionsMeta.total_count",
       :pagination.sync="pagination",
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
-      @assign-filter="showCreateFilterModal",
+      @assign-patterns="showAssignPatternsModal",
       @remove="showRemoveRemediationInstructionModal",
       @edit="showEditRemediationInstructionModal"
     )
@@ -86,21 +86,29 @@ export default {
       }
     },
 
-    showCreateFilterModal(remediationInstruction) {
+    showAssignPatternsModal(remediationInstruction) {
       this.$modals.show({
-        name: MODALS.createFilter,
+        name: MODALS.patterns,
         config: {
-          filter: { filter: remediationInstruction.filter },
-          hiddenFields: ['title'],
-          action: async ({ filter }) => {
-            if (isEqual(remediationInstruction.filter, filter)) {
+          alarm: true,
+          entity: true,
+          patterns: {
+            alarm_patterns: remediationInstruction.alarm_patterns,
+            entity_patterns: remediationInstruction.entity_patterns,
+          },
+          action: async ({ alarm_patterns: alarmPatterns, entity_patterns: entityPattens }) => {
+            if (
+              isEqual(remediationInstruction.alarm_patterns, alarmPatterns) &&
+              isEqual(remediationInstruction.entity_patterns, entityPattens)
+            ) {
               return;
             }
 
             const form = {
               ...remediationInstructionToForm(remediationInstruction),
               author: remediationInstruction.author,
-              filter,
+              alarm_patterns: alarmPatterns,
+              entity_patterns: entityPattens,
             };
 
             await this.updateRemediationInstructionWithConfirm(

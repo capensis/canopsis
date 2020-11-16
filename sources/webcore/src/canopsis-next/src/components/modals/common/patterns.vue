@@ -4,9 +4,19 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        remediation-job-form(v-model="form")
+        patterns-form(
+          v-model="form",
+          :alarm="config.alarm",
+          :entity="config.entity",
+          :event="config.event"
+        )
       template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(
+          :disabled="submitting",
+          depressed,
+          flat,
+          @click="$modals.hide"
+        ) {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",
@@ -15,44 +25,37 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
-import { formToRemediationJob, remediationJobToForm } from '@/helpers/forms/remediation-job';
-
 import modalInnerMixin from '@/mixins/modal/inner';
-import authMixin from '@/mixins/auth';
-import validationErrorsMixin from '@/mixins/form/validation-errors';
 import submittableMixin from '@/mixins/submittable';
-import confirmableModalMixin from '@/mixins/confirmable-modal';
+import validationErrorsMixin from '@/mixins/form/validation-errors';
 
-import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
+import PatternsForm from '@/components/forms/patterns.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createRemediationJob,
+  name: MODALS.patterns,
   $_veeValidate: {
     validator: 'new',
   },
-  components: {
-    ModalWrapper,
-    RemediationJobForm,
-  },
+  components: { ModalWrapper, PatternsForm },
   mixins: [
-    authMixin,
     modalInnerMixin,
-    validationErrorsMixin(),
     submittableMixin(),
-    confirmableModalMixin(),
+    validationErrorsMixin(),
   ],
   data() {
     return {
-      form: remediationJobToForm(this.modal.config.remediationJob),
+      form: this.modal.config.patterns ? cloneDeep(this.modal.config.patterns) : {},
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createRemediationJob.create.title');
+      return this.config.title || this.$t('modals.patterns.title');
     },
   },
   methods: {
@@ -62,10 +65,7 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            const job = formToRemediationJob(this.form);
-            job.author = this.currentUser._id;
-
-            await this.config.action(job);
+            await this.config.action(this.form);
           }
 
           this.$modals.hide();

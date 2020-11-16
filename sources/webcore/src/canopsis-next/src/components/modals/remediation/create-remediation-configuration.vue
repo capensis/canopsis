@@ -62,7 +62,10 @@ export default {
       if (isFormValid) {
         try {
           if (this.config.action) {
-            await this.config.action(formToRemediationConfiguration(this.form));
+            const configuration = formToRemediationConfiguration(this.form);
+            configuration.author = this.currentUser._id;
+
+            await this.config.action(configuration);
           }
 
           this.$modals.hide();
