@@ -29,7 +29,7 @@
 <script>
 import { sortBy } from 'lodash';
 
-import sortRightsMixin from '@/mixins/rights/entities/sort-headers';
+import sortRightHeadersMixin from '@/mixins/rights/entities/sort-headers';
 
 import RightsTable from './rights-table.vue';
 import RightGroupRow from './right-group-row.vue';
@@ -39,7 +39,7 @@ export default {
     RightsTable,
     RightGroupRow,
   },
-  mixins: [sortRightsMixin],
+  mixins: [sortRightHeadersMixin],
   props: {
     groups: {
       type: Array,

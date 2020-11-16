@@ -19,7 +19,7 @@
 <script>
 import { sortBy } from 'lodash';
 
-import sortRightsMixin from '@/mixins/rights/entities/sort-headers';
+import sortRightHeadersMixin from '@/mixins/rights/entities/sort-headers';
 
 import RightRow from './right-row.vue';
 
@@ -27,7 +27,7 @@ export default {
   components: {
     RightRow,
   },
-  mixins: [sortRightsMixin],
+  mixins: [sortRightHeadersMixin],
   props: {
     rights: {
       type: Array,
@@ -49,10 +49,6 @@ export default {
   computed: {
     sortedRights() {
       return sortBy(this.rights, ['name']);
-    },
-
-    sortedRoles() {
-      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()]);
     },
   },
 };
