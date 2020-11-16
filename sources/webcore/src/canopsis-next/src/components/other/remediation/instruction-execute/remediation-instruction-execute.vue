@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     async fetchExecution() {
+      await this.pingRemediationInstructionExecution({ id: this.executionInstruction._id });
       await this.fetchRemediationInstructionExecution({ id: this.executionInstruction._id });
     },
 

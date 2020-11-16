@@ -37,7 +37,8 @@ const remediationInstructionStepsToForm = steps => steps.map(step => ({
  * @property {string} name
  * @property {boolean} enabled
  * @property {string} description
- * @property {Object} filter
+ * @property {Array} alarm_patterns
+ * @property {Array} entity_patterns
  * @property {RemediationInstructionStep[]} steps
  * @param {Object} remediationInstruction
  * @returns {RemediationInstruction}
@@ -45,6 +46,8 @@ const remediationInstructionStepsToForm = steps => steps.map(step => ({
 export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   name: remediationInstruction.name || '',
   enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
+  alarm_patterns: remediationInstruction.alarm_patterns || [],
+  entity_patterns: remediationInstruction.entity_patterns || [],
   description: remediationInstruction.description || '',
   filter: remediationInstruction.filter || {},
   steps: remediationInstruction.steps

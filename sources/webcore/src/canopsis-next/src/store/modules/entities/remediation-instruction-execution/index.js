@@ -106,5 +106,9 @@ export default {
     rate({ dispatch }, { id, data }) {
       return dispatch('update', { path: 'rate', id, data });
     },
+
+    ping(context, { id }) {
+      return request.put(`${API_ROUTES.remediation.executions}/${id}/ping`);
+    },
   },
 };
