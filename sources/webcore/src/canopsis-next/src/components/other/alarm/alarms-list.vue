@@ -7,16 +7,6 @@
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"
         )
-      v-flex
-        pagination(
-          data-test="topPagination",
-          v-if="hasColumns",
-          :page="query.page",
-          :limit="query.limit",
-          :total="alarmsMeta.total_count",
-          type="top",
-          @input="updateQueryPage"
-        )
       v-flex(v-if="hasAccessToCorrelationSwitcher")
         v-switch(
           :value="query.correlation",
@@ -57,6 +47,16 @@
           )
             v-icon(:color="activeRange ? 'primary' : 'black'") schedule
           span {{ $t('liveReporting.button') }}
+    v-layout(row, wrap, align-center)
+      pagination(
+        data-test="topPagination",
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="alarmsMeta.total_count",
+        type="top",
+        @input="updateQueryPage"
+      )
     alarms-list-table(
       :widget="widget",
       :alarms="alarms",
@@ -82,7 +82,7 @@
           )
         v-spacer
         v-flex(xs2, data-test="itemsPerPage")
-          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+          records-per-page.py-4(:value="query.limit", @input="updateRecordsPerPage")
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 

@@ -1,22 +1,5 @@
 <template lang="pug">
   v-layout(align-center, row, wrap)
-    v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
-      v-switch(
-        data-test="mixFilters",
-        color="primary",
-        :label="$t('filterSelector.fields.mixFilters')",
-        :input-value="isMultiple",
-        :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
-        @change="updateIsMultipleFlag"
-      )
-    v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
-      v-radio-group(
-        :value="condition",
-        :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
-        @change="updateCondition"
-      )
-        v-radio(data-test="andFilters", label="AND", value="$and", color="primary")
-        v-radio(data-test="orFilters", label="OR", value="$or", color="primary")
     v-flex(
       data-test="selectFilters",
       v-show="!hideSelect",
@@ -34,6 +17,28 @@
         clearable,
         @input="updateSelectedFilter"
       )
+        template(slot="prepend-item")
+          v-layout.pl-3.mb-3
+            v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
+              v-switch(
+                data-test="mixFilters",
+                color="primary",
+                :label="$t('filterSelector.fields.mixFilters')",
+                :input-value="isMultiple",
+                :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+                hide-details,
+                @change="updateIsMultipleFlag"
+              )
+            v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
+              v-radio-group.mb-0(
+                :value="condition",
+                :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+                hide-details,
+                @change="updateCondition"
+              )
+                v-radio(data-test="andFilters", label="AND", value="$and", color="primary")
+                v-radio(data-test="orFilters", label="OR", value="$or", color="primary")
+          v-divider
         template(slot="item", slot-scope="{ parent, item, tile }")
           v-list-tile-action(
             v-if="isMultiple",
