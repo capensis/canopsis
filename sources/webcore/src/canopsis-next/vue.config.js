@@ -115,12 +115,19 @@ module.exports = {
           directives: {
             field(el, dir) {
               const { value, modifiers = {} } = dir;
-              const { number, trim } = modifiers;
+              const {
+                number,
+                trim,
+                mutate,
+                model,
+              } = modifiers;
+
               const path = parseField(value.trim());
 
               path.shift();
 
               const baseValueExpression = '$$v';
+              const basePreviousPathExpression = '$$p';
               let valueExpression = baseValueExpression;
 
               if (trim) {
@@ -134,13 +141,16 @@ module.exports = {
                 valueExpression = `_n(${valueExpression})`;
               }
 
-              const assignment = `$updateField([${path}], ${valueExpression})`;
+              const pathExpression = mutate ? `[${path}, ...(${basePreviousPathExpression} || [])]` : `[${path}]`;
+              const assignment = model
+                ? `$set(${value}, ${basePreviousPathExpression}, ${valueExpression})`
+                : `$updateField(${pathExpression}, ${valueExpression}, ${mutate})`;
 
               // eslint-disable-next-line no-param-reassign
               el.model = {
                 value: `(${value})`,
                 expression: JSON.stringify(value),
-                callback: `function (${baseValueExpression}) {${assignment}}`,
+                callback: `function (${baseValueExpression}, ${basePreviousPathExpression}) {${assignment}}`,
               };
             },
           },

@@ -2,7 +2,7 @@
   v-layout(column)
     v-flex.mt-1
       v-text-field(
-        v-field="form.username",
+        v-field.mutate="form.username",
         v-validate="'required'",
         :label="$t('common.username')",
         :error-messages="errors.collect('username')",
@@ -15,7 +15,7 @@
       )
     v-flex
       v-text-field(
-        v-field="form.password",
+        v-field.mutate="form.password",
         v-validate="'required'",
         :label="$t('common.password')",
         :error-messages="errors.collect('password')",

@@ -7,7 +7,7 @@
     v-card-text
       v-form.pa-2(data-test="loginForm", @submit.prevent.stop="submit")
         ldap-login-information(v-if="isLDAPAuthEnabled")
-        login-form(v-model="form")
+        login-form(v-field.model="form")
         v-flex
           v-layout.mb-1(justify-space-between, align-center)
             v-btn.ma-0(
