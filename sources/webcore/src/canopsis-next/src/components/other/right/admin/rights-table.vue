@@ -9,7 +9,7 @@
     template(slot="items", slot-scope="{ item }")
       right-row(
         :right="item",
-        :roles="roles",
+        :roles="sortedRoles",
         :changedRoles="changedRoles",
         :disabled="disabled",
         @change="$listeners.change"
@@ -17,12 +17,17 @@
 </template>
 
 <script>
+import { sortBy } from 'lodash';
+
+import sortRightsMixin from '@/mixins/rights/entities/sort-headers';
+
 import RightRow from './right-row.vue';
 
 export default {
   components: {
     RightRow,
   },
+  mixins: [sortRightsMixin],
   props: {
     rights: {
       type: Array,
@@ -42,12 +47,12 @@ export default {
     },
   },
   computed: {
-    headers() {
-      return [
-        { text: '', sortable: false },
+    sortedRights() {
+      return sortBy(this.rights, ['name']);
+    },
 
-        ...this.roles.map(role => ({ text: role._id, sortable: false })),
-      ];
+    sortedRoles() {
+      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()]);
     },
   },
 };
