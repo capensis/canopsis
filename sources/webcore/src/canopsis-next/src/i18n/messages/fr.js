@@ -1911,8 +1911,8 @@ export default {
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',
-      averageTimeCompletion: 'Temps moyen d\'achèvement',
-      monthExecutions: 'Nombre d\'exécutions ce mois-ci',
+      averageTimeCompletion: 'Temps moyen\nd\'achèvement',
+      monthExecutions: '№ d\'exécutions\nce mois-ci',
       lastExecutedBy: 'Dernière exécution par',
       lastExecutedOn: 'Dernière exécution le',
     },

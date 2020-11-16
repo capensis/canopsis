@@ -1911,8 +1911,8 @@ export default {
     table: {
       rating: 'Rating',
       lastModifiedOn: 'Last modified on',
-      averageTimeCompletion: 'Average time of completion',
-      monthExecutions: 'Number of executions this month',
+      averageTimeCompletion: 'Average time\nof completion',
+      monthExecutions: '№ of executions\nthis month',
       lastExecutedBy: 'Last executed by',
       lastExecutedOn: 'Last executed on',
     },
