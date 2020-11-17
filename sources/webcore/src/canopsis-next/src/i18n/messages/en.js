@@ -528,6 +528,7 @@ export default {
         counter: 'Counter',
       },
     },
+    counters: 'Counters',
   },
   modals: {
     common: {

@@ -1,8 +1,8 @@
 export const { BASE_URL, VUE_APP_API_HOST: API_HOST } = process.env;
 
-export const API_BASE_URL = process.env.NODE_ENV === 'development' ? '/api' : '';
+export const API_BASE_URL = '/backend';
 
-export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
+export const ROUTER_MODE = 'history';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
 

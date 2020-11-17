@@ -5,24 +5,30 @@
     tile,
     @click.native="showAdditionalInfoModal"
   )
-    v-btn.helpBtn.ma-0(
-      v-if="hasVariablesHelpAccess",
-      icon,
-      small,
-      @click.stop="showVariablesHelpModal(watcher)"
-    )
-      v-icon help
-    div(:class="{ blinking: isBlinking }")
-      v-layout(justify-start)
-        v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
-        v-runtime-template.watcherName.pt-3.pr-5(:template="compiledTemplate")
+    v-layout.fill-height(row)
+      v-flex.position-relative.fill-height
+        v-icon.weather__item--background.white--text(size="5em") {{ icon }}
+        v-layout(:class="{ blinking: isBlinking }", justify-start)
+          v-runtime-template.watcherName.pa-3(:template="compiledTemplate")
+        v-btn.helpBtn.ma-0(
+          v-if="hasVariablesHelpAccess",
+          icon,
+          small,
+          @click.stop="showVariablesHelpModal(watcher)"
+        )
+          v-icon help
         v-btn.pauseIcon(v-if="secondaryIcon", icon)
           v-icon(color="white") {{ secondaryIcon }}
-        v-btn.see-alarms-btn(
-          v-if="isBothModalType && hasAlarmsListAccess",
-          flat,
-          @click.stop="showAlarmListModal"
-        ) {{ $t('serviceWeather.seeAlarms') }}
+      v-flex(v-if="isCountersEnabled", xs2)
+        alarm-counters.fill-height(
+          :counters="counters",
+          :selected-types="selectedTypes"
+        )
+    v-btn.see-alarms-btn(
+      v-if="isBothModalType && hasAlarmsListAccess",
+      flat,
+      @click.stop="showAlarmListModal"
+    ) {{ $t('serviceWeather.seeAlarms') }}
 </template>
 
 <script>
@@ -45,8 +51,11 @@ import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
+import AlarmCounters from './alarm-counters.vue';
+
 export default {
   components: {
+    AlarmCounters,
     VRuntimeTemplate,
   },
   mixins: [authMixin, entitiesWatcherEntityMixin],
@@ -126,6 +135,30 @@ export default {
 
     isAlarmListModalType() {
       return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
+    },
+
+    counters() {
+      return this.watcher.alarm_counters || [];
+    },
+
+    hasCounters() {
+      return this.counters.length;
+    },
+
+    selectedTypes() {
+      const { counters } = this.widget.parameters;
+
+      return counters ? counters.types : [];
+    },
+
+    hasSelectedTypes() {
+      return this.selectedTypes.length;
+    },
+
+    isCountersEnabled() {
+      const { counters = {} } = this.widget.parameters;
+
+      return counters.enabled && this.hasCounters && this.hasSelectedTypes;
     },
   },
   methods: {

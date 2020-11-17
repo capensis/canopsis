@@ -7,4 +7,12 @@
     group: root
     mode: 0644
   vars:
-    TARGET: "http://{{ canopsis_gunicorn_host }}:{{ canopsis_gunicorn_port }}/"
+    CPS_API_URL: "http://{{ canopsis_api_host }}:{{ canopsis_api_port }}/"
+
+- name: Deploy Canopsis CORS configuration file for Nginx
+  template:
+    src: nginx/cors.j2
+    dest: /etc/nginx/cors.inc
+    owner: root
+    group: root
+    mode: 0644
