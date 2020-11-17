@@ -18,7 +18,8 @@
       pbehavior-type-field(
         v-field="value.type",
         :name="typeName",
-        :disabled="disabled"
+        :disabled="disabled",
+        return-object
       )
     v-flex(v-if="!disabled", xs1)
       v-btn(color="error", icon, @click="$emit('delete')")
