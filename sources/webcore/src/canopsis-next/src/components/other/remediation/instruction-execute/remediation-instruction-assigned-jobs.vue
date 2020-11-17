@@ -18,12 +18,16 @@
 
 <script>
 import entitiesRemediationJobsExecutionsMixin from '@/mixins/entities/remediation/jobs-executions';
+import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 import RemediationInstructionAssignedJob from './remediation-instruction-assigned-job.vue';
 
 export default {
   components: { RemediationInstructionAssignedJob },
-  mixins: [entitiesRemediationJobsExecutionsMixin],
+  mixins: [
+    entitiesRemediationJobsExecutionsMixin,
+    entitiesRemediationInstructionExecutionMixin,
+  ],
   props: {
     jobs: {
       type: Array,
@@ -48,6 +52,7 @@ export default {
             operation: this.operationId,
           },
         });
+        await this.fetchRemediationInstructionExecution({ id: this.executionId });
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
