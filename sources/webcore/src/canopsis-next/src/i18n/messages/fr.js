@@ -1945,9 +1945,12 @@ export default {
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}',
+    closeConfirmationText: 'Souhaitez-vous reprendre cette instruction plus tard?',
     popups: {
       success: '{instructionName} a été exécuté avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème davantage',
+      connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
+      wasPaused: 'L\'instruction {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez le reprendre manuellement.',
     },
   },
 

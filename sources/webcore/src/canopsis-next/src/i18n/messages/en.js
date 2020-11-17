@@ -1945,9 +1945,12 @@ export default {
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
+    closeConfirmationText: 'Would you like to resume this instruction later?',
     popups: {
       success: '{instructionName} has been successfully completed',
       failed: '{instructionName} has been failed. Please escalate this problem further',
+      connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
     },
   },
 

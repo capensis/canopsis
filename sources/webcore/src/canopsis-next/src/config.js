@@ -55,7 +55,7 @@ export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';
 
 export const API_ROUTES = {
   auth: '/auth',
-  currentUser: '/account/me',
+  currentUser: '/api/v4/account/me',
   version: '/api/v2/version',
   alarmList: '/api/v4/alarms',
   context: '/context',

@@ -1,13 +1,24 @@
 <template lang="pug">
   span(data-test="actionsPanelItem")
     template(v-if="isDropDown")
-      v-list-tile(@click.stop="method")
+      v-list-tile(:disabled="disabled", @click.stop="method")
         v-list-tile-title
-          v-icon.pr-3(:class="iconClass", left, small) {{ icon }}
+          v-icon.pr-3(
+            :class="iconClass",
+            :disabled="disabled",
+            left,
+            small
+          ) {{ icon }}
           span.body-1 {{ title }}
     template(v-else)
       v-tooltip(bottom)
-        v-btn.mx-1(slot="activator", flat, icon, @click.stop="method")
+        v-btn.mx-1(
+          slot="activator",
+          :disabled="disabled",
+          flat,
+          icon,
+          @click.stop="method"
+        )
           v-icon(:class="iconClass") {{ icon }}
         span {{ title }}
 </template>
@@ -45,6 +56,10 @@ export default {
       default: '',
     },
     isDropDown: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
