@@ -54,7 +54,7 @@ export default {
 
     updateSelectedFilter(filterObject) {
       this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
-      this.updateQueryBySelectedFilterAndCondition(filterObject, this.mainFilterCondition);
+      this.updateQueryBySelectedFilterAndCondition(filterObject || {}, this.mainFilterCondition);
     },
 
     updateQueryBySelectedFilterAndCondition(filter, condition) {

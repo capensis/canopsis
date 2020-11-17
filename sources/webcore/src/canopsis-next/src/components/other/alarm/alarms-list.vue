@@ -30,6 +30,16 @@
           @update:filters="updateFilters"
         )
       v-flex
+        v-tooltip(bottom)
+          v-btn(
+            slot="activator",
+            icon,
+            small,
+            @click="showInstructionsFiltersListModal"
+          )
+            v-icon(:color="activeInstructionsFilter ? 'primary' : 'black'") adjust
+          span {{ $t('instructionsFilter.button') }}
+      v-flex
         v-chip.primary.white--text(
           data-test="resetAlarmsDateInterval",
           v-if="activeRange",
@@ -152,6 +162,9 @@ export default {
     };
   },
   computed: {
+    activeInstructionsFilter() {
+      return false;
+    },
     tourCallbacks() {
       return {
         onPreviousStep: this.onTourPreviousStep,
@@ -254,6 +267,16 @@ export default {
     showEditLiveReportModal() {
       this.$modals.show({
         name: MODALS.editLiveReporting,
+        config: {
+          ...pick(this.query, ['tstart', 'tstop']),
+          action: params => this.query = { ...this.query, ...params },
+        },
+      });
+    },
+
+    showInstructionsFiltersListModal() {
+      this.$modals.show({
+        name: MODALS.instructionsFiltersList,
         config: {
           ...pick(this.query, ['tstart', 'tstop']),
           action: params => this.query = { ...this.query, ...params },

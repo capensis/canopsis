@@ -115,6 +115,7 @@ export const MODALS = {
   imageViewer: 'image-viewer',
   patterns: 'patterns',
   rate: 'rate',
+  instructionsFiltersList: 'instructions-filters-list',
 };
 
 export const EVENT_ENTITY_TYPES = {

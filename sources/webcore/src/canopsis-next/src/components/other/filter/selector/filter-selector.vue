@@ -18,7 +18,7 @@
         @input="updateSelectedFilter"
       )
         template(slot="prepend-item")
-          v-layout.pl-3.mb-3
+          v-layout.pl-3
             v-flex(v-show="!hideSelect", v-bind="flexProps.switch")
               v-switch(
                 data-test="mixFilters",
@@ -34,11 +34,22 @@
                 :value="condition",
                 :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
                 hide-details,
+                row,
                 @change="updateCondition"
               )
-                v-radio(data-test="andFilters", label="AND", value="$and", color="primary")
-                v-radio(data-test="orFilters", label="OR", value="$or", color="primary")
-          v-divider
+                v-radio(
+                  :value="$constants.FILTER_MONGO_OPERATORS.and",
+                  data-test="andFilters",
+                  label="AND",
+                  color="primary"
+                )
+                v-radio(
+                  :value="$constants.FILTER_MONGO_OPERATORS.or",
+                  data-test="orFilters",
+                  label="OR",
+                  color="primary"
+                )
+          v-divider.mt-3
         template(slot="item", slot-scope="{ parent, item, tile }")
           v-list-tile-action(
             v-if="isMultiple",
