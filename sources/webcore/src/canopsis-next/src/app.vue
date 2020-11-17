@@ -103,7 +103,7 @@ export default {
 
       data.paused_executions = [];
 
-      // await this.createUser({ data });
+      await this.createUser({ data });
       await this.fetchCurrentUser();
     },
   },

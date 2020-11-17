@@ -262,5 +262,25 @@ export default {
       return result;
     },
   },
+  methods: {
+    async showExecuteInstructionModal(assignedInstruction) {
+      const refreshAlarm = () => this.refreshAlarmById(this.item._id);
+
+      this.$modals.show({
+        id: `${this.item._id}${assignedInstruction._id}`,
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarm: this.item,
+          onOpen: refreshAlarm,
+          onClose: refreshAlarm,
+          onComplete: async (instructionExecute) => {
+            await refreshAlarm();
+            this.showRateInstructionModal(instructionExecute._id);
+          },
+        },
+      });
+    },
+  },
 };
 </script>

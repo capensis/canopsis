@@ -29,38 +29,6 @@ export default {
     entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
-    /**
-     * TODO: move into another place
-     *
-     * @returns {*}
-     */
-    refreshAlarm() {
-      const { item: alarm } = this;
-      const { correlation = false } = this.getQueryById(this.widget._id);
-      const params = { limit: 1, correlation };
-
-      if (alarm.v.steps) {
-        params.with_steps = true;
-      }
-
-      if (alarm.v.resolved) {
-        params.resolved = true;
-      }
-
-      if (get(alarm.consequences, 'data')) {
-        params.with_consequences = true;
-      }
-
-      if (get(alarm.causes, 'data')) {
-        params.with_causes = true;
-      }
-
-      return this.fetchAlarm({
-        id: this.item._id,
-        params,
-      });
-    },
-
     createFastAckEvent() {
       let eventData = {};
 
@@ -242,23 +210,6 @@ export default {
           title: this.$t('modals.rateInstruction.title'),
           text: this.$t('modals.rateInstruction.text'),
           action: data => this.rateRemediationInstructionExecution({ id: instructionExecuteId, data }),
-        },
-      });
-    },
-
-    async showExecuteInstructionModal(assignedInstruction) {
-      this.$modals.show({
-        id: `${this.item._id}${assignedInstruction._id}`,
-        name: MODALS.executeRemediationInstruction,
-        config: {
-          assignedInstruction,
-          alarm: this.item,
-          onOpen: this.refreshAlarm,
-          onClose: this.refreshAlarm,
-          onComplete: async (instructionExecute) => {
-            await this.refreshAlarm();
-            this.showRateInstructionModal(instructionExecute._id);
-          },
         },
       });
     },
