@@ -22,7 +22,7 @@ const { USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } = require('@/constants');
 const { getBaseUrl } = require('./url');
 
 const request = axios.create({
-  baseURL: getBaseUrl('/api'),
+  baseURL: getBaseUrl('/backend'),
   withCredentials: true,
 });
 

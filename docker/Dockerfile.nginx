@@ -2,7 +2,7 @@ FROM node:10.6-alpine AS build
 
 WORKDIR /canopsis-next
 COPY sources/webcore/src/canopsis-next /canopsis-next
-RUN yarn && yarn build
+RUN yarn && NODE_ENV=production yarn build --mode production
 
 FROM nginx:1.17.10-alpine
 

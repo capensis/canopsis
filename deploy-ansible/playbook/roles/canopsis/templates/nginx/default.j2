@@ -4,21 +4,25 @@ absolute_redirect off; # preserve port forwarding
 # Canopsis CSS/JS files have unique hashes in each official build.
 # Add a bit of cache to some other static elements as well, but don't
 # cache other resources.
+map_hash_bucket_size 64;
 map $sent_http_content_type $expires_time {
-	default				-1;
+	default				epoch;
 	text/css			1d;
 	application/javascript		1d;
 	application/vnd.ms-fontobject	1d;
 	font/ttf			1d;
 	font/woff			1d;
 	font/woff2			1d;
+	image/vnd.microsoft.icon	1d;
+	image/x-icon			1d;
 	image/gif			1h;
 	image/png			1h;
-	image/x-icon			1h;
 }
 
 server {
 	listen 80;
+
+	root /opt/canopsis/var/www/src/canopsis-next/dist/;
 
 	# Work around issue canopsis#1858
 	client_max_body_size 7m;
@@ -36,31 +40,28 @@ server {
 
 	expires $expires_time;
 
-	# This old URL shouldn't be used anymore
+	# This old URL mustn't be used anymore
 	location = /en/static/canopsis-next/dist/index.html {
 		return 301 /;
 	}
 
-	# Redirect to /canopsis, because some APIv1 calls didn't use the /api/
-	# namespace, so there could be a conflict between them and the UI.
-	location = / {
+	# Redirect API calls to canopsis-api. /backend depends on the baseURL
+	# setting of request.js.
+	location /backend/ {
 		include /etc/nginx/cors.inc;
-		return 303 /canopsis;
+		proxy_pass {{ CPS_API_URL }}; # must end with a slash!
+		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_read_timeout 90s;
+		# Never cache API calls
+		proxy_no_cache 1;
+		proxy_cache_bypass 1;
 	}
 
 	# Serve static files directly through Nginx by default
-	location /canopsis {
-		include /etc/nginx/cors.inc;
-		alias /opt/canopsis/var/www/src/canopsis-next/dist/;
-	}
-
-	# Everything else goes to canopsis-api, because it's very likely an API call
 	location / {
 		include /etc/nginx/cors.inc;
-
-		proxy_pass {{ CPS_API_URL }};
-		proxy_set_header X-Forwarded-Host $host;
-		proxy_set_header X-Forwarded-Server $host;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		try_files $uri $uri/ /index.html;
+		error_page 404 /index.html;
 	}
 }
