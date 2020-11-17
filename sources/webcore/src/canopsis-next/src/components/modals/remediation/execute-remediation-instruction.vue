@@ -63,6 +63,7 @@ export default {
           REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed,
           REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted,
         ].includes(executionInstruction.status);
+
         const type = isFailedExecution ? 'failed' : 'success';
         const text = this.$t(`remediationInstructionExecute.popups.${type}`, {
           instructionName: executionInstruction.name,
@@ -73,6 +74,8 @@ export default {
         } else {
           this.$popups.success({ text });
         }
+
+        this.stopPolling();
 
         if (this.config.onComplete) {
           await this.config.onComplete(executionInstruction);
