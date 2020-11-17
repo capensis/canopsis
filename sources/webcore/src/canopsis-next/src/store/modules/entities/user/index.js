@@ -48,36 +48,25 @@ export default {
     /**
      * Action for user creating/editing
      *
-     * @param {Function} dispatch
+     * @param {ActionContext} context
      * @param {Object} data
-     * @returns {Promise<void>}
+     * @returns {AxiosPromise<any>}
      */
-    async create({ dispatch }, { data }) {
-      try {
-        await request.post(API_ROUTES.user.create, qs.stringify({ user: JSON.stringify(data) }), {
-          headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        });
-
-        await dispatch('popups/success', { text: i18n.t('success.default') }, { root: true });
-      } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
-      }
+    async create(context, { data }) {
+      return request.post(API_ROUTES.user.create, qs.stringify({ user: JSON.stringify(data) }), {
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      });
     },
 
     /**
      * Action for user removing
      *
-     * @param {Function} dispatch
+     * @param {ActionContext} context
      * @param {string} id
-     * @returns {Promise<void>}
+     * @returns {AxiosPromise<any>}
      */
-    async remove({ dispatch }, { id }) {
-      try {
-        await request.delete(`${API_ROUTES.user.remove}/${id}`);
-        await dispatch('popups/success', { text: i18n.t('success.default') }, { root: true });
-      } catch (err) {
-        await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
-      }
+    async remove(context, { id }) {
+      return request.delete(`${API_ROUTES.user.remove}/${id}`);
     },
 
     /**

@@ -48,6 +48,7 @@ export default {
     return {
       executionInstructionId: execution && execution._id,
       hasPingError: false,
+      pending: true,
     };
   },
   computed: {
@@ -82,16 +83,24 @@ export default {
     },
   },
   async mounted() {
+    this.pending = true;
+
     await this.fetchInstructionExecution();
+
+    this.pending = false;
   },
   methods: {
     async pingInstructionExecution() {
       try {
+        if (!this.executionInstruction || this.pending) {
+          return;
+        }
+
         await this.pingRemediationInstructionExecution({ id: this.executionInstruction._id });
       } catch (err) {
         this.$modals.hide();
         this.$popups.error({
-          text: 'Some message', // TODO: fix the message
+          text: this.$t('remediationInstructionExecute.popups.connectionError'),
           autoClose: false,
         });
       }
@@ -108,10 +117,6 @@ export default {
       });
 
       this.executionInstructionId = instructionExecution._id;
-
-      if (this.config.onCreate) {
-        await this.config.onCreate();
-      }
     },
 
     async fetchInstructionExecution() {
@@ -124,6 +129,10 @@ export default {
           await this.resumeRemediationInstructionExecution({ id: execution._id });
         } else {
           await this.fetchRemediationInstructionExecution({ id: execution._id });
+        }
+
+        if (this.config.onOpen) {
+          await this.config.onOpen();
         }
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });

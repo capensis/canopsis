@@ -44,7 +44,7 @@ export default {
       this.$modals.show({
         name: MODALS.createUser,
         config: {
-          action: data => this.createUser({ data: prepareUserByData(data) }),
+          action: data => this.createUserWithPopup({ data: prepareUserByData(data) }),
         },
       });
     },

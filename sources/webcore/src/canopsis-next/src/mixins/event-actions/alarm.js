@@ -15,6 +15,7 @@ export default {
   mixins: [authMixin, eventActionsMixin],
   methods: {
     ...alarmMapActions({
+      fetchAlarm: 'fetchItem',
       fetchAlarmsListWithPreviousParams: 'fetchListWithPreviousParams',
     }),
 

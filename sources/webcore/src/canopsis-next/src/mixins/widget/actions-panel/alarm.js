@@ -29,10 +29,33 @@ export default {
     entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
+    /**
+     * TODO: move into another place
+     *
+     * @returns {*}
+     */
     refreshAlarm() {
-      const params = this.getQueryById(this.widget._id);
+      const { item: alarm } = this;
+      const { correlation = false } = this.getQueryById(this.widget._id);
+      const params = { limit: 1, correlation };
 
-      return this.fetchItem({
+      if (alarm.v.steps) {
+        params.with_steps = true;
+      }
+
+      if (alarm.v.resolved) {
+        params.resolved = true;
+      }
+
+      if (get(alarm.consequences, 'data')) {
+        params.with_consequences = true;
+      }
+
+      if (get(alarm.causes, 'data')) {
+        params.with_causes = true;
+      }
+
+      return this.fetchAlarm({
         id: this.item._id,
         params,
       });
@@ -230,7 +253,7 @@ export default {
         config: {
           assignedInstruction,
           alarm: this.item,
-          onCreate: this.refreshAlarm,
+          onOpen: this.refreshAlarm,
           onClose: this.refreshAlarm,
           onComplete: async (instructionExecute) => {
             await this.refreshAlarm();
