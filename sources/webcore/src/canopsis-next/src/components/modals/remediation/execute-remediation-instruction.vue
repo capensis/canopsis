@@ -47,7 +47,6 @@ export default {
 
     return {
       executionInstructionId: execution && execution._id,
-      hasPingError: false,
       pending: true,
     };
   },
