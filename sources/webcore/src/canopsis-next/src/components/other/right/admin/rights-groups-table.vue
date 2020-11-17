@@ -10,7 +10,7 @@
       right-group-row(
         :expanded="props.expanded",
         :group="props.item",
-        :roles="sortedRoles",
+        :roles="roles",
         :changedRoles="changedRoles",
         :disabled="disabled",
         @change="$listeners.change",
@@ -29,8 +29,6 @@
 <script>
 import { sortBy } from 'lodash';
 
-import sortRightHeadersMixin from '@/mixins/rights/entities/sort-headers';
-
 import RightsTable from './rights-table.vue';
 import RightGroupRow from './right-group-row.vue';
 
@@ -39,7 +37,6 @@ export default {
     RightsTable,
     RightGroupRow,
   },
-  mixins: [sortRightHeadersMixin],
   props: {
     groups: {
       type: Array,
@@ -59,6 +56,14 @@ export default {
     },
   },
   computed: {
+    headers() {
+      return [
+        { text: '', sortable: false },
+
+        ...this.roles.map(role => ({ text: role._id, sortable: false })),
+      ];
+    },
+
     groupsWithName() {
       return this.groups.map(({ key, rights }) => ({ rights, name: this.$t(key) }));
     },

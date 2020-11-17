@@ -11,7 +11,7 @@
           v-tab-item.white(:key="`tab-item-${groupKey}`")
             rights-table-wrapper(
               :rights="rights",
-              :roles="roles",
+              :roles="sortedRoles",
               :changedRoles="changedRoles",
               :disabled="!hasUpdateAnyActionAccess",
               @change="changeCheckboxValue"
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { get, isEmpty, isUndefined, transform } from 'lodash';
+import { get, isEmpty, isUndefined, sortBy, transform } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -65,6 +65,10 @@ export default {
   computed: {
     hasChanges() {
       return !isEmpty(this.changedRoles);
+    },
+
+    sortedRoles() {
+      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()]);
     },
   },
   mounted() {
