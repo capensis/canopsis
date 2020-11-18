@@ -69,4 +69,4 @@ export { default as ExecuteRemediationInstruction } from './remediation/execute-
 export { default as ImageViewer } from './common/image-viewer.vue';
 export { default as Patterns } from './common/patterns.vue';
 export { default as Rate } from './common/rate.vue';
-export { default as InstructionsFiltersList } from './common/instructions-filters-list.vue';
+export { default as RemediationInstructionsFilterEditor } from './remediation/remediation-instructions-filter-editor.vue';

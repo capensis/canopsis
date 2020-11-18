@@ -30,15 +30,10 @@
           @update:filters="updateFilters"
         )
       v-flex
-        v-tooltip(bottom)
-          v-btn(
-            slot="activator",
-            icon,
-            small,
-            @click="showInstructionsFiltersListModal"
-          )
-            v-icon(:color="activeInstructionsFilter ? 'primary' : 'black'") adjust
-          span {{ $t('instructionsFilter.button') }}
+        alarms-list-remediation-instructions-filters(
+          :filters="remediationInstructionsFilters",
+          @input="updateRemediationInstructionsFilters"
+        )
       v-flex
         v-chip.primary.white--text(
           data-test="resetAlarmsDateInterval",
@@ -116,8 +111,9 @@ import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
-import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
 import AlarmsListTable from './partials/alarms-list-table.vue';
+import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
  * Alarm-list component
@@ -135,6 +131,7 @@ export default {
     AdvancedSearch,
     AlarmsListTable,
     AlarmsExpandPanelTour,
+    AlarmsListRemediationInstructionsFilters,
   },
   mixins: [
     authMixin,
@@ -162,9 +159,10 @@ export default {
     };
   },
   computed: {
-    activeInstructionsFilter() {
-      return false;
+    remediationInstructionsFilters() {
+      return this.userPreference.widget_preferences.remediationInstructionsFilters || [];
     },
+
     tourCallbacks() {
       return {
         onPreviousStep: this.onTourPreviousStep,
@@ -212,6 +210,14 @@ export default {
     this.fetchAlarmColumnFilters();
   },
   methods: {
+    updateRemediationInstructionsFilters(remediationInstructionsFilters = []) {
+      this.updateWidgetPreferencesInUserPreference({
+        ...this.userPreference.widget_preferences,
+
+        remediationInstructionsFilters,
+      });
+    },
+
     updateCorrelation(correlation) {
       this.updateWidgetPreferencesInUserPreference({
         ...this.userPreference.widget_preferences,
@@ -267,16 +273,6 @@ export default {
     showEditLiveReportModal() {
       this.$modals.show({
         name: MODALS.editLiveReporting,
-        config: {
-          ...pick(this.query, ['tstart', 'tstop']),
-          action: params => this.query = { ...this.query, ...params },
-        },
-      });
-    },
-
-    showInstructionsFiltersListModal() {
-      this.$modals.show({
-        name: MODALS.instructionsFiltersList,
         config: {
           ...pick(this.query, ['tstart', 'tstop']),
           action: params => this.query = { ...this.query, ...params },

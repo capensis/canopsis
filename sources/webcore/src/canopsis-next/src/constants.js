@@ -115,7 +115,7 @@ export const MODALS = {
   imageViewer: 'image-viewer',
   patterns: 'patterns',
   rate: 'rate',
-  instructionsFiltersList: 'instructions-filters-list',
+  remediationInstructionsFilterEditor: 'remediation-instructions-filter-editor',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -1607,3 +1607,5 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
   aborted: 3,
   failed: 4,
 };
+
+export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';

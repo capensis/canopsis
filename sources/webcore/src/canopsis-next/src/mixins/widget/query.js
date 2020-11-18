@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, REMEDIATION_INSTRUCTION_FILTER_ALL } from '@/constants';
 
 import { dateParse } from '@/helpers/date-intervals';
 
@@ -56,11 +56,13 @@ export default {
         'sortDir',
         'tstart',
         'tstop',
+        'remediationInstructionsFilters',
       ]);
 
       const {
         tstart,
         tstop,
+        remediationInstructionsFilters,
         limit = PAGINATION_LIMIT,
       } = this.query;
 
@@ -74,6 +76,28 @@ export default {
         const convertedTstop = dateParse(tstop, 'stop', DATETIME_FORMATS.dateTimePicker);
 
         query.tstop = convertedTstop.unix();
+      }
+
+      if (remediationInstructionsFilters) {
+        const result = remediationInstructionsFilters.reduce((acc, filter) => {
+          const key = filter.condition ? 'without' : 'with';
+
+          if (filter.all) {
+            acc[key] = [REMEDIATION_INSTRUCTION_FILTER_ALL];
+          } else if (!acc[key].includes(REMEDIATION_INSTRUCTION_FILTER_ALL)) {
+            acc[key].push(...filter.instructions);
+          }
+
+          return acc;
+        }, { with: [], without: [] });
+
+        if (result.with.length) {
+          query.with_instructions = result.with.join(',');
+        }
+
+        if (result.without.length) {
+          query.without_instructions = result.without.join(',');
+        }
       }
 
       if (this.query.sortKey) {
