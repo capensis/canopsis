@@ -43,9 +43,7 @@ export default {
   actions: {
     async fetchListWithoutStore({ dispatch }, { params, withoutCatch = false }) {
       try {
-        const response = await request.get(API_ROUTES.alarmList, { params });
-
-        return response;
+        return request.get(API_ROUTES.alarmList, { params });
       } catch (err) {
         if (withoutCatch) {
           throw err;

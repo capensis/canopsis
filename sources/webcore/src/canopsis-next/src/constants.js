@@ -1569,6 +1569,8 @@ export const PLANNING_TABS = {
   exceptions: 'exceptions',
 };
 
+export const COUNTERS_LIMIT = 3;
+
 export const PBEHAVIOR_RRULE_PERIODS_RANGES = {
   thisWeek: 'thisWeek',
   nextWeek: 'nextWeek',

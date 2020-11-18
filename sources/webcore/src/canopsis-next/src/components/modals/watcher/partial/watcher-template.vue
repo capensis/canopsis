@@ -75,13 +75,13 @@ export default {
 
       return new Handlebars.SafeString(`
         <watcher-entities-wrapper
-            :watcher="watcher"
-            :watcher-entities="watcherEntities"
-            :entity-template="entityTemplate"
-            :items-per-page="itemsPerPage"
-            entity-name-field="${entityNameField}"
-            @add:event="addEventToQueue"
-          ></watcher-entities-wrapper>
+          :watcher="watcher"
+          :watcher-entities="watcherEntities"
+          :entity-template="entityTemplate"
+          :items-per-page="itemsPerPage"
+          entity-name-field="${entityNameField}"
+          @add:event="addEventToQueue"
+        ></watcher-entities-wrapper>
       `);
     });
   },

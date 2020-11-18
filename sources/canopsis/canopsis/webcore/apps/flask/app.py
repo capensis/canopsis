@@ -49,11 +49,11 @@ def _init(app):
     0: skip webservice
     1: load webservice
     """
-    logfile_handler = logging.FileHandler(os.path.join(root_path, 'var/log/webserver.log'))
+    logfile_handler = logging.FileHandler(os.path.join(root_path, 'var/log/oldapi.log'))
     app.logger.addHandler(logfile_handler)
     app.logger.setLevel(logging.INFO)
 
-    configuration = os.path.join(root_path, 'etc/webserver.conf')
+    configuration = os.path.join(root_path, 'etc/oldapi.conf')
     conf = Configuration.load(configuration, Ini)
     webservices = conf.get('webservices')
 

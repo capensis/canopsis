@@ -39,9 +39,9 @@ COPY docker/build/pip-canopsis.sh /
 RUN /bin/bash /pip-canopsis.sh
 RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 
-### Webserver
+### Webcore
 COPY sources/webcore /sources/webcore
-RUN mkdir -p ${CPS_HOME}/var/www && rsync -a --exclude=/sources/webcore/doc /sources/webcore/ ${CPS_HOME}/var/www/
+RUN mkdir -p ${CPS_HOME}/var/www && rsync -a /sources/webcore/ ${CPS_HOME}/var/www/
 
 COPY VERSION.txt /${CPS_HOME}/
 
@@ -52,7 +52,7 @@ ARG PROXY
 
 ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
-ENV CPS_WEBSERVER 0
+ENV CPS_OLD_API 0
 
 COPY --from=build /${CPS_HOME} /${CPS_HOME}
 
@@ -81,7 +81,7 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
     mkdir -p tmp && \
-    sed -r "s@~@${CPS_HOME}@g" -i ./etc/webserver.conf && \
+    sed -r "s@~@${CPS_HOME}@g" -i ./etc/oldapi.conf && \
     chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
 # Ansible
@@ -89,5 +89,5 @@ COPY deploy-ansible/ ${CPS_HOME}/deploy-ansible
 
 USER ${CPS_USER}:${CPS_GROUP}
 
-EXPOSE 8082
+EXPOSE 8081
 ENTRYPOINT /entrypoint.sh

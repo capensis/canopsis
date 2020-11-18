@@ -2,7 +2,7 @@
  * Mixin creator for polling
  *
  * @param {string} method
- * @param {Number} delay
+ * @param {number} delay
  * @returns {{
  *   data(): { timeout: null },
  *   methods: {

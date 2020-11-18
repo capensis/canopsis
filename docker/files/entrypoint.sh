@@ -18,8 +18,8 @@ if [ "x$1" == "xshell" ]; then
   exec /bin/bash
 else
     sudo /opt/canopsis/bin/env2cfg
-    if [ "${CPS_WEBSERVER}" = "1" ]; then
-        /opt/canopsis/bin/webserver --access-logfile /opt/canopsis/var/log/webserver-access.log -k gevent --limit-request-line ${LIMIT_REQUEST_LINE} -w ${WORKERS_SIZE} -b 0.0.0.0:8082
+    if [ "${CPS_OLD_API}" = "1" ]; then
+        /opt/canopsis/bin/canopsis-oldapi --access-logfile /opt/canopsis/var/log/oldapi-access.log -k gevent --limit-request-line ${LIMIT_REQUEST_LINE} -w ${WORKERS_SIZE} -b 0.0.0.0:8081
     else
         /opt/canopsis/bin/engine-launcher -e $ENGINE_MODULE -n $ENGINE_NAME -w 1 -l ${CPS_LOGGING_LEVEL:-info}
     fi

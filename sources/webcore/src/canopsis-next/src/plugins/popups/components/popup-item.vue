@@ -1,11 +1,10 @@
 <template lang="pug">
   v-alert.alert-without-border(
     v-model="visible",
+    v-on="alertListeners",
     :type="type",
     transition="fade-transition",
-    dismissible,
-    @mouseover="pauseProgress",
-    @mouseout="playProgress"
+    dismissible
   )
     .progress(v-if="autoClose")
       .progress-line(:style="progressLineStyle", :class="progressLineClass")
@@ -61,6 +60,16 @@ export default {
         'progress-line--paused': this.isPaused,
       };
     },
+    alertListeners() {
+      if (this.autoClose) {
+        return {
+          mouseover: this.pauseProgress,
+          mouseout: this.playProgress,
+        };
+      }
+
+      return {};
+    },
   },
   watch: {
     isVisible(value) {
@@ -72,7 +81,7 @@ export default {
   mounted() {
     this.visible = true;
 
-    if (this.closeValue) {
+    if (this.autoClose) {
       this.playProgress();
     }
   },

@@ -216,7 +216,7 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            await this.createUser({ data: prepareUserByData(data, this.currentUser) });
+            await this.createUserWithPopup({ data: prepareUserByData(data, this.currentUser) });
 
             await this.fetchCurrentUser();
           },
