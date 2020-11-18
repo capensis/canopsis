@@ -154,6 +154,7 @@ export function generateWidgetByType(type) {
         },
         heightFactor: 1,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
+        isCountersEnabled: false,
         alarmsList: alarmsListDefaultParameters,
         modalItemsPerPage: PAGINATION_LIMIT,
       };
@@ -586,13 +587,16 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
+  const result = {
+    ...omit(user, ['rights']),
+    ...omit(data, ['password']),
+  };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);
   }
 
-  if (!data._id) {
+  if (!result._id && !data._id) {
     result._id = data.crecord_name;
   }
 

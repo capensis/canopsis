@@ -27,7 +27,7 @@ from __future__ import unicode_literals
 import json
 import logging
 
-logger = logging.getLogger('webserver')
+logger = logging.getLogger('oldapi')
 
 
 def mongo_filter(config):

@@ -36,8 +36,6 @@ import smtplib
 import socket
 import re
 
-from chardet import detect
-
 from sys import version as PYVER
 
 if PYVER >= '3':

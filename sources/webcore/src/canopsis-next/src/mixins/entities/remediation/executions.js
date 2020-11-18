@@ -24,6 +24,7 @@ export default {
       previousOperationRemediationInstructionExecution: 'previousOperation',
       resumeRemediationInstructionExecution: 'resume',
       rateRemediationInstructionExecution: 'rate',
+      pingRemediationInstructionExecution: 'ping',
     }),
   },
 };

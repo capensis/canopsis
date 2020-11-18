@@ -100,7 +100,7 @@ function parseField(value) {
 }
 
 module.exports = {
-  baseUrl: isProduction ? '/en/static/canopsis-next/dist/' : '/',
+  baseUrl: '/',
   lintOnSave: false,
   chainWebpack: (config) => {
     config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
@@ -153,10 +153,10 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/api': {
+      '/backend': {
         target: process.env.VUE_APP_API_HOST,
         changeOrigin: true,
-        pathRewrite: { '^/api': '' },
+        pathRewrite: { '^/backend': '' },
         secure: false,
         cookieDomainRewrite: '',
       },

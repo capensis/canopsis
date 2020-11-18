@@ -106,5 +106,9 @@ export default {
     rate({ dispatch }, { id, data }) {
       return dispatch('update', { path: 'rate', id, data });
     },
+
+    ping({ dispatch }, { id }) {
+      return dispatch('update', { path: 'ping', id });
+    },
   },
 };

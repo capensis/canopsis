@@ -189,6 +189,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
     [MODALS.createRemediationInstruction]: { maxWidth: 960 },
+    [MODALS.executeRemediationInstruction]: { maxWidth: 960, persistent: true },
     [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
     [MODALS.rate]: { maxWidth: 400 },
 

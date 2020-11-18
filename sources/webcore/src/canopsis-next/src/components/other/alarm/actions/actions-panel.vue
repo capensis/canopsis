@@ -13,6 +13,7 @@ import {
   EVENT_ENTITY_STYLE,
   WIDGETS_ACTIONS_TYPES,
   META_ALARMS_RULE_TYPES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -221,11 +222,13 @@ export default {
        */
       if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
         assignedInstructions.forEach((instruction) => {
-          const titlePrefix = instruction.execution ? 'resume' : 'execute';
+          const { execution } = instruction;
+          const titlePrefix = execution ? 'resume' : 'execute';
 
           const action = {
             ...filteredActionsMap.executeInstruction,
 
+            disabled: get(execution, 'status') === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running,
             title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
@@ -258,6 +261,26 @@ export default {
       }
 
       return result;
+    },
+  },
+  methods: {
+    async showExecuteInstructionModal(assignedInstruction) {
+      const refreshAlarm = () => this.refreshAlarmById(this.item._id);
+
+      this.$modals.show({
+        id: `${this.item._id}${assignedInstruction._id}`,
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarm: this.item,
+          onOpen: refreshAlarm,
+          onClose: refreshAlarm,
+          onComplete: async (instructionExecute) => {
+            await refreshAlarm();
+            this.showRateInstructionModal(instructionExecute._id);
+          },
+        },
+      });
     },
   },
 };
