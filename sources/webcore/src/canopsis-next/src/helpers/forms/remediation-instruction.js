@@ -48,6 +48,7 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
   alarm_patterns: remediationInstruction.alarm_patterns || [],
   entity_patterns: remediationInstruction.entity_patterns || [],
+  description: remediationInstruction.description || '',
   steps: remediationInstruction.steps
     ? remediationInstructionStepsToForm(remediationInstruction.steps)
     : [generateRemediationInstructionStep()],
