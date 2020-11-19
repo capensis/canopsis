@@ -1531,3 +1531,16 @@ export const ENGINES_NAMES = {
   correlation: 'engine-correlation',
   heartbeat: 'engine-heartbeat',
 };
+
+export const ENGINES_COLOR = {
+  [ENGINES_NAMES.correlation]: 'secondary',
+  [ENGINES_NAMES.dynamicInfo]: 'secondary',
+  [ENGINES_NAMES.webhook]: 'secondary',
+  [ENGINES_NAMES.fifo]: 'primary',
+  [ENGINES_NAMES.axe]: 'primary',
+  [ENGINES_NAMES.che]: 'primary',
+  [ENGINES_NAMES.pbehavior]: 'primary',
+  [ENGINES_NAMES.action]: 'primary',
+  [ENGINES_NAMES.watcher]: 'primary',
+  [ENGINES_NAMES.heartbeat]: 'primary',
+};

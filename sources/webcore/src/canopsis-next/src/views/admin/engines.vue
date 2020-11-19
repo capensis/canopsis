@@ -1,41 +1,18 @@
 <template lang="pug">
   v-container
     h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.engines') }}
-    v-fade-transition
-      progress-overlay(v-if="pending", :pending="pending")
-      v-layout(v-else, row, justify-center)
-        v-flex
-          div.v-stepper.theme--light.event-info
-            div.v-stepper__step.v-stepper__step--active.pr-0
-              span.v-stepper__step__step.blue.darken-4.ma-0
-                v-icon(medium) offline_bolt
-              div.spacer
-            div.v-stepper__content.v-stepper__step--active.pt-0
-              div.v-stepper__label
-                div
-                  strong {{ $t('engines.event.title') }}
-                small {{ $t('engines.event.description') }}
-        v-flex
-          div.v-stepper.v-stepper--vertical.theme--light
-            template(v-for="(engine, index) in engines")
-              div.v-stepper__step.v-stepper__step--active.pl-0(:key="engine.name")
-                span.v-stepper__step__step.primary {{ index + 1 }}
-                div.v-stepper__label
-                  div
-                    strong {{ $t(`engines.${engine.name}.title`) }}
-                  small {{ $t(`engines.${engine.name}.description`) }}
-              div.v-stepper__content(:key="`${engine.name}-content`")
+    engines-list(:loading="pending", :engines="engines")
     fab-buttons(@refresh="fetchList")
 </template>
 
 <script>
 import entitiesEngineRunInfoMixin from '@/mixins/entities/engine-run-info';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
+import EnginesList from '@/components/other/engines/exploitation/engines-list.vue';
 
 export default {
-  components: { ProgressOverlay, FabButtons },
+  components: { EnginesList, FabButtons },
   mixins: [entitiesEngineRunInfoMixin],
   data() {
     return {
