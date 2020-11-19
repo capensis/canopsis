@@ -97,6 +97,7 @@ import { omit, pick, isEmpty } from 'lodash';
 import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
+import { convertRemediationInstructionsFiltersToQuery } from '@/helpers/query';
 
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
@@ -216,6 +217,11 @@ export default {
 
         remediationInstructionsFilters,
       });
+
+      this.query = {
+        ...omit(this.query, ['with_instructions', 'without_instructions']),
+        ...convertRemediationInstructionsFiltersToQuery(remediationInstructionsFilters),
+      };
     },
 
     updateCorrelation(correlation) {

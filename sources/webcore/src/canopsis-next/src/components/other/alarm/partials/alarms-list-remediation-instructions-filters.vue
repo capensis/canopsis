@@ -29,8 +29,8 @@ import uid from '@/helpers/uid';
 
 export default {
   filters: {
-    conditionMessage({ condition, all }) {
-      return `${condition === 0 ? 'WITH' : 'WITHOUT'}${all ? ' ALL' : ':'}`;
+    conditionMessage(filter) {
+      return `${filter.with ? 'WITH' : 'WITHOUT'}${filter.all ? ' ALL' : ':'}`;
     },
   },
   props: {
