@@ -8,7 +8,8 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
-  PBEHAVIOR_RRULE_PERIODS_RANGES, ENGINES_NAMES,
+  PBEHAVIOR_RRULE_PERIODS_RANGES,
+  ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
