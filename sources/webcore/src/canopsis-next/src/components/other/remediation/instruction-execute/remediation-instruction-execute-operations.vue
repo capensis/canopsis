@@ -5,8 +5,9 @@
       :key="operation.operation_id",
       :operation="operation",
       :operation-number="getOperationNumber(index + 1)",
-      :is-first="index === 0",
+      :is-first-operation="index === 0",
       :is-first-step="isFirstStep",
+      :execution-id="executionId",
       @next="nextOperation(index)",
       @previous="previousOperation"
     )
@@ -20,6 +21,10 @@ import RemediationInstructionExecuteOperation from './remediation-instruction-ex
 export default {
   components: { RemediationInstructionExecuteOperation },
   props: {
+    executionId: {
+      type: String,
+      required: true,
+    },
     operations: {
       type: Array,
       default: () => [],

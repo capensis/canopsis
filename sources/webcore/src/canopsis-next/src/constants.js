@@ -1608,4 +1608,8 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
   failed: 4,
 };
 
+export const REMEDIATION_JOB_EXECUTION_STATUSES = {
+  running: 0,
+};
+
 export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';

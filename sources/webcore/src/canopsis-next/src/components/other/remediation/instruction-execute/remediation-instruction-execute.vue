@@ -8,9 +8,8 @@
     )
     remediation-instruction-execute-steps(
       :steps="executionInstruction.steps",
-      @next-step="nextStep",
-      @next-operation="nextOperation",
-      @previous-operation="previousOperation"
+      :execution-id="executionInstruction._id",
+      @next-step="nextStep"
     )
 </template>
 
@@ -36,14 +35,6 @@ export default {
         id: this.executionInstruction._id,
         data: { failed: !success },
       });
-    },
-
-    previousOperation() {
-      this.previousOperationRemediationInstructionExecution({ id: this.executionInstruction._id });
-    },
-
-    nextOperation() {
-      this.nextOperationRemediationInstructionExecution({ id: this.executionInstruction._id });
     },
   },
 };
