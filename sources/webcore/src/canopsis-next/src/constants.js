@@ -1532,6 +1532,19 @@ export const ENGINES_NAMES = {
   heartbeat: 'engine-heartbeat',
 };
 
+export const ENGINES_QUEUE_NAMES = {
+  [ENGINES_NAMES.webhook]: 'Engine_webhook',
+  [ENGINES_NAMES.fifo]: 'Engine_fifo',
+  [ENGINES_NAMES.axe]: 'Engine_axe',
+  [ENGINES_NAMES.che]: 'Engine_che',
+  [ENGINES_NAMES.pbehavior]: 'Engine_pbehavior',
+  [ENGINES_NAMES.action]: 'Engine_action',
+  [ENGINES_NAMES.watcher]: 'Engine_watcher',
+  [ENGINES_NAMES.dynamicInfo]: 'Engine_dynamic_infos',
+  [ENGINES_NAMES.correlation]: 'Engine_correlation',
+  [ENGINES_NAMES.heartbeat]: 'Engine_heartbeat',
+};
+
 export const ENGINES_COLOR = {
   [ENGINES_NAMES.correlation]: 'secondary',
   [ENGINES_NAMES.dynamicInfo]: 'secondary',
