@@ -11,7 +11,7 @@ function wait_for_backends {
                 # Check for timeout
                 if [ $(($(date +%s) - start_time)) -gt ${timeout} ]
                 then
-                        echo "Backends not responding after ${elapsed_time}s, exiting"
+                        echo "Backends not responding after $(($(date +%s) - start_time))s, exiting"
                         exit 1
                 fi
         done
