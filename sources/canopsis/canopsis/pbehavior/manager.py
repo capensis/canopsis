@@ -247,6 +247,9 @@ class PBehaviorManager(object):
         except:
             return False
 
+
+
+
     def get(self, _id, search=None, limit=None, skip=None, sort=None):
         """Get pbehavior by id.
 
@@ -271,7 +274,8 @@ class PBehaviorManager(object):
                     {"comments.author": re.compile(str(search), re.IGNORECASE)},
                     {"comments.message": re.compile(str(search), re.IGNORECASE)},
                     {"eids": {"$elemMatch": {
-                        "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}}
+                        "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}},
+                    {"filter": re.compile(str(search), re.IGNORECASE)},
                 ]
                 pipeline.append({"$match": {"$or": or_query}})
             else:
