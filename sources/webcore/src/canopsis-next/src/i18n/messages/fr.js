@@ -1952,6 +1952,12 @@ export default {
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
       wasPaused: 'L\'instruction {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez le reprendre manuellement.',
     },
+    jobs: {
+      title: 'Emplois attribués:',
+      startedAt: 'Commencé à',
+      launchedAt: 'Lancé à',
+      completedAt: 'Terminé à',
+    },
   },
 
   ...featureService.get('i18n.fr'),

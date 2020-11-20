@@ -11,6 +11,8 @@ export const types = {
   CREATE_ITEM_COMPLETED: 'CREATE_ITEM_COMPLETED',
 
   UPDATE_ITEM_COMPLETED: 'UPDATE_ITEM_COMPLETED',
+
+  UPDATE_OPERATION_COMPLETED: 'UPDATE_OPERATION_COMPLETED',
 };
 
 export default {
@@ -41,6 +43,18 @@ export default {
     },
     [types.UPDATE_ITEM_COMPLETED]: (state, instructionExecution) => {
       Vue.set(state.byId, instructionExecution._id, instructionExecution);
+    },
+    [types.UPDATE_OPERATION_COMPLETED]: (state, { id, operation }) => {
+      const execution = state.byId[id];
+
+      execution.steps.forEach((step) => {
+        const operationIndex = step.operations
+          .findIndex(({ operation_id: operationId }) => operationId === operation.operation_id);
+
+        if (operationIndex !== -1) {
+          Vue.set(step.operations, operationIndex, operation);
+        }
+      });
     },
     [types.FETCH_ITEM_FAILED]: (state) => {
       state.pending = false;
@@ -107,8 +121,14 @@ export default {
       return dispatch('update', { path: 'rate', id, data });
     },
 
-    ping({ dispatch }, { id }) {
-      return dispatch('update', { path: 'ping', id });
+    async ping({ commit }, { id }) {
+      try {
+        const operation = await request.put(`${API_ROUTES.remediation.executions}/${id}/ping`);
+
+        commit(types.UPDATE_OPERATION_COMPLETED, { id, operation });
+      } catch (err) {
+        console.warn(err);
+      }
     },
   },
 };

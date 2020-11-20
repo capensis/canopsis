@@ -26,10 +26,14 @@ export default ({ method, delay }) => ({
     this.stopPolling();
   },
   methods: {
-    async startPolling() {
+    async polling() {
       await this[method]();
 
-      this.timeout = setTimeout(this.startPolling, delay);
+      this.startPolling();
+    },
+
+    startPolling() {
+      this.timeout = setTimeout(this.polling, delay);
     },
 
     stopPolling() {

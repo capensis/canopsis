@@ -1952,6 +1952,12 @@ export default {
       connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
       wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
     },
+    jobs: {
+      title: 'Jobs assigned:',
+      startedAt: 'Started at',
+      launchedAt: 'Launched at',
+      completedAt: 'Completed at',
+    },
   },
 
   ...featureService.get('i18n.en'),
