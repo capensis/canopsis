@@ -26,6 +26,8 @@ server {
 
 	expires $expires_time;
 
+        include /etc/nginx/conf.d/locations.d/*.conf;
+
 	location / {
 		if ($request_method = 'OPTIONS') {
 			add_header 'Access-Control-Allow-Origin' "$http_origin";
