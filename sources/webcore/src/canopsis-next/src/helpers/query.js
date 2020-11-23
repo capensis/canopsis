@@ -1,9 +1,13 @@
 import { omit, isUndefined, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
-import { WIDGET_TYPES, STATS_QUICK_RANGES, REMEDIATION_INSTRUCTION_FILTER_ALL } from '@/constants';
+import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilter } from './filter';
+import {
+  prepareRemediationInstructionsFiltersToQuery,
+  getRemediationInstructionsFilters,
+} from './filter/remediation-instructions-filter';
 
 /**
  * WIDGET CONVERTERS
@@ -43,32 +47,6 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
     if (!isUndefined(alarmsStateFilter.resolved)) {
       query.resolved = alarmsStateFilter.resolved;
     }
-  }
-
-  return query;
-}
-
-export function convertRemediationInstructionsFiltersToQuery(remediationInstructionsFilters = []) {
-  const query = {};
-
-  const result = remediationInstructionsFilters.reduce((acc, filter) => {
-    const key = filter.with ? 'with' : 'without';
-
-    if (filter.all) {
-      acc[key] = [REMEDIATION_INSTRUCTION_FILTER_ALL];
-    } else if (!acc[key].includes(REMEDIATION_INSTRUCTION_FILTER_ALL)) {
-      acc[key].push(...filter.instructions);
-    }
-
-    return acc;
-  }, { with: [], without: [] });
-
-  if (result.with.length) {
-    query.with_instructions = result.with.join(',');
-  }
-
-  if (result.without.length) {
-    query.without_instructions = result.without.join(',');
   }
 
   return query;
@@ -280,13 +258,10 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
   const {
     itemsPerPage,
     isCorrelationEnabled = false,
-    remediationInstructionsFilters = [],
   } = widgetPreferences;
 
   const query = {
     correlation: isCorrelationEnabled,
-
-    ...convertRemediationInstructionsFiltersToQuery(remediationInstructionsFilters),
   };
 
   if (itemsPerPage) {
@@ -382,7 +357,7 @@ export function convertWidgetToQuery(widget) {
 export function prepareQuery(widget, userPreference) {
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference);
-  const query = {
+  let query = {
     ...widgetQuery,
     ...userPreferenceQuery,
   };
@@ -400,6 +375,15 @@ export function prepareQuery(widget, userPreference) {
     if (activeMainFilter) {
       query[filterKey] = prepareMainFilterToQueryFilter(activeMainFilter);
     }
+  }
+
+  const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
+
+  if (remediationInstructionsFilters.length) {
+    query = {
+      ...query,
+      ...prepareRemediationInstructionsFiltersToQuery(remediationInstructionsFilters),
+    };
   }
 
   return query;

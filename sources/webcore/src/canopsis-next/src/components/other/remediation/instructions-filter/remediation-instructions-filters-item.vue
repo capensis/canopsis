@@ -4,7 +4,7 @@
       v-on="chipListeners",
       :color="chipColor",
       :close-icon="chipCloseIcon",
-      close,
+      :close="closable",
       label
     )
       span.instruction-filter__text
@@ -35,6 +35,10 @@ export default {
       default: () => [],
     },
     editable: {
+      type: Boolean,
+      default: false,
+    },
+    closable: {
       type: Boolean,
       default: false,
     },

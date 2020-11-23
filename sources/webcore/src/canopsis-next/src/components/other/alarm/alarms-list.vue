@@ -97,7 +97,6 @@ import { omit, pick, isEmpty } from 'lodash';
 import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
-import { convertRemediationInstructionsFiltersToQuery } from '@/helpers/query';
 
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
@@ -109,6 +108,7 @@ import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
+import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
@@ -142,6 +142,7 @@ export default {
     widgetPaginationMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
+    widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
   ],
   props: {
@@ -160,54 +161,6 @@ export default {
     };
   },
   computed: {
-    remediationInstructionsFilters: {
-      get() {
-        return this.userPreference.widget_preferences.remediationInstructionsFilters || [];
-      },
-      set(filters) {
-        this.updateWidgetPreferencesInUserPreference({
-          ...this.userPreference.widget_preferences,
-
-          remediationInstructionsFilters: filters,
-        });
-
-        const newRemediationInstructionsFilters = [
-          ...filters,
-          ...this.widgetRemediationInstructionsFilters.filter(filter => !filter.disabled),
-        ];
-
-        this.updateRemediationInstructionsFiltersInQuery(newRemediationInstructionsFilters);
-      },
-    },
-
-    widgetRemediationInstructionsFilters: {
-      get() {
-        const { remediationInstructionsFilters = [] } = this.widget.parameters;
-        const { disabledWidgetRemediationInstructionsFilters = [] } = this.userPreference.widget_preferences;
-
-        return remediationInstructionsFilters.map(filter => ({
-          ...filter,
-          disabled: disabledWidgetRemediationInstructionsFilters.includes(filter._id),
-          locked: true,
-        }));
-      },
-      set(filters) {
-        this.updateWidgetPreferencesInUserPreference({
-          ...this.userPreference.widget_preferences,
-
-          disabledWidgetRemediationInstructionsFilters: filters.filter(filter => filter.disabled)
-            .map(filter => filter._id),
-        });
-
-        const newRemediationInstructionsFilters = [
-          ...this.userPreference.widget_preferences.remediationInstructionsFilters,
-          ...filters.filter(filter => !filter.disabled),
-        ];
-
-        this.updateRemediationInstructionsFiltersInQuery(newRemediationInstructionsFilters);
-      },
-    },
-
     tourCallbacks() {
       return {
         onPreviousStep: this.onTourPreviousStep,
@@ -255,15 +208,6 @@ export default {
     this.fetchAlarmColumnFilters();
   },
   methods: {
-    updateRemediationInstructionsFiltersInQuery(remediationInstructionsFilters) {
-      this.query = {
-        ...omit(this.query, ['with_instructions', 'without_instructions']),
-        ...convertRemediationInstructionsFiltersToQuery(remediationInstructionsFilters),
-
-        page: 1,
-      };
-    },
-
     updateCorrelation(correlation) {
       this.updateWidgetPreferencesInUserPreference({
         ...this.userPreference.widget_preferences,

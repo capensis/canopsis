@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.remediationInstructionsFilters') }}
     v-container
       v-layout(row, wrap)
-        remediation-instructions-filters-list(v-field="filters", editable)
+        remediation-instructions-filters-list(v-field="filters", editable, closable)
       v-layout(row, wrap)
         v-btn.ml-1(
           color="primary",

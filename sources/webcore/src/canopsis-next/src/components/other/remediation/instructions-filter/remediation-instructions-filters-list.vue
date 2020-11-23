@@ -31,6 +31,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    closable: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     remove(filter) {

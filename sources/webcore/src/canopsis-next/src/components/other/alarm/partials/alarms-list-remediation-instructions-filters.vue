@@ -7,6 +7,7 @@
     remediation-instructions-filters-list(
       :filters="filters",
       editable,
+      closable,
       @input="$listeners['update:filters']"
     )
     v-tooltip(bottom)
