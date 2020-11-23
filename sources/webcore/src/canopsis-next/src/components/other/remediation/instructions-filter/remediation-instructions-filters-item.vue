@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.instruction-filter
     v-chip.white--text(
       v-on="chipListeners",
       :color="chipColor",
@@ -7,7 +7,7 @@
       close,
       label
     )
-      span
+      span.instruction-filter__text
         v-icon(color="white", small) assignment
         v-icon.pl-1(v-if="filter.locked", color="white", small) lock
         strong.pl-2 {{ typeMessage }}
@@ -92,7 +92,7 @@ export default {
         name: MODALS.createRemediationInstructionsFilter,
         config: {
           filter: this.filter,
-          anotherFilters: this.anotherFilters,
+          filters: this.anotherFilters,
           action: newFilter => this.updateModel(newFilter),
         },
       });
@@ -102,7 +102,19 @@ export default {
 </script>
 
 <style lang="scss">
-.v-chip__custom-close {
-  font-size: 20px;
+.instruction-filter {
+  & /deep/ .v-chip .v-chip__content {
+    min-height: 32px;
+    height: auto;
+  }
+
+  &__text {
+    word-break: break-word;
+    white-space: pre-line;
+  }
+
+  .v-chip__custom-close {
+    font-size: 20px;
+  }
 }
 </style>

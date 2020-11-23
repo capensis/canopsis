@@ -6,7 +6,7 @@
       template(slot="text")
         remediation-instructions-filter-form(
           v-model="form",
-          :filters="config.anotherFilters"
+          :filters="config.filters"
         )
       template(slot="actions")
         v-btn(

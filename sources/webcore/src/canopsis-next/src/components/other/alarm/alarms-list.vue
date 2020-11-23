@@ -31,10 +31,8 @@
         )
       v-flex
         alarms-list-remediation-instructions-filters(
-          :filters="remediationInstructionsFilters",
-          :lockedFilters="widgetRemediationInstructionsFilters",
-          @update:filters="updateRemediationInstructionsFilters",
-          @update:lockedFilters="updateWidgetRemediationInstructionsFilters"
+          :filters.sync="remediationInstructionsFilters",
+          :locked-filters.sync="widgetRemediationInstructionsFilters"
         )
       v-flex
         v-chip.primary.white--text(
@@ -162,19 +160,52 @@ export default {
     };
   },
   computed: {
-    remediationInstructionsFilters() {
-      return this.userPreference.widget_preferences.remediationInstructionsFilters || [];
+    remediationInstructionsFilters: {
+      get() {
+        return this.userPreference.widget_preferences.remediationInstructionsFilters || [];
+      },
+      set(filters) {
+        this.updateWidgetPreferencesInUserPreference({
+          ...this.userPreference.widget_preferences,
+
+          remediationInstructionsFilters: filters,
+        });
+
+        const newRemediationInstructionsFilters = [
+          ...filters,
+          ...this.widgetRemediationInstructionsFilters.filter(filter => !filter.disabled),
+        ];
+
+        this.updateRemediationInstructionsFiltersInQuery(newRemediationInstructionsFilters);
+      },
     },
 
-    widgetRemediationInstructionsFilters() {
-      const { remediationInstructionsFilters = [] } = this.widget.parameters;
-      const { disabledWidgetRemediationInstructionsFilters = [] } = this.userPreference.widget_preferences;
+    widgetRemediationInstructionsFilters: {
+      get() {
+        const { remediationInstructionsFilters = [] } = this.widget.parameters;
+        const { disabledWidgetRemediationInstructionsFilters = [] } = this.userPreference.widget_preferences;
 
-      return remediationInstructionsFilters.map(filter => ({
-        ...filter,
-        disabled: disabledWidgetRemediationInstructionsFilters.includes(filter._id),
-        locked: true,
-      }));
+        return remediationInstructionsFilters.map(filter => ({
+          ...filter,
+          disabled: disabledWidgetRemediationInstructionsFilters.includes(filter._id),
+          locked: true,
+        }));
+      },
+      set(filters) {
+        this.updateWidgetPreferencesInUserPreference({
+          ...this.userPreference.widget_preferences,
+
+          disabledWidgetRemediationInstructionsFilters: filters.filter(filter => filter.disabled)
+            .map(filter => filter._id),
+        });
+
+        const newRemediationInstructionsFilters = [
+          ...this.userPreference.widget_preferences.remediationInstructionsFilters,
+          ...filters.filter(filter => !filter.disabled),
+        ];
+
+        this.updateRemediationInstructionsFiltersInQuery(newRemediationInstructionsFilters);
+      },
     },
 
     tourCallbacks() {
@@ -231,39 +262,6 @@ export default {
 
         page: 1,
       };
-    },
-
-    updateWidgetRemediationInstructionsFilters(filters = []) {
-      const { remediationInstructionsFilters } = this.userPreference.widget_preferences;
-
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
-        disabledWidgetRemediationInstructionsFilters: filters.filter(filter => filter.disabled)
-          .map(filter => filter._id),
-      });
-
-      const newRemediationInstructionsFilters = [
-        ...remediationInstructionsFilters,
-        ...filters.filter(filter => !filter.disabled),
-      ];
-
-      this.updateRemediationInstructionsFiltersInQuery(newRemediationInstructionsFilters);
-    },
-
-    updateRemediationInstructionsFilters(remediationInstructionsFilters = []) {
-      this.updateWidgetPreferencesInUserPreference({
-        ...this.userPreference.widget_preferences,
-
-        remediationInstructionsFilters,
-      });
-
-      const newRemediationInstructionsFilters = [
-        ...remediationInstructionsFilters,
-        ...this.widgetRemediationInstructionsFilters.filter(filter => !filter.disabled),
-      ];
-
-      this.updateRemediationInstructionsFiltersInQuery(newRemediationInstructionsFilters);
     },
 
     updateCorrelation(correlation) {

@@ -25,8 +25,8 @@
       )
     v-layout(row)
       v-select(
-        v-field="form.instructions",
         v-validate="selectValidationRules",
+        :value="form.instructions",
         :items="preparedRemediationInstructions",
         :loading="remediationInstructionsPending",
         :disabled="form.all",
@@ -36,13 +36,14 @@
         itemValue="name",
         name="instructions",
         multiple,
-        clearable
+        clearable,
+        @change="updateField('instructions', $event)"
       )
 </template>
 
 <script>
+import formMixin from '@/mixins/form';
 import entitiesRemediationInstructionsMixin from '@/mixins/entities/remediation/instructions';
-import formMixin from '@/mixins/form/object';
 
 export default {
   inject: ['$validator'],
@@ -72,9 +73,11 @@ export default {
 
     preparedRemediationInstructions() {
       return this.remediationInstructions.map((instruction) => {
-        const disabled = !this.form.instructions.includes(instruction.name)
-          && this.filters.some(filter =>
-            this.form.with !== filter.with && (filter.all || filter.instructions.includes(instruction.name)));
+        const filtersSomeComparator = filter => this.form.with !== filter.with
+          && (filter.all || filter.instructions.includes(instruction.name));
+
+        const instructionAlreadyInForm = this.form.instructions.includes(instruction.name);
+        const disabled = !instructionAlreadyInForm && this.filters.some(filtersSomeComparator);
 
         if (disabled) {
           return { ...instruction, disabled };

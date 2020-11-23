@@ -17,7 +17,7 @@
         @click="showCreateFilterModal"
       )
         v-icon(:color="filters.length ? 'primary' : 'black'") adjust
-      span {{ $t('instructionsFilter.button') }}
+      span {{ $t('remediationInstructionsFilters.button') }}
 </template>
 
 <script>
@@ -45,6 +45,7 @@ export default {
       this.$modals.show({
         name: MODALS.createRemediationInstructionsFilter,
         config: {
+          filters: this.filters,
           action: newFilter => this.$emit('update:filters', [...this.filters, { _id: uid(), ...newFilter }]),
         },
       });

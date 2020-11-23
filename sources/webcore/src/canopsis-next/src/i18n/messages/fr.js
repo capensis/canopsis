@@ -535,6 +535,7 @@ export default {
       },
     },
     counters: 'Compteurs',
+    remediationInstructionsFilters: 'Filtres d\'instructions',
   },
   modals: {
     common: {
@@ -1957,6 +1958,21 @@ export default {
       startedAt: 'Commencé à',
       launchedAt: 'Lancé à',
       completedAt: 'Terminé à',
+    },
+  },
+
+  remediationInstructionsFilters: {
+    button: 'Créer un filtre d\'instructions',
+    fields: {
+      with: 'Avec des instructions sélectionnées',
+      without: 'Sans instructions sélectionnées',
+      selectAll: 'Tout sélectionner',
+      selectedInstructions: 'Instructions sélectionnées',
+    },
+    chip: {
+      with: 'AVEC',
+      without: 'SANS POUR AUTANT',
+      all: 'TOUT',
     },
   },
 

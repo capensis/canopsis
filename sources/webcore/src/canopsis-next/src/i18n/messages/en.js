@@ -535,6 +535,7 @@ export default {
       },
     },
     counters: 'Counters',
+    remediationInstructionsFilters: 'Instructions filters',
   },
   modals: {
     common: {
@@ -1961,6 +1962,7 @@ export default {
   },
 
   remediationInstructionsFilters: {
+    button: 'Create instructions filter',
     fields: {
       with: 'With selected instructions',
       without: 'Without selected instructions',

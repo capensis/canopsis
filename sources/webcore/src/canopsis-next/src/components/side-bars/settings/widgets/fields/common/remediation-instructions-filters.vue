@@ -3,7 +3,7 @@
     v-list-tile(slot="activator") {{ $t('settings.remediationInstructionsFilters') }}
     v-container
       v-layout(row, wrap)
-        remediation-instructions-filters-list(v-field="filters")
+        remediation-instructions-filters-list(v-field="filters", editable)
       v-layout(row, wrap)
         v-btn.ml-1(
           color="primary",
@@ -39,7 +39,7 @@ export default {
       this.$modals.show({
         name: MODALS.createRemediationInstructionsFilter,
         config: {
-          anotherFilters: this.filters,
+          filters: this.filters,
           action: newFilter => this.addItemIntoArray({ _id: uid(), ...newFilter }),
         },
       });
