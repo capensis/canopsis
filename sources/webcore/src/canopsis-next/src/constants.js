@@ -111,11 +111,11 @@ export const MODALS = {
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
+  createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
   imageViewer: 'image-viewer',
   patterns: 'patterns',
   rate: 'rate',
-  remediationInstructionsFilterEditor: 'remediation-instructions-filter-editor',
 };
 
 export const EVENT_ENTITY_TYPES = {

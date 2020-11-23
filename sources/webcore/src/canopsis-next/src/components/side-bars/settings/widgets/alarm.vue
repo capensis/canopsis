@@ -43,6 +43,11 @@
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
+          template(v-if="hasAccessToListFilters")
+            field-remediation-instructions-filters(
+              v-model="settings.widget.parameters.remediationInstructionsFilters"
+            )
+            v-divider
           field-live-reporting(v-model="settings.widget.parameters.liveReporting")
           v-divider
           field-info-popup(
@@ -110,6 +115,7 @@ import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
 import FieldGridRangeSize from './fields/common/grid-range-size.vue';
+import FieldRemediationInstructionsFilters from './fields/alarm/remediation-instructions-filters.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -133,6 +139,7 @@ export default {
     FieldSwitcher,
     FieldFastAckOutput,
     FieldGridRangeSize,
+    FieldRemediationInstructionsFilters,
   },
   mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
   data() {

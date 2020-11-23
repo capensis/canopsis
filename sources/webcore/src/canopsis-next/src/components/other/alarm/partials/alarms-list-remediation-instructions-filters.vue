@@ -1,16 +1,13 @@
 <template lang="pug">
-  div
-    v-chip.primary.white--text(
-      v-for="filter in filters",
-      :key="filter._id",
-      close,
-      label,
-      @click="showEditFilterModal(filter)",
-      @input="removeFilter(filter)"
+  v-layout(row, wrap, align-center)
+    remediation-instructions-filters-list(
+      :filters="lockedFilters",
+      @input="$listeners['update:lockedFilters']"
     )
-      span
-        strong {{ filter | conditionMessage }}
-        span.pl-1(v-if="!filter.all") {{ filter.instructions.join(', ') }}
+    remediation-instructions-filters-list(
+      :filters="filters",
+      @input="$listeners['update:filters']"
+    )
     v-tooltip(bottom)
       v-btn(
         slot="activator",
@@ -27,40 +24,36 @@ import { MODALS } from '@/constants';
 
 import uid from '@/helpers/uid';
 
+import RemediationInstructionsFiltersList
+  from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-list.vue';
+
 export default {
-  filters: {
-    conditionMessage(filter) {
-      return `${filter.with ? 'WITH' : 'WITHOUT'}${filter.all ? ' ALL' : ':'}`;
-    },
-  },
+  components: { RemediationInstructionsFiltersList },
   props: {
     filters: {
       type: Array,
       default: () => [],
     },
+    lockedFilters: {
+      type: Array,
+      default: () => [],
+    },
   },
   methods: {
-    removeFilter(filter) {
-      this.$emit('input', this.filters.filter(item => item._id !== filter._id));
-    },
     showCreateFilterModal() {
       this.$modals.show({
-        name: MODALS.remediationInstructionsFilterEditor,
+        name: MODALS.createRemediationInstructionsFilter,
         config: {
           action: newFilter => this.$emit('input', [...this.filters, { _id: uid(), ...newFilter }]),
-        },
-      });
-    },
-    showEditFilterModal(filter) {
-      this.$modals.show({
-        name: MODALS.remediationInstructionsFilterEditor,
-        config: {
-          filter,
-          action: newFilter =>
-            this.$emit('input', this.filters.map(item => (item._id === filter._id ? newFilter : item))),
         },
       });
     },
   },
 };
 </script>
+
+<style lang="scss">
+.v-chip__custom-close {
+  font-size: 20px;
+}
+</style>

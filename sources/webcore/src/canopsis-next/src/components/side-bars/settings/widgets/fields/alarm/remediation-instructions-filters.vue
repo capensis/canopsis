@@ -1,0 +1,49 @@
+<template lang="pug">
+  v-list-group(data-test="filterOnOpenResolved")
+    v-list-tile(slot="activator") {{ $t('settings.remediationInstructionsFilters') }}
+    v-container
+      v-layout(row, wrap)
+        remediation-instructions-filters-list(v-field="filters")
+      v-layout(row, wrap)
+        v-btn.ml-1(
+          color="primary",
+          @click="showCreateInstructionsFilterModal"
+        ) {{ $t('common.add') }}
+</template>
+
+<script>
+import { MODALS } from '@/constants';
+
+import uid from '@/helpers/uid';
+
+import formArrayMixin from '@/mixins/form/array';
+
+import RemediationInstructionsFiltersList
+  from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-list.vue';
+
+export default {
+  components: { RemediationInstructionsFiltersList },
+  mixins: [formArrayMixin],
+  model: {
+    prop: 'filters',
+    event: 'input',
+  },
+  props: {
+    filters: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  methods: {
+    showCreateInstructionsFilterModal() {
+      this.$modals.show({
+        name: MODALS.createRemediationInstructionsFilter,
+        config: {
+          anotherFilters: this.filters,
+          action: newFilter => this.addItemIntoArray({ _id: uid(), ...newFilter }),
+        },
+      });
+    },
+  },
+};
+</script>

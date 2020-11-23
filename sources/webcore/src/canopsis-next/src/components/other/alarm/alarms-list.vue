@@ -32,6 +32,7 @@
       v-flex
         alarms-list-remediation-instructions-filters(
           :filters="remediationInstructionsFilters",
+          :lockedFilters="widgetRemediationInstructionsFilters",
           @input="updateRemediationInstructionsFilters"
         )
       v-flex
@@ -162,6 +163,16 @@ export default {
   computed: {
     remediationInstructionsFilters() {
       return this.userPreference.widget_preferences.remediationInstructionsFilters || [];
+    },
+
+    widgetRemediationInstructionsFilters() {
+      const { remediationInstructionsFilters = [] } = this.widget.parameters;
+
+      return remediationInstructionsFilters.map(filter => ({
+        ...filter,
+        enabled: true,
+        locked: true,
+      }));
     },
 
     tourCallbacks() {
