@@ -6,6 +6,7 @@
     )
     remediation-instructions-filters-list(
       :filters="filters",
+      editable,
       @input="$listeners['update:filters']"
     )
     v-tooltip(bottom)
@@ -44,7 +45,7 @@ export default {
       this.$modals.show({
         name: MODALS.createRemediationInstructionsFilter,
         config: {
-          action: newFilter => this.$emit('input', [...this.filters, { _id: uid(), ...newFilter }]),
+          action: newFilter => this.$emit('update:filters', [...this.filters, { _id: uid(), ...newFilter }]),
         },
       });
     },

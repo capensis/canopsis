@@ -1,12 +1,11 @@
 <template lang="pug">
   div
     v-chip.white--text(
-      :color="color",
-      :close-icon="closeIcon",
+      v-on="chipListeners",
+      :color="chipColor",
+      :close-icon="chipCloseIcon",
       close,
-      label,
-      @click="showEditFilterModal",
-      @input="close"
+      label
     )
       span
         v-icon(color="white", small) assignment
@@ -35,26 +34,44 @@ export default {
       type: Array,
       default: () => [],
     },
+    editable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
-    color() {
+    chipListeners() {
+      const listeners = { input: this.close };
+
+      if (this.editable) {
+        listeners.click = this.showEditFilterModal;
+      }
+
+      return listeners;
+    },
+
+    chipColor() {
       return this.filter.disabled ? 'grey' : 'primary';
     },
-    closeIcon() {
+
+    chipCloseIcon() {
       if (this.filter.locked) {
         return this.filter.disabled ? 'check_box_outline_blank' : 'check_box';
       }
 
       return '$vuetify.icons.delete';
     },
+
     anotherFilters() {
       return this.filters.filter(item => item._id !== this.filter._id);
     },
+
     typeMessage() {
       const { filter } = this;
 
       return `${filter.with ? 'WITH' : 'WITHOUT'}${filter.all ? ' ALL' : ':'}`; // TODO: add i18n
     },
+
     instructionsMessage() {
       return this.filter.instructions.join(', ');
     },
@@ -67,6 +84,7 @@ export default {
 
       return this.$emit('remove', this.filter);
     },
+
     showEditFilterModal() {
       this.$modals.show({
         name: MODALS.createRemediationInstructionsFilter,

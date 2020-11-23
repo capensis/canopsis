@@ -5,6 +5,7 @@
       v-field="filters[index]",
       :key="filter._id",
       :filters="filters",
+      :editable="editable",
       @remove="remove"
     )
 </template>
@@ -25,6 +26,10 @@ export default {
     filters: {
       type: Array,
       default: () => [],
+    },
+    editable: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
