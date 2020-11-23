@@ -821,6 +821,15 @@ export const USERS_RIGHTS = {
         addFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_addFilter`,
         userFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_userFilter`,
 
+        listRemediationInstructionsFilters:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_listRemediationInstructionsFilters`,
+        editRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_editRemediationInstructionsFilter`,
+        addRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_addRemediationInstructionsFilter`,
+        userRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_userRemediationInstructionsFilter`,
+
         links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
 
         correlation: `${USER_RIGHTS_PREFIXES.business.alarmsList}_correlation`,
@@ -936,6 +945,12 @@ export const WIDGETS_ACTIONS_TYPES = {
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
+    userFilter: 'userFilter',
+
+    listRemediationInstructionsFilters: 'listRemediationInstructionsFilters',
+    editRemediationInstructionsFilter: 'editRemediationInstructionsFilter',
+    addRemediationInstructionsFilter: 'addRemediationInstructionsFilter',
+    userRemediationInstructionsFilter: 'userRemediationInstructionsFilter',
 
     executeInstruction: 'executeInstruction',
   },
@@ -1005,6 +1020,14 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.userFilter]: USERS_RIGHTS.business.alarmsList.actions.userFilter,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.listRemediationInstructionsFilters]:
+      USERS_RIGHTS.business.alarmsList.actions.listRemediationInstructionsFilters,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.editRemediationInstructionsFilter]:
+      USERS_RIGHTS.business.alarmsList.actions.editRemediationInstructionsFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.addRemediationInstructionsFilter]:
+      USERS_RIGHTS.business.alarmsList.actions.addRemediationInstructionsFilter,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.executeInstruction]: USERS_RIGHTS.business.alarmsList.actions.executeInstruction,
 

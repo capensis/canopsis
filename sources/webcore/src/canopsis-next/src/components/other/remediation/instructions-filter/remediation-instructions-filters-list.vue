@@ -6,6 +6,7 @@
       :key="filter._id",
       :filters="filters",
       :editable="editable",
+      :closable="closable",
       @remove="remove"
     )
 </template>

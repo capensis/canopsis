@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.container.text-xs-center(v-if="total && total > limit")
+  div.container.text-xs-center(v-if="total")
     ul.v-pagination(v-if="type === 'top'")
       li
         button.v-pagination__navigation(

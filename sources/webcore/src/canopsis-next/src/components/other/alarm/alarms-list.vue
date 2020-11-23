@@ -7,7 +7,7 @@
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"
         )
-      v-flex(v-if="hasAccessToCorrelationSwitcher")
+      v-flex(v-if="hasAccessToCorrelation")
         v-switch(
           :value="query.correlation",
           :label="$t('common.correlation')",
@@ -19,12 +19,12 @@
           data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
-          :lockedFilters="widgetViewFilters",
+          :locked-filters="widgetViewFilters",
           :value="mainFilter",
           :condition="mainFilterCondition",
-          :hasAccessToEditFilter="hasAccessToEditFilter",
-          :hasAccessToUserFilter="hasAccessToUserFilter",
-          :hasAccessToListFilter="hasAccessToListFilter",
+          :has-access-to-edit-filter="hasAccessToEditFilter",
+          :has-access-to-user-filter="hasAccessToUserFilter",
+          :has-access-to-list-filters="hasAccessToListFilter",
           @input="updateSelectedFilter",
           @update:condition="updateSelectedCondition",
           @update:filters="updateFilters"
@@ -32,7 +32,10 @@
       v-flex
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
-          :locked-filters.sync="widgetRemediationInstructionsFilters"
+          :locked-filters.sync="widgetRemediationInstructionsFilters",
+          :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter",
+          :has-access-to-user-filter="hasAccessToUserRemediationInstructionsFilter",
+          :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
         )
       v-flex
         v-chip.primary.white--text(
@@ -65,12 +68,12 @@
     alarms-list-table(
       :widget="widget",
       :alarms="alarms",
-      :totalItems="alarmsMeta.total_count",
+      :total-items="alarmsMeta.total_count",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
-      :isTourEnabled="isTourEnabled",
-      :hideGroups="!query.correlation",
-      :hasColumns="hasColumns",
+      :is-tour-enabled="isTourEnabled",
+      :hide-groups="!query.correlation",
+      :has-columns="hasColumns",
       :columns="columns",
       selectable,
       expandable,
@@ -87,14 +90,14 @@
           )
         v-spacer
         v-flex(xs2, data-test="itemsPerPage")
-          records-per-page.py-4(:value="query.limit", @input="updateRecordsPerPage")
+          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
+import { MODALS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 
@@ -111,6 +114,10 @@ import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
+import rightsWidgetsAlarmsListCorrelation from '@/mixins/rights/widgets/alarms-list/correlation';
+import rightsWidgetsAlarmsListFilters from '@/mixins/rights/widgets/alarms-list/filters';
+import rightsWidgetsAlarmsListRemediationInstructionsFilters
+  from '@/mixins/rights/widgets/alarms-list/remediation-instructions-filters';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
 import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
@@ -144,6 +151,9 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    rightsWidgetsAlarmsListCorrelation,
+    rightsWidgetsAlarmsListFilters,
+    rightsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
   props: {
     widget: {
@@ -180,22 +190,6 @@ export default {
       }
 
       return null;
-    },
-
-    hasAccessToListFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
-    },
-
-    hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
-    },
-
-    hasAccessToUserFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
-    },
-
-    hasAccessToCorrelationSwitcher() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.correlation);
     },
 
     firstAlarmExpanded() {

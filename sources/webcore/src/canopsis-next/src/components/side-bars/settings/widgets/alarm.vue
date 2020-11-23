@@ -43,9 +43,11 @@
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
-          template(v-if="hasAccessToListFilters")
+          template(v-if="hasAccessToListRemediationInstructionsFilters")
             field-remediation-instructions-filters(
-              v-model="settings.widget.parameters.remediationInstructionsFilters"
+              v-model="settings.widget.parameters.remediationInstructionsFilters",
+              :hasAccessToAddFilter="hasAccessToAddRemediationInstructionsFilter",
+              :hasAccessToEditFilter="hasAccessToEditRemediationInstructionsFilter"
             )
             v-divider
           field-live-reporting(v-model="settings.widget.parameters.liveReporting")
@@ -96,11 +98,13 @@
 import { get, cloneDeep } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
+import { SIDE_BARS } from '@/constants';
 
-import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
 import sideBarSettingsWidgetAlarmMixin from '@/mixins/side-bar/settings/widgets/alarm';
+import rightsWidgetsAlarmsListFilters from '@/mixins/rights/widgets/alarms-list/filters';
+import rightsWidgetsAlarmsListRemediationInstructionsFilters
+  from '@/mixins/rights/widgets/alarms-list/remediation-instructions-filters';
 
 import FieldTitle from './fields/common/title.vue';
 import FieldDefaultSortColumn from './fields/common/default-sort-column.vue';
@@ -141,7 +145,12 @@ export default {
     FieldGridRangeSize,
     FieldRemediationInstructionsFilters,
   },
-  mixins: [authMixin, widgetSettingsMixin, sideBarSettingsWidgetAlarmMixin],
+  mixins: [
+    widgetSettingsMixin,
+    sideBarSettingsWidgetAlarmMixin,
+    rightsWidgetsAlarmsListFilters,
+    rightsWidgetsAlarmsListRemediationInstructionsFilters,
+  ],
   data() {
     const { widget } = this.config;
 
@@ -153,19 +162,6 @@ export default {
         },
       },
     };
-  },
-  computed: {
-    hasAccessToListFilters() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
-    },
-
-    hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
-    },
-
-    hasAccessToAddFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.addFilter);
-    },
   },
   mounted() {
     const { widget_preferences: widgetPreference } = this.userPreference;

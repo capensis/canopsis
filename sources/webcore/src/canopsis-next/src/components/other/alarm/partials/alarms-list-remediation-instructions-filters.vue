@@ -2,22 +2,23 @@
   v-layout(row, wrap, align-center)
     remediation-instructions-filters-list(
       :filters="lockedFilters",
+      :closable="hasAccessToEditFilter",
       @input="$listeners['update:lockedFilters']"
     )
     remediation-instructions-filters-list(
       :filters="filters",
-      editable,
-      closable,
+      :editable="hasAccessToEditFilter",
+      :closable="hasAccessToEditFilter",
       @input="$listeners['update:filters']"
     )
-    v-tooltip(bottom)
+    v-tooltip(v-if="hasAccessToUserFilter", bottom)
       v-btn(
         slot="activator",
         icon,
         small,
         @click="showCreateFilterModal"
       )
-        v-icon(:color="filters.length ? 'primary' : 'black'") adjust
+        v-icon(:color="buttonIconColor") adjust
       span {{ $t('remediationInstructionsFilters.button') }}
 </template>
 
@@ -39,6 +40,26 @@ export default {
     lockedFilters: {
       type: Array,
       default: () => [],
+    },
+    hasAccessToUserFilter: {
+      type: Boolean,
+      default: true,
+    },
+    hasAccessToEditFilter: {
+      type: Boolean,
+      default: true,
+    },
+    hasAccessToListFilters: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  computed: {
+    hasAnyEnabledFilters() {
+      return this.filters.length || this.lockedFilters.filter(filter => !filter.disabled).length;
+    },
+    buttonIconColor() {
+      return this.hasAnyEnabledFilters ? 'primary' : 'black';
     },
   },
   methods: {

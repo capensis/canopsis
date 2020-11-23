@@ -3,8 +3,12 @@
     v-list-tile(slot="activator") {{ $t('settings.remediationInstructionsFilters') }}
     v-container
       v-layout(row, wrap)
-        remediation-instructions-filters-list(v-field="filters", editable, closable)
-      v-layout(row, wrap)
+        remediation-instructions-filters-list(
+          v-field="filters",
+          :editable="hasAccessToEditFilter",
+          :closable="hasAccessToEditFilter"
+        )
+      v-layout(v-if="hasAccessToAddFilter", row, wrap)
         v-btn.ml-1(
           color="primary",
           @click="showCreateInstructionsFilterModal"
@@ -32,6 +36,14 @@ export default {
     filters: {
       type: Array,
       default: () => [],
+    },
+    hasAccessToAddFilter: {
+      type: Boolean,
+      default: true,
+    },
+    hasAccessToEditFilter: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {
