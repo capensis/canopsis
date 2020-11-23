@@ -1378,7 +1378,7 @@ class PBehaviorManager(object):
 
         return results
 
-    def generate_pbh_event(self, now):
+    def generate_pbh_event(self, now, beat_time):
         """
         Yields event of 2 types: pbenter and pbleave.
 
@@ -1394,20 +1394,22 @@ class PBehaviorManager(object):
         :rtype: Iterator[Dict]
         """
         currently_active_pbehaviors = self.get_all_active_pbehaviors_base_on_time(now)
-        self.logger.info("[GenPbhEvent] Number of active pbehaviors: {}".format(len(currently_active_pbehaviors)))
+        self.logger.info(u"[GenPbhEvent][{}] Number of active pbehaviors: {}".format(beat_time, len(currently_active_pbehaviors)))
         currently_active_pb_dict = {}
         for active_pb in currently_active_pbehaviors:
             currently_active_pb_dict[active_pb[PBehavior.ID]] = active_pb
         removed_pb_id = set(self.pbehavior_event_sent_flag.keys()).difference(currently_active_pb_dict.keys())
 
-        self.logger.info("[GenPbhEvent] Number of inactive pbehaviors: {}. Start send pbhleave event.".format(len(removed_pb_id)))
+        self.logger.info(u"[GenPbhEvent][{}] Number of inactive pbehaviors: {}. Start send pbhleave event.".format(beat_time, len(removed_pb_id)))
         # pbehaviors are removed
         for removed in removed_pb_id:
             if removed in self.pbehavior_event_sent_flag:
                 events = self._make_pbleave_event(
                     now,
                     self.pbehavior_event_sent_flag[removed].pbehavior,
-                    self.pbehavior_event_sent_flag[removed].pbleave_time
+                    beat_time,
+                    None,
+                    "not currently active"
                 )
                 self.pbehavior_event_sent_flag.pop(removed)
                 for env in events:
@@ -1433,12 +1435,16 @@ class PBehaviorManager(object):
                     events = chain(events, self._make_pbleave_event(
                         now,
                         self.pbehavior_event_sent_flag[active_pb].pbehavior,
-                        self.pbehavior_event_sent_flag[active_pb].pbleave_time
+                        beat_time,
+                        None,
+                        "change start time"
                     ))
                     events = chain(events, self._make_pbenter_event(
                         now,
                         currently_active_pb_dict[active_pb],
-                        interval[0]
+                        beat_time,
+                        None,
+                        "change start time"
                     ))
                 else:
                     # send pbhleave for those entities are no longer belong to pbehavior
@@ -1448,18 +1454,24 @@ class PBehaviorManager(object):
                     events = chain(events, self._make_pbleave_event(
                         now,
                         self.pbehavior_event_sent_flag[active_pb].pbehavior,
-                        self.pbehavior_event_sent_flag[active_pb].pbleave_time,
-                        list(old_eids.difference(current_eids))))
+                        beat_time,
+                        list(old_eids.difference(current_eids)),
+                        "entities are removed from pbehavior"
+                    ))
                     events = chain(events, self._make_pbenter_event(
                         now,
                         self.pbehavior_event_sent_flag[active_pb].pbehavior,
-                        self.pbehavior_event_sent_flag[active_pb].pbenter_time,
-                        list(current_eids.difference(old_eids))))
+                        beat_time,
+                        list(current_eids.difference(old_eids)),
+                        "entities are added to pbehavior"
+                    ))
             else:
                 events = chain(events, self._make_pbenter_event(
                     now,
                     currently_active_pb_dict[active_pb],
-                    interval[0]
+                    beat_time,
+                    None,
+                    "new currently active pbehavior"
                 ))
             self.pbehavior_event_sent_flag[active_pb] = PbehaviorInterval(
                 pbenter_time=interval[0],
@@ -1469,9 +1481,9 @@ class PBehaviorManager(object):
             for env in events:
                 yield env
 
-    def send_pbehavior_event(self):
+    def send_pbehavior_event(self, beat_time):
         now = int(time())
-        for event in self.generate_pbh_event(now):
+        for event in self.generate_pbh_event(now, beat_time):
             self.amqp_pub.direct_event(event, "Engine_pbehavior")
 
     def _get_interval_from_time_pivot(self, pb, time_pivot):
@@ -1513,24 +1525,24 @@ class PBehaviorManager(object):
         timestamp = (utc_naive - datetime(1970, 1, 1)).total_seconds()
         return int(timestamp)
 
-    def _make_pbleave_event(self, start_time, pb, action_time, eids=None):
+    def _make_pbleave_event(self, start_time, pb, action_time, eids=None, reason=''):
         """
         mak pbleave event
         :param pb: pbehavior
         :param action_time: time indicates pbehavior will stop
         :rtype: List[Dict]
         """
-        return self._make_pbehavior_event(start_time, pb, action_time, "pbhleave", eids)
+        return self._make_pbehavior_event(start_time, pb, action_time, "pbhleave", eids, reason)
 
-    def _make_pbenter_event(self, start_time, pb, action_time, eids=None):
+    def _make_pbenter_event(self, start_time, pb, action_time, eids=None, reason=''):
         """
         :param pb: pbehavior
         :param action_time: time indicates pbehavior will start
         :rtype: Dict
         """
-        return self._make_pbehavior_event(start_time, pb, action_time, "pbhenter", eids)
+        return self._make_pbehavior_event(start_time, pb, action_time, "pbhenter", eids, reason)
 
-    def _make_pbehavior_event(self, start_time, pb, action_time, pb_event_type, eids=None):
+    def _make_pbehavior_event(self, start_time, pb, action_time, pb_event_type, eids=None, reason=''):
         events = []
         if eids is None:
             eids = pb.get('eids', [])
@@ -1557,11 +1569,13 @@ class PBehaviorManager(object):
                 )
 
                 self.logger.info(
-                    u"[GenPbhEvent] Made {} event for pbehavior: [_id: {}, name: {}] at {}".format(
+                    u"[GenPbhEvent][{}] Made {} event for pbehavior: [_id: {}, name: {}] at {}. Reason: {}".format(
+                        action_time,
                         pb_event_type,
                         pb.get(PBehavior.ID, ''),
                         pb.get(PBehavior.NAME, ''),
-                        int(now)
+                        int(now),
+                        reason
                     ))
 
                 events.append(event)

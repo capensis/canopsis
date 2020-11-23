@@ -35,6 +35,7 @@ from canopsis.pbehavior.manager import PBehaviorManager, PBehavior
 from canopsis.watcher.manager import Watcher
 from canopsis.engines.core import DROP
 import timeit
+import time
 
 
 EVENT_TYPE = 'pbehavior'
@@ -201,15 +202,17 @@ def beat_processing(engine, pbm=_pb_manager, **kwargs):
     """
     Beat processing.
     """
-    engine.logger.info("Start beat processing")
+    now = int(time.time())
+    engine.logger.info("[%d] Start beat processing.", now)
 
     try:
         start = timeit.default_timer()
         pbm.compute_pbehaviors_filters()
         end_compute = timeit.default_timer()
-        engine.logger.info("compute_pbehaviors_filters took %.2f seconds" % (end_compute - start))
-        pbm.send_pbehavior_event()
-        engine.logger.info("send_pbehavior_event took %.2f seconds" % (timeit.default_timer() - end_compute))
+        engine.logger.info("[%d] compute_pbehaviors_filters took %.2f seconds" % (now, end_compute - start))
+        pbm.send_pbehavior_event(now)
+        engine.logger.info("[%d] send_pbehavior_event took %.2f seconds" % (now, timeit.default_timer() - end_compute))
         pbm.launch_update_watcher(watcher_manager)
+        engine.logger.info("[%d] End beat processing. Took %.2f seconds" % (now, timeit.default_timer() - start ))
     except Exception as ex:
         engine.logger.exception('Processing error {}'.format(str(ex)))
