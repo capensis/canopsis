@@ -67,9 +67,11 @@ export default {
     },
 
     typeMessage() {
+      const getMessage = key => this.$t(`remediationInstructionsFilters.chip.${key}`);
+
       const { filter } = this;
 
-      return `${filter.with ? 'WITH' : 'WITHOUT'}${filter.all ? ' ALL' : ':'}`; // TODO: add i18n
+      return `${filter.with ? getMessage('with') : getMessage('without')}${filter.all ? ` ${getMessage('all')}` : ':'}`;
     },
 
     instructionsMessage() {

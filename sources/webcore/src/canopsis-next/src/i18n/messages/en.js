@@ -1960,5 +1960,19 @@ export default {
     },
   },
 
+  remediationInstructionsFilters: {
+    fields: {
+      with: 'With selected instructions',
+      without: 'Without selected instructions',
+      selectAll: 'Select all',
+      selectedInstructions: 'Selected instructions',
+    },
+    chip: {
+      with: 'WITH',
+      without: 'WITHOUT',
+      all: 'ALL',
+    },
+  },
+
   ...featureService.get('i18n.en'),
 };

@@ -6,19 +6,19 @@
         hide-details
       )
         v-radio(
-          label="With selected instructions",
+          :label="$t('remediationInstructionsFilters.fields.with')",
           :value="true",
           color="primary"
         )
         v-radio(
-          label="Without selected instructions",
+          :label="$t('remediationInstructionsFilters.fields.without')",
           :value="false",
           color="primary"
         )
     v-layout(row)
       v-switch(
         :input-value="form.all",
-        label="Select all",
+        :label="$t('remediationInstructionsFilters.fields.selectAll')",
         :disabled="hasAnyAnotherOppositeFilter",
         color="primary",
         @change="changeSelectedAll"
@@ -30,7 +30,7 @@
         :items="preparedRemediationInstructions",
         :loading="remediationInstructionsPending",
         :disabled="form.all",
-        label="Select instructions",
+        :label="$t('remediationInstructionsFilters.fields.selectedInstructions')",
         :error-messages="errors.collect('instructions')",
         itemText="name",
         itemValue="name",
