@@ -1,12 +1,9 @@
 <template lang="pug">
-  div
+  div.jobs-assigned
     v-layout(row)
       span.subheading {{ $t('remediationInstructionExecute.jobs.title') }}
     v-layout(column)
-      v-data-table.jobs-assigned(
-        :items="jobs",
-        hide-actions
-      )
+      v-data-table(:items="jobs", hide-actions)
         template(slot="headers", slot-scope="props")
           td
           td.text-xs-center {{ $t('remediationInstructionExecute.jobs.startedAt') }}
@@ -61,7 +58,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .jobs-assigned {
     tr {
       border-bottom: none !important;

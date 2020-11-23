@@ -19,10 +19,7 @@
 <script>
 import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
 
-import entitiesRemediationJobsExecutionsMixin from '@/mixins/entities/remediation/jobs-executions';
-
 export default {
-  mixins: [entitiesRemediationJobsExecutionsMixin],
   props: {
     job: {
       type: Object,
