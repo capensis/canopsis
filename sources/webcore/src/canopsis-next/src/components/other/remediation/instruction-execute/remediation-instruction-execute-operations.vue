@@ -4,7 +4,7 @@
       v-for="(operation, index) in operations",
       :key="operation.operation_id",
       :operation="operation",
-      :operation-number="getOperationNumber(index + 1)",
+      :operation-number="getOperationNumber(index)",
       :is-first-operation="index === 0",
       :is-first-step="isFirstStep",
       :execution-id="executionId",
