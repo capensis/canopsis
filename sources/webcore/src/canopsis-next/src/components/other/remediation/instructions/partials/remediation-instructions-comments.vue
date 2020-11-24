@@ -7,8 +7,7 @@
       template(v-for="(comment, index) in comments")
         v-list-tile(:key="index")
           v-list-tile-content
-            v-list-tile-title {{ comment.author }}
-            v-list-tile-sub-title {{ comment.comment }}
+            v-list-tile-title {{ comment.comment }}
           v-list-tile-action
             rating-field(:value="comment.rating", readonly)
         v-divider(v-if="index < comments.length - 1", :key="`divider_${index}`")
