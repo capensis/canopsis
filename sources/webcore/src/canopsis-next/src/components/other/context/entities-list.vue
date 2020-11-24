@@ -25,7 +25,7 @@
           :condition="mainFilterCondition",
           :hasAccessToEditFilter="hasAccessToEditFilter",
           :hasAccessToUserFilter="hasAccessToUserFilter",
-          :hasAccessToListFilter="hasAccessToListFilter",
+          :hasAccessToListFilters="hasAccessToListFilters",
           @input="updateSelectedFilter",
           @update:condition="updateSelectedCondition",
           @update:filters="updateFilters",
@@ -171,7 +171,7 @@ export default {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.createEntity);
     },
 
-    hasAccessToListFilter() {
+    hasAccessToListFilters() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.listFilters);
     },
 

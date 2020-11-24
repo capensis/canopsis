@@ -666,6 +666,34 @@
         "desc": "Rights on listalarm: Access to 'Execute instruction' action"
     },
     {
+        "_id": "listalarm_listRemediationInstructionsFilters",
+        "loader_id": "listalarm_listRemediationInstructionsFilters",
+        "crecord_name": "listalarm_listRemediationInstructionsFilters",
+        "crecord_type": "action",
+        "desc": "Rights on listalarm: Access to 'Remediation instructions filters: list' action"
+    },
+    {
+        "_id": "listalarm_editRemediationInstructionsFilter",
+        "loader_id": "listalarm_editRemediationInstructionsFilter",
+        "crecord_name": "listalarm_editRemediationInstructionsFilter",
+        "crecord_type": "action",
+        "desc": "Rights on listalarm: Access to 'Remediation instructions filters: edit' action"
+    },
+    {
+        "_id": "listalarm_addRemediationInstructionsFilter",
+        "loader_id": "listalarm_addRemediationInstructionsFilter",
+        "crecord_name": "listalarm_addRemediationInstructionsFilter",
+        "crecord_type": "action",
+        "desc": "Rights on listalarm: Access to 'Remediation instructions filters: add' action"
+    },
+    {
+        "_id": "listalarm_userRemediationInstructionsFilter",
+        "loader_id": "listalarm_userRemediationInstructionsFilter",
+        "crecord_name": "listalarm_userRemediationInstructionsFilter",
+        "crecord_type": "action",
+        "desc": "Rights on listalarm: Access to 'Remediation instructions filters: user' action"
+    },
+    {
         "_id": "serviceweather_moreInfos",
         "loader_id": "serviceweather_moreInfos",
         "crecord_name": "serviceweather_moreInfos",
