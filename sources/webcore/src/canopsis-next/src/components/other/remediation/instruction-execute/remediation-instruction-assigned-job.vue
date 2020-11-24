@@ -1,7 +1,7 @@
 <template lang="pug">
   tr
     td.pa-0
-      v-tooltip(right, :disabled="!isFailedJob")
+      v-tooltip(:disabled="!isFailedJob", right)
         v-btn.primary(
           :disabled="isRunningJob || isFailedJob",
           slot="activator",
