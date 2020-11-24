@@ -311,6 +311,12 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
         [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'Instruction has been started',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'Instruction has been paused',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'Instruction has been resumed',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'Instruction has been completed',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'Instruction has been aborted',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'Instruction has been failed',
       },
     },
     tabs: {
@@ -529,6 +535,7 @@ export default {
       },
     },
     counters: 'Counters',
+    remediationInstructionsFilters: 'Instructions filters',
   },
   modals: {
     common: {
@@ -1346,6 +1353,10 @@ export default {
     patterns: {
       title: 'Assign patterns',
     },
+    rateInstruction: {
+      title: 'Rate this instruction',
+      text: 'How useful was this instruction?',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1935,6 +1946,34 @@ export default {
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
+    closeConfirmationText: 'Would you like to resume this instruction later?',
+    popups: {
+      success: '{instructionName} has been successfully completed',
+      failed: '{instructionName} has been failed. Please escalate this problem further',
+      connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
+    },
+    jobs: {
+      title: 'Jobs assigned:',
+      startedAt: 'Started at',
+      launchedAt: 'Launched at',
+      completedAt: 'Completed at',
+    },
+  },
+
+  remediationInstructionsFilters: {
+    button: 'Create instructions filter',
+    fields: {
+      with: 'With selected instructions',
+      without: 'Without selected instructions',
+      selectAll: 'Select all',
+      selectedInstructions: 'Selected instructions',
+    },
+    chip: {
+      with: 'WITH',
+      without: 'WITHOUT',
+      all: 'ALL',
+    },
   },
 
   ...featureService.get('i18n.en'),

@@ -13,16 +13,20 @@ import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateWidgetByType } from '@/helpers/entities';
 
+import queryMixin from '@/mixins/query';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
   mixins: [
+    queryMixin,
     eventActionsAlarmMixin,
     entitiesPbehaviorMixin,
+    entitiesRemediationInstructionExecutionMixin,
   ],
   methods: {
     createFastAckEvent() {
@@ -199,14 +203,13 @@ export default {
       });
     },
 
-    async showExecuteInstructionModal(assignedInstruction) {
+    showRateInstructionModal(instructionExecuteId) {
       this.$modals.show({
-        id: `${this.item._id}${assignedInstruction._id}`,
-        name: MODALS.executeRemediationInstruction,
+        name: MODALS.rate,
         config: {
-          assignedInstruction,
-          alarm: this.item,
-          onCreate: () => this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id }),
+          title: this.$t('modals.rateInstruction.title'),
+          text: this.$t('modals.rateInstruction.text'),
+          action: data => this.rateRemediationInstructionExecution({ id: instructionExecuteId, data }),
         },
       });
     },

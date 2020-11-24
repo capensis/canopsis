@@ -63,6 +63,7 @@ export default {
       return new Promise((resolve) => {
         this.$modals.show({
           name: MODALS.confirmation,
+          dialogProps: { persistent: true },
           config: {
             text: this.$t('remediationInstructions.errors.runningInstruction'),
             action: async () => {

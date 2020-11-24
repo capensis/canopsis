@@ -58,7 +58,7 @@ export { default as ManagePlaylistTabs } from './admin/manage-playlist-tabs.vue'
 export { default as PbehaviorPlanning } from './pbehavior/pbehavior-planning.vue';
 export { default as SelectExceptionsLists } from './pbehavior/select-exceptions-lists.vue';
 export { default as CreateRRule } from './pbehavior/create-r-rule.vue';
-export { default as pbehaviorRecurrentChangesConfirmation } from './pbehavior/pbehavior-recurrent-changes-confirmation.vue';
+export { default as PbehaviorRecurrentChangesConfirmation } from './pbehavior/pbehavior-recurrent-changes-confirmation.vue';
 export { default as CreatePbehaviorType } from './pbehavior/create-pbehavior-type.vue';
 export { default as CreatePbehaviorReason } from './pbehavior/create-pbehavior-reason.vue';
 export { default as CreatePbehaviorException } from './pbehavior/create-pbehavior-exception.vue';
@@ -68,3 +68,5 @@ export { default as CreateRemediationJob } from './remediation/create-remediatio
 export { default as ExecuteRemediationInstruction } from './remediation/execute-remediation-instruction.vue';
 export { default as ImageViewer } from './common/image-viewer.vue';
 export { default as Patterns } from './common/patterns.vue';
+export { default as Rate } from './common/rate.vue';
+export { default as CreateRemediationInstructionsFilter } from './remediation/create-remediation-instructions-filter.vue';

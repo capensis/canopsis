@@ -2,6 +2,7 @@
   v-rating.layout(
     v-field="value",
     :readonly="readonly",
+    :hover="hover",
     backgroundColor="primary",
     medium,
     half-increments,
@@ -21,6 +22,10 @@ export default {
       default: 0,
     },
     readonly: {
+      type: Boolean,
+      default: false,
+    },
+    hover: {
       type: Boolean,
       default: false,
     },

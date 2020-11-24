@@ -144,8 +144,8 @@ export default {
       ];
 
       return links.filter(({ right }) =>
-        this.checkAppInfoAccessByRight(right) &&
-        this.checkReadAccess(right));
+        this.checkAppInfoAccessByRight(right)
+        && this.checkReadAccess(right));
     },
 
     administrationLinks() {
@@ -200,7 +200,9 @@ export default {
         },
       ];
 
-      return links.filter(({ right }) => this.checkReadAccess(right));
+      return links.filter(({ right }) =>
+        this.checkAppInfoAccessByRight(right)
+        && this.checkReadAccess(right));
     },
 
     userName() {
@@ -216,7 +218,7 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            await this.createUser({ data: prepareUserByData(data, this.currentUser) });
+            await this.createUserWithPopup({ data: prepareUserByData(data, this.currentUser) });
 
             await this.fetchCurrentUser();
           },

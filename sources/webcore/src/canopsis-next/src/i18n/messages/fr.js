@@ -311,6 +311,12 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarme annulée',
         [EVENT_ENTITY_TYPES.comment]: 'Alarme commentée',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarme liée à la méta alarme',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'L\'instruction a commencé',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'L\'instruction a été mise en pause',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'L\'instruction a été reprise',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'L\'instruction est terminée',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'L\'instruction a été abandonnée',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'L\'instruction a échoué',
       },
     },
     tabs: {
@@ -529,6 +535,7 @@ export default {
       },
     },
     counters: 'Compteurs',
+    remediationInstructionsFilters: 'Filtres d\'instructions',
   },
   modals: {
     common: {
@@ -1346,6 +1353,10 @@ export default {
     patterns: {
       title: 'Attribuer des modèles',
     },
+    rateInstruction: {
+      title: 'Évaluez cette instruction',
+      text: 'Dans quelle mesure cette instruction a-t-elle été utile?',
+    },
   },
   tables: {
     noData: 'Aucune donnée',
@@ -1935,6 +1946,34 @@ export default {
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}',
+    closeConfirmationText: 'Souhaitez-vous reprendre cette instruction plus tard?',
+    popups: {
+      success: '{instructionName} a été exécuté avec succès',
+      failed: '{instructionName} a échoué. Veuillez faire remonter ce problème davantage',
+      connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
+      wasPaused: 'L\'instruction {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez le reprendre manuellement.',
+    },
+    jobs: {
+      title: 'Emplois attribués:',
+      startedAt: 'Commencé à',
+      launchedAt: 'Lancé à',
+      completedAt: 'Terminé à',
+    },
+  },
+
+  remediationInstructionsFilters: {
+    button: 'Créer un filtre d\'instructions',
+    fields: {
+      with: 'Avec des instructions sélectionnées',
+      without: 'Sans instructions sélectionnées',
+      selectAll: 'Tout sélectionner',
+      selectedInstructions: 'Instructions sélectionnées',
+    },
+    chip: {
+      with: 'AVEC',
+      without: 'SANS POUR AUTANT',
+      all: 'TOUT',
+    },
   },
 
   ...featureService.get('i18n.fr'),

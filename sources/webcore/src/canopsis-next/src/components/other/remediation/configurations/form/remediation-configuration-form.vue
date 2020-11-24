@@ -17,7 +17,6 @@
           :label="$t('common.type')",
           :error-messages="errors.collect('type')",
           name="type",
-          return-object,
           item-text="text",
           item-value="value"
         )

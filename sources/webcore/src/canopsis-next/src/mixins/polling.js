@@ -2,8 +2,16 @@
  * Mixin creator for polling
  *
  * @param {string} method
- * @param {Number} delay
- * @returns {{ data(): *, mounted(): *, beforeDestroy(): void, methods(): void }}
+ * @param {number} delay
+ * @returns {{
+ *   data(): { timeout: null },
+ *   methods: {
+ *     startPolling(): void,
+ *     stopPolling(): void
+ *   },
+ *   beforeDestroy(): void,
+ *   mounted(): void
+ * }}
  */
 export default ({ method, delay }) => ({
   data() {
@@ -18,10 +26,14 @@ export default ({ method, delay }) => ({
     this.stopPolling();
   },
   methods: {
-    async startPolling() {
+    async polling() {
       await this[method]();
 
-      this.timeout = setTimeout(this.startPolling, delay);
+      this.startPolling();
+    },
+
+    startPolling() {
+      this.timeout = setTimeout(this.polling, delay);
     },
 
     stopPolling() {

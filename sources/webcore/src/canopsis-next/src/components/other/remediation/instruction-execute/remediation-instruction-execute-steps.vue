@@ -5,8 +5,10 @@
       :key="step.step_id",
       :step="step",
       :step-number="index + 1",
-      :is-last="index === steps.length - 1",
-      :is-first="index === 0"
+      :is-last-step="index === steps.length - 1",
+      :is-first-step="index === 0",
+      :execution-id="executionId",
+      @next-step="$emit('next-step', $event)"
     )
 </template>
 
@@ -16,6 +18,10 @@ import RemediationInstructionExecuteStep from './remediation-instruction-execute
 export default {
   components: { RemediationInstructionExecuteStep },
   props: {
+    executionId: {
+      type: String,
+      required: true,
+    },
     steps: {
       type: Array,
       default: () => [],

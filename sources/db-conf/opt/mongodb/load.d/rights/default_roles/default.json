@@ -257,6 +257,22 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_listRemediationInstructionsFilters": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_editRemediationInstructionsFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_addRemediationInstructionsFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_userRemediationInstructionsFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
         "serviceweather_entityComment": {
             "checksum": 1,
             "desc": ""

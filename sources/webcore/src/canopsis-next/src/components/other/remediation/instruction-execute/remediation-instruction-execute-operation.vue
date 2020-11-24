@@ -18,30 +18,49 @@
         :failed-at="operation.failed_at",
         :started-at="operation.started_at"
       )
-      template(v-if="isShownDetails")
-        text-editor-blurred(
-          :value="operation.description",
-          :label="$t('common.description')",
-          hide-details
-        )
-        v-layout.mb-2(row, justify-end)
-          v-btn.accent(:disabled="isFirst && isFirstStep") {{ $t('common.previous') }}
-          v-btn.primary.mr-0 {{ $t('common.next') }}
+      v-expand-transition
+        v-layout(v-if="isShownDetails", column)
+          text-editor-blurred(
+            :value="operation.description",
+            :label="$t('common.description')",
+            hide-details
+          )
+          remediation-instruction-execute-assigned-jobs.mt-4(
+            v-if="operation.jobs.length",
+            :jobs="operation.jobs",
+            :operation-id="operation.operation_id",
+            :execution-id="executionId"
+          )
+          v-layout.mb-2(row, justify-end)
+            v-btn.accent(
+              :disabled="isFirstOperation && isFirstStep",
+              @click="$listeners.previous"
+            ) {{ $t('common.previous') }}
+            v-btn.primary.mr-0(@click="$listeners.next") {{ $t('common.next') }}
 </template>
 
 <script>
 import TextEditorBlurred from '@/components/other/text-editor/text-editor-blurred.vue';
 
 import RemediationInstructionStatus from './partials/remediation-instruction-status.vue';
+import RemediationInstructionExecuteAssignedJobs from './remediation-instruction-assigned-jobs.vue';
 
 export default {
-  components: { TextEditorBlurred, RemediationInstructionStatus },
+  components: {
+    TextEditorBlurred,
+    RemediationInstructionStatus,
+    RemediationInstructionExecuteAssignedJobs,
+  },
   props: {
+    executionId: {
+      type: String,
+      required: true,
+    },
     isFirstStep: {
       type: Boolean,
       default: false,
     },
-    isFirst: {
+    isFirstOperation: {
       type: Boolean,
       default: false,
     },

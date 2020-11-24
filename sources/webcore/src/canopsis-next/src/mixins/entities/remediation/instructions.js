@@ -21,6 +21,7 @@ export default {
       createRemediationInstruction: 'create',
       updateRemediationInstruction: 'update',
       removeRemediationInstruction: 'remove',
+      rateRemediationInstruction: 'rateInstruction',
     }),
   },
 };

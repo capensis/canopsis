@@ -111,9 +111,11 @@ export const MODALS = {
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
+  createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
   imageViewer: 'image-viewer',
   patterns: 'patterns',
+  rate: 'rate',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -148,6 +150,12 @@ export const EVENT_ENTITY_TYPES = {
   unsooze: 'unsooze',
   metaalarmattach: 'metaalarmattach',
   executeInstruction: 'executeInstruction',
+  instructionStart: 'instructionstart',
+  instructionPause: 'instructionpause',
+  instructionResume: 'instructionresume',
+  instructionComplete: 'instructioncomplete',
+  instructionAbort: 'instructionabort',
+  instructionFail: 'instructionfail',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -401,6 +409,24 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'center_focus_weak',
   },
   [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionStart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionPause]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionResume]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionComplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionAbort]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionFail]: {
     icon: 'assignment',
   },
 };
@@ -795,6 +821,15 @@ export const USERS_RIGHTS = {
         addFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_addFilter`,
         userFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_userFilter`,
 
+        listRemediationInstructionsFilters:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_listRemediationInstructionsFilters`,
+        editRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_editRemediationInstructionsFilter`,
+        addRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_addRemediationInstructionsFilter`,
+        userRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_userRemediationInstructionsFilter`,
+
         links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
 
         correlation: `${USER_RIGHTS_PREFIXES.business.alarmsList}_correlation`,
@@ -910,6 +945,12 @@ export const WIDGETS_ACTIONS_TYPES = {
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
+    userFilter: 'userFilter',
+
+    listRemediationInstructionsFilters: 'listRemediationInstructionsFilters',
+    editRemediationInstructionsFilter: 'editRemediationInstructionsFilter',
+    addRemediationInstructionsFilter: 'addRemediationInstructionsFilter',
+    userRemediationInstructionsFilter: 'userRemediationInstructionsFilter',
 
     executeInstruction: 'executeInstruction',
   },
@@ -979,6 +1020,14 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.userFilter]: USERS_RIGHTS.business.alarmsList.actions.userFilter,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.listRemediationInstructionsFilters]:
+      USERS_RIGHTS.business.alarmsList.actions.listRemediationInstructionsFilters,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.editRemediationInstructionsFilter]:
+      USERS_RIGHTS.business.alarmsList.actions.editRemediationInstructionsFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.addRemediationInstructionsFilter]:
+      USERS_RIGHTS.business.alarmsList.actions.addRemediationInstructionsFilter,
 
     [WIDGETS_ACTIONS_TYPES.alarmsList.executeInstruction]: USERS_RIGHTS.business.alarmsList.actions.executeInstruction,
 
@@ -1408,6 +1457,10 @@ export const DEFAULT_TIME_INTERVAL = {
   unit: TIME_UNITS.second,
 };
 
+export const ADMIN_PAGES_RULES = {
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
@@ -1418,7 +1471,15 @@ export const EXPLOITATION_PAGES_RULES = {
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
-export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
+export const USER_RIGHTS_TO_PAGES_RULES = {
+  /**
+   * Admin pages
+   */
+  [USERS_RIGHTS.technical.remediation]: ADMIN_PAGES_RULES.remediation,
+
+  /**
+   * Exploitation pages
+   */
   [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
@@ -1577,4 +1638,13 @@ export const REMEDIATION_CONFIGURATION_TYPES = {
 export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
   running: 0,
   paused: 1,
+  completed: 2,
+  aborted: 3,
+  failed: 4,
 };
+
+export const REMEDIATION_JOB_EXECUTION_STATUSES = {
+  running: 0,
+};
+
+export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';

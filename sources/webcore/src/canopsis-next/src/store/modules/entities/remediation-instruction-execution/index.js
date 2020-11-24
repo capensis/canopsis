@@ -11,6 +11,8 @@ export const types = {
   CREATE_ITEM_COMPLETED: 'CREATE_ITEM_COMPLETED',
 
   UPDATE_ITEM_COMPLETED: 'UPDATE_ITEM_COMPLETED',
+
+  UPDATE_OPERATION_COMPLETED: 'UPDATE_OPERATION_COMPLETED',
 };
 
 export default {
@@ -42,6 +44,18 @@ export default {
     [types.UPDATE_ITEM_COMPLETED]: (state, instructionExecution) => {
       Vue.set(state.byId, instructionExecution._id, instructionExecution);
     },
+    [types.UPDATE_OPERATION_COMPLETED]: (state, { id, operation }) => {
+      const execution = state.byId[id];
+
+      execution.steps.forEach((step) => {
+        const operationIndex = step.operations
+          .findIndex(({ operation_id: operationId }) => operationId === operation.operation_id);
+
+        if (operationIndex !== -1) {
+          Vue.set(step.operations, operationIndex, operation);
+        }
+      });
+    },
     [types.FETCH_ITEM_FAILED]: (state) => {
       state.pending = false;
     },
@@ -71,8 +85,8 @@ export default {
       return instructionExecution;
     },
 
-    async update({ commit }, { path, id }) {
-      const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`);
+    async update({ commit }, { path, id, data }) {
+      const instructionExecution = await request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`, data);
 
       commit(types.UPDATE_ITEM_COMPLETED, instructionExecution);
 
@@ -83,24 +97,38 @@ export default {
       return dispatch('update', { path: 'cancel', id });
     },
 
-    next({ dispatch }, { id }) {
+    nextOperation({ dispatch }, { id }) {
       return dispatch('update', { path: 'next', id });
     },
 
-    nextStep({ dispatch }, { id }) {
-      return dispatch('update', { path: 'next-step', id });
+    nextStep({ dispatch }, { id, data }) {
+      return dispatch('update', { path: 'next-step', id, data });
     },
 
     pause({ dispatch }, { id }) {
       return dispatch('update', { path: 'pause', id });
     },
 
-    previous({ dispatch }, { id }) {
+    previousOperation({ dispatch }, { id }) {
       return dispatch('update', { path: 'previous', id });
     },
 
     resume({ dispatch }, { id }) {
       return dispatch('update', { path: 'resume', id });
+    },
+
+    rate({ dispatch }, { id, data }) {
+      return dispatch('update', { path: 'rate', id, data });
+    },
+
+    async ping({ commit }, { id }) {
+      try {
+        const operation = await request.put(`${API_ROUTES.remediation.executions}/${id}/ping`);
+
+        commit(types.UPDATE_OPERATION_COMPLETED, { id, operation });
+      } catch (err) {
+        console.warn(err);
+      }
     },
   },
 };
