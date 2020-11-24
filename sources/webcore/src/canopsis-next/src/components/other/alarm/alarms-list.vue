@@ -24,7 +24,7 @@
           :condition="mainFilterCondition",
           :has-access-to-edit-filter="hasAccessToEditFilter",
           :has-access-to-user-filter="hasAccessToUserFilter",
-          :has-access-to-list-filters="hasAccessToListFilter",
+          :has-access-to-list-filters="hasAccessToListFilters",
           @input="updateSelectedFilter",
           @update:condition="updateSelectedCondition",
           @update:filters="updateFilters"

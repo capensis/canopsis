@@ -12,7 +12,7 @@
         :itemText="itemText",
         :itemValue="itemValue",
         :multiple="isMultiple",
-        :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+        :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
         return-object,
         clearable,
         @input="updateSelectedFilter"
@@ -25,14 +25,14 @@
                 color="primary",
                 :label="$t('filterSelector.fields.mixFilters')",
                 :input-value="isMultiple",
-                :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+                :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
                 hide-details,
                 @change="updateIsMultipleFlag"
               )
             v-flex(v-show="!hideSelect && isMultiple", v-bind="flexProps.radio")
               v-radio-group.mb-0(
                 :value="condition",
-                :disabled="!hasAccessToListFilter && !hasAccessToUserFilter",
+                :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
                 hide-details,
                 row,
                 @change="updateCondition"
@@ -137,7 +137,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    hasAccessToListFilter: {
+    hasAccessToListFilters: {
       type: Boolean,
       default: false,
     },

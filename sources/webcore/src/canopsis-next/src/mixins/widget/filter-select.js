@@ -21,7 +21,7 @@ export default {
     widgetViewFilters() {
       const { mainFilter, viewFilters } = this.widget.parameters;
 
-      if (!this.hasAccessToListFilter) {
+      if (!this.hasAccessToListFilters) {
         return mainFilter ? [mainFilter] : [];
       }
 

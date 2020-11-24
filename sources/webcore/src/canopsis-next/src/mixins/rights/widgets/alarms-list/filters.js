@@ -5,7 +5,7 @@ import authMixin from '@/mixins/auth';
 export default {
   mixins: [authMixin],
   computed: {
-    hasAccessToListFilter() {
+    hasAccessToListFilters() {
       return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
     },
 
