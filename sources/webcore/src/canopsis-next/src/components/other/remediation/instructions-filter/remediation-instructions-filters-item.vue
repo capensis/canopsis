@@ -75,7 +75,7 @@ export default {
 
       const { filter } = this;
 
-      return `${filter.with ? getMessage('with') : getMessage('without')}${filter.all ? ` ${getMessage('all')}` : ':'}`;
+      return `${getMessage(filter.with ? 'with' : 'without')}${filter.all ? ` ${getMessage('all')}` : ':'}`;
     },
 
     instructionsMessage() {
