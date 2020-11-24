@@ -1433,6 +1433,10 @@ export const DEFAULT_TIME_INTERVAL = {
   unit: TIME_UNITS.second,
 };
 
+export const ADMIN_PAGES_RULES = {
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
@@ -1443,7 +1447,15 @@ export const EXPLOITATION_PAGES_RULES = {
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
-export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
+export const USER_RIGHTS_TO_PAGES_RULES = {
+  /**
+   * Admin pages
+   */
+  [USERS_RIGHTS.technical.remediation]: ADMIN_PAGES_RULES.remediation,
+
+  /**
+   * Exploitation pages
+   */
   [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
