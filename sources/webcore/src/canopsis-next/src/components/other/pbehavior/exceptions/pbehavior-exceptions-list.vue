@@ -19,7 +19,6 @@
     template(slot="actions", slot-scope="props")
       v-layout
         v-btn.mx-0(
-          slot="activator",
           v-if="hasUpdateAnyPbehaviorExceptionAccess",
           icon,
           small,

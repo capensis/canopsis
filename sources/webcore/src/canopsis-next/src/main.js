@@ -40,6 +40,9 @@ import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import GridPlugin from '@/plugins/grid';
 
+import { isValidUrl } from '@/helpers/validators/is-valid-url';
+import { isValidJson } from '@/helpers/validators/is-valid-json';
+
 import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
 import AdvancedDataTable from '@/components/other/table/advanced-data-table.vue';
 import ThePageHeader from '@/components/layout/the-page-header/the-page-header.vue';
@@ -147,13 +150,11 @@ Vue.use(VueClipboard);
 
 Validator.extend('json', {
   getMessage: () => i18n.$t('errors.JSONNotValid'),
-  validate: (value) => {
-    try {
-      return !!JSON.parse(value);
-    } catch (err) {
-      return false;
-    }
-  },
+  validate: isValidJson,
+});
+
+Validator.extend('url', {
+  validate: isValidUrl,
 });
 
 Vue.use(VeeValidate, {
