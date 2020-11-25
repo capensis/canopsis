@@ -7,6 +7,9 @@
     name="payload",
     @blur="updatePayload($event)"
   )
+    v-tooltip(slot="append", v-if="helpText", left)
+      v-icon(slot="activator") help
+      div(v-html="helpText")
 </template>
 
 <script>
@@ -23,6 +26,10 @@ export default {
     value: {
       type: Object,
       default: () => ({}),
+    },
+    helpText: {
+      type: String,
+      default: '',
     },
   },
   data() {

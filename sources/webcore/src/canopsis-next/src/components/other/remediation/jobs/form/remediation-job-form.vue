@@ -21,7 +21,7 @@
         name="job_id"
       )
     v-layout(row)
-      payload-field(v-field="form.payload")
+      payload-field(v-field="form.payload", :help-text="$t('modals.createRemediationJob.payloadHelp')")
 </template>
 
 <script>
