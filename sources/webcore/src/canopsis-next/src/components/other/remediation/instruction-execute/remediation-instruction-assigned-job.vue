@@ -12,14 +12,19 @@
         ) {{ job.name }}
         span {{ job.fail_reason }}
     td.text-xs-center {{ job.started_at | date('long', true, '-') }}
-    td.text-xs-center {{ job.launched_at | date('long', true, '-') }}
-    td.text-xs-center {{ job.completed_at | date('long', true, '-') }}
+    progress-cell.text-xs-center(:pending="!isLaunchedJob && isStartedJob")
+      span {{ job.launched_at | date('long', true, '-') }}
+    progress-cell.text-xs-center(:pending="!isCompletedJob && isStartedJob && isLaunchedJob")
+      span {{ job.completed_at | date('long', true, '-') }}
 </template>
 
 <script>
 import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
 
+import ProgressCell from '@/components/other/table/progress-cell.vue';
+
 export default {
+  components: { ProgressCell },
   props: {
     job: {
       type: Object,
@@ -27,6 +32,18 @@ export default {
     },
   },
   computed: {
+    isStartedJob() {
+      return !!this.job.started_at;
+    },
+
+    isLaunchedJob() {
+      return !!this.job.launched_at;
+    },
+
+    isCompletedJob() {
+      return !!this.job.completed_at;
+    },
+
     isFailedJob() {
       return !!this.job.fail_reason;
     },
