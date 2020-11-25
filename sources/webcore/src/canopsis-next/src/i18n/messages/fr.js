@@ -1958,9 +1958,9 @@ export default {
     },
     jobs: {
       title: 'Jobs attribués:',
-      startedAt: 'Date de déclenchement\npar Canopsis',
-      launchedAt: 'Date de lancement par l\'ordonnanceur',
-      completedAt: 'Fin de traitement par l\'ordonnanceur',
+      startedAt: 'Date de déclenchement\n(par Canopsis)',
+      launchedAt: 'Date de lancement\n(par l\'ordonnanceur)',
+      completedAt: 'Fin de traitement\n(par l\'ordonnanceur)',
     },
   },
 
