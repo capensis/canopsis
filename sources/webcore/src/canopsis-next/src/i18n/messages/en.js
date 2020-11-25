@@ -317,6 +317,10 @@ export default {
         [EVENT_ENTITY_TYPES.instructionComplete]: 'Instruction has been completed',
         [EVENT_ENTITY_TYPES.instructionAbort]: 'Instruction has been aborted',
         [EVENT_ENTITY_TYPES.instructionFail]: 'Instruction has been failed',
+        [EVENT_ENTITY_TYPES.instructionJobStart]: 'Instruction job has been started',
+        [EVENT_ENTITY_TYPES.instructionJobComplete]: 'Instruction job has been completed',
+        [EVENT_ENTITY_TYPES.instructionJobAbort]: 'Instruction job has been aborted',
+        [EVENT_ENTITY_TYPES.instructionJobFail]: 'Instruction job has been failed',
       },
     },
     tabs: {
