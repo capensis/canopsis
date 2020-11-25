@@ -113,8 +113,8 @@ export default {
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
     planningAdministration: 'Administration de la planification',
-    remediation: 'Remediation',
-    instructions: 'Instructions',
+    remediation: 'Remédiation',
+    instructions: 'Consignes',
     icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',
@@ -266,8 +266,8 @@ export default {
         manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
         manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
-        executeInstruction: 'Exécuter le {instructionName}',
-        resumeInstruction: 'Reprendre le {instructionName}',
+        executeInstruction: 'Exécuter la consigne "{instructionName}"',
+        resumeInstruction: 'Reprendre la consigne "{instructionName}"',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -311,12 +311,12 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarme annulée',
         [EVENT_ENTITY_TYPES.comment]: 'Alarme commentée',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarme liée à la méta alarme',
-        [EVENT_ENTITY_TYPES.instructionStart]: 'L\'instruction a commencé',
-        [EVENT_ENTITY_TYPES.instructionPause]: 'L\'instruction a été mise en pause',
-        [EVENT_ENTITY_TYPES.instructionResume]: 'L\'instruction a été reprise',
-        [EVENT_ENTITY_TYPES.instructionComplete]: 'L\'instruction est terminée',
-        [EVENT_ENTITY_TYPES.instructionAbort]: 'L\'instruction a été abandonnée',
-        [EVENT_ENTITY_TYPES.instructionFail]: 'L\'instruction a échoué',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'L\'exécution de la consigne a été déclenchée',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'L\'exécution de la consigne a été mise en pause',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'L\'exécution de la consigne a été reprise',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'L\'exécution de la consigne a été terminée',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'L\'exécution de la consigne a été abandonnée',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'L\'exécution de la consigne a échoué',
       },
     },
     tabs: {
@@ -329,7 +329,7 @@ export default {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
     infoPopup: 'Info popup',
-    instructionInfoPopup: 'Il existe une consigne pour ce type d\'incidents',
+    instructionInfoPopup: 'Au moins une consigne est attachée à cette alarme',
   },
   weather: {
     moreInfos: 'Plus d\'infos',
@@ -535,7 +535,7 @@ export default {
       },
     },
     counters: 'Compteurs',
-    remediationInstructionsFilters: 'Filtres d\'instructions',
+    remediationInstructionsFilters: 'Filtres de consignes',
   },
   modals: {
     common: {
@@ -1286,15 +1286,15 @@ export default {
     },
     createRemediationInstruction: {
       create: {
-        title: 'Créer une instruction',
+        title: 'Créer une consigne',
         popups: {
-          success: '{instructionName} a été créé avec succès',
+          success: '{instructionName} a été créée avec succès',
         },
       },
       edit: {
-        title: 'Éditée une instruction',
+        title: 'Éditer une consigne',
         popups: {
-          success: '{instructionName} a été modifié avec succès',
+          success: '{instructionName} a été modifiée avec succès',
         },
       },
     },
@@ -1322,20 +1322,20 @@ export default {
     },
     createRemediationJob: {
       create: {
-        title: 'Créer un travail',
+        title: 'Créer un job',
         popups: {
           success: '{jobName} a été créé avec succès',
         },
       },
       edit: {
-        title: 'Éditée une travail',
+        title: 'Éditer un job',
         popups: {
           success: '{jobName} a été modifié avec succès',
         },
       },
       fields: {
         configuration: 'Configuration',
-        jobId: 'Emploi ID',
+        jobId: 'Job ID',
       },
       errors: {
         invalidJSON: 'JSON non valide',
@@ -1348,8 +1348,8 @@ export default {
       title: 'Êtes-vous sûr(e) ?',
       text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',
       buttons: {
-        save: 'Sauver',
-        dontSave: 'Ne sauvez pas',
+        save: 'Sauvegarder',
+        dontSave: 'Ne pas sauvegarder',
         backToForm: 'Retour au formulaire',
       },
     },
@@ -1357,8 +1357,8 @@ export default {
       title: 'Attribuer des modèles',
     },
     rateInstruction: {
-      title: 'Évaluez cette instruction',
-      text: 'Dans quelle mesure cette instruction a-t-elle été utile?',
+      title: 'Évaluer cette consigne',
+      text: 'Dans quelle mesure cette consigne a-t-elle été utile?',
     },
   },
   tables: {
@@ -1891,7 +1891,7 @@ export default {
 
   remediation: {
     tabs: {
-      instructions: 'Instructions',
+      instructions: 'Consignes',
       configurations: 'Configurations',
       jobs: 'Jobs',
     },
@@ -1904,19 +1904,19 @@ export default {
     addEndpoint: 'Ajouter un point de terminaison',
     endpoint: 'Point de terminaison',
     endpointAvatar: 'EP',
-    workflow: 'Workflow si cette étape échoue:',
-    stop: 'Arrêtez',
-    remainingStep: 'Continuez avec les étapes restantes',
-    timeToComplete: 'Temps pour terminer',
+    workflow: 'Si cette étape échoue:',
+    stop: 'Arrêter',
+    remainingStep: 'Continuer avec les étapes restantes',
+    timeToComplete: 'Temps d\'exécution (estimation)',
     hideAll: 'Cacher tout',
     expandAll: 'Développer tout',
     tooltips: {
-      endpoint: 'Le point final doit être en question au format Oui / Non',
+      endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',
     },
     table: {
       rating: 'Évaluation',
       lastModifiedOn: 'Dernière modification le',
-      averageTimeCompletion: 'Temps moyen\nd\'achèvement',
+      averageTimeCompletion: 'Temps moyen\nd\'exécution',
       monthExecutions: '№ d\'exécutions\nce mois-ci',
       lastExecutedBy: 'Dernière exécution par',
       lastExecutedOn: 'Dernière exécution le',
@@ -1929,11 +1929,11 @@ export default {
   },
 
   remediationJobs: {
-    addJobs: 'Ajouter {count} emploi | Ajouter {count} emplois',
+    addJobs: 'Ajouter {count} job | Ajouter {count} jobs',
     usingJob: 'La raison utilise, car ne peut pas être supprimée',
     table: {
       configuration: 'Configuration',
-      jobId: 'Emploi ID',
+      jobId: 'Job ID',
     },
   },
 
@@ -1948,33 +1948,33 @@ export default {
     timeToComplete: '{duration} pour terminer',
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',
-    startedAt: 'Commencé à {time}',
-    closeConfirmationText: 'Souhaitez-vous reprendre cette instruction plus tard?',
+    startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
+    closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard?',
     popups: {
-      success: '{instructionName} a été exécuté avec succès',
+      success: '{instructionName} a été exécutée avec succès',
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème davantage',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
-      wasPaused: 'L\'instruction {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez le reprendre manuellement.',
+      wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
     },
     jobs: {
-      title: 'Emplois attribués:',
-      startedAt: 'Commencé à',
-      launchedAt: 'Lancé à',
-      completedAt: 'Terminé à',
+      title: 'Jobs attribués:',
+      startedAt: 'Date de déclenchement\npar Canopsis',
+      launchedAt: 'Date de lancement par l\'ordonnanceur',
+      completedAt: 'Fin de traitement par l\'ordonnanceur',
     },
   },
 
   remediationInstructionsFilters: {
-    button: 'Créer un filtre d\'instructions',
+    button: 'Créer un filtre de consignes',
     fields: {
-      with: 'Avec des instructions sélectionnées',
-      without: 'Sans instructions sélectionnées',
+      with: 'Avec les consignes sélectionnées',
+      without: 'Sans les consignes sélectionnées',
       selectAll: 'Tout sélectionner',
-      selectedInstructions: 'Instructions sélectionnées',
+      selectedInstructions: 'Consignes sélectionnées',
     },
     chip: {
       with: 'AVEC',
-      without: 'SANS POUR AUTANT',
+      without: 'SANS',
       all: 'TOUT',
     },
   },
