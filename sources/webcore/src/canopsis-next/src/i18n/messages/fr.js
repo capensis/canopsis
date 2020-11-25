@@ -1340,7 +1340,7 @@ export default {
       errors: {
         invalidJSON: 'JSON non valide',
       },
-      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
+      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
         '<i>Quelques exemples:</i>' +
         '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
     },
