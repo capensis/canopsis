@@ -40,9 +40,15 @@ export default {
   },
   methods: {
     getRequestData() {
-      if (this.searchingText.startsWith('-') && this.columns.length) {
-        return this.columns.reduce((acc, { text, value }) =>
-          replaceTextNotInQuotes(acc, text, value), this.searchingText.replace(/^-(\s*)/, ''));
+      if (this.searchingText.startsWith('-')) {
+        const preparedSearchingText = this.searchingText.replace(/^-(\s*)/, '');
+
+        if (this.columns.length) {
+          return this.columns.reduce((acc, { text, value }) =>
+            replaceTextNotInQuotes(acc, text, value), preparedSearchingText);
+        }
+
+        return preparedSearchingText;
       }
 
       return this.searchingText;
