@@ -520,7 +520,8 @@ class AlertsReader(object):
                 "v": 1,
                 "d": 1,
                 "t": 1,
-                "entity": 1
+                "entity": 1,
+                "metaalarm": 1, "consequences": 1, "filtered": 1, "rule": 1,
             }
         }
         pipeline.append(filter_enabled_pbhs)
@@ -547,7 +548,8 @@ class AlertsReader(object):
                     "v": 1,
                     "d": 1,
                     "t": 1,
-                    "entity": 1
+                    "entity": 1,
+                    "metaalarm": 1, "consequences": 1, "filtered": 1, "rule": 1,
                 }
             }
             pipeline.append(stage)
