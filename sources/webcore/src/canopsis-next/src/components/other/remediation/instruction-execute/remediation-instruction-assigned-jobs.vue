@@ -6,7 +6,7 @@
       v-data-table(:items="jobs", hide-actions)
         template(slot="headers", slot-scope="props")
           td
-          td.text-xs-center {{ $t('remediationInstructionExecute.jobs.startedAt') }}
+          td.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.startedAt') }}
           td.text-xs-center {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
           td.text-xs-center {{ $t('remediationInstructionExecute.jobs.completedAt') }}
         template(slot="items", slot-scope="props")
