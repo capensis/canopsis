@@ -317,7 +317,7 @@ export default {
         [EVENT_ENTITY_TYPES.instructionComplete]: 'L\'exécution de la consigne a été terminée',
         [EVENT_ENTITY_TYPES.instructionAbort]: 'L\'exécution de la consigne a été abandonnée',
         [EVENT_ENTITY_TYPES.instructionFail]: 'L\'exécution de la consigne a échoué',
-        [EVENT_ENTITY_TYPES.instructionJobStart]: 'L\'exécution d'\un job de remédiation a été démarrée',
+        [EVENT_ENTITY_TYPES.instructionJobStart]: 'L\'exécution d\'un job de remédiation a été démarrée',
         [EVENT_ENTITY_TYPES.instructionJobComplete]: 'L\'exécution du job de remédiation est terminée',
         [EVENT_ENTITY_TYPES.instructionJobAbort]: 'L\'exécution du job de remédiation a été abandonnée',
         [EVENT_ENTITY_TYPES.instructionJobFail]: 'L\'exécution du job de remédiation a échouée',
