@@ -21,10 +21,11 @@
 from socket import setdefaulttimeout, getfqdn, gethostname, gethostbyaddr
 from time import time
 from re import compile as re_compile
-from logging import getLogger
-
+from logging import getLogger, basicConfig
+from canopsis.logger import Logger
 from canopsis.old.storage import get_storage
 from canopsis.old.account import Account
+from canopsis.common import root_path
 
 
 class Event(object):
@@ -96,7 +97,7 @@ regexp_ip = re_compile(
 dns_cache = {}
 cache_time = 60 * 30  # 30min
 
-logger = getLogger('event')
+logger = Logger.get('event', root_path + '/var/log/event-log.log')
 
 
 def forger(
