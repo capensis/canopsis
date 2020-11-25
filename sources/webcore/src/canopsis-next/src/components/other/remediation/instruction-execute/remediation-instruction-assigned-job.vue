@@ -12,9 +12,9 @@
         ) {{ job.name }}
         span {{ job.fail_reason }}
     td.text-xs-center {{ job.started_at | date('long', true, '-') }}
-    progress-cell.text-xs-center(:pending="!job.launched_at && isStartedJob")
+    progress-cell.text-xs-center(:pending="!isLaunchedJob && isStartedJob")
       span {{ job.launched_at | date('long', true, '-') }}
-    progress-cell.text-xs-center(:pending="!job.completed_at && isStartedJob")
+    progress-cell.text-xs-center(:pending="!isCompletedJob && isStartedJob && isLaunchedJob")
       span {{ job.completed_at | date('long', true, '-') }}
 </template>
 
@@ -34,6 +34,14 @@ export default {
   computed: {
     isStartedJob() {
       return !!this.job.started_at;
+    },
+
+    isLaunchedJob() {
+      return !!this.job.launched_at;
+    },
+
+    isCompletedJob() {
+      return !!this.job.completed_at;
     },
 
     isFailedJob() {
