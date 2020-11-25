@@ -5,7 +5,7 @@
       :key="operation.operation_id",
       :operation="operation",
       :operation-number="getOperationNumber(index)",
-      :is-first-operation="index === 0",
+      :is-first-operation="!index",
       :is-first-step="isFirstStep",
       :execution-id="executionId",
       @next="nextOperation(index)",
