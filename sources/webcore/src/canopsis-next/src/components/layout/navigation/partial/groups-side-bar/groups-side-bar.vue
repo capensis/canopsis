@@ -4,7 +4,7 @@
       v-model="isOpen",
       :width="$config.SIDE_BAR_WIDTH",
       :class="{ editing: isNavigationEditingMode }",
-      :ignoreClickOutside="isGroupsOrderChanged || hasMaximizedModal",
+      :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal",
       data-test="groupsSideBar",
       app
     )

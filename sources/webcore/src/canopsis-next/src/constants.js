@@ -156,6 +156,10 @@ export const EVENT_ENTITY_TYPES = {
   instructionComplete: 'instructioncomplete',
   instructionAbort: 'instructionabort',
   instructionFail: 'instructionfail',
+  instructionJobStart: 'instructionjobstart',
+  instructionJobComplete: 'instructionjobcomplete',
+  instructionJobAbort: 'instructionjobabort',
+  instructionJobFail: 'instructionjobfail',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -427,6 +431,18 @@ export const EVENT_ENTITY_STYLE = {
     icon: 'assignment',
   },
   [EVENT_ENTITY_TYPES.instructionFail]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobStart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobComplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobAbort]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobFail]: {
     icon: 'assignment',
   },
 };

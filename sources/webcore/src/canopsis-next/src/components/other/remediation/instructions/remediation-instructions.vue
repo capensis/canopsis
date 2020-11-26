@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card-text
     remediation-instructions-list(
-      :remediationInstructions="remediationInstructions",
+      :remediation-instructions="remediationInstructions",
       :pending="remediationInstructionsPending",
       :totalItems="remediationInstructionsMeta.total_count",
       :pagination.sync="pagination",
