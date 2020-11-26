@@ -1,6 +1,7 @@
 <template lang="pug">
-  v-alert.py-1.job-alert(:value="true", type="error", border="left", icon="info")
+  v-alert.py-1.job-alert(:value="true", border="left")
     v-layout(align-center, justify-space-around)
+      v-icon.mr-3(color="white") info
       span {{ $t('remediationInstructionExecute.jobs.waitAlert') }}
       div.job-alert-buttons
         v-btn.ma-0(
