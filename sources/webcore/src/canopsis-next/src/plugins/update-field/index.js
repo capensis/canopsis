@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+
 import { setField } from '@/helpers/immutable';
 
 export default {
@@ -10,6 +12,17 @@ export default {
       }
 
       return this.$emit(event, path.length ? setField(this[prop], path, value) : value);
+    };
+
+    Vue.prototype.$updateFieldModel = function updateField(source, path = [], value = undefined) {
+      if (!path.length) {
+        throw new Error(`Incorrect path: ${path}`);
+      }
+
+      const copiedPath = [...path];
+      const fieldKey = copiedPath.pop();
+
+      this.$set(copiedPath.length ? get(source, copiedPath) : source, fieldKey, value);
     };
   },
 };

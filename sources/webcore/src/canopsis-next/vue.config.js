@@ -143,7 +143,7 @@ module.exports = {
 
               const pathExpression = mutate ? `[${path}, ...(${basePreviousPathExpression} || [])]` : `[${path}]`;
               const assignment = model
-                ? `$set(${value}, ${basePreviousPathExpression}, ${valueExpression})`
+                ? `$updateFieldModel(${value}, ${basePreviousPathExpression}, ${valueExpression})`
                 : `$updateField(${pathExpression}, ${valueExpression}, ${mutate})`;
 
               // eslint-disable-next-line no-param-reassign
