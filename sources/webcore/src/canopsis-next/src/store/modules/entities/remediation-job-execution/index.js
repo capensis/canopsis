@@ -66,12 +66,8 @@ export default {
       return jobExecution;
     },
 
-    async cancel({ commit }, { id, data } = {}) {
-      const jobExecution = await request.put(`${API_ROUTES.remediation.jobExecutions}/${id}/cancel`, data);
-
-      commit(types.CREATE_ITEM_COMPLETED, jobExecution);
-
-      return jobExecution;
+    async cancel(context, { id } = {}) {
+      await request.put(`${API_ROUTES.remediation.jobExecutions}/${id}/cancel`);
     },
   },
 };
