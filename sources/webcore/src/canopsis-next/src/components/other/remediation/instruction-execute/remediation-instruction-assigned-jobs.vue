@@ -5,22 +5,28 @@
     v-layout(column)
       v-data-table(:items="jobs", hide-actions)
         template(slot="headers", slot-scope="props")
-          td
-          td.text-xs-center {{ $t('remediationInstructionExecute.jobs.startedAt') }}
-          td.text-xs-center {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
-          td.text-xs-center {{ $t('remediationInstructionExecute.jobs.completedAt') }}
+          tr
+            td
+            td.text-xs-center {{ $t('remediationInstructionExecute.jobs.startedAt') }}
+            td.text-xs-center {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
+            td.text-xs-center {{ $t('remediationInstructionExecute.jobs.completedAt') }}
         template(slot="items", slot-scope="props")
           remediation-instruction-assigned-job(:job="props.item", @execute-job="executeJob")
+          remediation-instruction-assigned-job-alert-row(:job="props.item", @skip="cancelExecuteJob")
 </template>
 
 <script>
 import entitiesRemediationJobsExecutionsMixin from '@/mixins/entities/remediation/jobs-executions';
 import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
-import RemediationInstructionAssignedJob from './remediation-instruction-assigned-job.vue';
+import RemediationInstructionAssignedJob from './partials/remediation-instruction-assigned-job.vue';
+import RemediationInstructionAssignedJobAlertRow from './partials/remediation-instruction-assigned-job-alert-row.vue';
 
 export default {
-  components: { RemediationInstructionAssignedJob },
+  components: {
+    RemediationInstructionAssignedJobAlertRow,
+    RemediationInstructionAssignedJob,
+  },
   mixins: [
     entitiesRemediationJobsExecutionsMixin,
     entitiesRemediationInstructionExecutionMixin,
@@ -49,10 +55,15 @@ export default {
             operation: this.operationId,
           },
         });
-        await this.fetchRemediationInstructionExecution({ id: this.executionId });
+        await this.pingRemediationInstructionExecution({ id: this.executionId });
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
+    },
+
+    async cancelExecuteJob(job) {
+      await this.cancelRemediationJobExecution({ id: job._id });
+      await this.pingRemediationInstructionExecution({ id: this.executionId });
     },
   },
 };

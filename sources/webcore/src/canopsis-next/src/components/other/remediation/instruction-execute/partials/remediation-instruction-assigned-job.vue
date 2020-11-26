@@ -11,10 +11,12 @@
           @click="$emit('execute-job', job)"
         ) {{ job.name }}
         span {{ job.fail_reason }}
-    td.text-xs-center {{ job.started_at | date('long', true, '-') }}
-    progress-cell.text-xs-center(:pending="!isLaunchedJob && isStartedJob")
+    td.text-xs-center
+      span(v-if="!isCancelledJob") {{ job.started_at | date('long', true, '-') }}
+      span(v-else) -
+    progress-cell.text-xs-center(:pending="shownLaunchedPendingJob")
       span {{ job.launched_at | date('long', true, '-') }}
-    progress-cell.text-xs-center(:pending="!isCompletedJob && isStartedJob && isLaunchedJob")
+    progress-cell.text-xs-center(:pending="shownCompletedPendingJob")
       span {{ job.completed_at | date('long', true, '-') }}
 </template>
 
@@ -32,6 +34,14 @@ export default {
     },
   },
   computed: {
+    isRunningJob() {
+      return this.job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
+    },
+
+    isCancelledJob() {
+      return this.job.status === REMEDIATION_JOB_EXECUTION_STATUSES.canceled;
+    },
+
     isStartedJob() {
       return !!this.job.started_at;
     },
@@ -48,8 +58,12 @@ export default {
       return !!this.job.fail_reason;
     },
 
-    isRunningJob() {
-      return this.job.status === REMEDIATION_JOB_EXECUTION_STATUSES.running;
+    shownLaunchedPendingJob() {
+      return !this.isCancelledJob && !this.isLaunchedJob && this.isStartedJob;
+    },
+
+    shownCompletedPendingJob() {
+      return !this.isCancelledJob && !this.isCompletedJob && this.isStartedJob && this.isLaunchedJob;
     },
   },
 };

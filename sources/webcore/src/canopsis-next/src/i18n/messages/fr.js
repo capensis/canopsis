@@ -1961,6 +1961,9 @@ export default {
       startedAt: 'Commencé à',
       launchedAt: 'Lancé à',
       completedAt: 'Terminé à',
+      waitAlert: 'L\'exécuteur d\'emplois externe ne répond pas, veuillez contacter votre administrateur',
+      skip: 'Ignorer le travail',
+      await: 'Attendre',
     },
   },
 

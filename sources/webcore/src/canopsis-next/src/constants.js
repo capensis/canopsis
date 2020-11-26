@@ -1645,6 +1645,7 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
 
 export const REMEDIATION_JOB_EXECUTION_STATUSES = {
   running: 0,
+  canceled: 3,
 };
 
 export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';
