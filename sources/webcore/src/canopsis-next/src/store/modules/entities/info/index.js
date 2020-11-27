@@ -23,6 +23,7 @@ export default {
     casConfig: {},
     popupTimeout: undefined,
     timezone: undefined,
+    jobExecutorFetchTimeout: undefined,
   },
   getters: {
     version: state => state.version,
@@ -39,6 +40,7 @@ export default {
     isCASAuthEnabled: state => state.isCASAuthEnabled,
     casConfig: state => state.casConfig,
     timezone: state => state.timezone,
+    jobExecutorFetchTimeout: state => state.jobExecutorFetchTimeout,
   },
   mutations: {
     [types.FETCH_LOGIN_INFOS](state, {
@@ -69,6 +71,7 @@ export default {
       stack,
       language,
       timezone,
+      jobExecutorFetchTimeout,
     }) {
       state.version = version;
       state.logo = logo;
@@ -79,6 +82,7 @@ export default {
       state.stack = stack;
       state.language = language;
       state.timezone = timezone;
+      state.jobExecutorFetchTimeout = jobExecutorFetchTimeout;
     },
   },
   actions: {
@@ -108,6 +112,7 @@ export default {
           app_title: appTitle,
           popup_timeout: popupTimeout,
           allow_change_severity_to_info: allowChangeSeverityToInfo,
+          job_executor_fetch_timeout: jobExecutorFetchTimeout,
           edition,
           stack,
           language,
@@ -126,6 +131,7 @@ export default {
             stack,
             language,
             timezone,
+            jobExecutorFetchTimeout,
           },
         );
 

@@ -6,13 +6,21 @@
       v-data-table(:items="jobs", hide-actions)
         template(slot="headers", slot-scope="props")
           tr
-            td
-            td.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.startedAt') }}
-            td.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
-            td.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.completedAt') }}
+            th
+            th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.startedAt') }}
+            th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.launchedAt') }}
+            th.text-xs-center.pre-line {{ $t('remediationInstructionExecute.jobs.completedAt') }}
         template(slot="items", slot-scope="props")
-          remediation-instruction-assigned-job(:job="props.item", @execute-job="executeJob")
-          remediation-instruction-assigned-job-alert-row(:job="props.item", @skip="cancelExecuteJob")
+          remediation-instruction-assigned-job(
+            :job="props.item",
+            :key="`job_${props.item.job_id}`",
+            @execute-job="executeJob"
+          )
+          remediation-instruction-assigned-job-alert-row(
+            :job="props.item",
+            :key="`key_${props.item.job_id}`",
+            @skip="cancelExecuteJob"
+          )
 </template>
 
 <script>

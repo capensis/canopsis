@@ -59,11 +59,18 @@ export default {
     },
 
     shownLaunchedPendingJob() {
-      return !this.isCancelledJob && !this.isLaunchedJob && this.isStartedJob;
+      return !this.isCancelledJob
+        && !this.isFailedJob
+        && !this.isLaunchedJob
+        && this.isStartedJob;
     },
 
     shownCompletedPendingJob() {
-      return !this.isCancelledJob && !this.isCompletedJob && this.isStartedJob && this.isLaunchedJob;
+      return !this.isCancelledJob
+        && !this.isFailedJob
+        && !this.isCompletedJob
+        && this.isStartedJob
+        && this.isLaunchedJob;
     },
   },
 };

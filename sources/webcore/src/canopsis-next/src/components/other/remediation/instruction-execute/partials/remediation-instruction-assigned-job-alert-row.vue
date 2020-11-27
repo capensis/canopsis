@@ -11,12 +11,12 @@
 
 <script>
 import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
-import { INSTRUCTION_EXECUTE_JOB_ALERT_DELAY } from '@/config';
 
 import RemediationInstructionAssignedJobAlert from './remediation-instruction-assigned-job-alert.vue';
 
 export default {
   components: { RemediationInstructionAssignedJobAlert },
+  inject: ['$system'],
   props: {
     job: {
       type: Object,
@@ -31,7 +31,7 @@ export default {
   },
   watch: {
     'job.started_at': function startedAtWatcher(value) {
-      if (value) {
+      if (value && !this.job.launched_at) {
         this.startTimer();
       } else if (this.shownAlert) {
         this.hideAlert();
@@ -55,7 +55,7 @@ export default {
     startTimer() {
       this.timer = setTimeout(() => {
         this.shownAlert = true;
-      }, INSTRUCTION_EXECUTE_JOB_ALERT_DELAY);
+      }, this.$system.jobExecutorFetchTimeout);
     },
 
     stopTimer() {
