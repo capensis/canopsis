@@ -1965,7 +1965,7 @@ export default {
       startedAt: 'Date de déclenchement\n(par Canopsis)',
       launchedAt: 'Date de lancement\n(par l\'ordonnanceur)',
       completedAt: 'Fin de traitement\n(par l\'ordonnanceur)',
-      waitAlert: 'L\'exécuteur d\'emplois externe ne répond pas, veuillez contacter votre administrateur',
+      waitAlert: 'L\'exécuteur de jobs ne répond pas, veuillez contacter votre administrateur',
       skip: 'Ignorer le travail',
       await: 'Attendre',
     },
