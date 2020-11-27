@@ -57,6 +57,9 @@ VALID_CANOPSIS_LANGUAGES = [
 
 DEFAULT_INTERVAL_VALUE = 3
 
+GLOBAL_CONF_ID = "global_config"
+REMEDIATION_SECTION = "remediation"
+
 user_interface_manager = UserInterfaceManager(
         *UserInterfaceManager.provide_default_basics())
 
@@ -129,14 +132,26 @@ def get_login_config(ws):
     return {"login_config": login_config}
 
 
-def get_timezone(ws):
+def get_global_conf_record(ws):
     store = MongoStore.get_default()
     configuration_collection = \
         store.get_collection(name=UserInterfaceManager.COLLECTION)
     record = MongoCollection(configuration_collection).find_one(
-        {"_id": "global_config"})
+        {"_id": GLOBAL_CONF_ID})
+
+    return record
+
+
+def get_timezone(ws):
+    record = get_global_conf_record(ws)
 
     return record['timezone'] if record is not None and 'timezone' in record else None
+
+
+def get_remediation_conf(ws):
+    record = get_global_conf_record(ws)
+
+    return record[REMEDIATION_SECTION] if record is not None and REMEDIATION_SECTION in record else None
 
 
 def check_values(ws, edition, stack):
@@ -237,6 +252,9 @@ def exports(ws):
         tz = get_timezone(ws)
         if isinstance(tz, dict):
             cservices.update(tz)
+        remediation_conf = get_remediation_conf(ws)
+        if isinstance(remediation_conf, dict):
+            cservices.update(remediation_conf)
         ws.logger.debug(cservices)
 
         return gen_json(cservices)
