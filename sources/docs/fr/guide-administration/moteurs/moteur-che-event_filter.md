@@ -171,7 +171,7 @@ L'action `set_field` permet de modifier un champ de l'évènement.
 
 Les paramètres de l'action sont :
 
- - `name` (requis) : le nom du champ.
+ - `name` (requis) : le nom du champ (tel que [défini dans l'annexe](#champs-des-evenements)).
  - `value` (requis) : la nouvelle valeur du champ.
 
 Par exemple, l'action suivante passe la criticité d'un évènement en critique :
@@ -191,7 +191,7 @@ L'action `set_field_from_template` permet de modifier un champ de l'évènement
 
 Les paramètres de l'action sont :
 
- - `name` (requis) : le nom du champ.
+ - `name` (requis) : le nom du champ (tel que [défini dans l'annexe](#champs-des-evenements)).
  - `value` (requis) : le template utilisé pour déterminer la valeur du champ.
 
 L'event-filter utilise le [moteur de templates
@@ -351,7 +351,7 @@ Les paramètres de cette source de données sont :
    utilisé pour déterminer la valeur du champ.
 
 L'event-filter utilise le [moteur de templates
-go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
+Go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
@@ -683,22 +683,24 @@ des évènements.
 
 ### Champs des évènements
 
-| Évènement JSON | Représentation interne de Canopsis |                                                                                                                         Notes                                                                                                                         |
-| -------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   connector    |             Connector              |                                                                                                                                                                                                                                                       |
-| connector_name |           ConnectorName            |                                                                                                                                                                                                                                                       |
-|   event_type   |             EventType              |                                                                                                                                                                                                                                                       |
-|   component    |             Component              |                                                                                                                                                                                                                                                       |
-|    resource    |              Resource              |                                                                                                                                                                                                                                                       |
-|   perf_data    |              PerfData              |                                                                                                                                                                                                                                                       |
-|     status     |               Status               |                                                                                                                                                                                                                                                       |
-|   timestamp    |             Timestamp              |                                                                                                                                                                                                                                                       |
-|   state_type   |             StateType              |                                                                                                                                                                                                                                                       |
-|  source_type   |             SourceType             |                                                                                                                                                                                                                                                       |
-|  long_output   |             LongOutput             |                                                                                                                                                                                                                                                       |
-|     state      |               State                |                                                                                                                                                                                                                                                       |
-|     output     |               Output               |                                                                                                                                                                                                                                                       |
-|     author     |               Author               |                                                                                                                                                                                                                                                       |
-|     ticket     |               Ticket               |                                                                                                                                                                                                                                                       |
-|     debug      |               Debug                |                                                                                                                                                                                                                                                       |
-| current_entity |               Entity               | Ce champ n'est pas défini au début de l'exécution de l'event-filter. Pour y accéder, ou pour modifier les informations de l'entité, il faut utiliser une [règle ajoutant les entités aux évènements](#ajout-de-lentité-correspondant-à-un-évènement). |
+| Nom du champ JSON | Nom de la représentation interne de Canopsis |
+|-------------------|----------------------------------------------|
+| `connector`       | `Connector` |
+| `connector_name`  | `ConnectorName` |
+| `event_type`      | `EventType` |
+| `component`       | `Component` |
+| `resource`        | `Resource` |
+| `perf_data`       | `PerfData` |
+| `status`          | `Status` |
+| `timestamp`       | `Timestamp` |
+| `state_type`      | `StateType` |
+| `source_type`     | `SourceType` |
+| `long_output`     | `LongOutput` |
+| `state`           | `State` |
+| `output`          | `Output` |
+| `author`          | `Author` |
+| `ticket`          | `Ticket` |
+| `debug`           | `Debug` |
+| `current_entity`  | `Entity` |
+
+**Note :** le champ `Entity` n'est pas défini au début de l'exécution de l'event-filter. Pour y accéder, ou pour modifier les informations de l'entité, il faut utiliser une [règle ajoutant les entités aux évènements](#ajout-de-lentite-correspondant-a-un-evenement).
