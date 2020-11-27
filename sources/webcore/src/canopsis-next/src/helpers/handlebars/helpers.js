@@ -98,7 +98,7 @@ export async function requestHelper(options) {
   const {
     method = 'get',
     url,
-    headers = '{}',
+    headers,
     path,
     variable,
     username,
@@ -110,12 +110,20 @@ export async function requestHelper(options) {
   }
 
   try {
-    const { data } = await axios({
+    const axiosOptions = {
       method,
       url: unescape(url),
-      auth: { username, password },
-      headers: JSON.parse(headers),
-    });
+    };
+
+    if (headers) {
+      axiosOptions.headers = JSON.parse(headers);
+    }
+
+    if (username || password) {
+      axiosOptions.auth = { username, password };
+    }
+
+    const { data } = await axios(axiosOptions);
 
     if (isFunction(options.fn)) {
       const value = path ? get(data, path) : data;

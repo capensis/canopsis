@@ -132,9 +132,16 @@ export function generateWidgetByType(type) {
         sort: {
           order: SORT_ORDERS.asc,
         },
-        blockTemplate: '',
-        modalTemplate: '',
-        entityTemplate: '',
+        blockTemplate: `<p><strong><span style="font-size: 18px;">{{entity.display_name}}</span></strong></p>
+<hr id="null">
+<p>{{ entity.output }}</p>
+<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>`,
+
+        modalTemplate: '{{ entities name="entity.entity_id" }}',
+        entityTemplate: `<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>`,
+
         columnSM: 6,
         columnMD: 4,
         columnLG: 3,
@@ -145,9 +152,9 @@ export function generateWidgetByType(type) {
           bottom: 1,
           left: 1,
         },
-        heightFactor: 1,
-        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
         isCountersEnabled: false,
+        heightFactor: 6,
+        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.both,
         alarmsList: alarmsListDefaultParameters,
         modalItemsPerPage: PAGINATION_LIMIT,
       };
