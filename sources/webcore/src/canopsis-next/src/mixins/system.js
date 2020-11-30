@@ -1,7 +1,7 @@
 import Vue from 'vue';
 
 import { DEFAULT_TIMEZONE } from '@/constants';
-import { INSTRUCTION_EXECUTE_JOB_ALERT_DELAY } from '@/config';
+import { DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS } from '@/config';
 
 export default {
   provide() {
@@ -13,7 +13,8 @@ export default {
     return {
       system: {
         timezone: this.timezone || DEFAULT_TIMEZONE,
-        jobExecutorFetchTimeoutSeconds: this.jobExecutorFetchTimeoutSeconds || INSTRUCTION_EXECUTE_JOB_ALERT_DELAY,
+        jobExecutorFetchTimeoutSeconds: this.jobExecutorFetchTimeoutSeconds
+          || DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS,
       },
     };
   },
