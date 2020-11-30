@@ -1,132 +1,116 @@
 <template lang="pug">
-  v-menu(
-    v-model="opened",
-    :close-on-content-click="false",
-    :disabled="disabled",
-    content-class="time-picker",
-    transition="slide-y-transition",
-    max-width="290px",
-    right,
-    lazy
+  v-combobox.time-picker__select(
+    ref="combobox",
+    :value="value",
+    :items="items",
+    :menu-props="menuProps",
+    :return-object="false",
+    :filter="filter",
+    :label="label",
+    append-icon="",
+    hide-details,
+    @change="change"
   )
-    div(slot="activator")
-      v-text-field(
-        ref="textField",
-        :value="value",
-        :label="label",
-        :error="error",
-        :error-messages="errorMessages",
-        :name="name",
-        :disabled="disabled",
-        :hide-details="hideDetails",
-        :append-icon="clearable ? 'close' : ''",
-        readonly,
-        @click:append="clear"
-      )
-    v-time-picker.time-picker(
-      :value="value",
-      :opened="opened",
-      :color="color",
-      :format="format",
-      @input="input",
-      @change="change"
-    )
 </template>
 
 <script>
 import formBaseMixin from '@/mixins/form/base';
 
 /**
- * Time picker field component
+ * TODO: Move into another place
+ *
+ * @type {number}
  */
-export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
+const HOURS_IN_DAY = 24;
+const MINUTES_STEP = 15;
+const MINUTES_STEPS_IN_HOUR = Math.floor(60 / MINUTES_STEP);
 
-    name() {
-      return this.name;
-    },
-  },
-  inject: ['$validator'],
+export default {
   mixins: [formBaseMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    clearable: {
-      type: Boolean,
-      default: false,
-    },
     value: {
       type: String,
-      default: null,
+      default: '12:00',
     },
     label: {
       type: String,
-      default: '',
-    },
-    name: {
-      type: String,
       default: null,
     },
-    color: {
-      type: String,
-      default: 'primary',
-    },
-    format: {
-      type: String,
-      default: '24hr',
-    },
-    error: {
+    roundHours: {
       type: Boolean,
       default: false,
     },
-    hideDetails: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      opened: false,
-    };
   },
   computed: {
-    errorMessages() {
-      if (this.$validator && this.errors && this.name) {
-        return this.errors.collect(this.name);
+    menuProps() {
+      return {
+        minWidth: 90,
+        maxHeight: 200,
+      };
+    },
+
+    items() {
+      if (this.roundHours) {
+        return new Array(HOURS_IN_DAY).fill(0).map((item, index) => `${index < 10 ? `0${index}` : index}:00`);
       }
 
-      return [];
+      return new Array(HOURS_IN_DAY * MINUTES_STEPS_IN_HOUR).fill(0).map((item, index) => {
+        const hoursIndex = Math.floor(index / MINUTES_STEPS_IN_HOUR);
+        const minutesIndex = index - (hoursIndex * MINUTES_STEPS_IN_HOUR);
+
+        const hours = hoursIndex < 10 ? `0${hoursIndex}` : hoursIndex;
+        const minutes = minutesIndex === 0 ? '00' : minutesIndex * MINUTES_STEP;
+
+        return `${hours}:${minutes}`;
+      });
     },
   },
   methods: {
-    clear() {
-      this.updateModel(null);
-    },
-    input(value) {
-      this.updateModel(value);
+    filter(item, queryText, itemText) {
+      return itemText.toLocaleLowerCase().startsWith(queryText.toLocaleLowerCase());
     },
     change(value) {
-      this.$emit('change', value);
+      const result = value.match(/(\d{2}):(\d{2})/);
+      let preparedValue = value;
 
-      this.opened = false;
-      this.$refs.textField.blur();
+      if (result && this.roundHours) {
+        const [, hours] = result;
+
+        preparedValue = `${hours}:00`;
+      } else if (!result) {
+        preparedValue = this.value;
+      }
+
+      if (value !== preparedValue) {
+        this.$refs.combobox.setValue(preparedValue);
+        this.$refs.combobox.setSearch('');
+      }
+
+      if (this.value !== preparedValue) {
+        this.updateModel(preparedValue);
+      }
     },
   },
 };
 </script>
 
-<style lang="scss">
-  .time-picker {
-    .v-picker__body,
-    .v-time-picker-clock__item,
-    .v-time-picker-clock__item span,
-    .v-time-picker-clock__hand {
-      z-index: inherit;
+<style lang="scss" scoped>
+.time-picker__select {
+  display: inline-block;
+  width: 56px;
+
+  &.v-select--is-menu-active .v-input__slot {
+    background: #686868;
+  }
+
+  & /deep/ {
+    .v-select__slot {
+      padding: 0 5px;
     }
   }
+}
 </style>

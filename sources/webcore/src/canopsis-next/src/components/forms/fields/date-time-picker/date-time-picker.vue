@@ -7,7 +7,7 @@
         v-flex.v-date-time-picker__subtitle-wrapper
           span.v-date-time-picker__subtitle {{ localValue | date(dateFormat, true, null) }}
         v-flex.v-date-time-picker__subtitle-wrapper
-          time-picker.v-date-time-picker__subtitle(
+          time-picker-field.v-date-time-picker__subtitle(
             :value="localValue | date('timePicker', true, null)",
             :round-hours="roundHours",
             @input="updateTime"
@@ -28,21 +28,17 @@
 </template>
 
 <script>
-import dateTimePickerMixin from '@/mixins/vuetify/date-time-picker';
+import { isDate } from 'lodash';
 
-import TimePicker from '../time-picker/time-picker.vue';
+import { updateTime, updateDate } from '@/helpers/date-time-picker';
 
-/**
- * Date time picker component
- *
- * @prop {Date} [value=null] - Date value
- * @prop {Boolean} [roundHours=false] - Deny to change minutes it will be only 0
- *
- * @event value#input
- */
+import formBaseMixin from '@/mixins/form/base';
+
+import TimePickerField from '../time-picker/time-picker-field.vue';
+
 export default {
-  components: { TimePicker },
-  mixins: [dateTimePickerMixin],
+  components: { TimePickerField },
+  mixins: [formBaseMixin],
   props: {
     value: {
       type: [Date, Number],
@@ -62,35 +58,19 @@ export default {
     },
   },
   data() {
+    const milliseconds = isDate(this.value) ? this.value.getTime() : this.value;
+
     return {
-      localValue: new Date(this.value),
+      localValue: new Date(milliseconds),
     };
   },
   methods: {
-    updateTime(time = '00:00:00') {
-      const value = this.localValue;
-      const newValue = new Date(value ? value.getTime() : null);
-      const [hours = 0, minutes = 0, seconds = 0] = time.split(':');
-
-      newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0, parseInt(seconds, 10) || 0, 0);
-
-      this.localValue = newValue;
+    updateTime(time = '00:00') {
+      this.localValue = updateTime(this.localValue, time);
     },
 
     updateDate(date) {
-      const value = this.localValue;
-      const newValue = new Date(value ? value.getTime() : null);
-      const [year, month, day] = date.split('-');
-
-      newValue.setFullYear(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
-
-      if (!value) {
-        newValue.setHours(0, 0, 0, 0);
-      } else {
-        newValue.setSeconds(0, 0);
-      }
-
-      this.localValue = newValue;
+      this.localValue = updateDate(this.localValue, date);
     },
 
     submit() {
@@ -109,16 +89,10 @@ export default {
       width: 290px;
       height: 352px;
       z-index: inherit;
-
-      .v-picker__body,
-      .v-time-picker-clock__item,
-      .v-time-picker-clock__item span,
-      .v-time-picker-clock__hand {
-        z-index: inherit;
-      }
     }
 
     .v-date-time-picker__subtitle {
+      margin-top: -12px;
       line-height: 30px;
       font-size: 18px;
       font-weight: 400;
@@ -126,12 +100,6 @@ export default {
       &-wrapper {
         text-align: center;
       }
-    }
-
-    .v-tabs__container--centered .v-tabs__div,
-    .v-tabs__container--fixed-tabs .v-tabs__div,
-    .v-tabs__container--icons-and-text .v-tabs__div {
-      min-width: 145px;
     }
 
     .v-menu__content {
