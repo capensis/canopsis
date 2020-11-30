@@ -23,8 +23,6 @@ export default {
 
       if (!value) {
         newValue.setHours(0, 0, 0, 0);
-      } else if (this.useSeconds) {
-        newValue.setMilliseconds(0);
       } else {
         newValue.setSeconds(0, 0);
       }

@@ -7,8 +7,12 @@
       v-layout.headline(justify-space-between, align-center)
         v-flex
           slot(name="title")
-        v-flex(v-if="minimize")
-          modal-title-buttons(:modal="modal")
+        v-flex(v-if="minimize || close")
+          modal-title-buttons(
+            :modal="modal",
+            :minimize="minimize",
+            :close="close"
+          )
     slot(name="fullTitle")
     template(v-if="!modal.minimized")
       v-card-text(v-if="$slots.text", key="text")
@@ -31,6 +35,10 @@ export default {
       default: false,
     },
     minimize: {
+      type: Boolean,
+      default: false,
+    },
+    close: {
       type: Boolean,
       default: false,
     },

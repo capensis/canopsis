@@ -129,6 +129,7 @@ export default {
           closeConditional: this.closeConditional,
           include: this.getOpenDependentElements,
         },
+        modifiers: { same: true },
       });
     }
 
