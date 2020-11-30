@@ -13,7 +13,7 @@ export default {
     return {
       system: {
         timezone: this.timezone || DEFAULT_TIMEZONE,
-        jobExecutorFetchTimeout: this.jobExecutorFetchTimeout || INSTRUCTION_EXECUTE_JOB_ALERT_DELAY,
+        jobExecutorFetchTimeoutSeconds: this.jobExecutorFetchTimeoutSeconds || INSTRUCTION_EXECUTE_JOB_ALERT_DELAY,
       },
     };
   },
@@ -21,7 +21,7 @@ export default {
     /**
      * @param {Object} options
      * @param {string} [options.timezone]
-     * @param {number} [options.jobExecutorFetchTimeout]
+     * @param {number} [options.jobExecutorFetchTimeoutSeconds]
      */
     setSystemData(options) {
       Object.entries(options).forEach(([key, value]) => {

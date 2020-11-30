@@ -55,7 +55,7 @@ export default {
     startTimer() {
       this.timer = setTimeout(() => {
         this.shownAlert = true;
-      }, this.$system.jobExecutorFetchTimeout);
+      }, this.$system.jobExecutorFetchTimeoutSeconds * 1000);
     },
 
     stopTimer() {

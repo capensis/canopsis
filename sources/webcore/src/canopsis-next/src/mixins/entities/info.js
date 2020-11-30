@@ -27,7 +27,7 @@ export default {
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
       timezone: 'timezone',
-      jobExecutorFetchTimeout: 'jobExecutorFetchTimeout',
+      jobExecutorFetchTimeoutSeconds: 'jobExecutorFetchTimeoutSeconds',
     }),
   },
   methods: {

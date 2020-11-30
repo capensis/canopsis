@@ -71,7 +71,10 @@ export default {
         if (!isEmpty(currentUser)) {
           await this.fetchAppInfos();
 
-          this.setSystemData({ timezone: this.timezone, jobExecutorFetchTimeout: this.jobExecutorFetchTimeout });
+          this.setSystemData({
+            timezone: this.timezone,
+            jobExecutorFetchTimeoutSeconds: this.jobExecutorFetchTimeoutSeconds,
+          });
 
           this.setTitle();
           this.setPopupTimeout();
