@@ -61,6 +61,7 @@ export default {
     },
 
     clickHandler(e) {
+      e.preventDefault();
       e.stopPropagation();
 
       this.$modals.show({
