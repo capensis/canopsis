@@ -36,4 +36,10 @@ yum install -y \
     xmlsec1-openssl-devel \
     zlib-devel
 
+rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+yum install -y epel-release
+yum makecache
+
+yum install -y python2-pip
+
 rm -rf /var/cache/yum
