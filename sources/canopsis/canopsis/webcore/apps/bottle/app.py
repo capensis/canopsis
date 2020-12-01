@@ -47,7 +47,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.webcore.services import session as session_module
 from canopsis.common import root_path
-
+from canopsis.common.middleware import SetSameSiteCookie
 from canopsis.vendor import mongodb_beaker
 
 DEFAULT_DEBUG = False
@@ -126,6 +126,7 @@ class OldApi():
             raise RuntimeError('Missing providers')
 
         session = self.config.get('session', {})
+        self.secure_cookie = session.get('secure_cookie', 'false') == 'true'
         self.cookie_expires = int(session.get('cookie_expires',
                                               DEFAULT_COOKIES_EXPIRE))
         self.secret = session.get('secret', DEFAULT_SECRET)
@@ -243,6 +244,7 @@ class OldApi():
             'session.secret': self.secret,
             'session.lock_dir': self.data_dir
         })
+        self.app = SetSameSiteCookie(self.app, secure=self.secure_cookie)
 
     def unload_session(self):
         pass

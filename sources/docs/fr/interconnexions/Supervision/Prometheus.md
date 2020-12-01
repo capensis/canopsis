@@ -76,9 +76,17 @@ l'Alertmanager) :
 
 ```yaml
 receivers:
-- name: 'example.web.hook'
+- name: 'prometheus2canopsis'
   webhook_configs:
   - url: 'http://127.0.0.1:8080/webhook'
 ```
 
-[upstream]: https://git.canopsis.net/canopsis-connectors/connector-prometheus2canopsis/-/tree/dev
+Note : l'extrait ci-dessus est un exemple, à intégrer au sein de votre propre
+configuration alertmanager. Pour que le connecteur prometheus2canopsis reçoive
+des messages, le *receiver* nommé doit être utilisé dans votre définition du
+routage des notifications. Voir pour cela la page sur la
+[configuration de l'alertmanager][alertmanager-config] dans la documentation
+officielle de Prometheus.
+
+[upstream]: https://git.canopsis.net/canopsis-connectors/connector-prometheus2canopsis
+[alertmanager-config]: https://prometheus.io/docs/alerting/latest/configuration/

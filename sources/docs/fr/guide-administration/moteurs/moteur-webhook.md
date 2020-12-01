@@ -64,11 +64,11 @@ Une règle est un document JSON contenant les paramètres suivants :
      * `regexp` est un booléen qui détermine si les valeurs des champs `ticket_id` ou tout autre champ de l'option `declare_ticket` doivent être traitées comme des expressions régulières.
      * `empty_response` est un champ qui précise si la réponse du service externe est vide ou non. Si ce champ est présent et qu'il vaut `true`, alors le webhook va s'activer en ignorant les autres champs du `declare_ticket`.
 
-Lors du lancement du moteur `engine-webhook`, plusieurs variables d'environnement sont utilisées (si elles existent) pour la configuration des webhooks :
+Lors du lancement du moteur `engine-webhook`, plusieurs [variables d'environnement](../administration-avancee/variables-environnement.md) peuvent être [configurées](../administration-avancee/variables-environnement.md#modification-des-variables-denvironnement) :
 
 * `SSL_CERT_FILE` indique un chemin vers un fichier de certificat SSL ;
 * `SSL_CERT_DIR` désigne un répertoire qui contient un ou plusieurs certificats SSL qui seront ajoutés aux certificats de confiance ;
-* `NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY` seront utilisés si la connexion au service externe nécessite un proxy.
+* [`NO_PROXY`, `HTTPS_PROXY` et `HTTP_PROXY`](../administration-avancee/variables-environnement.md#utilisation-dun-proxy-http-ou-https) seront utilisés si la connexion au service externe nécessite un proxy.
 
 !!! attention
     Les [`triggers`](../architecture-interne/triggers.md) `declareticketwebhook`, `resolve` et `unsnooze` n'étant pas déclenchés par des [évènements](../../guide-developpement/struct-event.md), ils ne sont pas utilisables avec les `event_patterns`.
