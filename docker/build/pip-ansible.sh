@@ -2,7 +2,9 @@
 set -e
 set -o pipefail
 
-virtualenv --system-site-packages ${CPS_HOME}/venv-ansible
+# Make sure that virtualenv doesn't auto-upgrade pip, because
+# recent versions have problems with our old Python 2 setup.
+virtualenv --no-download --system-site-packages ${CPS_HOME}/venv-ansible
 
 source ${CPS_HOME}/venv-ansible/bin/activate
 
