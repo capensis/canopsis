@@ -59,9 +59,15 @@ export default {
 </script>
 
 <style lang="scss">
-$minimizedDialogMaxWidth: 300px;
+$minimizedDialogMaxWidth: 360px;
 
 .v-dialog {
+  .v-card__title {
+    .headline {
+      word-break: break-word;
+    }
+  }
+
   &.v-dialog--minimized {
     position: fixed;
     bottom: 0;

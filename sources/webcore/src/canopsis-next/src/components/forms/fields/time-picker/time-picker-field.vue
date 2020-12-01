@@ -73,8 +73,9 @@ export default {
     filter(item, queryText, itemText) {
       return itemText.toLocaleLowerCase().startsWith(queryText.toLocaleLowerCase());
     },
+
     change(value) {
-      const result = value.match(/(\d{2}):(\d{2})/);
+      const result = value.match(/(([01][0-9])|(2[0-3])):([0-5][0-9])/);
       let preparedValue = value;
 
       if (result && this.roundHours) {

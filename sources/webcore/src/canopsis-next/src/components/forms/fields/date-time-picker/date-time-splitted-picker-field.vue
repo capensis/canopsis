@@ -102,7 +102,7 @@ export default {
     },
   },
   methods: {
-    updateTime(time = '00:00') {
+    updateTime(time) {
       this.updateModel(updateTime(this.value, time));
     },
 

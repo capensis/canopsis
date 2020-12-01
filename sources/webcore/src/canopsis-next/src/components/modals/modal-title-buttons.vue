@@ -1,10 +1,10 @@
 <template lang="pug">
-  div
+  div.modal-title-buttons(:class="{ 'close': close, 'minimize': minimize }")
     div(v-if="close")
       v-btn(
         icon,
         small,
-        @click="$modals.hide({ id: modal.id })"
+        @click="closeHandler"
       )
         v-icon(color="white", small) close
     div(v-if="minimize")
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { isFunction } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapGetters } = createNamespacedHelpers('modals');
@@ -47,18 +48,40 @@ export default {
       default: false,
     },
     close: {
-      type: Boolean,
+      type: [Boolean, Function],
       default: false,
     },
   },
   computed: {
     ...mapGetters(['hasMinimizedModal']),
+
+    closeHandler() {
+      if (!this.close) {
+        return false;
+      }
+
+      return isFunction(this.close)
+        ? this.close
+        : () => this.$modals.hide({ id: this.modal.id });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.v-btn--minimize {
-  pointer-events: auto;
+.modal-title-buttons {
+  float: right;
+
+  &.close, &.minimize {
+    width: 45px;
+  }
+
+  &.close.minimize {
+    width: 90px;
+  }
+
+  .v-btn--minimize {
+    pointer-events: auto;
+  }
 }
 </style>

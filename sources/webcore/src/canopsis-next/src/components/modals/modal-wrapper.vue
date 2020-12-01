@@ -39,7 +39,7 @@ export default {
       default: false,
     },
     close: {
-      type: Boolean,
+      type: [Boolean, Function],
       default: false,
     },
   },

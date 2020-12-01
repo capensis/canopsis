@@ -1,3 +1,10 @@
+/**
+ * Immutable update time in the Date value
+ *
+ * @param {Date} value
+ * @param {string} [time = '00:00'];
+ * @returns {Date}
+ */
 export function updateTime(value, time = '00:00') {
   const newValue = new Date(value ? value.getTime() : null);
   const [hours = 0, minutes = 0] = time.split(':');
@@ -7,6 +14,13 @@ export function updateTime(value, time = '00:00') {
   return newValue;
 }
 
+/**
+ * Immutable update date in the Date value
+ *
+ * @param {Date} value
+ * @param {string} date
+ * @returns {Date}
+ */
 export function updateDate(value, date) {
   const newValue = new Date(value ? value.getTime() : null);
   const [year, month, day] = date.split('-');
