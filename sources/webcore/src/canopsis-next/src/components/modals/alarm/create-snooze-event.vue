@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createSnoozeEventModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createSnoozeEvent.title') }}
       template(slot="text")

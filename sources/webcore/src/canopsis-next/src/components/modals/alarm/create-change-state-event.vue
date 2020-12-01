@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createChangeStateEventModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createChangeStateEvent.title') }}
       template(slot="text")

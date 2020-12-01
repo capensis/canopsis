@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="liveReportingModal")
+    modal-wrapper(data-test="liveReportingModal", close)
       template(slot="title")
         span {{ $t('modals.liveReporting.editLiveReporting') }}
       template(slot="text")
