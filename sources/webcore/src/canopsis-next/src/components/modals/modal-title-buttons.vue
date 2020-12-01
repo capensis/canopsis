@@ -1,13 +1,16 @@
 <template lang="pug">
-  div.modal-title-buttons(:class="{ 'close': close, 'minimize': minimize }")
-    div(v-if="close")
+  div.modal-title-buttons(
+    :class="{ 'close': close, 'minimize': minimize }"
+  )
+    div.modal-title-button__wrapper(v-if="close")
       v-btn(
+        slot="activator",
         icon,
         small,
         @click="closeHandler"
       )
         v-icon(color="white", small) close
-    div(v-if="minimize")
+    div.modal-title-button__wrapper(v-if="minimize")
       v-tooltip(
         v-if="!modal.minimized",
         :disabled="!hasMinimizedModal",
@@ -72,12 +75,16 @@ export default {
 .modal-title-buttons {
   float: right;
 
+  .modal-title-button__wrapper:first-of-type /deep/ .v-btn {
+    margin-right: 0;
+  }
+
   &.close, &.minimize {
-    width: 45px;
+    width: 41px;
   }
 
   &.close.minimize {
-    width: 90px;
+    width: 82px;
   }
 
   .v-btn--minimize {

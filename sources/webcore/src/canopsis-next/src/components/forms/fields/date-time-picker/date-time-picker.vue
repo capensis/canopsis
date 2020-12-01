@@ -5,7 +5,9 @@
     div.date-time-picker__body
       v-layout.py-2(row, align-center, justify-center)
         v-flex.v-date-time-picker__subtitle-wrapper
-          span.v-date-time-picker__subtitle {{ localValue | date(dateFormat, true, null) }}
+          span.v-date-time-picker__subtitle(
+            :class="{ 'grey--text darken-1': !localValue }"
+          ) {{ localValue | date(dateFormat, true, '−−/−−/−−−−') }}
         v-flex.v-date-time-picker__subtitle-wrapper
           time-picker-field.v-date-time-picker__subtitle(
             :value="localValue | date('timePicker', true, null)",
@@ -61,7 +63,7 @@ export default {
     const milliseconds = isDate(this.value) ? this.value.getTime() : this.value;
 
     return {
-      localValue: new Date(milliseconds),
+      localValue: milliseconds ? new Date(milliseconds) : null,
     };
   },
   methods: {

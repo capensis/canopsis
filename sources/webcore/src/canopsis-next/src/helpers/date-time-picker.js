@@ -6,7 +6,7 @@
  * @returns {Date}
  */
 export function updateTime(value, time = '00:00') {
-  const newValue = new Date(value ? value.getTime() : null);
+  const newValue = value ? new Date(value.getTime()) : new Date();
   const [hours = 0, minutes = 0] = time.split(':');
 
   newValue.setHours(parseInt(hours, 10) || 0, parseInt(minutes, 10) || 0, 0, 0);
@@ -22,7 +22,7 @@ export function updateTime(value, time = '00:00') {
  * @returns {Date}
  */
 export function updateDate(value, date) {
-  const newValue = new Date(value ? value.getTime() : null);
+  const newValue = value ? new Date(value.getTime()) : new Date();
   const [year, month, day] = date.split('-');
 
   newValue.setFullYear(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));

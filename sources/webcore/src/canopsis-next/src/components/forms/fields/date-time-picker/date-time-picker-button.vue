@@ -20,7 +20,7 @@
     date-time-picker(
       :value="value",
       :round-hours="roundHours",
-      @input="updateModel($event)",
+      @input="$listeners.input",
       @close="close"
     )
 </template>

@@ -7,6 +7,7 @@
     :return-object="false",
     :filter="filter",
     :label="label",
+    placeholder="−−:−−",
     append-icon="",
     hide-details,
     @change="change"
@@ -34,7 +35,7 @@ export default {
   props: {
     value: {
       type: String,
-      default: '12:00',
+      default: null,
     },
     label: {
       type: String,
