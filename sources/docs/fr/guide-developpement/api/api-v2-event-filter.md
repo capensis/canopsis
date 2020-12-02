@@ -4,6 +4,26 @@ L'API Event-Filter permet de consulter, créer et supprimer des règles d'enrich
 
 Pour plus d'informations sur ce qu'est une règle d'enrichissement, consulter la [documentation du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md).
 
+!!! note
+    Un changement important est apparu dans cette API à partir de Canopsis 3.48.0 : la liste des `patterns` (au pluriel) peut maintenant contenir plusieurs règles à la fois. Avant Canopsis 3.48.0, il s'agissait d'un champ `pattern` (au singulier) ne pouvant contenir qu'une seule règle.
+
+    Avant Canopsis 3.48.0 :
+    ```js
+    "pattern": {
+        "component": "192.168.0.1", "resource": "foobar"
+    },
+    ```
+
+    À partir de Canopsis 3.48.0 :
+    ```js
+    "patterns": [
+        {"component": "192.168.0.1", "resource": "foobar"},
+        {"resource": "other"}
+    ],
+    ```
+
+    Les exemples suivants utilisent uniquement la nouvelle syntaxe.
+
 ### Création d'une règle
 
 Crée une nouvelle règle à partir du corps de la requête.
@@ -20,9 +40,9 @@ Crée une nouvelle règle à partir du corps de la requête.
 ```json
 {
     "type": "enrichment",
-    "pattern": {
-        "component": "192.168.0.1"
-    },
+    "patterns": [
+        {"component": "192.168.0.1"}
+    ],
     "actions": [
         {
             "type": "set_field",
@@ -41,9 +61,9 @@ Crée une nouvelle règle à partir du corps de la requête.
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "type": "enrichment",
-    "pattern": {
-        "component": "192.168.0.1"
-    },
+    "patterns": [
+        {"component": "192.168.0.1"}
+    ],
     "actions": [
         {
             "type": "set_field",
@@ -54,7 +74,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "priority": 101,
     "on_success": "pass",
     "on_failure": "pass"
-}' 'http://<Canopsis_URL>/api/v2/eventfilter/rules'
+}' 'http://localhost:8082/api/v2/eventfilter/rules'
 ```
 
 #### Réponse en cas de réussite
@@ -119,9 +139,9 @@ Modifie une règle à partir du corps de la requête.
 ```json
 {
     "type": "enrichment",
-    "pattern": {
-        "component": "192.168.0.8"
-    },
+    "patterns": [
+        {"component": "192.168.0.8"}
+    ],
     "actions": [
         {
             "type": "set_field",
@@ -140,9 +160,9 @@ Modifie une règle à partir du corps de la requête.
 ```sh
 curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "type": "enrichment",
-    "pattern": {
-        "component": "192.168.0.8"
-    },
+    "patterns": [
+        {"component": "192.168.0.8"}
+    ],
     "actions": [
         {
             "type": "set_field",
@@ -153,7 +173,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
     "priority": 101,
     "on_success": "pass",
     "on_failure": "pass"
-}' 'http://<Canopsis_URL>/api/v2/eventfilter/rules/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
+}' 'http://localhost:8082/api/v2/eventfilter/rules/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
 ```
 
 #### Réponse en cas de réussite
@@ -187,7 +207,7 @@ Supprime une règle en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer la règle avec l'`id` `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/eventfilter/rules/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
 ```
 
 #### Réponse en cas de réussite
@@ -236,7 +256,7 @@ Récupère une ou plusieurs règles créées en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer la règle avec l'`id` `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/eventfilter/rules/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
 ```
 
 ##### Réponse en cas de réussite
@@ -249,9 +269,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules/6dacc23
 
 ```json
 {
-	"pattern": {
-		"component": "192.168.0.1"
-	},
+	"patterns": [
+		{"component": "192.168.0.1"}
+	],
 	"actions": [{
 		"type": "set_field",
 		"name": "Component",
@@ -297,7 +317,7 @@ Récupère toutes les règles stockées en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer toutes les règles :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/eventfilter/rules'
 ```
 
 ##### Réponse en cas de réussite
@@ -310,9 +330,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules'
 
 ```json
 [{
-	"pattern": {
-		"component": "192.168.0.1"
-	},
+	"patterns": [
+		{"component": "192.168.0.1"}
+	],
 	"actions": [{
 		"type": "set_field",
 		"name": "Component",
@@ -324,9 +344,9 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/eventfilter/rules'
 	"type": "enrichment",
 	"on_success": "pass"
 }, {
-	"pattern": {
-		"component": "192.168.0.2"
-	},
+	"patterns": [
+		{"component": "192.168.0.2"}
+	],
 	"actions": [{
 		"type": "set_field",
 		"name": "Component",

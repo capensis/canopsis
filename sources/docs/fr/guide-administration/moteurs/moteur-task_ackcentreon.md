@@ -123,7 +123,6 @@ Sur un nœud frontend Canopsis, créer un fichier `enrichentity.json` :
 ```json
 {
     "type": "enrichment",
-    "pattern": {},
     "external_data": {
         "entity": {
             "type": "entity"
