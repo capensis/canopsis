@@ -193,6 +193,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.executeRemediationInstruction]: { maxWidth: 960, persistent: true },
     [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
     [MODALS.rate]: { maxWidth: 400 },
+    [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

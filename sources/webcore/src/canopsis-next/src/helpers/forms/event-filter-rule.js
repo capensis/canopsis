@@ -13,7 +13,7 @@ export function eventFilterRuleToForm(rule = {}) {
       _id: rule._id || '',
       type: rule.type || EVENT_FILTER_RULE_TYPES.drop,
       description: rule.description || '',
-      pattern: rule.pattern ? cloneDeep(rule.pattern) : {},
+      patterns: rule.patterns ? cloneDeep(rule.patterns) : [],
       priority: rule.priority || 0,
       enabled: !isUndefined(rule.enabled) ? rule.enabled : true,
     },

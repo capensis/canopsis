@@ -142,6 +142,7 @@ export default {
     eventPatterns: 'Patterns des événements',
     alarmPatterns: 'Patterns des alarmes',
     entityPatterns: 'Pattern des entités',
+    totalEntityPatterns: 'Total des modèles d\'entité',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -216,6 +217,19 @@ export default {
     '    <dd>Alarmes dont le connecteur n\'est pas "connector_1"</dd>\n' +
     '</dl>',
     contextAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
+      '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
+      '<p>Le "-" avant la recherche est obligatoire</p>\n' +
+      '<p>Opérateurs:\n' +
+      '    <=, <,=, !=,>=, >, LIKE (Pour les expressions régulières MongoDB)</p>\n' +
+      '<p>Les types de valeurs : String entre doubles guillemets, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Exemples :</dt><dt>- Name = "name_1"</dt>\n' +
+      '    <dd>Entités dont le names est "name_1"</dd><dt>- Name="name_1" AND Type="watcher"</dt>\n' +
+      '    <dd>Entités dont le names est "name_1" et la types est "watcher"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
+      '    <dd>Entités dont le infos.custom.value est "Custom value" ou la type est "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
+      '    <dd>Entités dont le infos.custom.value contient 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
+      '    <dd>Entités dont le name n\'est pas "name_1"</dd>\n' +
+      '</dl>',
+    dynamicInfoAdvancedSearch: '<span>Aide sur la recherche avancée :</span>\n' +
       '<p>- [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt;</p> [ AND|OR [ NOT ] &lt;NomColonne&gt; &lt;Opérateur&gt; &lt;Valeur&gt; ]\n' +
       '<p>Le "-" avant la recherche est obligatoire</p>\n' +
       '<p>Opérateurs:\n' +
@@ -1619,8 +1633,11 @@ export default {
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',
       timeInterval: 'Intervalle de temps',
-      valuePath: 'Chemin de valeur',
+      valuePath: 'Chemin de valeur | Chemins de valeur',
       autoResolve: 'Résolution automatique',
+    },
+    errors: {
+      noValuePaths: 'Vous devez ajouter au moins 1 chemin de valeur',
     },
   },
   snmpRules: {
@@ -1965,6 +1982,9 @@ export default {
       startedAt: 'Date de déclenchement\n(par Canopsis)',
       launchedAt: 'Date de lancement\n(par l\'ordonnanceur)',
       completedAt: 'Fin de traitement\n(par l\'ordonnanceur)',
+      waitAlert: 'L\'exécuteur de jobs ne répond pas, veuillez contacter votre administrateur',
+      skip: 'Ignorer le travail',
+      await: 'Attendre',
     },
   },
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-data-table(
-    :items="rights",
+    :items="sortedRights",
     :headers="headers",
     item-key="_id",
     expand,
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { sortBy } from 'lodash';
+
 import RightRow from './right-row.vue';
 
 export default {
@@ -48,6 +50,10 @@ export default {
 
         ...this.roles.map(role => ({ text: role._id, sortable: false })),
       ];
+    },
+
+    sortedRights() {
+      return sortBy(this.rights, ({ desc }) => desc.toLowerCase());
     },
   },
 };

@@ -30,18 +30,17 @@
       color="primary"
     )
     v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
-    v-text-field(
-      v-if="isValueGroupType",
-      v-field="form.config.value_path",
-      v-validate="'required'",
-      :label="$t('metaAlarmRule.fields.valuePath')",
-      :error-messages="errors.collect('valuePath')",
-      name="valuePath"
-    )
     meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
-    meta-alarm-rule-threshold-count-form(v-if="isThresholdCountFormShown", v-field="form.config")
     meta-alarm-rule-time-based-form(v-if="isTimeBasedFormShown", v-field="form.config")
-    patterns-form(v-if="isPatternsFormShown", v-field="form.config", alarm, entity, event)
+    meta-alarm-rule-value-paths-form(v-if="isValuePathsFormShown", v-field="form.config")
+    patterns-form(
+      v-if="isPatternsFormShown",
+      v-field="form.config",
+      :total-entity="isValueGroupType",
+      alarm,
+      entity,
+      event
+    )
 </template>
 
 <script>
@@ -51,15 +50,15 @@ import PatternsForm from '@/components/forms/patterns.vue';
 
 import MetaAlarmRuleThresholdForm from './meta-alarm-rule-threshold-form.vue';
 import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
-import MetaAlarmRuleThresholdCountForm from './meta-alarm-rule-threshold-count-form.vue';
+import MetaAlarmRuleValuePathsForm from './meta-alarm-rule-value-paths-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     PatternsForm,
-    MetaAlarmRuleThresholdCountForm,
     MetaAlarmRuleTimeBasedForm,
     MetaAlarmRuleThresholdForm,
+    MetaAlarmRuleValuePathsForm,
   },
   model: {
     prop: 'form',
@@ -88,10 +87,10 @@ export default {
      * Conditions for forms showing
      */
     isThresholdFormShown() {
-      return this.isComplexType;
+      return this.isComplexType || this.isValueGroupType;
     },
 
-    isThresholdCountFormShown() {
+    isValuePathsFormShown() {
       return this.isValueGroupType;
     },
 

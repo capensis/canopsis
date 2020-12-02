@@ -36,7 +36,8 @@ from canopsis.models.dynamic_infos import DynamicInfosRule
 from canopsis.webcore.utils import (
     gen_json, gen_json_error, HTTP_ERROR, HTTP_NOT_FOUND
 )
-
+import copy
+import canopsis.alerts.translate_search as ts
 
 def get_username():
     """Returns the username of the logged-in user, or ''."""
@@ -52,6 +53,35 @@ def get_username():
         return user.get('_id', '')
     except AttributeError:
         return ''
+
+
+def replace_pattern_key(filter_, replacing_key):
+    if isinstance(filter_, list):
+        for i, fil in enumerate(filter_):
+            filter_[i] = replace_pattern_key(fil, replacing_key)
+
+    elif isinstance(filter_, dict):
+        for key, value in filter_.items():
+            new_value = replace_pattern_key(value, replacing_key)
+            filter_[key] = new_value
+
+            new_key = key
+            if new_key == "pattern":
+                new_key= replacing_key
+            filter_[new_key] = filter_.pop(key)
+
+    return filter_
+
+
+def translate_search(list_path, search):
+    def f():
+        filters = []
+        for path in list_path:
+            _, bnf_filter = ts.parse_search(search)
+            filters.append(replace_pattern_key(bnf_filter, path))
+        return {"$or": filters}
+
+    return f()
 
 
 def exports(ws):
@@ -70,6 +100,16 @@ def exports(ws):
             for field in request.query.search_fields.split(',')
             if field.strip()
         ]
+
+        bnf_search = None
+        try:
+            _, bnf_search = ts.parse_search(search)
+        except:
+            pass
+
+        if bnf_search:
+            list_pattern = manager.list_all_patterns()
+            bnf_search = translate_search(list_pattern, search)
 
         try:
             limit = int(request.query.limit or '0')
@@ -94,8 +134,8 @@ def exports(ws):
                 HTTP_ERROR)
 
         try:
-            count = manager.count(search, search_fields)
-            rules = manager.list(search, search_fields, limit, skip, sort_key, sort_dir)
+            count = manager.count(search, search_fields, bnf_search)
+            rules = manager.list(search, search_fields, limit, skip, sort_key, sort_dir, bnf_search)
         except CollectionError:
             return gen_json_error(
                 {"description": "Cannot retrieve the dynamic infos list from "
