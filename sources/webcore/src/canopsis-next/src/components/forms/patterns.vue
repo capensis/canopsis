@@ -29,6 +29,15 @@
               name="entity_patterns",
               @input="errors.remove('entity_patterns')"
             )
+        template(v-if="totalEntity")
+          v-tab(:class="{ 'error--text': errors.has('total_entity_patterns') }") {{ $t('common.totalEntityPatterns') }}
+          v-tab-item
+            patterns-list(
+              v-field="value.total_entity_patterns",
+              :disabled="disabled",
+              name="total_entity_patterns",
+              @input="errors.remove('total_entity_patterns')"
+            )
 </template>
 
 <script>
@@ -59,6 +68,10 @@ export default {
       default: false,
     },
     entity: {
+      type: Boolean,
+      default: false,
+    },
+    totalEntity: {
       type: Boolean,
       default: false,
     },

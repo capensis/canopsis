@@ -43,6 +43,45 @@ export default {
     },
   },
   methods: {
+    onFocusin(event) {
+      const { target } = event;
+
+      if (
+        /**
+         * It isn't the document or the dialog body
+         */
+        ![document, this.$refs.content].includes(target) &&
+        /**
+         * It isn't inside the dialog body
+         */
+        !this.$refs.content.contains(target) &&
+        /**
+         * It isn't inside a dependent element (like a menu)
+         */
+        !this.getOpenDependentElements().some(el => el.contains(target))
+        /**
+         * So we must have focused something outside the dialog and its children
+         *
+         * We need next tick here for correct zIndex comparison
+         */
+      ) {
+        this.$nextTick(() => {
+          /**
+           *  We're the topmost dialog
+           */
+          if (this.activeZIndex >= this.getMaxZIndex()) {
+            /**
+             * Find and focus the first available element inside the dialog
+             */
+            const focusable = this.$refs.content.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+
+            if (focusable.length) {
+              focusable[0].focus();
+            }
+          }
+        });
+      }
+    },
     closeConditional(e) {
       // If the dialog content contains
       // the click event, or if the
