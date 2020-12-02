@@ -50,8 +50,8 @@ export default {
       return {
         ...props,
 
-        hideOverlay: minimized,
-        ignoreClickOutside: minimized,
+        hideOverlay: props.hideOverlay || minimized,
+        ignoreClickOutside: props.ignoreClickOutside || minimized,
         contentClass: minimized ? `v-dialog--minimized ${props.contentClass}` : props.contentClass,
       };
     },
