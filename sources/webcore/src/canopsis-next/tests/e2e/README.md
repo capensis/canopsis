@@ -1,13 +1,49 @@
 Environment setup
 ============================
-If you need change environment for nightwatch you can do it in the `tests/e2e/.env.local`
+Available parameters for environment you can see in the `tests/e2e/.env` file.
 
-For example: If you are receiving the problem with `chromedriver` version, you can set `CHROME_DRIVER_PATH`.
+If you need to change environment parameters for nightwatch you can copy `tests/e2e/.env` to `tests/e2e/.env.local` and modify parameters in the second one.
+
+The main point that your `chromedriver` version should be the same with installed `google-chrome` on OS.
+
+Example of specific `chromedriver` installation by `yarn`:
+```bash
+yarn global add chromedriver@86.0.0
+```
+
+`chromedriver` will be available by a path: `/home/<user>/.yarn/bin/chromedriver`:
 ```
 # Example for yarn global package
-CHROME_DRIVER_PATH=/usr/local/share/.config/yarn/global/node_modules/chromedriver/lib/chromedriver/chromedriver
+CHROME_DRIVER_PATH=/home/<user>/.yarn/bin/chromedriver
 ```
 
+Commands to run the tests
+============================
+Example of commands to run the tests:
+```bash
+# Run all tests one by one
+yarn e2e
+
+# Run specific test
+yarn e2e --test tests/e2e/specs/01-auth/auth.js
+
+# Run tests for specific url (without dev-server setuping)
+yarn e2e --url http://localhost:8080/
+```
+
+We have possibility to run tests in parallel mode:
+```bash
+# Run all tests without `.consistently` suffix
+yarn e2e:parallel
+```
+
+Here we should know, that not all tests can works in parallel mode.
+
+More details about `consistently` tests are available in Tests writing convention.
+```bash
+# Run all tests with `.consistently` suffix
+yarn e2e:consistently
+```
 
 Folder structure conventions
 ============================
@@ -57,7 +93,13 @@ We will consider `custom-commands` folder but this we must apply and on `custom-
 
 Tests writing convention
 ========================
-If we need set the order of tests running we can put number prefixes for tests files. But it will be better if we will write tests isolated (So that the tests do not depend on each other).
+If we need set the order of tests running we can put number prefixes for tests files.
+It will be better if we will write tests isolated (So that the tests do not depend on each other).
+
+Also, sometimes specific tests can't run in parallel mode (Example: if our tests has conflicts by the same backend).
+We must put `.consistently` suffix for those tests. Example: `groups-top-bar.consistently.js`.
+
+The tests will not run in parallel mode.
 
 Planned tests
 =============
