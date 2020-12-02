@@ -39,16 +39,20 @@ export default {
       const { dialogPropsMap = {} } = this.$modals;
       const { name, dialogProps, minimized } = this.modal;
 
-      return {
+      const props = {
         ...defaultDialogProps,
         ...dialogPropsMap[name],
         ...dialogProps,
 
-        hideOverlay: minimized,
-        ignoreClickOutside: minimized,
-        contentClass: minimized ? 'v-dialog--minimized' : '',
-
         customCloseConditional: (...args) => this.$clickOutside.call(...args),
+      };
+
+      return {
+        ...props,
+
+        hideOverlay: props.hideOverlay || minimized,
+        ignoreClickOutside: props.ignoreClickOutside || minimized,
+        contentClass: minimized ? `v-dialog--minimized ${props.contentClass}` : props.contentClass,
       };
     },
   },
