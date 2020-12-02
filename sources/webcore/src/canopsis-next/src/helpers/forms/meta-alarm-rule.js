@@ -7,6 +7,7 @@ import { convertDurationToIntervalObject } from '@/helpers/date';
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 
 import { getConditionsForRemovingEmptyPatterns } from './shared/patterns';
+import { formToPrimitiveArray, primitiveArrayToForm } from './shared/common';
 
 /**
  * Convert meta alarm rule to form
@@ -24,10 +25,11 @@ export function metaAlarmRuleToForm(rule = {}) {
     auto_resolve: !!rule.auto_resolve,
     output_template: rule.output_template || '{{ .Children.Alarm.Value.State.Message }}',
     config: {
-      value_path: config.value_path || '',
+      value_paths: config.value_paths ? primitiveArrayToForm(config.value_paths) : [],
       alarm_patterns: config.alarm_patterns ? cloneDeep(config.alarm_patterns) : [],
       entity_patterns: config.entity_patterns ? cloneDeep(config.entity_patterns) : [],
       event_patterns: config.event_patterns ? cloneDeep(config.event_patterns) : [],
+      total_entity_patterns: config.total_entity_patterns ? cloneDeep(config.total_entity_patterns) : [],
       threshold_rate: config.threshold_rate || 1,
       threshold_count: config.threshold_count || 1,
       threshold_type: isNumber(config.threshold_count)
@@ -62,22 +64,28 @@ export function formToMetaAlarmRule(form = {}) {
     case META_ALARMS_RULE_TYPES.complex:
     case META_ALARMS_RULE_TYPES.valuegroup: {
       const isComplex = form.type === META_ALARMS_RULE_TYPES.complex;
+      const isValueGroup = form.type === META_ALARMS_RULE_TYPES.valuegroup;
 
-      const thresholdField = form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount || !isComplex
+      const thresholdField = form.config.threshold_type === META_ALARMS_THRESHOLD_TYPES.thresholdCount
         ? 'threshold_rate'
         : 'threshold_count';
 
       const fields = ['threshold_type', thresholdField];
+      const patternsKeys = ['alarm_patterns', 'entity_patterns', 'event_patterns', 'total_entity_patterns'];
 
       if (isComplex) {
-        fields.push('value_path');
+        fields.push('value_paths');
       }
 
       const config = omit(form.config, fields);
 
+      if (isValueGroup) {
+        config.value_paths = formToPrimitiveArray(config.value_paths);
+      }
+
       metaAlarmRule.config = unsetSeveralFieldsWithConditions(
         config,
-        getConditionsForRemovingEmptyPatterns(),
+        getConditionsForRemovingEmptyPatterns(patternsKeys),
       );
       break;
     }

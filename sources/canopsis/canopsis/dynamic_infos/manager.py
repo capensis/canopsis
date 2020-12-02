@@ -74,7 +74,26 @@ class DynamicInfosManager(object):
 
         return (logger, mongo_collection)
 
-    def count(self, search="", search_fields=None):
+    def list_all_patterns(self):
+        paths = []
+
+        def dict_path(path, mdict):
+            if isinstance(mdict, list):
+                for d in mdict:
+                    dict_path(path, d)
+            elif isinstance(mdict, dict):
+                for k, v in mdict.iteritems():
+                    if isinstance(v, list):
+                        for i, item in enumerate(v):
+                            dict_path(path + "." + k + "." + str(i), item)
+                    elif isinstance(v, dict):
+                        dict_path(path + "." + k, v)
+                    else:
+                        paths.append(path + "." + k)
+        dict_path("", list(self.collection.find({}, {"entity_patterns": 1, "alarm_patterns": 1, "_id": 0})))
+        return map(lambda x: x[1:], paths)
+
+    def count(self, search="", search_fields=None, bnf_search=None):
         """Return the number of DynamicInfosRules.
 
         If search is defined, only the rules where one of the fields listed in
@@ -87,10 +106,12 @@ class DynamicInfosManager(object):
             default.
         :rtype: int
         """
+        if bnf_search:
+            return self.collection.find(bnf_search).count()
         query = self._get_search_query(search, search_fields)
         return self.collection.find(query).count()
 
-    def list(self, search="", search_fields=None, limit=0, offset=0, sort_key=None, sort_dir=None):
+    def list(self, search="", search_fields=None, limit=0, offset=0, sort_key=None, sort_dir=None, bnf_search=None):
         """Return a list of the DynamicInfosRules as dictionaries.
 
         If search is defined, only the rules where one of the fields listed in
@@ -103,7 +124,10 @@ class DynamicInfosManager(object):
             default.
         :rtype: List[Dict[str, Any]]
         """
-        query = self._get_search_query(search, search_fields)
+        if bnf_search:
+            query = bnf_search
+        else:
+            query = self._get_search_query(search, search_fields)
         if sort_dir == self.SORT_DIRECTION_ASC:
             sort_dir = ASCENDING
         elif sort_dir == self.SORT_DIRECTION_DESC:

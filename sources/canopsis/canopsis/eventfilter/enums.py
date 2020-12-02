@@ -35,7 +35,7 @@ class RuleField(FastEnum):
     id = '_id'
     description = 'description'
     type = 'type'
-    pattern = 'pattern'
+    patterns = 'patterns'
     priority = 'priority'
     enabled = 'enabled'
     external_data = 'external_data'
