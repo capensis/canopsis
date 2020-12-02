@@ -12,13 +12,32 @@ Des exemples pratiques d'utilisation de l'event-filter sont disponibles dans la 
 
 ## Règles
 
+!!! important
+    Un changement important est apparu dans cette API à partir de Canopsis 3.48.0 : la liste des `patterns` (au pluriel) peut maintenant contenir plusieurs règles à la fois. Avant Canopsis 3.48.0, il s'agissait d'un champ `pattern` (au singulier) ne pouvant contenir qu'une seule règle.
+
+    Avant Canopsis 3.48.0 :
+    ```js
+    "pattern": {
+        "component": "192.168.0.1", "resource": "foobar"
+    },
+    ```
+
+    À partir de Canopsis 3.48.0 :
+    ```js
+    "patterns": [
+        {"component": "192.168.0.1", "resource": "foobar"},
+        {"resource": "other"}
+    ],
+    ```
+
+    Les exemples suivants utilisent uniquement la nouvelle syntaxe.
+
 Une règle est un document JSON contenant les paramètres suivants :
 
  - `_id` (optionnel) : un identifiant unique (généré automatiquement s'il n'est pas défini par l'utilisateur).
  - `description` (optionnel) : une description de la règle, donnée par l'utilisateur.
  - `type` (requis) : le type de la règle (voir [Types de règles](#types-de-regles) pour plus de détails).
- - `pattern` (optionnel) : un pattern permettant de sélectionner les évènements auxquels la règle doit être appliquée. Si le pattern n'est pas précisé, la
-   règle est appliquée à tous les évènements (voir [Patterns](#patterns) pour plus de détails).
+ - `patterns` (optionnel) : une liste de patterns permettant de sélectionner les évènements auxquels la règle doit être appliquée. Si le paramètre est absent, la règle est appliquée à tous les évènements (voir [Patterns](#patterns) pour plus de détails).
  - `priority` (optionnel, 0 par défaut) : la priorité de la règle. Les règles sont appliquées par ordre de priorité croissante.
  - `enabled` (optionnel, `true` par défaut) : `false` pour désactiver la règle.
 
@@ -27,22 +46,22 @@ Une règle est un document JSON contenant les paramètres suivants :
 ```json
 {
     "type": "drop",
-    "pattern": {
-        "resource": "invalid_resource"
-    },
+    "patterns": [
+        {"resource": "invalid_resource"}
+    ],
     "priority": 10
 }
 ```
 
 Le `type` de cette règle vaut `drop`, indiquant que c'est une règle qui supprime les évènements.
 
-Le `pattern` de cette règle sélectionne les évènements dont la ressource vaut`invalid_resource` (voir [Patterns](#patterns) pour plus de détails).
+Le pattern de cette règle sélectionne les évènements dont la ressource vaut `invalid_resource` (voir [Patterns](#patterns) pour plus de détails).
 
 Cette règle supprime donc les évènements dont la ressource vaut `invalid_resource`.
 
 ### Application des règles
 
-Lors de la réception d'un évènement par le moteur `engine-che`, les règles sont parcourues par ordre de priorité croissante. Si l'évènement est reconnu par le `pattern` d'une règle, celle-ci est appliquée à l'évènement. Le traitement effectué dépend du `type` de la règle (voir [Types de règles](#types-de-regles) pour plus de détails).
+Lors de la réception d'un évènement par le moteur `engine-che`, les règles sont parcourues par ordre de priorité croissante. Si l'évènement est reconnu par l'un des `patterns` d'une règle, celle-ci est appliquée à l'évènement. Le traitement effectué dépend du `type` de la règle (voir [Types de règles](#types-de-regles) pour plus de détails).
 
 **Note :** Pour pouvoir être traité par Canopsis, un évènement doit respecter l'une des conditions suivantes :
 
@@ -56,10 +75,10 @@ Les évènements ne respectant pas l'une de ces conditions en entrée du moteur 
 
 ### Patterns
 
-Le pattern d'une règle permet de sélectionner les évènements auxquels elle doit être appliquée.
+Les patterns d'une règle permettent de sélectionner les évènements auxquels elle doit être appliquée.
 
-!!! info
-    Afin de connaître l'intitulé exact du pattern que vous souhaitez utiliser, vous pouvez, en tant qu'administrateur, prendre une alarme représentative dans votre Bac à alarmes, et vous aider du bouton d'action « Liste des variables disponibles ».
+!!! note
+    Afin de connaître l'intitulé exact des patterns que vous souhaitez utiliser, vous pouvez, en tant qu'administrateur, prendre une alarme représentative dans votre Bac à alarmes, et vous aider du bouton d'action « Liste des variables disponibles ».
     
     Cette vue vous présente le contenu de vos alarmes et de vos entités, sous la forme d'un arbre.
     
@@ -69,13 +88,13 @@ Le pattern d'une règle permet de sélectionner les évènements auxquels elle d
 
 Un pattern peut être défini comme un objet JSON contenant les valeurs de certains champs d'un évènement.
 
-Par exemple, une règle contenant le pattern suivant sera appliquée aux évènements dont le composant vaut `component_name` et dont la ressource vaut `resource_name` :
+Par exemple, une règle contenant le pattern suivant sera appliquée aux évènements dont le composant vaut `component_name` et dont la ressource vaut `resource_name`, ainsi qu'aux évènement dont le composant vaut `foobar` :
 
 ```json
-"pattern": {
-    "component": "component_name",
-    "resource": "resource_name"
-}
+"patterns": [
+    {"component": "component_name", "resource": "resource_name"},
+    {"component": "foobar"}
+]
 ```
 
 #### Patterns avancés
@@ -88,10 +107,17 @@ Pour plus d'expressivité, il est possible d'associer à un champ un objet conte
 Par exemple, le pattern suivant sélectionne les évènements dont la criticité est comprise entre 1 et 3 (mineur, majeur ou critique) et dont l'output vérifie une expression régulière :
 
 ```json
-"pattern": {
-    "state": {">=": 1, "<=": 3},
-    "output": {"regex_match": "Warning: CPU Load is critical \(.*\)"}
-}
+"patterns": [
+    {
+        "state": {
+            ">=": 1,
+            "<=": 3
+        },
+        "output": {
+            "regex_match": "Warning: CPU Load is critical \(.*\)"
+        }
+    }
+]
 ```
 
 ### Types de règles
@@ -118,7 +144,7 @@ Les règles de types `enrichment` sont des règles d'enrichissement, qui permett
 
 Les règles de types `enrichment` sont des règles d'enrichissement, qui permettent d'appliquer des actions modifiant les évènements.
 
-Ces règles peuvent avoir les paramètres suivants (en plus de `type`, `pattern`, `priority` et `enabled`) :
+Ces règles peuvent avoir les paramètres supplémentaires suivants :
 
  - `actions` (requis) : une liste d'actions à appliquer à l'évènement (voir [Actions](#actions) pour plus de détails).
  - `external_data` (optionnel) : des sources de données externes (voir [Données externes](#donnees-externes) pour plus de détails).
@@ -169,7 +195,7 @@ Les paramètres de l'action sont :
  - `value` (requis) : le template utilisé pour déterminer la valeur du champ.
 
 L'event-filter utilise le [moteur de templates
-go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
+Go](https://golang.org/pkg/text/template/). Les champs de l'évènement peuvent
 être utilisés dans les templates de la manière suivante :
 `{{.Event.NomDuChamp}}`. Il est également possible d'utiliser les expressions
 régulières des patterns pour utiliser des sous-groupes dans les templates (voir
@@ -252,7 +278,7 @@ Par exemple, l'action suivante va vérifier si l'entité à l'origine de l'évè
 
 ### Expressions régulières
 
-Si le pattern d'une règle contient une expression régulière (avec l'opérateur
+Si l'un des patterns d'une règle contient une expression régulière (avec l'opérateur
 `regex_match`) et des sous-groupes nommés, les valeurs de ces
 sous-groupes peuvent être utilisés dans les templates des actions de type
 `set_field_from_template` et `set_entity_info_from_template`, et comme champ
@@ -267,13 +293,15 @@ La valeur du sous-groupe sera alors disponible dans
 `{{.RegexMatch.<nom du champ>.nom_du_match}}` pour les templates, et dans
 `RegexMatch.<nom du champ>.nom_du_match` pour les actions de type `copy`.
 
-Par exemple, si le pattern vaut :
+Par exemple, si la liste des patterns vaut :
 
 ```json
-"pattern": {
-    "State": {">=": 2},
-    "Output": {"regex_match": "Warning: CPU Load is critical \((?P<load>.*)%\)"}
-}
+"patterns": [
+    {
+        "State": {">=": 2},
+        "Output": {"regex_match": "Warning: CPU Load is critical \((?P<load>.*)%\)"}
+    }
+]
 ```
 
 et si l'output de l'évènement vaut `Warning: CPU Load is critical (97.5%)`,
@@ -366,7 +394,7 @@ Cet événement met à disposition du moteur d'enrichissement plusieurs attribut
 
 Voici un exemple qui permet d'ajouter un attribut texte sur l'entité de la méta alarme et dont le contenu vaut :
 
-**`Count : Nombre d'alarmes conséquences; Children : Sévérité de la dernière alarme conséquence attachée; Rule : Nom de la règle ayant permis le regroupement`** 
+**`Count : Nombre d'alarmes conséquences; Children : Sévérité de la dernière alarme conséquence attachée; Rule : Nom de la règle ayant permis le regroupement`**
 
 ```
 {
@@ -414,9 +442,9 @@ les évènements.
 {
     "description": "Conversion de 192.168.0.1 en example.com",
     "type": "enrichment",
-    "pattern": {
-        "component": "192.168.0.1"
-    },
+    "patterns": [
+        {"component": "192.168.0.1"}
+    ],
     "actions": [
         {
             "type": "set_field",
@@ -442,9 +470,9 @@ de l'event-filter dès que son output a été traduit.
 {
     "description": "Traduction du message de CPU critique",
     "type": "enrichment",
-    "pattern": {
-        "output": {"regex_match": "Warning: CPU Load is critical \\((?P<load>.*)%\\)"}
-    },
+    "patterns": [
+        {"output": {"regex_match": "Warning: CPU Load is critical \\((?P<load>.*)%\\)"}}
+    ],
     "actions": [
         {
             "type": "set_field_from_template",
@@ -462,9 +490,9 @@ de l'event-filter dès que son output a été traduit.
 {
     "description": "Traduction du message de disque presque plein",
     "type": "enrichment",
-    "pattern": {
-        "output": {"regex_match": "Warning: The disk (?P<disk>.*) is almost full \\((?P<load>[\\.0-9]*)% used\\)"}
-    },
+    "patterns": [
+        {"output": {"regex_match": "Warning: The disk (?P<disk>.*) is almost full \\((?P<load>[\\.0-9]*)% used\\)"}}
+    ],
     "actions": [
         {
             "type": "set_field_from_template",
@@ -486,9 +514,9 @@ l'event-filter, avec une priorité inférieure à celle des règles de traductio
 ```json
 {
     "type": "break",
-    "pattern": {
-        "component": "component_name"
-    },
+    "patterns": [
+        {"component": "component_name"}
+    ],
     "priority": 50
 }
 ```
@@ -500,9 +528,9 @@ La règle suivante permet de passer les évènements d'un composant en mode debu
 ```json
 {
     "type": "enrichment",
-    "pattern": {
-        "component": "component_name"
-    },
+    "patterns": [
+        {"component": "component_name"}
+    ],
     "actions": [
         {
             "type": "set_field",
@@ -524,7 +552,7 @@ son champ `Entity`.
 ```json
 {
     "type": "enrichment",
-    "pattern": {},
+    "patterns": [],
     "external_data": {
         "entity": {
             "type": "entity"
@@ -554,7 +582,7 @@ La première règle ajoute l'entité correspondant à l'évènement dans le cham
 ```json
 {
     "type": "enrichment",
-    "pattern": {},
+    "patterns": [],
     "external_data": {
         "entity": {
             "type": "entity"
@@ -594,14 +622,14 @@ client et le responsable d'un composant dans une collection MongoDB
 ```json
 {
     "type" : "enrichment",
-    "pattern" : {
+    "patterns" : [{
         "current_entity": {
             "infos": {
                 "customer": null,
                 "manager": null
             }
         }
-    },
+    }],
     "external_data" : {
         "component" : {
             "type" : "mongo",
@@ -637,7 +665,7 @@ des évènements.
 ```json
 {
     "type" : "enrichment",
-    "pattern" : {},
+    "patterns" : [],
     "actions" : [
         {
             "type" : "set_field_from_template",
