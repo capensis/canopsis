@@ -39,7 +39,7 @@ yarn e2e:parallel
 
 Here we should know, that not all tests can works in parallel mode.
 
-More details about `consistently` tests are available in Tests writing convention.
+More details about `consistently` tests are available in [Tests writing convention](#tests-writing-convention).
 ```bash
 # Run all tests with `.consistently` suffix
 yarn e2e:consistently
