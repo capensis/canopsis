@@ -88,7 +88,7 @@ Les patterns d'une règle permettent de sélectionner les évènements auxquels 
 
 Un pattern peut être défini comme un objet JSON contenant les valeurs de certains champs d'un évènement.
 
-Par exemple, une règle contenant le pattern suivant sera appliquée aux évènements dont le composant vaut `component_name` et dont la ressource vaut `resource_name`, ainsi qu'aux évènement dont le composant vaut `foobar` :
+Par exemple, une règle contenant le pattern suivant sera appliquée aux évènements dont le composant vaut `component_name` et dont la ressource vaut `resource_name`, ainsi qu'aux évènements dont le composant vaut `foobar` :
 
 ```json
 "patterns": [
