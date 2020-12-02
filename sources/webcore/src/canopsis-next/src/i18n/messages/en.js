@@ -1982,6 +1982,9 @@ export default {
       startedAt: 'Started at',
       launchedAt: 'Launched at',
       completedAt: 'Completed at',
+      waitAlert: 'External job executor is not responding, please contact your admin',
+      skip: 'Skip job',
+      await: 'Await',
     },
   },
 
