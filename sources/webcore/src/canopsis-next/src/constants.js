@@ -1233,6 +1233,8 @@ export const TIME_UNITS = {
   year: 'y',
 };
 
+export const DEFAULT_DURATION_FORMAT = 'D __ H _ m _ s _';
+
 export const AVAILABLE_TIME_UNITS = {
   second: {
     text: 'common.times.second',
@@ -1507,6 +1509,8 @@ export const PLANNING_TABS = {
   reasons: 'reasons',
   exceptions: 'exceptions',
 };
+
+export const COUNTERS_LIMIT = 3;
 
 export const PBEHAVIOR_RRULE_PERIODS_RANGES = {
   thisWeek: 'thisWeek',

@@ -13,7 +13,7 @@ from canopsis.webcore.wsgi import get_default_app
 class WebServerPy(Application):
     """
     Transparently replace the usual gunicorn command so we can
-    package the Canopsis Web Server with PyInstaller.
+    package the Canopsis Old API with PyInstaller.
     """
 
     def __init__(self, wsgi_getter, accesslog, access_log_format):
@@ -45,7 +45,7 @@ class WebServerPy(Application):
 
 if __name__ == "__main__":
     accesslog = os.path.join(
-        root_path, 'var', 'log', 'webserver-access.log')
+        root_path, 'var', 'log', 'oldapi-access.log')
     access_fmt = '%(h)s %(l)s %(t)s "%(m)s %(U)s %(H)s" %(s)s %(b)s "%(f)s" "%(a)s"'
     gunicorn_app = WebServerPy(
         get_default_app, accesslog, access_fmt)

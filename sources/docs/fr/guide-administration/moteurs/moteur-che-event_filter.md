@@ -351,6 +351,31 @@ une requête MongoDB, ce qui risque d'affecter les performances du moteur `engin
 Il est donc déconseillé de les utiliser dans des règles appliquées à tous les
 évènements.
 
+### Cas particulier des méta alarmes
+
+Lorsqu'une méta alarme est créée ou mise à jour, un événement de type `metaalarm` ou `metaalarmupdated` est généré.
+
+Cet événement met à disposition du moteur d'enrichissement plusieurs attributs :
+
+| Représentation interne de Canopsis | Notes                                                       |
+| ---------------------------------- | ----------------------------------------------------------- |
+| .Event.ExtraInfos.Meta.Count       |  Nombre d'alarmes conséquences   |
+| .Event.ExtraInfos.Meta.Children    |  Objet représentant la dernière alarme conséquence attachée |
+| .Event.ExtraInfos.Meta.Rule        |  Les informations de la règle méta en elle-même            |
+
+
+Voici un exemple qui permet d'ajouter un attribut texte sur l'entité de la méta alarme et dont le contenu vaut :
+
+**`Count : Nombre d'alarmes conséquences; Children : Sévérité de la dernière alarme conséquence attachée; Rule : Nom de la règle ayant permis le regroupement`** 
+
+```
+{
+  "type": "set_entity_info_from_template",
+  "name": "children",
+  "description": "children",
+  "value": "Count: {{ .Event.ExtraInfos.Meta.Count }}; Children: {{ .Event.ExtraInfos.Meta.Children.alarm.v.state.m }}; Rule: {{ .Event.ExtraInfos.Meta.Rule.Name }}"
+}
+```
 
 ## En cas de problème
 

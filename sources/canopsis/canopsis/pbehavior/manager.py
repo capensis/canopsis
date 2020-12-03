@@ -247,6 +247,9 @@ class PBehaviorManager(object):
         except:
             return False
 
+
+
+
     def get(self, _id, search=None, limit=None, skip=None, sort=None):
         """Get pbehavior by id.
 
@@ -271,7 +274,8 @@ class PBehaviorManager(object):
                     {"comments.author": re.compile(str(search), re.IGNORECASE)},
                     {"comments.message": re.compile(str(search), re.IGNORECASE)},
                     {"eids": {"$elemMatch": {
-                        "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}}
+                        "$regex": ".*{}.*".format(str(search)), '$options': 'i'}}},
+                    {"filter": re.compile(str(search), re.IGNORECASE)},
                 ]
                 pipeline.append({"$match": {"$or": or_query}})
             else:
@@ -1390,12 +1394,13 @@ class PBehaviorManager(object):
         :rtype: Iterator[Dict]
         """
         currently_active_pbehaviors = self.get_all_active_pbehaviors_base_on_time(now)
-        self.logger.info("Currently, number of active pbehaviors: {}".format(len(currently_active_pbehaviors)))
+        self.logger.info("[GenPbhEvent] Number of active pbehaviors: {}".format(len(currently_active_pbehaviors)))
         currently_active_pb_dict = {}
         for active_pb in currently_active_pbehaviors:
             currently_active_pb_dict[active_pb[PBehavior.ID]] = active_pb
         removed_pb_id = set(self.pbehavior_event_sent_flag.keys()).difference(currently_active_pb_dict.keys())
 
+        self.logger.info("[GenPbhEvent] Number of inactive pbehaviors: {}. Start send pbhleave event.".format(len(removed_pb_id)))
         # pbehaviors are removed
         for removed in removed_pb_id:
             if removed in self.pbehavior_event_sent_flag:
@@ -1550,5 +1555,14 @@ class PBehaviorManager(object):
                     display_name=pb[PBehavior.NAME],
                     timestamp=int(now)
                 )
+
+                self.logger.info(
+                    u"[GenPbhEvent] Made {} event for pbehavior: [_id: {}, name: {}] at {}".format(
+                        pb_event_type,
+                        pb.get(PBehavior.ID, ''),
+                        pb.get(PBehavior.NAME, ''),
+                        int(now)
+                    ))
+
                 events.append(event)
         return events

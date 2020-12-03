@@ -1,13 +1,9 @@
 <template lang="pug">
   search-field(v-model="searchingText", @submit="submit", @clear="clear")
     v-tooltip(v-if="tooltip", bottom)
-      v-btn(
-        data-test="tableSearchHelp",
-        icon,
-        slot="activator"
-      )
+      v-btn(slot="activator", icon)
         v-icon help_outline
-      div(data-test="tableSearchHelpInfo", v-html="tooltip")
+      div(v-html="tooltip")
 </template>
 
 <script>
@@ -45,8 +41,14 @@ export default {
   methods: {
     getRequestData() {
       if (this.searchingText.startsWith('-')) {
-        return this.columns.reduce((acc, { text, value }) =>
-          replaceTextNotInQuotes(acc, text, value), this.searchingText.replace(/^-(\s*)/, ''));
+        const preparedSearchingText = this.searchingText.replace(/^-(\s*)/, '');
+
+        if (this.columns.length) {
+          return this.columns.reduce((acc, { text, value }) =>
+            replaceTextNotInQuotes(acc, text, value), preparedSearchingText);
+        }
+
+        return preparedSearchingText;
       }
 
       return this.searchingText;

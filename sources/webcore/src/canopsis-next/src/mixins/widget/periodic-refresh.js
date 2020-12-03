@@ -1,4 +1,4 @@
-import { getSecondsByUnit } from '@/helpers/time';
+import { toSeconds } from '@/helpers/duration';
 
 export default {
   data() {
@@ -18,7 +18,7 @@ export default {
 
         if (periodicRefresh.enabled && periodicRefresh.interval) {
           if (interval !== oldInterval || periodicRefresh.enabled !== oldPeriodicRefresh.enabled) {
-            const delay = getSecondsByUnit(interval, periodicRefresh.unit);
+            const delay = toSeconds(interval, periodicRefresh.unit);
 
             if (this.periodicRefreshInterval) {
               clearInterval(this.periodicRefreshInterval);

@@ -47,7 +47,7 @@ from canopsis.old.account import Account
 from canopsis.old.storage import get_storage
 from canopsis.webcore.services import session as session_module
 from canopsis.common import root_path
-
+from canopsis.common.middleware import SetSameSiteCookie
 from canopsis.vendor import mongodb_beaker
 
 DEFAULT_DEBUG = False
@@ -81,10 +81,10 @@ class EnsureAuthenticated(object):
         return decorated
 
 
-class WebServer():
+class OldApi():
 
-    CONF_PATH = 'etc/webserver.conf'
-    LOG_FILE = root_path + '/var/log/webserver.log'
+    CONF_PATH = 'etc/oldapi.conf'
+    LOG_FILE = root_path + '/var/log/oldapi.log'
 
     @property
     def application(self):
@@ -126,6 +126,7 @@ class WebServer():
             raise RuntimeError('Missing providers')
 
         session = self.config.get('session', {})
+        self.secure_cookie = session.get('secure_cookie', 'false') == 'true'
         self.cookie_expires = int(session.get('cookie_expires',
                                               DEFAULT_COOKIES_EXPIRE))
         self.secret = session.get('secret', DEFAULT_SECRET)
@@ -243,6 +244,7 @@ class WebServer():
             'session.secret': self.secret,
             'session.lock_dir': self.data_dir
         })
+        self.app = SetSameSiteCookie(self.app, secure=self.secure_cookie)
 
     def unload_session(self):
         pass
@@ -268,12 +270,12 @@ class WebServer():
         pass
 
 
-def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
-    if webconf is None:
-        webconf = Configuration.load(WebServer.CONF_PATH, Ini)
+def get_default_app(logger=None, oldapiconf=None, amqp_conn=None, amqp_pub=None):
+    if oldapiconf is None:
+        oldapiconf = Configuration.load(OldApi.CONF_PATH, Ini)
 
     if logger is None:
-        logger = Logger.get('webserver', WebServer.LOG_FILE)
+        logger = Logger.get('oldapi', OldApi.LOG_FILE)
 
     if amqp_conn is None:
         amqp_conn = get_default_amqp_connection()
@@ -282,6 +284,6 @@ def get_default_app(logger=None, webconf=None, amqp_conn=None, amqp_pub=None):
         amqp_pub = AmqpPublisher(amqp_conn, logger)
 
     # Declare WSGI application
-    ws = WebServer(config=webconf, logger=logger, amqp_pub=amqp_pub).init_app()
+    ws = OldApi(config=oldapiconf, logger=logger, amqp_pub=amqp_pub).init_app()
     app = ws.application
     return app
