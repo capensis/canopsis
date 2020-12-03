@@ -118,7 +118,7 @@ export default {
 
           acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
-          const pausedPbehaviorsRequests = event.data.pbehavior.reduce((accSecond, pbehavior) => {
+          const pausedPbehaviorsRequests = event.data.pbehaviors.reduce((accSecond, pbehavior) => {
             if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
               accSecond.push(this.updatePbehavior({
                 id: pbehavior._id,
