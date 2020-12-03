@@ -6,6 +6,11 @@ import pbehaviorReasonsModule from './pbehavior-reasons';
 import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
+import remediationInstructionModule from './remediation-instruction';
+import remediationInstructionExecutionModule from './remediation-instruction-execution';
+import remediationConfigurationModule from './remediation-configuration';
+import remediationJobModule from './remediation-job';
+import remediationJobExecutionModule from './remediation-job-execution';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -62,4 +67,9 @@ export default {
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,
+  remediationInstruction: remediationInstructionModule,
+  remediationJob: remediationJobModule,
+  remediationConfiguration: remediationConfigurationModule,
+  remediationInstructionExecution: remediationInstructionExecutionModule,
+  remediationJobExecution: remediationJobExecutionModule,
 };

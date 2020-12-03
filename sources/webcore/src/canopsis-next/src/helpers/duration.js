@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { TIME_UNITS } from '@/constants';
+import { AVAILABLE_SORTED_TIME_UNITS, TIME_UNITS } from '@/constants';
 
 /**
  * @typedef { "y" | "M" | "w" | "d" | "h" | "m" | "s" } DurationUnit
@@ -75,3 +75,29 @@ export const durationToForm = ({ seconds = 0, unit = TIME_UNITS.second } = {}) =
  */
 export const formToDuration = ({ value = 0, unit = TIME_UNITS.second } = {}) =>
   ({ unit, seconds: toSeconds(value, unit) });
+
+
+/**
+ * Get max available interval value
+ *
+ * @param {DurationForm} [durationForm = { value: 0, unit: TIME_UNITS.second }]
+ * @param {DurationUnit[]} [availableUnits = AVAILABLE_SORTED_TIME_UNITS]
+ * @return {DurationForm}
+ */
+export const formToMaxByAvailableUnitsForm = (
+  durationForm = { value: 0, unit: TIME_UNITS.second },
+  availableUnits = AVAILABLE_SORTED_TIME_UNITS,
+) => {
+  const { value, unit } = durationForm;
+  let unitValue = value;
+
+  const maxUnit = availableUnits.find((availableUnit) => {
+    unitValue = Math.floor(convertUnit(value, unit, availableUnit));
+    return unitValue;
+  });
+
+  return {
+    value: unitValue,
+    unit: maxUnit || unit,
+  };
+};

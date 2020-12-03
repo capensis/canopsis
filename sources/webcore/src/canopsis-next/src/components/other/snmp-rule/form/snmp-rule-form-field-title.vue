@@ -1,7 +1,7 @@
-<template lang="pug" functional>
+<template lang="pug">
   v-layout.mt-3(row, wrap)
-    v-flex(v-show="props.label", xs12)
-      .body-2 {{ props.label }}
+    v-flex(v-show="label", xs12)
+      .body-2 {{ label }}
 </template>
 
 <script>

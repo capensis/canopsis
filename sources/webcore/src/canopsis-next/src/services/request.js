@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { get } from 'lodash';
+
+import { API_BASE_URL } from '@/config';
 
 /**
  * Active axios sources
@@ -43,7 +46,7 @@ export async function useRequestCancelling(action, key) {
  * @returns {Object}
  */
 function successResponseHandler(response) {
-  if (response.data.errors && response.data.errors.length) {
+  if (get(response, 'data.errors', []).length) {
     return Promise.reject(response.data.errors);
   }
 
@@ -75,7 +78,7 @@ function errorResponseHandler(responseWithError) {
 }
 
 const request = axios.create({
-  baseURL: '/backend',
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 

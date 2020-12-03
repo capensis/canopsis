@@ -37,6 +37,10 @@ export const ENTITIES_TYPES = {
   pbehaviorExceptions: 'pbehaviorExceptions',
   pbehaviorTypes: 'pbehaviorTypes',
   pbehaviorReasons: 'pbehaviorReasons',
+  remediationInstruction: 'remediationInstruction',
+  remediationJob: 'remediationJob',
+  remediationConfiguration: 'remediationConfiguration',
+  remediationInstructionExecution: 'remediationInstructionExecution',
 };
 
 export const MODALS = {
@@ -59,6 +63,7 @@ export const MODALS = {
   infoPopupSetting: 'info-popup-setting',
   addInfoPopup: 'add-info-popup',
   confirmation: 'confirmation',
+  clickOutsideConfirmation: 'click-outside-confirmation',
   createWidget: 'create-widget',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',
@@ -103,6 +108,14 @@ export const MODALS = {
   createPbehaviorReason: 'create-pbehavior-reason',
   createPbehaviorException: 'create-pbehavior-exception',
   createManualMetaAlarm: 'create-manual-meta-alarm',
+  createRemediationInstruction: 'create-remediation-instruction',
+  createRemediationConfiguration: 'create-remediation-configuration',
+  createRemediationJob: 'create-remediation-job',
+  createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
+  executeRemediationInstruction: 'execute-remediation-instruction',
+  imageViewer: 'image-viewer',
+  patterns: 'patterns',
+  rate: 'rate',
 };
 
 export const EVENT_ENTITY_TYPES = {
@@ -136,6 +149,17 @@ export const EVENT_ENTITY_TYPES = {
   statusdec: 'statusdec',
   unsooze: 'unsooze',
   metaalarmattach: 'metaalarmattach',
+  executeInstruction: 'executeInstruction',
+  instructionStart: 'instructionstart',
+  instructionPause: 'instructionpause',
+  instructionResume: 'instructionresume',
+  instructionComplete: 'instructioncomplete',
+  instructionAbort: 'instructionabort',
+  instructionFail: 'instructionfail',
+  instructionJobStart: 'instructionjobstart',
+  instructionJobComplete: 'instructionjobcomplete',
+  instructionJobAbort: 'instructionjobabort',
+  instructionJobFail: 'instructionjobfail',
 };
 
 export const ENTITY_INFOS_TYPE = {
@@ -387,6 +411,39 @@ export const EVENT_ENTITY_STYLE = {
   [EVENT_ENTITY_TYPES.metaalarmattach]: {
     color: COLORS.entitiesEvents.metaalarmattach,
     icon: 'center_focus_weak',
+  },
+  [EVENT_ENTITY_TYPES.executeInstruction]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionStart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionPause]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionResume]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionComplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionAbort]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionFail]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobStart]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobComplete]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobAbort]: {
+    icon: 'assignment',
+  },
+  [EVENT_ENTITY_TYPES.instructionJobFail]: {
+    icon: 'assignment',
   },
 };
 
@@ -742,6 +799,10 @@ export const USERS_RIGHTS = {
     planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
     exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
+    remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
+    remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationInstruction`,
+    remediationJob: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationJob`,
+    remediationConfiguration: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationConfiguration`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -776,9 +837,20 @@ export const USERS_RIGHTS = {
         addFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_addFilter`,
         userFilter: `${USER_RIGHTS_PREFIXES.business.alarmsList}_userFilter`,
 
+        listRemediationInstructionsFilters:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_listRemediationInstructionsFilters`,
+        editRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_editRemediationInstructionsFilter`,
+        addRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_addRemediationInstructionsFilter`,
+        userRemediationInstructionsFilter:
+          `${USER_RIGHTS_PREFIXES.business.alarmsList}_userRemediationInstructionsFilter`,
+
         links: `${USER_RIGHTS_PREFIXES.business.alarmsList}_links`,
 
         correlation: `${USER_RIGHTS_PREFIXES.business.alarmsList}_correlation`,
+
+        executeInstruction: `${USER_RIGHTS_PREFIXES.business.alarmsList}_executeInstruction`,
 
         variablesHelp: `${USER_RIGHTS_PREFIXES.business.common}_variablesHelp`,
 
@@ -889,6 +961,14 @@ export const WIDGETS_ACTIONS_TYPES = {
     listFilters: 'listFilters',
     editFilter: 'editFilter',
     addFilter: 'addFilter',
+    userFilter: 'userFilter',
+
+    listRemediationInstructionsFilters: 'listRemediationInstructionsFilters',
+    editRemediationInstructionsFilter: 'editRemediationInstructionsFilter',
+    addRemediationInstructionsFilter: 'addRemediationInstructionsFilter',
+    userRemediationInstructionsFilter: 'userRemediationInstructionsFilter',
+
+    executeInstruction: 'executeInstruction',
   },
   context: {
     createEntity: 'createEntity',
@@ -956,6 +1036,16 @@ export const BUSINESS_USER_RIGHTS_ACTIONS_MAP = {
     [WIDGETS_ACTIONS_TYPES.alarmsList.listFilters]: USERS_RIGHTS.business.alarmsList.actions.listFilters,
     [WIDGETS_ACTIONS_TYPES.alarmsList.editFilter]: USERS_RIGHTS.business.alarmsList.actions.editFilter,
     [WIDGETS_ACTIONS_TYPES.alarmsList.addFilter]: USERS_RIGHTS.business.alarmsList.actions.addFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.userFilter]: USERS_RIGHTS.business.alarmsList.actions.userFilter,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.listRemediationInstructionsFilters]:
+      USERS_RIGHTS.business.alarmsList.actions.listRemediationInstructionsFilters,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.editRemediationInstructionsFilter]:
+      USERS_RIGHTS.business.alarmsList.actions.editRemediationInstructionsFilter,
+    [WIDGETS_ACTIONS_TYPES.alarmsList.addRemediationInstructionsFilter]:
+      USERS_RIGHTS.business.alarmsList.actions.addRemediationInstructionsFilter,
+
+    [WIDGETS_ACTIONS_TYPES.alarmsList.executeInstruction]: USERS_RIGHTS.business.alarmsList.actions.executeInstruction,
 
     ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
   },
@@ -1233,6 +1323,15 @@ export const TIME_UNITS = {
   year: 'y',
 };
 
+export const AVAILABLE_SORTED_TIME_UNITS = [
+  TIME_UNITS.year,
+  TIME_UNITS.month,
+  TIME_UNITS.day,
+  TIME_UNITS.hour,
+  TIME_UNITS.minute,
+  TIME_UNITS.second,
+];
+
 export const DEFAULT_DURATION_FORMAT = 'D __ H _ m _ s _';
 
 export const AVAILABLE_TIME_UNITS = {
@@ -1374,6 +1473,10 @@ export const DEFAULT_TIME_INTERVAL = {
   unit: TIME_UNITS.second,
 };
 
+export const ADMIN_PAGES_RULES = {
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+};
+
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
   webhooks: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
@@ -1384,7 +1487,15 @@ export const EXPLOITATION_PAGES_RULES = {
   metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
 };
 
-export const USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES = {
+export const USER_RIGHTS_TO_PAGES_RULES = {
+  /**
+   * Admin pages
+   */
+  [USERS_RIGHTS.technical.remediation]: ADMIN_PAGES_RULES.remediation,
+
+  /**
+   * Exploitation pages
+   */
   [USERS_RIGHTS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USERS_RIGHTS.technical.exploitation.webhook]: EXPLOITATION_PAGES_RULES.webhooks,
   [USERS_RIGHTS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
@@ -1519,3 +1630,45 @@ export const PBEHAVIOR_RRULE_PERIODS_RANGES = {
   thisMonth: 'thisMonth',
   nextMonth: 'nextMonth',
 };
+
+export const REMEDIATION_TABS = {
+  instructions: 'instructions',
+  configurations: 'configurations',
+  jobs: 'jobs',
+};
+
+export const REMEDIATION_WORKFLOW_TYPES = {
+  stop: true,
+  continue: false,
+};
+
+export const FIRST_LETTER_ALPHABET_CHAR_CODE = 97;
+
+export const MAX_LIMIT = 10000;
+
+export const REMEDIATION_CONFIGURATION_TYPES = {
+  rundeck: 'rundeck',
+  awx: 'awx',
+};
+
+export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
+  running: 0,
+  paused: 1,
+  completed: 2,
+  aborted: 3,
+  failed: 4,
+};
+
+export const REMEDIATION_JOB_EXECUTION_STATUSES = {
+  running: 0,
+  canceled: 3,
+};
+
+export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';
+
+/**
+ * 19/01/2038 @ 3:14am (UTC) in unix timestamp
+ *
+ * @type {number}
+ */
+export const MAX_PBEHAVIOR_DEFAULT_TSTOP = 2147483647;

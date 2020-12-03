@@ -13,6 +13,7 @@ import {
   EVENT_ENTITY_STYLE,
   WIDGETS_ACTIONS_TYPES,
   META_ALARMS_RULE_TYPES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
 import authMixin from '@/mixins/auth';
@@ -147,6 +148,11 @@ export default {
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           method: this.showManualMetaAlarmUngroupModal,
         },
+        executeInstruction: {
+          type: alarmsListActionsTypes.executeInstruction,
+          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.executeInstruction].icon,
+          method: this.showExecuteInstructionModal,
+        },
       },
     };
   },
@@ -171,6 +177,7 @@ export default {
     },
     unresolvedActions() {
       const { filteredActionsMap } = this;
+      const { assigned_instructions: assignedInstructions = [] } = this.item;
 
       const actions = [
         filteredActionsMap.snooze,
@@ -210,8 +217,31 @@ export default {
         }
       }
 
+      /**
+       * Add actions for available instructions
+       */
+      if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+        assignedInstructions.forEach((instruction) => {
+          const { execution } = instruction;
+          const titlePrefix = execution ? 'resume' : 'execute';
+
+          const action = {
+            ...filteredActionsMap.executeInstruction,
+
+            disabled: get(execution, 'status') === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running,
+            title: this.$t(`alarmList.actions.titles.${titlePrefix}Instruction`, {
+              instructionName: instruction.name,
+            }),
+            method: () => filteredActionsMap.executeInstruction.method(instruction),
+          };
+
+          actions.push(action);
+        });
+      }
+
       return actions;
     },
+
     actions() {
       let actions = this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions;
 
@@ -231,6 +261,26 @@ export default {
       }
 
       return result;
+    },
+  },
+  methods: {
+    async showExecuteInstructionModal(assignedInstruction) {
+      const refreshAlarm = () => this.refreshAlarmById(this.item._id);
+
+      this.$modals.show({
+        id: `${this.item._id}${assignedInstruction._id}`,
+        name: MODALS.executeRemediationInstruction,
+        config: {
+          assignedInstruction,
+          alarm: this.item,
+          onOpen: refreshAlarm,
+          onClose: refreshAlarm,
+          onComplete: async (instructionExecute) => {
+            await refreshAlarm();
+            this.showRateInstructionModal(instructionExecute._id);
+          },
+        },
+      });
     },
   },
 };

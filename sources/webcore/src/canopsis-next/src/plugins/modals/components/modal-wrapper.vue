@@ -5,6 +5,7 @@
 </template>
 
 <script>
+
 /**
  * Wrapper for each modal window
  *
@@ -12,6 +13,7 @@
  * @prop {Object} [dialogProps={}] - Properties for vuetify v-dialog
  */
 export default {
+  inject: ['$clickOutside'],
   props: {
     modal: {
       type: Object,
@@ -35,11 +37,22 @@ export default {
     dialogProps() {
       const defaultDialogProps = { maxWidth: 700, lazy: true };
       const { dialogPropsMap = {} } = this.$modals;
+      const { name, dialogProps, minimized } = this.modal;
+
+      const props = {
+        ...defaultDialogProps,
+        ...dialogPropsMap[name],
+        ...dialogProps,
+
+        customCloseConditional: (...args) => this.$clickOutside.call(...args),
+      };
 
       return {
-        ...defaultDialogProps,
-        ...dialogPropsMap[this.modal.name],
-        ...this.modal.dialogProps,
+        ...props,
+
+        hideOverlay: props.hideOverlay || minimized,
+        ignoreClickOutside: props.ignoreClickOutside || minimized,
+        contentClass: minimized ? `v-dialog--minimized ${props.contentClass}` : props.contentClass,
       };
     },
   },
@@ -48,3 +61,30 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+$minimizedDialogMaxWidth: 300px;
+
+.v-dialog {
+  &.v-dialog--minimized {
+    position: fixed;
+    bottom: 0;
+    max-width: $minimizedDialogMaxWidth !important;
+    margin-bottom: 0 !important;
+    transition: all .1s linear;
+
+    .v-card__title {
+      padding: 0 10px;
+      transition: all .1s linear;
+
+      .headline {
+        font-size: 16px !important;
+      }
+    }
+  }
+
+  .v-card__title .headline .v-btn {
+    float: right;
+  }
+}
+</style>

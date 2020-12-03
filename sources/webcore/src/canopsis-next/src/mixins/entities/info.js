@@ -1,4 +1,4 @@
-import { POPUP_TYPES, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
+import { POPUP_TYPES, USER_RIGHTS_TO_PAGES_RULES } from '@/constants';
 
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
@@ -27,6 +27,7 @@ export default {
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
       timezone: 'timezone',
+      jobExecutorFetchTimeoutSeconds: 'jobExecutorFetchTimeoutSeconds',
     }),
   },
   methods: {
@@ -37,7 +38,7 @@ export default {
     }),
 
     checkAppInfoAccessByRight(right) {
-      const rightAppInfoRules = USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right];
+      const rightAppInfoRules = USER_RIGHTS_TO_PAGES_RULES[right];
 
       if (!rightAppInfoRules) {
         return true;
@@ -48,7 +49,7 @@ export default {
         stack: this.stack,
       };
 
-      return isMatch(appInfo, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right]);
+      return isMatch(appInfo, USER_RIGHTS_TO_PAGES_RULES[right]);
     },
 
     setErrorPopupTime() {

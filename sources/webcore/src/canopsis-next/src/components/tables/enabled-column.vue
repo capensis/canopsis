@@ -1,6 +1,6 @@
-<template lang="pug" functional>
+<template lang="pug">
   span
-    v-icon(v-if="props.value", color="primary") check_circle
+    v-icon(v-if="value", color="primary") check_circle
     v-icon(v-else, color="error") cancel
 </template>
 

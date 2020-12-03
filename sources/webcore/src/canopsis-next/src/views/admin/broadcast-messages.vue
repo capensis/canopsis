@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.broadcastMessages') }}
+    the-page-header {{ $t('common.broadcastMessages') }}
     div.white
       v-data-table(
         :headers="headers",
@@ -31,19 +31,12 @@
                 @click="showRemoveBroadcastMessageModal(props.item._id)"
               )
                 v-icon(color="error") delete
-    .fab(v-if="hasCreateAnyBroadcastMessageAccess")
-      v-layout(column)
-        refresh-btn(@click="fetchList")
-        v-tooltip(left)
-          v-btn(
-            slot="activator",
-            color="primary",
-            data-test="addButton",
-            fab,
-            @click.stop="showCreateBroadcastMessageModal"
-          )
-            v-icon add
-          span {{ $t('modals.createBroadcastMessage.create.title') }}
+    fab-buttons(
+      v-if="hasCreateAnyBroadcastMessageAccess",
+      @refresh="fetchList",
+      @create="showCreateBroadcastMessageModal"
+    )
+      span {{ $t('modals.createBroadcastMessage.create.title') }}
 </template>
 
 <script>
@@ -54,17 +47,17 @@ import { MODALS, BROADCAST_MESSAGES_STATUSES } from '@/constants';
 
 import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broadcast-message';
 
-import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
+import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
 
 export default {
   components: {
-    RefreshBtn,
     SearchField,
     BroadcastMessage,
+    FabButtons,
   },
   mixins: [rightsTechnicalBroadcastMessageMixin],
   computed: {

@@ -1,15 +1,10 @@
-import { isParent } from '@/helpers/vue-base';
+import validationChildrenMixin from './validation-children';
 
 export default {
+  mixins: [validationChildrenMixin],
   computed: {
     hasAnyError() {
-      if (this.$validator && this.errors.any()) {
-        const fields = this.$validator.fields.items.filter(({ vm }) => isParent(vm, this));
-
-        return fields.some(field => this.errors.has(field.name));
-      }
-
-      return false;
+      return this.hasChildrenError;
     },
 
     validationHeaderClass() {

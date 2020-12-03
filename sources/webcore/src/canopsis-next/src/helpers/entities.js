@@ -24,11 +24,18 @@ import {
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
   WIDGET_GRID_COLUMNS_COUNT,
+  REMEDIATION_WORKFLOW_TYPES,
 } from '@/constants';
 
 import uuid from './uuid';
 import uid from './uid';
 import { pbehaviorToForm } from './forms/planning-pbehavior';
+
+/**
+ * @typedef {Object} Interval
+ * @property {Number} interval
+ * @property {String} unit
+ */
 
 /**
  * Generate widget by type
@@ -587,13 +594,16 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
+  const result = {
+    ...omit(user, ['rights']),
+    ...omit(data, ['password']),
+  };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);
   }
 
-  if (!data._id) {
+  if (!result._id && !data._id) {
     result._id = data.crecord_name;
   }
 
@@ -687,3 +697,46 @@ export const removeKeyFromEntity = (entities = []) => entities.map(entity => omi
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
+
+/**
+ * Generate an remediation instruction step operation entity
+ *
+ * @typedef {Object} RemediationInstructionStepOperation
+ * @property {string} name
+ * @property {string} description
+ * @property {Array} jobs
+ * @property {DurationForm} time_to_complete
+ * @property {string} [key]
+ * @return {RemediationInstructionStepOperation}
+ */
+export const generateRemediationInstructionStepOperation = () => ({
+  name: '',
+  description: '',
+  jobs: [],
+  time_to_complete: {
+    value: 0,
+    unit: TIME_UNITS.minute,
+  },
+  key: uid(),
+});
+
+/**
+ * Generate an remediation instruction step entity
+ *
+ * @typedef {Object} RemediationInstructionStep
+ * @property {string} endpoint
+ * @property {string} name
+ * @property {boolean} stop_on_fail
+ * @property {RemediationInstructionStepOperation[]} operations
+ * @property {boolean} [saved]
+ * @property {string} [key]
+ * @return {RemediationInstructionStep}
+ */
+export const generateRemediationInstructionStep = () => ({
+  endpoint: '',
+  name: '',
+  operations: [generateRemediationInstructionStepOperation()],
+  stop_on_fail: REMEDIATION_WORKFLOW_TYPES.stop,
+  saved: false,
+  key: uid(),
+});

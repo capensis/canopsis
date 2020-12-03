@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.roles') }}
+    the-page-header {{ $t('common.roles') }}
     div.white
       v-layout(row, wrap)
         v-flex(xs4)

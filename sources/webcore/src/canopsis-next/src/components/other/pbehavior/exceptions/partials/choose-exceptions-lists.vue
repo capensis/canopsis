@@ -20,12 +20,10 @@
 </template>
 
 <script>
-import { isEqual, omit } from 'lodash';
-
-import { PLANNING_TABS } from '@/constants';
+import { omit } from 'lodash';
 
 import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exceptions';
-import pbehaviorQueryMixin from '@/mixins/pbehavior/query';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 
@@ -33,7 +31,7 @@ export default {
   components: { SearchField },
   mixins: [
     entitiesPbehaviorExceptionMixin,
-    pbehaviorQueryMixin,
+    localQueryMixin,
   ],
   model: {
     prop: 'exceptions',
@@ -44,27 +42,18 @@ export default {
       type: Array,
       default: () => [],
     },
-    queryId: {
-      type: String,
-      default: PLANNING_TABS.exceptions,
-    },
   },
   computed: {
     headers() {
       return [{ text: this.$t('common.name'), value: 'name', sortable: false }];
     },
   },
-  watch: {
-    query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
-        this.fetchList();
-      }
-    },
+  mounted() {
+    this.fetchList();
   },
-
   methods: {
     async fetchList() {
-      this.fetchPbehaviorExceptionsList({ params: this.query });
+      this.fetchPbehaviorExceptionsList({ params: this.getQuery() });
     },
 
     updateSearchHandler(search) {
