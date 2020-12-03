@@ -75,8 +75,14 @@ export default {
 .modal-title-buttons {
   float: right;
 
-  .modal-title-button__wrapper:first-of-type /deep/ .v-btn {
-    margin-right: 0;
+  .modal-title-button__wrapper {
+    .v-btn {
+      margin: 0 8px;
+    }
+
+    &:first-of-type /deep/ .v-btn {
+      margin-right: 0;
+    }
   }
 
   &.close, &.minimize {

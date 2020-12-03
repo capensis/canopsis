@@ -10,8 +10,6 @@
         )
         v-layout(v-else, justify-center)
           v-progress-circular(indeterminate, color="primary")
-      template(slot="actions")
-        v-btn(depressed, flat, @click="close") {{ $t('common.actions.close') }}
 </template>
 
 <script>

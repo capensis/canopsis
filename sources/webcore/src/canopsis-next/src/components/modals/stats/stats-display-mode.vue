@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="statsDisplayModeModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('settings.statsNumbers.displayMode') }}
       template(slot="text")

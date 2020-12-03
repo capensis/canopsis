@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(:close="cancel")
       template(slot="title")
         span {{ $t('modals.pbehaviorRecurrentChangesConfirmation.title') }}
       template(slot="text")

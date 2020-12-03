@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="createWidgetModal")
+  modal-wrapper(data-test="createWidgetModal", close)
     template(slot="title")
       span {{ $t('modals.widgetCreation.title') }}
     template(slot="text")
@@ -17,8 +17,6 @@
                   div.subheading {{ $t(`modals.widgetCreation.types.${widget}.title`) }}
                 v-flex
                   v-icon {{ iconByWidgetType(widget) }}
-    template(slot="actions")
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
 </template>
 
 <script>

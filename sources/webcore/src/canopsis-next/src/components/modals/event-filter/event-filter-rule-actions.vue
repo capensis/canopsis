@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(close)
     template(slot="title")
       span {{ $t('modals.eventFilterRule.editActions') }}
     template(slot="text")

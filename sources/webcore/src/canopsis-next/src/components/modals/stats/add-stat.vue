@@ -1,10 +1,10 @@
 <template lang="pug">
   v-form(data-test="addStatModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ config.title }}
       template(slot="text")
-        add-stat-form(v-model="form", :withTrend="config.withTrend")
+        add-stat-form(v-model="form", :with-trend="config.withTrend")
       template(slot="actions")
         v-btn(
           data-test="addStatCancelButton",
