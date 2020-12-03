@@ -1,10 +1,9 @@
-import moment from 'moment';
-
 import {
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
   WEATHER_EVENT_DEFAULT_ENTITY,
   WEATHER_ACK_EVENT_OUTPUT,
+  MAX_PBEHAVIOR_DEFAULT_TSTOP,
 } from '@/constants';
 
 export default {
@@ -121,8 +120,8 @@ export default {
         name: 'downtime',
         reason,
         type,
-        tstart: moment().toDate(),
-        tstop: moment.unix(2147483647), // 01/19/2038 @ 3:14am (UTC)
+        tstart: new Date(),
+        tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
       };
 
       this.$emit('add:event', { type: EVENT_ENTITY_TYPES.pause, data, entity });
@@ -142,6 +141,7 @@ export default {
      *
      * @param {Object} entity
      * @param {string} output
+     * @param {boolean} [fromSystem = false]
      */
     addCancelActionToQueue({ entity, output, fromSystem = false }) {
       const data = {

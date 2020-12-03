@@ -123,7 +123,7 @@ export default {
               accSecond.push(this.updatePbehavior({
                 id: pbehavior._id,
                 data: pbehaviorToRequest({
-                  ...formToPbehavior(pbehavior),
+                  ...pbehavior,
 
                   tstop: moment().unix(),
                 }),
