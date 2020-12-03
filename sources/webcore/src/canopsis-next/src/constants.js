@@ -1546,14 +1546,14 @@ export const ENGINES_QUEUE_NAMES = {
 };
 
 export const ENGINES_COLOR = {
-  [ENGINES_NAMES.correlation]: 'secondary',
-  [ENGINES_NAMES.dynamicInfo]: 'secondary',
-  [ENGINES_NAMES.webhook]: 'secondary',
-  [ENGINES_NAMES.fifo]: 'primary',
-  [ENGINES_NAMES.axe]: 'primary',
-  [ENGINES_NAMES.che]: 'primary',
-  [ENGINES_NAMES.pbehavior]: 'primary',
-  [ENGINES_NAMES.action]: 'primary',
-  [ENGINES_NAMES.watcher]: 'primary',
-  [ENGINES_NAMES.heartbeat]: 'primary',
+  [ENGINES_NAMES.correlation]: COLORS.secondary,
+  [ENGINES_NAMES.dynamicInfo]: COLORS.secondary,
+  [ENGINES_NAMES.webhook]: COLORS.secondary,
+  [ENGINES_NAMES.fifo]: COLORS.primary,
+  [ENGINES_NAMES.axe]: COLORS.primary,
+  [ENGINES_NAMES.che]: COLORS.primary,
+  [ENGINES_NAMES.pbehavior]: COLORS.primary,
+  [ENGINES_NAMES.action]: COLORS.primary,
+  [ENGINES_NAMES.watcher]: COLORS.primary,
+  [ENGINES_NAMES.heartbeat]: COLORS.primary,
 };

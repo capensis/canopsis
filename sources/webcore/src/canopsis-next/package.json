@@ -15,7 +15,10 @@
   "dependencies": {
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
+    "chartjs-chart-graph": "^2.2.1",
     "chartjs-plugin-annotation": "^0.5.7",
+    "d3-force": "^2.1.1",
+    "d3-hierarchy": "^2.0.0",
     "dayspan": "^0.12.2",
     "dayspan-vuetify": "^0.4.0",
     "deep-freeze": "^0.0.1",
