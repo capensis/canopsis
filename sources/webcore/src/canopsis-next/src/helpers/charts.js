@@ -2,37 +2,38 @@ import { forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY
 import { keyBy, cloneDeep } from 'lodash';
 
 const DEFAULT_FORCE_BODY_STRENGTH = -2300;
+const DEFAULT_FORCE_X_STRENGTH = 0.9;
+const DEFAULT_FORCE_Y_STRENGTH = 3;
 
 /**
  * Calculate dependencies count
  *
- * @param {Object} nodeById
+ * @param {Object} nodeByName
  * @param {Object} node
  * @param {Number} length
  * @returns {number}
  */
-const calculateNodeDepth = (node, nodeById, length = 1) => {
+const calculateNodeDepth = (node, nodeByName, length = 1) => {
   if (!node || !node.dependencies || node.dependencies.length < 1) {
     return length;
   }
 
-  const childrenNodesDepth = node.dependencies.map(id => calculateNodeDepth(nodeById[id], nodeById, length + 1));
+  const childrenNodesDepth = node.dependencies.map(id => calculateNodeDepth(nodeByName[id], nodeByName, length + 1));
 
   return Math.max.apply(null, childrenNodesDepth);
 };
 
-const fixCoordinate = (value, step) => {
-  const inv = 1.0 / step;
-
-  return Math.round(value * inv) / inv;
-};
-
+/**
+ * Mix depth in each of node
+ * @param {Array} nodes
+ * @returns {Array}
+ */
 const prepareNodesForSimulation = (nodes) => {
-  const nodeById = keyBy(nodes, 'id');
+  const nodeByName = keyBy(nodes, 'name');
 
   return cloneDeep(nodes).map(node => ({
     ...node,
-    depth: calculateNodeDepth(node, nodeById),
+    depth: calculateNodeDepth(node, nodeByName),
   }));
 };
 
@@ -50,8 +51,8 @@ export const simulateNetworkGraph = ({
   nodes,
   links,
   nodeRadius,
-  width = 1000,
-  linkDistance = 100,
+  width,
+  linkDistance,
 }) => {
   const diameter = nodeRadius * 2;
 
@@ -60,16 +61,16 @@ export const simulateNetworkGraph = ({
   const copiedLinks = cloneDeep(links);
 
   const forceLinks = forceLink(copiedLinks)
-    .id(data => data.id)
+    .id(data => data.name)
     .links(copiedLinks);
 
-  const forceXAxis = forceX(width / 2).strength(0.5);
+  const forceXAxis = forceX(width / 2).strength(DEFAULT_FORCE_X_STRENGTH);
 
   const forceYAxis = forceY()
     .y(node => ((node.depth - 1) * linkDistance) + diameter)
-    .strength(3);
+    .strength(DEFAULT_FORCE_Y_STRENGTH);
 
-  const forceCharge = forceManyBody().distanceMin(100).distanceMax(150).strength(DEFAULT_FORCE_BODY_STRENGTH);
+  const forceCharge = forceManyBody().strength(DEFAULT_FORCE_BODY_STRENGTH);
 
   const simulation = forceSimulation(preparedNodes)
     .force('link', forceLinks)
@@ -81,14 +82,11 @@ export const simulateNetworkGraph = ({
   return new Promise((resolve) => {
     simulation.on('end', () => {
       resolve({
-        nodes: preparedNodes.map(({ x, ...node }) => ({
-          ...node,
-          x: fixCoordinate(x, 50),
-        })),
+        nodes: preparedNodes,
         links: copiedLinks.map(link => ({
-          x1: fixCoordinate(link.source.x, 50),
+          x1: link.source.x,
           y1: link.source.y + nodeRadius,
-          x2: fixCoordinate(link.target.x, 50),
+          x2: link.target.x,
           y2: link.target.y - nodeRadius,
         })),
         height: ((maxDepth - 1) * linkDistance) + (diameter * 2),

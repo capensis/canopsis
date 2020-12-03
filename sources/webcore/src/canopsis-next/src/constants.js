@@ -1520,6 +1520,7 @@ export const PBEHAVIOR_RRULE_PERIODS_RANGES = {
 };
 
 export const ENGINES_NAMES = {
+  event: 'event',
   webhook: 'engine-webhook',
   fifo: 'engine-fifo',
   axe: 'engine-axe',
@@ -1532,17 +1533,30 @@ export const ENGINES_NAMES = {
   heartbeat: 'engine-heartbeat',
 };
 
+export const ENGINES_OUTPUT_NAMES = {
+  webhook: 'Engine_webhook',
+  fifo: 'Engine_fifo',
+  axe: 'Engine_axe',
+  che: 'Engine_che',
+  pbehavior: 'Engine_pbehavior',
+  action: 'Engine_action',
+  watcher: 'Engine_watcher',
+  dynamicInfo: 'Engine_dynamic_infos',
+  correlation: 'Engine_correlation',
+  heartbeat: 'Engine_heartbeat',
+};
+
 export const ENGINES_QUEUE_NAMES = {
-  [ENGINES_NAMES.webhook]: 'Engine_webhook',
-  [ENGINES_NAMES.fifo]: 'Engine_fifo',
-  [ENGINES_NAMES.axe]: 'Engine_axe',
-  [ENGINES_NAMES.che]: 'Engine_che',
-  [ENGINES_NAMES.pbehavior]: 'Engine_pbehavior',
-  [ENGINES_NAMES.action]: 'Engine_action',
-  [ENGINES_NAMES.watcher]: 'Engine_watcher',
-  [ENGINES_NAMES.dynamicInfo]: 'Engine_dynamic_infos',
-  [ENGINES_NAMES.correlation]: 'Engine_correlation',
-  [ENGINES_NAMES.heartbeat]: 'Engine_heartbeat',
+  [ENGINES_OUTPUT_NAMES.webhook]: ENGINES_NAMES.webhook,
+  [ENGINES_OUTPUT_NAMES.fifo]: ENGINES_NAMES.fifo,
+  [ENGINES_OUTPUT_NAMES.axe]: ENGINES_NAMES.axe,
+  [ENGINES_OUTPUT_NAMES.che]: ENGINES_NAMES.che,
+  [ENGINES_OUTPUT_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
+  [ENGINES_OUTPUT_NAMES.action]: ENGINES_NAMES.action,
+  [ENGINES_OUTPUT_NAMES.watcher]: ENGINES_NAMES.watcher,
+  [ENGINES_OUTPUT_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
+  [ENGINES_OUTPUT_NAMES.correlation]: ENGINES_NAMES.correlation,
+  [ENGINES_OUTPUT_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
 };
 
 export const ENGINES_COLOR = {
