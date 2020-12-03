@@ -18,7 +18,11 @@ const calculateNodeDepth = (node, nodeByName, length = 1) => {
     return length;
   }
 
-  const childrenNodesDepth = node.dependencies.map(id => calculateNodeDepth(nodeByName[id], nodeByName, length + 1));
+  const childrenNodesDepth = node.dependencies.map(id => calculateNodeDepth(
+    nodeByName[id],
+    nodeByName,
+    length + 1,
+  ));
 
   return Math.max.apply(null, childrenNodesDepth);
 };
@@ -38,7 +42,7 @@ const prepareNodesForSimulation = (nodes) => {
 };
 
 /**
- * Simulate network graph with multi root
+ * Simulate network graph
  *
  * @param {Array} nodes
  * @param {Array} links
