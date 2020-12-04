@@ -1714,15 +1714,4 @@ export const ENGINES_QUEUE_NAMES = {
   [ENGINES_OUTPUT_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
 };
 
-export const ENGINES_COLOR = {
-  [ENGINES_NAMES.correlation]: COLORS.secondary,
-  [ENGINES_NAMES.dynamicInfo]: COLORS.secondary,
-  [ENGINES_NAMES.webhook]: COLORS.secondary,
-  [ENGINES_NAMES.fifo]: COLORS.primary,
-  [ENGINES_NAMES.axe]: COLORS.primary,
-  [ENGINES_NAMES.che]: COLORS.primary,
-  [ENGINES_NAMES.pbehavior]: COLORS.primary,
-  [ENGINES_NAMES.action]: COLORS.primary,
-  [ENGINES_NAMES.watcher]: COLORS.primary,
-  [ENGINES_NAMES.heartbeat]: COLORS.primary,
-};
+export const CAT_ENGINES = [ENGINES_NAMES.correlation, ENGINES_NAMES.dynamicInfo, ENGINES_NAMES.webhook];
