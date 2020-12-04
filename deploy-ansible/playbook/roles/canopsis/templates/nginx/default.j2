@@ -19,12 +19,13 @@ map $sent_http_content_type $expires_time {
 	image/png			1h;
 }
 
-include /etc/nginx/resolvers.conf;
+include /etc/nginx/resolvers.inc;
 
 server {
 	listen 80;
 
 	root /opt/canopsis/var/www/src/canopsis-next/dist/;
+	set $canopsis_api_url {{ CPS_API_URL }};
 
 	# Work around issue canopsis#1858
 	client_max_body_size 7m;
@@ -51,8 +52,7 @@ server {
 	# setting of request.js.
 	location ~ ^/backend/(?<api_uri>(.*)) {
 		include /etc/nginx/cors.inc;
-                set $canopsis_api_url {{ CPS_API_URL }}; # must end with a slash!
-		proxy_pass $canopsis_api_url$api_uri$is_args$args;
+		proxy_pass $canopsis_api_url/$api_uri$is_args$args;
 		proxy_set_header X-Canopsis-API-Call-Origin 'nginx';
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_read_timeout 90s;

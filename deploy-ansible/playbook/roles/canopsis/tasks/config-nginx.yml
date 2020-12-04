@@ -16,3 +16,11 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Deploy Canopsis resolver configuration file for Nginx
+  template:
+    src: nginx/resolvers.j2
+    dest: /etc/nginx/resolvers.inc
+    owner: root
+    group: root
+    mode: 0644
