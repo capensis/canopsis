@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createAckEventModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createAckEvent.title') }}
       template(slot="text")

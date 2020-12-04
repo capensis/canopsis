@@ -1,171 +1,84 @@
 <template lang="pug">
   div
-    .v-picker__title.primary.text-xs-center
-      span.v-date-time-picker-title(:class="{ 'use-seconds': useSeconds }")
-        span.v-picker__title__btn(
-          data-test="datePickerDateTab",
-          @click="showDateTab",
-          :class="{ 'v-picker__title__btn--active': isActiveDateTab }"
-        ) {{ value | date('datePicker', true, '--/--/----') }}
-        span &nbsp;
-        span.v-picker__title__btn(
-          data-test="datePickerHoursTab",
-          :class="{ 'v-picker__title__btn--active': isActiveHoursTab }",
-          @click="showHoursTabInTimeTab"
-        ) {{ value | date('HH', true, '--') }}
-        span :
-        span.v-picker__title__btn(
-          data-test="datePickerMinutesTab",
-          :class="{ 'v-picker__title__btn--active': isActiveMinutesTab }",
-          @click="showMinutesTabInTimeTab"
-        ) {{ value | date('mm', true, '--') }}
-        template(v-if="useSeconds")
-          span :
-          span.v-picker__title__btn(
-            data-test="datePickerSecondsTab",
-            :class="{ 'v-picker__title__btn--active': isActiveSecondsTab }",
-            @click="showSecondsTabInTimeTab"
-          ) {{ value | date('ss', true, '--') }}
-    .date-time-picker__body
-      v-fade-transition
+    div.v-picker__title.primary.text-xs-center(v-if="label")
+      span.headline {{ label }}
+    div.date-time-picker__body
+      v-layout.py-2(row, align-center, justify-center)
+        v-flex.v-date-time-picker__subtitle-wrapper
+          span.v-date-time-picker__subtitle(
+            :class="{ 'grey--text darken-1': !localValue }"
+          ) {{ localValue | date(dateFormat, true, '−−/−−/−−−−') }}
+        v-flex.v-date-time-picker__subtitle-wrapper
+          time-picker-field.v-date-time-picker__subtitle(
+            :value="localValue | date('timePicker', true, null)",
+            :round-hours="roundHours",
+            @input="updateTime"
+          )
+      div
         v-date-picker(
-          v-if="isActiveDateTab",
           :locale="$i18n.locale",
-          :value="value | date('YYYY-MM-DD', true, null)",
+          :value="localValue | date('YYYY-MM-DD', true, null)",
           color="primary",
           no-title,
-          @input="updateDate",
-          @change="showHoursTabInTimeTab"
+          @input="updateDate"
         )
-      v-fade-transition
-        v-time-picker(
-          v-show="isActiveTimeTab",
-          ref="timePicker",
-          :value="value | date('timePickerWithSeconds', true, null)",
-          :allowed-minutes="allowedMinutes",
-          :useSeconds="useSeconds",
-          color="primary",
-          format="24hr",
-          no-title,
-          @input="updateTime",
-          @change="showDateTab"
-        )
-    slot(name="footer")
+    slot(name="footer", @submit="submit")
+      v-divider
+      v-layout.mt-1(justify-space-around)
+        v-btn(depressed, flat, @click="$listeners.close") {{ $t('common.cancel') }}
+        v-btn.primary(@click="submit") {{ $t('common.apply') }}
 </template>
 
 <script>
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
+import { isDate } from 'lodash';
 
-import dateTimePickerMixin from '@/mixins/vuetify/date-time-picker';
+import { updateTime, updateDate } from '@/helpers/date-time-picker';
 
-const TABS = {
-  date: 'date',
-  time: 'time',
-};
+import formBaseMixin from '@/mixins/form/base';
 
-/**
- * Date time picker component
- *
- * @prop {Date} [value=null] - Date value
- * @prop {Boolean} [roundHours=false] - Deny to change minutes it will be only 0
- * @prop {Boolean} [opened=false] - Is fate time picker opened (need for v-menu)
- *
- * @event value#input
- */
+import TimePickerField from '../time-picker/time-picker-field.vue';
+
 export default {
-  mixins: [dateTimePickerMixin],
+  components: { TimePickerField },
+  mixins: [formBaseMixin],
   props: {
     value: {
       type: [Date, Number],
       default: null,
     },
+    label: {
+      type: String,
+      default: '',
+    },
+    dateFormat: {
+      type: String,
+      default: 'short',
+    },
     roundHours: {
-      type: Boolean,
-      default: false,
-    },
-    opened: {
-      type: Boolean,
-      default: false,
-    },
-    useSeconds: {
       type: Boolean,
       default: false,
     },
   },
   data() {
+    const milliseconds = isDate(this.value) ? this.value.getTime() : this.value;
+
     return {
-      activeTab: TABS.date,
+      localValue: milliseconds ? new Date(milliseconds) : null,
     };
   },
-  computed: {
-    isActiveDateTab() {
-      return this.activeTab === TABS.date;
-    },
-
-    isActiveTimeTab() {
-      return this.activeTab === TABS.time;
-    },
-
-    isActiveHoursTab() {
-      return this.isActiveTimeTab && this.$refs.timePicker.selectingHour;
-    },
-
-    isActiveMinutesTab() {
-      return this.isActiveTimeTab && this.$refs.timePicker.selectingMinute;
-    },
-
-    isActiveSecondsTab() {
-      return this.isActiveTimeTab && this.$refs.timePicker.selectingSecond;
-    },
-
-    allowedMinutes() {
-      if (this.roundHours) {
-        return v => v === 0;
-      }
-
-      return null;
-    },
-  },
-  watch: {
-    opened(value) {
-      if (!value) {
-        setTimeout(() => {
-          this.showDateTab();
-        }, VUETIFY_ANIMATION_DELAY);
-      }
-    },
-  },
   methods: {
-    showDateTab() {
-      this.activeTab = TABS.date;
+    updateTime(time) {
+      this.localValue = updateTime(this.localValue, time);
     },
 
-    showTimeTab() {
-      this.activeTab = TABS.time;
+    updateDate(date) {
+      this.localValue = updateDate(this.localValue, date);
     },
 
-    showHoursTabInTimeTab() {
-      /**
-       * Change to vuetify hour tab
-       */
-      this.$refs.timePicker.selecting = 1;
-      this.showTimeTab();
-    },
+    submit() {
+      this.updateModel(this.localValue);
 
-    showMinutesTabInTimeTab() {
-      /**
-       * Change to vuetify minute tab
-       */
-      this.$refs.timePicker.selecting = 2;
-      this.showTimeTab();
-    },
-
-    showSecondsTabInTimeTab() {
-      /**
-       * Change to vuetify minute tab
-       */
-      this.$refs.timePicker.selecting = 3;
-      this.showTimeTab();
+      this.$emit('close');
     },
   },
 };
@@ -176,37 +89,19 @@ export default {
     .date-time-picker__body {
       position: relative;
       width: 290px;
-      height: 312px;
+      height: 352px;
       z-index: inherit;
-
-      .v-picker {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-
-      .v-picker__body,
-      .v-time-picker-clock__item,
-      .v-time-picker-clock__item span,
-      .v-time-picker-clock__hand {
-        z-index: inherit;
-      }
     }
 
-    .v-date-time-picker-title {
-      line-height: 50px;
-      font-size: 30px;
-      font-weight: 500;
+    .v-date-time-picker__subtitle {
+      margin-top: -12px;
+      line-height: 30px;
+      font-size: 18px;
+      font-weight: 400;
 
-      &.use-seconds {
-        font-size: 27px;
+      &-wrapper {
+        text-align: center;
       }
-    }
-
-    .v-tabs__container--centered .v-tabs__div,
-    .v-tabs__container--fixed-tabs .v-tabs__div,
-    .v-tabs__container--icons-and-text .v-tabs__div {
-      min-width: 145px;
     }
 
     .v-menu__content {

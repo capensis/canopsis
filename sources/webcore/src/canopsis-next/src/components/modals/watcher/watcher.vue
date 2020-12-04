@@ -2,8 +2,11 @@
   modal-wrapper
     template(slot="fullTitle")
       v-card-title.white--text(:style="{ backgroundColor: color }")
-        v-layout(justify-space-between, align-center)
-          span.headline {{ watcher.name }}
+        v-layout.headline(justify-space-between, align-center)
+          v-flex
+            span {{ watcher.name }}
+          v-flex
+            modal-title-buttons(:modal="modal", close)
     template(slot="text")
       v-fade-transition(mode="out-in")
         watcher-template(
@@ -52,12 +55,13 @@ import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import ModalWrapper from '../modal-wrapper.vue';
+import ModalTitleButtons from '../modal-title-buttons.vue';
 
 import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: { WatcherTemplate, ModalWrapper },
+  components: { ModalTitleButtons, WatcherTemplate, ModalWrapper },
   inject: ['$system'],
   mixins: [
     modalInnerMixin,

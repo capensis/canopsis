@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(minimize)
+    modal-wrapper(:close="close", minimize)
       template(slot="title")
         span {{ config.assignedInstruction.name }}
       template(slot="text")
@@ -10,8 +10,6 @@
         )
         v-layout(v-else, justify-center)
           v-progress-circular(indeterminate, color="primary")
-      template(slot="actions")
-        v-btn(depressed, flat, @click="close") {{ $t('common.actions.close') }}
 </template>
 
 <script>

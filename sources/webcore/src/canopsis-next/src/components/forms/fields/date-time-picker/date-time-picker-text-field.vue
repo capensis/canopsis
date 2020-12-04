@@ -15,8 +15,8 @@
       v-flex
         date-time-picker-button(
           :value="objectValue",
-          :roundHours="roundHours",
-          :useSeconds="useSeconds",
+          :label="label",
+          :round-hours="roundHours",
           @input="updateObjectField"
         )
 </template>
@@ -64,10 +64,6 @@ export default {
       default: null,
     },
     roundHours: {
-      type: Boolean,
-      default: false,
-    },
-    useSeconds: {
       type: Boolean,
       default: false,
     },

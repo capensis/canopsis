@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="infoPopupSettingModal")
+  modal-wrapper(data-test="infoPopupSettingModal", close)
     template(slot="title")
       span {{ $t('modals.infoPopupSetting.title') }}
     template(slot="text")

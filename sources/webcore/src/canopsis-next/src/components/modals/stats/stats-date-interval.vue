@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="statsDateIntervalModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.statsDateInterval.title') }}
       template(slot="text")

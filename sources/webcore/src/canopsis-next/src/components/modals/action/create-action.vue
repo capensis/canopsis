@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(minimize, close)
       template(slot="title")
         span {{ $t('modals.createAction.create.title') }}
       template(slot="text")
@@ -13,11 +13,11 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
-import submittableMixin from '@/mixins/submittable';
-
 import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
+
+import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
 import ActionForm from '@/components/other/action/form/action-form.vue';
 

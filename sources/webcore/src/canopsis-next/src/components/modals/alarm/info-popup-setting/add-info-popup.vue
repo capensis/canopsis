@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="addInfoPopupModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
       template(slot="text")
