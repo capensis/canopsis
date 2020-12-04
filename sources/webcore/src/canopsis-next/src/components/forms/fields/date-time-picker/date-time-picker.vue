@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    div.v-picker__title.primary.text-xs-center
+    div.v-picker__title.primary.text-xs-center(v-if="label")
       span.headline {{ label }}
     div.date-time-picker__body
       v-layout.py-2(row, align-center, justify-center)
@@ -48,7 +48,7 @@ export default {
     },
     label: {
       type: String,
-      default: 'End date time',
+      default: '',
     },
     dateFormat: {
       type: String,

@@ -2,14 +2,6 @@
   div.modal-title-buttons(
     :class="{ 'close': close, 'minimize': minimize }"
   )
-    div.modal-title-button__wrapper(v-if="close")
-      v-btn(
-        slot="activator",
-        icon,
-        small,
-        @click="closeHandler"
-      )
-        v-icon(color="white", small) close
     div.modal-title-button__wrapper(v-if="minimize")
       v-tooltip(
         v-if="!modal.minimized",
@@ -20,18 +12,23 @@
           slot="activator",
           :disabled="hasMinimizedModal",
           icon,
-          small,
           @click="$modals.minimize({ id: modal.id })"
         )
-          v-icon(color="white", small) minimize
+          v-icon(color="white") minimize
         span {{ $t('modals.common.titleButtons.minimizeTooltip') }}
       v-btn(
         v-else,
         icon,
-        small,
         @click="$modals.maximize({ id: modal.id })"
       )
-        v-icon(color="white", small) maximize
+        v-icon(color="white") maximize
+    div.modal-title-button__wrapper(v-if="close")
+      v-btn(
+        slot="activator",
+        icon,
+        @click="closeHandler"
+      )
+        v-icon(color="white") close
 </template>
 
 <script>
@@ -73,22 +70,38 @@ export default {
 
 <style lang="scss" scoped>
 .modal-title-buttons {
-  .modal-title-button__wrapper {
-    .v-btn {
-      margin: 0 8px;
-    }
+  display: flex;
 
-    &:first-of-type /deep/ .v-btn {
-      margin-right: 0;
-    }
+  .v-btn {
+    margin: 0 8px;
   }
 
   &.close, &.minimize {
-    width: 41px;
+    width: 48px;
   }
 
   &.close.minimize {
-    width: 82px;
+    width: 96px;
+  }
+
+  .v-dialog:not(.v-dialog--fullscreen) & {
+    .modal-title-button__wrapper .v-btn {
+      font-size: 13px;
+      height: 28px;
+      width: 28px;
+
+      .v-icon {
+        font-size: 16px;
+      }
+    }
+
+    &.close, &.minimize {
+      width: 40px;
+    }
+
+    &.close.minimize {
+      width: 80px;
+    }
   }
 
   .v-btn--minimize {

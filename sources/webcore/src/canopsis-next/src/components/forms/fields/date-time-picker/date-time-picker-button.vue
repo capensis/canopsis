@@ -19,9 +19,10 @@
       v-icon calendar_today
     date-time-picker(
       :value="value",
+      :label="label",
       :round-hours="roundHours",
-      @input="$listeners.input",
-      @close="close"
+      @close="close",
+      @input="$listeners.input"
     )
 </template>
 
@@ -41,6 +42,10 @@ export default {
     value: {
       type: Date,
       default: null,
+    },
+    label: {
+      type: String,
+      default: '',
     },
     roundHours: {
       type: Boolean,

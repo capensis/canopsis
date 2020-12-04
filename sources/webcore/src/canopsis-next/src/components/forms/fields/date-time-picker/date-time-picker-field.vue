@@ -22,10 +22,10 @@
     date-time-picker(
       data-test="dateTimePickerCalendar",
       :value="value",
+      :label="label",
       :round-hours="roundHours",
-      :opened="opened",
       @close="close",
-      @input="$emit('input', $event)"
+      @input="$listeners.input"
     )
 </template>
 

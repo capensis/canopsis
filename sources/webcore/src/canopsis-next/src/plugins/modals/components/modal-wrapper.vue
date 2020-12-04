@@ -78,6 +78,10 @@ $minimizedDialogMaxWidth: 360px;
     max-width: $minimizedDialogMaxWidth !important;
     margin-bottom: 0 !important;
     transition: all .1s linear;
+    top: auto;
+    left: auto;
+    right: auto;
+    height: auto;
 
     .v-card__title {
       padding: 0 10px;
@@ -87,10 +91,10 @@ $minimizedDialogMaxWidth: 360px;
         font-size: 16px !important;
       }
     }
-  }
 
-  .v-card__title .headline .v-btn {
-    float: right;
+    .v-card.fill-min-height {
+      min-height: auto;
+    }
   }
 }
 </style>
