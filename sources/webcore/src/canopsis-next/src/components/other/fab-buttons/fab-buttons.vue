@@ -8,7 +8,7 @@
           slot="activator",
           color="primary",
           fab,
-          @click.stop="$emit('create')"
+          @click.stop="$listeners.create"
         )
           v-icon add
         slot

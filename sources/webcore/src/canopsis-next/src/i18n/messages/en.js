@@ -1913,7 +1913,7 @@ export default {
   },
 
   engines: {
-    event: {
+    [ENGINES_NAMES.event]: {
       title: 'Event',
       description: 'Comes from resource',
     },

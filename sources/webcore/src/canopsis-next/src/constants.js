@@ -1688,7 +1688,7 @@ export const ENGINES_NAMES = {
   heartbeat: 'engine-heartbeat',
 };
 
-export const ENGINES_OUTPUT_NAMES = {
+export const ENGINES_QUEUE_NAMES = {
   webhook: 'Engine_webhook',
   fifo: 'Engine_fifo',
   axe: 'Engine_axe',
@@ -1701,17 +1701,21 @@ export const ENGINES_OUTPUT_NAMES = {
   heartbeat: 'Engine_heartbeat',
 };
 
-export const ENGINES_QUEUE_NAMES = {
-  [ENGINES_OUTPUT_NAMES.webhook]: ENGINES_NAMES.webhook,
-  [ENGINES_OUTPUT_NAMES.fifo]: ENGINES_NAMES.fifo,
-  [ENGINES_OUTPUT_NAMES.axe]: ENGINES_NAMES.axe,
-  [ENGINES_OUTPUT_NAMES.che]: ENGINES_NAMES.che,
-  [ENGINES_OUTPUT_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
-  [ENGINES_OUTPUT_NAMES.action]: ENGINES_NAMES.action,
-  [ENGINES_OUTPUT_NAMES.watcher]: ENGINES_NAMES.watcher,
-  [ENGINES_OUTPUT_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
-  [ENGINES_OUTPUT_NAMES.correlation]: ENGINES_NAMES.correlation,
-  [ENGINES_OUTPUT_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
+export const ENGINES_NAMES_TO_QUEUE_NAMES = {
+  [ENGINES_QUEUE_NAMES.webhook]: ENGINES_NAMES.webhook,
+  [ENGINES_QUEUE_NAMES.fifo]: ENGINES_NAMES.fifo,
+  [ENGINES_QUEUE_NAMES.axe]: ENGINES_NAMES.axe,
+  [ENGINES_QUEUE_NAMES.che]: ENGINES_NAMES.che,
+  [ENGINES_QUEUE_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
+  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action,
+  [ENGINES_QUEUE_NAMES.watcher]: ENGINES_NAMES.watcher,
+  [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
+  [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,
+  [ENGINES_QUEUE_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
 };
 
-export const CAT_ENGINES = [ENGINES_NAMES.correlation, ENGINES_NAMES.dynamicInfo, ENGINES_NAMES.webhook];
+export const CAT_ENGINES = [
+  ENGINES_NAMES.correlation,
+  ENGINES_NAMES.dynamicInfo,
+  ENGINES_NAMES.webhook,
+];

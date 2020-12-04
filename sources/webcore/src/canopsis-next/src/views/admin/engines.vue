@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.engines') }}
+    the-page-header {{ $t('common.engines') }}
     engines-list(:loading="pending", :engines="engines")
     fab-buttons(@refresh="fetchList")
 </template>
