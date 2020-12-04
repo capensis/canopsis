@@ -8,7 +8,7 @@
         :disabled="!hasMinimizedModal",
         left
       )
-        v-btn.v-btn--minimize(
+        v-btn.v-btn--minimize.my-0(
           slot="activator",
           :disabled="hasMinimizedModal",
           icon,
@@ -16,14 +16,14 @@
         )
           v-icon(color="white") minimize
         span {{ $t('modals.common.titleButtons.minimizeTooltip') }}
-      v-btn(
+      v-btn.my-0(
         v-else,
         icon,
         @click="$modals.maximize({ id: modal.id })"
       )
         v-icon(color="white") maximize
     div.modal-title-button__wrapper(v-if="close")
-      v-btn(
+      v-btn.my-0(
         slot="activator",
         icon,
         @click="closeHandler"
@@ -71,10 +71,6 @@ export default {
 <style lang="scss" scoped>
 .modal-title-buttons {
   display: flex;
-
-  .v-btn {
-    margin: 0 8px;
-  }
 
   &.close, &.minimize {
     width: 48px;

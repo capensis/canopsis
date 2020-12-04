@@ -17,15 +17,6 @@
 <script>
 import formBaseMixin from '@/mixins/form/base';
 
-/**
- * TODO: Move into another place
- *
- * @type {number}
- */
-const HOURS_IN_DAY = 24;
-const MINUTES_STEP = 15;
-const MINUTES_STEPS_IN_HOUR = Math.floor(60 / MINUTES_STEP);
-
 export default {
   mixins: [formBaseMixin],
   model: {
@@ -40,6 +31,10 @@ export default {
     label: {
       type: String,
       default: null,
+    },
+    stepsInHours: {
+      type: Number,
+      default: 4,
     },
     roundHours: {
       type: Boolean,
@@ -56,15 +51,18 @@ export default {
 
     items() {
       if (this.roundHours) {
-        return new Array(HOURS_IN_DAY).fill(0).map((item, index) => `${index < 10 ? `0${index}` : index}:00`);
+        return new Array(24).fill(0).map((item, index) => `${index < 10 ? `0${index}` : index}:00`);
       }
 
-      return new Array(HOURS_IN_DAY * MINUTES_STEPS_IN_HOUR).fill(0).map((item, index) => {
-        const hoursIndex = Math.floor(index / MINUTES_STEPS_IN_HOUR);
-        const minutesIndex = index - (hoursIndex * MINUTES_STEPS_IN_HOUR);
+      const { stepsInHours } = this;
+      const minutesStep = Math.floor(60 / stepsInHours);
+
+      return new Array(24 * stepsInHours).fill(0).map((item, index) => {
+        const hoursIndex = Math.floor(index / stepsInHours);
+        const minutesIndex = index - (hoursIndex * stepsInHours);
 
         const hours = hoursIndex < 10 ? `0${hoursIndex}` : hoursIndex;
-        const minutes = minutesIndex === 0 ? '00' : minutesIndex * MINUTES_STEP;
+        const minutes = minutesIndex === 0 ? '00' : minutesIndex * minutesStep;
 
         return `${hours}:${minutes}`;
       });
