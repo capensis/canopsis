@@ -249,7 +249,27 @@
             "checksum": 1,
             "desc": ""
         },
+        "listalarm_executeInstruction": {
+          "checksum": 1,
+          "desc": ""
+        },
         "listalarm_correlation": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_listRemediationInstructionsFilters": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_editRemediationInstructionsFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_addRemediationInstructionsFilter": {
+            "checksum": 1,
+            "desc": ""
+        },
+        "listalarm_userRemediationInstructionsFilter": {
             "checksum": 1,
             "desc": ""
         },
@@ -402,6 +422,22 @@
           "desc": ""
         },
         "models_planningExceptions": {
+          "checksum": 15,
+          "desc": ""
+        },
+        "models_remediation": {
+          "checksum": 15,
+          "desc": ""
+        },
+        "models_remediationInstruction": {
+          "checksum": 15,
+          "desc": ""
+        },
+        "models_remediationJob": {
+          "checksum": 15,
+          "desc": ""
+        },
+        "models_remediationConfiguration": {
           "checksum": 15,
           "desc": ""
         },

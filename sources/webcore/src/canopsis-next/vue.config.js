@@ -100,7 +100,7 @@ function parseField(value) {
 }
 
 module.exports = {
-  baseUrl: isProduction ? '/en/static/canopsis-next/dist/' : '/',
+  baseUrl: '/',
   lintOnSave: false,
   chainWebpack: (config) => {
     config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
@@ -115,12 +115,19 @@ module.exports = {
           directives: {
             field(el, dir) {
               const { value, modifiers = {} } = dir;
-              const { number, trim } = modifiers;
+              const {
+                number,
+                trim,
+                mutate,
+                model,
+              } = modifiers;
+
               const path = parseField(value.trim());
 
               path.shift();
 
               const baseValueExpression = '$$v';
+              const basePreviousPathExpression = '$$p';
               let valueExpression = baseValueExpression;
 
               if (trim) {
@@ -134,13 +141,16 @@ module.exports = {
                 valueExpression = `_n(${valueExpression})`;
               }
 
-              const assignment = `$updateField([${path}], ${valueExpression})`;
+              const pathExpression = mutate ? `[${path}, ...(${basePreviousPathExpression} || [])]` : `[${path}]`;
+              const assignment = model
+                ? `$updateFieldModel(${value}, ${basePreviousPathExpression}, ${valueExpression})`
+                : `$updateField(${pathExpression}, ${valueExpression}, ${mutate})`;
 
               // eslint-disable-next-line no-param-reassign
               el.model = {
                 value: `(${value})`,
                 expression: JSON.stringify(value),
-                callback: `function (${baseValueExpression}) {${assignment}}`,
+                callback: `function (${baseValueExpression}, ${basePreviousPathExpression}) {${assignment}}`,
               };
             },
           },
@@ -153,10 +163,10 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/api': {
+      '/backend': {
         target: process.env.VUE_APP_API_HOST,
         changeOrigin: true,
-        pathRewrite: { '^/api': '' },
+        pathRewrite: { '^/backend': '' },
         secure: false,
         cookieDomainRewrite: '',
       },

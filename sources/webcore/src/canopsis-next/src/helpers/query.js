@@ -4,6 +4,10 @@ import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import { WIDGET_TYPES, STATS_QUICK_RANGES } from '@/constants';
 
 import { prepareMainFilterToQueryFilter, getMainFilter } from './filter';
+import {
+  prepareRemediationInstructionsFiltersToQuery,
+  getRemediationInstructionsFilters,
+} from './filter/remediation-instructions-filter';
 
 /**
  * WIDGET CONVERTERS
@@ -251,8 +255,14 @@ export function convertCounterWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPreferences }) {
-  const { itemsPerPage, isCorrelationEnabled = false } = widgetPreferences;
-  const query = { correlation: isCorrelationEnabled };
+  const {
+    itemsPerPage,
+    isCorrelationEnabled = false,
+  } = widgetPreferences;
+
+  const query = {
+    correlation: isCorrelationEnabled,
+  };
 
   if (itemsPerPage) {
     query.limit = itemsPerPage;
@@ -347,7 +357,7 @@ export function convertWidgetToQuery(widget) {
 export function prepareQuery(widget, userPreference) {
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference);
-  const query = {
+  let query = {
     ...widgetQuery,
     ...userPreferenceQuery,
   };
@@ -365,6 +375,15 @@ export function prepareQuery(widget, userPreference) {
     if (activeMainFilter) {
       query[filterKey] = prepareMainFilterToQueryFilter(activeMainFilter);
     }
+  }
+
+  const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
+
+  if (remediationInstructionsFilters.length) {
+    query = {
+      ...query,
+      ...prepareRemediationInstructionsFiltersToQuery(remediationInstructionsFilters),
+    };
   }
 
   return query;

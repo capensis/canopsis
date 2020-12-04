@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.users') }}
+    the-page-header {{ $t('common.users') }}
     div.white
       v-layout(row, wrap)
         v-flex(xs4)
@@ -111,7 +111,7 @@ export default {
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await this.removeUser({ id });
+            await this.removeUserWithPopup({ id });
             await this.fetchUsersListWithPreviousParams();
           },
         },
@@ -124,6 +124,7 @@ export default {
         config: {
           action: async () => {
             await Promise.all(this.selected.map(({ _id }) => this.removeUser({ id: _id })));
+            this.$popups.success({ text: this.$t('success.default') });
             await this.fetchUsersListWithPreviousParams();
 
             this.selected = [];
@@ -139,7 +140,7 @@ export default {
           title: this.$t('modals.editUser.title'),
           user,
           action: async (data) => {
-            await this.createUser({ data: prepareUserByData(data, user) });
+            await this.createUserWithPopup({ data: prepareUserByData(data, user) });
 
             const requests = [this.fetchUsersListWithPreviousParams()];
 
@@ -158,7 +159,7 @@ export default {
         name: MODALS.createUser,
         config: {
           action: async (data) => {
-            await this.createUser({ data: prepareUserByData(data) });
+            await this.createUserWithPopup({ data: prepareUserByData(data) });
 
             await this.fetchUsersListWithPreviousParams();
           },

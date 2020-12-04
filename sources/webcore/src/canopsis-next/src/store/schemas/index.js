@@ -107,6 +107,12 @@ export const pbehaviorReasonsSchema = new schema.Entity(ENTITIES_TYPES.pbehavior
 
 export const pbehaviorExceptionsSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorExceptions, {}, { idAttribute: '_id' });
 
+export const remediationInstructionSchema = new schema.Entity(ENTITIES_TYPES.remediationInstruction, {}, { idAttribute: '_id' });
+
+export const remediationJobSchema = new schema.Entity(ENTITIES_TYPES.remediationJob, {}, { idAttribute: '_id' });
+
+export const remediationConfigurationSchema = new schema.Entity(ENTITIES_TYPES.remediationConfiguration, {}, { idAttribute: '_id' });
+
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
@@ -132,4 +138,7 @@ export default {
   [ENTITIES_TYPES.pbehaviorTypes]: pbehaviorTypesSchema,
   [ENTITIES_TYPES.pbehaviorReasons]: pbehaviorReasonsSchema,
   [ENTITIES_TYPES.pbehaviorExceptions]: pbehaviorExceptionsSchema,
+  [ENTITIES_TYPES.remediationInstruction]: remediationInstructionSchema,
+  [ENTITIES_TYPES.remediationJob]: remediationJobSchema,
+  [ENTITIES_TYPES.remediationConfiguration]: remediationConfigurationSchema,
 };

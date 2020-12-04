@@ -1,17 +1,11 @@
 <template lang="pug">
-  v-expansion-panel.my-1
-    v-expansion-panel-content.grey.darken-2.white--text
-      div.white--text(slot="header") {{ label }}
-      v-card
-        v-layout(wrap)
-          v-chip(
-            v-for="entity in entities",
-            :key="entity._id",
-            close,
-            @input="removeEntity(entity)"
-          ) {{ entity }}
-        v-btn.red.white--text(v-show="entities.length", @click="clear", small) Clear
-        context-general-list(@update:selectedIds="updateEntities($event)")
+  choose-expansion-panel(
+    :entities="entities",
+    :label="label",
+    @remove="removeEntity"
+  )
+    v-btn.error(v-show="entities.length", small, @click="clear") {{ $t('common.clear') }}
+    context-general-list(@update:selectedIds="updateEntities($event)")
 </template>
 
 <script>
@@ -20,6 +14,7 @@ import { union, filter } from 'lodash';
 import formBaseMixin from '@/mixins/form/base';
 
 import ContextGeneralList from '@/components/other/context/context-general-list.vue';
+import ChooseExpansionPanel from '@/components/other/choose-expansion-panel/choose-expansion-panel.vue';
 
 /**
  * Component to select entities for impact/dependencies
@@ -31,7 +26,7 @@ import ContextGeneralList from '@/components/other/context/context-general-list.
  * @event selectedIds#update
  */
 export default {
-  components: { ContextGeneralList },
+  components: { ChooseExpansionPanel, ContextGeneralList },
   mixins: [formBaseMixin],
   model: {
     prop: 'entities',
@@ -44,9 +39,7 @@ export default {
     },
     entities: {
       type: Array,
-      default() {
-        return [];
-      },
+      default: () => [],
     },
   },
   methods: {

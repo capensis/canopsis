@@ -1,26 +1,26 @@
 <template lang="pug">
   v-container
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.planningAdministration') }}
+    the-page-header {{ $t('common.planningAdministration') }}
     v-layout(row, wrap)
       v-flex(xs12)
         v-card.ma-2
           v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
             template(v-if="hasReadAnyPbehaviorTypeAccess")
-              v-tab(href="#types") {{ $t('planning.tabs.type') }}
-              v-tab-item(value="types")
+              v-tab(:href="`#${$constants.PLANNING_TABS.types}`") {{ $t('planning.tabs.type') }}
+              v-tab-item(:value="$constants.PLANNING_TABS.types")
                 v-card-text
                   planning-types
             template(v-if="hasReadAnyPbehaviorReasonAccess")
-              v-tab(href="#reasons") {{ $t('planning.tabs.reason') }}
-              v-tab-item(value="reasons")
+              v-tab(:href="`#${$constants.PLANNING_TABS.reasons}`") {{ $t('planning.tabs.reason') }}
+              v-tab-item(:value="$constants.PLANNING_TABS.reasons")
                 v-card-text
                   planning-reasons
             template(v-if="hasReadAnyPbehaviorExceptionAccess")
-              v-tab(href="#exceptions") {{ $t('planning.tabs.exceptions') }}
-              v-tab-item(value="exceptions")
+              v-tab(:href="`#${$constants.PLANNING_TABS.exceptions}`") {{ $t('planning.tabs.exceptions') }}
+              v-tab-item(:value="$constants.PLANNING_TABS.exceptions")
                 v-card-text
                   planning-exceptions
-    fab-buttons(@create="create", @refresh="refresh", :has-access="hasAccess")
+    fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
       span {{ tooltipText }}
 </template>
 
@@ -70,7 +70,7 @@ export default {
       }[this.activeTab];
     },
 
-    hasAccess() {
+    hasCreateAccess() {
       return {
         [PLANNING_TABS.types]: this.hasCreateAnyPbehaviorTypeAccess,
         [PLANNING_TABS.reasons]: this.hasCreateAnyPbehaviorReasonAccess,
@@ -108,15 +108,15 @@ export default {
     },
 
     fetchTypesList() {
-      this.fetchPbehaviorTypesList({ params: this.getQueryById(PLANNING_TABS.types) });
+      this.fetchPbehaviorTypesListWithPreviousParams();
     },
 
     fetchReasonsList() {
-      this.fetchPbehaviorReasonsList({ params: this.getQueryById(PLANNING_TABS.reasons) });
+      this.fetchPbehaviorReasonsListWithPreviousParams();
     },
 
     fetchExceptionsList() {
-      this.fetchPbehaviorExceptionsList({ params: this.getQueryById(PLANNING_TABS.exceptions) });
+      this.fetchPbehaviorExceptionsListWithPreviousParams();
     },
 
     showCreateTypeModal() {

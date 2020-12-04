@@ -144,8 +144,8 @@ export default {
       ];
 
       return links.filter(({ right }) =>
-        this.checkAppInfoAccessByRight(right) &&
-        this.checkReadAccess(right));
+        this.checkAppInfoAccessByRight(right)
+        && this.checkReadAccess(right));
     },
 
     administrationLinks() {
@@ -192,6 +192,12 @@ export default {
           icon: 'assignment',
           right: USERS_RIGHTS.technical.planning,
         },
+        {
+          route: { name: 'remediation-administration' },
+          text: this.$t('common.remediation'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.remediation,
+        },
       ];
 
       const linksWithDefaultRight = [
@@ -203,7 +209,8 @@ export default {
         },
       ];
 
-      return links.filter(({ right }) => this.checkReadAccess(right))
+      return links
+        .filter(({ right }) => this.checkAppInfoAccessByRight(right) && this.checkReadAccess(right))
         .concat(linksWithDefaultRight.filter(({ right }) => this.checkAccess(right)));
     },
 
@@ -220,7 +227,7 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            await this.createUser({ data: prepareUserByData(data, this.currentUser) });
+            await this.createUserWithPopup({ data: prepareUserByData(data, this.currentUser) });
 
             await this.fetchCurrentUser();
           },

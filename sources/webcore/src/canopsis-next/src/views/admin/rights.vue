@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container.admin-rights
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.rights') }}
+    the-page-header {{ $t('common.rights') }}
     div.position-relative
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
@@ -11,7 +11,7 @@
           v-tab-item.white(:key="`tab-item-${groupKey}`")
             rights-table-wrapper(
               :rights="rights",
-              :roles="roles",
+              :roles="sortedRoles",
               :changedRoles="changedRoles",
               :disabled="!hasUpdateAnyActionAccess",
               @change="changeCheckboxValue"
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { get, isEmpty, isUndefined, transform } from 'lodash';
+import { get, isEmpty, isUndefined, sortBy, transform } from 'lodash';
 
 import { MODALS } from '@/constants';
 
@@ -70,6 +70,10 @@ export default {
   computed: {
     hasChanges() {
       return !isEmpty(this.changedRoles);
+    },
+
+    sortedRoles() {
+      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()]);
     },
   },
   mounted() {

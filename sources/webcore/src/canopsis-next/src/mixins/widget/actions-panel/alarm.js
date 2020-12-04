@@ -9,18 +9,25 @@ import {
   STATS_QUICK_RANGES,
 } from '@/constants';
 
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
-import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
-
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { generateWidgetByType } from '@/helpers/entities';
+
+import queryMixin from '@/mixins/query';
+import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
+import entitiesRemediationInstructionExecutionMixin from '@/mixins/entities/remediation/executions';
 
 /**
  * @mixin Mixin for the alarms list actions panel, show modal of the action
  */
 export default {
-  mixins: [eventActionsAlarmMixin, entitiesPbehaviorMixin],
+  mixins: [
+    queryMixin,
+    eventActionsAlarmMixin,
+    entitiesPbehaviorMixin,
+    entitiesRemediationInstructionExecutionMixin,
+  ],
   methods: {
     createFastAckEvent() {
       let eventData = {};
@@ -192,6 +199,17 @@ export default {
           title: this.$t('alarmList.actions.titles.manualMetaAlarmUngroup'),
           eventType: EVENT_ENTITY_TYPES.manualMetaAlarmUngroup,
           parentsIds: [get(this.parentAlarm, 'd')],
+        },
+      });
+    },
+
+    showRateInstructionModal(instructionExecuteId) {
+      this.$modals.show({
+        name: MODALS.rate,
+        config: {
+          title: this.$t('modals.rateInstruction.title'),
+          text: this.$t('modals.rateInstruction.text'),
+          action: data => this.rateRemediationInstructionExecution({ id: instructionExecuteId, data }),
         },
       });
     },

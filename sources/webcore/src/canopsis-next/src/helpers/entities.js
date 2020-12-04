@@ -24,11 +24,18 @@ import {
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
   WIDGET_GRID_COLUMNS_COUNT,
+  REMEDIATION_WORKFLOW_TYPES,
 } from '@/constants';
 
 import uuid from './uuid';
 import uid from './uid';
 import { pbehaviorToForm } from './forms/planning-pbehavior';
+
+/**
+ * @typedef {Object} Interval
+ * @property {Number} interval
+ * @property {String} unit
+ */
 
 /**
  * Generate widget by type
@@ -132,9 +139,16 @@ export function generateWidgetByType(type) {
         sort: {
           order: SORT_ORDERS.asc,
         },
-        blockTemplate: '',
-        modalTemplate: '',
-        entityTemplate: '',
+        blockTemplate: `<p><strong><span style="font-size: 18px;">{{entity.display_name}}</span></strong></p>
+<hr id="null">
+<p>{{ entity.output }}</p>
+<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>`,
+
+        modalTemplate: '{{ entities name="entity.entity_id" }}',
+        entityTemplate: `<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>`,
+
         columnSM: 6,
         columnMD: 4,
         columnLG: 3,
@@ -145,8 +159,9 @@ export function generateWidgetByType(type) {
           bottom: 1,
           left: 1,
         },
-        heightFactor: 1,
-        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.moreInfo,
+        isCountersEnabled: false,
+        heightFactor: 6,
+        modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.both,
         alarmsList: alarmsListDefaultParameters,
         modalItemsPerPage: PAGINATION_LIMIT,
       };
@@ -579,13 +594,16 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
+  const result = {
+    ...omit(user, ['rights']),
+    ...omit(data, ['password']),
+  };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);
   }
 
-  if (!data._id) {
+  if (!result._id && !data._id) {
     result._id = data.crecord_name;
   }
 
@@ -679,3 +697,46 @@ export const removeKeyFromEntity = (entities = []) => entities.map(entity => omi
  */
 export const getIdFromEntity = (entity, idField = '_id') =>
   (isObject(entity) ? entity[idField] : entity);
+
+/**
+ * Generate an remediation instruction step operation entity
+ *
+ * @typedef {Object} RemediationInstructionStepOperation
+ * @property {string} name
+ * @property {string} description
+ * @property {Array} jobs
+ * @property {DurationForm} time_to_complete
+ * @property {string} [key]
+ * @return {RemediationInstructionStepOperation}
+ */
+export const generateRemediationInstructionStepOperation = () => ({
+  name: '',
+  description: '',
+  jobs: [],
+  time_to_complete: {
+    value: 0,
+    unit: TIME_UNITS.minute,
+  },
+  key: uid(),
+});
+
+/**
+ * Generate an remediation instruction step entity
+ *
+ * @typedef {Object} RemediationInstructionStep
+ * @property {string} endpoint
+ * @property {string} name
+ * @property {boolean} stop_on_fail
+ * @property {RemediationInstructionStepOperation[]} operations
+ * @property {boolean} [saved]
+ * @property {string} [key]
+ * @return {RemediationInstructionStep}
+ */
+export const generateRemediationInstructionStep = () => ({
+  endpoint: '',
+  name: '',
+  operations: [generateRemediationInstructionStepOperation()],
+  stop_on_fail: REMEDIATION_WORKFLOW_TYPES.stop,
+  saved: false,
+  key: uid(),
+});

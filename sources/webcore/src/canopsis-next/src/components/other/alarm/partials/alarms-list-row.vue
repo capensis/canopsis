@@ -1,7 +1,7 @@
 <template lang="pug">
   tr(:data-test="`tableRow-${alarm._id}`", :class="{ 'not-filtered': isNotFiltered }")
-    td.pr-0(v-if="selectable || expandable", data-test="rowCheckbox")
-      v-layout(row, align-center)
+    td.pr-0(v-if="hasRowActions", data-test="rowCheckbox")
+      v-layout(row, align-center, justify-space-between)
         template(v-if="selectable")
           v-checkbox-functional(
             v-if="!isResolvedAlarm",
@@ -14,7 +14,11 @@
             disabled,
             hide-details
           )
-        v-layout.ml-2(v-if="expandable", align-center)
+        v-layout(v-if="hasAlarmInstruction", align-center)
+          v-tooltip(top)
+            v-icon(slot="activator", size="16", color="black") adjust
+            span {{ $t('alarmList.instructionInfoPopup') }}
+        v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
           expand-button(
             :class="expandButtonClass",
             :expanded="row.expanded",
@@ -100,6 +104,16 @@ export default {
   computed: {
     alarm() {
       return this.row.item;
+    },
+
+    hasRowActions() {
+      return this.selectable || this.expandable || this.hasAlarmInstruction;
+    },
+
+    hasAlarmInstruction() {
+      const { assigned_instructions: assignedInstructions = [] } = this.alarm;
+
+      return assignedInstructions.length;
     },
 
     isResolvedAlarm() {

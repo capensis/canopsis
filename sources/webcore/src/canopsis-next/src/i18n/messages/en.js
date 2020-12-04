@@ -8,6 +8,7 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
 } from '@/constants';
@@ -113,6 +114,8 @@ export default {
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
     planningAdministration: 'Planning Administration',
+    remediation: 'Remediation',
+    instructions: 'Instructions',
     icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
@@ -124,6 +127,9 @@ export default {
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    clear: 'Clear',
+    deleteAll: 'Delete all',
+    payload: 'Payload',
     output: 'Note',
     created: 'Creation date',
     updated: 'Last update date',
@@ -133,6 +139,12 @@ export default {
     range: 'Range',
     duration: 'Duration',
     engines: 'Engines',
+    previous: 'Previous',
+    next: 'Next',
+    eventPatterns: 'Event patterns',
+    alarmPatterns: 'Alarm patterns',
+    entityPatterns: 'Entity patterns',
+    totalEntityPatterns: 'Total entity patterns',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -219,6 +231,19 @@ export default {
       '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
       '    <dd>Entities whose name isn\'t "name_1"</dd>\n' +
       '</dl>',
+    dynamicInfoAdvancedSearch: '<span>Help on the advanced research :</span>\n' +
+      '<p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]\n' +
+      '<p>The "-" before the research is required</p>\n' +
+      '<p>Operators :\n' +
+      '    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>\n' +
+      '<p>Value\'s type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>\n' +
+      '<dl><dt>Examples :</dt><dt>- Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose names are "name_1"</dd><dt>- Name="name_1" AND Type="watcher"</dt>\n' +
+      '    <dd>Entities whose names is "name_1" and the types is "watcher"</dd><dt>- infos.custom.value="Custom value" OR Type="resource"</dt>\n' +
+      '    <dd>Entities whose infos.custom.value is "Custom value" or the type is "resource"</dd><dt>- infos.custom.value LIKE 1 OR infos.custom.value LIKE 2</dt>\n' +
+      '    <dd>Entities whose infos.custom.value contains 1 or 2</dd><dt>- NOT Name = "name_1"</dt>\n' +
+      '    <dd>Entities whose name isn\'t "name_1"</dd>\n' +
+      '</dl>',
     submit: 'Search',
     clear: 'Clear search input',
   },
@@ -257,6 +282,8 @@ export default {
         manualMetaAlarmGroup: 'Manual meta alarm management',
         manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
+        executeInstruction: 'Execute {instructionName}',
+        resumeInstruction: 'Resume {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -300,6 +327,16 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
         [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'Instruction has been started',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'Instruction has been paused',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'Instruction has been resumed',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'Instruction has been completed',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'Instruction has been aborted',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'Instruction has been failed',
+        [EVENT_ENTITY_TYPES.instructionJobStart]: 'Instruction job has been started',
+        [EVENT_ENTITY_TYPES.instructionJobComplete]: 'Instruction job has been completed',
+        [EVENT_ENTITY_TYPES.instructionJobAbort]: 'Instruction job has been aborted',
+        [EVENT_ENTITY_TYPES.instructionJobFail]: 'Instruction job has been failed',
       },
     },
     tabs: {
@@ -312,6 +349,7 @@ export default {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
+    instructionInfoPopup: 'There is an instruction for this type of incidents',
   },
   weather: {
     moreInfos: 'More info',
@@ -516,8 +554,15 @@ export default {
         counter: 'Counter',
       },
     },
+    counters: 'Counters',
+    remediationInstructionsFilters: 'Instructions filters',
   },
   modals: {
+    common: {
+      titleButtons: {
+        minimizeTooltip: 'You already have minimized modal window',
+      },
+    },
     contextInfos: {
       title: 'Entities infos',
     },
@@ -1259,6 +1304,82 @@ export default {
         output: 'Note',
       },
     },
+    createRemediationInstruction: {
+      create: {
+        title: 'Create instruction',
+        popups: {
+          success: '{instructionName} has been successfully created',
+        },
+      },
+      edit: {
+        title: 'Modify instruction',
+        popups: {
+          success: '{instructionName} has been successfully modified',
+        },
+      },
+    },
+    createRemediationConfiguration: {
+      create: {
+        title: 'Create configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      types: {
+        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
+        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
+      },
+      fields: {
+        host: 'Host',
+        token: 'Authorization token',
+      },
+    },
+    createRemediationJob: {
+      create: {
+        title: 'Create Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      fields: {
+        configuration: 'Configuration',
+        jobId: 'Job ID',
+      },
+      errors: {
+        invalidJSON: 'Invalid JSON',
+      },
+      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
+        '<i>For example:</i>' +
+        '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    },
+    clickOutsideConfirmation: {
+      title: 'Are you sure?',
+      text: 'Changes will not be saved. Are you sure?',
+      buttons: {
+        save: 'Save',
+        dontSave: 'Don\'t save',
+        backToForm: 'Back to form',
+      },
+    },
+    patterns: {
+      title: 'Assign patterns',
+    },
+    rateInstruction: {
+      title: 'Rate this instruction',
+      text: 'How useful was this instruction?',
+    },
   },
   tables: {
     noData: 'No data',
@@ -1510,15 +1631,15 @@ export default {
       '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
       outputTemplate: 'Output template',
-      eventPatterns: 'Event patterns',
-      alarmPatterns: 'Alarm patterns',
-      entityPatterns: 'Entity patterns',
       thresholdType: 'Threshold type',
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
       timeInterval: 'Time interval',
-      valuePath: 'Value path',
+      valuePath: 'Value path | Value paths',
       autoResolve: 'Auto resolve',
+    },
+    errors: {
+      noValuePaths: 'You have to add at least 1 value path',
     },
   },
   snmpRules: {
@@ -1836,6 +1957,99 @@ export default {
     [ENGINES_NAMES.heartbeat]: {
       title: 'Heartbeat',
       description: 'Adds dynamic infos to alarm',
+    },
+  },
+
+  remediation: {
+    tabs: {
+      instructions: 'Instructions',
+      configurations: 'Configurations',
+      jobs: 'Jobs',
+    },
+  },
+
+  remediationInstructions: {
+    usingInstruction: 'Cannot be deleted since it is in use',
+    addStep: 'Add step',
+    addOperation: 'Add operation',
+    addEndpoint: 'Add endpoint',
+    endpoint: 'Endpoint',
+    endpointAvatar: 'EP',
+    workflow: 'Workflow if this step fails:',
+    stop: 'Stop',
+    remainingStep: 'Continue with remaining steps',
+    timeToComplete: 'Time to complete',
+    hideAll: 'Hide all',
+    expandAll: 'Expand all',
+    tooltips: {
+      endpoint: 'Endpoint should be in question in Yes/No format',
+    },
+    table: {
+      rating: 'Rating',
+      lastModifiedOn: 'Last modified on',
+      averageTimeCompletion: 'Average time\nof completion',
+      monthExecutions: '№ of executions\nthis month',
+      lastExecutedBy: 'Last executed by',
+      lastExecutedOn: 'Last executed on',
+    },
+    errors: {
+      runningInstruction: 'New changes cannot be applied to the instruction in progress. Would you like to cancel started instruction and apply new changes?',
+      operationRequired: 'Please add at least one operation',
+      stepRequired: 'Please add at least one step',
+    },
+  },
+
+  remediationJobs: {
+    addJobs: 'Add {count} job | Add {count} jobs',
+    usingJob: 'Cannot be deleted since it is in use',
+    table: {
+      configuration: 'Configuration',
+      jobId: 'Job ID',
+    },
+  },
+
+  remediationConfigurations: {
+    usingConfiguration: 'Cannot be deleted since it is in use',
+    table: {
+      host: 'Host',
+    },
+  },
+
+  remediationInstructionExecute: {
+    timeToComplete: '{duration} to complete',
+    completedAt: 'Completed at {time}',
+    failedAt: 'Failed at {time}',
+    startedAt: 'Started at {time}',
+    closeConfirmationText: 'Would you like to resume this instruction later?',
+    popups: {
+      success: '{instructionName} has been successfully completed',
+      failed: '{instructionName} has been failed. Please escalate this problem further',
+      connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
+    },
+    jobs: {
+      title: 'Jobs assigned:',
+      startedAt: 'Started at',
+      launchedAt: 'Launched at',
+      completedAt: 'Completed at',
+      waitAlert: 'External job executor is not responding, please contact your admin',
+      skip: 'Skip job',
+      await: 'Await',
+    },
+  },
+
+  remediationInstructionsFilters: {
+    button: 'Create instructions filter',
+    fields: {
+      with: 'With selected instructions',
+      without: 'Without selected instructions',
+      selectAll: 'Select all',
+      selectedInstructions: 'Selected instructions',
+    },
+    chip: {
+      with: 'WITH',
+      without: 'WITHOUT',
+      all: 'ALL',
     },
   },
 

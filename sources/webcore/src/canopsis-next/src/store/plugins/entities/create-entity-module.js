@@ -4,12 +4,19 @@ import request from '@/services/request';
 
 import schemas from '@/store/schemas';
 
+export const DEFAULT_ENTITY_MODULE_TYPES = {
+  FETCH_LIST: 'FETCH_LIST',
+  FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
+  FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+};
+
 export default ({
-  types,
+  types = DEFAULT_ENTITY_MODULE_TYPES,
   entityType,
   route,
   dataPreparer,
   withFetchingParams,
+  withMeta,
 }, module = {}) => {
   const schema = schemas[entityType];
 
@@ -52,7 +59,7 @@ export default ({
       try {
         commit(types.FETCH_LIST, { params });
 
-        const { normalizedData } = await dispatch('entities/fetch', {
+        const { normalizedData, data } = await dispatch('entities/fetch', {
           route,
           params,
           dataPreparer,
@@ -60,6 +67,7 @@ export default ({
         }, { root: true });
 
         commit(types.FETCH_LIST_COMPLETED, {
+          ...data,
           allIds: normalizedData.result,
         });
       } catch (err) {
@@ -114,6 +122,18 @@ export default ({
     moduleActions.fetchListWithPreviousParams = ({ dispatch, state }) => dispatch('fetchList', {
       params: state.fetchingParams,
     });
+  }
+
+  if (withMeta) {
+    moduleState.meta = {};
+
+    moduleMutations[types.FETCH_LIST_COMPLETED] = (state, { allIds, meta }) => {
+      state.allIds = allIds;
+      state.meta = meta;
+      state.pending = false;
+    };
+
+    moduleGetters.meta = state => state.meta;
   }
 
   return merge({

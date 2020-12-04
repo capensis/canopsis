@@ -7,17 +7,15 @@ Ce document regroupe l'ensemble des variables d'environnement pouvant être ajus
 
 ## Modification des variables d'environnement
 
-En installation Docker, les variables suivantes peuvent être redéfinies dans un fichier `compose.env` ou dans une section `environment:` de votre Docker Compose.
+En installation Docker, les variables suivantes peuvent être définies dans un fichier `compose.env` ou dans une section `environment:` de votre Docker Compose.
 
-En installation par paquets, ces variables peuvent être redéfinies dans les unités systemd ou dans le shell exécutant votre commande.
+En installation par paquets, ces variables peuvent être définies dans `/opt/canopsis/etc/go-engines-vars.conf` si elles doivent s'appliquer à l'ensemble des moteurs, ou dans la section `[Environment]` d'une unité systemd dédiée si un moteur en particulier est ciblé.
 
 ## Liste des variables d'environnement
 
 ### URI de connexion aux services externes
 
 Votre installation de Canopsis doit obligatoirement comporter les adresses et données de connexion (on parle d'URI) permettant de se connecter aux services externes Redis, MongoDB, RabbitMQ et InfluxDB.
-
-En installation Docker, ces variables sont généralement définies dans le fichier `compose.env`. En installation par paquets, elles sont définies dans le fichier `/opt/canopsis/etc/go-engines-vars.conf`.
 
 Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `init` ou `feeder`.
 
@@ -53,6 +51,16 @@ Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `
 | `CPS_MAX_RETRY` | `10` | Nombre maximum de tentatives de connexion aux services externes |
 | `CPS_MAX_DELAY` | `30` | Temps maximum d'attente, en secondes, lors de chaque tentative de connexion à un service externe |
 | `CPS_WAIT_FIRST_ATTEMPT` | `10` | Temps d'attente obligatoire, en secondes, avant la première tentative de connexion aux services externes |
+
+### Utilisation d'un proxy HTTP ou HTTPS
+
+Certains moteurs permettent l'utilisation d'un proxy HTTP ou HTTPS pour les accès à des ressources web externes. Si les deux types de proxy sont activés, le proxy HTTPS sera généralement privilégié.
+
+| Variable d'environnement | Valeur par défaut | Utilité |
+|:-------------------------|-------------------|---------|
+| `HTTP_PROXY` | (vide) | URL vers un proxy HTTP (ex : `http://utilisateur:motdepasse@192.168.0.253:3128/`) |
+| `HTTPS_PROXY` | (vide) | URL vers un proxy HTTPS (ex : `https://utilisateur:motdepasse@192.168.0.253:3128/`) |
+| `NO_PROXY` | (vide) | Liste des adresses pour lesquelles le proxy ne doit **pas** s'appliquer, séparées par des virgules (ex : `127.0.0.1,localhost`) |
 
 ### Durées d'exécution maximales
 

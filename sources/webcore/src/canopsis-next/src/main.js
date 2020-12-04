@@ -5,7 +5,7 @@ import Vue from 'vue';
 import moment from 'moment-timezone';
 import deepFreeze from 'deep-freeze';
 import Vuetify from 'vuetify';
-import VeeValidate from 'vee-validate';
+import VeeValidate, { Validator } from 'vee-validate';
 import enValidationMessages from 'vee-validate/dist/locale/en';
 import frValidationMessages from 'vee-validate/dist/locale/fr';
 import VueMq from 'vue-mq';
@@ -40,7 +40,12 @@ import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 import GridPlugin from '@/plugins/grid';
 
+import { isValidUrl } from '@/helpers/validators/is-valid-url';
+import { isValidJson } from '@/helpers/validators/is-valid-json';
+
 import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
+import AdvancedDataTable from '@/components/other/table/advanced-data-table.vue';
+import ThePageHeader from '@/components/layout/the-page-header/the-page-header.vue';
 import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
@@ -136,8 +141,9 @@ Vue.use(DaySpanVuetifyPlugin, {
 });
 
 Vue.component('alarm-chips', AlarmChips);
-
 Vue.component('alarms-list-table', AlarmsListTable);
+Vue.component('advanced-data-table', AdvancedDataTable);
+Vue.component('the-page-header', ThePageHeader);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,
@@ -145,6 +151,15 @@ Vue.use(VueMq, {
 
 VueClipboard.config.autoSetContainer = true;
 Vue.use(VueClipboard);
+
+Validator.extend('json', {
+  getMessage: () => i18n.$t('errors.JSONNotValid'),
+  validate: isValidJson,
+});
+
+Validator.extend('url', {
+  validate: isValidUrl,
+});
 
 Vue.use(VeeValidate, {
   i18n,
@@ -178,6 +193,11 @@ Vue.use(ModalsPlugin, {
     [MODALS.createPlaylist]: { maxWidth: 920, lazy: true },
     [MODALS.pbehaviorPlanning]: { fullscreen: true, lazy: true, persistent: true },
     [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
+    [MODALS.createRemediationInstruction]: { maxWidth: 960 },
+    [MODALS.executeRemediationInstruction]: { maxWidth: 960, persistent: true },
+    [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
+    [MODALS.rate]: { maxWidth: 400 },
+    [MODALS.createMetaAlarmRule]: { maxWidth: 920, lazy: true },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

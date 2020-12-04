@@ -1,6 +1,8 @@
-export const { BASE_URL } = process.env;
+export const { BASE_URL, VUE_APP_API_HOST: API_HOST } = process.env;
 
-export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
+export const API_BASE_URL = '/backend';
+
+export const ROUTER_MODE = 'history';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
 
@@ -53,7 +55,7 @@ export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';
 
 export const API_ROUTES = {
   auth: '/auth',
-  currentUser: '/account/me',
+  currentUser: '/api/v4/account/me',
   version: '/api/v2/version',
   alarmList: '/api/v4/alarms',
   context: '/context',
@@ -122,6 +124,14 @@ export const API_ROUTES = {
     pbehaviorById: '/api/v4/entities/pbehaviors',
     reasons: '/api/v4/pbehavior-reasons',
   },
+  remediation: {
+    instructions: '/api/v4/cat/instructions',
+    jobs: '/api/v4/cat/jobs',
+    configurations: '/api/v4/cat/job-configs',
+    executions: '/api/v4/cat/executions',
+    jobExecutions: '/api/v4/cat/job-executions',
+  },
+  file: '/api/v4/cat/file',
   engineRunInfo: '/api/v4/engine-runinfo',
 };
 
@@ -156,3 +166,10 @@ export const COLORS = {
   },
   statsDefault: '#dddddd',
 };
+
+export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
+
+export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
+
+export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
+

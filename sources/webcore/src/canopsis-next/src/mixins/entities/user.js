@@ -21,5 +21,23 @@ export default {
       createUser: 'create',
       removeUser: 'remove',
     }),
+
+    async createUserWithPopup({ data }) {
+      try {
+        await this.createUser({ data });
+        this.$popups.success({ text: this.$t('success.default') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('error.default') });
+      }
+    },
+
+    async removeUserWithPopup({ id }) {
+      try {
+        await this.removeUser({ id });
+        this.$popups.success({ text: this.$t('success.default') });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('error.default') });
+      }
+    },
   },
 };
