@@ -73,8 +73,6 @@ export default {
 
 <style lang="scss" scoped>
 .modal-title-buttons {
-  float: right;
-
   .modal-title-button__wrapper {
     .v-btn {
       margin: 0 8px;
