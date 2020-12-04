@@ -29,6 +29,7 @@ const calculateNodeDepth = (node, nodeByName, length = 1) => {
 
 /**
  * Mix depth in each of node
+ *
  * @param {Array} nodes
  * @returns {Array}
  */
