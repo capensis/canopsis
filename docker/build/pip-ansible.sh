@@ -41,6 +41,6 @@ requests==2.24.0
 six==1.15.0
 urllib3==1.25.11
 EOF
-pip install -U -r ./tmprequirements.txt
+pip install --no-use-pep517 -U -r ./tmprequirements.txt
 
 rm -rf /tmp/pipbuild ~/.cache tmprequirements.txt
