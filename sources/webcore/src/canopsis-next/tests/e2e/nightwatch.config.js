@@ -57,6 +57,17 @@ const seleniumConfig = {
   },
 };
 
+const chromeTestSettings = {
+  desiredCapabilities: {
+    browserName: 'chrome',
+    javascriptEnabled: true,
+    acceptSslCerts: true,
+    chromeOptions: {
+      args: ['--no-sandbox'],
+    },
+  },
+};
+
 /**
  * Put sel helper method into global object
  */
@@ -96,15 +107,14 @@ module.exports = deepmerge({
       filter: isConsistentlyMode && '**/*.consistently.js',
     },
 
-    chrome: {
+    chrome: chromeTestSettings,
+
+    chromeHeadless: deepmerge(chromeTestSettings, {
       desiredCapabilities: {
-        browserName: 'chrome',
-        javascriptEnabled: true,
-        acceptSslCerts: true,
         chromeOptions: {
-          args: ['--no-sandbox'],
+          args: ['--headless'],
         },
       },
-    },
+    }),
   },
 }, userOptions);
