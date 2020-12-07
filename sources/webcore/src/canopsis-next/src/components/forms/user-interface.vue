@@ -38,7 +38,8 @@
     v-layout(row)
       v-switch(
         v-model="form.allowChangeSeverityToInfo",
-        :label="$t('parameters.userInterfaceForm.fields.allowChangeSeverityToInfo')"
+        :label="$t('parameters.userInterfaceForm.fields.allowChangeSeverityToInfo')",
+        color="primary"
       )
     v-layout(
       data-test="footerLayout",

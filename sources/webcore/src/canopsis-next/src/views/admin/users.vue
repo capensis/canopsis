@@ -32,22 +32,17 @@
             td
               enabled-column(:value="props.item.enable")
             td
-              div
-                v-btn(
-                  v-if="hasUpdateAnyUserAccess",
-                  data-test="editButton",
-                  @click="showEditUserModal(props.item)",
-                  icon
-                )
-                  v-icon edit
-                v-btn(
-                  v-if="hasDeleteAnyUserAccess",
-                  data-test="deleteButton",
-                  @click="showRemoveUserModal(props.item._id)",
-                  icon
-                )
-                  v-icon(color="error") delete
-    .fab(v-if="hasCreateAnyUserAccess")
+              action-btn(
+                v-if="hasUpdateAnyUserAccess",
+                type="edit",
+                @click="showEditUserModal(props.item)"
+              )
+              action-btn(
+                v-if="hasDeleteAnyUserAccess",
+                type="delete",
+                @click="showRemoveUserModal(props.item._id)"
+              )
+    div.fab(v-if="hasCreateAnyUserAccess")
       v-layout(column)
         refresh-btn(@click="fetchList")
       v-tooltip(left)
@@ -69,12 +64,14 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 export default {
   components: {
     RefreshBtn,
     SearchField,
     EnabledColumn,
+    ActionBtn,
   },
   mixins: [viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
   data() {

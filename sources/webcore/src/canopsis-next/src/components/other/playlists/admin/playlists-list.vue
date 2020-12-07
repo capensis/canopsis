@@ -17,39 +17,38 @@
             enabled-column(:value="props.item.enabled")
           td {{ props.item.interval | interval }}
           td
-            v-btn.ma-0(
-              :to="{ name: 'playlist', params: { id: props.item._id, userAction: true }, query: { autoplay: true } }",
-              icon
-            )
-              v-icon play_arrow
-            v-btn(
-              v-clipboard:copy="getPlaylistRoute(props.item)",
-              v-clipboard:success="onSuccessCopied",
-              v-clipboard:error="onErrorCopied",
-              small,
-              icon,
-              @click.stop
-            )
-              v-icon content_copy
-            v-btn(
+            action-btn(:tooltip="$t('common.play')")
+              v-btn.mx-1(
+                slot="button",
+                :to="{ name: 'playlist', params: { id: props.item._id, userAction: true }, query: { autoplay: true } }",
+                icon
+              )
+                v-icon play_arrow
+            action-btn(:tooltip="$t('common.copyLink')")
+              v-btn.mx-1(
+                slot="button",
+                v-clipboard:copy="getPlaylistRoute(props.item)",
+                v-clipboard:success="onSuccessCopied",
+                v-clipboard:error="onErrorCopied",
+                icon,
+                @click.stop
+              )
+                v-icon content_copy
+            action-btn(
               v-if="hasCreateAnyPlaylistAccess",
-              icon,
-              small,
-              @click.stop="$emit('duplicate', props.item)"
+              type="duplicate",
+              @click="$emit('duplicate', props.item)"
             )
-              v-icon file_copy
-            v-btn.ma-0(
+            action-btn(
               v-if="hasUpdateAnyPlaylistAccess",
-              icon,
-              @click.stop="$emit('edit', props.item)"
+              type="edit",
+              @click="$emit('edit', props.item)"
             )
-              v-icon edit
-            v-btn.ma-0(
+            action-btn(
               v-if="hasDeleteAnyPlaylistAccess",
-              icon,
-              @click.stop="$emit('delete', props.item._id)"
+              type="delete",
+              @click="$emit('delete', props.item._id)"
             )
-              v-icon(color="error") delete
       template(slot="expand", slot-scope="{ item }")
         playlist-list-expand-item(:playlist="item")
 </template>
@@ -60,6 +59,7 @@ import { getApplicationHost } from '@/helpers/router';
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 import PlaylistListExpandItem from './playlists-list-expand-item.vue';
 
@@ -71,6 +71,7 @@ export default {
   },
   components: {
     EnabledColumn,
+    ActionBtn,
     PlaylistListExpandItem,
   },
   mixins: [rightsTechnicalPlaylistMixin],
@@ -118,7 +119,7 @@ export default {
     },
 
     onSuccessCopied() {
-      this.$popups.success({ text: this.$t('success.pathCopied') });
+      this.$popups.success({ text: this.$t('success.linkCopied') });
     },
 
     onErrorCopied() {

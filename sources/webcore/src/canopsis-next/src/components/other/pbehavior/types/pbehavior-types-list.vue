@@ -21,28 +21,18 @@
         v-icon(color="white", size="18") {{ props.item.icon_name }}
     template(slot="actions", slot-scope="props")
       v-layout
-        v-tooltip(bottom, :disabled="props.item.editable")
-          v-btn.mx-0(
-            slot="activator",
-            v-if="hasUpdateAnyPbehaviorTypeAccess",
-            :disabled="!props.item.editable",
-            icon,
-            small,
-            @click.stop="$emit('edit', props.item)"
-          )
-            v-icon edit
-          span {{ $t('pbehaviorTypes.defaultType') }}
-        v-tooltip(bottom, :disabled="props.item.deletable")
-          v-btn.mx-0(
-            slot="activator",
-            v-if="hasDeleteAnyPbehaviorTypeAccess",
-            :disabled="!props.item.deletable",
-            icon,
-            small,
-            @click.stop="$emit('remove', props.item._id)"
-          )
-            v-icon(color="error") delete
-          span {{ $t('pbehaviorTypes.usingType') }}
+        action-btn(
+          :disabled="!props.item.editable",
+          :tooltip="props.item.editable ? $t('common.edit') : $t('pbehaviorTypes.defaultType')",
+          type="edit",
+          @click="$emit('edit', props.item)"
+        )
+        action-btn(
+          :disabled="!props.item.deletable",
+          :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehaviorTypes.defaultType')",
+          type="delete",
+          @click="$emit('remove', props.item._id)"
+        )
     template(slot="expand", slot-scope="props")
       pbehavior-types-list-expand-panel(:pbehaviorType="props.item")
 </template>
@@ -50,10 +40,13 @@
 <script>
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
+
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
 
 export default {
   components: {
+    ActionBtn,
     PbehaviorTypesListExpandPanel,
   },
   mixins: [rightsTechnicalPbehaviorTypesMixin],

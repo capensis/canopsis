@@ -18,25 +18,22 @@
             tr(@click="props.expanded = !props.expanded")
               td {{ props.item.title }}
               td
-                v-layout
-                  v-btn(
-                    icon,
-                    small,
-                    @click.stop="selectTemplate(props.item)"
-                  )
-                    v-icon done
-                  v-btn(
-                    icon,
-                    small,
-                    @click.stop="showEditTemplateModal(props.item)"
-                  )
-                    v-icon edit
-                  v-btn(
-                    icon,
-                    small,
-                    @click.stop="showDeleteTemplateModal(props.item._id)"
-                  )
-                    v-icon.error--text delete
+                action-btn(
+                  :tooltip="$t('modals.createDynamicInfo.create.title')",
+                  icon="assignment",
+                  @click="selectTemplate(props.item)"
+                )
+                action-btn(
+                  :tooltip="$t('common.edit')",
+                  icon="edit",
+                  @click="showEditTemplateModal(props.item)"
+                )
+                action-btn(
+                  :tooltip="$t('common.delete')",
+                  icon="delete",
+                  color="error",
+                  @click="showDeleteTemplateModal(props.item._id)"
+                )
           template(slot="expand", slot-scope="props")
             v-container.secondary.lighten-2
               v-card
@@ -56,13 +53,15 @@ import { templateToDynamicInfoInfos } from '@/helpers/forms/dynamic-info-templat
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
+
 import ModalWrapper from '../modal-wrapper.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('dynamicInfoTemplate');
 
 export default {
   name: MODALS.dynamicInfoTemplatesList,
-  components: { ModalWrapper },
+  components: { ActionBtn, ModalWrapper },
   mixins: [modalInnerMixin],
   computed: {
     ...mapGetters(['pending', 'templates']),
@@ -78,6 +77,12 @@ export default {
           text: this.$t('common.actionsLabel'),
           sortable: false,
         },
+      ];
+    },
+
+    availableActions() {
+      return [
+
       ];
     },
   },

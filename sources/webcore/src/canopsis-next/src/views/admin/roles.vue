@@ -29,21 +29,17 @@
               v-checkbox(v-model="props.selected", data-test="optionCheckbox", primary, hide-details)
             td {{ props.item._id }}
             td
-              v-btn.ma-0(
+              action-btn(
                 v-if="hasUpdateAnyRoleAccess",
-                data-test="editButton",
-                icon,
+                type="edit",
                 @click="showEditRoleModal(props.item._id)"
               )
-                v-icon edit
-              v-btn.ma-0(
+              action-btn(
                 v-if="hasDeleteAnyRoleAccess",
-                data-test="deleteButton",
-                icon,
+                type="delete",
                 @click="showRemoveRoleModal(props.item._id)"
               )
-                v-icon(color="error") delete
-    .fab(v-if="hasCreateAnyRoleAccess")
+    div.fab(v-if="hasCreateAnyRoleAccess")
       v-layout(column)
         refresh-btn(@click="fetchList")
         v-tooltip(left)
@@ -69,11 +65,13 @@ import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
 import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 export default {
   components: {
     RefreshBtn,
     SearchField,
+    ActionBtn,
   },
   mixins: [
     viewQuery,
