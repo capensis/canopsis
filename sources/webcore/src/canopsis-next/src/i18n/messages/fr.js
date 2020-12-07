@@ -143,6 +143,7 @@ export default {
     alarmPatterns: 'Patterns des alarmes',
     entityPatterns: 'Pattern des entités',
     totalEntityPatterns: 'Total des modèles d\'entité',
+    addFilter: 'Ajouter un filtre',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -830,6 +831,7 @@ export default {
       fields: {
         title: 'Nom',
       },
+      emptyFilters: 'Aucun filtre ajouté pour le moment',
     },
     colorPicker: {
       title: 'Sélecteur de couleur',

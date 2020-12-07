@@ -1,26 +1,29 @@
 <template lang="pug">
-  modal-wrapper(data-test="filtersListModal", close)
-    template(slot="title")
-      span {{ $t('common.filters') }}
-    template(slot="text")
-      filters-list-component(
-        :filters="filters",
-        :entitiesType="config.entitiesType",
-        :hasAccessToAddFilter="config.hasAccessToAddFilter",
-        :hasAccessToEditFilter="config.hasAccessToEditFilter",
-        @create:filter="createFilter",
-        @update:filter="updateFilter",
-        @delete:filter="deleteFilter",
-        @update:filters="updateFilters"
-      )
+  v-form(@submit.prevent="submit", close)
+    modal-wrapper(data-test="filtersListModal")
+      template(slot="title")
+        span {{ $t('common.filters') }}
+      template(slot="text")
+        filters-form(
+          v-model="form.filters",
+          :entities-type="config.entitiesType",
+          :has-access-to-add-filter="config.hasAccessToAddFilter",
+          :has-access-to-edit-filter="config.hasAccessToEditFilter"
+        )
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
 
-import FiltersListComponent from '@/components/other/filter/list/filters-list.vue';
+import { filtersToForm, formToFilters } from '@/helpers/forms/filters';
+
+import FiltersForm from '@/components/other/filter/form/filters-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -29,43 +32,24 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.filtersList,
-  components: { FiltersListComponent, ModalWrapper },
-  mixins: [modalInnerMixin],
+  components: { FiltersForm, ModalWrapper },
+  mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { filters = [] } = this.modal.config;
 
     return {
-      filters: [...filters],
+      form: {
+        filters: filtersToForm(filters),
+      },
     };
   },
-  computed: {
-    actions() {
-      return this.config.actions || {};
-    },
-  },
   methods: {
-    createFilter(newFilter) {
-      if (this.actions.create) {
-        this.filters = [...this.actions.create(newFilter)];
+    async submit() {
+      if (this.config.action) {
+        await this.config.action(formToFilters(this.form.filters));
       }
-    },
 
-    updateFilter(newFilter, index) {
-      if (this.actions.update) {
-        this.filters = [...this.actions.update(newFilter, index)];
-      }
-    },
-
-    deleteFilter(index) {
-      if (this.actions.delete) {
-        this.filters = [...this.actions.delete(index)];
-      }
-    },
-
-    updateFilters(filters) {
-      if (this.actions.updateList) {
-        this.filters = [...this.actions.updateList(filters)];
-      }
+      this.$modals.hide();
     },
   },
 };

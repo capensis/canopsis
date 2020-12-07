@@ -143,6 +143,7 @@ export default {
     alarmPatterns: 'Alarm patterns',
     entityPatterns: 'Entity patterns',
     totalEntityPatterns: 'Total entity patterns',
+    addFilter: 'Add filter',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -830,6 +831,7 @@ export default {
       fields: {
         title: 'Title',
       },
+      emptyFilters: 'No filters added yet',
     },
     colorPicker: {
       title: 'Color picker',
