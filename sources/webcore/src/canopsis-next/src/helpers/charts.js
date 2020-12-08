@@ -2,7 +2,7 @@ import { forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY
 import { keyBy, cloneDeep } from 'lodash';
 
 const DEFAULT_FORCE_BODY_STRENGTH = -2300;
-const DEFAULT_FORCE_X_STRENGTH = 0.9;
+const DEFAULT_FORCE_X_STRENGTH = 0.6;
 const DEFAULT_FORCE_Y_STRENGTH = 3;
 
 /**

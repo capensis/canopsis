@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container
     the-page-header {{ $t('common.engines') }}
-    engines-list(:loading="pending", :engines="engines")
+    engines-list(:loading="pending")
     fab-buttons(@refresh="fetchList")
 </template>
 
