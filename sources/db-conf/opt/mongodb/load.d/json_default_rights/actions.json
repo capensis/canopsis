@@ -1180,5 +1180,45 @@
         "crecord_name": "api_event",
         "crecord_type": "action",
         "desc": "Event"
+    },
+    {
+        "_id": "api_engine",
+        "crecord_name": "api_engine",
+        "crecord_type": "action",
+        "desc": "Engine Info"
+    },
+    {
+        "_id": "api_execution",
+        "crecord_name": "api_execution",
+        "crecord_type": "action",
+        "desc": "Runs instructions"
+    },
+    {
+        "_id": "api_job_config",
+        "crecord_name": "api_job_config",
+        "crecord_type": "action",
+        "desc": "Job configs",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_job",
+        "crecord_name": "api_job",
+        "crecord_type": "action",
+        "desc": "Jobs",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_instruction",
+        "crecord_name": "api_instruction",
+        "crecord_type": "action",
+        "desc": "Instructions",
+        "type": "CRUD"
+    },
+    {
+        "_id": "api_file",
+        "crecord_name": "api_file",
+        "crecord_type": "action",
+        "desc": "File",
+        "type": "CRUD"
     }
 ]
