@@ -17,7 +17,7 @@
     template(slot="enable", slot-scope="props")
       enabled-column(:value="props.item.enable")
     template(slot="actions", slot-scope="props")
-      div
+      v-layout
         v-btn.mx-0(
           v-if="hasUpdateAnyUserAccess",
           icon,
