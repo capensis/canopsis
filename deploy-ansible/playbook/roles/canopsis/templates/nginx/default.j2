@@ -25,7 +25,7 @@ server {
 	listen 80;
 
 	root /opt/canopsis/var/www/src/canopsis-next/dist/;
-	set $canopsis_api_url {{ CPS_API_URL }};
+	set $canopsis_api_url {{ CPS_API_URL }}; # see /etc/nginx/resolvers.inc if you modify this
 
 	# Work around issue canopsis#1858
 	client_max_body_size 7m;
