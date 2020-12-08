@@ -4,27 +4,25 @@
       v-list-tile(:disabled="disabled", @click.stop="method")
         v-list-tile-title
           v-icon.pr-3(
-            :class="iconClass",
+            :color="iconColor",
             :disabled="disabled",
             left,
             small
           ) {{ icon }}
           span.body-1 {{ title }}
     template(v-else)
-      v-tooltip(bottom)
-        v-btn.mx-1(
-          slot="activator",
-          :disabled="disabled",
-          flat,
-          icon,
-          @click.stop="method"
-        )
-          v-icon(:class="iconClass") {{ icon }}
-        span {{ title }}
+      action-btn(
+        :tooltip="title",
+        :disabled="disabled",
+        :icon="icon",
+        :color="iconColor",
+        @click="method"
+      )
 </template>
 
 
 <script>
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 /**
  * Component showing an action icon
@@ -34,10 +32,11 @@
  * @prop {string} title - Action title
  * @prop {string} icon - Action icon
  * @prop {Function} method - Action to execute when user clicks on the action's icon
- * @prop {string} [iconClass=''] - Action icon className
+ * @prop {string} [iconColor=''] - Action icon color
  * @prop {boolean} [isDropDown=false] - Boolean to decide whether to show a dropdown with actions, or actions separately
  */
 export default {
+  components: { ActionBtn },
   props: {
     title: {
       type: String,
@@ -51,7 +50,7 @@ export default {
       type: Function,
       required: true,
     },
-    iconClass: {
+    iconColor: {
       type: String,
       default: '',
     },

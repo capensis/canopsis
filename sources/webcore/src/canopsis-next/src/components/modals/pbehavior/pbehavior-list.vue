@@ -14,14 +14,17 @@
           td {{ props.item.type | get('name', null, '') }}
           td {{ props.item.reason | get('name', null, '') }}
           td
-            v-btn.mx-0(
-              v-for="action in availableActions",
-              :key="action.name",
-              :data-test="`pbehaviorRow-${props.item._id}-action-${action.name}`",
-              @click="() => action.action(props.item)",
-              icon
-            )
-              v-icon {{ action.icon }}
+            v-layout(row)
+              action-btn(
+                v-if="hasAccessToEditPbehavior",
+                type="edit",
+                @click="showEditPbehaviorModal(props.item)"
+              )
+              action-btn(
+                v-if="hasAccessToDeletePbehavior",
+                type="delete",
+                @click="showRemovePbehaviorModal(props.item._id)"
+              )
       v-layout(v-if="showAddButton", justify-end)
         v-btn(
           icon,
@@ -42,6 +45,7 @@ import { MODALS, CRUD_ACTIONS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -50,7 +54,11 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
-  components: { EnabledColumn, ModalWrapper },
+  components: {
+    ActionBtn,
+    EnabledColumn,
+    ModalWrapper,
+  },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin],
   inject: ['$system'],
   computed: {
@@ -67,27 +75,13 @@ export default {
       ];
     },
     availableActions() {
-      const availableActions = this.modal.config.availableActions || [];
-
-      return availableActions.reduce((acc, action) => {
-        if (action === CRUD_ACTIONS.delete) {
-          acc.push({
-            name: CRUD_ACTIONS.delete,
-            icon: 'delete',
-            action: pbehavior => this.showRemovePbehaviorModal(pbehavior._id),
-          });
-        }
-
-        if (action === CRUD_ACTIONS.update) {
-          acc.push({
-            name: CRUD_ACTIONS.update,
-            icon: 'edit',
-            action: pbehavior => this.showEditPbehaviorModal(pbehavior),
-          });
-        }
-
-        return acc;
-      }, []);
+      return this.modal.config.availableActions || [];
+    },
+    hasAccessToEditPbehavior() {
+      return this.availableActions.includes(CRUD_ACTIONS.update);
+    },
+    hasAccessToDeletePbehavior() {
+      return this.availableActions.includes(CRUD_ACTIONS.delete);
     },
     filteredPbehaviors() {
       if (this.modal.config.onlyActive) {

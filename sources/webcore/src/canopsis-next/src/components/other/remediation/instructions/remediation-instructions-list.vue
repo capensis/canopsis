@@ -30,32 +30,25 @@
       template(slot="last_executed_on", slot-scope="props")
         | {{ props.item.last_executed_on | date('long', true, null) }}
       template(slot="actions", slot-scope="props")
-        v-layout
-          v-btn.mx-0(
+        v-layout(row)
+          action-btn(
             v-if="hasUpdateAnyRemediationInstructionAccess",
-            icon,
-            small,
-            @click.stop="$emit('edit', props.item)"
+            type="edit",
+            @click="$emit('edit', props.item)"
           )
-            v-icon edit
-          v-btn.mx-0(
+          action-btn(
             v-if="hasUpdateAnyRemediationInstructionAccess",
-            icon,
-            small,
-            @click.stop="$emit('assign-patterns', props.item)"
+            :tooltip="$t('modals.patterns.title')",
+            icon="assignment",
+            @click="$emit('assign-patterns', props.item)"
           )
-            v-icon assignment
-          v-tooltip(bottom, :disabled="!props.disabled")
-            v-btn.mx-0(
-              slot="activator",
-              v-if="hasDeleteAnyRemediationInstructionAccess",
-              :disabled="props.disabled",
-              icon,
-              small,
-              @click.stop="$emit('remove', props.item)"
-            )
-              v-icon(color="error") delete
-            span {{ $t('remediationInstructions.usingInstruction') }}
+          action-btn(
+            v-if="hasDeleteAnyRemediationInstructionAccess",
+            :tooltip="props.disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
+            :disabled="props.disabled",
+            type="delete",
+            @click="$emit('remove', props.item)"
+          )
       template(slot="expand", slot-scope="props")
         remediation-instructions-list-expand-panel(:remediationInstruction="props.item")
 </template>
@@ -64,14 +57,16 @@
 import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';
 
 export default {
   components: {
-    RatingField,
     EnabledColumn,
+    ActionBtn,
+    RatingField,
     RemediationInstructionsListExpandPanel,
   },
   mixins: [rightsTechnicalRemediationInstructionMixin],

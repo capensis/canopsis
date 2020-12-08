@@ -85,6 +85,8 @@ export default {
     show: 'Show',
     edit: 'Edit',
     duplicate: 'Duplicate',
+    play: 'Play',
+    copyLink: 'Copy link',
     parse: 'Parse',
     home: 'Home',
     step: 'Step',
@@ -1100,7 +1102,12 @@ export default {
         success: 'Action successfully created!',
       },
       edit: {
+        title: 'Edit action',
         success: 'Action successfully edited!',
+      },
+      duplicate: {
+        title: 'Duplicate action',
+        success: 'Action successfully duplicated!',
       },
       remove: {
         success: 'Action successfully removed!',
@@ -1540,6 +1547,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
+    linkCopied: 'Link copied to clipboard',
     authKeyCopied: 'Auth key copied to clipboard',
     widgetIdCopied: 'Widget id copied to clipboard',
   },
