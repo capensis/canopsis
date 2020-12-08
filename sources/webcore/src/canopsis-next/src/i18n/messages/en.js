@@ -1205,6 +1205,7 @@ export default {
       errors: {
         noNames: 'You have to add at least 1 name',
       },
+      emptyNames: 'No names added yet',
     },
     importExportViews: {
       title: 'Import/Export views',
@@ -1295,6 +1296,7 @@ export default {
         name: 'Name',
         description: 'Description',
       },
+      emptyExdates: 'No exdates added yet',
     },
     createManualMetaAlarm: {
       title: 'Manual meta alarm management',
@@ -1777,6 +1779,7 @@ export default {
           headerValue: 'Header value',
           payload: 'Payload',
         },
+        emptyHeaders: 'No headers added yet',
       },
       declareTicket: {
         title: 'Declare ticket',
@@ -1785,6 +1788,7 @@ export default {
           text: 'Key',
           value: 'Value',
         },
+        emptyDeclareTicket: 'Empty declare ticket',
       },
     },
   },
@@ -1893,6 +1897,7 @@ export default {
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
     usingException: 'Cannot be deleted since it is in use',
+    emptyExceptions: 'No exceptions added yet',
   },
 
   pbehaviorTypes: {
@@ -1931,8 +1936,8 @@ export default {
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',
     timeToComplete: 'Time to complete',
-    hideAll: 'Hide all',
-    expandAll: 'Expand all',
+    emptySteps: 'No steps added yet',
+    emptyOperations: 'No operations added yet',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
     },

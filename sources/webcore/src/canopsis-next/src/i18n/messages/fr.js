@@ -1205,6 +1205,7 @@ export default {
       errors: {
         noNames: 'Vous devez ajouter au moins 1 attribut',
       },
+      emptyNames: 'Aucun nom ajouté pour le moment',
     },
     importExportViews: {
       title: 'Vues d\'importation / exportation',
@@ -1295,6 +1296,7 @@ export default {
         name: 'Nom',
         description: 'Description',
       },
+      emptyExdates: 'Aucun exdates ajouté pour le moment',
     },
     createManualMetaAlarm: {
       title: 'Gestion manuelle des méta-alarmes',
@@ -1777,6 +1779,7 @@ export default {
           headerValue: 'Valeur',
           payload: 'Payload',
         },
+        emptyHeaders: 'Aucun en-tête ajouté pour le moment',
       },
       declareTicket: {
         emptyResponse: 'Réponse vide',
@@ -1785,6 +1788,7 @@ export default {
           text: 'Clé',
           value: 'Valeur',
         },
+        emptyDeclareTicket: 'Billet de déclaration vide',
       },
     },
   },
@@ -1893,6 +1897,7 @@ export default {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
+    emptyExceptions: 'Aucune exception ajoutée pour le moment',
   },
 
   pbehaviorTypes: {
@@ -1931,8 +1936,8 @@ export default {
     stop: 'Arrêter',
     remainingStep: 'Continuer avec les étapes restantes',
     timeToComplete: 'Temps d\'exécution (estimation)',
-    hideAll: 'Cacher tout',
-    expandAll: 'Développer tout',
+    emptySteps: 'Aucune étape ajoutée pour le moment',
+    emptyOperations: 'Aucune opération ajoutée pour le moment',
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',
     },

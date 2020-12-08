@@ -45,7 +45,7 @@
             v-icon close
     v-flex(v-if="!disabled", xs12)
       v-layout
-        v-btn.ml-1(color="primary", @click="addNewItem") {{ addButtonLabel || $t('common.add') }}
+        v-btn.ml-0(color="primary", @click="addNewItem") {{ addButtonLabel || $t('common.add') }}
 </template>
 
 <script>
