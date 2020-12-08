@@ -1104,7 +1104,7 @@ export default {
         success: 'Action successfully edited!',
       },
       duplicate: {
-        title: 'Duplicate',
+        title: 'Duplicate action',
         success: 'Action successfully duplicated!',
       },
       remove: {
