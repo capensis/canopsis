@@ -32,16 +32,17 @@
             td
               enabled-column(:value="props.item.enable")
             td
-              action-btn(
-                v-if="hasUpdateAnyUserAccess",
-                type="edit",
-                @click="showEditUserModal(props.item)"
-              )
-              action-btn(
-                v-if="hasDeleteAnyUserAccess",
-                type="delete",
-                @click="showRemoveUserModal(props.item._id)"
-              )
+              v-layout(row)
+                action-btn(
+                  v-if="hasUpdateAnyUserAccess",
+                  type="edit",
+                  @click="showEditUserModal(props.item)"
+                )
+                action-btn(
+                  v-if="hasDeleteAnyUserAccess",
+                  type="delete",
+                  @click="showRemoveUserModal(props.item._id)"
+                )
     div.fab(v-if="hasCreateAnyUserAccess")
       v-layout(column)
         refresh-btn(@click="fetchList")

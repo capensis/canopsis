@@ -30,24 +30,25 @@
       template(slot="last_executed_on", slot-scope="props")
         | {{ props.item.last_executed_on | date('long', true, null) }}
       template(slot="actions", slot-scope="props")
-        action-btn(
-          v-if="hasUpdateAnyRemediationInstructionAccess",
-          type="edit",
-          @click="$emit('edit', props.item)"
-        )
-        action-btn(
-          v-if="hasUpdateAnyRemediationInstructionAccess",
-          :tooltip="$t('modals.patterns.title')",
-          icon="assignment",
-          @click="$emit('assign-patterns', props.item)"
-        )
-        action-btn(
-          v-if="hasDeleteAnyRemediationInstructionAccess",
-          :tooltip="props.disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
-          :disabled="props.disabled",
-          type="delete",
-          @click="$emit('remove', props.item)"
-        )
+        v-layout(row)
+          action-btn(
+            v-if="hasUpdateAnyRemediationInstructionAccess",
+            type="edit",
+            @click="$emit('edit', props.item)"
+          )
+          action-btn(
+            v-if="hasUpdateAnyRemediationInstructionAccess",
+            :tooltip="$t('modals.patterns.title')",
+            icon="assignment",
+            @click="$emit('assign-patterns', props.item)"
+          )
+          action-btn(
+            v-if="hasDeleteAnyRemediationInstructionAccess",
+            :tooltip="props.disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
+            :disabled="props.disabled",
+            type="delete",
+            @click="$emit('remove', props.item)"
+          )
       template(slot="expand", slot-scope="props")
         remediation-instructions-list-expand-panel(:remediationInstruction="props.item")
 </template>

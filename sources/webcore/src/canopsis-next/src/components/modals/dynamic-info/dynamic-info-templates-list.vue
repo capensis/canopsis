@@ -18,22 +18,20 @@
             tr(@click="props.expanded = !props.expanded")
               td {{ props.item.title }}
               td
-                action-btn(
-                  :tooltip="$t('modals.createDynamicInfo.create.title')",
-                  icon="assignment",
-                  @click="selectTemplate(props.item)"
-                )
-                action-btn(
-                  :tooltip="$t('common.edit')",
-                  icon="edit",
-                  @click="showEditTemplateModal(props.item)"
-                )
-                action-btn(
-                  :tooltip="$t('common.delete')",
-                  icon="delete",
-                  color="error",
-                  @click="showDeleteTemplateModal(props.item._id)"
-                )
+                v-layout(row)
+                  action-btn(
+                    :tooltip="$t('modals.createDynamicInfo.create.title')",
+                    icon="assignment",
+                    @click="selectTemplate(props.item)"
+                  )
+                  action-btn(
+                    type="edit",
+                    @click="showEditTemplateModal(props.item)"
+                  )
+                  action-btn(
+                    type="delete",
+                    @click="showDeleteTemplateModal(props.item._id)"
+                  )
           template(slot="expand", slot-scope="props")
             v-container.secondary.lighten-2
               v-card
@@ -77,12 +75,6 @@ export default {
           text: this.$t('common.actionsLabel'),
           sortable: false,
         },
-      ];
-    },
-
-    availableActions() {
-      return [
-
       ];
     },
   },

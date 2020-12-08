@@ -1100,7 +1100,12 @@ export default {
         success: 'Action successfully created!',
       },
       edit: {
+        title: 'Edit action',
         success: 'Action successfully edited!',
+      },
+      duplicate: {
+        title: 'Duplicate',
+        success: 'Action successfully duplicated!',
       },
       remove: {
         success: 'Action successfully removed!',

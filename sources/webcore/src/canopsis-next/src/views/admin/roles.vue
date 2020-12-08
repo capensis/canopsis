@@ -29,16 +29,17 @@
               v-checkbox(v-model="props.selected", data-test="optionCheckbox", primary, hide-details)
             td {{ props.item._id }}
             td
-              action-btn(
-                v-if="hasUpdateAnyRoleAccess",
-                type="edit",
-                @click="showEditRoleModal(props.item._id)"
-              )
-              action-btn(
-                v-if="hasDeleteAnyRoleAccess",
-                type="delete",
-                @click="showRemoveRoleModal(props.item._id)"
-              )
+              v-layout(row)
+                action-btn(
+                  v-if="hasUpdateAnyRoleAccess",
+                  type="edit",
+                  @click="showEditRoleModal(props.item._id)"
+                )
+                action-btn(
+                  v-if="hasDeleteAnyRoleAccess",
+                  type="delete",
+                  @click="showRemoveRoleModal(props.item._id)"
+                )
     div.fab(v-if="hasCreateAnyRoleAccess")
       v-layout(column)
         refresh-btn(@click="fetchList")

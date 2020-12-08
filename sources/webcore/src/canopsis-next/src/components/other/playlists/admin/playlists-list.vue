@@ -17,38 +17,39 @@
             enabled-column(:value="props.item.enabled")
           td {{ props.item.interval | interval }}
           td
-            action-btn(:tooltip="$t('common.play')")
-              v-btn.mx-1(
-                slot="button",
-                :to="{ name: 'playlist', params: { id: props.item._id, userAction: true }, query: { autoplay: true } }",
-                icon
+            v-layout(row)
+              action-btn(:tooltip="$t('common.play')")
+                v-btn.mx-1(
+                  slot="button",
+                  :to="getPlaylistRouteById(props.item._id, true)",
+                  icon
+                )
+                  v-icon play_arrow
+              action-btn(:tooltip="$t('common.copyLink')")
+                v-btn.mx-1(
+                  slot="button",
+                  v-clipboard:copy="getPlaylistRouteFullUrlById(props.item._id)",
+                  v-clipboard:success="onSuccessCopied",
+                  v-clipboard:error="onErrorCopied",
+                  icon,
+                  @click.stop
+                )
+                  v-icon content_copy
+              action-btn(
+                v-if="hasCreateAnyPlaylistAccess",
+                type="duplicate",
+                @click="$emit('duplicate', props.item)"
               )
-                v-icon play_arrow
-            action-btn(:tooltip="$t('common.copyLink')")
-              v-btn.mx-1(
-                slot="button",
-                v-clipboard:copy="getPlaylistRoute(props.item)",
-                v-clipboard:success="onSuccessCopied",
-                v-clipboard:error="onErrorCopied",
-                icon,
-                @click.stop
+              action-btn(
+                v-if="hasUpdateAnyPlaylistAccess",
+                type="edit",
+                @click="$emit('edit', props.item)"
               )
-                v-icon content_copy
-            action-btn(
-              v-if="hasCreateAnyPlaylistAccess",
-              type="duplicate",
-              @click="$emit('duplicate', props.item)"
-            )
-            action-btn(
-              v-if="hasUpdateAnyPlaylistAccess",
-              type="edit",
-              @click="$emit('edit', props.item)"
-            )
-            action-btn(
-              v-if="hasDeleteAnyPlaylistAccess",
-              type="delete",
-              @click="$emit('delete', props.item._id)"
-            )
+              action-btn(
+                v-if="hasDeleteAnyPlaylistAccess",
+                type="delete",
+                @click="$emit('delete', props.item._id)"
+              )
       template(slot="expand", slot-scope="{ item }")
         playlist-list-expand-item(:playlist="item")
 </template>
@@ -112,8 +113,16 @@ export default {
     },
   },
   methods: {
-    getPlaylistRoute({ _id }) {
-      const { href } = this.$router.resolve({ name: 'playlist', params: { id: _id }, query: { autoplay: true } });
+    getPlaylistRouteById(id, userAction = false) {
+      return {
+        name: 'playlist',
+        params: { id, userAction },
+        query: { autoplay: true },
+      };
+    },
+
+    getPlaylistRouteFullUrlById(id) {
+      const { href } = this.$router.resolve(this.getPlaylistRouteById(id));
 
       return `${getApplicationHost()}${href}`;
     },

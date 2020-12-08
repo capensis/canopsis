@@ -1,8 +1,8 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(minimize, close)
+    modal-wrapper(close)
       template(slot="title")
-        span {{ $t('modals.createAction.create.title') }}
+        span {{ title }}
       template(slot="text")
         action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
       template(slot="actions")
@@ -36,7 +36,9 @@ export default {
 
     const form = actionToForm(item, this.$system.timezone);
 
-    // If we're duplicating an action, generate a new unique id
+    /**
+     * If we're duplicating an action, generate a new unique id
+     */
     if (isDuplicating) {
       form.generalParameters._id = uuid('action');
     }
@@ -44,6 +46,11 @@ export default {
     return {
       form,
     };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.createAction.create.title');
+    },
   },
   methods: {
     async submit() {

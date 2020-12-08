@@ -17,16 +17,17 @@
             td {{ props.item.start | date('long', true) }}
             td {{ props.item.end | date('long', true) }}
             td
-              action-btn(
-                v-if="hasUpdateAnyBroadcastMessageAccess",
-                type="edit",
-                @click="showEditBroadcastMessageModal(props.item)"
-              )
-              action-btn(
-                v-if="hasDeleteAnyBroadcastMessageAccess",
-                type="delete",
-                @click="showRemoveBroadcastMessageModal(props.item._id)"
-              )
+              v-layout(row)
+                action-btn(
+                  v-if="hasUpdateAnyBroadcastMessageAccess",
+                  type="edit",
+                  @click="showEditBroadcastMessageModal(props.item)"
+                )
+                action-btn(
+                  v-if="hasDeleteAnyBroadcastMessageAccess",
+                  type="delete",
+                  @click="showRemoveBroadcastMessageModal(props.item._id)"
+                )
     fab-buttons(
       v-if="hasCreateAnyBroadcastMessageAccess",
       @refresh="fetchList",

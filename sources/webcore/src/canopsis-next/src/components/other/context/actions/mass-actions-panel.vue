@@ -45,7 +45,7 @@ export default {
         {
           type: contextActionsTypes.deleteEntity,
           icon: 'delete',
-          iconClass: 'error--text',
+          iconColor: 'error',
           title: this.$t('context.actions.titles.deleteEntity'),
           method: this.showDeleteEntitiesModal,
         },
