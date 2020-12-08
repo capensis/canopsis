@@ -41,11 +41,7 @@ export default {
   },
   computed: {
     title() {
-      if (this.config.template) {
-        return this.$t('modals.createDynamicInfoTemplate.edit.title');
-      }
-
-      return this.$t('modals.createDynamicInfoTemplate.create.title');
+      return this.config.title || this.$t('modals.createDynamicInfoTemplate.create.title');
     },
   },
   methods: {

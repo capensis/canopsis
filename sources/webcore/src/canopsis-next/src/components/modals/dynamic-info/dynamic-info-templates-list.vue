@@ -107,6 +107,7 @@ export default {
         config: {
           template,
 
+          title: this.$t('modals.createDynamicInfoTemplate.edit.title'),
           action: newTemplate => this.updateTemplate({ id: template._id, data: newTemplate }),
         },
       });
