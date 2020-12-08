@@ -117,7 +117,7 @@ export default {
     },
 
     hasMetaAlarm() {
-      return this.items.some(item => item.metaalarm === '1');
+      return this.items.some(item => item.metaalarm);
     },
 
     modalConfig() {
@@ -131,18 +131,11 @@ export default {
   methods: {
     showAddPbehaviorModal() {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: this.items.map(item => item.d) },
-            },
+          filter: {
+            _id: { $in: this.items.map(item => item.entity._id) },
           },
-          action: data => this.createPbehavior({
-            data,
-            parents: [this.items],
-            parentsType: ENTITIES_TYPES.alarm,
-          }),
         },
       });
     },

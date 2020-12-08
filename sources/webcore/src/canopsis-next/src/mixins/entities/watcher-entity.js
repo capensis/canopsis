@@ -9,10 +9,10 @@ export default {
       getWatcherEntitiesPendingByWatcherId: 'getPendingByWatcherId',
     }),
     watcherEntities() {
-      return this.getWatcherEntitiesListByWatcherId(this.watcher.entity_id);
+      return this.getWatcherEntitiesListByWatcherId(this.watcher._id);
     },
     watcherEntitiesPending() {
-      return this.getWatcherEntitiesPendingByWatcherId(this.watcher.entity_id);
+      return this.getWatcherEntitiesPendingByWatcherId(this.watcher._id);
     },
   },
   methods: {

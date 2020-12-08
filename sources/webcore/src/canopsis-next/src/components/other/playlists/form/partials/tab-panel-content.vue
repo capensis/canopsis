@@ -1,8 +1,8 @@
-<template lang="pug" functional>
+<template lang="pug">
   v-layout(column)
     v-layout.secondary.lighten-2.tab-panel-item(align-center)
       slot(name="title")
-        span.white--text {{ props.tab.title }}
+        span.white--text {{ tab.title }}
     v-divider(dark)
 </template>
 

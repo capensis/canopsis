@@ -1,9 +1,9 @@
-<template lang="pug" functional>
+<template lang="pug">
   v-fade-transition
     v-layout.progress(
-      v-show="props.pending",
-      :class="props.backgroundColor",
-      :style="{ opacity: props.opacity }",
+      v-show="pending",
+      :class="backgroundColor",
+      :style="{ opacity }",
       data-test="progressOverlay"
     )
       v-progress-circular(indeterminate, color="primary")

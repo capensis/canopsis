@@ -41,7 +41,7 @@ function build_for_distribution() {
     echo "BUILDING CORE ${distribution}"
     docker build ${docker_args} -f docker/Dockerfile -t canopsis/canopsis-core:${full_tag} .
 
-    echo "Building provisionning image"
+    echo "Building provisioning image"
     docker build ${docker_args} -f docker/Dockerfile.prov -t canopsis/canopsis-prov:${full_tag} .
 
     echo "Building uiv3 image"

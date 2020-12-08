@@ -1,22 +1,21 @@
-import { TIME_UNITS } from '@/constants';
-import { getUnitValueFromSeconds } from '@/helpers/time';
+import { TIME_UNITS, AVAILABLE_SORTED_TIME_UNITS } from '@/constants';
 
-const AVAILABLE_UNITS = [
-  TIME_UNITS.year,
-  TIME_UNITS.month,
-  TIME_UNITS.day,
-  TIME_UNITS.hour,
-  TIME_UNITS.minute,
-  TIME_UNITS.second,
-];
+import { formToMaxByAvailableUnitsForm } from '@/helpers/duration';
 
-export default function (value = 0, availableUnits = AVAILABLE_UNITS) {
-  let unitValue;
+/**
+ * Filter for getting max available interval value from unit
+ *
+ * @param {number|string} [value = 0]
+ * @param {string} [unit = TIME_UNITS.second]
+ * @param {string[]} [availableUnits = AVAILABLE_SORTED_TIME_UNITS]
+ * @return {string}
+ */
+export default function (
+  value = 0,
+  unit = TIME_UNITS.second,
+  availableUnits = AVAILABLE_SORTED_TIME_UNITS,
+) {
+  const durationForm = formToMaxByAvailableUnitsForm({ value, unit }, availableUnits);
 
-  const maxUnit = availableUnits.find((unit) => {
-    unitValue = Math.floor(getUnitValueFromSeconds(value, unit));
-    return unitValue;
-  });
-
-  return `${unitValue}${maxUnit || TIME_UNITS.second}`;
+  return `${durationForm.value}${durationForm.unit}`;
 }

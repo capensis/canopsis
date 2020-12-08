@@ -1,6 +1,12 @@
 import { isEmpty, isFunction, isMatch } from 'lodash';
 
-import { USERS_RIGHTS_MASKS, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES, POPUP_TYPES } from '@/constants';
+import { BASE_URL } from '@/config';
+import {
+  USERS_RIGHTS_MASKS,
+  USER_RIGHTS_TO_PAGES_RULES,
+  POPUP_TYPES,
+} from '@/constants';
+
 import store from '@/store';
 import i18n from '@/i18n';
 
@@ -36,7 +42,7 @@ export async function checkAppInfoAccessForRoute(to = {}) {
   }
 
   const rightId = isFunction(requiresRight.id) ? requiresRight.id(to) : requiresRight.id;
-  const rightAppInfoRules = USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[rightId];
+  const rightAppInfoRules = USER_RIGHTS_TO_PAGES_RULES[rightId];
 
   if (!rightAppInfoRules) {
     return true;
@@ -56,7 +62,7 @@ export async function checkAppInfoAccessForRoute(to = {}) {
     return true;
   }
 
-  store.dispatch('popups/add', { text: i18n.t('common.notFound') });
+  store.dispatch('popups/error', { text: i18n.t('common.notFound') });
 
   throw new Error('Application don\'t have access to the page');
 }
@@ -110,3 +116,10 @@ export function getKeepalivePathByRoute({ path, query } = {}) {
 
   return [path];
 }
+
+/**
+ * Get application host address.
+ *
+ * @return {string}
+ */
+export const getApplicationHost = () => window.location.origin + BASE_URL;

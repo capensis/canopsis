@@ -1,8 +1,8 @@
-import { POPUP_TYPES, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES } from '@/constants';
+import { POPUP_TYPES, USER_RIGHTS_TO_PAGES_RULES } from '@/constants';
 
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
-import { getSecondsByUnit } from '@/helpers/time';
+import { toSeconds } from '@/helpers/duration';
 import { setTabTitle } from '@/helpers/set-tab-title';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
@@ -26,6 +26,8 @@ export default {
       allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
       isCASAuthEnabled: 'isCASAuthEnabled',
       casConfig: 'casConfig',
+      timezone: 'timezone',
+      jobExecutorFetchTimeoutSeconds: 'jobExecutorFetchTimeoutSeconds',
     }),
   },
   methods: {
@@ -36,7 +38,7 @@ export default {
     }),
 
     checkAppInfoAccessByRight(right) {
-      const rightAppInfoRules = USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right];
+      const rightAppInfoRules = USER_RIGHTS_TO_PAGES_RULES[right];
 
       if (!rightAppInfoRules) {
         return true;
@@ -47,12 +49,12 @@ export default {
         stack: this.stack,
       };
 
-      return isMatch(appInfo, USER_RIGHTS_TO_EXPLOITATION_PAGES_RULES[right]);
+      return isMatch(appInfo, USER_RIGHTS_TO_PAGES_RULES[right]);
     },
 
     setErrorPopupTime() {
       const { interval, unit } = this.popupTimeout.error;
-      const delay = getSecondsByUnit(interval, unit) * 1000;
+      const delay = toSeconds(interval, unit) * 1000;
 
       this.$popups.setDefaultCloseTime(POPUP_TYPES.error, delay);
       this.$popups.setDefaultCloseTime(POPUP_TYPES.warning, delay);
@@ -60,7 +62,7 @@ export default {
 
     setInfoPopupTime() {
       const { interval, unit } = this.popupTimeout.info;
-      const delay = getSecondsByUnit(interval, unit) * 1000;
+      const delay = toSeconds(interval, unit) * 1000;
 
       this.$popups.setDefaultCloseTime(POPUP_TYPES.info, delay);
       this.$popups.setDefaultCloseTime(POPUP_TYPES.success, delay);

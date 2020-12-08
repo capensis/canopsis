@@ -7,17 +7,7 @@
           :columns="columns",
           :tooltip="$t('search.alarmAdvancedSearch')"
         )
-      v-flex
-        pagination(
-          data-test="topPagination",
-          v-if="hasColumns",
-          :page="query.page",
-          :limit="query.limit",
-          :total="alarmsMeta.total",
-          type="top",
-          @input="updateQueryPage"
-        )
-      v-flex(v-if="hasAccessToCorrelationSwitcher")
+      v-flex(v-if="hasAccessToCorrelation")
         v-switch(
           :value="query.correlation",
           :label="$t('common.correlation')",
@@ -29,15 +19,23 @@
           data-test="tableFilterSelector",
           :label="$t('settings.selectAFilter')",
           :filters="viewFilters",
-          :lockedFilters="widgetViewFilters",
+          :locked-filters="widgetViewFilters",
           :value="mainFilter",
           :condition="mainFilterCondition",
-          :hasAccessToEditFilter="hasAccessToEditFilter",
-          :hasAccessToUserFilter="hasAccessToUserFilter",
-          :hasAccessToListFilter="hasAccessToListFilter",
+          :has-access-to-edit-filter="hasAccessToEditFilter",
+          :has-access-to-user-filter="hasAccessToUserFilter",
+          :has-access-to-list-filters="hasAccessToListFilters",
           @input="updateSelectedFilter",
           @update:condition="updateSelectedCondition",
           @update:filters="updateFilters"
+        )
+      v-flex
+        alarms-list-remediation-instructions-filters(
+          :filters.sync="remediationInstructionsFilters",
+          :locked-filters.sync="widgetRemediationInstructionsFilters",
+          :has-access-to-edit-filter="hasAccessToEditRemediationInstructionsFilter",
+          :has-access-to-user-filter="hasAccessToUserRemediationInstructionsFilter",
+          :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
         )
       v-flex
         v-chip.primary.white--text(
@@ -57,27 +55,37 @@
           )
             v-icon(:color="activeRange ? 'primary' : 'black'") schedule
           span {{ $t('liveReporting.button') }}
+    v-layout(row, wrap, align-center)
+      pagination(
+        data-test="topPagination",
+        v-if="hasColumns",
+        :page="query.page",
+        :limit="query.limit",
+        :total="alarmsMeta.total_count",
+        type="top",
+        @input="updateQueryPage"
+      )
     alarms-list-table(
       :widget="widget",
       :alarms="alarms",
-      :totalItems="alarmsMeta.total",
+      :total-items="alarmsMeta.total_count",
       :pagination.sync="vDataTablePagination",
       :loading="alarmsPending",
-      :isTourEnabled="isTourEnabled",
-      :hideGroups="!query.correlation",
-      :hasColumns="hasColumns",
+      :is-tour-enabled="isTourEnabled",
+      :hide-groups="!query.correlation",
+      :has-columns="hasColumns",
       :columns="columns",
       selectable,
       expandable,
       ref="alarmsTable"
     )
-      v-layout.white(v-show="alarmsMeta.total", align-center)
+      v-layout.white(v-show="alarmsMeta.total_count", align-center)
         v-flex(xs10)
           pagination(
             data-test="bottomPagination",
             :page="query.page",
             :limit="query.limit",
-            :total="alarmsMeta.total",
+            :total="alarmsMeta.total_count",
             @input="updateQueryPage"
           )
         v-spacer
@@ -89,7 +97,7 @@
 <script>
 import { omit, pick, isEmpty } from 'lodash';
 
-import { MODALS, USERS_RIGHTS, TOURS } from '@/constants';
+import { MODALS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 
@@ -103,11 +111,17 @@ import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
+import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
+import rightsWidgetsAlarmsListCorrelation from '@/mixins/rights/widgets/alarms-list/correlation';
+import rightsWidgetsAlarmsListFilters from '@/mixins/rights/widgets/alarms-list/filters';
+import rightsWidgetsAlarmsListRemediationInstructionsFilters
+  from '@/mixins/rights/widgets/alarms-list/remediation-instructions-filters';
 
-import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
 import AlarmsListTable from './partials/alarms-list-table.vue';
+import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
  * Alarm-list component
@@ -125,6 +139,7 @@ export default {
     AdvancedSearch,
     AlarmsListTable,
     AlarmsExpandPanelTour,
+    AlarmsListRemediationInstructionsFilters,
   },
   mixins: [
     authMixin,
@@ -134,7 +149,11 @@ export default {
     widgetPaginationMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
+    widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    rightsWidgetsAlarmsListCorrelation,
+    rightsWidgetsAlarmsListFilters,
+    rightsWidgetsAlarmsListRemediationInstructionsFilters,
   ],
   props: {
     widget: {
@@ -171,22 +190,6 @@ export default {
       }
 
       return null;
-    },
-
-    hasAccessToListFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.listFilters);
-    },
-
-    hasAccessToEditFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.editFilter);
-    },
-
-    hasAccessToUserFilter() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.userFilter);
-    },
-
-    hasAccessToCorrelationSwitcher() {
-      return this.checkAccess(USERS_RIGHTS.business.alarmsList.actions.correlation);
     },
 
     firstAlarmExpanded() {

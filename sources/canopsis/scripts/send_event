@@ -35,7 +35,7 @@ def usage():
     print(" Usage: send_event \n")
     print(" Options:")
     print("  -s, --server=[SERVER_ADDR]")
-    print("     webserver address (default : localhost:8082)")
+    print("     Canopsis API server address (default : localhost:8082)")
     print("  -a, --authkey=[AUTHKEY]")
     print("  -f, --file=[FILE_PATH]")
     print("     file contraining a json event to send")
@@ -157,7 +157,7 @@ def send_event(
     request = Request(
         'http://%s/event' % server, urlencode(request_params))
     r = opener.open(request)
-    print('Webserver replied :')
+    print('API replied :')
     print(r.read())
 
 

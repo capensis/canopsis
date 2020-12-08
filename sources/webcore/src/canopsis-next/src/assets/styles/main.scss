@@ -116,6 +116,19 @@ $mobileBreakpoint: 450px;
     top: 0;
     z-index: 1;
   }
+
+  &--background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+.pre {
+  white-space: pre;
 }
 
 .pre-wrap {
@@ -135,4 +148,22 @@ $mobileBreakpoint: 450px;
   padding: 3px 8px;
   color: white;
   border-radius: 5px;
+}
+
+.fill-min-height {
+  min-height: 100vh;
+}
+
+.v-menu__activator {
+  &--disabled {
+    cursor: default !important;
+
+    & * {
+      cursor: default !important;
+    }
+  }
+}
+
+.pre-line {
+  white-space: pre-line;
 }

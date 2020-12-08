@@ -33,6 +33,9 @@
           :label="$t('parameters.userInterfaceForm.fields.language')"
         )
     v-layout(row)
+      v-flex
+        timezone-field(v-model="form.timezone", disabled)
+    v-layout(row)
       v-switch(
         v-model="form.allowChangeSeverityToInfo",
         :label="$t('parameters.userInterfaceForm.fields.allowChangeSeverityToInfo')"
@@ -42,9 +45,9 @@
       row
     )
       v-flex
-        span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.footer') }}
-        text-editor(
+        text-editor-field(
           v-model="form.footer",
+          :label="$t('parameters.userInterfaceForm.fields.footer')",
           :config="textEditorConfig"
         )
     v-layout.mt-3(
@@ -52,9 +55,9 @@
       row
     )
       v-flex
-        span.theme--light.v-label.file-selector__label.mb-2 {{ $t('parameters.userInterfaceForm.fields.description') }}
-        text-editor(
+        text-editor-field(
           v-model="form.description",
+          :label="$t('parameters.userInterfaceForm.fields.description')",
           :config="textEditorConfig"
         )
     v-layout.mt-3(row)
@@ -95,14 +98,20 @@ import { getFileDataUrlContent } from '@/helpers/file-select';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
-import TextEditor from '@/components/other/text-editor/text-editor.vue';
 import PopupTimeoutField from '@/components/forms/fields/popup-timeout.vue';
+import TimezoneField from '@/components/forms/fields/timezone-field.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PopupTimeoutField, FileSelector, TextEditor },
+  components: {
+    TimezoneField,
+    PopupTimeoutField,
+    FileSelector,
+    TextEditorField,
+  },
   mixins: [entitiesInfoMixin],
   props: {
     disabled: {
@@ -119,6 +128,7 @@ export default {
         language: DEFAULT_LOCALE,
         footer: '',
         description: '',
+        timezone: '',
         popupTimeout: {},
         allowChangeSeverityToInfo: false,
       },
@@ -147,6 +157,7 @@ export default {
         description: this.description || '',
         popupTimeout: this.popupTimeout ? { ...this.popupTimeout } : {},
         allowChangeSeverityToInfo: this.allowChangeSeverityToInfo || false,
+        timezone: this.timezone,
       };
     },
 

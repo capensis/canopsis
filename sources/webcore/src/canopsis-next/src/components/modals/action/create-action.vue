@@ -28,12 +28,13 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { ActionForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
     const { item, isDuplicating } = this.modal.config;
 
-    const form = actionToForm(item);
+    const form = actionToForm(item, this.$system.timezone);
 
     // If we're duplicating an action, generate a new unique id
     if (isDuplicating) {
@@ -50,7 +51,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          const data = formToAction(this.form);
+          const data = formToAction(this.form, this.$system.timezone);
 
           await this.config.action(data);
         }

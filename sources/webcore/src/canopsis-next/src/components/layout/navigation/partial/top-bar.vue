@@ -37,7 +37,11 @@
                   span.black--text {{ link.text }}
                   v-icon.ml-2 {{ link.icon }}
       v-menu(bottom, offset-y, offset-x)
-        v-btn.white--text(slot="activator", data-test="userTopBarDropdownButton", flat) {{ currentUser._id }}
+        v-btn.white--text(
+          slot="activator",
+          data-test="userTopBarDropdownButton",
+          flat
+        ) {{ userName }}
         v-list.pb-0
           v-list-tile
             v-list-tile-content
@@ -140,8 +144,8 @@ export default {
       ];
 
       return links.filter(({ right }) =>
-        this.checkAppInfoAccessByRight(right) &&
-        this.checkReadAccess(right));
+        this.checkAppInfoAccessByRight(right)
+        && this.checkReadAccess(right));
     },
 
     administrationLinks() {
@@ -182,9 +186,27 @@ export default {
           icon: 'playlist_play',
           right: USERS_RIGHTS.technical.playlist,
         },
+        {
+          route: { name: 'planning-administration' },
+          text: this.$t('common.planningAdministration'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.planning,
+        },
+        {
+          route: { name: 'remediation-administration' },
+          text: this.$t('common.remediation'),
+          icon: 'assignment',
+          right: USERS_RIGHTS.technical.remediation,
+        },
       ];
 
-      return links.filter(({ right }) => this.checkReadAccess(right));
+      return links.filter(({ right }) =>
+        this.checkAppInfoAccessByRight(right)
+        && this.checkReadAccess(right));
+    },
+
+    userName() {
+      return this.currentUser.crecord_name || this.currentUser._id;
     },
   },
   methods: {
@@ -196,7 +218,7 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            await this.createUser({ data: prepareUserByData(data, this.currentUser) });
+            await this.createUserWithPopup({ data: prepareUserByData(data, this.currentUser) });
 
             await this.fetchCurrentUser();
           },

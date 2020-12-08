@@ -173,17 +173,6 @@ export default {
   },
   async created() {
     if (this.required && this.$validator) {
-      this.$validator.extend('json', {
-        getMessage: () => this.$t('filterEditor.errors.invalidJSON'),
-        validate: (value) => {
-          try {
-            return !!JSON.parse(value);
-          } catch (err) {
-            return false;
-          }
-        },
-      });
-
       this.$validator.attach({
         name: 'filter',
         rules: 'required:true',

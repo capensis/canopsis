@@ -293,6 +293,7 @@ def make_alarm_from_mongo(alarm_dict):
         alarm_filter=ald.get('alarm_filter'),
         done=done,
         extra=ald.get('extra'),
+        activation_date=ald.get('activation_date'),
         parents=parents,
         children=children
     )

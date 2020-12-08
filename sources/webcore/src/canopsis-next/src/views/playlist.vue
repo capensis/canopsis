@@ -3,7 +3,7 @@
     v-fade-transition(mode="out-in")
       progress-overlay(v-if="pending", :pending="true")
       div(v-else-if="playlist")
-        h2.text-xs-center.my-3.display-1.font-weight-medium {{ playlist.name }}
+        the-page-header {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
           v-fade-transition
             v-toolbar-items.mr-2(v-if="!pending")
@@ -31,7 +31,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { getSecondsByUnit } from '@/helpers/time';
+import { toSeconds } from '@/helpers/duration';
 
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
@@ -103,7 +103,7 @@ export default {
     initTime() {
       const { interval, unit } = this.playlist.interval;
 
-      this.time = getSecondsByUnit(interval, unit);
+      this.time = toSeconds(interval, unit);
     },
 
     play() {

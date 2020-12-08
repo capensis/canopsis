@@ -1,10 +1,9 @@
-import moment from 'moment';
-
 import {
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
   WEATHER_EVENT_DEFAULT_ENTITY,
   WEATHER_ACK_EVENT_OUTPUT,
+  MAX_PBEHAVIOR_DEFAULT_TSTOP,
 } from '@/constants';
 
 export default {
@@ -100,9 +99,15 @@ export default {
      *
      * @param {Object} entity
      * @param {string} comment
-     * @param {string} reason
+     * @param {Object} reason
+     * @param {Object} type
      */
-    addPauseActionToQueue({ entity, comment, reason }) {
+    addPauseActionToQueue({
+      entity,
+      comment,
+      reason,
+      type,
+    }) {
       const data = {
         author: this.currentUser._id,
         comments: [{
@@ -110,13 +115,13 @@ export default {
           message: comment,
         }],
         filter: {
-          _id: entity.entity_id,
+          _id: { $in: [entity._id] },
         },
         name: 'downtime',
         reason,
-        tstart: moment().unix(),
-        tstop: 2147483647, // 01/19/2038 @ 3:14am (UTC)
-        type_: 'pause',
+        type,
+        tstart: new Date(),
+        tstop: new Date(MAX_PBEHAVIOR_DEFAULT_TSTOP * 1000),
       };
 
       this.$emit('add:event', { type: EVENT_ENTITY_TYPES.pause, data, entity });
@@ -136,6 +141,7 @@ export default {
      *
      * @param {Object} entity
      * @param {string} output
+     * @param {boolean} [fromSystem = false]
      */
     addCancelActionToQueue({ entity, output, fromSystem = false }) {
       const data = {

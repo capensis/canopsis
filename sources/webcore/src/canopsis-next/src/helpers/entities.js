@@ -1,5 +1,5 @@
 import sha1 from 'sha1';
-import { get, omit, cloneDeep } from 'lodash';
+import { get, omit, cloneDeep, isObject } from 'lodash';
 
 import i18n from '@/i18n';
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
@@ -24,10 +24,18 @@ import {
   TIME_UNITS,
   WIDGET_GRID_SIZES_KEYS,
   WIDGET_GRID_COLUMNS_COUNT,
+  REMEDIATION_WORKFLOW_TYPES,
 } from '@/constants';
 
 import uuid from './uuid';
-import { pbehaviorToForm } from './forms/pbehavior';
+import uid from './uid';
+import { pbehaviorToForm } from './forms/planning-pbehavior';
+
+/**
+ * @typedef {Object} Interval
+ * @property {Number} interval
+ * @property {String} unit
+ */
 
 /**
  * Generate widget by type
@@ -151,6 +159,7 @@ export function generateWidgetByType(type) {
           bottom: 1,
           left: 1,
         },
+        isCountersEnabled: false,
         heightFactor: 6,
         modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.both,
         alarmsList: alarmsListDefaultParameters,
@@ -511,11 +520,7 @@ export function generateAction() {
   };
 
   // Default 'pbehavior' action parameters
-  const pbehaviorParameters = {
-    general: { ...pbehaviorToForm() },
-    comments: [],
-    exdate: [],
-  };
+  const pbehaviorParameters = pbehaviorToForm();
 
   // Default 'changestate' action parameters
   const changeStateParameters = {
@@ -589,10 +594,17 @@ export function getViewsWidgetsIdsMappings(oldView, newView) {
 }
 
 export function prepareUserByData(data, user = generateUser()) {
-  const result = { ...omit(user, ['rights']), ...omit(data, ['password']) };
+  const result = {
+    ...omit(user, ['rights']),
+    ...omit(data, ['password']),
+  };
 
   if (data.password && data.password !== '') {
     result.shadowpasswd = sha1(data.password);
+  }
+
+  if (!result._id && !data._id) {
+    result._id = data.crecord_name;
   }
 
   return result;
@@ -655,3 +667,76 @@ export function getDefaultPlaylist() {
     tabs_list: [],
   };
 }
+
+/**
+ * Add uniq key field in each entity.
+ *
+ * @param {Array} entities
+ * @return {Array}
+ */
+export const addKeyInEntity = (entities = []) => entities.map(entity => ({
+  ...entity,
+  key: uid(),
+}));
+
+/**
+ * Remove key field from each entity.
+ *
+ * @param {Array} entities
+ * @return {Array}
+ */
+export const removeKeyFromEntity = (entities = []) => entities.map(entity => omit(entity, ['key']));
+
+/**
+ * Get id from entity
+ *
+ * @param {Object} entity
+ * @param {String} entity._id
+ * @param {String} idField
+ * @return {String}
+ */
+export const getIdFromEntity = (entity, idField = '_id') =>
+  (isObject(entity) ? entity[idField] : entity);
+
+/**
+ * Generate an remediation instruction step operation entity
+ *
+ * @typedef {Object} RemediationInstructionStepOperation
+ * @property {string} name
+ * @property {string} description
+ * @property {Array} jobs
+ * @property {DurationForm} time_to_complete
+ * @property {string} [key]
+ * @return {RemediationInstructionStepOperation}
+ */
+export const generateRemediationInstructionStepOperation = () => ({
+  name: '',
+  description: '',
+  jobs: [],
+  time_to_complete: {
+    value: 0,
+    unit: TIME_UNITS.minute,
+  },
+  key: uid(),
+});
+
+/**
+ * Generate an remediation instruction step entity
+ *
+ * @typedef {Object} RemediationInstructionStep
+ * @property {string} endpoint
+ * @property {string} name
+ * @property {boolean} stop_on_fail
+ * @property {RemediationInstructionStepOperation[]} operations
+ * @property {boolean} [saved]
+ * @property {string} [key]
+ * @return {RemediationInstructionStep}
+ */
+export const generateRemediationInstructionStep = () => ({
+  endpoint: '',
+  name: '',
+  operations: [generateRemediationInstructionStepOperation()],
+  stop_on_fail: REMEDIATION_WORKFLOW_TYPES.stop,
+  saved: false,
+  key: uid(),
+});

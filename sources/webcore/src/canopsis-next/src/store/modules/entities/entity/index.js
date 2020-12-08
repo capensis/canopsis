@@ -63,7 +63,7 @@ export default {
   actions: {
     async fetchListWithoutStore({ dispatch }, { params } = {}) {
       try {
-        const { total, data } = await request.post(API_ROUTES.context, {}, { params });
+        const { total, data } = await request.post(API_ROUTES.context, null, { params });
 
         return { total, entities: data };
       } catch (err) {

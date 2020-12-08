@@ -1,34 +1,34 @@
-import { get, omit } from 'lodash';
+import { get, isUndefined, omit } from 'lodash';
 
 import { setSeveralFields, unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
-/**
- * Get webhook form field's values (or customizer function)
- *
- * @param {Object} webhook
- * @returns {Object}
- */
-function getWebhookFormFields(webhook) {
-  const patternsFieldsCustomizer = value => value || [];
-
+export function webhookToForm(webhook = {}) {
   const declareTicketField = webhook.declare_ticket ? omit(webhook.declare_ticket, ['empty_response']) : {};
 
   return {
-    declare_ticket: () => objectToTextPairs(declareTicketField),
-    'request.headers': objectToTextPairs,
-    'hook.event_patterns': patternsFieldsCustomizer,
-    'hook.alarm_patterns': patternsFieldsCustomizer,
-    'hook.entity_patterns': patternsFieldsCustomizer,
-  };
-}
+    _id: webhook._id,
+    retry: webhook.retry || {},
+    hook: {
+      triggers: get(webhook, 'hook.triggers', []),
+      event_patterns: get(webhook, 'hook.event_patterns', []),
+      alarm_patterns: get(webhook, 'hook.alarm_patterns', []),
+      entity_patterns: get(webhook, 'hook.entity_patterns', []),
+    },
+    request: {
+      method: get(webhook, 'request.method', ''),
+      url: get(webhook, 'request.url', ''),
+      headers: webhook.request && webhook.request.headers
+        ? objectToTextPairs(webhook.request.headers)
+        : [],
+      payload: webhook.payload || '{}',
+    },
+    declare_ticket: objectToTextPairs(declareTicketField),
+    disable_during_periods: webhook.disable_during_periods || [],
 
-export function webhookToForm(webhook) {
-  return {
-    emptyResponse: webhook.empty_response || false,
-    enabled: webhook.enabled || true,
-    ...setSeveralFields(webhook, getWebhookFormFields(webhook)),
+    emptyResponse: !!webhook.empty_response,
+    enabled: !isUndefined(webhook.enabled) ? webhook.enabled : true,
   };
 }
 

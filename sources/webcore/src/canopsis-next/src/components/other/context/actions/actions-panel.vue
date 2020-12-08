@@ -164,14 +164,11 @@ export default {
 
     showAddPbehaviorModal() {
       this.$modals.show({
-        name: MODALS.createPbehavior,
+        name: MODALS.pbehaviorPlanning,
         config: {
-          pbehavior: {
-            filter: {
-              _id: { $in: [this.item._id] },
-            },
+          filter: {
+            _id: { $in: [this.item._id] },
           },
-          action: data => this.createPbehavior({ data }),
         },
       });
     },

@@ -76,7 +76,7 @@ export default {
       try {
         commit(types.FETCH_USER);
 
-        const { data: [currentUser] } = await request.get(API_ROUTES.currentUser);
+        const currentUser = await request.get(API_ROUTES.currentUser);
 
         if (currentUser.ui_language) {
           dispatch('i18n/setPersonalLocale', currentUser.ui_language, { root: true });

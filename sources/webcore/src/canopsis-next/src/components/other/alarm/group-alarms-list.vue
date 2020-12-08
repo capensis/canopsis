@@ -3,7 +3,7 @@
     alarms-list-table(
       :widget="widget",
       :alarms="displayedAlarms",
-      :totalItems="alarmsMeta.total",
+      :totalItems="alarmsMeta.total_count",
       :pagination.sync="vDataTablePagination",
       :isEditingMode="isEditingMode",
       :hasColumns="hasGroupColumns",
@@ -18,7 +18,7 @@
         pagination(
           :page="query.page",
           :limit="query.limit",
-          :total="alarmsMeta.total",
+          :total="alarmsMeta.total_count",
           @input="updateQueryPage"
         )
       v-spacer

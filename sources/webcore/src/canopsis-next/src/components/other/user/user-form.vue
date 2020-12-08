@@ -3,7 +3,7 @@
     progress-overlay(:pending="pending")
     v-layout(row)
       v-text-field(
-        v-field="form._id",
+        v-field="form.crecord_name",
         v-validate="'required'",
         :label="$t('modals.createUser.fields.username')",
         :disabled="onlyUserPrefs",

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container.admin-rights
-    h2.text-xs-center.my-3.display-1.font-weight-medium {{ $t('common.rights') }}
+    the-page-header {{ $t('common.rights') }}
     div.position-relative
       v-fade-transition
         v-layout.white.progress(v-show="pending", column)
@@ -58,7 +58,12 @@ export default {
   data() {
     return {
       pending: false,
-      groupedRights: { business: [], view: [], technical: [] },
+      groupedRights: {
+        business: [],
+        view: [],
+        technical: [],
+        api: [],
+      },
       changedRoles: {},
     };
   },

@@ -1,6 +1,8 @@
-export const { BASE_URL } = process.env;
+export const { BASE_URL, VUE_APP_API_HOST: API_HOST } = process.env;
 
-export const ROUTER_MODE = process.env.NODE_ENV === 'development' ? 'history' : 'hash';
+export const API_BASE_URL = '/backend';
+
+export const ROUTER_MODE = 'history';
 
 export const COOKIE_SESSION_KEY = process.env.VUE_APP_COOKIE_SESSION_KEY;
 
@@ -53,24 +55,14 @@ export const EXPORT_VIEWS_AND_GROUPS_SUFFIX = 'canopsis_groups_views-';
 
 export const API_ROUTES = {
   auth: '/auth',
-  currentUser: '/account/me',
+  currentUser: '/api/v4/account/me',
   version: '/api/v2/version',
-  alarmList: '/alerts/get-alarms',
+  alarmList: '/api/v4/alarms',
   context: '/context',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   watcherng: '/api/v2/watcherng',
-  weatherWatcher: '/api/v2/weather/watchers',
-  pbehavior: {
-    pbehavior: '/api/v2/pbehavior',
-    list: '/pbehavior/read',
-    comment: {
-      create: '/pbehavior/comment/create',
-      update: '/pbehavior/comment/update',
-      delete: '/pbehavior/comment/delete',
-    },
-  },
-  pbehaviorById: '/api/v2/pbehavior_byeid',
+  weatherWatcher: '/api/v4/weather-watchers',
   actions: '/api/v2/actions',
   event: '/event',
   userPreferences: '/rest/userpreferences/userpreferences',
@@ -105,22 +97,41 @@ export const API_ROUTES = {
     app: '/api/internal/app_info',
     userInterface: '/api/internal/user_interface',
   },
-  heartbeat: '/api/v2/heartbeat',
+  heartbeat: '/api/v4/heartbeats',
   dynamicInfo: '/api/v2/dynamic-infos',
   filterHints: '/api/v2/associativetable/filterhints',
   sessionStart: '/api/v2/sessionstart',
   sessionTracePath: '/api/v2/session_tracepath',
   keepalive: '/api/v2/keepalive',
   alarmColumnFilters: '/api/v2/associativetable/alarm-column-filters',
-  pbehaviorReasons: '/api/v2/associativetable/pbehavior-reasons',
   dynamicInfoTemplates: '/api/v2/associativetable/dynamic-info-templates',
   session: '/api/v2/sessions',
   broadcastMessage: {
     list: '/api/v2/broadcast-message',
     activeList: '/api/v2/broadcast-message/active',
   },
-  counter: '/alerts/get-counters',
+  counter: '/api/v4/alarm-counters',
   playlist: '/api/v2/playlist',
+  /**
+   * TODO: rename to pbehavior
+   */
+  planning: {
+    timespan: '/api/v4/pbehavior-timespans',
+    exceptions: '/api/v4/pbehavior-exceptions',
+    types: '/api/v4/pbehavior-types',
+    pbehaviors: '/api/v4/pbehaviors',
+    pbehaviorComments: '/api/v4/pbehavior-comments',
+    pbehaviorById: '/api/v4/entities/pbehaviors',
+    reasons: '/api/v4/pbehavior-reasons',
+  },
+  remediation: {
+    instructions: '/api/v4/cat/instructions',
+    jobs: '/api/v4/cat/jobs',
+    configurations: '/api/v4/cat/job-configs',
+    executions: '/api/v4/cat/executions',
+    jobExecutions: '/api/v4/cat/job-executions',
+  },
+  file: '/api/v4/cat/file',
 };
 
 export const COLORS = {
@@ -154,3 +165,10 @@ export const COLORS = {
   },
   statsDefault: '#dddddd',
 };
+
+export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
+
+export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
+
+export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
+

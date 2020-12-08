@@ -2,6 +2,15 @@ import alarmModule from './alarm';
 import entityModule from './entity';
 import watcherModule from './watcher';
 import pbehaviorModule from './pbehavior';
+import pbehaviorReasonsModule from './pbehavior-reasons';
+import pbehaviorTimespanModule from './pbehavior-timespan';
+import pbehaviorExceptionsModule from './pbehavior-exceptions';
+import pbehaviorTypesModule from './pbehavior-types';
+import remediationInstructionModule from './remediation-instruction';
+import remediationInstructionExecutionModule from './remediation-instruction-execution';
+import remediationConfigurationModule from './remediation-configuration';
+import remediationJobModule from './remediation-job';
+import remediationJobExecutionModule from './remediation-job-execution';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import statsModule from './stats';
@@ -19,7 +28,6 @@ import heartbeatModule from './heartbeat';
 import keepaliveModule from './keepalive';
 import dynamicInfoModule from './dynamic-info';
 import dynamicInfoTemplateModule from './dynamic-info-template';
-import pbehaviorReasonsModule from './pbehavior-reasons';
 import alarmColumnFiltersModule from './alarm-column-filters';
 import sessionModule from './session';
 import broadcastMessageModule from './broadcast-message';
@@ -32,6 +40,10 @@ export default {
   entity: entityModule,
   watcher: watcherModule,
   pbehavior: pbehaviorModule,
+  pbehaviorReasons: pbehaviorReasonsModule,
+  pbehaviorTimespan: pbehaviorTimespanModule,
+  pbehaviorExceptions: pbehaviorExceptionsModule,
+  pbehaviorTypes: pbehaviorTypesModule,
   userPreference: userPreferenceModule,
   view: viewModule,
   stats: statsModule,
@@ -49,11 +61,15 @@ export default {
   dynamicInfo: dynamicInfoModule,
   dynamicInfoTemplate: dynamicInfoTemplateModule,
   filterHint: filterHintModule,
-  pbehaviorReasons: pbehaviorReasonsModule,
   alarmColumnFilters: alarmColumnFiltersModule,
   session: sessionModule,
   broadcastMessage: broadcastMessageModule,
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,
+  remediationInstruction: remediationInstructionModule,
+  remediationJob: remediationJobModule,
+  remediationConfiguration: remediationConfigurationModule,
+  remediationInstructionExecution: remediationInstructionExecutionModule,
+  remediationJobExecution: remediationJobExecutionModule,
 };

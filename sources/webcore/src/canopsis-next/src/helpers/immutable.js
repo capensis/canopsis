@@ -105,9 +105,11 @@ export function addTo(obj, path, value) {
  *
  * @param {Object|Array} obj - Object will be copied and copy will be updated
  * @param {string|Array} path - Path to field or item
- * @param {number} index - Index of array item
+ * @param {number|Function} index - Index of array item or special condition function
  * @return {Object|Array}
  */
 export function removeFrom(obj, path, index) {
-  return setField(obj, path, get(obj, path, []).filter((v, i) => i !== index));
+  const filterFunc = isFunction(index) ? index : (v, i) => i !== index;
+
+  return setField(obj, path, get(obj, path, []).filter(filterFunc));
 }

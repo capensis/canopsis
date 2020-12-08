@@ -8,6 +8,8 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  REMEDIATION_CONFIGURATION_TYPES,
+  PBEHAVIOR_RRULE_PERIODS_RANGES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -110,18 +112,37 @@ export default {
     edition: 'Edition',
     broadcastMessages: 'Broadcast messages',
     playlists: 'Playlists',
+    planningAdministration: 'Planning Administration',
+    remediation: 'Remediation',
+    instructions: 'Instructions',
+    icon: 'Icon',
     fullscreen: 'Fullscreen',
     interval: 'Interval',
     status: 'Status',
     unit: 'Unit',
+    begin: 'Begin',
+    timezone: 'Timezone',
+    reason: 'Reason',
     or: 'Or',
     and: 'And',
     priority: 'Priority',
+    clear: 'Clear',
+    deleteAll: 'Delete all',
+    payload: 'Payload',
     output: 'Note',
     created: 'Creation date',
     updated: 'Last update date',
     pattern: 'Pattern',
     correlation: 'Correlation',
+    periods: 'Periods',
+    range: 'Range',
+    duration: 'Duration',
+    previous: 'Previous',
+    next: 'Next',
+    eventPatterns: 'Event patterns',
+    alarmPatterns: 'Alarm patterns',
+    entityPatterns: 'Entity patterns',
+    totalEntityPatterns: 'Total entity patterns',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -229,11 +250,12 @@ export default {
     entities: 'Entities',
   },
   login: {
-    standard: 'Standard',
+    base: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Login with CAS',
     documentation: 'Documentation',
     forum: 'Forum',
+    website: 'Canopsis.com',
     connectionProtocols: 'Connection protocols',
     errors: {
       incorrectEmailOrPassword: 'Incorrect email or password',
@@ -258,6 +280,8 @@ export default {
         manualMetaAlarmGroup: 'Manual meta alarm management',
         manualMetaAlarmUngroup: 'Unlink alarm from manual meta alarm',
         comment: 'Comment',
+        executeInstruction: 'Execute {instructionName}',
+        resumeInstruction: 'Resume {instructionName}',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -301,6 +325,16 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarm cancelled',
         [EVENT_ENTITY_TYPES.comment]: 'Alarm commented',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarm linked to meta alarm',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'Instruction has been started',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'Instruction has been paused',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'Instruction has been resumed',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'Instruction has been completed',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'Instruction has been aborted',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'Instruction has been failed',
+        [EVENT_ENTITY_TYPES.instructionJobStart]: 'Instruction job has been started',
+        [EVENT_ENTITY_TYPES.instructionJobComplete]: 'Instruction job has been completed',
+        [EVENT_ENTITY_TYPES.instructionJobAbort]: 'Instruction job has been aborted',
+        [EVENT_ENTITY_TYPES.instructionJobFail]: 'Instruction job has been failed',
       },
     },
     tabs: {
@@ -313,6 +347,7 @@ export default {
       defineATemplate: 'To define a template for this window, go to the alarms list settings',
     },
     infoPopup: 'Info popup',
+    instructionInfoPopup: 'There is an instruction for this type of incidents',
   },
   weather: {
     moreInfos: 'More info',
@@ -327,9 +362,10 @@ export default {
     reason: 'Reason',
     rrule: 'Rrule',
     status: 'Status',
+    created: 'Creation date',
+    updated: 'Last update date',
     tabs: {
       filter: 'Filter',
-      eids: 'Eids',
       comments: 'Comments',
     },
   },
@@ -516,8 +552,15 @@ export default {
         counter: 'Counter',
       },
     },
+    counters: 'Counters',
+    remediationInstructionsFilters: 'Instructions filters',
   },
   modals: {
+    common: {
+      titleButtons: {
+        minimizeTooltip: 'You already have minimized modal window',
+      },
+    },
     contextInfos: {
       title: 'Entities infos',
     },
@@ -672,7 +715,9 @@ export default {
             type: 'Type',
             start: 'Start',
             stop: 'End',
-            timezone: 'Timezone',
+            fullDay: 'Whole day',
+            noEnding: 'No ending',
+            startOnTrigger: 'Start on trigger',
           },
         },
         filter: {
@@ -691,7 +736,7 @@ export default {
         comments: {
           title: 'Comments',
           buttons: {
-            addComment: 'Add a new comment',
+            addComment: 'Add comment',
           },
           fields: {
             message: 'Message',
@@ -704,6 +749,7 @@ export default {
       success: {
         create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
       },
+      cancelConfirmation: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
     },
     createPause: {
       title: 'Create Pause event',
@@ -1203,6 +1249,51 @@ export default {
       result: 'Result',
       manageTabs: 'Manage tabs',
     },
+    pbehaviorPlanning: {
+      title: 'Periodical behaviors',
+    },
+    selectExceptionsLists: {
+      title: 'Choose list of exceptions',
+    },
+    createRrule: {
+      title: 'Create RRule',
+    },
+    createPbehaviorType: {
+      title: 'Create type',
+      iconNameHint: 'Enter a name of an icon from material.io',
+      errors: {
+        iconName: 'The name is invalid',
+      },
+      fields: {
+        name: 'Name',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priority',
+        iconName: 'Icon name',
+      },
+    },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modify',
+      fields: {
+        selected: 'Only selected period',
+        all: 'All the periods',
+      },
+    },
+    createPbehaviorReason: {
+      title: 'Create reason',
+      fields: {
+        name: 'Name',
+        description: 'Description',
+      },
+    },
+    createPbehaviorException: {
+      title: 'Create date of exception',
+      addDate: 'Add date',
+      fields: {
+        name: 'Name',
+        description: 'Description',
+      },
+    },
     createManualMetaAlarm: {
       title: 'Manual meta alarm management',
       noData: 'No meta alarm corresponding. Press <kbd>enter</kbd> to create a new one',
@@ -1210,6 +1301,82 @@ export default {
         metaAlarm: 'Manual meta alarm',
         output: 'Note',
       },
+    },
+    createRemediationInstruction: {
+      create: {
+        title: 'Create instruction',
+        popups: {
+          success: '{instructionName} has been successfully created',
+        },
+      },
+      edit: {
+        title: 'Modify instruction',
+        popups: {
+          success: '{instructionName} has been successfully modified',
+        },
+      },
+    },
+    createRemediationConfiguration: {
+      create: {
+        title: 'Create configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify configuration',
+        popups: {
+          success: '{configurationName} has been successfully modified',
+        },
+      },
+      types: {
+        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
+        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
+      },
+      fields: {
+        host: 'Host',
+        token: 'Authorization token',
+      },
+    },
+    createRemediationJob: {
+      create: {
+        title: 'Create Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      edit: {
+        title: 'Modify Job',
+        popups: {
+          success: '{jobName} has been successfully modified',
+        },
+      },
+      fields: {
+        configuration: 'Configuration',
+        jobId: 'Job ID',
+      },
+      errors: {
+        invalidJSON: 'Invalid JSON',
+      },
+      payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>' +
+        '<i>For example:</i>' +
+        '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    },
+    clickOutsideConfirmation: {
+      title: 'Are you sure?',
+      text: 'Changes will not be saved. Are you sure?',
+      buttons: {
+        save: 'Save',
+        dontSave: 'Don\'t save',
+        backToForm: 'Back to form',
+      },
+    },
+    patterns: {
+      title: 'Assign patterns',
+    },
+    rateInstruction: {
+      title: 'Rate this instruction',
+      text: 'How useful was this instruction?',
     },
   },
   tables: {
@@ -1246,7 +1413,7 @@ export default {
       enabled: 'Is enabled',
       tstart: 'Begins',
       tstop: 'Ends',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Reason',
       rrule: 'Rrule',
     },
@@ -1304,6 +1471,13 @@ export default {
     },
     errors: {
       main: 'Please note that the Rrule you chose is not valid. We strongly advise you to modify it before saving changes.',
+    },
+    periodsRanges: {
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek]: 'This week',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek]: 'Next week',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks]: 'Next 2 weeks',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'This month',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Next month',
     },
     fields: {
       freq: 'Frequency',
@@ -1455,10 +1629,6 @@ export default {
       '<p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
       outputTemplate: 'Output template',
-      eventPatterns: 'Event patterns',
-      alarmPatterns: 'Alarm patterns',
-      entityPatterns: 'Entity patterns',
-      totalEntityPatterns: 'Total entity patterns',
       thresholdType: 'Threshold type',
       thresholdRate: 'Threshold rate',
       thresholdCount: 'Threshold count',
@@ -1570,7 +1740,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Disable if a pbehavior is active',
+    disableDuringPeriods: 'Disable during periods',
     table: {
       headers: {
         id: 'ID',
@@ -1704,6 +1874,132 @@ export default {
       [USER_RIGHTS_PREFIXES.business.context]: 'Rights for Context Explorer',
       [USER_RIGHTS_PREFIXES.business.weather]: 'Rights for Service Weather',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Rights for Counter',
+    },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Add filter',
+      editFilter: 'Edit filter',
+      addRRule: 'Add RRule',
+      editRrule: 'Edit RRule',
+    },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Exception dates',
+    create: 'Add an exception date',
+    choose: 'Choose list of exceptions',
+    usingException: 'Cannot be deleted since it is in use',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Cannot be deleted since it is in use',
+    defaultType: 'Type is default, because cannot be edited',
+  },
+
+  pbehaviorReasons: {
+    usingReason: 'Cannot be deleted since it is in use',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Reason',
+      exceptions: 'Dates of exceptions',
+    },
+  },
+
+  remediation: {
+    tabs: {
+      instructions: 'Instructions',
+      configurations: 'Configurations',
+      jobs: 'Jobs',
+    },
+  },
+
+  remediationInstructions: {
+    usingInstruction: 'Cannot be deleted since it is in use',
+    addStep: 'Add step',
+    addOperation: 'Add operation',
+    addEndpoint: 'Add endpoint',
+    endpoint: 'Endpoint',
+    endpointAvatar: 'EP',
+    workflow: 'Workflow if this step fails:',
+    stop: 'Stop',
+    remainingStep: 'Continue with remaining steps',
+    timeToComplete: 'Time to complete',
+    hideAll: 'Hide all',
+    expandAll: 'Expand all',
+    tooltips: {
+      endpoint: 'Endpoint should be in question in Yes/No format',
+    },
+    table: {
+      rating: 'Rating',
+      lastModifiedOn: 'Last modified on',
+      averageTimeCompletion: 'Average time\nof completion',
+      monthExecutions: '№ of executions\nthis month',
+      lastExecutedBy: 'Last executed by',
+      lastExecutedOn: 'Last executed on',
+    },
+    errors: {
+      runningInstruction: 'New changes cannot be applied to the instruction in progress. Would you like to cancel started instruction and apply new changes?',
+      operationRequired: 'Please add at least one operation',
+      stepRequired: 'Please add at least one step',
+    },
+  },
+
+  remediationJobs: {
+    addJobs: 'Add {count} job | Add {count} jobs',
+    usingJob: 'Cannot be deleted since it is in use',
+    table: {
+      configuration: 'Configuration',
+      jobId: 'Job ID',
+    },
+  },
+
+  remediationConfigurations: {
+    usingConfiguration: 'Cannot be deleted since it is in use',
+    table: {
+      host: 'Host',
+    },
+  },
+
+  remediationInstructionExecute: {
+    timeToComplete: '{duration} to complete',
+    completedAt: 'Completed at {time}',
+    failedAt: 'Failed at {time}',
+    startedAt: 'Started at {time}',
+    closeConfirmationText: 'Would you like to resume this instruction later?',
+    popups: {
+      success: '{instructionName} has been successfully completed',
+      failed: '{instructionName} has been failed. Please escalate this problem further',
+      connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
+      wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
+    },
+    jobs: {
+      title: 'Jobs assigned:',
+      startedAt: 'Started at',
+      launchedAt: 'Launched at',
+      completedAt: 'Completed at',
+      waitAlert: 'External job executor is not responding, please contact your admin',
+      skip: 'Skip job',
+      await: 'Await',
+    },
+  },
+
+  remediationInstructionsFilters: {
+    button: 'Create instructions filter',
+    fields: {
+      with: 'With selected instructions',
+      without: 'Without selected instructions',
+      selectAll: 'Select all',
+      selectedInstructions: 'Selected instructions',
+    },
+    chip: {
+      with: 'WITH',
+      without: 'WITHOUT',
+      all: 'ALL',
     },
   },
 

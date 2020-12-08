@@ -27,6 +27,7 @@ from canopsis.webcore.utils import gen_json, gen_json_error, HTTP_ERROR
 from canopsis.userinterface.manager import UserInterfaceManager
 from canopsis.version import CanopsisVersionManager
 from canopsis.common.mongo_store import MongoStore
+from canopsis.common.collection import MongoCollection
 from canopsis.common.collection import CollectionError
 
 VALID_USER_INTERFACE_PARAMS = [
@@ -93,7 +94,7 @@ def get_version():
 
 def get_login_config(ws):
     login_config = {
-        'webserver': {provider: 1 for provider in ws.providers},
+        'oldapi': {provider: 1 for provider in ws.providers},
     }
 
     records = ws.db.find(
@@ -126,6 +127,16 @@ def get_login_config(ws):
             "url": result[0].data["saml2"]["settings"]["idp"]["singleSignOnService"]["url"]}
 
     return {"login_config": login_config}
+
+
+def get_timezone(ws):
+    store = MongoStore.get_default()
+    configuration_collection = \
+        store.get_collection(name=UserInterfaceManager.COLLECTION)
+    record = MongoCollection(configuration_collection).find_one(
+        {"_id": "global_config"})
+
+    return record['timezone'] if record is not None and 'timezone' in record else None
 
 
 def check_values(ws, edition, stack):
@@ -223,6 +234,9 @@ def exports(ws):
                     user_interface.pop(key)
             cservices.update(user_interface)
         cservices.update(get_version())
+        tz = get_timezone(ws)
+        if isinstance(tz, dict):
+            cservices.update(tz)
         ws.logger.debug(cservices)
 
         return gen_json(cservices)

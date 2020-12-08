@@ -8,6 +8,8 @@ import {
   TOURS,
   BROADCAST_MESSAGES_STATUSES,
   USER_RIGHTS_PREFIXES,
+  REMEDIATION_CONFIGURATION_TYPES,
+  PBEHAVIOR_RRULE_PERIODS_RANGES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -110,18 +112,37 @@ export default {
     edition: 'Édition',
     broadcastMessages: 'Diffuser des messages',
     playlists: 'Playlists',
+    planningAdministration: 'Administration de la planification',
+    remediation: 'Remédiation',
+    instructions: 'Consignes',
+    icon: 'Icône',
     fullscreen: 'Plein écran',
     interval: 'Période',
     status: 'Statut',
     unit: 'Unité',
+    begin: 'Commencer',
+    timezone: 'Fuseau horaire',
+    reason: 'Raison',
     or: 'OU',
     and: 'ET',
     priority: 'Priorité',
+    clear: 'Clair',
+    deleteAll: 'Tout supprimer',
+    payload: 'Payload',
     output: 'Note',
     created: 'Date de création',
     updated: 'Date de dernière modification',
     pattern: 'Pattern',
     correlation: 'Corrélation',
+    periods: 'Périodes',
+    range: 'Gamme',
+    duration: 'Durée',
+    previous: 'Précédent',
+    next: 'Suivant',
+    eventPatterns: 'Patterns des événements',
+    alarmPatterns: 'Patterns des alarmes',
+    entityPatterns: 'Pattern des entités',
+    totalEntityPatterns: 'Total des modèles d\'entité',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -229,11 +250,12 @@ export default {
     entities: 'Entités',
   },
   login: {
-    standard: 'Standard',
+    base: 'Standard',
     LDAP: 'LDAP',
     loginWithCAS: 'Se connecter avec CAS',
     documentation: 'Documentation',
     forum: 'Forum',
+    website: 'Canopsis.com',
     connectionProtocols: 'Modes de connexion',
     errors: {
       incorrectEmailOrPassword: 'Mot de passe / Email incorrect',
@@ -258,6 +280,8 @@ export default {
         manualMetaAlarmGroup: 'Gestion manuelle des méta-alarmes',
         manualMetaAlarmUngroup: 'Dissocier l\'alarme de la méta-alarme manuelle',
         comment: 'Commenter l\'alarme',
+        executeInstruction: 'Exécuter la consigne "{instructionName}"',
+        resumeInstruction: 'Reprendre la consigne "{instructionName}"',
       },
       iconsTitles: {
         ack: 'Ack',
@@ -301,6 +325,16 @@ export default {
         [EVENT_ENTITY_TYPES.cancel]: 'Alarme annulée',
         [EVENT_ENTITY_TYPES.comment]: 'Alarme commentée',
         [EVENT_ENTITY_TYPES.metaalarmattach]: 'Alarme liée à la méta alarme',
+        [EVENT_ENTITY_TYPES.instructionStart]: 'L\'exécution de la consigne a été déclenchée',
+        [EVENT_ENTITY_TYPES.instructionPause]: 'L\'exécution de la consigne a été mise en pause',
+        [EVENT_ENTITY_TYPES.instructionResume]: 'L\'exécution de la consigne a été reprise',
+        [EVENT_ENTITY_TYPES.instructionComplete]: 'L\'exécution de la consigne a été terminée',
+        [EVENT_ENTITY_TYPES.instructionAbort]: 'L\'exécution de la consigne a été abandonnée',
+        [EVENT_ENTITY_TYPES.instructionFail]: 'L\'exécution de la consigne a échoué',
+        [EVENT_ENTITY_TYPES.instructionJobStart]: 'L\'exécution d\'un job de remédiation a été démarrée',
+        [EVENT_ENTITY_TYPES.instructionJobComplete]: 'L\'exécution du job de remédiation est terminée',
+        [EVENT_ENTITY_TYPES.instructionJobAbort]: 'L\'exécution du job de remédiation a été abandonnée',
+        [EVENT_ENTITY_TYPES.instructionJobFail]: 'L\'exécution du job de remédiation a échouée',
       },
     },
     tabs: {
@@ -313,6 +347,7 @@ export default {
       defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
     },
     infoPopup: 'Info popup',
+    instructionInfoPopup: 'Au moins une consigne est attachée à cette alarme',
   },
   weather: {
     moreInfos: 'Plus d\'infos',
@@ -327,9 +362,10 @@ export default {
     reason: 'Raison',
     rrule: 'Récurrence',
     status: 'Statut',
+    created: 'Date de création',
+    updated: 'Date de dernière modification',
     tabs: {
       filter: 'Filtre',
-      eids: 'Entités',
       comments: 'Commentaires',
     },
   },
@@ -516,8 +552,15 @@ export default {
         counter: 'Compteur',
       },
     },
+    counters: 'Compteurs',
+    remediationInstructionsFilters: 'Filtres de consignes',
   },
   modals: {
+    common: {
+      titleButtons: {
+        minimizeTooltip: 'Vous avez déjà réduit la fenêtre modale',
+      },
+    },
     contextInfos: {
       title: 'Infos sur l\'entité',
     },
@@ -672,7 +715,9 @@ export default {
             type: 'Type',
             start: 'Début',
             stop: 'Fin',
-            timezone: 'Fuseau horaire',
+            fullDay: 'Toute la journée',
+            noEnding: 'Pas de fin',
+            startOnTrigger: 'Démarrer sur déclencheur',
           },
         },
         filter: {
@@ -704,6 +749,7 @@ export default {
       success: {
         create: 'Comportement périodique créé avec succès ! Celui-ci peut mettre jusqu\'à 60 sec pour apparaître dans l\'interface',
       },
+      cancelConfirmation: 'Certaines informations ont été modifiées et ne seront pas sauvegardées. Voulez-vous vraiment quitter ce menu ?',
     },
     createPause: {
       title: 'Mettre en pause',
@@ -1203,6 +1249,51 @@ export default {
       result: 'Résultat',
       manageTabs: 'Gérer les onglets',
     },
+    pbehaviorPlanning: {
+      title: 'Comportement périodiques',
+    },
+    selectExceptionsLists: {
+      title: 'Choisissez la liste des exceptions',
+    },
+    createRrule: {
+      title: 'Créer un récurrence',
+    },
+    createPbehaviorType: {
+      title: 'Créer un type',
+      iconNameHint: 'Entrez le nom d\'une icône à partir de material.io',
+      errors: {
+        iconName: 'Le nom est invalide',
+      },
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+        type: 'Type',
+        priority: 'Priorité',
+        iconName: 'Nom de l\'icône',
+      },
+    },
+    pbehaviorRecurrentChangesConfirmation: {
+      title: 'Modifier',
+      fields: {
+        selected: 'Seulement période sélectionnée',
+        all: 'Toutes les périodes',
+      },
+    },
+    createPbehaviorReason: {
+      title: 'Créer un reason',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
+    createPbehaviorException: {
+      title: 'Créer une liste d\'exceptions',
+      addDate: 'Ajouter une date',
+      fields: {
+        name: 'Nom',
+        description: 'Description',
+      },
+    },
     createManualMetaAlarm: {
       title: 'Gestion manuelle des méta-alarmes',
       noData: 'Aucune méta-alarme correspondante. Appuyez sur <kbd>Entrée</kbd> pour en créer un nouveau',
@@ -1210,6 +1301,82 @@ export default {
         metaAlarm: 'Méta-alarme manuelle',
         output: 'Note',
       },
+    },
+    createRemediationInstruction: {
+      create: {
+        title: 'Créer une consigne',
+        popups: {
+          success: '{instructionName} a été créée avec succès',
+        },
+      },
+      edit: {
+        title: 'Éditer une consigne',
+        popups: {
+          success: '{instructionName} a été modifiée avec succès',
+        },
+      },
+    },
+    createRemediationConfiguration: {
+      create: {
+        title: 'Créer une configuration',
+        popups: {
+          success: '{configurationName} a été créé avec succès',
+        },
+      },
+      edit: {
+        title: 'Modifier la configuration',
+        popups: {
+          success: '{configurationName} a été modifié avec succès',
+        },
+      },
+      types: {
+        [REMEDIATION_CONFIGURATION_TYPES.rundeck]: 'Rundeck',
+        [REMEDIATION_CONFIGURATION_TYPES.awx]: 'Awx',
+      },
+      fields: {
+        host: 'Hôte',
+        token: 'Jeton d\'autorisation',
+      },
+    },
+    createRemediationJob: {
+      create: {
+        title: 'Créer un job',
+        popups: {
+          success: '{jobName} a été créé avec succès',
+        },
+      },
+      edit: {
+        title: 'Éditer un job',
+        popups: {
+          success: '{jobName} a été modifié avec succès',
+        },
+      },
+      fields: {
+        configuration: 'Configuration',
+        jobId: 'Job ID',
+      },
+      errors: {
+        invalidJSON: 'JSON non valide',
+      },
+      payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>' +
+        '<i>Quelques exemples:</i>' +
+        '<pre>{\n  resource: "{{ .Alarm.Value.Resource }}",\n  entity: "{{ .Entity.ID }}"\n}</pre>',
+    },
+    clickOutsideConfirmation: {
+      title: 'Êtes-vous sûr(e) ?',
+      text: 'Les modifications ne seront pas enregistrées. Êtes-vous sûr(e) ?',
+      buttons: {
+        save: 'Sauvegarder',
+        dontSave: 'Ne pas sauvegarder',
+        backToForm: 'Retour au formulaire',
+      },
+    },
+    patterns: {
+      title: 'Attribuer des modèles',
+    },
+    rateInstruction: {
+      title: 'Évaluer cette consigne',
+      text: 'Dans quelle mesure cette consigne a-t-elle été utile?',
     },
   },
   tables: {
@@ -1246,7 +1413,7 @@ export default {
       enabled: 'Actif',
       tstart: 'Démarre',
       tstop: 'Finit',
-      type_: 'Type',
+      type: 'Type',
       reason: 'Raison',
       rrule: 'Récurrence',
     },
@@ -1304,6 +1471,13 @@ export default {
     },
     errors: {
       main: 'La récurrence choisie n\'est pas valide. Nous vous recommandons de la modifier avant de sauvegarder',
+    },
+    periodsRanges: {
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisWeek]: 'Cette semaine',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek]: 'Prochaine semaine',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks]: 'Prochaines 2 semaines',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth]: 'Ce mois',
+      [PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth]: 'Le mois prochain',
     },
     fields: {
       freq: 'Fréquence',
@@ -1455,10 +1629,6 @@ export default {
       '<p>Corrélé par la règle <strong>{{ .Rule.Name }}</strong></p>',
     fields: {
       outputTemplate: 'Modèle de sortie',
-      eventPatterns: 'Patterns des événements',
-      alarmPatterns: 'Patterns des alarmes',
-      entityPatterns: 'Pattern des entités',
-      totalEntityPatterns: 'Total des modèles d\'entité',
       thresholdType: 'Type de seuil',
       thresholdRate: 'Taux de déclenchement',
       thresholdCount: 'Seuil de déclenchement',
@@ -1570,7 +1740,7 @@ export default {
   },
   webhook: {
     title: 'Webhooks',
-    disableIfActivePbehavior: 'Désactivé si un pbehavior est actif',
+    disableDuringPeriods: 'Désactiver pendant les règles',
     table: {
       headers: {
         id: 'ID',
@@ -1705,6 +1875,131 @@ export default {
       [USER_RIGHTS_PREFIXES.business.context]: 'Droits pour le widget Explorateur de contexte',
       [USER_RIGHTS_PREFIXES.business.weather]: 'Droits pour le widget Météo des services',
       [USER_RIGHTS_PREFIXES.business.counter]: 'Droits pour le widget Compteur',
+    },
+  },
+
+  pbehavior: {
+    buttons: {
+      addFilter: 'Ajouter un filtre',
+      editFilter: 'Modifier le filtre',
+      addRRule: 'Ajouter RRule',
+      editRrule: 'Modifier RRule',
+    },
+  },
+
+  pbehaviorExceptions: {
+    title: 'Dates d\'exception',
+    create: 'Ajouter une date d\'exception',
+    choose: 'Sélectionnez la liste d\'exclusion',
+  },
+
+  pbehaviorTypes: {
+    usingType: 'Le type utilise, car ne peut pas être supprimé',
+    defaultType: 'Le type est par défaut, car ne peut pas être modifié',
+  },
+
+  pbehaviorReasons: {
+    usingReason: 'La raison utilise, car ne peut pas être supprimée',
+  },
+
+  planning: {
+    tabs: {
+      type: 'Type',
+      reason: 'Raison',
+      exceptions: 'Dates d\'exception',
+    },
+  },
+
+  remediation: {
+    tabs: {
+      instructions: 'Consignes',
+      configurations: 'Configurations',
+      jobs: 'Jobs',
+    },
+  },
+
+  remediationInstructions: {
+    usingInstruction: 'La raison utilise, car ne peut pas être supprimée',
+    addStep: 'Ajouter une étape',
+    addOperation: 'Ajouter une opération',
+    addEndpoint: 'Ajouter un point de terminaison',
+    endpoint: 'Point de terminaison',
+    endpointAvatar: 'EP',
+    workflow: 'Si cette étape échoue:',
+    stop: 'Arrêter',
+    remainingStep: 'Continuer avec les étapes restantes',
+    timeToComplete: 'Temps d\'exécution (estimation)',
+    hideAll: 'Cacher tout',
+    expandAll: 'Développer tout',
+    tooltips: {
+      endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',
+    },
+    table: {
+      rating: 'Évaluation',
+      lastModifiedOn: 'Dernière modification le',
+      averageTimeCompletion: 'Temps moyen\nd\'exécution',
+      monthExecutions: '№ d\'exécutions\nce mois-ci',
+      lastExecutedBy: 'Dernière exécution par',
+      lastExecutedOn: 'Dernière exécution le',
+    },
+    errors: {
+      runningInstruction: 'Les changements ne peuvent pas être enregistrés car la consigne est en cours d\'exécution. Voulez vous stopper l\'exécution de la consigne et ainsi enregistrer les changements ?',
+      operationRequired: 'Veuillez ajouter au moins une opération',
+      stepRequired: 'Veuillez ajouter au moins une étape',
+    },
+  },
+
+  remediationJobs: {
+    addJobs: 'Ajouter {count} job | Ajouter {count} jobs',
+    usingJob: 'La raison utilise, car ne peut pas être supprimée',
+    table: {
+      configuration: 'Configuration',
+      jobId: 'Job ID',
+    },
+  },
+
+  remediationConfigurations: {
+    usingConfiguration: 'La raison utilise, car ne peut pas être supprimée',
+    table: {
+      host: 'Hôte',
+    },
+  },
+
+  remediationInstructionExecute: {
+    timeToComplete: '{duration} pour terminer',
+    completedAt: 'Terminé à {time}',
+    failedAt: 'Échec à {time}',
+    startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
+    closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard?',
+    popups: {
+      success: '{instructionName} a été exécutée avec succès',
+      failed: '{instructionName} a échoué. Veuillez faire remonter ce problème davantage',
+      connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
+      wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
+    },
+    jobs: {
+      title: 'Jobs attribués:',
+      startedAt: 'Date de déclenchement\n(par Canopsis)',
+      launchedAt: 'Date de lancement\n(par l\'ordonnanceur)',
+      completedAt: 'Fin de traitement\n(par l\'ordonnanceur)',
+      waitAlert: 'L\'exécuteur de jobs ne répond pas, veuillez contacter votre administrateur',
+      skip: 'Ignorer le travail',
+      await: 'Attendre',
+    },
+  },
+
+  remediationInstructionsFilters: {
+    button: 'Créer un filtre de consignes',
+    fields: {
+      with: 'Avec les consignes sélectionnées',
+      without: 'Sans les consignes sélectionnées',
+      selectAll: 'Tout sélectionner',
+      selectedInstructions: 'Consignes sélectionnées',
+    },
+    chip: {
+      with: 'AVEC',
+      without: 'SANS',
+      all: 'TOUT',
     },
   },
 

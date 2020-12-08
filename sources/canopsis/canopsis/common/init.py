@@ -99,7 +99,7 @@ class Init(object):
         """
         Get path to config file.
 
-        :param conftype: Type of configuration (webserver, websocket, amqp, storage, ...)
+        :param conftype: Type of configuration (oldapi, websocket, amqp, storage, ...)
         :type conftype: basestring
 
         :returns: Absolute path to config file
@@ -108,7 +108,7 @@ class Init(object):
         envvar = 'CPS_CONFPATH_{0}'.format(conftype.upper())
 
         if conftype == 'webcore':
-            default = '~/etc/webserver.conf'
+            default = '~/etc/oldapi.conf'
 
         elif conftype == 'websocket':
             default = '~/etc/websocket.conf'

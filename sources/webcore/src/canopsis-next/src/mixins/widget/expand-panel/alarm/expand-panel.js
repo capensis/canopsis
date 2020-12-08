@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+import { SORT_ORDERS } from '@/constants';
 
 import queryMixin from '@/mixins/query';
 
@@ -41,7 +42,7 @@ export default {
     fetchAlarmItemWithParams(alarm, params) {
       const defaultParams = {
         sort_key: 't',
-        sort_dir: 'DESC',
+        sort_dir: SORT_ORDERS.desc.toLowerCase(),
         limit: 1,
       };
 
@@ -52,8 +53,7 @@ export default {
       return this.fetchAlarmItem({
         id: alarm._id,
         params: { ...defaultParams, ...params },
-        dataPreparer: (d) => {
-          const { alarms: fetchedAlarms = [] } = d.data[0];
+        dataPreparer: ({ data: fetchedAlarms = [] }) => {
           const [firstFetchedAlarm] = fetchedAlarms;
 
           if (alarm.filtered && firstFetchedAlarm) {
