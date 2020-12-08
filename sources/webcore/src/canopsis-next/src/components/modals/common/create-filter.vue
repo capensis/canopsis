@@ -36,8 +36,6 @@
 </template>
 
 <script>
-import { pick } from 'lodash';
-
 import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -61,7 +59,7 @@ export default {
       hiddenFields,
       entitiesType,
 
-      form: pick(filter, ['title', 'filter']),
+      form: { ...filter },
     };
   },
   computed: {

@@ -11,8 +11,6 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -32,21 +30,15 @@ export default {
   components: { DynamicInfoForm, ModalWrapper },
   mixins: [modalInnerMixin, submittableMixin()],
   data() {
-    const { dynamicInfo = {}, isDuplicating } = this.modal.config;
+    const { dynamicInfo } = this.modal.config;
 
     return {
-      form: dynamicInfoToForm(isDuplicating ? omit(dynamicInfo, ['_id']) : dynamicInfo),
+      form: dynamicInfoToForm(dynamicInfo),
     };
   },
   computed: {
     title() {
-      let type = 'create';
-
-      if (this.config.dynamicInfo) {
-        type = this.config.isDuplicating ? 'duplicate' : 'edit';
-      }
-
-      return this.$t(`modals.createDynamicInfo.${type}.title`);
+      return this.config.title || this.$t('modals.createDynamicInfo.create.title');
     },
   },
   methods: {
