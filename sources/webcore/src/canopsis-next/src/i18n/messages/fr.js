@@ -1448,6 +1448,8 @@ export default {
       users: {
         columns: {
           username: 'Identifiant utilisateur',
+          firstName: 'Prénom',
+          lastName: 'Nom',
           role: 'Rôle',
           enabled: 'Actif',
         },

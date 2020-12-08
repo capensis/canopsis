@@ -27,7 +27,7 @@ import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
-import UserForm from '@/components/other/user/user-form.vue';
+import UserForm from '@/components/other/users/form/user-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
