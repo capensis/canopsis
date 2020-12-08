@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit", close)
-    modal-wrapper(data-test="filtersListModal")
+  v-form(@submit.prevent="submit")
+    modal-wrapper(data-test="filtersListModal", close)
       template(slot="title")
         span {{ $t('common.filters') }}
       template(slot="text")
