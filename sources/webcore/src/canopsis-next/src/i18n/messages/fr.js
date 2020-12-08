@@ -85,6 +85,8 @@ export default {
     show: 'Afficher',
     edit: 'Éditer',
     duplicate: 'Dupliquer',
+    play: 'Play',
+    copyLink: 'Copier le lien',
     parse: 'Compiler',
     home: 'Accueil',
     step: 'Étape',
@@ -1098,7 +1100,12 @@ export default {
         success: 'Action créée avec succès !',
       },
       edit: {
+        title: 'Modifier le action',
         success: 'Action éditée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer un action',
+        success: 'Action dupliquée avec succès !',
       },
       remove: {
         success: 'Action supprimée avec succès !',
@@ -1536,6 +1543,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
     pathCopied: 'Chemin copié dans le presse-papier',
+    linkCopied: 'Lien copié dans le presse-papiers',
     authKeyCopied: 'Clé d\'authentification copiée dans le presse-papiers',
     widgetIdCopied: 'Widget id copié dans le presse-papier',
   },

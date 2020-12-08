@@ -17,25 +17,18 @@
         v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
-      v-layout
-        v-btn.mx-0(
-          v-if="hasUpdateAnyPbehaviorExceptionAccess",
-          icon,
-          small,
-          @click.stop="$emit('edit', props.item)"
-        )
-          v-icon edit
-        v-tooltip(bottom, :disabled="props.item.deletable")
-          v-btn.mx-0(
-            slot="activator",
-            v-if="hasDeleteAnyPbehaviorExceptionAccess",
-            :disabled="!props.item.deletable",
-            icon,
-            small,
-            @click.stop="$emit('remove', props.item._id)"
-          )
-            v-icon(color="error") delete
-          span {{ $t('pbehaviorExceptions.usingException') }}
+      action-btn(
+        v-if="hasUpdateAnyPbehaviorExceptionAccess",
+        type="edit",
+        @click="$emit('edit', props.item)"
+      )
+      action-btn(
+        v-if="hasDeleteAnyPbehaviorExceptionAccess",
+        :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehaviorExceptions.usingException')",
+        :disabled="!props.item.deletable",
+        type="delete",
+        @click="$emit('remove', props.item._id)"
+      )
     template(slot="expand", slot-scope="props")
       pbehavior-exceptions-list-expand-panel(:pbehaviorException="props.item")
 </template>
@@ -43,10 +36,13 @@
 <script>
 import rightsTechnicalPbehaviorExceptionsMixin from '@/mixins/rights/technical/pbehavior-exceptions';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
+
 import PbehaviorExceptionsListExpandPanel from './partials/pbehavior-exceptions-list-expand-panel.vue';
 
 export default {
   components: {
+    ActionBtn,
     PbehaviorExceptionsListExpandPanel,
   },
   mixins: [rightsTechnicalPbehaviorExceptionsMixin],
