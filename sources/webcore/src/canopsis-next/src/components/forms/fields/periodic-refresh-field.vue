@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout.mb-3(align-center)
     v-flex(xs5)
-      v-switch(
+      enabled-field(
         v-field="periodicRefresh.enabled",
         :label="label",
         hide-details
@@ -32,7 +32,10 @@
 <script>
 import { PERIODIC_REFRESH_UNITS, DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
+import EnabledField from '@/components/forms/fields/enabled-field.vue';
+
 export default {
+  components: { EnabledField },
   inject: ['$validator'],
   model: {
     prop: 'periodicRefresh',
