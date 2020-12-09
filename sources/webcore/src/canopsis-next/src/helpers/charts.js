@@ -50,7 +50,12 @@ const prepareNodesForSimulation = (nodes) => {
  * @param {number} width
  * @param {number} nodeRadius
  * @param {number} linkDistance
- * @returns {Promise<unknown>}
+ * @param {number} iterations
+ * @returns {{
+ *  nodes: array
+ *  links: array
+ *  height: number
+ * }}
  */
 export const simulateNetworkGraph = ({
   nodes,
@@ -58,6 +63,7 @@ export const simulateNetworkGraph = ({
   nodeRadius,
   width,
   linkDistance,
+  iterations = 300,
 }) => {
   const diameter = nodeRadius * 2;
 
@@ -84,20 +90,16 @@ export const simulateNetworkGraph = ({
     .force('y', forceYAxis)
     .force('collide', forceCollide(diameter));
 
-  return new Promise((resolve) => {
-    simulation.on('end', () => {
-      resolve({
-        nodes: preparedNodes,
-        links: copiedLinks.map(link => ({
-          x1: link.source.x,
-          y1: link.source.y + nodeRadius,
-          x2: link.target.x,
-          y2: link.target.y - nodeRadius,
-        })),
-        height: ((maxDepth - 1) * linkDistance) + (diameter * 2),
-      });
+  simulation.tick(iterations);
 
-      simulation.stop();
-    });
-  });
+  return {
+    nodes: preparedNodes,
+    links: copiedLinks.map(link => ({
+      x1: link.source.x,
+      y1: link.source.y + nodeRadius,
+      x2: link.target.x,
+      y2: link.target.y - nodeRadius,
+    })),
+    height: ((maxDepth - 1) * linkDistance) + (diameter * 2),
+  };
 };
