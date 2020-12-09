@@ -10,6 +10,7 @@ import {
   USER_RIGHTS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
+  ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -137,6 +138,7 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
+    engines: 'Engines',
     previous: 'Previous',
     next: 'Next',
     eventPatterns: 'Event patterns',
@@ -1907,6 +1909,54 @@ export default {
       type: 'Type',
       reason: 'Reason',
       exceptions: 'Dates of exceptions',
+    },
+  },
+
+  engines: {
+    [ENGINES_NAMES.event]: {
+      title: 'Event',
+      description: 'Comes from resource',
+    },
+
+    [ENGINES_NAMES.webhook]: {
+      title: 'Webhook',
+      description: 'Triggers the webhooks launch',
+    },
+    [ENGINES_NAMES.fifo]: {
+      title: 'FIFO',
+      description: 'Manages the queue of events and alarms',
+    },
+    [ENGINES_NAMES.axe]: {
+      title: 'AXE',
+      description: 'Creates alarms and performs actions with them',
+    },
+    [ENGINES_NAMES.che]: {
+      title: 'CHE',
+      description: 'Applies eventfilters and created entities',
+    },
+    [ENGINES_NAMES.pbehavior]: {
+      title: 'Pbehavior',
+      description: 'Checks if the alarm is under PBehvaior',
+    },
+    [ENGINES_NAMES.action]: {
+      title: 'Action',
+      description: 'Triggers the actions launch',
+    },
+    [ENGINES_NAMES.watcher]: {
+      title: 'Watcher',
+      description: 'Updates watcher counters and generates watcher-events',
+    },
+    [ENGINES_NAMES.dynamicInfo]: {
+      title: 'Dynamic infos',
+      description: 'Adds dynamic infos to alarm',
+    },
+    [ENGINES_NAMES.correlation]: {
+      title: 'Correlation',
+      description: 'Adds dynamic infos to alarm',
+    },
+    [ENGINES_NAMES.heartbeat]: {
+      title: 'Heartbeat',
+      description: 'Adds dynamic infos to alarm',
     },
   },
 

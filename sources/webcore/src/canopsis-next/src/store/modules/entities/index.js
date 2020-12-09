@@ -32,8 +32,9 @@ import alarmColumnFiltersModule from './alarm-column-filters';
 import sessionModule from './session';
 import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
-import metaAlarmRuleModule from './meta-alarm-rule';
 import playlistModule from './playlist';
+import metaAlarmRuleModule from './meta-alarm-rule';
+import engineRunInfoModule from './engine-run-info';
 
 export default {
   alarm: alarmModule,
@@ -67,6 +68,7 @@ export default {
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,
+  engineRunInfo: engineRunInfoModule,
   remediationInstruction: remediationInstructionModule,
   remediationJob: remediationJobModule,
   remediationConfiguration: remediationConfigurationModule,
