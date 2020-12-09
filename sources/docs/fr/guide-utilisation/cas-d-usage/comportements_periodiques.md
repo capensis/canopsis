@@ -2,14 +2,14 @@
 
 Vous avez la possibilité dans Canopsis de définir des périodes de temps pendant lesquelles des changements de comportements sont nécessaires :
 
-* Plage de service d'une application : vous souhaitez repérer visuellement les applications qui doivent rendre un service à un moment donné
-* Maintenance : vous souhaitez déclarer en maintenance des entités pour que leurs alarmes ne remontent pas visuellement
-* Pause : vous souhaitez mettre en *pause* une application pour un temps indéterminé
+* Plage de service d'une application : vous souhaitez repérer visuellement les applications qui doivent rendre un service à un moment donné.
+* Maintenance : vous souhaitez déclarer en maintenance des entités pour que leurs alarmes ne remontent pas visuellement.
+* Pause : vous souhaitez mettre en *pause* une application pour un temps indéterminé.
 
 Cette fonctionnalité porte le nom de « Comportement périodique ».
 
 !!! note
-    Voici une méthode vous permettant de
+    Voici une méthode vous permettant de :
 
     * définir la plage de service d'une application
     * mettre en maintenance une entité

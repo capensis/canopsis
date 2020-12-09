@@ -1,18 +1,70 @@
-# Moteur `pbehavior` (Python, Core)
+# Moteur `pbehavior` (Go, Core)
 
 Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes, par exemple).
 
-Ils permettent de créer des « downtimes », à savoir indiquer qu'une entité est en pause.
+Ils permettent de créer des « downtimes » et donc d'indiquer qu'une entité est en pause.
 
 Les comportements sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md).
 
+## Utilisation
+
+### Options du moteur
+
+La commande `engine-pbehavior -help` liste toutes les options acceptées par le moteur.
+
 ## Fonctionnement
 
-Ce moteur doit toujours être présent, que vous utilisiez des moteurs Go ou non.
+Ce moteur doit toujours être présent. A partir de la v4 de Canopsis ce moteur est désormais écrit en langage Go.
 
-Un comportement périodique contient un filtre (`filter`) qui est appliqué sur une entité.
+Un comportement périodique est caractérisé par un type et une raison (voir ci-dessous). Il contient également un filtre (`filter`) qui est appliqué sur une entité.
 
-Chaque minute, le moteur calcule les comportements périodiques et leur application sur les entités.
+A partir de la v4 de Canopsis, les comportements périodiques existants sont appliqués immédiatement sur les nouvelles alarmes. De la même façon, les comportements périodiques nouvellement créés sont appliqués immédiatement sur les alarmes existantes.
+
+Ensuite, chaque minute, le moteur calcule les comportements périodiques et leur application sur les entités.
+
+## Administration de la planification
+
+La version 4 de Canopsis introduit une nouvelle interface dédiée à l'administration de la planification des comportements périodiques.
+
+### Configuration des types de comportements périodiques
+
+Rendez vous dans le menu Administration puis dans Administration de la planification.
+
+![Menu administration de la planification](./img/menu-administration-planification.png)
+
+Les types par défaut s'affichent à l'écran : `actif`, `inactif`, `maintenance` et `pause`. Ils ne peuvent être ni supprimés, ni modifiés. La priorité des types est gérée dans l'ordre croissant, c'est à dire, 0 est la priorité la plus faible et 3 est la plus forte et sera traitée avant les autres. Un seul type de comportement périodique peut être actif sur une entité à un moment donné.
+
+![Types de comportements périodiques](./img/admin-planification-types-defaut.png)
+
+### Création d'un type personnalisé
+
+Cliquez sur le bouton `+` en bas à droite de la fenêtre pour ouvrir la fenêtre de création.
+
+![Créer un type personnalisé](./img/admin-planification-creer-type.png)
+
+Renseignez les différents champs, choisissez un type parmi la liste et affectez lui une priorité et une icône.
+
+![Formulaire type personnalisé](./img/admin-planification-type-personnalise.png)
+
+Cliquez sur le bouton Soumettre et votre type personnalisé apparaît dans la liste.
+
+![Liste des types personnalisés](./img/admin-planification-liste-type-perso.png)
+
+### Configuration des raisons
+
+Cliquez sur l'onglet Raison. Par défaut, la liste des raisons est vide. Comme pour les types vous pouvez cliquer sur le bouton `+` pour créer une nouvelle raison. Chaque raison doit avoir un nom et une description.
+
+Voici, par exemple, une liste de raisons personnalisées :
+
+![Liste de raisons personnalisées](./img/admin-planification-liste-raisons.png)
+
+## Configuration des dates d'exception
+
+Il est également possible de configurer des dates d'exceptions dans l'onglet dédié. Pour cela cliquez de nouveau sur le bouton `+` pour créer une liste d'exceptions.
+
+Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. A chaque date vous pourrez associer un des types existant.
+
+![Créer une liste d'exceptions](./img/admin-planification-liste-exceptions.png)
 
 ## Définition d'un comportement périodique
 
