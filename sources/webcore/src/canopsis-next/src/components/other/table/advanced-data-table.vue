@@ -27,7 +27,7 @@
             slot(name="mass-actions", :selected="selected", :count="selected.length")
     v-data-table(
       v-model="selected",
-      :headers="headers",
+      :headers="headersWithExpand",
       :items="items",
       :loading="loading",
       :total-items="totalItems",
@@ -62,7 +62,7 @@
           slot(v-bind="props", name="expand")
       template(slot="headerCell", slot-scope="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
-    v-layout.white(v-show="totalItems && advancedPagination", align-center)
+    v-layout.white(v-if="pagination && totalItems && advancedPagination", align-center)
       v-flex(xs10)
         pagination(
           :page="pagination.page",
@@ -151,7 +151,7 @@ export default {
     },
     pagination: {
       type: Object,
-      required: true,
+      required: false,
     },
     getPagination: {
       type: Function,
@@ -175,6 +175,14 @@ export default {
       set(selected) {
         this.selectedItems = selected;
       },
+    },
+
+    headersWithExpand() {
+      if (this.expand && !this.selectAll) {
+        return [{ sortable: false }, ...this.headers];
+      }
+
+      return this.headers;
     },
 
     hasExpandSlot() {

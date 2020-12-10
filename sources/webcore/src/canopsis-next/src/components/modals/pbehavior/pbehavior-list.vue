@@ -3,25 +3,23 @@
     template(slot="title")
       span {{ $t('alarmList.actions.titles.pbehaviorList') }}
     template(slot="text")
-      v-data-table(:headers="headers", :items="filteredPbehaviors", disable-initial-sort)
-        template(slot="items", slot-scope="props")
-          td {{ props.item.name }}
-          td {{ props.item.author }}
-          td
-            enabled-column(:value="props.item.enabled")
-          td {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
-          td {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
-          td {{ props.item.type | get('name', null, '') }}
-          td {{ props.item.reason | get('name', null, '') }}
-          td
-            v-btn.mx-0(
-              v-for="action in availableActions",
-              :key="action.name",
-              :data-test="`pbehaviorRow-${props.item._id}-action-${action.name}`",
-              @click="() => action.action(props.item)",
-              icon
-            )
-              v-icon {{ action.icon }}
+      advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
+        template(slot="enabled", slot-scope="props")
+          enabled-column(:value="props.item.enabled")
+        template(slot="tstart", slot-scope="props") {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
+        template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
+        template(slot="type", slot-scope="props") {{ props.item.type | get('name', null, '') }}
+        template(slot="reason", slot-scope="props") {{ props.item.reason | get('name', null, '') }}
+        template(slot="actions", slot-scope="props")
+          v-btn.mx-0(
+            v-for="action in availableActions",
+            :key="action.name",
+            @click="() => action.action(props.item)",
+            icon
+          )
+            v-icon {{ action.icon }}
+        template(slot="expand", slot-scope="props")
+          pbehaviors-list-expand-item(:pbehavior="props.item")
       v-layout(v-if="showAddButton", justify-end)
         v-btn(
           icon,
@@ -43,6 +41,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -50,7 +49,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
-  components: { EnabledColumn, ModalWrapper },
+  components: { PbehaviorsListExpandItem, EnabledColumn, ModalWrapper },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin],
   inject: ['$system'],
   computed: {
@@ -63,7 +62,7 @@ export default {
         { sortable: false, text: this.$t('tables.pbehaviorList.tstop'), value: 'tstop' },
         { sortable: false, text: this.$t('tables.pbehaviorList.type'), value: 'type' },
         { sortable: false, text: this.$t('tables.pbehaviorList.reason'), value: 'reason' },
-        { sortable: false, text: this.$t('common.actionsLabel') },
+        { sortable: false, text: this.$t('common.actionsLabel'), value: 'actions' },
       ];
     },
     availableActions() {
