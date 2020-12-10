@@ -104,11 +104,16 @@ export function convertContextWidgetToQuery(widget) {
   const query = {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
-    selectedTypes,
   };
 
   if (widgetColumns) {
     query.active_columns = widgetColumns.map(v => v.value);
+  }
+
+  if (!isEmpty(selectedTypes)) {
+    query.typesFilter = {
+      $or: selectedTypes.map(type => ({ type })),
+    };
   }
 
   return { ...query, ...convertSortToQuery(widget) };
@@ -272,29 +277,6 @@ export function convertAlarmUserPreferenceToQuery({ widget_preferences: widgetPr
 }
 
 /**
- * This function converts userPreference with widgetXtype 'Context' to query Object
- *
- * @param {Object} userPreference
- * @returns {{}}
- */
-export function convertContextUserPreferenceToQuery({ widget_preferences: widgetPreferences = {} }) {
-  const query = {};
-  const { itemsPerPage, selectedTypes } = widgetPreferences;
-
-  if (itemsPerPage) {
-    query.limit = itemsPerPage;
-  }
-
-  if (!isEmpty(selectedTypes)) {
-    query.typesFilter = {
-      $or: selectedTypes.map(type => ({ type })),
-    };
-  }
-
-  return query;
-}
-
-/**
  * MAIN CONVERTERS
  */
 
@@ -308,8 +290,6 @@ export function convertUserPreferenceToQuery(userPreference) {
   switch (userPreference.widgetXtype) {
     case WIDGET_TYPES.alarmList:
       return convertAlarmUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.context:
-      return convertContextUserPreferenceToQuery(userPreference);
     default:
       return {};
   }
