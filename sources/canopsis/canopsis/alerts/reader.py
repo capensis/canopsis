@@ -731,15 +731,24 @@ class AlertsReader(object):
         }})
         if self._can_add_metaalarm_filter(with_consequences, filter_):
             old_final_filter = self.ff_ref_children(final_filter)
-            lookup_children_pipeline = [
-                {'$match': {'$expr': {"$in": ['$$eid', '$v.parents']}}},
-                {'$match': old_final_filter}]
-            pipeline.insert(start_pos, {'$lookup': {
-                'from': 'periodical_alarm',
-                'let':  {'eid': '$d'},
-                'pipeline': lookup_children_pipeline,
-                'as': 'children',
-            }})
+            glookup = {
+                "from": "periodical_alarm",
+                "startWith": "$v.children",
+                "connectFromField": "v.children",
+                "connectToField": "d",
+                "restrictSearchWithMatch": {"$or": [old_final_filter]},
+                "as": "children",
+            }
+            pipeline.insert(start_pos, {'$graphLookup': glookup})
+            # lookup_children_pipeline = [
+            #     {'$match': {'$expr': {"$in": ['$$eid', '$v.parents']}}},
+            #     {'$match': old_final_filter}]
+            # pipeline.insert(start_pos, {'$lookup': {
+            #     'from': 'periodical_alarm',
+            #     'let':  {'eid': '$d'},
+            #     'pipeline': lookup_children_pipeline,
+            #     'as': 'children',
+            # }})
             pipeline.insert(start_pos, {"$match": {"$or": [{"v.parents": {"$in": [None, []]}}, {
                             "v.children": {"$nin": [None, []]}}]}})
 
