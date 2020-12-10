@@ -14,9 +14,9 @@ Cette fonctionnalité porte le nom de « Comportement périodique ».
     * définir la plage de service d'une application
     * mettre en maintenance une entité
 
-### Contexte du cas d'usage
+### Contexte
 
-Nous considérons l'application `ERP` (sous forme d'observateur) composée des entités *Comptabilite* et *Gestion*.
+Nous considérons l'application `ERP` (sous forme d'observateur) composée de différentes entités.
 
 ![Situation initiale](./img/pbh_situation_initiale.png "Situation initiale")
 
@@ -49,21 +49,40 @@ En parallèle des plages de services, vous pouvez déclarer des entités en main
 
 Vous avez la possibilité d'effectuer ces opérations :
 
-* Depuis le Bac à alarmes : dans ce cas, la mise en maintenance se fait de manière unitaire (En sélectionnant individuellement la ou les alarmes concernées).
-* Depuis l'Explorateur de contexte : dans ce cas, la mise en maintenance se fait de manière unitaire sur des entités quelconques
-* Depuis le panneau d'exploitation des comportements périodiques : dans ce cas, la mise en maintenance s'effectue à partir d'un filtre
+* **Depuis le Bac à alarmes** : dans ce cas, la mise en maintenance se fait de manière unitaire (En sélectionnant individuellement la ou les alarmes concernées).
+* **Depuis l'Explorateur de contexte** : dans ce cas, la mise en maintenance se fait de manière unitaire sur des entités quelconques
+* **Depuis le panneau d'exploitation des comportements périodiques** : dans ce cas, la mise en maintenance s'effectue à partir d'un filtre
 
-!!! note
-    Vous souhaitez mettre en maintenance les entités qui composent l'application ERP.  
-    Nous utilisons dans l'exemple la méthode *Depuis le panneau d'exploitation des comportements périodiques*
+Dans les 2 premiers cas un filtre sera généré automatiquement lors de la création du comportement périodique. Nous allons donc commencer par détailler le 3ème cas qui implique la création manuelle d'un filtre.
 
-Pour cela, RDV sur le panneau d'exploitation *Comportement périodiques*  
-Vous ajoutez un comportement avec un filtre qui sélectionne les entités de *ERP*
+### Depuis le panneau d'exploitation
 
-![Ajout comportement](./img/pbh_ajout_comportement.png "Ajout comportement")  
+Pour cela, rendez-vous dans le menu Exploitation puis dans Comportements périodiques et ajoutez un comportement avec un filtre qui sélectionne les entités de *ERP*.
+
+![Ajout comportement](./img/pbh_ajout_comportement.png "Ajout comportement")
+
+A partir de la v4 de Canopsis l'ajout d'un comportement se fait par le biais d'un calendrier.
+
+Sélectionnez une date ou un intervalle de temps pendant lequel vous souhaitez que le comportement périodique soit actif. Vous pouvez sélectionner plusieurs dates en maintenant le bouton de la souris enfoncé et en la faisant glisser depuis la date de début jusqu'à la date de fin. Lorsque vous relâchez le bouton de la souris la fenêtre de création s'affiche.
+
+![Sélection des dates](./img/pbh_selection_dates.png "Sélection des dates")
+
+Remplissez les champs du formulaire puis cliquez sur le bouton Ajouter un filtre.
+
+![Formulaire de création](./img/pbh_formulaire_creation.png "Formulaire de création")
+
+Créer ensuite votre filtre en fonction des variables des entités que vous souhaitez inclure.
+
 ![Filtre comportement](./img/pbh_filtre_comportement.png "Filtre comportement")  
 
-Ainsi, de 15h30 à 16h, les entités *comptabilite* et *gestion* sont en maintenance.  
+Validez votre filtre avec le bouton Soumettre pour revenir au formulaire de création du comportement.   
+Vous pouvez alors afficher votre filtre au format `JSON` en passant le curseur sur l’icône `infos` apparue à coté du bouton pour ajouter un filtre.
+
+![Filtre format JSON](./img/pbh_afficher_filtre_json.png "Filtre format JSON")
+
+Validez ensuite le formulaire de création avec le bouton Soumettre et validez également le calendrier des comportements périodiques.
+
+Les entités inclues dans votre filtre sont à présent en maintenance.  
 
 ![Maintenance entités](./img/pbh_maintenance_entites.png "Maintenance entités")  
 
@@ -71,14 +90,9 @@ Ainsi, de 15h30 à 16h, les entités *comptabilite* et *gestion* sont en mainten
 
 ![Maintenance ERP](./img/pbh_maintenance_erp.png "Maintenance ERP")  
 
-Dans le cas où toutes les entités d'une application ne sont pas en maintenance, le picto suivant est présenté :
+### Depuis le Bac à alarmes
 
-![Maintenance ERP partielle](./img/pbh_maintenance_entites_1.png "Maintenance ERP partielle")  
-
-## Côté Bac à alarmes
-
-Jusqu'ici nous nous sommes concentrés sur la météo de service.
-Le but de ce paragraphe est de montrer les impacts des comportements périodiques sur le bac à alarmes.  
+Détaillons maintenant les impacts des comportements périodiques sur le bac à alarmes.  
 
 Il est possible d'appliquer des filtres sur les comportements périodiques, actifs ou non.  
 
@@ -86,11 +100,11 @@ Sur un Bac à alarmes, vous pouvez ajouter un filtre comme suit (dans les propri
 
 ![Ajout filtre](./img/pbh_ajout_filtre.png "Ajout filtre")  
 
-Le point important concerne l'attribut *fictif* `has_active_pb` qui est un booléen.
+Le point important concerne l'attribut *virtuel* `has_active_pb` qui est un booléen.
 
 ![Filtre comportement actif](./img/pbh_filtre_actif.png "Filtre comportement actif")  
 
-Puis au niveau exploitation, sélectionnez le filtre nouvellement créé :
+Puis dans le widget bac à alarmes, sélectionnez le filtre nouvellement créé :
 
 ![Filtre comportement actif](./img/pbh_filtre_actif_baa.png "Filtre comportement actif")  
 
