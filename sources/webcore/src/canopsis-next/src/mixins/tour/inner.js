@@ -23,15 +23,18 @@ export default {
         onStop: this.onStop,
       };
     },
+    tourInstance() {
+      return this.$tours[this.tourName];
+    },
   },
   mounted() {
-    if (this.$tours[this.tourName]) {
-      this.$tours[this.tourName].start();
+    if (this.tourInstance) {
+      this.tourInstance.start();
     }
   },
   beforeDestroy() {
-    if (this.$tours[this.tourName] && this.$tours[this.tourName].currentStep === 0) {
-      this.$tours[this.tourName].finish();
+    if (this.tourInstance && this.tourInstance.currentStep === 0) {
+      this.tourInstance.finish();
     }
   },
   methods: {
