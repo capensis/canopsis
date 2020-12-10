@@ -46,12 +46,11 @@ export default {
             },
           }));
 
-        const responses = await Promise.all(requests);
+        const counters = await Promise.all(requests);
 
         commit(types.FETCH_LIST_COMPLETED, {
           widgetId,
-
-          counters: responses.map(({ data: [counter] }) => counter),
+          counters,
         });
       } catch (err) {
         commit(types.FETCH_LIST_FAILED, { widgetId });
