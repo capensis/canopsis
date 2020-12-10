@@ -32,11 +32,6 @@ export default {
       this.tourInstance.start();
     }
   },
-  beforeDestroy() {
-    if (this.tourInstance && this.tourInstance.currentStep === 0) {
-      this.tourInstance.finish();
-    }
-  },
   methods: {
     ...authMapActions(['fetchCurrentUser']),
     ...userMapActions({
@@ -49,7 +44,8 @@ export default {
       }
 
       const user = prepareUserByData({}, this.currentUser);
-      const data = setField(user, ['tours', this.tourName], true);
+      const tours = { ...user.tours, [this.tourName]: true };
+      const data = setField(user, 'tours', tours);
 
       await this.createUser({ data });
 
