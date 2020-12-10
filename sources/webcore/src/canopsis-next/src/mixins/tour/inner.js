@@ -25,7 +25,14 @@ export default {
     },
   },
   mounted() {
-    this.$tours[this.tourName].start();
+    if (this.$tours[this.tourName]) {
+      this.$tours[this.tourName].start();
+    }
+  },
+  beforeDestroy() {
+    if (this.$tours[this.tourName] && this.$tours[this.tourName].currentStep === 0) {
+      this.$tours[this.tourName].finish();
+    }
   },
   methods: {
     ...authMapActions(['fetchCurrentUser']),
