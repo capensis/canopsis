@@ -263,7 +263,7 @@ export default {
           pbehaviors: this.pausePbehaviors,
           entityId: this.entity._id,
           onlyActive: true,
-          availableActions: [CRUD_ACTIONS.update, CRUD_ACTIONS.delete],
+          availableActions: [CRUD_ACTIONS.delete, CRUD_ACTIONS.update],
         },
       });
     },
