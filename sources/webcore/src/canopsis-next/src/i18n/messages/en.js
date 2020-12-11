@@ -1461,6 +1461,8 @@ export default {
       users: {
         columns: {
           username: 'Username',
+          firstName: 'First name',
+          lastName: 'Last name',
           role: 'Role',
           enabled: 'Enabled',
         },

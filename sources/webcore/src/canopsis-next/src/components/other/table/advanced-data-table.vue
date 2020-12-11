@@ -33,6 +33,7 @@
       :total-items="totalItems",
       :pagination="pagination",
       :header-text="headerText",
+      :rows-per-page-items="rowsPerPageItems",
       :item-key="itemKey",
       :select-all="selectAll",
       :expand="expand",
@@ -104,6 +105,10 @@ export default {
     items: {
       type: Array,
       required: true,
+    },
+    rowsPerPageItems: {
+      type: Array,
+      required: false,
     },
     loading: {
       type: Boolean,
@@ -187,6 +192,15 @@ export default {
 
     shownSearch() {
       return this.search || this.advancedSearch;
+    },
+  },
+  watch: {
+    items(items) {
+      if (this.selectAll) {
+        const itemKeys = items.map(item => item[this.itemKey]);
+
+        this.selectedItems = this.selectedItems.filter(selectedItem => itemKeys.includes(selectedItem[this.itemKey]));
+      }
     },
   },
   methods: {

@@ -20,15 +20,15 @@
 </template>
 
 <script>
-import { pick } from 'lodash';
+import { userToForm } from '@/helpers/forms/user';
 
-import { MODALS, GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import UserForm from '@/components/other/user/user-form.vue';
+import UserForm from '@/components/other/users/form/user-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -48,18 +48,7 @@ export default {
   ],
   data() {
     return {
-      form: {
-        crecord_name: '',
-        firstname: '',
-        lastname: '',
-        mail: '',
-        password: '',
-        role: null,
-        ui_language: '',
-        enable: true,
-        defaultview: '',
-        groupsNavigationType: GROUPS_NAVIGATION_TYPES.sideBar,
-      },
+      form: userToForm(this.modal.config.user),
     };
   },
   computed: {
@@ -70,26 +59,6 @@ export default {
     isNew() {
       return !this.config.user;
     },
-  },
-  async mounted() {
-    if (!this.isNew) {
-      this.form = pick(this.config.user, [
-        'crecord_name',
-        'firstname',
-        'lastname',
-        'mail',
-        'password',
-        'role',
-        'ui_language',
-        'enable',
-        'defaultview',
-        'groupsNavigationType',
-      ]);
-
-      if (!this.form.groupsNavigationType) {
-        this.form.groupsNavigationType = GROUPS_NAVIGATION_TYPES.sideBar;
-      }
-    }
   },
   methods: {
     async submit() {
