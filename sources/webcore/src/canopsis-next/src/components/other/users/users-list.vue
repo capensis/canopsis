@@ -21,12 +21,12 @@
         action-btn(
           v-if="hasUpdateAnyUserAccess",
           type="edit",
-          @click="showEditUserModal(props.item)"
+          @click.stop="$emit('edit', props.item)"
         )
         action-btn(
           v-if="hasDeleteAnyUserAccess",
           type="delete",
-          @click="showRemoveUserModal(props.item._id)"
+          @click.stop="$emit('remove', props.item)"
         )
 </template>
 
@@ -34,11 +34,9 @@
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
 
 export default {
   components: {
-    ActionBtn,
     EnabledColumn,
   },
   mixins: [rightsTechnicalUserMixin],
