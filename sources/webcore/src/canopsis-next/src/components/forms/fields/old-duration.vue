@@ -2,7 +2,7 @@
   v-layout(row)
     v-flex(xs8)
       v-text-field(
-        v-field="value.duration",
+        v-field.number="value.duration",
         v-validate="'required|numeric|min_value:1'",
         :label="$t('modals.createSnoozeEvent.fields.duration')",
         :error-messages="errors.collect('duration')",

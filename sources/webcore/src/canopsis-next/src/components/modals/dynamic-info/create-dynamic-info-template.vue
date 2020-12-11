@@ -1,42 +1,10 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        div
-          v-text-field(
-            v-model="form.title",
-            v-validate="'required'",
-            :error-messages="errors.collect('title')",
-            :label="$t('common.title')",
-            name="title"
-          )
-          h3 {{ $t('modals.createDynamicInfoTemplate.fields.names') }}
-          v-layout(
-            v-for="(name, index) in form.names",
-            :key="name.key",
-            row,
-            justify-space-between
-          )
-            v-flex(xs11)
-              v-text-field(
-                v-model="name.value",
-                v-validate="'required'",
-                :error-messages="errors.collect(`name[${name.key}]`)",
-                :name="`name[${name.key}]`",
-                :placeholder="$t('common.name')"
-              )
-            v-flex(xs1)
-              v-btn(
-                color="error",
-                icon,
-                @click="deleteValue(index)"
-              )
-                v-icon delete
-          v-btn.primary.mx-0(@click="showAddValueModal") {{ $t('modals.createDynamicInfoTemplate.buttons.addName') }}
-          v-alert(:value="errors.has('names')", type="error")
-            span {{ $t('modals.createDynamicInfoTemplate.errors.noNames') }}
+        dynamic-info-template-form(v-model="form")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
@@ -48,11 +16,13 @@ import { MODALS } from '@/constants';
 import {
   templateToForm,
   formToTemplate,
-  generateTemplateFormName,
 } from '@/helpers/forms/dynamic-info-template';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
+
+import DynamicInfoTemplateForm from '@/components/other/dynamic-info/form/dynamic-info-template-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -61,8 +31,12 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  components: { DynamicInfoTemplateForm, ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { template = {} } = this.modal.config;
 
@@ -72,33 +46,10 @@ export default {
   },
   computed: {
     title() {
-      if (this.config.template) {
-        return this.$t('modals.createDynamicInfoTemplate.edit.title');
-      }
-
-      return this.$t('modals.createDynamicInfoTemplate.create.title');
+      return this.config.title || this.$t('modals.createDynamicInfoTemplate.create.title');
     },
-  },
-  created() {
-    this.$validator.attach({
-      name: 'names',
-      rules: 'required:true',
-      getter: () => this.form.names.length > 0,
-      context: () => this,
-      vm: this,
-    });
   },
   methods: {
-    showAddValueModal() {
-      this.form.names.push(generateTemplateFormName());
-
-      this.$nextTick(() => this.$validator.validate('names'));
-    },
-
-    deleteValue(index) {
-      this.form.names = this.form.names.filter((v, i) => i !== index);
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

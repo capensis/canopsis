@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.eventFilterRule.addAction') }}
       template(slot="text")
@@ -38,6 +38,7 @@ import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_ENRICHMENT_
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesRightMixin from '@/mixins/entities/right';
 
 import MixedField from '@/components/forms/fields/mixed-field.vue';
@@ -74,7 +75,12 @@ export default {
     },
   },
   components: { MixedField, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin(), entitiesRightMixin],
+  mixins: [
+    modalInnerMixin,
+    entitiesRightMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const enrichmentActionsTypes = cloneDeep(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES);
 

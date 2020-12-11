@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="statsDateIntervalModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.statsDateInterval.title') }}
       template(slot="text")
@@ -27,6 +27,7 @@ import { MODALS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import StatsDateIntervalForm from '@/components/other/stats/stats-date-interval-form.vue';
 
@@ -38,7 +39,11 @@ export default {
     validator: 'new',
   },
   components: { StatsDateIntervalForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { interval } = this.modal.config;
     const defaultPeriodForm = {

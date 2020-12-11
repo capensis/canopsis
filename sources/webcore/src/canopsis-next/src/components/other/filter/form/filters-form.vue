@@ -1,46 +1,52 @@
 <template lang="pug">
   div
+    v-alert(
+      v-if="!filters.length",
+      :value="true",
+      type="info"
+    ) {{ $t('modals.filter.emptyFilters') }}
     draggable(
+      v-else,
       :value="filters",
       :options="draggableOptions",
       element="v-list",
       @change="changeFiltersOrdering"
     )
-      v-list-tile.filter-item.pa-0(v-for="(filter, index) in filters", :key="filter.title")
-        v-layout(:data-test="`filterItem-${filter.title}`")
-          v-flex(xs12)
-            v-list-tile-content {{ filter.title }}
-          v-list-tile-action(v-if="hasAccessToEditFilter")
-            v-layout
-              v-btn.ma-1(
-                icon,
-                :data-test="`editFilter-${filter.title}`",
-                @click="showEditFilterModal(index)"
-              )
-                v-icon edit
-              v-btn.ma-1(
-                icon,
-                :data-test="`deleteFilter-${filter.title}`",
-                @click="showDeleteFilterModal(index)"
-              )
-                v-icon delete
+      filter-field(
+        v-for="(filter, index) in filters",
+        :filter="filters[index]",
+        :key="filter.title",
+        :has-access-to-edit="hasAccessToEditFilter",
+        @edit="showEditFilterModal(index)",
+        @delete="showDeleteFilterModal(index)"
+      )
     v-btn.ml-0(
       data-test="addFilter",
       v-if="hasAccessToAddFilter",
       color="primary",
+      outline,
       @click.prevent="showCreateFilterModal"
-    ) {{ $t('common.add') }}
+    ) {{ $t('common.addFilter') }}
 </template>
 
 <script>
 import Draggable from 'vuedraggable';
 
+import formArrayMixin from '@/mixins/form/array';
+
+import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS, ENTITIES_TYPES } from '@/constants';
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
+
+import FilterField from '@/components/other/filter/form/fields/filter-field.vue';
 
 export default {
-  components: { Draggable },
+  components: { Draggable, FilterField },
+  mixins: [formArrayMixin],
+  model: {
+    prop: 'filters',
+    event: 'input',
+  },
   props: {
     filters: {
       type: Array,
@@ -79,7 +85,7 @@ export default {
           title: this.$t('modals.filter.create.title'),
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: newFilter => this.$emit('create:filter', newFilter),
+          action: newFilter => this.addItemIntoArray(newFilter),
         },
       });
     },
@@ -94,7 +100,7 @@ export default {
           filter,
           entitiesType: this.entitiesType,
           existingTitles: this.existingTitles,
-          action: newFilter => this.$emit('update:filter', newFilter, index),
+          action: newFilter => this.updateItemInArray(index, newFilter),
         },
       });
     },
@@ -103,20 +109,14 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.$emit('delete:filter', index),
+          action: () => this.removeItemFromArray(index),
         },
       });
     },
 
     changeFiltersOrdering(event) {
-      this.$emit('update:filters', dragDropChangePositionHandler(this.filters, event));
+      this.updateModel(dragDropChangePositionHandler(this.filters, event));
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .filter-item {
-    cursor: move;
-  }
-</style>

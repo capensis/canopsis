@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(close)
     template(slot="title")
       span {{ $t('modals.variablesHelp.variables') }}
     template(slot="text")

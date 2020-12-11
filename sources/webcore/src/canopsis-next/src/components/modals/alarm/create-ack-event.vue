@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createAckEventModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createAckEvent.title') }}
       template(slot="text")
@@ -38,6 +38,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
 import AckEventForm from '@/components/other/alarm/forms/ack-event-form.vue';
@@ -57,6 +58,7 @@ export default {
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
     submittableMixin(),
+    confirmableModalMixin(),
     submittableMixin({
       method: 'submitWithTicket',
       property: 'submittingWithTicket',

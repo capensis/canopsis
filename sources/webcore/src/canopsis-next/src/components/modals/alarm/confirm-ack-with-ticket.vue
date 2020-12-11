@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="confirmAckModal")
+  modal-wrapper(data-test="confirmAckModal", close)
     template(slot="title")
       span {{ $t('common.confirmation') }}
     template(slot="text")

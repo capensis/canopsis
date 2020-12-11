@@ -102,7 +102,7 @@ import { MODALS, TOURS } from '@/constants';
 import { findRange } from '@/helpers/date-intervals';
 
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 
 import authMixin from '@/mixins/auth';

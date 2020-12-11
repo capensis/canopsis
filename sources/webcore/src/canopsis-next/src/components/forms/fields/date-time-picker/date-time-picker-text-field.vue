@@ -15,8 +15,8 @@
       v-flex
         date-time-picker-button(
           :value="objectValue",
-          :roundHours="roundHours",
-          :useSeconds="useSeconds",
+          :label="label",
+          :round-hours="roundHours",
           @input="updateObjectField"
         )
 </template>
@@ -67,10 +67,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    useSeconds: {
-      type: Boolean,
-      default: false,
-    },
     dateObjectPreparer: {
       type: Function,
       default: value => moment(value, DATETIME_FORMATS.dateTimePicker).toDate(),
@@ -78,7 +74,7 @@ export default {
   },
   data() {
     return {
-      objectValue: null,
+      objectValue: new Date(),
       isFocusedTextField: false,
     };
   },

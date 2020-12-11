@@ -1,9 +1,8 @@
 <template lang="pug">
-  v-card
-    v-card-title.primary.white--text
-      v-layout(justify-space-between, align-center)
-        span.headline {{ $t('modals.eventFilterRule.addAField') }}
-    v-card-text
+  modal-wrapper(close)
+    template(slot="title")
+      span {{ $t('modals.eventFilterRule.addAField') }}
+    template(slot="text")
       v-form
         v-switch(
           v-if="!config.isSimple",
@@ -54,8 +53,8 @@
               v-flex
                 v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
                   v-icon(color="error") delete
-    v-layout.pa-2(justify-end)
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+    template(slot="actions")
+      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
 </template>
 
@@ -68,12 +67,14 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import MixedField from '@/components/forms/fields/mixed-field.vue';
 
+import ModalWrapper from '../../modal-wrapper.vue';
+
 export default {
   name: MODALS.addEventFilterRuleToPattern,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { MixedField },
+  components: { MixedField, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
     return {

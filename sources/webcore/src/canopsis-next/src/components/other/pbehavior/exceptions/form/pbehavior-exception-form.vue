@@ -18,6 +18,11 @@
       )
     v-layout(row)
       pbehavior-exceptions-field(v-model="form.exdates")
+        v-alert(
+          slot="no-data",
+          :value="true",
+          type="info"
+        ) {{ $t('modals.createPbehaviorException.emptyExdates') }}
 </template>
 
 <script>

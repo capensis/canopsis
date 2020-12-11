@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="infoPopupSettingModal")
+  modal-wrapper(data-test="infoPopupSettingModal", close)
     template(slot="title")
       span {{ $t('modals.infoPopupSetting.title') }}
     template(slot="text")
@@ -15,7 +15,7 @@
           v-icon add
       v-layout(column)
         v-card.my-1(
-          v-for="(popup, index) in popups",
+          v-for="(popup, index) in form.popups",
           :key="index",
           flat,
           data-test="infoPopupSetting",
@@ -58,26 +58,32 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../../modal-wrapper.vue';
 
 export default {
   name: MODALS.infoPopupSetting,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
+    const { infoPopups = [] } = this.modal.config;
+
     return {
-      popups: [],
+      form: {
+        popups: cloneDeep(infoPopups),
+      },
     };
-  },
-  mounted() {
-    if (this.config) {
-      this.popups = [...this.config.infoPopups];
-    }
   },
   methods: {
     addPopup() {
@@ -85,13 +91,13 @@ export default {
         name: MODALS.addInfoPopup,
         config: {
           columns: this.config.columns,
-          action: popup => this.popups.push(popup),
+          action: popup => this.form.popups.push(popup),
         },
       });
     },
 
     deletePopup(index) {
-      this.$delete(this.popups, index);
+      this.$delete(this.form.popups, index);
     },
 
     editPopup(index, popup) {
@@ -101,7 +107,7 @@ export default {
           columns: this.config.columns,
           popup,
           action: (editedPopup) => {
-            this.$set(this.popups, index, editedPopup);
+            this.$set(this.form.popups, index, editedPopup);
           },
         },
       });
@@ -109,7 +115,7 @@ export default {
 
     async submit() {
       if (this.config.action) {
-        await this.config.action(this.popups);
+        await this.config.action(this.form.popups);
       }
 
       this.$modals.hide();

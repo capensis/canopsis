@@ -86,6 +86,8 @@ export default {
     show: 'Afficher',
     edit: 'Éditer',
     duplicate: 'Dupliquer',
+    play: 'Play',
+    copyLink: 'Copier le lien',
     parse: 'Compiler',
     home: 'Accueil',
     step: 'Étape',
@@ -145,6 +147,7 @@ export default {
     alarmPatterns: 'Patterns des alarmes',
     entityPatterns: 'Pattern des entités',
     totalEntityPatterns: 'Total des modèles d\'entité',
+    addFilter: 'Ajouter un filtre',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -832,6 +835,7 @@ export default {
       fields: {
         title: 'Nom',
       },
+      emptyFilters: 'Aucun filtre ajouté pour le moment',
     },
     colorPicker: {
       title: 'Sélecteur de couleur',
@@ -1100,7 +1104,12 @@ export default {
         success: 'Action créée avec succès !',
       },
       edit: {
+        title: 'Modifier le action',
         success: 'Action éditée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer un action',
+        success: 'Action dupliquée avec succès !',
       },
       remove: {
         success: 'Action supprimée avec succès !',
@@ -1205,6 +1214,7 @@ export default {
       errors: {
         noNames: 'Vous devez ajouter au moins 1 attribut',
       },
+      emptyNames: 'Aucun nom ajouté pour le moment',
     },
     importExportViews: {
       title: 'Vues d\'importation / exportation',
@@ -1295,6 +1305,7 @@ export default {
         name: 'Nom',
         description: 'Description',
       },
+      emptyExdates: 'Aucun exdates ajouté pour le moment',
     },
     createManualMetaAlarm: {
       title: 'Gestion manuelle des méta-alarmes',
@@ -1538,6 +1549,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
     pathCopied: 'Chemin copié dans le presse-papier',
+    linkCopied: 'Lien copié dans le presse-papiers',
     authKeyCopied: 'Clé d\'authentification copiée dans le presse-papiers',
     widgetIdCopied: 'Widget id copié dans le presse-papier',
   },
@@ -1777,6 +1789,7 @@ export default {
           headerValue: 'Valeur',
           payload: 'Payload',
         },
+        emptyHeaders: 'Aucun en-tête ajouté pour le moment',
       },
       declareTicket: {
         emptyResponse: 'Réponse vide',
@@ -1785,6 +1798,7 @@ export default {
           text: 'Clé',
           value: 'Valeur',
         },
+        emptyDeclareTicket: 'Billet de déclaration vide',
       },
     },
   },
@@ -1893,6 +1907,7 @@ export default {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
+    emptyExceptions: 'Aucune exception ajoutée pour le moment',
   },
 
   pbehaviorTypes: {
@@ -1979,8 +1994,8 @@ export default {
     stop: 'Arrêter',
     remainingStep: 'Continuer avec les étapes restantes',
     timeToComplete: 'Temps d\'exécution (estimation)',
-    hideAll: 'Cacher tout',
-    expandAll: 'Développer tout',
+    emptySteps: 'Aucune étape ajoutée pour le moment',
+    emptyOperations: 'Aucune opération ajoutée pour le moment',
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',
     },

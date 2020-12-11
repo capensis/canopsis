@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createSnoozeEventModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createSnoozeEvent.title') }}
       template(slot="text")
@@ -29,6 +29,7 @@ import { MODALS, EVENT_ENTITY_TYPES, DURATION_UNITS } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import OldDurationField from '@/components/forms/fields/old-duration.vue';
 
@@ -43,7 +44,12 @@ export default {
     validator: 'new',
   },
   components: { OldDurationField, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
+  mixins: [
+    modalInnerItemsMixin,
+    eventActionsAlarmMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

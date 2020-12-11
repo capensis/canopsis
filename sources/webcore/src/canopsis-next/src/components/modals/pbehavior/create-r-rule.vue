@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createRrule.title') }}
       template(slot="text")
@@ -27,6 +27,7 @@ import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partia
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -41,7 +42,11 @@ export default {
     RRuleForm,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { rrule, exdates, exceptions } = this.modal.config;
 

@@ -92,7 +92,7 @@ import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
-import FilterSelector from '@/components/other/filter/selector/filter-selector.vue';
+import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 

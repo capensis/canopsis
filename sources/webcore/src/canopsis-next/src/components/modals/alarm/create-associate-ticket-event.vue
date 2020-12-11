@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createAssociateTicketModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createAssociateTicket.title') }}
       template(slot="text")
@@ -42,6 +42,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
@@ -58,7 +59,12 @@ export default {
     validator: 'new',
   },
   components: { AlarmGeneralTable, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
+  mixins: [
+    modalInnerItemsMixin,
+    eventActionsAlarmMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

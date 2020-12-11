@@ -34,6 +34,9 @@ export default {
   computed: {
     ...mapGetters(['activeMessages']),
   },
+  mounted() {
+    this.fetchActiveBroadcastMessagesList();
+  },
   methods: {
     ...mapActions({
       fetchActiveBroadcastMessagesList: 'fetchActiveList',

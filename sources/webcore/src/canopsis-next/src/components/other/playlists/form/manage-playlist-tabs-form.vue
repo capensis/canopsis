@@ -10,7 +10,7 @@
           hideActions
         )
           template(slot="title")
-            v-checkbox.group-checkbox(
+            v-checkbox.group-checkbox.mt-0.pt-0(
               :input-value="selectedGroupsIds",
               :value="group._id",
               primary,

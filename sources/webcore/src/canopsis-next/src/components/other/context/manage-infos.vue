@@ -17,11 +17,15 @@
           td {{ props.item.description }}
           td {{ props.item.value }}
           td
-            v-layout
-              v-btn.mx-0(@click="showEditInfoModal(props.item)", icon, small)
-                v-icon(color="primary") edit
-              v-btn.mx-0(@click="removeField(props.item.name)", icon, small)
-                v-icon(color="error") delete
+            v-layout(row)
+              action-btn(
+                type="edit",
+                @click="showEditInfoModal(props.item)"
+              )
+              action-btn(
+                type="delete",
+                @click="removeField(props.item.name)"
+              )
 </template>
 
 <script>
@@ -31,12 +35,15 @@ import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
+
 /**
  * Form to manipulation with infos
  *
  * @prop {Object} infos - infos from parent
  */
 export default {
+  components: { ActionBtn },
   mixins: [
     formMixin,
   ],

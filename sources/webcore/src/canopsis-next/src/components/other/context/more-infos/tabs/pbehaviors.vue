@@ -13,24 +13,15 @@
           td {{ props.item.reason.name }}
           td {{ props.item.rrule }}
           td
-            template(v-if="hasAccessToDeletePbehavior")
-              v-btn(
-                icon,
-                small,
-                @click.stop="showEditPbehaviorModal(props.item)"
-              )
-                v-icon edit
-              v-btn(
-                icon,
-                small,
-                @click="showDeletePbehaviorModal(props.item._id)"
-              )
-                v-icon(color="error") delete
+            v-layout(v-if="hasAccessToDeletePbehavior", row)
+              action-btn(type="edit", @click="showEditPbehaviorModal(props.item)")
+              action-btn(type="delete", @click="showDeletePbehaviorModal(props.item._id)")
 </template>
 
 <script>
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 import authMixin from '@/mixins/auth';
@@ -39,6 +30,7 @@ import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 export default {
   components: {
+    ActionBtn,
     EnabledColumn,
   },
   inject: ['$system'],

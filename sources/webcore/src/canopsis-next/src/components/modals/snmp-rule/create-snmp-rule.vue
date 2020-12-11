@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
@@ -21,6 +21,7 @@ import { MODALS, SNMP_STATE_TYPES } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
@@ -29,7 +30,11 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.createSnmpRule,
   components: { SnmpRuleForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const defaultModuleMibObjectForm = {
       value: '',
