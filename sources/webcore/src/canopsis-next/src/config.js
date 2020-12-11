@@ -132,6 +132,7 @@ export const API_ROUTES = {
     jobExecutions: '/api/v4/cat/job-executions',
   },
   file: '/api/v4/cat/file',
+  engineRunInfo: '/api/v4/engine-runinfo',
 };
 
 export const COLORS = {

@@ -63,7 +63,7 @@ export default {
         return this.filter.disabled ? 'check_box_outline_blank' : 'check_box';
       }
 
-      return '$vuetify.icons.delete';
+      return 'cancel';
     },
 
     anotherFilters() {

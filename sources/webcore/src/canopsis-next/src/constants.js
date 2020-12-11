@@ -798,11 +798,12 @@ export const USERS_RIGHTS = {
     planning: `${USER_RIGHTS_PREFIXES.technical.admin}_planning`,
     planningType: `${USER_RIGHTS_PREFIXES.technical.admin}_planningType`,
     planningReason: `${USER_RIGHTS_PREFIXES.technical.admin}_planningReason`,
-    exceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
+    planningExceptions: `${USER_RIGHTS_PREFIXES.technical.admin}_planningExceptions`,
     remediation: `${USER_RIGHTS_PREFIXES.technical.admin}_remediation`,
     remediationInstruction: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_RIGHTS_PREFIXES.technical.admin}_remediationConfiguration`,
+    engine: `${USER_RIGHTS_PREFIXES.technical.admin}_engine`,
     exploitation: {
       eventFilter: `${USER_RIGHTS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_RIGHTS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -1672,3 +1673,49 @@ export const REMEDIATION_INSTRUCTION_FILTER_ALL = 'all';
  * @type {number}
  */
 export const MAX_PBEHAVIOR_DEFAULT_TSTOP = 2147483647;
+
+export const ENGINES_NAMES = {
+  event: 'event',
+  webhook: 'engine-webhook',
+  fifo: 'engine-fifo',
+  axe: 'engine-axe',
+  che: 'engine-che',
+  pbehavior: 'engine-pbehavior',
+  action: 'engine-action',
+  watcher: 'engine-watcher',
+  dynamicInfo: 'engine-dynamic-info',
+  correlation: 'engine-correlation',
+  heartbeat: 'engine-heartbeat',
+};
+
+export const ENGINES_QUEUE_NAMES = {
+  webhook: 'Engine_webhook',
+  fifo: 'Engine_fifo',
+  axe: 'Engine_axe',
+  che: 'Engine_che',
+  pbehavior: 'Engine_pbehavior',
+  action: 'Engine_action',
+  watcher: 'Engine_watcher',
+  dynamicInfo: 'Engine_dynamic_infos',
+  correlation: 'Engine_correlation',
+  heartbeat: 'Engine_heartbeat',
+};
+
+export const ENGINES_NAMES_TO_QUEUE_NAMES = {
+  [ENGINES_QUEUE_NAMES.webhook]: ENGINES_NAMES.webhook,
+  [ENGINES_QUEUE_NAMES.fifo]: ENGINES_NAMES.fifo,
+  [ENGINES_QUEUE_NAMES.axe]: ENGINES_NAMES.axe,
+  [ENGINES_QUEUE_NAMES.che]: ENGINES_NAMES.che,
+  [ENGINES_QUEUE_NAMES.pbehavior]: ENGINES_NAMES.pbehavior,
+  [ENGINES_QUEUE_NAMES.action]: ENGINES_NAMES.action,
+  [ENGINES_QUEUE_NAMES.watcher]: ENGINES_NAMES.watcher,
+  [ENGINES_QUEUE_NAMES.dynamicInfo]: ENGINES_NAMES.dynamicInfo,
+  [ENGINES_QUEUE_NAMES.correlation]: ENGINES_NAMES.correlation,
+  [ENGINES_QUEUE_NAMES.heartbeat]: ENGINES_NAMES.heartbeat,
+};
+
+export const CAT_ENGINES = [
+  ENGINES_NAMES.correlation,
+  ENGINES_NAMES.dynamicInfo,
+  ENGINES_NAMES.webhook,
+];

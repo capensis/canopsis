@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="liveReportingModal")
+    modal-wrapper(data-test="liveReportingModal", close)
       template(slot="title")
         span {{ $t('modals.liveReporting.editLiveReporting') }}
       template(slot="text")
@@ -28,6 +28,7 @@ import { MODALS, DATETIME_FORMATS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
@@ -42,7 +43,11 @@ export default {
     validator: 'new',
   },
   components: { DateIntervalSelector, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { config } = this.modal;
 

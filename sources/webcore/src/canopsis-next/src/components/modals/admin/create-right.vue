@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createRight.title') }}
       template(slot="text")
@@ -18,6 +18,7 @@ import { generateRight } from '@/helpers/entities';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRightMixin from '@/mixins/entities/right';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import RightForm from '@/components/other/right/form/right-form.vue';
 
@@ -29,7 +30,12 @@ export default {
     validator: 'new',
   },
   components: { RightForm, ModalWrapper },
-  mixins: [modalInnerMixin, entitiesRightMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    entitiesRightMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="confirmationModal")
+  modal-wrapper(data-test="confirmationModal", close)
     template(v-if="!config.hideTitle", slot="title")
       span {{ $t('common.confirmation') }}
     template(v-if="config.text", slot="text")

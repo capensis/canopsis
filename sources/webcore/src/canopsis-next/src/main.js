@@ -50,6 +50,7 @@ import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
+import AltRouteIcon from '@/components/icons/alt_route.vue';
 
 import * as modalsComponents from '@/components/modals';
 
@@ -71,6 +72,9 @@ Vue.use(Vuetify, {
     },
     bullhorn: {
       component: BullhornIcon,
+    },
+    alt_route: {
+      component: AltRouteIcon,
     },
   },
 });

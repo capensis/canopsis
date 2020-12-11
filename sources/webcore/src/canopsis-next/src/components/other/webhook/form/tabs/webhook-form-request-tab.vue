@@ -50,6 +50,7 @@
       :textLabel="$t('webhook.tabs.request.fields.headerKey')",
       :valueLabel="$t('webhook.tabs.request.fields.headerValue')"
     )
+      v-alert(slot="no-data", :value="true", type="info") {{ $t('webhook.tabs.request.emptyHeaders') }}
     v-layout
       v-flex
         v-textarea(

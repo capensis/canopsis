@@ -23,9 +23,14 @@ export default {
         onStop: this.onStop,
       };
     },
+    tourInstance() {
+      return this.$tours[this.tourName];
+    },
   },
   mounted() {
-    this.$tours[this.tourName].start();
+    if (this.tourInstance) {
+      this.tourInstance.start();
+    }
   },
   methods: {
     ...authMapActions(['fetchCurrentUser']),
@@ -39,7 +44,8 @@ export default {
       }
 
       const user = prepareUserByData({}, this.currentUser);
-      const data = setField(user, ['tours', this.tourName], true);
+      const tours = { ...user.tours, [this.tourName]: true };
+      const data = setField(user, 'tours', tours);
 
       await this.createUser({ data });
 

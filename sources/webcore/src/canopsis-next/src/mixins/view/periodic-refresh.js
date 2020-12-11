@@ -85,7 +85,6 @@ export default {
     periodicRefreshProgressFormatted() {
       return this.$options.filters.duration(
         this.periodicRefreshProgress,
-        undefined,
         DATETIME_FORMATS.refreshFieldFormat,
       );
     },
@@ -107,7 +106,7 @@ export default {
     },
 
     periodicRefreshDelay() {
-      return toSeconds(this.periodicRefreshValue, this.periodicRefreshUnit);
+      return toSeconds(Number(this.periodicRefreshValue), this.periodicRefreshUnit);
     },
 
     refreshHandler() {

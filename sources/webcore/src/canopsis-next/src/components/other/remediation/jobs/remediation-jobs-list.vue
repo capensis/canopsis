@@ -16,31 +16,27 @@
         v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
-      v-layout
-        v-btn.mx-0(
-          v-if="hasUpdateAnyRemediationJobAccess",
-          icon,
-          small,
-          @click.stop="$emit('edit', props.item)"
-        )
-          v-icon edit
-        v-tooltip(bottom, :disabled="!props.disabled")
-          v-btn.mx-0(
-            slot="activator",
-            v-if="hasDeleteAnyRemediationJobAccess",
-            :disabled="props.disabled",
-            icon,
-            small,
-            @click.stop="$emit('remove', props.item)"
-          )
-            v-icon(color="error") delete
-          span {{ $t('remediationJobs.usingJob') }}
+      action-btn(
+        v-if="hasUpdateAnyRemediationJobAccess",
+        type="edit",
+        @click="$emit('edit', props.item)"
+      )
+      action-btn(
+        v-if="hasDeleteAnyRemediationJobAccess",
+        :tooltip="props.disabled ? $t('remediationJobs.usingJob') : $t('common.delete')",
+        :disabled="props.disabled",
+        type="delete",
+        @click="$emit('remove', props.item)"
+      )
 </template>
 
 <script>
 import rightsTechnicalRemediationJobMixin from '@/mixins/rights/technical/remediation-job';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
+
 export default {
+  components: { ActionBtn },
   mixins: [rightsTechnicalRemediationJobMixin],
   props: {
     remediationJobs: {

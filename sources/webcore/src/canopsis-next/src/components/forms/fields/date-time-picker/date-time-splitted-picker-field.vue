@@ -38,8 +38,9 @@
 
 <script>
 import { convertTimestampToMoment } from '@/helpers/date';
+import { updateTime, updateDate } from '@/helpers/date-time-picker';
 
-import dateTimePickerMixin from '@/mixins/vuetify/date-time-picker';
+import formBaseMixin from '@/mixins/form/base';
 
 import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
@@ -60,7 +61,7 @@ export default {
   },
   inject: ['$validator'],
   components: { DatePickerField, TimePickerField },
-  mixins: [dateTimePickerMixin],
+  mixins: [formBaseMixin],
   props: {
     value: {
       type: Date,
@@ -98,6 +99,15 @@ export default {
 
     errorMessages() {
       return this.errors.collect(this.name).map(error => error.replace(this.name, this.label));
+    },
+  },
+  methods: {
+    updateTime(time) {
+      this.updateModel(updateTime(this.value, time));
+    },
+
+    updateDate(date) {
+      this.updateModel(updateDate(this.value, date));
     },
   },
 };

@@ -76,26 +76,23 @@
         )
           v-icon filter_list
         span {{ $t('filterSelector.buttons.list') }}
-      filters-list(
+      filters-form(
         v-else,
-        :filters="filters",
+        :filters="filtersWithSelected",
         :entitiesType="entitiesType",
-        @create:filter="createFilter",
-        @update:filter="updateFilter",
-        @delete:filter="deleteFilter",
-        @update:filters="updateFilters"
+        @input="updateFilters"
       )
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 
 import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
 
-import FiltersList from '@/components/other/filter/list/filters-list.vue';
+import FiltersForm from '@/components/other/filter/form/filters-form.vue';
 
 export default {
-  components: { FiltersList },
+  components: { FiltersForm },
   props: {
     long: {
       type: Boolean,
@@ -185,6 +182,16 @@ export default {
 
       return preparedLockedFilters;
     },
+
+    filtersWithSelected() {
+      return this.filters.map((filter) => {
+        const selected = this.isMultiple
+          ? this.value.some(currentFilter => this.isFilterEqual(filter, currentFilter))
+          : !!this.value && this.isFilterEqual(filter, this.value);
+
+        return { ...filter, selected };
+      });
+    },
   },
   methods: {
     updateIsMultipleFlag(checked) {
@@ -205,60 +212,35 @@ export default {
       this.$emit('update:condition', newCondition);
     },
 
-    updateFilters(newFilters, newValue) {
-      this.$emit('update:filters', newFilters, newValue);
+    updateFilters(filters) {
+      const removeSelectedProperty = filter => omit(filter, 'selected');
 
-      return newFilters;
+      const selectedFilters = filters.reduce((acc, filter) => {
+        if (filter.selected) {
+          acc.push(removeSelectedProperty(filter));
+        }
+
+        return acc;
+      }, []);
+
+      const newValue = this.isMultiple ? selectedFilters : selectedFilters[0];
+
+      return this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
     },
 
-    createFilter(newFilter) {
-      return this.updateFilters([...this.filters, newFilter]);
-    },
-
-    updateFilter(newFilter, index) {
-      const oldFilter = this.filters[index];
-      let newValue = this.value;
-
-      if (this.isMultiple) {
-        newValue = this.value.map(v => (v.filter === newFilter.filter ? newFilter : v));
-      } else if (this.value && this.value.filter === oldFilter.filter) {
-        newValue = newFilter;
-      }
-
-      const newFilters = this.filters.map((v, i) => (index === i ? newFilter : v));
-
-      return this.updateFilters(newFilters, newValue);
-    },
-
-    deleteFilter(index) {
-      const oldFilter = this.filters[index];
-      let newValue = this.value;
-
-      if (this.isMultiple) {
-        newValue = this.value.filter(selectedFilter => selectedFilter.filter !== oldFilter.filter);
-      } else if (this.value && this.value.filter === oldFilter.filter) {
-        newValue = null;
-      }
-
-      const newFilters = this.filters.filter((filter, i) => i !== index);
-
-      return this.updateFilters(newFilters, newValue);
+    isFilterEqual(firstFilter, secondFilter) {
+      return firstFilter.title === secondFilter.title && firstFilter.filter === secondFilter.filter;
     },
 
     showFiltersListModal() {
       this.$modals.show({
         name: MODALS.filtersList,
         config: {
-          filters: this.filters,
+          filters: this.filtersWithSelected,
           hasAccessToAddFilter: this.hasAccessToUserFilter,
           hasAccessToEditFilter: this.hasAccessToUserFilter,
           entitiesType: this.entitiesType,
-          actions: {
-            create: this.createFilter,
-            update: this.updateFilter,
-            updateList: this.updateFilters,
-            delete: this.deleteFilter,
-          },
+          action: filters => this.updateFilters(filters),
         },
       });
     },

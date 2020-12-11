@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="textFieldEditorModal")
+    modal-wrapper(data-test="textFieldEditorModal", close)
       template(slot="title")
         span {{ config.title }}
       template(slot="text")
@@ -31,6 +31,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -40,7 +41,11 @@ export default {
     validator: 'new',
   },
   components: { ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin({ field: 'text' }),
+  ],
   data() {
     const field = this.modal.config.field || {};
 

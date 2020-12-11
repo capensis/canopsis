@@ -10,6 +10,7 @@ import {
   USER_RIGHTS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
+  ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -85,6 +86,8 @@ export default {
     show: 'Afficher',
     edit: 'Éditer',
     duplicate: 'Dupliquer',
+    play: 'Play',
+    copyLink: 'Copier le lien',
     parse: 'Compiler',
     home: 'Accueil',
     step: 'Étape',
@@ -137,12 +140,14 @@ export default {
     periods: 'Périodes',
     range: 'Gamme',
     duration: 'Durée',
+    engines: 'Engines',
     previous: 'Précédent',
     next: 'Suivant',
     eventPatterns: 'Patterns des événements',
     alarmPatterns: 'Patterns des alarmes',
     entityPatterns: 'Pattern des entités',
     totalEntityPatterns: 'Total des modèles d\'entité',
+    addFilter: 'Ajouter un filtre',
     actions: {
       close: 'Fermer',
       acknowledgeAndDeclareTicket: 'Acquitter et déclarer un ticket',
@@ -830,6 +835,7 @@ export default {
       fields: {
         title: 'Nom',
       },
+      emptyFilters: 'Aucun filtre ajouté pour le moment',
     },
     colorPicker: {
       title: 'Sélecteur de couleur',
@@ -1098,7 +1104,12 @@ export default {
         success: 'Action créée avec succès !',
       },
       edit: {
+        title: 'Modifier le action',
         success: 'Action éditée avec succès !',
+      },
+      duplicate: {
+        title: 'Dupliquer un action',
+        success: 'Action dupliquée avec succès !',
       },
       remove: {
         success: 'Action supprimée avec succès !',
@@ -1203,6 +1214,7 @@ export default {
       errors: {
         noNames: 'Vous devez ajouter au moins 1 attribut',
       },
+      emptyNames: 'Aucun nom ajouté pour le moment',
     },
     importExportViews: {
       title: 'Vues d\'importation / exportation',
@@ -1293,6 +1305,7 @@ export default {
         name: 'Nom',
         description: 'Description',
       },
+      emptyExdates: 'Aucun exdates ajouté pour le moment',
     },
     createManualMetaAlarm: {
       title: 'Gestion manuelle des méta-alarmes',
@@ -1538,6 +1551,7 @@ export default {
     createEntity: 'Entité créée avec succès',
     editEntity: 'Entité éditée avec succès',
     pathCopied: 'Chemin copié dans le presse-papier',
+    linkCopied: 'Lien copié dans le presse-papiers',
     authKeyCopied: 'Clé d\'authentification copiée dans le presse-papiers',
     widgetIdCopied: 'Widget id copié dans le presse-papier',
   },
@@ -1777,6 +1791,7 @@ export default {
           headerValue: 'Valeur',
           payload: 'Payload',
         },
+        emptyHeaders: 'Aucun en-tête ajouté pour le moment',
       },
       declareTicket: {
         emptyResponse: 'Réponse vide',
@@ -1785,6 +1800,7 @@ export default {
           text: 'Clé',
           value: 'Valeur',
         },
+        emptyDeclareTicket: 'Billet de déclaration vide',
       },
     },
   },
@@ -1893,6 +1909,7 @@ export default {
     title: 'Dates d\'exception',
     create: 'Ajouter une date d\'exception',
     choose: 'Sélectionnez la liste d\'exclusion',
+    emptyExceptions: 'Aucune exception ajoutée pour le moment',
   },
 
   pbehaviorTypes: {
@@ -1909,6 +1926,54 @@ export default {
       type: 'Type',
       reason: 'Raison',
       exceptions: 'Dates d\'exception',
+    },
+  },
+
+  engines: {
+    [ENGINES_NAMES.event]: {
+      title: 'Event',
+      description: 'Provient de la ressource',
+    },
+
+    [ENGINES_NAMES.webhook]: {
+      title: 'Webhook',
+      description: 'Déclenche le lancement des webhooks',
+    },
+    [ENGINES_NAMES.fifo]: {
+      title: 'FIFO',
+      description: 'Gère la file d\'attente des événements et des alarmes',
+    },
+    [ENGINES_NAMES.axe]: {
+      title: 'AXE',
+      description: 'Crée des alarmes et effectue des actions avec elles',
+    },
+    [ENGINES_NAMES.che]: {
+      title: 'CHE',
+      description: 'Applique les filtres d\'événements et les entités créées',
+    },
+    [ENGINES_NAMES.pbehavior]: {
+      title: 'Pbehavior',
+      description: 'Vérifie si l\'alarme est sous PBehvaior',
+    },
+    [ENGINES_NAMES.action]: {
+      title: 'Action',
+      description: 'Déclenche le lancement des actions',
+    },
+    [ENGINES_NAMES.watcher]: {
+      title: 'Watcher',
+      description: 'Met à jour les compteurs de l\'observateur et génère watcher-events',
+    },
+    [ENGINES_NAMES.dynamicInfo]: {
+      title: 'Dynamic infos',
+      description: 'Ajoute des informations dynamiques à l\'alarme',
+    },
+    [ENGINES_NAMES.correlation]: {
+      title: 'Correlation',
+      description: 'Adds dynamic infos to alarm',
+    },
+    [ENGINES_NAMES.heartbeat]: {
+      title: 'Heartbeat',
+      description: 'Adds dynamic infos to alarm',
     },
   },
 
@@ -1931,8 +1996,8 @@ export default {
     stop: 'Arrêter',
     remainingStep: 'Continuer avec les étapes restantes',
     timeToComplete: 'Temps d\'exécution (estimation)',
-    hideAll: 'Cacher tout',
-    expandAll: 'Développer tout',
+    emptySteps: 'Aucune étape ajoutée pour le moment',
+    emptyOperations: 'Aucune opération ajoutée pour le moment',
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui / Non',
     },

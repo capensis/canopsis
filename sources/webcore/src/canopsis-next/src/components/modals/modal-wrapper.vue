@@ -4,11 +4,15 @@
     :data-test="$attrs['data-test']"
   )
     v-card-title.primary.white--text(v-if="$slots.title && !$slots.fullTitle")
-      v-layout.headline(justify-space-between, align-center)
-        v-flex
+      div.modal-wrapper__title.headline
+        div
           slot(name="title")
-        v-flex(v-if="minimize")
-          modal-title-buttons(:modal="modal")
+        div
+          modal-title-buttons(
+            :modal="modal",
+            :minimize="minimize",
+            :close="close"
+          )
     slot(name="fullTitle")
     template(v-if="!modal.minimized")
       v-card-text(v-if="$slots.text", key="text")
@@ -34,6 +38,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    close: {
+      type: [Boolean, Function],
+      default: false,
+    },
   },
   computed: {
     modal() {
@@ -42,3 +50,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.modal-wrapper__title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+
+  & > div {
+    display: flex;
+  }
+}
+</style>

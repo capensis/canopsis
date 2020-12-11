@@ -30,8 +30,12 @@
         td.text-xs-left {{ props.item.name }}
         td.text-xs-left {{ props.item._id}}
         td
-          v-btn(icon, @click="$emit('update:selectedIds', [props.item])")
-            v-icon add
+          v-layout(row)
+            action-btn(
+              :tooltip="$t('common.add')",
+              icon="add",
+              @click="$emit('update:selectedIds', [props.item])"
+            )
 </template>
 
 <script>
@@ -39,12 +43,13 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { getContextWidgetSearchByText } from '@/helpers/entities-search';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 const { mapActions } = createNamespacedHelpers('entity');
 
 export default {
-  components: { SearchField },
+  components: { ActionBtn, SearchField },
   data() {
     return {
       pending: false,

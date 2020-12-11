@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createFilterModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
@@ -36,12 +36,11 @@
 </template>
 
 <script>
-import { pick } from 'lodash';
-
 import { ENTITIES_TYPES, MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 
@@ -53,7 +52,11 @@ export default {
     validator: 'new',
   },
   components: { FilterEditor, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { hiddenFields = [], filter = {}, entitiesType = ENTITIES_TYPES.alarm } = this.modal.config;
 
@@ -61,7 +64,7 @@ export default {
       hiddenFields,
       entitiesType,
 
-      form: pick(filter, ['title', 'filter']),
+      form: { ...filter },
     };
   },
   computed: {

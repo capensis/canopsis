@@ -1,10 +1,10 @@
 <template lang="pug">
   v-form(data-test="addStatModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ config.title }}
       template(slot="text")
-        add-stat-form(v-model="form", :withTrend="config.withTrend")
+        add-stat-form(v-model="form", :with-trend="config.withTrend")
       template(slot="actions")
         v-btn(
           data-test="addStatCancelButton",
@@ -28,6 +28,7 @@ import { setField } from '@/helpers/immutable';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import AddStatForm from '@/components/other/stats/add-stat-form.vue';
 
@@ -39,7 +40,11 @@ export default {
     validator: 'new',
   },
   components: { AddStatForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

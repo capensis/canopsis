@@ -1,5 +1,8 @@
 <template lang="pug">
   v-layout.mt-2(column)
+    v-layout(row)
+      v-flex(v-if="!operations.length", xs11)
+        v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptyOperations') }}
     draggable(
       v-field="operations",
       :options="draggableOptions",

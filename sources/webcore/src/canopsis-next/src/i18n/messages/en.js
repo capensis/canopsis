@@ -10,6 +10,7 @@ import {
   USER_RIGHTS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
+  ENGINES_NAMES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -85,6 +86,8 @@ export default {
     show: 'Show',
     edit: 'Edit',
     duplicate: 'Duplicate',
+    play: 'Play',
+    copyLink: 'Copy link',
     parse: 'Parse',
     home: 'Home',
     step: 'Step',
@@ -137,12 +140,14 @@ export default {
     periods: 'Periods',
     range: 'Range',
     duration: 'Duration',
+    engines: 'Engines',
     previous: 'Previous',
     next: 'Next',
     eventPatterns: 'Event patterns',
     alarmPatterns: 'Alarm patterns',
     entityPatterns: 'Entity patterns',
     totalEntityPatterns: 'Total entity patterns',
+    addFilter: 'Add filter',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -830,6 +835,7 @@ export default {
       fields: {
         title: 'Title',
       },
+      emptyFilters: 'No filters added yet',
     },
     colorPicker: {
       title: 'Color picker',
@@ -1098,7 +1104,12 @@ export default {
         success: 'Action successfully created!',
       },
       edit: {
+        title: 'Edit action',
         success: 'Action successfully edited!',
+      },
+      duplicate: {
+        title: 'Duplicate action',
+        success: 'Action successfully duplicated!',
       },
       remove: {
         success: 'Action successfully removed!',
@@ -1203,6 +1214,7 @@ export default {
       errors: {
         noNames: 'You have to add at least 1 name',
       },
+      emptyNames: 'No names added yet',
     },
     importExportViews: {
       title: 'Import/Export views',
@@ -1293,6 +1305,7 @@ export default {
         name: 'Name',
         description: 'Description',
       },
+      emptyExdates: 'No exdates added yet',
     },
     createManualMetaAlarm: {
       title: 'Manual meta alarm management',
@@ -1538,6 +1551,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
+    linkCopied: 'Link copied to clipboard',
     authKeyCopied: 'Auth key copied to clipboard',
     widgetIdCopied: 'Widget id copied to clipboard',
   },
@@ -1777,6 +1791,7 @@ export default {
           headerValue: 'Header value',
           payload: 'Payload',
         },
+        emptyHeaders: 'No headers added yet',
       },
       declareTicket: {
         title: 'Declare ticket',
@@ -1785,6 +1800,7 @@ export default {
           text: 'Key',
           value: 'Value',
         },
+        emptyDeclareTicket: 'Empty declare ticket',
       },
     },
   },
@@ -1893,6 +1909,7 @@ export default {
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
     usingException: 'Cannot be deleted since it is in use',
+    emptyExceptions: 'No exceptions added yet',
   },
 
   pbehaviorTypes: {
@@ -1909,6 +1926,54 @@ export default {
       type: 'Type',
       reason: 'Reason',
       exceptions: 'Dates of exceptions',
+    },
+  },
+
+  engines: {
+    [ENGINES_NAMES.event]: {
+      title: 'Event',
+      description: 'Comes from resource',
+    },
+
+    [ENGINES_NAMES.webhook]: {
+      title: 'Webhook',
+      description: 'Triggers the webhooks launch',
+    },
+    [ENGINES_NAMES.fifo]: {
+      title: 'FIFO',
+      description: 'Manages the queue of events and alarms',
+    },
+    [ENGINES_NAMES.axe]: {
+      title: 'AXE',
+      description: 'Creates alarms and performs actions with them',
+    },
+    [ENGINES_NAMES.che]: {
+      title: 'CHE',
+      description: 'Applies eventfilters and created entities',
+    },
+    [ENGINES_NAMES.pbehavior]: {
+      title: 'Pbehavior',
+      description: 'Checks if the alarm is under PBehvaior',
+    },
+    [ENGINES_NAMES.action]: {
+      title: 'Action',
+      description: 'Triggers the actions launch',
+    },
+    [ENGINES_NAMES.watcher]: {
+      title: 'Watcher',
+      description: 'Updates watcher counters and generates watcher-events',
+    },
+    [ENGINES_NAMES.dynamicInfo]: {
+      title: 'Dynamic infos',
+      description: 'Adds dynamic infos to alarm',
+    },
+    [ENGINES_NAMES.correlation]: {
+      title: 'Correlation',
+      description: 'Adds dynamic infos to alarm',
+    },
+    [ENGINES_NAMES.heartbeat]: {
+      title: 'Heartbeat',
+      description: 'Adds dynamic infos to alarm',
     },
   },
 
@@ -1931,8 +1996,8 @@ export default {
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',
     timeToComplete: 'Time to complete',
-    hideAll: 'Hide all',
-    expandAll: 'Expand all',
+    emptySteps: 'No steps added yet',
+    emptyOperations: 'No operations added yet',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
     },
