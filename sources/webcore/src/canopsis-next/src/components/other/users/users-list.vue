@@ -17,28 +17,28 @@
     template(slot="enable", slot-scope="props")
       enabled-column(:value="props.item.enable")
     template(slot="actions", slot-scope="props")
-      v-layout
-        v-btn.mx-0(
+      v-layout(row)
+        action-btn(
           v-if="hasUpdateAnyUserAccess",
-          icon,
-          @click.stop="$emit('edit', props.item)"
+          type="edit",
+          @click="showEditUserModal(props.item)"
         )
-          v-icon edit
-        v-btn.mx-0(
+        action-btn(
           v-if="hasDeleteAnyUserAccess",
-          icon,
-          @click.stop="$emit('remove', props.item)"
+          type="delete",
+          @click="showRemoveUserModal(props.item._id)"
         )
-          v-icon(color="error") delete
 </template>
 
 <script>
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 export default {
   components: {
+    ActionBtn,
     EnabledColumn,
   },
   mixins: [rightsTechnicalUserMixin],
