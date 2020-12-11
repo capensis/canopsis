@@ -44,7 +44,7 @@ export default {
   props: {
     value: {
       type: [Date, Number],
-      default: null,
+      default: () => new Date(),
     },
     label: {
       type: String,

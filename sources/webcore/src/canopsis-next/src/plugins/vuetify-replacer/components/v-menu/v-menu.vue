@@ -16,8 +16,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    scrollCalculator: {
+      type: Function,
+      required: false,
+    },
   },
   methods: {
+    calcScrollPosition() {
+      const $el = this.$refs.content;
+      const activeTile = $el.querySelector('.v-list__tile--active');
+      const maxScrollTop = $el.scrollHeight - $el.offsetHeight;
+
+      if (activeTile) {
+        const newScrollTop = (activeTile.offsetTop - ($el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
+
+        return Math.min(maxScrollTop, Math.max(0, newScrollTop));
+      }
+
+      return this.scrollCalculator ? this.scrollCalculator($el) : $el.scrollTop;
+    },
+
     closeConditional(e) {
       const targetZIndex = getZIndex(e.target);
       const contentZIndex = getZIndex(this.$refs.content);
