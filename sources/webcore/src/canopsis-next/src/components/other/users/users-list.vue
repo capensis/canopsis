@@ -34,9 +34,11 @@
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 export default {
   components: {
+    ActionBtn,
     EnabledColumn,
   },
   mixins: [rightsTechnicalUserMixin],
