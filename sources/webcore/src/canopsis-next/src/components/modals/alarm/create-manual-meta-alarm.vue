@@ -40,6 +40,7 @@ import { isWarningAlarmState } from '@/helpers/entities';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
 import ManualMetaAlarmForm from '@/components/other/alarm/forms/manual-meta-alarm-form.vue';
@@ -59,7 +60,12 @@ export default {
     ManualMetaAlarmForm,
     ModalWrapper,
   },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
+  mixins: [
+    modalInnerItemsMixin,
+    eventActionsAlarmMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

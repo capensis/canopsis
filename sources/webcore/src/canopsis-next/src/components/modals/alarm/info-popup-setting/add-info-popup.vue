@@ -27,6 +27,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import InfoPopupForm from '@/components/other/alarm/forms/info-popup-form.vue';
 
@@ -38,7 +39,11 @@ export default {
     validator: 'new',
   },
   components: { InfoPopupForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

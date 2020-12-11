@@ -34,6 +34,7 @@ import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
 import EntityForm from '@/components/other/context/form/entity-form.vue';
@@ -56,8 +57,9 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    submittableMixin(),
     entitiesContextEntityMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     return {

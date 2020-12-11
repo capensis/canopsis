@@ -29,6 +29,7 @@ import { eventFilterRuleToForm, formEnrichmentOptionsToEventFilterRule } from '@
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 import EventFilterEnrichmentForm from '@/components/other/event-filter/form/event-filter-enrichment-form.vue';
@@ -41,7 +42,11 @@ export default {
     validator: 'new',
   },
   components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { rule, isDuplicating } = this.modal.config;
 

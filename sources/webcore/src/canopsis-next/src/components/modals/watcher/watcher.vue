@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(close)
     template(slot="fullTitle")
       v-card-title.white--text(:style="{ backgroundColor: color }")
         v-layout.headline(justify-space-between, align-center)
@@ -50,6 +50,7 @@ import { addKeyInEntity } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
@@ -69,6 +70,7 @@ export default {
     entitiesPbehaviorMixin,
     entitiesWatcherEntityMixin,
     submittableMixin(),
+    confirmableModalMixin({ field: 'eventsQueue' }),
   ],
   data() {
     return {

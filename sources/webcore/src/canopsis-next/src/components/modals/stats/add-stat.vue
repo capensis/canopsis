@@ -28,6 +28,7 @@ import { setField } from '@/helpers/immutable';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import AddStatForm from '@/components/other/stats/add-stat-form.vue';
 
@@ -39,7 +40,11 @@ export default {
     validator: 'new',
   },
   components: { AddStatForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

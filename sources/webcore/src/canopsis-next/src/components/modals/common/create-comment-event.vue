@@ -31,6 +31,7 @@ import { MODALS } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/other/alarm/alarm-general-list.vue';
 
@@ -45,7 +46,12 @@ export default {
     validator: 'new',
   },
   components: { AlarmGeneralTable, ModalWrapper },
-  mixins: [modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
+  mixins: [
+    modalInnerItemsMixin,
+    eventActionsAlarmMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

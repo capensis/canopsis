@@ -37,6 +37,7 @@ import { formToWebhook, webhookToForm } from '@/helpers/forms/webhook';
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import DisableDuringPeriodsField from '@/components/forms/fields/disable-during-periods.vue';
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
@@ -60,7 +61,12 @@ export default {
     ModalWrapper,
     RetryField,
   },
-  mixins: [authMixin, modalInnerMixin, submittableMixin()],
+  mixins: [
+    authMixin,
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const preparedWebhook = this.modal.config.isDuplicating
       ? omit(this.modal.config.webhook, ['_id'])

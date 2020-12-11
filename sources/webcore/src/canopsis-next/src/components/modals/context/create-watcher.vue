@@ -23,6 +23,7 @@ import uuid from '@/helpers/uuid';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -38,9 +39,10 @@ export default {
   components: { WatcherForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    submittableMixin(),
     entitiesContextEntityMixin,
     entitiesInfoMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     const { item } = this.modal.config;

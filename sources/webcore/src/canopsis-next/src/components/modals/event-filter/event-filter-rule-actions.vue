@@ -11,8 +11,8 @@
       v-container
         h2 {{ $t('modals.eventFilterRule.actions') }}
         v-list(dark)
-          draggable(v-model="actions")
-            v-list-group(v-for="(action, index) in actions", :key="action.name")
+          draggable(v-model="form.actions")
+            v-list-group(v-for="(action, index) in form.actions", :key="action.name")
               v-list-tile(slot="activator")
                 v-list-tile-title {{index + 1}} - {{ action.type }} - {{ action.name || action.from }}
                 v-btn(@click.stop="showEditActionModal(index)", icon)
@@ -32,12 +32,14 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash';
 import Draggable from 'vuedraggable';
 
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -47,23 +49,26 @@ export default {
     validator: 'new',
   },
   components: { Draggable, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
+    const { actions = [] } = this.modal.config;
+
     return {
-      actions: [],
+      form: {
+        actions: cloneDeep(actions),
+      },
     };
-  },
-  mounted() {
-    if (this.config.actions) {
-      this.actions = [...this.config.actions];
-    }
   },
   methods: {
     showCreateActionModal() {
       this.$modals.show({
         name: MODALS.eventFilterRuleCreateAction,
         config: {
-          action: ruleAction => this.actions.push(ruleAction),
+          action: ruleAction => this.form.actions.push(ruleAction),
         },
       });
     },
@@ -73,17 +78,17 @@ export default {
         name: MODALS.eventFilterRuleCreateAction,
         config: {
           ruleAction: this.actions[index],
-          action: ruleAction => this.$set(this.actions, index, ruleAction),
+          action: ruleAction => this.$set(this.form.actions, index, ruleAction),
         },
       });
     },
 
     deleteAction(index) {
-      this.$delete(this.actions, index);
+      this.$delete(this.form.actions, index);
     },
 
     async submit() {
-      await this.config.action(this.actions);
+      await this.config.action(this.form.actions);
       this.$modals.hide();
     },
   },
