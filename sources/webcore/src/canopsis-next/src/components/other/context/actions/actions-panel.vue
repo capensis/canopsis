@@ -52,7 +52,7 @@ export default {
         editEntity: {
           type: contextActionsTypes.editEntity,
           icon: 'edit',
-          iconClass: 'primary--text',
+          iconColor: 'primary',
           title: this.$t('context.actions.titles.editEntity'),
           method: this.showEditEntityModal,
         },
@@ -65,7 +65,7 @@ export default {
         deleteEntity: {
           type: contextActionsTypes.deleteEntity,
           icon: 'delete',
-          iconClass: 'error--text',
+          iconColor: 'error',
           title: this.$t('context.actions.titles.deleteEntity'),
           method: this.showDeleteEntityModal,
         },

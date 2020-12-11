@@ -1,5 +1,7 @@
 <template lang="pug">
   v-layout(column)
+    v-flex(v-if="!steps.length", xs12)
+      v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptySteps') }}
     draggable(v-field="steps", :options="draggableOptions")
       v-card.my-2(v-for="(step, index) in steps", :key="step.key")
         v-card-text

@@ -16,31 +16,27 @@
         v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
-      v-layout
-        v-btn.mx-0(
-          v-if="hasUpdateAnyRemediationConfigurationAccess",
-          icon,
-          small,
-          @click.stop="$emit('edit', props.item)"
-        )
-          v-icon edit
-        v-tooltip(bottom, :disabled="!props.disabled")
-          v-btn.mx-0(
-            slot="activator",
-            v-if="hasDeleteAnyRemediationConfigurationAccess",
-            :disabled="props.disabled",
-            icon,
-            small,
-            @click.stop="$emit('remove', props.item)"
-          )
-            v-icon(color="error") delete
-          span {{ $t('remediationConfigurations.usingConfiguration') }}
+      action-btn(
+        v-if="hasUpdateAnyRemediationConfigurationAccess",
+        type="edit",
+        @click="$emit('edit', props.item)"
+      )
+      action-btn(
+        v-if="hasDeleteAnyRemediationConfigurationAccess",
+        :tooltip="props.disabled ? $t('remediationConfigurations.usingConfiguration') : $t('common.delete')",
+        :disabled="props.disabled",
+        type="delete",
+        @click="$emit('edit', props.item)"
+      )
 </template>
 
 <script>
 import rightsTechnicalRemediationConfigurationMixin from '@/mixins/rights/technical/remediation-configuration';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
+
 export default {
+  components: { ActionBtn },
   mixins: [rightsTechnicalRemediationConfigurationMixin],
   props: {
     remediationConfigurations: {

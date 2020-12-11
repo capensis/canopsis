@@ -86,6 +86,8 @@ export default {
     show: 'Show',
     edit: 'Edit',
     duplicate: 'Duplicate',
+    play: 'Play',
+    copyLink: 'Copy link',
     parse: 'Parse',
     home: 'Home',
     step: 'Step',
@@ -145,6 +147,7 @@ export default {
     alarmPatterns: 'Alarm patterns',
     entityPatterns: 'Entity patterns',
     totalEntityPatterns: 'Total entity patterns',
+    addFilter: 'Add filter',
     actions: {
       close: 'Close',
       acknowledgeAndDeclareTicket: 'Acknowledge and declare ticket',
@@ -832,6 +835,7 @@ export default {
       fields: {
         title: 'Title',
       },
+      emptyFilters: 'No filters added yet',
     },
     colorPicker: {
       title: 'Color picker',
@@ -1100,7 +1104,12 @@ export default {
         success: 'Action successfully created!',
       },
       edit: {
+        title: 'Edit action',
         success: 'Action successfully edited!',
+      },
+      duplicate: {
+        title: 'Duplicate action',
+        success: 'Action successfully duplicated!',
       },
       remove: {
         success: 'Action successfully removed!',
@@ -1205,6 +1214,7 @@ export default {
       errors: {
         noNames: 'You have to add at least 1 name',
       },
+      emptyNames: 'No names added yet',
     },
     importExportViews: {
       title: 'Import/Export views',
@@ -1295,6 +1305,7 @@ export default {
         name: 'Name',
         description: 'Description',
       },
+      emptyExdates: 'No exdates added yet',
     },
     createManualMetaAlarm: {
       title: 'Manual meta alarm management',
@@ -1538,6 +1549,7 @@ export default {
     createEntity: 'Entity successfully created',
     editEntity: 'Entity successfully edited',
     pathCopied: 'Path copied to clipboard',
+    linkCopied: 'Link copied to clipboard',
     authKeyCopied: 'Auth key copied to clipboard',
     widgetIdCopied: 'Widget id copied to clipboard',
   },
@@ -1777,6 +1789,7 @@ export default {
           headerValue: 'Header value',
           payload: 'Payload',
         },
+        emptyHeaders: 'No headers added yet',
       },
       declareTicket: {
         title: 'Declare ticket',
@@ -1785,6 +1798,7 @@ export default {
           text: 'Key',
           value: 'Value',
         },
+        emptyDeclareTicket: 'Empty declare ticket',
       },
     },
   },
@@ -1893,6 +1907,7 @@ export default {
     create: 'Add an exception date',
     choose: 'Choose list of exceptions',
     usingException: 'Cannot be deleted since it is in use',
+    emptyExceptions: 'No exceptions added yet',
   },
 
   pbehaviorTypes: {
@@ -1979,8 +1994,8 @@ export default {
     stop: 'Stop',
     remainingStep: 'Continue with remaining steps',
     timeToComplete: 'Time to complete',
-    hideAll: 'Hide all',
-    expandAll: 'Expand all',
+    emptySteps: 'No steps added yet',
+    emptyOperations: 'No operations added yet',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
     },

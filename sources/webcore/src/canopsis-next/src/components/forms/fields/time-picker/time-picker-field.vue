@@ -1,132 +1,138 @@
 <template lang="pug">
-  v-menu(
-    v-model="opened",
-    :close-on-content-click="false",
-    :disabled="disabled",
-    content-class="time-picker",
-    transition="slide-y-transition",
-    max-width="290px",
-    right,
-    lazy
+  v-combobox.time-picker__select(
+    ref="combobox",
+    :value="value",
+    :items="items",
+    :menu-props="menuProps",
+    :return-object="false",
+    :filter="filter",
+    :label="label",
+    placeholder="−−:−−",
+    append-icon="",
+    hide-details,
+    @change="change"
   )
-    div(slot="activator")
-      v-text-field(
-        ref="textField",
-        :value="value",
-        :label="label",
-        :error="error",
-        :error-messages="errorMessages",
-        :name="name",
-        :disabled="disabled",
-        :hide-details="hideDetails",
-        :append-icon="clearable ? 'close' : ''",
-        readonly,
-        @click:append="clear"
-      )
-    v-time-picker.time-picker(
-      :value="value",
-      :opened="opened",
-      :color="color",
-      :format="format",
-      @input="input",
-      @change="change"
-    )
 </template>
 
 <script>
 import formBaseMixin from '@/mixins/form/base';
 
-/**
- * Time picker field component
- */
 export default {
-  $_veeValidate: {
-    value() {
-      return this.value;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
-  inject: ['$validator'],
   mixins: [formBaseMixin],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    clearable: {
-      type: Boolean,
-      default: false,
-    },
     value: {
       type: String,
       default: null,
     },
     label: {
       type: String,
-      default: '',
-    },
-    name: {
-      type: String,
       default: null,
     },
-    color: {
-      type: String,
-      default: 'primary',
+    stepsInHours: {
+      type: Number,
+      default: 4,
     },
-    format: {
-      type: String,
-      default: '24hr',
-    },
-    error: {
+    roundHours: {
       type: Boolean,
       default: false,
     },
-    hideDetails: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      opened: false,
-    };
   },
   computed: {
-    errorMessages() {
-      if (this.$validator && this.errors && this.name) {
-        return this.errors.collect(this.name);
+    menuProps() {
+      return {
+        auto: true,
+        minWidth: 90,
+        maxHeight: 200,
+        scrollCalculator: this.scrollCalculator,
+      };
+    },
+
+    items() {
+      if (this.roundHours) {
+        return new Array(24).fill(0).map((item, index) => `${index < 10 ? `0${index}` : index}:00`);
       }
 
-      return [];
+      const { stepsInHours } = this;
+      const minutesStep = Math.floor(60 / stepsInHours);
+
+      return new Array(24 * stepsInHours).fill(0).map((item, index) => {
+        const hoursIndex = Math.floor(index / stepsInHours);
+        const minutesIndex = index - (hoursIndex * stepsInHours);
+
+        const hours = hoursIndex < 10 ? `0${hoursIndex}` : hoursIndex;
+        const minutes = minutesIndex === 0 ? '00' : minutesIndex * minutesStep;
+
+        return `${hours}:${minutes}`;
+      });
     },
   },
   methods: {
-    clear() {
-      this.updateModel(null);
-    },
-    input(value) {
-      this.updateModel(value);
-    },
-    change(value) {
-      this.$emit('change', value);
+    scrollCalculator(el) {
+      if (!this.value) {
+        return el.scrollTop;
+      }
 
-      this.opened = false;
-      this.$refs.textField.blur();
+      const maxScrollTop = el.scrollHeight - el.offsetHeight;
+      const index = this.items.findIndex(item => item >= this.value);
+      const elements = el.querySelectorAll('.v-list__tile');
+
+      const activeTile = elements[index === -1 ? elements.length - 1 : index];
+
+      if (activeTile) {
+        const newScrollTop = (activeTile.offsetTop - (el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
+
+        return Math.min(maxScrollTop, Math.max(0, newScrollTop));
+      }
+
+      return el.scrollTop;
+    },
+
+    filter(item, queryText, itemText) {
+      return itemText.toLocaleLowerCase().startsWith(queryText.toLocaleLowerCase());
+    },
+
+    change(value) {
+      const result = value.match(/(([01][0-9])|(2[0-3])):([0-5][0-9])/);
+      let preparedValue = value;
+
+      if (result && this.roundHours) {
+        const [, hours] = result;
+
+        preparedValue = `${hours}:00`;
+      } else if (!result) {
+        preparedValue = this.value;
+      }
+
+      if (value !== preparedValue) {
+        this.$refs.combobox.setValue(preparedValue);
+        this.$refs.combobox.setSearch('');
+      }
+
+      if (this.value !== preparedValue) {
+        this.updateModel(preparedValue);
+      }
     },
   },
 };
 </script>
 
-<style lang="scss">
-  .time-picker {
-    .v-picker__body,
-    .v-time-picker-clock__item,
-    .v-time-picker-clock__item span,
-    .v-time-picker-clock__hand {
-      z-index: inherit;
+<style lang="scss" scoped>
+.time-picker__select {
+  display: inline-block;
+  width: 56px;
+
+  &.v-select--is-menu-active .v-input__slot {
+    background: #686868;
+  }
+
+  & /deep/ {
+    .v-select__slot {
+      padding: 0 5px;
     }
   }
+}
 </style>

@@ -16,6 +16,11 @@
       mixed,
       @input="$emit('input', $event)"
     )
+      v-alert(
+        slot="no-data",
+        :value="true",
+        type="info"
+      ) {{ $t('webhook.tabs.declareTicket.emptyDeclareTicket') }}
 </template>
 
 <script>

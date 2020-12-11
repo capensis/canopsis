@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createViewModal", @submit.prevent="submit")
-    modal-wrapper(data-test="createViewModal")
+    modal-wrapper(data-test="createViewModal", close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
@@ -42,6 +42,7 @@ import {
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesViewMixin from '@/mixins/entities/view';
 import entitiesViewRightsMixin from '@/mixins/entities/view/rights';
 import entitiesRoleMixin from '@/mixins/entities/role';
@@ -67,6 +68,7 @@ export default {
     authMixin,
     modalInnerMixin,
     submittableMixin(),
+    confirmableModalMixin(),
     entitiesViewMixin,
     entitiesRoleMixin,
     entitiesRightMixin,
