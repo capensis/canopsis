@@ -45,9 +45,11 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
+    const [selectedColumn = {}] = this.modal.config.columns || [];
+
     return {
       form: {
-        selectedColumn: {},
+        selectedColumn,
         template: '',
       },
     };
