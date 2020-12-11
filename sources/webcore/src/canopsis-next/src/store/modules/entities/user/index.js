@@ -66,7 +66,7 @@ export default {
      * @returns {AxiosPromise<any>}
      */
     async remove(context, { id }) {
-      return request.delete(`${API_ROUTES.user.remove}/${id}`);
+      return request.delete(`${API_ROUTES.user.remove}/${encodeURIComponent(id)}`);
     },
 
     /**
