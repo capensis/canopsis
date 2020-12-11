@@ -38,6 +38,13 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapGetters } = createNamespacedHelpers('modals');
 
 export default {
+  inject: {
+    $closeModal: {
+      default() {
+        return () => this.$modals.hide({ id: this.modal.id });
+      },
+    },
+  },
   props: {
     modal: {
       type: Object,
@@ -60,9 +67,11 @@ export default {
         return false;
       }
 
-      return isFunction(this.close)
-        ? this.close
-        : () => this.$modals.hide({ id: this.modal.id });
+      if (isFunction(this.close)) {
+        return this.close;
+      }
+
+      return this.$closeModal;
     },
   },
 };

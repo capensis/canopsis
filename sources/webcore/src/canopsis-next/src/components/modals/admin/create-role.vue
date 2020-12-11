@@ -25,6 +25,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import RoleForm from '@/components/other/role/role-form.vue';
 
@@ -41,6 +42,7 @@ export default {
     entitiesRoleMixin,
     entitiesViewGroupMixin,
     submittableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     const group = this.modal.config.group || { name: '', description: '', defaultView: '' };

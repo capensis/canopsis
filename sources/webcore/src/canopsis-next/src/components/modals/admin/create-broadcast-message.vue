@@ -21,6 +21,7 @@ import { messageToForm, formToMessage } from '@/helpers/forms/broadcast-message'
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
 import BroadcastMessageForm from '@/components/other/broadcast-message/broadcast-message-form.vue';
@@ -29,12 +30,15 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createBroadcastMessage,
-
   $_veeValidate: {
     validator: 'new',
   },
   components: { BroadcastMessage, BroadcastMessageForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { message = {} } = this.modal.config;
 

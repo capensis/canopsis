@@ -18,6 +18,7 @@ import { formToAction, actionToForm } from '@/helpers/forms/action';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import ActionForm from '@/components/other/action/form/action-form.vue';
 
@@ -30,7 +31,11 @@ export default {
   },
   inject: ['$system'],
   components: { ActionForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { item, isDuplicating } = this.modal.config;
 
