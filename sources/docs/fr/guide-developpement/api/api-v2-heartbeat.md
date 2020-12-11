@@ -112,7 +112,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 Supprime un HeartBeat en fonction de son `id`.
 
-**URL** : `/api/v2/heartbeat<heartbeat_id>`
+**URL** : `/api/v2/heartbeat/<heartbeat_id>`
 
 **Méthode** : `DELETE`
 
