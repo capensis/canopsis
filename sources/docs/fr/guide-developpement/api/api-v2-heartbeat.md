@@ -19,11 +19,15 @@ Crée un nouveau HeartBeat à partir du corps de la requête.
 **Exemple de corps de requête** :
 ```json
 {
+  "author": "créateur",
+  "name": "Heartbeat",
+  "description": "Ceci est une description",
+  "expected_interval": "1m",
+  "output": "Une note personnalisable",
   "pattern": {
-      "connector": "c1",
-      "connector_name": "connector1"
-  },
-  "expected_interval": "10s"
+    "connector": "connect",
+    "connector_name": "c01"
+  }
 }
 ```
 
@@ -31,12 +35,16 @@ Crée un nouveau HeartBeat à partir du corps de la requête.
 
 ```sh
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
+  "author": "créateur",
+  "name": "Heartbeat",
+  "description": "Ceci est une description",
+  "expected_interval": "1m",
+  "output": "Une note personnalisable",
   "pattern": {
-      "connector": "c1",
-      "connector_name": "connector1"
-  },
-  "expected_interval": "10s"
-}' 'http://<Canopsis_URL>/api/v2/heartbeat/'
+    "connector": "connect",
+    "connector_name": "c01"
+  }
+}' 'http://localhost:8082/api/v2/heartbeat'
 ```
 
 #### Réponse en cas de réussite
@@ -50,7 +58,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 ```json
 {
   "name": "heartbeat created",
-  "description": "cd92421e77f48435d38b3682beb62f07"
+  "description": "eaadc64a-a0ef-4c5c-8453-a45e574fd5ca"
 }
 ```
 
@@ -104,7 +112,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 Supprime un HeartBeat en fonction de son `id`.
 
-**URL** : `/api/v2/heartbeat/<heartbeat_id>`
+**URL** : `/api/v2/heartbeat<heartbeat_id>`
 
 **Méthode** : `DELETE`
 
@@ -112,10 +120,10 @@ Supprime un HeartBeat en fonction de son `id`.
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le heartbeat avec l'`id` `cd92421e77f48435d38b3682beb62f07` :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le heartbeat avec l'`id` `eaadc64a-a0ef-4c5c-8453-a45e574fd5ca` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/heartbeat/eaadc64a-a0ef-4c5c-8453-a45e574fd5ca'
 ```
 
 #### Réponse en cas de réussite
@@ -129,7 +137,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4
 ```json
 {
   "name": "heartbeat removed",
-  "description": "cd92421e77f48435d38b3682beb62f07"
+  "description": "eaadc64a-a0ef-4c5c-8453-a45e574fd5ca"
 }
 ```
 
@@ -144,7 +152,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4
 ```json
 {
   "description" : "heartbeat not found",
-  "name" : "cd92421e77f48435d38b3682beb62f07"
+  "name" : "eaadc64a-a0ef-4c5c-8453-a45e574fd5ca"
 }
 ```
 
@@ -178,10 +186,10 @@ Récupère un ou plusieurs HeartBeats créés en base.
 
 **Permissions requise** : Aucune
 
-**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le heartbeat avec l'`id` `cd92421e77f48435d38b3682beb62f07` :
+**Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le heartbeat avec l'`id` `cf7097b6-71ba-48db-a749-e9474aa70c93` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f48435d38b3682beb62f07'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/heartbeat/cf7097b6-71ba-48db-a749-e9474aa70c93'
 ```
 
 ##### Réponse en cas de réussite
@@ -194,12 +202,18 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 
 ```json
 {
-  "_id": "cd92421e77f48435d38b3682beb62f07",
+  "updated": 1607680814,
+  "description": "Ceci est une description",
+  "created": 1607680814,
   "pattern": {
-      "connector": "c1",
-      "connector_name": "connector1"
+    "connector": "connect",
+    "connector_name": "c01"
   },
-  "expected_interval": "10s"
+  "author": "créateur",
+  "expected_interval": "1m",
+  "output": "Une chaîne de caractères",
+  "_id": "cf7097b6-71ba-48db-a749-e9474aa70c93",
+  "name": "Heartbeat"
 }
 ```
 
@@ -214,7 +228,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 ```json
 {
   "description" : "heartbeat not found",
-  "name" : "cd92421e77f48435d38b3682beb62f07"
+  "name" : "cf7097b6-71ba-48db-a749-e9474aa70c93"
 }
 ```
 
@@ -236,7 +250,7 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/cd92421e77f4843
 
 Récupère tous les HeartBeats stockés en base
 
-**URL** : `/api/v2/heartbeat/`
+**URL** : `/api/v2/heartbeat`
 
 **Méthode** : `GET`
 
@@ -247,7 +261,7 @@ Récupère tous les HeartBeats stockés en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les heartbeats :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/heartbeat'
 ```
 
 ##### Réponse en cas de réussite
@@ -261,20 +275,32 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/heartbeat/'
 ```json
 [
     {
-      "_id": "cd92421e77f48435d38b3682beb62f07",
+      "updated": 1607680882,
+      "description": "Ceci est une description",
+      "created": 1607680882,
       "pattern": {
-          "connector": "c1",
-          "connector_name": "connector1"
+        "connector": "connect",
+        "connector_name": "c02"
       },
-      "expected_interval": "10s"
+      "author": "root",
+      "expected_interval": "1m",
+      "output": "Une chaîne de caractères",
+      "_id": "619e1f78-cb2e-4f15-afbe-1921aef8db8e",
+      "name": "Heartbeat 2"
     },
     {
-      "_id": "3d071cb49acce44040b35ed8c6714ef1",
+      "updated": 1607680814,
+      "description": "Ceci est une description",
+      "created": 1607680814,
       "pattern": {
-          "connector": "c2",
-          "connector_name": "connector2"
+        "connector": "connect",
+        "connector_name": "c01"
       },
-      "expected_interval": "15m"
+      "author": "créateur",
+      "expected_interval": "1m",
+      "output": "Une chaîne de caractères",
+      "_id": "cf7097b6-71ba-48db-a749-e9474aa70c93",
+      "name": "Heartbeat"
     }
 ]
 ```
