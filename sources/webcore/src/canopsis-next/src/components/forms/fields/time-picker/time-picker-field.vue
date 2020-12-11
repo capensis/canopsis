@@ -47,24 +47,7 @@ export default {
         auto: true,
         minWidth: 90,
         maxHeight: 200,
-        scrollCalculator: ($el) => {
-          if (!this.value) {
-            return $el.scrollTop;
-          }
-
-          const maxScrollTop = $el.scrollHeight - $el.offsetHeight;
-          const index = this.items.findIndex(item => item >= this.value);
-          const elements = $el.querySelectorAll('.v-list__tile');
-          const activeTile = elements[index === -1 ? elements.length - 1 : index];
-
-          if (activeTile) {
-            const newScrollTop = (activeTile.offsetTop - ($el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
-
-            return Math.min(maxScrollTop, Math.max(0, newScrollTop));
-          }
-
-          return $el.scrollTop;
-        },
+        scrollCalculator: this.scrollCalculator,
       };
     },
 
