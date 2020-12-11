@@ -90,6 +90,7 @@ export default {
 
       return el.scrollTop;
     },
+
     filter(item, queryText, itemText) {
       return itemText.toLocaleLowerCase().startsWith(queryText.toLocaleLowerCase());
     },
