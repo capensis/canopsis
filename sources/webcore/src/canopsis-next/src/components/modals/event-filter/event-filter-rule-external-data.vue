@@ -31,7 +31,7 @@ export default {
   mixins: [
     modalInnerMixin,
     submittableMixin(),
-    confirmableModalMixin(),
+    confirmableModalMixin({ field: 'newVal' }),
   ],
   data() {
     const { value } = this.modal.config;
