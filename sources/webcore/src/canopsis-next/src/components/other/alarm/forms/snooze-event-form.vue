@@ -1,15 +1,22 @@
 <template lang="pug">
   div
     duration-field(v-field="form.duration")
-    output-field(v-field="form.output", :required="isNoteRequired")
+    v-layout(row)
+      v-textarea(
+        v-field="form.output",
+        v-validate="isNoteRequired ? 'required' : ''",
+        :label="$t('common.output')",
+        :error-messages="errors.collect('output')",
+        name="output"
+      )
 </template>
 
 <script>
 import DurationField from '@/components/forms/fields/duration.vue';
-import OutputField from '@/components/forms/fields/output.vue';
 
 export default {
-  components: { DurationField, OutputField },
+  inject: ['$validator'],
+  components: { DurationField },
   model: {
     prop: 'form',
     event: 'input',
