@@ -52,9 +52,16 @@
               hide-details
             )
       v-flex(xs12)
-        pbehavior-reasons-field(v-field="form.reason")
+        pbehavior-reasons-field(
+          v-field="form.reason",
+          v-validate="'required'"
+        )
       v-flex(xs12)
-        pbehavior-type-field(v-field="form.type", return-object)
+        pbehavior-type-field(
+          v-field="form.type",
+          v-validate="'required'",
+          return-object
+        )
 </template>
 
 <script>
@@ -76,6 +83,7 @@ import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/p
 import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     EnabledField,
     DurationField,
@@ -92,7 +100,6 @@ export default {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

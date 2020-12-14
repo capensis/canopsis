@@ -31,12 +31,12 @@ import PayloadField from '@/components/forms/fields/payload-field.vue';
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     EnabledField,
     PayloadField,
     RemediationJobConfigurationField,
   },
-  inject: ['$validator'],
   model: {
     prop: 'form',
     event: 'input',

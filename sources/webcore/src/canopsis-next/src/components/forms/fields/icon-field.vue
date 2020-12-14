@@ -22,7 +22,6 @@
 import materialIconNameByCode from '@/assets/material-icons/MaterialIcons-Regular.json';
 
 export default {
-  inject: ['$validator'],
   $_veeValidate: {
     name() {
       return this.name;
@@ -31,6 +30,7 @@ export default {
       return this.value;
     },
   },
+  inject: ['$validator'],
   model: {
     prop: 'value',
     event: 'input',

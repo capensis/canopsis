@@ -7,15 +7,18 @@
       :error-messages="errors.collect('comment')",
       name="comment"
     )
-    pbehavior-reasons-field(v-field="form.reason")
+    pbehavior-reasons-field(
+      v-field="form.reason",
+      v-validate="'required'"
+    )
 </template>
 
 <script>
 import PbehaviorReasonsField from '@/components/other/pbehavior/reasons/partials/pbehavior-reasons-field.vue';
 
 export default {
-  components: { PbehaviorReasonsField },
   inject: ['$validator'],
+  components: { PbehaviorReasonsField },
   model: {
     prop: 'form',
     event: 'input',

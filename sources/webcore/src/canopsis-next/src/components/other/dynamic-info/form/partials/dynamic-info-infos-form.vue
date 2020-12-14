@@ -29,13 +29,13 @@ import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import ActionBtn from '@/components/tables/action-btn.vue';
 
 export default {
+  inject: ['$validator'],
   components: { ActionBtn },
   mixins: [formArrayMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Array,

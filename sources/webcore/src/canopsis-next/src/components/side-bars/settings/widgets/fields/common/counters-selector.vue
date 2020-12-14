@@ -11,6 +11,7 @@
         )
         pbehavior-type-field(
           v-field="value.types",
+          v-validate="value.enabled ? 'required' : ''",
           :disabled="!value.enabled",
           :is-item-disabled="isItemDisabled",
           with-icon,

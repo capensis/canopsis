@@ -32,8 +32,8 @@ import formArrayMixin from '@/mixins/form/array';
 import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/form/pbehavior-exceptions-field.vue';
 
 export default {
-  components: { PbehaviorExceptionsField },
   inject: ['$validator'],
+  components: { PbehaviorExceptionsField },
   mixins: [formMixin, formArrayMixin],
   model: {
     prop: 'form',

@@ -27,6 +27,7 @@ import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     PatternsList,
   },
@@ -35,7 +36,6 @@ export default {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

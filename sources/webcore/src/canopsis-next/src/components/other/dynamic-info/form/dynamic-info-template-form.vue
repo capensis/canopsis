@@ -16,8 +16,8 @@
 import DynamicInfoTemplateNamesField from './partials/dynamic-info-template-names-field.vue';
 
 export default {
-  components: { DynamicInfoTemplateNamesField },
   inject: ['$validator'],
+  components: { DynamicInfoTemplateNamesField },
   model: {
     prop: 'template',
     event: 'input',

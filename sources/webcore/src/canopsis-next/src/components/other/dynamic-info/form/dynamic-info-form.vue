@@ -45,6 +45,7 @@ import DynamicInfoInfosForm from './partials/dynamic-info-infos-form.vue';
 import DynamicInfoPatternsForm from './partials/dynamic-info-patterns-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     DynamicInfoGeneralForm,
     DynamicInfoInfosForm,
@@ -54,7 +55,6 @@ export default {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

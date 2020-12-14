@@ -49,12 +49,12 @@ import { MODALS } from '@/constants';
 import formMixin from '@/mixins/form';
 
 export default {
+  inject: ['$validator'],
   mixins: [formMixin],
   model: {
     prop: 'annotationLine',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     annotationLine: {
       type: Object,

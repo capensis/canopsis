@@ -31,13 +31,13 @@ import formValidationHeaderMixin from '@/mixins/form/validation-header';
 import DisableDuringPeriodsField from '@/components/forms/fields/disable-during-periods.vue';
 
 export default {
+  inject: ['$validator'],
   components: { DisableDuringPeriodsField },
   mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

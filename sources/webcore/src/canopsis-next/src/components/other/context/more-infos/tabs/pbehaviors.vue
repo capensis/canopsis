@@ -29,11 +29,11 @@ import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 export default {
+  inject: ['$system'],
   components: {
     ActionBtn,
     EnabledColumn,
   },
-  inject: ['$system'],
   mixins: [
     authMixin,
     queryMixin,

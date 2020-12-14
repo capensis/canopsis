@@ -62,8 +62,8 @@ import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: { ModalTitleButtons, WatcherTemplate, ModalWrapper },
   inject: ['$system'],
+  components: { ModalTitleButtons, WatcherTemplate, ModalWrapper },
   mixins: [
     modalInnerMixin,
     eventActionsMixin,

@@ -8,12 +8,12 @@ import ModalWrapper from './modal-wrapper.vue';
 
 export default {
   name: 'modal-base',
-  components: { ModalWrapper },
   provide() {
     return {
       $clickOutside: this.$clickOutside,
     };
   },
+  components: { ModalWrapper },
   props: {
     modal: {
       type: Object,

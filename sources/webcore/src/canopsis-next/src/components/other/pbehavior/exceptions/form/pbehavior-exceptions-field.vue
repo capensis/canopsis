@@ -27,9 +27,9 @@ import formArrayMixin from '@/mixins/form/array';
 import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: { PbehaviorExceptionField },
   mixins: [formArrayMixin],
-  inject: ['$validator'],
   model: {
     prop: 'exdates',
     event: 'input',

@@ -22,12 +22,12 @@ export default {
       return this.name;
     },
   },
+  inject: ['$validator'],
   mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     value: {
       type: String,

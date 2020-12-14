@@ -19,12 +19,12 @@ import { MODALS } from '@/constants';
 import formMixin from '@/mixins/form/object';
 
 export default {
+  inject: ['$validator'],
   mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

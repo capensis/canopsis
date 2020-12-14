@@ -1,15 +1,14 @@
 <template lang="pug">
   v-select(
     v-field="reason",
-    v-validate="'required'",
     :label="$t('modals.createPbehavior.steps.general.fields.reason')",
     :loading="pbehaviorReasonsPending",
     :items="pbehaviorReasons",
-    :error-messages="errors.collect('reason')",
-    return-object,
-    name="reason",
+    :error-messages="errors.collect(name)",
+    :name="name",
     item-text="name",
-    item-value="_id"
+    item-value="_id",
+    return-object
   )
 </template>
 
@@ -17,16 +16,29 @@
 import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
 export default {
+  $_veeValidate: {
+    value() {
+      return this.value;
+    },
+
+    name() {
+      return this.name;
+    },
+  },
+  inject: ['$validator'],
   mixins: [pbehaviorReasonsMixin],
   model: {
     prop: 'reason',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     reason: {
       type: [Object, String],
       default: '',
+    },
+    name: {
+      type: String,
+      default: 'reason',
     },
   },
   mounted() {

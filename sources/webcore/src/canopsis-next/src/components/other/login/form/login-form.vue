@@ -33,12 +33,12 @@ import authMixin from '@/mixins/auth';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 export default {
+  inject: ['$validator'],
   mixins: [authMixin, entitiesInfoMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

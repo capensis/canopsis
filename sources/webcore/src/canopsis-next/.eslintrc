@@ -25,6 +25,7 @@
         "parent",
         "functional",
         "$_veeValidate",
+        ["provide", "inject"],
         ["delimiters", "comments"],
         ["components", "directives", "filters"],
         "extends",

@@ -36,8 +36,8 @@ import { META_ALARMS_THRESHOLD_TYPES } from '@/constants';
 import PercentsField from '@/components/forms/fields/percents.vue';
 
 export default {
-  components: { PercentsField },
   inject: ['$validator'],
+  components: { PercentsField },
   model: {
     prop: 'threshold',
     event: 'input',

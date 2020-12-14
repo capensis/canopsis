@@ -30,10 +30,10 @@
 import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     DateTimeSplittedPickerField,
   },
-  inject: ['$validator'],
   props: {
     start: {
       type: Date,

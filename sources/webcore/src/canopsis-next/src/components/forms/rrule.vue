@@ -202,6 +202,7 @@ import { mapValues, pickBy, isArray } from 'lodash';
  * @type {Object|null} - RRule object
  */
 export default {
+  inject: ['$validator'],
   filters: {
     rRuleToFormOptions(rRule) {
       const { origOptions } = rRule;
@@ -254,7 +255,6 @@ export default {
       type: String,
     },
   },
-  inject: ['$validator'],
   data() {
     let rRule;
 

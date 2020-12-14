@@ -126,7 +126,7 @@ export default {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.createCancelEvent.fields.output'),
+          title: this.$t('common.output'),
           action: (output) => {
             this.addCancelActionToQueue({ entity: this.entity, output });
             this.actionsClicked.push(EVENT_ENTITY_TYPES.cancel);

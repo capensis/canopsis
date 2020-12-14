@@ -35,8 +35,8 @@ import { PERIODIC_REFRESH_UNITS, DEFAULT_PERIODIC_REFRESH } from '@/constants';
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 export default {
-  components: { EnabledField },
   inject: ['$validator'],
+  components: { EnabledField },
   model: {
     prop: 'periodicRefresh',
     event: 'input',

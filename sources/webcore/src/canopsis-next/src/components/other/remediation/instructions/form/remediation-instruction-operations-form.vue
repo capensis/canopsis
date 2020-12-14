@@ -42,12 +42,12 @@ import DraggableStepNumber from '../partials/draggable-step-number.vue';
 import RemediationInstructionOperationField from './fields/remediation-instruction-operation-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     Draggable,
     DraggableStepNumber,
     RemediationInstructionOperationField,
   },
-  inject: ['$validator'],
   mixins: [formArrayMixin],
   model: {
     prop: 'operations',

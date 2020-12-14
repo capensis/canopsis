@@ -24,6 +24,7 @@ import PbehaviorFilterField from './pbehavior-filter-field.vue';
 import PbehaviorRruleField from './pbehavior-rrule-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     PbehaviorRruleField,
     PbehaviorFilterField,
@@ -35,7 +36,6 @@ export default {
     prop: 'form',
     event: 'input',
   },
-  inject: ['$validator'],
   props: {
     form: {
       type: Object,

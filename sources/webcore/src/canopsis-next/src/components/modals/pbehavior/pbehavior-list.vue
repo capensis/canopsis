@@ -54,13 +54,13 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
+  inject: ['$system'],
   components: {
     ActionBtn,
     EnabledColumn,
     ModalWrapper,
   },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin],
-  inject: ['$system'],
   computed: {
     headers() {
       return [

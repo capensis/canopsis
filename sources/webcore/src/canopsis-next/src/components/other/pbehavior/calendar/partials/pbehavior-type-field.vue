@@ -1,7 +1,6 @@
 <template lang="pug">
   v-select(
     v-field="value",
-    v-validate="rules",
     :label="$t('common.type')",
     :loading="pbehaviorTypesPending",
     :items="types",
@@ -23,6 +22,15 @@
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 
 export default {
+  $_veeValidate: {
+    value() {
+      return this.value;
+    },
+
+    name() {
+      return this.name;
+    },
+  },
   inject: ['$validator'],
   mixins: [entitiesPbehaviorTypesMixin],
   model: {
@@ -70,12 +78,6 @@ export default {
 
     errorMessages() {
       return this.errors.collect(this.name).map(error => error.replace(this.name, this.$t('common.type')));
-    },
-
-    rules() {
-      return {
-        required: !this.disabled,
-      };
     },
   },
   mounted() {

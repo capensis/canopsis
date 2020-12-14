@@ -53,8 +53,8 @@ import formMixin from '@/mixins/form';
 import IconField from '@/components/forms/fields/icon-field.vue';
 
 export default {
-  components: { IconField },
   inject: ['$validator'],
+  components: { IconField },
   mixins: [formMixin],
   model: {
     prop: 'form',

@@ -17,6 +17,7 @@
     v-flex.pl-2(:class="disabled ? 'xs6' : 'xs5'")
       pbehavior-type-field(
         v-field="value.type",
+        v-validate="disabled ? '' : 'required'",
         :name="typeName",
         :disabled="disabled",
         return-object

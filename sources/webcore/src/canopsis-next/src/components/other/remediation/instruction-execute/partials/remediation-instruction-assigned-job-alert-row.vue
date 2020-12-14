@@ -15,8 +15,8 @@ import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
 import RemediationInstructionAssignedJobAlert from './remediation-instruction-assigned-job-alert.vue';
 
 export default {
-  components: { RemediationInstructionAssignedJobAlert },
   inject: ['$system'],
+  components: { RemediationInstructionAssignedJobAlert },
   props: {
     job: {
       type: Object,
