@@ -28,15 +28,15 @@
               @input="updateMainFilterUpdatedAt"
             )
             v-divider
-          field-context-entities-types-filter(v-model="settings.widget_preferences.selectedTypes")
+          field-context-entities-types-filter(v-model="settings.widget.parameters.selectedTypes")
       v-divider
     v-btn.primary(data-test="submitContext", @click="submit") {{ $t('common.save') }}
 </template>
 
 <script>
-import { get, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
-import { SIDE_BARS, FILTER_DEFAULT_VALUES, USERS_RIGHTS } from '@/constants';
+import { SIDE_BARS, USERS_RIGHTS } from '@/constants';
 
 import authMixin from '@/mixins/auth';
 import widgetSettingsMixin from '@/mixins/widget/settings';
@@ -72,11 +72,6 @@ export default {
     return {
       settings: {
         widget: cloneDeep(widget),
-        widget_preferences: {
-          selectedTypes: [],
-          viewFilters: [],
-          mainFilter: {},
-        },
       },
     };
   },
@@ -92,15 +87,6 @@ export default {
     hasAccessToAddFilter() {
       return this.checkAccess(USERS_RIGHTS.business.context.actions.addFilter);
     },
-  },
-  created() {
-    const { widget_preferences: widgetPreference } = this.userPreference;
-    this.settings.widget_preferences = {
-      selectedTypes: get(widgetPreference, 'selectedTypes', []),
-      viewFilters: get(widgetPreference, 'viewFilters', []),
-      mainFilter: get(widgetPreference, 'mainFilter', {}),
-      mainFilterCondition: get(widgetPreference, 'mainFilterCondition', FILTER_DEFAULT_VALUES.condition),
-    };
   },
   methods: {
     prepareWidgetQuery(newQuery, oldQuery) {

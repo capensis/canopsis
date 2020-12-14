@@ -1,7 +1,9 @@
 <template lang="pug">
-  div
+  v-layout(column)
     v-layout.mt-3(row)
       v-flex(xs12)
+        v-layout
+          slot(name="no-data", v-if="!exdates.length")
         pbehavior-exception-field.mb-3(
           v-for="(exdate, index) in exdates",
           v-field="exdates[index]",

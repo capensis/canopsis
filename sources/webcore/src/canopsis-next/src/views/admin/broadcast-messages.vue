@@ -17,20 +17,17 @@
             td {{ props.item.start | date('long', true) }}
             td {{ props.item.end | date('long', true) }}
             td
-              v-btn.ma-0(
-                v-if="hasUpdateAnyBroadcastMessageAccess",
-                data-test="editButton",
-                icon,
-                @click="showEditBroadcastMessageModal(props.item)"
-              )
-                v-icon edit
-              v-btn.ma-0(
-                v-if="hasDeleteAnyBroadcastMessageAccess",
-                data-test="deleteButton",
-                icon,
-                @click="showRemoveBroadcastMessageModal(props.item._id)"
-              )
-                v-icon(color="error") delete
+              v-layout(row)
+                action-btn(
+                  v-if="hasUpdateAnyBroadcastMessageAccess",
+                  type="edit",
+                  @click="showEditBroadcastMessageModal(props.item)"
+                )
+                action-btn(
+                  v-if="hasDeleteAnyBroadcastMessageAccess",
+                  type="delete",
+                  @click="showRemoveBroadcastMessageModal(props.item._id)"
+                )
     fab-buttons(
       v-if="hasCreateAnyBroadcastMessageAccess",
       @refresh="fetchList",
@@ -50,6 +47,7 @@ import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broa
 import SearchField from '@/components/forms/fields/search-field.vue';
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
 import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
 
@@ -58,6 +56,7 @@ export default {
     SearchField,
     BroadcastMessage,
     FabButtons,
+    ActionBtn,
   },
   mixins: [rightsTechnicalBroadcastMessageMixin],
   computed: {

@@ -7,25 +7,25 @@
     max-width="290px",
     :close-on-content-click="false",
     right,
+    lazy-with-unmount,
     lazy
   )
     div(slot="activator")
       v-text-field(
-        data-test="dateTimePickerField",
-        readonly,
         :label="label",
         :error-messages="errorMessages",
-        :value="value | date(useSeconds ? 'dateTimePickerWithSeconds' : 'dateTimePicker', true)",
+        :value="value | date('dateTimePicker', true)",
         :append-icon="clearable ? 'close' : ''",
+        readonly,
         @click:append="clear"
       )
     date-time-picker(
       data-test="dateTimePickerCalendar",
       :value="value",
-      :roundHours="roundHours",
-      :opened="opened",
-      :useSeconds="useSeconds",
-      @input="$emit('input', $event)"
+      :label="label",
+      :round-hours="roundHours",
+      @close="close",
+      @input="$listeners.input"
     )
 </template>
 
@@ -54,9 +54,7 @@ export default {
         return this.value;
       }
 
-      const startOfValue = this.useSeconds ? 'second' : 'minute';
-
-      return convertTimestampToMoment(this.value).startOf(startOfValue).toDate();
+      return convertTimestampToMoment(this.value).startOf('minute').toDate();
     },
 
     name() {
@@ -72,7 +70,7 @@ export default {
     },
     value: {
       type: [Date, Number],
-      default: null,
+      default: () => new Date(),
     },
     label: {
       type: String,
@@ -83,10 +81,6 @@ export default {
       default: null,
     },
     roundHours: {
-      type: Boolean,
-      default: false,
-    },
-    useSeconds: {
       type: Boolean,
       default: false,
     },
@@ -106,6 +100,10 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.opened = false;
+    },
+
     clear() {
       this.$emit('input', null);
     },

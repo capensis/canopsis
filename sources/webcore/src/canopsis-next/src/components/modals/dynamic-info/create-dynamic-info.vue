@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
@@ -11,12 +11,11 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/forms/dynamic-info';
 
@@ -30,23 +29,21 @@ export default {
     validator: 'new',
   },
   components: { DynamicInfoForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
-    const { dynamicInfo = {}, isDuplicating } = this.modal.config;
+    const { dynamicInfo } = this.modal.config;
 
     return {
-      form: dynamicInfoToForm(isDuplicating ? omit(dynamicInfo, ['_id']) : dynamicInfo),
+      form: dynamicInfoToForm(dynamicInfo),
     };
   },
   computed: {
     title() {
-      let type = 'create';
-
-      if (this.config.dynamicInfo) {
-        type = this.config.isDuplicating ? 'duplicate' : 'edit';
-      }
-
-      return this.$t(`modals.createDynamicInfo.${type}.title`);
+      return this.config.title || this.$t('modals.createDynamicInfo.create.title');
     },
   },
   methods: {

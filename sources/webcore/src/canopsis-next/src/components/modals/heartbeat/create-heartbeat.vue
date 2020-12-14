@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
@@ -22,6 +22,7 @@ import { heartbeatToForm, formToHeartbeat } from '@/helpers/forms/heartbeat';
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import HeartbeatForm from '@/components/other/heartbeat/form/heartbeat-form.vue';
 
@@ -36,7 +37,12 @@ export default {
     validator: 'new',
   },
   components: { HeartbeatForm, ModalWrapper },
-  mixins: [authMixin, modalInnerMixin, submittableMixin()],
+  mixins: [
+    authMixin,
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { heartbeat = {} } = this.modal.config;
 

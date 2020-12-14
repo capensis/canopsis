@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="pbehaviorListModal")
+  modal-wrapper(data-test="pbehaviorListModal", close)
     template(slot="title")
       span {{ $t('alarmList.actions.titles.pbehaviorList') }}
     template(slot="text")
@@ -10,16 +10,20 @@
         template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
         template(slot="type", slot-scope="props") {{ props.item.type | get('name', null, '') }}
         template(slot="reason", slot-scope="props") {{ props.item.reason | get('name', null, '') }}
-        template(slot="actions", slot-scope="props")
-          v-btn.mx-0(
-            v-for="action in availableActions",
-            :key="action.name",
-            @click="() => action.action(props.item)",
-            icon
-          )
-            v-icon {{ action.icon }}
         template(slot="expand", slot-scope="props")
           pbehaviors-list-expand-item(:pbehavior="props.item")
+        template(slot="actions", slot-scope="props")
+          v-layout(row)
+            action-btn(
+              v-if="hasAccessToEditPbehavior",
+              type="edit",
+              @click="showEditPbehaviorModal(props.item)"
+            )
+            action-btn(
+              v-if="hasAccessToDeletePbehavior",
+              type="delete",
+              @click="showRemovePbehaviorModal(props.item._id)"
+            )
         template(slot="is_active_status", slot-scope="props")
           v-icon(:color="props.item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
       v-layout(v-if="showAddButton", row)
@@ -42,6 +46,7 @@ import { MODALS, CRUD_ACTIONS } from '@/constants';
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
 
@@ -51,7 +56,12 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal showing a list of an alarm's pbehaviors
  */
 export default {
-  components: { PbehaviorsListExpandItem, EnabledColumn, ModalWrapper },
+  components: {
+    PbehaviorsListExpandItem,
+    ActionBtn,
+    EnabledColumn,
+    ModalWrapper,
+  },
   mixins: [modalInnerMixin, entitiesPbehaviorMixin],
   inject: ['$system'],
   computed: {
@@ -69,28 +79,17 @@ export default {
       ];
     },
     availableActions() {
-      const availableActions = this.modal.config.availableActions || [];
-
-      return availableActions.reduce((acc, action) => {
-        if (action === CRUD_ACTIONS.delete) {
-          acc.push({
-            name: CRUD_ACTIONS.delete,
-            icon: 'delete',
-            action: pbehavior => this.showRemovePbehaviorModal(pbehavior._id),
-          });
-        }
-
-        if (action === CRUD_ACTIONS.update) {
-          acc.push({
-            name: CRUD_ACTIONS.update,
-            icon: 'edit',
-            action: pbehavior => this.showEditPbehaviorModal(pbehavior),
-          });
-        }
-
-        return acc;
-      }, []);
+      return this.modal.config.availableActions || [];
     },
+
+    hasAccessToEditPbehavior() {
+      return this.availableActions.includes(CRUD_ACTIONS.update);
+    },
+
+    hasAccessToDeletePbehavior() {
+      return this.availableActions.includes(CRUD_ACTIONS.delete);
+    },
+
     filteredPbehaviors() {
       if (this.modal.config.onlyActive) {
         return this.pbehaviors.filter(value => value.enabled);

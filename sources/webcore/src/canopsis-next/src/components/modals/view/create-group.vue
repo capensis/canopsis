@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createGroupViewModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
@@ -35,6 +35,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsTechnicalViewMixin from '@/mixins/rights/technical/view';
 
@@ -49,6 +50,7 @@ export default {
   mixins: [
     modalInnerMixin,
     submittableMixin(),
+    confirmableModalMixin(),
     entitiesViewGroupMixin,
     rightsTechnicalViewMixin,
   ],

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(fillHeight)
+    modal-wrapper(fill-height, close)
       template(slot="title")
         span {{ $t('modals.pbehaviorPlanning.title') }}
       template(slot="text")
@@ -24,6 +24,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import { pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
@@ -39,6 +40,7 @@ export default {
     modalInnerMixin,
     entitiesPbehaviorMixin,
     submittableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     return {

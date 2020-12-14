@@ -1,9 +1,12 @@
 <template lang="pug">
-  modal-wrapper
+  modal-wrapper(close)
     template(slot="fullTitle")
       v-card-title.white--text(:style="{ backgroundColor: color }")
-        v-layout(justify-space-between, align-center)
-          span.headline {{ watcher.name }}
+        v-layout.headline(justify-space-between, align-center)
+          v-flex
+            span {{ watcher.name }}
+          v-flex
+            modal-title-buttons(:modal="modal", close)
     template(slot="text")
       v-fade-transition(mode="out-in")
         watcher-template(
@@ -47,17 +50,19 @@ import { addKeyInEntity } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
 
 import ModalWrapper from '../modal-wrapper.vue';
+import ModalTitleButtons from '../modal-title-buttons.vue';
 
 import WatcherTemplate from './partial/watcher-template.vue';
 
 export default {
   name: MODALS.watcher,
-  components: { WatcherTemplate, ModalWrapper },
+  components: { ModalTitleButtons, WatcherTemplate, ModalWrapper },
   inject: ['$system'],
   mixins: [
     modalInnerMixin,
@@ -65,6 +70,7 @@ export default {
     entitiesPbehaviorMixin,
     entitiesWatcherEntityMixin,
     submittableMixin(),
+    confirmableModalMixin({ field: 'eventsQueue' }),
   ],
   data() {
     return {

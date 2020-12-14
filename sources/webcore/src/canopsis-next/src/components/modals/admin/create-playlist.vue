@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ title }}
       template(slot="text")
@@ -31,6 +31,7 @@ import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
@@ -41,11 +42,9 @@ const { mapGetters: mapEntitiesGetters } = createNamespacedHelpers('entities');
 
 export default {
   name: MODALS.createPlaylist,
-
   $_veeValidate: {
     validator: 'new',
   },
-
   components: { PlaylistForm, ProgressOverlay, ModalWrapper },
   mixins: [
     modalInnerMixin,
@@ -53,6 +52,7 @@ export default {
     rightsEntitiesGroupMixin,
     rightsEntitiesPlaylistTabMixin,
     submittableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     const { playlist } = this.modal.config;

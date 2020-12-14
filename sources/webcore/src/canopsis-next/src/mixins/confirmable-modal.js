@@ -24,6 +24,11 @@ export default ({
   const clickOutsideHandlerMethodKey = uid('click-outside');
 
   return {
+    provide() {
+      return {
+        $closeModal: () => this[clickOutsideHandlerMethodKey]() && this.$modals.hide(),
+      };
+    },
     inject: ['$clickOutside'],
     created() {
       this.$clickOutside.register(this[clickOutsideHandlerMethodKey]);

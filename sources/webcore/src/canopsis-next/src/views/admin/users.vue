@@ -1,59 +1,22 @@
 <template lang="pug">
-  v-container
+  div
     the-page-header {{ $t('common.users') }}
-    div.white
-      v-layout(row, wrap)
-        v-flex(xs4)
-          search-field(
-            v-model="searchingText",
-            @submit="applySearchFilter",
-            @clear="applySearchFilter"
-          )
-        v-flex(v-show="hasDeleteAnyUserAccess && selected.length", xs4)
-          v-btn(@click="showRemoveSelectedUsersModal", data-test="massDeleteButton", icon)
-            v-icon delete
-      v-data-table(
-        v-model="selected",
-        :headers="headers",
-        :items="users",
-        :pagination.sync="pagination",
-        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
+    v-card-text
+      users-list(
+        :users="users",
         :total-items="usersMeta.total",
-        :loading="usersPending",
-        item-key="_id",
-        select-all
+        :pagination.sync="pagination",
+        :pending="usersPending",
+        @edit="showEditUserModal",
+        @remove="showRemoveUserModal",
+        @remove-selected="showRemoveSelectedUsersModal"
       )
-        template(slot="items", slot-scope="props")
-          tr(:data-test="`user-${props.item._id}`")
-            td
-              v-checkbox(v-model="props.selected", data-test="optionCheckbox", primary, hide-details)
-            td {{ props.item.id }}
-            td {{ props.item.role }}
-            td
-              enabled-column(:value="props.item.enable")
-            td
-              div
-                v-btn(
-                  v-if="hasUpdateAnyUserAccess",
-                  data-test="editButton",
-                  @click="showEditUserModal(props.item)",
-                  icon
-                )
-                  v-icon edit
-                v-btn(
-                  v-if="hasDeleteAnyUserAccess",
-                  data-test="deleteButton",
-                  @click="showRemoveUserModal(props.item._id)",
-                  icon
-                )
-                  v-icon(color="error") delete
-    .fab(v-if="hasCreateAnyUserAccess")
-      v-layout(column)
-        refresh-btn(@click="fetchList")
-      v-tooltip(left)
-        v-btn(slot="activator", fab, color="primary", data-test="addButton", @click.stop="showCreateUserModal")
-          v-icon add
-        span {{ $t('modals.createUser.title') }}
+    fab-buttons(
+      :has-access="hasCreateAnyUserAccess",
+      @refresh="fetchList",
+      @create="showCreateUserModal"
+    )
+      span {{ $t('modals.createUser.title') }}
 </template>
 
 <script>
@@ -62,72 +25,60 @@ import { MODALS } from '@/constants';
 import { prepareUserByData } from '@/helpers/entities';
 import { getUsersSearchByText } from '@/helpers/entities-search';
 
-import viewQuery from '@/mixins/view/query';
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
+import localQueryMixin from '@/mixins/query-local/query';
+import authMixin from '@/mixins/auth';
 
-import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
-import SearchField from '@/components/forms/fields/search-field.vue';
-import EnabledColumn from '@/components/tables/enabled-column.vue';
+import UsersList from '@/components/other/users/users-list.vue';
+import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
   components: {
-    RefreshBtn,
-    SearchField,
-    EnabledColumn,
+    FabButtons,
+    UsersList,
   },
-  mixins: [viewQuery, entitiesUserMixin, rightsTechnicalUserMixin],
-  data() {
-    return {
-      searchingText: '',
-      selected: [],
-    };
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('tables.admin.users.columns.username'),
-          value: '_id',
-        },
-        {
-          text: this.$t('tables.admin.users.columns.role'),
-          value: 'role',
-        },
-        {
-          text: this.$t('tables.admin.users.columns.enabled'),
-          value: 'enable',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          sortable: false,
-        },
-      ];
-    },
+  mixins: [entitiesUserMixin, localQueryMixin, rightsTechnicalUserMixin, authMixin],
+  mounted() {
+    this.fetchList();
   },
   methods: {
-    showRemoveUserModal(id) {
+    showCreateUserModal() {
       this.$modals.show({
-        name: MODALS.confirmation,
+        name: MODALS.createUser,
         config: {
-          action: async () => {
-            await this.removeUserWithPopup({ id });
-            await this.fetchUsersListWithPreviousParams();
+          action: async (data) => {
+            await this.createUserWithPopup({ data: prepareUserByData(data) });
+
+            await this.fetchList();
           },
         },
       });
     },
 
-    showRemoveSelectedUsersModal() {
+    showRemoveUserModal(user) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
-            await Promise.all(this.selected.map(({ _id }) => this.removeUser({ id: _id })));
-            this.$popups.success({ text: this.$t('success.default') });
-            await this.fetchUsersListWithPreviousParams();
+            await this.removeUserWithPopup({ id: user._id });
 
-            this.selected = [];
+            await this.fetchList();
+          },
+        },
+      });
+    },
+
+    showRemoveSelectedUsersModal(selected) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await Promise.all(selected.map(({ _id }) => this.removeUser({ id: _id })));
+
+            this.$popups.success({ text: this.$t('success.default') });
+
+            await this.fetchList();
           },
         },
       });
@@ -142,7 +93,7 @@ export default {
           action: async (data) => {
             await this.createUserWithPopup({ data: prepareUserByData(data, user) });
 
-            const requests = [this.fetchUsersListWithPreviousParams()];
+            const requests = [this.fetchList()];
 
             if (user._id === this.currentUser._id) {
               requests.push(this.fetchCurrentUser());
@@ -154,30 +105,24 @@ export default {
       });
     },
 
-    showCreateUserModal() {
-      this.$modals.show({
-        name: MODALS.createUser,
-        config: {
-          action: async (data) => {
-            await this.createUserWithPopup({ data: prepareUserByData(data) });
+    getQuery({
+      page,
+      search,
+      rowsPerPage,
+      sortKey,
+      sortDir,
+    } = this.query) {
+      const query = {};
 
-            await this.fetchUsersListWithPreviousParams();
-          },
-        },
-      });
-    },
+      query.limit = rowsPerPage;
+      query.start = (page - 1) * rowsPerPage;
 
-    applySearchFilter() {
-      this.query = {
-        ...this.query,
-
-        search: this.searchingText,
-      };
-    },
-
-    getQuery() {
-      const { search } = this.query;
-      const query = this.getBaseQuery();
+      if (sortKey) {
+        query.sort = [{
+          property: sortKey,
+          direction: sortDir,
+        }];
+      }
 
       if (search) {
         query.filter = { $and: [getUsersSearchByText(search)] };
@@ -187,7 +132,7 @@ export default {
     },
 
     fetchList() {
-      this.fetchUsersList({ params: this.getQuery() });
+      return this.fetchUsersList({ params: this.getQuery() });
     },
   },
 };

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('common.filters') }}
       template(slot="text")
@@ -29,6 +29,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import RemediationInstructionsFilterForm
   from '@/components/other/remediation/instructions-filter/remediation-instructions-filter-form.vue';
@@ -44,6 +45,7 @@ export default {
   mixins: [
     modalInnerMixin,
     submittableMixin(),
+    confirmableModalMixin(),
   ],
   data() {
     const defaultForm = {

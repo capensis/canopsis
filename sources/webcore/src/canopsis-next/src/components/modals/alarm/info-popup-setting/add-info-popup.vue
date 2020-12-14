@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="addInfoPopupModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.infoPopupSetting.addInfoPopup.title') }}
       template(slot="text")
@@ -27,6 +27,7 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import InfoPopupForm from '@/components/other/alarm/forms/info-popup-form.vue';
 
@@ -38,11 +39,17 @@ export default {
     validator: 'new',
   },
   components: { InfoPopupForm, ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
+    const [selectedColumn = {}] = this.modal.config.columns || [];
+
     return {
       form: {
-        selectedColumn: {},
+        selectedColumn,
         template: '',
       },
     };

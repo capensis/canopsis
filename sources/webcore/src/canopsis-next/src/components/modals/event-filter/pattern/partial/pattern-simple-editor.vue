@@ -1,10 +1,14 @@
 <template lang="pug">
   div.pattern-simple-editor
     v-layout(justify-end)
-      v-tooltip(v-for="(action, index) in mainActions", :key="`action-${index}`", top)
-        v-btn(slot="activator", icon, @click="action.action()")
-          v-icon(:class="action.iconClass") {{ action.icon }}
-        span {{ action.tooltip }}
+      action-btn(
+        v-for="(action, index) in mainActions",
+        :key="index",
+        :tooltip="action.tooltip",
+        :icon="action.icon",
+        :color="action.iconColor",
+        @click="action.action()"
+      )
     v-layout(row)
       pattern-information(v-if="treeViewItems.length > 1") {{ $t('common.and') }}
       v-flex(xs12)
@@ -23,10 +27,14 @@
                       p.body-1.font-italic.text-field {{ field }}
           template(slot="append", slot-scope="{ item }")
             v-layout(row)
-              v-tooltip(v-for="(action, index) in getActionsForItem(item)", :key="`action-${index}`", top)
-                v-btn(slot="activator", icon, @click="action.action(item)")
-                  v-icon(:class="action.iconClass") {{ action.icon }}
-                span {{ action.tooltip }}
+              action-btn(
+                v-for="(action, index) in getActionsForItem(item)",
+                :key="index",
+                :tooltip="action.tooltip",
+                :icon="action.icon",
+                :color="action.iconColor",
+                @click="action.action(item)"
+              )
 </template>
 
 <script>
@@ -36,10 +44,11 @@ import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 export default {
-  components: { PatternInformation },
+  components: { ActionBtn, PatternInformation },
   filters: {
     treeViewValue(value) {
       if (isString(value)) {
@@ -81,7 +90,7 @@ export default {
         addValueRuleField: {
           tooltip: this.$t('modals.eventFilterRule.tooltips.addValueRuleField'),
           icon: 'add',
-          iconClass: 'primary--text',
+          iconColor: 'primary',
           action: this.showAddValueRuleFieldModal,
         },
         editValueRuleField: {
@@ -92,7 +101,7 @@ export default {
         addObjectRuleField: {
           tooltip: this.$t('modals.eventFilterRule.tooltips.addObjectRuleField'),
           icon: 'library_add',
-          iconClass: 'primary--text',
+          iconColor: 'primary',
           action: this.showAddObjectRuleFieldModal,
         },
         editObjectRuleField: {
@@ -103,7 +112,7 @@ export default {
         removeRuleField: {
           tooltip: this.$t('modals.eventFilterRule.tooltips.removeRuleField'),
           icon: 'remove',
-          iconClass: 'error--text',
+          iconColor: 'error',
           action: this.deleteRule,
         },
       };

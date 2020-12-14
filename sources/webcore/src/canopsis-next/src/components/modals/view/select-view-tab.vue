@@ -1,5 +1,5 @@
 <template lang="pug">
-  modal-wrapper(data-test="selectViewTabModal")
+  modal-wrapper(data-test="selectViewTabModal", close)
     template(slot="title")
       span {{ $t('modals.selectViewTab.title') }}
     template(slot="text")

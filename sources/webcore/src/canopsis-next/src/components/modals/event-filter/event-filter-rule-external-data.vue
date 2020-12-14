@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.eventFilterRule.externalData') }}
       template(slot="text")
@@ -21,13 +21,18 @@ import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.eventFilterRuleExternalData,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin({ field: 'newVal' }),
+  ],
   data() {
     const { value } = this.modal.config;
 

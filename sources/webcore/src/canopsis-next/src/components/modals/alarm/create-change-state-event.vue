@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(data-test="createChangeStateEventModal", @submit.prevent="submit")
-    modal-wrapper
+    modal-wrapper(close)
       template(slot="title")
         span {{ $t('modals.createChangeStateEvent.title') }}
       template(slot="text")
@@ -30,6 +30,7 @@ import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
 import ChangeStateField from '@/components/other/action/form/fields/change-state.vue';
@@ -45,7 +46,13 @@ export default {
     validator: 'new',
   },
   components: { ChangeStateField, ModalWrapper },
-  mixins: [entitiesInfoMixin, modalInnerItemsMixin, eventActionsAlarmMixin, submittableMixin()],
+  mixins: [
+    entitiesInfoMixin,
+    modalInnerItemsMixin,
+    eventActionsAlarmMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     return {
       form: {

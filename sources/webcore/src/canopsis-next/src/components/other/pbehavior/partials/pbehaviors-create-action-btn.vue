@@ -1,11 +1,10 @@
 <template lang="pug">
-  v-btn(
+  action-btn(
     v-if="hasCreateAnyPbehaviorAccess",
-    icon,
-    small,
-    @click.stop="showCreatePbehaviorModal"
+    :tooltip="$t('modals.createPbehavior.create.title')",
+    icon="pause",
+    @click="showCreatePbehaviorModal"
   )
-    v-icon pause
 </template>
 
 <script>
@@ -14,7 +13,10 @@ import { MODALS } from '@/constants';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import rightsTechnicalExploitationPbehaviorMixin from '@/mixins/rights/technical/exploitation/pbehavior';
 
+import ActionBtn from '@/components/tables/action-btn.vue';
+
 export default {
+  components: { ActionBtn },
   mixins: [
     entitiesPbehaviorMixin,
     rightsTechnicalExploitationPbehaviorMixin,
