@@ -405,6 +405,7 @@ export default {
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
+    isSnoozeNoteRequired: "Champ 'Note' requis lorsque vous répétez ?",
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',

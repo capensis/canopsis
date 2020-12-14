@@ -90,6 +90,11 @@
             )
             v-divider
             field-fast-ack-output(v-model="settings.widget.parameters.fastAckOutput")
+          v-divider
+          field-switcher(
+            v-model="settings.widget.parameters.isSnoozeNoteRequired",
+            :title="$t('settings.isSnoozeNoteRequired')"
+          )
       v-divider
     v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>

@@ -405,6 +405,7 @@ export default {
     filters: 'Filters',
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack?',
+    isSnoozeNoteRequired: 'Note field required when snooze?',
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',

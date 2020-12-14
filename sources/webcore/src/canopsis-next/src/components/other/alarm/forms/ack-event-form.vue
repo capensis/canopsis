@@ -6,15 +6,7 @@
         :label="$t('modals.createAckEvent.fields.ticket')",
         data-test="createAckEventTicket"
       )
-    v-layout(row)
-      v-textarea(
-        v-field="form.output",
-        v-validate="isNoteRequired ? 'required' : ''",
-        :label="$t('modals.createAckEvent.fields.output')",
-        :error-messages="errors.collect('output')",
-        name="output",
-        data-test="createAckEventNote"
-      )
+    output-field(v-field="form.output", :required="isNoteRequired")
     v-layout(row)
       v-tooltip(top)
         v-checkbox(
@@ -28,7 +20,10 @@
 </template>
 
 <script>
+import OutputField from '@/components/forms/fields/output.vue';
+
 export default {
+  components: { OutputField },
   inject: ['$validator'],
   model: {
     prop: 'form',
