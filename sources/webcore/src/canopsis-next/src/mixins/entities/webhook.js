@@ -7,7 +7,6 @@ export default {
     ...mapGetters({
       webhooksPending: 'pending',
       webhooks: 'items',
-      webhooksMeta: 'meta',
     }),
   },
   methods: {
