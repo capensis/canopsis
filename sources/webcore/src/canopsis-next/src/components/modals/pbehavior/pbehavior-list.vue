@@ -20,7 +20,9 @@
             v-icon {{ action.icon }}
         template(slot="expand", slot-scope="props")
           pbehaviors-list-expand-item(:pbehavior="props.item")
-      v-layout(v-if="showAddButton", justify-end)
+        template(slot="is_active_status", slot-scope="props")
+          v-icon(:color="props.item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
+      v-layout(v-if="showAddButton", row)
         v-btn(
           icon,
           fab,
@@ -62,6 +64,7 @@ export default {
         { sortable: false, text: this.$t('tables.pbehaviorList.tstop'), value: 'tstop' },
         { sortable: false, text: this.$t('tables.pbehaviorList.type'), value: 'type' },
         { sortable: false, text: this.$t('tables.pbehaviorList.reason'), value: 'reason' },
+        { sortable: false, text: this.$t('common.status'), value: 'is_active_status' },
         { sortable: false, text: this.$t('common.actionsLabel'), value: 'actions' },
       ];
     },
