@@ -61,6 +61,7 @@
           div {{ $t('common.by') }} : {{ alarm.v.snooze.a }}
           div {{ $t('common.date') }} : {{ alarm.v.snooze.t | date('long') }}
           div {{ $t('common.end') }} : {{ alarm.v.snooze.val | date('long') }}
+          div.message(v-if="alarm.v.snooze.m") {{ $tc('common.comment') }} : {{ alarm.v.snooze.m }}
     div(v-if="alarm.pbehavior")
       v-tooltip(top)
         v-icon.badge.cyan.accent-2.white--text(

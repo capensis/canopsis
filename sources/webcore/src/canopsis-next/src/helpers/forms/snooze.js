@@ -15,6 +15,7 @@ import { toSeconds } from '@/helpers/duration';
  */
 
 /**
+ * Convert snooze object to form snooze
  *
  * @param snooze
  * @returns {SnoozeActionForm}
@@ -28,6 +29,7 @@ export const snoozeToForm = (snooze = {}) => ({
 });
 
 /**
+ * Convert form snooze object to API snooze
  *
  * @param {Object} form
  * @returns {SnoozeAction}
