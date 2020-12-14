@@ -58,10 +58,10 @@ export default {
       sortKey,
       sortDir,
     } = this.query) {
-      const query = {};
-
-      query.limit = rowsPerPage;
-      query.page = page;
+      const query = {
+        limit: rowsPerPage,
+        page,
+      };
 
       if (sortKey) {
         query.sort_key = sortKey;
