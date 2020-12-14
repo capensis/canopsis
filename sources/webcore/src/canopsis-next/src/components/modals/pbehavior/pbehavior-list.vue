@@ -26,7 +26,7 @@
             )
         template(slot="is_active_status", slot-scope="props")
           v-icon(:color="props.item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
-      v-layout(v-if="showAddButton", row)
+      v-layout(v-if="showAddButton", justify-end)
         v-btn(
           icon,
           fab,
