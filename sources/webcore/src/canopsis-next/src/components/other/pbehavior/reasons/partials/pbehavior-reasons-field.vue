@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { MAX_LIMIT } from '@/constants';
+
 import pbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
 
 export default {
@@ -42,7 +44,9 @@ export default {
     },
   },
   mounted() {
-    this.fetchPbehaviorReasonsList();
+    this.fetchPbehaviorReasonsList({
+      params: { limit: MAX_LIMIT },
+    });
   },
 };
 </script>

@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { MAX_LIMIT } from '@/constants';
+
 import entitiesPbehaviorTypesMixin from '@/mixins/entities/pbehavior/types';
 
 export default {
@@ -81,7 +83,9 @@ export default {
     },
   },
   mounted() {
-    this.fetchPbehaviorTypesList();
+    this.fetchPbehaviorTypesList({
+      params: { limit: MAX_LIMIT },
+    });
   },
 };
 </script>
