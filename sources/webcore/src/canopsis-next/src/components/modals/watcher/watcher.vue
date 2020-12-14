@@ -1,12 +1,7 @@
 <template lang="pug">
-  modal-wrapper(close)
-    template(slot="fullTitle")
-      v-card-title.white--text(:style="{ backgroundColor: color }")
-        v-layout.headline(justify-space-between, align-center)
-          v-flex
-            span {{ watcher.name }}
-          v-flex
-            modal-title-buttons(:modal="modal", close)
+  modal-wrapper(:title-color="color", close)
+    template(slot="title")
+      span {{ watcher.name }}
     template(slot="text")
       v-fade-transition(mode="out-in")
         watcher-template(
