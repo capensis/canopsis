@@ -215,7 +215,7 @@ export default {
       const { filteredActionsMap } = this;
       const actions = [filteredActionsMap.comment];
 
-      if (this.entity.state !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
+      if (this.entity.state.val !== ENTITIES_STATES.ok && isNull(this.entity.ack)) {
         actions.push(filteredActionsMap.ack);
       }
 
