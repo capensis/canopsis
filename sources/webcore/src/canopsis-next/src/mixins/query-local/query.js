@@ -18,7 +18,7 @@ export default {
 
   watch: {
     query(query, oldQuery) {
-      if (!isEqual(query, oldQuery)) {
+      if (this.customQueryCondition(query, oldQuery)) {
         this.fetchList();
       }
     },
@@ -47,6 +47,10 @@ export default {
   },
 
   methods: {
+    customQueryCondition(query, oldQuery) {
+      return !isEqual(query, oldQuery);
+    },
+
     getQuery({
       page,
       search,
