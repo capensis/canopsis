@@ -110,5 +110,9 @@ export default {
         query: { limit },
       });
     },
+
+    updateQueryPage(page) {
+      this.query = { ...this.query, page };
+    },
   },
 };
