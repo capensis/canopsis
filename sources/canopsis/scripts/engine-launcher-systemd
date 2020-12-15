@@ -13,11 +13,11 @@ if [ ! "${2}" = "" ]; then
     engine_mod_path="${2}"
 fi
 
-engine_module=$(echo -n "${1}" | sed -r 's/([^-]+)-.+/\1/g')
-engine_name=$(echo -n "${1}" | sed -r 's/[^-]+-([^0-9]+).*/\1/g')
+engine_module=$(echo -n "${1}" | sed -E 's/([^-]+)-.+/\1/g')
+engine_name=$(echo -n "${1}" | sed -E 's/[^-]+-([^0-9]+).*/\1/g')
 
 worker_id="1"
-engine_worker_id=$(echo -n ${1} | sed -r 's/([0-9]*)$/\1/g')
+engine_worker_id=$(echo -n ${1} | sed -E 's/([0-9]*)$/\1/g')
 if [[ ! "${engine_worker_id}" = "" ]]; then
     worker_id="${engine_worker_id}"
 fi
