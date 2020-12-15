@@ -3,32 +3,27 @@
     alarms-list-table(
       :widget="widget",
       :alarms="displayedAlarms",
-      :totalItems="alarmsMeta.total_count",
+      :total-items="alarmsMeta.total_count",
       :pagination.sync="vDataTablePagination",
-      :isEditingMode="isEditingMode",
-      :hasColumns="hasGroupColumns",
+      :is-editing-mode="isEditingMode",
+      :has-columns="hasGroupColumns",
       :columns="groupColumns",
-      :parentAlarm="alarm",
+      :parent-alarm="alarm",
       expandable,
       hideGroups,
       ref="alarmsTable"
     )
-    v-layout.white(align-center)
-      v-flex(xs10)
-        pagination(
-          :page="query.page",
-          :limit="query.limit",
-          :total="alarmsMeta.total_count",
-          @input="updateQueryPage"
-        )
-      v-spacer
-      v-flex(xs2)
-        records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+    table-pagination(
+      :total-items="alarmsMeta.total_count",
+      :rows-per-page="query.limit",
+      :page="query.page",
+      @update:page="updateQueryPage",
+      @update:rows-per-page="updateRecordsPerPage"
+    )
 </template>
 
 <script>
-import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import TablePagination from '@/components/other/table/table-pagination.vue';
 
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';
@@ -42,8 +37,7 @@ import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-pa
  */
 export default {
   components: {
-    RecordsPerPage,
-    Pagination,
+    TablePagination,
   },
   mixins: [
     widgetGroupFetchQueryMixin,

@@ -65,17 +65,15 @@
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
       template(slot="progress", slot-scope="props")
         slot(name="progress", v-bind="props")
-    v-layout.white(v-show="totalItems && advancedPagination", align-center)
-      v-flex(xs10)
-        pagination(
-          :page="pagination.page",
-          :limit="pagination.rowsPerPage",
-          :total="totalItems",
-          @input="updatePage"
-        )
-      v-spacer
-      v-flex(xs2)
-        records-per-page(:value="pagination.rowsPerPage", @input="updateRecordsPerPage")
+    table-pagination(
+      v-if="totalItems && advancedPagination",
+      :total-items="totalItems",
+      :rows-per-page-items="rowsPerPageItems",
+      :rows-per-page="pagination.rowsPerPage",
+      :page="pagination.page",
+      @update:page="updatePage",
+      @update:rows-per-page="updateRecordsPerPage"
+    )
 </template>
 
 <script>
@@ -84,16 +82,14 @@ import { omit } from 'lodash';
 import SearchField from '@/components/forms/fields/search-field.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
-import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import TablePagination from '@/components/other/table/table-pagination.vue';
 
 export default {
   components: {
+    TablePagination,
     SearchField,
     AdvancedSearch,
     ExpandButton,
-    Pagination,
-    RecordsPerPage,
   },
   model: {
     prop: 'selected',
@@ -158,7 +154,7 @@ export default {
     },
     pagination: {
       type: Object,
-      required: true,
+      required: false,
     },
     getPagination: {
       type: Function,

@@ -79,18 +79,14 @@
       expandable,
       ref="alarmsTable"
     )
-      v-layout.white(v-show="alarmsMeta.total_count", align-center)
-        v-flex(xs10)
-          pagination(
-            data-test="bottomPagination",
-            :page="query.page",
-            :limit="query.limit",
-            :total="alarmsMeta.total_count",
-            @input="updateQueryPage"
-          )
-        v-spacer
-        v-flex(xs2, data-test="itemsPerPage")
-          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+      table-pagination(
+        v-if="alarmsMeta.total_count",
+        :total-items="alarmsMeta.total_count",
+        :rows-per-page="query.limit",
+        :page="query.page",
+        @update:page="updateQueryPage",
+        @update:rows-per-page="updateRecordsPerPage"
+      )
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
@@ -101,9 +97,9 @@ import { MODALS, TOURS } from '@/constants';
 
 import { findRange } from '@/helpers/date-intervals';
 
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
+import TablePagination from '@/components/other/table/table-pagination.vue';
 import Pagination from '@/components/tables/pagination.vue';
 
 import authMixin from '@/mixins/auth';
@@ -135,7 +131,7 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
 export default {
   components: {
     Pagination,
-    RecordsPerPage,
+    TablePagination,
     FilterSelector,
     AdvancedSearch,
     AlarmsListTable,

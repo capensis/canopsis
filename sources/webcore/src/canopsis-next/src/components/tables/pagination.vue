@@ -9,9 +9,7 @@
           @click="previous"
         )
           v-icon chevron_left
-      span {{ page }}
-      span /
-      span {{ totalPages }}
+      div.pagination-details {{ page }} / {{ totalPages }}
       li
         button.v-pagination__navigation(
           data-test="paginationNextButton",
@@ -20,9 +18,10 @@
           @click="next"
         )
           v-icon chevron_right
-    div(v-else)
-      span {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
-      |  {{ last }} {{ $t('common.of') }} {{ total }} {{ $t('common.entries') }}
+    v-layout(v-else, align-center, justify-center)
+      span.pagination-details
+        | {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
+        |  {{ last }} {{ $t('common.of') }} {{ total }} {{ $t('common.entries') }}
       v-pagination(
         data-test="vPagination",
         :value="page",
@@ -131,5 +130,8 @@ export default {
 
   span {
     padding-left: 1%;
+  }
+  .pagination-details {
+    color: rgba(0, 0, 0, 0.54);
   }
 </style>
