@@ -29,7 +29,7 @@ import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze';
+import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
 
 import SnoozeEventForm from '@/components/other/alarm/forms/snooze-event-form.vue';
 
