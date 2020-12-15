@@ -90,6 +90,7 @@ import { USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
+import Pagination from '@/components/tables/pagination.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
@@ -99,7 +100,6 @@ import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 
@@ -121,6 +121,7 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
 export default {
   components: {
     Ellipsis,
+    Pagination,
     RecordsPerPage,
     NoColumnsTable,
     FilterSelector,
@@ -135,7 +136,6 @@ export default {
     authMixin,
     widgetFetchQueryMixin,
     widgetColumnsMixin,
-    widgetPaginationMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
   ],

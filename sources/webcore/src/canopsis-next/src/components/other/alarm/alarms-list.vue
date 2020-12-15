@@ -104,11 +104,11 @@ import { findRange } from '@/helpers/date-intervals';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
+import Pagination from '@/components/tables/pagination.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetFilterSelectMixin from '@/mixins/widget/filter-select';
 import widgetPeriodicRefreshMixin from '@/mixins/widget/periodic-refresh';
 import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
@@ -134,6 +134,7 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
  */
 export default {
   components: {
+    Pagination,
     RecordsPerPage,
     FilterSelector,
     AdvancedSearch,
@@ -146,7 +147,6 @@ export default {
     alarmColumnFilters,
     widgetFetchQueryMixin,
     widgetColumnsMixin,
-    widgetPaginationMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,

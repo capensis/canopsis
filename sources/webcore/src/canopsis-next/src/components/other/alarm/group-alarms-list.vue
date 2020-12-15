@@ -27,9 +27,10 @@
 </template>
 
 <script>
+import Pagination from '@/components/tables/pagination.vue';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
+
 import widgetColumnsMixin from '@/mixins/widget/columns';
-import widgetPaginationMixin from '@/mixins/widget/pagination';
 import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
@@ -42,11 +43,11 @@ import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-pa
 export default {
   components: {
     RecordsPerPage,
+    Pagination,
   },
   mixins: [
     widgetGroupFetchQueryMixin,
     widgetColumnsMixin,
-    widgetPaginationMixin,
     widgetExpandPanelAlarm,
   ],
   props: {

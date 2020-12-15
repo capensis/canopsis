@@ -1,13 +1,12 @@
 import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 
 import { dateParse } from '@/helpers/date-intervals';
 
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
-import vuetifyPaginationMixinCreator from '@/mixins/vuetify/pagination-creator';
 
 /**
  * @mixin Add query logic
@@ -16,10 +15,6 @@ export default {
   mixins: [
     queryMixin,
     entitiesUserPreferenceMixin,
-    vuetifyPaginationMixinCreator({
-      field: 'vDataTablePagination',
-      mutating: true,
-    }),
   ],
   props: {
     tabId: {
@@ -47,6 +42,29 @@ export default {
 
     tabQueryNonce() {
       return this.getQueryNonceById(this.tabId);
+    },
+
+    vDataTablePagination: {
+      get() {
+        const { sortDir, sortKey: sortBy } = this.query;
+        const descending = sortDir === SORT_ORDERS.desc;
+
+        return { sortBy, descending };
+      },
+
+      set(value) {
+        const isNotEqualSortBy = value.sortBy !== this.vDataTablePagination.sortBy;
+        const isNotEqualDescending = value.descending !== this.vDataTablePagination.descending;
+
+        if (isNotEqualSortBy || isNotEqualDescending) {
+          this.query = {
+            ...this.query,
+
+            sortKey: value.sortBy,
+            sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
+          };
+        }
+      },
     },
   },
   methods: {
@@ -91,6 +109,10 @@ export default {
         id: this.queryId,
         query: { limit },
       });
+    },
+
+    updateQueryPage(page) {
+      this.query = { ...this.query, page };
     },
   },
 };

@@ -63,6 +63,8 @@
           slot(v-bind="props", name="expand")
       template(slot="headerCell", slot-scope="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
+      template(slot="progress", slot-scope="props")
+        slot(name="progress", v-bind="props")
     v-layout.white(v-show="totalItems && advancedPagination", align-center)
       v-flex(xs10)
         pagination(
