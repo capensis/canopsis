@@ -1415,21 +1415,6 @@ export default {
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
     },
-    /**
-     * This object for pbehavior fields from database
-     */
-    pbehaviorList: {
-      name: 'Nom',
-      author: 'Auteur',
-      connector: 'Type de connecteur',
-      connectorName: 'Nom du connecteur',
-      enabled: 'Actif',
-      tstart: 'Démarre',
-      tstop: 'Finit',
-      type: 'Type',
-      reason: 'Raison',
-      rrule: 'Récurrence',
-    },
     rolesList: {
       name: 'Nom',
       actions: 'Actions',

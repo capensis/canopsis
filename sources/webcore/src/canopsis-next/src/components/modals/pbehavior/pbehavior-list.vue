@@ -8,8 +8,8 @@
           enabled-column(:value="props.item.enabled")
         template(slot="tstart", slot-scope="props") {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
         template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
-        template(slot="type", slot-scope="props") {{ props.item.type | get('name', null, '') }}
-        template(slot="reason", slot-scope="props") {{ props.item.reason | get('name', null, '') }}
+        template(slot="rrule", slot-scope="props")
+          v-icon {{ props.item.rrule ? 'check' : 'clear' }}
         template(slot="expand", slot-scope="props")
           pbehaviors-list-expand-item(:pbehavior="props.item")
         template(slot="actions", slot-scope="props")
@@ -67,15 +67,16 @@ export default {
   computed: {
     headers() {
       return [
-        { sortable: false, text: this.$t('tables.pbehaviorList.name'), value: 'name' },
-        { sortable: false, text: this.$t('tables.pbehaviorList.author'), value: 'author' },
-        { sortable: false, text: this.$t('tables.pbehaviorList.enabled'), value: 'enabled' },
-        { sortable: false, text: this.$t('tables.pbehaviorList.tstart'), value: 'tstart' },
-        { sortable: false, text: this.$t('tables.pbehaviorList.tstop'), value: 'tstop' },
-        { sortable: false, text: this.$t('tables.pbehaviorList.type'), value: 'type' },
-        { sortable: false, text: this.$t('tables.pbehaviorList.reason'), value: 'reason' },
-        { sortable: false, text: this.$t('common.status'), value: 'is_active_status' },
-        { sortable: false, text: this.$t('common.actionsLabel'), value: 'actions' },
+        { text: this.$t('common.name'), value: 'name' },
+        { text: this.$t('common.author'), value: 'author' },
+        { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
+        { text: this.$t('pbehaviors.begins'), value: 'tstart' },
+        { text: this.$t('pbehaviors.ends'), value: 'tstop' },
+        { text: this.$t('pbehaviors.type'), value: 'type.name' },
+        { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
+        { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
+        { text: this.$t('common.status'), value: 'is_active_status' },
+        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
     },
     availableActions() {
