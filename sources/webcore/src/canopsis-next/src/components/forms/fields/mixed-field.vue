@@ -1,5 +1,5 @@
 <template lang="pug">
-  .mixed-field(:class="{ 'mixed-field__solo-inverted': soloInverted }")
+  div.mixed-field(:class="{ 'mixed-field__solo-inverted': soloInverted }")
     v-select.mixed-field__type-selector(
       :items="types",
       :value="inputType",

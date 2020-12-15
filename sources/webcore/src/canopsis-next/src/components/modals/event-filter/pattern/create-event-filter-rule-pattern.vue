@@ -3,63 +3,68 @@
     template(slot="title")
       span {{ $t('modals.eventFilterRule.editPattern') }}
     template(slot="text")
-      v-tabs(fixed-tabs, v-model="activeTab", slider-color="primary")
-        v-tab(v-for="(tab, key) in tabs", :key="key") {{ tab }}
-        v-tabs-items(v-model="activeTab")
-          v-tab-item
-            pattern-simple-editor(
-              v-model="pattern",
-              :operators="operators",
-              :isSimplePattern="config.isSimplePattern"
-            )
-          v-tab-item
-            pattern-advanced-editor(v-model="pattern")
+      pattern-form(
+        v-model="form",
+        :operators="operators",
+        :is-simple-pattern="config.isSimplePattern"
+      )
     template(slot="actions")
       v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+      v-btn.primary(
+        :disabled="patternWasChanged",
+        @click.prevent="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import ModalWrapper from '../../modal-wrapper.vue';
+import PatternForm from '@/components/other/pattern/pattern-form.vue';
 
-import PatternSimpleEditor from './partial/pattern-simple-editor.vue';
-import PatternAdvancedEditor from './partial/pattern-advanced-editor.vue';
+import ModalWrapper from '../../modal-wrapper.vue';
 
 export default {
   name: MODALS.createEventFilterRulePattern,
+  $_veeValidate: {
+    validator: 'new',
+  },
   components: {
+    PatternForm,
     ModalWrapper,
-    PatternSimpleEditor,
-    PatternAdvancedEditor,
   },
   mixins: [modalInnerMixin],
   data() {
-    const { pattern = {}, operators = EVENT_FILTER_RULE_OPERATORS } = this.modal.config;
+    const { pattern = {} } = this.modal.config;
 
     return {
-      operators,
-
-      pattern: cloneDeep(pattern),
+      form: cloneDeep(pattern),
       activeTab: 0,
-      tabs: [
-        this.$t('modals.eventFilterRule.simpleEditor'),
-        this.$t('modals.eventFilterRule.advancedEditor'),
-      ],
     };
+  },
+  computed: {
+    operators() {
+      return this.config.operators || EVENT_FILTER_RULE_OPERATORS;
+    },
+
+    patternWasChanged() {
+      return get(this.fields, ['pattern', 'touched']);
+    },
   },
   methods: {
     async submit() {
-      if (this.config.action) {
-        await this.config.action(this.pattern);
-      }
+      const isFormValid = await this.$validator.validateAll();
 
-      this.$modals.hide();
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(this.pattern);
+        }
+
+        this.$modals.hide();
+      }
     },
   },
 };
