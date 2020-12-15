@@ -53,8 +53,6 @@ import { isResolvedAlarm } from '@/helpers/entities';
 
 import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
-import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue';
 
@@ -68,10 +66,8 @@ import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 export default {
   components: {
     AlarmsListRow,
-    RecordsPerPage,
     AlarmsExpandPanel,
     MassActionsPanel,
-    AlarmColumnValue,
     NoColumnsTable,
   },
   mixins: [alarmColumnFilters],
