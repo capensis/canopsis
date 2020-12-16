@@ -26,7 +26,7 @@ canopsis_mongo_password: canopsis
 canopsis_mongo_port: "27017"
 
 canopsis_influxdb_host: localhost
-canopsis_influxdb_port: "4444"
+canopsis_influxdb_port: "8086"
 canopsis_influxdb_user: cpsinflux
 canopsis_influxdb_password: canopsis
 canopsis_influxdb_db: canopsis
