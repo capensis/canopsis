@@ -87,7 +87,7 @@ export default {
       this.$modals.show({
         name: MODALS.createEventFilterRulePattern,
         config: {
-          isSimplePattern: true,
+          onlySimpleRule: true,
           pattern: this.form.pattern,
           action: (pattern) => {
             this.updateField('pattern', pattern);

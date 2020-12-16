@@ -40,6 +40,7 @@
       :inputValue="value",
       :label="switchLabel",
       :disabled="disabled",
+      color="primary",
       data-test="mixedInputSwitch",
       hide-details,
       @change="updateModel"

@@ -6,7 +6,7 @@
       pattern-form(
         v-model="form",
         :operators="operators",
-        :is-simple-pattern="config.isSimplePattern"
+        :only-simple-rule="config.onlySimpleRule"
       )
     template(slot="actions")
       v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
@@ -23,7 +23,7 @@ import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import PatternForm from '@/components/other/pattern/pattern-form.vue';
+import PatternForm from '@/components/other/pattern/form/pattern-form.vue';
 
 import ModalWrapper from '../../modal-wrapper.vue';
 
@@ -60,7 +60,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.pattern);
+          await this.config.action(this.form);
         }
 
         this.$modals.hide();

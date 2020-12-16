@@ -17,14 +17,14 @@
             v-flex(xs12)
               v-layout(row)
                 v-flex.text-field(xs6) {{ item.name }}
-                  span(v-show="item.isValueRule") :
-                template(v-if="item.isValueRule")
-                  v-flex(xs6, v-if="isSimpleValueRule(item.value)")
-                    span.body-1.font-italic.text-field {{ item.value | treeViewValue }}
-                  v-flex(xs6, v-else)
-                    v-flex(v-for="(field, fieldKey) in item.value", :key="fieldKey")
+                  span(v-show="item.rule") :
+                template(v-if="item.rule")
+                  v-flex(v-if="item.isSimpleRule", xs6)
+                    span.body-1.font-italic.text-field {{ item.rule.value | treeViewValue }}
+                  v-flex(v-else, xs6)
+                    v-flex(v-for="(field, fieldKey) in item.rule.value", :key="fieldKey")
                       p.body-1.font-italic {{ fieldKey }}
-                      p.body-1.font-italic.text-field {{ field }}
+                      p.body-1.font-italic.text-field {{ field | treeViewValue }}
           template(slot="append", slot-scope="{ item }")
             v-layout(row)
               action-btn(
@@ -46,6 +46,44 @@ import formMixin from '@/mixins/form';
 
 import ActionBtn from '@/components/tables/action-btn.vue';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
+
+function isValueRule(rule = '', operators = []) {
+  if (!isObject(rule)) {
+    return true;
+  }
+
+  const items = Object.entries(rule);
+
+  return items.length && items.every(([key, value]) => operators.includes(key) && !isObject(value));
+}
+
+/**
+ * Parse pattern object to treeview items
+ *
+ * @param {Object} source
+ * @param {Array} operators
+ * @param {Array} prevPath
+ */
+function parsePatternToTreeview(source, operators = [], prevPath = []) {
+  return Object.entries(source).map(([field, value]) => {
+    const path = [...prevPath, field];
+    const item = {
+      path,
+
+      id: path.join('.'),
+      name: field,
+    };
+
+    if (isValueRule(value, operators)) {
+      item.rule = { field, value };
+      item.isSimpleRule = !isObject(value);
+    } else {
+      item.children = parsePatternToTreeview(value, operators, path);
+    }
+
+    return item;
+  }, []);
+}
 
 export default {
   components: { ActionBtn, PatternInformation },
@@ -74,7 +112,7 @@ export default {
       type: Array,
       required: true,
     },
-    isSimplePattern: {
+    onlySimpleRule: {
       type: Boolean,
       default: false,
     },
@@ -128,28 +166,14 @@ export default {
     },
 
     treeViewItems() {
-      return this.parsePatternToTreeview(this.pattern);
+      return parsePatternToTreeview(this.pattern, this.operators);
     },
   },
   methods: {
-    isValueRule(rule) {
-      if (!isObject(rule)) {
-        return true;
-      }
-
-      const items = Object.entries(rule);
-
-      return items.length && items.every(([key, value]) => this.operators.indexOf(key) !== -1 && !isObject(value));
-    },
-
-    isSimpleValueRule(rule) {
-      return !isObject(rule);
-    },
-
     getActionsForItem(treeViewItem) {
       const { actionsMap } = this;
 
-      if (has(treeViewItem, 'value')) {
+      if (has(treeViewItem, 'rule')) {
         return [
           actionsMap.editValueRuleField,
           actionsMap.removeRuleField,
@@ -162,31 +186,6 @@ export default {
         actionsMap.editObjectRuleField,
         actionsMap.removeRuleField,
       ];
-    },
-    /**
-     * Parse pattern object to treeview items
-     *
-     * @param {Object} source
-     * @param {Array} prevPath
-     */
-    parsePatternToTreeview(source, prevPath = []) {
-      return Object.entries(source).map(([key, value]) => {
-        const path = [...prevPath, key];
-        const item = {
-          path,
-          name: key,
-          id: path.join('.'),
-          isValueRule: this.isValueRule(value),
-        };
-
-        if (item.isValueRule) {
-          item.value = value;
-        } else {
-          item.children = this.parsePatternToTreeview(value, path);
-        }
-
-        return item;
-      }, []);
     },
 
     /**
@@ -212,7 +211,7 @@ export default {
         name: MODALS.addEventFilterRuleToPattern,
         config: {
           operators: this.operators,
-          isSimple: this.isSimplePattern,
+          onlySimple: this.onlySimpleRule,
           action: (newRule) => {
             this.updateField([...parentPath, newRule.field], newRule.value);
 
@@ -228,15 +227,15 @@ export default {
      * @param {Object} treeViewItem
      */
     showEditValueRuleFieldModal(treeViewItem) {
-      const { name, value, path } = treeViewItem;
+      const { rule, path } = treeViewItem;
 
       this.$modals.show({
         name: MODALS.addEventFilterRuleToPattern,
         config: {
-          ruleKey: name,
-          ruleValue: value,
+          rule,
+
           operators: this.operators,
-          isSimple: this.isSimplePattern,
+          onlySimple: this.onlySimpleRule,
           action: (newRule) => {
             const newPath = [...dropRight(path, 1), newRule.field];
 
@@ -318,22 +317,6 @@ export default {
         word-break: break-all;
         margin-bottom: 0;
       }
-    }
-
-    .operator {
-      height: 100%;
-      position: relative;
-    }
-
-    .bracket {
-      position: absolute;
-      width: 15px;
-      border-radius: 100% 0 0 100% / 50% 50% 50% 50%;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      border: 4px #a6a6a6 solid;
-      border-right: none;
     }
   }
 </style>

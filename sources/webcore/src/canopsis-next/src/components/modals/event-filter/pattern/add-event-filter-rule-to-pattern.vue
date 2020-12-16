@@ -1,153 +1,93 @@
 <template lang="pug">
-  modal-wrapper(close)
-    template(slot="title")
-      span {{ $t('modals.eventFilterRule.addAField') }}
-    template(slot="text")
-      v-form
-        v-switch(
-          v-if="!config.isSimple",
-          v-model="form.advancedMode",
-          :label="$t('modals.eventFilterRule.advanced')",
-          hide-details,
-          color="primary"
+  v-form(@submit.prevent="submit")
+    modal-wrapper(close)
+      template(slot="title")
+        span {{ $t('modals.eventFilterRule.addAField') }}
+      template(slot="text")
+        pattern-rule-form(
+          v-model="form",
+          :operators="config.operators",
+          :only-simple="config.onlySimple"
         )
-        v-text-field(
-          v-model="form.field",
-          :label="$t('modals.eventFilterRule.field')",
-          name="field",
-          v-validate="'required'",
-          :error-messages="errors.collect('field')"
-        )
-        v-text-field(
-          v-if="config.isSimple",
-          v-model="form.value",
-          :label="$t('modals.eventFilterRule.value')"
-        )
-        template(v-else)
-          mixed-field(
-            v-if="!form.advancedMode",
-            v-model="form.value",
-            :label="$t('modals.eventFilterRule.value')"
-          )
-          template(v-else)
-            v-layout(align-center, justify-center)
-              h2 {{ $t('modals.eventFilterRule.comparisonRules') }}
-              v-btn(
-                @click="addAdvancedRuleField",
-                :disabled="!availableOperators.length > 0",
-                icon,
-                small
-              )
-                v-icon add
-            v-layout(v-for="field in form.advancedRuleFields", :key="field.key", align-center)
-              v-flex(xs3)
-                v-select(
-                  :items="getAvailableOperatorsForRule(field)",
-                  v-model="field.key",
-                  name="fieldKey",
-                  v-validate="'required'",
-                  :error-messages="errors.collect('fieldKey')"
-                )
-              v-flex.pl-1(xs9)
-                mixed-field(v-model="field.value")
-              v-flex
-                v-btn(@click="deleteAdvancedRuleField(field)", small, icon)
-                  v-icon(color="error") delete
-    template(slot="actions")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-btn.primary(@click.prevent="submit") {{ $t('common.submit') }}
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
 import { isObject } from 'lodash';
 
+import uid from '@/helpers/uid';
+
 import { MODALS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
-import MixedField from '@/components/forms/fields/mixed-field.vue';
+import PatternRuleForm from '@/components/other/pattern/form/pattern-rule-form.vue';
 
 import ModalWrapper from '../../modal-wrapper.vue';
+
+function ruleToForm({ field = '', value = '' } = {}) {
+  const isSimple = !isObject(value);
+  const form = {
+    field,
+    value: '',
+    advancedMode: !isSimple,
+    advancedFields: [],
+  };
+
+  if (isSimple) {
+    form.value = value;
+  } else {
+    form.advancedFields = Object.entries(value)
+      .map(([fieldKey, fieldValue]) => ({ key: uid(), operator: fieldKey, value: fieldValue }));
+  }
+
+  return form;
+}
+
+function formToRule(form) {
+  if (!form.advancedMode) {
+    return {
+      field: form.field,
+      value: form.value,
+    };
+  }
+
+  const value = form.advancedFields.reduce((acc, field) => {
+    acc[field.operator] = field.value;
+
+    return acc;
+  }, {});
+
+  return {
+    value,
+
+    field: form.field,
+  };
+}
 
 export default {
   name: MODALS.addEventFilterRuleToPattern,
   $_veeValidate: {
     validator: 'new',
   },
-  components: { MixedField, ModalWrapper },
+  components: { PatternRuleForm, ModalWrapper },
   mixins: [modalInnerMixin],
   data() {
+    const { rule = {} } = this.modal.config;
+
     return {
-      pattern: {},
-      form: {
-        advancedMode: false,
-        field: '',
-        value: '',
-        advancedRuleFields: [],
-      },
+      form: ruleToForm(rule),
     };
   },
-  computed: {
-    availableOperators() {
-      return this.operators.filter(operator => !this.form.advancedRuleFields.find(({ key }) => key === operator));
-    },
-
-    getAvailableOperatorsForRule() {
-      return (rule) => {
-        const rules = this.form.advancedRuleFields.filter(({ key }) => key !== rule.key);
-
-        return this.operators.filter(operator => !rules.find(({ key }) => key === operator));
-      };
-    },
-  },
-  mounted() {
-    if (this.config) {
-      const {
-        operators,
-        ruleKey = '',
-        ruleValue = '',
-      } = this.config;
-
-      const isSimpleRule = !isObject(ruleValue);
-
-      this.operators = operators;
-      this.form.advancedMode = !isSimpleRule;
-      this.form.field = ruleKey;
-
-      if (isSimpleRule) {
-        this.form.value = ruleValue;
-      } else {
-        this.form.advancedRuleFields = Object.keys(ruleValue).map(key => ({ key, value: ruleValue[key] }));
-      }
-    }
-  },
   methods: {
-    addAdvancedRuleField() {
-      this.form.advancedRuleFields.push({ key: this.availableOperators[0], value: '' });
-    },
-
-    deleteAdvancedRuleField(field) {
-      this.form.advancedRuleFields = this.form.advancedRuleFields.filter(({ key }) => key !== field.key);
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         if (this.config.action) {
-          let newRule = {};
-
-          if (!this.form.advancedMode) {
-            newRule = { field: this.form.field, value: this.form.value };
-          } else {
-            const value = this.form.advancedRuleFields.reduce((acc, field) => {
-              acc[field.key] = field.value;
-              return acc;
-            }, {});
-            newRule = { field: this.form.field, value };
-          }
-
-          await this.config.action(newRule);
+          await this.config.action(formToRule(this.form));
         }
 
         this.$modals.hide();

@@ -3,10 +3,10 @@
     v-tab(:disabled="patternWasChanged") {{ $t('modals.eventFilterRule.simpleEditor') }}
     v-tab {{ $t('modals.eventFilterRule.advancedEditor') }}
     v-tab-item
-      pattern-simple-editor(
+      pattern-simple-form(
         v-field="form",
         :operators="operators",
-        :is-simple-pattern="isSimplePattern"
+        :only-simple-rule="onlySimpleRule"
       )
     v-tab-item
       json-field(
@@ -21,12 +21,13 @@ import { get } from 'lodash';
 
 import { EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
-import PatternSimpleEditor from '@/components/modals/event-filter/pattern/partial/pattern-simple-editor.vue';
 import JsonField from '@/components/forms/fields/json-field.vue';
+
+import PatternSimpleForm from './pattern-simple-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { PatternSimpleEditor, JsonField },
+  components: { PatternSimpleForm, JsonField },
   model: {
     prop: 'form',
     event: 'input',
@@ -40,7 +41,7 @@ export default {
       type: Array,
       default: () => EVENT_FILTER_RULE_OPERATORS,
     },
-    isSimplePattern: {
+    onlySimpleRule: {
       type: Boolean,
       default: false,
     },
