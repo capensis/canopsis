@@ -58,7 +58,7 @@ ADD docker/files/entrypoint.sh /
 #  * Image size: docker is dumb, until --squash is stable.
 RUN \
     mkdir -p ./etc/init.d var/log/engines var/cache/canopsis tmp && \
-    sed -r "s@~@${CPS_HOME}@g" -i ./etc/oldapi.conf && \
+    sed -i -E -e "s@~@${CPS_HOME}@g" ./etc/oldapi.conf && \
     groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash ${CPS_USER} && \
     chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
