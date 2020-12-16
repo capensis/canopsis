@@ -153,6 +153,7 @@ export default {
     isShownInputField() {
       return ![
         FILTER_OPERATORS.isEmpty,
+        FILTER_OPERATORS.isEmptyArray,
         FILTER_OPERATORS.isNotEmpty,
         FILTER_OPERATORS.isNull,
         FILTER_OPERATORS.isNotNull,
