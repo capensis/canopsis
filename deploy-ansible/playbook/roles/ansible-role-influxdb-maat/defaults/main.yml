@@ -19,7 +19,3 @@ influxdb_ip_address: "{{ ansible_default_ipv4.address }}"
 #influxdb_username: test
 #influxdb_password: test
 influxdb_deploy_additional_repository: false
-
-influxdb_udp_enabled: true
-influxdb_udp_bind_address: "{{ ansible_default_ipv4.address}}:4444"
-influxdb_udp_database_name: "canopsis"

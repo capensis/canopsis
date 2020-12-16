@@ -43,8 +43,6 @@ services:
     image: influxdb:${INFLUX_TAG}
     ports:
       - "8086:8086"
-      - "4444:4444/udp"
-      - "8083:8083"
     restart: unless-stopped
     mem_limit: 3g
     mem_reservation: 3g
