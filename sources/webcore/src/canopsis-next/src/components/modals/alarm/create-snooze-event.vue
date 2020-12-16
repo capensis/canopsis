@@ -5,7 +5,7 @@
         span {{ $t('modals.createSnoozeEvent.title') }}
       template(slot="text")
         v-container
-          old-duration-field(v-model="form")
+          snooze-event-form(v-model="form", :is-note-required="isNoteRequired")
       template(slot="actions")
         v-btn(
           data-test="createSnoozeEventCancelButton",
@@ -22,16 +22,16 @@
 </template>
 
 <script>
-import moment from 'moment';
-
-import { MODALS, EVENT_ENTITY_TYPES, DURATION_UNITS } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import modalInnerItemsMixin from '@/mixins/modal/inner-items';
 import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import OldDurationField from '@/components/forms/fields/old-duration.vue';
+import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
+
+import SnoozeEventForm from '@/components/other/alarm/forms/snooze-event-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -43,7 +43,10 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { OldDurationField, ModalWrapper },
+  components: {
+    ModalWrapper,
+    SnoozeEventForm,
+  },
   mixins: [
     modalInnerItemsMixin,
     eventActionsAlarmMixin,
@@ -52,23 +55,22 @@ export default {
   ],
   data() {
     return {
-      form: {
-        duration: 1,
-        durationType: DURATION_UNITS.minute.value,
-      },
+      form: snoozeToForm(),
     };
+  },
+  computed: {
+    isNoteRequired() {
+      return this.config.isNoteRequired;
+    },
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const duration = moment.duration(
-          parseInt(this.form.duration, 10),
-          this.form.durationType,
-        ).asSeconds();
+        const form = formToSnooze(this.form);
 
-        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, { duration });
+        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, form);
 
         this.$modals.hide();
       }
