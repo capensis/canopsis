@@ -2,7 +2,7 @@
 
 ## Introduction
 
-!!! quote 
+!!! quote "Définition"
     Plan d’actions mis en œuvre pour corriger une situation.
 
 La principe de `remédiation` a été mis en oeuvre dans Canopsis pour palier plusieurs limites constatées sur le module [Linkbuilder](../../guide-administration/linkbuilder/index.md) qui permet de gérer des liens dans l'interface de Canopsis.
@@ -17,7 +17,7 @@ Ces limites sont :
 Le module de remédiation permet donc de : 
 
 * Faire office de référentiel de consignes
-* Mettre à disposition d'une alarmes toutes les consignes adaptées
+* Mettre à disposition d'une alarme toutes les consignes adaptées
 * Identifier les alarmes orphelines, c'est-à-dire sans consignes associées
 
 Les bénéfices de l'utilisation de ce modules sont multiples 
@@ -61,19 +61,19 @@ Les ordonnanceurs de tâches compatibles avec les jobs de remédiation sont :
 
 Du point de vue "pilotage", voici comment exécuter une consigne.  
 
-1. Vérifier la présence d'une ou plusieurs consignes associées
+* Vérifier la présence d'une ou plusieurs consignes associées
 
 ![Présence](./img/remediation_consigne_existe.png)
 
-2. Exécuter la consigne à partir du menu d'actions
+* Exécuter la consigne à partir du menu d'actions
 
 ![Exécuter](./img/remediation_consigne_executer.png)
 
-3. Evaluer la consigne
+* Evaluer la consigne
 
 ![Evaluer](./img/remediation_consigne_evaluation.png)
 
-4. Filtrer les alarmes avec ou sans consignes
+* Filtrer les alarmes avec ou sans consignes
 
 ![Filtrer](./img/remediation_consigne_filtres.png)
 

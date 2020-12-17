@@ -50,6 +50,55 @@ Ces droits sont configurés dans le panneau de droits sous l'onglet `API`
 
 ## Gestions des consignes
 
+### Créer une consigne
+
+Pour créer une consigne, rendez vous dans le menu d'administration de la remédiation, onglet `CONSIGNES`.  
+
+![Ajout consigne](./img/remediation_instruction_ajout.png)
+
+Saisissez à présent les différentes étapes et opérations de votre consigne. Voici un exemple 
+
+**Nom et description de la consigne**
+
+![Ajout consigne details1](./img/remediation_instruction_ajout_details1.png)
+
+**Etape 1**
+
+![Ajout consigne details2](./img/remediation_instruction_ajout_details2.png)
+
+**Etape 2**
+
+![Ajout consigne details3](./img/remediation_instruction_ajout_details3.png)
+
+!!! Note
+    Veuillez noter que les templates des opérations peuvent utiliser des [variables de payload](../../../guide-administration/architecture-interne/templates-golang/#templates-pour-payload)
+
+    Ainsi vous disposez principalement des variables `.Alarm` et `.Entity`.
+
+Une fois créée, votre consigne sera affichée dans la liste des consignes.  
+
+![Liste consignes](./img/remediation_instruction_liste.png)
+
+### Assigner une consigne à des alarmes
+
+Lorsque votre consigne a été créée, vous devez l'assigner à une ou des alarmes. 
+Pour cela, vous allez pouvoir sélectionner ces alarmes grâce à des patterns spécifiques de l'alarme ou de l'entité associée à l'alarme.
+Utilisez pour cela le bouton d'action situé à droite de votre consigne.
+
+
+![Assignation_consigne1](./img/remediation_instruction_assignation1.png)
+
+Puis associer vos alarmes en saisissant les patterns souhaités, dans notre cas, les alarmes dont la ressource contient `ping`.
+
+![Assignation_consigne2](./img/remediation_instruction_assignation2.png)
+
+A ce stade, vous pouvez vérifier que les alarmes sélectionnées par les patterns sont bien éligibles à votre consigne.
+
+![Assignation_consigne3](./img/remediation_instruction_assignation3.png)
+
+
+### Associer un job à une opération
+
 ## Jobs associés à un ordonnanceur
 
 Pour être en mesure de relier un job à une opération, il est nécessaire de définir une configuration d'ordonnanceur ainsi que le job en lui-même.  
@@ -67,7 +116,7 @@ Explications sur les champs demandés :
 * Jeton d'autorisation : Jeton lié à votre utilisateur déclaré dans l'ordonnanceur
 
 !!! Note
-    Vous pouvez consulter [cette page](../guide-administration/remediation/index.md) qui concerne les configurations de Rundeck et Awx 
+    Vous pouvez consulter [cette page](../../../guide-administration/remediation/index.md) qui concerne les configurations de Rundeck et Awx 
 
 Lorsque la configuration d'ordonnanceur est prête, vous pouvez déclarer un `job`
 
