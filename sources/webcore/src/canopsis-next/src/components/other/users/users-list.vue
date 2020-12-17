@@ -6,6 +6,7 @@
     :total-items="totalItems",
     :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
     :pagination="pagination",
+    advanced-pagination,
     search,
     select-all,
     @update:pagination="$emit('update:pagination', $event)"
