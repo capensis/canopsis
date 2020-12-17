@@ -6,7 +6,6 @@
 Comme précisé dans le [guide d'utilisation](../../guide-utilisation/remediation), une opération de consigne peut être liée à un ou des jobs.  
 Le diagramme suivant vous présente cette possibilité.
 
-
 ```mermaid
 graph TD
     C[Consigne] -->|1| E1(Etape 1)
@@ -26,7 +25,20 @@ Le `job1`, selon sa configuration sera distribué à l'ordonnanceur `rundeck` ou
 
 ## Architecture
 
-## Ordonnanceurs supportés
+Lorsqu'un job est déclenché depuis une consigne dans Canopsis, il est placé dans une file d'attente.  
+Cette file d'attente est parcourue par un exécuteur de job, `external-job-executor`.
+
+```sh
+# ./external-job-executor -h
+Usage of ./external-job-executor:
+  -c string
+    	Configuration file path (default "/opt/canopsis/share/config/external-job-executor/externalapi.yml")
+  -d	debug
+```
+
+C'est ce process qui va se charger de déclencher l'exéxution du job auprès des ordonnanceurs de tâches selon les différentes configurations définies.
+
+## Ordonnanceurs supportés
 
 ### Configuration pour Rundeck
 
