@@ -38,52 +38,16 @@
 </template>
 
 <script>
-import { isObject, isString, isNull, dropRight, has } from 'lodash';
+import { isString, isNull, dropRight, has } from 'lodash';
 
 import { MODALS } from '@/constants';
+
+import { convertPatternToTreeview } from '@/helpers/treeview';
 
 import formMixin from '@/mixins/form';
 
 import ActionBtn from '@/components/tables/action-btn.vue';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
-
-function isValueRule(rule = '', operators = []) {
-  if (!isObject(rule)) {
-    return true;
-  }
-
-  const items = Object.entries(rule);
-
-  return items.length && items.every(([key, value]) => operators.includes(key) && !isObject(value));
-}
-
-/**
- * Parse pattern object to treeview items
- *
- * @param {Object} source
- * @param {Array} operators
- * @param {Array} prevPath
- */
-function parsePatternToTreeview(source, operators = [], prevPath = []) {
-  return Object.entries(source).map(([field, value]) => {
-    const path = [...prevPath, field];
-    const item = {
-      path,
-
-      id: path.join('.'),
-      name: field,
-    };
-
-    if (isValueRule(value, operators)) {
-      item.rule = { field, value };
-      item.isSimpleRule = !isObject(value);
-    } else {
-      item.children = parsePatternToTreeview(value, operators, path);
-    }
-
-    return item;
-  }, []);
-}
 
 export default {
   components: { ActionBtn, PatternInformation },
@@ -166,7 +130,7 @@ export default {
     },
 
     treeViewItems() {
-      return parsePatternToTreeview(this.pattern, this.operators);
+      return convertPatternToTreeview(this.pattern, this.operators);
     },
   },
   methods: {
@@ -208,7 +172,7 @@ export default {
       const parentPath = treeViewParent ? treeViewParent.path : [];
 
       this.$modals.show({
-        name: MODALS.addEventFilterRuleToPattern,
+        name: MODALS.createPatternRule,
         config: {
           operators: this.operators,
           onlySimple: this.onlySimpleRule,
@@ -230,7 +194,7 @@ export default {
       const { rule, path } = treeViewItem;
 
       this.$modals.show({
-        name: MODALS.addEventFilterRuleToPattern,
+        name: MODALS.createPatternRule,
         config: {
           rule,
 

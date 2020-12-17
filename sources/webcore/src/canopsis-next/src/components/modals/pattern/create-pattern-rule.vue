@@ -15,60 +15,18 @@
 </template>
 
 <script>
-import { isObject } from 'lodash';
-
-import uid from '@/helpers/uid';
-
 import { MODALS } from '@/constants';
+
+import { patternRuleToForm, formToPatternRule } from '@/helpers/forms/pattern-rule';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 
 import PatternRuleForm from '@/components/other/pattern/form/pattern-rule-form.vue';
 
-import ModalWrapper from '../../modal-wrapper.vue';
-
-function ruleToForm({ field = '', value = '' } = {}) {
-  const isSimple = !isObject(value);
-  const form = {
-    field,
-    value: '',
-    advancedMode: !isSimple,
-    advancedFields: [],
-  };
-
-  if (isSimple) {
-    form.value = value;
-  } else {
-    form.advancedFields = Object.entries(value)
-      .map(([fieldKey, fieldValue]) => ({ key: uid(), operator: fieldKey, value: fieldValue }));
-  }
-
-  return form;
-}
-
-function formToRule(form) {
-  if (!form.advancedMode) {
-    return {
-      field: form.field,
-      value: form.value,
-    };
-  }
-
-  const value = form.advancedFields.reduce((acc, field) => {
-    acc[field.operator] = field.value;
-
-    return acc;
-  }, {});
-
-  return {
-    value,
-
-    field: form.field,
-  };
-}
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.addEventFilterRuleToPattern,
+  name: MODALS.createPatternRule,
   $_veeValidate: {
     validator: 'new',
   },
@@ -78,7 +36,7 @@ export default {
     const { rule = {} } = this.modal.config;
 
     return {
-      form: ruleToForm(rule),
+      form: patternRuleToForm(rule),
     };
   },
   methods: {
@@ -87,7 +45,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToRule(this.form));
+          await this.config.action(formToPatternRule(this.form));
         }
 
         this.$modals.hide();

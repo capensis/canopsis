@@ -11,7 +11,7 @@
     template(slot="actions")
       v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
       v-btn.primary(
-        :disabled="patternWasChanged",
+        :disabled="patternWasTouched",
         @click.prevent="submit"
       ) {{ $t('common.submit') }}
 </template>
@@ -25,10 +25,10 @@ import modalInnerMixin from '@/mixins/modal/inner';
 
 import PatternForm from '@/components/other/pattern/form/pattern-form.vue';
 
-import ModalWrapper from '../../modal-wrapper.vue';
+import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createEventFilterRulePattern,
+  name: MODALS.createPattern,
   $_veeValidate: {
     validator: 'new',
   },
@@ -50,7 +50,7 @@ export default {
       return this.config.operators || EVENT_FILTER_RULE_OPERATORS;
     },
 
-    patternWasChanged() {
+    patternWasTouched() {
       return get(this.fields, ['pattern', 'touched']);
     },
   },

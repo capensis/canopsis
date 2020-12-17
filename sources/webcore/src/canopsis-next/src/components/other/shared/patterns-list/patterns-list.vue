@@ -90,7 +90,7 @@ export default {
   methods: {
     showCreatePatternModal() {
       this.$modals.show({
-        name: MODALS.createEventFilterRulePattern,
+        name: MODALS.createPattern,
         config: {
           operators: this.operators,
           action: pattern => this.addItemIntoArray(pattern),
@@ -100,7 +100,7 @@ export default {
 
     showEditPatternModal(index) {
       this.$modals.show({
-        name: MODALS.createEventFilterRulePattern,
+        name: MODALS.createPattern,
         config: {
           pattern: this.patterns[index],
           operators: this.operators,

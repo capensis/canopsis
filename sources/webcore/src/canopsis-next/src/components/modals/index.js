@@ -36,8 +36,8 @@ export { default as CreateRole } from './admin/create-role.vue';
 export { default as CreateRight } from './admin/create-right.vue';
 export { default as CreateBroadcastMessage } from './admin/create-broadcast-message.vue';
 export { default as CreateEventFilterRule } from './event-filter/create-event-filter-rule.vue';
-export { default as CreateEventFilterRulePattern } from './event-filter/pattern/create-event-filter-rule-pattern.vue';
-export { default as AddEventFilterRuleToPattern } from './event-filter/pattern/add-event-filter-rule-to-pattern.vue';
+export { default as CreatePattern } from './pattern/create-pattern.vue';
+export { default as CreatePatternRule } from './pattern/create-pattern-rule.vue';
 export { default as EventFilterRuleActions } from './event-filter/event-filter-rule-actions.vue';
 export { default as EventFilterRuleExternalData } from './event-filter/event-filter-rule-external-data.vue';
 export { default as EventFilterRuleCreateAction } from './event-filter/event-filter-rule-create-action.vue';
@@ -67,6 +67,6 @@ export { default as CreateRemediationConfiguration } from './remediation/create-
 export { default as CreateRemediationJob } from './remediation/create-remediation-job.vue';
 export { default as ExecuteRemediationInstruction } from './remediation/execute-remediation-instruction.vue';
 export { default as ImageViewer } from './common/image-viewer.vue';
-export { default as Patterns } from './common/patterns.vue';
+export { default as Patterns } from './pattern/patterns.vue';
 export { default as Rate } from './common/rate.vue';
 export { default as CreateRemediationInstructionsFilter } from './remediation/create-remediation-instructions-filter.vue';
