@@ -1,7 +1,7 @@
 <template lang="pug">
   v-select(
     v-field="value",
-    :label="$t('common.type')",
+    :label="label || $t('common.type')",
     :loading="pbehaviorTypesPending",
     :items="types",
     :error-messages="errorMessages",
@@ -47,6 +47,10 @@ export default {
     name: {
       type: String,
       default: 'type',
+    },
+    label: {
+      type: String,
+      default: '',
     },
     disabled: {
       type: Boolean,

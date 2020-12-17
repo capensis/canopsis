@@ -38,6 +38,7 @@
               name="total_entity_patterns",
               @input="errors.remove('total_entity_patterns')"
             )
+        slot(name="additionalTabs")
 </template>
 
 <script>

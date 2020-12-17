@@ -46,7 +46,8 @@ const remediationInstructionStepsToForm = steps => steps.map(step => ({
 export const remediationInstructionToForm = (remediationInstruction = {}) => ({
   name: remediationInstruction.name || '',
   enabled: !isUndefined(remediationInstruction.enabled) ? remediationInstruction.enabled : true,
-  pbehavior_types: remediationInstruction.pbehavior_types ? [...remediationInstruction.pbehavior_types] : [],
+  active_on_pbh: remediationInstruction.active_on_pbh || [],
+  disabled_on_pbh: remediationInstruction.disabled_on_pbh || [],
   alarm_patterns: remediationInstruction.alarm_patterns || [],
   entity_patterns: remediationInstruction.entity_patterns || [],
   description: remediationInstruction.description || '',

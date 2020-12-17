@@ -113,6 +113,7 @@ export const MODALS = {
   createRemediationJob: 'create-remediation-job',
   createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
+  remediationPatterns: 'remediation-patterns',
   imageViewer: 'image-viewer',
   patterns: 'patterns',
   rate: 'rate',

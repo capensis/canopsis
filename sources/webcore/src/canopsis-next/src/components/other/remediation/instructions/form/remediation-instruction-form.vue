@@ -19,18 +19,11 @@
         name="description"
       )
     v-layout(row)
-      pbehavior-type-field(
-        v-field="form.pbehavior_types",
-        chips,
-        multiple
-      )
-    v-layout(row)
       remediation-instruction-steps-form(v-field="form.steps")
 </template>
 
 <script>
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
-import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
 
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 
@@ -38,7 +31,6 @@ export default {
   inject: ['$validator'],
   components: {
     RemediationInstructionStepsForm,
-    PbehaviorTypeField,
     EnabledField,
   },
   model: {

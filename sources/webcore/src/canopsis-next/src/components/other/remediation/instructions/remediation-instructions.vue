@@ -88,13 +88,13 @@ export default {
 
     showAssignPatternsModal(remediationInstruction) {
       this.$modals.show({
-        name: MODALS.patterns,
+        name: MODALS.remediationPatterns,
         config: {
-          alarm: true,
-          entity: true,
           patterns: {
             alarm_patterns: remediationInstruction.alarm_patterns,
             entity_patterns: remediationInstruction.entity_patterns,
+            active_on_pbh: remediationInstruction.active_on_pbh || [],
+            disabled_on_pbh: remediationInstruction.disabled_on_pbh || [],
           },
           action: async ({ alarm_patterns: alarmPatterns, entity_patterns: entityPattens }) => {
             if (
