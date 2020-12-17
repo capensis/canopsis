@@ -96,8 +96,20 @@ A ce stade, vous pouvez vérifier que les alarmes sélectionnées par les patter
 
 ![Assignation_consigne3](./img/remediation_instruction_assignation3.png)
 
-
 ### Associer un job à une opération
+
+!!! Warning
+    Pour qu'un job soit disponible, une configuration spécifique est nécessaire. [Consultez ce paragraphe pour cela](#jobs-associes-a-un-ordonnanceur)
+
+Vous avez la possibilité d'associer un job d'ordonnanceur à une opération dans une consigne.
+
+Pour cela, dans votre consigne, il vous suffit de sélectionner le ou les jobs qui seront présentés à l'utilisateur de la consigne pour exécution.
+
+![Job1](./img/remediation_instruction_job1.png)
+
+Au moment de l'exécution de la consigne, les jobs associés pourront être exécuter.
+
+![Job2](./img/remediation_instruction_job2.png)
 
 ## Jobs associés à un ordonnanceur
 
@@ -116,7 +128,7 @@ Explications sur les champs demandés :
 * Jeton d'autorisation : Jeton lié à votre utilisateur déclaré dans l'ordonnanceur
 
 !!! Note
-    Vous pouvez consulter [cette page](../../../guide-administration/remediation/index.md) qui concerne les configurations de Rundeck et Awx 
+    Vous pouvez consulter [cette page](../../../guide-administration/remediation/) qui concerne les configurations de Rundeck et Awx 
 
 Lorsque la configuration d'ordonnanceur est prête, vous pouvez déclarer un `job`
 
@@ -134,7 +146,7 @@ Explications sur les champs demandés :
 * Payload : Corps du message qui sera transmis à l'ordonnaceur au moment de l'exécution du job
 
 !!! Note
-    Vous pouvez consulter [cette page](../guide-administration/remediation/index.md) qui concerne les configurations de Rundeck et Awx 
+    Vous pouvez consulter [cette page](../../../guide-administration/remediation/) qui concerne les configurations de Rundeck et Awx 
 
 ### Payload
 
