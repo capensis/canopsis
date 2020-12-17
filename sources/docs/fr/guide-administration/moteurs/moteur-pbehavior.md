@@ -16,7 +16,7 @@ La commande `engine-pbehavior -help` liste toutes les options acceptées par le 
 
 Ce moteur doit toujours être présent. A partir de la v4 de Canopsis ce moteur est désormais écrit en langage Go.
 
-Un comportement périodique est caractérisé par un type et une raison (voir ci-dessous). Il contient également un filtre (`filter`) qui est appliqué sur une entité.
+Un comportement périodique est caractérisé par un type et une raison (voir ci-dessous). Il contient également un filtre (`filter`) qui est appliqué sur le référentiel des entités.
 
 A partir de la v4 de Canopsis, les comportements périodiques existants sont appliqués immédiatement sur les nouvelles alarmes. De la même façon, les comportements périodiques nouvellement créés sont appliqués immédiatement sur les alarmes existantes.
 
