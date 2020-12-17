@@ -1,16 +1,20 @@
 <template lang="pug">
-  div
-    v-textarea(
-      v-model="localValue",
-      v-validate="'json'",
-      :label="label",
-      :name="name",
-      :rows="rows",
-      :error-messages="errorsMessages",
-      data-vv-validate-on="none",
-      @input="resetValidation"
-    )
-    v-layout(row)
+  v-layout(row, wrap)
+    v-flex(xs12)
+      v-textarea(
+        v-model="localValue",
+        v-validate="'json'",
+        :label="label",
+        :name="name",
+        :rows="rows",
+        :error-messages="errors.collect(name)",
+        data-vv-validate-on="none",
+        v-on="listeners"
+      )
+        v-tooltip(slot="append", v-if="helpText", left)
+          v-icon(slot="activator") help
+          div(v-html="helpText")
+    v-flex(v-if="!validateOnBlur", xs12)
       v-btn.ml-0(
         :disabled="errors.has(name) || !wasTouched",
         color="primary",
@@ -32,7 +36,7 @@ export default {
   inject: ['$validator'],
   props: {
     value: {
-      type: [String, Object],
+      type: [Object, String],
       default: () => ({}),
     },
     label: {
@@ -45,7 +49,16 @@ export default {
     },
     rows: {
       type: [Number, String],
-      default: 10,
+      default: 5,
+    },
+    validateOn: {
+      type: String,
+      default: 'blur',
+      validate: value => ['blur', 'button'].includes(value),
+    },
+    helpText: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -54,13 +67,24 @@ export default {
     };
   },
   computed: {
+    validateOnBlur() {
+      return this.validateOn === 'blur';
+    },
+
     wasTouched() {
       return get(this.fields, [this.name, 'touched']);
     },
 
-    errorsMessages() {
-      return this.errors.collect(this.name)
-        .map(error => (error.rule === 'json' ? this.$t('errors.JSONNotValid') : error));
+    listeners() {
+      const listeners = {
+        input: this.resetValidation,
+      };
+
+      if (this.validateOnBlur) {
+        listeners.blur = this.parse;
+      }
+
+      return listeners;
     },
   },
   watch: {

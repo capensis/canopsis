@@ -12,7 +12,8 @@
       json-field(
         v-field="form",
         name="pattern",
-        rows="15"
+        rows="15",
+        validate-on="button"
       )
 </template>
 

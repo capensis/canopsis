@@ -17,6 +17,7 @@
           :label="$t('filterEditor.tabs.advancedEditor')",
           name="advancedJson",
           rows="10",
+          validate-on="button",
           @input="updateJson"
         )
     v-alert(:value="errors.has('filter')", type="error") {{ $t('filterEditor.errors.required') }}
