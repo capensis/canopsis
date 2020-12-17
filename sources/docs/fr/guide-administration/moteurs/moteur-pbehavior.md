@@ -62,7 +62,7 @@ Voici, par exemple, une liste de raisons personnalisées :
 
 Il est également possible de configurer des dates d'exceptions dans l'onglet dédié. Pour cela cliquez de nouveau sur le bouton `+` pour créer une liste d'exceptions.
 
-Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. A chaque date vous pourrez associer un des types existant.
+Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. A chaque date vous pourrez associer un des types existants.
 
 ![Créer une liste d'exceptions](./img/admin-planification-liste-exceptions.png)
 
