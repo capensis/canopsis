@@ -51,6 +51,7 @@ import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
+import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
 
 import * as modalsComponents from '@/components/modals';
 
@@ -75,6 +76,9 @@ Vue.use(Vuetify, {
     },
     alt_route: {
       component: AltRouteIcon,
+    },
+    settings_sync: {
+      component: SettingsSyncIcon,
     },
   },
 });

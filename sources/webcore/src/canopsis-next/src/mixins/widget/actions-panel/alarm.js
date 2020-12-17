@@ -69,6 +69,16 @@ export default {
       });
     },
 
+    showSnoozeModal() {
+      this.$modals.show({
+        name: MODALS.createSnoozeEvent,
+        config: {
+          ...this.modalConfig,
+          isNoteRequired: this.widget.parameters.isSnoozeNoteRequired,
+        },
+      });
+    },
+
     showAckModal() {
       this.$modals.show({
         name: MODALS.createAckEvent,

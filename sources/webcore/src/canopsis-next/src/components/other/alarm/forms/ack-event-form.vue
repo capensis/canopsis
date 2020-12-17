@@ -10,7 +10,7 @@
       v-textarea(
         v-field="form.output",
         v-validate="isNoteRequired ? 'required' : ''",
-        :label="$t('modals.createAckEvent.fields.output')",
+        :label="$t('common.output')",
         :error-messages="errors.collect('output')",
         name="output",
         data-test="createAckEventNote"

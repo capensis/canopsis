@@ -67,6 +67,7 @@ export function generateWidgetByType(type) {
     infoPopups: [],
     moreInfoTemplate: '',
     isAckNoteRequired: false,
+    isSnoozeNoteRequired: false,
     isMultiAckEnabled: false,
     isHtmlEnabledOnTimeLine: false,
     fastAckOutput: {
