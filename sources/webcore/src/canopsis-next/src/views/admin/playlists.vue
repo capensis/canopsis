@@ -5,7 +5,7 @@
       :playlists="playlists",
       :pending="playlistsPending",
       @edit="showEditPlaylistModal",
-      @delete="showRemovePlaylistModal",
+      @remove="showRemovePlaylistModal",
       @duplicate="showDuplicatePlaylistModal"
     )
     fab-buttons(
