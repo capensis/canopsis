@@ -52,7 +52,8 @@ export default {
     },
 
     errorsMessages() {
-      return this.errors.has(this.name) ? [this.$t('errors.JSONNotValid')] : [];
+      return this.errors.collect(this.name)
+        .map(error => (error.rule === 'json' ? this.$t('errors.JSONNotValid') : error));
     },
   },
   watch: {
@@ -68,7 +69,7 @@ export default {
   methods: {
     valueToLocalValue(value) {
       try {
-        return isString(value) ? value : JSON.stringify(value);
+        return this.$options.filters.json(value);
       } catch (err) {
         this.$popups.error({ text: this.$t('errors.default') });
 
@@ -78,9 +79,9 @@ export default {
 
     validate() {
       try {
-        const newValue = JSON.parse(this.localValue);
-
         this.$validator.reset({ name: this.name });
+
+        const newValue = JSON.parse(this.localValue);
 
         this.$emit('input', isString(this.value) ? this.localValue : newValue);
       } catch (err) {

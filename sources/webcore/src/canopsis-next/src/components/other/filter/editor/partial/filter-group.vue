@@ -51,8 +51,8 @@
             :key="groupKey",
             :group="group",
             :possibleFields="possibleFields",
-            @deleteGroup="deleteGroup(groupKey)",
-            @update:group="updateGroup(groupKey, $event)"
+            @input="updateGroup(groupKey, $event)",
+            @deleteGroup="deleteGroup(groupKey)"
           )
 </template>
 
@@ -90,7 +90,7 @@ export default {
   mixins: [formMixin],
   model: {
     prop: 'group',
-    event: 'update:group',
+    event: 'input',
   },
   props: {
     possibleFields: {
