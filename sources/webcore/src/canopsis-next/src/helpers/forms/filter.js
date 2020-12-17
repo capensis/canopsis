@@ -2,6 +2,7 @@ import { isEmpty, cloneDeep } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
+import { addKeyInEntity, removeKeyFromEntity } from '../entities';
 import parseGroupToFilter from '../filter/editor/parse-group-to-filter';
 import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
 
@@ -42,3 +43,19 @@ export function filterToForm(filter = {}) {
 export function formToFilter(form) {
   return parseFilterToRequest(form);
 }
+
+/**
+ * Convert filters to filters form
+ *
+ * @param {Array} [filters = []]
+ * @returns {Array}
+ */
+export const filtersToForm = (filters = []) => cloneDeep(addKeyInEntity(filters));
+
+/**
+ * Convert filters form to filters object
+ *
+ * @param {Array} [filters = []]
+ * @returns {Array}
+ */
+export const formToFilters = (filters = []) => removeKeyFromEntity(filters);

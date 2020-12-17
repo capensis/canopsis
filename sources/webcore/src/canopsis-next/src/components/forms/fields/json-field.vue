@@ -11,7 +11,7 @@
       @input="resetValidation"
     )
     v-btn.ml-0(
-      :disabled="errors.has(name) || !hasChanges",
+      :disabled="errors.has(name) || !wasTouched",
       color="primary",
       outline,
       @click="validate"
@@ -47,7 +47,7 @@ export default {
     };
   },
   computed: {
-    hasChanges() {
+    wasTouched() {
       return get(this.fields, [this.name, 'touched']);
     },
 
@@ -98,7 +98,7 @@ export default {
         this.errors.remove(this.name);
       }
 
-      if (!this.hasChanges) {
+      if (!this.wasTouched) {
         this.$validator.flag(this.name, {
           touched: true,
         });

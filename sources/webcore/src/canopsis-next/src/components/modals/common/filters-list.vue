@@ -22,7 +22,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import { filtersToForm, formToFilters } from '@/helpers/forms/filters';
+import { filtersToForm, formToFilters } from '@/helpers/forms/filter';
 
 import FiltersForm from '@/components/other/filter/form/filters-form.vue';
 

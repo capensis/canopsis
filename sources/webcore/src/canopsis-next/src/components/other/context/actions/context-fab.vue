@@ -8,7 +8,14 @@
       v-icon add
       v-icon close
     v-tooltip(v-for="button in buttons", :key="button.label", top)
-      v-btn(slot="activator", :color="button.color", @click.prevent.stop="button.action", fab, dark, small)
+      v-btn(
+        slot="activator",
+        :color="button.color",
+        fab,
+        dark,
+        small,
+        @click.prevent.stop="button.action"
+      )
         v-icon {{ button.icon }}
       span {{ button.label }}
 </template>

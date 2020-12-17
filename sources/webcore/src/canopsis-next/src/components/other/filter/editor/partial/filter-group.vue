@@ -42,7 +42,7 @@
             :rule="rule",
             :possibleFields="possibleFields",
             @deleteRule="deleteRule(ruleKey)",
-            @update:rule="updateRule(ruleKey, $event)"
+            @input="updateRule(ruleKey, $event)"
           )
 
         div(data-test="filterGroupLayout")

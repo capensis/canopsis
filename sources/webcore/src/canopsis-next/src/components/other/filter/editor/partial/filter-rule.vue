@@ -90,7 +90,7 @@ export default {
   mixins: [formMixin, filterHintsMixin],
   model: {
     prop: 'rule',
-    event: 'update:rule',
+    event: 'input',
   },
   props: {
     rule: {
