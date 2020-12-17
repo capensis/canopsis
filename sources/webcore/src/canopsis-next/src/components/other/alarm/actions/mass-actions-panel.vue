@@ -84,7 +84,7 @@ export default {
           type: alarmsListActionsTypes.snooze,
           icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
           title: this.$t('alarmList.actions.titles.snooze'),
-          method: this.showActionModal(MODALS.createSnoozeEvent),
+          method: this.showSnoozeModal,
         },
       ];
 

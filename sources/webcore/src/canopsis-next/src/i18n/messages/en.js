@@ -405,6 +405,7 @@ export default {
     filters: 'Filters',
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack?',
+    isSnoozeNoteRequired: 'Note field required when snooze?',
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
@@ -1414,21 +1415,6 @@ export default {
       state: 'Severity',
       status: 'Status',
       extraDetails: 'Extra details',
-    },
-    /**
-     * This object for pbehavior fields from database
-     */
-    pbehaviorList: {
-      name: 'Name',
-      author: 'Author',
-      connector: 'Connector Type',
-      connectorName: 'Connector name',
-      enabled: 'Is enabled',
-      tstart: 'Begins',
-      tstop: 'Ends',
-      type: 'Type',
-      reason: 'Reason',
-      rrule: 'Rrule',
     },
     rolesList: {
       name: 'Name',

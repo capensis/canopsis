@@ -81,7 +81,7 @@ RUN mkdir -p ./etc/init.d && \
     mkdir -p var/log/engines && \
     mkdir -p var/cache/canopsis && \
     mkdir -p tmp && \
-    sed -r "s@~@${CPS_HOME}@g" -i ./etc/oldapi.conf && \
+    sed -i -E -e "s@~@${CPS_HOME}@g" ./etc/oldapi.conf && \
     chown -R ${CPS_USER}:${CPS_GROUP} ${CPS_HOME}/var/cache ${CPS_HOME}/var/log ${CPS_HOME}/tmp
 
 # Ansible

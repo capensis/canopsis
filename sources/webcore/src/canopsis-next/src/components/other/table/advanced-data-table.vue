@@ -27,7 +27,7 @@
             slot(name="mass-actions", :selected="selected", :count="selected.length")
     v-data-table(
       v-model="selected",
-      :headers="headers",
+      :headers="headersWithExpand",
       :items="items",
       :loading="loading",
       :total-items="totalItems",
@@ -66,7 +66,7 @@
       template(slot="progress", slot-scope="props")
         slot(name="progress", v-bind="props")
     table-pagination(
-      v-if="totalItems && advancedPagination",
+      v-if="pagination && totalItems && advancedPagination",
       :total-items="totalItems",
       :rows-per-page-items="rowsPerPageItems",
       :rows-per-page="pagination.rowsPerPage",
@@ -178,6 +178,14 @@ export default {
       set(selected) {
         this.selectedItems = selected;
       },
+    },
+
+    headersWithExpand() {
+      if (this.expand && !this.selectAll) {
+        return [{ sortable: false }, ...this.headers];
+      }
+
+      return this.headers;
     },
 
     hasExpandSlot() {

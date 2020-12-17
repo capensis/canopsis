@@ -404,7 +404,8 @@ export default {
     resolved: 'Résolue',
     filters: 'Filtres',
     filterEditor: 'Éditeur de filtre',
-    isAckNoteRequired: "Champ 'Note' requis lors d'un ack ?",
+    isAckNoteRequired: 'Champ \'Note\' requis lors d\'un ack ?',
+    isSnoozeNoteRequired: 'Champ \'Note\' requis lorsque vous répétez ?',
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
@@ -1414,21 +1415,6 @@ export default {
       state: 'Criticité',
       status: 'Statut',
       extraDetails: 'Détails supplémentaires',
-    },
-    /**
-     * This object for pbehavior fields from database
-     */
-    pbehaviorList: {
-      name: 'Nom',
-      author: 'Auteur',
-      connector: 'Type de connecteur',
-      connectorName: 'Nom du connecteur',
-      enabled: 'Actif',
-      tstart: 'Démarre',
-      tstop: 'Finit',
-      type: 'Type',
-      reason: 'Raison',
-      rrule: 'Récurrence',
     },
     rolesList: {
       name: 'Nom',
