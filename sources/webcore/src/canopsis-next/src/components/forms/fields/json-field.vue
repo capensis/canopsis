@@ -10,12 +10,19 @@
       data-vv-validate-on="none",
       @input="resetValidation"
     )
-    v-btn.ml-0(
-      :disabled="errors.has(name) || !wasTouched",
-      color="primary",
-      outline,
-      @click="validate"
-    ) {{ $t('common.parse') }}
+    v-layout(row)
+      v-btn.ml-0(
+        :disabled="errors.has(name) || !wasTouched",
+        color="primary",
+        outline,
+        @click="parse"
+      ) {{ $t('common.parse') }}
+      v-btn(
+        :disabled="!wasTouched",
+        color="grey darken-1",
+        outline,
+        @click="reset"
+      ) {{ $t('common.reset') }}
 </template>
 
 <script>
@@ -77,7 +84,7 @@ export default {
       }
     },
 
-    validate() {
+    parse() {
       try {
         const newValue = JSON.parse(this.localValue);
 
@@ -91,6 +98,12 @@ export default {
           rule: 'json',
         });
       }
+    },
+
+    reset() {
+      this.localValue = this.valueToLocalValue(this.value);
+
+      this.$validator.reset({ name: this.name });
     },
 
     resetValidation() {
