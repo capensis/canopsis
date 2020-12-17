@@ -62,7 +62,7 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const { title, filter = {} } = this.modal.config.filter || {};
+    const { title = '', filter = '{}' } = this.modal.config.filter || {};
     let preparedFilter = {};
 
     try {
@@ -119,7 +119,9 @@ export default {
           const preparedFilter = formToFilter(this.form.filter);
           const newFilter = {
             title: this.form.title,
-            filter: isString(get(this.config.filter, 'filter')) ? JSON.stringify(preparedFilter) : preparedFilter,
+            filter: isString(get(this.config.filter, 'filter', '{}'))
+              ? JSON.stringify(preparedFilter)
+              : preparedFilter,
           };
 
           await this.config.action(newFilter);

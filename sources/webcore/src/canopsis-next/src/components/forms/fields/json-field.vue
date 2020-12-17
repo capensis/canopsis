@@ -79,9 +79,9 @@ export default {
 
     validate() {
       try {
-        this.$validator.reset({ name: this.name });
-
         const newValue = JSON.parse(this.localValue);
+
+        this.$validator.reset({ name: this.name });
 
         this.$emit('input', isString(this.value) ? this.localValue : newValue);
       } catch (err) {

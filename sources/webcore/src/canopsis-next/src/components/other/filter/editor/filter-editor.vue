@@ -1,6 +1,6 @@
 <template lang="pug">
   div(data-test="filterEditor")
-    v-tabs.filter-editor(slider-color="primary", centered)
+    v-tabs.filter-editor(v-model="activeTab", slider-color="primary", centered)
       v-tab(:disabled="advancedJsonWasTouched || errors.has('advancedJson')") {{ $t('filterEditor.tabs.visualEditor') }}
       v-tab-item
         v-container.pa-1
@@ -74,6 +74,7 @@ export default {
   },
   data() {
     return {
+      activeTab: 0,
       advancedJson: '{}',
     };
   },
@@ -140,6 +141,14 @@ export default {
       return this.alarmFilterHintsOrDefault;
     },
   },
+
+  watch: {
+    advancedJsonWasTouched(value) {
+      if (value) {
+        this.resetFilterValidator();
+      }
+    },
+  },
   async created() {
     if (this.required && this.$validator) {
       this.$validator.attach({
@@ -161,6 +170,10 @@ export default {
     },
 
     openAdvancedTab() {
+      if (this.activeTab === 1) {
+        return;
+      }
+
       try {
         this.advancedJson = formToFilter(this.form);
       } catch (err) {

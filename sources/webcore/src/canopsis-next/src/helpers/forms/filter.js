@@ -22,7 +22,7 @@ import parseFilterToRequest from '../filter/editor/parse-filter-to-request';
 /**
  * Convert filter object to filter form
  *
- * @param {Object|string} filter
+ * @param {Object} [filter = {}]
  * @returns {FilterForm}
  */
 export function filterToForm(filter = {}) {
