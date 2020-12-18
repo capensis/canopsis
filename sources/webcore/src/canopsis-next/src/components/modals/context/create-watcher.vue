@@ -8,7 +8,7 @@
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled || advancedJsonWasTouched",
+          :disabled="isDisabled || advancedJsonWasChanged",
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
@@ -53,8 +53,8 @@ export default {
     };
   },
   computed: {
-    advancedJsonWasTouched() {
-      return get(this.fields, ['advancedJson', 'touched']);
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
     },
   },
   methods: {

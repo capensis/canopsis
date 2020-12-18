@@ -1,19 +1,21 @@
 <template lang="pug">
-  modal-wrapper(close)
-    template(slot="title")
-      span {{ $t('modals.eventFilterRule.editPattern') }}
-    template(slot="text")
-      pattern-form(
-        v-model="form",
-        :operators="operators",
-        :only-simple-rule="config.onlySimpleRule"
-      )
-    template(slot="actions")
-      v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-      v-btn.primary(
-        :disabled="patternWasTouched",
-        @click.prevent="submit"
-      ) {{ $t('common.submit') }}
+  v-form(@submit.prevent="submit")
+    modal-wrapper(close)
+      template(slot="title")
+        span {{ $t('modals.eventFilterRule.editPattern') }}
+      template(slot="text")
+        pattern-form(
+          v-model="form",
+          :operators="operators",
+          :only-simple-rule="config.onlySimpleRule"
+        )
+      template(slot="actions")
+        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled || patternWasChanged",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -22,6 +24,8 @@ import { cloneDeep, get } from 'lodash';
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
 import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import PatternForm from '@/components/other/pattern/form/pattern-form.vue';
 
@@ -36,7 +40,11 @@ export default {
     PatternForm,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
   data() {
     const { pattern = {} } = this.modal.config;
 
@@ -50,8 +58,8 @@ export default {
       return this.config.operators || EVENT_FILTER_RULE_OPERATORS;
     },
 
-    patternWasTouched() {
-      return get(this.fields, ['pattern', 'touched']);
+    patternWasChanged() {
+      return get(this.fields, ['pattern', 'changed']);
     },
   },
   methods: {

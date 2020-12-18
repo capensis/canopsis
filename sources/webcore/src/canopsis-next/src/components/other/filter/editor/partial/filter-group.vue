@@ -29,7 +29,7 @@
           block,
           small,
           flat,
-          @click="$emit('deleteGroup')"
+          @click="$emit('delete-group')"
         ) {{ $t("filterEditor.buttons.deleteGroup") }}
 
     v-layout
@@ -40,8 +40,8 @@
             v-for="(rule, ruleKey) in group.rules",
             :key="ruleKey",
             :rule="rule",
-            :possibleFields="possibleFields",
-            @deleteRule="deleteRule(ruleKey)",
+            :possible-fields="possibleFields",
+            @delete-rule="deleteRule(ruleKey)",
             @input="updateRule(ruleKey, $event)"
           )
 
@@ -52,7 +52,7 @@
             :group="group",
             :possibleFields="possibleFields",
             @input="updateGroup(groupKey, $event)",
-            @deleteGroup="deleteGroup(groupKey)"
+            @delete-group="deleteGroup(groupKey)"
           )
 </template>
 
@@ -72,13 +72,6 @@ import FilterRule from './filter-rule.vue';
 
 /**
  * Component representing a group in MongoDB filter
- *
- * @prop {Array} possibleFields - Boolean to determine if it's the root filter's group
- * @prop {Object} group - Group object
- * @prop {boolean} [isInitial=false] - Boolean to determine if it's the root filter's group
- *
- * @event group#update
- * @event deleteGroup#click
  */
 export default {
   name: 'filter-group', // We need it for recursive

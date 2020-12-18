@@ -2,8 +2,8 @@
   v-layout(row, wrap)
     v-flex(xs12)
       v-textarea(
-        v-model="localValue",
         v-validate="'json'",
+        :value="localValue",
         :label="label",
         :name="name",
         :rows="rows",
@@ -16,13 +16,13 @@
           div(v-html="helpText")
     v-flex(v-if="!validateOnBlur", xs12)
       v-btn.ml-0(
-        :disabled="errors.has(name) || !wasTouched",
+        :disabled="errors.has(name) || !wasChanged",
         color="primary",
         outline,
         @click="parse"
       ) {{ $t('common.parse') }}
       v-btn(
-        :disabled="!wasTouched",
+        :disabled="!wasChanged",
         color="grey darken-1",
         outline,
         @click="reset"
@@ -71,8 +71,8 @@ export default {
       return this.validateOn === 'blur';
     },
 
-    wasTouched() {
-      return get(this.fields, [this.name, 'touched']);
+    wasChanged() {
+      return get(this.fields, [this.name, 'changed']);
     },
 
     listeners() {
@@ -130,14 +130,21 @@ export default {
       this.$validator.reset({ name: this.name });
     },
 
-    resetValidation() {
+    resetValidation(value) {
+      if (value === this.localValue) {
+        return;
+      }
+
+      this.localValue = value;
+
       if (this.errors.has(this.name)) {
         this.errors.remove(this.name);
       }
 
-      if (!this.wasTouched) {
+      if (!this.wasChanged) {
         this.$validator.flag(this.name, {
           touched: true,
+          changed: true,
         });
       }
     },

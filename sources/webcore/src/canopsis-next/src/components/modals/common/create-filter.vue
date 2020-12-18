@@ -28,7 +28,7 @@
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled || advancedJsonWasTouched",
+          :disabled="isDisabled || advancedJsonWasChanged",
           :loading="submitting",
           type="submit",
           data-test="createFilterSubmitButton"
@@ -99,8 +99,8 @@ export default {
       return this.config.filter && this.config.filter.title;
     },
 
-    advancedJsonWasTouched() {
-      return get(this.fields, ['advancedJson', 'touched']);
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
     },
   },
   created() {

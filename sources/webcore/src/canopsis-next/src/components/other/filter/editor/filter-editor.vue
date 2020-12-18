@@ -1,7 +1,7 @@
 <template lang="pug">
   div(data-test="filterEditor")
     v-tabs.filter-editor(v-model="activeTab", slider-color="primary", centered)
-      v-tab(:disabled="advancedJsonWasTouched || errors.has('advancedJson')") {{ $t('filterEditor.tabs.visualEditor') }}
+      v-tab(:disabled="advancedJsonWasChanged || errors.has('advancedJson')") {{ $t('filterEditor.tabs.visualEditor') }}
       v-tab-item
         v-container.pa-1
           filter-group(
@@ -80,8 +80,8 @@ export default {
     };
   },
   computed: {
-    advancedJsonWasTouched() {
-      return get(this.fields, ['advancedJson', 'touched']);
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
     },
 
     defaultAlarmHints() {
@@ -144,7 +144,7 @@ export default {
   },
 
   watch: {
-    advancedJsonWasTouched(value) {
+    advancedJsonWasChanged(value) {
       if (value) {
         this.resetFilterValidator();
       }

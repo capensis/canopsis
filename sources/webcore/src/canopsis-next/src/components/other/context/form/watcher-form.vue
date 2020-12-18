@@ -45,12 +45,13 @@
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import { CANOPSIS_STACK } from '@/constants';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
 import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
 import ManageInfos from '@/components/other/context/manage-infos.vue';
-import { get } from 'lodash';
 
 export default {
   inject: ['$validator'],
@@ -78,8 +79,8 @@ export default {
       return this.errors.has('advancedJson') || this.errors.has('filter');
     },
 
-    advancedJsonWasTouched() {
-      return get(this.fields, ['advancedJson', 'touched']);
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
     },
 
     tabs() {
@@ -92,14 +93,14 @@ export default {
       return [
         {
           name: this.$t('modals.createEntity.fields.form'),
-          disabled: this.advancedJsonWasTouched,
+          disabled: this.advancedJsonWasChanged,
         },
 
         this.stack === CANOPSIS_STACK.go ? patternsTab : filterEditorTab,
 
         {
           name: this.$t('modals.createEntity.fields.manageInfos'),
-          disabled: this.advancedJsonWasTouched,
+          disabled: this.advancedJsonWasChanged,
         },
       ];
     },

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-tabs(slider-color="primary", fixed-tabs)
-    v-tab(:disabled="patternWasTouched") {{ $t('modals.eventFilterRule.simpleEditor') }}
+    v-tab(:disabled="patternWasChanged") {{ $t('modals.eventFilterRule.simpleEditor') }}
     v-tab {{ $t('modals.eventFilterRule.advancedEditor') }}
     v-tab-item
       pattern-simple-form(
@@ -48,8 +48,8 @@ export default {
     },
   },
   computed: {
-    patternWasTouched() {
-      return get(this.fields, ['pattern', 'touched']);
+    patternWasChanged() {
+      return get(this.fields, ['pattern', 'changed']);
     },
   },
 };
