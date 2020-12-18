@@ -1,4 +1,4 @@
-import { isEmpty, cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty, isString } from 'lodash';
 
 import { FILTER_DEFAULT_VALUES } from '@/constants';
 
@@ -42,6 +42,22 @@ export function filterToForm(filter = {}) {
  */
 export function formToFilter(form) {
   return parseFilterToRequest(form);
+}
+
+/**
+ * Convert filter string to object
+ *
+ * @param {Object|string} [filter = {}]
+ * @returns {Object}
+ */
+export function filterToObject(filter = {}) {
+  try {
+    return isString(filter) ? JSON.parse(filter) : filter;
+  } catch (err) {
+    console.warn(err);
+
+    return {};
+  }
 }
 
 /**

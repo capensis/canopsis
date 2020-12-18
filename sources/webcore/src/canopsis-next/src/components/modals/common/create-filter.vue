@@ -40,7 +40,7 @@ import { get, isString } from 'lodash';
 
 import { ENTITIES_TYPES, MODALS } from '@/constants';
 
-import { filterToForm, formToFilter } from '@/helpers/forms/filter';
+import { filterToForm, formToFilter, filterToObject } from '@/helpers/forms/filter';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -63,13 +63,7 @@ export default {
   ],
   data() {
     const { title = '', filter = '{}' } = this.modal.config.filter || {};
-    let preparedFilter = {};
-
-    try {
-      preparedFilter = isString(filter) ? JSON.parse(filter) : filter;
-    } catch (err) {
-      console.warn(err);
-    }
+    const preparedFilter = filterToObject(filter);
 
     return {
       form: {
