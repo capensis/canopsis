@@ -112,3 +112,58 @@ Le job est maintenant prêt à l'emploi. La section [Payload](#utilisation-des-p
 
 
 ## Utilisation des `payloads`
+
+Le module de remédiation de Canopsis permet de transmettre des variables à l'ordonnanceur au moment de l'exécution d'un job.
+
+!!! Note
+    Vous avez accès aux variables `.Alarm` et `.Entity` dans ce payload.
+
+    Les différentes valeurs sont [documentées ici](../architecture-interne/templates-golang/)
+
+Ce paragraphe décrit la manière de procéder pour `Rundeck` et `Awx`.
+
+### Rundeck
+
+L'ordonnanceur attend des `variables` pour un job dans une structure qui doit être appelée `options`.
+Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous pouvez préciser 
+
+```json
+{
+  "options": {
+    "variable1" : "valeur1",
+    "variable2" : "valeur2"
+  }
+}
+```
+
+Du coté de Rundeck, vous pourrez exploiter ces variables grâce aux notations suivantes : 
+
+* `@option.variable1@`
+* `$RD_OPTION_VARIABLE2`
+
+Voici un exemple complet de passage de variables de Canopsis vers Rundeck
+
+**Payload Job Canopsis**
+
+```json
+{
+  "options": {
+    "component": "{{.Alarm.Value.Component}}",
+    "resource": "{{.Alarm.Value.Resource}}",
+    "service_name": "{{.Alarm.Value.Resource}}"
+  }
+}
+```
+
+**Exploitation des variables dans un job Rundeck**
+
+```sh
+#!/bin/bash
+
+echo "Demande d'exécution de job reçue par Canopsis"
+echo "Alarme concernée :"
+echo -e "\tComposant : @option.component@"
+echo -e "\tResource : @option.resource@"
+echo "Service à redémarrer : $RD_OPTION_SERVICE_NAME"
+echo "Terminé"
+```
