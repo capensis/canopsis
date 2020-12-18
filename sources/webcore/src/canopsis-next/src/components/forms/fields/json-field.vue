@@ -62,8 +62,12 @@ export default {
     },
   },
   data() {
+    const localValue = this.valueToLocalValue(this.value);
+
     return {
-      localValue: this.valueToLocalValue(this.value),
+      localValue,
+
+      sourceValue: localValue,
     };
   },
   computed: {
@@ -90,6 +94,7 @@ export default {
   watch: {
     value(newValue) {
       const newLocalValue = this.valueToLocalValue(newValue);
+      this.sourceValue = newLocalValue;
 
       if (newLocalValue !== this.localValue) {
         this.localValue = newLocalValue;
@@ -131,11 +136,12 @@ export default {
     },
 
     resetValidation(value) {
-      if (value === this.localValue) {
+      this.localValue = value;
+
+      if (value === this.sourceValue) {
+        this.$validator.reset({ name: this.name });
         return;
       }
-
-      this.localValue = value;
 
       if (this.errors.has(this.name)) {
         this.errors.remove(this.name);
