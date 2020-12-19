@@ -17,7 +17,7 @@
         filter-editor(
           v-if="!hiddenFields.includes('filter')",
           v-model="form.filter",
-          :entitiesType="entitiesType",
+          :entities-type="entitiesType",
           required
         )
       template(slot="actions")
@@ -28,7 +28,7 @@
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled",
+          :disabled="isDisabled || advancedJsonWasChanged",
           :loading="submitting",
           type="submit",
           data-test="createFilterSubmitButton"
@@ -36,7 +36,11 @@
 </template>
 
 <script>
+import { get, isString } from 'lodash';
+
 import { ENTITIES_TYPES, MODALS } from '@/constants';
+
+import { filterToForm, formToFilter, filterToObject } from '@/helpers/forms/filter';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -58,24 +62,39 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const { hiddenFields = [], filter = {}, entitiesType = ENTITIES_TYPES.alarm } = this.modal.config;
+    const { title = '', filter = '{}' } = this.modal.config.filter || {};
+    const preparedFilter = filterToObject(filter);
 
     return {
-      hiddenFields,
-      entitiesType,
-
-      form: { ...filter },
+      form: {
+        title,
+        filter: filterToForm(preparedFilter),
+      },
     };
   },
   computed: {
     title() {
       return this.config.title || this.$t('modals.filter.create.title');
     },
+
+    entitiesType() {
+      return this.config.entitiesType || ENTITIES_TYPES.alarm;
+    },
+
+    hiddenFields() {
+      return this.config.hiddenFields || [];
+    },
+
     existingTitles() {
       return this.config.existingTitles || [];
     },
+
     initialTitle() {
       return this.config.filter && this.config.filter.title;
+    },
+
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
     },
   },
   created() {
@@ -91,7 +110,15 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          const preparedFilter = formToFilter(this.form.filter);
+          const newFilter = {
+            title: this.form.title,
+            filter: isString(get(this.config.filter, 'filter', '{}'))
+              ? JSON.stringify(preparedFilter)
+              : preparedFilter,
+          };
+
+          await this.config.action(newFilter);
         }
 
         this.$modals.hide();

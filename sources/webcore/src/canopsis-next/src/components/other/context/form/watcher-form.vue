@@ -3,7 +3,8 @@
     v-tab.validation-header(
       v-for="tab in tabs",
       :key="tab.name",
-      :class="tab.class"
+      :class="tab.class",
+      :disabled="tab.disabled"
     ) {{ tab.name }}
     v-tab-item
       div
@@ -29,19 +30,23 @@
     v-tab-item
       v-card
         v-card-text
-          patterns-list(v-if="stack === $constants.CANOPSIS_STACK.go", v-field="form.entities")
+          patterns-list(
+            v-if="stack === $constants.CANOPSIS_STACK.go",
+            v-field="form.entities"
+          )
           filter-editor(
             v-else,
-            ref="filterEditor",
             v-field="form.mfilter",
-            required,
-            :entitiesType="$constants.ENTITIES_TYPES.entity"
+            :entities-type="$constants.ENTITIES_TYPES.entity",
+            required
           )
     v-tab-item
       manage-infos(v-field="form.infos")
 </template>
 
 <script>
+import { get } from 'lodash';
+
 import { CANOPSIS_STACK } from '@/constants';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
@@ -69,12 +74,15 @@ export default {
       default: null,
     },
   },
-  data() {
-    return {
-      hasFilterEditorAnyError: false,
-    };
-  },
   computed: {
+    hasFilterEditorAnyError() {
+      return this.errors.has('advancedJson') || this.errors.has('filter');
+    },
+
+    advancedJsonWasChanged() {
+      return get(this.fields, ['advancedJson', 'changed']);
+    },
+
     tabs() {
       const patternsTab = { name: this.$t('eventFilter.pattern') };
       const filterEditorTab = {
@@ -83,18 +91,19 @@ export default {
       };
 
       return [
-        { name: this.$t('modals.createEntity.fields.form') },
+        {
+          name: this.$t('modals.createEntity.fields.form'),
+          disabled: this.advancedJsonWasChanged,
+        },
+
         this.stack === CANOPSIS_STACK.go ? patternsTab : filterEditorTab,
-        { name: this.$t('modals.createEntity.fields.manageInfos') },
+
+        {
+          name: this.$t('modals.createEntity.fields.manageInfos'),
+          disabled: this.advancedJsonWasChanged,
+        },
       ];
     },
-  },
-  mounted() {
-    if (this.$refs.filterEditor) {
-      this.$watch(() => this.$refs.filterEditor.hasAnyError, (value) => {
-        this.hasFilterEditorAnyError = value;
-      });
-    }
   },
 };
 </script>

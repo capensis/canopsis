@@ -1,13 +1,21 @@
 <template lang="pug">
   v-speed-dial.d-inline-block(
+    v-model="isVSpeedDialOpen",
     direction="left",
     transition="scale-transition"
   )
-    v-btn.primary(slot="activator", dark, fab, small)
+    v-btn.primary(slot="activator", :input-value="isVSpeedDialOpen", dark, fab, small)
       v-icon add
       v-icon close
     v-tooltip(v-for="button in buttons", :key="button.label", top)
-      v-btn(slot="activator", :color="button.color", @click.prevent="button.action", fab, dark, small)
+      v-btn(
+        slot="activator",
+        :color="button.color",
+        fab,
+        dark,
+        small,
+        @click.prevent.stop="button.action"
+      )
         v-icon {{ button.icon }}
       span {{ button.label }}
 </template>
@@ -30,7 +38,12 @@ export default {
   ],
   data() {
     return {
-      buttons: [
+      isVSpeedDialOpen: false,
+    };
+  },
+  computed: {
+    buttons() {
+      return [
         {
           label: this.$t('entities.watcher'),
           icon: 'watch',
@@ -43,8 +56,8 @@ export default {
           color: 'red',
           action: this.showCreateEntityModal,
         },
-      ],
-    };
+      ];
+    },
   },
   methods: {
     showCreateEntityModal() {
