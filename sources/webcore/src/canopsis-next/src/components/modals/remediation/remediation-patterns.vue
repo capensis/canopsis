@@ -6,24 +6,9 @@
       template(slot="text")
         patterns-form(v-model="form", alarm, entity)
           template(slot="additionalTabs")
-            v-tab Pbehaviors types
+            v-tab {{ $t('remediationPatterns.tabs.pbehaviorTypes.title') }}
             v-tab-item
-              v-layout(row)
-                pbehavior-type-field(
-                  v-model="form.active_on_pbh",
-                  label="Active on types",
-                  :is-item-disabled="isActiveItemDisabled",
-                  chips,
-                  multiple
-                )
-              v-layout(row)
-                pbehavior-type-field(
-                  v-model="form.disabled_on_pbh",
-                  label="Disabled on types",
-                  :is-item-disabled="isDisabledItemDisabled",
-                  chips,
-                  multiple
-                )
+              remediation-patterns-pbehavior-types-form(v-model="form")
       template(slot="actions")
         v-btn(
           :disabled="submitting",
@@ -49,7 +34,8 @@ import confirmableModalMixin from '@/mixins/confirmable-modal';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 
 import PatternsForm from '@/components/forms/patterns.vue';
-import PbehaviorTypeField from '@/components/other/pbehavior/calendar/partials/pbehavior-type-field.vue';
+import RemediationPatternsPbehaviorTypesForm
+  from '@/components/other/remediation/patterns/remediation-patterns-pbehavior-types-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -58,7 +44,11 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PbehaviorTypeField, ModalWrapper, PatternsForm },
+  components: {
+    RemediationPatternsPbehaviorTypesForm,
+    ModalWrapper,
+    PatternsForm,
+  },
   mixins: [
     modalInnerMixin,
     submittableMixin(),

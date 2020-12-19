@@ -2070,5 +2070,17 @@ export default {
     },
   },
 
+  remediationPatterns: {
+    tabs: {
+      pbehaviorTypes: {
+        title: 'Pbehavior types',
+        fields: {
+          activeOnTypes: 'Active on types',
+          disabledOnTypes: 'Disabled on types',
+        },
+      },
+    },
+  },
+
   ...featureService.get('i18n.en'),
 };

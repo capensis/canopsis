@@ -87,28 +87,28 @@ export default {
     },
 
     showAssignPatternsModal(remediationInstruction) {
+      const patterns = {
+        alarm_patterns: remediationInstruction.alarm_patterns,
+        entity_patterns: remediationInstruction.entity_patterns,
+        active_on_pbh: remediationInstruction.active_on_pbh || [],
+        disabled_on_pbh: remediationInstruction.disabled_on_pbh || [],
+      };
+
       this.$modals.show({
         name: MODALS.remediationPatterns,
         config: {
-          patterns: {
-            alarm_patterns: remediationInstruction.alarm_patterns,
-            entity_patterns: remediationInstruction.entity_patterns,
-            active_on_pbh: remediationInstruction.active_on_pbh || [],
-            disabled_on_pbh: remediationInstruction.disabled_on_pbh || [],
-          },
-          action: async ({ alarm_patterns: alarmPatterns, entity_patterns: entityPattens }) => {
-            if (
-              isEqual(remediationInstruction.alarm_patterns, alarmPatterns) &&
-              isEqual(remediationInstruction.entity_patterns, entityPattens)
-            ) {
+          patterns,
+
+          action: async (newPatterns) => {
+            if (isEqual(patterns, newPatterns)) {
               return;
             }
 
             const form = {
               ...remediationInstructionToForm(remediationInstruction),
+              ...newPatterns,
+
               author: remediationInstruction.author,
-              alarm_patterns: alarmPatterns,
-              entity_patterns: entityPattens,
             };
 
             await this.updateRemediationInstructionWithConfirm(
