@@ -45,9 +45,9 @@ export default {
     validator: 'new',
   },
   components: {
+    PatternsForm,
     RemediationPatternsPbehaviorTypesForm,
     ModalWrapper,
-    PatternsForm,
   },
   mixins: [
     modalInnerMixin,
@@ -66,14 +66,6 @@ export default {
     },
   },
   methods: {
-    isActiveItemDisabled(item) {
-      return this.form.disabled_on_pbh.includes(item._id);
-    },
-
-    isDisabledItemDisabled(item) {
-      return this.form.active_on_pbh.includes(item._id);
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
