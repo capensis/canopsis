@@ -80,7 +80,6 @@
       ref="alarmsTable"
     )
       table-pagination(
-        v-if="alarmsMeta.total_count",
         :total-items="alarmsMeta.total_count",
         :rows-per-page="query.limit",
         :page="query.page",

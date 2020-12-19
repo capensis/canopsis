@@ -66,7 +66,7 @@
       template(slot="progress", slot-scope="props")
         slot(name="progress", v-bind="props")
     table-pagination(
-      v-if="pagination && totalItems && advancedPagination",
+      v-if="pagination && advancedPagination",
       :total-items="totalItems",
       :rows-per-page-items="rowsPerPageItems",
       :rows-per-page="pagination.rowsPerPage",

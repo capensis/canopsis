@@ -11,7 +11,6 @@
       )
     .float-clear
     table-pagination(
-      v-if="pagination.total",
       :total-items="pagination.total",
       :rows-per-page="pagination.limit",
       :page="pagination.page",

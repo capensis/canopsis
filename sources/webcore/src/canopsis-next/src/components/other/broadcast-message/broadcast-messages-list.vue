@@ -84,11 +84,9 @@ export default {
         let status = BROADCAST_MESSAGES_STATUSES.pending;
 
         if (now >= message.start) {
-          if (now <= message.end) {
-            status = BROADCAST_MESSAGES_STATUSES.active;
-          } else {
-            status = BROADCAST_MESSAGES_STATUSES.expired;
-          }
+          status = now <= message.end
+            ? BROADCAST_MESSAGES_STATUSES.active
+            : BROADCAST_MESSAGES_STATUSES.expired;
         }
 
         return {
