@@ -22,8 +22,8 @@ import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
  */
 export default {
   model: {
-    event: 'input',
     prop: 'value',
+    event: 'input',
   },
   props: {
     value: {

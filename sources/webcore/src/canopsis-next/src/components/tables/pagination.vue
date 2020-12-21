@@ -19,7 +19,7 @@
         )
           v-icon chevron_right
     v-layout(v-else, align-center, justify-center)
-      span.pagination-details
+      span.grey--text.text--darken-1
         | {{ $t('common.showing') }} {{ first }} {{ $t('common.to') }}
         |  {{ last }} {{ $t('common.of') }} {{ total }} {{ $t('common.entries') }}
       v-pagination(
@@ -130,8 +130,5 @@ export default {
 
   span {
     padding-left: 1%;
-  }
-  .pagination-details {
-    color: rgba(0, 0, 0, 0.54);
   }
 </style>

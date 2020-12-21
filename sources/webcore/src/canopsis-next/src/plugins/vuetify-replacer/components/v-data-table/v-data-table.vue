@@ -44,9 +44,12 @@ export default {
             color: this.selectAll === true ? '' : this.selectAll,
             hideDetails: true,
             inputValue: this.everyItem,
-            // disabled added for case with all inactive items
-            disabled: !this.activeItems.length,
             indeterminate: this.indeterminate,
+
+            /**
+             * disabled added for case with all inactive items
+             */
+            disabled: !this.activeItems.length,
           },
           on: { change: this.toggle },
         });
