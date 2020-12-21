@@ -54,28 +54,26 @@
                     hide-details
                   )
                   v-checkbox-functional(v-else, primary, disabled, hide-details)
-                slot(v-if="expand", name="item-expand", v-bind="getItemsProps(props)")
+                slot(v-if="expand && isExpandableItem(props.item)", v-bind="getItemsProps(props)", name="item-expand")
                   expand-button.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
             td(v-for="header in headers", :key="header.value")
               slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
       template(v-if="hasExpandSlot", slot="expand", slot-scope="props")
-        div.secondary.lighten-2
+        div.secondary.lighten-2(v-if="isExpandableItem(props.item)")
           slot(v-bind="props", name="expand")
       template(slot="headerCell", slot-scope="props")
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
       template(slot="progress", slot-scope="props")
         slot(name="progress", v-bind="props")
-    v-layout.white(v-show="pagination && totalItems && advancedPagination", align-center)
-      v-flex(xs10)
-        pagination(
-          :page="pagination.page",
-          :limit="pagination.rowsPerPage",
-          :total="totalItems",
-          @input="updatePage"
-        )
-      v-spacer
-      v-flex(xs2)
-        records-per-page(:value="pagination.rowsPerPage", @input="updateRecordsPerPage")
+    table-pagination(
+      v-if="pagination && advancedPagination",
+      :total-items="totalItems",
+      :rows-per-page-items="rowsPerPageItems",
+      :rows-per-page="pagination.rowsPerPage",
+      :page="pagination.page",
+      @update:page="updatePage",
+      @update:rows-per-page="updateRecordsPerPage"
+    )
 </template>
 
 <script>
@@ -84,16 +82,14 @@ import { omit } from 'lodash';
 import SearchField from '@/components/forms/fields/search-field.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
 import ExpandButton from '@/components/other/buttons/expand-button.vue';
-import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import TablePagination from '@/components/other/table/table-pagination.vue';
 
 export default {
   components: {
+    TablePagination,
     SearchField,
     AdvancedSearch,
     ExpandButton,
-    Pagination,
-    RecordsPerPage,
   },
   model: {
     prop: 'selected',
@@ -167,6 +163,10 @@ export default {
     isDisabledItem: {
       type: Function,
       default: item => !item,
+    },
+    isExpandableItem: {
+      type: Function,
+      default: () => true,
     },
   },
   data() {

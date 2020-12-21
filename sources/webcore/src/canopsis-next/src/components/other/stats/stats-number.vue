@@ -42,15 +42,11 @@ import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
-import Ellipsis from '@/components/tables/ellipsis.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {
   components: {
-    Ellipsis,
-    RecordsPerPage,
     ProgressOverlay,
     AlertOverlay,
   },

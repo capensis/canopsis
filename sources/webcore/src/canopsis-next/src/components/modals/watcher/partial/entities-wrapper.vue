@@ -10,17 +10,13 @@
         @add:event="$emit('add:event', $event)"
       )
     .float-clear
-    v-layout.white(v-if="pagination.total", align-center)
-      v-flex(xs10)
-        pagination(
-          :page="pagination.page",
-          :limit="pagination.limit",
-          :total="pagination.total",
-          @input="updatePage"
-        )
-      v-spacer
-      v-flex(xs2)
-        records-per-page(:value="pagination.limit", @input="updateItemsPerPage")
+    table-pagination(
+      :total-items="pagination.total",
+      :rows-per-page="pagination.limit",
+      :page="pagination.page",
+      @update:page="updatePage",
+      @update:rows-per-page="updateItemsPerPage"
+    )
 </template>
 
 <script>
@@ -28,15 +24,13 @@ import { orderBy } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import TablePagination from '@/components/other/table/table-pagination.vue';
 
 import WatcherEntity from './entity.vue';
 
 export default {
   components: {
-    Pagination,
-    RecordsPerPage,
+    TablePagination,
     WatcherEntity,
   },
   props: {

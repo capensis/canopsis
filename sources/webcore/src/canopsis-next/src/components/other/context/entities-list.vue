@@ -71,16 +71,13 @@
             actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item", :tabId="tabId")
-      v-layout.white(align-center)
-        v-flex(xs10)
-          pagination(
-            :page="query.page",
-            :limit="query.limit",
-            :total="contextEntitiesMeta.total",
-            @input="updateQueryPage"
-          )
-        v-flex(xs2)
-          records-per-page(:value="query.limit", @input="updateRecordsPerPage")
+      table-pagination(
+        :total-items="contextEntitiesMeta.total",
+        :rows-per-page="query.limit",
+        :page="query.page",
+        @update:page="updateQueryPage",
+        @update:rows-per-page="updateRecordsPerPage"
+      )
 </template>
 
 <script>
@@ -91,11 +88,11 @@ import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
 import Ellipsis from '@/components/tables/ellipsis.vue';
 import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
+import TablePagination from '@/components/other/table/table-pagination.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
@@ -120,9 +117,9 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
  */
 export default {
   components: {
+    TablePagination,
     Ellipsis,
     Pagination,
-    RecordsPerPage,
     NoColumnsTable,
     FilterSelector,
     MoreInfos,

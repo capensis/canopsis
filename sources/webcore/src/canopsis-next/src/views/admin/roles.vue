@@ -1,58 +1,21 @@
 <template lang="pug">
   v-container
     the-page-header {{ $t('common.roles') }}
-    div.white
-      v-layout(row, wrap)
-        v-flex(xs4)
-          search-field(
-            v-model="searchingText",
-            @submit="applySearchFilter",
-            @clear="applySearchFilter"
-          )
-        v-flex(v-show="hasDeleteAnyRoleAccess && selected.length", xs4)
-          v-btn(@click="showRemoveSelectedRolesModal", data-test="massDeleteButton", icon)
-            v-icon delete
-      v-data-table(
-        v-model="selected",
-        :headers="headers",
-        :items="roles",
-        :loading="rolesPending",
-        :pagination.sync="pagination",
-        :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES",
-        :total-items="rolesMeta.total",
-        item-key="id",
-        select-all
-      )
-        template(slot="items", slot-scope="props")
-          tr(:data-test="`role-${props.item._id}`")
-            td
-              v-checkbox(v-model="props.selected", data-test="optionCheckbox", primary, hide-details)
-            td {{ props.item._id }}
-            td
-              v-layout(row)
-                action-btn(
-                  v-if="hasUpdateAnyRoleAccess",
-                  type="edit",
-                  @click="showEditRoleModal(props.item._id)"
-                )
-                action-btn(
-                  v-if="hasDeleteAnyRoleAccess",
-                  type="delete",
-                  @click="showRemoveRoleModal(props.item._id)"
-                )
-    div.fab(v-if="hasCreateAnyRoleAccess")
-      v-layout(column)
-        refresh-btn(@click="fetchList")
-        v-tooltip(left)
-          v-btn(
-            slot="activator",
-            color="primary",
-            data-test="addButton",
-            fab,
-            @click.stop="showCreateRoleModal"
-          )
-            v-icon add
-          span {{ $t('modals.createRole.title') }}
+    roles-list(
+      :roles="roles",
+      :pending="rolesPending",
+      :pagination.sync="pagination",
+      :total-items="rolesMeta.total",
+      @edit="showEditRoleModal",
+      @remove="showRemoveRoleModal",
+      @remove-selected="showRemoveSelectedRolesModal"
+    )
+    fab-buttons(
+      :has-access="hasCreateAnyRoleAccess",
+      @refresh="fetchList",
+      @create="showCreateRoleModal"
+    )
+      span {{ $t('modals.createRole.title') }}
 </template>
 
 <script>
@@ -60,44 +23,25 @@ import { MODALS } from '@/constants';
 
 import { getRolesSearchByText } from '@/helpers/entities-search';
 
-import viewQuery from '@/mixins/view/query';
 import entitiesRoleMixins from '@/mixins/entities/role';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
+import localQueryMixin from '@/mixins/query-local/query';
 
-import RefreshBtn from '@/components/other/view/buttons/refresh-btn.vue';
-import SearchField from '@/components/forms/fields/search-field.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
+import RolesList from '@/components/other/roles/roles-list.vue';
+import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
   components: {
-    RefreshBtn,
-    SearchField,
-    ActionBtn,
+    FabButtons,
+    RolesList,
   },
   mixins: [
-    viewQuery,
+    localQueryMixin,
     entitiesRoleMixins,
     rightsTechnicalRoleMixin,
   ],
-  data() {
-    return {
-      searchingText: '',
-      selected: [],
-    };
-  },
-  computed: {
-    headers() {
-      return [
-        {
-          text: this.$t('tables.rolesList.name'),
-          value: '_id',
-        },
-        {
-          text: this.$t('common.actionsLabel'),
-          sortable: false,
-        },
-      ];
-    },
+  mounted() {
+    this.fetchList();
   },
   methods: {
     showRemoveRoleModal(id) {
@@ -118,13 +62,13 @@ export default {
       });
     },
 
-    showRemoveSelectedRolesModal() {
+    showRemoveSelectedRolesModal(selected) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
           action: async () => {
             try {
-              await Promise.all(this.selected.map(({ _id }) => this.removeRole({ id: _id })));
+              await Promise.all(selected.map(({ _id }) => this.removeRole({ id: _id })));
               await this.fetchRolesListWithPreviousParams();
               this.selected = [];
 
@@ -137,7 +81,7 @@ export default {
       });
     },
 
-    showEditRoleModal(roleId) {
+    showEditRoleModal({ _id: roleId }) {
       this.$modals.show({
         name: MODALS.createRole,
         config: {
@@ -153,18 +97,27 @@ export default {
       });
     },
 
+    /**
+     * TODO: Should be removed after backend change query
+     */
+    getQuery({
+      page,
+      search,
+      rowsPerPage,
+      sortKey,
+      sortDir,
+    } = this.query) {
+      const query = {};
 
-    applySearchFilter() {
-      this.query = {
-        ...this.query,
+      query.limit = rowsPerPage;
+      query.start = (page - 1) * rowsPerPage;
 
-        search: this.searchingText,
-      };
-    },
-
-    getQuery() {
-      const { search } = this.query;
-      const query = this.getBaseQuery();
+      if (sortKey) {
+        query.sort = [{
+          property: sortKey,
+          direction: sortDir,
+        }];
+      }
 
       if (search) {
         query.filter = { $and: [getRolesSearchByText(search)] };
