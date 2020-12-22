@@ -4,7 +4,7 @@
   )
     div.modal-title-button__wrapper(v-if="minimize")
       v-tooltip(
-        v-if="!modal.minimized",
+        v-if="!$modal.minimized",
         :disabled="!hasMinimizedModal",
         left
       )
@@ -12,14 +12,14 @@
           slot="activator",
           :disabled="hasMinimizedModal",
           icon,
-          @click="$modals.minimize({ id: modal.id })"
+          @click="$modals.minimize({ id: $modal.id })"
         )
           v-icon(color="white") minimize
         span {{ $t('modals.common.titleButtons.minimizeTooltip') }}
       v-btn.my-0(
         v-else,
         icon,
-        @click="$modals.maximize({ id: modal.id })"
+        @click="$modals.maximize({ id: $modal.id })"
       )
         v-icon(color="white") maximize
     div.modal-title-button__wrapper(v-if="close")
@@ -39,17 +39,18 @@ const { mapGetters } = createNamespacedHelpers('modals');
 
 export default {
   inject: {
+    $modal: {
+      default() {
+        return {};
+      },
+    },
     $closeModal: {
       default() {
-        return () => this.$modals.hide({ id: this.modal.id });
+        return () => this.$modals.hide({ id: this.$modal.id });
       },
     },
   },
   props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
     minimize: {
       type: Boolean,
       default: false,

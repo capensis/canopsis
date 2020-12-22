@@ -27,7 +27,6 @@ import { MODALS, EVENT_FILTER_RULE_TYPES } from '@/constants';
 
 import { eventFilterRuleToForm, formEnrichmentOptionsToEventFilterRule } from '@/helpers/forms/event-filter-rule';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
@@ -43,7 +42,6 @@ export default {
   },
   components: { EventFilterForm, EventFilterEnrichmentForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],

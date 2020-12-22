@@ -32,7 +32,6 @@ import { MODALS } from '@/constants';
 
 import uuid from '@/helpers/uuid';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
@@ -56,7 +55,6 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    modalInnerMixin,
     entitiesContextEntityMixin,
     submittableMixin(),
     confirmableModalMixin(),

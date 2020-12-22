@@ -29,7 +29,6 @@ import { Chrome, Compact } from 'vue-color';
 
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -41,7 +40,7 @@ export default {
     Compact,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin, submittableMixin()],
+  mixins: [submittableMixin()],
   data() {
     const { config } = this.modal;
     const color = {};

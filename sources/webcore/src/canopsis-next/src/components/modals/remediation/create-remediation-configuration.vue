@@ -19,7 +19,6 @@ import { MODALS } from '@/constants';
 
 import { formToRemediationConfiguration, remediationConfigurationToForm } from '@/helpers/forms/remediation-configuration';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import authMixin from '@/mixins/auth';
 import validationErrorsMixin from '@/mixins/form/validation-errors';
 import submittableMixin from '@/mixins/submittable';
@@ -40,7 +39,6 @@ export default {
   },
   mixins: [
     authMixin,
-    modalInnerMixin,
     validationErrorsMixin(),
     submittableMixin(),
     confirmableModalMixin(),

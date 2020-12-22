@@ -26,7 +26,6 @@ import { MODALS } from '@/constants';
 import { getDefaultPlaylist } from '@/helpers/entities';
 import { playlistToForm, formToPlaylist } from '@/helpers/forms/playlist';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesGroupMixin from '@/mixins/rights/entities/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
@@ -47,7 +46,6 @@ export default {
   },
   components: { PlaylistForm, ProgressOverlay, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     entitiesViewGroupMixin,
     rightsEntitiesGroupMixin,
     rightsEntitiesPlaylistTabMixin,
