@@ -10,7 +10,7 @@
 import qs from 'qs';
 import { get } from 'lodash';
 
-import { APP_HOST, API_HOST } from '@/config';
+import { APP_HOST, API_HOST, API_ROUTES } from '@/config';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -30,10 +30,10 @@ export default {
 
       const query = qs.stringify({
         redirect: `${APP_HOST}${redirect}`,
-        service: `${API_HOST}/cas/loggedin`,
+        service: `${API_HOST}${API_ROUTES.cas.loggedin}`,
       });
 
-      return `${API_HOST}/cas/login?${query}`;
+      return `${API_HOST}${API_ROUTES.cas.login}?${query}`;
     },
   },
 };

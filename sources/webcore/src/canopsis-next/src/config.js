@@ -4,9 +4,9 @@ export const { BASE_URL } = process.env;
 
 export const API_BASE_URL = '/backend';
 
-export const APP_HOST = removeTrailingSlashes(window.location.origin + BASE_URL);
+export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
 
-export const API_HOST = removeTrailingSlashes(APP_HOST + API_BASE_URL);
+export const API_HOST = removeTrailingSlashes(`${APP_HOST}${API_BASE_URL}`);
 
 export const ROUTER_MODE = 'history';
 
@@ -139,6 +139,10 @@ export const API_ROUTES = {
   },
   file: '/api/v4/cat/file',
   engineRunInfo: '/api/v4/engine-runinfo',
+  cas: {
+    login: '/api/cas/login',
+    loggedin: '/api/cas/loggedin',
+  },
 };
 
 export const COLORS = {
