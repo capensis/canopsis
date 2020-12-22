@@ -29,6 +29,9 @@ yarn e2e --test tests/e2e/specs/01-auth/auth.js
 
 # Run tests for specific url (without dev-server setuping)
 yarn e2e --url http://localhost:8080/
+
+# Run tests with another environment (For example: in `chromeHeadless` env)
+yarn e2e --env chromeHeadless
 ```
 
 We have possibility to run tests in parallel mode:
