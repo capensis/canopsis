@@ -140,8 +140,8 @@ export const API_ROUTES = {
   file: '/api/v4/cat/file',
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
-    login: '/api/cas/login',
-    loggedin: '/api/cas/loggedin',
+    login: '/cas/login',
+    loggedin: '/cas/loggedin',
   },
 };
 
