@@ -10,7 +10,7 @@
 import qs from 'qs';
 import { get } from 'lodash';
 
-import { getApplicationHost } from '@/helpers/router';
+import { APP_HOST, API_HOST } from '@/config';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 
@@ -26,15 +26,14 @@ export default {
         return null;
       }
 
-      const { href } = this.$router.resolve({ name: 'home' });
-      const { redirect = href } = this.$route.query;
-      const appUrl = getApplicationHost();
+      const { redirect = '' } = this.$route.query;
+
       const query = qs.stringify({
-        redirect: `${appUrl}${redirect}`,
-        service: `${appUrl}api/cas/loggedin`,
+        redirect: `${APP_HOST}${redirect}`,
+        service: `${API_HOST}/cas/loggedin`,
       });
 
-      return `${appUrl}api/cas/login?${query}`;
+      return `${API_HOST}/cas/login?${query}`;
     },
   },
 };
