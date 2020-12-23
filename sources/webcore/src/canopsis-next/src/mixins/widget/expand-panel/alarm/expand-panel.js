@@ -56,11 +56,11 @@ export default {
         dataPreparer: ({ data: fetchedAlarms = [] }) => {
           const [firstFetchedAlarm] = fetchedAlarms;
 
-          if (alarm.filtered && firstFetchedAlarm) {
+          if (alarm.filtered_children && firstFetchedAlarm) {
             return [{
               ...firstFetchedAlarm,
 
-              filtered: alarm.filtered,
+              filtered_children: alarm.filtered_children,
             }];
           }
 
