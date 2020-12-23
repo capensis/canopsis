@@ -2,8 +2,8 @@ import { POPUP_TYPES, USER_RIGHTS_TO_PAGES_RULES } from '@/constants';
 
 import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
-import { toSeconds } from '@/helpers/duration';
-import { setTabTitle } from '@/helpers/set-tab-title';
+import { toSeconds } from '@/helpers/date/duration';
+import { DEFAULT_APP_TITLE } from '@/config';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
@@ -83,7 +83,7 @@ export default {
     },
 
     setTitle() {
-      setTabTitle(this.appTitle);
+      document.title = this.appTitle || DEFAULT_APP_TITLE;
     },
   },
 };

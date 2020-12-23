@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 
-import { dateParse } from '@/helpers/date-intervals';
+import { dateParse } from '@/helpers/date/date-intervals';
 
 import queryMixin from '@/mixins/query';
 import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';

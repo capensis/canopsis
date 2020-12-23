@@ -7,7 +7,7 @@ import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
   convertTimestampToMomentByTimezone,
-} from '@/helpers/date';
+} from '@/helpers/date/date';
 import { addKeyInEntity, getIdFromEntity, removeKeyFromEntity } from '@/helpers/entities';
 
 /**

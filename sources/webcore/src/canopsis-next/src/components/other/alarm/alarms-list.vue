@@ -94,7 +94,7 @@ import { omit, pick, isEmpty } from 'lodash';
 
 import { MODALS, TOURS } from '@/constants';
 
-import { findRange } from '@/helpers/date-intervals';
+import { findRange } from '@/helpers/date/date-intervals';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';

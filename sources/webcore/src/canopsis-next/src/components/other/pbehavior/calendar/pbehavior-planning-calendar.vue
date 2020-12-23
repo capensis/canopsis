@@ -51,7 +51,7 @@ import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES }
 import uid from '@/helpers/uid';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
-import { convertDateToTimestampByTimezone } from '@/helpers/date';
+import { convertDateToTimestampByTimezone } from '@/helpers/date/date';
 
 import entitiesInfoMixin from '@/mixins/entities/info';
 import entitiesPbehaviorTimespansMixin from '@/mixins/entities/pbehavior/timespans';
