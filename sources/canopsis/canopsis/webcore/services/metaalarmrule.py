@@ -196,7 +196,7 @@ def exports(ws):
         r = rh_ma_rule.read(rule_id)
         if r is None:
             _set_status(HTTP_NOT_FOUND)
-            return {'description': 'Rule ID={} not found'.format(rule_id)}
+            return {u'description': 'Rule ID={} not found'.format(rule_id.decode('utf8'))}
         if r.get("patterns") is None:
             r["patterns"] = {}
         if r.get("config") is None:
@@ -219,9 +219,9 @@ def exports(ws):
         delete is a sucess. False, otherwise.
         :rtype: dict
         """
-        ws.logger.info('Delete meta-alarm rule: {}'.format(rule_id))
+
+        ws.logger.info(u"Delete meta-alarm rule: {}".format(rule_id.decode('utf8')))
         if rule_id.startswith(SERVICE_ID_PREFIX):
             _set_status(HTTP_ERROR)
             return {'description': 'Can not delete rule with prefix "{}"'.format(SERVICE_ID_PREFIX)}
-
         return rh_ma_rule.delete(rule_id)
