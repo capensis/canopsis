@@ -39,7 +39,12 @@ La classe doit hériter de `SnmpTrap` et implémenter au moins les méthodes :
 
 - `build_event(trap)`
 
-    Cette méthode doit retourner un évènement au format attendu par Canopsis.
+    Cette méthode doit en principe retourner un évènement au format attendu par
+    Canopsis.
+
+    Il est aussi possible de retourner une valeur fausse (le booléen `False` ou
+    toute autre valeur évaluée comme fausse en Python) si au dernier moment,
+    lors de l'étape `build_event`, on décide de ne pas produire d'évènement.
 
     Le paramètre `trap` est toujours le dictionnaire sorti par `snmp2canopsis`.
     Il est en fait déjà construit pour respecter la forme d'un évènement
@@ -122,6 +127,34 @@ même trap. Ce comportement peut être modifié sur chaque classe en définissan
 l'attribut de classe `STOP_AT_FIRST_MATCH` (booléen). Lorsque cet attribut est
 vrai pour une classe et que cette classe a reconnu un trap, aucune autre classe
 suivante ne sera essayée pour ce trap.
+
+## Journalisation
+
+Au sein de la classe custom, un [logger Python][logging] est utilisable,
+les messages se trouveront alors dans le log du moteur snmp.
+
+Le logger est accessible via `self.logger` :
+
+```python
+from canopsis_cat.snmp.custom_trap import SnmpTrap
+
+class MyCustomTrap(SnmpTrap):
+
+    DELIMITER = '#'
+    RULE_TAG = 'MYRULENAME'
+    STOP_AT_FIRST_MATCH = False
+
+    def match(self, trap):
+        """
+        :rtype: bool
+        """
+        self.logger.info("It's a trap! but it will never match.")
+        return False
+
+    # ...
+```
+
+[logging]: https://docs.python.org/2.7/howto/logging.html
 
 ## Outil de test de classe
 
