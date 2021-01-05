@@ -1,22 +1,24 @@
 # Comportements périodiques
 
-Vous avez la possibilité dans Canopsis de définir des périodes de temps pendant lesquelles des changements de comportements sont nécessaires :
+Vous avez la possibilité, dans Canopsis, de définir des périodes pendant lesquelles des changements de comportements sont nécessaires :
 
 * Plage de service d'une application : vous souhaitez repérer visuellement les applications qui doivent rendre un service à un moment donné.
 * Maintenance : vous souhaitez déclarer en maintenance des entités pour que leurs alarmes ne remontent pas visuellement.
 * Pause : vous souhaitez mettre en *pause* une application pour un temps indéterminé.
 
-Cette fonctionnalité porte le nom de « Comportement périodique ».
+Pour cela vous allez utiliser des comportements périodiques (ou *pbehaviors*, pour *periodical behaviors*).
 
-!!! note
-    Voici une méthode vous permettant de :
+!!! Note
+    Avec la v4 de Canopsis le fonctionnement des comportements périodiques à été complètement revu.
+    Les informations qui figurent sur cette page ne sont donc valables que pour cette version.
 
-    * définir la plage de service d'une application
-    * mettre en maintenance une entité
+Les cas d'usage détaillés dans cette documentation vous permettront de :
+* Définir la plage de service d'une application
+* Mettre en maintenance une entité
 
-### Contexte
+## Contexte
 
-Nous considérons l'application `ERP` (sous forme d'observateur) composée de différentes entités.
+Considérons l'application `ERP` (sous forme d'observateur) composée de différentes entités.
 
 ![Situation initiale](./img/pbh_situation_initiale.png "Situation initiale")
 
@@ -24,12 +26,15 @@ Nous considérons l'application `ERP` (sous forme d'observateur) composée de di
 
 ### Définition de la plage de service
 
-Dans l'explorateur de contexte, vous recherchez votre observateur ERP.  
-Vous ajoutez un comportement périodique ![Action comportement periodique](./img/pbh_action.png "Action comportement périodique")  
+Rendez-vous dans l'explorateur de contexte et recherchez votre observateur `ERP`.
 
-Pour fabriquer une plage 5 jours/7 de 8h à 19h15, vous devez créer :
+Ajoutez lui ensuite un comportement périodique en cliquant sur ce bouton.
 
-* Une plage récurrente de 19h15 à 00h
+![Action comportement periodique](./img/pbh_action.png "Action comportement périodique")
+
+Pour créer une plage, du lundi au vendredi, de 19h15 à 8h, vous devez :
+
+* Sélectionner sur le calendrier, le premier jour de la première occurrence de votre plage.
 
 ![Plage 19h15-00h](./img/pbh_plage_19h15-00h.png "Plage 19h15-00h")  
 
@@ -60,8 +65,6 @@ Dans les 2 premiers cas un filtre sera généré automatiquement lors de la cré
 Pour cela, rendez-vous dans le menu Exploitation puis dans Comportements périodiques et ajoutez un comportement avec un filtre qui sélectionne les entités de *ERP*.
 
 ![Ajout comportement](./img/pbh_ajout_comportement.png "Ajout comportement")
-
-A partir de la v4 de Canopsis l'ajout d'un comportement se fait par le biais d'un calendrier.
 
 Sélectionnez une date ou un intervalle de temps pendant lequel vous souhaitez que le comportement périodique soit actif. Vous pouvez sélectionner plusieurs dates en maintenant le bouton de la souris enfoncé et en la faisant glisser depuis la date de début jusqu'à la date de fin. Lorsque vous relâchez le bouton de la souris la fenêtre de création s'affiche.
 
