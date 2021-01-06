@@ -113,11 +113,17 @@ Le processus est ensuite le même qu'en passant par l'interface d'exploitation m
 
 Il est également possible d'appliquer des filtres sur les comportements périodiques.  
 
+Les alarmes possèdent une variable `pbehavior`, qui lui même contient des attributs sur lesquels on pourra filtrer. Pour accéder à la liste des variables référez vous à la capture précédente et cliquez sur Liste des variables disponibles.
+
+Vous pourrez alors afficher les attribut de la variable `pbehavior` :
+
+![Attributs pbehavior](./img/pbh_attributs_pbehavior.png)
+
 Sur un Bac à alarmes, vous pouvez ajouter un filtre en allant dans les propriétés du widget :
 
 ![Ajout filtre](./img/pbh_ajout_filtre.png)  
 
-Les alarmes possèdent un attribut `pbehavior`, qui lui même contient des attributs sur lesquels on pourra filtrer.
+Créez votre filtre à l'aide de l'éditeur.
 
 ![Filtre maintenances actives](./img/pbh_maintenances_actives.png)  
 
@@ -132,7 +138,7 @@ Par ailleurs, la colonne *extra_details* affiche une icône pour signaler la pr�
 La marche à suivre est identique à celle présentée pour mettre en place une plage de service :
 * Rendez-vous dans l'explorateur de contexte.
 * Sélectionnez l'entité concernée
-* Ajoutez un comportement périodique (le filtre est généré automatiquement)
+* Ajoutez un comportement périodique (le filtre est généré automatiquement).
 
 ## Quelques filtres courants
 
