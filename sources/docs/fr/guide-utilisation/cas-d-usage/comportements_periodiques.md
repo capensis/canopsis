@@ -52,9 +52,13 @@ Après avoir validé les différents formulaires vous pouvez visualiser le résu
 
 ### Affichage dans la météo de services
 
-Lorsque le comportement périodique est actif la tuile se présente sous cette forme.
+Lorsque le comportement périodique créé précédemment est actif la tuile se présente sous cette forme.
 
 ![Affichage tuile avec comportement actif](./img/pbh_tuile_comportement_actif.png)
+
+Si certaines entités d'une application ne sont pas en maintenance la tuile s'affichera de cette façon.
+
+![Maintenance ERP partielle](./img/pbh_maintenance_erp_partielle.png)
 
 ## Maintenance d'une entité
 
