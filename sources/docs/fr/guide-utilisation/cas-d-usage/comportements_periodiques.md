@@ -24,9 +24,7 @@ Considérons l'application `ERP` (sous forme d'observateur) composée de différ
 
 Vous aurez également créé une ou plusieurs raisons personnalisée par le biais de l'interface d'[administration de la planification](../../guide-administration/moteurs/moteur-pbehavior.md#administration-de-la-planification).
 
-## Comportements périodiques
-
-### Définition de la plage de service
+## Définition de la plage de service
 
 Rendez-vous dans l'explorateur de contexte et recherchez votre observateur `ERP`.
 
@@ -44,21 +42,31 @@ Pour créer une plage, du lundi au vendredi, de 19h15 à 8h :
 
 ![Récurrence mardi-vendredi](./img/pbh_plage_19h15-08h_rrule.png)
 
-### Aperçu de la plage de service
+## Aperçu de la plage de service
 
 Après avoir validé les différents formulaires vous pouvez visualiser le résultat dans le calendrier.
 
 ![Aperçu de la plage de service](./img/pbh_apercu_plage_19h15-08h.png)
 
-### Affichage dans la météo de services
+## Affichage dans la météo de services
 
 Lorsque le comportement périodique créé précédemment est actif la tuile se présente sous cette forme.
 
 ![Affichage tuile avec comportement actif](./img/pbh_tuile_comportement_actif.png)
 
+## Maintenance partielle
+
 Si certaines entités d'une application ne sont pas en maintenance la tuile s'affichera de cette façon.
 
 ![Maintenance ERP partielle](./img/pbh_maintenance_erp_partielle.png)
+
+Vous pouvez également configurer le widget météo pour affiche plus d'information sur les comportements actifs depuis les propriétés du widget.
+
+![Propriétés compteurs comportements](./img/pbh_proprietes_compteurs_tuile.png)
+
+La tuile affichera alors des compteurs supplémentaires.
+
+![Compteur supplémentaires](./img/pbh_affichage_compteurs_tuile.png)
 
 ## Maintenance d'une entité
 
