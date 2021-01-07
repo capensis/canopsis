@@ -205,19 +205,11 @@ export default {
       }
     },
 
-    updateRequestString(requestString) {
-      try {
-        this.errors.remove('requestString');
+    updateRequestString() {
+      this.errors.remove('requestString');
 
-        if (!this.isRequestStringChanged) {
-          this.isRequestStringChanged = true;
-        }
-
-        const newValue = isString(this.value) ? removeSpacesFromStringFilter(requestString) : JSON.parse(requestString);
-
-        this.$emit('input', newValue);
-      } catch (err) {
-        console.warn(err);
+      if (!this.isRequestStringChanged) {
+        this.isRequestStringChanged = true;
       }
     },
 

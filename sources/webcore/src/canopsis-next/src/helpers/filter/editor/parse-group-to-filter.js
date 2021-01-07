@@ -1,4 +1,4 @@
-import { isEmpty, isObject, cloneDeep, isNull } from 'lodash';
+import { isArray, isEmpty, isObject, cloneDeep, isNull } from 'lodash';
 
 import { FILTER_OPERATORS, FILTER_DEFAULT_VALUES, FILTER_MONGO_OPERATORS } from '@/constants';
 import uid from '@/helpers/uid';
@@ -30,6 +30,8 @@ function ruleOperatorAndInput(rule) {
         parsedRule.input = input;
       }
     }
+  } else if (isArray(ruleValue) && ruleValue.length === 0) {
+    parsedRule.operator = FILTER_OPERATORS.isEmptyArray;
   } else {
     const operator = Object.keys(ruleValue)[0];
 
@@ -136,7 +138,12 @@ export default function parseGroupToFilter(group) {
   * Else -> It's a rule.
   */
   groupContent.forEach((item) => {
-    if (Array.isArray(Object.values(item)[0])) {
+    const [[firstItemKey, firstItemValue] = []] = Object.entries(item);
+
+    if (
+      Array.isArray(firstItemValue)
+      && [FILTER_MONGO_OPERATORS.and, FILTER_MONGO_OPERATORS.or].includes(firstItemKey)
+    ) {
       parsedGroup.groups[uid('group')] = parseGroupToFilter(item);
     } else {
       Object.entries(item).forEach(([key, value]) => {
