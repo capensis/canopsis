@@ -68,6 +68,22 @@ La tuile affichera alors des compteurs supplémentaires.
 
 ![Compteur supplémentaires](./img/pbh_affichage_compteurs_tuile.png)
 
+## Surcharge d'un comportement périodique
+
+Si une application ou une entité possède déjà un comportement actif, tout nouveau comportement viendra surcharger le(s) précédent(s).
+
+Par exemple, l'application Messagerie a été mise en maintenance grâce à un premier comportement de type `maintenance`.
+
+![Messagerie en maintenance](./img/pbh_messagerie_maintenance.png)
+
+Si vous créez un nouveau comportement de type `pause` sans désactiver ou supprimer le précédent. Par exemple :
+
+![Deux comportements actifs](./img/pbh_deux_comportements_actifs.png)
+
+Vous observez que l'application est passée en pause.
+
+![Messagerie en pause](./img/pbh_messagerie_pause.png)
+
 ## Maintenance d'une entité
 
 En parallèle des plages de services, vous pouvez déclarer des entités en maintenance par exemple.
