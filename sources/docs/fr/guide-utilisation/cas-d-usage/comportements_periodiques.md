@@ -70,13 +70,13 @@ La tuile affichera alors des compteurs supplémentaires.
 
 ## Surcharge d'un comportement périodique
 
-Si une application ou une entité possède déjà un comportement actif, tout nouveau comportement viendra surcharger le(s) précédent(s).
+Si une application ou une entité possède déjà un comportement actif, tout nouveau comportement, **ayant une priorité plus élevée**, viendra surcharger le(s) précédent(s).
 
-Par exemple, l'application Messagerie a été mise en maintenance grâce à un premier comportement de type `maintenance`.
+Par exemple, l'application Messagerie a été mise en maintenance grâce à un premier comportement de type `maintenance`, priorité 2.
 
 ![Messagerie en maintenance](./img/pbh_messagerie_maintenance.png)
 
-Si vous créez un nouveau comportement de type `pause` sans désactiver ou supprimer le précédent. Par exemple :
+Si vous créez un nouveau comportement de type `pause`, priorité 3, alors que le précédent est toujours actif.
 
 ![Deux comportements actifs](./img/pbh_deux_comportements_actifs.png)
 
