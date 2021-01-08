@@ -16,15 +16,15 @@
     - cps_config
   when: canopsis_edition == "cat"
 
-- import_tasks: init-engines.yml
-  tags:
-    - cps_go_engines
-
 - import_tasks: init-db.yml
   become: true
   become_user: "{{ canopsis_user }}"
   tags:
     - cps_initdb
+
+- import_tasks: init-engines.yml
+  tags:
+    - cps_go_engines
 
 - import_tasks: config-nginx.yml
   tags:
