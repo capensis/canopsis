@@ -23,7 +23,6 @@ import { cloneDeep, get } from 'lodash';
 
 import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
@@ -41,7 +40,6 @@ export default {
     ModalWrapper,
   },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],

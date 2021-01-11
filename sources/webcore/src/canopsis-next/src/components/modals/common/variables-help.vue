@@ -32,8 +32,6 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
-
 import Ellipsis from '@/components/tables/ellipsis.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -41,6 +39,5 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.variablesHelp,
   components: { Ellipsis, ModalWrapper },
-  mixins: [modalInnerMixin],
 };
 </script>

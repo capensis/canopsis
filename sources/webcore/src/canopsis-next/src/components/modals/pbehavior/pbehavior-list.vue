@@ -43,7 +43,6 @@
 
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 import ActionBtn from '@/components/tables/action-btn.vue';
@@ -62,7 +61,7 @@ export default {
     EnabledColumn,
     ModalWrapper,
   },
-  mixins: [modalInnerMixin, entitiesPbehaviorMixin],
+  mixins: [entitiesPbehaviorMixin],
   inject: ['$system'],
   computed: {
     headers() {

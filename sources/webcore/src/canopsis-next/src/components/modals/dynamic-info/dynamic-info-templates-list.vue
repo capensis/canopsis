@@ -49,8 +49,6 @@ import { MODALS } from '@/constants';
 
 import { templateToDynamicInfoInfos } from '@/helpers/forms/dynamic-info-template';
 
-import modalInnerMixin from '@/mixins/modal/inner';
-
 import ActionBtn from '@/components/tables/action-btn.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -60,7 +58,6 @@ const { mapActions, mapGetters } = createNamespacedHelpers('dynamicInfoTemplate'
 export default {
   name: MODALS.dynamicInfoTemplatesList,
   components: { ActionBtn, ModalWrapper },
-  mixins: [modalInnerMixin],
   computed: {
     ...mapGetters(['pending', 'templates']),
 
