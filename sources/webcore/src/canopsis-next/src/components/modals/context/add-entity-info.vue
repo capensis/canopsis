@@ -24,7 +24,7 @@ import { MODALS } from '@/constants';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import EntityInfoForm from '@/components/other/context/form/entity-info-form.vue';
+import EntityInfoForm from '@/components/widgets/context/form/entity-info-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

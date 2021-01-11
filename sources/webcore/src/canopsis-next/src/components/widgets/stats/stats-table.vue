@@ -46,7 +46,7 @@ import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
 import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+import AlarmChips from '@/components/widgets/alarm/alarm-chips.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {

@@ -11,7 +11,7 @@ import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, WIDGETS
 import authMixin from '@/mixins/auth';
 import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
 
-import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
+import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 

@@ -22,7 +22,7 @@
 import { ALARM_ENTITY_FIELDS } from '@/constants';
 import { formatState } from '@/helpers/state-and-status-formatting';
 
-import AlarmColumnCell from '@/components/other/alarm/columns-formatting/alarm-column-cell.vue';
+import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
 
 export default {
   components: {

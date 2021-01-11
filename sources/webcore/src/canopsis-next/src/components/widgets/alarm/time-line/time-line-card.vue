@@ -30,7 +30,7 @@
 <script>
 import { ENTITIES_STATES_STYLES, ENTITY_INFOS_TYPE, ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR } from '@/constants';
 
-import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+import AlarmChips from '../alarm-chips.vue';
 
 export default {
   components: { AlarmChips },

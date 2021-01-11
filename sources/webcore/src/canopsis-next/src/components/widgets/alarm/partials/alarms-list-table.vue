@@ -51,12 +51,13 @@
 <script>
 import { isResolvedAlarm } from '@/helpers/entities';
 
-import MassActionsPanel from '@/components/other/alarm/actions/mass-actions-panel.vue';
-import AlarmsExpandPanel from '@/components/other/alarm/partials/alarms-expand-panel.vue';
-import NoColumnsTable from '@/components/tables/no-columns.vue';
-import AlarmsListRow from '@/components/other/alarm/partials/alarms-list-row.vue';
-
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
+
+import NoColumnsTable from '@/components/tables/no-columns.vue';
+
+import MassActionsPanel from '../actions/mass-actions-panel.vue';
+import AlarmsExpandPanel from '../partials/alarms-expand-panel.vue';
+import AlarmsListRow from '../partials/alarms-list-row.vue';
 
 /**
    * Alarm-list-table component

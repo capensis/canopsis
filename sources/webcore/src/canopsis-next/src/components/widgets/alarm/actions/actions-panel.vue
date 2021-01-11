@@ -20,7 +20,7 @@ import authMixin from '@/mixins/auth';
 import entitiesAlarmMixin from '@/mixins/entities/alarm';
 import widgetActionsPanelAlarmMixin from '@/mixins/widget/actions-panel/alarm';
 
-import SharedActionsPanel from '@/components/other/shared/actions-panel/actions-panel.vue';
+import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 import featuresService from '@/services/features';
 

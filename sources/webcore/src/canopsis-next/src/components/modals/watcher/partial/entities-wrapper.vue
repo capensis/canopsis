@@ -24,7 +24,7 @@ import { orderBy } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import TablePagination from '@/components/other/table/table-pagination.vue';
+import TablePagination from '@/components/tables/table-pagination.vue';
 
 import WatcherEntity from './entity.vue';
 

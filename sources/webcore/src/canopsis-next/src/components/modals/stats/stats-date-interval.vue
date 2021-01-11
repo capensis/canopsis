@@ -28,7 +28,7 @@ import { MODALS, STATS_DURATION_UNITS, STATS_QUICK_RANGES } from '@/constants';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import StatsDateIntervalForm from '@/components/other/stats/stats-date-interval-form.vue';
+import StatsDateIntervalForm from '@/components/widgets/stats/stats-date-interval-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

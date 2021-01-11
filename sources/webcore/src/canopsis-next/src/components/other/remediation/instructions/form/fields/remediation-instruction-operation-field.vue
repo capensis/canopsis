@@ -51,7 +51,7 @@ import validationChildrenMixin from '@/mixins/form/validation-children';
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
+import ExpandButton from '@/components/common/buttons/expand-button.vue';
 import JobsSelect from '@/components/other/remediation/instructions/partials/jobs-select.vue';
 
 import DraggableStepNumber from '../../partials/draggable-step-number.vue';

@@ -50,8 +50,8 @@ import { get } from 'lodash';
 import { CANOPSIS_STACK } from '@/constants';
 
 import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
-import PatternsList from '@/components/other/shared/patterns-list/patterns-list.vue';
-import ManageInfos from '@/components/other/context/manage-infos.vue';
+import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 
 export default {
   inject: ['$validator'],

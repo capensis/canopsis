@@ -13,8 +13,8 @@ import { union, filter } from 'lodash';
 
 import formBaseMixin from '@/mixins/form/base';
 
-import ContextGeneralList from '@/components/other/context/context-general-list.vue';
-import ChooseExpansionPanel from '@/components/other/choose-expansion-panel/choose-expansion-panel.vue';
+import ContextGeneralList from '@/components/widgets/context/context-general-list.vue';
+import ChooseExpansionPanel from '@/components/common/choose-expansion-panel/choose-expansion-panel.vue';
 
 /**
  * Component to select entities for impact/dependencies

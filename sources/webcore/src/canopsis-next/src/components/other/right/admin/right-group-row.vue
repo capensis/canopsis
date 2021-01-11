@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
+import ExpandButton from '@/components/common/buttons/expand-button.vue';
 
 import RightGroupRowCell from './right-group-row-cell.vue';
 

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import TablePagination from '@/components/other/table/table-pagination.vue';
+import TablePagination from '@/components/tables/table-pagination.vue';
 
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';

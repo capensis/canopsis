@@ -27,7 +27,7 @@ import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesInfoMixin from '@/mixins/entities/info';
 
-import WatcherForm from '@/components/other/context/form/watcher-form.vue';
+import WatcherForm from '@/components/widgets/context/form/watcher-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

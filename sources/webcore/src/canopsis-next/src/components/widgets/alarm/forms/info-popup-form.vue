@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import TextEditor from '@/components/other/text-editor/text-editor.vue';
+import TextEditor from '@/components/common/text-editor/text-editor.vue';
 
 export default {
   inject: ['$validator'],

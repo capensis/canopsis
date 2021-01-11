@@ -46,11 +46,12 @@ import { TOURS } from '@/constants';
 import { isResolvedAlarm } from '@/helpers/entities';
 import { getStepClass } from '@/helpers/tour';
 
-import ActionsPanel from '@/components/other/alarm/actions/actions-panel.vue';
-import AlarmColumnValue from '@/components/other/alarm/columns-formatting/alarm-column-value.vue';
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
-
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
+
+import ExpandButton from '@/components/common/buttons/expand-button.vue';
+
+import ActionsPanel from '../actions/actions-panel.vue';
+import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
 
 export default {
   components: {

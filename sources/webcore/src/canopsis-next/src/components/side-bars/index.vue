@@ -8,17 +8,17 @@
 import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
 
 import SideBarWrapper from './side-bar-wrapper.vue';
-import AlarmSettings from './settings/widgets/alarm.vue';
-import ContextSettings from './settings/widgets/context.vue';
-import WeatherSettings from './settings/widgets/weather.vue';
-import StatsHistogramSettings from './settings/widgets/stats-histogram.vue';
-import StatsCurvesSettings from './settings/widgets/stats-curves.vue';
-import StatsTableSettings from './settings/widgets/stats-table.vue';
-import StatsCalendarSettings from './settings/widgets/stats-calendar.vue';
-import StatsNumberSettings from './settings/widgets/stats-number.vue';
-import StatsParetoSettings from './settings/widgets/stats-pareto.vue';
-import TextSettings from './settings/widgets/text.vue';
-import CounterSettings from './settings/widgets/counter.vue';
+import AlarmSettings from './settings/alarm.vue';
+import ContextSettings from './settings/context.vue';
+import WeatherSettings from './settings/weather.vue';
+import StatsHistogramSettings from './settings/stats-histogram.vue';
+import StatsCurvesSettings from './settings/stats-curves.vue';
+import StatsTableSettings from './settings/stats-table.vue';
+import StatsCalendarSettings from './settings/stats-calendar.vue';
+import StatsNumberSettings from './settings/stats-number.vue';
+import StatsParetoSettings from './settings/stats-pareto.vue';
+import TextSettings from './settings/text.vue';
+import CounterSettings from './settings/counter.vue';
 
 /**
  * Wrapper for all side-bars

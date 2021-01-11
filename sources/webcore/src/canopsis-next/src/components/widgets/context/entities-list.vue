@@ -91,8 +91,8 @@ import Pagination from '@/components/tables/pagination.vue';
 import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
-import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
-import TablePagination from '@/components/other/table/table-pagination.vue';
+import AdvancedSearch from '@/components/common/search/advanced-search.vue';
+import TablePagination from '@/components/tables/table-pagination.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';

@@ -80,9 +80,9 @@
 import { omit } from 'lodash';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
-import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
-import TablePagination from '@/components/other/table/table-pagination.vue';
+import AdvancedSearch from '@/components/common/search/advanced-search.vue';
+import ExpandButton from '@/components/common/buttons/expand-button.vue';
+import TablePagination from '@/components/tables/table-pagination.vue';
 
 export default {
   components: {

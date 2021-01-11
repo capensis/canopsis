@@ -9,7 +9,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
+import AlarmsListWidget from '@/components/widgets/alarm/alarms-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

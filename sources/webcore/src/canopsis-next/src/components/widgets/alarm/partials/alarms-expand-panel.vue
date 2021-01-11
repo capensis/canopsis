@@ -62,9 +62,9 @@ import { ALARMS_GROUP_PREFIX, GRID_SIZES, TOURS } from '@/constants';
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 
-import TimeLine from '@/components/other/alarm/time-line/time-line.vue';
-import MoreInfos from '@/components/other/alarm/more-infos/more-infos.vue';
-import GroupAlarmsList from '@/components/other/alarm/group-alarms-list.vue';
+import TimeLine from '../time-line/time-line.vue';
+import MoreInfos from '../more-infos/more-infos.vue';
+import GroupAlarmsList from '../group-alarms-list.vue';
 
 export default {
   components: {

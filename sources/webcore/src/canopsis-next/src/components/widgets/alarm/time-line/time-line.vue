@@ -16,10 +16,10 @@ import { groupBy } from 'lodash';
 
 import { DATETIME_FORMATS } from '@/constants';
 
-import TimeLineFlag from '@/components/other/alarm/time-line/time-line-flag.vue';
-import TimeLineCard from '@/components/other/alarm/time-line/time-line-card.vue';
-
 import widgetExpandPanelAlarmTimeLine from '@/mixins/widget/expand-panel/alarm/expand-panel';
+
+import TimeLineFlag from './time-line-flag.vue';
+import TimeLineCard from './time-line-card.vue';
 
 export default {
   components: { TimeLineFlag, TimeLineCard },

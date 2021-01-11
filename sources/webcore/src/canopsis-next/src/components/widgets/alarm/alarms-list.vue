@@ -97,8 +97,8 @@ import { MODALS, TOURS } from '@/constants';
 import { findRange } from '@/helpers/date-intervals';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
-import TablePagination from '@/components/other/table/table-pagination.vue';
+import AdvancedSearch from '@/components/common/search/advanced-search.vue';
+import TablePagination from '@/components/tables/table-pagination.vue';
 import Pagination from '@/components/tables/pagination.vue';
 
 import authMixin from '@/mixins/auth';

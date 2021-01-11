@@ -23,7 +23,7 @@
 <script>
 import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
 
-import ProgressCell from '@/components/other/table/progress-cell.vue';
+import ProgressCell from '@/components/tables/progress-cell.vue';
 
 export default {
   components: { ProgressCell },

@@ -26,7 +26,7 @@ import { MODALS } from '@/constants';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import TextEditorComponent from '@/components/other/text-editor/text-editor.vue';
+import TextEditorComponent from '@/components/common/text-editor/text-editor.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

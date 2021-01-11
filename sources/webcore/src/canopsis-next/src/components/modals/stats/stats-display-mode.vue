@@ -28,7 +28,7 @@ import { MODALS, STATS_DISPLAY_MODE, STATS_DISPLAY_MODE_PARAMETERS } from '@/con
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import StatsDisplayModeForm from '@/components/other/stats/stats-display-mode-form.vue';
+import StatsDisplayModeForm from '@/components/widgets/stats/stats-display-mode-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

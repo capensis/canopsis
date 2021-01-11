@@ -43,10 +43,10 @@ import GridPlugin from '@/plugins/grid';
 import { isValidUrl } from '@/helpers/validators/is-valid-url';
 import { isValidJson } from '@/helpers/validators/is-valid-json';
 
-import AlarmsListTable from '@/components/other/alarm/partials/alarms-list-table.vue';
-import AdvancedDataTable from '@/components/other/table/advanced-data-table.vue';
+import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
+import AdvancedDataTable from '@/components/tables/advanced-data-table.vue';
 import ThePageHeader from '@/components/layout/the-page-header/the-page-header.vue';
-import AlarmChips from '@/components/other/alarm/alarm-chips.vue';
+import AlarmChips from '@/components/widgets/alarm/alarm-chips.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';

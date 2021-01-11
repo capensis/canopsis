@@ -55,7 +55,7 @@ import { generateRemediationInstructionStep } from '@/helpers/entities';
 
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
-import ExpandButton from '@/components/other/buttons/expand-button.vue';
+import ExpandButton from '@/components/common/buttons/expand-button.vue';
 
 import DraggableStepNumber from '../../partials/draggable-step-number.vue';
 

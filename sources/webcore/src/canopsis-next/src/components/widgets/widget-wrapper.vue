@@ -21,18 +21,19 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
 
-import AlarmsListWidget from '@/components/other/alarm/alarms-list.vue';
-import EntitiesListWidget from '@/components/other/context/entities-list.vue';
-import WeatherWidget from '@/components/other/service-weather/weather.vue';
-import StatsHistogramWidget from '@/components/other/stats/histogram/stats-histogram.vue';
-import StatsCurvesWidget from '@/components/other/stats/curves/stats-curves.vue';
-import StatsTableWidget from '@/components/other/stats/stats-table.vue';
-import StatsCalendarWidget from '@/components/other/stats/calendar/stats-calendar.vue';
-import StatsNumberWidget from '@/components/other/stats/stats-number.vue';
-import StatsParetoWidget from '@/components/other/stats/pareto/stats-pareto.vue';
-import TextWidget from '@/components/other/text/text.vue';
-import CounterWidget from '@/components/other/counter/counter.vue';
 import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
+
+import AlarmsListWidget from './alarm/alarms-list.vue';
+import EntitiesListWidget from './context/entities-list.vue';
+import WeatherWidget from './service-weather/weather.vue';
+import StatsHistogramWidget from './stats/histogram/stats-histogram.vue';
+import StatsCurvesWidget from './stats/curves/stats-curves.vue';
+import StatsTableWidget from './stats/stats-table.vue';
+import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
+import StatsNumberWidget from './stats/stats-number.vue';
+import StatsParetoWidget from './stats/pareto/stats-pareto.vue';
+import TextWidget from './text/text.vue';
+import CounterWidget from './counter/counter.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 

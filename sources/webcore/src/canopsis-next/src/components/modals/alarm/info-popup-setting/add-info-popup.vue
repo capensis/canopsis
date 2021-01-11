@@ -28,7 +28,7 @@ import { MODALS } from '@/constants';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import InfoPopupForm from '@/components/other/alarm/forms/info-popup-form.vue';
+import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 
 import ModalWrapper from '../../modal-wrapper.vue';
 

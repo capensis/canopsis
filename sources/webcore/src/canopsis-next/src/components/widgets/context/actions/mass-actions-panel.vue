@@ -12,7 +12,7 @@ import entitiesWatcherMixin from '@/mixins/entities/watcher';
 import entitiesContextEntityMixin from '@/mixins/entities/context-entity';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
-import SharedMassActionsPanel from '@/components/other/shared/actions-panel/mass-actions-panel.vue';
+import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
 const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 

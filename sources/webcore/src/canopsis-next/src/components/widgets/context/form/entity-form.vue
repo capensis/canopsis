@@ -43,7 +43,7 @@
 <script>
 import formMixin from '@/mixins/form';
 
-import EntitiesSelect from '@/components/other/context/entities-select.vue';
+import EntitiesSelect from '@/components/widgets/context/entities-select.vue';
 import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 /**
