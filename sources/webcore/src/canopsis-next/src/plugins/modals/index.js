@@ -1,4 +1,4 @@
-import { get, uniq } from 'lodash';
+import { get } from 'lodash';
 
 import { setField } from '@/helpers/immutable';
 
@@ -22,7 +22,7 @@ export default {
     }
 
     const preparedComponents = Object.entries(components).reduce((acc, [key, value]) => {
-      acc[key] = setField(value, 'mixins', (mixins = []) => uniq([innerMixin, ...mixins]));
+      acc[key] = setField(value, 'mixins', (mixins = []) => [innerMixin, ...mixins]);
 
       return acc;
     }, {});
