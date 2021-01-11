@@ -2,12 +2,13 @@ import Vue from 'vue';
 import { get, pick, uniqWith, mergeWith, isEqual } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
-import request from '@/services/request';
-import schemas from '@/store/schemas';
-import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from '@/helpers/store';
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
 
+import request from '@/services/request';
+import schemas from '@/store/schemas';
+
 import cache from './cache';
+import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from './helpers';
 
 const entitiesModuleName = 'entities';
 

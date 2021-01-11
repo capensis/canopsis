@@ -25,7 +25,7 @@ import {
 
 import { MODALS } from '@/constants';
 
-import { isOmitEqual } from '@/helpers/is-omit-equal';
+import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
 
 import authMixin from '@/mixins/auth';

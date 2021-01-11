@@ -1,41 +1,42 @@
-export function getRule(text) {
+function getRule(text = '') {
   return {
     $regex: text,
     $options: 'i',
   };
 }
 
+function getRulesByKeys(keys = [], text = '') {
+  return keys.map(key => ({ [key]: getRule(text) }));
+}
+
 export function getContextWidgetSearchByText(text) {
   return {
-    $or: [
-      { name: getRule(text) },
-      { type: getRule(text) },
-    ],
+    $or: getRulesByKeys(['name', 'type'], text),
   };
 }
 
 export function getUsersSearchByText(text) {
   return {
-    $or: [
-      { _id: getRule(text) },
-      { role: getRule(text) },
-      { username: getRule(text) },
-      { firstname: getRule(text) },
-      { lastname: getRule(text) },
-      { mail: getRule(text) },
-      { enable: getRule(text) },
-      { external: getRule(text) },
-    ],
+    $or: getRulesByKeys([
+      '_id',
+      'role',
+      'username',
+      'firstname',
+      'lastname',
+      'mail',
+      'enable',
+      'external',
+    ], text),
   };
 }
 
 export function getRolesSearchByText(text) {
   return {
-    $or: [
-      { _id: getRule(text) },
-      { role: getRule(text) },
-      { enable: getRule(text) },
-      { description: getRule(text) },
-    ],
+    $or: getRulesByKeys([
+      '_id',
+      'role',
+      'enable',
+      'description',
+    ], text),
   };
 }

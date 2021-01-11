@@ -49,7 +49,7 @@
 import formMixin from '@/mixins/form';
 import validationChildrenMixin from '@/mixins/form/validation-children';
 
-import { isOmitEqual } from '@/helpers/is-omit-equal';
+import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
 import { toSeconds } from '@/helpers/date/duration';
 import { generateRemediationInstructionStep } from '@/helpers/entities';
 
