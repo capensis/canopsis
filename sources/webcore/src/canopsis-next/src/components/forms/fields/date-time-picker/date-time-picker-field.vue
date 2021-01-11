@@ -25,7 +25,7 @@
       :label="label",
       :round-hours="roundHours",
       @close="close",
-      @input="$listeners.input"
+      @input="input"
     )
 </template>
 
@@ -106,6 +106,14 @@ export default {
 
     clear() {
       this.$emit('input', null);
+    },
+
+    input(value) {
+      this.$emit('input', value);
+
+      if (this.$validator && this.name) {
+        this.$nextTick(() => this.$validator.validate(this.name));
+      }
     },
   },
 };

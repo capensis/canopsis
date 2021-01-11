@@ -466,6 +466,7 @@ export const FILTER_OPERATORS = {
   endsWith: 'ends with',
   doesntEndWith: 'doesn\'t end with',
   isEmpty: 'is empty',
+  isEmptyArray: 'is empty array',
   isNotEmpty: 'is not empty',
   isNull: 'is null',
   isNotNull: 'is not null',

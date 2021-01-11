@@ -77,7 +77,7 @@ export default {
       this.$modals.show({
         name: MODALS.eventFilterRuleCreateAction,
         config: {
-          ruleAction: this.actions[index],
+          ruleAction: this.form.actions[index],
           action: ruleAction => this.$set(this.form.actions, index, ruleAction),
         },
       });

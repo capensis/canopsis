@@ -2,15 +2,15 @@
 set -u
 
 if [ $# -ne 1 ] && [ $# -ne 2 ]; then
-    echo "Usage: $0 start|status|restart|stop [pattern]"
-    exit 1
+	echo "Usage: $0 start|status|restart|stop [systemd-service-pattern]"
+	exit 1
 fi
 
 pattern="canopsis*"
 if [ -n "${2:-}" ]; then
-    pattern="$2"
+	pattern="$2"
 fi
 
-for i in $(systemctl list-units -a --type=service "$pattern" | sed -En 's/^.*(canopsis-.*\.service).*/\1/pg'); do
-    systemctl $1 $i
+for service in $(systemctl list-units -a --type=service --plain --no-legend "$pattern" | awk '/^canopsis-/ {print $1}'); do
+	systemctl --no-pager $1 "$service"
 done

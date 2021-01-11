@@ -76,6 +76,10 @@ function parseFilterRuleToRequest(rule) {
       parsedRule[rule.field] = '';
       break;
     }
+    case FILTER_OPERATORS.isEmptyArray: {
+      parsedRule[rule.field] = [];
+      break;
+    }
     case FILTER_OPERATORS.isNotEmpty: {
       parsedRule[rule.field] = {
         [FILTER_MONGO_OPERATORS.notEqual]: '',
