@@ -4,35 +4,84 @@ import { setSeveralFields, unsetSeveralFieldsWithConditions } from '@/helpers/im
 import { textPairsToObject, objectToTextPairs } from '@/helpers/text-pairs';
 import { getConditionsForRemovingEmptyPatterns } from '@/helpers/forms/shared/patterns';
 
-export function webhookToForm(webhook = {}) {
+/**
+ * @typedef {Object} WebhookRequest
+ * @property {string} method
+ * @property {string} url
+ * @property {Array|Object} headers
+ * @property {string} payload
+ */
+
+/**
+ * @typedef {Object} WebhookHook
+ * @property {Array} triggers
+ * @property {Array} event_patterns
+ * @property {Array} alarm_patterns
+ * @property {Array} entity_patterns
+ */
+
+/**
+ * @typedef {Object} Webhook
+ * @property {Array} _id
+ * @property {Object} retry
+ * @property {Object} hook
+ * @property {Object} request
+ * @property {Array|Object} declare_ticket
+ * @property {Array} disable_during_periods
+ * @property {boolean} [emptyResponse]
+ * @property {boolean} [empty_response]
+ * @property {boolean} enabled
+ */
+
+/**
+ * Convert webhook request field object to webhook request form object
+ *
+ * @param {WebhookRequest} request
+ * @returns {WebhookRequest}
+ */
+const webhookRequestToForm = (request = {}) => ({
+  method: request.method || '',
+  url: request.url || '',
+  headers: request.headers
+    ? objectToTextPairs(request.headers)
+    : [],
+  payload: request.payload || '{}',
+});
+
+/**
+ * Convert webhook hook field object to webhook hook form object
+ *
+ * @param {WebhookHook} hook
+ * @returns {WebhookHook}
+ */
+const webhookHookToForm = (hook = {}) => ({
+  triggers: hook.triggers || [],
+  event_patterns: hook.event_patterns || [],
+  alarm_patterns: hook.alarm_patterns || [],
+  entity_patterns: hook.entity_patterns || [],
+});
+
+/**
+ * Convert webhook object to webhook form object
+ *
+ * @param {Webhook} webhook
+ * @returns {Webhook}
+ */
+export const webhookToForm = (webhook = {}) => {
   const declareTicketField = webhook.declare_ticket ? omit(webhook.declare_ticket, ['empty_response']) : {};
 
   return {
     _id: webhook._id,
     retry: webhook.retry || {},
-    hook: {
-      triggers: get(webhook, 'hook.triggers', []),
-      event_patterns: get(webhook, 'hook.event_patterns', []),
-      alarm_patterns: get(webhook, 'hook.alarm_patterns', []),
-      entity_patterns: get(webhook, 'hook.entity_patterns', []),
-    },
-    request: {
-      method: get(webhook, 'request.method', ''),
-      url: get(webhook, 'request.url', ''),
-      headers: webhook.request && webhook.request.headers
-        ? objectToTextPairs(webhook.request.headers)
-        : [],
-      payload: webhook.request && webhook.request.payload
-        ? webhook.request.payload
-        : '{}',
-    },
+    hook: webhookHookToForm(webhook.hook),
+    request: webhookRequestToForm(webhook.request),
     declare_ticket: objectToTextPairs(declareTicketField),
     disable_during_periods: webhook.disable_during_periods || [],
 
     emptyResponse: !!webhook.empty_response,
     enabled: !isUndefined(webhook.enabled) ? webhook.enabled : true,
   };
-}
+};
 
 /**
  * Tranform webhook declare ticket field to object (editable in the UI)
