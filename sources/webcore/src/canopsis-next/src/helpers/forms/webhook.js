@@ -22,7 +22,9 @@ export function webhookToForm(webhook = {}) {
       headers: webhook.request && webhook.request.headers
         ? objectToTextPairs(webhook.request.headers)
         : [],
-      payload: webhook.payload || '{}',
+      payload: webhook.request && webhook.request.payload
+        ? webhook.request.payload
+        : '{}',
     },
     declare_ticket: objectToTextPairs(declareTicketField),
     disable_during_periods: webhook.disable_during_periods || [],
