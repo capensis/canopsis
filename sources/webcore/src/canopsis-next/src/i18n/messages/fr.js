@@ -10,7 +10,8 @@ import {
   USER_RIGHTS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES, WIDGET_TYPES,
+  ENGINES_NAMES,
+  WIDGET_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
