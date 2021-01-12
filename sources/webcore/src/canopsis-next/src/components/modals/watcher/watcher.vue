@@ -124,7 +124,7 @@ export default {
       this.eventsQueue.push(event);
     },
 
-    getPausedPbehaviors(pbehaviors) {
+    getPausedPbehaviors(pbehaviors = []) {
       return pbehaviors.reduce((accSecond, pbehavior) => {
         if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
           accSecond.push(this.updatePbehavior({
