@@ -86,6 +86,7 @@
                 v-on="$listeners",
                 :calendar="calendar",
                 :read-only="readOnly",
+                :current-time-for-today="currentTimeForToday",
                 @view-day="viewDay"
               )
 
@@ -158,6 +159,10 @@ export default {
       default: false,
     },
     fillHeight: {
+      type: Boolean,
+      default: false,
+    },
+    currentTimeForToday: {
       type: Boolean,
       default: false,
     },

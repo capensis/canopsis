@@ -138,6 +138,6 @@ export default {
   .pbehavior-form {
     overflow: auto;
     width: 500px;
-    max-height: 555px; // For validation errors
+    max-height: 615px;
   }
 </style>
