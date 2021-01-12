@@ -148,7 +148,7 @@ Explications sur les champs demandés :
 !!! Note
     Vous pouvez consulter [cette page](../../../guide-administration/remediation/) qui concerne les configurations de Rundeck et Awx 
 
-### Payload
+### Payload
 
 Le `payload` ou corps de message associé à un job permet de variabiliser son exécution et ainsi passer des paramètres à l'ordonnanceur de tâches.  
 2 objets sont disponibles dans ce payload : 
