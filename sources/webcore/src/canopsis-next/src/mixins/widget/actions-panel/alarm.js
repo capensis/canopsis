@@ -128,13 +128,18 @@ export default {
     showVariablesHelperModal() {
       const variables = [];
 
-      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity', 'infos']), 'alarm');
+      const alarmFields = convertObjectToTreeview(omit(this.item, ['entity', 'pbehavior', 'infos']), 'alarm');
 
       variables.push(alarmFields);
 
       if (this.item.entity) {
         const entityFields = convertObjectToTreeview(this.item.entity, 'entity');
         variables.push(entityFields);
+      }
+
+      if (this.item.pbehavior) {
+        const pbehaviorFields = convertObjectToTreeview(this.item.pbehavior, 'pbehavior');
+        variables.push(pbehaviorFields);
       }
 
       this.$modals.show({
