@@ -5,18 +5,18 @@
     template(slot="text")
       v-layout(row, wrap)
         v-flex.my-1(
+          v-for="widgetType in availableWidgets",
+          :key="widgetType",
           xs12,
-          v-for="widget in availableWidgets",
-          :key="widget",
-          @click="selectWidgetType(widget)"
+          @click="selectWidgetType(widgetType)"
         )
-          v-card.widgetType(:data-test="`widget-${$constants.WIDGET_TYPES[widget]}`")
+          v-card.widgetType(:data-test="`widget-${widgetType}`")
             v-card-title(primary-title)
               v-layout(wrap, justify-between)
                 v-flex(xs11)
-                  div.subheading {{ $t(`modals.widgetCreation.types.${widget}.title`) }}
+                  div.subheading {{ $t(`modals.widgetCreation.types.${widgetType}.title`) }}
                 v-flex
-                  v-icon {{ iconByWidgetType(widget) }}
+                  v-icon {{ getIconByWidgetType(widgetType) }}
 </template>
 
 <script>
@@ -38,6 +38,16 @@ export default {
   components: { ModalWrapper },
   mixins: [modalInnerMixin, sideBarMixin, entitiesInfoMixin],
   computed: {
+    availableWidgetTypes() {
+      return [
+        WIDGET_TYPES.alarmList,
+        WIDGET_TYPES.context,
+        WIDGET_TYPES.weather,
+        WIDGET_TYPES.statsCalendar,
+        WIDGET_TYPES.text,
+        WIDGET_TYPES.counter,
+      ];
+    },
     /**
      * Some widgets are only available with 'cat' edition.
      * Filter widgetTypes list to keep only available widgets, thanks to the edition
@@ -45,8 +55,8 @@ export default {
      * @return {Array}
      */
     availableWidgets() {
-      return Object.keys(WIDGET_TYPES).filter((widget) => {
-        const rules = WIDGET_TYPES_RULES[WIDGET_TYPES[widget]];
+      return this.availableWidgetTypes.filter((widgetType) => {
+        const rules = WIDGET_TYPES_RULES[widgetType];
 
         if (!rules) {
           return true;
@@ -55,17 +65,17 @@ export default {
         return rules.edition && rules.edition === this.edition;
       });
     },
-
-    iconByWidgetType() {
-      return type => WIDGET_ICONS[WIDGET_TYPES[type]];
-    },
   },
   methods: {
-    selectWidgetType(type) {
-      const widget = generateWidgetByType(WIDGET_TYPES[type]);
+    getIconByWidgetType(widgetType) {
+      return WIDGET_ICONS[widgetType];
+    },
+
+    selectWidgetType(widgetType) {
+      const widget = generateWidgetByType(widgetType);
 
       this.showSideBar({
-        name: SIDE_BARS_BY_WIDGET_TYPES[WIDGET_TYPES[type]],
+        name: SIDE_BARS_BY_WIDGET_TYPES[widgetType],
         config: {
           widget,
           tabId: this.config.tabId,
@@ -80,7 +90,7 @@ export default {
 
 <style lang="scss" scoped>
   .widgetType {
-    cursor: pointer,
+    cursor: pointer;
   }
 </style>
 

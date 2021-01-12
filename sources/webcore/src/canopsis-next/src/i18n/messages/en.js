@@ -10,7 +10,7 @@ import {
   USER_RIGHTS_PREFIXES,
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
-  ENGINES_NAMES,
+  ENGINES_NAMES, WIDGET_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -846,37 +846,37 @@ export default {
     widgetCreation: {
       title: 'Select a widget',
       types: {
-        alarmList: {
+        [WIDGET_TYPES.alarmList]: {
           title: 'Alarm list',
         },
-        context: {
+        [WIDGET_TYPES.context]: {
           title: 'Context explorer',
         },
-        weather: {
+        [WIDGET_TYPES.weather]: {
           title: 'Service weather',
         },
-        statsHistogram: {
+        [WIDGET_TYPES.statsHistogram]: {
           title: 'Stats histogram',
         },
-        statsCurves: {
+        [WIDGET_TYPES.statsCurves]: {
           title: 'Stats curves',
         },
-        statsTable: {
+        [WIDGET_TYPES.statsTable]: {
           title: 'Stats table',
         },
-        statsCalendar: {
+        [WIDGET_TYPES.statsCalendar]: {
           title: 'Stats calendar',
         },
-        statsNumber: {
+        [WIDGET_TYPES.statsNumber]: {
           title: 'Stats number',
         },
-        statsPareto: {
+        [WIDGET_TYPES.statsPareto]: {
           title: 'Pareto diagram',
         },
-        text: {
+        [WIDGET_TYPES.text]: {
           title: 'Text',
         },
-        counter: {
+        [WIDGET_TYPES.counter]: {
           title: 'Counter',
         },
       },
