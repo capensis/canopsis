@@ -7,10 +7,10 @@
         watcher-template(
           v-if="!watcherEntitiesPending",
           :watcher="watcher",
-          :watcherEntities="watcherEntitiesWithKey",
-          :modalTemplate="config.modalTemplate",
-          :entityTemplate="config.entityTemplate",
-          :itemsPerPage="config.itemsPerPage",
+          :watcher-entities="watcherEntitiesWithKey",
+          :modal-template="config.modalTemplate",
+          :entity-template="config.entityTemplate",
+          :items-per-page="config.itemsPerPage",
           @add:event="addEventToQueue"
         )
         v-layout(v-else, column)
@@ -105,11 +105,40 @@ export default {
   },
   methods: {
     fetchWatchersList() {
-      this.fetchWatcherEntitiesList({ watcherId: this.watcher._id });
+      const params = {};
+
+      if (this.modal.config.sort) {
+        const { column, order } = this.modal.config.sort;
+
+        params.sort_by = column;
+        params.sort = order.toLowerCase();
+      }
+
+      this.fetchWatcherEntitiesList({
+        watcherId: this.watcher._id,
+        params,
+      });
     },
 
     addEventToQueue(event) {
       this.eventsQueue.push(event);
+    },
+
+    getPausedPbehaviors(pbehaviors) {
+      return pbehaviors.reduce((accSecond, pbehavior) => {
+        if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
+          accSecond.push(this.updatePbehavior({
+            id: pbehavior._id,
+            data: pbehaviorToRequest({
+              ...pbehavior,
+
+              tstop: moment().unix(),
+            }),
+          }));
+        }
+
+        return accSecond;
+      }, []);
     },
 
     async submit() {
@@ -119,22 +148,7 @@ export default {
 
           acc.push(this.createPbehavior({ data: pbehavior }));
         } else if (event.type === EVENT_ENTITY_TYPES.play) {
-          const pausedPbehaviorsRequests = event.data.pbehaviors.reduce((accSecond, pbehavior) => {
-            if (pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause) {
-              accSecond.push(this.updatePbehavior({
-                id: pbehavior._id,
-                data: pbehaviorToRequest({
-                  ...pbehavior,
-
-                  tstop: moment().unix(),
-                }),
-              }));
-            }
-
-            return accSecond;
-          }, []);
-
-          acc.push(...pausedPbehaviorsRequests);
+          acc.push(...this.getPausedPbehaviors(event.data.pbehaviors));
         } else {
           acc.push(this.createEventAction({ data: event.data }));
         }

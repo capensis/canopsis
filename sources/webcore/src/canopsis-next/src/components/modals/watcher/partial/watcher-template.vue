@@ -81,7 +81,7 @@ export default {
           :items-per-page="itemsPerPage"
           entity-name-field="${entityNameField}"
           @add:event="addEventToQueue"
-        ></watcher-entities-wrapper>
+        />
       `);
     });
   },
