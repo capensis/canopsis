@@ -130,8 +130,8 @@ export default {
 
     isNotFiltered() {
       return this.parentAlarm
-        && this.parentAlarm.filtered
-        && !this.parentAlarm.filtered.includes(this.alarm._id);
+        && this.parentAlarm.filtered_children
+        && !this.parentAlarm.filtered_children.includes(this.alarm._id);
     },
   },
   methods: {
