@@ -41,7 +41,7 @@ Ces droits sont configurés dans le panneau de droits sous l'onglet `technical`
 Ces droits sont configurés dans le panneau de droits sous l'onglet `API`
 
 | Droits sur les APIs      | Définition                                          |
-|:--------------------- -- |:--------------------------------------------------- |
+|:------------------------ |:--------------------------------------------------- |
 | `Instructions`           | Manipulation des consignes                          |
 | `Runs instructions`      | Exécuter une consigne                               |
 | `File`                   | Manipulation des fichiers inclus dans les consignes |

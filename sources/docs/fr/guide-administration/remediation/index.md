@@ -23,7 +23,7 @@ graph TD
 
 Le `job1`, selon sa configuration sera distribué à l'ordonnanceur `rundeck` ou `awx`.
 
-## Architecture
+## Architecture
 
 Lorsqu'un job est déclenché depuis une consigne dans Canopsis, il est placé dans une file d'attente.  
 Cette file d'attente est parcourue par un exécuteur de job, `external-job-executor`.
@@ -122,7 +122,7 @@ Le module de remédiation de Canopsis permet de transmettre des variables à l'o
 
 Ce paragraphe décrit la manière de procéder pour `Rundeck` et `Awx`.
 
-### Rundeck
+### Rundeck
 
 L'ordonnanceur attend des `variables` pour un job dans une structure qui doit être appelée `options`.
 Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous pouvez préciser 

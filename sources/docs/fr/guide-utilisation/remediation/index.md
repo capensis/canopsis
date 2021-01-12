@@ -57,7 +57,7 @@ Les ordonnanceurs de tâches compatibles avec les jobs de remédiation sont :
 1. [Rundeck](https://www.rundeck.com/)
 2. [Awx](https://www.ansible.com/products/awx-project)
 
-## Exécution d'une remédiation
+## Exécution d'une remédiation
 
 Du point de vue "pilotage", voici comment exécuter une consigne.  
 
@@ -70,6 +70,9 @@ Du point de vue "pilotage", voici comment exécuter une consigne.
 ![Exécuter](./img/remediation_consigne_executer.png)
 
 * Evaluer la consigne
+
+Vous avez la possibilité d'évaluer la consigner que vous venez d'exécuter.
+Ces évaluations seront comptabilisées et transmises aux administrateurs.
 
 ![Evaluer](./img/remediation_consigne_evaluation.png)
 
