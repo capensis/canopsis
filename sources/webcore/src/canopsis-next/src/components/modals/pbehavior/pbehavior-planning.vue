@@ -27,7 +27,7 @@ import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
-import { pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
@@ -46,7 +46,7 @@ export default {
     return {
       form: {
         pbehaviorsById: keyBy(this.modal.config.pbehaviors, '_id'),
-        addedPbehaviorsById: keyBy(this.modal.config.addedPbehaviors, '_id'),
+        addedPbehaviorsById: keyBy(this.modal.config.pbehaviorsToAdd.map(pbehaviorToDuplicateForm), '_id'),
         changedPbehaviorsById: {},
         removedPbehaviorsById: {},
       },
