@@ -9,7 +9,7 @@
       v-layout(row)
         v-flex.pr-1(xs11)
           v-layout(row)
-            expand-button.operation-expand(
+            c-expand-btn.operation-expand(
               v-model="expanded",
               :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
             )
@@ -51,7 +51,6 @@ import validationChildrenMixin from '@/mixins/form/validation-children';
 import confirmableFormMixin from '@/mixins/confirmable-form';
 
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
-import ExpandButton from '@/components/common/buttons/expand-button.vue';
 import JobsSelect from '@/components/other/remediation/instructions/partials/jobs-select.vue';
 
 import DraggableStepNumber from '../../partials/draggable-step-number.vue';
@@ -62,7 +61,6 @@ export default {
   inject: ['$validator'],
   components: {
     DraggableStepNumber,
-    ExpandButton,
     RemediationInstructionTimeToCompleteField,
     TextEditorField,
     JobsSelect,

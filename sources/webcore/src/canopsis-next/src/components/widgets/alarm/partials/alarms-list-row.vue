@@ -19,7 +19,7 @@
             v-icon(slot="activator", size="16", color="black") adjust
             span {{ $t('alarmList.instructionInfoPopup') }}
         v-layout(v-if="expandable", :class="{ 'ml-3': !hasAlarmInstruction }", align-center)
-          expand-button(
+          c-expand-btn(
             :class="expandButtonClass",
             :expanded="row.expanded",
             @expand="showExpandPanel"
@@ -48,14 +48,11 @@ import { getStepClass } from '@/helpers/tour';
 
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
 
-import ExpandButton from '@/components/common/buttons/expand-button.vue';
-
 import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
 
 export default {
   components: {
-    ExpandButton,
     ActionsPanel,
     AlarmColumnValue,
   },

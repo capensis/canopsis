@@ -19,16 +19,16 @@
               td {{ props.item.title }}
               td
                 v-layout(row)
-                  action-btn(
+                  c-action-btn(
                     :tooltip="$t('modals.createDynamicInfo.create.title')",
                     icon="assignment",
                     @click="selectTemplate(props.item)"
                   )
-                  action-btn(
+                  c-action-btn(
                     type="edit",
                     @click="showEditTemplateModal(props.item)"
                   )
-                  action-btn(
+                  c-action-btn(
                     type="delete",
                     @click="showDeleteTemplateModal(props.item._id)"
                   )
@@ -49,15 +49,13 @@ import { MODALS } from '@/constants';
 
 import { templateToDynamicInfoInfos } from '@/helpers/forms/dynamic-info-template';
 
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
-
 import ModalWrapper from '../modal-wrapper.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('dynamicInfoTemplate');
 
 export default {
   name: MODALS.dynamicInfoTemplatesList,
-  components: { ActionBtn, ModalWrapper },
+  components: { ModalWrapper },
   computed: {
     ...mapGetters(['pending', 'templates']),
 

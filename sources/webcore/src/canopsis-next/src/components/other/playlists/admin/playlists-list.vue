@@ -13,14 +13,14 @@
       enabled-column(:value="props.item.enabled")
     template(slot="actions", slot-scope="props")
       v-layout(row)
-        action-btn(:tooltip="$t('common.play')")
+        c-action-btn(:tooltip="$t('common.play')")
           v-btn.mx-1(
             slot="button",
             :to="getPlaylistRouteById(props.item._id, true)",
             icon
           )
             v-icon play_arrow
-        action-btn(:tooltip="$t('common.copyLink')")
+        c-action-btn(:tooltip="$t('common.copyLink')")
           v-btn.mx-1(
             slot="button",
             v-clipboard:copy="getPlaylistRouteFullUrlById(props.item._id)",
@@ -30,17 +30,17 @@
             @click.stop
           )
             v-icon content_copy
-        action-btn(
+        c-action-btn(
           v-if="hasCreateAnyPlaylistAccess",
           type="duplicate",
           @click="$emit('duplicate', props.item)"
         )
-        action-btn(
+        c-action-btn(
           v-if="hasUpdateAnyPlaylistAccess",
           type="edit",
           @click="$emit('edit', props.item)"
         )
-        action-btn(
+        c-action-btn(
           v-if="hasDeleteAnyPlaylistAccess",
           type="delete",
           @click="$emit('remove', props.item._id)"
@@ -55,7 +55,6 @@ import { getApplicationHost } from '@/helpers/router';
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 import PlaylistListExpandItem from './playlists-list-expand-item.vue';
 
@@ -67,7 +66,6 @@ export default {
   },
   components: {
     EnabledColumn,
-    ActionBtn,
     PlaylistListExpandItem,
   },
   mixins: [rightsTechnicalPlaylistMixin],

@@ -7,7 +7,7 @@
       @edit="showEditBroadcastMessageModal",
       @remove="showRemoveBroadcastMessageModal"
     )
-    fab-buttons(
+    c-fab-btn(
       v-if="hasCreateAnyBroadcastMessageAccess",
       @refresh="fetchList",
       @create="showCreateBroadcastMessageModal"
@@ -22,7 +22,6 @@ import { MODALS } from '@/constants';
 
 import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broadcast-message';
 
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 import BroadcastMessagesList from '@/components/other/broadcast-message/broadcast-messages-list.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
@@ -30,7 +29,6 @@ const { mapActions, mapGetters } = createNamespacedHelpers('broadcastMessage');
 export default {
   components: {
     BroadcastMessagesList,
-    FabButtons,
   },
   mixins: [rightsTechnicalBroadcastMessageMixin],
   computed: {

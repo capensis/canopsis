@@ -17,12 +17,12 @@
         v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="actions", slot-scope="props")
-      action-btn(
+      c-action-btn(
         v-if="hasUpdateAnyPbehaviorReasonAccess",
         type="edit",
         @click="$emit('edit', props.item)"
       )
-      action-btn(
+      c-action-btn(
         v-if="hasDeleteAnyPbehaviorReasonAccess",
         :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehaviorReasons.usingReason')",
         :disabled="!props.item.deletable",
@@ -36,13 +36,10 @@
 <script>
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
-
 import PbehaviorReasonsListExpandPanel from './partials/pbehavior-reasons-list-expand-panel.vue';
 
 export default {
   components: {
-    ActionBtn,
     PbehaviorReasonsListExpandPanel,
   },
   mixins: [rightsTechnicalPbehaviorReasonsMixin],

@@ -19,12 +19,12 @@
       enabled-column(:value="props.item.enable")
     template(slot="actions", slot-scope="props")
       v-layout(row)
-        action-btn(
+        c-action-btn(
           v-if="hasUpdateAnyUserAccess",
           type="edit",
           @click.stop="$emit('edit', props.item)"
         )
-        action-btn(
+        c-action-btn(
           v-if="hasDeleteAnyUserAccess",
           type="delete",
           @click.stop="$emit('remove', props.item)"
@@ -35,11 +35,9 @@
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 export default {
   components: {
-    ActionBtn,
     EnabledColumn,
   },
   mixins: [rightsTechnicalUserMixin],

@@ -20,7 +20,7 @@
               v-tab-item(:value="$constants.PLANNING_TABS.exceptions")
                 v-card-text
                   planning-exceptions
-    fab-buttons(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
+    c-fab-btn(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
       span {{ tooltipText }}
 </template>
 
@@ -38,12 +38,10 @@ import queryMixin from '@/mixins/query';
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
 import PlanningExceptions from '@/components/other/pbehavior/exceptions/planning-exceptions.vue';
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
   components: {
     PlanningExceptions,
-    FabButtons,
     PlanningTypes,
     PlanningReasons,
   },

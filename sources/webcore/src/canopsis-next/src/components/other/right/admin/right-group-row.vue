@@ -1,7 +1,7 @@
 <template lang="pug">
   tr
     td.cursor-pointer
-      expand-button.mr-2(:expanded="expanded", @expand="$emit('expand')")
+      c-expand-btn.mr-2(:expanded="expanded", @expand="$emit('expand')")
       span {{ group.name }}
     right-group-row-cell(
       v-for="role in roles",
@@ -15,12 +15,10 @@
 </template>
 
 <script>
-import ExpandButton from '@/components/common/buttons/expand-button.vue';
-
 import RightGroupRowCell from './right-group-row-cell.vue';
 
 export default {
-  components: { ExpandButton, RightGroupRowCell },
+  components: { RightGroupRowCell },
   props: {
     group: {
       type: Object,

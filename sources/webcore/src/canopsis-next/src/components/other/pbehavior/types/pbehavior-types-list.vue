@@ -21,13 +21,13 @@
         v-icon(color="white", size="18") {{ props.item.icon_name }}
     template(slot="actions", slot-scope="props")
       v-layout
-        action-btn(
+        c-action-btn(
           :disabled="!props.item.editable",
           :tooltip="props.item.editable ? $t('common.edit') : $t('pbehaviorTypes.defaultType')",
           type="edit",
           @click="$emit('edit', props.item)"
         )
-        action-btn(
+        c-action-btn(
           :disabled="!props.item.deletable",
           :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehaviorTypes.defaultType')",
           type="delete",
@@ -40,13 +40,10 @@
 <script>
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
-
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
 
 export default {
   components: {
-    ActionBtn,
     PbehaviorTypesListExpandPanel,
   },
   mixins: [rightsTechnicalPbehaviorTypesMixin],

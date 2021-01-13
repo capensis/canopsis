@@ -47,6 +47,11 @@ import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-tab
 import AdvancedDataTable from '@/components/tables/advanced-data-table.vue';
 import ThePageHeader from '@/components/layout/the-page-header/the-page-header.vue';
 import AlarmChips from '@/components/widgets/alarm/alarm-chips.vue';
+import ExpandBtn from '@/components/common/buttons/expand-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
+import FabExpandBtn from '@/components/common/buttons/fab-expand-btn.vue';
+import FabBtn from '@/components/common/buttons/fab-btn.vue';
+import RefreshBtn from '@/components/common/buttons/refresh-btn.vue';
 
 import WebhookIcon from '@/components/icons/webhook.vue';
 import BullhornIcon from '@/components/icons/bullhorn.vue';
@@ -148,6 +153,11 @@ Vue.component('alarm-chips', AlarmChips);
 Vue.component('alarms-list-table', AlarmsListTable);
 Vue.component('advanced-data-table', AdvancedDataTable);
 Vue.component('the-page-header', ThePageHeader);
+Vue.component('c-expand-btn', ExpandBtn);
+Vue.component('c-action-btn', ActionBtn);
+Vue.component('c-fab-expand-btn', FabExpandBtn);
+Vue.component('c-fab-btn', FabBtn);
+Vue.component('c-refresh-btn', RefreshBtn);
 
 Vue.use(VueMq, {
   breakpoints: config.MEDIA_QUERIES_BREAKPOINTS,

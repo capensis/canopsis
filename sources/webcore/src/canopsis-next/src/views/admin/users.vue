@@ -11,7 +11,7 @@
         @remove="showRemoveUserModal",
         @remove-selected="showRemoveSelectedUsersModal"
       )
-    fab-buttons(
+    c-fab-btn(
       :has-access="hasCreateAnyUserAccess",
       @refresh="fetchList",
       @create="showCreateUserModal"
@@ -31,11 +31,9 @@ import localQueryMixin from '@/mixins/query-local/query';
 import authMixin from '@/mixins/auth';
 
 import UsersList from '@/components/other/users/users-list.vue';
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
   components: {
-    FabButtons,
     UsersList,
   },
   mixins: [entitiesUserMixin, localQueryMixin, rightsTechnicalUserMixin, authMixin],

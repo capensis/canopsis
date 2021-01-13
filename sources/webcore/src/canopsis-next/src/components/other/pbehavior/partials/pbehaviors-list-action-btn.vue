@@ -1,5 +1,5 @@
 <template lang="pug">
-  action-btn(
+  c-action-btn(
     v-if="hasReadAnyPbehaviorAccess",
     :tooltip="$t('alarmList.actions.titles.pbehaviorList')",
     icon="list",
@@ -13,10 +13,7 @@ import { CRUD_ACTIONS, MODALS } from '@/constants';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import rightsTechnicalExploitationPbehaviorMixin from '@/mixins/rights/technical/exploitation/pbehavior';
 
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
-
 export default {
-  components: { ActionBtn },
   mixins: [
     entitiesPbehaviorMixin,
     rightsTechnicalExploitationPbehaviorMixin,

@@ -14,14 +14,13 @@
           td {{ props.item.rrule }}
           td
             v-layout(v-if="hasAccessToDeletePbehavior", row)
-              action-btn(type="edit", @click="showEditPbehaviorModal(props.item)")
-              action-btn(type="delete", @click="showDeletePbehaviorModal(props.item._id)")
+              c-action-btn(type="edit", @click="showEditPbehaviorModal(props.item)")
+              c-action-btn(type="delete", @click="showDeletePbehaviorModal(props.item._id)")
 </template>
 
 <script>
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 import authMixin from '@/mixins/auth';
@@ -30,7 +29,6 @@ import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 export default {
   components: {
-    ActionBtn,
     EnabledColumn,
   },
   inject: ['$system'],

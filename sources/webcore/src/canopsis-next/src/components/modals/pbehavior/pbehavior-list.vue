@@ -14,12 +14,12 @@
           pbehaviors-list-expand-item(:pbehavior="props.item")
         template(slot="actions", slot-scope="props")
           v-layout(row)
-            action-btn(
+            c-action-btn(
               v-if="hasAccessToEditPbehavior",
               type="edit",
               @click="showEditPbehaviorModal(props.item)"
             )
-            action-btn(
+            c-action-btn(
               v-if="hasAccessToDeletePbehavior",
               type="delete",
               @click="showRemovePbehaviorModal(props.item._id)"
@@ -45,7 +45,6 @@ import { MODALS, CRUD_ACTIONS } from '@/constants';
 
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
 
@@ -57,7 +56,6 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   components: {
     PbehaviorsListExpandItem,
-    ActionBtn,
     EnabledColumn,
     ModalWrapper,
   },

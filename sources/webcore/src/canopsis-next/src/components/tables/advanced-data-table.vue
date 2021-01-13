@@ -55,7 +55,7 @@
                   )
                   v-checkbox-functional(v-else, primary, disabled, hide-details)
                 slot(v-if="expand && isExpandableItem(props.item)", v-bind="getItemsProps(props)", name="item-expand")
-                  expand-button.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
+                  c-expand-btn.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
             td(v-for="header in headers", :key="header.value")
               slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
       template(v-if="hasExpandSlot", slot="expand", slot-scope="props")
@@ -81,7 +81,6 @@ import { omit } from 'lodash';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 import AdvancedSearch from '@/components/common/search/advanced-search.vue';
-import ExpandButton from '@/components/common/buttons/expand-button.vue';
 import TablePagination from '@/components/tables/table-pagination.vue';
 
 export default {
@@ -89,7 +88,6 @@ export default {
     TablePagination,
     SearchField,
     AdvancedSearch,
-    ExpandButton,
   },
   model: {
     prop: 'selected',

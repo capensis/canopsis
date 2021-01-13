@@ -11,7 +11,7 @@
           ) {{ icon }}
           span.body-1 {{ title }}
     template(v-else)
-      action-btn(
+      c-action-btn(
         :tooltip="title",
         :disabled="disabled",
         :icon="icon",
@@ -22,8 +22,6 @@
 
 
 <script>
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
-
 /**
  * Component showing an action icon
  *
@@ -36,7 +34,6 @@ import ActionBtn from '@/components/common/buttons/action-btn.vue';
  * @prop {boolean} [isDropDown=false] - Boolean to decide whether to show a dropdown with actions, or actions separately
  */
 export default {
-  components: { ActionBtn },
   props: {
     title: {
       type: String,

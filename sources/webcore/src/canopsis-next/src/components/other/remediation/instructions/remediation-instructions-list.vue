@@ -31,18 +31,18 @@
         | {{ props.item.last_executed_on | date('long', true, null) }}
       template(slot="actions", slot-scope="props")
         v-layout(row)
-          action-btn(
+          c-action-btn(
             v-if="hasUpdateAnyRemediationInstructionAccess",
             type="edit",
             @click="$emit('edit', props.item)"
           )
-          action-btn(
+          c-action-btn(
             v-if="hasUpdateAnyRemediationInstructionAccess",
             :tooltip="$t('modals.patterns.title')",
             icon="assignment",
             @click="$emit('assign-patterns', props.item)"
           )
-          action-btn(
+          c-action-btn(
             v-if="hasDeleteAnyRemediationInstructionAccess",
             :tooltip="props.disabled ? $t('remediationInstructions.usingInstruction') : $t('common.delete')",
             :disabled="props.disabled",
@@ -57,7 +57,6 @@
 import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';
@@ -65,7 +64,6 @@ import RemediationInstructionsListExpandPanel from './partials/remediation-instr
 export default {
   components: {
     EnabledColumn,
-    ActionBtn,
     RatingField,
     RemediationInstructionsListExpandPanel,
   },

@@ -14,12 +14,12 @@
         td {{ props.item.end | date('long', true) }}
         td
           v-layout(row)
-            action-btn(
+            c-action-btn(
               v-if="hasUpdateAnyBroadcastMessageAccess",
               type="edit",
               @click="$emit('edit', props.item)"
             )
-            action-btn(
+            c-action-btn(
               v-if="hasDeleteAnyBroadcastMessageAccess",
               type="delete",
               @click="$emit('remove', props.item)"
@@ -34,11 +34,9 @@ import { BROADCAST_MESSAGES_STATUSES } from '@/constants';
 import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broadcast-message';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
-import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 export default {
   components: {
-    ActionBtn,
     BroadcastMessage,
   },
   mixins: [rightsTechnicalBroadcastMessageMixin],
