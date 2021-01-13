@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    the-page-header {{ $t('common.roles') }}
+    c-the-page-header {{ $t('common.roles') }}
     roles-list(
       :roles="roles",
       :pending="rolesPending",

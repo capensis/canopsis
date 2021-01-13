@@ -13,7 +13,7 @@
       hideGroups,
       ref="alarmsTable"
     )
-    table-pagination(
+    c-table-pagination(
       :total-items="alarmsMeta.total_count",
       :rows-per-page="query.limit",
       :page="query.page",
@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import TablePagination from '@/components/tables/table-pagination.vue';
-
 import widgetColumnsMixin from '@/mixins/widget/columns';
 import widgetGroupFetchQueryMixin from '@/mixins/widget/group-fetch-query';
 import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-panel';
@@ -36,9 +34,6 @@ import widgetExpandPanelAlarm from '@/mixins/widget/expand-panel/alarm/expand-pa
  *
  */
 export default {
-  components: {
-    TablePagination,
-  },
   mixins: [
     widgetGroupFetchQueryMixin,
     widgetColumnsMixin,

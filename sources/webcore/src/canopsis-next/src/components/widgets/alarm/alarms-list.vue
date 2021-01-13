@@ -56,7 +56,7 @@
             v-icon(:color="activeRange ? 'primary' : 'black'") schedule
           span {{ $t('liveReporting.button') }}
     v-layout(row, wrap, align-center)
-      pagination(
+      c-pagination(
         data-test="topPagination",
         v-if="hasColumns",
         :page="query.page",
@@ -79,7 +79,7 @@
       expandable,
       ref="alarmsTable"
     )
-      table-pagination(
+      c-table-pagination(
         :total-items="alarmsMeta.total_count",
         :rows-per-page="query.limit",
         :page="query.page",
@@ -98,8 +98,6 @@ import { findRange } from '@/helpers/date-intervals';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import AdvancedSearch from '@/components/common/search/advanced-search.vue';
-import TablePagination from '@/components/tables/table-pagination.vue';
-import Pagination from '@/components/tables/pagination.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
@@ -129,8 +127,6 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
  */
 export default {
   components: {
-    Pagination,
-    TablePagination,
     FilterSelector,
     AdvancedSearch,
     AlarmsListTable,

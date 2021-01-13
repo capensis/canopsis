@@ -28,8 +28,6 @@ import { get } from 'lodash';
 
 import { ALARM_ENTITY_FIELDS } from '@/constants';
 
-import Ellipsis from '@/components/tables/ellipsis.vue';
-
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueState from './alarm-column-value-state.vue';
 import AlarmColumnValueLinks from './alarm-column-value-links.vue';
@@ -47,7 +45,6 @@ import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue
  */
 export default {
   components: {
-    Ellipsis,
     AlarmColumnCellPopupBody,
     AlarmColumnValueState,
     AlarmColumnValueLinks,
@@ -170,7 +167,7 @@ export default {
 
       return {
         bind: {
-          is: 'ellipsis',
+          is: 'c-ellipsis',
           text: String(this.$options.filters.get(this.alarm, this.column.value, this.columnFilter, '')),
         },
       };

@@ -1,5 +1,5 @@
 <template lang="pug">
-  advanced-data-table.white(
+  c-advanced-data-table.white(
     :headers="headers",
     :items="preparedBroadcastMessages",
     :loading="pending",

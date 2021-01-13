@@ -3,7 +3,7 @@
     v-fade-transition(mode="out-in")
       progress-overlay(v-if="pending", :pending="true")
       div(v-else-if="playlist")
-        the-page-header {{ playlist.name }}
+        c-the-page-header {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
           v-fade-transition
             v-toolbar-items.mr-2(v-if="!pending")

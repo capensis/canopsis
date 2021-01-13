@@ -1,5 +1,5 @@
 <template lang="pug">
-  advanced-data-table.white(
+  c-advanced-data-table.white(
     :headers="headers",
     :items="users",
     :loading="pending",
@@ -16,7 +16,7 @@
         v-btn(@click="$emit('remove-selected', props.selected)", icon)
           v-icon delete
     template(slot="enable", slot-scope="props")
-      enabled-column(:value="props.item.enable")
+      c-enabled(:value="props.item.enable")
     template(slot="actions", slot-scope="props")
       v-layout(row)
         c-action-btn(
@@ -34,12 +34,7 @@
 <script>
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 
-import EnabledColumn from '@/components/tables/enabled-column.vue';
-
 export default {
-  components: {
-    EnabledColumn,
-  },
   mixins: [rightsTechnicalUserMixin],
   props: {
     users: {

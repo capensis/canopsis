@@ -8,7 +8,7 @@
           :tooltip="$t('search.contextAdvancedSearch')"
         )
       v-flex
-        pagination(
+        c-pagination(
           v-if="hasColumns",
           :page="query.page",
           :limit="query.limit",
@@ -35,7 +35,7 @@
         mass-actions-panel(:itemsIds="selectedIds")
       v-flex
         context-fab(v-if="hasAccessToCreateEntity")
-    no-columns-table(v-if="!hasColumns")
+    c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table(
         v-model="selected",
@@ -61,8 +61,8 @@
             @click="props.expanded = !props.expanded"
           )
             div(v-if="column.value === 'enabled'")
-              enabled-column(:value="props.item.enabled")
-            ellipsis(
+              c-enabled(:value="props.item.enabled")
+            c-ellipsis(
               v-else,
               :text="props.item | get(column.value, null, '')",
               :maxLetters="column.maxLetters"
@@ -71,7 +71,7 @@
             actions-panel(:item="props.item", :isEditingMode="isEditingMode")
         template(slot="expand", slot-scope="props")
           more-infos(:item="props.item", :tabId="tabId")
-      table-pagination(
+      c-table-pagination(
         :total-items="contextEntitiesMeta.total",
         :rows-per-page="query.limit",
         :page="query.page",
@@ -86,13 +86,8 @@ import { omit, isString } from 'lodash';
 import { USERS_RIGHTS } from '@/constants';
 import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
 
-import Ellipsis from '@/components/tables/ellipsis.vue';
-import Pagination from '@/components/tables/pagination.vue';
-import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import EnabledColumn from '@/components/tables/enabled-column.vue';
 import AdvancedSearch from '@/components/common/search/advanced-search.vue';
-import TablePagination from '@/components/tables/table-pagination.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
@@ -117,16 +112,11 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
  */
 export default {
   components: {
-    TablePagination,
-    Ellipsis,
-    Pagination,
-    NoColumnsTable,
     FilterSelector,
     MoreInfos,
     ContextFab,
     ActionsPanel,
     MassActionsPanel,
-    EnabledColumn,
     AdvancedSearch,
   },
   mixins: [

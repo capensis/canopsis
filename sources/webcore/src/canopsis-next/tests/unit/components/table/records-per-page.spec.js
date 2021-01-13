@@ -3,7 +3,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import RecordsPerPage from '@/components/common/pagination/records-per-page.vue';
 
 const localVue = createLocalVue();
 

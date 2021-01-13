@@ -6,7 +6,7 @@
           td {{ props.item.name }}
           td {{ props.item.author }}
           td
-            enabled-column(:value="props.item.enabled")
+            c-enabled(:value="props.item.enabled")
           td {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
           td {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
           td {{ props.item.type.name }}
@@ -21,16 +21,11 @@
 <script>
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
-import EnabledColumn from '@/components/tables/enabled-column.vue';
-
 import authMixin from '@/mixins/auth';
 import queryMixin from '@/mixins/query';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
 export default {
-  components: {
-    EnabledColumn,
-  },
   inject: ['$system'],
   mixins: [
     authMixin,

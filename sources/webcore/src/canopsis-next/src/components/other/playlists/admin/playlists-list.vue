@@ -1,5 +1,5 @@
 <template lang="pug">
-  advanced-data-table.white(
+  c-advanced-data-table.white(
     :headers="headers",
     :items="playlists",
     :loading="pending",
@@ -7,10 +7,10 @@
     expand
   )
     template(slot="fullscreen", slot-scope="props")
-      enabled-column(:value="props.item.fullscreen")
+      c-enabled(:value="props.item.fullscreen")
     template(slot="interval", slot-scope="props") {{ props.item.interval | interval }}
     template(slot="enabled", slot-scope="props")
-      enabled-column(:value="props.item.enabled")
+      c-enabled(:value="props.item.enabled")
     template(slot="actions", slot-scope="props")
       v-layout(row)
         c-action-btn(:tooltip="$t('common.play')")
@@ -54,8 +54,6 @@ import { getApplicationHost } from '@/helpers/router';
 
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
-import EnabledColumn from '@/components/tables/enabled-column.vue';
-
 import PlaylistListExpandItem from './playlists-list-expand-item.vue';
 
 export default {
@@ -65,7 +63,6 @@ export default {
     },
   },
   components: {
-    EnabledColumn,
     PlaylistListExpandItem,
   },
   mixins: [rightsTechnicalPlaylistMixin],

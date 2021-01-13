@@ -65,7 +65,7 @@
         slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
       template(slot="progress", slot-scope="props")
         slot(name="progress", v-bind="props")
-    table-pagination(
+    c-table-pagination(
       v-if="pagination && advancedPagination",
       :total-items="totalItems",
       :rows-per-page-items="rowsPerPageItems",
@@ -81,11 +81,9 @@ import { omit } from 'lodash';
 
 import SearchField from '@/components/forms/fields/search-field.vue';
 import AdvancedSearch from '@/components/common/search/advanced-search.vue';
-import TablePagination from '@/components/tables/table-pagination.vue';
 
 export default {
   components: {
-    TablePagination,
     SearchField,
     AdvancedSearch,
   },

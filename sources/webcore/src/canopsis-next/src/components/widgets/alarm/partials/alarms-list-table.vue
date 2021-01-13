@@ -2,7 +2,7 @@
   v-flex.white
     v-flex.px-3(v-show="selectedIds.length", xs12)
       mass-actions-panel(:itemsIds="selectedIds", :widget="widget")
-    no-columns-table(v-if="!hasColumns")
+    c-empty-data-table-columns(v-if="!hasColumns")
     div(v-else)
       v-data-table.alarms-list-table(
         v-model="selected",
@@ -53,8 +53,6 @@ import { isResolvedAlarm } from '@/helpers/entities';
 
 import alarmColumnFilters from '@/mixins/entities/alarm-column-filters';
 
-import NoColumnsTable from '@/components/tables/no-columns.vue';
-
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
 import AlarmsExpandPanel from '../partials/alarms-expand-panel.vue';
 import AlarmsListRow from '../partials/alarms-list-row.vue';
@@ -69,7 +67,6 @@ export default {
     AlarmsListRow,
     AlarmsExpandPanel,
     MassActionsPanel,
-    NoColumnsTable,
   },
   mixins: [alarmColumnFilters],
   props: {

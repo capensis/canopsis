@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import Pagination from '@/components/tables/pagination.vue';
-import RecordsPerPage from '@/components/tables/records-per-page.vue';
+import Pagination from './pagination.vue';
+import RecordsPerPage from './records-per-page.vue';
 
 export default {
   components: {

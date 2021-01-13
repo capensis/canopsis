@@ -4,7 +4,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 
 import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
-import Ellipsis from '@/components/tables/ellipsis.vue';
+import Ellipsis from '@/components/common/table/ellipsis.vue';
 
 const localVue = createLocalVue();
 

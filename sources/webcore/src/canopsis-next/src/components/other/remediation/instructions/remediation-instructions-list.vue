@@ -1,6 +1,6 @@
 <template lang="pug">
   div.instruction-list
-    advanced-data-table.white(
+    c-advanced-data-table.white(
       :headers="headers",
       :items="remediationInstructions",
       :loading="pending",
@@ -20,7 +20,7 @@
       template(slot="headerCell", slot-scope="props")
         span.pre-line.header-text {{ props.header.text }}
       template(slot="enabled", slot-scope="props")
-        enabled-column(:value="props.item.enabled")
+        c-enabled(:value="props.item.enabled")
       template(slot="rating", slot-scope="props")
         rating-field(:value="props.item.rating", readonly)
       template(slot="last_modified", slot-scope="props")
@@ -56,14 +56,12 @@
 <script>
 import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
 
-import EnabledColumn from '@/components/tables/enabled-column.vue';
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';
 
 export default {
   components: {
-    EnabledColumn,
     RatingField,
     RemediationInstructionsListExpandPanel,
   },

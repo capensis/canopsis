@@ -3,9 +3,9 @@
     template(slot="title")
       span {{ $t('alarmList.actions.titles.pbehaviorList') }}
     template(slot="text")
-      advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
+      c-advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
         template(slot="enabled", slot-scope="props")
-          enabled-column(:value="props.item.enabled")
+          c-enabled(:value="props.item.enabled")
         template(slot="tstart", slot-scope="props") {{ props.item.tstart | timezone($system.timezone, 'long', true) }}
         template(slot="tstop", slot-scope="props") {{ props.item.tstop | timezone($system.timezone, 'long', true) }}
         template(slot="rrule", slot-scope="props")
@@ -45,7 +45,6 @@ import { MODALS, CRUD_ACTIONS } from '@/constants';
 
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
-import EnabledColumn from '@/components/tables/enabled-column.vue';
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -56,7 +55,6 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   components: {
     PbehaviorsListExpandItem,
-    EnabledColumn,
     ModalWrapper,
   },
   mixins: [entitiesPbehaviorMixin],

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    the-page-header {{ $t('common.users') }}
+    c-the-page-header {{ $t('common.users') }}
     v-card-text
       users-list(
         :users="users",
