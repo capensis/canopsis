@@ -2,6 +2,8 @@
 
 Vous trouverez ici toute la documentation nécessaire au développement sur Canopsis.
 
+La documentation de l'API est disponible [ici](./swagger).
+
 !!! tip "Note"
     Cette page contient le plan de la documentation de développement, qui est en cours d'écriture.
 
