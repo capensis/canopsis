@@ -30,7 +30,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import uuid from '@/helpers/uuid';
+import { generateEntityId } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -99,7 +99,7 @@ export default {
         const formData = { ...this.form };
 
         if (!this.config.item || this.config.isDuplicating) {
-          formData._id = uuid('entity');
+          formData._id = generateEntityId();
         }
 
         await this.config.action(formData);

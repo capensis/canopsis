@@ -13,8 +13,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
+import { generateActionId } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -45,7 +45,7 @@ export default {
      * If we're duplicating an action, generate a new unique id
      */
     if (isDuplicating) {
-      form.generalParameters._id = uuid('action');
+      form.generalParameters._id = generateActionId();
     }
 
     return {

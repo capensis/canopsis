@@ -9,8 +9,8 @@
           draggable-groups(
             v-model="importedGroups",
             pull,
-            viewPull,
-            viewPut,
+            view-pull,
+            view-put,
             @change:group="changeImportedGroupHandler"
           )
         v-flex.pl-1(xs4)
@@ -23,7 +23,7 @@
             v-model="currentGroups",
             put,
             pull,
-            viewPut,
+            view-put,
             @change:group="changeCurrentGroupHandler"
           )
     template(slot="actions")
@@ -39,6 +39,8 @@
 import { cloneDeep } from 'lodash';
 
 import { MODALS } from '@/constants';
+
+import { generateViewTabId, generateWidgetId } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesViewsGroupsMixin from '@/mixins/entities/view/group';
@@ -75,12 +77,16 @@ export default {
     };
   },
   computed: {
-    groupsOrderedViewsIds() {
-      return this.groupsOrdered.reduce((ids, { views }) => {
-        ids.push(...views.map(({ _id }) => _id));
+    groupsOrderedViews() {
+      return this.groupsOrdered.reduce((acc, { views }) => {
+        acc.push(...views);
 
-        return ids;
+        return acc;
       }, []);
+    },
+
+    viewsIds() {
+      return this.groupsOrderedViews.map(({ _id }) => _id);
     },
   },
   watch: {
@@ -92,6 +98,31 @@ export default {
     },
   },
   methods: {
+    prepareImportedTabs(tabs) {
+      return tabs.map(tab => ({
+        ...tab,
+        _id: generateViewTabId(),
+        widgets: tab.widgets.map(widget => ({
+          ...widget,
+          _id: generateWidgetId(widget.type),
+        })),
+      }));
+    },
+
+    prepareImportedViews(views = []) {
+      return views.map(view => ({
+        ...view,
+        tabs: this.prepareImportedTabs(view.tabs),
+      }));
+    },
+
+    prepareImportedGroups(groups = []) {
+      return groups.map(group => ({
+        ...group,
+        views: this.prepareImportedViews(group.views),
+      }));
+    },
+
     changeImportedGroupHandler(groupIndex, group) {
       const groups = [...this.importedGroups];
 
@@ -111,8 +142,8 @@ export default {
     setDefaultValues() {
       const { groups, views } = this.modal.config;
 
-      this.importedViews = cloneDeep(views);
-      this.importedGroups = cloneDeep(groups);
+      this.importedViews = cloneDeep(this.prepareImportedViews(views));
+      this.importedGroups = cloneDeep(this.prepareImportedGroups(groups));
       this.currentGroups = cloneDeep(this.groupsOrdered);
     },
 
@@ -127,7 +158,7 @@ export default {
           position: viewIndex,
         };
 
-        if (this.groupsOrderedViewsIds.includes(viewId) && (viewGroupId !== groupId || position !== viewIndex)) {
+        if (this.viewsIds.includes(viewId) && (viewGroupId !== groupId || position !== viewIndex)) {
           return promise.then(() => this.updateViewWithoutStore({ id: viewId, data }));
         } else if (exported) {
           return promise

@@ -38,6 +38,42 @@ import { pbehaviorToForm } from './forms/planning-pbehavior';
  */
 
 /**
+ * Generate id for view tab
+ *
+ * @returns {string}
+ */
+export const generateViewTabId = () => uuid('view-tab');
+
+/**
+ * Generate id for widget by type
+ *
+ * @param {string} type
+ * @returns {string}
+ */
+export const generateWidgetId = type => uuid(`widget_${type}`);
+
+/**
+ * Generate id for action
+ *
+ * @returns {string}
+ */
+export const generateActionId = () => uuid('action');
+
+/**
+ * Generate id for watcher
+ *
+ * @returns {string}
+ */
+export const generateWatcherId = () => uuid('watcher');
+
+/**
+ * Generate id for entity
+ *
+ * @returns {string}
+ */
+export const generateEntityId = () => uuid('entity');
+
+/**
  * Generate widget by type
  *
  * @param {string} type
@@ -46,7 +82,7 @@ import { pbehaviorToForm } from './forms/planning-pbehavior';
 export function generateWidgetByType(type) {
   const widget = {
     type,
-    _id: uuid(`widget_${type}`),
+    _id: generateWidgetId(type),
     title: '',
     parameters: {},
     gridParameters: Object.values(WIDGET_GRID_SIZES_KEYS).reduce((acc, size) => {
@@ -334,7 +370,7 @@ export function generateWidgetByType(type) {
  */
 export function generateViewTab() {
   return {
-    _id: uuid('view-tab'),
+    _id: generateViewTabId(),
     title: '',
     widgets: [],
   };
@@ -503,7 +539,7 @@ export function generateAction() {
 
   // Get basic action parameters
   const generalParameters = {
-    _id: uuid('action'),
+    _id: generateActionId(),
     type: ACTION_TYPES.snooze,
     enabled: true,
     delay: {},

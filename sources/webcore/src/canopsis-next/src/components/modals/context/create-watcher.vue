@@ -19,7 +19,7 @@ import { omit } from 'lodash';
 
 import { MODALS, ENTITIES_TYPES, CANOPSIS_STACK } from '@/constants';
 
-import uuid from '@/helpers/uuid';
+import { generateWatcherId } from '@/helpers/entities';
 
 import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
@@ -75,7 +75,7 @@ export default {
         if (this.stack === CANOPSIS_STACK.go) {
           data = {
             ...omit(this.form, ['mfilter', 'impact', 'depends']),
-            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
+            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : generateWatcherId(),
             name: this.form.name,
             type: ENTITIES_TYPES.watcher,
             state: {
@@ -85,7 +85,7 @@ export default {
         } else {
           data = {
             ...omit(this.form, ['entities', 'output_template']),
-            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : uuid('watcher'),
+            _id: this.config.item && !this.config.isDuplicating ? this.config.item._id : generateWatcherId(),
             infos: this.form.infos,
             name: this.form.name,
             type: ENTITIES_TYPES.watcher,
