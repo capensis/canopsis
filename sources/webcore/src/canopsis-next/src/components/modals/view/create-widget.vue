@@ -5,7 +5,7 @@
     template(slot="text")
       v-layout(row, wrap)
         v-flex.my-1(
-          v-for="widgetType in availableWidgets",
+          v-for="widgetType in availableWidgetTypes",
           :key="widgetType",
           xs12,
           @click="selectWidgetType(widgetType)"
@@ -38,6 +38,12 @@ export default {
   components: { ModalWrapper },
   mixins: [modalInnerMixin, sideBarMixin, entitiesInfoMixin],
   computed: {
+    /**
+     * Some widgets are only available with 'cat' edition.
+     * Filter widgetTypes list to keep only available widgets, thanks to the edition
+     *
+     * @return {Array}
+     */
     availableWidgetTypes() {
       return [
         WIDGET_TYPES.alarmList,
@@ -46,16 +52,7 @@ export default {
         WIDGET_TYPES.statsCalendar,
         WIDGET_TYPES.text,
         WIDGET_TYPES.counter,
-      ];
-    },
-    /**
-     * Some widgets are only available with 'cat' edition.
-     * Filter widgetTypes list to keep only available widgets, thanks to the edition
-     *
-     * @return {Array}
-     */
-    availableWidgets() {
-      return this.availableWidgetTypes.filter((widgetType) => {
+      ].filter((widgetType) => {
         const rules = WIDGET_TYPES_RULES[widgetType];
 
         if (!rules) {
