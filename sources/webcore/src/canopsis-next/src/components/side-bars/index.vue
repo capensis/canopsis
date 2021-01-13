@@ -10,7 +10,7 @@ import sideBarInnerMixin from '@/mixins/side-bar/side-bar-inner';
 import SideBarWrapper from './side-bar-wrapper.vue';
 import AlarmSettings from './settings/alarm.vue';
 import ContextSettings from './settings/context.vue';
-import WeatherSettings from './settings/weather.vue';
+import WeatherSettings from './settings/service-weather.vue';
 import StatsHistogramSettings from './settings/stats-histogram.vue';
 import StatsCurvesSettings from './settings/stats-curves.vue';
 import StatsTableSettings from './settings/stats-table.vue';
