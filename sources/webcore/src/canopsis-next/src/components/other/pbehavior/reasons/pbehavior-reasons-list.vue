@@ -36,7 +36,7 @@
 <script>
 import rightsTechnicalPbehaviorReasonsMixin from '@/mixins/rights/technical/pbehavior-reasons';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 import PbehaviorReasonsListExpandPanel from './partials/pbehavior-reasons-list-expand-panel.vue';
 

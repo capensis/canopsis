@@ -55,7 +55,7 @@ import { getApplicationHost } from '@/helpers/router';
 import rightsTechnicalPlaylistMixin from '@/mixins/rights/technical/playlist';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 import PlaylistListExpandItem from './playlists-list-expand-item.vue';
 

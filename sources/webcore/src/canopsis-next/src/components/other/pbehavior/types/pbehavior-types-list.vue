@@ -40,7 +40,7 @@
 <script>
 import rightsTechnicalPbehaviorTypesMixin from '@/mixins/rights/technical/pbehavior-types';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 import PbehaviorTypesListExpandPanel from './partials/pbehavior-types-list-expand-panel.vue';
 

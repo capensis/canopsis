@@ -21,7 +21,7 @@
 <script>
 import { MODALS, USERS_RIGHTS } from '@/constants';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 
 import authMixin from '@/mixins/auth';

@@ -22,7 +22,7 @@
 
 
 <script>
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 /**
  * Component showing an action icon

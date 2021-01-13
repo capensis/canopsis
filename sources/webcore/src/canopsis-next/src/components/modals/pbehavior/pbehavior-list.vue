@@ -45,7 +45,7 @@ import { MODALS, CRUD_ACTIONS } from '@/constants';
 
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
 

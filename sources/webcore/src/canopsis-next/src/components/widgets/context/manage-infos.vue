@@ -35,7 +35,7 @@ import { MODALS } from '@/constants';
 
 import formMixin from '@/mixins/form';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 /**
  * Form to manipulation with infos

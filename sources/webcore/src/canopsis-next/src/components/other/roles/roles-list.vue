@@ -32,7 +32,7 @@
 <script>
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 export default {
   components: { ActionBtn },

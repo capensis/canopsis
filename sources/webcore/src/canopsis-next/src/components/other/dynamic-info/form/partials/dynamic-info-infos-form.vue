@@ -26,7 +26,7 @@ import { MODALS } from '@/constants';
 import formArrayMixin from '@/mixins/form/array';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 export default {
   components: { ActionBtn },

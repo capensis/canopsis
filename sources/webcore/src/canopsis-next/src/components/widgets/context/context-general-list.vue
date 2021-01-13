@@ -43,7 +43,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { getContextWidgetSearchByText } from '@/helpers/entities-search';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import SearchField from '@/components/forms/fields/search-field.vue';
 
 const { mapActions } = createNamespacedHelpers('entity');

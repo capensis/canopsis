@@ -18,7 +18,7 @@
 import { uniq } from 'lodash';
 
 import MixedField from '@/components/forms/fields/mixed-field.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 export default {
   components: { MixedField, ActionBtn },

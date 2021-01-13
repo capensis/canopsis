@@ -34,7 +34,7 @@ import { BROADCAST_MESSAGES_STATUSES } from '@/constants';
 import rightsTechnicalBroadcastMessageMixin from '@/mixins/rights/technical/broadcast-message';
 
 import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 export default {
   components: {

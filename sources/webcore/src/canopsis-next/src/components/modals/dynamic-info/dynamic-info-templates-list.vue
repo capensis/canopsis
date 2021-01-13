@@ -49,7 +49,7 @@ import { MODALS } from '@/constants';
 
 import { templateToDynamicInfoInfos } from '@/helpers/forms/dynamic-info-template';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

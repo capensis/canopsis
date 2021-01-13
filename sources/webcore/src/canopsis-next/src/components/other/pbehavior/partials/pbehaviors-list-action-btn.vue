@@ -13,7 +13,7 @@ import { CRUD_ACTIONS, MODALS } from '@/constants';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import rightsTechnicalExploitationPbehaviorMixin from '@/mixins/rights/technical/exploitation/pbehavior';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 
 export default {
   components: { ActionBtn },

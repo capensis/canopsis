@@ -57,7 +57,7 @@
 import rightsTechnicalRemediationInstructionMixin from '@/mixins/rights/technical/remediation-instruction';
 
 import EnabledColumn from '@/components/tables/enabled-column.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import RatingField from '@/components/forms/fields/rating-field.vue';
 
 import RemediationInstructionsListExpandPanel from './partials/remediation-instructions-list-expand-panel.vue';

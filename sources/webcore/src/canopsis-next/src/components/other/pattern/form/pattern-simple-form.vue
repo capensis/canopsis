@@ -46,7 +46,7 @@ import { convertPatternToTreeview } from '@/helpers/treeview';
 
 import formMixin from '@/mixins/form';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
+import ActionBtn from '@/components/common/buttons/action-btn.vue';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 export default {
