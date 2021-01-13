@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import { orderBy } from 'lodash';
-
 import { PAGINATION_LIMIT } from '@/config';
 
 import Pagination from '@/components/tables/pagination.vue';
@@ -76,18 +74,14 @@ export default {
         limit: this.query.limit,
         first: (this.query.page - 1) * this.query.limit,
         last: this.query.page * this.query.limit,
-        total: this.orderedWatcherEntities.length,
+        total: this.watcherEntities.length,
       };
     },
-    orderedWatcherEntities() {
-      const preparedEntityNameField = this.entityNameField.replace(/^entity\./, '');
 
-      return orderBy(this.watcherEntities, ['state.val', preparedEntityNameField], ['desc', 'asc']);
-    },
     slicedWatcherEntities() {
       const { first, last } = this.pagination;
 
-      return this.orderedWatcherEntities.slice(first, last);
+      return this.watcherEntities.slice(first, last);
     },
   },
   methods: {
