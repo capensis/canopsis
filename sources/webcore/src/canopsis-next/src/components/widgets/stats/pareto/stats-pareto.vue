@@ -1,7 +1,7 @@
 <template lang="pug">
   div.position-relative
-    progress-overlay(:pending="pending")
-    alert-overlay(
+    c-progress-overlay(:pending="pending")
+    c-alert-overlay(
       :value="hasError",
       :message="serverErrorMessage"
     )
@@ -16,15 +16,10 @@ import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrap
 
 import { SORT_ORDERS } from '@/constants';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
-
 import StatsParetoChart from './stats-pareto-chart.vue';
 
 export default {
   components: {
-    ProgressOverlay,
-    AlertOverlay,
     StatsParetoChart,
   },
   mixins: [

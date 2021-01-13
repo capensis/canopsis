@@ -1,7 +1,7 @@
 <template lang="pug">
   div
-    progress-overlay(:pending="pending")
-    alert-overlay(
+    c-progress-overlay(:pending="pending")
+    c-alert-overlay(
       :value="hasError",
       :message="serverErrorMessage"
     )
@@ -45,15 +45,11 @@ import widgetStatsQueryMixin from '@/mixins/widget/stats/stats-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsTableWrapperMixin from '@/mixins/widget/stats/stats-table-wrapper';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 import AlarmChips from '@/components/widgets/alarm/alarm-chips.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
 
 export default {
   components: {
-    ProgressOverlay,
     AlarmChips,
-    AlertOverlay,
   },
   filters: {
     statValue(name) {

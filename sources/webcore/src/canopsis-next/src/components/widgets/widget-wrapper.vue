@@ -21,8 +21,6 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
 
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
-
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import WeatherWidget from './service-weather/weather.vue';
@@ -50,7 +48,6 @@ export default {
     StatsParetoWidget,
     TextWidget,
     CounterWidget,
-    AlertOverlay,
   },
   props: {
     widget: {
@@ -102,7 +99,7 @@ export default {
 
         Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
           if (rule.edition !== this.edition) {
-            baseMap[key] = 'alert-overlay';
+            baseMap[key] = 'c-alert-overlay';
             widgetSpecificsProp = {
               message: this.$t('errors.statsWrongEditionError'),
               value: true,

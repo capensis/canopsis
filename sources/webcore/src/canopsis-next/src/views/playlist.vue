@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-fade-transition(mode="out-in")
-      progress-overlay(v-if="pending", :pending="true")
+      c-progress-overlay(v-if="pending", :pending="true")
       div(v-else-if="playlist")
         c-the-page-header {{ playlist.name }}
         portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
@@ -37,12 +37,11 @@ import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import rightsEntitiesPlaylistTabMixin from '@/mixins/rights/entities/playlist-tab';
 
 import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 const { mapActions } = createNamespacedHelpers('playlist');
 
 export default {
-  components: { ViewTabWidgets, ProgressOverlay },
+  components: { ViewTabWidgets },
   mixins: [entitiesViewGroupMixin, rightsEntitiesPlaylistTabMixin],
   props: {
     id: {

@@ -1,7 +1,7 @@
 <template lang="pug">
   div.position-relative
-    progress-overlay(:pending="pending")
-    alert-overlay(
+    c-progress-overlay(:pending="pending")
+    c-alert-overlay(
       :value="hasError",
       :message="serverErrorMessage"
     )
@@ -19,15 +19,10 @@ import entitiesUserPreferenceMixin from '@/mixins/entities/user-preference';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 import widgetStatsChartWrapperMixin from '@/mixins/widget/stats/stats-chart-wrapper';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
-
 import StatsHistogramChart from './stats-histogram-chart.vue';
 
 export default {
   components: {
-    ProgressOverlay,
-    AlertOverlay,
     StatsHistogramChart,
   },
   mixins: [

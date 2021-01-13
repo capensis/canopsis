@@ -1,8 +1,8 @@
 <template lang="pug">
   div
     v-layout.white.calender-wrapper
-      progress-overlay(:pending="pending")
-      alert-overlay(
+      c-progress-overlay(:pending="pending")
+      c-alert-overlay(
         :value="hasError",
         :message="serverErrorMessage"
       )
@@ -38,17 +38,12 @@ import { generateWidgetByType } from '@/helpers/entities';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
 import widgetStatsWrapperMixin from '@/mixins/widget/stats/stats-wrapper';
 
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
-import AlertOverlay from '@/components/layout/alert/alert-overlay.vue';
-
 import StatsCalendarMenu from './stats-calendar-menu.vue';
 
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
-    ProgressOverlay,
-    AlertOverlay,
     StatsCalendarMenu,
   },
   mixins: [widgetFetchQueryMixin, widgetStatsWrapperMixin],
