@@ -1,4 +1,4 @@
-import { mergeWith, get, has, isArray, isFunction, flow, uniq } from 'lodash';
+import { mergeWith, get, has, flow, uniq, isArray, isFunction } from 'lodash';
 
 class Features {
   constructor() {
@@ -12,6 +12,10 @@ class Features {
 
         if (isArray(objValue)) {
           return uniq(objValue.concat(srcValue));
+        }
+
+        if (get(objValue, '__esModule') || get(srcValue, '__esModule')) {
+          return { ...objValue, ...srcValue };
         }
 
         return undefined;
