@@ -184,7 +184,7 @@ Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous
 
 Dans AWX, vous pourrez exploiter ces variables dans un modèle de job en activant le paramètre `ask_variables_on_launch=TRUE`. Ou, dans l'interface web, en cochant la case :
 
-![](./img/remediation_awx7.png)
+![awx7](./img/remediation_awx7.png)
 
 Les variables contenues dans `extra_vars` seront alors automatiquement utilisables par le job.
 
