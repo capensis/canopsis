@@ -112,23 +112,25 @@ Voici un listing de paramètres nécessaires à la configuration CAS :
 
 |   Attribut   |                    Description                     |            Exemple             |
 | ------------ | -------------------------------------------------- | ------------------------------ |
-|  `service`   |         URL de connexion pour le Canopsis          |   http://canopsis.info.local/  |
-| `default_role` | Rôle par défaut au moment de la première connexion |         Visualisation          |
-|   `title`    |        Label sur le formulaire de connexion        |           Connexion            |
-|   `server`   |            Serveur de connexion WebSSO             | https://cas.info.local/websso/ |
+|  `login_url`      |         URL du serveur CAS sur laquelle le navigateur web va être redirigé pour s'authentifier        |   http://canopsis.info.local/  |
+| `default_role`    | Rôle par défaut au moment de la première connexion                                                    |         Visualisation          |
+|   `title`         |        Label sur le formulaire de connexion                                                           |           Connexion            |
+|   `validate_url`  |            URL de validation du serveur CAS à laquelle l'API va accéder                               | https://cas.info.local/websso/ |
 
 La configuration se fait dans un fichier JSON : **casconfig.json**
 
 ```json
 {
+    "_id": "cservice.casconfig",
     "crecord_type": "cservice",
     "crecord_name": "casconfig",
-    "_id": "cservice.casconfig",
     "enable": true,
-    "service": "http://canopsis.info.local/",
     "default_role": "Visualisation",
     "title": "Connexion",
-    "server": "https://cas.info.local/websso/"
+    "login_url": "http://localhost:8443/cas/login",
+    "validate_url": "http://cas:8443/cas/serviceValidate",
+    "server": "",
+    "service": ""
 }
 ```
 
@@ -144,17 +146,18 @@ Le résultat renvoyé doit être de type :
 {"total": 1, "data": [{"..."}], "success": true}
 ```
 
-Enfin, vous devez vous assurer que le fichier `/opt/canopsis/etc/webserver.conf` contienne bien `canopsis.auth.cas` dans la liste des mécanismes d'authentification :
-
-```ini
-[auth]
-providers = canopsis.auth.authkey,canopsis.auth.cas
+Enfin, vous devez vous assurer que le fichier `/opt/canopsis/share/config/api/security/config.yml` contienne bien `cas` dans la liste des mécanismes d'authentification :
+```yaml
+security:
+  auth_providers:
+    - cas
+    ...
 ```
 
-Vous devez ensuite **obligatoirement** redémarrer le serveur web Gunicorn (ou le conteneur `webserver` en Docker) :
+Vous devez ensuite **obligatoirement** redémarrer les APIs ( `api` et `oldapi` en docker ).
 
 ```sh
-systemctl restart canopsis-webserver
+systemctl restart canopsis-service@canopsis-api canopsis-service@canopsis-oldapi
 ```
 
 ### Utilisation de CAS
