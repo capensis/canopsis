@@ -49,7 +49,6 @@ import {
   EVENT_ENTITY_STYLE,
   EVENT_ENTITY_TYPES,
   ENTITIES_STATES,
-  ENTITIES_STATES_STYLES,
   WIDGETS_ACTIONS_TYPES,
   USERS_RIGHTS,
   ENTITIES_STATUSES,
@@ -153,18 +152,14 @@ export default {
       };
     },
     color() {
-      if (this.hasActivePbehavior || this.isWatcherOnPbehavior) {
-        return WATCHER_STATES_COLORS.pause;
-      }
-
-      return ENTITIES_STATES_STYLES[this.entity.state.val].color;
+      return WATCHER_STATES_COLORS[this.entity.color];
     },
 
     mainIcons() {
       const mainIcons = [];
 
       if (!this.isPaused && !this.hasActivePbehavior) {
-        mainIcons.push(WEATHER_ICONS[this.entity.color]);
+        mainIcons.push(WEATHER_ICONS[this.entity.icon]);
       }
 
       mainIcons.push(...this.entity.pbehaviors.map(({ type }) => type.icon_name));

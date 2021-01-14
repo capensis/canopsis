@@ -97,6 +97,10 @@ $mobileBreakpoint: 450px;
     right: 0;
     bottom: 1em;
     cursor: inherit;
+
+    &:hover {
+      position: absolute;
+    }
   }
 
   .watcherName {

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card.white--text.cursor-pointer.weather__item(
     :class="itemClasses",
-    :style="{ height: itemHeight + 'em', backgroundColor: color}",
+    :style="{ height: itemHeight + 'em', backgroundColor: color }",
     tile,
     @click.native="showAdditionalInfoModal"
   )
