@@ -1,6 +1,6 @@
 <template lang="pug">
   v-container
-    the-page-header {{ $t('common.roles') }}
+    c-the-page-header {{ $t('common.roles') }}
     roles-list(
       :roles="roles",
       :pending="rolesPending",
@@ -10,7 +10,7 @@
       @remove="showRemoveRoleModal",
       @remove-selected="showRemoveSelectedRolesModal"
     )
-    fab-buttons(
+    c-fab-btn(
       :has-access="hasCreateAnyRoleAccess",
       @refresh="fetchList",
       @create="showCreateRoleModal"
@@ -28,11 +28,9 @@ import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import localQueryMixin from '@/mixins/query-local/query';
 
 import RolesList from '@/components/other/roles/roles-list.vue';
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
   components: {
-    FabButtons,
     RolesList,
   },
   mixins: [

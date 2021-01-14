@@ -1,5 +1,5 @@
 <template lang="pug">
-  advanced-data-table.white(
+  c-advanced-data-table.white(
     :headers="headers",
     :items="roles",
     :loading="pending",
@@ -17,12 +17,12 @@
           v-icon(color="error") delete
     template(slot="actions", slot-scope="props")
       v-layout(row)
-        action-btn(
+        c-action-btn(
           v-if="hasUpdateAnyRoleAccess",
           type="edit",
           @click="$emit('edit', props.item)"
         )
-        action-btn(
+        c-action-btn(
           v-if="hasDeleteAnyRoleAccess",
           type="delete",
           @click="$emit('remove', props.item._id)"
@@ -32,10 +32,7 @@
 <script>
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
-
 export default {
-  components: { ActionBtn },
   mixins: [rightsTechnicalRoleMixin],
   props: {
     roles: {

@@ -10,7 +10,7 @@
         @add:event="$emit('add:event', $event)"
       )
     .float-clear
-    table-pagination(
+    c-table-pagination(
       :total-items="pagination.total",
       :rows-per-page="pagination.limit",
       :page="pagination.page",
@@ -24,13 +24,10 @@ import { orderBy } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import TablePagination from '@/components/other/table/table-pagination.vue';
-
 import WatcherEntity from './entity.vue';
 
 export default {
   components: {
-    TablePagination,
     WatcherEntity,
   },
   props: {

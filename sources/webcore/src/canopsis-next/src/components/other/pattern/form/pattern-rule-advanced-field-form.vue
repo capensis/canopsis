@@ -8,7 +8,7 @@
     v-flex.pl-1(xs9)
       mixed-field(v-field="form.value")
     v-flex
-      action-btn(
+      c-action-btn(
         type="delete",
         @click="$emit('delete')"
       )
@@ -18,10 +18,9 @@
 import { uniq } from 'lodash';
 
 import MixedField from '@/components/forms/fields/mixed-field.vue';
-import ActionBtn from '@/components/tables/action-btn.vue';
 
 export default {
-  components: { MixedField, ActionBtn },
+  components: { MixedField },
   model: {
     prop: 'form',
     event: 'input',

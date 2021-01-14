@@ -33,7 +33,6 @@ import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
 import PlaylistForm from '@/components/other/playlists/form/playlist-form.vue';
-import ProgressOverlay from '@/components/layout/progress/progress-overlay.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -44,7 +43,7 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { PlaylistForm, ProgressOverlay, ModalWrapper },
+  components: { PlaylistForm, ModalWrapper },
   mixins: [
     entitiesViewGroupMixin,
     rightsEntitiesGroupMixin,

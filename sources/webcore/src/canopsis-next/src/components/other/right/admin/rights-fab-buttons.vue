@@ -1,5 +1,5 @@
 <template lang="pug">
-  fab-expand-buttons(
+  c-fab-expand-btn(
     v-if="hasCreateAnyUserAccess || hasCreateAnyRoleAccess || hasCreateAnyActionAccess",
     @refresh="refresh"
   )
@@ -27,12 +27,7 @@ import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';
 import rightsTechnicalRoleMixin from '@/mixins/rights/technical/role';
 import rightsTechnicalActionMixin from '@/mixins/rights/technical/action';
 
-import FabExpandButtons from '@/components/other/fab-buttons/fab-expand-buttons.vue';
-
 export default {
-  components: {
-    FabExpandButtons,
-  },
   mixins: [
     entitiesUserMixin,
     rightsTechnicalUserMixin,

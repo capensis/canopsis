@@ -20,7 +20,7 @@ import { MODALS } from '@/constants';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import WatcherPauseEventForm from '@/components/other/service-weather/watcher-pause-event-form.vue';
+import WatcherPauseEventForm from '@/components/widgets/service-weather/watcher-pause-event-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
