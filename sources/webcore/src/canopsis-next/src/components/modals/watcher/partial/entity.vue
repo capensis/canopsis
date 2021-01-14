@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { isNull, pickBy } from 'lodash';
+import { isNull, pickBy, uniq } from 'lodash';
 
 import {
   CRUD_ACTIONS,
@@ -164,7 +164,7 @@ export default {
 
       mainIcons.push(...this.entity.pbehaviors.map(({ type }) => type.icon_name));
 
-      return mainIcons;
+      return uniq(mainIcons);
     },
 
     extraIcons() {
