@@ -43,10 +43,12 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
+    const { pbehaviors = [], pbehaviorsToAdd = [] } = this.modal.config;
+
     return {
       form: {
-        pbehaviorsById: keyBy(this.modal.config.pbehaviors, '_id'),
-        addedPbehaviorsById: keyBy(this.modal.config.pbehaviorsToAdd.map(pbehaviorToDuplicateForm), '_id'),
+        pbehaviorsById: keyBy(pbehaviors, '_id'),
+        addedPbehaviorsById: keyBy(pbehaviorsToAdd.map(pbehaviorToDuplicateForm), '_id'),
         changedPbehaviorsById: {},
         removedPbehaviorsById: {},
       },
