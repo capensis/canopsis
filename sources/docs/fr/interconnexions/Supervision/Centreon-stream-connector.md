@@ -87,14 +87,14 @@ La traduction des états entre Centreon et Canopsis est la suivante :
 
 - lua version >= 5.1.4
 - lua-socket library >= 3.0rc1-2
-- centreon-broker version 19.10.5 ou >= 20.04.2
+- centreon-broker version >= 20.04.12 ou >= 20.10.3
 
 ### Installation
 
 #### Par les paquets
 
 !!! warning
-    Uniquement valable pour une version de centreon-broker >= 20.04.2.
+    Uniquement valable pour une version de centreon-broker version >= 20.04.12 ou >= 20.10.3
 
 **Installation du dépôt Canopsis :**
 
@@ -108,14 +108,27 @@ enabled=1" > /etc/yum.repos.d/canopsis.repo
 
 **Installation du paquet :**
 
-```
-yum install canopsis-connector-centreon-stream-connector
-```
+   * Pour Centreon 20.04 
+   ```
+   yum install canopsis-connector-centreon-stream-connector-2004
+   ```
+   * Pour Centreon 20.10
+   ```
+   yum install canopsis-connector-centreon-stream-connector-2010
+   ```
+
+
+!!! warning
+    Si une précédente version du connecteur à été installé, il faudra la désinstaller ua préalable
+
+   ```
+   yum remove install canopsis-connector-centreon-stream-connector
+   ```
 
 #### Par les sources
 
 !!! warning
-    Compatible avec la version 19.10.5 et >= 20.04.2 :
+    Compatible avec la version >= 20.04.12 ou >= 20.10.3 :
 
 0. Récupérer les [sources du connecteur][sources]
 1. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
@@ -166,8 +179,7 @@ Canopsis tous les évènements qui circulent sans qu'il y ait forcément de chan
 d'état et ce pendant la durée du "init_spread_timer".
 
 !!! warning
-    Cela implique un pic de charge  lors de l'activation du connecteur pendant la
-durée du "init_spread_timer".
+    Cela implique un pic de charge  lors de l'activation du connecteur pendant la durée du "init_spread_timer".
 
 #### Exemple de configuration
 
