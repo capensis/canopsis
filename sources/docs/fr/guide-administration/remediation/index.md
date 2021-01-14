@@ -125,7 +125,7 @@ Ce paragraphe décrit la manière de procéder pour `Rundeck` et `Awx`.
 ### Rundeck
 
 L'ordonnanceur attend des `variables` pour un job dans une structure qui doit être appelée `options`.
-Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous pouvez préciser 
+Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous pouvez préciser :
 
 ```json
 {
@@ -136,12 +136,12 @@ Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous
 }
 ```
 
-Du coté de Rundeck, vous pourrez exploiter ces variables grâce aux notations suivantes : 
+Du coté de Rundeck, vous pourrez exploiter ces variables grâce aux notations suivantes :
 
 * `@option.variable1@`
 * `$RD_OPTION_VARIABLE2`
 
-Voici un exemple complet de passage de variables de Canopsis vers Rundeck
+Voici un exemple complet de passage de variables de Canopsis vers Rundeck :
 
 **Payload Job Canopsis**
 
@@ -166,4 +166,38 @@ echo -e "\tComposant : @option.component@"
 echo -e "\tResource : @option.resource@"
 echo "Service à redémarrer : $RD_OPTION_SERVICE_NAME"
 echo "Terminé"
+```
+
+### AWX
+
+L'ordonnanceur attend des `variables` pour un job dans une structure qui doit être appelée `extra_vars`.
+Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous pouvez préciser :
+
+```json
+{
+  "extra_vars": {
+    "variable1" : "valeur1",
+    "variable2" : "valeur2"
+  }
+}
+```
+
+Dans AWX, vous pourrez exploiter ces variables dans un modèle de job en activant le paramètre `ask_variables_on_launch=TRUE`. Ou, dans l'interface web, en cochant la case :
+
+![](./img/remediation_awx7.png)
+
+Les variables contenues dans `extra_vars` seront alors automatiquement utilisables par le job.
+
+Voici un exemple complet de passage de variables de Canopsis vers AWX :
+
+**Payload Job Canopsis**
+
+```json
+{
+  "extra_vars": {
+    "component": "{{.Alarm.Value.Component}}",
+    "resource": "{{.Alarm.Value.Resource}}",
+    "entity_id": "{{.Entity.ID}}"
+  }
+}
 ```
