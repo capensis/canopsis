@@ -11,6 +11,7 @@ import {
   REMEDIATION_CONFIGURATION_TYPES,
   PBEHAVIOR_RRULE_PERIODS_RANGES,
   ENGINES_NAMES,
+  WIDGET_TYPES,
 } from '@/constants';
 
 import featureService from '@/services/features';
@@ -846,37 +847,37 @@ export default {
     widgetCreation: {
       title: 'Sélectionnez un widget',
       types: {
-        alarmList: {
+        [WIDGET_TYPES.alarmList]: {
           title: 'Bac à alarmes',
         },
-        context: {
+        [WIDGET_TYPES.context]: {
           title: 'Explorateur de contexte',
         },
-        weather: {
+        [WIDGET_TYPES.weather]: {
           title: 'Météo des services',
         },
-        statsHistogram: {
+        [WIDGET_TYPES.statsHistogram]: {
           title: 'Histogramme des statistiques',
         },
-        statsCurves: {
+        [WIDGET_TYPES.statsCurves]: {
           title: 'Courbes de statistiques',
         },
-        statsTable: {
+        [WIDGET_TYPES.statsTable]: {
           title: 'Tableau de statistiques',
         },
-        statsCalendar: {
+        [WIDGET_TYPES.statsCalendar]: {
           title: 'Calendrier',
         },
-        statsNumber: {
+        [WIDGET_TYPES.statsNumber]: {
           title: 'Compteur de statistiques',
         },
-        statsPareto: {
+        [WIDGET_TYPES.statsPareto]: {
           title: 'Diagramme de Pareto',
         },
-        text: {
+        [WIDGET_TYPES.text]: {
           title: 'Texte',
         },
-        counter: {
+        [WIDGET_TYPES.counter]: {
           title: 'Compteur',
         },
       },

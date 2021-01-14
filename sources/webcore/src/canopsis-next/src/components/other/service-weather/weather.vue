@@ -68,8 +68,8 @@ export default {
       ]);
 
       if (this.query.sortKey) {
-        query.orderby = this.query.sortKey;
-        query.direction = this.query.sortDir;
+        query.sort_by = this.query.sortKey;
+        query.sort = this.query.sortDir.toLowerCase();
       }
 
       return query;

@@ -5,11 +5,11 @@
         span {{ $t('modals.pbehaviorPlanning.title') }}
       template(slot="text")
         pbehavior-planning-calendar(
-          :pbehaviorsById.sync="form.pbehaviorsById",
-          :addedPbehaviorsById.sync="form.addedPbehaviorsById",
-          :changedPbehaviorsById.sync="form.changedPbehaviorsById",
-          :removedPbehaviorsById.sync="form.removedPbehaviorsById",
-          :readOnly="readOnly",
+          :pbehaviors-by-id.sync="form.pbehaviorsById",
+          :added-pbehaviors-by-id.sync="form.addedPbehaviorsById",
+          :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById",
+          :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById",
+          :read-only="readOnly",
           :filter="filter"
         )
       template(slot="actions")
@@ -27,7 +27,7 @@ import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
-import { pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';
 
@@ -46,17 +46,13 @@ export default {
     return {
       form: {
         pbehaviorsById: keyBy(this.modal.config.pbehaviors, '_id'),
-        addedPbehaviorsById: {},
+        addedPbehaviorsById: keyBy(this.modal.config.pbehaviorsToAdd.map(pbehaviorToDuplicateForm), '_id'),
         changedPbehaviorsById: {},
         removedPbehaviorsById: {},
       },
     };
   },
   computed: {
-    pbehaviors() {
-      return this.config.pbehaviors;
-    },
-
     readOnly() {
       return !!this.config.readOnly;
     },
