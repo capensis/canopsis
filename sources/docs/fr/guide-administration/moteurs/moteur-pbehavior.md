@@ -71,6 +71,17 @@ Ensuite, chaque minute, le moteur calcule les comportements périodiques et leur
 
 Un seul comportement peut être actif, à un moment donné, sur une entité.
 
+## Gestion des fuseaux horaires
+
+Le fuseau horaire utilisé par défaut pour le calcul des pbehaviors est `Europe/Paris`, en prenant en compte les heures d'été et d'hiver.
+
+Le fichier de configuration `/opt/canopsis/etc/canopsis.toml` vous permet de modifier cette valeur (au [format `tz`](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)), si nécessaire :
+
+```ini
+[Canopsis.timezone]
+Timezone = "Europe/Paris"
+```
+
 ## Administration de la planification
 
 ### Configuration des types de comportements périodiques
