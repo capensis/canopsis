@@ -41,7 +41,7 @@ Par exemple, si une entité a été mise en `pause` la raison pourra préciser :
 
 ### Filtre
 
-Le filtre quant à lui est utilisé pour déterminer sur quelles entités le comportement va s'appliquer. Il prend en charge les opération OR et AND et s'applique directement sur les variables de l'entité.
+Le filtre est utilisé pour déterminer sur quelles entités le comportement va s'appliquer. Il prend en charge les opération `OR` et `AND`, et s'applique directement sur les variables de l'entité.
 
 Pour plus d'information à propos des filtres, reportez-vous à [la documentation dédiée](../../guide-utilisation/interface/filtres/index.md).
 
@@ -61,7 +61,7 @@ La commande `engine-pbehavior -help` liste toutes les options acceptées par le 
 
 ## Fonctionnement
 
-Ce moteur doit toujours être présent. Ce moteur est écrit en langage Go.
+Ce moteur doit toujours être présent.
 
 Un comportement périodique est caractérisé par un type et une raison (voir ci-dessous). Il contient également un filtre (`filter`) qui est appliqué sur le référentiel des entités.
 
@@ -79,7 +79,7 @@ Rendez-vous dans le menu Administration puis dans Administration de la planifica
 
 ![Menu administration de la planification](./img/menu-administration-planification.png)
 
-Les types par défaut s'affichent à l'écran : `actif`, `inactif`, `maintenance` et `pause`. Ils ne peuvent être ni supprimés, ni modifiés. La priorité des types est gérée dans l'ordre croissant, c'est à dire, 0 est la priorité la plus faible et 3 est la plus forte et sera traitée avant les autres. Un seul type de comportement périodique peut être actif sur une entité à un moment donné.
+Les types par défaut s'affichent à l'écran : `actif`, `inactif`, `maintenance` et `pause`. Ils ne peuvent être ni supprimés, ni modifiés. La priorité des types est gérée dans l'ordre croissant : `0` est la priorité la plus faible et `3` est la plus forte et sera traitée avant les autres. Un seul type de comportement périodique peut être actif sur une entité à un moment donné.
 
 ![Types de comportements périodiques](./img/admin-planification-types-defaut.png)
 

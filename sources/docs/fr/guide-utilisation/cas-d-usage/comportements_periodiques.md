@@ -71,7 +71,7 @@ La tuile affichera alors des compteurs supplémentaires.
 
 ## Surcharge d'un comportement périodique
 
-Si une application ou une entité possède déjà un comportement actif, tout nouveau comportement, **ayant une priorité plus élevée**, viendra surcharger le(s) précédent(s).
+Si une application ou une entité possède déjà un comportement actif, tout nouveau comportement, **ayant une priorité plus élevée**, viendra surcharger les précédents.
 
 Par exemple, l'application Messagerie a été mise en maintenance grâce à un premier comportement de type `maintenance`, priorité 2.
 
@@ -92,12 +92,12 @@ En parallèle des plages de services, vous pouvez déclarer des entités en main
 Vous avez la possibilité d'effectuer cette opération :
 
 * **Depuis le panneau d'exploitation des comportements périodiques** : la mise en maintenance s'effectue à partir d'un filtre.
-* **Depuis le Bac à alarmes** : dans ce cas, la mise en maintenance se fait de manière unitaire (en sélectionnant individuellement la ou les alarmes concernées).
+* **Depuis le Bac à alarmes** : dans ce cas, la mise en maintenance se fait de manière unitaire (en sélectionnant individuellement les alarmes concernées).
 * **Depuis l'Explorateur de contexte** : la mise en maintenance se fait de manière unitaire sur des entités quelconques.
 
 ### Depuis le panneau d'exploitation
 
-Pour cela, rendez-vous dans le menu Exploitation puis dans Comportements périodiques et ajoutez un comportement avec un filtre qui sélectionne les entités de *ERP*.
+Pour cela, rendez-vous dans le menu Exploitation > Comportements périodiques, et ajoutez un comportement avec un filtre qui sélectionne les entités de *ERP*.
 
 Cliquez d'abord sur le bouton `+` en bas à droite de la fenêtre.
 
@@ -113,8 +113,9 @@ Créer ensuite votre filtre en fonction des variables des entités que vous souh
 
 ![Filtre comportement](./img/pbh_filtre_comportement.png)  
 
-Validez votre filtre avec le bouton Soumettre pour revenir au formulaire de création du comportement.   
-Vous pouvez alors afficher votre filtre au format `JSON` en passant le curseur sur l’icône `infos` apparue à coté du bouton pour ajouter un filtre.
+Validez votre filtre avec le bouton Soumettre pour revenir au formulaire de création du comportement.
+ 
+Vous pouvez alors afficher votre filtre au format JSON en passant le curseur sur l’icône `infos` apparue à coté du bouton pour ajouter un filtre.
 
 ![Filtre format JSON](./img/pbh_afficher_filtre_json.png)
 
@@ -142,7 +143,7 @@ Le processus est ensuite le même qu'en passant par l'interface d'exploitation, 
 
 Il est également possible d'appliquer des filtres sur les comportements périodiques.  
 
-Les alarmes possèdent une variable `pbehavior`, qui lui même contient des attributs sur lesquels on pourra filtrer. Pour accéder à la liste des variables référez vous à la capture précédente et cliquez sur Liste des variables disponibles.
+Les alarmes possèdent une variable `pbehavior`, qui contient elle-même des attributs sur lesquels on pourra filtrer. Pour accéder à la liste des variables, référez-vous à la capture précédente et cliquez sur Liste des variables disponibles.
 
 Vous pourrez alors afficher les attributs de la variable `pbehavior` :
 
@@ -160,7 +161,7 @@ Puis dans le widget bac à alarmes, sélectionnez le filtre nouvellement créé 
 
 ![Filtre comportement actif](./img/pbh_filtre_maintenances_actives_alarmes.png)  
 
-Par ailleurs, la colonne *extra_details* affiche une icône pour signaler la présence d'un comportement périodique actif.  
+Par ailleurs, la colonne `extra_details` affiche une icône pour signaler la présence d'un comportement périodique actif.  
 
 ### Depuis l'explorateur de contexte
 
