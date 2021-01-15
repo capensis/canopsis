@@ -45,19 +45,19 @@ Pour créer une plage, du lundi au vendredi, de 19h15 à 8h :
 
 ## Aperçu de la plage de service
 
-Après avoir validé les différents formulaires vous pouvez visualiser le résultat dans le calendrier.
+Après avoir validé les différents formulaires, vous pouvez visualiser le résultat dans le calendrier.
 
 ![Aperçu de la plage de service](./img/pbh_apercu_plage_19h15-08h.png)
 
 ## Affichage dans la météo de services
 
-Lorsque le comportement périodique créé précédemment est actif la tuile se présente sous cette forme.
+Lorsque le comportement périodique créé précédemment est actif, la tuile se présente sous cette forme.
 
 ![Affichage tuile avec comportement actif](./img/pbh_tuile_comportement_actif.png)
 
 ## Maintenance partielle
 
-Si certaines entités d'une application ne sont pas en maintenance la tuile s'affichera de cette façon.
+Si certaines entités d'une application ne sont pas en maintenance, la tuile s'affichera de cette façon.
 
 ![Maintenance ERP partielle](./img/pbh_maintenance_erp_partielle.png)
 
@@ -101,7 +101,7 @@ Pour cela, rendez-vous dans le menu Exploitation puis dans Comportements périod
 
 Cliquez d'abord sur le bouton `+` en bas à droite de la fenêtre.
 
-Sélectionnez une date ou un intervalle de temps pendant lequel vous souhaitez que le comportement périodique soit actif. Vous pouvez sélectionner plusieurs dates en maintenant le bouton de la souris enfoncé et en la faisant glisser depuis la date de début jusqu'à la date de fin. Lorsque vous relâchez le bouton de la souris la fenêtre de création s'affiche.
+Sélectionnez une date ou un intervalle de temps pendant lequel vous souhaitez que le comportement périodique soit actif. Vous pouvez sélectionner plusieurs dates en maintenant le bouton de la souris enfoncé et en la faisant glisser depuis la date de début jusqu'à la date de fin. Lorsque vous relâchez le bouton de la souris, la fenêtre de création s'affiche.
 
 ![Sélection des dates](./img/pbh_selection_dates.png)
 
@@ -130,13 +130,13 @@ Les entités incluses dans votre filtre sont à présent en maintenance.
 
 #### Mettre une entité en maintenance
 
-Depuis le bac à alarme sélectionnez votre alarme et ajoutez lui un comportement périodique par le biais de l'action dédiée.
+Depuis le Bac à alarmes, sélectionnez votre alarme et ajoutez-lui un comportement périodique par le biais de l'action dédiée.
 
 ![Ajout comportement alarme](./img/pbh_ajout_comportement_alarme1.png)  
 
 ![Ajout comportement alarme](./img/pbh_ajout_comportement_alarme2.png)  
 
-Le processus est ensuite le même qu'en passant par l'interface d'exploitation mis à part que le filtre sera généré automatiquement.
+Le processus est ensuite le même qu'en passant par l'interface d'exploitation, mis à part que le filtre sera généré automatiquement.
 
 #### Filtrer les alarmes en fonction des comportements
 

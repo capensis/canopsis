@@ -102,7 +102,7 @@ Cliquez sur le bouton Soumettre et votre type personnalisé apparaît dans la li
 
 ### Configuration des raisons
 
-Cliquez sur l'onglet Raison. Par défaut, la liste des raisons est vide. Comme pour les types vous pouvez cliquer sur le bouton `+` pour créer une nouvelle raison. Chaque raison doit avoir un nom et une description.
+Cliquez sur l'onglet Raison. Par défaut, la liste des raisons est vide. Comme pour les types, vous pouvez cliquer sur le bouton `+` pour créer une nouvelle raison. Chaque raison doit avoir un nom et une description.
 
 Voici, par exemple, une liste de raisons personnalisées :
 
@@ -110,7 +110,7 @@ Voici, par exemple, une liste de raisons personnalisées :
 
 ## Configuration des dates d'exception
 
-Il est également possible de configurer des dates d'exceptions dans l'onglet dédié. Pour cela cliquez de nouveau sur le bouton `+` pour créer une liste d'exceptions.
+Il est également possible de configurer des dates d'exceptions dans l'onglet dédié. Pour cela, cliquez de nouveau sur le bouton `+` pour créer une liste d'exceptions.
 
 Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. À chaque date vous pourrez associer un des types existants.
 
