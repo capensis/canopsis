@@ -13,6 +13,7 @@ Pour cela vous allez utiliser des comportements périodiques (ou *pbehaviors*, p
     Les informations qui figurent sur cette page ne sont donc valables que pour cette version.
 
 Les cas d'usage détaillés dans cette documentation vous permettront de :
+
 * Définir la plage de service d'une application
 * Mettre en maintenance une entité
 
@@ -164,6 +165,7 @@ Par ailleurs, la colonne *extra_details* affiche une icône pour signaler la pr�
 ### Depuis l'explorateur de contexte
 
 La marche à suivre est identique à celle présentée pour mettre en place une plage de service :
-* Rendez-vous dans l'explorateur de contexte.
+
+* Rendez-vous dans l'Explorateur de contexte.
 * Sélectionnez l'entité concernée
 * Ajoutez un comportement périodique (le filtre est généré automatiquement).

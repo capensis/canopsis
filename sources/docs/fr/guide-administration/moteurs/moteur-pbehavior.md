@@ -3,6 +3,7 @@
 Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont des évènements de calendrier, récurrents ou non, qui permettent de modifier la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes, par exemple).
 
 Ils permettent notamment de :
+
 - Déclarer des périodes de maintenance sur des applications.
 - Conditionner l'exécution de règles (ex : cette remédiation doit s'appliquer uniquement la nuit).
 - Conditionner l'affichage d'alarmes (ex: ne pas montrer les alarmes dont l'entité est en maintenance).
@@ -27,6 +28,7 @@ Des dates d'exception viennent compléter le planning si l'on a besoin de préci
 ### Type
 
 Il indique la nature du comportement périodique, par exemple :
+
 - La surveillance de l'entité a été mise en `pause`.
 - Un `changement` est en cours sur l'application.
 - Les entités sont en cours de `maintenance`.
