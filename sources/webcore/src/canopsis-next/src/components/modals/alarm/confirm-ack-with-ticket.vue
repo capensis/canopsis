@@ -28,7 +28,6 @@
 <script>
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -40,7 +39,6 @@ export default {
   name: MODALS.confirmAckWithTicket,
   components: { ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     submittableMixin({
       method: 'submitWithTicket',

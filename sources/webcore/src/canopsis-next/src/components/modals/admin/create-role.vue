@@ -21,7 +21,6 @@ import { MODALS } from '@/constants';
 
 import { generateRole } from '@/helpers/entities';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesRoleMixin from '@/mixins/entities/role';
 import entitiesViewGroupMixin from '@/mixins/entities/view/group';
 import submittableMixin from '@/mixins/submittable';
@@ -38,7 +37,6 @@ export default {
   },
   components: { RoleForm, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     entitiesRoleMixin,
     entitiesViewGroupMixin,
     submittableMixin(),

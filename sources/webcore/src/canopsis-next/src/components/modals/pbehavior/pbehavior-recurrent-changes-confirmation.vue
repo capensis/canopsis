@@ -27,8 +27,6 @@
 <script>
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
-
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
@@ -36,7 +34,6 @@ export default {
   components: {
     ModalWrapper,
   },
-  mixins: [modalInnerMixin],
   data() {
     return {
       type: PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected,

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    the-page-header {{ $t('common.playlists') }}
+    c-the-page-header {{ $t('common.playlists') }}
     playlists-list(
       :playlists="playlists",
       :pending="playlistsPending",
@@ -8,7 +8,7 @@
       @remove="showRemovePlaylistModal",
       @duplicate="showDuplicatePlaylistModal"
     )
-    fab-buttons(
+    c-fab-btn(
       v-if="hasCreateAnyPlaylistAccess",
       @refresh="fetchList",
       @create="showCreatePlaylistModal"
@@ -27,11 +27,9 @@ import entitiesPlaylistMixin from '@/mixins/entities/playlist';
 import entitiesPlaylistRightMixin from '@/mixins/entities/playlist/right';
 
 import PlaylistsList from '@/components/other/playlists/admin/playlists-list.vue';
-import FabButtons from '@/components/other/fab-buttons/fab-buttons.vue';
 
 export default {
   components: {
-    FabButtons,
     PlaylistsList,
   },
   mixins: [

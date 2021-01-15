@@ -37,7 +37,6 @@ import Draggable from 'vuedraggable';
 
 import { MODALS } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
@@ -50,7 +49,6 @@ export default {
   },
   components: { Draggable, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     submittableMixin(),
     confirmableModalMixin(),
   ],
@@ -77,7 +75,7 @@ export default {
       this.$modals.show({
         name: MODALS.eventFilterRuleCreateAction,
         config: {
-          ruleAction: this.actions[index],
+          ruleAction: this.form.actions[index],
           action: ruleAction => this.$set(this.form.actions, index, ruleAction),
         },
       });

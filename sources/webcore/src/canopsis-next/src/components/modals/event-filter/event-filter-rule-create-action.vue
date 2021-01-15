@@ -36,7 +36,6 @@ import { cloneDeep, pick } from 'lodash';
 
 import { MODALS, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES_MAP } from '@/constants';
 
-import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 import entitiesRightMixin from '@/mixins/entities/right';
@@ -76,7 +75,6 @@ export default {
   },
   components: { MixedField, ModalWrapper },
   mixins: [
-    modalInnerMixin,
     entitiesRightMixin,
     submittableMixin(),
     confirmableModalMixin(),

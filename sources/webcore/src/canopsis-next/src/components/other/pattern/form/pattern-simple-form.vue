@@ -1,7 +1,7 @@
 <template lang="pug">
   div.pattern-simple-editor
     v-layout(justify-end)
-      action-btn(
+      c-action-btn(
         v-for="(action, index) in mainActions",
         :key="index",
         :tooltip="action.tooltip",
@@ -27,7 +27,7 @@
                       p.body-1.font-italic.text-field {{ field | treeViewValue }}
           template(slot="append", slot-scope="{ item }")
             v-layout(row)
-              action-btn(
+              c-action-btn(
                 v-for="(action, index) in getActionsForItem(item)",
                 :key="index",
                 :tooltip="action.tooltip",
@@ -46,11 +46,10 @@ import { convertPatternToTreeview } from '@/helpers/treeview';
 
 import formMixin from '@/mixins/form';
 
-import ActionBtn from '@/components/tables/action-btn.vue';
 import PatternInformation from '@/components/other/pattern/pattern-information.vue';
 
 export default {
-  components: { ActionBtn, PatternInformation },
+  components: { PatternInformation },
   filters: {
     treeViewValue(value) {
       if (isString(value)) {
