@@ -1,177 +1,128 @@
-# Moteur `pbehavior` (Python, Core)
+# Moteur `engine-pbehavior` (Go, Core)
 
-Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont des évènements de calendrier récurrents qui permettent de mettre en pause la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes, par exemple).
+Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont des évènements de calendrier, récurrents ou non, qui permettent de modifier la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes, par exemple).
 
-Ils permettent de créer des « downtimes », à savoir indiquer qu'une entité est en pause.
+Ils permettent notamment de :
 
-Les comportements sont définis dans la collection MongoDB `default_pbehavior`, et peuvent être ajoutés et modifiés avec l'[API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md).
+- Déclarer des périodes de maintenance sur des applications.
+- Conditionner l'exécution de règles (ex : cette remédiation doit s'appliquer uniquement la nuit).
+- Conditionner l'affichage d'alarmes (ex: ne pas montrer les alarmes dont l'entité est en maintenance).
+- Déclarer des périodes de service sur des applications.
+
+!!! Note
+    Avec la v4 de Canopsis le fonctionnement des comportements périodiques à été complètement revu.
+    Les informations qui figurent sur cette page ne sont donc valables que pour cette version.
+
+## Définitions
+
+Un comportement périodique est défini par plusieurs éléments.
+
+### Planning
+
+Il permet de définir une plage horaire ou un intervalle de dates pendant lequel le comportement périodique sera actif.
+
+Une règle de récurrence peut être ajoutée si l'on veut que le comportement s'active de façon périodique. L'intervalle défini précédemment se répétera alors de façon régulière.
+
+Des dates d'exception viennent compléter le planning si l'on a besoin de préciser des intervalles de temps pendant lesquels le comportement ne devra pas s'activer.
+
+### Type
+
+Il indique la nature du comportement périodique, par exemple :
+
+- La surveillance de l'entité a été mise en `pause`.
+- Un `changement` est en cours sur l'application.
+- Les entités sont en cours de `maintenance`.
+
+### Raison
+
+Elle permettra de préciser le motif de l'activation du comportement.
+
+Par exemple, si une entité a été mise en `pause` la raison pourra préciser : `Problème de sonde` ou `Hors plage de maintenance`.
+
+### Filtre
+
+Le filtre est utilisé pour déterminer sur quelles entités le comportement va s'appliquer. Il prend en charge les opération `OR` et `AND`, et s'applique directement sur les variables de l'entité.
+
+Pour plus d'information à propos des filtres, reportez-vous à [la documentation dédiée](../../guide-utilisation/interface/filtres/index.md).
+
+### Commentaire
+
+Vous pourrez également ajouter un commentaire à votre comportement périodique pour lui apporter une description détaillée.
+
+## Exploitation
+
+Consultez [la documentation sur les cas d'usage](../../guide-utilisation/cas-d-usage/comportements_periodiques.md) des comportements périodiques pour savoir comment accéder à leur interface de création et de gestion.
+
+## Utilisation
+
+### Options du moteur
+
+La commande `engine-pbehavior -help` liste toutes les options acceptées par le moteur.
 
 ## Fonctionnement
 
-Ce moteur doit toujours être présent, que vous utilisiez des moteurs Go ou non.
+Ce moteur doit toujours être présent.
 
-Un comportement périodique contient un filtre (`filter`) qui est appliqué sur une entité.
+Un comportement périodique est caractérisé par un type et une raison (voir ci-dessous). Il contient également un filtre (`filter`) qui est appliqué sur le référentiel des entités.
 
-Chaque minute, le moteur calcule les comportements périodiques et leur application sur les entités.
+Les comportements périodiques existants sont appliqués immédiatement sur les nouvelles alarmes. De la même façon, les comportements périodiques nouvellement créés sont appliqués immédiatement sur les alarmes existantes.
 
-## Définition d'un comportement périodique
+Ensuite, chaque minute, le moteur calcule les comportements périodiques et leur application sur les entités.
 
-Un comportement périodique se caractérise par les informations suivantes.
+Un seul comportement peut être actif, à un moment donné, sur une entité.
 
-|   Champ    |  Type  |                                             Description                                              |     |
-| ---------- | ------ | ---------------------------------------------------------------------------------------------------- | --- |
-|   `_id`    | string |                   Identifiant unique du comportement, généré par MongoDB lui-même.                   |     |
-|   `eids`   | liste  |                  Liste d'identifiants d'entité qui correspond au filtre précédent.                   |     |
-|   `name`   | string |       Type de comportement périodique. `downtime` est la seule valeur acceptée.                      |     |
-|  `author`  | string |              Auteur ou application ayant créé le comportement périodique.                            |     |
-| `enabled`  |  bool  |    Activer ou désactiver le pbehavior, pour qu’il puisse être ignoré, même sur une plage active.     |     |
-| `comments` | liste  |                                 `null` ou une liste de commentaires.                                 |     |
-|  `rrule`   | string | Règle de récurrence, champ texte [défini par la RFC 2445](https://www.kanzaki.com/docs/ical/recur.html).  |   |
-|  `tstart`  |  int   | Timestamp fournissant la date de départ, recalculée à partir de la `rrule` si présente.              |     |
-|  `tstop`   |  int   |  Timestamp fournissant la date de fin, recalculée à partir de la `rrule` si présente.                |     |
-|  `type_`   | string |             Optionnel. Type de comportement périodique (pause, maintenance…).                        |     |
-|  `reason`  | string |                       Optionnel. Raison pour laquelle ce comportement périodique a été posé.         |     |
-| `timezone` | string |                       Fuseau horaire dans lequel le comportement périodique doit s'exécuter.         |     |
-|  `exdate`  | array  |                     La liste des occurrences à ignorer sous forme de timestamps                      |     |
+## Gestion des fuseaux horaires
 
-Un exemple d'évènement `pbehavior` brut :
-```js
-{
-   "_id" : string,
-   "name" : string,
-   "filter" : string,
-   "comments" : [ {
-       "_id": string,
-       "author": string,
-       "ts": timestamp,
-       "message": string
-   } ],
-   "tstart" : timestamp,
-   "tstop" : timestamp,
-   "rrule" : string,
-   "enabled" : boolean,
-   "eids" : [ ],
-   "connector" : string,
-   "connector_name" : string,
-   "author" : string,
-   "timezone" : string,
-   "exdate" : [
-      timestamp
-   ]
-}
+Le fuseau horaire utilisé par défaut pour le calcul des pbehaviors est `Europe/Paris`, en prenant en compte les heures d'été et d'hiver.
+
+Le fichier de configuration `/opt/canopsis/etc/canopsis.toml` vous permet de modifier cette valeur (au [format `tz`](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)), si nécessaire :
+
+```ini
+[Canopsis.timezone]
+Timezone = "Europe/Paris"
 ```
 
-### Filtrage d'entités (`filter`)
+## Administration de la planification
 
-Le champ `filter` permet de filtrer les entités sur lesquelles le comportement périodique est appliqué.
+### Configuration des types de comportements périodiques
 
-Il peut prendre en charge les conditions `or` et `and` mais nécessite de les échapper.
+Rendez-vous dans le menu Administration puis dans Administration de la planification.
 
-Exemple :
+![Menu administration de la planification](./img/menu-administration-planification.png)
 
-```json
-{
-	"author": "root",
-	"name": "Pbehavior test 2",
-	"tstart": 1567439123,
-	"tstop": 1569599100,
-	"filter": {
-		"$or": [{
-			"impact": {
-				"$in": ["pbehavior_test_1"]
-			}
-		}, {
-			"$and": [{
-				"type": "component"
-			}, {
-				"name": "pbehavior_test_1"
-			}]
-		}]
-	},
-	"type_": "Hors plage horaire de surveillance",
-	"reason": "Problème d'habilitation",
-	"rrule": null,
-	"comments": [],
-	"exdate": []
-}
-```
+Les types par défaut s'affichent à l'écran : `actif`, `inactif`, `maintenance` et `pause`. Ils ne peuvent être ni supprimés, ni modifiés. La priorité des types est gérée dans l'ordre croissant : `0` est la priorité la plus faible et `3` est la plus forte et sera traitée avant les autres. Un seul type de comportement périodique peut être actif sur une entité à un moment donné.
 
-C'est un filtre appliqué directement sur les champs des entités contenues dans la collection `default_entities` de MongoDB.
+![Types de comportements périodiques](./img/admin-planification-types-defaut.png)
 
-### Règles de récurrence (`rrule`)
+### Création d'un type personnalisé
 
-C'est une règle de récurrence du comportement périodique.
+Cliquez sur le bouton `+` en bas à droite de la fenêtre pour ouvrir la fenêtre de création.
 
-Dans le cas où la `rrule` est absente, `tstart` et `tstop` font office de plage d’activation, sans récurrence.
+![Créer un type personnalisé](./img/admin-planification-creer-type.png)
 
-Dans le cas où la `rrule` est présente, `tstart` et `tstop` seront recalculés afin de refléter la récurrence.
+Renseignez les différents champs, choisissez un type parmi la liste et affectez-lui une priorité et une icône.
 
-### Dates d'exclusion (`exdate`)
+!!! Attention
+    Deux types ne peuvent avoir la même priorité.
 
-Il est possible d'empêcher l'exécution d'une occurrence d'un comportement périodique, à l'aide du champ `exdate`.
+![Formulaire type personnalisé](./img/admin-planification-type-personnalise.png)
 
-`exdate` est une liste de timestamps correspondant au début d'une occurrence à empêcher.
+Cliquez sur le bouton Soumettre et votre type personnalisé apparaît dans la liste.
 
-### Raison (`reason`)
+![Liste des types personnalisés](./img/admin-planification-liste-type-perso.png)
 
-Ce champ permet de préciser librement la raison qui motive la création de ce comportement périodique.
+### Configuration des raisons
 
-En revanche, lors de la création d'un comportement périodique par l'interface graphique, une liste de raisons prédéfinies est proposée à l'utilisateur.
+Cliquez sur l'onglet Raison. Par défaut, la liste des raisons est vide. Comme pour les types, vous pouvez cliquer sur le bouton `+` pour créer une nouvelle raison. Chaque raison doit avoir un nom et une description.
 
-Pour personnaliser cette liste vous devez insérer une configuration via l'API `associativetable`. Elle est stockée dans la collection `default_associativetable` de MongoDB. Par exemple :
+Voici, par exemple, une liste de raisons personnalisées :
 
-```sh
-curl -X POST -u root:root -H "Content-Type: application/json" -d '{
-    "reasons" :
-    [
-        "Problème de sonde",
-        "Problème de consigne",
-        "Maintenance préventive",
-        "Changement",
-        "Période de congés",
-        "Autre"
-    ]
-}' 'http://localhost:8082/api/v2/associativetable/pbehavior-reasons'
-```
+![Liste de raisons personnalisées](./img/admin-planification-liste-raisons.png)
 
-Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
+## Configuration des dates d'exception
 
-### Fuseau horaire (`timezone`)
+Il est également possible de configurer des dates d'exceptions dans l'onglet dédié. Pour cela, cliquez de nouveau sur le bouton `+` pour créer une liste d'exceptions.
 
-L'exécution de chaque comportement périodique se fait dans un fuseau horaire particulier.
+Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. À chaque date vous pourrez associer un des types existants.
 
-Lorsqu'un comportement périodique ne contient pas de champ `timezone`, le fuseau utilisé sera celui défini dans le fichier `/opt/canopsis/etc/pbehavior/manager.conf` sous le champ `default_timezone`.
-
-Si le fichier de configuration n'existe pas ou si le champ `default_timezone` n'existe pas, le fuseau `Europe/Paris` sera utilisé.
-
-Si le fuseau horaire choisi comporte des heures d'hiver et d'été, celles-ci seront respectées tout au long de l'année. Ainsi, un comportement périodique devant se déclencher à 16 heures s'exécutera à 16 heures en heure d'été et à 16 heures en heure d'hiver.
-
-## Collection MongoDB associée
-
-Les comportements périodiques sont stockés dans la collection MongoDB `default_pbehavior` (voir [API PBehavior](../../guide-developpement/api/api-v2-pbehavior.md)).
-
-Un exemple de comportement périodique appliqué pour une plage de maintenance sans `rrule` avec la raison `Problème d'habilitation` et le type `Maintenance` aux alarmes dont le composant est `pbehavior_test_1`.
-
-```json
-{
-    "_id" : "145331d4-d536-4c58-8e6d-229d5d8f3f10",
-    "filter" : "{\"$or\": [{\"impact\": {\"$in\": [\"pbehavior_test_1\"]}}, {\"$and\": [{\"type\": \"component\"}, {\"name\": \"pbehavior_test_1\"}]}]}",
-    "name" : "Pbehavior test 2",
-    "author" : "root",
-    "enabled" : true,
-    "type_" : "Hors plage horaire de surveillance",
-    "comments" : [],
-    "connector" : "canopsis",
-    "reason" : "Problème d'habilitation",
-    "connector_name" : "canopsis",
-    "eids" : [
-        "pbehavior_test_1",
-        "disk2/pbehavior_test_1"
-    ],
-    "tstart" : 1567439123,
-    "tstop" : 1569599100,
-    "timezone" : "Europe/Paris",
-    "exdate" : [],
-    "rrule" : null
-}
-```
+![Créer une liste d'exceptions](./img/admin-planification-liste-exceptions.png)
