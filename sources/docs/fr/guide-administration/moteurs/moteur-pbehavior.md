@@ -1,4 +1,4 @@
-# Moteur `pbehavior` (Go, Core)
+# Moteur `engine-pbehavior` (Go, Core)
 
 Les comportements périodiques (*pbehaviors*, pour *periodical behaviors*) sont des évènements de calendrier, récurrents ou non, qui permettent de modifier la surveillance d'une alarme pendant une période donnée (pour des maintenances ou des astreintes, par exemple).
 
