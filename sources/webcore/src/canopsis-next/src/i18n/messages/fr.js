@@ -406,6 +406,8 @@ export default {
     filterEditor: 'Éditeur de filtre',
     isAckNoteRequired: 'Champ \'Note\' requis lors d\'un ack ?',
     isSnoozeNoteRequired: 'Champ \'Note\' requis lorsque vous répétez ?',
+    linksCategoriesAsList: 'Afficher les liens sous forme de liste?',
+    linksCategoriesLimit: 'Nombre d\'éléments de catégorie',
     isMultiAckEnabled: 'Ack multiple',
     fastAckOutput: 'Commentaire d\'Ack rapide',
     isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',

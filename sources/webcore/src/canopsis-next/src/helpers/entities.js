@@ -2,7 +2,7 @@ import sha1 from 'sha1';
 import { get, omit, cloneDeep, isObject } from 'lodash';
 
 import i18n from '@/i18n';
-import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS } from '@/config';
+import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT, COLORS, DEFAULT_CATEGORIES_LIMIT } from '@/config';
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -82,6 +82,10 @@ export function generateWidgetByType(type) {
       label: i18n.t(labelKey),
       value,
     })),
+    linksCategoriesAsList: {
+      enabled: false,
+      limit: DEFAULT_CATEGORIES_LIMIT,
+    },
   };
 
   let specialParameters = {};

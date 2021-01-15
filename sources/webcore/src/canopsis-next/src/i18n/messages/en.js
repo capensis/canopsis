@@ -406,6 +406,8 @@ export default {
     filterEditor: 'Filter',
     isAckNoteRequired: 'Note field required when ack?',
     isSnoozeNoteRequired: 'Note field required when snooze?',
+    linksCategoriesAsList: 'Display links as a list?',
+    linksCategoriesLimit: 'Number of category items',
     isMultiAckEnabled: 'Multiple ack',
     fastAckOutput: 'Fast-ack output',
     isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',

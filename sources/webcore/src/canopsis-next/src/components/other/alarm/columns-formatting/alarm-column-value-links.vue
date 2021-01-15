@@ -1,17 +1,10 @@
 <template lang="pug">
-  v-menu(@click.native.stop, :disabled="isDisabled")
-    v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $t('common.links') }}
-    v-list(dark, dense)
-      v-list-tile-content(
-        v-for="category in filteredCategories",
-        :key="category.label"
-      )
-        v-list-tile-title.px-2.font-weight-bold.category {{ category.label }}
-        v-list-tile(
-          v-for="(link, index) in category.links",
-          :key="index"
-        )
-          alarm-column-value-link(:link="link")
+  div
+    v-menu(v-if="!asList", @click.native.stop, :disabled="isDisabled")
+      v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $t('common.links') }}
+      v-list(dark, dense)
+        category-links-list(:categories="filteredCategories")
+    category-links-list(v-else, :categories="filteredCategories", :limit="limit")
 </template>
 
 <script>
@@ -21,21 +14,33 @@ import { harmonizeCategories } from '@/helpers/links';
 
 import authMixin from '@/mixins/auth';
 
-import AlarmColumnValueLink from './alarm-column-value-link.vue';
+import CategoryLinksList from './category-links/category-links-list.vue';
 
 export default {
-  components: { AlarmColumnValueLink },
+  components: { CategoryLinksList },
   mixins: [authMixin],
   props: {
     links: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        Category1: [
+          { label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' },
+          { label: 'Procédure2', link: 'http://uneurl.local/?composant=feeder2_0&message=' },
+        ],
+        Category2: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
+        Category3: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
+        Category4: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
+        Category5: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
+      }),
     },
-  },
-  data() {
-    return {
-      isOpen: false,
-    };
+    asList: {
+      type: Boolean,
+      default: false,
+    },
+    limit: {
+      type: Number,
+      required: false,
+    },
   },
   computed: {
     filteredCategories() {
@@ -66,13 +71,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .category {
-    display: inline-block;
-
-    &:first-letter {
-      text-transform: uppercase;
-    }
-  }
-</style>

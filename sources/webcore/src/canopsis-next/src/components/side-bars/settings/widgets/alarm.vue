@@ -95,6 +95,12 @@
             v-model="settings.widget.parameters.isSnoozeNoteRequired",
             :title="$t('settings.isSnoozeNoteRequired')"
           )
+          v-divider
+          field-enabled-limit(
+            v-model="settings.widget.parameters.linksCategoriesAsList",
+            :title="$t('settings.linksCategoriesAsList')",
+            :label="$t('settings.linksCategoriesLimit')"
+          )
       v-divider
     v-btn.primary(data-test="submitAlarms", @click="submit") {{ $t('common.save') }}
 </template>
@@ -117,14 +123,15 @@ import FieldColumns from './fields/common/columns.vue';
 import FieldLiveReporting from './fields/common/live-reporting.vue';
 import FieldPeriodicRefresh from './fields/common/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from './fields/common/default-elements-per-page.vue';
-import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
 import FieldFilters from './fields/common/filters.vue';
-import FieldInfoPopup from './fields/alarm/info-popup.vue';
 import FieldTextEditor from './fields/common/text-editor.vue';
 import FieldSwitcher from './fields/common/switcher.vue';
 import FieldFastAckOutput from './fields/alarm/fast-ack-output.vue';
 import FieldGridRangeSize from './fields/common/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './fields/common/remediation-instructions-filters.vue';
+import FieldOpenedResolvedFilter from './fields/alarm/opened-resolved-filter.vue';
+import FieldInfoPopup from './fields/alarm/info-popup.vue';
+import FieldEnabledLimit from './fields/common/enabled-limit.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -143,12 +150,13 @@ export default {
     FieldDefaultElementsPerPage,
     FieldOpenedResolvedFilter,
     FieldFilters,
-    FieldInfoPopup,
     FieldTextEditor,
     FieldSwitcher,
     FieldFastAckOutput,
     FieldGridRangeSize,
     FieldRemediationInstructionsFilters,
+    FieldInfoPopup,
+    FieldEnabledLimit,
   },
   mixins: [
     widgetSettingsMixin,

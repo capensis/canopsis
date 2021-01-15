@@ -33,7 +33,6 @@ import Ellipsis from '@/components/tables/ellipsis.vue';
 import AlarmColumnCellPopupBody from './alarm-column-cell-popup-body.vue';
 import AlarmColumnValueState from './alarm-column-value-state.vue';
 import AlarmColumnValueLinks from './alarm-column-value-links.vue';
-import AlarmColumnValueLink from './alarm-column-value-link.vue';
 import AlarmColumnValueExtraDetails from './alarm-column-value-extra-details.vue';
 
 /**
@@ -51,7 +50,6 @@ export default {
     AlarmColumnCellPopupBody,
     AlarmColumnValueState,
     AlarmColumnValueLinks,
-    AlarmColumnValueLink,
     AlarmColumnValueExtraDetails,
   },
   props: {
@@ -138,7 +136,9 @@ export default {
         links: {
           bind: {
             is: 'alarm-column-value-links',
-            links: this.alarm.links,
+            asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
+            limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
+            // links: this.alarm.links,
           },
         },
         extra_details: {
