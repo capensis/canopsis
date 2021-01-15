@@ -1,4 +1,6 @@
 mkdocs==1.1.2 ; python_version >= '3.6'
+# XXX: some Jinja2 versions, such as 2.10.1 on Ubuntu, have bugs, but mkdocs doesn't enforce 2.11 yet
+Jinja2>=2.11.1
 mkdocs-material==6.2.3
 mkdocs-git-revision-date-localized-plugin==0.7.4
 pymdown-extensions==8.1.0
