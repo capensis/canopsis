@@ -108,18 +108,23 @@ enabled=1" > /etc/yum.repos.d/canopsis.repo
 
 **Installation du paquet :**
 
-   * Pour Centreon 20.04 
+   * Pour Centreon >= 20.04.2 et <= 20.04.11 ou >= 20.10.1 et <= 20.10.2 ( ancienne version du connecteur )
+   ```
+   yum install canopsis-connector-centreon-stream-connector
+   ```
+
+   * Pour Centreon 20.04 ( version >= 20.04.12 ) 
    ```
    yum install canopsis-connector-centreon-stream-connector-2004
    ```
-   * Pour Centreon 20.10
+   * Pour Centreon 20.10 ( version >= 20.10.3 )
    ```
    yum install canopsis-connector-centreon-stream-connector-2010
    ```
 
 
 !!! warning
-    Si une précédente version du connecteur à été installé, il faudra la désinstaller ua préalable
+    Si une précédente version du connecteur à été installé, il faudra la désinstaller au préalable
 
    ```
    yum remove install canopsis-connector-centreon-stream-connector
