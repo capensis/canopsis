@@ -138,7 +138,7 @@ export default {
             is: 'alarm-column-value-links',
             asList: get(this.widget.parameters, 'linksCategoriesAsList.enabled', false),
             limit: get(this.widget.parameters, 'linksCategoriesAsList.limit'),
-            // links: this.alarm.links,
+            links: this.alarm.links,
           },
         },
         extra_details: {

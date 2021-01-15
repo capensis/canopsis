@@ -34,7 +34,7 @@ export default {
       type: Object,
       default: () => ({
         enabled: false,
-        limit: 0,
+        limit: 1,
       }),
     },
     label: {

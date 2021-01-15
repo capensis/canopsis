@@ -22,16 +22,7 @@ export default {
   props: {
     links: {
       type: Object,
-      default: () => ({
-        Category1: [
-          { label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' },
-          { label: 'Procédure2', link: 'http://uneurl.local/?composant=feeder2_0&message=' },
-        ],
-        Category2: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
-        Category3: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
-        Category4: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
-        Category5: [{ label: 'Procédure', link: 'http://uneurl.local/?composant=feeder2_0&message=' }],
-      }),
+      default: () => ({}),
     },
     asList: {
       type: Boolean,
