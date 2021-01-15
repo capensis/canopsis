@@ -23,13 +23,13 @@ Considérons l'application `ERP` (sous forme d'observateur) composée de différ
 
 ![Situation initiale](./img/pbh_situation_initiale.png)
 
-Vous aurez également créé une ou plusieurs raisons personnalisée par le biais de l'interface d'[administration de la planification](../../guide-administration/moteurs/moteur-pbehavior.md#administration-de-la-planification).
+Vous aurez également créé une ou plusieurs raisons personnalisées par le biais de l'interface d'[administration de la planification](../../guide-administration/moteurs/moteur-pbehavior.md#administration-de-la-planification).
 
 ## Définition de la plage de service
 
 Rendez-vous dans l'explorateur de contexte et recherchez votre observateur `ERP`.
 
-Ajoutez lui ensuite un comportement périodique en cliquant sur ce bouton.
+Ajoutez-lui ensuite un comportement périodique en cliquant sur ce bouton.
 
 ![Action comportement periodique](./img/pbh_action.png)
 
@@ -39,7 +39,7 @@ Pour créer une plage, du lundi au vendredi, de 19h15 à 8h :
 
 ![Plage 19h15-08h](./img/pbh_plage_19h15-08h.png)
 
-* Et ajoutez lui une règle de récurrence du mardi au vendredi.
+* Et ajoutez-lui une règle de récurrence du mardi au vendredi.
 
 ![Récurrence mardi-vendredi](./img/pbh_plage_19h15-08h_rrule.png)
 
@@ -61,7 +61,7 @@ Si certaines entités d'une application ne sont pas en maintenance la tuile s'af
 
 ![Maintenance ERP partielle](./img/pbh_maintenance_erp_partielle.png)
 
-Vous pouvez également configurer le widget météo pour affiche plus d'information sur les comportements actifs depuis les propriétés du widget.
+Vous pouvez également configurer le widget météo pour afficher plus d'informations sur les comportements actifs depuis les propriétés du widget.
 
 ![Propriétés compteurs comportements](./img/pbh_proprietes_compteurs_tuile.png)
 
@@ -120,7 +120,7 @@ Vous pouvez alors afficher votre filtre au format `JSON` en passant le curseur s
 
 Validez ensuite le formulaire de création avec le bouton Soumettre et validez également le calendrier des comportements périodiques.
 
-Les entités inclues dans votre filtre sont à présent en maintenance.  
+Les entités incluses dans votre filtre sont à présent en maintenance.  
 
 ![Maintenance entités](./img/pbh_maintenance_entites.png)  
 
@@ -144,7 +144,7 @@ Il est également possible d'appliquer des filtres sur les comportements périod
 
 Les alarmes possèdent une variable `pbehavior`, qui lui même contient des attributs sur lesquels on pourra filtrer. Pour accéder à la liste des variables référez vous à la capture précédente et cliquez sur Liste des variables disponibles.
 
-Vous pourrez alors afficher les attribut de la variable `pbehavior` :
+Vous pourrez alors afficher les attributs de la variable `pbehavior` :
 
 ![Attributs pbehavior](./img/pbh_attributs_pbehavior.png)
 

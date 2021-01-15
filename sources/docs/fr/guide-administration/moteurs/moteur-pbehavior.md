@@ -13,7 +13,7 @@ Ils permettent notamment de :
     Avec la v4 de Canopsis le fonctionnement des comportements périodiques à été complètement revu.
     Les informations qui figurent sur cette page ne sont donc valables que pour cette version.
 
-## Définition
+## Définitions
 
 Un comportement périodique est défini par plusieurs éléments.
 
@@ -43,7 +43,7 @@ Par exemple, si une entité a été mise en `pause` la raison pourra préciser :
 
 Le filtre quant à lui est utilisé pour déterminer sur quelles entités le comportement va s'appliquer. Il prend en charge les opération OR et AND et s'applique directement sur les variables de l'entité.
 
-Pour plus d'information à propos des filtres, reportez à [la documentation dédiée](../../guide-utilisation/interface/filtres/index.md).
+Pour plus d'information à propos des filtres, reportez-vous à [la documentation dédiée](../../guide-utilisation/interface/filtres/index.md).
 
 ### Commentaire
 
@@ -75,7 +75,7 @@ Un seul comportement peut être actif, à un moment donné, sur une entité.
 
 ### Configuration des types de comportements périodiques
 
-Rendez vous dans le menu Administration puis dans Administration de la planification.
+Rendez-vous dans le menu Administration puis dans Administration de la planification.
 
 ![Menu administration de la planification](./img/menu-administration-planification.png)
 
@@ -89,7 +89,7 @@ Cliquez sur le bouton `+` en bas à droite de la fenêtre pour ouvrir la fenêtr
 
 ![Créer un type personnalisé](./img/admin-planification-creer-type.png)
 
-Renseignez les différents champs, choisissez un type parmi la liste et affectez lui une priorité et une icône.
+Renseignez les différents champs, choisissez un type parmi la liste et affectez-lui une priorité et une icône.
 
 !!! Attention
     Deux types ne peuvent avoir la même priorité.
@@ -112,6 +112,6 @@ Voici, par exemple, une liste de raisons personnalisées :
 
 Il est également possible de configurer des dates d'exceptions dans l'onglet dédié. Pour cela cliquez de nouveau sur le bouton `+` pour créer une liste d'exceptions.
 
-Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. A chaque date vous pourrez associer un des types existants.
+Vous pourrez alors renseigner un nom, une description et ajouter des dates dans la liste. À chaque date vous pourrez associer un des types existants.
 
 ![Créer une liste d'exceptions](./img/admin-planification-liste-exceptions.png)
