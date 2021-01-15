@@ -1,4 +1,4 @@
-import { getMenuClassByCalendarEvent } from '@/helpers/dayspan';
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
 import popoverMixin from './popover';
 

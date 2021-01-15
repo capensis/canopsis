@@ -32,7 +32,7 @@ import { Calendar, Units } from 'dayspan';
 
 import { DATETIME_FORMATS, MODALS, WIDGET_TYPES } from '@/constants';
 
-import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/dayspan';
+import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
 import { generateWidgetByType } from '@/helpers/entities';
 
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';

@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { formatState, formatStatus, formatEvent } from '@/helpers/state-and-status-formatting';
+import { formatState, formatStatus, formatEvent } from '@/helpers/formatting';
 
 /**
  * Component for the flag on the alarms list's timeline

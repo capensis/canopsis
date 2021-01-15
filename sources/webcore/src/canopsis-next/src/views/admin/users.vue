@@ -23,7 +23,7 @@
 import { MODALS } from '@/constants';
 
 import { prepareUserByData } from '@/helpers/entities';
-import { getUsersSearchByText } from '@/helpers/entities-search';
+import { getUsersSearchByText } from '@/helpers/search/patterns-search';
 
 import entitiesUserMixin from '@/mixins/entities/user';
 import rightsTechnicalUserMixin from '@/mixins/rights/technical/user';

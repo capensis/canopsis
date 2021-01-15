@@ -51,7 +51,7 @@ import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-b
 
 import { saveJsonFile } from '@/helpers/file/files';
 import { getFileTextContent } from '@/helpers/file/file-select';
-import { prepareGroupsAndViewsToExport } from '@/helpers/groups';
+import { prepareGroupsAndViewsToExport } from '@/helpers/forms/groups';
 import { EXPORT_VIEWS_AND_GROUPS_SUFFIX } from '@/config';
 import { MODALS } from '@/constants';
 
