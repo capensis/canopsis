@@ -17,7 +17,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { pbehaviorToForm, formToPbehavior } from '@/helpers/forms/planning-pbehavior';
+import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 
 import authMixin from '@/mixins/auth';
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -28,14 +28,12 @@ import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehav
 
 import ModalWrapper from '../modal-wrapper.vue';
 
-/**
- * Modal to create widget
- */
 export default {
   name: MODALS.createPbehavior,
   $_veeValidate: {
     validator: 'new',
   },
+  inject: ['$system'],
   components: { PbehaviorForm, ModalWrapper },
   mixins: [
     authMixin,
@@ -47,7 +45,7 @@ export default {
     const { pbehavior = {} } = this.modal.config;
 
     return {
-      form: pbehaviorToForm(pbehavior),
+      form: pbehaviorToForm(pbehavior, null, this.$system.timezone),
     };
   },
   computed: {
@@ -61,7 +59,7 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
-          await this.config.action(formToPbehavior(this.form));
+          await this.config.action(pbehaviorToRequest(formToPbehavior(this.form, this.$system.timezone)));
         }
 
         this.$modals.hide();
