@@ -46,9 +46,9 @@ C'est ce composant qui va se charger de déclencher l'exécution du job auprès 
 
 Dans le menu `profile` de Rundeck, vous avez accès à la création d'un token.  
 
-![rundeck1](./img/remediation_rundeck1.png)
+[![rundeck1](./img/remediation_rundeck1.png)](./img/remediation_rundeck1.png){target=_blank}
 
-![rundeck2](./img/remediation_rundeck2.png)
+[![rundeck2](./img/remediation_rundeck2.png)](./img/remediation_rundeck2.png){target=_blank}
 
 ![rundeck3](./img/remediation_rundeck3.png)
 
@@ -66,9 +66,9 @@ Dans le menu d'administration de la remédiation, onglet `CONFIGURATIONS`, cliqu
 
 Coté Rundeck, dans le menu `Jobs`, créez un job et récupérez son identifiant
 
-![rundeck6](./img/remediation_rundeck6.png)
+[![rundeck6](./img/remediation_rundeck6.png)](./img/remediation_rundeck6.png){target=_blank}
 
-![rundeck7](./img/remediation_rundeck7.png)
+[![rundeck7](./img/remediation_rundeck7.png)](./img/remediation_rundeck7.png){target=_blank}
 
 Coté Canopsis, dans le menu d'administration de la remédiation, onglet `JOBS`, cliquez sur "+" et renseignez les différents champs.
 
@@ -82,9 +82,9 @@ Le job est maintenant prêt à l'emploi. La section [Payload](#utilisation-des-p
 
 Dans le menu `Users` d'Awx, vous avez accès à la création d'un token.  
 
-![awx1](./img/remediation_awx1.png)
+[![awx1](./img/remediation_awx1.png)](./img/remediation_awx1.png){target=_blank}
 
-![awx2](./img/remediation_awx2.png)
+[![awx2](./img/remediation_awx2.png)](./img/remediation_awx2.png){target=_blank}
 
 Le scope à sélectionner est `WRITE`.
 

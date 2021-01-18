@@ -77,7 +77,7 @@ Saisissez à présent les différentes étapes et opérations de votre consigne.
 
 Une fois créée, votre consigne sera affichée dans la liste des consignes.  
 
-![Liste consignes](./img/remediation_instruction_liste.png)
+[![Liste consignes](./img/remediation_instruction_liste.png)](./img/remediation_instruction_liste.png){target=_blank}
 
 ### Assigner une consigne à des alarmes
 
@@ -90,11 +90,11 @@ Utilisez pour cela le bouton d'action situé à droite de votre consigne.
 
 Puis associer vos alarmes en saisissant les patterns souhaités, dans notre cas, les alarmes dont la ressource contient `ping`.
 
-![Assignation_consigne2](./img/remediation_instruction_assignation2.png)
+[![Assignation_consigne2](./img/remediation_instruction_assignation2.png)](./img/remediation_instruction_assignation2.png){target=_blank}
 
 A ce stade, vous pouvez vérifier que les alarmes sélectionnées par les patterns sont bien éligibles à votre consigne.
 
-![Assignation_consigne3](./img/remediation_instruction_assignation3.png)
+[![Assignation_consigne3](./img/remediation_instruction_assignation3.png)](./img/remediation_instruction_assignation3.png){target=_blank}
 
 ### Associer un job à une opération
 
