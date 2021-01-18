@@ -22,6 +22,7 @@ Par défaut, ces moteurs sont open-source. Les moteurs marqués « CAT » ne so
 | [`engine-dynamic-infos`](moteur-dynamic-infos.md)| Enrichit les alarmes | ✅ |
 | [`engine-fifo`](moteur-fifo.md) | Garantit la cohérence et l'ordre des évènements entrant dans Canopsis | |
 | [`engine-heartbeat`](moteur-heartbeat.md)  | Surveille des entités, et lève des alarmes en cas d'absence d'information | |
+| [`engine-pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
 | [`engine-watcher`](moteur-watcher.md)| Calcule les états des observateurs | |
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
@@ -32,7 +33,6 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 
 | Moteur | Rôle | CAT ? |
 |--------|------|:-----:|
-| [`pbehavior`](moteur-pbehavior.md) | Gère les comportements périodiques | |
 | [`event_filter` (Python)](moteur-event_filter.md) | Applique des règles de filtrage. Ne doit pas être confondu avec le nouvel `event-filter` Go, contenu dans `engine-che` | |
 | [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
 | `metric` | Stocke les données de métrologie des évènements | |
