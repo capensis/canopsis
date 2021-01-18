@@ -43,6 +43,8 @@
 
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
+import { pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+
 import modalInnerMixin from '@/mixins/modal/inner';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 
@@ -128,11 +130,13 @@ export default {
 
     showEditPbehaviorModal(pbehavior) {
       this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
+        name: MODALS.createPbehavior,
         config: {
-          pbehaviors: [pbehavior],
-
-          afterSubmit: () => this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId }),
+          pbehavior,
+          action: data => this.updatePbehavior({
+            data: pbehaviorToRequest(data),
+            id: pbehavior._id,
+          }),
         },
       });
     },

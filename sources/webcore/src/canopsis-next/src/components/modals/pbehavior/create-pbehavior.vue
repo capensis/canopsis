@@ -1,0 +1,72 @@
+<template lang="pug">
+  v-form(@submit.prevent="submit")
+    modal-wrapper(close)
+      template(slot="title")
+        span {{ title }}
+      template(slot="text")
+        pbehavior-form(v-model="form")
+      template(slot="actions")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
+</template>
+
+<script>
+import { MODALS } from '@/constants';
+
+import { pbehaviorToForm, formToPbehavior } from '@/helpers/forms/planning-pbehavior';
+
+import authMixin from '@/mixins/auth';
+import modalInnerMixin from '@/mixins/modal/inner';
+import submittableMixin from '@/mixins/submittable';
+import confirmableModalMixin from '@/mixins/confirmable-modal';
+
+import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+
+import ModalWrapper from '../modal-wrapper.vue';
+
+/**
+ * Modal to create widget
+ */
+export default {
+  name: MODALS.createPbehavior,
+  $_veeValidate: {
+    validator: 'new',
+  },
+  components: { PbehaviorForm, ModalWrapper },
+  mixins: [
+    authMixin,
+    modalInnerMixin,
+    submittableMixin(),
+    confirmableModalMixin(),
+  ],
+  data() {
+    const { pbehavior = {} } = this.modal.config;
+
+    return {
+      form: pbehaviorToForm(pbehavior),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.createPbehavior.create.title');
+    },
+  },
+  methods: {
+    async submit() {
+      const isValid = await this.$validator.validateAll();
+
+      if (isValid) {
+        if (this.config.action) {
+          await this.config.action(formToPbehavior(this.form));
+        }
+
+        this.$modals.hide();
+      }
+    },
+  },
+};
+</script>
