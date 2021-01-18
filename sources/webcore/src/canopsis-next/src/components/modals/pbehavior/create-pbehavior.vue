@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        pbehavior-form(v-model="form", no-filter)
+        pbehavior-form(v-model="form", :no-filter="noFilter")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -51,6 +51,10 @@ export default {
   computed: {
     title() {
       return this.config.title || this.$t('modals.createPbehavior.create.title');
+    },
+
+    noFilter() {
+      return !!this.config.noFilter;
     },
   },
   methods: {

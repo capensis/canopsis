@@ -131,6 +131,7 @@ export default {
         name: MODALS.createPbehavior,
         config: {
           pbehavior,
+          noFilter: true,
           action: data => this.updatePbehavior({ data, id: pbehavior._id }),
         },
       });
