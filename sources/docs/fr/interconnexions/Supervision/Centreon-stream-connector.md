@@ -81,7 +81,7 @@ La traduction des états entre Centreon et Canopsis est la suivante :
 
 - Lua ≥ 5.1.4
 - `lua-socket` ≥ 3.0rc1-2
-- `centreon-broker` versions 20.04 ou 20.10
+- `centreon-broker` versions 19.10.5, 20.04 ou 20.10
 
 ### Installation par les paquets
 
@@ -113,7 +113,7 @@ enabled=1" > /etc/yum.repos.d/canopsis.repo
 
 === "Précédentes versions de Centreon 20.04 et 20.10"
 
-    Installation de l'ancienne version du connecteur pour Centreon 20.04.2–20.04.11 et Centreon 20.10.1–20.10.2 :
+    Installation de l'ancienne version du connecteur pour Centreon 19.10.5, 20.04.2–20.04.11 et Centreon 20.10.1–20.10.2 :
 
     ```sh
     yum install canopsis-connector-centreon-stream-connector
@@ -123,9 +123,9 @@ enabled=1" > /etc/yum.repos.d/canopsis.repo
 
 L'installation par paquets doit être privilégiée lorsqu'elle est possible.
 
-Il est néanmoins possible d'installer ce connecteur (pour **Centreon ≥ 20.04.12 et ≥ 20.10.3**) à partir des sources à l'aide des manipulations suivantes :
+Il est néanmoins possible d'installer ce connecteur (**pour Centreon ≥ 20.04.12 et ≥ 20.10.3 uniquement**) à partir des sources à l'aide des manipulations suivantes :
 
-1. Récupérer les [sources du connecteur][sources]
+1. Récupérer les [sources du connecteur][sources].
 2. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
 3. Ajouter les permissions suivantes : `chown centreon-engine:centreon-engine /usr/share/centreon-broker/lua/bbdo4canopsis.lua`
 
