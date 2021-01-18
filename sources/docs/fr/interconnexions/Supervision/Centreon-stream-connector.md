@@ -1,104 +1,93 @@
-# Connecteur Centreon "Stream Connector"
+# Connecteur Centreon « Stream Connector »
 
 ## Description
 
-Le connecteur convertit des évènements envoyés par le Broker Centreon en 
-évènements Canopsis.
-Ce connecteur utilise les fonctionnalités du Stream Connector de Centreon.
+Le connecteur convertit des évènements envoyés par le Broker Centreon en évènements Canopsis.
 
-Liens connexes :
+Ce connecteur est écrit en Lua et utilise les fonctionnalités du Stream Connector de Centreon.
+
+Liens connexes :
 
 - [README des sources du connecteur][readme]
-- [Documentation du stream connector de Centreon][centreon-stream-connector]
+- [Documentation du Stream Connector de Centreon][centreon-stream-connector]
 
 ## Principe de fonctionnement
 
-Le connecteur est développé en `lua`, le langage imposé par le mécanisme du Stream Connector.
-Tous les évènements filtrés par le connecteur sont traduits au format JSON et 
-envoyés sur l'**API** Canopsis via le protocole **HTTP**.
+Tous les évènements filtrés par le connecteur sont traduits au format JSON et envoyés à l'API Canopsis via le protocole HTTP.
 
-### Évènements filtrés
+Les évènements de type NEB suivants sont actuellement gérés par le connecteur et correspondent à une catégorie et à un élément du protocole BBDO de Centreon :
 
-Les évènements de type "NEB" suivants sont actuellement gérés par le connecteur 
-et correspondent à une catégorie et un élément du protocole BBDO de Centreon :
+- Acquittement, ou *Acknowledgment* (category 1, element 1)
+- Plages de maintenance, ou *Downtime* (category 1, element 5)
+- Hôtes, ou *Host status* (category 1, element 14)
+- Services, ou *Service status* (category 1, element 24)
 
-- Acquittement ou "Acknowledgment" (category 1, element 1)
-- Plages de maintenance ou "Downtime" (category 1, element 5)
-- Hôtes ou "Host status" (category 1, element 14)
-- Services ou "Service status" (category 1, element 24)
+Nous ajoutons des informations `extra` supplémentaires aux évènements hôtes et services :
 
-Nous ajoutons des informations "extra" supplémentaires aux évènements hôtes et
-services :
+- `action_url`
+- `notes_url`
+- `hostgroups`
+- `servicegroups` (pour les services uniquement)
 
-- action_url
-- notes_url
-- hostgroups
-- servicegroups (pour les services uniquement)
+### Acquittement (ack)
 
-#### Acquittement (ack)
+Deux sortes d'actions sont envoyées à Canopsis :
 
-Deux sortes d'actions sont envoyées à Canopsis :
+1. Création d'un ack
+2. Suppression d'un ack
 
-- Création d'un ack
-- Suppression d'un ack
+L'acquittement est positionné sur le couple `resource/component` concerné.
 
-L'ack est positionné sur le couple resource/component concerné.
+### Plages de maintenance (downtimes)
 
-#### Plages de maintenance (downtimes)
-
-Deux sortes d'actions sont envoyées à Canopsis :
-
-- Création d'un downtime
-- Annulation d'un downtime
-
-Pour chaque downtime, un identifiant unique est généré afin que l'action 
-d'annulation puisse être fonctionnelle en retrouvant le downtime précèdemment
-créé.
-
-!!! warning
+!!! attention
     Les downtimes récurrents ne sont actuellement pas gérés par le connecteur.
 
-#### Hosts
+Deux sortes d'actions sont envoyées à Canopsis :
 
-Seuls les évènements de type HARD lors d'un changement d'état sont envoyés à Canopsis.
-La traduction des états entre Centreon et Canopsis est la suivante :
+1. Création d'un downtime
+2. Annulation d'un downtime
 
-| CENTREON        | CANOPSIS    |
+Pour chaque plage de maintenance, un identifiant unique est généré afin que l'action d'annulation puisse être fonctionnelle en retrouvant le downtime précédemment créé.
+
+### Hôtes (hosts)
+
+Seuls les évènements de type `HARD` lors d'un changement d'état sont envoyés à Canopsis.
+
+La traduction des états entre Centreon et Canopsis est la suivante :
+
+| Centreon        | Canopsis    |
 |-----------------|-------------|
 | UP (0)          | INFO (0)    |
 | DOWN (1)        | CRITICAL (3)|
 | UNREACHABLE (2) | MAJOR (2)   |
 
-#### Services
+### Services
 
-Seuls les évènements de type HARD lors d'un changement d'état sont envoyés à Canopsis.
-La traduction des états entre Centreon et Canopsis est la suivante :
+Seuls les évènements de type `HARD` lors d'un changement d'état sont envoyés à Canopsis.
 
-| CENTREON        | CANOPSIS    |
+La traduction des états entre Centreon et Canopsis est la suivante :
+
+| Centreon        | Canopsis    |
 |-----------------|-------------|
 | OK (0)          | INFO (0)    |
 | WARNING (1)     | MINOR (1)   |
 | CRITICAL (2)    | CRITICAL (3)|
 | UNKNOWN (3)     | MAJOR (2)   |
 
-## Intégration du connecteur
+## Installation du connecteur
 
 ### Prérequis
 
-- lua version >= 5.1.4
-- lua-socket library >= 3.0rc1-2
-- centreon-broker version >= 20.04.12 ou >= 20.10.3
+- Lua ≥ 5.1.4
+- `lua-socket` ≥ 3.0rc1-2
+- `centreon-broker` versions 20.04 ou 20.10
 
-### Installation
+### Installation par les paquets
 
-#### Par les paquets
+Ajout du dépôt Canopsis pour CentOS 7 :
 
-!!! warning
-    Uniquement valable pour une version de centreon-broker version >= 20.04.12 ou >= 20.10.3
-
-**Installation du dépôt Canopsis :**
-
-```
+```sh
 echo "[canopsis]
 name = canopsis
 baseurl=https://repositories.canopsis.net/pulp/repos/centos7-canopsis/
@@ -106,54 +95,53 @@ gpgcheck=0
 enabled=1" > /etc/yum.repos.d/canopsis.repo
 ```
 
-**Installation du paquet :**
+=== "Centreon ≥ 20.10.3"
 
-   * Pour Centreon >= 20.04.2 et <= 20.04.11 ou >= 20.10.1 et <= 20.10.2 ( ancienne version du connecteur )
-   ```
-   yum install canopsis-connector-centreon-stream-connector
-   ```
+    Installation du connecteur pour Centreon 20.10, **à partir de Centreon 20.10.3** (tout ancien paquet `canopsis-connector-centreon-stream-connector` doit être supprimé au préalable) :
 
-   * Pour Centreon 20.04 ( version >= 20.04.12 ) 
-   ```
-   yum install canopsis-connector-centreon-stream-connector-2004
-   ```
-   * Pour Centreon 20.10 ( version >= 20.10.3 )
-   ```
-   yum install canopsis-connector-centreon-stream-connector-2010
-   ```
+    ```sh
+    yum install canopsis-connector-centreon-stream-connector-2010
+    ```
 
+=== "Centreon ≥ 20.04.12"
 
-!!! warning
-    Si une précédente version du connecteur à été installé, il faudra la désinstaller au préalable
+    Installation du connecteur pour Centreon 20.04, **à partir de Centreon 20.04.12** (tout ancien paquet `canopsis-connector-centreon-stream-connector` doit être supprimé au préalable) :
 
-   ```
-   yum remove install canopsis-connector-centreon-stream-connector
-   ```
+    ```sh
+    yum install canopsis-connector-centreon-stream-connector-2004
+    ```
 
-#### Par les sources
+=== "Précédentes versions de Centreon 20.04 et 20.10"
 
-!!! warning
-    Compatible avec la version >= 20.04.12 ou >= 20.10.3 :
+    Installation de l'ancienne version du connecteur pour Centreon 20.04.2–20.04.11 et Centreon 20.10.1–20.10.2 :
 
-0. Récupérer les [sources du connecteur][sources]
-1. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
-2. Ajouter les permissions suivantes : `chown centreon-engine:centreon-engine /usr/share/centreon-broker/lua/bbdo4canopsis.lua`
+    ```sh
+    yum install canopsis-connector-centreon-stream-connector
+    ```
 
-#### Activation du connecteur
+### Installation depuis les sources
 
-1. Ajout d'une nouvelle entrée ["Generic - Stream connector"][configure-centreon-broker]
-   Voir les détails de la configuration dans la [section Configuration](#configuration)
-2. Export de la [configuration du poller][configure-centreon-broker]
-3. Redémarrage des services `systemctl restart cbd centengine gorgoned`
+L'installation par paquets doit être privilégiée lorsqu'elle est possible.
 
-### Configuration
+Il est néanmoins possible d'installer ce connecteur (pour **Centreon ≥ 20.04.12 et ≥ 20.10.3**) à partir des sources à l'aide des manipulations suivantes :
 
-Toute la configuration du connecteur peut se faire au travers de l'interface
-Centreon.
+1. Récupérer les [sources du connecteur][sources]
+2. Copier le script sur le serveur Centreon central dans `/usr/share/centreon-broker/lua/bbdo2canopsis.lua`.
+3. Ajouter les permissions suivantes : `chown centreon-engine:centreon-engine /usr/share/centreon-broker/lua/bbdo4canopsis.lua`
 
-**Voici les principaux paramètres :**
+## Activation du connecteur
 
-| VARIABLE          | DESCRIPTION                   | VALEUR PAR DÉFAUT       |
+1. Ajout d'une nouvelle entrée [*Generic - Stream connector*][configure-centreon-broker]. Voir les détails de la configuration dans la [section Configuration](#configuration).
+2. Export de la [configuration du poller][configure-centreon-broker].
+3. Redémarrage des services : `systemctl restart cbd centengine gorgoned`
+
+## Configuration
+
+Toute la configuration du connecteur peut se faire au travers de l'interface Centreon.
+
+Voici les principaux paramètres :
+
+| Variable          | Description                   | Valeur par défaut       |
 |-------------------|-------------------------------|-------------------------|
 | connector_name    | Nom du connecteur             | centreon-stream-central |
 | canopsis_user     | Utilisateur de l'API          | root                    |
@@ -161,44 +149,37 @@ Centreon.
 | canopsis_host     | Hôte Canopsis                 | localhost               |
 | canopsis_port     | Port d'écoute de Canopsis     | 8082                    |
 
-**Il est possible de modifier les paramètres de file d'attente :**
+Il est possible de modifier les paramètres de file d'attente :
 
-| VARIABLE          | DESCRIPTION                                   | VALEUR PAR DÉFAUT |
+| Variable          | Description                                   | Valeur par défaut |
 |-------------------|-----------------------------------------------|-------------------|
 | max_buffer_age    | Durée (en secondes) de rétention des évènements avant envoi | 60  |
 | max_buffer_size   | Nombre d'évènements en attente avant envoi    | 10                |
 
-**Temps de propagation et convergence des évènements :**
+Temps de propagation et convergence des évènements :
 
-| VARIABLE          | DESCRIPTION                                                    | VALEUR PAR DÉFAUT |
+| Variable          | Description                                                    | Valeur par défaut |
 |-------------------|----------------------------------------------------------------|-------------------|
-| init_spread_timer | Temps de propagation (en secondes) des évènements, quelque soit leur état, au démarrage du connecteur | 360 |
+| init_spread_timer | Temps de propagation (en secondes) des évènements, quel que soit leur état, au démarrage du connecteur | 360 |
 
-Étant donné que seuls les changements d'état sont transmis à Canopsis,
-au moment du démarrage du connecteur, s'il existe déjà des alarmes Centreon,
-alors elles ne seront pas transmises à Canopsis car aucun changement d'état ne
-sera détecté.
+Étant donné que seuls les changements d'état sont transmis à Canopsis, au moment du démarrage du connecteur, s'il existe déjà des alarmes Centreon elles ne seront pas transmises à Canopsis, car aucun changement d'état ne sera détecté.
 
-Pour limiter ce phénomène, nous proposons une option qui permet d'envoyer à 
-Canopsis tous les évènements qui circulent sans qu'il y ait forcément de changement 
-d'état et ce pendant la durée du "init_spread_timer".
+Pour limiter ce phénomène, nous proposons une option qui permet d'envoyer à Canopsis tous les évènements qui circulent sans qu'il y ait forcément de changement d'état, ceci pendant la durée du `init_spread_timer`.
 
-!!! warning
-    Cela implique un pic de charge  lors de l'activation du connecteur pendant la durée du "init_spread_timer".
+!!! attention
+    Cela implique un pic de charge lors de l'activation du connecteur pendant la durée du `init_spread_timer`.
 
-#### Exemple de configuration
+### Exemple de configuration
 
-Dans : Configuration > Pollers > Broker configuration > central-broker-master >
-Output > Select "Generic - Stream connector" > Add
+Dans Centreon, rendez-vous dans Configuration > Pollers > Broker configuration > central-broker-master > Output, sélectionnez `Generic - Stream connector` puis cliquez sur Add :
 
 ![centreon-configuration-screenshot](img/centreon-configuration-screenshot.png)
 
-### Contrôle du bon fonctionnement
+## Contrôle du bon fonctionnement
 
-Connectez-vous l'interface de Canopsis et assurez-vous que les évènements et leurs
-états affichés du côté de Centreon correspondent avec les évènements côté Canopsis.
+Connectez-vous l'interface de Canopsis et assurez-vous que les évènements et leurs états affichés du côté de Centreon correspondent avec les évènements côté Canopsis.
 
-Pour rappel, seules les alarmes sont envoyées (état différent de "ok").
+Pour rappel, seules les alarmes sont envoyées (état différent de `ok`).
 
 [readme]: https://git.canopsis.net/canopsis-connectors/connector-centreon-stream-connector/-/blob/master/README.md
 [sources]: https://git.canopsis.net/canopsis-connectors/connector-centreon-stream-connector
