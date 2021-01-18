@@ -24,16 +24,6 @@ L'interface de Canopsis n'est donc **pas** compatible avec les navigateurs suiva
 * Mozilla Firefox, avant la version 68 ESR ;
 * Google Chrome, avant la version 85.
 
-### Taille maximale des filtres du Bac à alarmes
-
-(Ticket [#1858](https://git.canopsis.net/canopsis/canopsis/-/issues/1858) sur Gitlab)
-
-Actuellement, les filtres que vous pouvez créer dans un Bac à alarmes ont une limite implicite sur leur taille.
-
-En effet, le contenu complet des filtres est actuellement envoyé dans une requête `GET` à l'API `get-alarms`. Par défaut, le serveur HTTP Gunicorn intégré à Canopsis générera une erreur `Request Line is too large` si une requête `GET` à l'API dépasse 6 800 octets. Cette limite est valable pour toutes les API, mais se rencontre principalement sur `get-alarms`.
-
-Vous devez donc soit concevoir vos filtres de Bac à alarmes de manière à ce qu'ils ne soient pas excessivement grands (par exemple en privilégiant des regex plutôt que des répétitions), soit augmenter la limite de Gunicorn à l'aide de la variable d'environnement `LIMIT_REQUEST_LINE` présente depuis [Canopsis 3.44.1](../../notes-de-version/3.44.1.md).
-
 ## Limitations des évènements 
 
 ### Encodage des évènements
