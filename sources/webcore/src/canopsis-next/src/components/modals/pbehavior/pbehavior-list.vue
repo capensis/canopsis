@@ -132,6 +132,7 @@ export default {
         config: {
           pbehavior,
           noFilter: true,
+          timezone: this.$system.timezone,
           action: data => this.updatePbehavior({ data, id: pbehavior._id }),
         },
       });

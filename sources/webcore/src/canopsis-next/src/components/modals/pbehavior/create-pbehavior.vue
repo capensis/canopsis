@@ -33,7 +33,6 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  inject: ['$system'],
   components: { PbehaviorForm, ModalWrapper },
   mixins: [
     authMixin,
@@ -42,10 +41,10 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const { pbehavior } = this.modal.config;
+    const { pbehavior, timezone } = this.modal.config;
 
     return {
-      form: pbehaviorToForm(pbehavior, null, this.$system.timezone),
+      form: pbehaviorToForm(pbehavior, null, timezone),
     };
   },
   computed: {
@@ -63,7 +62,7 @@ export default {
 
       if (isValid) {
         if (this.config.action) {
-          await this.config.action(pbehaviorToRequest(formToPbehavior(this.form, this.$system.timezone)));
+          await this.config.action(pbehaviorToRequest(formToPbehavior(this.form, this.config.timezone)));
         }
 
         this.$modals.hide();
