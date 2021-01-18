@@ -154,7 +154,7 @@ security:
     ...
 ```
 
-Vous devez ensuite **obligatoirement** redémarrer les APIs ( `api` et `oldapi` en docker ).
+Vous devez ensuite **obligatoirement** redémarrer les API (`api` et `oldapi` en Docker).
 
 ```sh
 systemctl restart canopsis-service@canopsis-api canopsis-service@canopsis-oldapi
