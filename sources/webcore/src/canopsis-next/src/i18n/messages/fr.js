@@ -1775,7 +1775,6 @@ export default {
           headers: 'Headers',
           headerKey: 'Clé',
           headerValue: 'Valeur',
-          payload: 'Payload',
         },
         emptyHeaders: 'Aucun en-tête ajouté pour le moment',
       },
