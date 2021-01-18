@@ -1,11 +1,11 @@
-# Mise en oeuvre
+# Mise en œuvre de la remédiation
 
 ## Introduction
 
 !!! Note
     Disponible à partir de Canopsis 4.0.0
 
-Cette documentation vous permet de mettre en oeuvre une remédiation de bout en bout.  
+Cette documentation vous permet de mettre en œuvre une remédiation de bout en bout.  
 Comme expliqué en [préambule](./index.md), l'anatomie d'une remédiation suit le schéma ci-après : 
 
 ```mermaid
@@ -23,7 +23,7 @@ graph TD
 
 ## Les droits
 
-Le module de remédiation est soumis au système de droits sur l'interface et sur les APIs.
+Le module de remédiation est soumis au système de droits sur l'interface et sur les API.
 
 **Interface**
 
@@ -40,7 +40,7 @@ Ces droits sont configurés dans le panneau de droits sous l'onglet `technical`
 
 Ces droits sont configurés dans le panneau de droits sous l'onglet `API`
 
-| Droits sur les APIs      | Définition                                          |
+| Droits sur les API      | Définition                                          |
 |:------------------------ |:--------------------------------------------------- |
 | `Instructions`           | Manipulation des consignes                          |
 | `Runs instructions`      | Exécuter une consigne                               |
@@ -52,7 +52,7 @@ Ces droits sont configurés dans le panneau de droits sous l'onglet `API`
 
 ### Créer une consigne
 
-Pour créer une consigne, rendez vous dans le menu d'administration de la remédiation, onglet `CONSIGNES`.  
+Pour créer une consigne, rendez-vous dans le menu d'administration de la remédiation, onglet `CONSIGNES`.  
 
 ![Ajout consigne](./img/remediation_instruction_ajout.png)
 
@@ -98,23 +98,23 @@ A ce stade, vous pouvez vérifier que les alarmes sélectionnées par les patter
 
 ### Associer un job à une opération
 
-!!! Warning
+!!! attention
     Pour qu'un job soit disponible, une configuration spécifique est nécessaire. [Consultez ce paragraphe pour cela](#jobs-associes-a-un-ordonnanceur)
 
 Vous avez la possibilité d'associer un job d'ordonnanceur à une opération dans une consigne.
 
-Pour cela, dans votre consigne, il vous suffit de sélectionner le ou les jobs qui seront présentés à l'utilisateur de la consigne pour exécution.
+Pour cela, dans votre consigne, il vous suffit de sélectionner les jobs qui seront présentés à l'utilisateur de la consigne pour exécution.
 
 ![Job1](./img/remediation_instruction_job1.png)
 
-Au moment de l'exécution de la consigne, les jobs associés pourront être exécuter.
+Au moment de l'exécution de la consigne, les jobs associés pourront être exécutés.
 
 ![Job2](./img/remediation_instruction_job2.png)
 
 ## Jobs associés à un ordonnanceur
 
 Pour être en mesure de relier un job à une opération, il est nécessaire de définir une configuration d'ordonnanceur ainsi que le job en lui-même.  
-Pour cela, RDV dans le menu `CONFIGURATIONS` du panneau d'administration des remédiations.  
+Pour cela, rendez-vous dans le menu `CONFIGURATIONS` du panneau d'administration des remédiations.  
 
 En cliquant sur le "+" en bas à droite, vous accéderez au formulaire suivant : 
 
@@ -124,7 +124,7 @@ Explications sur les champs demandés :
 
 * Nom : Nom de la configuration qui sera utilisée dans la définition du job
 * Type : `Rundeck` ou `Awx` fonction de votre ordonnanceur
-* Hôte : Adresse http de votre ordonnanceur
+* Hôte : Adresse HTTP de votre ordonnanceur
 * Jeton d'autorisation : Jeton lié à votre utilisateur déclaré dans l'ordonnanceur
 
 !!! Note
@@ -132,7 +132,7 @@ Explications sur les champs demandés :
 
 Lorsque la configuration d'ordonnanceur est prête, vous pouvez déclarer un `job`
 
-RDV dans le menu `JOBS` du panneau d'administration des remédiations.
+Rendez-vous dans le menu `JOBS` du panneau d'administration des remédiations.
 
 En cliquant sur le "+" en bas à droite, vous accéderez au formulaire suivant : 
 

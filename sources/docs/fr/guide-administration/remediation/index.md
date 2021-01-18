@@ -36,7 +36,7 @@ Usage of ./external-job-executor:
   -d	debug
 ```
 
-C'est ce process qui va se charger de déclencher l'exéxution du job auprès des ordonnanceurs de tâches selon les différentes configurations définies.
+C'est ce composant qui va se charger de déclencher l'exécution du job auprès des ordonnanceurs de tâches selon les différentes configurations définies.
 
 ## Ordonnanceurs supportés
 
@@ -74,7 +74,7 @@ Coté Canopsis, dans le menu d'administration de la remédiation, onglet `JOBS`,
 
 ![rundeck8](./img/remediation_rundeck8.png)
 
-Le job est maintenant prêt à l'emploi. La section [Payload](#utilisation-des-payload) vous explique comment passer des variables à votre job.
+Le job est maintenant prêt à l'emploi. La section [Payload](#utilisation-des-payloads) vous explique comment passer des variables à votre job.
 
 ### Configuration Awx
 
@@ -108,7 +108,7 @@ Coté Canopsis, dans le menu d'administration de la remédiation, onglet `JOBS`,
 
 ![awx6](./img/remediation_awx6.png)
 
-Le job est maintenant prêt à l'emploi. La section [Payload](#utilisation-des-payload) vous explique comment passer des variables à votre job.
+Le job est maintenant prêt à l'emploi. La section [Payload](#utilisation-des-payloads) vous explique comment passer des variables à votre job.
 
 
 ## Utilisation des `payloads`
@@ -120,7 +120,7 @@ Le module de remédiation de Canopsis permet de transmettre des variables à l'o
 
     Les différentes valeurs sont [documentées ici](../architecture-interne/templates-golang/)
 
-Ce paragraphe décrit la manière de procéder pour `Rundeck` et `Awx`.
+Cette section décrit la manière de procéder pour `Rundeck` et `Awx`.
 
 ### Rundeck
 

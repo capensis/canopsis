@@ -82,4 +82,4 @@ Ces évaluations seront comptabilisées et transmises aux administrateurs.
 
 ## La suite
 
-Pour paramétrer le module de `Remédiation` dans Canopsis, vous pouvez consulter la [documentation suivante](./mise-en-oeuvre.md)
+Pour paramétrer le module de `Remédiation` dans Canopsis, vous pouvez consulter la [documentation de mise en œuvre de la remédiation](./mise-en-oeuvre.md).
