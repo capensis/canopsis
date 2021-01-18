@@ -74,7 +74,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 **Code** : `500 Internal Server Error`
 
-**Corps de la réponse** : Page HTML. Une trace d'erreur est disponible dans les logs du webserver.
+**Corps de la réponse** : Page HTML. Une trace d'erreur est disponible dans les logs de `canopsis-oldapi`.
 
 ### Modification d'actions
 
@@ -148,7 +148,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 
 **Code** : `500 Internal Server Error`
 
-**Corps de la réponse** : Page HTML. Une trace d'erreur est disponible dans les logs du webserver.
+**Corps de la réponse** : Page HTML. Une trace d'erreur est disponible dans les logs de `canopsis-oldapi`.
 
 ### Suppression d'actions
 

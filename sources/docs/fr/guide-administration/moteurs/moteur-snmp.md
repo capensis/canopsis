@@ -39,7 +39,7 @@ systemctl start canopsis-engine-cat@snmp
 
 ### Activation du service SNMP dans l'interface web
 
-À la fin du fichier `/opt/canopsis/etc/webserver.conf` (ou équivalent Docker), ajouter la ligne suivante :
+À la fin du fichier `/opt/canopsis/etc/oldapi.conf` (ou équivalent Docker), assurez-vous de la présence de la ligne suivante :
 
 ```ini
 canopsis_cat.webcore.services.snmprule = 1
@@ -48,7 +48,7 @@ canopsis_cat.webcore.services.snmprule = 1
 et redémarrer le serveur web Canopsis :
 
 ```sh
-systemctl restart canopsis-webserver
+systemctl restart canopsis-service@canopsis-oldapi
 ```
 
 ### Traduction des traps

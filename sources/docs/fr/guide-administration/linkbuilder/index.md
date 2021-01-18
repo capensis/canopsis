@@ -50,7 +50,7 @@ Voici la configuration qui correspond aux captures d'écran visibles au début d
 
 !!! Attention
     La classe `basic_alarm_link_builder`, dans sa version livrée par défaut avec Canopsis, ne permet de créer qu'un seul lien.
-    Pour pouvoir créer plusieurs liens et les regrouper par catégories il est nécessaire d'étendre la classe `BasicAlarmLinkBuilder` qui se trouve dans le fichier `basic_alarm_link_builder.py` du `webserver`.  
+    Pour pouvoir créer plusieurs liens et les regrouper par catégories il est nécessaire d'étendre la classe `BasicAlarmLinkBuilder` qui se trouve dans le fichier `basic_alarm_link_builder.py` de `canopsis-oldapi`.  
     L'image ci-dessous montre un exemple de liens multiples regroupés par catégories :  
     ![Liens multiples par catégories](img/baa.png)
 
@@ -75,7 +75,7 @@ curl -H "Content-Type: application/json" -X POST -u root:root -d'{
 Si une configuration existe déjà en base, remplacez `POST` par `PUT`.
 
 !!! Attention
-    1. Un redémarrage du moteur `webserver` est nécessaire après l'envoi de la configuration.
+    1. Un redémarrage de `canopsis-service@canopsis-oldapi` est nécessaire après l'envoi de la configuration.
     2. Les liens sont générés à la volée et ne sont en aucun cas stockés.
 
 ## Visualisation frontend
