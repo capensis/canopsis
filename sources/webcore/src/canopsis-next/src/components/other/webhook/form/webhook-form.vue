@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-tabs(:color="vTabsColor", :dark="dark", fixed-tabs, slider-color="primary")
+  v-tabs(v-model="activeTab", :color="vTabsColor", :dark="dark", fixed-tabs, slider-color="primary")
     template(v-for="(tab, index) in tabs")
       v-tab(:key="`tab-${index}`")
         .validation-header(:class="{ 'error--text': validationErrorsFlagsForTabs[index] }") {{ tab.title }}
@@ -10,6 +10,7 @@
               ref="forms",
               :is="tab.component",
               :class="webhookTabClass",
+              :auto-grow="activeTab === index",
               v-bind="tab.bind",
               v-on="tab.on"
             )
@@ -58,6 +59,7 @@ export default {
   data() {
     return {
       validationErrorsFlagsForTabs: [],
+      activeTab: 0,
     };
   },
   computed: {
