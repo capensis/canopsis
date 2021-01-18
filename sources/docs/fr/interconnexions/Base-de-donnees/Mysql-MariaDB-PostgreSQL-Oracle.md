@@ -229,8 +229,8 @@ Lorsque plusieurs métriques sont utilisées pour générer des évènements, le
 
 ### DB2
 
-Pour ce qui est de DB2, l'un des systèmes de gestion de base de données propriétaire d'IBM, veillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/#production-ready), ou encore [ici](https://github.com/ibmdb/python-ibmdb).
+Pour ce qui est de DB2, l'un des systèmes de gestion de base de données propriétaire d'IBM, veuillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/#production-ready), ou encore [ici](https://github.com/ibmdb/python-ibmdb).
 
 ### MSSQL
 
-Pour ce qui est de DB2, le système de gestion de base de données propriétaire de Microsoft, veillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/mssql.html), ou encore [ici](https://docs.sqlalchemy.org/en/latest/core/engines.html#microsoft-sql-server).
+Pour ce qui est de DB2, le système de gestion de base de données propriétaire de Microsoft, veuillez vous rendre [ici](https://docs.sqlalchemy.org/en/latest/dialects/mssql.html), ou encore [ici](https://docs.sqlalchemy.org/en/latest/core/engines.html#microsoft-sql-server).
