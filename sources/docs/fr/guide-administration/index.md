@@ -18,6 +18,7 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 *  [Liste des différentes interconnexions](../interconnexions/index.md)
 *  [Liste des différents moteurs](moteurs/index.md)
+*  [La remédiation](remediation/index.md)
 
 ### Administration quotidienne
 

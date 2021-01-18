@@ -5,16 +5,7 @@
 !!! quote "Définition"
     Plan d’actions mis en œuvre pour corriger une situation.
 
-La principe de `remédiation` a été mis en oeuvre dans Canopsis pour palier plusieurs limites constatées sur le module [Linkbuilder](../../guide-administration/linkbuilder/index.md) qui permet de gérer des liens dans l'interface de Canopsis.
-
-Ces limites sont : 
-
-* Construction complexe
-* Impossibilité de lier des fichiers
-* Pas de suivi sur l’avancement de l’exécution
-* Pas d’évaluation de la qualité de la consigne
-
-Le module de remédiation permet donc de : 
+La principe de `remédiation` a été mis en oeuvre dans Canopsis répondre à différents objectifs :
 
 * Faire office de référentiel de consignes
 * Mettre à disposition d'une alarme toutes les consignes adaptées
