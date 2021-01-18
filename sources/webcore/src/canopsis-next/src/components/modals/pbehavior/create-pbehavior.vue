@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        pbehavior-form(v-model="form")
+        pbehavior-form(v-model="form", no-filter)
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -42,7 +42,7 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const { pbehavior = {} } = this.modal.config;
+    const { pbehavior } = this.modal.config;
 
     return {
       form: pbehaviorToForm(pbehavior, null, this.$system.timezone),
