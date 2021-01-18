@@ -4,8 +4,8 @@
       v-field="form.generalParameters._id",
       v-validate="'required'",
       :error-messages="errors.collect('id')",
-      :disabled="disabledId",
-      label="Id",
+      :disabled="isDisabledIdField",
+      :label="$t('common.id')",
       name="id"
     )
     delay-field(v-field="form.generalParameters.delay")
@@ -14,7 +14,7 @@
       v-validate="'required'",
       :items="actionTypes",
       :error-messages="errors.collect('actionType')",
-      label="Type",
+      :label="$t('common.type')",
       name="actionType",
       @change="errors.clear()"
     )
@@ -77,7 +77,7 @@ export default {
       type: Object,
       required: true,
     },
-    disabledId: {
+    isDisabledIdField: {
       type: Boolean,
       default: false,
     },

@@ -4,19 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        v-text-field(
-          v-model="form._id",
-          :label="$t('modals.createWebhook.fields.id')",
-          :readonly="isDisabledIdField",
-          :disabled="isDisabledIdField"
-        )
-          v-tooltip(v-show="!isDisabledIdField", slot="append", left)
-            v-icon(slot="activator") help_outline
-            span {{ $t('modals.createWebhook.tooltips.id') }}
-        retry-field(v-model="form.retry")
-        enabled-field(v-model="form.enabled")
-        disable-during-periods-field(v-model="form.disable_during_periods")
-        webhook-form(v-model="form")
+        webhook-form(v-model="form", :is-disabled-id-field="isDisabledIdField")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -27,8 +15,6 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
@@ -39,10 +25,7 @@ import modalInnerMixin from '@/mixins/modal/inner';
 import submittableMixin from '@/mixins/submittable';
 import confirmableModalMixin from '@/mixins/confirmable-modal';
 
-import DisableDuringPeriodsField from '@/components/forms/fields/disable-during-periods.vue';
 import WebhookForm from '@/components/other/webhook/form/webhook-form.vue';
-import RetryField from '@/components/forms/fields/retry.vue';
-import EnabledField from '@/components/forms/fields/enabled-field.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -55,11 +38,8 @@ export default {
     validator: 'new',
   },
   components: {
-    EnabledField,
-    DisableDuringPeriodsField,
     WebhookForm,
     ModalWrapper,
-    RetryField,
   },
   mixins: [
     authMixin,
@@ -68,27 +48,19 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const preparedWebhook = this.modal.config.isDuplicating
-      ? omit(this.modal.config.webhook, ['_id'])
-      : this.modal.config.webhook;
+    const { webhook } = this.modal.config;
 
     return {
-      form: webhookToForm(preparedWebhook),
+      form: webhookToForm(webhook),
     };
   },
   computed: {
     title() {
-      let type = 'create';
-
-      if (this.config.webhook) {
-        type = this.config.isDuplicating ? 'duplicate' : 'edit';
-      }
-
-      return this.$t(`modals.createWebhook.${type}.title`);
+      return this.config.title || this.$t('modals.createWebhook.create.title');
     },
 
     isDisabledIdField() {
-      return this.config.webhook && !this.config.isDuplicating;
+      return this.config.isDisabledIdField;
     },
   },
   methods: {
