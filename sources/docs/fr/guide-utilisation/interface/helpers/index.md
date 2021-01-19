@@ -113,7 +113,7 @@ Utilisation générique :
 Ce helper accepte les attributs suivants :
 
 *  `href` (obligatoire). La page interne à Canopsis vers laquelle on souhaite créer un lien.
-    *  `lien-canopsis` peut être remplacé par une chaîne de caractères contenant une adresse complète, telle que `"http://10.127.186.12/en/static/canopsis-next/dist/index.html/views/123456"`.
+    *  `lien-canopsis` peut être remplacé par une chaîne de caractères contenant une adresse complète, telle que `"http://10.127.186.12/views/123456"`.
     *  `lien-canopsis` peut aussi être une variable correspondant à un champ de l'entité. Par exemple : `entity.infos.weather-link.value`. Cette valeur sera remplacée par la valeur trouvée dans l'entité.
     *  **Attention :** les guillemets sont obligatoires dans le cas d'une chaîne de caractères, et ne doivent pas apparaître dans le cas d'une variable.
 *  `text` (obligatoire). Le texte qui sera affiché pour construire le lien cliquable.
