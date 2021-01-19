@@ -85,6 +85,12 @@ export default {
     watcherEntitiesWithKey() {
       return addKeyInEntity(this.watcherEntities);
     },
+
+    sort() {
+      const { column = 'state', order } = this.config.sort || {};
+
+      return { column, order };
+    },
   },
   mounted() {
     this.fetchWatchersList();
@@ -105,14 +111,10 @@ export default {
   },
   methods: {
     fetchWatchersList() {
-      const params = {};
-
-      if (this.modal.config.sort) {
-        const { column, order } = this.modal.config.sort;
-
-        params.sort_by = column;
-        params.sort = order.toLowerCase();
-      }
+      const params = {
+        sort_by: this.sort.column,
+        sort: this.sort.order && this.sort.order.toLowerCase(),
+      };
 
       this.fetchWatcherEntitiesList({
         watcherId: this.watcher._id,
