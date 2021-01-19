@@ -38,7 +38,7 @@
 import moment from 'moment-timezone';
 import { pick, mapValues } from 'lodash';
 
-import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS, MAX_LIMIT } from '@/constants';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntity } from '@/helpers/entities';
@@ -87,7 +87,7 @@ export default {
     },
 
     sort() {
-      const { column = 'state', order } = this.config.sort || {};
+      const { column = 'state', order = SORT_ORDERS.desc } = this.config.sort || {};
 
       return { column, order };
     },
@@ -113,7 +113,8 @@ export default {
     fetchWatchersList() {
       const params = {
         sort_by: this.sort.column,
-        sort: this.sort.order && this.sort.order.toLowerCase(),
+        sort: this.sort.order.toLowerCase(),
+        limit: MAX_LIMIT,
       };
 
       this.fetchWatcherEntitiesList({
