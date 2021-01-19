@@ -1,16 +1,18 @@
 # Sommaire et présentation des moteurs Canopsis
 
-Les [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) envoyés par des [connecteurs](../../guide-utilisation/vocabulaire/index.md#connecteur) à Canopsis sont traités à l'aide de [moteurs](../../guide-utilisation/vocabulaire/index.md#moteur).
+Les [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) envoyés par des [connecteurs](../../guide-utilisation/vocabulaire/index.md#connecteur) à Canopsis sont traités à l'aide de [moteurs](../../guide-utilisation/vocabulaire/index.md#moteur). En voici la liste.
 
-## Liste des moteurs
+Par défaut, ces moteurs sont open-source. Les moteurs marqués « CAT » ne sont en revanche disponibles qu'auprès d'une souscription commerciale à [Canopsis CAT](https://www.capensis.fr/canopsis/).
 
-Les tableaux suivants décrivent l'ensemble des différents moteurs de Canopsis, dans la dernière version disponible.
+## Liste des moteurs Canopsis
 
-Les moteurs historiques de Canopsis sont écrits en Python (il s'agit des « moteurs Python ancienne génération »). Depuis Canopsis 3, ces moteurs sont progressivement améliorés, réécrits et réarchitecturés en Go (il s'agit des « moteurs Go nouvelle génération »).
+### Enchaînement des moteurs
 
-Par défaut, ces moteurs sont open-source. Les moteurs marqués « CAT » ne sont en revanche disponibles qu'auprès d'une souscription commerciale à Canopsis CAT.
+L'organisation de [l'enchaînement des moteurs Canopsis](schema-enchainement-moteurs.md) est décrite dans un document dédié.
 
 ### Liste des moteurs Go
+
+La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en Go.
 
 | Moteur | Rôle | CAT ? |
 |--------|------|:-----:|
@@ -27,9 +29,17 @@ Par défaut, ces moteurs sont open-source. Les moteurs marqués « CAT » ne so
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
-En installation par paquets, l'ensemble des moteurs Go se trouvent dans le namespace systemd `canopsis-engine-go@`.
+L'ensemble des moteurs Go se trouvent dans `/opt/canopsis/bin/` lors d'une installation paquets, ou à la racine du conteneur de ce moteur, lors d'une installation Docker.
+
+Les moteurs Go acceptent au minimum les options suivantes :
+
+* `-d` : passage du moteur en mode *debug* ;
+* `-help` : obtenir la liste complète des options acceptées par ce moteur (voyez aussi pour cela la documentation associée à chaque moteur) ;
+* `-version` : obtenir les informations de version et de compilation du moteur.
 
 ### Liste des moteurs Python
+
+Certains moteurs et composants historiques de Canopsis sont écrits en Python.
 
 | Moteur | Rôle | CAT ? |
 |--------|------|:-----:|
@@ -40,30 +50,31 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 | `task_importctx` | Gestionnaire des imports de données en masse | |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
-En installation par paquets, les moteurs Python se trouvent dans le namespace systemd `canopsis-engine@` ou `canopsis-engine-cat@`. Le moteur `snmp` n'a pas de namespace.
+### Liste des anciens moteurs (non supportés)
 
-### Liste des moteurs obsolètes
-
-Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou pris en charge. Sauf indication contraire, ces anciens moteurs étaient en Python.
+Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou pris en charge.
 
 | Moteur obsolète | Remplacé par |
 |-----------------|--------------|
-| `acknowledgement` | `engine-axe` |
-| `alerts` | `engine-action` |
-| `cancel` | `engine-axe` |
-| `cleaner_alerts` | `engine-che` |
-| `cleaner_events` | `engine-che` |
-| `context` | `engine-che` |
-| `context-graph` | `engine-che` |
-| `engine-stat` (Go) | `statsng` ⇒ n/a |
-| `eventstore` | n/a |
-| `perfdata` | `metric` ⇒ n/a |
-| `statsng` | n/a |
-| `task_dataclean` | n/a |
-| `task_linklist` | Utilisation du [linkbuilder](../linkbuilder/index.md) |
-| `task_mail` | Utilisation d'un [Webhook](moteur-webhook.md) (CAT) vers un service d'envoi d'e-mails |
+| `acknowledgement` (Python) | `engine-axe` (Go) |
+| `alerts` (Python) | `engine-action`(Go)  |
+| `cancel` (Python) | `engine-axe` (Go) |
+| `cleaner_alerts` (Python) | `engine-che` (Go) |
+| `cleaner_events` (Python) | `engine-che` (Go) |
+| `context` (Python) | `engine-che` (Go) |
+| `context-graph` (Python) | `engine-che` (Go) |
+| `engine-stat` (Go) | `statsng` (Python) ⇒ n/a |
+| `eventstore` (Python) | n/a |
+| `event_filter` (Python) | `engine-che` (Go) |
+| `metric` (Python) | n/a |
+| `pbehavior` (Python) | `engine-pbehavior` (Go) |
+| `perfdata` (Python) | `metric` (Python) ⇒ n/a |
+| `statsng` (Python) | n/a |
+| `task_dataclean` (Python) | n/a |
+| `task_linklist` (Python) | Utilisation du [linkbuilder](../linkbuilder/index.md) |
+| `task_mail` (Python) | Utilisation d'un [Webhook](moteur-webhook.md) (CAT) vers un service d'envoi d'e-mails |
 | `ticket` | ? |
-| `watcher` | `engine-watcher` |
+| `watcher` (Python) | `engine-watcher` (Go) |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
 ## Variables d'environnement liées aux moteurs
@@ -71,17 +82,3 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 Certains comportements des moteurs de Canopsis peuvent être ajustés à l'aide de variables.
 
 Consultez la [liste des variables d'environnement de Canopsis](../administration-avancee/variables-environnement.md) pour en savoir plus.
-
-## Enchaînement des moteurs
-
-L'organisation de [l'enchaînement des moteurs Canopsis](schema-enchainement-moteurs.md) est décrite dans un document dédié.
-
-## Options génériques des moteurs
-
-L'ensemble des moteurs Go se trouvent dans `/opt/canopsis/bin/` lors d'une installation paquets, ou à la racine du conteneur de ce moteur, lors d'une installation Docker.
-
-Les moteurs Go acceptent au minimum les options suivantes :
-
-* `-d` : passage du moteur en mode *debug* ;
-* `-help` : obtenir la liste complète des options acceptées par ce moteur (voyez aussi pour cela la [documentation associée à chaque moteur](#liste-des-moteurs-go)) ;
-* `-version` : obtenir les informations de version et de compilation du moteur.
