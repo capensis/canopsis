@@ -14,7 +14,7 @@
         )
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(type="submit") {{ $t('common.submit') }}
+        v-btn.primary(:disabled="isDisabled", :loading="submitting", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -65,16 +65,22 @@ export default {
   },
   methods: {
     async submit() {
-      await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById)
-        .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id']))));
-      await this.updatePbehaviors(Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest));
-      await this.removePbehaviors(Object.values(this.form.removedPbehaviorsById));
+      try {
+        await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById)
+          .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id']))));
+        await this.updatePbehaviors(Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest));
+        await this.removePbehaviors(Object.values(this.form.removedPbehaviorsById));
 
-      if (this.config.afterSubmit) {
-        await this.config.afterSubmit();
+        if (this.config.afterSubmit) {
+          await this.config.afterSubmit();
+        }
+
+        this.$modals.hide();
+      } catch (err) {
+        const message = Object.values(err).join(' ');
+
+        this.$popups.error({ text: message || this.$t('errors.default') });
       }
-
-      this.$modals.hide();
     },
   },
 };
