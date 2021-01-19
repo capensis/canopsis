@@ -11,9 +11,12 @@
       v-flex(xs11)
         v-textarea(
           data-test="pbehaviorCommentField",
+          v-validate="'required'",
           :disabled="!!comment._id",
           :label="$t('modals.createPbehavior.steps.comments.fields.message')",
+          :error-messages="errors.collect('message')",
           :value="comment.message",
+          name="message",
           @input="updateFieldInArrayItem(index, 'message', $event)"
         )
       v-flex(xs1)
@@ -44,6 +47,7 @@ export default {
     prop: 'comments',
     event: 'input',
   },
+  inject: ['$validator'],
   props: {
     comments: {
       type: Array,
