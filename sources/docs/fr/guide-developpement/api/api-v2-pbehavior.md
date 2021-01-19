@@ -89,9 +89,6 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 #### Cas particulier : Permettre la création d'un comportement périodique avec un `_id` déjà existant
 
-!!! note
-    Disponible depuis Canopsis 3.38.0.
-
 Lorsque les comportements périodiques sont pilotés par l'API (via un ordonnanceur par exemple), il est parfois nécessaire de devoir 
 « écraser » un comportement périodique déjà existant mais qui serait expiré.
 
@@ -370,14 +367,8 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/pbehavior/read'
 }
 ```
 
-!!! note
-    Disponible depuis Canopsis 3.40.0.
-
 Le paramètre `current_active_pbh` permet de récupérer uniquement les comportements périodiques qui sont actifs au moment de la requête.
-
 
 Ce paramètre est de type **booléen**.
 
 **URL** : `/api/v2/pbehavior?current_active_pbh=true`
-
-

@@ -1,8 +1,5 @@
 # Messages d'information
 
-!!! note
-    Disponible depuis Canopsis 3.40.0.
-
 L'API broadcast-message permet de consulter, créer, modifier et supprimer des messages d'informations qui seront affichés sur l'interface graphique de Canopsis.
 
 Pour plus d'informations sur ce qu'est un `message d'informations`, consulter la [documentation sur les messages](../../guide-utilisation/interface/broadcast-messages.md).

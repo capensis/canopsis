@@ -2,7 +2,7 @@
 
 ## Affichage de type de données formatées dans une colonne
 
-Depuis la version `3.35.0`, il est maintenant possible de choisir un formatage de donnée particulier pour les champs présents et affichés dans une colonne du bac à alarmes de Canopsis.
+Il est possible de choisir un formatage de donnée particulier pour les champs présents et affichés dans une colonne du Bac à alarmes de Canopsis.
 
 Pour cela, il faut au préalable ajouter des règles de conversion via l'API `associativetable` qui sauvegardera dans un champ `alarm-column-filters`  de la collection MongoDB `default_associativetable`
 

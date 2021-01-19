@@ -1,6 +1,6 @@
 # Configuration avancée du reverse proxy HTTP Nginx de Canopsis
 
-À partir de [Canopsis 3.35.0](../../../notes-de-version/3.35.0.md), le *reverse proxy* HTTP ([Nginx](https://nginx.org)) fournit l'accès à l'interface web de Canopsis.
+Le *reverse proxy* HTTP ([Nginx](https://nginx.org)) fournit l'accès à l'interface web de Canopsis.
 
 ## Configuration par défaut
 
