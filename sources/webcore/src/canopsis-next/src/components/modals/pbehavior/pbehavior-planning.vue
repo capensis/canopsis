@@ -85,7 +85,7 @@ export default {
 
         this.$modals.hide();
       } catch (err) {
-        const message = Object.values(err).join(' ');
+        const message = Object.values(err).join('\n');
 
         this.$popups.error({ text: message || this.$t('errors.default') });
       }
