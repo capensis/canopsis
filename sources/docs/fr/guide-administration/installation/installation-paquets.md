@@ -1,46 +1,19 @@
-# Installation de Canopsis avec un paquet Debian ou CentOS
+# Installation de paquets Canopsis sur CentOS 7
 
-Canopsis peut être installé à l'aide de paquets sur Debian 9 (« *stretch* ») et CentOS 7. Les binaires sont compilés pour l'architecture x86-64.
+Cette procédure décrit l'installation de Canopsis en mono-instance à l'aide de paquets CentOS 7. Les binaires sont compilés pour l'architecture x86-64.
 
-Cette procédure décrit l'installation de l'édition open-source de Canopsis en mono-instance.
-
-L'ensemble des procédures décrites doivent être réalisées avec l'utilisateur `root`.
+L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur `root`.
 
 ## Prérequis
 
-Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md).
+Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md), notamment concernant la désactivation de SELinux.
 
-!!! attention
-    Notez que Canopsis installe ses propres versions d'InfluxDB, MongoDB, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser les versions installées avec Canopsis (ex : installation des dépôts officiels InfluxDB pour l'ajout d'un Telegraf).
+L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances.
 
-## Étape 1 : installation des paquets
+!!! information
+    Notez que Canopsis installe ses propres versions d'InfluxDB, MongoDB, Nginx, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser les versions fournies par Canopsis.
 
-### Sur Debian 9
-
-Il peut être nécessaire d'activer les dépôts `non-free` de Debian, dans le cas d'une installation CAT.
-
-Application des dernières mises à jour du système :
-```sh
-apt update
-apt upgrade
-```
-
-Ajout du dépôt Canopsis (qui permettra aussi de récupérer les mises à jour) :
-```sh
-apt install apt-transport-https
-echo "deb [trusted=yes] https://repositories.canopsis.net/pulp/deb/debian9-canopsis/ stable main" > /etc/apt/sources.list.d/canopsis.list
-```
-
-Installation de l'édition open-source de Canopsis :
-```sh
-apt update
-apt install canopsis-core
-```
-
-### Sur CentOS 7
-
-!!! important
-    Assurez-vous d'avoir [désactivé SELinux](pre-requis-parefeu-et-selinux.md) au préalable.
+## Ajout de dépôts tiers et de dépendances
 
 Activation d'EPEL et application des dernières mises à jour du système :
 ```sh
@@ -48,64 +21,69 @@ yum install yum-utils epel-release
 yum update
 ```
 
-Installation d'une version plus récente de Python 2.7 [depuis SCL](https://www.softwarecollections.org/en/scls/rhscl/python27/) :
+Activation de SCL et installation d'une version corrigée de Python 2.7 (pour quelques composants historiques de Canopsis nécessitant cette version) :
 ```sh
 yum install centos-release-scl
 yum install python27
 ```
 
-Ajout du dépôt Canopsis (qui permettra aussi de récupérer les mises à jour) :
-```sh
-echo "[canopsis]
-name = canopsis
-baseurl=https://repositories.canopsis.net/pulp/repos/centos7-canopsis/
-gpgcheck=0
-enabled=1" > /etc/yum.repos.d/canopsis.repo
-```
+## Installation de Canopsis Core ou CAT
 
-Installation de l'édition open-source de Canopsis :
-```sh
-yum install canopsis-core
-```
+Canopsis est disponible dans une édition « Core », open-source et gratuitement accessible à tous, et une édition « CAT », souscription commerciale ajoutant des fonctionnalités supplémentaires. Voyez [le site officiel de Canopsis](https://www.capensis.fr/canopsis/) pour en savoir plus.
 
-## Étape 2 : initialisation de l'environnement
+Cliquez sur l'un des onglets « Core » ou « CAT » suivants, en fonction de l'édition choisie.
 
-Une fois le paquet installé, vous devez lancer une commande d'initialisation de votre environnement. Cette commande s'occupe notamment d'installer les briques et réglages nécessaires à Canopsis, de finaliser les fichiers de configuration et d'activer les bons moteurs.
+=== "Canopsis Core (édition open-source)"
 
-Cette commande n'est destinée à être lancée qu'**une seule fois après une installation** de Canopsis. Pour les mises à jour, suivez la procédure décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
+    Ajout du dépôt de paquets Canopsis pour CentOS 7 :
+    ```sh
+    echo "[canopsis]
+    name = canopsis
+    baseurl=https://repositories.canopsis.net/pulp/repos/centos7-canopsis4/
+    gpgcheck=0
+    enabled=1" > /etc/yum.repos.d/canopsis.repo
+    ```
 
-### Versions de Canopsis 3.30.0 et inférieures
+    Installation de l'édition open-source de Canopsis :
+    ```sh
+    yum install canopsis-core
+    yum install canopsis-engines-go
+    ```
 
-Dans les versions de Canopsis 3.30.0 et inférieures, la commande à utiliser est la suivante. Elle déploie une installation mono-nœud avec les [moteurs Python « historiques »](../moteurs/index.md#moteurs-python) :
+=== "Canopsis CAT (souscription commerciale)"
+
+    !!! attention
+        L'édition CAT nécessite une souscription commerciale, ainsi que d'une demande d'autorisation d'accès au dépôt `canopsis-cat`.
+
+    Ajout des dépôts de paquets Canopsis pour CentOS 7 :
+    ```sh
+    echo "[canopsis]
+    name = canopsis
+    baseurl=https://repositories.canopsis.net/pulp/repos/centos7-canopsis4/
+    gpgcheck=0
+    enabled=1" > /etc/yum.repos.d/canopsis.repo
+
+    echo "[canopsis-cat]
+    name = canopsis-cat
+    baseurl=https://repositories.canopsis.net/pulp/repos/centos7-canopsis4-cat/
+    gpgcheck=0
+    enabled=1" > /etc/yum.repos.d/canopsis-cat.repo
+    ```
+
+    Installation de Canopsis CAT :
+    ```sh
+    yum install canopsis-cat
+    yum install canopsis-engines-go canopsis-engines-go-cat
+    ```
+
+## Initialisation de Canopsis
+
+Vous devez ensuite initialiser l'environnement Canopsis à l'aide de la commande suivante (qui procédera à l'installation des dépendances, la finalisation des fichiers de configuration, l'activation des moteurs…).
 
 ```sh
 canoctl deploy
 ```
 
-Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
+Cette commande peut prendre quelques minutes. Elle ne doit être exécutée qu'à la **première installation** de Canopsis.
 
-### Versions de Canopsis 3.31.0 et supérieures
-
-À partir de [Canopsis 3.31.0](../../notes-de-version/3.31.0.md), vous pouvez choisir de déployer facilement votre environnement Canopsis mono-nœud avec les [moteurs Python « historiques »](../moteurs/index.md#moteurs-python) ou avec les [moteurs Go « nouvelle génération »](../moteurs/index.md#moteurs-go).
-
-L'environnement Python reste disponible pour l'instant, mais les efforts de développement se concentrent dorénavant sur les moteurs Go, qui apportent notamment de meilleures performances et de nouvelles fonctionnalités.
-
-Si vous souhaitez réaliser une installation de Canopsis en environnement Python, exécutez la commande suivante :
-
-```sh
-canoctl deploy-python
-```
-
-Si vous souhaitez plutôt bénéficier des moteurs Go nouvelle génération (recommandé), exécutez les commandes suivantes :
-
-```sh
-# Sur Debian :
-apt install canopsis-engines-go
-# Sur CentOS :
-yum install canopsis-engines-go
-
-# Puis, dans tous les cas :
-canoctl deploy-go
-```
-
-Vous pouvez alors procéder à votre [première connexion à l'interface Canopsis](premiere-connexion.md).
+Une fois cette commande terminée, vous pouvez alors réaliser votre [première connexion à l'interface Canopsis](premiere-connexion.md). La procédure de mise à jour est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
