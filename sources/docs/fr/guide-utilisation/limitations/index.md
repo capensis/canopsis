@@ -21,7 +21,7 @@ L'interface de Canopsis n'est donc **pas** compatible avec les navigateurs suiva
 
 * Internet Explorer, toutes versions ;
 * Microsoft Edge, avant la version 80 ;
-* Mozilla Firefox, avant la version 68 ESR ;
+* Mozilla Firefox, avant la version 78 ESR ;
 * Google Chrome, avant la version 85.
 
 ## Limitations des évènements 
@@ -41,8 +41,8 @@ Vous devez donc vous assurer que vos appels à l'API et que vos connecteurs ne g
 !!! note
     Cette limite s'appliquant aux évènements Canopsis, elle s'applique aussi aux API, à l'interface web et aux connecteurs que vous branchez à Canopsis.
 
-L'unicité d'une alarme est établie sur la concaténation des champs `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]`.
+L'unicité d'une alarme est établie par la concaténation des champs `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]`.
 
-Cette chaîne sert actuellement de clé de routage (ou *routing key*) pour acheminer les évènements vers Canopsis, dans le cadre de notre utilisation de RabbitMQ. Le protocole AMQP qui lui est associé impose néanmoins une longueur maximale de 256 caractères à cette chaîne (cf. Section 4.9 de la [spécification AMQP](https://www.rabbitmq.com/resources/specs/amqp0-9-1.pdf)). Canopsis peut générer une exception `ShortStringTooLong` lorsque cette limite est dépassée.
+Cette chaîne sert actuellement de clé de routage (ou *routing key*) pour acheminer les évènements vers Canopsis, dans le cadre de notre utilisation de RabbitMQ. Le protocole AMQP qui lui est associé impose néanmoins une longueur maximale de 256 caractères à cette chaîne (cf. Section 4.9 de la [spécification AMQP](https://www.rabbitmq.com/resources/specs/amqp0-9-1.pdf)). Canopsis ne pouvant pas contourner cette limite du protocole, une exception `ShortStringTooLong` sera générée lorsque cette limite est dépassée.
 
 Vous devez donc veiller à ce que l'ensemble `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]` ne dépasse jamais 256 caractères, sans quoi les évènements, traitements et alarmes associés ne pourront être traités par Canopsis.
