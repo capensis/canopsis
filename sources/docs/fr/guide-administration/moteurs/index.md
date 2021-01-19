@@ -33,7 +33,6 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 
 | Moteur | Rôle | CAT ? |
 |--------|------|:-----:|
-| [`event_filter` (Python)](moteur-event_filter.md) | Applique des règles de filtrage. Ne doit pas être confondu avec le nouvel `event-filter` Go, contenu dans `engine-che` | |
 | [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
 | `metric` | Stocke les données de métrologie des évènements | |
 | `scheduler` | Coordonne le travail destiné aux différents moteurs `task_*` | |
