@@ -2,7 +2,7 @@
 
 ### Modification de l'edition et de la stack de Canopsis
 
-Des valeurs par défaut sont mises en place pour l'édition et la stack de Canopsis. L'édition vaut soit `"cat"`, soit `"core"`. La stack est soit `"go"`, soit `"python"`.
+Des valeurs par défaut sont mises en place pour l'édition et la stack de Canopsis. L'édition vaut soit `"cat"`, soit `"core"`. La stack est soit `"go"`, soit `"python"`. La valeur `"python"` n'est plus prise en charge depuis Canopsis v4.
 
 Pour modifier ces valeurs, il faut passer par l'API.
 
