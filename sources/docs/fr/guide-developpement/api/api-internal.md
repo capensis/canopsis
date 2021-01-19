@@ -28,7 +28,7 @@ Pour modifier ces valeurs, il faut passer par l'API.
 curl -X POST -u root:root -H "Content-Type: application/json" -d '{
     "edition":"cat",
     "stack":"go"
-}' 'http://<Canopsis_URL>/api/internal/properties'
+}' 'http://localhost:8082/api/internal/properties'
 ```
 
 #### Réponse en cas de réussite

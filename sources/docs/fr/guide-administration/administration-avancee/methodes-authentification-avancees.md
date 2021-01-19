@@ -133,7 +133,7 @@ La configuration se fait dans un fichier JSON : **casconfig.json**
 La requête suivante permet d'envoyer cette configuration.
 
 ```sh
-curl -X POST -H "Content-type: application/json" -d @casconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/casconfig/cservice.casconfig'
+curl -u root:root -X POST -H "Content-type: application/json" -d @casconfig.json 'http://localhost:8082/rest/object/casconfig/cservice.casconfig'
 ```
 
 Le résultat renvoyé doit être de type :

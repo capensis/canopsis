@@ -10,7 +10,7 @@ Pour cela, il faut au préalable ajouter des règles de conversion via l'API `as
 
 Voici un exemple de configuration avec ajout de `2 règles`
 
-```shell
+```sh
 curl -H "Content-Type: application/json" -X POST -u root:root -d '{
     "filters" : 
     [
@@ -24,7 +24,7 @@ curl -H "Content-Type: application/json" -X POST -u root:root -d '{
         "filter": "duration"
       }
     ]
-}' http://<ip_canopsis>:8082/api/v2/associativetable/alarm-column-filters
+}' http://localhost:8082/api/v2/associativetable/alarm-column-filters
 ```
 
 Dans cet exemple, nous allons configurer `2 valeurs de colonne` avec un rendu particulier.
@@ -70,7 +70,6 @@ Toute colonne qui afficherait :
 
         * 2) Format de la Durée (par défaut - `'D __ H _ m _ s _'`)
 
-
 #### Les attributs liés aux dates peuvent contenir plusieurs type de formats
 
 * `long` - DD/MM/YYYY H:mm:ss
@@ -84,8 +83,6 @@ Toute colonne qui afficherait :
 * `timePickerWithSeconds` - HH:mm:ss
 * `veeValidateDateTimeFormat` - dd/MM/yyyy HH:mm
 
-
-
 Il est à noter que les champs utilisés ne peuvent être que des sous-éléments d'une `alarme` et pas d'une `entité`
 
 Par défaut, la date du jour ne sera pas affichée ( uniquement l'heure : format `timePicker` )
@@ -94,19 +91,15 @@ Par défaut, la date du jour ne sera pas affichée ( uniquement l'heure : format
 
 Attention à bien utiliser la méthode `POST` pour la première création de règle et `PUT` par la suite
 
-```shell
-curl -H "Content-Type: application/json" -X POST -u root:root -d @configuration.json http://<ip_canopsis>:8082/api/v2/associativetable/alarm-column-filters
+```sh
+curl -H "Content-Type: application/json" -X POST -u root:root -d @configuration.json http://localhost:8082/api/v2/associativetable/alarm-column-filters
 ```
-
-
 
 ### Accès à la configuration via l'UI
 
 Nous allons configurer la personnalisation du champ `alarm.v.extra.activation_date` présent dans l'explorateur de contexte et correspondant au champ `v.extra.activation_date` envoyé à l'API [ci-dessus](#envoi-via-lapi)
 
 ![](img/alarm-list-setting-3.png)
-
-
 
 Pour accéder au paramétrage de cette fonctionnalité de rendu côté interface Web, il faut :
 
@@ -125,8 +118,6 @@ Pour accéder au paramétrage de cette fonctionnalité de rendu côté interface
 ![](img/alarm-list-setting-5.png)
 
 * Elle s'affiche uniquement avec une date différente de la date du jour
-
-
 
 ![](img/alarm-list-setting-6.png)
 

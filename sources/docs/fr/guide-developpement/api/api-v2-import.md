@@ -287,7 +287,7 @@ curl -X PUT -u root:root -H "Content-type: application/x-www-form-urlencoded" -d
         }
     ],
     "links":[]
-}' 'http://<Canopsis_URL>/api/contextgraph/import'
+}' 'http://localhost:8082/api/contextgraph/import'
 ```
 
 #### Réponse en cas de réussite
@@ -323,7 +323,7 @@ curl -X PUT -u root:root -H "Content-type: application/x-www-form-urlencoded" -d
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut connaître le statut de la task `c3090ed6-5b17-4c75-ad23-82238cffa62f` :
 
 ```
-curl -u root:root http://<Canopsis_URL>/api/contextgraph/import/status/c3090ed6-5b17-4c75-ad23-82238cffa62f
+curl -u root:root http://localhost:8082/api/contextgraph/import/status/c3090ed6-5b17-4c75-ad23-82238cffa62f
 ```
 
 #### Import en attente

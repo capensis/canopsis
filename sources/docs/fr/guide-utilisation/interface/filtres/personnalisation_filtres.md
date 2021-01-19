@@ -59,7 +59,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
       "value": "infos.weather_type.value"
     }
   ]
-}' 'http://<Canopsis_URL>/api/v2/associativetable/filterhints'
+}' 'http://localhost:8082/api/v2/associativetable/filterhints'
 ````
 Vous devez obtenir le résultat suivant : 
 

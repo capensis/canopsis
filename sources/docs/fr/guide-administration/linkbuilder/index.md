@@ -69,7 +69,7 @@ curl -H "Content-Type: application/json" -X POST -u root:root -d'{
         "category" : "Consignes",
         "label" : "Procédure"
     }
-}' 'http://IP_CANOPSIS:8082/api/v2/associativetable/link_builders_settings'
+}' 'http://localhost:8082/api/v2/associativetable/link_builders_settings'
 ```
 
 Si une configuration existe déjà en base, remplacez `POST` par `PUT`.

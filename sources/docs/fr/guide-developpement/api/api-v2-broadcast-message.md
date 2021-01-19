@@ -34,7 +34,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 	"color": "#e75e40",
 	"start": 1588601154,
 	"end": 1588601400
-}' 'http://<Canopsis_URL>/api/v2/broadcast-message'
+}' 'http://localhost:8082/api/v2/broadcast-message'
 ```
 
 #### Réponse en cas de réussite
@@ -96,7 +96,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 	"color": "#0062B1",
 	"start": 1588601154,
 	"end": 1588601400
-}' 'http://<Canopsis_URL>/api/v2/broadcast-message/3590174b-ea11-4d32-bdcd-72335b41b4fc'
+}' 'http://localhost:8082/api/v2/broadcast-message/3590174b-ea11-4d32-bdcd-72335b41b4fc'
 ```
 
 #### Réponse en cas de réussite
@@ -128,7 +128,7 @@ Supprime un message d'information en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le message d'information avec l'`id` `3590174b-ea11-4d32-bdcd-72335b41b4fc` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/broadcast-message/3590174b-ea11-4d32-bdcd-72335b41b4fc'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/broadcast-message/3590174b-ea11-4d32-bdcd-72335b41b4fc'
 ```
 
 #### Réponse en cas de réussite
@@ -163,7 +163,7 @@ Récupère un ou plusieurs messages d'information créés en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer le message d'information avec l'`id` `4be6eb22-f173-4ac1-8352-1f37cf5caf48` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/broadcast-message/4be6eb22-f173-4ac1-8352-1f37cf5caf48'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/broadcast-message/4be6eb22-f173-4ac1-8352-1f37cf5caf48'
 ```
 
 ##### Réponse en cas de réussite
@@ -214,7 +214,7 @@ Récupère tous les messages d'informations stockés en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les messages d'information :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/broadcast-message'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/broadcast-message'
 ```
 
 ##### Réponse en cas de réussite
@@ -253,7 +253,7 @@ Récupère tous les messages d'informations actifs
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les messages d'information :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/broadcast-message/active'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/broadcast-message/active'
 ```
 
 ##### Réponse en cas de réussite
