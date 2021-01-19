@@ -18,7 +18,7 @@ Cette fonctionnalité sera aussi disponible en installation par paquets lors d'u
 
 ## Fichier de configuration
 
-Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
+Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/canopsis.toml` (ou `/canopsis.toml` en environnement Docker) et inscrit ces informations en base de données.
 
 ### Option `EnableLastEventDate`
 

@@ -26,17 +26,17 @@ Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `
 | `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v3.6/reference/connection-string/)) |
 | `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis)) |
 
-### Chemin d'accès au fichier de configuration global (`default_configuration.toml`)
+### Chemin d'accès au fichier de configuration global (`canopsis.toml`)
 
-Les différents moteurs et binaires Go ont besoin d'un fichier de configuration `default_configuration.toml`. La variable `CPS_DEFAULT_CFG` permet de leur indiquer le chemin où se trouve ce fichier.
+Les différents moteurs et binaires Go ont besoin d'un fichier de configuration `canopsis.toml`. La variable `CPS_DEFAULT_CFG` permet de leur indiquer le chemin où se trouve ce fichier.
 
-En installation Docker, elle doit presque toujours valoir `/default_configuration.toml`. En installation par paquets, elle doit valoir `/opt/canopsis/etc/default_configuration.toml` (`canoctl deploy` se charge de renseigner cette valeur dans l'unité systemd `canopsis-engine-go@.service`).
+En installation Docker, elle doit presque toujours valoir `/canopsis.toml`. En installation par paquets, elle doit valoir `/opt/canopsis/etc/canopsis.toml` (`canoctl deploy` se charge de renseigner cette valeur dans l'unité systemd `canopsis-engine-go@.service`).
 
-Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `init` ou `feeder`.
+Ces variables concernent l'ensemble des moteurs Go, et certains outils comme `canopsis-reconfigure`.
 
 | Variable d'environnement | Valeur par défaut | Utilité |
 |:-------------------------|-------------------|---------|
-| `CPS_DEFAULT_CFG` | `default_configuration.toml` (dans le répertoire courant) | Chemin d'accès vers le fichier de configuration `default_configuration.toml` |
+| `CPS_DEFAULT_CFG` | `canopsis.toml` (dans le répertoire courant) | Chemin d'accès vers le fichier de configuration `canopsis.toml` |
 
 ### Tentatives de connexion aux services externes
 
