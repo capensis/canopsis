@@ -34,7 +34,6 @@ En installation par paquets, l'ensemble des moteurs Go se trouvent dans le names
 | Moteur | Rôle | CAT ? |
 |--------|------|:-----:|
 | [`kpi`](moteur-kpi.md) | Mise en place de statistiques sur les alarmes, entités et sessions | ✅ |
-| `metric` | Stocke les données de métrologie des évènements | |
 | `scheduler` | Coordonne le travail destiné aux différents moteurs `task_*` | |
 | [`snmp`](moteur-snmp.md) | Gère les traps SNMP | ✅ |
 | [`task_ackcentreon`](moteur-task_ackcentreon.md) | Envoi d'ACK de Canopsis vers Centreon | ✅ |
@@ -58,7 +57,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `context-graph` | `engine-che` |
 | `engine-stat` (Go) | `statsng` ⇒ n/a |
 | `eventstore` | n/a |
-| `perfdata` | `metric` |
+| `perfdata` | `metric` ⇒ n/a |
 | `statsng` | n/a |
 | `task_dataclean` | n/a |
 | `task_linklist` | Utilisation du [linkbuilder](../linkbuilder/index.md) |
