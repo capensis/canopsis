@@ -14,7 +14,11 @@
         )
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="isDisabled", :loading="submitting", type="submit") {{ $t('common.submit') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
+          type="submit"
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -66,10 +70,14 @@ export default {
   methods: {
     async submit() {
       try {
-        await this.createPbehaviors(Object.values(this.form.addedPbehaviorsById)
-          .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id']))));
-        await this.updatePbehaviors(Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest));
-        await this.removePbehaviors(Object.values(this.form.removedPbehaviorsById));
+        const createdPbehaviors = Object.values(this.form.addedPbehaviorsById)
+          .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])));
+        const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
+        const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
+
+        await this.createPbehaviors(createdPbehaviors);
+        await this.updatePbehaviors(updatedPbehaviors);
+        await this.removePbehaviors(removedPbehaviors);
 
         if (this.config.afterSubmit) {
           await this.config.afterSubmit();
