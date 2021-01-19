@@ -1,100 +1,106 @@
-# Procédure de mise à jour de Canopsis
+# Mise à jour de Canopsis
 
-!!! note
-    Cette procédure ne décrit que la mise à jour d'une instance mono-nœud de Canopsis open-core.
+Cette procédure décrit la mise à jour d'une instance mono-nœud de Canopsis.
 
-## Principes des numéros de version de Canopsis
+Lisez l'ensemble de ce document avant de procéder à toute manipulation.
 
-Une nouvelle version de Canopsis sort généralement toutes les 3 semaines.
+## Versions concernées par cette procédure
 
-Afin de décrire ses changements, Canopsis suit le principe du *versionnage sémantique*.
+Cette procédure concerne uniquement les mises à jour « régulières » de l'outil, c'est-à-dire celles où le premier chiffre du numéro de version n'a pas changé (3.25.0 vers 3.26.0, 3.26.0 vers 3.26.1…).
 
-### Mises à jour majeures
+Les mises à jour « majeures » de Canopsis (3.48.0 vers 4.0.0) ne peuvent pas et **ne doivent pas** être réalisées à l'aide de ce seul document. Pour ces mises à jour en particulier, le Guide de migration lié à cette nouvelle version majeure doit être suivi.
 
-On parle d'une mise à jour **majeure** lorque le premier chiffre change ; par exemple, lors du passage de Canopsis 2 à Canopsis 3.
+Consultez le [document des numéros de version de Canopsis](numeros-version-canopsis.md) pour en savoir plus au sujet du *versionnage sémantique* utilisé par Canopsis.
 
-Ceci signifie que des changements fondamentaux ont été apportés à Canopsis (changement d'interface, de paradigmes, de technologies…), ou qu'une incompatibilité majeure est survenue. Ces changements sont exceptionnels.
-
-La mise à jour d'une installation existante n'est **pas garantie** lors d'une mise à jour majeure. Il faudra généralement prévoir une réinstallation et une reconfiguration complètes.
-
-### Mises à jour intermédiaires
-
-Les mises à jour **intermédiaires** sont les plus courantes. Il s'agit, par exemple, d'une mise à jour de Canopsis 3.25.0 vers Canopsis 3.26.0.
-
-Ce type de mise à jour apporte de nouvelles fonctionnalités, souvent des corrections de bugs et parfois quelques changements de comportement.
-
-Elle nécessite de suivre la procédure de mise à jour decrite ci-dessous.
-
-### Mises à jour mineures
-
-La mise à jour d'un Canopsis 3.26.0 vers 3.26.1 constitue une mise à jour **mineure**.
-
-Ces mises à jour ne comportent uniquement que des correctifs. Il n'y a aucun ajout de fonctionnalités ou de changement fonctionnel.
-
-Elle nécessite de suivre la procédure de mise à jour décrite ci-dessous.
+Les environnements n'ayant pas été installés en suivant l'une des [méthodes d'installation officielles de Canopsis](../installation/index.md#methodes-dinstallation-de-canopsis), notamment les environnements de type Docker Swarm ou en paquets multi-nœuds, ne sont pas non plus pris en charge par cette procédure.
 
 ## Procédure de mise à jour
 
-Cette procédure s'applique aux mises à jour intermédiaires (3.25.0 vers 3.26.0) et aux mises à jour mineures (3.26.0 vers 3.26.1).
+Vous devez tout d'abord lire **chacune** des [notes de version](../../index.md#notes-de-version) publiée entre votre version actuelle et celle que vous ciblez.
 
-Vous devez *impérativement* lire **chacune** des [notes de version](../../index.md) vous séparant de votre version précédente à votre version cible, avant de procéder à une mise à jour.
+Par exemple, si vous effectuez une mise à jour de Canopsis 3.38.0 à 3.40.0, vous devez :
+
+*  consulter et appliquer toute procédure donnée dans les notes de version de Canopsis 3.39.0,
+*  puis celles de Canopsis 3.39.1,
+*  puis celles de Canopsis 3.40.0,
+*  puis suivre le reste de cette procédure, selon votre méthode d'installation (paquets ou Docker Compose).
+
+Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
 
 ### Mise à jour en installation par paquets
 
-Veuillez tout d'abord obligatoirement lire les [notes de version](../../index.md) qui vous concernent **avant** de démarrer toute manipulation. Des prérequis cruciaux peuvent y être mentionnés.
-
-Puisque la [procédure d'installation par paquets](../installation/installation-paquets.md) ajoute un dépôt Canopsis dans votre gestionnaire de paquets, celui-ci vous permettra de mettre à jour Canopsis avec le reste de votre système.
-
 !!! attention
-    **Cette mise à jour causera une interruption de service.**
+    Cette mise à jour causera une **interruption de service** de Canopsis et des composants qui lui sont associés, durant son déroulement.
+    
+    Vous pouvez notamment utiliser la fonctionnalité de [diffusion de messages](../../guide-utilisation/interface/broadcast-messages.md) afin de prévenir vos utilisateurs en amont.
 
-Sur un environnement Debian :
-```sh
-apt update
-apt upgrade
-```
+L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur `root`.
 
-Sur un environnement CentOS :
-```sh
-yum update
-```
+=== "CentOS 7"
+    Appliquez la mise à jour des paquets Canopsis :
 
-Il faut ensuite lancer le script `canopsinit` pour appliquer les éventuelles procédures automatisées de mise à jour.
+    ```sh
+    yum --disablerepo="*" --enablerepo="canopsis*" update
+    ```
 
-!!! attention
-    Avant Canopsis 3.27.0, la procédure suivante réinitialise les identifiants `root` de la base utilisateur, interne à Canopsis, ainsi que sa authkey associée.
+=== "Debian 9 (déprécié)"
+    !!! attention
+        Les paquets Canopsis pour Debian sont dépréciés et seront supprimés dans une prochaine version de Canopsis. Migrez dès que possible vers une autre [méthode d'installation](../installation/index.md#methodes-dinstallation-de-canopsis).
 
-Si vous utilisez la configuration « moteurs Python uniquement » et « édition Canopsis open-core » (qui sont les réglages par défaut), lancer :
-```sh
-su - canopsis -c "canopsinit"
-```
+    Appliquez l'ensemble de vos mises à jour (ciblez uniquement les paquets `canopsis*` si nécessaire) :
 
-En revanche, si vous utilisez une configuration « moteurs Go » et « édition Canopsis CAT », lancer :
-```sh
-# Valeurs acceptées : --canopsis-edition core OU cat, --canopsis-stack python OU go.
-# "core" et "python" sont les valeurs par défaut.
-su - canopsis -c "canopsinit --canopsis-edition cat --canopsis-stack go"
-```
+    ```sh
+    apt update
+    apt upgrade
+    ```
 
-S'assurer que toute modification des unités systemd soit bien prise en compte :
+Vous devez ensuite, dans tous les cas, finaliser la mise à jour avec les commandes suivantes, fonction de votre édition de Canopsis (Core ou CAT) :
+
+=== "Canopsis Core"
+
+    ```sh
+    su - canopsis -c "canopsinit --canopsis-edition core"
+    ```
+
+=== "Canopsis CAT"
+
+    ```sh
+    su - canopsis -c "canopsinit --canopsis-edition cat"
+    ```
+
+Puis, après avoir pris en compte toute éventuelle remarque des notes de version au sujet du fichier `canopsis.toml`, appliquez les changements de configuration :
+
+```bash
+set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+/opt/canopsis/bin/canopsis-reconfigure
+``` 
+
+Puis, redémarrez l'ensemble des moteurs Canopsis :
+
 ```sh
 systemctl daemon-reload
-```
-
-Puis, redémarrer l'ensemble des moteurs Canopsis :
-```sh
 canoctl restart
 ```
 
-Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md) qui vous concernent.
+Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concernent.
 
-**Si vous bénéficiez d'un développement spécifique** (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
 
-Vous pouvez alors vous connecter à nouveau sur l'interface Canopsis pour valider que tout fonctionne correctement.
+### Mise à jour en environnement Docker Compose
 
-### Mise à jour en environnement Docker
+Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue : <https://git.canopsis.net/canopsis/canopsis/-/tree/develop/docker-compose>.
 
-!!! note
-    Dans la plupart des cas, la mise à jour d'un environnement installé via Docker consistera à mettre à jour les versions de tags des images Docker utilisées. Dans tous les cas, il est recommandé d'aller lire les [notes de version](https://doc.canopsis.net/#dernieres-versions) entre la version à mettre à jour et la version qui doit être installée.
-    
-    Dans le cas d'une version Core, vous pouvez allez récupérer la dernière version des configurations `docker-compose` dans le [Gitlab](https://git.canopsis.net/canopsis/canopsis/-/tree/develop/docker-compose) ou via un `git pull` si vous avez déjà un clone de ce dépôt.
+Puis, exécutez la commande suivante :
+
+```sh
+docker-compose up -d
+```
+
+## Après la mise à jour
+
+Durant le temps de coupure des services Canopsis, RabbitMQ se sera chargé de mettre en attente vos [évènements](../../guide-utilisation/vocabulaire/index.md#evenement). Ils seront alors « dépilés » et traités normalement par les moteurs Canopsis, dès leur redémarrage.
+
+Cette accumulation d'évènements en attente peut, néanmoins, provoquer une latence des traitements, ou une augmentation de la consommation des ressources, en raison du rattrapage à effectuer. Cette incidence reste temporaire. Nous vous conseillons de [surveiller l'interface d'administration de RabbitMQ](../../guide-de-depannage/rabbitmq-webui.md) juste avant, durant et après la mise à jour, afin de mesurer l'état de « retour à la normale » de votre plateforme lors d'une période de maintenance de l'outil.
+
+En revanche, tout appel fait aux API Canopsis durant cette période de maintenance n'aura pas été temporisé et devra donc être renouvelé s'il a échoué.
+
+Une fois que le service est rétabli, vous pouvez vous connecter à nouveau sur l'interface Canopsis pour valider que tout fonctionne correctement.
