@@ -57,7 +57,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | Moteur obsolète | Remplacé par |
 |-----------------|--------------|
 | `acknowledgement` (Python) | `engine-axe` (Go) |
-| `alerts` (Python) | `engine-action`(Go)  |
+| `alerts` (Python) | `engine-axe`(Go)  |
 | `cancel` (Python) | `engine-axe` (Go) |
 | `cleaner_alerts` (Python) | `engine-che` (Go) |
 | `cleaner_events` (Python) | `engine-che` (Go) |
