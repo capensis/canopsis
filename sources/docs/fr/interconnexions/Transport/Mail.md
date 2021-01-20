@@ -99,7 +99,7 @@ On peut définir les champs `component`, `resource` et `output` de manière dyna
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une expression régulière définie, à partir de Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
+Pour garantir le fonctionnement, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une expression régulière définie, à partir de Canopsis 3.39.0) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
@@ -117,6 +117,9 @@ Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit 
 
 A partir de la `3.40.0` On peut assigner plusieurs templates à un expéditeur en fonction du sujet du mail. Pour cela il faut définir une expression régulière pour assigner un sujet a son template.
 
+**note 1:** Lorsque plusieurs templates sont définis, l'ordre de ceux-ci est important. C'est le premier template correspondant qui sera appliqué, les suivants seront ignorés.
+**note 2:** Le nommage des templates(template1, template2, etc...) n'influe pas dans l'ordre de comparaison.
+
 Exemple :
 
 ```ini
@@ -130,6 +133,23 @@ template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 template2.sender=sender@mail.net
 # Vous pouvez définir une  expression régulière pour lier un sujet de mail a un template (3.40.0+)
 template2.subject=.*Datacenter.*
+# Template à appliquer sur ces emails
+template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
+```
+
+Dans cet exemple tous les mails de `sender@mail.net` avec ou sans le le mot `Datacenter` dans le sujet seront liés au template /opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
+
+```ini
+[template]
+# Expéditeur des emails à traiter
+template1.sender=sender@mail.net
+# Vous pouvez définir une  expression régulière pour lier un sujet de mail a un template (3.40.0+)
+template1.subject=.*Datacenter.*
+# Template à appliquer sur ces emails
+template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
+
+# Expéditeur des emails à traiter
+template2.sender=sender@mail.net
 # Template à appliquer sur ces emails
 template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
 ```
