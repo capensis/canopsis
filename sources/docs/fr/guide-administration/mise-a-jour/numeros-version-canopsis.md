@@ -18,7 +18,7 @@ Les mises à jour *intermédiaires* sont les plus courantes. Il s'agit, par exem
 
 Ce type de mise à jour apporte de nouvelles fonctionnalités, souvent des corrections de bugs et parfois quelques changements de comportement.
 
-Elle nécessite de suivre la [procédure standard de mise à jour](index.md).
+Elle nécessite de suivre la [procédure standard de mise à jour](index.md) et de réaliser toute manipulation supplémentaire décrite dans les [notes de version](../../index.md#notes-de-version) correspondantes.
 
 ## Mises à jour mineures
 
@@ -26,4 +26,4 @@ La mise à jour d'un Canopsis 3.26.0 vers 3.26.1 constitue une mise à jour *m
 
 Ces mises à jour comportent uniquement des correctifs. Il n'y a aucun ajout de fonctionnalités ou de changement fonctionnel.
 
-Elle nécessite de suivre la [procédure standard de mise à jour](index.md).
+Elle nécessite de suivre la [procédure standard de mise à jour](index.md) et de réaliser toute manipulation supplémentaire décrite dans les [notes de version](../../index.md#notes-de-version) correspondantes.
