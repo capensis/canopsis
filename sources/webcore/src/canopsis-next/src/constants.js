@@ -1663,6 +1663,8 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STATUSES = {
 
 export const REMEDIATION_JOB_EXECUTION_STATUSES = {
   running: 0,
+  succeeded: 1,
+  failed: 2,
   canceled: 3,
 };
 
