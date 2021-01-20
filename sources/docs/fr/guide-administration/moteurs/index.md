@@ -29,7 +29,7 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
-L'ensemble des moteurs Go se trouvent dans `/opt/canopsis/bin/` lors d'une installation paquets, ou à la racine du conteneur de ce moteur, lors d'une installation Docker.
+L'ensemble des moteurs Go se trouve dans `/opt/canopsis/bin/` lors d'une installation paquets, ou à la racine du conteneur de ce moteur, lors d'une installation Docker.
 
 Les moteurs Go acceptent au minimum les options suivantes :
 
