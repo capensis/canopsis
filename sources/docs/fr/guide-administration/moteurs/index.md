@@ -29,7 +29,7 @@ La plupart des moteurs « nouvelle génération » de Canopsis sont écrits en
 | [`engine-webhook`](moteur-webhook.md) | Gère le système de webhooks vers des services externes | ✅ |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 
-L'ensemble des moteurs Go se trouvent dans `/opt/canopsis/bin/` lors d'une installation paquets, ou à la racine du conteneur de ce moteur, lors d'une installation Docker.
+L'ensemble des moteurs Go se trouve dans `/opt/canopsis/bin/` lors d'une installation paquets, ou à la racine du conteneur de ce moteur, lors d'une installation Docker.
 
 Les moteurs Go acceptent au minimum les options suivantes :
 
@@ -57,7 +57,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | Moteur obsolète | Remplacé par |
 |-----------------|--------------|
 | `acknowledgement` (Python) | `engine-axe` (Go) |
-| `alerts` (Python) | `engine-action`(Go)  |
+| `alerts` (Python) | `engine-axe`(Go)  |
 | `cancel` (Python) | `engine-axe` (Go) |
 | `cleaner_alerts` (Python) | `engine-che` (Go) |
 | `cleaner_events` (Python) | `engine-che` (Go) |
@@ -73,7 +73,7 @@ Les moteurs suivants sont obsolètes et ne sont plus maintenus, documentés ou p
 | `task_dataclean` (Python) | n/a |
 | `task_linklist` (Python) | Utilisation du [linkbuilder](../linkbuilder/index.md) |
 | `task_mail` (Python) | Utilisation d'un [Webhook](moteur-webhook.md) (CAT) vers un service d'envoi d'e-mails |
-| `ticket` | ? |
+| `ticket` | `engine-axe`(Go) |
 | `watcher` (Python) | `engine-watcher` (Go) |
 <!-- Note : maintenir ce tableau dans l'ordre alphabétique -->
 

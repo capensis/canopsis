@@ -82,7 +82,7 @@ systemctl daemon-reload
 canoctl restart
 ```
 
-Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concernent.
+Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
 
 
 ### Mise à jour en environnement Docker Compose
