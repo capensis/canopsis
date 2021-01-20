@@ -31,22 +31,22 @@ Dans cet exemple, nous allons configurer `2 valeurs de colonne` avec un rendu pa
 
 Toute colonne qui afficherait :
 
-* l'attribut `v.extra.activation_date` initialement de type `timestamp Unix` qui sera affiché en format `date` de type `long` ( voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date )
+* l'attribut `v.extra.activation_date` initialement de type `timestamp Unix` qui sera affiché en format `date` de type `long` (voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date)
 * l'attribut `v.duration` initialement en secondes qui sera affiché en format `duration` de type durée par défaut
 
-### Les filtres utilisés ( attribut `filter` ) peuvent contenir plusieurs valeurs
+### Les filtres utilisés (attribut `filter`) peuvent contenir plusieurs valeurs
 
 * `date` 
   
-    * `attributes` possibles ( tableau de valeurs )
+    * `attributes` possibles (tableau de valeurs)
       
-        * 1) Format ( voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date )
-    	* 2) `true` ou `false` ( valeur par défaut si non précisée ) : Ignore la vérification du jour courant
+        * 1) Format (voir [matrice de correspondance](#les-attributs-lies-aux-dates-peuvent-contenir-plusieurs-type-de-formats) des types d'attributs liés au filtre date)
+    	* 2) `true` ou `false` (valeur par défaut si non précisée) : Ignore la vérification du jour courant
         * 3) Valeur par défaut à mettre dans l'attribut si aucune valeur n'est présente dans l'explorateur de contexte
         
     * Exemple
     
-```
+```json
 {
   column: "v.last_update_date",
   filter: "date",
@@ -62,7 +62,7 @@ Toute colonne qui afficherait :
     
 * `duration`
   
-    * `attributes` possibles ( tableau de valeurs )
+    * `attributes` possibles (tableau de valeurs)
         * 1) Locale (par défaut locale du navigateur)
             * Exemples
                 * Rendu avec la locale `fr` : 27 jours 5 heures 6 minutes
@@ -85,7 +85,7 @@ Toute colonne qui afficherait :
 
 Il est à noter que les champs utilisés ne peuvent être que des sous-éléments d'une `alarme` et pas d'une `entité`
 
-Par défaut, la date du jour ne sera pas affichée ( uniquement l'heure : format `timePicker` )
+Par défaut, la date du jour ne sera pas affichée (uniquement l'heure : format `timePicker`)
 
 ### Le fichier peut ensuite être envoyé via l'API pour charger la configuration
 
@@ -113,7 +113,7 @@ Pour accéder au paramétrage de cette fonctionnalité de rendu côté interface
 
 ![](img/alarm-list-setting-2.png)
 
-* L'affichage du rendu se fait dans la colonne paramétrée ( par défaut la date du jour n'est pas affichée avec ce type de données )
+* L'affichage du rendu se fait dans la colonne paramétrée (par défaut la date du jour n'est pas affichée avec ce type de données)
 
 ![](img/alarm-list-setting-5.png)
 
@@ -121,6 +121,6 @@ Pour accéder au paramétrage de cette fonctionnalité de rendu côté interface
 
 ![](img/alarm-list-setting-6.png)
 
-* Voici le rendu de l'autre champ personnalisé envoyé à l'API ( `alarm.v.duration` utilisé au niveau de la configuration du widget )
+* Voici le rendu de l'autre champ personnalisé envoyé à l'API (`alarm.v.duration` utilisé au niveau de la configuration du widget)
 
 ![](img/alarm-list-setting-7.png)
