@@ -1,15 +1,24 @@
 import { saveAs } from 'file-saver';
 
 /**
+ * Save data in file
+ *
+ * @param {string|Object} data
+ * @param {string} name
+ * @param {string} extension
+ */
+export const saveFile = (data, name, extension) => saveAs(data, `${name}.${extension}`);
+
+/**
  * Save file as json
  *
  * @param {Object} data
  * @param {string} name
- * @param {string} mime
  */
-export const saveJsonFile = (data, name, { mime = 'application/json;charset=utf-8' } = {}) => {
-  const blob = new Blob([JSON.stringify(data)], { type: mime });
-  saveAs(blob, `${name}.json`);
+export const saveJsonFile = (data, name) => {
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json;charset=utf-8' });
+
+  return saveFile(blob, name, 'json');
 };
 
 /**
@@ -17,9 +26,9 @@ export const saveJsonFile = (data, name, { mime = 'application/json;charset=utf-
  *
  * @param {string} string
  * @param {string} name
- * @param {string} mime
  */
-export const saveCsvFile = (string, name, { mime = 'text/csv;charset=utf-8;' } = {}) => {
-  const blob = new Blob([string], { type: mime });
-  saveAs(blob, `${name}.csv`);
+export const saveCsvFile = (string, name) => {
+  const blob = new Blob([string], { type: 'text/csv;charset=utf-8;' });
+
+  return saveFile(blob, name, 'csv');
 };
