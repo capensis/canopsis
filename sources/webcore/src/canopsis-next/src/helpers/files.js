@@ -3,11 +3,11 @@ import { saveAs } from 'file-saver';
 /**
  * Save data in file
  *
- * @param {string|Object} data
+ * @param {Blob} data
  * @param {string} name
  * @param {string} extension
  */
-export const saveFile = (data, name, extension) => saveAs(data, `${name}.${extension}`);
+export const saveFile = (blob, name, extension) => saveAs(blob, `${name}.${extension}`);
 
 /**
  * Save file as json
