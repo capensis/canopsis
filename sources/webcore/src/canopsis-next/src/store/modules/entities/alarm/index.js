@@ -126,18 +126,25 @@ export default {
         widgetId,
         exportData,
       });
+
+      return exportData;
     },
 
-    fetchAlarmsListExport(context, { params, id }) {
-      return request.get(`${API_ROUTES.alarmListExport}/${id}`, { params });
+    async fetchAlarmsListExport({ commit }, { params, id, widgetId }) {
+      const exportData = request.get(`${API_ROUTES.alarmListExport}/${id}`, { params });
+
+      commit(types.EXPORT_LIST_COMPLETED, {
+        widgetId,
+        exportData,
+      });
+
+      return exportData;
     },
 
     async fetchAlarmsListCsvFile({ commit }, { params, id, widgetId }) {
       const csvData = await request.get(`${API_ROUTES.alarmListExport}/${id}/download`, { params });
 
-      commit(types.DOWNLOAD_LIST_COMPLETED, {
-        widgetId,
-      });
+      commit(types.DOWNLOAD_LIST_COMPLETED, { widgetId });
 
       return csvData;
     },

@@ -31,8 +31,10 @@ export default {
     alarmsPending() {
       return this.getAlarmsPendingByWidgetId(this.widget._id);
     },
-    alarmsExportData() {
-      return this.getAlarmsExportByWidgetId(this.widget._id);
+    alarmsExportPending() {
+      const exportData = this.getAlarmsExportByWidgetId(this.widget._id);
+
+      return exportData && exportData.status === EXPORT_STATUSES.running;
     },
   },
   methods: {
@@ -84,34 +86,43 @@ export default {
 
     async exportAlarms({ params, name } = {}) {
       try {
-        await this.createAlarmsListExport({ params, widgetId: this.widget._id });
+        const widgetId = this.widget._id;
 
-        this.startFetchExportAlarmsData({ id: this.alarmsExportData._id, widgetId: this.widget._id, name });
+        const { _id: id } = await this.createAlarmsListExport({ params, widgetId });
+
+        await this.waitGeneratingAlarmListFile({ id, widgetId });
+
+        const csvFile = await this.fetchAlarmsListCsvFile({ id, widgetId });
+
+        saveCsvFile(csvFile, name);
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },
 
-    startFetchExportAlarmsData({ id, widgetId, name }) {
-      setTimeout(async () => {
-        try {
-          const exportAlarmsData = await this.fetchAlarmsListExport({ id });
+    waitGeneratingAlarmListFile({ id, widgetId }) {
+      return new Promise((resolve, reject) => {
+        const interval = setInterval(async () => {
+          try {
+            const exportAlarmListData = await this.fetchAlarmsListExport({ id, widgetId });
 
-          switch (exportAlarmsData.status) {
-            case EXPORT_STATUSES.running:
-              this.startFetchExportAlarmsData({ id });
-              break;
-            case EXPORT_STATUSES.completed: {
-              const csvFile = await this.fetchAlarmsListCsvFile({ id, widgetId });
-
-              saveCsvFile(csvFile, name);
-              break;
+            if (exportAlarmListData.status === EXPORT_STATUSES.completed) {
+              resolve(exportAlarmListData);
             }
+
+            if (exportAlarmListData.status === EXPORT_STATUSES.failed) {
+              reject();
+            }
+
+            if (exportAlarmListData.status !== EXPORT_STATUSES.running) {
+              clearInterval(interval);
+            }
+          } catch (err) {
+            clearInterval(interval);
+            reject(err);
           }
-        } catch (err) {
-          this.$popups.error({ text: err.error || this.$t('errors.default') });
-        }
-      }, EXPORT_FETCHING_INTERVAL);
+        }, EXPORT_FETCHING_INTERVAL);
+      });
     },
   },
 };

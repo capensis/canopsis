@@ -174,18 +174,25 @@ export default {
         widgetId,
         exportData,
       });
+
+      return exportData;
     },
 
-    fetchExportContext(context, { params, id }) {
-      return request.get(`${API_ROUTES.contextExport}/${id}`, { params });
+    fetchExportContext({ commit }, { params, widgetId, id }) {
+      const exportData = request.get(`${API_ROUTES.contextExport}/${id}`, { params });
+
+      commit(types.EXPORT_LIST_COMPLETED, {
+        widgetId,
+        exportData,
+      });
+
+      return exportData;
     },
 
     async fetchContextCsvFile({ commit }, { params, id, widgetId }) {
       const csvData = await request.get(`${API_ROUTES.contextExport}/${id}/download`, { params });
 
-      commit(types.DOWNLOAD_LIST_COMPLETED, {
-        widgetId,
-      });
+      commit(types.DOWNLOAD_LIST_COMPLETED, { widgetId });
 
       return csvData;
     },

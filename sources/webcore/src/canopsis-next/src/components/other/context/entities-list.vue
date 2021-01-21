@@ -37,7 +37,7 @@
         context-fab(v-if="hasAccessToCreateEntity")
       v-flex
         action-btn(
-          :loading="!!contextExportData",
+          :loading="!!contextExportPending",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
           color="black",

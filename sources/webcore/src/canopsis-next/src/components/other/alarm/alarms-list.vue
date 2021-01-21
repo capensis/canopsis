@@ -53,7 +53,7 @@
         )
       v-flex
         action-btn(
-          :loading="!!alarmsExportData",
+          :loading="!!alarmsExportPending",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
           color="black",

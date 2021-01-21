@@ -29,8 +29,10 @@ export default {
     contextEntitiesPending() {
       return this.getContextEntitiesPendingByWidgetId(this.widget._id);
     },
-    contextExportData() {
-      return this.getContextExportByWidgetId(this.widget._id);
+    contextExportPending() {
+      const exportData = this.getContextExportByWidgetId(this.widget._id);
+
+      return exportData && exportData.status === EXPORT_STATUSES.running;
     },
   },
   methods: {
@@ -62,34 +64,43 @@ export default {
 
     async exportContext({ params, name } = {}) {
       try {
-        await this.createContextExport({ params, widgetId: this.widget._id });
+        const widgetId = this.widget._id;
 
-        this.startFetchExportContextData({ id: this.contextExportData._id, widgetId: this.widget._id, name });
+        const { _id: id } = await this.createContextExport({ params, widgetId });
+
+        await this.waitGeneratingContextFile({ id, widgetId });
+
+        const csvFile = await this.fetchContextCsvFile({ id, widgetId });
+
+        saveCsvFile(csvFile, name);
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },
 
-    startFetchExportContextData({ id, widgetId, name }) {
-      setTimeout(async () => {
-        try {
-          const exportContextData = await this.fetchExportContext({ id });
+    waitGeneratingContextFile({ id, widgetId }) {
+      return new Promise((resolve, reject) => {
+        const interval = setInterval(async () => {
+          try {
+            const exportContextData = await this.fetchExportContext({ id, widgetId });
 
-          switch (exportContextData.status) {
-            case EXPORT_STATUSES.running:
-              this.startFetchExportContextData({ id });
-              break;
-            case EXPORT_STATUSES.completed: {
-              const csvFile = await this.fetchContextCsvFile({ id, widgetId });
-
-              saveCsvFile(csvFile, name);
-              break;
+            if (exportContextData.status === EXPORT_STATUSES.completed) {
+              resolve(exportContextData);
             }
+
+            if (exportContextData.status === EXPORT_STATUSES.failed) {
+              reject();
+            }
+
+            if (exportContextData.status !== EXPORT_STATUSES.running) {
+              clearInterval(interval);
+            }
+          } catch (err) {
+            clearInterval(interval);
+            reject(err);
           }
-        } catch (err) {
-          this.$popups.error({ text: err.error || this.$t('errors.default') });
-        }
-      }, EXPORT_FETCHING_INTERVAL);
+        }, EXPORT_FETCHING_INTERVAL);
+      });
     },
   },
 };
