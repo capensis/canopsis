@@ -86,4 +86,6 @@ canoctl deploy
 
 Cette commande peut prendre quelques minutes. Elle ne doit être exécutée qu'à la **première installation** de Canopsis.
 
-Une fois cette commande terminée, vous pouvez alors réaliser votre [première connexion à l'interface Canopsis](premiere-connexion.md). La procédure de mise à jour est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
+Une fois cette commande terminée, vous pouvez alors réaliser votre [première connexion à l'interface Canopsis](premiere-connexion.md). 
+
+Si vous souhaitez réaliser un mise à jour, la procédure est décrite dans le [Guide de mise à jour](../mise-a-jour/index.md).
