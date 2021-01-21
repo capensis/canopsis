@@ -8,7 +8,7 @@ L'ensemble des procédures décrites doivent être réalisées avec l'utilisateu
 
 ## Prérequis
 
-Assurez vous d'avoir suivi les [prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md).
+Assurez-vous d'avoir suivi les [prérequis réseau et de sécurité](pre-requis-parefeu-et-selinux.md).
 
 !!! attention
     Notez que Canopsis installe ses propres versions d'InfluxDB, MongoDB, Redis et RabbitMQ, et que seules ces versions sont validées pour fonctionner avec Canopsis. Veillez à ne pas remplacer ces versions par vos propres versions, que ce soit de façon intentionnelle, ou par l'ajout de dépôt tiers qui pourraient écraser les versions installées avec Canopsis (ex : installation des dépôts officiels InfluxDB pour l'ajout d'un Telegraf).

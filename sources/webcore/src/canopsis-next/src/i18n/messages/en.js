@@ -757,7 +757,7 @@ export default {
       success: {
         create: 'Pbehavior successfully created! You may need to wait 60 sec to see it in interface',
       },
-      cancelConfirmation: 'Some datas has been modified and will not be saved. Do you really want to close this menu ?',
+      cancelConfirmation: 'Some data has been modified and will not be saved. Do you really want to close this menu?',
     },
     createPause: {
       title: 'Create Pause event',
@@ -1179,7 +1179,7 @@ export default {
         },
         infos: {
           title: 'Informations',
-          validationError: 'Every values must be filled',
+          validationError: 'Every value must be filled',
         },
         patterns: {
           title: 'Patterns',
@@ -1611,7 +1611,7 @@ export default {
     priority: 'Priority',
     enabled: 'Enabled',
     actions: 'Actions',
-    externalDatas: 'External datas',
+    externalDatas: 'External data',
     actionsRequired: 'Please add at least one action',
     id: 'Id',
     idHelp: 'If no id is specified, a unique id will be generated automatically on rule creation',
@@ -1913,7 +1913,7 @@ export default {
     tabs: {
       type: 'Type',
       reason: 'Reason',
-      exceptions: 'Dates of exceptions',
+      exceptions: 'Exception dates',
     },
   },
 
