@@ -45,16 +45,19 @@
           label,
           @input="removeHistoryFilter"
         ) {{ $t(`settings.statsDateInterval.quickRanges.${activeRange.value}`) }}
-        v-tooltip(bottom)
-          v-btn(
-            slot="activator",
-            data-test="alarmsDateInterval",
-            icon,
-            small,
-            @click="showEditLiveReportModal"
-          )
-            v-icon(:color="activeRange ? 'primary' : 'black'") schedule
-          span {{ $t('liveReporting.button') }}
+        action-btn(
+          :tooltip="$t('liveReporting.button')",
+          :color="activeRange ? 'primary' : 'black'",
+          icon="schedule",
+          @click="showEditLiveReportModal"
+        )
+      v-flex
+        action-btn(
+          :loading="!!alarmsExportData",
+          icon="cloud_download",
+          color="black",
+          @click="exportAlarmsList"
+        )
     v-layout(row, wrap, align-center)
       pagination(
         data-test="topPagination",
@@ -104,6 +107,7 @@ import { findRange } from '@/helpers/date-intervals';
 import RecordsPerPage from '@/components/tables/records-per-page.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
@@ -134,6 +138,7 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
  */
 export default {
   components: {
+    ActionBtn,
     RecordsPerPage,
     FilterSelector,
     AdvancedSearch,
@@ -277,6 +282,17 @@ export default {
           params: query,
         });
       }
+    },
+
+    exportAlarmsList() {
+      this.exportAlarms({
+        params: pick(this.getQuery(), [
+          'search',
+          'filter',
+          'active_columns',
+        ]),
+        name: `${this.widget._id}-${new Date().toLocaleString()}`,
+      });
     },
   },
 };

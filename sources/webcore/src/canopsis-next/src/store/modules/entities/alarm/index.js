@@ -11,6 +11,12 @@ export const types = {
   FETCH_LIST: 'FETCH_LIST',
   FETCH_LIST_COMPLETED: 'FETCH_LIST_COMPLETED',
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
+
+  EXPORT_LIST: 'EXPORT_LIST',
+  EXPORT_LIST_COMPLETED: 'EXPORT_LIST_COMPLETED',
+  EXPORT_LIST_FAILED: 'EXPORT_LIST_FAILED',
+
+  DOWNLOAD_LIST_COMPLETED: 'DOWNLOAD_LIST_COMPLETED',
 };
 
 export default {
@@ -24,6 +30,8 @@ export default {
 
     getMetaByWidgetId: state => widgetId => get(state.widgets[widgetId], 'meta', {}),
     getPendingByWidgetId: state => widgetId => get(state.widgets[widgetId], 'pending'),
+    getExportByWidgetId: state => widgetId => get(state.widgets[widgetId], 'exportData'),
+
     getItem: (state, getters, rootState, rootGetters) => id =>
       rootGetters['entities/getItem'](ENTITIES_TYPES.alarm, id),
     getList: (state, getters, rootState, rootGetters) => ids =>
@@ -38,6 +46,12 @@ export default {
     },
     [types.FETCH_LIST_FAILED](state, { widgetId }) {
       Vue.setSeveral(state.widgets, widgetId, { pending: false });
+    },
+    [types.EXPORT_LIST_COMPLETED](state, { widgetId, exportData }) {
+      Vue.setSeveral(state.widgets, widgetId, { exportData });
+    },
+    [types.DOWNLOAD_LIST_COMPLETED](state, { widgetId }) {
+      Vue.delete(state.widgets[widgetId], 'exportData');
     },
   },
   actions: {
@@ -105,5 +119,27 @@ export default {
       }
     },
 
+    async createAlarmsListExport({ commit }, { widgetId, params }) {
+      const exportData = await request.post(API_ROUTES.alarmListExport, {}, { params });
+
+      commit(types.EXPORT_LIST_COMPLETED, {
+        widgetId,
+        exportData,
+      });
+    },
+
+    fetchAlarmsListExport(context, { params, id }) {
+      return request.get(`${API_ROUTES.alarmListExport}/${id}`, { params });
+    },
+
+    async fetchAlarmsListCsvFile({ commit }, { params, id, widgetId }) {
+      const csvData = await request.get(`${API_ROUTES.alarmListExport}/${id}/download`, { params });
+
+      commit(types.DOWNLOAD_LIST_COMPLETED, {
+        widgetId,
+      });
+
+      return csvData;
+    },
   },
 };

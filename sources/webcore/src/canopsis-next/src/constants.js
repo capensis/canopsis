@@ -1720,3 +1720,9 @@ export const CAT_ENGINES = [
   ENGINES_NAMES.dynamicInfo,
   ENGINES_NAMES.webhook,
 ];
+
+export const EXPORT_STATUSES = {
+  running: 0,
+  completed: 1,
+  failed: 2,
+};

@@ -1,6 +1,11 @@
 import { createNamespacedHelpers } from 'vuex';
 import { get } from 'lodash';
 
+import { EXPORT_FETCHING_INTERVAL } from '@/config';
+import { EXPORT_STATUSES } from '@/constants';
+
+import { saveCsvFile } from '@/helpers/files';
+
 const { mapGetters, mapActions } = createNamespacedHelpers('alarm');
 
 /**
@@ -14,6 +19,7 @@ export default {
       getAlarmsListByWidgetId: 'getListByWidgetId',
       getAlarmsMetaByWidgetId: 'getMetaByWidgetId',
       getAlarmsPendingByWidgetId: 'getPendingByWidgetId',
+      getAlarmsExportByWidgetId: 'getExportByWidgetId',
     }),
 
     alarms() {
@@ -25,12 +31,18 @@ export default {
     alarmsPending() {
       return this.getAlarmsPendingByWidgetId(this.widget._id);
     },
+    alarmsExportData() {
+      return this.getAlarmsExportByWidgetId(this.widget._id);
+    },
   },
   methods: {
     ...mapActions({
       fetchAlarmItem: 'fetchItem',
       fetchAlarmsList: 'fetchList',
       fetchAlarmsListWithPreviousParams: 'fetchListWithPreviousParams',
+      createAlarmsListExport: 'createAlarmsListExport',
+      fetchAlarmsListExport: 'fetchAlarmsListExport',
+      fetchAlarmsListCsvFile: 'fetchAlarmsListCsvFile',
     }),
 
     /**
@@ -68,6 +80,38 @@ export default {
         id: alarm._id,
         params,
       });
+    },
+
+    async exportAlarms({ params, name } = {}) {
+      try {
+        await this.createAlarmsListExport({ params, widgetId: this.widget._id });
+
+        this.startFetchExportAlarmsData({ id: this.alarmsExportData._id, widgetId: this.widget._id, name });
+      } catch (err) {
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
+    },
+
+    startFetchExportAlarmsData({ id, widgetId, name }) {
+      setTimeout(async () => {
+        try {
+          const exportAlarmsData = await this.fetchAlarmsListExport({ id });
+
+          switch (exportAlarmsData.status) {
+            case EXPORT_STATUSES.running:
+              this.startFetchExportAlarmsData({ id });
+              break;
+            case EXPORT_STATUSES.completed: {
+              const csvFile = await this.fetchAlarmsListCsvFile({ id, widgetId });
+
+              saveCsvFile(csvFile, name);
+              break;
+            }
+          }
+        } catch (err) {
+          this.$popups.error({ text: err.error || this.$t('errors.default') });
+        }
+      }, EXPORT_FETCHING_INTERVAL);
     },
   },
 };

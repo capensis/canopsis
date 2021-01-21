@@ -64,7 +64,9 @@ export const API_ROUTES = {
   currentUser: '/api/v4/account/me',
   version: '/api/v2/version',
   alarmList: '/api/v4/alarms',
+  alarmListExport: '/api/v4/alarm-export',
   context: '/context',
+  contextExport: '/api/v4/entity-export',
   createEntity: '/put-entities',
   watcher: '/api/v2/watchers',
   watcherng: '/api/v2/watcherng',
@@ -180,6 +182,8 @@ export const COLORS = {
 export const FILE_BASE_URL = `${API_BASE_URL}${API_ROUTES.file}`;
 
 export const INSTRUCTION_EXECUTE_FETCHING_INTERVAL = 10000;
+
+export const EXPORT_FETCHING_INTERVAL = 2000;
 
 export const DEFAULT_JOB_EXECUTOR_FETCH_TIMEOUT_SECONDS = 30;
 

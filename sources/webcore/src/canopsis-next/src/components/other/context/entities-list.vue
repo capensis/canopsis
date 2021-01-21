@@ -35,6 +35,13 @@
         mass-actions-panel(:itemsIds="selectedIds")
       v-flex
         context-fab(v-if="hasAccessToCreateEntity")
+      v-flex
+        action-btn(
+          :loading="!!contextExportData",
+          :tooltip="$t('settings.selectAFilter')",
+          icon="cloud_download",
+          @click="exportContextList"
+        )
     no-columns-table(v-if="!hasColumns")
     div(v-else)
       v-data-table(
@@ -95,6 +102,7 @@ import NoColumnsTable from '@/components/tables/no-columns.vue';
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
 import EnabledColumn from '@/components/tables/enabled-column.vue';
 import AdvancedSearch from '@/components/other/shared/search/advanced-search.vue';
+import ActionBtn from '@/components/tables/action-btn.vue';
 
 import authMixin from '@/mixins/auth';
 import widgetFetchQueryMixin from '@/mixins/widget/fetch-query';
@@ -120,6 +128,7 @@ import MassActionsPanel from './actions/mass-actions-panel.vue';
  */
 export default {
   components: {
+    ActionBtn,
     Ellipsis,
     RecordsPerPage,
     NoColumnsTable,
@@ -236,6 +245,19 @@ export default {
 
         mainFilter: prepareMainFilterToQueryFilter(filter, condition),
       };
+    },
+
+    exportContextList() {
+      const query = this.getQuery();
+
+      this.exportContext({
+        params: {
+          filter: query._filter,
+          search: query.search,
+          active_columns: query.active_columns,
+        },
+        name: `${this.widget._id}-${new Date().toLocaleString()}`,
+      });
     },
   },
 };

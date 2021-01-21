@@ -5,6 +5,7 @@
         slot="activator",
         :disabled="disabled",
         :data-test="$attrs['data-test']",
+        :loading="loading",
         icon,
         @click.stop.prevent="$listeners.click"
       )
@@ -33,6 +34,10 @@ export default {
       default: '',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
       type: Boolean,
       default: false,
     },
