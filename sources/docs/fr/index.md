@@ -16,6 +16,7 @@ Cette plateforme regroupe toutes les informations permettant de mettre en place,
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
 
 ### Dernières versions
+
 *  [Canopsis 4.0.0](notes-de-version/4.0.0.md), publié le 21 janvier 2021
 
 ### Anciennes versions
