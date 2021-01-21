@@ -74,7 +74,7 @@ Choisissez un onglet ci-dessous, en fonction de votre environnement (paquets Cen
 
     À la date de publication de ce Guide de migration, les URL et accès aux images Docker restent inchangés pour le moment.
 
-    Ce document sera mis à jour, et une communication sera effectuée auprès des utilisateurs connus de nos images DockerHub, lorsque 
+    Ce document sera mis à jour, et une communication sera effectuée auprès des utilisateurs connus de nos images DockerHub, lorsque ce nouveau registre sera disponible.
 
 === "Debian 9"
 
