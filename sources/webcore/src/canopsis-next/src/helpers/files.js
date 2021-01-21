@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 /**
  * Save data in file
  *
- * @param {Blob} data
+ * @param {Blob} blob
  * @param {string} name
  * @param {string} extension
  */
