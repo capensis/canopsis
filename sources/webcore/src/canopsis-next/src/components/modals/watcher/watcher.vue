@@ -5,12 +5,14 @@
     template(slot="text")
       v-fade-transition(mode="out-in")
         watcher-template(
-          v-if="!watcherEntitiesPending",
+          v-if="!watcherEntitiesPendingOnMount",
           :watcher="watcher",
           :watcher-entities="watcherEntitiesWithKey",
           :modal-template="config.modalTemplate",
           :entity-template="config.entityTemplate",
-          :items-per-page="config.itemsPerPage",
+          :pagination.sync="pagination",
+          :total-items="watcherEntitiesMeta.total_count",
+          :pending="watcherEntitiesPending",
           @add:event="addEventToQueue"
         )
         v-layout(v-else, column)
@@ -24,7 +26,7 @@
       ) {{ eventsQueue.length }} {{ $t('modals.watcher.actionPending') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
       v-tooltip.mx-2(top)
-        v-btn.secondary(slot="activator", @click="fetchWatchersList")
+        v-btn.secondary(slot="activator", @click="fetchList")
           v-icon refresh
         span {{ $t('modals.watcher.refreshEntities') }}
       v-btn.primary(
@@ -38,7 +40,7 @@
 import moment from 'moment-timezone';
 import { pick, mapValues } from 'lodash';
 
-import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { MODALS, EVENT_ENTITY_TYPES, PBEHAVIOR_TYPE_TYPES, SORT_ORDERS } from '@/constants';
 
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { addKeyInEntity } from '@/helpers/entities';
@@ -49,6 +51,7 @@ import confirmableModalMixin from '@/mixins/confirmable-modal';
 import eventActionsMixin from '@/mixins/event-actions/alarm';
 import entitiesPbehaviorMixin from '@/mixins/entities/pbehavior';
 import entitiesWatcherEntityMixin from '@/mixins/entities/watcher-entity';
+import localQueryMixin from '@/mixins/query-local/query';
 
 import ModalWrapper from '../modal-wrapper.vue';
 import ModalTitleButtons from '../modal-title-buttons.vue';
@@ -66,11 +69,18 @@ export default {
     entitiesWatcherEntityMixin,
     submittableMixin(),
     confirmableModalMixin({ field: 'eventsQueue' }),
+    localQueryMixin,
   ],
   data() {
     return {
       attributes: {},
       eventsQueue: [],
+      watcherEntitiesPendingOnMount: false,
+      query: {
+        rowsPerPage: this.modal.config.itemsPerPage,
+        sortKey: 'state',
+        sortDir: SORT_ORDERS.desc,
+      },
     };
   },
   computed: {
@@ -87,8 +97,13 @@ export default {
     },
   },
   mounted() {
-    this.fetchWatchersList();
+    this.watcherEntitiesPendingOnMount = true;
 
+    this.fetchList();
+
+    this.watcherEntitiesPendingOnMount = false;
+
+    // TODO: Do we need it ?
     const infoAttributes = mapValues(pick(this.watcher.infos, [
       'application_crit_label',
       'product_line',
@@ -104,19 +119,10 @@ export default {
     };
   },
   methods: {
-    fetchWatchersList() {
-      const params = {};
-
-      if (this.modal.config.sort) {
-        const { column, order } = this.modal.config.sort;
-
-        params.sort_by = column;
-        params.sort = order.toLowerCase();
-      }
-
+    fetchList() {
       this.fetchWatcherEntitiesList({
         watcherId: this.watcher._id,
-        params,
+        params: this.getQuery(),
       });
     },
 

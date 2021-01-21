@@ -99,7 +99,7 @@ La section `[event_error]` permet de définir l'événement envoyé en cas [d'er
 
 Le bloc `template` contient la configuration des templates.
 
-Pour la recette, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une expression régulière définie) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
+Pour garantir le fonctionnement, il faut s'assurer que l'adresse depuis laquelle on va envoyer un email se trouve bien dans le bloc (ou qu'elle respecte bien une expression régulière définie) et que le contenu de l'email correspond bien au template appliqué à cette même adresse email.
 
 Ici, pour
 
@@ -116,6 +116,9 @@ template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
 Il faut envoyer un email depuis l'adresse `sender@mail.net` et son contenu doit correspondre au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
 
 On peut assigner plusieurs templates à un expéditeur en fonction du sujet du mail. Pour cela il faut définir une expression régulière pour assigner un sujet a son template.
+
+**note 1:** Lorsque plusieurs templates sont définis, l'ordre de ceux-ci est important. C'est le premier template correspondant qui sera appliqué, les suivants seront ignorés.  
+**note 2:** Le nommage des templates (template1, template2, etc.) n'influe pas sur l'ordre de comparaison.
 
 Exemple :
 
@@ -134,10 +137,26 @@ template2.subject=.*Datacenter.*
 template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
 ```
 
-Dans cet exemple tous les mails de `sender@mail.net` qui ont dans le sujet le mot `Datacenter` seront liés au template `/opt/canopsis_connectors/email2canopsis/etc/template_2.conf`.
+Dans cet exemple tous les mails de `sender@mail.net` avec ou sans le mot `Datacenter` dans le sujet seront liés au template /opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
+
+```ini
+[template]
+# Expéditeur des emails à traiter
+template1.sender=sender@mail.net
+# Vous pouvez définir une  expression régulière pour lier un sujet de mail a un template (3.40.0+)
+template1.subject=.*Datacenter.*
+# Template à appliquer sur ces emails
+template1.path=/opt/canopsis_connectors/email2canopsis/etc/template_1.conf
+
+# Expéditeur des emails à traiter
+template2.sender=sender@mail.net
+# Template à appliquer sur ces emails
+template2.path=/opt/canopsis_connectors/email2canopsis/etc/template_2.conf
+```
+
+Dans cet exemple tous les mails de `sender@mail.net` qui ont dans le sujet le mot `Datacenter` seront liés au template `/opt/canopsis_connectors/email2canopsis/etc/template_1.conf`.
 
 Le `subject` peut être utilisé avec les deux types de déclarations d'expéditeurs (`sender` ou `regex`).
-
 
 ### Configuration du template d'email
 
@@ -182,7 +201,7 @@ Exemple :
 On sélectionne dans cet exemple le sujet du mail pour définir la criticité de l’alarme.
 
 - Les mails dont le sujet contient `Mineur ?` auront une criticité de 1. Le caractère `?` est un symbole utilisé dans l’écriture des expressions régulières, comme `*, {, }` etc. Il faut donc le protéger avec un `\`.
-- Les mails dont le sujet est strictement `Majeur` auront une criticité de 2. Le caractère `^` défini le début de la chaîne de caractères et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la sélection des mails dont le sujet se termine par `Mineur`.
+- Les mails dont le sujet est strictement `Majeur` auront une criticité de 2. Le caractère `^` définit le début de la chaîne de caractères et `$` la fin. On aurait donc pu définir comme  expression régulière `^Mineur` pour sélectionner les mails dont le sujet commence par `Mineur`. Inversement `Mineur$` pour la sélection des mails dont le sujet se termine par `Mineur`.
 - Les mails dont le sujet contient `Critique` auront une criticité de 3.
 - L'utilisation de l'expression régulière `.*` permet de définir un comportement par défaut. Les mails qui ne correspondent pas aux cas précédents auront donc une criticité par défaut de 0.
 
