@@ -38,8 +38,9 @@
       v-flex
         action-btn(
           :loading="!!contextExportData",
-          :tooltip="$t('settings.selectAFilter')",
+          :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
+          color="black",
           @click="exportContextList"
         )
     no-columns-table(v-if="!hasColumns")

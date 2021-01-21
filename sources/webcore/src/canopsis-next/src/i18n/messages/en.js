@@ -422,6 +422,7 @@ export default {
     },
     yesNoMode: 'Yes/No mode',
     selectAFilter: 'Select a filter',
+    exportAsCsv: 'Export widget as csv file',
     criticityLevels: 'Criticity levels',
     colorsSelector: {
       title: 'Colors selector',
