@@ -2,11 +2,6 @@
 
 Le serveur de cache [Redis](https://redis.io) permet un accès rapide aux données les plus utilisées dans la modélisation interne que Canopsis construit afin de représenter votre périmètre de surveillance. Il est essentiel pour la performance de Canopsis.
 
-À partir de Canopsis 3.39.0, la bonne configuration de ce composant devient indispensable.
-
-!!! note
-    Les informations suivantes s'appliquent à Canopsis 3.39.0 et versions ultérieures, où Redis doit obligatoirement avoir été mis à jour vers Redis 5.
-
 ## Optimisations système
 
 En dehors d'une utilisation pour un périmètre réduit, il est recommandé que Redis soit installé sur une instance dédiée.

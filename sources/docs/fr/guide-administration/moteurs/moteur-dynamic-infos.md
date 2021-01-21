@@ -1,7 +1,7 @@
 # Moteur `engine-dynamic-infos` (Go, CAT)
 
 !!! info
-    Disponible à partir de Canopsis 3.34.0, uniquement en édition CAT.
+    Disponible uniquement en édition CAT.
 
 Le moteur `engine-dynamic-infos` permet d'ajouter des informations aux alarmes. Ces informations sont définies avec des règles indiquant dans quelles conditions une information doit être présente sur une alarme.
 
@@ -62,9 +62,6 @@ Ces informations seront présentes dans l'alarme tant qu'elle correspondra aux p
 
 ### Templates
 
-!!! info
-    Disponible à partir de Canopsis 3.38.0.
-
 Les champs `value` sont personnalisables grâce aux templates. Les templates permettent de générer du texte en fonction de la criticité de l'alarme ou de l'entité.  
 Pour plus d'informations, vous pouvez consulter la [documentation sur les templates Golang](../architecture-interne/templates-golang.md).
 
@@ -79,9 +76,6 @@ Seules les fonctions suivantes sont disponibles dans les templates `dynamic-info
 Un exemple concret d'utilisation du moteur `engine-dynamic-infos` pour l'affichage de consignes techniques dans le bac à alarmes est disponible dans le [guide d'utilisation](../../guide-utilisation/cas-d-usage/affichage-de-consignes.md).
 
 ### Pré remplissage des attributs
-
-!!! info
-    Disponible à partir de Canopsis 3.39.0.
 
 Lorsque vous devez saisir des règles d'informations dynamiques similaires, vous avez la possibilité de pré remplir les attributs de celles-ci pour n'avoir plus que la saisie des valeurs à effectuer.  
 

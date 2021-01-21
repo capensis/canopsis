@@ -98,9 +98,7 @@ systemctl restart canopsis-webserver
 
 ## Authentification CAS
 
-L'authentification CAS est fonctionnelle en UIv3 (uniquement) depuis **Canopsis 3.22.0**. Les versions antérieures de Canopsis ne disposaient d'une authentification CAS qu'en UIv2.
-
-Sa configuration par l'interface web n'est pas prise en charge pour le moment.
+La configuration de CAS par l'interface web n'est pas prise en charge pour le moment.
 
 Les fonctionnalités actuellement implémentées permettent l'authentification des utilisateurs via WebSSO.
 
@@ -135,7 +133,7 @@ La configuration se fait dans un fichier JSON : **casconfig.json**
 La requête suivante permet d'envoyer cette configuration.
 
 ```sh
-curl -X POST -H "Content-type: application/json" -d @casconfig.json 'http://user:mdp@IP_CANOPSIS:PORT_CANOPSIS/rest/object/casconfig/cservice.casconfig'
+curl -u root:root -X POST -H "Content-type: application/json" -d @casconfig.json 'http://localhost:8082/rest/object/casconfig/cservice.casconfig'
 ```
 
 Le résultat renvoyé doit être de type :

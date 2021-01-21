@@ -1,15 +1,13 @@
-# Session
+# Sessions
 
-!!! note
-    Page en cours d'ecriture
 !!! info 
-        Le fonctionnement des routes l'API est décrit dans le guide développement [api/Session](../../../guide-developpement/api/api-v2-session/)
+        Le fonctionnement des routes de l'API est décrit dans le Guide de développement, section [API sessions](../../../guide-developpement/api/api-v2-session/).
 
 ## Information
 
-Le Webserver récolte des informations sur les sessions utilisateurs dans l'objectif de permettre la réalisation de statistiques.
+Le service web de Canopsis récolte des informations sur les sessions utilisateurs dans l'objectif de permettre la réalisation de statistiques.
 
-Ces informations sont stockées dans la collection ```default_session``` de la BDD MongoDB.
+Ces informations sont stockées dans la collection `default_session` de MongoDB.
 
 ## Document dans la BDD
 

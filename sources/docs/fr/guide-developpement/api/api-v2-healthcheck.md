@@ -45,7 +45,7 @@ Renvoie un résumé de l'état.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'état général :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/healthcheck/'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/healthcheck/'
 ```
 
 ##### Réponse en cas de réussite
@@ -85,7 +85,7 @@ Récupère l'état de services en particulier.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'état des services `amqp`, `cache`, `database` et `engines` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/healthcheck/?criticals=amqp,cache,database,engines'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/healthcheck/?criticals=amqp,cache,database,engines'
 ```
 
 ##### Réponse en cas de réussite

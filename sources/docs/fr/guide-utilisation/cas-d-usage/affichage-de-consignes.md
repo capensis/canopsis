@@ -1,8 +1,7 @@
 # Affichage de consignes
 
-!!! info "Disponible uniquement dans Canopsis CAT"
-
-!!! info "Disponible à partir de Canopsis 3.34.0"
+!!! info
+    Disponible uniquement en édition CAT.
 
 Le moteur [`engine-dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md) de Canopsis permet d'ajouter dynamiquement des informations aux alarmes.
 

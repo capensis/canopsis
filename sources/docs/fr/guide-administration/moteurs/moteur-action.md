@@ -10,10 +10,6 @@ En édition Core, la file du moteur est placée juste après le moteur [`engine-
 
 En édition CAT, la file du moteur est placée juste après le moteur [`engine-webhook`](moteur-webhook.md).
 
-!!! Note
-    Depuis la version 3.39.0, les actions ack, ackremove, assocticket, declareticket, et cancel sont disponibles.  
-    Par ailleurs il existe aussi la possibilité de déclencher les actions après un délai paramétré
-
 ### Options du moteur
 
 La commande `engine-action -help` liste toutes les options acceptées par le moteur.
