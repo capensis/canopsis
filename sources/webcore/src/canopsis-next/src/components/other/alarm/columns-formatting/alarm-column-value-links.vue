@@ -1,10 +1,10 @@
 <template lang="pug">
   div
-    v-menu(v-if="!asList", @click.native.stop, :disabled="isDisabled")
+    category-links-list(v-if="asList", :categories="filteredCategories", :limit="limit")
+    v-menu(v-else, :disabled="isDisabled", @click.native.stop)
       v-btn(slot="activator", :disabled="isDisabled", depressed, small) {{ $t('common.links') }}
       v-list(dark, dense)
         category-links-list(:categories="filteredCategories")
-    category-links-list(v-else, :categories="filteredCategories", :limit="limit")
 </template>
 
 <script>
