@@ -50,6 +50,9 @@ cbd -v
 
 Dans cet exemple, on est sur une CentOS 7 avec un Centreon Broker (CBD) 3.0.11. Le module qui nous intéresse est donc `precompiled/Centos7/85-amqp-cbd-3.0.11.so`.
 
+!!! attention
+    Vous devez utiliser la version correspondant **EXACTEMENT** au résultat de `cbd -v`. Ainsi, un connecteur `20.4.8` ne peut **PAS** fonctionner sur une version `20.4.11` de cbd.
+
 Il faut ensuite l'envoyer dans le répertoire d'installation des modules Centreon (attention : le nom `85-amqp.so` est attendu en destination) :
 
 ```sh
