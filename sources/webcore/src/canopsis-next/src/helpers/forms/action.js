@@ -3,7 +3,7 @@ import { omit, pick, isEmpty } from 'lodash';
 import { ACTION_TYPES, ACTION_AUTHOR, ACTION_FORM_FIELDS_MAP_BY_TYPE } from '@/constants';
 
 import { unsetSeveralFieldsWithConditions } from '@/helpers/immutable';
-import { generateAction } from '@/helpers/entities';
+import { generateAction, generateActionId } from '@/helpers/entities';
 import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { convertDurationToIntervalObject } from '@/helpers/date';
 import { durationToForm, formToDuration } from '@/helpers/duration';
@@ -71,6 +71,10 @@ export function actionToForm(action, timezone = moment.tz.guess()) {
 
   data.generalParameters = pick(action, ['_id', 'type', 'hook', 'priority']);
   data.generalParameters.enabled = action.enabled !== false;
+
+  if (!data.generalParameters._id) {
+    data.generalParameters._id = generateActionId();
+  }
 
   if (action.delay) {
     const [, value, unit] = action.delay.match(/^(\d+)(\w)$/);
