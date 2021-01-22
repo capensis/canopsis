@@ -8,6 +8,7 @@ import VNavigationDrawer from './components/v-navigation-drawer/v-navigation-dra
 import VMenu from './components/v-menu/v-menu.vue';
 import VTooltip from './components/v-tooltip/v-tooltip.vue';
 import VDataTable from './components/v-data-table/v-data-table.vue';
+import VTextarea from './components/v-textarea/v-textarea.vue';
 
 import ClickOutside from './directives/click-outside';
 
@@ -23,6 +24,7 @@ export default {
     Vue.component('v-menu', VMenu);
     Vue.component('v-tooltip', VTooltip);
     Vue.component('v-data-table', VDataTable);
+    Vue.component('v-textarea', VTextarea);
 
     Vue.directive('click-outside', ClickOutside);
   },

@@ -1,8 +1,3 @@
-# Présentation du Webserver
+# Services web Canopsis
 
-!!! note
-        Page en cours d'ecriture
-
-
-!!! info 
-        Informations sur les sessions [documentation Session](session.md)
+[Documentation sur les sessions](session.md)

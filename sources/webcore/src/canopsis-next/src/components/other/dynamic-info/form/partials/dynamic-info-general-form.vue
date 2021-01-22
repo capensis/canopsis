@@ -4,6 +4,7 @@
       v-text-field(
         v-field="form._id",
         :label="$t('modals.createDynamicInfo.steps.general.fields.id')",
+        :disabled="isDisabledIdField",
         name="id"
       )
     v-layout
@@ -42,6 +43,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    isDisabledIdField: {
+      type: Boolean,
+      default: false,
     },
   },
 };

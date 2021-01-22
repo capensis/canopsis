@@ -11,7 +11,6 @@ La documentation de l'API est disponible [ici](./swagger).
 
 * [Internal](api/api-internal.md)
 * [Action](api/api-v2-action.md)
-* [Alarm-filter](api/api-v2-alarm-filter.md)
 * [Information dynamiques](api/api-v2-dynamic-infos.md)
 * [Event-filter](api/api-v2-event-filter.md)
 * [Event](api/api-v2-event.md)

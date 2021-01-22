@@ -100,7 +100,9 @@ Si la colonne 'extra\_details' est activée dans le bac à alarmes, l'icone ![Ic
 
 L'alarme prend alors le statut `cancel` et reste pendant 1h dans le bac des alarmes en cours. Ce délai de 1h passé, elle change de statut pour passer en `resolved` et bascule dans le bac des alarmes résolues.
 
-**Note :** Toute alarme annulée garde son dernier niveau de criticité connu.
+**Note 1 :** Toute alarme annulée garde son dernier niveau de criticité connu.
+
+**Note 2 :** Par défaut, une alarme annulée manuellement reste affichée dans le Bac des alarmes en cours durant une heure. Cette durée peut être modifiée à l'aide de [l'option `CancelAutosolveDelay` du fichier de configuration global](../../../../guide-administration/moteurs/moteur-axe.md#option-cancelautosolvedelay).
 
 ### Annuler l'acquittement
 

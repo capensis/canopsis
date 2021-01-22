@@ -6,7 +6,7 @@ L'ensemble des commandes suivantes doit être réalisées avec l'utilisateur `ro
 
 L'utilitaire `canoctl` permet, entre autres, de redémarrer Canopsis en lui-même. Il ne s'applique pas aux services associés, tels que RabbitMQ ou MongoDB.
 
-La commande suivante redémarrera Canopsis, son serveur web Gunicorn, et l'ensemble des moteurs, qu'ils soient en Python ou en Go :
+La commande suivante redémarrera Canopsis, ses services et ses moteurs :
 
 ```sh
 canoctl restart

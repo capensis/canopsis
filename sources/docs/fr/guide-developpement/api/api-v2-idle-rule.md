@@ -54,7 +54,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
       }
     }
    ]
-}' 'http://<Canopsis_URL>/api/v2/idle-rule'
+}' 'http://localhost:8082/api/v2/idle-rule'
 ```
 
 #### Réponse en cas de réussite
@@ -182,7 +182,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
       }
     }
    ]
-}' 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
+}' 'http://localhost:8082/api/v2/idle-rule/idltest'
 ```
 
 #### Réponse en cas de réussite
@@ -237,7 +237,7 @@ Supprime une Idle rule en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer l'idle rule avec l'`id` `idltest` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/idle-rule/idltest'
 ```
 
 #### Réponse en cas de réussite
@@ -282,7 +282,7 @@ curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'idle rule avec l'`id` `idltest` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule/idltest'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/idle-rule/idltest'
 ```
 
 ##### Réponse en cas de réussite
@@ -351,7 +351,7 @@ Récupère toutes les Idle rules stockées en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer toutes les Idle rules :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/idle-rule'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/idle-rule'
 ```
 
 ##### Réponse en cas de réussite

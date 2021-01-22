@@ -5,7 +5,7 @@ import { entitySchema } from '@/store/schemas';
 import request from '@/services/request';
 import i18n from '@/i18n';
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES, WIDGET_TYPES } from '@/constants';
+import { ENTITIES_TYPES, REQUEST_METHODS, WIDGET_TYPES } from '@/constants';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -93,7 +93,7 @@ export default {
       return dispatch('entities/fetch', {
         route: API_ROUTES.context,
         schema: [entitySchema],
-        method: 'POST',
+        method: REQUEST_METHODS.post,
         params,
         dataPreparer: d => d.data,
       }, { root: true });

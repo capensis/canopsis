@@ -41,7 +41,7 @@ graph TD
     E2 -->|3| O6(Opération 3)
 ```            
 
-## Pré-requis
+## Prérequis
 
 Les ordonnanceurs de tâches compatibles avec les jobs de remédiation sont :
 

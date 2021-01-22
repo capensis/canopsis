@@ -66,7 +66,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
       }
     ]
   }
-}' 'http://<Canopsis_URL>/api/v2/metaalarmrule'
+}' 'http://localhost:8082/api/v2/metaalarmrule'
 ```
 
 #### Réponse en cas de réussite
@@ -158,7 +158,7 @@ Supprime une règle en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer la règle avec l'`id` `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/metaalarmrule/6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd'
 ```
 
 #### Réponse en cas de réussite
@@ -209,7 +209,7 @@ Récupère une ou plusieurs règles créées en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer la règle avec l'`id` `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule/8c7b1732-522f-4bcf-a7ac-d08bd9c085eb'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/metaalarmrule/8c7b1732-522f-4bcf-a7ac-d08bd9c085eb'
 ```
 
 ##### Réponse en cas de réussite
@@ -276,7 +276,7 @@ Récupère toutes les règles stockées en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer toutes les règles :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/metaalarmrule'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/metaalarmrule'
 ```
 
 ##### Réponse en cas de réussite

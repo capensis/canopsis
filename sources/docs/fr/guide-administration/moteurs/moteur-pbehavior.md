@@ -39,7 +39,7 @@ Elle permettra de préciser le motif de l'activation du comportement.
 
 Par exemple, si une entité a été mise en `pause` la raison pourra préciser : `Problème de sonde` ou `Hors plage de maintenance`.
 
-### Filtre
+### Filtre
 
 Le filtre est utilisé pour déterminer sur quelles entités le comportement va s'appliquer. Il prend en charge les opération `OR` et `AND`, et s'applique directement sur les variables de l'entité.
 

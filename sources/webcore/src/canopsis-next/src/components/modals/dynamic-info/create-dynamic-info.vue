@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        dynamic-info-form(v-model="form")
+        dynamic-info-form(v-model="form", :is-disabled-id-field="isDisabledIdField")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
@@ -44,6 +44,10 @@ export default {
   computed: {
     title() {
       return this.config.title || this.$t('modals.createDynamicInfo.create.title');
+    },
+
+    isDisabledIdField() {
+      return this.config.isDisabledIdField;
     },
   },
   methods: {

@@ -49,7 +49,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 "state": 2,
 "debug": true,
 "output": "Disque plein a 98%, 50GO occupe"
-}' 'http://<Canopsis_URL>/api/v2/event'
+}' 'http://localhost:8082/api/v2/event'
 ```
 
 ### Réponse en cas de réussite

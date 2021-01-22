@@ -28,7 +28,11 @@
       v-stepper-content(:step="steps.GENERAL")
         v-card
           v-card-text
-            dynamic-info-general-form(v-field="form.general", ref="generalForm")
+            dynamic-info-general-form(
+              v-field="form.general",
+              :is-disabled-id-field="isDisabledIdField",
+              ref="generalForm"
+            )
       v-stepper-content(:step="steps.INFOS")
         v-card
           v-card-text
@@ -59,6 +63,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    isDisabledIdField: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

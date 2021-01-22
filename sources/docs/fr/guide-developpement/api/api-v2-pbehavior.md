@@ -70,7 +70,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 	"rrule": null,
 	"comments": [],
 	"exdate": []
-}' 'http://<Canopsis_URL>/api/v2/pbehavior'
+}' 'http://localhost:8082/api/v2/pbehavior'
 ```
 
 #### Réponse en cas de réussite
@@ -88,9 +88,6 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 ```
 
 #### Cas particulier : Permettre la création d'un comportement périodique avec un `_id` déjà existant
-
-!!! note
-    Disponible depuis Canopsis 3.38.0.
 
 Lorsque les comportements périodiques sont pilotés par l'API (via un ordonnanceur par exemple), il est parfois nécessaire de devoir 
 « écraser » un comportement périodique déjà existant mais qui serait expiré.
@@ -203,7 +200,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
 	"rrule": "FREQ=WEEKLY;BYDAY=FR,TH",
 	"comments": [],
 	"exdate": []
-}' 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
+}' 'http://localhost:8082/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
 ```
 
 #### Réponse en cas de réussite
@@ -244,7 +241,7 @@ Supprime un comportement périodique en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer le comportement périodique avec l'`id` `6dacc239-59e8-4ba9-b1d0-e9c08ab8eacd` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/pbehavior/e89d0a8f-8ccd-4357-83e9-ea3f8a53ebb2'
 ```
 
 #### Réponse en cas de réussite
@@ -281,7 +278,7 @@ Récupère un ou plusieurs comportements périodiques appliqués sur une entité
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer les comportements périodiques s'appliquant à l'entité dont l'`_id` est `disk2/pbehavior_test_1` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/pbehavior_byeid/disk2/pbehavior_test_1'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/pbehavior_byeid/disk2/pbehavior_test_1'
 ```
 
 ##### Réponse en cas de réussite
@@ -329,7 +326,7 @@ Récupère tous les comportements périodiques stockés en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer tous les comportements périodiques :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/pbehavior/read'
+curl -X GET -u root:root 'http://localhost:8082/pbehavior/read'
 ```
 
 ##### Réponse en cas de réussite
@@ -370,14 +367,8 @@ curl -X GET -u root:root 'http://<Canopsis_URL>/pbehavior/read'
 }
 ```
 
-!!! note
-    Disponible depuis Canopsis 3.40.0.
-
 Le paramètre `current_active_pbh` permet de récupérer uniquement les comportements périodiques qui sont actifs au moment de la requête.
-
 
 Ce paramètre est de type **booléen**.
 
 **URL** : `/api/v2/pbehavior?current_active_pbh=true`
-
-
