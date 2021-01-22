@@ -149,6 +149,7 @@ export default {
     entityPatterns: 'Pattern des entités',
     totalEntityPatterns: 'Total des modèles d\'entité',
     addFilter: 'Ajouter un filtre',
+    id: 'Id',
     reset: 'Réinitialiser',
     actions: {
       close: 'Fermer',

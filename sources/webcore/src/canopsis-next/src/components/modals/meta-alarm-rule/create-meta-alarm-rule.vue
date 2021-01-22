@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/forms/meta-alarm-rule';
@@ -44,25 +43,19 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const { rule, isDuplicating } = this.modal.config;
+    const { rule } = this.modal.config;
 
     return {
-      form: metaAlarmRuleToForm(isDuplicating ? omit(rule, ['_id']) : rule),
+      form: metaAlarmRuleToForm(rule),
     };
   },
   computed: {
     title() {
-      let type = 'create';
-
-      if (this.config.rule) {
-        type = this.config.isDuplicating ? 'duplicate' : 'edit';
-      }
-
-      return this.$t(`modals.metaAlarmRule.${type}.title`);
+      return this.config.title || this.$t('modals.metaAlarmRule.create.title');
     },
 
     isDisabledIdField() {
-      return this.config.rule && !this.config.isDuplicating;
+      return this.config.isDisabledIdField;
     },
   },
   methods: {

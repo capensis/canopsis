@@ -70,7 +70,7 @@ export default {
         { text: this.$t('pbehaviors.type'), value: 'type.name' },
         { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
         { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
-        { text: this.$t('common.status'), value: 'is_active_status' },
+        { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
     },
