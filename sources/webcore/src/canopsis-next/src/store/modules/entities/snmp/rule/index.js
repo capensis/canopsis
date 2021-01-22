@@ -1,5 +1,5 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
+import { ENTITIES_TYPES, REQUEST_METHODS } from '@/constants';
 
 import request from '@/services/request';
 
@@ -45,7 +45,7 @@ export default {
 
         const { data, normalizedData } = await dispatch('entities/fetch', {
           body: params,
-          method: 'POST',
+          method: REQUEST_METHODS.post,
           route: API_ROUTES.snmpRule.list,
           dataPreparer: d => d.data,
           schema: [snmpRuleSchema],

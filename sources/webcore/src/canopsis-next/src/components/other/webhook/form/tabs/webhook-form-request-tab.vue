@@ -58,13 +58,16 @@
           v-validate="'required'",
           :disabled="disabled",
           :read-only="disabled",
-          :label="$t('webhook.tabs.request.fields.payload')",
+          :auto-grow="autoGrow",
+          :label="$t('common.payload')",
           :error-messages="errors.collect('request.payload')",
           name="request.payload"
         )
 </template>
 
 <script>
+import { REQUEST_METHODS } from '@/constants';
+
 import formMixin from '@/mixins/form';
 import formValidationHeaderMixin from '@/mixins/form/validation-header';
 
@@ -84,6 +87,10 @@ export default {
       required: true,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    autoGrow: {
       type: Boolean,
       default: false,
     },
@@ -108,9 +115,7 @@ export default {
     },
 
     availableMethods() {
-      return [
-        'POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'CONNECT', 'OPTIONS', 'TRACE',
-      ];
+      return Object.values(REQUEST_METHODS);
     },
   },
 };
