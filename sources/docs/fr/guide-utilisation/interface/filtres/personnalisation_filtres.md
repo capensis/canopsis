@@ -1,7 +1,5 @@
 # Personnalisation des filtres
 
-!!! info "Disponible à partir de Canopsis 3.35.0"
-
 La liste des attributs présentés par l'éditeur de filtres peut être personnalisée.  
 L'éditeur de filtres est utilisé pour filtrer 2 types d'objets : 
 
@@ -61,7 +59,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
       "value": "infos.weather_type.value"
     }
   ]
-}' 'http://<Canopsis_URL>/api/v2/associativetable/filterhints'
+}' 'http://localhost:8082/api/v2/associativetable/filterhints'
 ````
 Vous devez obtenir le résultat suivant : 
 

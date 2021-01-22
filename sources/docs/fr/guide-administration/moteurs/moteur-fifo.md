@@ -1,8 +1,5 @@
 # Moteur `engine-fifo` (Go, Core)
 
-!!! note
-    Ce moteur est disponible à partir de Canopsis 3.39.0.
-
 La possibilité de pouvoir démarrer plusieurs instances des moteurs [`engine-che`](moteur-che.md), [`engine-axe`](moteur-axe.md) et [`engine-correlation`](moteur-correlation.md) amène une problématique d'ordre de traitement des [événements](../../../guide-utilisation/vocabulaire/#evenement). Le moteur `engine-fifo` permet de répondre à cette problématique en conservant l'ordre des événements entrants.
 
 ## Utilisation

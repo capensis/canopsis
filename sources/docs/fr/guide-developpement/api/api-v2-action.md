@@ -76,7 +76,7 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
         "tstart": 0,
         "tstop": 4170912120
     }
-}' 'http://<Canopsis_URL>/api/v2/actions'
+}' 'http://localhost:8082/api/v2/actions'
 ```
 
 #### Réponse en cas de réussite
@@ -210,7 +210,7 @@ curl -X PUT -u root:root -H "Content-Type: application/json" -d '{
         "tstart": 0,
         "tstop": 253402297199
     }
-}' 'http://<Canopsis_URL>/api/v2/actions/action_id_pbehavior'
+}' 'http://localhost:8082/api/v2/actions/action_id_pbehavior'
 ```
 
 #### Réponse en cas de réussite
@@ -243,7 +243,7 @@ Supprime une Action en fonction de son `id`.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` qui veut supprimer l'action avec l'`id` `action_id_pbehavior` :
 
 ```sh
-curl -X DELETE -u root:root 'http://<Canopsis_URL>/api/v2/actions/action_id_pbehavior'
+curl -X DELETE -u root:root 'http://localhost:8082/api/v2/actions/action_id_pbehavior'
 ```
 
 #### Réponse en cas de réussite
@@ -269,7 +269,7 @@ Récupère une ou plusieurs Actions créées en base.
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer l'action avec l'`id` `action_id_pbehavior` :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/actions/action_id_pbehavior'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/actions/action_id_pbehavior'
 ```
 
 ##### Réponse en cas de réussite
@@ -338,7 +338,7 @@ Récupère toutes les Actions stockées en base
 **Exemple de requête curl** pour utilisateur `root` avec mot de passe `root` pour récupérer toutes les Actions :
 
 ```sh
-curl -X GET -u root:root 'http://<Canopsis_URL>/api/v2/actions'
+curl -X GET -u root:root 'http://localhost:8082/api/v2/actions'
 ```
 
 ##### Réponse en cas de réussite

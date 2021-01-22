@@ -1,11 +1,8 @@
 # Importation / Exportation
 
-!!! Note
-    Disponible à partir de Canopsis 3.39.0
-
 Cette fonctionnalité vous permet d'exporter des vues ou des groupes de vues sous forme de fichiers JSON. Il sera ensuite possible de les importer dans un autre Canopsis par exemple.
 
-Pour y accéder, passez par le menu d'administration puis rendez vous dans les paramètres. Cliquez ensuite sur l'onglet "Importation/Exportation".
+Pour y accéder, passez par le menu d'administration puis rendez-vous dans les paramètres. Cliquez ensuite sur l'onglet "Importation/Exportation".
 
 ![Importation / Exportation d'une vue](img/parametres_import_export.png)
 

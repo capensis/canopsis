@@ -11,13 +11,13 @@ En installation Docker, les variables suivantes peuvent être définies dans un 
 
 En installation par paquets, ces variables peuvent être définies dans `/opt/canopsis/etc/go-engines-vars.conf` si elles doivent s'appliquer à l'ensemble des moteurs, ou dans la section `[Environment]` d'une unité systemd dédiée si un moteur en particulier est ciblé.
 
-## Liste des variables d'environnement
+## Variables d'environnement des composants Go
+
+Ces variables concernent l'ensemble des moteurs Go, et certains outils comme `canopsis-reconfigure`.
 
 ### URI de connexion aux services externes
 
 Votre installation de Canopsis doit obligatoirement comporter les adresses et données de connexion (on parle d'URI) permettant de se connecter aux services externes Redis, MongoDB, RabbitMQ et InfluxDB.
-
-Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `init` ou `feeder`.
 
 | Variable d'environnement | Valeur par défaut | Utilité |
 |:-------------------------|-------------------|---------|
@@ -26,25 +26,21 @@ Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `
 | `CPS_MONGO_URL` | (vide) | Une URI de connexion MongoDB (cf. [Spécification d'URI MongoDB](https://docs.mongodb.com/v3.6/reference/connection-string/)) |
 | `CPS_REDIS_URL` | (vide) | Une URI de connexion Redis (cf. [Spécification d'URI Redis](https://www.iana.org/assignments/uri-schemes/prov/redis)) |
 
-### Chemin d'accès au fichier de configuration global (`default_configuration.toml`)
+### Chemin d'accès au fichier de configuration global (`canopsis.toml`)
 
-Les différents moteurs et binaires Go ont besoin d'un fichier de configuration `default_configuration.toml`. La variable `CPS_DEFAULT_CFG` permet de leur indiquer le chemin où se trouve ce fichier.
+Les différents moteurs et binaires Go ont besoin d'un fichier de configuration `canopsis.toml`. La variable `CPS_DEFAULT_CFG` permet de leur indiquer le chemin où se trouve ce fichier.
 
-En installation Docker, elle doit presque toujours valoir `/default_configuration.toml`. En installation par paquets, elle doit valoir `/opt/canopsis/etc/default_configuration.toml` (`canoctl deploy` se charge de renseigner cette valeur dans l'unité systemd `canopsis-engine-go@.service`).
-
-Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `init` ou `feeder`.
+En installation Docker, elle doit presque toujours valoir `/canopsis.toml`. En installation par paquets, elle doit valoir `/opt/canopsis/etc/canopsis.toml` (`canoctl deploy` se charge de renseigner cette valeur dans l'unité systemd `canopsis-engine-go@.service`).
 
 | Variable d'environnement | Valeur par défaut | Utilité |
 |:-------------------------|-------------------|---------|
-| `CPS_DEFAULT_CFG` | `default_configuration.toml` (dans le répertoire courant) | Chemin d'accès vers le fichier de configuration `default_configuration.toml` |
+| `CPS_DEFAULT_CFG` | `canopsis.toml` (dans le répertoire courant) | Chemin d'accès vers le fichier de configuration `canopsis.toml` |
 
 ### Tentatives de connexion aux services externes
 
 Les variables suivantes concernent les tentatives de connexion aux services externes de Canopsis, à savoir Redis, RabbitMQ, MongoDB et InfluxDB.
 
 Elles servent notamment à gérer le cas où les moteurs démarrent avant que ces services ne soient prêts (ce qui est essentiel pour Docker Compose).
-
-Ces variables concernent l'ensemble des moteurs Go, et certains binaires comme `init` ou `feeder`.
 
 | Variable d'environnement | Valeur par défaut | Utilité |
 |:-------------------------|-------------------|---------|
@@ -72,6 +68,8 @@ Dans certains cas d'utilisation, il peut être pertinent d'ajuster ces valeurs �
 |:-------------------------|-------------------|---------|
 | `REGEXP2_MATCH_TIMEOUT` | `1s` | Depuis Canopsis 3.45.0. Durée (au format [`ParseDuration`](https://golang.org/pkg/time/#ParseDuration)) d'exécution maximale de l'évaluation d'une [expression régulière avancée](../../guide-utilisation/formats-et-syntaxe/format-regex.md) |
 
+## Variables d'environnement propres à certains outils
+
 ### `canopsinit`
 
 L'outil `canopsinit` dispose lui aussi de variables d'environnement permettant de définir le temps d'attente nécessaire lors des tentatives de connexion aux services externes de Canopsis.
@@ -82,7 +80,7 @@ L'outil `canopsinit` dispose lui aussi de variables d'environnement permettant d
 | `CPS_INIT_RETRY_DELAY` | `30` | Temps maximum d'attente, en secondes, lors de chaque tentative de connexion à un service externe |
 | `CPS_INIT_WAIT_FIRST_ATTEMPT` | `0` | Temps d'attente obligatoire, en secondes, avant la première tentative de connexion aux services externes |
 
-### Docker
+## Variables d'environnement propres à Docker
 
 Les variables suivantes ne sont disponibles que dans un environnement Canopsis reposant sur Docker. Elles sont sans effet sur les autres méthodes d'installation.
 

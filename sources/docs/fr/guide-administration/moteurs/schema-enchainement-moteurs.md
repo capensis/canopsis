@@ -34,7 +34,6 @@ exch.events --> heart(engine-heartbeat)
 exch.events --> fifo(engine-fifo &#40failover&#41)
 fifo --> che(engine-che &#40multi-instanciable&#41)
 che --> filter(event_filter)
-filter --> metric(metric)
 filter --> pbh(pbehavior)
 pbh --> axe(engine-axe &#40multi-instanciable&#41)
 axe --> correl(engine-correlation &#40multi-instanciable&#41)
@@ -50,7 +49,6 @@ click heart "https://doc.canopsis.net/guide-administration/moteurs/moteur-heartb
 click fifo "https://doc.canopsis.net/guide-administration/moteurs/moteur-fifo/"
 click che "https://doc.canopsis.net/guide-administration/moteurs/moteur-che/"
 click filter "https://doc.canopsis.net/guide-administration/moteurs/moteur-che-event_filter/"
-click metric "https://doc.canopsis.net/guide-administration/moteurs/moteur-metric/"
 click pbh "https://doc.canopsis.net/guide-administration/moteurs/moteur-pbehavior/"
 click axe "https://doc.canopsis.net/guide-administration/moteurs/moteur-axe/"
 click correl "https://doc.canopsis.net/guide-administration/moteurs/moteur-correlation/"
@@ -64,7 +62,7 @@ classDef core-green font-weight:normal,font-size:12pt,color:#fff,fill:#2fab63,co
 classDef cat-blue font-weight:normal,font-size:12pt,color:#fff,fill:#2b3e4f,color:#fff,stroke:#222,stroke-width:3px;
 classDef rabbit-orange font-weight:normal,font-size:12pt,color:#fff,fill:#ff6600,color:#fff,stroke:#222,stroke-width:3px;
 class sup grey
-class heart,fifo,che,filter,metric,pbh,axe,watcher,action core-green
+class heart,fifo,che,filter,pbh,axe,watcher,action core-green
 class snmp,kpi,correl,info,webh cat-blue
 class exch.snmp,exch.events rabbit-orange
 ```

@@ -151,6 +151,7 @@ export function formToWebhook(form) {
     'retry.count': hasValue,
     'retry.unit': hasValue,
     'retry.delay': hasValue,
+    _id: hasValue,
   });
 }
 

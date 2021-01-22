@@ -2,8 +2,6 @@
 
 Le moteur `engine-axe` permet de créer et d'enrichir les alarmes. Il permet également d'appliquer les actions entrées depuis le Bac à alarmes.
 
-Jusqu'à Canopsis 3.33.0, `engine-axe` permettait aussi d'appliquer des Webhooks, dans la version CAT. Depuis Canopsis 3.34.0, les Webhooks sont gérés par un moteur [`engine-webhook`](moteur-webhook.md) dédié (toujours en édition CAT).
-
 ## Utilisation
 
 ### Options du moteur
@@ -12,10 +10,7 @@ La commande `engine-axe -help` liste toutes les options acceptées par le moteur
 
 ### Multi-instanciation
 
-!!! note
-    Cette fonctionnalité est disponible à partir de Canopsis 3.40.0. Elle ne doit pas être utilisée sur les versions antérieures.
-
-Il est possible, à partir de **Canopsis 3.40.0**, de lancer plusieurs instances du moteur `engine-axe`, afin d'améliorer sa performance de traitement et sa résilience.
+Il est possible, à partir de Canopsis 3.40.0, de lancer plusieurs instances du moteur `engine-axe`, afin d'améliorer sa performance de traitement et sa résilience.
 
 En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale axe=2` pour que le moteur `engine-axe` soit lancé avec 2 instances.
 
@@ -23,9 +18,7 @@ Cette fonctionnalité sera aussi disponible en installation par paquets lors d'u
 
 ## Fichier de configuration
 
-Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/default_configuration.toml` (ou `/default_configuration.toml` en environnement Docker) et inscrit ces informations en base de données.
-
-À partir de Canopsis 3.37.0, l'option `-ignoreDefaultTomlConfig` permet au moteur de ne pas prendre en compte les paramètres qui se trouvent dans son fichier de configuration lors du démarrage. Il se basera alors uniquement sur les données présentes en base. Si cette option n'est pas précisée, `engine-axe` synchronisera les informations présentes en base avec celles contenues dans le fichier lors de son lancement.
+Lors de son tout premier démarrage, le moteur `engine-axe` lit le fichier de configuration `/opt/canopsis/etc/canopsis.toml` (ou `/canopsis.toml` en environnement Docker) et inscrit ces informations en base de données.
 
 ### Option `EnableLastEventDate`
 
@@ -57,9 +50,6 @@ Lorsqu'une alarme est annulée manuellement, via l'interface web par exemple, el
 Vous pouvez agir sur ce délai en modifiant le paramètre `CancelAutosolveDelay`.
 
 ### Option `DisplayNameScheme`
-
-!!! note
-    Cette fonctionnalité est disponible à partir de Canopsis 3.45.0.
 
 Vous avez la possibilité de personnaliser le schéma de construction de l'attribut `display_name` d'une alarme par l'intermédiaire de l'option `DisplayNameScheme`.
 

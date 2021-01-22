@@ -1,8 +1,5 @@
 # Documentation de la grille d'édition
 
-!!! Note
-    Disponible à partir de Canopsis 3.43.1
-
 * Premièrement il faut se diriger dans une vue comme les alarmes résolues par exemple.
 On peut alors entrer en mode edition grâce à `ctrl + e` ou cliquer sur le bouton en bas à droite puis le crayon.
 

@@ -40,12 +40,12 @@ markdown_extensions:
     - pymdownx.tabbed
     - toc:
         permalink: true
-        toc_depth: 0
     - pymdownx.superfences:
         custom_fences:
           - name: mermaid
             class: mermaid
             format: !!python/name:pymdownx.superfences.fence_div_format
+    - attr_list
 
 plugins:
     - search:

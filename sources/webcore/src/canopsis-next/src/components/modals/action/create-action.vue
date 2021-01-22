@@ -4,7 +4,7 @@
       template(slot="title")
         span {{ title }}
       template(slot="text")
-        action-form(v-model="form", :disabledId="modal.config.item && !modal.config.isDuplicating")
+        action-form(v-model="form", :is-disabled-id-field="isDisabledIdField")
       template(slot="actions")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.actions.saveChanges') }}
@@ -13,7 +13,6 @@
 <script>
 import { MODALS } from '@/constants';
 
-import uuid from '@/helpers/uuid';
 import { formToAction, actionToForm } from '@/helpers/forms/action';
 
 import modalInnerMixin from '@/mixins/modal/inner';
@@ -37,24 +36,19 @@ export default {
     confirmableModalMixin(),
   ],
   data() {
-    const { item, isDuplicating } = this.modal.config;
-
-    const form = actionToForm(item, this.$system.timezone);
-
-    /**
-     * If we're duplicating an action, generate a new unique id
-     */
-    if (isDuplicating) {
-      form.generalParameters._id = uuid('action');
-    }
+    const { item: action } = this.modal.config;
 
     return {
-      form,
+      form: actionToForm(action, this.$system.timezone),
     };
   },
   computed: {
     title() {
       return this.config.title || this.$t('modals.createAction.create.title');
+    },
+
+    isDisabledIdField() {
+      return this.config.isDisabledIdField;
     },
   },
   methods: {
